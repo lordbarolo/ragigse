@@ -77,6 +77,47 @@ export type Database = {
         }
         Relationships: []
       }
+      payments: {
+        Row: {
+          amount_ore: number
+          created_at: string
+          currency: string
+          id: string
+          lead_id: string
+          plan: string
+          status: string
+          stripe_session_id: string
+        }
+        Insert: {
+          amount_ore?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          lead_id: string
+          plan?: string
+          status?: string
+          stripe_session_id: string
+        }
+        Update: {
+          amount_ore?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          lead_id?: string
+          plan?: string
+          status?: string
+          stripe_session_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rates: {
         Row: {
           detaljer: string | null
