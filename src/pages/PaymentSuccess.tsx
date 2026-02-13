@@ -33,8 +33,8 @@ export default function PaymentSuccess() {
 
         setStatus("success");
         // Store report_id for redirect
-        if (data.lead_id) {
-          sessionStorage.setItem("paidReportLeadId", data.lead_id);
+        if (data.report_id) {
+          sessionStorage.setItem("reportId", data.report_id);
         }
       } catch {
         setStatus("error");
@@ -52,7 +52,8 @@ export default function PaymentSuccess() {
       setCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          navigate("/rapport");
+          const reportId = sessionStorage.getItem("reportId");
+          navigate(reportId ? `/rapport/${reportId}` : "/resultat");
           return 0;
         }
         return prev - 1;
@@ -90,7 +91,10 @@ export default function PaymentSuccess() {
                 <CheckCircle className="w-3.5 h-3.5 text-accent" />
                 <span>Omdirigerar om {countdown} sekunder…</span>
               </div>
-              <Button onClick={() => navigate("/rapport")} className="w-full mt-2" size="lg">
+              <Button onClick={() => {
+                const reportId = sessionStorage.getItem("reportId");
+                navigate(reportId ? `/rapport/${reportId}` : "/resultat");
+              }} className="w-full mt-2" size="lg">
                 Visa din rapport nu
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>

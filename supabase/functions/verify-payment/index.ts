@@ -37,34 +37,45 @@ serve(async (req) => {
     }
 
     const leadId = session.metadata?.lead_id;
+    const reportId = session.metadata?.report_id;
+
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
 
     if (leadId) {
-      const supabase = createClient(
-        Deno.env.get("SUPABASE_URL")!,
-        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-      );
-
       // Mark lead as paid
       await supabase.from("leads").update({ paid: true }).eq("id", leadId);
-
-      // Insert payment record
-      await supabase.from("payments").insert({
-        lead_id: leadId,
-        stripe_session_id: session.id,
-        amount_ore: session.amount_total || 0,
-        currency: session.currency || "sek",
-        status: "paid",
-        plan: session.mode === "subscription" ? "yearly" : "single",
-      });
-
-      console.log(`Payment verified and recorded for lead ${leadId}`);
     }
+
+    if (reportId) {
+      // Update report status to paid
+      await supabase
+        .from("reports")
+        .update({ status: "paid", paid_at: new Date().toISOString() })
+        .eq("id", reportId);
+    }
+
+    // Insert payment record (idempotent via unique stripe_session_id)
+    await supabase.from("payments").insert({
+      lead_id: leadId || null,
+      report_id: reportId || null,
+      stripe_session_id: session.id,
+      amount_ore: session.amount_total || 0,
+      currency: session.currency || "sek",
+      status: "paid",
+      plan: session.mode === "subscription" ? "yearly" : "single",
+    });
+
+    console.log(`Payment verified for lead ${leadId}, report ${reportId}`);
 
     return new Response(
       JSON.stringify({
         verified: true,
         email: session.customer_details?.email,
         lead_id: leadId,
+        report_id: reportId,
       }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
