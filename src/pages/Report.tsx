@@ -16,6 +16,7 @@ import {
   Lock,
   Loader2,
   Lightbulb,
+  Info,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
@@ -282,32 +283,66 @@ export default function Report() {
           )}
         </Card>
 
-        {/* ── 3. Antaganden (full access) ─────────── */}
+        {/* ── 3. Antaganden & Beräkning (full access) ─── */}
         {isFullAccess && rec && (
           <Card className="card-shadow">
             <CardContent className="pt-6 space-y-4">
-              <SectionHeading icon={BarChart3} title="Så räknade vi" />
+              <SectionHeading icon={Info} title="Antaganden & Beräkning" />
+
+              {/* Steg-för-steg kalkyl */}
               <div className="space-y-3 text-sm text-muted-foreground">
                 <CalcRow label="Ramavtalspris (timpris mot kund)" value={`${fmt(marketRate)} kr/h`} />
                 <CalcRow label="Bemanningsbolagets marginal (15%)" value={`−${fmt(Math.round(marketRate * margin))} kr/h`} />
                 <CalcRow label="Löneutrymme efter marginal" value={`${fmt(afterMargin)} kr/h`} />
                 {isEmployee ? (
-                  <>
-                    <CalcRow
-                      label="÷ 1.42 (arbetsgivaravg. + semester + pension 4.5%)"
-                      value={`= ${fmt(Math.round(afterMargin / 1.42))} kr/h brutto`}
-                    />
-                    <p className="text-xs text-muted-foreground/70 pt-1">
-                      Spannet {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h
-                      baseras på 10–15% marginal.
-                    </p>
-                  </>
+                  <CalcRow
+                    label="÷ 1,42 (arbetsgivaravg. + semester + pension)"
+                    value={`= ${fmt(Math.round(afterMargin / 1.42))} kr/h brutto`}
+                  />
                 ) : (
                   <p className="text-xs text-muted-foreground/70 pt-1">
                     Som egenföretagare bör du fakturera 85–90% av kundpriset, dvs{" "}
                     {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h.
                   </p>
                 )}
+              </div>
+
+              <Separator />
+
+              {/* Faktaruta */}
+              <div className="p-4 rounded-lg bg-muted/50 border border-border space-y-3">
+                <div className="flex items-center gap-2">
+                  <Info className="w-4 h-4 text-primary shrink-0" />
+                  <p className="font-semibold text-foreground text-sm">Information om beräkningen</p>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  För att ge en så realistisk bild som möjligt av ditt löneutrymme baseras kalkylen på följande standardvärden i branschen:
+                </p>
+                <ul className="space-y-2 text-xs text-muted-foreground leading-relaxed">
+                  <li>
+                    <span className="font-semibold text-foreground">Bemanningsbolagets marginal (15%):</span>{" "}
+                    Vi räknar med att bolaget behåller 15% av timpriset för att täcka sina administrativa kostnader, rekrytering och vinst. Detta är en vanlig nivå vid ramavtalsuppdrag.
+                  </li>
+                  {isEmployee && (
+                    <li>
+                      <span className="font-semibold text-foreground">Arbetsgivaravgifter & omkostnader (faktor 1,42):</span>{" "}
+                      För att omvandla den totala lönekostnaden till bruttolön använder vi faktorn 1,42. Detta täcker:
+                      <ul className="mt-1 ml-4 space-y-0.5 list-disc">
+                        <li>Lagstadgade arbetsgivaravgifter (31,42%)</li>
+                        <li>Tjänstepension (enligt ITP eller motsvarande kollektivavtal)</li>
+                        <li>Sjukförsäkringar och ansvarsförsäkringar</li>
+                        <li>Semesterersättning</li>
+                      </ul>
+                    </li>
+                  )}
+                  <li>
+                    <span className="font-semibold text-foreground">Arbetsmånad:</span>{" "}
+                    Vi baserar månadsberäkningen på ett snitt om 167 arbetstimmar.
+                  </li>
+                </ul>
+                <p className="text-xs text-muted-foreground/70 pt-1">
+                  Spannet {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h baseras på 10–15% marginal.
+                </p>
               </div>
             </CardContent>
           </Card>
