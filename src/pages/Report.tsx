@@ -26,10 +26,12 @@ interface ResultJson {
   calc_version: string;
   inputs: {
     location_id?: string;
+    location?: string;
     occupation: string;
     employment_type: string;
     experience_years: number;
     current_salary_sek: number;
+    salary_type?: string;
   };
   market: {
     rate_customer_sek_per_hour: number;
@@ -65,6 +67,7 @@ interface ReportData {
   kommun: string;
   experience: number;
   referral_unlock_granted: boolean;
+  email?: string;
   result_json: ResultJson;
   zone_comparisons?: ZoneComparison[];
   user_zone?: string;
@@ -134,11 +137,12 @@ export default function Report() {
     if (!report) return;
     setCheckoutLoading(plan);
     try {
+      const leadId = sessionStorage.getItem("leadId");
       const { data, error } = await supabase.functions.invoke("create-checkout", {
         body: {
           plan,
-          email: report.result_json?.inputs?.occupation ? undefined : undefined,
-          lead_id: undefined,
+          email: report.email || "",
+          lead_id: leadId || "",
           report_id: report.id,
         },
       });
@@ -170,7 +174,8 @@ export default function Report() {
 
   /* Preview values for teaser */
   const currentSalary = r.inputs.current_salary_sek;
-  const currentHourly = isEmployee ? Math.round(currentSalary / 165) : currentSalary;
+  const salaryIsHourly = r.inputs.salary_type === "hourly";
+  const currentHourly = salaryIsHourly ? currentSalary : (isEmployee ? Math.round(currentSalary / 167) : currentSalary);
 
   /* Full access values */
   const rec = r.recommendation;
@@ -233,7 +238,7 @@ export default function Report() {
                   />
                   <StatBlock
                     label="Din månadslön"
-                    value={`${fmt(currentSalary)} kr`}
+                    value={`${fmt(salaryIsHourly ? currentSalary * 167 : currentSalary)} kr`}
                     muted
                   />
                   <StatBlock

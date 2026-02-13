@@ -163,27 +163,20 @@ export default function Teaser() {
 
   const handleCheckout = async (plan: "single" | "yearly") => {
     const leadId = sessionStorage.getItem("leadId");
+    const existingReportId = sessionStorage.getItem("reportId");
     if (!survey?.email) return;
     setCheckoutLoading(plan);
     try {
-      const resultJson = buildResultJson();
       const { data, error } = await supabase.functions.invoke("create-checkout", {
         body: {
           plan,
           email: survey.email,
           lead_id: leadId,
-          result_json: resultJson,
-          occupation: survey.yrke,
-          employment_type: survey.employmentType,
-          kommun: survey.kommun,
-          experience: survey.experience,
-          current_salary: survey.currentSalary,
-          salary_type: survey.salaryType,
+          report_id: existingReportId || "",
         },
       });
       if (error) throw error;
       if (data?.url) {
-        // Store report_id for post-payment redirect
         if (data.report_id) {
           sessionStorage.setItem("reportId", data.report_id);
         }

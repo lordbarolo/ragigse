@@ -70,7 +70,7 @@ export default function Survey() {
     if (step < TOTAL_STEPS - 1) {
       setStep(step + 1);
     } else {
-      // Save lead to DB and navigate
+      // Save lead and create report, then navigate to report
       setSaving(true);
       try {
         const leadId = crypto.randomUUID();
@@ -85,14 +85,33 @@ export default function Survey() {
           current_salary: data.currentSalary,
         });
         if (error) throw error;
+
+        // Create preview report via edge function
+        const { data: reportData, error: reportError } = await supabase.functions.invoke("create-report", {
+          body: {
+            lead_id: leadId,
+            email: data.email.trim().toLowerCase(),
+            occupation: data.yrke,
+            employment_type: data.employmentType,
+            kommun: data.kommun,
+            experience: data.experience,
+            current_salary: data.currentSalary,
+            salary_type: data.salaryType,
+          },
+        });
+
+        if (reportError || !reportData?.report_id) {
+          throw new Error("Failed to create report");
+        }
+
         sessionStorage.setItem("leadId", leadId);
+        sessionStorage.setItem("reportId", reportData.report_id);
+        navigate(`/rapport/${reportData.report_id}`);
       } catch {
         toast.error("Kunde inte spara dina uppgifter. Försök igen.");
         setSaving(false);
         return;
       }
-      sessionStorage.setItem("surveyData", JSON.stringify(data));
-      navigate("/resultat");
     }
   };
 
