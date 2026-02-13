@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import Stripe from "https://esm.sh/stripe@18.5.0";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -24,7 +25,7 @@ serve(async (req) => {
   }
 
   try {
-    const { plan, email, lead_id } = await req.json();
+    const { plan, email, lead_id, result_json, occupation, employment_type, kommun, experience, current_salary, salary_type } = await req.json();
 
     const priceConfig = PRICES[plan];
     if (!priceConfig) {
@@ -37,6 +38,37 @@ serve(async (req) => {
     if (!email) {
       return new Response(JSON.stringify({ error: "Email required" }), {
         status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Create report row in database
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
+
+    const { data: report, error: reportError } = await supabase
+      .from("reports")
+      .insert({
+        lead_id: lead_id || null,
+        email,
+        status: "preview",
+        result_json: result_json || null,
+        occupation: occupation || null,
+        employment_type: employment_type || null,
+        kommun: kommun || null,
+        experience: experience ?? null,
+        current_salary: current_salary ?? null,
+        salary_type: salary_type || null,
+      })
+      .select("id")
+      .single();
+
+    if (reportError) {
+      console.error("Failed to create report:", reportError);
+      return new Response(JSON.stringify({ error: "Failed to create report" }), {
+        status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
@@ -61,12 +93,15 @@ serve(async (req) => {
       mode: priceConfig.mode,
       success_url: `${origin}/betalning-klar?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/resultat`,
-      metadata: { lead_id: lead_id || "" },
+      metadata: {
+        lead_id: lead_id || "",
+        report_id: report.id,
+      },
     });
 
-    console.log(`Checkout session created: ${session.id} for ${email}, plan: ${plan}`);
+    console.log(`Checkout session created: ${session.id} for ${email}, plan: ${plan}, report: ${report.id}`);
 
-    return new Response(JSON.stringify({ url: session.url }), {
+    return new Response(JSON.stringify({ url: session.url, report_id: report.id }), {
       status: 200,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

@@ -116,16 +116,77 @@ export default function Teaser() {
   const isUnderpaid = result ? userHourly < result.high : false;
   const diffPercent = result ? Math.round(((result.high - userHourly) / result.high) * 100) : 0;
 
+  const buildResultJson = () => {
+    if (!result || !survey || !selectedRate) return null;
+    const hoursPerMonth = 160;
+    const isEmployee = survey.employmentType === "anstalld";
+    const shareMin = isEmployee ? 0.85 : 0.85;
+    const shareMax = isEmployee ? 0.90 : 0.90;
+    const factor = isEmployee ? 1.42 : 1;
+    const recommendedHourlyMin = Math.round((selectedRate.timpris_kund * shareMin) / factor);
+    const recommendedHourlyMax = Math.round((selectedRate.timpris_kund * shareMax) / factor);
+    const recommendedMonthlyMin = recommendedHourlyMin * hoursPerMonth;
+    const recommendedMonthlyMax = recommendedHourlyMax * hoursPerMonth;
+    const currentMonthly = survey.salaryType === "hourly"
+      ? survey.currentSalary * hoursPerMonth
+      : survey.currentSalary;
+
+    return {
+      calc_version: "v1",
+      inputs: {
+        location: survey.kommun,
+        occupation: survey.yrke,
+        employment_type: survey.employmentType,
+        experience_years: survey.experience,
+        current_salary_sek: survey.currentSalary,
+        salary_type: survey.salaryType,
+      },
+      market: {
+        rate_customer_sek_per_hour: selectedRate.timpris_kund,
+      },
+      recommendation: {
+        consultant_share_min: shareMin,
+        consultant_share_max: shareMax,
+        employee_factor: factor,
+        recommended_hourly_min: recommendedHourlyMin,
+        recommended_hourly_max: recommendedHourlyMax,
+        recommended_monthly_min: recommendedMonthlyMin,
+        recommended_monthly_max: recommendedMonthlyMax,
+        hours_per_month: hoursPerMonth,
+      },
+      delta: {
+        monthly_vs_current_min: recommendedMonthlyMin - currentMonthly,
+        monthly_vs_current_max: recommendedMonthlyMax - currentMonthly,
+      },
+    };
+  };
+
   const handleCheckout = async (plan: "single" | "yearly") => {
     const leadId = sessionStorage.getItem("leadId");
     if (!survey?.email) return;
     setCheckoutLoading(plan);
     try {
+      const resultJson = buildResultJson();
       const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: { plan, email: survey.email, lead_id: leadId },
+        body: {
+          plan,
+          email: survey.email,
+          lead_id: leadId,
+          result_json: resultJson,
+          occupation: survey.yrke,
+          employment_type: survey.employmentType,
+          kommun: survey.kommun,
+          experience: survey.experience,
+          current_salary: survey.currentSalary,
+          salary_type: survey.salaryType,
+        },
       });
       if (error) throw error;
       if (data?.url) {
+        // Store report_id for post-payment redirect
+        if (data.report_id) {
+          sessionStorage.setItem("reportId", data.report_id);
+        }
         window.open(data.url, "_blank");
       }
     } catch {
