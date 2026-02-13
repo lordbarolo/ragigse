@@ -106,6 +106,9 @@ export default function Survey() {
 
         sessionStorage.setItem("leadId", leadId);
         sessionStorage.setItem("reportId", reportData.report_id);
+        if (reportData.ab_variant) {
+          sessionStorage.setItem("abVariant", reportData.ab_variant);
+        }
         navigate("/resultat");
       } catch {
         toast.error("Kunde inte spara dina uppgifter. Försök igen.");
