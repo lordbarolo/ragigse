@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.get-report]
 verify_jwt = false
+
+[functions.e2e-test]
+verify_jwt = false
