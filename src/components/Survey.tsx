@@ -1,16 +1,18 @@
 import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocations, useRates } from "@/hooks/useCalculator";
+import { supabase } from "@/integrations/supabase/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
-  Users, Briefcase, MapPin, Stethoscope, Clock, Banknote,
+  Users, Briefcase, MapPin, Stethoscope, Clock, Banknote, Mail,
   ChevronRight, ChevronLeft, ArrowRight
 } from "lucide-react";
+import { toast } from "sonner";
 
 export interface SurveyData {
+  email: string;
   employmentType: "anstalld" | "foretagare";
   yrke: string;
   kommun: string;
@@ -19,15 +21,19 @@ export interface SurveyData {
   currentSalary: number;
 }
 
-const TOTAL_STEPS = 5;
+const TOTAL_STEPS = 6;
+
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function Survey() {
   const navigate = useNavigate();
   const { data: locations, isLoading: locLoading } = useLocations();
   const { data: rates, isLoading: ratesLoading } = useRates();
+  const [saving, setSaving] = useState(false);
 
   const [step, setStep] = useState(0);
   const [data, setData] = useState<SurveyData>({
+    email: "",
     employmentType: "anstalld",
     kommun: "",
     yrke: "",
@@ -50,20 +56,38 @@ export default function Survey() {
 
   const canProceed = (() => {
     switch (step) {
-      case 0: return true; // employment type always has default
-      case 1: return !!data.yrke;
-      case 2: return !!data.kommun;
-      case 3: return true; // slider always has value
-      case 4: return data.currentSalary > 0;
+      case 0: return EMAIL_REGEX.test(data.email.trim());
+      case 1: return true; // employment type always has default
+      case 2: return !!data.yrke;
+      case 3: return !!data.kommun;
+      case 4: return true; // slider always has value
+      case 5: return data.currentSalary > 0;
       default: return false;
     }
   })();
 
-  const handleNext = () => {
+  const handleNext = async () => {
     if (step < TOTAL_STEPS - 1) {
       setStep(step + 1);
     } else {
-      // Save to sessionStorage and navigate to teaser
+      // Save lead to DB and navigate
+      setSaving(true);
+      try {
+        const { error } = await supabase.from("leads").insert({
+          email: data.email.trim().toLowerCase(),
+          employment_type: data.employmentType,
+          yrke: data.yrke,
+          kommun: data.kommun,
+          experience: data.experience,
+          salary_type: data.salaryType,
+          current_salary: data.currentSalary,
+        });
+        if (error) throw error;
+      } catch {
+        toast.error("Kunde inte spara dina uppgifter. Försök igen.");
+        setSaving(false);
+        return;
+      }
       sessionStorage.setItem("surveyData", JSON.stringify(data));
       navigate("/resultat");
     }
@@ -95,6 +119,30 @@ export default function Survey() {
       <div className="min-h-[280px] flex flex-col">
         {step === 0 && (
           <StepWrapper
+            icon={<Mail className="w-6 h-6" />}
+            title="Vad är din e-postadress?"
+            subtitle="Vi skickar din rapport hit"
+          >
+            <div className="space-y-3">
+              <Input
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                placeholder="namn@exempel.se"
+                value={data.email}
+                onChange={(e) => setData({ ...data, email: e.target.value })}
+                className="h-14 text-base"
+                autoFocus
+              />
+              <p className="text-xs text-muted-foreground">
+                Vi delar aldrig din e-post med tredje part.
+              </p>
+            </div>
+          </StepWrapper>
+        )}
+
+        {step === 1 && (
+          <StepWrapper
             icon={<Users className="w-6 h-6" />}
             title="Hur arbetar du?"
             subtitle="Välj din anställningsform"
@@ -118,7 +166,7 @@ export default function Survey() {
           </StepWrapper>
         )}
 
-        {step === 1 && (
+        {step === 2 && (
           <StepWrapper
             icon={<Stethoscope className="w-6 h-6" />}
             title="Vad jobbar du som?"
@@ -140,7 +188,7 @@ export default function Survey() {
           </StepWrapper>
         )}
 
-        {step === 2 && (
+        {step === 3 && (
           <StepWrapper
             icon={<MapPin className="w-6 h-6" />}
             title="Var jobbar du?"
@@ -161,7 +209,7 @@ export default function Survey() {
           </StepWrapper>
         )}
 
-        {step === 3 && (
+        {step === 4 && (
           <StepWrapper
             icon={<Clock className="w-6 h-6" />}
             title="Hur lång erfarenhet har du?"
@@ -191,14 +239,13 @@ export default function Survey() {
           </StepWrapper>
         )}
 
-        {step === 4 && (
+        {step === 5 && (
           <StepWrapper
             icon={<Banknote className="w-6 h-6" />}
             title="Vad tjänar du idag?"
             subtitle="Ange din nuvarande ersättning"
           >
             <div className="space-y-4">
-              {/* Toggle hourly / monthly */}
               <div className="flex bg-secondary rounded-lg p-1 gap-1">
                 <button
                   onClick={() => setData({ ...data, salaryType: "hourly", currentSalary: 0 })}
@@ -252,17 +299,17 @@ export default function Survey() {
         )}
         <button
           onClick={handleNext}
-          disabled={!canProceed}
+          disabled={!canProceed || saving}
           className={`flex-1 flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl text-sm sm:text-base font-semibold transition-all duration-200 ${
-            canProceed
+            canProceed && !saving
               ? "hero-gradient text-primary-foreground card-shadow-hover"
               : "bg-muted text-muted-foreground cursor-not-allowed"
           }`}
         >
           {step === TOTAL_STEPS - 1 ? (
             <>
-              Visa mitt resultat
-              <ArrowRight className="w-5 h-5" />
+              {saving ? "Sparar..." : "Visa mitt resultat"}
+              {!saving && <ArrowRight className="w-5 h-5" />}
             </>
           ) : (
             <>
