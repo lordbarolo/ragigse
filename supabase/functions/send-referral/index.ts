@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
 serve(async (req) => {
@@ -12,7 +12,7 @@ serve(async (req) => {
   }
 
   try {
-    const { lead_id, referrer_email, referee_email } = await req.json();
+    const { lead_id, referrer_email, referee_email, region, send_email } = await req.json();
 
     if (!lead_id || !referrer_email || !referee_email) {
       return new Response(JSON.stringify({ error: "Missing fields" }), {
@@ -43,24 +43,61 @@ serve(async (req) => {
     // Build the confirmation link
     const siteUrl = req.headers.get("origin") || supabaseUrl;
     const confirmLink = `${siteUrl}/referral/${referral.token}`;
+    const homepageLink = siteUrl;
 
-    // Use Lovable AI to generate a nice email body
-    const apiKey = Deno.env.get("LOVABLE_API_KEY");
-    
-    // For MVP, we'll use a simple template. In production, integrate with an email service.
-    // For now, log the referral and return success — the referral is tracked.
+    // Send email via Resend if API key is configured and email sending requested
+    let emailSent = false;
+    const resendApiKey = Deno.env.get("RESEND_API_KEY");
+
+    if (send_email && resendApiKey) {
+      const regionDisplay = region || "din region";
+      const emailHtml = `
+        <div style="font-family: 'Inter', Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #1a1a2e;">
+          <p>Hej!</p>
+          <p>En kollega till dig har precis använt vår lönekoll för att se om hen ligger rätt i förhållande till de senaste ramavtalspriserna i <strong>${regionDisplay}</strong>.</p>
+          <p>Din kollega tyckte att även du borde göra en koll. Det tar bara 30 sekunder att se om du är en av de 75% som faktiskt är underbetalda i förhållande till vad kommunerna och regionerna faktiskt betalar bemanningsbolagen.</p>
+          <p style="margin: 24px 0;">
+            <a href="${homepageLink}" style="display: inline-block; padding: 12px 28px; background: linear-gradient(135deg, #1565c0, #0d47a1); color: #fff; text-decoration: none; border-radius: 8px; font-weight: 600;">Kolla din lön här</a>
+          </p>
+          <p style="color: #666; font-size: 13px;">Hälsningar,<br/>Lönekollen</p>
+        </div>
+      `;
+
+      try {
+        const resendRes = await fetch("https://api.resend.com/emails", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${resendApiKey}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            from: "Lönekollen <noreply@lonekollen.se>",
+            to: [referee_email],
+            subject: "Din kollega tipsar: Har du rätt lön som konsult?",
+            html: emailHtml,
+          }),
+        });
+
+        if (resendRes.ok) {
+          emailSent = true;
+          console.log(`Email sent to ${referee_email}`);
+        } else {
+          const errBody = await resendRes.text();
+          console.error(`Resend error [${resendRes.status}]: ${errBody}`);
+        }
+      } catch (emailErr) {
+        console.error("Email send error:", emailErr);
+      }
+    }
+
     console.log(`Referral created: ${referrer_email} -> ${referee_email}, link: ${confirmLink}`);
 
-    // Send email via Supabase Auth admin (using the built-in mailer isn't ideal for custom emails)
-    // For MVP: we'll use a simple approach - the link is returned to the frontend
-    // In production, integrate Resend/SendGrid here.
-
     return new Response(
-      JSON.stringify({ 
-        success: true, 
+      JSON.stringify({
+        success: true,
         token: referral.token,
-        // In production, remove this — email would be sent server-side
-        confirm_link: confirmLink 
+        confirm_link: confirmLink,
+        email_sent: emailSent,
       }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
