@@ -50,6 +50,12 @@ interface ResultJson {
   };
 }
 
+interface ZoneComparison {
+  yrkeskategori: string;
+  zon: string;
+  timpris_kund: number;
+}
+
 interface ReportData {
   id: string;
   status: string;
@@ -60,6 +66,8 @@ interface ReportData {
   experience: number;
   referral_unlock_granted: boolean;
   result_json: ResultJson;
+  zone_comparisons?: ZoneComparison[];
+  user_zone?: string;
 }
 
 /* ── Helpers ──────────────────────────────────────────── */
@@ -403,7 +411,60 @@ export default function Report() {
           </Card>
         )}
 
-        {/* ── 6. Godkända leverantörer (full) ─────── */}
+        {/* ── 6. Regionala jämförelser (full) ──────── */}
+        {isFullAccess && report.zone_comparisons && report.zone_comparisons.length > 0 && (
+          <Card className="card-shadow">
+            <CardContent className="pt-6 space-y-4">
+              <SectionHeading icon={MapPin} title="Regional jämförelse" />
+              <p className="text-sm text-muted-foreground">
+                Timpris mot kund för {report.occupation} i alla zoner:
+              </p>
+              <div className="space-y-3">
+                {[...report.zone_comparisons]
+                  .sort((a, b) => a.zon.localeCompare(b.zon))
+                  .map((zc) => {
+                    const isUserZone = zc.zon === report.user_zone;
+                    const zoneRate = zc.timpris_kund;
+                    const recHourly = isEmployee
+                      ? Math.round((zoneRate * 0.85) / 1.42)
+                      : Math.round(zoneRate * 0.85);
+                    const recHourlyHigh = isEmployee
+                      ? Math.round((zoneRate * 0.90) / 1.42)
+                      : Math.round(zoneRate * 0.90);
+                    const maxRate = Math.max(...report.zone_comparisons!.map((z) => z.timpris_kund));
+                    const barWidth = Math.round((zoneRate / maxRate) * 100);
+
+                    return (
+                      <div key={zc.zon} className={`p-3 rounded-lg border ${isUserZone ? 'border-primary bg-primary/5' : 'border-border bg-muted/30'}`}>
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-semibold text-foreground">{zc.zon}</span>
+                            {isUserZone && (
+                              <span className="text-[10px] font-medium bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full">
+                                Din zon
+                              </span>
+                            )}
+                          </div>
+                          <span className="text-sm font-bold text-foreground">{fmt(zoneRate)} kr/h</span>
+                        </div>
+                        <div className="h-2 bg-secondary rounded-full overflow-hidden mb-1.5">
+                          <div
+                            className={`h-full rounded-full transition-all duration-700 ${isUserZone ? 'bg-primary' : 'bg-muted-foreground/40'}`}
+                            style={{ width: `${barWidth}%` }}
+                          />
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                          Rekommenderad {isEmployee ? 'bruttolön' : 'ersättning'}: {fmt(recHourly)}–{fmt(recHourlyHigh)} kr/h
+                        </p>
+                      </div>
+                    );
+                  })}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* ── 7. Godkända leverantörer (full) ─────── */}
         {isFullAccess && (
           <Card className="card-shadow">
             <CardContent className="pt-6 space-y-4">

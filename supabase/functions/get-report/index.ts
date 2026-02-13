@@ -59,6 +59,49 @@ serve(async (req) => {
       // Full access
       response.result_json = report.result_json;
       response.access = "full";
+
+      // Fetch zone comparisons for the same occupation type
+      const resultJson = report.result_json as Record<string, unknown> | null;
+      const occupation = report.occupation;
+
+      if (occupation) {
+        // Find the rate type matching this occupation
+        const { data: matchingRates } = await supabase
+          .from("rates")
+          .select("yrkeskategori, zon, timpris_kund")
+          .eq("yrkeskategori", occupation);
+
+        if (!matchingRates || matchingRates.length === 0) {
+          // Try matching by typ instead
+          const { data: anyRate } = await supabase
+            .from("rates")
+            .select("typ")
+            .eq("yrkeskategori", occupation)
+            .limit(1);
+
+          if (anyRate && anyRate.length > 0) {
+            const { data: typeRates } = await supabase
+              .from("rates")
+              .select("yrkeskategori, zon, timpris_kund")
+              .eq("typ", anyRate[0].typ);
+            response.zone_comparisons = typeRates || [];
+          }
+        } else {
+          response.zone_comparisons = matchingRates;
+        }
+
+        // Also get the user's zone from locations
+        if (report.kommun) {
+          const { data: loc } = await supabase
+            .from("locations")
+            .select("zon")
+            .eq("kommun", report.kommun)
+            .limit(1);
+          if (loc && loc.length > 0) {
+            response.user_zone = loc[0].zon;
+          }
+        }
+      }
     } else {
       // Preview: only expose inputs and partial market data for teaser
       const resultJson = report.result_json as Record<string, unknown> | null;
@@ -66,7 +109,6 @@ serve(async (req) => {
         response.result_json = {
           calc_version: resultJson.calc_version,
           inputs: resultJson.inputs,
-          // Expose market rate for teaser bar chart
           market: resultJson.market,
         };
       }
