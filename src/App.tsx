@@ -9,6 +9,7 @@ import ReferralLanding from "./pages/ReferralLanding";
 import Report from "./pages/Report";
 import PaymentSuccess from "./pages/PaymentSuccess";
 import NotFound from "./pages/NotFound";
+import Compare from "./pages/Compare";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/referral/:token" element={<ReferralLanding />} />
           <Route path="/betalning-klar" element={<PaymentSuccess />} />
           <Route path="/rapport/:reportId" element={<Report />} />
+          <Route path="/jamfor" element={<Compare />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
