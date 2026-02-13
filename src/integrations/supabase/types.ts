@@ -104,6 +104,44 @@ export type Database = {
         }
         Relationships: []
       }
+      referrals: {
+        Row: {
+          clicked: boolean
+          created_at: string
+          id: string
+          lead_id: string
+          referee_email: string
+          referrer_email: string
+          token: string
+        }
+        Insert: {
+          clicked?: boolean
+          created_at?: string
+          id?: string
+          lead_id: string
+          referee_email: string
+          referrer_email: string
+          token?: string
+        }
+        Update: {
+          clicked?: boolean
+          created_at?: string
+          id?: string
+          lead_id?: string
+          referee_email?: string
+          referrer_email?: string
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "referrals_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
