@@ -238,38 +238,6 @@ export default function Teaser() {
           </CardContent>
         </Card>
 
-        {/* Exit-intent inline referral — slides in after inactivity/exit */}
-        {!unlocked && !partialUnlocked && (
-          <ExitIntentReferral
-            visible={exitIntentVisible}
-            leadId={leadId}
-            referrerEmail={survey.email}
-            region={regionName}
-            onUnlocked={() => setPartialUnlocked(true)}
-          />
-        )}
-
-        {/* Referral CTA */}
-        <Card className="card-shadow border-accent/30">
-          <CardContent className="pt-6 space-y-3">
-            <div className="flex items-center gap-2">
-              <Users className="w-5 h-5 text-accent" />
-              <h3 className="font-display text-lg text-foreground">Tipsa en kollega — lås upp gratis</h3>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Skicka länken till en kollega. När hen klickar på den låser vi upp marknadspriset för dig — helt gratis.
-            </p>
-            <Button
-              onClick={() => setReferralOpen(true)}
-              variant="outline"
-              className="w-full border-accent text-accent hover:bg-accent/5"
-            >
-              <Users className="w-4 h-4 mr-2" />
-              Tipsa en kollega
-            </Button>
-          </CardContent>
-        </Card>
-
         {/* What's included */}
         <Card className="card-shadow">
           <CardContent className="pt-6 space-y-3">
@@ -311,6 +279,38 @@ export default function Teaser() {
             Engångsbetalning · Ingen bindningstid · Stripe säker betalning
           </p>
         </div>
+
+        {/* Exit-intent inline referral — slides in after inactivity/exit */}
+        {!unlocked && !partialUnlocked && (
+          <ExitIntentReferral
+            visible={exitIntentVisible}
+            leadId={leadId}
+            referrerEmail={survey.email}
+            region={regionName}
+            onUnlocked={() => setPartialUnlocked(true)}
+          />
+        )}
+
+        {/* Referral CTA */}
+        <Card className="card-shadow border-accent/30">
+          <CardContent className="pt-6 space-y-3">
+            <div className="flex items-center gap-2">
+              <Users className="w-5 h-5 text-accent" />
+              <h3 className="font-display text-lg text-foreground">Tipsa en kollega — lås upp gratis</h3>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Skicka länken till en kollega. När hen klickar på den låser vi upp marknadspriset för dig — helt gratis.
+            </p>
+            <Button
+              onClick={() => setReferralOpen(true)}
+              variant="outline"
+              className="w-full border-accent text-accent hover:bg-accent/5"
+            >
+              <Users className="w-4 h-4 mr-2" />
+              Tipsa en kollega
+            </Button>
+          </CardContent>
+        </Card>
       </main>
 
       {/* Referral Dialog */}
