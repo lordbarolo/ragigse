@@ -52,6 +52,7 @@ serve(async (req) => {
       employment_type: report.employment_type,
       kommun: report.kommun,
       experience: report.experience,
+      email: report.email,
       referral_unlock_granted: isReferralUnlocked,
     };
 
