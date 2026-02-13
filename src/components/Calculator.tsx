@@ -88,11 +88,11 @@ export default function Calculator() {
           <div className="space-y-2">
             <Label className="flex items-center gap-2 text-sm font-medium">
               <MapPin className="w-4 h-4 text-primary" />
-              Kommun
+              Arbetsort
             </Label>
             <Select value={selectedKommun} onValueChange={(v) => { setSelectedKommun(v); setSelectedYrke(""); }}>
               <SelectTrigger className="h-12">
-                <SelectValue placeholder={isLoading ? "Laddar..." : "Välj din kommun"} />
+                <SelectValue placeholder={isLoading ? "Laddar..." : "Välj din arbetsort"} />
               </SelectTrigger>
               <SelectContent>
                 {locations?.map((l) => (
