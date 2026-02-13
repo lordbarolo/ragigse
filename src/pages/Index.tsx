@@ -1,4 +1,4 @@
-import Calculator from "@/components/Calculator";
+import Survey from "@/components/Survey";
 import { Shield, TrendingUp, FileCheck } from "lucide-react";
 
 const Index = () => {
@@ -25,9 +25,9 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Calculator */}
+      {/* Survey */}
       <main className="px-4 py-8 sm:py-12">
-        <Calculator />
+        <Survey />
       </main>
 
       {/* Footer */}
