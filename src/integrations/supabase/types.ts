@@ -85,7 +85,9 @@ export type Database = {
           id: string
           lead_id: string
           plan: string
+          report_id: string | null
           status: string
+          stripe_payment_intent_id: string | null
           stripe_session_id: string
         }
         Insert: {
@@ -95,7 +97,9 @@ export type Database = {
           id?: string
           lead_id: string
           plan?: string
+          report_id?: string | null
           status?: string
+          stripe_payment_intent_id?: string | null
           stripe_session_id: string
         }
         Update: {
@@ -105,7 +109,9 @@ export type Database = {
           id?: string
           lead_id?: string
           plan?: string
+          report_id?: string | null
           status?: string
+          stripe_payment_intent_id?: string | null
           stripe_session_id?: string
         }
         Relationships: [
@@ -114,6 +120,13 @@ export type Database = {
             columns: ["lead_id"]
             isOneToOne: false
             referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payments_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "reports"
             referencedColumns: ["id"]
           },
         ]
@@ -176,6 +189,68 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "referrals_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: false
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      reports: {
+        Row: {
+          created_at: string
+          current_salary: number | null
+          email: string | null
+          employment_type: string | null
+          experience: number | null
+          id: string
+          kommun: string | null
+          lead_id: string | null
+          occupation: string | null
+          paid_at: string | null
+          referral_unlock_granted: boolean
+          referral_unlocked_at: string | null
+          result_json: Json | null
+          salary_type: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          current_salary?: number | null
+          email?: string | null
+          employment_type?: string | null
+          experience?: number | null
+          id?: string
+          kommun?: string | null
+          lead_id?: string | null
+          occupation?: string | null
+          paid_at?: string | null
+          referral_unlock_granted?: boolean
+          referral_unlocked_at?: string | null
+          result_json?: Json | null
+          salary_type?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          current_salary?: number | null
+          email?: string | null
+          employment_type?: string | null
+          experience?: number | null
+          id?: string
+          kommun?: string | null
+          lead_id?: string | null
+          occupation?: string | null
+          paid_at?: string | null
+          referral_unlock_granted?: boolean
+          referral_unlocked_at?: string | null
+          result_json?: Json | null
+          salary_type?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reports_lead_id_fkey"
             columns: ["lead_id"]
             isOneToOne: false
             referencedRelation: "leads"
