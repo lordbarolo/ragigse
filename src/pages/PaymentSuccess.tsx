@@ -32,6 +32,10 @@ export default function PaymentSuccess() {
         }
 
         setStatus("success");
+        // Store report_id for redirect
+        if (data.lead_id) {
+          sessionStorage.setItem("paidReportLeadId", data.lead_id);
+        }
       } catch {
         setStatus("error");
       }

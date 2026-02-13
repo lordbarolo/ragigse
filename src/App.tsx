@@ -23,7 +23,7 @@ const App = () => (
           <Route path="/resultat" element={<Teaser />} />
           <Route path="/referral/:token" element={<ReferralLanding />} />
           <Route path="/betalning-klar" element={<PaymentSuccess />} />
-          <Route path="/rapport" element={<Report />} />
+          <Route path="/rapport/:reportId" element={<Report />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
