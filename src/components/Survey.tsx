@@ -73,7 +73,9 @@ export default function Survey() {
       // Save lead to DB and navigate
       setSaving(true);
       try {
+        const leadId = crypto.randomUUID();
         const { error } = await supabase.from("leads").insert({
+          id: leadId,
           email: data.email.trim().toLowerCase(),
           employment_type: data.employmentType,
           yrke: data.yrke,
@@ -83,6 +85,7 @@ export default function Survey() {
           current_salary: data.currentSalary,
         });
         if (error) throw error;
+        sessionStorage.setItem("leadId", leadId);
       } catch {
         toast.error("Kunde inte spara dina uppgifter. Försök igen.");
         setSaving(false);
