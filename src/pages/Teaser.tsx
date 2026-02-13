@@ -54,6 +54,7 @@ export default function Teaser() {
   const [referralLink, setReferralLink] = useState<string | null>(null);
   const [unlocked, setUnlocked] = useState(false);
   const [partialUnlocked, setPartialUnlocked] = useState(false);
+  const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
 
   const exitIntentVisible = useExitIntent();
 
@@ -114,6 +115,25 @@ export default function Teaser() {
 
   const isUnderpaid = result ? userHourly < result.high : false;
   const diffPercent = result ? Math.round(((result.high - userHourly) / result.high) * 100) : 0;
+
+  const handleCheckout = async (plan: "single" | "yearly") => {
+    const leadId = sessionStorage.getItem("leadId");
+    if (!survey?.email) return;
+    setCheckoutLoading(plan);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-checkout", {
+        body: { plan, email: survey.email, lead_id: leadId },
+      });
+      if (error) throw error;
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      }
+    } catch {
+      toast({ title: "Kunde inte starta betalning, försök igen", variant: "destructive" });
+    } finally {
+      setCheckoutLoading(null);
+    }
+  };
 
   const handleSendReferral = async () => {
     const leadId = sessionStorage.getItem("leadId");
@@ -275,18 +295,20 @@ export default function Teaser() {
         <div className="space-y-3">
           <button
             data-cta
-            onClick={() => navigate("/rapport")}
-            className="w-full flex items-center justify-center gap-2 py-4 rounded-xl font-semibold text-base hero-gradient text-primary-foreground card-shadow-hover transition-all"
+            disabled={checkoutLoading !== null}
+            onClick={() => handleCheckout("single")}
+            className="w-full flex items-center justify-center gap-2 py-4 rounded-xl font-semibold text-base hero-gradient text-primary-foreground card-shadow-hover transition-all disabled:opacity-70"
           >
-            Köp rapport — 49 kr
-            <ArrowRight className="w-5 h-5" />
+            {checkoutLoading === "single" ? "Laddar..." : "Köp rapport — 49 kr"}
+            {checkoutLoading !== "single" && <ArrowRight className="w-5 h-5" />}
           </button>
           <button
             data-cta
-            onClick={() => navigate("/rapport")}
-            className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-medium text-sm border-2 border-primary text-primary hover:bg-primary/5 transition-all"
+            disabled={checkoutLoading !== null}
+            onClick={() => handleCheckout("yearly")}
+            className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-medium text-sm border-2 border-primary text-primary hover:bg-primary/5 transition-all disabled:opacity-70"
           >
-            Årsabonnemang — 495 kr/år
+            {checkoutLoading === "yearly" ? "Laddar..." : "Årsabonnemang — 495 kr/år"}
           </button>
           <p className="text-center text-xs text-muted-foreground">
             Engångsbetalning · Ingen bindningstid · Stripe säker betalning
