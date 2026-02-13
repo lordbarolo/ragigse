@@ -41,7 +41,7 @@ serve(async (req) => {
     }
 
     // Build the confirmation link
-    const siteUrl = req.headers.get("origin") || supabaseUrl;
+    const siteUrl = req.headers.get("origin") || "https://bragig.se";
     const confirmLink = `${siteUrl}/referral/${referral.token}`;
     const homepageLink = siteUrl;
 
