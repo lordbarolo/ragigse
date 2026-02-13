@@ -270,8 +270,7 @@ export default function Teaser() {
                   value={result.high}
                   max={result.high + 50}
                   color="bg-primary"
-                  blurred={!unlocked && !partialUnlocked}
-                  partialReveal={partialUnlocked && !unlocked}
+                  blurred={true}
                 />
                 <BarRow
                   label="Rekommenderad lön"

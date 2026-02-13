@@ -106,7 +106,7 @@ export default function Survey() {
 
         sessionStorage.setItem("leadId", leadId);
         sessionStorage.setItem("reportId", reportData.report_id);
-        navigate(`/rapport/${reportData.report_id}`);
+        navigate("/resultat");
       } catch {
         toast.error("Kunde inte spara dina uppgifter. Försök igen.");
         setSaving(false);
