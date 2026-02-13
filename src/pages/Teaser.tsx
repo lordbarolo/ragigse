@@ -221,7 +221,7 @@ export default function Teaser() {
                       </p>
                     </div>
                   ) : (
-                    <div className="backdrop-blur-md bg-card/80 rounded-xl p-5 border border-accent/30 card-shadow w-full animate-fade-in">
+                    <div className="backdrop-blur-md bg-card/80 rounded-xl p-3 border border-accent/30 card-shadow w-full animate-fade-in">
                       <ExitIntentReferral
                         visible={true}
                         leadId={leadId}
