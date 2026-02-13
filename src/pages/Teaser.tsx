@@ -17,6 +17,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useExitIntent } from "@/hooks/useExitIntent";
 import ExitIntentReferral from "@/components/ExitIntentReferral";
+import { trackEvent } from "@/lib/trackEvent";
 
 /* ── Helpers ───────────────────────────────────────────── */
 
@@ -65,6 +66,7 @@ export default function Teaser() {
       return;
     }
     setSurvey(JSON.parse(raw));
+    trackEvent("teaser_viewed");
   }, [navigate]);
 
   // Check if referral was already confirmed for this lead
@@ -166,6 +168,7 @@ export default function Teaser() {
     const existingReportId = sessionStorage.getItem("reportId");
     if (!survey?.email) return;
     setCheckoutLoading(plan);
+    trackEvent("checkout_started", { plan });
     try {
       const { data, error } = await supabase.functions.invoke("create-checkout", {
         body: {
@@ -212,6 +215,7 @@ export default function Teaser() {
       if (error) throw error;
 
       setReferralLink(data.confirm_link);
+      trackEvent("referral_sent");
       toast({ title: "Referens skapad! Dela länken med din kollega." });
     } catch {
       toast({ title: "Något gick fel, försök igen", variant: "destructive" });
