@@ -110,7 +110,7 @@ export default function Teaser() {
   const userHourly = useMemo(() => {
     if (!survey) return 0;
     if (survey.salaryType === "hourly") return survey.currentSalary;
-    return Math.round(survey.currentSalary / 165);
+    return Math.round(survey.currentSalary / 167);
   }, [survey]);
 
   const isUnderpaid = result ? userHourly < result.high : false;
@@ -118,7 +118,7 @@ export default function Teaser() {
 
   const buildResultJson = () => {
     if (!result || !survey || !selectedRate) return null;
-    const hoursPerMonth = 160;
+    const hoursPerMonth = 167;
     const isEmployee = survey.employmentType === "anstalld";
     const shareMin = isEmployee ? 0.85 : 0.85;
     const shareMax = isEmployee ? 0.90 : 0.90;
