@@ -54,29 +54,29 @@ export default function Calculator() {
   const isLoading = locLoading || ratesLoading;
 
   return (
-    <div className="w-full max-w-2xl mx-auto space-y-6">
+    <div className="w-full max-w-2xl mx-auto space-y-4 sm:space-y-6">
       {/* Employment Type Toggle */}
-      <div className="flex gap-3">
+      <div className="flex gap-2 sm:gap-3">
         <button
           onClick={() => setEmploymentType("anstalld")}
-          className={`flex-1 flex items-center justify-center gap-2 py-4 px-6 rounded-xl font-semibold text-base transition-all duration-200 ${
+          className={`flex-1 flex items-center justify-center gap-2 py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-semibold text-sm sm:text-base transition-all duration-200 ${
             employmentType === "anstalld"
               ? "hero-gradient text-primary-foreground card-shadow-hover"
               : "bg-secondary text-secondary-foreground hover:bg-muted"
           }`}
         >
-          <Users className="w-5 h-5" />
+          <Users className="w-4 h-4 sm:w-5 sm:h-5" />
           Anställd
         </button>
         <button
           onClick={() => setEmploymentType("foretagare")}
-          className={`flex-1 flex items-center justify-center gap-2 py-4 px-6 rounded-xl font-semibold text-base transition-all duration-200 ${
+          className={`flex-1 flex items-center justify-center gap-2 py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-semibold text-sm sm:text-base transition-all duration-200 ${
             employmentType === "foretagare"
               ? "hero-gradient text-primary-foreground card-shadow-hover"
               : "bg-secondary text-secondary-foreground hover:bg-muted"
           }`}
         >
-          <Briefcase className="w-5 h-5" />
+          <Briefcase className="w-4 h-4 sm:w-5 sm:h-5" />
           Egenföretagare
         </button>
       </div>
@@ -117,7 +117,7 @@ export default function Calculator() {
             </Label>
             <Select value={selectedYrke} onValueChange={setSelectedYrke} disabled={!selectedKommun}>
               <SelectTrigger className="h-12">
-                <SelectValue placeholder={!selectedKommun ? "Välj kommun först" : "Välj yrkeskategori"} />
+                <SelectValue placeholder={!selectedKommun ? "Välj arbetsort först" : "Välj yrkeskategori"} />
               </SelectTrigger>
               <SelectContent>
                 {uniqueYrken.map((r) => (
@@ -142,16 +142,16 @@ export default function Calculator() {
             </CardTitle>
           </div>
           <CardContent className="pt-6 space-y-4">
-            <div className="text-center">
-              <p className="text-4xl font-bold font-display text-foreground">
+             <div className="text-center">
+              <p className="text-3xl sm:text-4xl font-bold font-display text-foreground">
                 {result.low} – {result.high} kr
               </p>
-              <p className="text-muted-foreground mt-1">
+              <p className="text-sm sm:text-base text-muted-foreground mt-1">
                 {employmentType === "anstalld" ? "per timme (bruttolön)" : "per timme (fakturerat)"}
               </p>
             </div>
 
-            <div className="border-t pt-4 space-y-2 text-sm">
+            <div className="border-t pt-4 space-y-2 text-xs sm:text-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Ramavtalspris (timpris kund)</span>
                 <span className="font-semibold">{selectedRate.timpris_kund} kr/h</span>
@@ -176,7 +176,7 @@ export default function Calculator() {
               </div>
             </div>
 
-            <div className="bg-muted rounded-lg p-3 text-sm text-muted-foreground">
+            <div className="bg-muted rounded-lg p-3 text-xs sm:text-sm text-muted-foreground">
               <strong className="text-foreground">Så räknar vi:</strong>{" "}
               {employmentType === "anstalld"
                 ? `Ramavtalspriset (${selectedRate.timpris_kund} kr) minus 10–15% marginal, delat med 1.42 för arbetsgivaravgifter, semester och tjänstepension.`
