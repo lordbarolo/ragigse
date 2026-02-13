@@ -53,6 +53,7 @@ serve(async (req) => {
       kommun: report.kommun,
       experience: report.experience,
       email: report.email,
+      ab_variant: report.ab_variant || "A",
       referral_unlock_granted: isReferralUnlocked,
     };
 

@@ -1,9 +1,9 @@
 import { useEffect, useState, useRef } from "react";
 
-/** Time in ms before the exit-intent section appears if no CTA click. Easy to change. */
-const EXIT_INTENT_DELAY_MS = 12_000;
+/** Default delay; can be overridden per-variant */
+const DEFAULT_DELAY_MS = 12_000;
 
-export function useExitIntent() {
+export function useExitIntent(delayMs: number = DEFAULT_DELAY_MS) {
   const [triggered, setTriggered] = useState(false);
   const timerRef = useRef<ReturnType<typeof setTimeout>>();
   const ctaClickedRef = useRef(false);
@@ -16,7 +16,7 @@ export function useExitIntent() {
       if (!ctaClickedRef.current) {
         setTriggered(true);
       }
-    }, EXIT_INTENT_DELAY_MS);
+    }, delayMs);
 
     // Mouse leaves viewport top (exit intent)
     const handleMouseLeave = (e: MouseEvent) => {

@@ -85,6 +85,9 @@ serve(async (req) => {
       );
     }
 
+    // A/B variant: 50/50 random assignment
+    const abVariant = Math.random() < 0.5 ? "A" : "B";
+
     // Calculate result_json
     const isEmployee = employment_type === "anstalld";
     const hoursPerMonth = 167;
@@ -145,6 +148,7 @@ serve(async (req) => {
         experience: experience ?? null,
         current_salary: current_salary ?? null,
         salary_type: salary_type || null,
+        ab_variant: abVariant,
       })
       .select("id")
       .single();
@@ -160,7 +164,7 @@ serve(async (req) => {
     console.log(`Report created: ${report.id} for ${email}`);
 
     return new Response(
-      JSON.stringify({ report_id: report.id }),
+      JSON.stringify({ report_id: report.id, ab_variant: abVariant }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {

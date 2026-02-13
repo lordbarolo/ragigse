@@ -222,6 +222,7 @@ export type Database = {
       }
       reports: {
         Row: {
+          ab_variant: string
           created_at: string
           current_salary: number | null
           email: string | null
@@ -239,6 +240,7 @@ export type Database = {
           status: string
         }
         Insert: {
+          ab_variant?: string
           created_at?: string
           current_salary?: number | null
           email?: string | null
@@ -256,6 +258,7 @@ export type Database = {
           status?: string
         }
         Update: {
+          ab_variant?: string
           created_at?: string
           current_salary?: number | null
           email?: string | null

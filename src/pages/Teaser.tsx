@@ -57,7 +57,9 @@ export default function Teaser() {
   const [partialUnlocked, setPartialUnlocked] = useState(false);
   const [checkoutLoading, setCheckoutLoading] = useState<string | null>(null);
 
-  const exitIntentVisible = useExitIntent();
+  const abVariant = sessionStorage.getItem("abVariant") || "A";
+  const exitIntentDelay = abVariant === "B" ? 18_000 : 12_000;
+  const exitIntentVisible = useExitIntent(exitIntentDelay);
 
   useEffect(() => {
     const raw = sessionStorage.getItem("surveyData");
@@ -67,7 +69,12 @@ export default function Teaser() {
     }
     setSurvey(JSON.parse(raw));
     trackEvent("teaser_viewed");
-  }, [navigate]);
+
+    // Variant B: show partial unlock immediately
+    if (abVariant === "B") {
+      setPartialUnlocked(true);
+    }
+  }, [navigate, abVariant]);
 
   // Check if referral was already confirmed for this lead
   useEffect(() => {
@@ -255,9 +262,11 @@ export default function Teaser() {
           <div className="bg-destructive/10 p-4 flex items-center gap-3">
             <TrendingDown className="w-5 h-5 text-destructive" />
             <p className="font-semibold text-foreground">
-              {isUnderpaid
-                ? `Du kan tjäna upp till ${diffPercent}% mer`
-                : "Din lön ligger nära marknadspris"}
+              {abVariant === "B"
+                ? "Du är sannolikt underbetald enligt offentliga ramavtal."
+                : isUnderpaid
+                  ? `Du kan tjäna upp till ${diffPercent}% mer`
+                  : "Din lön ligger nära marknadspris"}
             </p>
           </div>
           <CardContent className="pt-6">
