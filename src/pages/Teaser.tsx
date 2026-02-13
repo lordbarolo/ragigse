@@ -15,6 +15,33 @@ import {
 import { Lock, TrendingDown, ArrowRight, ShieldCheck, Users, CheckCircle, Copy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { useExitIntent } from "@/hooks/useExitIntent";
+import ExitIntentReferral from "@/components/ExitIntentReferral";
+
+/* ── Helpers ───────────────────────────────────────────── */
+
+/** Replace zeros in the last 3 digits with 1 to avoid trailing zeros */
+function ensureNoTrailingZeros(value: number): number {
+  const chars = String(value).split("");
+  for (let i = Math.max(0, chars.length - 3); i < chars.length; i++) {
+    if (chars[i] === "0") chars[i] = "1";
+  }
+  return parseInt(chars.join(""), 10);
+}
+
+/** Show digits at positions 0, 2, 3, 4 (1-indexed: 1st, 3rd, 4th, 5th). Mask 2nd digit. */
+function formatPartialValue(value: number): string {
+  const adjusted = ensureNoTrailingZeros(value);
+  const chars = String(adjusted).split("");
+  if (chars.length > 1) chars[1] = "X";
+  const result = chars.join("");
+  if (result.length > 3) {
+    return result.slice(0, -3) + " " + result.slice(-3);
+  }
+  return result;
+}
+
+/* ── Main component ────────────────────────────────────── */
 
 export default function Teaser() {
   const navigate = useNavigate();
@@ -26,6 +53,9 @@ export default function Teaser() {
   const [referralSending, setReferralSending] = useState(false);
   const [referralLink, setReferralLink] = useState<string | null>(null);
   const [unlocked, setUnlocked] = useState(false);
+  const [partialUnlocked, setPartialUnlocked] = useState(false);
+
+  const exitIntentVisible = useExitIntent();
 
   useEffect(() => {
     const raw = sessionStorage.getItem("surveyData");
@@ -125,6 +155,9 @@ export default function Teaser() {
 
   if (!survey || !result) return null;
 
+  const leadId = sessionStorage.getItem("leadId") || "";
+  const regionName = selectedLocation?.region || survey.kommun || "";
+
   return (
     <div className="min-h-screen bg-background">
       <header className="hero-gradient py-8 px-5 text-center">
@@ -163,19 +196,21 @@ export default function Teaser() {
                   value={result.high}
                   max={result.high + 50}
                   color="bg-primary"
-                  blurred={!unlocked}
+                  blurred={!unlocked && !partialUnlocked}
+                  partialReveal={partialUnlocked && !unlocked}
                 />
                 <BarRow
                   label="Rekommenderad lön"
                   value={result.low}
                   max={result.high + 50}
                   color="bg-accent"
-                  blurred
+                  blurred={!unlocked && !partialUnlocked}
+                  partialReveal={partialUnlocked && !unlocked}
                 />
               </div>
 
               {/* Blur overlay — only on fully locked rows */}
-              {!unlocked && (
+              {!unlocked && !partialUnlocked && (
                 <div className="absolute inset-0 top-[60px] flex items-center justify-center">
                   <div className="backdrop-blur-md bg-card/60 rounded-xl p-6 text-center border border-border card-shadow">
                     <Lock className="w-8 h-8 text-primary mx-auto mb-2" />
@@ -202,6 +237,17 @@ export default function Teaser() {
             )}
           </CardContent>
         </Card>
+
+        {/* Exit-intent inline referral — slides in after inactivity/exit */}
+        {!unlocked && !partialUnlocked && (
+          <ExitIntentReferral
+            visible={exitIntentVisible}
+            leadId={leadId}
+            referrerEmail={survey.email}
+            region={regionName}
+            onUnlocked={() => setPartialUnlocked(true)}
+          />
+        )}
 
         {/* Referral CTA */}
         <Card className="card-shadow border-accent/30">
@@ -247,6 +293,7 @@ export default function Teaser() {
         {/* CTA buttons */}
         <div className="space-y-3">
           <button
+            data-cta
             onClick={() => navigate("/rapport")}
             className="w-full flex items-center justify-center gap-2 py-4 rounded-xl font-semibold text-base hero-gradient text-primary-foreground card-shadow-hover transition-all"
           >
@@ -254,6 +301,7 @@ export default function Teaser() {
             <ArrowRight className="w-5 h-5" />
           </button>
           <button
+            data-cta
             onClick={() => navigate("/rapport")}
             className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-medium text-sm border-2 border-primary text-primary hover:bg-primary/5 transition-all"
           >
@@ -314,26 +362,42 @@ export default function Teaser() {
   );
 }
 
+/* ── BarRow sub-component ──────────────────────────────── */
+
 function BarRow({
   label,
   value,
   max,
   color,
   blurred = false,
+  partialReveal = false,
 }: {
   label: string;
   value: number;
   max: number;
   color: string;
   blurred?: boolean;
+  partialReveal?: boolean;
 }) {
   const width = Math.min((value / max) * 100, 100);
+
+  let displayValue: string;
+  if (partialReveal) {
+    displayValue = formatPartialValue(value) + " kr/h";
+  } else {
+    displayValue = value + " kr/h";
+  }
+
   return (
     <div>
       <div className="flex justify-between text-xs mb-1">
         <span className="text-muted-foreground">{label}</span>
-        <span className={`font-semibold ${blurred ? "blur-sm select-none" : "text-foreground"}`}>
-          {value} kr/h
+        <span
+          className={`font-semibold ${
+            blurred ? "blur-sm select-none" : "text-foreground"
+          }`}
+        >
+          {displayValue}
         </span>
       </div>
       <div className="h-6 bg-secondary rounded-full overflow-hidden">
