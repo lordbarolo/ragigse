@@ -55,47 +55,39 @@ export default function ExitIntentReferral({ visible, leadId, referrerEmail, reg
 
   if (inline) {
     return (
-      <div className="space-y-3 text-center">
+      <div className="space-y-1.5 text-center">
         {!sent ? (
           <>
-            <div className="flex items-center justify-center gap-2">
-              <Gift className="w-5 h-5 text-accent" />
-              <h3 className="font-display text-sm font-semibold text-foreground">
-                Vill du ha en smygtitt helt gratis?
+            <div className="flex items-center justify-center gap-1.5">
+              <Gift className="w-4 h-4 text-accent shrink-0" />
+              <h3 className="font-display text-xs font-semibold text-foreground leading-tight">
+                Smygtitt gratis — tipsa en kollega
               </h3>
             </div>
-            <p className="text-xs text-muted-foreground">
-              Tipsa en kollega så låser vi upp första siffran direkt.
-            </p>
-            <div className="flex gap-2">
+            <div className="flex gap-1.5">
               <Input
                 type="email"
                 placeholder="Kollegans e-post"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="flex-1 h-8 text-xs"
+                className="flex-1 h-7 text-xs px-2"
               />
               <Button
                 onClick={handleSend}
                 disabled={sending || !email}
                 variant="outline"
                 size="sm"
-                className="border-accent text-accent hover:bg-accent/10 shrink-0 text-xs"
+                className="border-accent text-accent hover:bg-accent/10 shrink-0 text-xs h-7 px-2"
               >
                 {sending ? "..." : <><Send className="w-3 h-3 mr-1" />Lås upp</>}
               </Button>
             </div>
           </>
         ) : (
-          <>
-            <div className="flex items-center justify-center gap-2">
-              <CheckCircle className="w-4 h-4 text-accent" />
-              <span className="text-sm font-semibold text-foreground">Tips skickat!</span>
-            </div>
-            <p className="text-xs text-muted-foreground">
-              Första, tredje, fjärde och femte siffran upplåst.
-            </p>
-          </>
+          <div className="flex items-center justify-center gap-1.5">
+            <CheckCircle className="w-4 h-4 text-accent" />
+            <span className="text-xs font-semibold text-foreground">Upplåst!</span>
+          </div>
         )}
       </div>
     );
