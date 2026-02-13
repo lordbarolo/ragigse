@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 
 /** Time in ms before the exit-intent section appears if no CTA click. Easy to change. */
-const EXIT_INTENT_DELAY_MS = 15_000;
+const EXIT_INTENT_DELAY_MS = 12_000;
 
 export function useExitIntent() {
   const [triggered, setTriggered] = useState(false);

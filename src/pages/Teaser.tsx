@@ -209,16 +209,29 @@ export default function Teaser() {
                 />
               </div>
 
-              {/* Blur overlay — only on fully locked rows */}
+              {/* Blur overlay / exit-intent inline referral */}
               {!unlocked && !partialUnlocked && (
                 <div className="absolute inset-0 top-[60px] flex items-center justify-center">
-                  <div className="backdrop-blur-md bg-card/60 rounded-xl p-6 text-center border border-border card-shadow">
-                    <Lock className="w-8 h-8 text-primary mx-auto mb-2" />
-                    <p className="font-semibold text-foreground text-sm">Lås upp full analys</p>
-                    <p className="text-xs text-muted-foreground mt-1">
-                      Se exakta siffror och förhandlingstips
-                    </p>
-                  </div>
+                  {!exitIntentVisible ? (
+                    <div className="backdrop-blur-md bg-card/60 rounded-xl p-6 text-center border border-border card-shadow">
+                      <Lock className="w-8 h-8 text-primary mx-auto mb-2" />
+                      <p className="font-semibold text-foreground text-sm">Lås upp full analys</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Se exakta siffror och förhandlingstips
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="backdrop-blur-md bg-card/80 rounded-xl p-5 border border-accent/30 card-shadow w-full animate-fade-in">
+                      <ExitIntentReferral
+                        visible={true}
+                        leadId={leadId}
+                        referrerEmail={survey.email}
+                        region={regionName}
+                        onUnlocked={() => setPartialUnlocked(true)}
+                        inline
+                      />
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -280,16 +293,6 @@ export default function Teaser() {
           </p>
         </div>
 
-        {/* Exit-intent inline referral — slides in after inactivity/exit */}
-        {!unlocked && !partialUnlocked && (
-          <ExitIntentReferral
-            visible={exitIntentVisible}
-            leadId={leadId}
-            referrerEmail={survey.email}
-            region={regionName}
-            onUnlocked={() => setPartialUnlocked(true)}
-          />
-        )}
 
         {/* Referral CTA */}
         <Card className="card-shadow border-accent/30">

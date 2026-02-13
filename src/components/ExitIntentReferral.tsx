@@ -12,9 +12,10 @@ interface Props {
   referrerEmail: string;
   region: string;
   onUnlocked: () => void;
+  inline?: boolean;
 }
 
-export default function ExitIntentReferral({ visible, leadId, referrerEmail, region, onUnlocked }: Props) {
+export default function ExitIntentReferral({ visible, leadId, referrerEmail, region, onUnlocked, inline = false }: Props) {
   const [email, setEmail] = useState("");
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
@@ -51,6 +52,54 @@ export default function ExitIntentReferral({ visible, leadId, referrerEmail, reg
       setSending(false);
     }
   };
+
+  if (inline) {
+    return (
+      <div className="space-y-3 text-center">
+        {!sent ? (
+          <>
+            <div className="flex items-center justify-center gap-2">
+              <Gift className="w-5 h-5 text-accent" />
+              <h3 className="font-display text-sm font-semibold text-foreground">
+                Vill du ha en smygtitt helt gratis?
+              </h3>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Tipsa en kollega så låser vi upp första siffran direkt.
+            </p>
+            <div className="flex gap-2">
+              <Input
+                type="email"
+                placeholder="Kollegans e-post"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="flex-1 h-8 text-xs"
+              />
+              <Button
+                onClick={handleSend}
+                disabled={sending || !email}
+                variant="outline"
+                size="sm"
+                className="border-accent text-accent hover:bg-accent/10 shrink-0 text-xs"
+              >
+                {sending ? "..." : <><Send className="w-3 h-3 mr-1" />Lås upp</>}
+              </Button>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="flex items-center justify-center gap-2">
+              <CheckCircle className="w-4 h-4 text-accent" />
+              <span className="text-sm font-semibold text-foreground">Tips skickat!</span>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Första, tredje, fjärde och femte siffran upplåst.
+            </p>
+          </>
+        )}
+      </div>
+    );
+  }
 
   return (
     <div className="animate-fade-in">
