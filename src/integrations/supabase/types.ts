@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      leads: {
+        Row: {
+          created_at: string
+          current_salary: number | null
+          email: string
+          employment_type: string
+          experience: number | null
+          id: string
+          kommun: string | null
+          paid: boolean
+          salary_type: string | null
+          updated_at: string
+          yrke: string | null
+        }
+        Insert: {
+          created_at?: string
+          current_salary?: number | null
+          email: string
+          employment_type: string
+          experience?: number | null
+          id?: string
+          kommun?: string | null
+          paid?: boolean
+          salary_type?: string | null
+          updated_at?: string
+          yrke?: string | null
+        }
+        Update: {
+          created_at?: string
+          current_salary?: number | null
+          email?: string
+          employment_type?: string
+          experience?: number | null
+          id?: string
+          kommun?: string | null
+          paid?: boolean
+          salary_type?: string | null
+          updated_at?: string
+          yrke?: string | null
+        }
+        Relationships: []
+      }
       locations: {
         Row: {
           id: string
