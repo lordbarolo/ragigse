@@ -17,6 +17,8 @@ import {
   Loader2,
   Lightbulb,
   Info,
+  Download,
+  Linkedin,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
@@ -533,6 +535,36 @@ export default function Report() {
                 Engångsbetalning · Ingen bindningstid · Stripe säker betalning
               </p>
             </div>
+          </div>
+        )}
+
+        {/* ── Action buttons (full access) ────── */}
+        {isFullAccess && (
+          <div className="flex flex-col sm:flex-row gap-3">
+            <Button
+              variant="outline"
+              className="flex-1 gap-2"
+              onClick={() => window.print()}
+            >
+              <Download className="w-4 h-4" />
+              Ladda ner som PDF
+            </Button>
+            <Button
+              variant="outline"
+              className="flex-1 gap-2"
+              onClick={() => {
+                const url = window.location.href;
+                const text = `Jag har precis tagit reda på mitt verkliga löneutrymme som ${report.occupation} med BraGig.se — rekommenderar det!`;
+                window.open(
+                  `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}&summary=${encodeURIComponent(text)}`,
+                  "_blank",
+                  "width=600,height=500"
+                );
+              }}
+            >
+              <Linkedin className="w-4 h-4" />
+              Dela på LinkedIn
+            </Button>
           </div>
         )}
 
