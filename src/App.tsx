@@ -41,8 +41,12 @@ const App = () => (
             <Route path="/rapport/:reportId" element={<Report />} />
             <Route path="/jamfor" element={<Compare />} />
             <Route path="/vanliga-fragor" element={<FAQ />} />
-            <Route path="/dev/e2e-test" element={<E2ETest />} />
-            <Route path="/dev/analytics" element={<AnalyticsDashboard />} />
+            {import.meta.env.DEV && (
+              <>
+                <Route path="/dev/e2e-test" element={<E2ETest />} />
+                <Route path="/dev/analytics" element={<AnalyticsDashboard />} />
+              </>
+            )}
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
