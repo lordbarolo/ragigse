@@ -233,11 +233,11 @@ export type Database = {
           lead_id: string | null
           occupation: string | null
           paid_at: string | null
-          referral_unlock_granted: boolean
           referral_unlocked_at: string | null
           result_json: Json | null
           salary_type: string | null
           status: string
+          unlocked_by_referral: boolean
         }
         Insert: {
           ab_variant?: string
@@ -251,11 +251,11 @@ export type Database = {
           lead_id?: string | null
           occupation?: string | null
           paid_at?: string | null
-          referral_unlock_granted?: boolean
           referral_unlocked_at?: string | null
           result_json?: Json | null
           salary_type?: string | null
           status?: string
+          unlocked_by_referral?: boolean
         }
         Update: {
           ab_variant?: string
@@ -269,11 +269,11 @@ export type Database = {
           lead_id?: string | null
           occupation?: string | null
           paid_at?: string | null
-          referral_unlock_granted?: boolean
           referral_unlocked_at?: string | null
           result_json?: Json | null
           salary_type?: string | null
           status?: string
+          unlocked_by_referral?: boolean
         }
         Relationships: [
           {
