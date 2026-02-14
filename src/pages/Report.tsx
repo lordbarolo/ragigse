@@ -219,17 +219,16 @@ export default function Report() {
         <SocialProofBanner occupation={report.occupation} />
 
         {/* Salary Gauge */}
-        {isFullAccess && rec && (
-          <Card className="card-shadow">
-            <CardContent className="pt-6 pb-4">
-              <SalaryGauge
-                currentHourly={currentHourly}
-                marketLow={rec.recommended_hourly_min}
-                marketHigh={rec.recommended_hourly_max}
-              />
-            </CardContent>
-          </Card>
-        )}
+        <Card className="card-shadow">
+          <CardContent className="pt-6 pb-4">
+            <SalaryGauge
+              currentHourly={currentHourly}
+              marketLow={rec ? rec.recommended_hourly_min : Math.round(marketRate * 0.6)}
+              marketHigh={rec ? rec.recommended_hourly_max : Math.round(marketRate * 0.63)}
+              blurred={!isFullAccess}
+            />
+          </CardContent>
+        </Card>
         {/* ── 1. Ramavtalspris ────────────────────── */}
         <Card className="card-shadow">
           <CardContent className="pt-6 space-y-3">
@@ -276,15 +275,32 @@ export default function Report() {
                   />
                 </div>
 
-                {/* Förhandlingsspann */}
-                <div className="p-4 rounded-lg bg-accent/5 border border-accent/20">
-                  <p className="text-xs text-muted-foreground mb-1">Förhandlingsspann</p>
-                  <p className="text-lg font-bold text-foreground">
-                    {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h
-                  </p>
-                  <p className="text-sm text-muted-foreground">
-                    = {fmt(rec.recommended_monthly_min)}–{fmt(rec.recommended_monthly_max)} kr/mån
-                    ({rec.hours_per_month}h/mån)
+                {/* Förhandlingsspann: Safe / Target / Aggressive */}
+                <div className="p-4 rounded-lg bg-accent/5 border border-accent/20 space-y-3">
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Förhandlingsspann</p>
+                  <div className="grid grid-cols-3 gap-2 text-center">
+                    <div className="p-3 rounded-lg bg-accent/10 border border-accent/20">
+                      <p className="text-[10px] font-medium text-accent uppercase tracking-wide mb-1">Safe</p>
+                      <p className="text-base font-bold text-foreground">{fmt(rec.recommended_hourly_min)} kr/h</p>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">{fmt(rec.recommended_monthly_min)} kr/mån</p>
+                    </div>
+                    <div className="p-3 rounded-lg bg-primary/10 border border-primary/20 ring-2 ring-primary/30">
+                      <p className="text-[10px] font-medium text-primary uppercase tracking-wide mb-1">Target</p>
+                      <p className="text-base font-bold text-foreground">
+                        {fmt(Math.round((rec.recommended_hourly_min + rec.recommended_hourly_max) / 2))} kr/h
+                      </p>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">
+                        {fmt(Math.round((rec.recommended_monthly_min + rec.recommended_monthly_max) / 2))} kr/mån
+                      </p>
+                    </div>
+                    <div className="p-3 rounded-lg bg-destructive/5 border border-destructive/20">
+                      <p className="text-[10px] font-medium text-destructive uppercase tracking-wide mb-1">Aggressive</p>
+                      <p className="text-base font-bold text-foreground">{fmt(rec.recommended_hourly_max)} kr/h</p>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">{fmt(rec.recommended_monthly_max)} kr/mån</p>
+                    </div>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground text-center">
+                    Safe = hög chans att få igenom · Target = rekommenderat · Aggressive = kräver stark erfarenhet
                   </p>
                 </div>
 
