@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { Link } from "react-router-dom";
 import Survey from "@/components/Survey";
 import { Shield, TrendingUp, FileCheck } from "lucide-react";
 import { trackEvent } from "@/lib/trackEvent";
@@ -131,8 +132,11 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t py-8 text-center text-sm text-muted-foreground">
+      <footer className="border-t py-8 text-center text-sm text-muted-foreground space-y-2">
         <p>© 2026 BraGig.se · Data från offentliga ramavtal</p>
+        <Link to="/vanliga-fragor" className="text-primary hover:underline">
+          Vanliga frågor om lön →
+        </Link>
       </footer>
     </div>
   );
