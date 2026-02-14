@@ -58,7 +58,7 @@ serve(async (req) => {
         .insert({
           email: testEmail,
           employment_type: "anstalld",
-          yrke: "Sjuksköterska",
+          yrke: "Legitimerad sjuksköterska",
           kommun: "Stockholm",
           experience: 5,
           current_salary: 35000,
@@ -81,7 +81,7 @@ serve(async (req) => {
       const { status, data } = await callFn("create-report", {
         lead_id: leadId,
         email: testEmail,
-        occupation: "Sjuksköterska",
+        occupation: "Legitimerad sjuksköterska",
         employment_type: "anstalld",
         kommun: "Stockholm",
         experience: 5,
