@@ -21,6 +21,9 @@ import {
   Linkedin,
 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import SalaryGauge from "@/components/SalaryGauge";
+import ShareButton from "@/components/ShareButton";
+import SocialProofBanner from "@/components/SocialProofBanner";
 
 /* ── Types ────────────────────────────────────────────── */
 
@@ -204,6 +207,29 @@ export default function Report() {
       </header>
 
       <main className="px-4 py-8 max-w-2xl mx-auto space-y-6">
+        {/* Referral banner */}
+        {report.unlocked_by_referral && (
+          <div className="flex items-center justify-center gap-2 py-2 px-4 bg-accent/10 border border-accent/20 rounded-lg text-xs text-accent font-medium">
+            <ShieldCheck className="w-4 h-4" />
+            Upplåst via kollegatips
+          </div>
+        )}
+
+        {/* Social proof */}
+        <SocialProofBanner occupation={report.occupation} />
+
+        {/* Salary Gauge */}
+        {isFullAccess && rec && (
+          <Card className="card-shadow">
+            <CardContent className="pt-6 pb-4">
+              <SalaryGauge
+                currentHourly={currentHourly}
+                marketLow={rec.recommended_hourly_min}
+                marketHigh={rec.recommended_hourly_max}
+              />
+            </CardContent>
+          </Card>
+        )}
         {/* ── 1. Ramavtalspris ────────────────────── */}
         <Card className="card-shadow">
           <CardContent className="pt-6 space-y-3">
@@ -540,31 +566,38 @@ export default function Report() {
 
         {/* ── Action buttons (full access) ────── */}
         {isFullAccess && (
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Button
-              variant="outline"
-              className="flex-1 gap-2"
-              onClick={() => window.print()}
-            >
-              <Download className="w-4 h-4" />
-              Ladda ner som PDF
-            </Button>
-            <Button
-              variant="outline"
-              className="flex-1 gap-2"
-              onClick={() => {
-                const url = window.location.href;
-                const text = `Jag har precis tagit reda på mitt verkliga löneutrymme som ${report.occupation} med BraGig.se — rekommenderar det!`;
-                window.open(
-                  `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}&summary=${encodeURIComponent(text)}`,
-                  "_blank",
-                  "width=600,height=500"
-                );
-              }}
-            >
-              <Linkedin className="w-4 h-4" />
-              Dela på LinkedIn
-            </Button>
+          <div className="flex flex-col gap-3">
+            <ShareButton
+              title="BraGig.se – Löneanalys"
+              text={`Jag kollade min lön som ${report.occupation} med BraGig.se — rekommenderar det!`}
+              className="w-full"
+            />
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                className="flex-1 gap-2"
+                onClick={() => window.print()}
+              >
+                <Download className="w-4 h-4" />
+                PDF
+              </Button>
+              <Button
+                variant="outline"
+                className="flex-1 gap-2"
+                onClick={() => {
+                  const url = window.location.href;
+                  const text = `Jag har precis tagit reda på mitt verkliga löneutrymme som ${report.occupation} med BraGig.se — rekommenderar det!`;
+                  window.open(
+                    `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}&summary=${encodeURIComponent(text)}`,
+                    "_blank",
+                    "width=600,height=500"
+                  );
+                }}
+              >
+                <Linkedin className="w-4 h-4" />
+                LinkedIn
+              </Button>
+            </div>
           </div>
         )}
 

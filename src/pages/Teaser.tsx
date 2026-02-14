@@ -13,6 +13,9 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Lock, TrendingDown, ArrowRight, ShieldCheck, Users, CheckCircle, Copy } from "lucide-react";
+import SalaryGauge from "@/components/SalaryGauge";
+import SocialProofBanner from "@/components/SocialProofBanner";
+import ShareButton from "@/components/ShareButton";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useExitIntent } from "@/hooks/useExitIntent";
@@ -256,7 +259,22 @@ export default function Teaser() {
         </div>
       </header>
 
-      <main className="px-4 py-8 max-w-lg mx-auto space-y-6">
+      <main className="px-4 py-8 pb-32 max-w-lg mx-auto space-y-6">
+        {/* Social proof */}
+        <SocialProofBanner occupation={survey.yrke || undefined} />
+
+        {/* Salary Gauge */}
+        <Card className="card-shadow">
+          <CardContent className="pt-6 pb-4">
+            <SalaryGauge
+              currentHourly={userHourly}
+              marketLow={result.low}
+              marketHigh={result.high}
+              blurred={!unlocked && !partialUnlocked}
+            />
+          </CardContent>
+        </Card>
+
         {/* Verdict card */}
         <Card className="card-shadow border-destructive/30 overflow-hidden">
           <div className="bg-destructive/10 p-4 flex items-center gap-3">
@@ -374,29 +392,13 @@ export default function Teaser() {
           </CardContent>
         </Card>
 
-        {/* CTA buttons */}
-        <div className="space-y-3">
-          <button
-            data-cta
-            disabled={checkoutLoading !== null}
-            onClick={() => handleCheckout("single")}
-            className="w-full flex items-center justify-center gap-2 py-4 rounded-xl font-semibold text-base hero-gradient text-primary-foreground card-shadow-hover transition-all disabled:opacity-70"
-          >
-            {checkoutLoading === "single" ? "Laddar..." : "Köp rapport — 49 kr"}
-            {checkoutLoading !== "single" && <ArrowRight className="w-5 h-5" />}
-          </button>
-          <button
-            data-cta
-            disabled={checkoutLoading !== null}
-            onClick={() => handleCheckout("yearly")}
-            className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl font-medium text-sm border-2 border-primary text-primary hover:bg-primary/5 transition-all disabled:opacity-70"
-          >
-            {checkoutLoading === "yearly" ? "Laddar..." : "Årsabonnemang — 495 kr/år"}
-          </button>
-          <p className="text-center text-xs text-muted-foreground">
-            Engångsbetalning · Ingen bindningstid · Stripe säker betalning
-          </p>
-        </div>
+        {/* Share button */}
+        <ShareButton
+          title="BraGig.se – Löneanalys"
+          text={`Jag kollade min lön som ${survey.yrke} i ${survey.kommun} — kolla din också!`}
+          url="https://bragig.se"
+          className="w-full"
+        />
 
 
         {/* Referral CTA */}
@@ -420,6 +422,29 @@ export default function Teaser() {
           </CardContent>
         </Card>
       </main>
+
+      {/* Sticky bottom CTAs — thumb zone */}
+      <div className="fixed bottom-0 inset-x-0 bg-card/95 backdrop-blur-sm border-t border-border p-3 z-40 safe-area-bottom">
+        <div className="max-w-lg mx-auto flex gap-2">
+          <button
+            data-cta
+            disabled={checkoutLoading !== null}
+            onClick={() => handleCheckout("single")}
+            className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-xl font-semibold text-sm hero-gradient text-primary-foreground transition-all disabled:opacity-70"
+          >
+            {checkoutLoading === "single" ? "Laddar..." : "49 kr"}
+            {checkoutLoading !== "single" && <ArrowRight className="w-4 h-4" />}
+          </button>
+          <button
+            data-cta
+            disabled={checkoutLoading !== null}
+            onClick={() => handleCheckout("yearly")}
+            className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-xl font-medium text-sm border border-primary text-primary hover:bg-primary/5 transition-all disabled:opacity-70"
+          >
+            {checkoutLoading === "yearly" ? "Laddar..." : "495 kr/år"}
+          </button>
+        </div>
+      </div>
 
       {/* Referral Dialog */}
       <Dialog open={referralOpen} onOpenChange={setReferralOpen}>
