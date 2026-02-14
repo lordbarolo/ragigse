@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CheckCircle, Loader2, XCircle, ArrowRight, PartyPopper } from "lucide-react";
+import { trackEvent } from "@/lib/trackEvent";
 
 const REDIRECT_SECONDS = 5;
 
@@ -32,7 +33,7 @@ export default function PaymentSuccess() {
         }
 
         setStatus("success");
-        // Store report_id for redirect
+        trackEvent("payment_verified", { session_id: sessionId || "" });
         if (data.report_id) {
           sessionStorage.setItem("reportId", data.report_id);
         }

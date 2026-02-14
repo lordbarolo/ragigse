@@ -10,6 +10,7 @@ import {
   ChevronRight, ChevronLeft, ArrowRight
 } from "lucide-react";
 import { toast } from "sonner";
+import { trackEvent } from "@/lib/trackEvent";
 
 export interface SurveyData {
   email: string;
@@ -68,6 +69,8 @@ export default function Survey() {
 
   const handleNext = async () => {
     if (step < TOTAL_STEPS - 1) {
+      if (step === 0) trackEvent("survey_started");
+      trackEvent("survey_step_completed", { step: step + 1 });
       setStep(step + 1);
     } else {
       // Save lead and create report, then navigate to report
@@ -109,6 +112,7 @@ export default function Survey() {
         if (reportData.ab_variant) {
           sessionStorage.setItem("abVariant", reportData.ab_variant);
         }
+        trackEvent("survey_completed");
         navigate("/resultat");
       } catch {
         toast.error("Kunde inte spara dina uppgifter. Försök igen.");

@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { CheckCircle, Loader2 } from "lucide-react";
+import { trackEvent } from "@/lib/trackEvent";
 
 export default function ReferralLanding() {
   const { token } = useParams<{ token: string }>();
@@ -24,6 +25,7 @@ export default function ReferralLanding() {
         setStatus("error");
       } else {
         setStatus("success");
+        trackEvent("referral_confirmed", { token: token || "" });
       }
     };
 

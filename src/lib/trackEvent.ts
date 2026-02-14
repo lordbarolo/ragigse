@@ -1,10 +1,17 @@
 import { supabase } from "@/integrations/supabase/client";
 
 type EventName =
+  | "landing_viewed"
+  | "survey_started"
+  | "survey_step_completed"
+  | "survey_completed"
   | "teaser_viewed"
   | "checkout_started"
+  | "payment_verified"
+  | "report_viewed"
   | "referral_sent"
   | "referral_confirmed"
+  | "referral_unlock_shown"
   | "exit_intent_shown";
 
 export function trackEvent(
@@ -15,7 +22,6 @@ export function trackEvent(
   const reportId = sessionStorage.getItem("reportId") || undefined;
   const abVariant = sessionStorage.getItem("abVariant") || undefined;
 
-  // Merge variant + report_id into every event
   const enrichedMetadata: Record<string, string | number | boolean | null> = {
     ...(metadata ?? {}),
     ...(reportId ? { report_id: reportId } : {}),

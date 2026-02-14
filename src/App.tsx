@@ -11,6 +11,7 @@ import PaymentSuccess from "./pages/PaymentSuccess";
 import NotFound from "./pages/NotFound";
 import Compare from "./pages/Compare";
 import E2ETest from "./pages/E2ETest";
+import AnalyticsDashboard from "./pages/AnalyticsDashboard";
 
 const queryClient = new QueryClient();
 
@@ -28,6 +29,7 @@ const App = () => (
           <Route path="/rapport/:reportId" element={<Report />} />
           <Route path="/jamfor" element={<Compare />} />
           <Route path="/dev/e2e-test" element={<E2ETest />} />
+          <Route path="/dev/analytics" element={<AnalyticsDashboard />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
