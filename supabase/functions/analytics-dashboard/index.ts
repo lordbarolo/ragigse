@@ -18,12 +18,26 @@ serve(async (req) => {
   );
 
   try {
-    // Fetch all analytics events
-    const { data: events, error } = await supabase
+    // Parse optional date filters from body
+    let fromDate: string | null = null;
+    let toDate: string | null = null;
+    try {
+      const body = await req.json();
+      fromDate = body?.from || null;
+      toDate = body?.to || null;
+    } catch { /* no body */ }
+
+    // Fetch analytics events with optional date filter
+    let query = supabase
       .from("analytics_events")
       .select("event_name, metadata, created_at")
       .order("created_at", { ascending: false })
       .limit(10000);
+
+    if (fromDate) query = query.gte("created_at", `${fromDate}T00:00:00Z`);
+    if (toDate) query = query.lte("created_at", `${toDate}T23:59:59Z`);
+
+    const { data: events, error } = await query;
 
     if (error) throw error;
 
