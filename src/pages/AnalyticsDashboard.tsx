@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Loader2, RefreshCw, BarChart3, Users, TrendingUp, DollarSign, CalendarIcon } from "lucide-react";
+import { Loader2, RefreshCw, BarChart3, Users, TrendingUp, DollarSign, CalendarIcon, Download } from "lucide-react";
 import { format, subDays } from "date-fns";
 import { cn } from "@/lib/utils";
 
@@ -61,12 +61,68 @@ export default function AnalyticsDashboard() {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
-  // Auto-refresh every 30s
   useEffect(() => {
     if (!autoRefresh) return;
     const id = setInterval(fetchData, 30000);
     return () => clearInterval(id);
   }, [autoRefresh, fetchData]);
+
+  const exportCSV = () => {
+    if (!data) return;
+    const rows: string[][] = [];
+
+    // Funnel data
+    rows.push(["--- Funnel ---"]);
+    rows.push(["Variant", "Step", "Count", "Rate %"]);
+    for (const v of ["A", "B"]) {
+      for (const s of data.funnels[v] || []) {
+        rows.push([v, s.step, String(s.count), String(s.rate)]);
+      }
+    }
+
+    // Conversion rates
+    rows.push([]);
+    rows.push(["--- Conversion Rates ---"]);
+    rows.push(["Variant", "Sessions", "Conversions", "Rate"]);
+    for (const v of ["A", "B"]) {
+      const cr = data.conversionRates[v];
+      if (cr) rows.push([v, String(cr.sessions), String(cr.conversions), cr.rate]);
+    }
+
+    // Referrals
+    rows.push([]);
+    rows.push(["--- Referrals ---"]);
+    rows.push(["Variant", "Sent", "Confirmed"]);
+    for (const v of ["A", "B"]) {
+      const r = data.referralEvents[v];
+      if (r) rows.push([v, String(r.sent), String(r.confirmed)]);
+    }
+
+    // Time series
+    rows.push([]);
+    rows.push(["--- Daily Activity ---"]);
+    rows.push(["Date", "Landing", "Survey", "Teaser", "Checkout", "Paid", "Referral"]);
+    for (const day of data.timeSeries) {
+      rows.push([
+        day.date,
+        String(day.events.landing_viewed || 0),
+        String(day.events.survey_completed || 0),
+        String(day.events.teaser_viewed || 0),
+        String(day.events.checkout_started || 0),
+        String(day.events.payment_verified || 0),
+        String(day.events.referral_sent || 0),
+      ]);
+    }
+
+    const csv = rows.map((r) => r.join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `analytics-${format(dateFrom, "yyyy-MM-dd")}-${format(dateTo, "yyyy-MM-dd")}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6 max-w-6xl mx-auto space-y-6">
@@ -85,6 +141,10 @@ export default function AnalyticsDashboard() {
             size="sm"
           >
             {autoRefresh ? "Auto ✓" : "Auto ✗"}
+          </Button>
+          <Button onClick={exportCSV} disabled={!data} variant="outline" size="sm">
+            <Download className="w-4 h-4" />
+            <span className="ml-2">CSV</span>
           </Button>
           <Button onClick={fetchData} disabled={loading} variant="outline" size="sm">
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
