@@ -1,0 +1,1 @@
+ALTER TABLE public.reports RENAME COLUMN referral_unlock_granted TO unlocked_by_referral;

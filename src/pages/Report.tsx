@@ -68,7 +68,7 @@ interface ReportData {
   employment_type: string;
   kommun: string;
   experience: number;
-  referral_unlock_granted: boolean;
+  unlocked_by_referral: boolean;
   email?: string;
   result_json: ResultJson;
   zone_comparisons?: ZoneComparison[];

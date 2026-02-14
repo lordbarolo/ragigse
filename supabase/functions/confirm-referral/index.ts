@@ -43,7 +43,7 @@ serve(async (req) => {
     // Unlock the report linked to this lead
     const { error: reportError } = await supabase
       .from("reports")
-      .update({ referral_unlock_granted: true, referral_unlocked_at: new Date().toISOString() })
+      .update({ unlocked_by_referral: true, referral_unlocked_at: new Date().toISOString() })
       .eq("lead_id", data.lead_id);
 
     if (reportError) {

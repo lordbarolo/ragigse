@@ -42,7 +42,7 @@ serve(async (req) => {
 
     // Determine access level
     const isPaid = report.status === "paid";
-    const isReferralUnlocked = report.referral_unlock_granted === true;
+    const isReferralUnlocked = report.unlocked_by_referral === true;
 
     // Build response based on access level
     const response: Record<string, unknown> = {
@@ -54,7 +54,7 @@ serve(async (req) => {
       experience: report.experience,
       email: report.email,
       ab_variant: report.ab_variant || "A",
-      referral_unlock_granted: isReferralUnlocked,
+      unlocked_by_referral: isReferralUnlocked,
     };
 
     if (isPaid || isReferralUnlocked) {

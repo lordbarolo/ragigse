@@ -197,7 +197,7 @@ serve(async (req) => {
     if (reportId) {
       await supabase
         .from("reports")
-        .update({ status: "preview", paid_at: null, referral_unlock_granted: false, referral_unlocked_at: null })
+        .update({ status: "preview", paid_at: null, unlocked_by_referral: false, referral_unlocked_at: null })
         .eq("id", reportId);
     }
 
@@ -278,7 +278,7 @@ serve(async (req) => {
       try {
         await supabase
           .from("reports")
-          .update({ referral_unlock_granted: true, referral_unlocked_at: new Date().toISOString() })
+          .update({ unlocked_by_referral: true, referral_unlocked_at: new Date().toISOString() })
           .eq("id", reportId);
 
         const { data } = await callFn("get-report", { report_id: reportId });
