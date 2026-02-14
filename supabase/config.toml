@@ -20,3 +20,6 @@ verify_jwt = false
 
 [functions.e2e-test]
 verify_jwt = false
+
+[functions.analytics-dashboard]
+verify_jwt = false

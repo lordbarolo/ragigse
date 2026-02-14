@@ -1,7 +1,11 @@
+import { useEffect } from "react";
 import Survey from "@/components/Survey";
 import { Shield, TrendingUp, FileCheck } from "lucide-react";
+import { trackEvent } from "@/lib/trackEvent";
 
 const Index = () => {
+  useEffect(() => { trackEvent("landing_viewed"); }, []);
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero */}
