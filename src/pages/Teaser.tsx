@@ -299,12 +299,29 @@ export default function Teaser() {
               {!unlocked && !partialUnlocked && (
                 <div className="absolute inset-0 top-[60px] flex items-center justify-center">
                   {!exitIntentVisible ? (
-                    <div className="backdrop-blur-md bg-card/60 rounded-xl p-6 text-center border border-border card-shadow">
+                    <div className="backdrop-blur-md bg-card/60 rounded-xl p-6 text-center border border-border card-shadow max-w-xs w-full">
                       <Lock className="w-8 h-8 text-primary mx-auto mb-2" />
                       <p className="font-semibold text-foreground text-sm">Lås upp full analys</p>
-                      <p className="text-xs text-muted-foreground mt-1">
+                      <p className="text-xs text-muted-foreground mt-1 mb-4">
                         Se exakta siffror och förhandlingstips
                       </p>
+                      <button
+                        data-cta
+                        disabled={checkoutLoading !== null}
+                        onClick={() => handleCheckout("single")}
+                        className="w-full flex items-center justify-center gap-2 py-3 rounded-lg font-semibold text-sm hero-gradient text-primary-foreground transition-all disabled:opacity-70"
+                      >
+                        {checkoutLoading === "single" ? "Laddar..." : "Köp rapport — 49 kr"}
+                        {checkoutLoading !== "single" && <ArrowRight className="w-4 h-4" />}
+                      </button>
+                      <button
+                        data-cta
+                        disabled={checkoutLoading !== null}
+                        onClick={() => handleCheckout("yearly")}
+                        className="w-full flex items-center justify-center gap-2 py-2.5 mt-2 rounded-lg font-medium text-xs border border-primary text-primary hover:bg-primary/5 transition-all disabled:opacity-70"
+                      >
+                        {checkoutLoading === "yearly" ? "Laddar..." : "Årsabonnemang — 495 kr/år"}
+                      </button>
                     </div>
                   ) : (
                     <div className="backdrop-blur-md bg-card/80 rounded-xl p-3 border border-accent/30 card-shadow w-full animate-fade-in">
