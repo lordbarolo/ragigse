@@ -116,4 +116,8 @@
   .card-shadow-hover {
     box-shadow: var(--card-shadow-hover);
   }
+
+  .safe-area-bottom {
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  }
 }
