@@ -1,8 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, RefreshCw, BarChart3, Users, TrendingUp, DollarSign } from "lucide-react";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Loader2, RefreshCw, BarChart3, Users, TrendingUp, DollarSign, CalendarIcon } from "lucide-react";
+import { format, subDays } from "date-fns";
+import { cn } from "@/lib/utils";
 
 interface FunnelStep {
   step: string;
@@ -32,12 +36,20 @@ export default function AnalyticsDashboard() {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [autoRefresh, setAutoRefresh] = useState(true);
+  const [dateFrom, setDateFrom] = useState<Date>(subDays(new Date(), 30));
+  const [dateTo, setDateTo] = useState<Date>(new Date());
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const { data: result, error: fnError } = await supabase.functions.invoke("analytics-dashboard");
+      const { data: result, error: fnError } = await supabase.functions.invoke("analytics-dashboard", {
+        body: {
+          from: format(dateFrom, "yyyy-MM-dd"),
+          to: format(dateTo, "yyyy-MM-dd"),
+        },
+      });
       if (fnError) throw fnError;
       setData(result as AnalyticsData);
     } catch (e: any) {
@@ -45,9 +57,16 @@ export default function AnalyticsDashboard() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [dateFrom, dateTo]);
 
-  useEffect(() => { fetchData(); }, []);
+  useEffect(() => { fetchData(); }, [fetchData]);
+
+  // Auto-refresh every 30s
+  useEffect(() => {
+    if (!autoRefresh) return;
+    const id = setInterval(fetchData, 30000);
+    return () => clearInterval(id);
+  }, [autoRefresh, fetchData]);
 
   return (
     <div className="min-h-screen bg-background p-4 sm:p-6 max-w-6xl mx-auto space-y-6">
@@ -56,10 +75,22 @@ export default function AnalyticsDashboard() {
           <h1 className="text-2xl font-bold text-foreground">📊 Analytics Dashboard</h1>
           <p className="text-sm text-muted-foreground">Funnelspårning & A/B-jämförelse</p>
         </div>
-        <Button onClick={fetchData} disabled={loading} variant="outline" size="sm">
-          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
-          <span className="ml-2">Uppdatera</span>
-        </Button>
+        <div className="flex items-center gap-2 flex-wrap">
+          {/* Date range pickers */}
+          <DatePicker label="Från" date={dateFrom} onSelect={(d) => d && setDateFrom(d)} />
+          <DatePicker label="Till" date={dateTo} onSelect={(d) => d && setDateTo(d)} />
+          <Button
+            onClick={() => setAutoRefresh((v) => !v)}
+            variant={autoRefresh ? "default" : "outline"}
+            size="sm"
+          >
+            {autoRefresh ? "Auto ✓" : "Auto ✗"}
+          </Button>
+          <Button onClick={fetchData} disabled={loading} variant="outline" size="sm">
+            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+            <span className="ml-2">Uppdatera</span>
+          </Button>
+        </div>
       </div>
 
       {error && (
@@ -214,6 +245,29 @@ export default function AnalyticsDashboard() {
 }
 
 /* ── Sub-components ─────────────────────────────────── */
+
+function DatePicker({ label, date, onSelect }: { label: string; date: Date; onSelect: (d: Date | undefined) => void }) {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button variant="outline" size="sm" className={cn("justify-start text-left font-normal gap-1")}>
+          <CalendarIcon className="w-3.5 h-3.5" />
+          <span className="text-xs text-muted-foreground">{label}:</span>
+          <span className="text-xs">{format(date, "yyyy-MM-dd")}</span>
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0" align="start">
+        <Calendar
+          mode="single"
+          selected={date}
+          onSelect={onSelect}
+          initialFocus
+          className={cn("p-3 pointer-events-auto")}
+        />
+      </PopoverContent>
+    </Popover>
+  );
+}
 
 function KPICard({ icon, label, value, sub }: { icon: React.ReactNode; label: string; value: string; sub?: string }) {
   return (
