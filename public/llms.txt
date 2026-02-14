@@ -1,0 +1,40 @@
+# BraGig.se
+
+> BraGig.se hjälper sjuksköterskor i Sverige att ta reda på om de får rätt lön genom att jämföra deras erbjudande med faktiska ramavtalspriser som kommuner betalar för inhyrd personal.
+
+## Om tjänsten
+
+BraGig.se är en löneanalysplattform riktad till sjuksköterskor och specialistsjuksköterskor. Tjänsten baseras på officiella ramavtalspriser från 290 svenska kommuner och ger användare en objektiv bild av sitt marknadsvärde.
+
+Användaren fyller i yrkesroll, kommun, erfarenhet och nuvarande lön. Systemet jämför sedan mot ramavtalspriser och visar om lönen ligger under, på eller över marknadsnivå.
+
+## Nyckeldata
+
+- Täcker 290 kommuner i Sverige
+- Baserat på offentliga ramavtalspriser (uppdaterat 2026)
+- Yrkeskategorier: sjuksköterskor, specialistsjuksköterskor
+- Anställningstyper: fast anställd, inhyrd/konsult
+
+## Vanliga frågor
+
+### Hur mycket tjänar en sjuksköterska i Sverige 2026?
+Medianlönen för en sjuksköterska ligger runt 36 000–39 000 kr/mån. Specialistsjuksköterskor kan tjäna 40 000–48 000 kr/mån. Ramavtalspriser visar att arbetsgivare ofta betalar betydligt mer för inhyrd personal.
+
+### Vad är ramavtalspriser?
+Ramavtalspriser är timpris som kommuner och regioner avtalat med bemanningsföretag. De speglar vad arbetsgivare faktiskt betalar för en viss kompetens och ger en realistisk bild av marknadsvärdet.
+
+### Skiljer sig lönerna mellan kommuner?
+Ja, skillnaderna kan vara stora. Storstadskommuner har generellt lägre priser, medan glesbygdskommuner i norra Sverige kan betala 30–50% mer.
+
+### Vilka faktorer påverkar lönen mest?
+1. Specialisering (t.ex. intensivvård, operation)
+2. Geografisk placering (glesbygd vs storstad)
+3. Antal års erfarenhet
+
+### Kostar det något?
+Den grundläggande lönejämförelsen är gratis. En detaljerad rapport med förhandlingstips finns som uppgradering.
+
+## Kontakt
+
+Webbplats: https://bragig.se
+FAQ: https://bragig.se/vanliga-fragor
