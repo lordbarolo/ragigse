@@ -109,6 +109,7 @@ export default function Survey() {
 
         sessionStorage.setItem("leadId", leadId);
         sessionStorage.setItem("reportId", reportData.report_id);
+        sessionStorage.setItem("surveyData", JSON.stringify(data));
         if (reportData.ab_variant) {
           sessionStorage.setItem("abVariant", reportData.ab_variant);
         }
