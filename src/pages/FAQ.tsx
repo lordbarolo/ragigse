@@ -4,54 +4,54 @@ import { ArrowLeft } from "lucide-react";
 
 const FAQ_ITEMS = [
   {
-    question: "Hur vet jag om jag är underbetald som sjuksköterska?",
+    question: "Hur fungerar BraGig.se?",
     answer:
-      "Det bästa sättet är att jämföra din lön med vad kommuner faktiskt betalar för inhyrd personal via ramavtal. BraGig.se gör exakt detta — vi matchar din yrkesroll, kommun och erfarenhet mot officiella ramavtalspriser så du ser om ditt erbjudande ligger under, på eller över marknadsnivå.",
+      "Du fyller i din yrkesroll, arbetsort och erfarenhet. Vi jämför din nuvarande eller erbjudna ersättning med faktiska ramavtalspriser som offentliga vårdgivare betalar till bemanningsföretag för inhyrd personal. Därefter gör vi ett avdrag för marknadsmässig marginal till bemanningsföretaget. Det som kvarstår är det belopp som utgör ersättningsutrymmet som är förhandlingsbar.",
+  },
+  {
+    question: "Vilka data baseras analysen på?",
+    answer:
+      "Analysen baseras på officiella ramavtalspriser från 290 svenska vårdgivare, uppdaterade 2026.",
+  },
+  {
+    question: "Kostar det något att använda BraGig?",
+    answer:
+      "Den grundläggande jämförelsen är helt gratis. För en detaljerad rapport med förhandlingstips kan du välja att uppgradera.",
+  },
+  {
+    question: "Vilka yrkesgrupper stöds?",
+    answer:
+      "Just nu fokuserar vi på sjuksköterskor, barnmorskor och läkare. Samtliga specialiseringar har unik data. Fler kompetenser kommer snart.",
+  },
+  {
+    question: "Hur vet jag om jag är underbetald?",
+    answer:
+      "Det bästa sättet är att jämföra din ersättning med vad offentliga vårdgivare faktiskt betalar för inhyrd personal via ramavtal. BraGig.se gör exakt detta — vi matchar din yrkesroll, arbetsort och erfarenhet mot officiella ramavtalspriser så du ser om ditt erbjudande ligger under, på eller över marknadsnivå.",
   },
   {
     question: "Vad är ramavtalspriser och varför är de relevanta?",
     answer:
-      "Ramavtalspriser är de timpris som kommuner och regioner har avtalat med bemanningsföretag. De speglar vad arbetsgivare faktiskt är villiga att betala för din kompetens — och ger därmed en mer realistisk bild av ditt marknadsvärde än generella lönestatistiker.",
-  },
-  {
-    question: "Hur mycket tjänar en sjuksköterska i Sverige 2026?",
-    answer:
-      "Medianlönen för en sjuksköterska i Sverige ligger runt 36 000–39 000 kr/mån beroende på region och erfarenhet. Specialistsjuksköterskor kan tjäna 40 000–48 000 kr/mån. Ramavtalspriserna visar dock att arbetsgivare ofta betalar betydligt mer för inhyrd personal, vilket indikerar att fast anställda ofta är underbetalda.",
-  },
-  {
-    question: "Vilka faktorer påverkar min lön mest?",
-    answer:
-      "De tre viktigaste faktorerna är: (1) Din specialisering — specialistsjuksköterskor inom t.ex. intensivvård eller operation har högre marknadsvärde. (2) Geografisk placering — glesbygdskommuner betalar ofta högre ramavtalspriser. (3) Erfarenhet — varje års erfarenhet höjer ditt timpris enligt ramavtalen.",
+      "Ramavtalspriser är de timpris som offentliga vårdgivare har avtalat med bemanningsföretag. De speglar vad arbetsgivare faktiskt är villiga att betala för din kompetens — och ger därmed en mer realistisk bild av ditt marknadsvärde än generella lönestatistiker.",
   },
   {
     question: "Hur kan jag använda BraGig-rapporten i en löneförhandling?",
     answer:
-      "Rapporten visar exakt vad din kommun betalar för inhyrd personal med din profil. I förhandlingen kan du referera till dessa siffror och argumentera att din fasta lön bör spegla ditt faktiska marknadsvärde. Många arbetsgivare föredrar att höja lönen framför att betala ännu mer för inhyrd personal.",
+      "Rapporten visar exakt vad din vårdgivare betalar för inhyrd personal med din profil. I förhandlingen kan du referera till dessa siffror och argumentera att din ersättning bör spegla ditt faktiska marknadsvärde.",
   },
   {
-    question: "Skiljer sig lönerna mycket mellan olika kommuner?",
+    question: "Skiljer sig ersättningarna mycket mellan olika kommuner?",
     answer:
-      "Ja, skillnaderna kan vara stora. Storstadskommuner har generellt lägre ramavtalspriser tack vare större tillgång på personal, medan glesbygdskommuner i norra Sverige kan betala 30–50% mer. BraGig.se visar data för alla 290 kommuner så du kan jämföra.",
-  },
-  {
-    question: "Kostar det något att använda BraGig.se?",
-    answer:
-      "Den grundläggande lönejämförelsen är helt gratis. Du fyller i din profil och får direkt se hur ditt erbjudande förhåller sig till ramavtalspriserna. För en detaljerad rapport med specifika förhandlingstips och djupare analys finns en uppgraderingsmöjlighet.",
+      "Ja, skillnaderna kan vara stora. Storstadskommuner har generellt lägre ramavtalspriser tack vare större tillgång på personal, medan glesbygdskommuner kan betala 30–50% mer. BraGig.se visar data för alla 290 vårdgivare så du kan jämföra.",
   },
   {
     question: "Hur ofta uppdateras datan?",
     answer:
-      "Vi uppdaterar ramavtalspriserna kontinuerligt i takt med att nya avtal tecknas. Den senaste uppdateringen gjordes 2026. Kommuner omförhandlar sina ramavtal regelbundet, och vi säkerställer att vår data alltid speglar aktuella priser.",
+      "Vi uppdaterar ramavtalspriserna kontinuerligt i takt med att nya avtal tecknas. Den senaste uppdateringen gjordes 2026.",
   },
   {
     question: "Kan jag lita på att datan är korrekt?",
     answer:
-      "All data kommer från offentliga ramavtal som kommuner och regioner publicerar. Dessa är juridiskt bindande avtal och representerar faktiska priser. Vi granskar och validerar all data innan den läggs in i systemet.",
-  },
-  {
-    question: "Vad är skillnaden mellan timpris och månadslön?",
-    answer:
-      "Ramavtalspriser anges som timpris som kommunen betalar till bemanningsföretaget. BraGig.se räknar om detta till en uppskattad månadslön genom att ta hänsyn till arbetstid, semesterersättning och arbetsgivaravgifter — så du kan jämföra direkt med din lönespecifikation.",
+      "All data kommer från offentliga ramavtal som vårdgivare publicerar. Dessa är juridiskt bindande avtal och representerar faktiska priser.",
   },
 ];
 
