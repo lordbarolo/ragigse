@@ -65,7 +65,7 @@ export default function Survey() {
     const loc = locations.find((l) => l.kommun === data.kommun);
     if (!loc) return null;
     const matching = rates.filter(
-      (r) => r.yrkeskategori === data.yrke && r.zon === loc.zon && r.typ === "Dag"
+      (r) => r.yrkeskategori === data.yrke && r.zon === loc.zon
     );
     if (matching.length === 0) return null;
     const rate = matching[0];
