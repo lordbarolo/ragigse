@@ -38,6 +38,74 @@ export type Database = {
         }
         Relationships: []
       }
+      contract_version_rates: {
+        Row: {
+          detaljer: string | null
+          id: string
+          timpris_kund: number
+          typ: string
+          version_id: string
+          yrkeskategori: string
+          zon: string
+        }
+        Insert: {
+          detaljer?: string | null
+          id?: string
+          timpris_kund: number
+          typ: string
+          version_id: string
+          yrkeskategori: string
+          zon: string
+        }
+        Update: {
+          detaljer?: string | null
+          id?: string
+          timpris_kund?: number
+          typ?: string
+          version_id?: string
+          yrkeskategori?: string
+          zon?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contract_version_rates_version_id_fkey"
+            columns: ["version_id"]
+            isOneToOne: false
+            referencedRelation: "contract_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contract_versions: {
+        Row: {
+          catalog_name: string
+          effective_from: string
+          id: string
+          imported_at: string
+          is_active: boolean
+          notes: string | null
+          version_label: string
+        }
+        Insert: {
+          catalog_name: string
+          effective_from: string
+          id?: string
+          imported_at?: string
+          is_active?: boolean
+          notes?: string | null
+          version_label: string
+        }
+        Update: {
+          catalog_name?: string
+          effective_from?: string
+          id?: string
+          imported_at?: string
+          is_active?: boolean
+          notes?: string | null
+          version_label?: string
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           created_at: string
@@ -151,6 +219,63 @@ export type Database = {
             columns: ["report_id"]
             isOneToOne: false
             referencedRelation: "reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      price_changes: {
+        Row: {
+          change_type: string
+          detected_at: string
+          diff_abs: number
+          diff_pct: number
+          id: string
+          new_timpris: number
+          new_version_id: string
+          old_timpris: number | null
+          old_version_id: string | null
+          yrkeskategori: string
+          zon: string
+        }
+        Insert: {
+          change_type?: string
+          detected_at?: string
+          diff_abs?: number
+          diff_pct?: number
+          id?: string
+          new_timpris: number
+          new_version_id: string
+          old_timpris?: number | null
+          old_version_id?: string | null
+          yrkeskategori: string
+          zon: string
+        }
+        Update: {
+          change_type?: string
+          detected_at?: string
+          diff_abs?: number
+          diff_pct?: number
+          id?: string
+          new_timpris?: number
+          new_version_id?: string
+          old_timpris?: number | null
+          old_version_id?: string | null
+          yrkeskategori?: string
+          zon?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "price_changes_new_version_id_fkey"
+            columns: ["new_version_id"]
+            isOneToOne: false
+            referencedRelation: "contract_versions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "price_changes_old_version_id_fkey"
+            columns: ["old_version_id"]
+            isOneToOne: false
+            referencedRelation: "contract_versions"
             referencedColumns: ["id"]
           },
         ]
