@@ -7,11 +7,11 @@ import { trackEvent } from "@/lib/trackEvent";
 const FAQ_ITEMS = [
   {
     question: "Hur fungerar BraGig.se?",
-    answer: "Du fyller i din yrkesroll, kommun och erfarenhet. Vi jämför ditt nuvarande eller erbjudna lön med faktiska ramavtalspriser som kommuner betalar för inhyrd personal.",
+    answer: "Du fyller i din yrkesroll, arbetsort och erfarenhet. Vi jämför din nuvarande eller erbjudna ersättning med faktiska ramavtalspriser som offentliga vårdgivare betalar till bemanningsföretag för inhyrd personal. Därefter gör vi ett avdrag för marknadsmässig marginal till bemanningsföretaget. Det som kvarstår är det belopp som utgör ersättningsutrymmet som är förhandlingsbar.",
   },
   {
     question: "Vilka data baseras analysen på?",
-    answer: "Analysen baseras på officiella ramavtalspriser från 290 svenska kommuner, uppdaterade 2026.",
+    answer: "Analysen baseras på officiella ramavtalspriser från 290 svenska vårdgivare, uppdaterade 2026.",
   },
   {
     question: "Kostar det något att använda BraGig?",
@@ -19,7 +19,7 @@ const FAQ_ITEMS = [
   },
   {
     question: "Vilka yrkesgrupper stöds?",
-    answer: "Just nu fokuserar vi på sjuksköterskor och specialistsjuksköterskor, men fler yrkeskategorier inom vård och omsorg kommer snart.",
+    answer: "Just nu fokuserar vi på sjuksköterskor, barnmorskor och läkare. Samtliga specialiseringar har unik data. Fler kompetenser kommer snart.",
   },
 ];
 

@@ -4,15 +4,15 @@
 
 ## Om tjänsten
 
-BraGig.se är en löneanalysplattform riktad till sjuksköterskor och specialistsjuksköterskor. Tjänsten baseras på officiella ramavtalspriser från 290 svenska kommuner och ger användare en objektiv bild av sitt marknadsvärde.
+BraGig.se är en löneanalysplattform riktad till sjuksköterskor, barnmorskor och läkare. Tjänsten baseras på officiella ramavtalspriser från 290 svenska vårdgivare och ger användare en objektiv bild av sitt marknadsvärde.
 
-Användaren fyller i yrkesroll, kommun, erfarenhet och nuvarande lön. Systemet jämför sedan mot ramavtalspriser och visar om lönen ligger under, på eller över marknadsnivå.
+Användaren fyller i yrkesroll, arbetsort och erfarenhet. Systemet jämför mot ramavtalspriser, gör avdrag för bemanningsföretagets marginal, och visar om ersättningen ligger under, på eller över marknadsnivå.
 
 ## Nyckeldata
 
-- Täcker 290 kommuner i Sverige
+- Täcker 290 vårdgivare i Sverige
 - Baserat på offentliga ramavtalspriser (uppdaterat 2026)
-- Yrkeskategorier: sjuksköterskor, specialistsjuksköterskor
+- Yrkeskategorier: sjuksköterskor, barnmorskor, läkare (samtliga specialiseringar)
 - Anställningstyper: fast anställd, inhyrd/konsult
 
 ## Vanliga frågor
