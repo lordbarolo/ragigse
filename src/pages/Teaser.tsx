@@ -20,6 +20,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useExitIntent } from "@/hooks/useExitIntent";
 import ExitIntentReferral from "@/components/ExitIntentReferral";
+import OpportunityGap from "@/components/OpportunityGap";
 import { trackEvent } from "@/lib/trackEvent";
 
 /* ── Helpers ───────────────────────────────────────────── */
@@ -274,6 +275,15 @@ export default function Teaser() {
             />
           </CardContent>
         </Card>
+
+        {/* Opportunity Gap */}
+        {isUnderpaid && (
+          <OpportunityGap
+            userHourly={userHourly}
+            marketHigh={result.high}
+            employmentType={survey.employmentType as "anstalld" | "foretagare"}
+          />
+        )}
 
         {/* Verdict card */}
         <Card className="card-shadow border-destructive/30 overflow-hidden">
