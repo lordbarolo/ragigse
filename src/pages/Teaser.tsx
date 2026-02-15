@@ -13,7 +13,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Lock, TrendingDown, ArrowRight, ShieldCheck, Users, CheckCircle, Copy } from "lucide-react";
-import SalaryGauge from "@/components/SalaryGauge";
+
 import SocialProofBanner from "@/components/SocialProofBanner";
 import ShareButton from "@/components/ShareButton";
 import { supabase } from "@/integrations/supabase/client";
@@ -265,17 +265,6 @@ export default function Teaser() {
         {/* Social proof */}
         <SocialProofBanner occupation={survey.yrke || undefined} />
 
-        {/* Salary Gauge */}
-        <Card className="card-shadow">
-          <CardContent className="pt-6 pb-4">
-            <SalaryGauge
-              currentHourly={userHourly}
-              marketLow={result.low}
-              marketHigh={result.high}
-              blurred={!unlocked && !partialUnlocked}
-            />
-          </CardContent>
-        </Card>
 
         {/* Opportunity Gap */}
         {isUnderpaid && (
