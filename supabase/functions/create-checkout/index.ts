@@ -9,11 +9,11 @@ const corsHeaders = {
 
 const PRICES: Record<string, { id: string; mode: "payment" | "subscription" }> = {
   single: {
-    id: "price_1T0C0HHvw1WxEWyiopHnK2mA",
+    id: "price_1T13d0H6keeMaRQjsw9HDiSa",
     mode: "payment",
   },
   yearly: {
-    id: "price_1T0C0dHvw1WxEWyits8npOA5",
+    id: "price_1T13dRH6keeMaRQjtsLtvDEm",
     mode: "subscription",
   },
 };
