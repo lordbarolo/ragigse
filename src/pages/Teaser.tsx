@@ -21,6 +21,7 @@ import { toast } from "@/hooks/use-toast";
 import { useExitIntent } from "@/hooks/useExitIntent";
 import ExitIntentReferral from "@/components/ExitIntentReferral";
 import OpportunityGap from "@/components/OpportunityGap";
+import MarketInsight from "@/components/MarketInsight";
 import { trackEvent } from "@/lib/trackEvent";
 
 /* ── Helpers ───────────────────────────────────────────── */
@@ -281,6 +282,16 @@ export default function Teaser() {
           <OpportunityGap
             userHourly={userHourly}
             marketHigh={result.high}
+            employmentType={survey.employmentType as "anstalld" | "foretagare"}
+          />
+        )}
+
+        {/* Market Insight – zone comparison */}
+        {rates && selectedLocation && (
+          <MarketInsight
+            occupation={survey.yrke}
+            currentZone={selectedLocation.zon}
+            rates={rates}
             employmentType={survey.employmentType as "anstalld" | "foretagare"}
           />
         )}
