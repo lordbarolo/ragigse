@@ -1,5 +1,14 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import {
+  calculateSalaryRange,
+  monthlyDelta,
+  SHARE_MIN,
+  SHARE_MAX,
+  HOURS_PER_MONTH,
+  EMPLOYER_FACTOR,
+  type EmploymentType,
+} from "../_shared/calc.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -57,7 +66,6 @@ serve(async (req) => {
     if (rateData && rateData.length > 0) {
       timprisKund = rateData[0].timpris_kund;
     } else {
-      // Fallback: find any rate matching occupation in any zone, then find same typ in user's zone
       const { data: anyRate } = await supabase
         .from("rates")
         .select("typ")
@@ -88,22 +96,17 @@ serve(async (req) => {
     // A/B variant: 50/50 random assignment
     const abVariant = Math.random() < 0.5 ? "A" : "B";
 
-    // Calculate result_json
-    const isEmployee = employment_type === "anstalld";
-    const hoursPerMonth = 167;
-    const shareMin = 0.85;
-    const shareMax = 0.90;
-    const factor = isEmployee ? 1.42 : 1;
-
-    const recommendedHourlyMin = Math.round((timprisKund * shareMin) / factor);
-    const recommendedHourlyMax = Math.round((timprisKund * shareMax) / factor);
-    const recommendedMonthlyMin = recommendedHourlyMin * hoursPerMonth;
-    const recommendedMonthlyMax = recommendedHourlyMax * hoursPerMonth;
+    // Calculate using shared module
+    const empType = employment_type as EmploymentType;
+    const range = calculateSalaryRange(timprisKund, empType);
+    const factor = empType === "anstalld" ? EMPLOYER_FACTOR : 1;
 
     const currentMonthly =
       salary_type === "hourly"
-        ? (current_salary || 0) * hoursPerMonth
+        ? (current_salary || 0) * HOURS_PER_MONTH
         : current_salary || 0;
+
+    const delta = monthlyDelta(range, currentMonthly);
 
     const resultJson = {
       calc_version: "v1",
@@ -119,18 +122,18 @@ serve(async (req) => {
         rate_customer_sek_per_hour: timprisKund,
       },
       recommendation: {
-        consultant_share_min: shareMin,
-        consultant_share_max: shareMax,
+        consultant_share_min: SHARE_MIN,
+        consultant_share_max: SHARE_MAX,
         employee_factor: factor,
-        recommended_hourly_min: recommendedHourlyMin,
-        recommended_hourly_max: recommendedHourlyMax,
-        recommended_monthly_min: recommendedMonthlyMin,
-        recommended_monthly_max: recommendedMonthlyMax,
-        hours_per_month: hoursPerMonth,
+        recommended_hourly_min: range.hourly_min,
+        recommended_hourly_max: range.hourly_max,
+        recommended_monthly_min: range.monthly_min,
+        recommended_monthly_max: range.monthly_max,
+        hours_per_month: HOURS_PER_MONTH,
       },
       delta: {
-        monthly_vs_current_min: recommendedMonthlyMin - currentMonthly,
-        monthly_vs_current_max: recommendedMonthlyMax - currentMonthly,
+        monthly_vs_current_min: delta.min,
+        monthly_vs_current_max: delta.max,
       },
     };
 

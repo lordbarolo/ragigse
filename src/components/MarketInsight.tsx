@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { BarChart3, MapPin, TrendingUp } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { estimateHourlySalary } from "@/lib/calc";
 
 interface ZoneRate {
   zon: string;
@@ -14,10 +15,7 @@ interface MarketInsightProps {
   employmentType: "anstalld" | "foretagare";
 }
 
-function toSalary(timpris: number, type: "anstalld" | "foretagare") {
-  if (type === "foretagare") return Math.round(timpris * 0.875);
-  return Math.round((timpris * 0.875) / 1.42);
-}
+const toSalary = estimateHourlySalary;
 
 export default function MarketInsight({ occupation, currentZone, rates, employmentType }: MarketInsightProps) {
   const zoneRates = useMemo(() => {
