@@ -25,6 +25,9 @@ export interface SurveyData {
 const TOTAL_STEPS = 6;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
+type EmployerType = "region_kommun" | "privat" | "inhyrd" | "";
+type CommuteType = "veckovis" | "dagligen" | "inte_alls" | "";
+
 export default function Survey() {
   const navigate = useNavigate();
   const { data: locations, isLoading: locLoading } = useLocations();
@@ -40,6 +43,9 @@ export default function Survey() {
     salaryType: "hourly",
     currentSalary: 0,
   });
+  const [employer, setEmployer] = useState<EmployerType>("");
+  const [commute, setCommute] = useState<CommuteType>("");
+  const [miniStep, setMiniStep] = useState(0); // 0 = employer question, 1 = commute question, 2 = done/spinner
 
   const uniqueYrken = useMemo(() => {
     if (!rates) return [];
@@ -71,11 +77,18 @@ export default function Survey() {
     };
   }, [rates, locations, data.yrke, data.kommun]);
 
-  // Auto-advance from "Vi räknar..." step (step 3) after 2.5 seconds
+  // Auto-advance from "Vi räknar..." step (step 3) after mini questions done
+  useEffect(() => {
+    if (step === 3 && miniStep === 2) {
+      const timer = setTimeout(() => setStep(4), 1800);
+      return () => clearTimeout(timer);
+    }
+  }, [step, miniStep]);
+
+  // Reset mini step when entering step 3
   useEffect(() => {
     if (step === 3) {
-      const timer = setTimeout(() => setStep(4), 2500);
-      return () => clearTimeout(timer);
+      setMiniStep(0);
     }
   }, [step]);
 
@@ -247,16 +260,71 @@ export default function Survey() {
           </StepWrapper>
         )}
 
-        {/* Step 3: "Vi räknar..." */}
+        {/* Step 3: Mini-questions while calculating */}
         {step === 3 && (
           <div className="flex-1 flex flex-col items-center justify-center text-center animate-in fade-in duration-300">
-            <Loader2 className="w-12 h-12 text-primary animate-spin mb-6" />
-            <h2 className="text-xl sm:text-2xl font-display text-foreground mb-2">
-              Vi räknar...
-            </h2>
-            <p className="text-sm text-muted-foreground max-w-xs">
-              Jämför din profil med ramavtalspriser från 290 vårdgivare
-            </p>
+            {miniStep < 2 ? (
+              <div className="w-full max-w-sm animate-in fade-in slide-in-from-bottom-4 duration-300" key={miniStep}>
+                <p className="text-xs text-muted-foreground mb-4 flex items-center justify-center gap-2">
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Beräknar medan du svarar…
+                </p>
+                {miniStep === 0 && (
+                  <>
+                    <h2 className="text-lg sm:text-xl font-display text-foreground mb-6">
+                      Var är du anställd?
+                    </h2>
+                    <div className="flex flex-col gap-3">
+                      {([
+                        { value: "region_kommun" as EmployerType, label: "Region eller kommun" },
+                        { value: "privat" as EmployerType, label: "Privat" },
+                        { value: "inhyrd" as EmployerType, label: "Inhyrd" },
+                      ]).map((opt) => (
+                        <button
+                          key={opt.value}
+                          onClick={() => { setEmployer(opt.value); setMiniStep(1); }}
+                          className="py-3 px-4 rounded-xl border border-border text-sm font-medium bg-card hover:bg-accent hover:text-accent-foreground transition-colors text-left"
+                        >
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
+                {miniStep === 1 && (
+                  <>
+                    <h2 className="text-lg sm:text-xl font-display text-foreground mb-6">
+                      Pendlar du till jobbet?
+                    </h2>
+                    <div className="flex flex-col gap-3">
+                      {([
+                        { value: "veckovis" as CommuteType, label: "Veckovis" },
+                        { value: "dagligen" as CommuteType, label: "Dagligen" },
+                        { value: "inte_alls" as CommuteType, label: "Inte alls" },
+                      ]).map((opt) => (
+                        <button
+                          key={opt.value}
+                          onClick={() => { setCommute(opt.value); setMiniStep(2); }}
+                          className="py-3 px-4 rounded-xl border border-border text-sm font-medium bg-card hover:bg-accent hover:text-accent-foreground transition-colors text-left"
+                        >
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+            ) : (
+              <>
+                <Loader2 className="w-12 h-12 text-primary animate-spin mb-6" />
+                <h2 className="text-xl sm:text-2xl font-display text-foreground mb-2">
+                  Vi räknar...
+                </h2>
+                <p className="text-sm text-muted-foreground max-w-xs">
+                  Jämför din profil med ramavtalspriser från 290 vårdgivare
+                </p>
+              </>
+            )}
           </div>
         )}
 
