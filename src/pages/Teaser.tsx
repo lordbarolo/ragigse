@@ -227,8 +227,9 @@ export default function Teaser() {
       if (error) throw error;
 
       setReferralLink(data.confirm_link);
+      setPartialUnlocked(true);
       trackEvent("referral_sent");
-      toast({ title: "Referens skapad! Dela länken med din kollega." });
+      toast({ title: "Länk skapad! Dela den med din kollega för att låsa upp en smygtitt." });
     } catch {
       toast({ title: "Något gick fel, försök igen", variant: "destructive" });
     } finally {
