@@ -59,6 +59,9 @@ export default function Survey() {
 
   const isLoading = locLoading || ratesLoading;
 
+  // Derive employment type from employer mini-question
+  const derivedEmploymentType = employer === "inhyrd" ? "foretagare" as const : "anstalld" as const;
+
   // Compute partial result for step 4 (shown in step 4)
   const partialResult = useMemo(() => {
     if (!rates || !locations || !data.yrke || !data.kommun) return null;
@@ -69,13 +72,14 @@ export default function Survey() {
     );
     if (matching.length === 0) return null;
     const rate = matching[0];
-    const result = calculateResult(rate.timpris_kund, "anstalld");
+    const empType = employer === "inhyrd" ? "foretagare" as const : "anstalld" as const;
+    const result = calculateResult(rate.timpris_kund, empType);
     return {
       low: result.low,
       high: result.high,
       timpris: rate.timpris_kund,
     };
-  }, [rates, locations, data.yrke, data.kommun]);
+  }, [rates, locations, data.yrke, data.kommun, employer]);
 
   // Auto-advance from "Vi räknar..." step (step 3) after mini questions done
   useEffect(() => {
@@ -117,7 +121,7 @@ export default function Survey() {
         const { error } = await supabase.from("leads").insert({
           id: leadId,
           email: data.email.trim().toLowerCase(),
-          employment_type: data.employmentType,
+          employment_type: derivedEmploymentType,
           yrke: data.yrke,
           kommun: data.kommun,
           experience: data.experience,
@@ -131,7 +135,7 @@ export default function Survey() {
             lead_id: leadId,
             email: data.email.trim().toLowerCase(),
             occupation: data.yrke,
-            employment_type: data.employmentType,
+            employment_type: derivedEmploymentType,
             kommun: data.kommun,
             experience: data.experience,
             current_salary: data.currentSalary,
@@ -344,7 +348,9 @@ export default function Survey() {
               {partialResult ? (
                 <div className="space-y-6">
                   <div className="bg-primary/5 border border-primary/20 rounded-2xl p-6 text-center">
-                    <p className="text-sm text-muted-foreground mb-2">Timlön (brutto, anställd)</p>
+                    <p className="text-sm text-muted-foreground mb-2">
+                      {derivedEmploymentType === "foretagare" ? "Timersättning (fakturerat)" : "Timlön (brutto, anställd)"}
+                    </p>
                     <p className="text-4xl sm:text-5xl font-bold font-display text-foreground">
                       {partialResult.low}–{partialResult.high}
                       <span className="text-lg text-muted-foreground ml-1">kr/h</span>
