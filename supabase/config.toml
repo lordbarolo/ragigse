@@ -23,3 +23,6 @@ verify_jwt = false
 
 [functions.analytics-dashboard]
 verify_jwt = false
+
+[functions.run-price-diff]
+verify_jwt = false
