@@ -1,8 +1,19 @@
-import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { calculateSalaryRange, type EmploymentType } from "@/lib/calc";
 
-export type EmploymentType = "anstalld" | "foretagare";
+// Re-export shared types/functions so existing imports keep working
+export type { EmploymentType } from "@/lib/calc";
+export { calculateSalaryRange };
+
+/** @deprecated Use calculateSalaryRange instead — returns {hourly_min, hourly_max}. */
+export function calculateResult(
+  timpris_kund: number,
+  employmentType: EmploymentType
+): { low: number; high: number } {
+  const r = calculateSalaryRange(timpris_kund, employmentType);
+  return { low: r.hourly_min, high: r.hourly_max };
+}
 
 export interface CalculationResult {
   yrkeskategori: string;
@@ -12,10 +23,8 @@ export interface CalculationResult {
   kommun: string;
   region: string;
   employmentType: EmploymentType;
-  // Anställd
   bruttolon_low?: number;
   bruttolon_high?: number;
-  // Företagare
   ersattning_low?: number;
   ersattning_high?: number;
 }
@@ -45,30 +54,10 @@ export function useRates() {
   });
 }
 
-export function calculateResult(
-  timpris_kund: number,
-  employmentType: EmploymentType
-): { low: number; high: number } {
-  if (employmentType === "foretagare") {
-    return {
-      low: Math.round(timpris_kund * 0.85),
-      high: Math.round(timpris_kund * 0.90),
-    };
-  }
-  // Anställd: 85-90% av priset (10-15% marginal), dela med 1.42
-  const loneutrymmeLow = timpris_kund * 0.85;
-  const loneutrymmeHigh = timpris_kund * 0.90;
-  return {
-    low: Math.round(loneutrymmeLow / 1.42),
-    high: Math.round(loneutrymmeHigh / 1.42),
-  };
-}
-
 export function findClosestRate(
   rates: { yrkeskategori: string; zon: string; typ: string; timpris_kund: number; detaljer: string | null }[],
   zon: string,
   typ: string
 ) {
-  // Find all rates matching zone and type
   return rates.filter((r) => r.zon === zon && r.typ === typ);
 }
