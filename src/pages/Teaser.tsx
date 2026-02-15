@@ -227,9 +227,8 @@ export default function Teaser() {
       if (error) throw error;
 
       setReferralLink(data.confirm_link);
-      setPartialUnlocked(true);
       trackEvent("referral_sent");
-      toast({ title: "Länk skapad! Dela den med din kollega för att låsa upp en smygtitt." });
+      toast({ title: "Länk skapad! När din kollega klickar på den låses en lightrapport upp för dig." });
     } catch {
       toast({ title: "Något gick fel, försök igen", variant: "destructive" });
     } finally {
@@ -420,7 +419,7 @@ export default function Teaser() {
               <h3 className="font-display text-lg text-foreground">Tipsa en kollega — lås upp gratis</h3>
             </div>
             <p className="text-sm text-muted-foreground">
-              Skicka länken till en kollega. När hen klickar på den låser vi upp marknadspriset för dig — helt gratis.
+              Skicka länken till en kollega. När hen klickar på den låser vi upp en gratis lightrapport åt dig.
             </p>
             <Button
               onClick={() => setReferralOpen(true)}
@@ -463,7 +462,7 @@ export default function Teaser() {
           <DialogHeader>
             <DialogTitle>Tipsa en kollega</DialogTitle>
             <DialogDescription>
-              Ange din kollegas e-postadress. När hen klickar på länken låser vi upp marknadspriset i din rapport.
+              Ange din kollegas e-postadress. När hen klickar på länken låser vi upp en gratis lightrapport åt dig.
             </DialogDescription>
           </DialogHeader>
 
@@ -496,7 +495,7 @@ export default function Teaser() {
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground">
-                Skicka länken till din kollega. När hen klickar på den låses marknadspriset upp i din rapport.
+                Skicka länken till din kollega. När hen klickar på den låses en lightrapport upp åt dig.
               </p>
             </div>
           )}
