@@ -1,13 +1,13 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useLocations, useRates } from "@/hooks/useCalculator";
+import { useLocations, useRates, calculateResult } from "@/hooks/useCalculator";
 import { supabase } from "@/integrations/supabase/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
 import {
-  Users, Briefcase, MapPin, Stethoscope, Clock, Banknote, Mail,
-  ChevronRight, ChevronLeft, ArrowRight
+  Stethoscope, Clock, MapPin, Mail,
+  ChevronRight, ChevronLeft, ArrowRight, Loader2, TrendingUp
 } from "lucide-react";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/trackEvent";
@@ -23,7 +23,6 @@ export interface SurveyData {
 }
 
 const TOTAL_STEPS = 6;
-
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function Survey() {
@@ -31,7 +30,6 @@ export default function Survey() {
   const { data: locations, isLoading: locLoading } = useLocations();
   const { data: rates, isLoading: ratesLoading } = useRates();
   const [saving, setSaving] = useState(false);
-
   const [step, setStep] = useState(0);
   const [data, setData] = useState<SurveyData>({
     email: "",
@@ -55,14 +53,40 @@ export default function Survey() {
 
   const isLoading = locLoading || ratesLoading;
 
+  // Compute partial result for step 4 (shown in step 4)
+  const partialResult = useMemo(() => {
+    if (!rates || !locations || !data.yrke || !data.kommun) return null;
+    const loc = locations.find((l) => l.kommun === data.kommun);
+    if (!loc) return null;
+    const matching = rates.filter(
+      (r) => r.yrkeskategori === data.yrke && r.zon === loc.zon && r.typ === "Dag"
+    );
+    if (matching.length === 0) return null;
+    const rate = matching[0];
+    const result = calculateResult(rate.timpris_kund, "anstalld");
+    return {
+      low: result.low,
+      high: result.high,
+      timpris: rate.timpris_kund,
+    };
+  }, [rates, locations, data.yrke, data.kommun]);
+
+  // Auto-advance from "Vi räknar..." step (step 3) after 2.5 seconds
+  useEffect(() => {
+    if (step === 3) {
+      const timer = setTimeout(() => setStep(4), 2500);
+      return () => clearTimeout(timer);
+    }
+  }, [step]);
+
   const canProceed = (() => {
     switch (step) {
-      case 0: return EMAIL_REGEX.test(data.email.trim());
-      case 1: return true; // employment type always has default
-      case 2: return !!data.yrke;
-      case 3: return !!data.kommun;
-      case 4: return true; // slider always has value
-      case 5: return data.currentSalary > 0;
+      case 0: return !!data.yrke;         // Yrkesroll
+      case 1: return true;                // Erfarenhet (slider always has value)
+      case 2: return !!data.kommun;       // Ort
+      case 3: return false;               // "Vi räknar..." – auto-advances
+      case 4: return true;                // Visa intervall
+      case 5: return EMAIL_REGEX.test(data.email.trim()); // E-post
       default: return false;
     }
   })();
@@ -89,7 +113,6 @@ export default function Survey() {
         });
         if (error) throw error;
 
-        // Create preview report via edge function
         const { data: reportData, error: reportError } = await supabase.functions.invoke("create-report", {
           body: {
             lead_id: leadId,
@@ -124,7 +147,8 @@ export default function Survey() {
   };
 
   const handleBack = () => {
-    if (step > 0) setStep(step - 1);
+    if (step === 4) setStep(2); // Skip "Vi räknar..." when going back
+    else if (step > 0) setStep(step - 1);
   };
 
   const progress = ((step + 1) / TOTAL_STEPS) * 100;
@@ -147,56 +171,8 @@ export default function Survey() {
 
       {/* Step content */}
       <div className="min-h-[280px] flex flex-col">
+        {/* Step 0: Yrkesroll */}
         {step === 0 && (
-          <StepWrapper
-            icon={<Mail className="w-6 h-6" />}
-            title="Vad är din e-postadress?"
-            subtitle="Vi skickar din rapport hit"
-          >
-            <div className="space-y-3">
-              <Input
-                type="email"
-                inputMode="email"
-                autoComplete="email"
-                placeholder="namn@exempel.se"
-                value={data.email}
-                onChange={(e) => setData({ ...data, email: e.target.value })}
-                className="h-14 text-base"
-                autoFocus
-              />
-              <p className="text-xs text-muted-foreground">
-                Vi delar aldrig din e-post med tredje part.
-              </p>
-            </div>
-          </StepWrapper>
-        )}
-
-        {step === 1 && (
-          <StepWrapper
-            icon={<Users className="w-6 h-6" />}
-            title="Hur arbetar du?"
-            subtitle="Välj din anställningsform"
-          >
-            <div className="flex flex-col gap-3">
-              <ToggleOption
-                selected={data.employmentType === "anstalld"}
-                onClick={() => setData({ ...data, employmentType: "anstalld" })}
-                icon={<Users className="w-5 h-5" />}
-                label="Anställd"
-                description="Via bemanningsföretag"
-              />
-              <ToggleOption
-                selected={data.employmentType === "foretagare"}
-                onClick={() => setData({ ...data, employmentType: "foretagare" })}
-                icon={<Briefcase className="w-5 h-5" />}
-                label="Egenföretagare"
-                description="Eget bolag / F-skatt"
-              />
-            </div>
-          </StepWrapper>
-        )}
-
-        {step === 2 && (
           <StepWrapper
             icon={<Stethoscope className="w-6 h-6" />}
             title="Vad jobbar du som?"
@@ -218,28 +194,8 @@ export default function Survey() {
           </StepWrapper>
         )}
 
-        {step === 3 && (
-          <StepWrapper
-            icon={<MapPin className="w-6 h-6" />}
-            title="Var jobbar du?"
-            subtitle="Välj din arbetsort"
-          >
-            <Select value={data.kommun} onValueChange={(v) => setData({ ...data, kommun: v })}>
-              <SelectTrigger className="h-14 text-base">
-                <SelectValue placeholder={isLoading ? "Laddar..." : "Välj arbetsort"} />
-              </SelectTrigger>
-              <SelectContent>
-                {locations?.map((l) => (
-                  <SelectItem key={l.id} value={l.kommun}>
-                    {l.kommun} ({l.region})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </StepWrapper>
-        )}
-
-        {step === 4 && (
+        {/* Step 1: Erfarenhet */}
+        {step === 1 && (
           <StepWrapper
             icon={<Clock className="w-6 h-6" />}
             title="Hur lång erfarenhet har du?"
@@ -269,86 +225,141 @@ export default function Survey() {
           </StepWrapper>
         )}
 
+        {/* Step 2: Ort */}
+        {step === 2 && (
+          <StepWrapper
+            icon={<MapPin className="w-6 h-6" />}
+            title="Var jobbar du?"
+            subtitle="Välj din arbetsort"
+          >
+            <Select value={data.kommun} onValueChange={(v) => setData({ ...data, kommun: v })}>
+              <SelectTrigger className="h-14 text-base">
+                <SelectValue placeholder={isLoading ? "Laddar..." : "Välj arbetsort"} />
+              </SelectTrigger>
+              <SelectContent>
+                {locations?.map((l) => (
+                  <SelectItem key={l.id} value={l.kommun}>
+                    {l.kommun} ({l.region})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </StepWrapper>
+        )}
+
+        {/* Step 3: "Vi räknar..." */}
+        {step === 3 && (
+          <div className="flex-1 flex flex-col items-center justify-center text-center animate-in fade-in duration-300">
+            <Loader2 className="w-12 h-12 text-primary animate-spin mb-6" />
+            <h2 className="text-xl sm:text-2xl font-display text-foreground mb-2">
+              Vi räknar...
+            </h2>
+            <p className="text-sm text-muted-foreground max-w-xs">
+              Jämför din profil med ramavtalspriser från 290 vårdgivare
+            </p>
+          </div>
+        )}
+
+        {/* Step 4: Visa intervall (delvis) */}
+        {step === 4 && (
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 flex-1 flex flex-col">
+            <div className="flex items-center gap-3 mb-2">
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                <TrendingUp className="w-6 h-6" />
+              </div>
+              <div>
+                <h2 className="text-lg sm:text-xl font-display text-foreground">Ditt uppskattade löneintervall</h2>
+                <p className="text-sm text-muted-foreground">Baserat på din yrkesroll och ort</p>
+              </div>
+            </div>
+            <div className="mt-6 flex-1">
+              {partialResult ? (
+                <div className="space-y-6">
+                  <div className="bg-primary/5 border border-primary/20 rounded-2xl p-6 text-center">
+                    <p className="text-sm text-muted-foreground mb-2">Timlön (brutto, anställd)</p>
+                    <p className="text-4xl sm:text-5xl font-bold font-display text-foreground">
+                      {partialResult.low}–{partialResult.high}
+                      <span className="text-lg text-muted-foreground ml-1">kr/h</span>
+                    </p>
+                  </div>
+                  <div className="bg-muted/50 rounded-xl p-4 text-center">
+                    <p className="text-xs text-muted-foreground">
+                      🔒 Fullständig analys med förhandlingstips, jämförelse per specialisering och regional benchmarking – ange din e-post i nästa steg.
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="bg-muted/50 rounded-2xl p-6 text-center">
+                  <p className="text-sm text-muted-foreground">
+                    Vi kunde inte beräkna ett intervall med dina val. Gå tillbaka och justera dina uppgifter.
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Step 5: E-post */}
         {step === 5 && (
           <StepWrapper
-            icon={<Banknote className="w-6 h-6" />}
-            title="Vad tjänar du idag?"
-            subtitle="Ange din nuvarande ersättning"
+            icon={<Mail className="w-6 h-6" />}
+            title="Få din fullständiga analys"
+            subtitle="Vi skickar den till din e-post"
           >
-            <div className="space-y-4">
-              <div className="flex bg-secondary rounded-lg p-1 gap-1">
-                <button
-                  onClick={() => setData({ ...data, salaryType: "hourly", currentSalary: 0 })}
-                  className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all ${
-                    data.salaryType === "hourly"
-                      ? "bg-card text-foreground card-shadow"
-                      : "text-muted-foreground"
-                  }`}
-                >
-                  Timlön (kr/h)
-                </button>
-                <button
-                  onClick={() => setData({ ...data, salaryType: "monthly", currentSalary: 0 })}
-                  className={`flex-1 py-2 px-3 rounded-md text-sm font-medium transition-all ${
-                    data.salaryType === "monthly"
-                      ? "bg-card text-foreground card-shadow"
-                      : "text-muted-foreground"
-                  }`}
-                >
-                  Månadslön (kr/mån)
-                </button>
-              </div>
-              <div className="relative">
-                <Input
-                  type="number"
-                  inputMode="numeric"
-                  placeholder={data.salaryType === "hourly" ? "T.ex. 280" : "T.ex. 42000"}
-                  value={data.currentSalary || ""}
-                  onChange={(e) => setData({ ...data, currentSalary: Number(e.target.value) })}
-                  className="h-14 text-lg pr-16"
-                />
-                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
-                  {data.salaryType === "hourly" ? "kr/h" : "kr/mån"}
-                </span>
-              </div>
+            <div className="space-y-3">
+              <Input
+                type="email"
+                inputMode="email"
+                autoComplete="email"
+                placeholder="namn@exempel.se"
+                value={data.email}
+                onChange={(e) => setData({ ...data, email: e.target.value })}
+                className="h-14 text-base"
+                autoFocus
+              />
+              <p className="text-xs text-muted-foreground">
+                Vi delar aldrig din e-post med tredje part.
+              </p>
             </div>
           </StepWrapper>
         )}
       </div>
 
-      {/* Navigation */}
-      <div className="flex gap-3 mt-8">
-        {step > 0 && (
-          <button
-            onClick={handleBack}
-            className="flex items-center gap-2 py-3 px-5 rounded-xl text-sm font-medium bg-secondary text-secondary-foreground hover:bg-muted transition-colors"
-          >
-            <ChevronLeft className="w-4 h-4" />
-            Tillbaka
-          </button>
-        )}
-        <button
-          onClick={handleNext}
-          disabled={!canProceed || saving}
-          className={`flex-1 flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl text-sm sm:text-base font-semibold transition-all duration-200 ${
-            canProceed && !saving
-              ? "hero-gradient text-primary-foreground card-shadow-hover"
-              : "bg-muted text-muted-foreground cursor-not-allowed"
-          }`}
-        >
-          {step === TOTAL_STEPS - 1 ? (
-            <>
-              {saving ? "Sparar..." : "Visa mitt resultat"}
-              {!saving && <ArrowRight className="w-5 h-5" />}
-            </>
-          ) : (
-            <>
-              Fortsätt
-              <ChevronRight className="w-4 h-4" />
-            </>
+      {/* Navigation – hide on "Vi räknar..." step */}
+      {step !== 3 && (
+        <div className="flex gap-3 mt-8">
+          {step > 0 && (
+            <button
+              onClick={handleBack}
+              className="flex items-center gap-2 py-3 px-5 rounded-xl text-sm font-medium bg-secondary text-secondary-foreground hover:bg-muted transition-colors"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              Tillbaka
+            </button>
           )}
-        </button>
-      </div>
+          <button
+            onClick={handleNext}
+            disabled={!canProceed || saving}
+            className={`flex-1 flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl text-sm sm:text-base font-semibold transition-all duration-200 ${
+              canProceed && !saving
+                ? "hero-gradient text-primary-foreground card-shadow-hover"
+                : "bg-muted text-muted-foreground cursor-not-allowed"
+            }`}
+          >
+            {step === TOTAL_STEPS - 1 ? (
+              <>
+                {saving ? "Sparar..." : "Skicka min analys"}
+                {!saving && <ArrowRight className="w-5 h-5" />}
+              </>
+            ) : (
+              <>
+                Fortsätt
+                <ChevronRight className="w-4 h-4" />
+              </>
+            )}
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -377,40 +388,5 @@ function StepWrapper({
       </div>
       <div className="mt-6 flex-1">{children}</div>
     </div>
-  );
-}
-
-function ToggleOption({
-  selected,
-  onClick,
-  icon,
-  label,
-  description,
-}: {
-  selected: boolean;
-  onClick: () => void;
-  icon: React.ReactNode;
-  label: string;
-  description: string;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={`w-full flex items-center gap-4 p-4 rounded-xl border-2 transition-all duration-200 text-left ${
-        selected
-          ? "border-primary bg-primary/5 card-shadow"
-          : "border-border hover:border-primary/30 hover:bg-muted/50"
-      }`}
-    >
-      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-        selected ? "bg-primary text-primary-foreground" : "bg-secondary text-muted-foreground"
-      }`}>
-        {icon}
-      </div>
-      <div>
-        <p className="font-semibold text-foreground">{label}</p>
-        <p className="text-sm text-muted-foreground">{description}</p>
-      </div>
-    </button>
   );
 }
