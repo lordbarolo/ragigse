@@ -1,7 +1,6 @@
 import { useMemo } from "react";
 import { BarChart3, MapPin, TrendingUp } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { estimateHourlySalary } from "@/lib/calc";
 
 interface ZoneRate {
   zon: string;
@@ -15,7 +14,7 @@ interface MarketInsightProps {
   employmentType: "anstalld" | "foretagare";
 }
 
-const toSalary = estimateHourlySalary;
+// Show raw timpris_kund (ramavtalspris) directly
 
 export default function MarketInsight({ occupation, currentZone, rates, employmentType }: MarketInsightProps) {
   const zoneRates = useMemo(() => {
@@ -58,14 +57,13 @@ export default function MarketInsight({ occupation, currentZone, rates, employme
         </div>
 
         <p className="text-xs text-muted-foreground">
-          Ramavtalspriser per zon (nationell priskatalog 2026).{" "}
-          {employmentType === "anstalld" ? "Uppskattad bruttolön" : "Uppskattad ersättning"} visas.
+          Ramavtalspriser per zon (nationell priskatalog 2026). Rekommenderad ersättning utgör 85–90 % av dessa.
         </p>
 
         <div className="space-y-2.5">
           {zoneRates.map((z) => {
             const isCurrent = z.zon === currentZone;
-            const salary = toSalary(z.timpris_kund, employmentType);
+            const salary = z.timpris_kund;
             const width = Math.max((z.timpris_kund / maxRate) * 100, 20);
 
             return (
@@ -100,7 +98,7 @@ export default function MarketInsight({ occupation, currentZone, rates, employme
           const currentRate = zoneRates.find((z) => z.zon === currentZone);
           const highest = zoneRates[zoneRates.length - 1];
           if (!currentRate || currentRate.zon === highest.zon) return null;
-          const diff = toSalary(highest.timpris_kund, employmentType) - toSalary(currentRate.timpris_kund, employmentType);
+          const diff = highest.timpris_kund - currentRate.timpris_kund;
           if (diff <= 0) return null;
           return (
             <div className="flex items-start gap-2 p-3 rounded-lg bg-primary/5 border border-primary/10">
