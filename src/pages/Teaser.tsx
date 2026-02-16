@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useLocations, useRates, calculateResult } from "@/hooks/useCalculator";
+import { usePricingEngine, type PricingResult } from "@/hooks/usePricingEngine";
+import { useRates } from "@/hooks/useCalculator";
 import type { SurveyData } from "@/components/Survey";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -51,7 +52,7 @@ function formatPartialValue(value: number): string {
 
 export default function Teaser() {
   const navigate = useNavigate();
-  const { data: locations } = useLocations();
+  const { calculate, result: pricingResult, loading: pricingLoading } = usePricingEngine();
   const { data: rates } = useRates();
   const [survey, setSurvey] = useState<SurveyData | null>(null);
   const [referralOpen, setReferralOpen] = useState(false);
@@ -72,12 +73,18 @@ export default function Teaser() {
       navigate("/");
       return;
     }
-    setSurvey(JSON.parse(raw));
+    const parsed = JSON.parse(raw) as SurveyData;
+    setSurvey(parsed);
     trackEvent("teaser_viewed");
 
     // Variant B: show partial unlock immediately
     if (abVariant === "B") {
       setPartialUnlocked(true);
+    }
+
+    // Call pricing-engine for server-side calculation
+    if (parsed.yrke && parsed.kommun) {
+      calculate(parsed.yrke, parsed.kommun, parsed.employmentType);
     }
   }, [navigate, abVariant]);
 
@@ -101,25 +108,10 @@ export default function Teaser() {
     checkReferral();
   }, []);
 
-  const selectedLocation = useMemo(
-    () => locations?.find((l) => l.kommun === survey?.kommun),
-    [locations, survey]
-  );
-
-  const selectedRate = useMemo(() => {
-    if (!rates || !selectedLocation || !survey) return null;
-    const zoneRates = rates.filter((r) => r.zon === selectedLocation.zon);
-    const exact = zoneRates.find((r) => r.yrkeskategori === survey.yrke);
-    if (exact) return exact;
-    const selectedRateFull = rates.find((r) => r.yrkeskategori === survey.yrke);
-    if (!selectedRateFull) return null;
-    return zoneRates.find((r) => r.typ === selectedRateFull.typ) || null;
-  }, [rates, selectedLocation, survey]);
-
-  const result = useMemo(() => {
-    if (!selectedRate || !survey) return null;
-    return calculateResult(selectedRate.timpris_kund, survey.employmentType);
-  }, [selectedRate, survey]);
+  // Derive result from pricing-engine
+  const result = pricingResult
+    ? { low: pricingResult.recommended_hourly_min, high: pricingResult.recommended_hourly_max }
+    : null;
 
   const userHourly = useMemo(() => {
     if (!survey) return 0;
@@ -131,18 +123,9 @@ export default function Teaser() {
   const diffPercent = result ? Math.round(((result.high - userHourly) / result.high) * 100) : 0;
 
   const buildResultJson = () => {
-    if (!result || !survey || !selectedRate) return null;
-    const hoursPerMonth = 167;
-    const isEmployee = survey.employmentType === "anstalld";
-    const shareMin = isEmployee ? 0.85 : 0.85;
-    const shareMax = isEmployee ? 0.90 : 0.90;
-    const factor = isEmployee ? 1.42 : 1;
-    const recommendedHourlyMin = Math.round((selectedRate.timpris_kund * shareMin) / factor);
-    const recommendedHourlyMax = Math.round((selectedRate.timpris_kund * shareMax) / factor);
-    const recommendedMonthlyMin = recommendedHourlyMin * hoursPerMonth;
-    const recommendedMonthlyMax = recommendedHourlyMax * hoursPerMonth;
+    if (!pricingResult || !survey) return null;
     const currentMonthly = survey.salaryType === "hourly"
-      ? survey.currentSalary * hoursPerMonth
+      ? survey.currentSalary * pricingResult.hours_per_month
       : survey.currentSalary;
 
     return {
@@ -156,21 +139,21 @@ export default function Teaser() {
         salary_type: survey.salaryType,
       },
       market: {
-        rate_customer_sek_per_hour: selectedRate.timpris_kund,
+        rate_customer_sek_per_hour: pricingResult.rate_customer_sek_per_hour,
       },
       recommendation: {
-        consultant_share_min: shareMin,
-        consultant_share_max: shareMax,
-        employee_factor: factor,
-        recommended_hourly_min: recommendedHourlyMin,
-        recommended_hourly_max: recommendedHourlyMax,
-        recommended_monthly_min: recommendedMonthlyMin,
-        recommended_monthly_max: recommendedMonthlyMax,
-        hours_per_month: hoursPerMonth,
+        consultant_share_min: pricingResult.consultant_share_min,
+        consultant_share_max: pricingResult.consultant_share_max,
+        employee_factor: pricingResult.employee_factor,
+        recommended_hourly_min: pricingResult.recommended_hourly_min,
+        recommended_hourly_max: pricingResult.recommended_hourly_max,
+        recommended_monthly_min: pricingResult.recommended_monthly_min,
+        recommended_monthly_max: pricingResult.recommended_monthly_max,
+        hours_per_month: pricingResult.hours_per_month,
       },
       delta: {
-        monthly_vs_current_min: recommendedMonthlyMin - currentMonthly,
-        monthly_vs_current_max: recommendedMonthlyMax - currentMonthly,
+        monthly_vs_current_min: pricingResult.recommended_monthly_min - currentMonthly,
+        monthly_vs_current_max: pricingResult.recommended_monthly_max - currentMonthly,
       },
     };
   };
@@ -246,7 +229,7 @@ export default function Teaser() {
   if (!survey || !result) return null;
 
   const leadId = sessionStorage.getItem("leadId") || "";
-  const regionName = selectedLocation?.region || survey.kommun || "";
+  const regionName = pricingResult?.region || survey.kommun || "";
 
   return (
     <div className="min-h-screen bg-background">
@@ -276,10 +259,10 @@ export default function Teaser() {
         )}
 
         {/* Market Insight – zone comparison */}
-        {rates && selectedLocation && (
+        {rates && pricingResult && (
           <MarketInsight
             occupation={survey.yrke}
-            currentZone={selectedLocation.zon}
+            currentZone={pricingResult.zon}
             rates={rates}
             employmentType={survey.employmentType as "anstalld" | "foretagare"}
           />
