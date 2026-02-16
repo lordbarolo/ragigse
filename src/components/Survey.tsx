@@ -200,7 +200,7 @@ export default function Survey() {
           >
             <SearchableSelect
               value={data.yrke}
-              onValueChange={(v) => setData({ ...data, yrke: v })}
+              onValueChange={(v) => { setData({ ...data, yrke: v }); setTimeout(() => { trackEvent("survey_started"); trackEvent("survey_step_completed", { step: 1 }); setStep(1); }, 300); }}
               placeholder={isLoading ? "Laddar..." : "Välj yrkeskategori"}
               options={uniqueYrken.map((r) => {
                 const yk = r.yrkeskategori.toLowerCase();
@@ -259,7 +259,7 @@ export default function Survey() {
           >
             <SearchableSelect
               value={data.kommun}
-              onValueChange={(v) => setData({ ...data, kommun: v })}
+              onValueChange={(v) => { setData({ ...data, kommun: v }); setTimeout(() => { trackEvent("survey_step_completed", { step: 3 }); setStep(3); }, 300); }}
               placeholder={isLoading ? "Laddar..." : "Välj arbetsort"}
               options={locations?.map((l) => ({
                 value: l.kommun,
@@ -401,7 +401,7 @@ export default function Survey() {
               ]).map((opt) => (
                 <button
                   key={opt.value}
-                  onClick={() => setData({ ...data, employmentType: opt.value })}
+                  onClick={() => { setData({ ...data, employmentType: opt.value }); setTimeout(() => { trackEvent("survey_step_completed", { step: 6 }); setStep(6); }, 300); }}
                   className={`py-4 px-5 rounded-xl border text-left transition-colors ${
                     data.employmentType === opt.value
                       ? "border-primary bg-primary/5 ring-2 ring-primary/20"
@@ -483,8 +483,8 @@ export default function Survey() {
         )}
       </div>
 
-      {/* Navigation – hide on "Vi räknar..." step */}
-      {step !== 4 && (
+      {/* Navigation – hide on auto-advancing steps (0=yrke, 2=ort, 4=miniQ, 5=anställning) */}
+      {![0, 2, 4, 5].includes(step) && (
         <div className="flex gap-3 mt-8">
           {step > 0 && (
             <button
