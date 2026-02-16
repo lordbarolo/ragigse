@@ -245,6 +245,19 @@ export default function Teaser() {
       </header>
 
       <main className="px-4 py-8 pb-32 max-w-lg mx-auto space-y-6">
+        {/* Top-level earnings potential banner */}
+        {isUnderpaid && diffPercent > 0 && (
+          <div className="hero-gradient rounded-2xl p-5 text-center card-shadow">
+            <p className="text-primary-foreground/80 text-sm font-medium">Enligt ramavtalen kan du tjäna</p>
+            <p className="text-3xl sm:text-4xl font-bold font-display text-primary-foreground mt-1">
+              upp till {diffPercent}% mer
+            </p>
+            <p className="text-primary-foreground/70 text-xs mt-2">
+              Baserat på offentliga ramavtalspriser för {survey.yrke} i {survey.kommun}
+            </p>
+          </div>
+        )}
+
         {/* Social proof */}
         <SocialProofBanner occupation={survey.yrke || undefined} />
 
@@ -276,7 +289,7 @@ export default function Teaser() {
               {abVariant === "B"
                 ? "Du är sannolikt underbetald enligt offentliga ramavtal."
                 : isUnderpaid
-                  ? `Du kan tjäna upp till ${diffPercent}% mer`
+                  ? "Din lön ligger under marknadspris"
                   : "Din lön ligger nära marknadspris"}
             </p>
           </div>
