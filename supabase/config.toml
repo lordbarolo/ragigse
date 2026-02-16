@@ -26,3 +26,6 @@ verify_jwt = false
 
 [functions.run-price-diff]
 verify_jwt = false
+
+[functions.pricing-engine]
+verify_jwt = false
