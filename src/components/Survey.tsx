@@ -4,6 +4,7 @@ import { useLocations, useRates } from "@/hooks/useCalculator";
 import { usePricingEngine } from "@/hooks/usePricingEngine";
 import { supabase } from "@/integrations/supabase/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import SearchableSelect from "@/components/SearchableSelect";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
 import {
@@ -194,18 +195,15 @@ export default function Survey() {
             title="Vad jobbar du som?"
             subtitle="Välj din yrkeskategori"
           >
-            <Select value={data.yrke} onValueChange={(v) => setData({ ...data, yrke: v })}>
-              <SelectTrigger className="h-14 text-base">
-                <SelectValue placeholder={isLoading ? "Laddar..." : "Välj yrkeskategori"} />
-              </SelectTrigger>
-              <SelectContent>
-                {uniqueYrken.map((r) => (
-                  <SelectItem key={r.id} value={r.yrkeskategori}>
-                    {r.detaljer || r.yrkeskategori}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <SearchableSelect
+              value={data.yrke}
+              onValueChange={(v) => setData({ ...data, yrke: v })}
+              placeholder={isLoading ? "Laddar..." : "Välj yrkeskategori"}
+              options={uniqueYrken.map((r) => ({
+                value: r.yrkeskategori,
+                label: r.detaljer || r.yrkeskategori,
+              }))}
+            />
           </StepWrapper>
         )}
 
