@@ -2,12 +2,8 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import {
   calculateSalaryRange,
-  estimateHourlySalary,
-  SHARE_MIN,
-  SHARE_MAX,
-  HOURS_PER_MONTH,
-  EMPLOYER_FACTOR,
   type EmploymentType,
+  type MarginModel,
 } from "../_shared/calc.ts";
 
 const corsHeaders = {
@@ -35,6 +31,24 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
+
+    // Fetch margin model from DB
+    const { data: modelData } = await supabase
+      .from("margin_models")
+      .select("share_min, share_max, employer_factor, hours_per_month")
+      .eq("name", "default")
+      .eq("is_active", true)
+      .limit(1)
+      .single();
+
+    const model: MarginModel | undefined = modelData
+      ? {
+          share_min: Number(modelData.share_min),
+          share_max: Number(modelData.share_max),
+          employer_factor: Number(modelData.employer_factor),
+          hours_per_month: Number(modelData.hours_per_month),
+        }
+      : undefined;
 
     // Look up zone
     const { data: locData } = await supabase
@@ -67,7 +81,6 @@ serve(async (req) => {
       timprisKund = rateData[0].timpris_kund;
       matchedOccupation = rateData[0].yrkeskategori;
     } else {
-      // Fallback: find by typ
       const { data: anyRate } = await supabase
         .from("rates")
         .select("typ")
@@ -96,8 +109,9 @@ serve(async (req) => {
     }
 
     const empType = employment_type as EmploymentType;
-    const range = calculateSalaryRange(timprisKund, empType);
-    const factor = empType === "anstalld" ? EMPLOYER_FACTOR : 1;
+    const range = calculateSalaryRange(timprisKund, empType, model);
+    const m = model ?? { share_min: 0.85, share_max: 0.90, employer_factor: 1.42, hours_per_month: 167 };
+    const factor = empType === "anstalld" ? m.employer_factor : 1;
 
     const result = {
       occupation: matchedOccupation,
@@ -106,10 +120,10 @@ serve(async (req) => {
       region,
       employment_type: empType,
       rate_customer_sek_per_hour: timprisKund,
-      consultant_share_min: SHARE_MIN,
-      consultant_share_max: SHARE_MAX,
+      consultant_share_min: m.share_min,
+      consultant_share_max: m.share_max,
       employee_factor: factor,
-      hours_per_month: HOURS_PER_MONTH,
+      hours_per_month: m.hours_per_month,
       recommended_hourly_min: range.hourly_min,
       recommended_hourly_max: range.hourly_max,
       recommended_monthly_min: range.monthly_min,
