@@ -5,10 +5,9 @@ import { usePricingEngine } from "@/hooks/usePricingEngine";
 import { supabase } from "@/integrations/supabase/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import SearchableSelect from "@/components/SearchableSelect";
-import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
 import {
-  Stethoscope, Clock, MapPin, Mail, Briefcase,
+  Stethoscope, MapPin, Mail, Briefcase,
   ChevronRight, ChevronLeft, ArrowRight, Loader2, TrendingUp
 } from "lucide-react";
 import { toast } from "sonner";
@@ -24,7 +23,7 @@ export interface SurveyData {
   currentSalary: number;
 }
 
-const TOTAL_STEPS = 8;
+const TOTAL_STEPS = 7;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 type EmployerType = "region_kommun" | "privat" | "inhyrd" | "";
@@ -81,17 +80,17 @@ export default function Survey() {
       }
     : null;
 
-  // Auto-advance from "Vi räknar..." step (step 4) after mini questions done
+  // Auto-advance from "Vi räknar..." step (step 3) after mini questions done
   useEffect(() => {
-    if (step === 4 && miniStep === 2) {
-      const timer = setTimeout(() => setStep(5), 1800);
+    if (step === 3 && miniStep === 2) {
+      const timer = setTimeout(() => setStep(4), 1800);
       return () => clearTimeout(timer);
     }
   }, [step, miniStep]);
 
-  // Reset mini step when entering step 4
+  // Reset mini step when entering step 3
   useEffect(() => {
-    if (step === 4) {
+    if (step === 3) {
       setMiniStep(0);
     }
   }, [step]);
@@ -99,13 +98,12 @@ export default function Survey() {
   const canProceed = (() => {
     switch (step) {
       case 0: return !!data.yrke;         // Yrkesroll
-      case 1: return true;                // Erfarenhet (slider always has value)
-      case 2: return !!data.kommun;       // Ort
-      case 3: return data.currentSalary > 0; // Ersättning
-      case 4: return false;               // "Vi räknar..." – auto-advances
-      case 5: return !!data.employmentType; // Anställd/Företagare
-      case 6: return true;                // Visa intervall
-      case 7: return EMAIL_REGEX.test(data.email.trim()); // E-post
+      case 1: return !!data.kommun;       // Ort
+      case 2: return data.currentSalary > 0; // Ersättning
+      case 3: return false;               // "Vi räknar..." – auto-advances
+      case 4: return !!data.employmentType; // Anställd/Företagare
+      case 5: return true;                // Visa intervall
+      case 6: return EMAIL_REGEX.test(data.email.trim()); // E-post
       default: return false;
     }
   })();
@@ -166,8 +164,8 @@ export default function Survey() {
   };
 
   const handleBack = () => {
-    if (step === 5) setStep(3); // Skip "Vi räknar..." (step 4) when going back
-    else if (step === 6) setStep(5); // From interval back to employment type
+    if (step === 4) setStep(2); // Skip "Vi räknar..." (step 3) when going back
+    else if (step === 5) setStep(4); // From interval back to employment type
     else if (step > 0) setStep(step - 1);
   };
 
@@ -219,39 +217,8 @@ export default function Survey() {
           </StepWrapper>
         )}
 
-        {/* Step 1: Erfarenhet */}
+        {/* Step 1: Ort */}
         {step === 1 && (
-          <StepWrapper
-            icon={<Clock className="w-6 h-6" />}
-            title="Hur lång erfarenhet har du?"
-            subtitle="Dra i reglaget"
-          >
-            <div className="space-y-8">
-              <div className="text-center">
-                <span className="text-5xl font-bold font-display text-foreground">
-                  {data.experience}
-                </span>
-                <span className="text-xl text-muted-foreground ml-2">år</span>
-              </div>
-              <Slider
-                value={[data.experience]}
-                onValueChange={([v]) => setData({ ...data, experience: v })}
-                min={0}
-                max={30}
-                step={1}
-                className="w-full"
-              />
-              <div className="flex justify-between text-xs text-muted-foreground">
-                <span>0 år</span>
-                <span>15 år</span>
-                <span>30+ år</span>
-              </div>
-            </div>
-          </StepWrapper>
-        )}
-
-        {/* Step 2: Ort */}
-        {step === 2 && (
           <StepWrapper
             icon={<MapPin className="w-6 h-6" />}
             title="Var jobbar du?"
@@ -259,7 +226,7 @@ export default function Survey() {
           >
             <SearchableSelect
               value={data.kommun}
-              onValueChange={(v) => { setData({ ...data, kommun: v }); setTimeout(() => { trackEvent("survey_step_completed", { step: 3 }); setStep(3); }, 300); }}
+              onValueChange={(v) => { setData({ ...data, kommun: v }); setTimeout(() => { trackEvent("survey_step_completed", { step: 2 }); setStep(2); }, 300); }}
               placeholder={isLoading ? "Laddar..." : "Välj arbetsort"}
               options={locations?.map((l) => ({
                 value: l.kommun,
@@ -270,8 +237,8 @@ export default function Survey() {
           </StepWrapper>
         )}
 
-        {/* Step 3: Ersättning */}
-        {step === 3 && (
+        {/* Step 2: Ersättning */}
+        {step === 2 && (
           <StepWrapper
             icon={<TrendingUp className="w-6 h-6" />}
             title="Vad har du i ersättning idag?"
@@ -319,8 +286,8 @@ export default function Survey() {
           </StepWrapper>
         )}
 
-        {/* Step 4: Mini-questions while calculating */}
-        {step === 4 && (
+        {/* Step 3: Mini-questions while calculating */}
+        {step === 3 && (
           <div className="flex-1 flex flex-col items-center justify-center text-center animate-in fade-in duration-300">
             {miniStep < 2 ? (
               <div className="w-full max-w-sm animate-in fade-in slide-in-from-bottom-4 duration-300" key={miniStep}>
@@ -387,8 +354,8 @@ export default function Survey() {
           </div>
         )}
 
-        {/* Step 5: Anställd / Företagare */}
-        {step === 5 && (
+        {/* Step 4: Anställd / Företagare */}
+        {step === 4 && (
           <StepWrapper
             icon={<Briefcase className="w-6 h-6" />}
             title="Hur är du anställd?"
@@ -401,7 +368,7 @@ export default function Survey() {
               ]).map((opt) => (
                 <button
                   key={opt.value}
-                  onClick={() => { setData({ ...data, employmentType: opt.value }); setTimeout(() => { trackEvent("survey_step_completed", { step: 6 }); setStep(6); }, 300); }}
+                  onClick={() => { setData({ ...data, employmentType: opt.value }); setTimeout(() => { trackEvent("survey_step_completed", { step: 5 }); setStep(5); }, 300); }}
                   className={`py-4 px-5 rounded-xl border text-left transition-colors ${
                     data.employmentType === opt.value
                       ? "border-primary bg-primary/5 ring-2 ring-primary/20"
@@ -416,8 +383,8 @@ export default function Survey() {
           </StepWrapper>
         )}
 
-        {/* Step 6: Visa intervall (delvis) */}
-        {step === 6 && (
+        {/* Step 5: Visa intervall (delvis) */}
+        {step === 5 && (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 flex-1 flex flex-col">
             <div className="flex items-center gap-3 mb-2">
               <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
@@ -457,8 +424,8 @@ export default function Survey() {
           </div>
         )}
 
-        {/* Step 7: E-post */}
-        {step === 7 && (
+        {/* Step 6: E-post */}
+        {step === 6 && (
           <StepWrapper
             icon={<Mail className="w-6 h-6" />}
             title="Få din fullständiga analys"
@@ -483,8 +450,8 @@ export default function Survey() {
         )}
       </div>
 
-      {/* Navigation – hide on auto-advancing steps (0=yrke, 2=ort, 4=miniQ, 5=anställning) */}
-      {![0, 2, 4, 5].includes(step) && (
+      {/* Navigation – hide on auto-advancing steps (0=yrke, 1=ort, 3=miniQ, 4=anställning) */}
+      {![0, 1, 3, 4].includes(step) && (
         <div className="flex gap-3 mt-8">
           {step > 0 && (
             <button
