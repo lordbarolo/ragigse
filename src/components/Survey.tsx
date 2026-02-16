@@ -201,8 +201,7 @@ export default function Survey() {
               <SelectContent>
                 {uniqueYrken.map((r) => (
                   <SelectItem key={r.id} value={r.yrkeskategori}>
-                    {r.yrkeskategori}
-                    {r.detaljer && ` — ${r.detaljer}`}
+                    {r.detaljer || r.yrkeskategori}
                   </SelectItem>
                 ))}
               </SelectContent>
