@@ -254,18 +254,15 @@ export default function Survey() {
             title="Var jobbar du?"
             subtitle="Välj din arbetsort"
           >
-            <Select value={data.kommun} onValueChange={(v) => setData({ ...data, kommun: v })}>
-              <SelectTrigger className="h-14 text-base">
-                <SelectValue placeholder={isLoading ? "Laddar..." : "Välj arbetsort"} />
-              </SelectTrigger>
-              <SelectContent>
-                {locations?.map((l) => (
-                  <SelectItem key={l.id} value={l.kommun}>
-                    {l.kommun} ({l.region})
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <SearchableSelect
+              value={data.kommun}
+              onValueChange={(v) => setData({ ...data, kommun: v })}
+              placeholder={isLoading ? "Laddar..." : "Välj arbetsort"}
+              options={locations?.map((l) => ({
+                value: l.kommun,
+                label: `${l.kommun} (${l.region})`,
+              })) || []}
+            />
           </StepWrapper>
         )}
 
