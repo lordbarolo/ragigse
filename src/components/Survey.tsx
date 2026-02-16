@@ -320,7 +320,7 @@ export default function Survey() {
                         <button
                           key={opt.value}
                           onClick={() => { setEmployer(opt.value); setMiniStep(1); }}
-                          className="py-3 px-4 rounded-xl border border-border text-sm font-medium bg-card hover:bg-accent hover:text-accent-foreground transition-colors text-left"
+                          className="py-3 px-4 rounded-xl border border-border text-sm font-medium bg-card [@media(hover:hover)]:hover:bg-accent [@media(hover:hover)]:hover:text-accent-foreground active:bg-accent/50 transition-colors text-left focus:outline-none"
                         >
                           {opt.label}
                         </button>
@@ -342,7 +342,7 @@ export default function Survey() {
                         <button
                           key={opt.value}
                           onClick={() => { setCommute(opt.value); setMiniStep(2); }}
-                          className="py-3 px-4 rounded-xl border border-border text-sm font-medium bg-card hover:bg-accent hover:text-accent-foreground transition-colors text-left"
+                          className="py-3 px-4 rounded-xl border border-border text-sm font-medium bg-card [@media(hover:hover)]:hover:bg-accent [@media(hover:hover)]:hover:text-accent-foreground active:bg-accent/50 transition-colors text-left focus:outline-none"
                         >
                           {opt.label}
                         </button>
