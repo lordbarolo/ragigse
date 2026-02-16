@@ -8,7 +8,7 @@ import SearchableSelect from "@/components/SearchableSelect";
 import { Slider } from "@/components/ui/slider";
 import { Input } from "@/components/ui/input";
 import {
-  Stethoscope, Clock, MapPin, Mail,
+  Stethoscope, Clock, MapPin, Mail, Briefcase,
   ChevronRight, ChevronLeft, ArrowRight, Loader2, TrendingUp
 } from "lucide-react";
 import { toast } from "sonner";
@@ -24,7 +24,7 @@ export interface SurveyData {
   currentSalary: number;
 }
 
-const TOTAL_STEPS = 6;
+const TOTAL_STEPS = 7;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 type EmployerType = "region_kommun" | "privat" | "inhyrd" | "";
@@ -61,8 +61,8 @@ export default function Survey() {
 
   const isLoading = locLoading || ratesLoading;
 
-  // Derive employment type from employer mini-question
-  const derivedEmploymentType = employer === "inhyrd" ? "foretagare" as const : "anstalld" as const;
+  // Use the explicit employment type from survey data
+  const derivedEmploymentType = data.employmentType;
 
   const { calculate: pricingCalculate, result: pricingResult, loading: pricingLoading } = usePricingEngine();
 
@@ -81,17 +81,17 @@ export default function Survey() {
       }
     : null;
 
-  // Auto-advance from "Vi räknar..." step (step 3) after mini questions done
+  // Auto-advance from "Vi räknar..." step (step 4) after mini questions done
   useEffect(() => {
-    if (step === 3 && miniStep === 2) {
-      const timer = setTimeout(() => setStep(4), 1800);
+    if (step === 4 && miniStep === 2) {
+      const timer = setTimeout(() => setStep(5), 1800);
       return () => clearTimeout(timer);
     }
   }, [step, miniStep]);
 
-  // Reset mini step when entering step 3
+  // Reset mini step when entering step 4
   useEffect(() => {
-    if (step === 3) {
+    if (step === 4) {
       setMiniStep(0);
     }
   }, [step]);
@@ -101,9 +101,10 @@ export default function Survey() {
       case 0: return !!data.yrke;         // Yrkesroll
       case 1: return true;                // Erfarenhet (slider always has value)
       case 2: return !!data.kommun;       // Ort
-      case 3: return false;               // "Vi räknar..." – auto-advances
-      case 4: return true;                // Visa intervall
-      case 5: return EMAIL_REGEX.test(data.email.trim()); // E-post
+      case 3: return !!data.employmentType; // Anställd/Företagare
+      case 4: return false;               // "Vi räknar..." – auto-advances
+      case 5: return true;                // Visa intervall
+      case 6: return EMAIL_REGEX.test(data.email.trim()); // E-post
       default: return false;
     }
   })();
@@ -164,7 +165,7 @@ export default function Survey() {
   };
 
   const handleBack = () => {
-    if (step === 4) setStep(2); // Skip "Vi räknar..." when going back
+    if (step === 5) setStep(3); // Skip "Vi räknar..." when going back
     else if (step > 0) setStep(step - 1);
   };
 
@@ -266,8 +267,37 @@ export default function Survey() {
           </StepWrapper>
         )}
 
-        {/* Step 3: Mini-questions while calculating */}
+        {/* Step 3: Anställd / Företagare */}
         {step === 3 && (
+          <StepWrapper
+            icon={<Briefcase className="w-6 h-6" />}
+            title="Hur är du anställd?"
+            subtitle="Välj din anställningsform"
+          >
+            <div className="flex flex-col gap-3">
+              {([
+                { value: "anstalld" as const, label: "Anställd", desc: "Tillsvidareanställd eller vikarie hos arbetsgivare" },
+                { value: "foretagare" as const, label: "Företagare", desc: "Eget bolag, inhyrd via bemanningsföretag" },
+              ]).map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => setData({ ...data, employmentType: opt.value })}
+                  className={`py-4 px-5 rounded-xl border text-left transition-colors ${
+                    data.employmentType === opt.value
+                      ? "border-primary bg-primary/5 ring-2 ring-primary/20"
+                      : "border-border bg-card hover:bg-accent hover:text-accent-foreground"
+                  }`}
+                >
+                  <span className="text-sm font-medium">{opt.label}</span>
+                  <p className="text-xs text-muted-foreground mt-0.5">{opt.desc}</p>
+                </button>
+              ))}
+            </div>
+          </StepWrapper>
+        )}
+
+        {/* Step 4: Mini-questions while calculating */}
+        {step === 4 && (
           <div className="flex-1 flex flex-col items-center justify-center text-center animate-in fade-in duration-300">
             {miniStep < 2 ? (
               <div className="w-full max-w-sm animate-in fade-in slide-in-from-bottom-4 duration-300" key={miniStep}>
@@ -334,8 +364,8 @@ export default function Survey() {
           </div>
         )}
 
-        {/* Step 4: Visa intervall (delvis) */}
-        {step === 4 && (
+        {/* Step 5: Visa intervall (delvis) */}
+        {step === 5 && (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 flex-1 flex flex-col">
             <div className="flex items-center gap-3 mb-2">
               <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
@@ -375,8 +405,8 @@ export default function Survey() {
           </div>
         )}
 
-        {/* Step 5: E-post */}
-        {step === 5 && (
+        {/* Step 6: E-post */}
+        {step === 6 && (
           <StepWrapper
             icon={<Mail className="w-6 h-6" />}
             title="Få din fullständiga analys"
@@ -402,7 +432,7 @@ export default function Survey() {
       </div>
 
       {/* Navigation – hide on "Vi räknar..." step */}
-      {step !== 3 && (
+      {step !== 4 && (
         <div className="flex gap-3 mt-8">
           {step > 0 && (
             <button
