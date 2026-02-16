@@ -2,9 +2,10 @@ import { useState, useMemo, useRef, useEffect } from "react";
 import { Check, ChevronDown, Search } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-interface Option {
+export interface Option {
   value: string;
   label: string;
+  group?: string;
 }
 
 interface SearchableSelectProps {
@@ -33,6 +34,17 @@ export default function SearchableSelect({
     return options.filter((o) => o.label.toLowerCase().includes(q));
   }, [options, search]);
 
+  // Group filtered options
+  const grouped = useMemo(() => {
+    const groups = new Map<string, Option[]>();
+    for (const opt of filtered) {
+      const g = opt.group || "";
+      if (!groups.has(g)) groups.set(g, []);
+      groups.get(g)!.push(opt);
+    }
+    return groups;
+  }, [filtered]);
+
   const selectedLabel = options.find((o) => o.value === value)?.label;
 
   useEffect(() => {
@@ -52,6 +64,28 @@ export default function SearchableSelect({
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
+
+  const renderOption = (opt: Option) => (
+    <button
+      key={opt.value}
+      type="button"
+      onClick={() => {
+        onValueChange(opt.value);
+        setOpen(false);
+      }}
+      className={cn(
+        "relative flex w-full cursor-default select-none items-center rounded-sm py-2 pl-8 pr-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground",
+        value === opt.value && "bg-accent/50"
+      )}
+    >
+      {value === opt.value && (
+        <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
+          <Check className="h-4 w-4" />
+        </span>
+      )}
+      {opt.label}
+    </button>
+  );
 
   return (
     <div ref={containerRef} className={cn("relative", className)}>
@@ -82,26 +116,18 @@ export default function SearchableSelect({
             {filtered.length === 0 ? (
               <p className="py-4 text-center text-sm text-muted-foreground">Inga resultat</p>
             ) : (
-              filtered.map((opt) => (
-                <button
-                  key={opt.value}
-                  type="button"
-                  onClick={() => {
-                    onValueChange(opt.value);
-                    setOpen(false);
-                  }}
-                  className={cn(
-                    "relative flex w-full cursor-default select-none items-center rounded-sm py-2 pl-8 pr-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground",
-                    value === opt.value && "bg-accent/50"
+              Array.from(grouped.entries()).map(([groupName, items], gi) => (
+                <div key={groupName || "_ungrouped"}>
+                  {groupName && (
+                    <>
+                      {gi > 0 && <div className="mx-1 my-1 h-px bg-muted" />}
+                      <div className="py-1.5 pl-3 pr-2 text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                        {groupName}
+                      </div>
+                    </>
                   )}
-                >
-                  {value === opt.value && (
-                    <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-                      <Check className="h-4 w-4" />
-                    </span>
-                  )}
-                  {opt.label}
-                </button>
+                  {items.map(renderOption)}
+                </div>
               ))
             )}
           </div>
