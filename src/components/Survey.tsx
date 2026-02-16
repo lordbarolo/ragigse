@@ -383,7 +383,7 @@ export default function Survey() {
           </StepWrapper>
         )}
 
-        {/* Step 5: Visa intervall (delvis) */}
+        {/* Step 5: Visa intervall (blurrad med CTA) */}
         {step === 5 && (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 flex-1 flex flex-col">
             <div className="flex items-center gap-3 mb-2">
@@ -395,24 +395,51 @@ export default function Survey() {
                 <p className="text-sm text-muted-foreground">Baserat på din yrkesroll och ort</p>
               </div>
             </div>
-            <div className="mt-6 flex-1">
+            <div className="mt-6 flex-1 relative">
               {partialResult ? (
-                <div className="space-y-6">
-                  <div className="bg-primary/5 border border-primary/20 rounded-2xl p-6 text-center">
-                    <p className="text-sm text-muted-foreground mb-2">
-                      {derivedEmploymentType === "foretagare" ? "Timersättning (fakturerat)" : "Timlön (brutto, anställd)"}
-                    </p>
-                    <p className="text-4xl sm:text-5xl font-bold font-display text-foreground">
-                      {partialResult.low}–{partialResult.high}
-                      <span className="text-lg text-muted-foreground ml-1">kr/h</span>
-                    </p>
+                <>
+                  {/* Blurred background content */}
+                  <div className="blur-sm select-none pointer-events-none space-y-6">
+                    <div className="bg-primary/5 border border-primary/20 rounded-2xl p-6 text-center">
+                      <p className="text-sm text-muted-foreground mb-2">
+                        {derivedEmploymentType === "foretagare" ? "Timersättning (fakturerat)" : "Timlön (brutto, anställd)"}
+                      </p>
+                      <p className="text-4xl sm:text-5xl font-bold font-display text-foreground">
+                        {partialResult.low}–{partialResult.high}
+                        <span className="text-lg text-muted-foreground ml-1">kr/h</span>
+                      </p>
+                    </div>
+                    <div className="bg-muted/50 rounded-xl p-4 text-center">
+                      <p className="text-xs text-muted-foreground">
+                        Fullständig analys med förhandlingstips och regional benchmarking
+                      </p>
+                    </div>
                   </div>
-                  <div className="bg-muted/50 rounded-xl p-4 text-center">
-                    <p className="text-xs text-muted-foreground">
-                      🔒 Fullständig analys med förhandlingstips, jämförelse per specialisering och regional benchmarking – ange din e-post i nästa steg.
-                    </p>
+
+                  {/* Overlay CTA */}
+                  <div className="absolute inset-0 z-10 flex items-center justify-center">
+                    <div className="bg-card/95 backdrop-blur-sm border border-border rounded-2xl p-6 text-center max-w-[320px] shadow-lg space-y-4">
+                      <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mx-auto">
+                        <TrendingUp className="w-6 h-6 text-accent" />
+                      </div>
+                      <div>
+                        <p className="font-display text-lg font-bold text-foreground">
+                          Ditt förhandlingsutrymme är {(() => {
+                            if (!partialResult) return "5–10";
+                            const currentHourly = data.salaryType === "monthly" ? Math.round(data.currentSalary / 167) : data.currentSalary;
+                            const lowPct = Math.max(0, Math.round(((partialResult.low - currentHourly) / currentHourly) * 100));
+                            const highPct = Math.max(0, Math.round(((partialResult.high - currentHourly) / currentHourly) * 100));
+                            if (lowPct === 0 && highPct === 0) return "0–5";
+                            return `${Math.min(lowPct, highPct)}–${Math.max(lowPct, highPct)}`;
+                          })()}%
+                        </p>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Ange din e-post för att få detaljerad analys och förhandlingsargument
+                        </p>
+                      </div>
+                    </div>
                   </div>
-                </div>
+                </>
               ) : (
                 <div className="bg-muted/50 rounded-2xl p-6 text-center">
                   <p className="text-sm text-muted-foreground">
