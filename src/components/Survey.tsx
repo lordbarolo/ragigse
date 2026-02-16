@@ -261,7 +261,8 @@ export default function Survey() {
               placeholder={isLoading ? "Laddar..." : "Välj arbetsort"}
               options={locations?.map((l) => ({
                 value: l.kommun,
-                label: `${l.kommun} (${l.region})`,
+                label: l.kommun,
+                group: l.region,
               })) || []}
             />
           </StepWrapper>
