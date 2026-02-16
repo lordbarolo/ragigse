@@ -1,6 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useLocations, useRates, calculateResult } from "@/hooks/useCalculator";
+import { useLocations, useRates } from "@/hooks/useCalculator";
+import { usePricingEngine } from "@/hooks/usePricingEngine";
 import { supabase } from "@/integrations/supabase/client";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Slider } from "@/components/ui/slider";
@@ -62,24 +63,22 @@ export default function Survey() {
   // Derive employment type from employer mini-question
   const derivedEmploymentType = employer === "inhyrd" ? "foretagare" as const : "anstalld" as const;
 
-  // Compute partial result for step 4 (shown in step 4)
-  const partialResult = useMemo(() => {
-    if (!rates || !locations || !data.yrke || !data.kommun) return null;
-    const loc = locations.find((l) => l.kommun === data.kommun);
-    if (!loc) return null;
-    const matching = rates.filter(
-      (r) => r.yrkeskategori === data.yrke && r.zon === loc.zon
-    );
-    if (matching.length === 0) return null;
-    const rate = matching[0];
-    const empType = employer === "inhyrd" ? "foretagare" as const : "anstalld" as const;
-    const result = calculateResult(rate.timpris_kund, empType);
-    return {
-      low: result.low,
-      high: result.high,
-      timpris: rate.timpris_kund,
-    };
-  }, [rates, locations, data.yrke, data.kommun, employer]);
+  const { calculate: pricingCalculate, result: pricingResult, loading: pricingLoading } = usePricingEngine();
+
+  // Trigger pricing-engine when we have enough data and employer is selected
+  useEffect(() => {
+    if (data.yrke && data.kommun && employer) {
+      pricingCalculate(data.yrke, data.kommun, derivedEmploymentType);
+    }
+  }, [data.yrke, data.kommun, employer]);
+
+  const partialResult = pricingResult
+    ? {
+        low: pricingResult.recommended_hourly_min,
+        high: pricingResult.recommended_hourly_max,
+        timpris: pricingResult.rate_customer_sek_per_hour,
+      }
+    : null;
 
   // Auto-advance from "Vi räknar..." step (step 3) after mini questions done
   useEffect(() => {
