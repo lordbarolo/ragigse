@@ -199,10 +199,19 @@ export default function Survey() {
               value={data.yrke}
               onValueChange={(v) => setData({ ...data, yrke: v })}
               placeholder={isLoading ? "Laddar..." : "Välj yrkeskategori"}
-              options={uniqueYrken.map((r) => ({
-                value: r.yrkeskategori,
-                label: r.detaljer || r.yrkeskategori,
-              }))}
+              options={uniqueYrken.map((r) => {
+                const yk = r.yrkeskategori.toLowerCase();
+                const group = yk.includes("läkare") || yk === "legitimerad läkare"
+                  ? "Läkare"
+                  : yk.includes("sjuksköterska") || yk === "barnmorska" || yk === "distriktssjuksköterska" || yk === "skolsköterska" || yk === "röntgensjuksköterska"
+                    ? "Sjuksköterska"
+                    : "Övriga";
+                return {
+                  value: r.yrkeskategori,
+                  label: r.detaljer || r.yrkeskategori,
+                  group,
+                };
+              })}
             />
           </StepWrapper>
         )}
