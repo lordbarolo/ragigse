@@ -3,11 +3,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import {
   calculateSalaryRange,
   monthlyDelta,
-  SHARE_MIN,
-  SHARE_MAX,
-  HOURS_PER_MONTH,
-  EMPLOYER_FACTOR,
   type EmploymentType,
+  type MarginModel,
 } from "../_shared/calc.ts";
 
 const corsHeaders = {
@@ -44,6 +41,26 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
+
+    // Fetch margin model from DB
+    const { data: modelData } = await supabase
+      .from("margin_models")
+      .select("share_min, share_max, employer_factor, hours_per_month")
+      .eq("name", "default")
+      .eq("is_active", true)
+      .limit(1)
+      .single();
+
+    const model: MarginModel | undefined = modelData
+      ? {
+          share_min: Number(modelData.share_min),
+          share_max: Number(modelData.share_max),
+          employer_factor: Number(modelData.employer_factor),
+          hours_per_month: Number(modelData.hours_per_month),
+        }
+      : undefined;
+
+    const m = model ?? { share_min: 0.85, share_max: 0.90, employer_factor: 1.42, hours_per_month: 167 };
 
     // Look up zone from locations
     const { data: locData } = await supabase
@@ -96,14 +113,14 @@ serve(async (req) => {
     // A/B variant: 50/50 random assignment
     const abVariant = Math.random() < 0.5 ? "A" : "B";
 
-    // Calculate using shared module
+    // Calculate using shared module with DB model
     const empType = employment_type as EmploymentType;
-    const range = calculateSalaryRange(timprisKund, empType);
-    const factor = empType === "anstalld" ? EMPLOYER_FACTOR : 1;
+    const range = calculateSalaryRange(timprisKund, empType, model);
+    const factor = empType === "anstalld" ? m.employer_factor : 1;
 
     const currentMonthly =
       salary_type === "hourly"
-        ? (current_salary || 0) * HOURS_PER_MONTH
+        ? (current_salary || 0) * m.hours_per_month
         : current_salary || 0;
 
     const delta = monthlyDelta(range, currentMonthly);
@@ -122,14 +139,14 @@ serve(async (req) => {
         rate_customer_sek_per_hour: timprisKund,
       },
       recommendation: {
-        consultant_share_min: SHARE_MIN,
-        consultant_share_max: SHARE_MAX,
+        consultant_share_min: m.share_min,
+        consultant_share_max: m.share_max,
         employee_factor: factor,
         recommended_hourly_min: range.hourly_min,
         recommended_hourly_max: range.hourly_max,
         recommended_monthly_min: range.monthly_min,
         recommended_monthly_max: range.monthly_max,
-        hours_per_month: HOURS_PER_MONTH,
+        hours_per_month: m.hours_per_month,
       },
       delta: {
         monthly_vs_current_min: delta.min,

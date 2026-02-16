@@ -5,24 +5,24 @@
  * Any changes here MUST be replicated there (and vice-versa).
  */
 
-// ── Constants ────────────────────────────────────────────────────────────────
+// ── Default constants (fallbacks if DB lookup fails) ─────────────────────────
 
-/** Consultant's share of the customer hourly rate (min / max). */
 export const SHARE_MIN = 0.85;
 export const SHARE_MAX = 0.90;
-
-/** Mid-point share used for single-value estimates (e.g. MarketInsight bars). */
 export const SHARE_MID = 0.875;
-
-/** Employer cost factor (social fees, pension, vacation). Divide gross by this. */
 export const EMPLOYER_FACTOR = 1.42;
-
-/** Standard billable hours per month. */
 export const HOURS_PER_MONTH = 167;
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
 export type EmploymentType = "anstalld" | "foretagare";
+
+export interface MarginModel {
+  share_min: number;
+  share_max: number;
+  employer_factor: number;
+  hours_per_month: number;
+}
 
 export interface SalaryRange {
   hourly_min: number;
@@ -31,36 +31,48 @@ export interface SalaryRange {
   monthly_max: number;
 }
 
-// ── Pure functions ───────────────────────────────────────────────────────────
+// ── Pure functions (now accept optional MarginModel) ─────────────────────────
 
 /**
  * Given a customer hourly rate, return the consultant's recommended salary range.
+ * Uses provided model constants or falls back to hardcoded defaults.
  */
 export function calculateSalaryRange(
   timpris_kund: number,
-  employmentType: EmploymentType
+  employmentType: EmploymentType,
+  model?: MarginModel
 ): SalaryRange {
-  const factor = employmentType === "anstalld" ? EMPLOYER_FACTOR : 1;
-  const hourly_min = Math.round((timpris_kund * SHARE_MIN) / factor);
-  const hourly_max = Math.round((timpris_kund * SHARE_MAX) / factor);
+  const shareMin = model?.share_min ?? SHARE_MIN;
+  const shareMax = model?.share_max ?? SHARE_MAX;
+  const empFactor = model?.employer_factor ?? EMPLOYER_FACTOR;
+  const hpm = model?.hours_per_month ?? HOURS_PER_MONTH;
+
+  const factor = employmentType === "anstalld" ? empFactor : 1;
+  const hourly_min = Math.round((timpris_kund * shareMin) / factor);
+  const hourly_max = Math.round((timpris_kund * shareMax) / factor);
   return {
     hourly_min,
     hourly_max,
-    monthly_min: hourly_min * HOURS_PER_MONTH,
-    monthly_max: hourly_max * HOURS_PER_MONTH,
+    monthly_min: hourly_min * hpm,
+    monthly_max: hourly_max * hpm,
   };
 }
 
 /**
  * Single-value salary estimate (mid-point of the range).
- * Useful for bar-chart comparisons across zones.
  */
 export function estimateHourlySalary(
   timpris_kund: number,
-  employmentType: EmploymentType
+  employmentType: EmploymentType,
+  model?: MarginModel
 ): number {
-  const factor = employmentType === "anstalld" ? EMPLOYER_FACTOR : 1;
-  return Math.round((timpris_kund * SHARE_MID) / factor);
+  const shareMin = model?.share_min ?? SHARE_MIN;
+  const shareMax = model?.share_max ?? SHARE_MAX;
+  const empFactor = model?.employer_factor ?? EMPLOYER_FACTOR;
+  const shareMid = (shareMin + shareMax) / 2;
+
+  const factor = employmentType === "anstalld" ? empFactor : 1;
+  return Math.round((timpris_kund * shareMid) / factor);
 }
 
 /**

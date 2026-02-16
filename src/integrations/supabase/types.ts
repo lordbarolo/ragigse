@@ -169,6 +169,42 @@ export type Database = {
         }
         Relationships: []
       }
+      margin_models: {
+        Row: {
+          created_at: string
+          employer_factor: number
+          hours_per_month: number
+          id: string
+          is_active: boolean
+          name: string
+          share_max: number
+          share_min: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          employer_factor?: number
+          hours_per_month?: number
+          id?: string
+          is_active?: boolean
+          name: string
+          share_max?: number
+          share_min?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          employer_factor?: number
+          hours_per_month?: number
+          id?: string
+          is_active?: boolean
+          name?: string
+          share_max?: number
+          share_min?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       payments: {
         Row: {
           amount_ore: number
