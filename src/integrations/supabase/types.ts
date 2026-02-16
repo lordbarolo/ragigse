@@ -175,6 +175,7 @@ export type Database = {
           employer_factor: number
           hours_per_month: number
           id: string
+          industry: string
           is_active: boolean
           name: string
           share_max: number
@@ -186,6 +187,7 @@ export type Database = {
           employer_factor?: number
           hours_per_month?: number
           id?: string
+          industry?: string
           is_active?: boolean
           name: string
           share_max?: number
@@ -197,6 +199,7 @@ export type Database = {
           employer_factor?: number
           hours_per_month?: number
           id?: string
+          industry?: string
           is_active?: boolean
           name?: string
           share_max?: number
@@ -320,6 +323,7 @@ export type Database = {
         Row: {
           detaljer: string | null
           id: string
+          industry: string
           timpris_kund: number
           typ: string
           yrkeskategori: string
@@ -328,6 +332,7 @@ export type Database = {
         Insert: {
           detaljer?: string | null
           id?: string
+          industry?: string
           timpris_kund: number
           typ: string
           yrkeskategori: string
@@ -336,6 +341,7 @@ export type Database = {
         Update: {
           detaljer?: string | null
           id?: string
+          industry?: string
           timpris_kund?: number
           typ?: string
           yrkeskategori?: string
@@ -390,6 +396,7 @@ export type Database = {
           employment_type: string | null
           experience: number | null
           id: string
+          industry: string
           kommun: string | null
           lead_id: string | null
           occupation: string | null
@@ -408,6 +415,7 @@ export type Database = {
           employment_type?: string | null
           experience?: number | null
           id?: string
+          industry?: string
           kommun?: string | null
           lead_id?: string | null
           occupation?: string | null
@@ -426,6 +434,7 @@ export type Database = {
           employment_type?: string | null
           experience?: number | null
           id?: string
+          industry?: string
           kommun?: string | null
           lead_id?: string | null
           occupation?: string | null

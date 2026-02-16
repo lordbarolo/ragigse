@@ -73,6 +73,9 @@ const Index = () => {
       {/* Hero */}
       <header className="hero-gradient py-10 px-5 text-center sm:py-16">
         <div className="max-w-3xl mx-auto space-y-3">
+          <p className="text-xs sm:text-sm uppercase tracking-widest text-primary-foreground/60 font-semibold mb-2">
+            För vårdkonsulter
+          </p>
           <h1 className="text-3xl sm:text-4xl md:text-5xl text-primary-foreground leading-tight">
             Får du den lön du förtjänar?
           </h1>
@@ -134,6 +137,7 @@ const Index = () => {
       {/* Footer */}
       <footer className="border-t py-8 text-center text-sm text-muted-foreground space-y-2">
         <p>© 2026 BraGig.se · Data från offentliga ramavtal</p>
+        <p className="text-xs text-muted-foreground/70">Fler branscher kommer snart</p>
         <Link to="/vanliga-fragor" className="text-primary hover:underline">
           Vanliga frågor om lön →
         </Link>
