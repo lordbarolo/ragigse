@@ -42,6 +42,10 @@ export default function SearchableSelect({
       if (!groups.has(g)) groups.set(g, []);
       groups.get(g)!.push(opt);
     }
+    // Sort items within each group alphabetically
+    for (const [, items] of groups) {
+      items.sort((a, b) => a.label.localeCompare(b.label, "sv"));
+    }
     return groups;
   }, [filtered]);
 
