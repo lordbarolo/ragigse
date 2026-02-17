@@ -2,16 +2,17 @@ import { useState, useMemo, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocations, useRates } from "@/hooks/useCalculator";
 import { usePricingEngine } from "@/hooks/usePricingEngine";
+import { useBenchmarkEngine } from "@/hooks/useBenchmarkEngine";
 import { supabase } from "@/integrations/supabase/client";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import SearchableSelect from "@/components/SearchableSelect";
 import { Input } from "@/components/ui/input";
 import {
-  Stethoscope, MapPin, Mail, Briefcase,
+  Stethoscope, MapPin, Mail, Briefcase, Building2,
   ChevronRight, ChevronLeft, ArrowRight, Loader2, TrendingUp
 } from "lucide-react";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/trackEvent";
+import { useQuery } from "@tanstack/react-query";
 
 export interface SurveyData {
   email: string;
@@ -23,18 +24,28 @@ export interface SurveyData {
   currentSalary: number;
 }
 
-const TOTAL_STEPS = 7;
+type Track = "consultant" | "permanent" | "";
+
+const TOTAL_STEPS = 8; // 0=track, 1=yrke, 2=ort, 3=ersättning, 4=mini-questions, 5=anställd/företagare, 6=resultat, 7=email
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 type EmployerType = "region_kommun" | "privat" | "inhyrd" | "";
 type CommuteType = "veckovis" | "dagligen" | "inte_alls" | "";
 type ShiftType = "ob_jour" | "bara_ob" | "nej" | "";
 
+// Permanent track: sector derived from employer selection
+function sectorFromEmployer(employer: EmployerType): string {
+  if (employer === "region_kommun") return "region";
+  if (employer === "privat" || employer === "inhyrd") return "privat";
+  return "kommunal";
+}
+
 export default function Survey() {
   const navigate = useNavigate();
   const { data: locations, isLoading: locLoading } = useLocations();
   const { data: rates, isLoading: ratesLoading } = useRates();
   const [saving, setSaving] = useState(false);
+  const [track, setTrack] = useState<Track>("");
   const [step, setStep] = useState(0);
   const [data, setData] = useState<SurveyData>({
     email: "",
@@ -48,8 +59,27 @@ export default function Survey() {
   const [employer, setEmployer] = useState<EmployerType>("");
   const [commute, setCommute] = useState<CommuteType>("");
   const [shiftWork, setShiftWork] = useState<ShiftType>("");
-  const [miniStep, setMiniStep] = useState(0); // 0 = employer, 1 = commute, 2 = OB/jour, 3 = done/spinner
+  const [miniStep, setMiniStep] = useState(0);
 
+  // Fetch benchmark occupations for permanent track
+  const { data: benchmarkOccupations } = useQuery({
+    queryKey: ["benchmark-occupations"],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("salary_benchmarks")
+        .select("occupation")
+        .order("occupation");
+      if (error) throw error;
+      const seen = new Set<string>();
+      return (data || []).filter(r => {
+        if (seen.has(r.occupation)) return false;
+        seen.add(r.occupation);
+        return true;
+      });
+    },
+  });
+
+  // Consultant occupations from rates
   const uniqueYrken = useMemo(() => {
     if (!rates) return [];
     const seen = new Set<string>();
@@ -62,17 +92,28 @@ export default function Survey() {
 
   const isLoading = locLoading || ratesLoading;
 
-  // Use the explicit employment type from survey data
   const derivedEmploymentType = data.employmentType;
 
   const { calculate: pricingCalculate, result: pricingResult, loading: pricingLoading } = usePricingEngine();
+  const { calculate: benchmarkCalculate, result: benchmarkResult, loading: benchmarkLoading } = useBenchmarkEngine();
 
-  // Trigger pricing-engine when we have enough data and employer is selected
+  // Trigger pricing-engine when consultant track has enough data
   useEffect(() => {
-    if (data.yrke && data.kommun && employer) {
+    if (track === "consultant" && data.yrke && data.kommun && employer) {
       pricingCalculate(data.yrke, data.kommun, derivedEmploymentType);
     }
-  }, [data.yrke, data.kommun, employer]);
+  }, [data.yrke, data.kommun, employer, track]);
+
+  // Trigger benchmark-engine when permanent track has enough data
+  useEffect(() => {
+    if (track === "permanent" && data.yrke && employer) {
+      const sector = sectorFromEmployer(employer);
+      const currentMonthly = data.salaryType === "hourly"
+        ? data.currentSalary * 167
+        : data.currentSalary;
+      benchmarkCalculate(data.yrke, sector, currentMonthly > 0 ? currentMonthly : undefined);
+    }
+  }, [data.yrke, employer, track]);
 
   const partialResult = pricingResult
     ? {
@@ -82,48 +123,62 @@ export default function Survey() {
       }
     : null;
 
-  // Auto-advance from "Vi räknar..." step (step 3) after mini questions done
+  // Auto-advance from mini-questions step after done
   useEffect(() => {
-    if (step === 3 && miniStep === 3) {
-      const timer = setTimeout(() => setStep(4), 1800);
+    if (step === 4 && miniStep === 3) {
+      const timer = setTimeout(() => {
+        if (track === "consultant") {
+          setStep(5); // Go to anställd/företagare
+        } else {
+          setStep(6); // Skip employment type for permanent, go to result
+        }
+      }, 1800);
       return () => clearTimeout(timer);
     }
-  }, [step, miniStep]);
+  }, [step, miniStep, track]);
 
-  // Reset mini step when entering step 3
+  // Reset mini step when entering step 4
   useEffect(() => {
-    if (step === 3) {
+    if (step === 4) {
       setMiniStep(0);
     }
   }, [step]);
 
   const canProceed = (() => {
     switch (step) {
-      case 0: return !!data.yrke;         // Yrkesroll
-      case 1: return !!data.kommun;       // Ort
-      case 2: return data.currentSalary > 0; // Ersättning
-      case 3: return false;               // "Vi räknar..." – auto-advances
-      case 4: return !!data.employmentType; // Anställd/Företagare
-      case 5: return true;                // Visa intervall
-      case 6: return EMAIL_REGEX.test(data.email.trim()); // E-post
+      case 0: return !!track;               // Track
+      case 1: return !!data.yrke;           // Yrkesroll
+      case 2: return !!data.kommun;         // Ort
+      case 3: return data.currentSalary > 0; // Ersättning
+      case 4: return false;                 // Mini-questions – auto-advances
+      case 5: return !!data.employmentType; // Anställd/Företagare (consultant only)
+      case 6: return true;                  // Visa intervall
+      case 7: return EMAIL_REGEX.test(data.email.trim()); // E-post
       default: return false;
     }
   })();
 
   const handleNext = async () => {
     if (step < TOTAL_STEPS - 1) {
-      if (step === 0) trackEvent("survey_started");
+      if (step === 0) trackEvent("survey_started", { track });
       trackEvent("survey_step_completed", { step: step + 1 });
-      setStep(step + 1);
+
+      // For permanent track, skip step 5 (anställd/företagare)
+      if (step === 3 && track === "permanent") {
+        // Permanent doesn't need municipality for benchmark, but we collected it for lead data
+        setStep(4); // Go to mini-questions
+      } else {
+        setStep(step + 1);
+      }
     } else {
-      // Save lead and create report, then navigate to report
+      // Save lead and create report
       setSaving(true);
       try {
         const leadId = crypto.randomUUID();
         const { error } = await supabase.from("leads").insert({
           id: leadId,
           email: data.email.trim().toLowerCase(),
-          employment_type: derivedEmploymentType,
+          employment_type: track === "permanent" ? "anstalld" : derivedEmploymentType,
           yrke: data.yrke,
           kommun: data.kommun,
           experience: data.experience,
@@ -137,11 +192,13 @@ export default function Survey() {
             lead_id: leadId,
             email: data.email.trim().toLowerCase(),
             occupation: data.yrke,
-            employment_type: derivedEmploymentType,
+            employment_type: track === "permanent" ? "anstalld" : derivedEmploymentType,
             kommun: data.kommun,
             experience: data.experience,
             current_salary: data.currentSalary,
             salary_type: data.salaryType,
+            track,
+            sector: track === "permanent" ? sectorFromEmployer(employer) : undefined,
           },
         });
 
@@ -151,11 +208,11 @@ export default function Survey() {
 
         sessionStorage.setItem("leadId", leadId);
         sessionStorage.setItem("reportId", reportData.report_id);
-        sessionStorage.setItem("surveyData", JSON.stringify(data));
+        sessionStorage.setItem("surveyData", JSON.stringify({ ...data, track }));
         if (reportData.ab_variant) {
           sessionStorage.setItem("abVariant", reportData.ab_variant);
         }
-        trackEvent("survey_completed");
+        trackEvent("survey_completed", { track });
         navigate("/resultat");
       } catch {
         toast.error("Kunde inte spara dina uppgifter. Försök igen.");
@@ -166,21 +223,60 @@ export default function Survey() {
   };
 
   const handleBack = () => {
-    if (step === 3) {
+    if (step === 4) {
       if (miniStep > 0) setMiniStep(miniStep - 1);
-      else setStep(2);
-    } else if (step === 4) setStep(2); // Skip spinner
+      else setStep(3);
+    } else if (step === 5) setStep(3); // Skip mini-questions back
+    else if (step === 6 && track === "permanent") setStep(3); // Permanent skipped step 5
+    else if (step === 6) setStep(5);
     else if (step > 0) setStep(step - 1);
   };
 
-  const progress = ((step + 1) / TOTAL_STEPS) * 100;
+  // Adjust progress: permanent track has 7 effective steps (skips step 5)
+  const effectiveSteps = track === "permanent" ? TOTAL_STEPS - 1 : TOTAL_STEPS;
+  const effectiveStep = track === "permanent" && step > 5 ? step - 1 : step;
+  const progress = ((effectiveStep + 1) / effectiveSteps) * 100;
+
+  // Occupation options based on track
+  const occupationOptions = useMemo(() => {
+    if (track === "consultant") {
+      return uniqueYrken.map((r) => {
+        const yk = r.yrkeskategori.toLowerCase();
+        const group = yk.includes("läkare") || yk === "legitimerad läkare"
+          ? "Läkare"
+          : yk.includes("sjuksköterska") || yk === "barnmorska" || yk === "distriktssjuksköterska" || yk === "skolsköterska" || yk === "röntgensjuksköterska"
+            ? "Sjuksköterska"
+            : "Övriga";
+        return {
+          value: r.yrkeskategori,
+          label: r.detaljer || r.yrkeskategori,
+          group,
+        };
+      });
+    } else {
+      // Permanent track – from salary_benchmarks
+      return (benchmarkOccupations || []).map((r) => {
+        const occ = r.occupation.toLowerCase();
+        const group = occ.includes("läkare")
+          ? "Läkare"
+          : occ.includes("sjukskötersk") || occ.includes("barnmorsk") || occ.includes("distriktssk") || occ.includes("skolsk") || occ.includes("röntgen")
+            ? "Sjuksköterska"
+            : "Övriga";
+        return {
+          value: r.occupation,
+          label: r.occupation,
+          group,
+        };
+      });
+    }
+  }, [track, uniqueYrken, benchmarkOccupations]);
 
   return (
     <div className="w-full max-w-lg mx-auto">
       {/* Progress bar */}
       <div className="mb-8">
         <div className="flex justify-between text-xs text-muted-foreground mb-2">
-          <span>Steg {step + 1} av {TOTAL_STEPS}</span>
+          <span>Steg {effectiveStep + 1} av {effectiveSteps}</span>
           <span>{Math.round(progress)}%</span>
         </div>
         <div className="h-2 bg-secondary rounded-full overflow-hidden">
@@ -193,8 +289,48 @@ export default function Survey() {
 
       {/* Step content */}
       <div className="min-h-[280px] flex flex-col">
-        {/* Step 0: Yrkesroll */}
+        {/* Step 0: Track selection */}
         {step === 0 && (
+          <StepWrapper
+            icon={<Building2 className="w-6 h-6" />}
+            title="Vad vill du jämföra?"
+            subtitle="Välj typ av anställning"
+          >
+            <div className="flex flex-col gap-3">
+              {([
+                { value: "permanent" as Track, label: "Fast tjänst", desc: "Jämför din lön mot officiell lönestatistik" },
+                { value: "consultant" as Track, label: "Konsultuppdrag", desc: "Se vad du borde tjäna baserat på ramavtalspriser" },
+              ]).map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => {
+                    setTrack(opt.value);
+                    setData({ ...data, yrke: "", kommun: "", currentSalary: 0 });
+                    if (opt.value === "permanent") {
+                      setData(d => ({ ...d, salaryType: "monthly", employmentType: "anstalld" }));
+                    }
+                    setTimeout(() => {
+                      trackEvent("survey_started", { track: opt.value });
+                      trackEvent("survey_step_completed", { step: 1 });
+                      setStep(1);
+                    }, 300);
+                  }}
+                  className={`py-5 px-5 rounded-xl border text-left transition-colors ${
+                    track === opt.value
+                      ? "border-primary bg-primary/5 ring-2 ring-primary/20"
+                      : "border-border bg-card [@media(hover:hover)]:hover:bg-accent [@media(hover:hover)]:hover:text-accent-foreground"
+                  }`}
+                >
+                  <span className="text-base font-semibold">{opt.label}</span>
+                  <p className="text-sm text-muted-foreground mt-0.5">{opt.desc}</p>
+                </button>
+              ))}
+            </div>
+          </StepWrapper>
+        )}
+
+        {/* Step 1: Yrkesroll */}
+        {step === 1 && (
           <StepWrapper
             icon={<Stethoscope className="w-6 h-6" />}
             title="Vad jobbar du som?"
@@ -202,35 +338,35 @@ export default function Survey() {
           >
             <SearchableSelect
               value={data.yrke}
-              onValueChange={(v) => { setData({ ...data, yrke: v }); setTimeout(() => { trackEvent("survey_started"); trackEvent("survey_step_completed", { step: 1 }); setStep(1); }, 300); }}
+              onValueChange={(v) => {
+                setData({ ...data, yrke: v });
+                setTimeout(() => {
+                  trackEvent("survey_step_completed", { step: 2 });
+                  setStep(2);
+                }, 300);
+              }}
               placeholder={isLoading ? "Laddar..." : "Välj yrkeskategori"}
-              options={uniqueYrken.map((r) => {
-                const yk = r.yrkeskategori.toLowerCase();
-                const group = yk.includes("läkare") || yk === "legitimerad läkare"
-                  ? "Läkare"
-                  : yk.includes("sjuksköterska") || yk === "barnmorska" || yk === "distriktssjuksköterska" || yk === "skolsköterska" || yk === "röntgensjuksköterska"
-                    ? "Sjuksköterska"
-                    : "Övriga";
-                return {
-                  value: r.yrkeskategori,
-                  label: r.detaljer || r.yrkeskategori,
-                  group,
-                };
-              })}
+              options={occupationOptions}
             />
           </StepWrapper>
         )}
 
-        {/* Step 1: Ort */}
-        {step === 1 && (
+        {/* Step 2: Ort */}
+        {step === 2 && (
           <StepWrapper
             icon={<MapPin className="w-6 h-6" />}
             title="Var jobbar du?"
-            subtitle="Välj din arbetsort"
+            subtitle={track === "permanent" ? "Välj din arbetsort" : "Välj din arbetsort (påverkar zon-prissättning)"}
           >
             <SearchableSelect
               value={data.kommun}
-              onValueChange={(v) => { setData({ ...data, kommun: v }); setTimeout(() => { trackEvent("survey_step_completed", { step: 2 }); setStep(2); }, 300); }}
+              onValueChange={(v) => {
+                setData({ ...data, kommun: v });
+                setTimeout(() => {
+                  trackEvent("survey_step_completed", { step: 3 });
+                  setStep(3);
+                }, 300);
+              }}
               placeholder={isLoading ? "Laddar..." : "Välj arbetsort"}
               options={locations?.map((l) => ({
                 value: l.kommun,
@@ -241,57 +377,61 @@ export default function Survey() {
           </StepWrapper>
         )}
 
-        {/* Step 2: Ersättning */}
-        {step === 2 && (
+        {/* Step 3: Ersättning */}
+        {step === 3 && (
           <StepWrapper
             icon={<TrendingUp className="w-6 h-6" />}
             title="Vad har du i ersättning idag?"
-            subtitle="Ange din nuvarande lön eller timersättning"
+            subtitle={track === "permanent" ? "Ange din nuvarande månadslön" : "Ange din nuvarande lön eller timersättning"}
           >
             <div className="space-y-6">
-              <div className="flex gap-3">
-                {([
-                  { value: "hourly" as const, label: "Per timme" },
-                  { value: "monthly" as const, label: "Per månad" },
-                ]).map((opt) => (
-                  <button
-                    key={opt.value}
-                    onClick={() => setData({ ...data, salaryType: opt.value })}
-                    className={`flex-1 py-3 px-4 rounded-xl border text-sm font-medium transition-colors ${
-                      data.salaryType === opt.value
-                        ? "border-primary bg-primary/5 ring-2 ring-primary/20"
-                        : "border-border bg-card [@media(hover:hover)]:hover:bg-accent [@media(hover:hover)]:hover:text-accent-foreground"
-                    }`}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
-              </div>
+              {track === "consultant" && (
+                <div className="flex gap-3">
+                  {([
+                    { value: "hourly" as const, label: "Per timme" },
+                    { value: "monthly" as const, label: "Per månad" },
+                  ]).map((opt) => (
+                    <button
+                      key={opt.value}
+                      onClick={() => setData({ ...data, salaryType: opt.value })}
+                      className={`flex-1 py-3 px-4 rounded-xl border text-sm font-medium transition-colors ${
+                        data.salaryType === opt.value
+                          ? "border-primary bg-primary/5 ring-2 ring-primary/20"
+                          : "border-border bg-card [@media(hover:hover)]:hover:bg-accent [@media(hover:hover)]:hover:text-accent-foreground"
+                      }`}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              )}
               <div className="relative">
                 <Input
                   type="number"
                   inputMode="numeric"
-                  placeholder={data.salaryType === "hourly" ? "Ex. 350" : "Ex. 45000"}
+                  placeholder={track === "permanent" ? "Ex. 45000" : (data.salaryType === "hourly" ? "Ex. 350" : "Ex. 45000")}
                   value={data.currentSalary || ""}
                   onChange={(e) => setData({ ...data, currentSalary: Number(e.target.value) })}
                   className="h-14 text-lg pr-16"
                   autoFocus
                 />
                 <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
-                  {data.salaryType === "hourly" ? "kr/h" : "kr/mån"}
+                  {track === "permanent" ? "kr/mån" : (data.salaryType === "hourly" ? "kr/h" : "kr/mån")}
                 </span>
               </div>
               <p className="text-xs text-muted-foreground">
-                {data.salaryType === "hourly"
-                  ? "Ange din timersättning före skatt"
-                  : "Ange din månadslön före skatt"}
+                {track === "permanent"
+                  ? "Ange din månadslön före skatt"
+                  : data.salaryType === "hourly"
+                    ? "Ange din timersättning före skatt"
+                    : "Ange din månadslön före skatt"}
               </p>
             </div>
           </StepWrapper>
         )}
 
-        {/* Step 3: Mini-questions while calculating */}
-        {step === 3 && (
+        {/* Step 4: Mini-questions while calculating */}
+        {step === 4 && (
           <div className="flex-1 flex flex-col items-center justify-center text-center animate-in fade-in duration-300">
             {miniStep < 3 ? (
               <div className="w-full max-w-sm animate-in fade-in slide-in-from-bottom-4 duration-300" key={miniStep}>
@@ -373,15 +513,17 @@ export default function Survey() {
                   Vi räknar...
                 </h2>
                 <p className="text-sm text-muted-foreground max-w-xs">
-                  Jämför din profil med ramavtalspriser från 290 vårdgivare
+                  {track === "permanent"
+                    ? "Jämför din lön mot officiell statistik från Medlingsinstitutet"
+                    : "Jämför din profil med ramavtalspriser från 290 vårdgivare"}
                 </p>
               </>
             )}
           </div>
         )}
 
-        {/* Step 4: Anställd / Företagare */}
-        {step === 4 && (
+        {/* Step 5: Anställd / Företagare (consultant only) */}
+        {step === 5 && track === "consultant" && (
           <StepWrapper
             icon={<Briefcase className="w-6 h-6" />}
             title="Hur är du anställd?"
@@ -394,7 +536,13 @@ export default function Survey() {
               ]).map((opt) => (
                 <button
                   key={opt.value}
-                  onClick={() => { setData({ ...data, employmentType: opt.value }); setTimeout(() => { trackEvent("survey_step_completed", { step: 5 }); setStep(5); }, 300); }}
+                  onClick={() => {
+                    setData({ ...data, employmentType: opt.value });
+                    setTimeout(() => {
+                      trackEvent("survey_step_completed", { step: 6 });
+                      setStep(6);
+                    }, 300);
+                  }}
                   className={`py-4 px-5 rounded-xl border text-left transition-colors ${
                     data.employmentType === opt.value
                       ? "border-primary bg-primary/5 ring-2 ring-primary/20"
@@ -409,83 +557,140 @@ export default function Survey() {
           </StepWrapper>
         )}
 
-        {/* Step 5: Visa intervall (blurrad med CTA) */}
-        {step === 5 && (
+        {/* Step 6: Result display */}
+        {step === 6 && (
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 flex-1 flex flex-col">
             <div className="flex items-center gap-3 mb-2">
               <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
                 <TrendingUp className="w-6 h-6" />
               </div>
               <div>
-                <h2 className="text-lg sm:text-xl font-display text-foreground">Ditt uppskattade löneintervall</h2>
-                <p className="text-sm text-muted-foreground">Baserat på din yrkesroll och ort</p>
+                <h2 className="text-lg sm:text-xl font-display text-foreground">
+                  {track === "permanent" ? "Ditt förhandlingsutrymme" : "Ditt uppskattade löneintervall"}
+                </h2>
+                <p className="text-sm text-muted-foreground">
+                  {track === "permanent" ? "Baserat på officiell lönestatistik" : "Baserat på din yrkesroll och ort"}
+                </p>
               </div>
             </div>
             <div className="mt-6 flex-1 relative">
-              {partialResult ? (
-                <>
-                  {/* Blurred background content */}
-                  <div className="blur-sm select-none pointer-events-none space-y-6">
-                    <div className="bg-primary/5 border border-primary/20 rounded-2xl p-6 text-center">
-                      <p className="text-sm text-muted-foreground mb-2">
-                        {derivedEmploymentType === "foretagare" ? "Timersättning (fakturerat)" : "Timlön (brutto, anställd)"}
-                      </p>
-                      <p className="text-4xl sm:text-5xl font-bold font-display text-foreground">
-                        {partialResult.low}–{partialResult.high}
-                        <span className="text-lg text-muted-foreground ml-1">kr/h</span>
-                      </p>
+              {track === "permanent" ? (
+                // Permanent track result
+                benchmarkResult ? (
+                  <>
+                    <div className="blur-sm select-none pointer-events-none space-y-6">
+                      <div className="bg-primary/5 border border-primary/20 rounded-2xl p-6 text-center">
+                        <p className="text-sm text-muted-foreground mb-2">Lönenivå P75 (officiell statistik)</p>
+                        <p className="text-4xl sm:text-5xl font-bold font-display text-foreground">
+                          {benchmarkResult.percentile_75.toLocaleString("sv-SE")}
+                          <span className="text-lg text-muted-foreground ml-1">kr/mån</span>
+                        </p>
+                      </div>
+                      <div className="bg-muted/50 rounded-xl p-4 text-center">
+                        <p className="text-xs text-muted-foreground">
+                          Fullständig analys med förhandlingstips
+                        </p>
+                      </div>
                     </div>
-                    <div className="bg-muted/50 rounded-xl p-4 text-center">
-                      <p className="text-xs text-muted-foreground">
-                        Fullständig analys med förhandlingstips och regional benchmarking
-                      </p>
+                    <div className="absolute inset-0 z-10 flex items-center justify-center">
+                      <div className="bg-card/95 backdrop-blur-sm border border-border rounded-2xl p-6 text-center max-w-[320px] shadow-lg space-y-4">
+                        <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mx-auto">
+                          <TrendingUp className="w-6 h-6 text-accent" />
+                        </div>
+                        <div>
+                          <p className="font-display text-lg font-bold text-foreground">
+                            {benchmarkResult.category === "large"
+                              ? "Stort förhandlingsutrymme"
+                              : benchmarkResult.category === "medium"
+                                ? "Medel förhandlingsutrymme"
+                                : "Begränsat förhandlingsutrymme"}
+                          </p>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            {benchmarkResult.gap_pct != null
+                              ? `Du kan potentiellt öka din lön med ~${benchmarkResult.gap_pct}%`
+                              : "Ange din e-post för att få detaljerad analys"}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2 pt-2 border-t border-border/50">
+                          <MapPin className="w-4 h-4 text-primary shrink-0" />
+                          <p className="text-xs text-primary font-medium leading-snug">
+                            Källa: Medlingsinstitutet {benchmarkResult.year}
+                          </p>
+                        </div>
+                      </div>
                     </div>
+                  </>
+                ) : (
+                  <div className="bg-muted/50 rounded-2xl p-6 text-center">
+                    <p className="text-sm text-muted-foreground">
+                      Vi kunde inte beräkna ett resultat med dina val. Gå tillbaka och justera dina uppgifter.
+                    </p>
                   </div>
-
-                  {/* Overlay CTA */}
-                  <div className="absolute inset-0 z-10 flex items-center justify-center">
-                    <div className="bg-card/95 backdrop-blur-sm border border-border rounded-2xl p-6 text-center max-w-[320px] shadow-lg space-y-4">
-                      <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mx-auto">
-                        <TrendingUp className="w-6 h-6 text-accent" />
-                      </div>
-                      <div>
-                        <p className="font-display text-lg font-bold text-foreground">
-                          Ditt förhandlingsutrymme är {(() => {
-                            if (!partialResult) return "5–10";
-                            const currentHourly = data.salaryType === "monthly" ? Math.round(data.currentSalary / 167) : data.currentSalary;
-                            const lowPct = Math.max(0, Math.round(((partialResult.low - currentHourly) / currentHourly) * 100));
-                            const highPct = Math.max(0, Math.round(((partialResult.high - currentHourly) / currentHourly) * 100));
-                            if (lowPct === 0 && highPct === 0) return "0–5";
-                            return `${Math.min(lowPct, highPct)}–${Math.max(lowPct, highPct)}`;
-                          })()}%
-                        </p>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          Ange din e-post för att få detaljerad analys och förhandlingsargument
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2 pt-2 border-t border-border/50">
-                        <MapPin className="w-4 h-4 text-primary shrink-0" />
-                        <p className="text-xs text-primary font-medium leading-snug">
-                          Du kan tjäna betydligt mer.<br />
-                          Se vilka orter som ger dig högre lön.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </>
+                )
               ) : (
-                <div className="bg-muted/50 rounded-2xl p-6 text-center">
-                  <p className="text-sm text-muted-foreground">
-                    Vi kunde inte beräkna ett intervall med dina val. Gå tillbaka och justera dina uppgifter.
-                  </p>
-                </div>
+                // Consultant track result
+                partialResult ? (
+                  <>
+                    <div className="blur-sm select-none pointer-events-none space-y-6">
+                      <div className="bg-primary/5 border border-primary/20 rounded-2xl p-6 text-center">
+                        <p className="text-sm text-muted-foreground mb-2">
+                          {derivedEmploymentType === "foretagare" ? "Timersättning (fakturerat)" : "Timlön (brutto, anställd)"}
+                        </p>
+                        <p className="text-4xl sm:text-5xl font-bold font-display text-foreground">
+                          {partialResult.low}–{partialResult.high}
+                          <span className="text-lg text-muted-foreground ml-1">kr/h</span>
+                        </p>
+                      </div>
+                      <div className="bg-muted/50 rounded-xl p-4 text-center">
+                        <p className="text-xs text-muted-foreground">
+                          Fullständig analys med förhandlingstips och regional benchmarking
+                        </p>
+                      </div>
+                    </div>
+                    <div className="absolute inset-0 z-10 flex items-center justify-center">
+                      <div className="bg-card/95 backdrop-blur-sm border border-border rounded-2xl p-6 text-center max-w-[320px] shadow-lg space-y-4">
+                        <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mx-auto">
+                          <TrendingUp className="w-6 h-6 text-accent" />
+                        </div>
+                        <div>
+                          <p className="font-display text-lg font-bold text-foreground">
+                            Ditt förhandlingsutrymme är {(() => {
+                              if (!partialResult) return "5–10";
+                              const currentHourly = data.salaryType === "monthly" ? Math.round(data.currentSalary / 167) : data.currentSalary;
+                              const lowPct = Math.max(0, Math.round(((partialResult.low - currentHourly) / currentHourly) * 100));
+                              const highPct = Math.max(0, Math.round(((partialResult.high - currentHourly) / currentHourly) * 100));
+                              if (lowPct === 0 && highPct === 0) return "0–5";
+                              return `${Math.min(lowPct, highPct)}–${Math.max(lowPct, highPct)}`;
+                            })()}%
+                          </p>
+                          <p className="text-sm text-muted-foreground mt-1">
+                            Ange din e-post för att få detaljerad analys och förhandlingsargument
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-2 pt-2 border-t border-border/50">
+                          <MapPin className="w-4 h-4 text-primary shrink-0" />
+                          <p className="text-xs text-primary font-medium leading-snug">
+                            Du kan tjäna betydligt mer.<br />
+                            Se vilka orter som ger dig högre lön.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <div className="bg-muted/50 rounded-2xl p-6 text-center">
+                    <p className="text-sm text-muted-foreground">
+                      Vi kunde inte beräkna ett intervall med dina val. Gå tillbaka och justera dina uppgifter.
+                    </p>
+                  </div>
+                )
               )}
             </div>
           </div>
         )}
 
-        {/* Step 6: E-post */}
-        {step === 6 && (
+        {/* Step 7: E-post */}
+        {step === 7 && (
           <StepWrapper
             icon={<Mail className="w-6 h-6" />}
             title="Få din fullständiga analys"
@@ -520,7 +725,7 @@ export default function Survey() {
             <ChevronLeft className="w-4 h-4" />
             Tillbaka
           </button>
-          {![0, 1, 3, 4].includes(step) && (
+          {![0, 1, 2, 4, 5].includes(step) && (
             <button
               onClick={handleNext}
               disabled={!canProceed || saving}
