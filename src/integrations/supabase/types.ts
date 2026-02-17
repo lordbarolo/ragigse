@@ -455,6 +455,69 @@ export type Database = {
           },
         ]
       }
+      salary_benchmarks: {
+        Row: {
+          average_monthly: number
+          created_at: string
+          id: string
+          industry: string
+          metadata: Json | null
+          occupation: string
+          occupation_code: string | null
+          percentile_10: number | null
+          percentile_25: number | null
+          percentile_50: number | null
+          percentile_75: number | null
+          percentile_90: number | null
+          region: string | null
+          sample_size: number | null
+          sector: string
+          source: string
+          updated_at: string
+          year: number
+        }
+        Insert: {
+          average_monthly: number
+          created_at?: string
+          id?: string
+          industry?: string
+          metadata?: Json | null
+          occupation: string
+          occupation_code?: string | null
+          percentile_10?: number | null
+          percentile_25?: number | null
+          percentile_50?: number | null
+          percentile_75?: number | null
+          percentile_90?: number | null
+          region?: string | null
+          sample_size?: number | null
+          sector: string
+          source: string
+          updated_at?: string
+          year: number
+        }
+        Update: {
+          average_monthly?: number
+          created_at?: string
+          id?: string
+          industry?: string
+          metadata?: Json | null
+          occupation?: string
+          occupation_code?: string | null
+          percentile_10?: number | null
+          percentile_25?: number | null
+          percentile_50?: number | null
+          percentile_75?: number | null
+          percentile_90?: number | null
+          region?: string | null
+          sample_size?: number | null
+          sector?: string
+          source?: string
+          updated_at?: string
+          year?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
