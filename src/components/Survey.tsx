@@ -166,8 +166,10 @@ export default function Survey() {
   };
 
   const handleBack = () => {
-    if (step === 4) setStep(2); // Skip "Vi räknar..." (step 3) when going back
-    else if (step === 5) setStep(4); // From interval back to employment type
+    if (step === 3) {
+      if (miniStep > 0) setMiniStep(miniStep - 1);
+      else setStep(2);
+    } else if (step === 4) setStep(2); // Skip spinner
     else if (step > 0) setStep(step - 1);
   };
 
@@ -501,39 +503,39 @@ export default function Survey() {
         )}
       </div>
 
-      {/* Navigation – hide on auto-advancing steps (0=yrke, 1=ort, 3=miniQ, 4=anställning) */}
-      {![0, 1, 3, 4].includes(step) && (
+      {/* Navigation */}
+      {step > 0 && (
         <div className="flex gap-3 mt-8">
-          {step > 0 && (
+          <button
+            onClick={handleBack}
+            className="flex items-center gap-2 py-3 px-5 rounded-xl text-sm font-medium bg-secondary text-secondary-foreground hover:bg-muted transition-colors"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            Tillbaka
+          </button>
+          {![0, 1, 3, 4].includes(step) && (
             <button
-              onClick={handleBack}
-              className="flex items-center gap-2 py-3 px-5 rounded-xl text-sm font-medium bg-secondary text-secondary-foreground hover:bg-muted transition-colors"
+              onClick={handleNext}
+              disabled={!canProceed || saving}
+              className={`flex-1 flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl text-sm sm:text-base font-semibold transition-all duration-200 ${
+                canProceed && !saving
+                  ? "hero-gradient text-primary-foreground card-shadow-hover"
+                  : "bg-muted text-muted-foreground cursor-not-allowed"
+              }`}
             >
-              <ChevronLeft className="w-4 h-4" />
-              Tillbaka
+              {step === TOTAL_STEPS - 1 ? (
+                <>
+                  {saving ? "Sparar..." : "Skicka min analys"}
+                  {!saving && <ArrowRight className="w-5 h-5" />}
+                </>
+              ) : (
+                <>
+                  Fortsätt
+                  <ChevronRight className="w-4 h-4" />
+                </>
+              )}
             </button>
           )}
-          <button
-            onClick={handleNext}
-            disabled={!canProceed || saving}
-            className={`flex-1 flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl text-sm sm:text-base font-semibold transition-all duration-200 ${
-              canProceed && !saving
-                ? "hero-gradient text-primary-foreground card-shadow-hover"
-                : "bg-muted text-muted-foreground cursor-not-allowed"
-            }`}
-          >
-            {step === TOTAL_STEPS - 1 ? (
-              <>
-                {saving ? "Sparar..." : "Skicka min analys"}
-                {!saving && <ArrowRight className="w-5 h-5" />}
-              </>
-            ) : (
-              <>
-                Fortsätt
-                <ChevronRight className="w-4 h-4" />
-              </>
-            )}
-          </button>
         </div>
       )}
     </div>
