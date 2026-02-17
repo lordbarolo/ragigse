@@ -29,3 +29,6 @@ verify_jwt = false
 
 [functions.pricing-engine]
 verify_jwt = false
+
+[functions.salary-benchmark-engine]
+verify_jwt = false
