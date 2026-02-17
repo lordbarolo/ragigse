@@ -28,6 +28,7 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 type EmployerType = "region_kommun" | "privat" | "inhyrd" | "";
 type CommuteType = "veckovis" | "dagligen" | "inte_alls" | "";
+type ShiftType = "ob_jour" | "bara_ob" | "nej" | "";
 
 export default function Survey() {
   const navigate = useNavigate();
@@ -46,7 +47,8 @@ export default function Survey() {
   });
   const [employer, setEmployer] = useState<EmployerType>("");
   const [commute, setCommute] = useState<CommuteType>("");
-  const [miniStep, setMiniStep] = useState(0); // 0 = employer question, 1 = commute question, 2 = done/spinner
+  const [shiftWork, setShiftWork] = useState<ShiftType>("");
+  const [miniStep, setMiniStep] = useState(0); // 0 = employer, 1 = commute, 2 = OB/jour, 3 = done/spinner
 
   const uniqueYrken = useMemo(() => {
     if (!rates) return [];
@@ -82,7 +84,7 @@ export default function Survey() {
 
   // Auto-advance from "Vi räknar..." step (step 3) after mini questions done
   useEffect(() => {
-    if (step === 3 && miniStep === 2) {
+    if (step === 3 && miniStep === 3) {
       const timer = setTimeout(() => setStep(4), 1800);
       return () => clearTimeout(timer);
     }
@@ -289,7 +291,7 @@ export default function Survey() {
         {/* Step 3: Mini-questions while calculating */}
         {step === 3 && (
           <div className="flex-1 flex flex-col items-center justify-center text-center animate-in fade-in duration-300">
-            {miniStep < 2 ? (
+            {miniStep < 3 ? (
               <div className="w-full max-w-sm animate-in fade-in slide-in-from-bottom-4 duration-300" key={miniStep}>
                 <p className="text-xs text-muted-foreground mb-4 flex items-center justify-center gap-2">
                   <Loader2 className="w-4 h-4 animate-spin" />
@@ -331,6 +333,28 @@ export default function Survey() {
                         <button
                           key={opt.value}
                           onClick={() => { setCommute(opt.value); setMiniStep(2); }}
+                          className="py-3 px-4 rounded-xl border border-border text-sm font-medium bg-card [@media(hover:hover)]:hover:bg-accent [@media(hover:hover)]:hover:text-accent-foreground active:bg-accent/50 transition-colors text-left focus:outline-none"
+                        >
+                          {opt.label}
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
+                {miniStep === 2 && (
+                  <>
+                    <h2 className="text-lg sm:text-xl font-display text-foreground mb-6">
+                      Jobbar du OB eller jour?
+                    </h2>
+                    <div className="flex flex-col gap-3">
+                      {([
+                        { value: "ob_jour" as ShiftType, label: "Ja, både OB och jour" },
+                        { value: "bara_ob" as ShiftType, label: "Bara OB (kväll/helg)" },
+                        { value: "nej" as ShiftType, label: "Nej, enbart dagtid" },
+                      ]).map((opt) => (
+                        <button
+                          key={opt.value}
+                          onClick={() => { setShiftWork(opt.value); setMiniStep(3); }}
                           className="py-3 px-4 rounded-xl border border-border text-sm font-medium bg-card [@media(hover:hover)]:hover:bg-accent [@media(hover:hover)]:hover:text-accent-foreground active:bg-accent/50 transition-colors text-left focus:outline-none"
                         >
                           {opt.label}
