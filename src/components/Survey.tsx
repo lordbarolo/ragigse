@@ -463,6 +463,12 @@ export default function Survey() {
                           Ange din e-post för att få detaljerad analys och förhandlingsargument
                         </p>
                       </div>
+                      <div className="flex items-center gap-2 pt-2 border-t border-border/50">
+                        <MapPin className="w-4 h-4 text-primary shrink-0" />
+                        <p className="text-xs text-primary font-medium">
+                          Du kan tjäna betydligt mer — se vilka orter som ger dig högre lön
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </>
