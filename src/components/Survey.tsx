@@ -465,9 +465,10 @@ export default function Survey() {
                       </div>
                       <div className="flex items-center gap-2 pt-2 border-t border-border/50">
                         <MapPin className="w-4 h-4 text-primary shrink-0" />
-                        <p className="text-xs text-primary font-medium">
-                          Du kan tjäna betydligt mer — se vilka orter som ger dig högre lön
-                        </p>
+                        <div className="text-xs text-primary font-medium leading-relaxed">
+                          <p>Du kan tjäna betydligt mer.</p>
+                          <p>Se vilka orter som ger dig högre lön.</p>
+                        </div>
                       </div>
                     </div>
                   </div>
