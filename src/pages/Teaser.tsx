@@ -411,12 +411,12 @@ export default function Teaser() {
         {/* Referral CTA */}
         <Card className="card-shadow border-accent/30">
           <CardContent className="pt-6 space-y-3">
-            <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2">
               <Users className="w-5 h-5 text-accent" />
-              <h3 className="font-display text-lg text-foreground">Tipsa en kollega — lås upp gratis</h3>
+              <h3 className="font-display text-lg text-foreground">Lås upp konsultlönen — gratis</h3>
             </div>
             <p className="text-sm text-muted-foreground">
-              Skicka länken till en kollega. När hen klickar på den låser vi upp en gratis lightrapport åt dig.
+              Genom att tipsa en kollega om sidan låser du upp rapporten som visar vad konsulter tjänar i samma roll.
             </p>
             <Button
               onClick={() => setReferralOpen(true)}
