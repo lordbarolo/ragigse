@@ -7,6 +7,16 @@ import {
   type MarginModel,
 } from "../_shared/calc.ts";
 
+type GapCategory = "small" | "medium" | "large";
+
+function categorizeGap(currentSalary: number, p75: number): GapCategory {
+  const gap = p75 - currentSalary;
+  const gapPct = gap / currentSalary;
+  if (gapPct <= 0.05) return "small";
+  if (gapPct <= 0.15) return "medium";
+  return "large";
+}
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -28,6 +38,8 @@ serve(async (req) => {
       experience,
       current_salary,
       salary_type,
+      track,
+      sector,
     } = await req.json();
 
     if (!email || !occupation || !employment_type || !kommun) {
@@ -41,6 +53,103 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
+
+    // A/B variant: 50/50 random assignment
+    const abVariant = Math.random() < 0.5 ? "A" : "B";
+
+    // ── PERMANENT TRACK (fast tjänst) ──────────────────────────────────────────
+    if (track === "permanent") {
+      const effectiveSector = sector || "privat";
+
+      const { data: benchData, error: benchError } = await supabase
+        .from("salary_benchmarks")
+        .select("occupation, sector, average_monthly, percentile_25, percentile_50, percentile_75, region, year, source")
+        .eq("occupation", occupation)
+        .eq("sector", effectiveSector)
+        .order("year", { ascending: false })
+        .limit(1)
+        .single();
+
+      if (benchError || !benchData) {
+        return new Response(
+          JSON.stringify({ error: "No benchmark data found for this occupation and sector" }),
+          { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      const p25 = benchData.percentile_25 ?? Math.round(benchData.average_monthly * 0.92);
+      const p50 = benchData.percentile_50 ?? benchData.average_monthly;
+      const p75 = benchData.percentile_75 ?? Math.round(benchData.average_monthly * 1.08);
+
+      const currentMonthly = current_salary || 0;
+      const gap = p75 - currentMonthly;
+      const gapPct = currentMonthly > 0 ? Math.round((gap / currentMonthly) * 100) : null;
+      const category: GapCategory | null = currentMonthly > 0 ? categorizeGap(currentMonthly, p75) : null;
+
+      const resultJson = {
+        calc_version: "v1",
+        track: "permanent",
+        inputs: {
+          location: kommun,
+          occupation,
+          employment_type: "anstalld",
+          experience_years: experience ?? 0,
+          current_salary_sek: currentMonthly,
+          salary_type: "monthly",
+          sector: effectiveSector,
+        },
+        market: {
+          source: benchData.source,
+          year: benchData.year,
+          region: benchData.region,
+          percentile_25: p25,
+          percentile_50: p50,
+          percentile_75: p75,
+          average_monthly: benchData.average_monthly,
+        },
+        gap_analysis: {
+          current_salary: currentMonthly,
+          gap_vs_p75: gap,
+          gap_pct: gapPct,
+          category,
+        },
+      };
+
+      const { data: report, error: reportError } = await supabase
+        .from("reports")
+        .insert({
+          lead_id: lead_id || null,
+          email,
+          status: "preview",
+          result_json: resultJson,
+          occupation,
+          employment_type: "anstalld",
+          kommun,
+          experience: experience ?? null,
+          current_salary: currentMonthly ?? null,
+          salary_type: "monthly",
+          ab_variant: abVariant,
+        })
+        .select("id")
+        .single();
+
+      if (reportError) {
+        console.error("Failed to create permanent report:", reportError);
+        return new Response(
+          JSON.stringify({ error: "Failed to create report" }),
+          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      console.log(`Permanent report created: ${report.id} for ${email}`);
+
+      return new Response(
+        JSON.stringify({ report_id: report.id, ab_variant: abVariant }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // ── CONSULTANT TRACK (default) ─────────────────────────────────────────────
 
     // Fetch margin model from DB
     const { data: modelData } = await supabase
@@ -110,9 +219,6 @@ serve(async (req) => {
       );
     }
 
-    // A/B variant: 50/50 random assignment
-    const abVariant = Math.random() < 0.5 ? "A" : "B";
-
     // Calculate using shared module with DB model
     const empType = employment_type as EmploymentType;
     const range = calculateSalaryRange(timprisKund, empType, model);
@@ -127,6 +233,7 @@ serve(async (req) => {
 
     const resultJson = {
       calc_version: "v1",
+      track: "consultant",
       inputs: {
         location: kommun,
         occupation,
