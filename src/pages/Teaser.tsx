@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { usePricingEngine, type PricingResult } from "@/hooks/usePricingEngine";
 import { useRates } from "@/hooks/useCalculator";
 import type { SurveyData } from "@/components/Survey";
+import type { BenchmarkResult } from "@/hooks/useBenchmarkEngine";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -55,6 +56,7 @@ export default function Teaser() {
   const { calculate, result: pricingResult, loading: pricingLoading } = usePricingEngine();
   const { data: rates } = useRates();
   const [survey, setSurvey] = useState<SurveyData | null>(null);
+  const [benchmarkResult, setBenchmarkResult] = useState<BenchmarkResult | null>(null);
   const [referralOpen, setReferralOpen] = useState(false);
   const [refereeEmail, setRefereeEmail] = useState("");
   const [referralSending, setReferralSending] = useState(false);
@@ -76,6 +78,12 @@ export default function Teaser() {
     const parsed = JSON.parse(raw) as SurveyData;
     setSurvey(parsed);
     trackEvent("teaser_viewed");
+
+    // Load benchmark result for permanent track
+    const savedBenchmark = sessionStorage.getItem("benchmarkResult");
+    if (savedBenchmark) {
+      setBenchmarkResult(JSON.parse(savedBenchmark) as BenchmarkResult);
+    }
 
     // Variant B: show partial unlock immediately
     if (abVariant === "B") {
@@ -109,10 +117,29 @@ export default function Teaser() {
     checkReferral();
   }, []);
 
-  // Derive result from pricing-engine
+  // Track detection (needs to happen early)
+  const track = (survey as SurveyData & { track?: string })?.track;
+  const isPermanent = track === "permanent";
+
+  // Consultant track: derive from pricing result
   const result = pricingResult
     ? { low: pricingResult.recommended_hourly_min, high: pricingResult.recommended_hourly_max }
     : null;
+
+  // Permanent track: derive from benchmark result (monthly values)
+  const benchmarkMonthly = benchmarkResult ? {
+    p25: benchmarkResult.percentile_25,
+    p50: benchmarkResult.percentile_50,
+    p75: benchmarkResult.percentile_75,
+    gapPct: benchmarkResult.gap_pct ?? 0,
+    category: benchmarkResult.category,
+  } : null;
+
+  const userMonthly = useMemo(() => {
+    if (!survey) return 0;
+    if (survey.salaryType === "hourly") return survey.currentSalary * 167;
+    return survey.currentSalary;
+  }, [survey]);
 
   const userHourly = useMemo(() => {
     if (!survey) return 0;
@@ -120,8 +147,12 @@ export default function Teaser() {
     return Math.round(survey.currentSalary / 167);
   }, [survey]);
 
-  const isUnderpaid = result ? userHourly < result.high : false;
-  const diffPercent = result ? Math.round(((result.high - userHourly) / result.high) * 100) : 0;
+  const isUnderpaid = isPermanent
+    ? (benchmarkMonthly ? userMonthly < benchmarkMonthly.p75 : false)
+    : (result ? userHourly < result.high : false);
+  const diffPercent = isPermanent
+    ? (benchmarkMonthly ? benchmarkMonthly.gapPct : 0)
+    : (result ? Math.round(((result.high - userHourly) / result.high) * 100) : 0);
 
   const buildResultJson = () => {
     if (!pricingResult || !survey) return null;
@@ -227,7 +258,10 @@ export default function Teaser() {
     }
   };
 
-  if (!survey || !result) return null;
+
+  // For permanent track we don't need pricing result to render
+  if (!survey) return null;
+  if (!isPermanent && !result) return null;
 
   const leadId = sessionStorage.getItem("leadId") || "";
   const regionName = pricingResult?.region || survey.kommun || "";
@@ -249,12 +283,16 @@ export default function Teaser() {
         {/* Top-level earnings potential banner */}
         {isUnderpaid && diffPercent > 0 && (
           <div className="hero-gradient rounded-2xl p-5 text-center card-shadow">
-            <p className="text-primary-foreground/80 text-sm font-medium">Enligt ramavtalen kan du tjäna</p>
+            <p className="text-primary-foreground/80 text-sm font-medium">
+              {isPermanent ? "Enligt officiell lönestatistik kan du tjäna" : "Enligt ramavtalen kan du tjäna"}
+            </p>
             <p className="text-3xl sm:text-4xl font-bold font-display text-primary-foreground mt-1">
               upp till {diffPercent}% mer
             </p>
             <p className="text-primary-foreground/70 text-xs mt-2">
-              Baserat på offentliga ramavtalspriser för {survey.yrke} i {survey.kommun}
+              {isPermanent
+                ? `Baserat på Medlingsinstitutets lönestatistik för ${survey.yrke}`
+                : `Baserat på offentliga ramavtalspriser för ${survey.yrke} i ${survey.kommun}`}
             </p>
           </div>
         )}
@@ -262,9 +300,8 @@ export default function Teaser() {
         {/* Social proof */}
         <SocialProofBanner occupation={survey.yrke || undefined} />
 
-
-        {/* Opportunity Gap */}
-        {isUnderpaid && (
+        {/* Opportunity Gap – consultant track only */}
+        {!isPermanent && isUnderpaid && result && (
           <OpportunityGap
             userHourly={userHourly}
             marketHigh={result.high}
@@ -272,8 +309,38 @@ export default function Teaser() {
           />
         )}
 
-        {/* Market Insight – zone comparison */}
-        {rates && pricingResult && (
+        {/* Permanent track: benchmark bars */}
+        {isPermanent && benchmarkMonthly && (
+          <Card className="card-shadow overflow-hidden">
+            <CardContent className="pt-6">
+              <div className="space-y-4">
+                <BarRow
+                  label="Din nuvarande månadslön"
+                  value={userMonthly}
+                  max={benchmarkMonthly.p75 + 5000}
+                  color="bg-muted-foreground/30"
+                />
+                <BarRow
+                  label="Median (P50) för din yrkesgrupp"
+                  value={benchmarkMonthly.p50}
+                  max={benchmarkMonthly.p75 + 5000}
+                  color="bg-primary"
+                />
+                <BarRow
+                  label="Övre kvartil (P75) — ditt mål"
+                  value={benchmarkMonthly.p75}
+                  max={benchmarkMonthly.p75 + 5000}
+                  color="bg-accent"
+                  blurred={!unlocked && !partialUnlocked}
+                  partialReveal={partialUnlocked && !unlocked}
+                />
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Market Insight – zone comparison, consultant track only */}
+        {!isPermanent && rates && pricingResult && (
           <MarketInsight
             occupation={survey.yrke}
             currentZone={pricingResult.zon}
@@ -282,7 +349,8 @@ export default function Teaser() {
           />
         )}
 
-        {/* Verdict card */}
+        {/* Verdict card — consultant track only */}
+        {!isPermanent && result && (
         <Card className="card-shadow border-destructive/30 overflow-hidden">
           <div className="bg-destructive/10 p-4 flex items-center gap-3">
             <TrendingDown className="w-5 h-5 text-destructive" />
@@ -378,8 +446,9 @@ export default function Teaser() {
             )}
           </CardContent>
         </Card>
+        )}
 
-        {/* What's included */}
+
         <Card className="card-shadow">
           <CardContent className="pt-6 space-y-3">
             <h3 className="font-display text-lg text-foreground">I din rapport får du:</h3>
