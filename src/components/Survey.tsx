@@ -158,7 +158,7 @@ export default function Survey() {
         if (track === "consultant" && miniStep === 3) return EMAIL_REGEX.test(data.email.trim());
         return false; // Mini-questions – auto-advances (permanent)
       case 5: return !!data.employmentType; // Anställd/Företagare (consultant only)
-      case 6: return true;                  // Visa intervall
+      case 6: return true;                  // Visa intervall (consultant saves here, permanent goes to step 7)
       case 7: return EMAIL_REGEX.test(data.email.trim()); // E-post (permanent only)
       default: return false;
     }
@@ -172,7 +172,14 @@ export default function Survey() {
       return;
     }
 
-    if (step < TOTAL_STEPS - 1) {
+    // Consultant at step 6 (result preview): save & navigate directly (email already collected)
+    const isConsultantFinalStep = step === 6 && track === "consultant";
+    // Permanent at step 7: save & navigate
+    const isPermanentFinalStep = step === 7 && track === "permanent";
+
+    if (isConsultantFinalStep || isPermanentFinalStep) {
+      // Fall through to save logic below
+    } else if (step < TOTAL_STEPS - 1) {
       if (step === 0) trackEvent("survey_started", { track });
       trackEvent("survey_step_completed", { step: step + 1 });
 
@@ -182,8 +189,11 @@ export default function Survey() {
       } else {
         setStep(step + 1);
       }
-    } else {
-      // Save lead and create report (permanent step 7, or consultant step 6 "Fortsätt")
+      return;
+    }
+
+    {
+      // Save lead and create report
       setSaving(true);
       try {
         const leadId = crypto.randomUUID();
@@ -779,9 +789,9 @@ export default function Survey() {
                   : "bg-muted text-muted-foreground cursor-not-allowed"
               }`}
             >
-              {step === TOTAL_STEPS - 1 ? (
+              {(step === TOTAL_STEPS - 1 || (step === 6 && track === "consultant")) ? (
                 <>
-                  {saving ? "Sparar..." : "Skicka min analys"}
+                  {saving ? "Sparar..." : (track === "consultant" ? "Se min rapport" : "Skicka min analys")}
                   {!saving && <ArrowRight className="w-5 h-5" />}
                 </>
               ) : (
