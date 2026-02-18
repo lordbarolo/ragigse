@@ -230,33 +230,54 @@ export default function Report() {
         .limit(1);
       const zon = locData?.[0]?.zon || "Zon 1";
 
-      const { data: rateData } = await supabase
+      // 1. Try exact match
+      const { data: exactMatch } = await supabase
         .from("rates")
         .select("timpris_kund")
         .eq("yrkeskategori", report.occupation)
         .eq("zon", zon)
         .limit(1);
 
-      if (rateData && rateData.length > 0) {
-        setConsultantRate(rateData[0].timpris_kund);
-      } else {
-        const { data: anyRate } = await supabase
+      if (exactMatch && exactMatch.length > 0) {
+        setConsultantRate(exactMatch[0].timpris_kund);
+        return;
+      }
+
+      // 2. Try prefix match (e.g. "Specialistläkare" → "Specialistläkare ortopedi")
+      const { data: prefixMatch } = await supabase
+        .from("rates")
+        .select("timpris_kund")
+        .ilike("yrkeskategori", `${report.occupation}%`)
+        .eq("zon", zon)
+        .limit(1);
+
+      if (prefixMatch && prefixMatch.length > 0) {
+        setConsultantRate(prefixMatch[0].timpris_kund);
+        return;
+      }
+
+      // 3. Try same zon with any matching typ (fallback)
+      const { data: anyMatch } = await supabase
+        .from("rates")
+        .select("typ")
+        .ilike("yrkeskategori", `${report.occupation}%`)
+        .limit(1);
+
+      if (anyMatch && anyMatch.length > 0) {
+        const { data: zoneRate } = await supabase
           .from("rates")
-          .select("typ")
-          .eq("yrkeskategori", report.occupation)
+          .select("timpris_kund")
+          .eq("typ", anyMatch[0].typ)
+          .eq("zon", zon)
           .limit(1);
-        if (anyRate && anyRate.length > 0) {
-          const { data: zoneRate } = await supabase
-            .from("rates")
-            .select("timpris_kund")
-            .eq("typ", anyRate[0].typ)
-            .eq("zon", zon)
-            .limit(1);
-          if (zoneRate && zoneRate.length > 0) {
-            setConsultantRate(zoneRate[0].timpris_kund);
-          }
+        if (zoneRate && zoneRate.length > 0) {
+          setConsultantRate(zoneRate[0].timpris_kund);
+          return;
         }
       }
+
+      // Nothing found — inform user
+      toast({ title: "Ingen konsultdata hittades för detta yrke", variant: "destructive" });
     } catch {
       toast({ title: "Kunde inte hämta konsultdata", variant: "destructive" });
     } finally {
