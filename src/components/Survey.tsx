@@ -214,6 +214,10 @@ export default function Survey() {
         if (reportData.ab_variant) {
           sessionStorage.setItem("abVariant", reportData.ab_variant);
         }
+        // Save benchmark result for permanent track so Teaser can display it
+        if (track === "permanent" && benchmarkResult) {
+          sessionStorage.setItem("benchmarkResult", JSON.stringify(benchmarkResult));
+        }
         trackEvent("survey_completed", { track });
         navigate("/resultat");
       } catch {
