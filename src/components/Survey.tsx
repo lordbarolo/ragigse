@@ -26,7 +26,7 @@ export interface SurveyData {
 
 type Track = "consultant" | "permanent" | "";
 
-const TOTAL_STEPS = 8; // 0=track, 1=yrke, 2=ort, 3=ersättning, 4=mini-questions, 5=anställd/företagare, 6=resultat, 7=email
+const TOTAL_STEPS = 8; // 0=track, 1=yrke, 2=ort, 3=ersättning, 4=mini-questions, 5=anställd/företagare, 6=resultat, 7=email (permanent only / fallback)
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 type EmployerType = "region_kommun" | "privat" | "inhyrd" | "";
@@ -126,12 +126,13 @@ export default function Survey() {
   // Auto-advance from mini-questions step after done
   useEffect(() => {
     if (step === 4 && miniStep === 3) {
+      if (track === "consultant") {
+        // Consultant: stay on spinner screen so user can enter email there
+        return;
+      }
+      // Permanent: auto-advance to result after spinner
       const timer = setTimeout(() => {
-        if (track === "consultant") {
-          setStep(5); // Go to anställd/företagare
-        } else {
-          setStep(6); // Skip employment type for permanent, go to result
-        }
+        setStep(6);
       }, 1800);
       return () => clearTimeout(timer);
     }
@@ -152,28 +153,37 @@ export default function Survey() {
       case 1: return !!data.yrke;           // Yrkesroll
       case 2: return !!data.kommun;         // Ort
       case 3: return data.currentSalary > 0; // Ersättning
-      case 4: return false;                 // Mini-questions – auto-advances
+      case 4:
+        // Consultant on spinner screen: need valid email to proceed
+        if (track === "consultant" && miniStep === 3) return EMAIL_REGEX.test(data.email.trim());
+        return false; // Mini-questions – auto-advances (permanent)
       case 5: return !!data.employmentType; // Anställd/Företagare (consultant only)
       case 6: return true;                  // Visa intervall
-      case 7: return EMAIL_REGEX.test(data.email.trim()); // E-post
+      case 7: return EMAIL_REGEX.test(data.email.trim()); // E-post (permanent only)
       default: return false;
     }
   })();
 
   const handleNext = async () => {
+    // Consultant: submit from spinner screen (step 4, miniStep 3) -> go to step 5
+    if (step === 4 && miniStep === 3 && track === "consultant") {
+      trackEvent("survey_step_completed", { step: 5 });
+      setStep(5);
+      return;
+    }
+
     if (step < TOTAL_STEPS - 1) {
       if (step === 0) trackEvent("survey_started", { track });
       trackEvent("survey_step_completed", { step: step + 1 });
 
       // For permanent track, skip step 5 (anställd/företagare)
       if (step === 3 && track === "permanent") {
-        // Permanent doesn't need municipality for benchmark, but we collected it for lead data
         setStep(4); // Go to mini-questions
       } else {
         setStep(step + 1);
       }
     } else {
-      // Save lead and create report
+      // Save lead and create report (permanent step 7, or consultant step 6 "Fortsätt")
       setSaving(true);
       try {
         const leadId = crypto.randomUUID();
@@ -518,11 +528,39 @@ export default function Survey() {
                 <h2 className="text-xl sm:text-2xl font-display text-foreground mb-2">
                   Vi räknar...
                 </h2>
-                <p className="text-sm text-muted-foreground max-w-xs">
+                <p className="text-sm text-muted-foreground max-w-xs mb-8">
                   {track === "permanent"
                     ? "Jämför din lön mot officiell statistik från Medlingsinstitutet"
                     : "Jämför din profil med ramavtalspriser från 290 vårdgivare"}
                 </p>
+                {track === "consultant" && (
+                  <div className="w-full max-w-sm space-y-3">
+                    <p className="text-sm font-medium text-foreground text-center">
+                      Ange din e-post för att se resultatet
+                    </p>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Input
+                        type="email"
+                        inputMode="email"
+                        autoComplete="email"
+                        placeholder="namn@exempel.se"
+                        value={data.email}
+                        onChange={(e) => setData({ ...data, email: e.target.value })}
+                        className="h-14 text-base pl-10"
+                        autoFocus
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" && EMAIL_REGEX.test(data.email.trim())) {
+                            handleNext();
+                          }
+                        }}
+                      />
+                    </div>
+                    <p className="text-xs text-muted-foreground text-center">
+                      Vi delar aldrig din e-post med tredje part.
+                    </p>
+                  </div>
+                )}
               </>
             )}
           </div>
@@ -731,7 +769,7 @@ export default function Survey() {
             <ChevronLeft className="w-4 h-4" />
             Tillbaka
           </button>
-          {![0, 1, 2, 4, 5].includes(step) && (
+          {(![0, 1, 2, 4, 5].includes(step) || (step === 4 && track === "consultant" && miniStep === 3)) && (
             <button
               onClick={handleNext}
               disabled={!canProceed || saving}
