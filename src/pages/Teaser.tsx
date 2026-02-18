@@ -82,8 +82,9 @@ export default function Teaser() {
       setPartialUnlocked(true);
     }
 
-    // Call pricing-engine for server-side calculation
-    if (parsed.yrke && parsed.kommun) {
+    // Call pricing-engine for server-side calculation — only for consultant track
+    const savedTrack = (parsed as SurveyData & { track?: string }).track;
+    if (parsed.yrke && parsed.kommun && savedTrack !== "permanent") {
       calculate(parsed.yrke, parsed.kommun, parsed.employmentType);
     }
   }, [navigate, abVariant]);
