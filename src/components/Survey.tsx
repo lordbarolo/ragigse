@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocations, useRates } from "@/hooks/useCalculator";
 import { usePricingEngine } from "@/hooks/usePricingEngine";
@@ -137,11 +137,13 @@ export default function Survey() {
     }
   }, [step, miniStep, track]);
 
-  // Reset mini step when entering step 4
+  // Reset mini step only when *entering* step 4 (track via previous step value)
+  const prevStepRef = useRef<number>(-1);
   useEffect(() => {
-    if (step === 4) {
+    if (step === 4 && prevStepRef.current !== 4) {
       setMiniStep(0);
     }
+    prevStepRef.current = step;
   }, [step]);
 
   const canProceed = (() => {
