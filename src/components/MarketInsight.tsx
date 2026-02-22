@@ -14,18 +14,13 @@ interface MarketInsightProps {
   employmentType: "anstalld" | "foretagare";
 }
 
-// Show raw timpris_kund (ramavtalspris) directly
-
 export default function MarketInsight({ occupation, currentZone, rates, employmentType }: MarketInsightProps) {
   const zoneRates = useMemo(() => {
-    // Find all rates for matching occupation across zones
     const occupationRates = rates.filter((r) => r.yrkeskategori === occupation);
     if (occupationRates.length === 0) {
-      // Fallback: match by typ
       const matchingRate = rates.find((r) => r.yrkeskategori === occupation);
       if (!matchingRate) return [];
       const typRates = rates.filter((r) => r.typ === matchingRate.typ);
-      // Deduplicate by zone, pick highest
       const byZone = new Map<string, ZoneRate>();
       for (const r of typRates) {
         const existing = byZone.get(r.zon);
@@ -57,13 +52,12 @@ export default function MarketInsight({ occupation, currentZone, rates, employme
         </div>
 
         <p className="text-xs text-muted-foreground">
-          Ramavtalspriser per zon (nationell priskatalog 2026). Rekommenderad ersättning utgör 85–90 % av dessa.
+          Ramavtalspriser per zon (nationell priskatalog 2026).
         </p>
 
         <div className="space-y-2.5">
           {zoneRates.map((z) => {
             const isCurrent = z.zon === currentZone;
-            const salary = z.timpris_kund;
             const width = Math.max((z.timpris_kund / maxRate) * 100, 20);
 
             return (
@@ -76,14 +70,14 @@ export default function MarketInsight({ occupation, currentZone, rates, employme
                       {isCurrent && " (din zon)"}
                     </span>
                   </span>
-                  <span className={isCurrent ? "font-bold text-foreground" : "font-medium text-muted-foreground"}>
-                    {fmt(salary)} kr/h
+                  <span className={`font-medium ${isCurrent ? "font-bold text-foreground" : "text-muted-foreground blur-sm select-none"}`}>
+                    {fmt(z.timpris_kund)} kr/h
                   </span>
                 </div>
                 <div className="h-5 bg-secondary rounded-full overflow-hidden">
                   <div
                     className={`h-full rounded-full transition-all duration-700 ${
-                      isCurrent ? "bg-primary" : "bg-primary/40"
+                      isCurrent ? "bg-primary" : "bg-primary/20"
                     }`}
                     style={{ width: `${width}%` }}
                   />
@@ -93,23 +87,17 @@ export default function MarketInsight({ occupation, currentZone, rates, employme
           })}
         </div>
 
-        {/* Zone premium hint */}
-        {zoneRates.length >= 2 && (() => {
-          const currentRate = zoneRates.find((z) => z.zon === currentZone);
-          const highest = zoneRates[zoneRates.length - 1];
-          if (!currentRate || currentRate.zon === highest.zon) return null;
-          const diff = highest.timpris_kund - currentRate.timpris_kund;
-          if (diff <= 0) return null;
-          return (
-            <div className="flex items-start gap-2 p-3 rounded-lg bg-primary/5 border border-primary/10">
-              <TrendingUp className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-              <p className="text-xs text-muted-foreground">
-                I <span className="font-semibold text-foreground">{highest.zon}</span> är ersättningen{" "}
-                <span className="font-semibold text-foreground">{fmt(diff)} kr/h mer</span> än i din zon.
-              </p>
-            </div>
-          );
-        })()}
+        {/* Conversion hook */}
+        {zoneRates.length >= 2 && (
+          <div className="flex items-start gap-2 p-3 rounded-lg bg-primary/5 border border-primary/10">
+            <TrendingUp className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+            <p className="text-xs text-muted-foreground">
+              Du kan tjäna betydligt mer.
+              <br />
+              <span className="font-semibold text-foreground">Se vilka orter som ger dig högre lön.</span>
+            </p>
+          </div>
+        )}
       </CardContent>
     </Card>
   );
