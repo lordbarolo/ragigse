@@ -324,7 +324,6 @@ export default function Survey() {
           >
             <div className="flex flex-col gap-3">
               {([
-                { value: "permanent" as Track, label: "Fast tjänst", desc: "Jämför din lön mot officiell lönestatistik" },
                 { value: "consultant" as Track, label: "Konsultuppdrag", desc: "Se vad du borde tjäna baserat på ramavtalspriser" },
               ]).map((opt) => (
                 <button
