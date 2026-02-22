@@ -7,19 +7,19 @@ import { trackEvent } from "@/lib/trackEvent";
 const FAQ_ITEMS = [
   {
     question: "Hur fungerar BraGig.se?",
-    answer: "Du fyller i din yrkesroll, arbetsort och erfarenhet. Vi jämför din nuvarande eller erbjudna ersättning med faktiska ramavtalspriser som offentliga vårdgivare betalar till bemanningsföretag för inhyrd personal. Därefter gör vi ett avdrag för marknadsmässig marginal till bemanningsföretaget. Det som kvarstår är det belopp som utgör ersättningsutrymmet som är förhandlingsbar.",
+    answer: "Du fyller i din yrkesroll, arbetsort och erfarenhet. Vi jämför din nuvarande eller erbjudna konsultersättning med faktiska ramavtalspriser som offentliga vårdgivare betalar till bemanningsföretag för inhyrd personal. Därefter gör vi ett avdrag för marknadsmässig marginal till bemanningsföretaget. Det som kvarstår är det belopp som utgör ditt förhandlingsbara ersättningsutrymme.",
   },
   {
     question: "Vilka data baseras analysen på?",
     answer: "Analysen baseras på officiella ramavtalspriser från 290 svenska vårdgivare, uppdaterade 2026.",
   },
   {
-    question: "Kostar det något att använda BraGig?",
-    answer: "Den grundläggande jämförelsen är helt gratis. För en detaljerad rapport med förhandlingstips kan du välja att uppgradera.",
+    question: "Kostar det något?",
+    answer: "Den grundläggande jämförelsen av din konsultersättning är helt gratis. För en detaljerad rapport med förhandlingstips kan du välja att uppgradera.",
   },
   {
     question: "Vilka yrkesgrupper stöds?",
-    answer: "Just nu fokuserar vi på sjuksköterskor, barnmorskor och läkare. Samtliga specialiseringar har unik data. Fler kompetenser kommer snart.",
+    answer: "Just nu fokuserar vi på konsulterande sjuksköterskor, barnmorskor och läkare. Samtliga specialiseringar har unik data. Fler kompetenser kommer snart.",
   },
 ];
 
@@ -42,14 +42,14 @@ const webAppJsonLd = {
   name: "BraGig.se",
   url: "https://bragig.se",
   description:
-    "Jämför din lön med faktiska ramavtalspriser för sjuksköterskor i 290 kommuner.",
+    "Jämför din konsultersättning med faktiska ramavtalspriser för vårdkonsulter i 290 kommuner.",
   applicationCategory: "FinanceApplication",
   operatingSystem: "All",
   offers: {
     "@type": "Offer",
     price: "0",
     priceCurrency: "SEK",
-    description: "Gratis lönejämförelse",
+    description: "Gratis jämförelse av konsultersättning",
   },
 };
 
@@ -77,10 +77,10 @@ const Index = () => {
             För vårdkonsulter
           </p>
           <h1 className="text-3xl sm:text-4xl md:text-5xl text-primary-foreground leading-tight">
-            Får du den lön du förtjänar?
+            Får du rätt konsultersättning?
           </h1>
           <p className="text-base sm:text-lg md:text-xl text-primary-foreground/85 font-body max-w-2xl mx-auto">
-            75% av sjuksköterskor är underbetalda. Jämför ditt erbjudande med
+            75% av vårdkonsulter är underbetalda. Jämför din ersättning med
             faktiska ramavtalspriser — gratis.
           </p>
         </div>
