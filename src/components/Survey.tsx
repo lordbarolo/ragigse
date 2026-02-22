@@ -545,7 +545,7 @@ export default function Survey() {
                 </p>
               </div>
             </div>
-            <div className="mt-6 flex-1 relative">
+            <div className="mt-6 flex-1 space-y-5">
               {track === "permanent" ? (
                 // Permanent track result
                 benchmarkResult ? (
@@ -564,8 +564,8 @@ export default function Survey() {
                         </p>
                       </div>
                     </div>
-                    <div className="absolute inset-0 z-10 flex items-center justify-center">
-                      <div className="bg-card/95 backdrop-blur-sm border border-border rounded-2xl p-6 text-center max-w-[320px] shadow-lg space-y-4">
+                    <div className="flex items-center justify-center">
+                      <div className="bg-card border border-border rounded-2xl p-6 text-center max-w-[320px] shadow-lg space-y-4">
                         <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mx-auto">
                           <TrendingUp className="w-6 h-6 text-accent" />
                         </div>
@@ -619,8 +619,8 @@ export default function Survey() {
                         </p>
                       </div>
                     </div>
-                    <div className="absolute inset-0 z-10 flex items-center justify-center">
-                      <div className="bg-card/95 backdrop-blur-sm border border-border rounded-2xl p-6 text-center max-w-[320px] shadow-lg space-y-4">
+                    <div className="flex items-center justify-center">
+                      <div className="bg-card border border-border rounded-2xl p-6 text-center max-w-[320px] shadow-lg space-y-4">
                         <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center mx-auto">
                           <TrendingUp className="w-6 h-6 text-accent" />
                         </div>
