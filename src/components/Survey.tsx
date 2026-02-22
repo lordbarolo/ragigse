@@ -60,6 +60,7 @@ export default function Survey() {
   const [commute, setCommute] = useState<CommuteType>("");
   const [shiftWork, setShiftWork] = useState<ShiftType>("");
   const [miniStep, setMiniStep] = useState(0);
+  const [employmentSelected, setEmploymentSelected] = useState(false);
 
   // Fetch benchmark occupations for permanent track
   const { data: benchmarkOccupations } = useQuery({
@@ -510,13 +511,14 @@ export default function Survey() {
                   key={opt.value}
                   onClick={() => {
                     setData({ ...data, employmentType: opt.value });
+                    setEmploymentSelected(true);
                     setTimeout(() => {
                       trackEvent("survey_step_completed", { step: 6 });
                       setStep(6);
                     }, 300);
                   }}
                   className={`py-4 px-5 rounded-xl border text-left transition-colors ${
-                    data.employmentType === opt.value
+                    employmentSelected && data.employmentType === opt.value
                       ? "border-primary bg-primary/5 ring-2 ring-primary/20"
                       : "border-border bg-card hover:bg-accent hover:text-accent-foreground"
                   }`}
