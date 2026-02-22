@@ -160,7 +160,7 @@ export default function Calculator() {
 
             <div className="border-t pt-4 space-y-2 text-xs sm:text-sm">
               <div className="flex justify-between">
-                <span className="text-muted-foreground">Ramavtalspris (timpris kund)</span>
+                <span className="text-muted-foreground">Ramavtalspris (vad kunden betalar)</span>
                 <span className="font-semibold">{result.rate_customer_sek_per_hour} kr/h</span>
               </div>
               <div className="flex justify-between">
