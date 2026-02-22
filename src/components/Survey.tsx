@@ -552,7 +552,7 @@ export default function Survey() {
                 // Permanent track result
                 benchmarkResult ? (
                   <>
-                    <div className="blur-sm select-none pointer-events-none space-y-6">
+                    <div className="blur-[12px] select-none pointer-events-none space-y-6">
                       <div className="bg-primary/5 border border-primary/20 rounded-2xl p-6 text-center">
                         <p className="text-sm text-muted-foreground mb-2">Lönenivå P75 (officiell statistik)</p>
                         <p className="text-4xl sm:text-5xl font-bold font-display text-foreground">
@@ -605,7 +605,7 @@ export default function Survey() {
                 // Consultant track result
                 partialResult ? (
                   <>
-                    <div className="blur-sm select-none pointer-events-none space-y-6">
+                    <div className="blur-[12px] select-none pointer-events-none space-y-6">
                       <div className="bg-primary/5 border border-primary/20 rounded-2xl p-6 text-center">
                         <p className="text-sm text-muted-foreground mb-2">
                           {derivedEmploymentType === "foretagare" ? "Timersättning (fakturerat)" : "Timlön (brutto, anställd)"}
