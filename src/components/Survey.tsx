@@ -61,6 +61,7 @@ export default function Survey() {
   const [shiftWork, setShiftWork] = useState<ShiftType>("");
   const [miniStep, setMiniStep] = useState(0);
   const [employmentSelected, setEmploymentSelected] = useState(false);
+  const [showHigherZoneCities, setShowHigherZoneCities] = useState(false);
 
   // Fetch benchmark occupations for permanent track
   const { data: benchmarkOccupations } = useQuery({
@@ -90,6 +91,28 @@ export default function Survey() {
       return true;
     });
   }, [rates]);
+
+  // Find cities in a higher price zone (higher zon number = higher rates)
+  const higherZoneCities = useMemo(() => {
+    if (!locations || !data.kommun) return [];
+    const currentLocation = locations.find((l) => l.kommun === data.kommun);
+    if (!currentLocation) return [];
+    const currentZonNum = parseInt(currentLocation.zon.replace("Zon ", ""), 10);
+    const nextZon = `Zon ${currentZonNum + 1}`;
+    // No higher zone exists
+    if (currentZonNum >= 3) return [];
+    // Get cities in the same region first, then others, in the higher zone
+    const sameRegion = locations
+      .filter((l) => l.zon === nextZon && l.region === currentLocation.region)
+      .map((l) => l.kommun)
+      .sort();
+    const otherRegion = locations
+      .filter((l) => l.zon === nextZon && l.region !== currentLocation.region)
+      .map((l) => l.kommun)
+      .sort();
+    // Show same-region first, limit total to 5
+    return [...sameRegion, ...otherRegion].slice(0, 5);
+  }, [locations, data.kommun]);
 
   const isLoading = locLoading || ratesLoading;
 
@@ -641,13 +664,32 @@ export default function Survey() {
                             Ange din e-post för att få detaljerad analys och förhandlingsargument
                           </p>
                         </div>
-                        <div className="flex items-center gap-2 pt-2 border-t border-border/50">
-                          <MapPin className="w-4 h-4 text-primary shrink-0" />
-                          <p className="text-xs text-primary font-medium leading-snug">
-                            Du kan tjäna betydligt mer.<br />
-                            Se vilka orter som ger dig högre lön.
-                          </p>
-                        </div>
+                        {higherZoneCities.length > 0 && (
+                          <div className="pt-2 border-t border-border/50">
+                            <button
+                              type="button"
+                              onClick={() => setShowHigherZoneCities(!showHigherZoneCities)}
+                              className="flex items-center gap-2 w-full text-left group"
+                            >
+                              <MapPin className="w-4 h-4 text-primary shrink-0" />
+                              <p className="text-xs text-primary font-medium leading-snug group-hover:underline cursor-pointer">
+                                Du kan tjäna betydligt mer.<br />
+                                Se vilka orter som ger dig högre lön.
+                              </p>
+                            </button>
+                            {showHigherZoneCities && (
+                              <div className="mt-2 pl-6 space-y-1 animate-in fade-in slide-in-from-top-2 duration-300">
+                                <p className="text-[11px] text-muted-foreground font-medium">Närliggande orter med högre pris:</p>
+                                {higherZoneCities.map((city) => (
+                                  <p key={city} className="text-xs text-foreground flex items-center gap-1.5">
+                                    <span className="w-1 h-1 rounded-full bg-primary shrink-0" />
+                                    {city}
+                                  </p>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </div>
                   </>
