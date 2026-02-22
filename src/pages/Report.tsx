@@ -517,7 +517,7 @@ export default function Report() {
               <CardContent className="pt-6 space-y-3">
                 <SectionHeading icon={BarChart3} title="Ramavtalspris" />
                 <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
-                  <p className="text-xs text-muted-foreground mb-1">Timpris mot kund (ramavtal)</p>
+                  <p className="text-xs text-muted-foreground mb-1">Vad kunden betalar (ramavtal)</p>
                   <p className="text-2xl font-bold text-foreground">{fmt(marketRate)} kr/h</p>
                   <p className="text-xs text-muted-foreground mt-1">
                     Grundtimpris enligt ramavtal (OB/jour ej inkluderat)
@@ -627,7 +627,7 @@ export default function Report() {
                 <CardContent className="pt-6 space-y-4">
                   <SectionHeading icon={Info} title="Antaganden & Beräkning" />
                   <div className="space-y-3 text-sm text-muted-foreground">
-                    <CalcRow label="Ramavtalspris (timpris mot kund)" value={`${fmt(marketRate)} kr/h`} />
+                    <CalcRow label="Ramavtalspris (vad kunden betalar)" value={`${fmt(marketRate)} kr/h`} />
                     <CalcRow label="Bemanningsbolagets marginal (15%)" value={`−${fmt(Math.round(marketRate * margin))} kr/h`} />
                     <CalcRow label="Löneutrymme efter marginal" value={`${fmt(afterMargin)} kr/h`} />
                     {isEmployee ? (
@@ -733,7 +733,7 @@ export default function Report() {
                 <CardContent className="pt-6 space-y-4">
                   <SectionHeading icon={MapPin} title="Regional jämförelse" />
                   <p className="text-sm text-muted-foreground">
-                    Timpris mot kund för {report.occupation} i alla zoner:
+                    Vad kunden betalar för {report.occupation} i alla zoner:
                   </p>
                   <div className="space-y-3">
                     {[...report.zone_comparisons]
