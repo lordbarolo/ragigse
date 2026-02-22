@@ -45,8 +45,8 @@ export default function Survey() {
   const { data: locations, isLoading: locLoading } = useLocations();
   const { data: rates, isLoading: ratesLoading } = useRates();
   const [saving, setSaving] = useState(false);
-  const [track, setTrack] = useState<Track>("");
-  const [step, setStep] = useState(0);
+  const [track, setTrack] = useState<Track>("consultant");
+  const [step, setStep] = useState(1);
   const [data, setData] = useState<SurveyData>({
     email: "",
     employmentType: "anstalld",
@@ -56,7 +56,7 @@ export default function Survey() {
     salaryType: "hourly",
     currentSalary: 0,
   });
-  const [employer, setEmployer] = useState<EmployerType>("");
+  const [employer, setEmployer] = useState<EmployerType>("inhyrd");
   const [commute, setCommute] = useState<CommuteType>("");
   const [shiftWork, setShiftWork] = useState<ShiftType>("");
   const [miniStep, setMiniStep] = useState(0);
@@ -99,10 +99,10 @@ export default function Survey() {
 
   // Trigger pricing-engine when consultant track has enough data
   useEffect(() => {
-    if (track === "consultant" && data.yrke && data.kommun && employer) {
+    if (track === "consultant" && data.yrke && data.kommun) {
       pricingCalculate(data.yrke, data.kommun, derivedEmploymentType);
     }
-  }, [data.yrke, data.kommun, employer, track]);
+  }, [data.yrke, data.kommun, track]);
 
   // Trigger benchmark-engine when permanent track has enough data
   useEffect(() => {
@@ -125,7 +125,7 @@ export default function Survey() {
 
   // Auto-advance from mini-questions step after done
   useEffect(() => {
-    if (step === 4 && miniStep === 3) {
+    if (step === 4 && miniStep === 1) {
       if (track === "consultant") {
         // Consultant: stay on spinner screen so user can enter email there
         return;
@@ -149,14 +149,14 @@ export default function Survey() {
 
   const canProceed = (() => {
     switch (step) {
-      case 0: return !!track;               // Track
+      case 0: return false;                 // Unused
       case 1: return !!data.yrke;           // Yrkesroll
       case 2: return !!data.kommun;         // Ort
       case 3: return data.currentSalary > 0; // Ersättning
       case 4:
         // Consultant on spinner screen: need valid email to proceed
-        if (track === "consultant" && miniStep === 3) return EMAIL_REGEX.test(data.email.trim());
-        return false; // Mini-questions – auto-advances (permanent)
+        if (track === "consultant" && miniStep === 1) return EMAIL_REGEX.test(data.email.trim());
+        return false; // Mini-questions – auto-advances
       case 5: return !!data.employmentType; // Anställd/Företagare (consultant only)
       case 6: return true;                  // Visa intervall (consultant saves here, permanent goes to step 7)
       case 7: return EMAIL_REGEX.test(data.email.trim()); // E-post (permanent only)
@@ -166,7 +166,7 @@ export default function Survey() {
 
   const handleNext = async () => {
     // Consultant: submit from spinner screen (step 4, miniStep 3) -> go to step 5
-    if (step === 4 && miniStep === 3 && track === "consultant") {
+    if (step === 4 && miniStep === 1 && track === "consultant") {
       trackEvent("survey_step_completed", { step: 5 });
       setStep(5);
       return;
@@ -458,35 +458,13 @@ export default function Survey() {
         {/* Step 4: Mini-questions while calculating */}
         {step === 4 && (
           <div className="flex-1 flex flex-col items-center justify-center text-center animate-in fade-in duration-300">
-            {miniStep < 3 ? (
+            {miniStep < 1 ? (
               <div className="w-full max-w-sm animate-in fade-in slide-in-from-bottom-4 duration-300" key={miniStep}>
                 <p className="text-xs text-muted-foreground mb-4 flex items-center justify-center gap-2">
                   <Loader2 className="w-4 h-4 animate-spin" />
                   Beräknar medan du svarar…
                 </p>
                 {miniStep === 0 && (
-                  <>
-                    <h2 className="text-lg sm:text-xl font-display text-foreground mb-6">
-                      Var är du anställd?
-                    </h2>
-                    <div className="flex flex-col gap-3">
-                      {([
-                        { value: "region_kommun" as EmployerType, label: "Region eller kommun" },
-                        { value: "privat" as EmployerType, label: "Privat" },
-                        { value: "inhyrd" as EmployerType, label: "Inhyrd" },
-                      ]).map((opt) => (
-                        <button
-                          key={opt.value}
-                          onClick={() => { setEmployer(opt.value); setMiniStep(1); }}
-                          className="py-3 px-4 rounded-xl border border-border text-sm font-medium bg-card [@media(hover:hover)]:hover:bg-accent [@media(hover:hover)]:hover:text-accent-foreground active:bg-accent/50 transition-colors text-left focus:outline-none"
-                        >
-                          {opt.label}
-                        </button>
-                      ))}
-                    </div>
-                  </>
-                )}
-                {miniStep === 1 && (
                   <>
                     <h2 className="text-lg sm:text-xl font-display text-foreground mb-6">
                       Pendlar du till jobbet?
@@ -499,29 +477,7 @@ export default function Survey() {
                       ]).map((opt) => (
                         <button
                           key={opt.value}
-                          onClick={() => { setCommute(opt.value); setMiniStep(2); }}
-                          className="py-3 px-4 rounded-xl border border-border text-sm font-medium bg-card [@media(hover:hover)]:hover:bg-accent [@media(hover:hover)]:hover:text-accent-foreground active:bg-accent/50 transition-colors text-left focus:outline-none"
-                        >
-                          {opt.label}
-                        </button>
-                      ))}
-                    </div>
-                  </>
-                )}
-                {miniStep === 2 && (
-                  <>
-                    <h2 className="text-lg sm:text-xl font-display text-foreground mb-6">
-                      Jobbar du OB eller jour?
-                    </h2>
-                    <div className="flex flex-col gap-3">
-                      {([
-                        { value: "ob_jour" as ShiftType, label: "Ja, både OB och jour" },
-                        { value: "bara_ob" as ShiftType, label: "Bara OB (kväll/helg)" },
-                        { value: "nej" as ShiftType, label: "Nej, enbart dagtid" },
-                      ]).map((opt) => (
-                        <button
-                          key={opt.value}
-                          onClick={() => { setShiftWork(opt.value); setMiniStep(3); }}
+                          onClick={() => { setCommute(opt.value); setMiniStep(1); }}
                           className="py-3 px-4 rounded-xl border border-border text-sm font-medium bg-card [@media(hover:hover)]:hover:bg-accent [@media(hover:hover)]:hover:text-accent-foreground active:bg-accent/50 transition-colors text-left focus:outline-none"
                         >
                           {opt.label}
