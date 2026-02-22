@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import SearchableSelect from "@/components/SearchableSelect";
 import { Input } from "@/components/ui/input";
 import {
-  Stethoscope, MapPin, Mail, Briefcase, Building2,
+  Stethoscope, MapPin, Mail, Briefcase,
   ChevronRight, ChevronLeft, ArrowRight, Loader2, TrendingUp
 } from "lucide-react";
 import { toast } from "sonner";
@@ -26,7 +26,7 @@ export interface SurveyData {
 
 type Track = "consultant" | "permanent" | "";
 
-const TOTAL_STEPS = 8; // 0=track, 1=yrke, 2=ort, 3=ersättning, 4=mini-questions, 5=anställd/företagare, 6=resultat, 7=email (permanent only / fallback)
+const TOTAL_STEPS = 7; // 1=yrke, 2=ort, 3=ersättning, 4=mini-questions, 5=anställd/företagare, 6=resultat, 7=email (permanent only / fallback)
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 type EmployerType = "region_kommun" | "privat" | "inhyrd" | "";
@@ -149,7 +149,6 @@ export default function Survey() {
 
   const canProceed = (() => {
     switch (step) {
-      case 0: return false;                 // Unused
       case 1: return !!data.yrke;           // Yrkesroll
       case 2: return !!data.kommun;         // Ort
       case 3: return data.currentSalary > 0; // Ersättning
@@ -261,7 +260,7 @@ export default function Survey() {
   // Adjust progress: permanent track has 7 effective steps (skips step 5)
   const effectiveSteps = track === "permanent" ? TOTAL_STEPS - 1 : TOTAL_STEPS;
   const effectiveStep = track === "permanent" && step > 5 ? step - 1 : step;
-  const progress = ((effectiveStep + 1) / effectiveSteps) * 100;
+  const progress = (effectiveStep / effectiveSteps) * 100;
 
   // Occupation options based on track
   const occupationOptions = useMemo(() => {
@@ -302,7 +301,7 @@ export default function Survey() {
       {/* Progress bar */}
       <div className="mb-8">
         <div className="flex justify-between text-xs text-muted-foreground mb-2">
-          <span>Steg {effectiveStep + 1} av {effectiveSteps}</span>
+          <span>Steg {effectiveStep} av {effectiveSteps}</span>
           <span>{Math.round(progress)}%</span>
         </div>
         <div className="h-2 bg-secondary rounded-full overflow-hidden">
@@ -315,44 +314,8 @@ export default function Survey() {
 
       {/* Step content */}
       <div className="min-h-[280px] flex flex-col">
-        {/* Step 0: Track selection */}
-        {step === 0 && (
-          <StepWrapper
-            icon={<Building2 className="w-6 h-6" />}
-            title="Vad vill du jämföra?"
-            subtitle="Välj typ av anställning"
-          >
-            <div className="flex flex-col gap-3">
-              {([
-                { value: "consultant" as Track, label: "Konsultuppdrag", desc: "Se vad du borde tjäna baserat på ramavtalspriser" },
-              ]).map((opt) => (
-                <button
-                  key={opt.value}
-                  onClick={() => {
-                    setTrack(opt.value);
-                    setData({ ...data, yrke: "", kommun: "", currentSalary: 0 });
-                    if (opt.value === "permanent") {
-                      setData(d => ({ ...d, salaryType: "monthly", employmentType: "anstalld" }));
-                    }
-                    setTimeout(() => {
-                      trackEvent("survey_started", { track: opt.value });
-                      trackEvent("survey_step_completed", { step: 1 });
-                      setStep(1);
-                    }, 300);
-                  }}
-                  className={`py-5 px-5 rounded-xl border text-left transition-colors ${
-                    track === opt.value
-                      ? "border-primary bg-primary/5 ring-2 ring-primary/20"
-                      : "border-border bg-card [@media(hover:hover)]:hover:bg-accent [@media(hover:hover)]:hover:text-accent-foreground"
-                  }`}
-                >
-                  <span className="text-base font-semibold">{opt.label}</span>
-                  <p className="text-sm text-muted-foreground mt-0.5">{opt.desc}</p>
-                </button>
-              ))}
-            </div>
-          </StepWrapper>
-        )}
+
+
 
         {/* Step 1: Yrkesroll */}
         {step === 1 && (
