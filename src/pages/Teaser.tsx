@@ -128,7 +128,7 @@ export default function Teaser() {
         </div>
       </header>
 
-      <main className="px-4 py-8 pb-32 max-w-lg mx-auto space-y-6">
+      <main className="px-4 py-8 pb-12 max-w-lg mx-auto space-y-6">
         {/* Persistent info */}
         <div className="flex items-center gap-3 text-sm bg-muted/50 border border-border rounded-lg px-4 py-2.5">
           <Stethoscope className="w-4 h-4 text-primary shrink-0" />
@@ -225,7 +225,7 @@ export default function Teaser() {
         <ReferralCta onOpen={() => setReferralOpen(true)} />
       </main>
 
-      <CheckoutButtons checkoutLoading={checkoutLoading} onCheckout={onCheckout} layout="sticky" />
+      <CheckoutButtons checkoutLoading={checkoutLoading} onCheckout={onCheckout} layout="stacked" />
 
       <ReferralDialog
         open={referralOpen}
