@@ -351,10 +351,10 @@ export default function Survey() {
           >
             <div className="flex flex-col gap-3">
               {([
+                { value: "specialist" as DoctorSubRole, label: "Specialistläkare", desc: "Färdig specialist" },
+                { value: "leg" as DoctorSubRole, label: "Leg. läkare", desc: "Legitimerad läkare utan specialistkompetens" },
                 { value: "at" as DoctorSubRole, label: "AT-läkare", desc: "Allmäntjänstgöring" },
                 { value: "st" as DoctorSubRole, label: "ST-läkare", desc: "Specialisttjänstgöring" },
-                { value: "leg" as DoctorSubRole, label: "Leg. läkare", desc: "Legitimerad läkare utan specialistkompetens" },
-                { value: "specialist" as DoctorSubRole, label: "Specialistläkare", desc: "Färdig specialist" },
               ]).map((opt) => (
                 <button
                   key={opt.value}
