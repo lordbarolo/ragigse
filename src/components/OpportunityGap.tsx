@@ -1,4 +1,4 @@
-import { TrendingDown, AlertTriangle } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface OpportunityGapProps {
@@ -14,9 +14,6 @@ export default function OpportunityGap({ userHourly, marketHigh, employmentType 
   const isUnderpaid = userHourly < marketHigh;
 
   if (!isUnderpaid || diffPercent < 1) return null;
-
-  const formattedMonthly = new Intl.NumberFormat("sv-SE").format(monthlyLoss);
-  const formattedYearly = new Intl.NumberFormat("sv-SE").format(yearlyLoss);
 
   return (
     <Card className="card-shadow border-destructive/40 bg-destructive/5 overflow-hidden">
@@ -36,37 +33,27 @@ export default function OpportunityGap({ userHourly, marketHigh, employmentType 
           </div>
         </div>
 
-        {/* Loss figures */}
-        <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-lg bg-card border border-destructive/20 p-3 text-center">
-            <div className="flex items-center justify-center gap-1 mb-1">
-              <TrendingDown className="w-3.5 h-3.5 text-destructive" />
-              <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
-                Per månad
-              </span>
+        {/* Blurred placeholder — locked content */}
+        <div className="relative rounded-lg border border-destructive/20 bg-card p-4 overflow-hidden">
+          <div className="blur-sm select-none pointer-events-none" aria-hidden="true">
+            <div className="grid grid-cols-2 gap-3">
+              <div className="rounded-lg bg-muted/40 p-3 text-center">
+                <p className="text-xs text-muted-foreground mb-1">Per månad</p>
+                <p className="text-xl font-bold text-muted-foreground">−XX XXX kr</p>
+              </div>
+              <div className="rounded-lg bg-muted/40 p-3 text-center">
+                <p className="text-xs text-muted-foreground mb-1">Per år</p>
+                <p className="text-xl font-bold text-muted-foreground">−XXX XXX kr</p>
+              </div>
             </div>
-            <p className="text-xl font-bold text-destructive">
-              −{formattedMonthly} kr
-            </p>
           </div>
-          <div className="rounded-lg bg-card border border-destructive/20 p-3 text-center">
-            <div className="flex items-center justify-center gap-1 mb-1">
-              <TrendingDown className="w-3.5 h-3.5 text-destructive" />
-              <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-medium">
-                Per år
-              </span>
-            </div>
-            <p className="text-xl font-bold text-destructive">
-              −{formattedYearly} kr
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-card/60 backdrop-blur-[2px]">
+            <span className="text-lg mb-1">🔒</span>
+            <p className="text-sm font-medium text-foreground text-center px-4 leading-snug">
+              Se exakt hur mycket du förlorar — och hur du förhandlar upp det
             </p>
           </div>
         </div>
-
-        <p className="text-xs text-muted-foreground text-center">
-          {employmentType === "anstalld"
-            ? "Beräknat utifrån 167 timmar/mån efter arbetsgivaravgifter"
-            : "Beräknat utifrån 167 timmar/mån som egenföretagare"}
-        </p>
       </CardContent>
     </Card>
   );

@@ -17,7 +17,7 @@ export default function CheckoutButtons({ checkoutLoading, onCheckout, layout }:
             onClick={() => onCheckout("single")}
             className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-xl font-semibold text-sm hero-gradient text-primary-foreground transition-all disabled:opacity-70"
           >
-            {checkoutLoading === "single" ? "Laddar..." : "49 kr"}
+            {checkoutLoading === "single" ? "Laddar..." : "Se din fulla löneanalys — 49 kr"}
             {checkoutLoading !== "single" && <ArrowRight className="w-4 h-4" />}
           </button>
           <button
@@ -26,7 +26,7 @@ export default function CheckoutButtons({ checkoutLoading, onCheckout, layout }:
             onClick={() => onCheckout("yearly")}
             className="flex-1 flex items-center justify-center gap-1.5 py-3 rounded-xl font-medium text-sm border border-primary text-primary hover:bg-primary/5 transition-all disabled:opacity-70"
           >
-            {checkoutLoading === "yearly" ? "Laddar..." : "495 kr/år"}
+            {checkoutLoading === "yearly" ? "Laddar..." : "Årsabonnemang — 495 kr/år"}
           </button>
         </div>
       </div>
