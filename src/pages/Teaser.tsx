@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePricingEngine } from "@/hooks/usePricingEngine";
-import { useRates } from "@/hooks/useCalculator";
+import { useRates, useLocations } from "@/hooks/useCalculator";
 import type { SurveyData } from "@/components/Survey";
 import type { BenchmarkResult } from "@/hooks/useBenchmarkEngine";
 import { Card, CardContent } from "@/components/ui/card";
@@ -30,6 +30,7 @@ export default function Teaser() {
   const navigate = useNavigate();
   const { calculate, result: pricingResult } = usePricingEngine();
   const { data: rates } = useRates();
+  const { data: locations } = useLocations();
   const [survey, setSurvey] = useState<SurveyData | null>(null);
   const [benchmarkResult, setBenchmarkResult] = useState<BenchmarkResult | null>(null);
   const [referralOpen, setReferralOpen] = useState(false);
@@ -174,6 +175,8 @@ export default function Teaser() {
             currentZone={pricingResult.zon}
             rates={rates}
             employmentType={survey.employmentType as "anstalld" | "foretagare"}
+            locations={locations}
+            currentRegion={pricingResult.region}
           />
         )}
 
