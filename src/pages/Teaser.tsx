@@ -25,6 +25,7 @@ import ReferralCta from "@/components/teaser/ReferralCta";
 import ReportPreviewList from "@/shared/ReportPreviewList";
 import CheckoutButtons from "@/shared/CheckoutButtons";
 
+/** Teaser page — orchestrator for the results preview */
 export default function Teaser() {
   const navigate = useNavigate();
   const { calculate, result: pricingResult } = usePricingEngine();
