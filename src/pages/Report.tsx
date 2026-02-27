@@ -29,9 +29,9 @@ export default function Report() {
         const { data, error } = await supabase.functions.invoke("get-report", {
           body: { report_id: reportId },
         });
-        if (error || !data || data.error) { navigate("/"); return; }
-        setReport(data as ReportData);
-      } catch { navigate("/"); } finally { setLoading(false); }
+        if (error || !data || data.error) { setReport(null); }
+        else { setReport(data as ReportData); }
+      } catch { setReport(null); } finally { setLoading(false); }
     };
     fetchReport();
   }, [reportId, navigate]);
@@ -50,7 +50,15 @@ export default function Report() {
     );
   }
 
-  if (!report) return null;
+  if (!report) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4 p-6 text-center">
+        <h1 className="text-xl font-semibold text-foreground">Rapporten hittades inte</h1>
+        <p className="text-sm text-muted-foreground">Kontrollera länken eller gå tillbaka till startsidan.</p>
+        <Button onClick={() => navigate("/")}>Till startsidan</Button>
+      </div>
+    );
+  }
 
   const r = report.result_json;
   const isPermanentTrack = r.track === "permanent";
