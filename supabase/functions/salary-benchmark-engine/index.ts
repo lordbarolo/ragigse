@@ -37,16 +37,50 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    const { data, error } = await supabase
+    // 1. Exact match
+    let { data, error } = await supabase
       .from("salary_benchmarks")
       .select("occupation, sector, average_monthly, percentile_25, percentile_50, percentile_75, region, year, source")
       .eq("occupation", occupation)
       .eq("sector", sector)
       .order("year", { ascending: false })
       .limit(1)
-      .single();
+      .maybeSingle();
 
-    if (error || !data) {
+    // 2. Prefix/ILIKE fallback — e.g. "Specialistläkare akutsjukvård" → "%akutsjukvård%"
+    if (!data && !error) {
+      const parts = occupation.split(" ");
+      if (parts.length > 1) {
+        const suffix = parts.slice(1).join(" ");
+        const res = await supabase
+          .from("salary_benchmarks")
+          .select("occupation, sector, average_monthly, percentile_25, percentile_50, percentile_75, region, year, source")
+          .eq("sector", sector)
+          .ilike("occupation", `%${suffix}%`)
+          .order("year", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (res.data) data = res.data;
+      }
+    }
+
+    // 3. Broad category fallback — e.g. "Specialistläkare" or "Sjuksköterska"
+    if (!data && !error) {
+      const mainCategory = occupation.split(" ")[0];
+      if (mainCategory) {
+        const res = await supabase
+          .from("salary_benchmarks")
+          .select("occupation, sector, average_monthly, percentile_25, percentile_50, percentile_75, region, year, source")
+          .eq("sector", sector)
+          .ilike("occupation", `${mainCategory}%`)
+          .order("year", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (res.data) data = res.data;
+      }
+    }
+
+    if (!data) {
       return new Response(
         JSON.stringify({ error: "No benchmark data found for this occupation and sector" }),
         { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
