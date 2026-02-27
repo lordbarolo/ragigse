@@ -388,7 +388,7 @@ export default function Survey() {
         { value: "Legitimerad läkare", label: "Leg. Läkare" },
       ];
       const specialtyItems = DOCTOR_SPECIALTIES.map((s) => ({
-        value: s,
+        value: `Specialistläkare ${s.toLowerCase()}`,
         label: s,
       }));
       return [
@@ -397,12 +397,35 @@ export default function Survey() {
       ];
     }
     if (occupationCategory === "ssk") {
-      const topItem = { value: "Allmänsjuksköterska", label: "Allmänsjuksköterska", group: "Grundkategori" };
-      const specItems = NURSE_SPECIALIZATIONS.map((s) => ({
-        value: s,
-        label: s,
-        group: "Specialisering",
-      }));
+      const topItem = { value: "Sjuksköterska", label: "Allmänsjuksköterska", group: "Grundkategori" };
+      const specItems = NURSE_SPECIALIZATIONS.map((s) => {
+        // Map UI labels to actual rates table yrkeskategori values
+        const nurseValueMap: Record<string, string> = {
+          "Akutsjukvård": "Specialistsjuksköterska akutsjukvård",
+          "Ambulanssjukvård": "Specialistsjuksköterska ambulanssjukvård",
+          "Anestesisjukvård": "Specialistsjuksköterska anestesi",
+          "Barn och ungdom": "Specialistsjuksköterska barn och ungdom",
+          "Barnmorska": "Barnmorska",
+          "Diabetesvård": "Specialistsjuksköterska diabetesvård",
+          "Distriktssköterska": "Distriktssjuksköterska",
+          "Hjärtsjukvård": "Specialistsjuksköterska hjärtsjukvård",
+          "Infektionssjukvård": "Specialistsjuksköterska infektionssjukvård",
+          "Intensivvård": "Specialistsjuksköterska intensivvård",
+          "Kirurgisk vård": "Specialistsjuksköterska kirurgisk vård",
+          "Medicinsk vård": "Specialistsjuksköterska medicinsk vård",
+          "Onkologi": "Specialistsjuksköterska onkologisk vård",
+          "Operationssjukvård": "Specialistsjuksköterska operationssjukvård",
+          "Palliativ vård": "Specialistsjuksköterska palliativ vård",
+          "Psykiatrisk vård": "Specialistsjuksköterska psykiatrisk vård",
+          "Vård av äldre": "Specialistsjuksköterska vård av äldre",
+          "Ögonsjukvård": "Specialistsjuksköterska ögonsjukvård",
+        };
+        return {
+          value: nurseValueMap[s] || s,
+          label: s,
+          group: "Specialisering",
+        };
+      });
       return [topItem, ...specItems];
     }
     // Fallback (shouldn't reach here with new flow)
