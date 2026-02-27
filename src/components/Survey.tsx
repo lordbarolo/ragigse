@@ -221,7 +221,7 @@ export default function Survey() {
         : data.currentSalary;
       benchmarkCalculate(data.yrke, sector, currentMonthly > 0 ? currentMonthly : undefined);
     }
-  }, [data.yrke, employer, track]);
+  }, [data.yrke, employer, track, data.currentSalary, data.salaryType]);
 
   const partialResult = pricingResult
     ? {
