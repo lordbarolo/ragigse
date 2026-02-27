@@ -15,7 +15,7 @@ import { trackEvent } from "@/lib/trackEvent";
 
 export interface SurveyData {
   email: string;
-  employmentType: "anstalld" | "foretagare";
+  employmentType: "anstalld" | "foretagare" | "";
   yrke: string;
   kommun: string;
   experience: number;
@@ -91,7 +91,7 @@ export default function Survey() {
   const [step, setStep] = useState(1);
   const [data, setData] = useState<SurveyData>({
     email: "",
-    employmentType: "anstalld",
+    employmentType: "",
     kommun: "",
     yrke: "",
     experience: 5,
@@ -146,8 +146,8 @@ export default function Survey() {
 
   // Trigger pricing when we have yrke + kommun
   useEffect(() => {
-    if (data.yrke && data.kommun) {
-      pricingCalculate(data.yrke, data.kommun, data.employmentType);
+    if (data.yrke && data.kommun && data.employmentType) {
+      pricingCalculate(data.yrke, data.kommun, data.employmentType as "anstalld" | "foretagare");
     }
   }, [data.yrke, data.kommun, data.employmentType]);
 
