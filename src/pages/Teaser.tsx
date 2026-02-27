@@ -14,7 +14,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { Lock, TrendingDown, ArrowRight, ShieldCheck, Users, CheckCircle, Copy } from "lucide-react";
+import { Lock, TrendingDown, ArrowRight, ShieldCheck, Users, CheckCircle, Copy, Stethoscope, MapPin } from "lucide-react";
 
 import SocialProofBanner from "@/components/SocialProofBanner";
 import ShareButton from "@/components/ShareButton";
@@ -280,6 +280,14 @@ export default function Teaser() {
       </header>
 
       <main className="px-4 py-8 pb-32 max-w-lg mx-auto space-y-6">
+        {/* Persistent info: occupation + kommun */}
+        <div className="flex items-center gap-3 text-sm bg-muted/50 border border-border rounded-lg px-4 py-2.5">
+          <Stethoscope className="w-4 h-4 text-primary shrink-0" />
+          <span className="font-medium text-foreground">{survey.yrke}</span>
+          <span className="text-muted-foreground">·</span>
+          <MapPin className="w-4 h-4 text-primary shrink-0" />
+          <span className="font-medium text-foreground">{survey.kommun}</span>
+        </div>
         {/* Top-level earnings potential banner */}
         {isUnderpaid && diffPercent > 0 && (
           <div className="hero-gradient rounded-2xl p-5 text-center card-shadow">
