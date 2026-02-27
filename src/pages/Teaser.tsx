@@ -54,8 +54,8 @@ export default function Teaser() {
     if (abVariant === "B") setPartialUnlocked(true);
 
     const savedTrack = (parsed as SurveyData & { track?: string }).track;
-    if (parsed.yrke && parsed.kommun && savedTrack !== "permanent") {
-      calculate(parsed.yrke, parsed.kommun, parsed.employmentType);
+    if (parsed.yrke && parsed.kommun && parsed.employmentType && savedTrack !== "permanent") {
+      calculate(parsed.yrke, parsed.kommun, parsed.employmentType as "anstalld" | "foretagare");
     }
   }, [navigate, abVariant]);
 
