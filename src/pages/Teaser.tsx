@@ -5,7 +5,7 @@ import { useRates, useLocations } from "@/hooks/useCalculator";
 import type { SurveyData } from "@/components/Survey";
 import type { BenchmarkResult } from "@/hooks/useBenchmarkEngine";
 import { Card, CardContent } from "@/components/ui/card";
-import { TrendingDown, Stethoscope, MapPin } from "lucide-react";
+import { TrendingDown, Stethoscope, MapPin, Loader2 } from "lucide-react";
 
 import SocialProofBanner from "@/components/SocialProofBanner";
 import ShareButton from "@/components/ShareButton";
@@ -110,7 +110,15 @@ export default function Teaser() {
   };
 
   if (!survey) return null;
-  if (!isPermanent && !result) return null;
+
+  // Show loading while pricing engine is working (consultant track)
+  if (!isPermanent && !result) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-primary animate-spin" />
+      </div>
+    );
+  }
 
   const leadId = sessionStorage.getItem("leadId") || "";
   const regionName = pricingResult?.region || survey.kommun || "";
