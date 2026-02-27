@@ -32,6 +32,89 @@ const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 type EmployerType = "region_kommun" | "privat" | "inhyrd" | "";
 type CommuteType = "veckovis" | "dagligen" | "inte_alls" | "";
 type ShiftType = "ob_jour" | "bara_ob" | "nej" | "";
+type OccupationCategory = "" | "lakare" | "ssk";
+
+// Doctor specialties (from Socialstyrelsen 2023)
+const DOCTOR_SPECIALTIES = [
+  "Akutsjukvård",
+  "Allmänmedicin",
+  "Anestesi och intensivvård",
+  "Arbets- och miljömedicin",
+  "Barn- och ungdomsallergologi",
+  "Barn- och ungdomshematologi och onkologi",
+  "Barn- och ungdomskardiologi",
+  "Barn- och ungdomskirurgi",
+  "Barn- och ungdomsmedicin",
+  "Barn- och ungdomsneurologi med habilitering",
+  "Barn- och ungdomspsykiatri",
+  "Endokrinologi och diabetologi",
+  "Geriatrik",
+  "Gynekologisk onkologi",
+  "Handkirurgi",
+  "Hematologi",
+  "Hud- och könssjukdomar",
+  "Hörsel- och balansrubbningar",
+  "Infektionssjukdomar",
+  "Internmedicin",
+  "Kardiologi",
+  "Kirurgi",
+  "Klinisk farmakologi",
+  "Klinisk fysiologi",
+  "Klinisk genetik",
+  "Klinisk immunologi och transfusionsmedicin",
+  "Klinisk kemi",
+  "Klinisk mikrobiologi",
+  "Klinisk neurofysiologi",
+  "Klinisk patologi",
+  "Kärlkirurgi",
+  "Lungsjukdomar",
+  "Medicinsk gastroenterologi och hepatologi",
+  "Neonatologi",
+  "Neurokirurgi",
+  "Neurologi",
+  "Neuroradiologi",
+  "Njurmedicin",
+  "Nuklearmedicin",
+  "Obstetrik och gynekologi",
+  "Onkologi",
+  "Ortopedi",
+  "Palliativ medicin",
+  "Plastikkirurgi",
+  "Psykiatri",
+  "Radiologi",
+  "Rehabiliteringsmedicin",
+  "Reumatologi",
+  "Rättsmedicin",
+  "Rättspsykiatri",
+  "Röst- och talrubbningar",
+  "Socialmedicin",
+  "Thoraxkirurgi",
+  "Urologi",
+  "Ögonsjukdomar",
+  "Öron-, näs- och halssjukdomar",
+];
+
+// Nurse/midwife specializations
+const NURSE_SPECIALIZATIONS = [
+  "Akutsjukvård",
+  "Ambulanssjukvård",
+  "Anestesisjukvård",
+  "Barn och ungdom",
+  "Barnmorska",
+  "Diabetesvård",
+  "Distriktssköterska",
+  "Hjärtsjukvård",
+  "Infektionssjukvård",
+  "Intensivvård",
+  "Kirurgisk vård",
+  "Medicinsk vård",
+  "Onkologi",
+  "Operationssjukvård",
+  "Palliativ vård",
+  "Psykiatrisk vård",
+  "Vård av äldre",
+  "Ögonsjukvård",
+];
 
 // Permanent track: sector derived from employer selection
 function sectorFromEmployer(employer: EmployerType): string {
@@ -62,6 +145,7 @@ export default function Survey() {
   const [miniStep, setMiniStep] = useState(0);
   const [employmentSelected, setEmploymentSelected] = useState(false);
   const [showHigherZoneCities, setShowHigherZoneCities] = useState(false);
+  const [occupationCategory, setOccupationCategory] = useState<OccupationCategory>("");
 
   // Fetch benchmark occupations for permanent track
   const { data: benchmarkOccupations } = useQuery({
@@ -272,11 +356,19 @@ export default function Survey() {
   };
 
   const handleBack = () => {
-    if (step === 4) {
+    if (step === 1 && occupationCategory) {
+      // Go back from role selector to category selector
+      setOccupationCategory("");
+      setData({ ...data, yrke: "" });
+    } else if (step === 2) {
+      // Go back to role selector (keep category)
+      setData({ ...data, yrke: "", kommun: "" });
+      setStep(1);
+    } else if (step === 4) {
       if (miniStep > 0) setMiniStep(miniStep - 1);
       else setStep(3);
-    } else if (step === 5) setStep(3); // Skip mini-questions back
-    else if (step === 6 && track === "permanent") setStep(3); // Permanent skipped step 5
+    } else if (step === 5) setStep(3);
+    else if (step === 6 && track === "permanent") setStep(3);
     else if (step === 6) setStep(5);
     else if (step > 0) setStep(step - 1);
   };
@@ -286,39 +378,47 @@ export default function Survey() {
   const effectiveStep = track === "permanent" && step > 5 ? step - 1 : step;
   const progress = (effectiveStep / effectiveSteps) * 100;
 
-  // Occupation options based on track
+  // Occupation options based on track and selected category
   const occupationOptions = useMemo(() => {
-    if (track === "consultant") {
-      return uniqueYrken.map((r) => {
-        const yk = r.yrkeskategori.toLowerCase();
-        const group = yk.includes("läkare") || yk === "legitimerad läkare"
-          ? "Läkare"
-          : yk.includes("sjuksköterska") || yk === "barnmorska" || yk === "distriktssjuksköterska" || yk === "skolsköterska" || yk === "röntgensjuksköterska"
-            ? "Sjuksköterska"
-            : "Övriga";
-        return {
-          value: r.yrkeskategori,
-          label: r.detaljer || r.yrkeskategori,
-          group,
-        };
-      });
-    } else {
-      // Permanent track – from salary_benchmarks
-      return (benchmarkOccupations || []).map((r) => {
-        const occ = r.occupation.toLowerCase();
-        const group = occ.includes("läkare")
-          ? "Läkare"
-          : occ.includes("sjukskötersk") || occ.includes("barnmorsk") || occ.includes("distriktssk") || occ.includes("skolsk") || occ.includes("röntgen")
-            ? "Sjuksköterska"
-            : "Övriga";
-        return {
-          value: r.occupation,
-          label: r.occupation,
-          group,
-        };
-      });
+    if (occupationCategory === "lakare") {
+      // Top items first, then specialties alphabetically
+      const topItems = [
+        { value: "AT-läkare", label: "AT-läkare" },
+        { value: "ST-läkare", label: "ST-läkare" },
+        { value: "Legitimerad läkare", label: "Leg. Läkare" },
+      ];
+      const specialtyItems = DOCTOR_SPECIALTIES.map((s) => ({
+        value: s,
+        label: s,
+      }));
+      return [
+        ...topItems.map((i) => ({ ...i, group: "Grundkategori" })),
+        ...specialtyItems.map((i) => ({ ...i, group: "Specialistområde" })),
+      ];
     }
-  }, [track, uniqueYrken, benchmarkOccupations]);
+    if (occupationCategory === "ssk") {
+      const topItem = { value: "Allmänsjuksköterska", label: "Allmänsjuksköterska", group: "Grundkategori" };
+      const specItems = NURSE_SPECIALIZATIONS.map((s) => ({
+        value: s,
+        label: s,
+        group: "Specialisering",
+      }));
+      return [topItem, ...specItems];
+    }
+    // Fallback (shouldn't reach here with new flow)
+    if (track === "consultant") {
+      return uniqueYrken.map((r) => ({
+        value: r.yrkeskategori,
+        label: r.detaljer || r.yrkeskategori,
+        group: "",
+      }));
+    }
+    return (benchmarkOccupations || []).map((r) => ({
+      value: r.occupation,
+      label: r.occupation,
+      group: "",
+    }));
+  }, [occupationCategory, track, uniqueYrken, benchmarkOccupations]);
 
   return (
     <div className="w-full max-w-lg mx-auto">
@@ -342,11 +442,35 @@ export default function Survey() {
 
 
         {/* Step 1: Yrkesroll */}
-        {step === 1 && (
+        {step === 1 && !occupationCategory && (
           <StepWrapper
             icon={<Stethoscope className="w-6 h-6" />}
             title="Vad jobbar du som?"
             subtitle="Välj din yrkeskategori"
+          >
+            <div className="flex flex-col gap-3">
+              {([
+                { value: "lakare" as OccupationCategory, label: "Läkare", desc: "AT, ST, specialist eller legitimerad läkare" },
+                { value: "ssk" as OccupationCategory, label: "Sjuksköterska / Barnmorska", desc: "Allmänsjuksköterska, specialistsjuksköterska eller barnmorska" },
+              ]).map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => setOccupationCategory(opt.value)}
+                  className="py-4 px-5 rounded-xl border border-border bg-card text-left transition-colors [@media(hover:hover)]:hover:bg-accent [@media(hover:hover)]:hover:text-accent-foreground active:bg-accent/50"
+                >
+                  <span className="text-sm font-medium">{opt.label}</span>
+                  <p className="text-xs text-muted-foreground mt-0.5">{opt.desc}</p>
+                </button>
+              ))}
+            </div>
+          </StepWrapper>
+        )}
+
+        {step === 1 && occupationCategory && (
+          <StepWrapper
+            icon={<Stethoscope className="w-6 h-6" />}
+            title={occupationCategory === "lakare" ? "Vilken typ av läkare?" : "Vilken typ av sjuksköterska?"}
+            subtitle="Välj din specifika roll"
           >
             <SearchableSelect
               value={data.yrke}
@@ -357,9 +481,19 @@ export default function Survey() {
                   setStep(2);
                 }, 300);
               }}
-              placeholder={isLoading ? "Laddar..." : "Välj yrkeskategori"}
+              placeholder="Välj roll"
               options={occupationOptions}
             />
+            <button
+              type="button"
+              onClick={() => {
+                setOccupationCategory("");
+                setData({ ...data, yrke: "" });
+              }}
+              className="mt-3 text-xs text-muted-foreground hover:text-foreground transition-colors"
+            >
+              ← Byt kategori
+            </button>
           </StepWrapper>
         )}
 
