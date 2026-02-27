@@ -31,7 +31,7 @@ serve(async (req) => {
       .from("reports")
       .select("*")
       .eq("id", report_id)
-      .single();
+      .maybeSingle();
 
     if (error || !report) {
       return new Response(JSON.stringify({ error: "Report not found" }), {
