@@ -15,7 +15,7 @@ export default function ReferralCta({ onOpen }: Props) {
           <h3 className="font-display text-lg text-foreground">Lås upp konsultlönen — gratis</h3>
         </div>
         <p className="text-sm text-muted-foreground">
-          Genom att dela en länk med en kollega låser du upp rapporten som visar vad konsulter tjänar i samma roll.
+          Genom att tipsa en kollega om sidan låser du upp rapporten som visar vad konsulter tjänar i samma roll.
         </p>
         <Button
           onClick={onOpen}
@@ -23,7 +23,7 @@ export default function ReferralCta({ onOpen }: Props) {
           className="w-full border-accent text-accent hover:bg-accent/5"
         >
           <Users className="w-4 h-4 mr-2" />
-          Dela med en kollega
+          Tipsa en kollega
         </Button>
       </CardContent>
     </Card>

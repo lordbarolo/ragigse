@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Gift, CheckCircle, Copy, Link as LinkIcon } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Gift, CheckCircle, Send } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 
@@ -15,80 +16,77 @@ interface Props {
 }
 
 export default function ExitIntentReferral({ visible, leadId, referrerEmail, region, onUnlocked, inline = false }: Props) {
-  const [loading, setLoading] = useState(false);
-  const [link, setLink] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
+  const [email, setEmail] = useState("");
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
 
-  if (!visible && !link) return null;
+  if (!visible && !sent) return null;
 
-  const generateAndCopy = async () => {
-    if (link) {
-      navigator.clipboard.writeText(link);
-      setCopied(true);
-      toast({ title: "Länk kopierad!" });
-      setTimeout(() => setCopied(false), 2000);
+  const handleSend = async () => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      toast({ title: "Ange en giltig e-postadress", variant: "destructive" });
       return;
     }
 
-    setLoading(true);
+    setSending(true);
     try {
-      const { data, error } = await supabase.functions.invoke("send-referral", {
+      const { error } = await supabase.functions.invoke("send-referral", {
         body: {
           lead_id: leadId,
           referrer_email: referrerEmail,
-          referee_email: referrerEmail,
+          referee_email: email,
           region,
+          send_email: true,
         },
       });
+
       if (error) throw error;
-      setLink(data.confirm_link);
-      navigator.clipboard.writeText(data.confirm_link);
-      setCopied(true);
+
+      setSent(true);
       onUnlocked();
-      toast({ title: "Länk kopierad! Dela den med en kollega." });
-      setTimeout(() => setCopied(false), 2000);
+      toast({ title: "Tips skickat!" });
     } catch {
       toast({ title: "Något gick fel, försök igen", variant: "destructive" });
     } finally {
-      setLoading(false);
+      setSending(false);
     }
   };
 
   if (inline) {
     return (
       <div className="space-y-1.5 text-center">
-        {!link ? (
+        {!sent ? (
           <>
             <div className="flex items-center justify-center gap-1.5">
               <Gift className="w-4 h-4 text-accent shrink-0" />
               <h3 className="font-display text-xs font-semibold text-foreground leading-tight">
-                Smygtitt gratis — dela med en kollega
+                Smygtitt gratis — tipsa en kollega
               </h3>
             </div>
-            <Button
-              onClick={generateAndCopy}
-              disabled={loading}
-              variant="outline"
-              size="sm"
-              className="border-accent text-accent hover:bg-accent/10 text-xs h-7 px-3"
-            >
-              {loading ? "..." : <><Copy className="w-3 h-3 mr-1" />Kopiera länk & lås upp</>}
-            </Button>
+            <div className="flex gap-1.5">
+              <Input
+                type="email"
+                placeholder="Kollegans e-post"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="flex-1 h-7 text-xs px-2"
+              />
+              <Button
+                onClick={handleSend}
+                disabled={sending || !email}
+                variant="outline"
+                size="sm"
+                className="border-accent text-accent hover:bg-accent/10 shrink-0 text-xs h-7 px-2"
+              >
+                {sending ? "..." : <><Send className="w-3 h-3 mr-1" />Lås upp</>}
+              </Button>
+            </div>
           </>
         ) : (
           <div className="flex items-center justify-center gap-1.5">
             <CheckCircle className="w-4 h-4 text-accent" />
-            <span className="text-xs font-semibold text-foreground">
-              {copied ? "Kopierad!" : "Upplåst!"}
-            </span>
-            <Button
-              onClick={generateAndCopy}
-              variant="ghost"
-              size="sm"
-              className="text-xs h-6 px-2 text-accent"
-            >
-              <Copy className="w-3 h-3" />
-            </Button>
+            <span className="text-xs font-semibold text-foreground">Upplåst!</span>
           </div>
         )}
       </div>
@@ -98,7 +96,7 @@ export default function ExitIntentReferral({ visible, leadId, referrerEmail, reg
   return (
     <div className="animate-fade-in">
       <Card className="card-shadow border-accent/40 overflow-hidden">
-        {!link ? (
+        {!sent ? (
           <CardContent className="pt-6 space-y-4">
             <div className="flex items-center gap-2">
               <Gift className="w-5 h-5 text-accent" />
@@ -107,36 +105,44 @@ export default function ExitIntentReferral({ visible, leadId, referrerEmail, reg
               </h3>
             </div>
             <p className="text-sm text-muted-foreground">
-              Dela en länk med en kollega så låser vi upp den första siffran i din rekommenderade lön direkt.
+              Tipsa en kollega om tjänsten så låser vi upp den första siffran i din rekommenderade lön direkt.
             </p>
-            <Button
-              onClick={generateAndCopy}
-              disabled={loading}
-              variant="outline"
-              className="w-full border-accent text-accent hover:bg-accent/10"
-            >
-              {loading ? "Skapar länk..." : <><Copy className="w-4 h-4 mr-2" />Kopiera länk & lås upp</>}
-            </Button>
+            <div className="flex gap-2">
+              <Input
+                type="email"
+                placeholder="Kollegans e-post"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="flex-1"
+              />
+              <Button
+                onClick={handleSend}
+                disabled={sending || !email}
+                variant="outline"
+                className="border-accent text-accent hover:bg-accent/10 shrink-0"
+              >
+                {sending ? (
+                  "Skickar..."
+                ) : (
+                  <>
+                    <Send className="w-4 h-4 mr-1" />
+                    Skicka tips & lås upp
+                  </>
+                )}
+              </Button>
+            </div>
           </CardContent>
         ) : (
           <CardContent className="pt-6 space-y-3">
             <div className="flex items-center gap-2">
               <CheckCircle className="w-5 h-5 text-accent" />
               <h3 className="font-display text-base text-foreground">
-                Länk kopierad!
+                Tips skickat!
               </h3>
             </div>
             <p className="text-sm text-muted-foreground">
-              Dela länken med en kollega. Första siffrorna i din rapport är nu upplåsta.
+              Första, tredje, fjärde och femte siffran upplåst. Vill du se hela rapporten och kalkylen? Välj ett alternativ nedan.
             </p>
-            <Button
-              onClick={generateAndCopy}
-              variant="ghost"
-              size="sm"
-              className="text-accent"
-            >
-              <Copy className="w-4 h-4 mr-1" /> Kopiera igen
-            </Button>
           </CardContent>
         )}
       </Card>

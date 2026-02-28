@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { Copy, CheckCircle, Link as LinkIcon } from "lucide-react";
+import { CheckCircle, Copy } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { trackEvent } from "@/lib/trackEvent";
@@ -21,76 +21,89 @@ interface Props {
 }
 
 export default function ReferralDialog({ open, onOpenChange, leadId, referrerEmail }: Props) {
-  const [loading, setLoading] = useState(false);
+  const [refereeEmail, setRefereeEmail] = useState("");
+  const [sending, setSending] = useState(false);
   const [referralLink, setReferralLink] = useState<string | null>(null);
-  const [copied, setCopied] = useState(false);
 
-  const generateLink = async () => {
-    if (!leadId) return;
-    setLoading(true);
+  const handleSend = async () => {
+    if (!leadId || !refereeEmail) return;
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(refereeEmail)) {
+      toast({ title: "Ange en giltig e-postadress", variant: "destructive" });
+      return;
+    }
+
+    setSending(true);
     try {
       const { data, error } = await supabase.functions.invoke("send-referral", {
         body: {
           lead_id: leadId,
           referrer_email: referrerEmail,
-          referee_email: referrerEmail, // placeholder, not used for email
+          referee_email: refereeEmail,
         },
       });
       if (error) throw error;
       setReferralLink(data.confirm_link);
-      trackEvent("referral_link_created");
+      trackEvent("referral_sent");
+      toast({ title: "Länk skapad! När din kollega klickar på den låses en lightrapport upp för dig." });
     } catch {
-      toast({ title: "Kunde inte skapa länk, försök igen", variant: "destructive" });
+      toast({ title: "Något gick fel, försök igen", variant: "destructive" });
     } finally {
-      setLoading(false);
+      setSending(false);
     }
   };
 
   const copyLink = () => {
     if (referralLink) {
       navigator.clipboard.writeText(referralLink);
-      setCopied(true);
       toast({ title: "Länk kopierad!" });
-      trackEvent("referral_link_copied");
-      setTimeout(() => setCopied(false), 2000);
     }
   };
 
-  // Generate link automatically when dialog opens
-  if (open && !referralLink && !loading) {
-    generateLink();
-  }
-
   return (
-    <Dialog open={open} onOpenChange={(v) => {
-      if (!v) { setReferralLink(null); setCopied(false); }
-      onOpenChange(v);
-    }}>
+    <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Dela med en kollega</DialogTitle>
+          <DialogTitle>Tipsa en kollega</DialogTitle>
           <DialogDescription>
-            Kopiera länken och skicka till en kollega. När hen klickar på den låser vi upp en gratis lightrapport åt dig.
+            Ange din kollegas e-postadress. När hen klickar på länken låser vi upp en gratis lightrapport åt dig.
           </DialogDescription>
         </DialogHeader>
 
-        {loading ? (
-          <div className="flex items-center justify-center py-6 text-sm text-muted-foreground">
-            Skapar din länk…
-          </div>
-        ) : referralLink ? (
+        {!referralLink ? (
           <div className="space-y-4">
+            <Input
+              type="email"
+              placeholder="kollegans@email.se"
+              value={refereeEmail}
+              onChange={(e) => setRefereeEmail(e.target.value)}
+            />
+            <Button
+              onClick={handleSend}
+              disabled={sending || !refereeEmail}
+              className="w-full"
+            >
+              {sending ? "Skickar..." : "Skapa referenslänk"}
+            </Button>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="w-5 h-5 text-accent shrink-0" />
+              <p className="text-sm text-foreground font-medium">Länken är redo!</p>
+            </div>
             <div className="flex gap-2">
               <Input value={referralLink} readOnly className="text-xs" />
               <Button variant="outline" size="icon" onClick={copyLink}>
-                {copied ? <CheckCircle className="w-4 h-4 text-accent" /> : <Copy className="w-4 h-4" />}
+                <Copy className="w-4 h-4" />
               </Button>
             </div>
             <p className="text-xs text-muted-foreground">
-              Dela länken via SMS, mejl eller valfri kanal. När din kollega klickar på den låses en lightrapport upp åt dig.
+              Skicka länken till din kollega. När hen klickar på den låses en lightrapport upp åt dig.
             </p>
           </div>
-        ) : null}
+        )}
       </DialogContent>
     </Dialog>
   );
