@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Survey from "@/components/Survey";
 import { Shield, TrendingUp, FileCheck } from "lucide-react";
 import { trackEvent } from "@/lib/trackEvent";
@@ -54,9 +54,28 @@ const webAppJsonLd = {
 };
 
 const Index = () => {
+  const navigate = useNavigate();
+
   useEffect(() => {
     trackEvent("landing_viewed");
   }, []);
+
+  const devSkip = () => {
+    const testData = {
+      category: "doctor",
+      role: "Specialistläkare",
+      specialization: "Allmänmedicin",
+      region: "Stockholm",
+      kommun: "Stockholm",
+      employmentType: "foretagare",
+      salaryType: "hourly",
+      currentSalary: 500,
+      commute: "none",
+      email: "test@bragig.se",
+    };
+    sessionStorage.setItem("surveyData", JSON.stringify(testData));
+    navigate("/resultat");
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -107,6 +126,14 @@ const Index = () => {
 
       {/* Survey */}
       <main className="px-4 py-8 sm:py-12">
+        {import.meta.env.DEV && (
+          <button
+            onClick={devSkip}
+            className="mx-auto mb-4 block text-xs px-3 py-1 rounded bg-muted text-muted-foreground hover:bg-accent/20 transition"
+          >
+            🧪 Dev: hoppa till /resultat
+          </button>
+        )}
         <Survey />
       </main>
 
