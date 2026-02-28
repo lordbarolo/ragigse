@@ -54,8 +54,8 @@ export default function PaywallOverlay({
           value={result.low}
           max={result.high + 50}
           color="bg-accent"
-          blurred={!unlocked && !partialUnlocked}
-          partialReveal={partialUnlocked && !unlocked}
+          blurred={true}
+          partialReveal={false}
         />
       </div>
 

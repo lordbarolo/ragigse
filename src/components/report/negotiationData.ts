@@ -106,6 +106,7 @@ export function getNegotiationTips(
     tips.push("Förhandla om utbildningsbudget och kompetensutveckling.");
   } else {
     tips.push("Som egenföretagare bör du fakturera minst 85% av kundpriset.");
+    tips.push("Om du tar risken för vite är det rimligt att förhandla en högre ersättning.");
   }
 
   tips.push(
