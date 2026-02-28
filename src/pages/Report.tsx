@@ -89,7 +89,7 @@ export default function Report() {
           </div>
         )}
 
-        <SocialProofBanner occupation={report.occupation} />
+        <SocialProofBanner />
 
         {isPermanentTrack ? (
           <PermanentTrackContent

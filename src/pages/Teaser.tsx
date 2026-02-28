@@ -154,7 +154,7 @@ export default function Teaser() {
           kommun={survey.kommun}
         />
 
-        <SocialProofBanner occupation={survey.yrke || undefined} />
+        <SocialProofBanner />
 
         {!isPermanent && isUnderpaid && result && (
           <OpportunityGap
