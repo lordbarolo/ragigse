@@ -12,6 +12,8 @@ type EventName =
   | "referral_sent"
   | "referral_confirmed"
   | "referral_unlock_shown"
+  | "referral_link_created"
+  | "referral_link_copied"
   | "exit_intent_shown";
 
 export function trackEvent(
