@@ -95,7 +95,27 @@ serve(async (req) => {
       }
     }
 
-    // 5. Cross-sector fallback — try any sector
+    // 5. Stem fallback — e.g. "Barnmorska" -> "%barnmorsk%"
+    if (!data && !error) {
+      const stem = occupation
+        .trim()
+        .toLowerCase()
+        .replace(/(orna|arna|erna|or|ar|er|a|e|n)$/u, "");
+
+      if (stem.length >= 4) {
+        const res = await supabase
+          .from("salary_benchmarks")
+          .select(selectCols)
+          .eq("sector", sector)
+          .ilike("occupation", `%${stem}%`)
+          .order("year", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (res.data) data = res.data;
+      }
+    }
+
+    // 6. Cross-sector fallback — try any sector
     if (!data && !error) {
       const res = await supabase
         .from("salary_benchmarks")
@@ -108,9 +128,30 @@ serve(async (req) => {
     }
 
     if (!data) {
+      const stem = occupation
+        .trim()
+        .toLowerCase()
+        .replace(/(orna|arna|erna|or|ar|er|a|e|n)$/u, "");
+
+      if (stem.length >= 4) {
+        const stemAnySector = await supabase
+          .from("salary_benchmarks")
+          .select(selectCols)
+          .ilike("occupation", `%${stem}%`)
+          .order("year", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (stemAnySector.data) {
+          data = stemAnySector.data;
+        }
+      }
+    }
+
+    if (!data) {
       return new Response(
-        JSON.stringify({ error: "No benchmark data found for this occupation and sector" }),
-        { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({ error: "No benchmark data available" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
