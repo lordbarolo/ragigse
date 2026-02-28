@@ -6,7 +6,6 @@ import { Separator } from "@/components/ui/separator";
 import { ShieldCheck, Loader2, Download, Linkedin } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import ShareButton from "@/components/ShareButton";
-import SocialProofBanner from "@/components/SocialProofBanner";
 import { useCheckout } from "@/shared/useCheckout";
 import type { ReportData } from "@/shared/types";
 
@@ -89,7 +88,7 @@ export default function Report() {
           </div>
         )}
 
-        <SocialProofBanner />
+        
 
         {isPermanentTrack ? (
           <PermanentTrackContent

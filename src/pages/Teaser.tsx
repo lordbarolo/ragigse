@@ -6,7 +6,6 @@ import type { SurveyData } from "@/components/Survey";
 import type { BenchmarkResult } from "@/hooks/useBenchmarkEngine";
 import { Loader2 } from "lucide-react";
 
-import SocialProofBanner from "@/components/SocialProofBanner";
 import ShareButton from "@/components/ShareButton";
 import { supabase } from "@/integrations/supabase/client";
 import { useExitIntent } from "@/hooks/useExitIntent";
@@ -109,7 +108,7 @@ export default function Teaser() {
           kommun={survey.kommun}
         />
 
-        <SocialProofBanner />
+        
 
         {!isPermanent && isUnderpaid && result && (
           <OpportunityGap
