@@ -32,8 +32,29 @@ export function useBenchmarkEngine() {
       const { data, error: fnError } = await supabase.functions.invoke("salary-benchmark-engine", {
         body: { occupation, sector, current_salary },
       });
-      if (fnError) throw fnError;
-      if (data?.error) throw new Error(data.error);
+
+      const isNoDataError = (msg: string) => msg.toLowerCase().includes("no benchmark data");
+
+      if (fnError) {
+        const msg = fnError?.message || "";
+        if (isNoDataError(msg)) {
+          setResult(null);
+          setError(null);
+          return null;
+        }
+        throw fnError;
+      }
+
+      if (data?.error) {
+        const msg = String(data.error);
+        if (isNoDataError(msg)) {
+          setResult(null);
+          setError(null);
+          return null;
+        }
+        throw new Error(msg);
+      }
+
       setResult(data as BenchmarkResult);
       return data as BenchmarkResult;
     } catch (e: any) {
