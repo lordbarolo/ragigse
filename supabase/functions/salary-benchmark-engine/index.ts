@@ -37,24 +37,39 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
+    const selectCols = "occupation, sector, average_monthly, percentile_25, percentile_50, percentile_75, region, year, source";
+
     // 1. Exact match
     let { data, error } = await supabase
       .from("salary_benchmarks")
-      .select("occupation, sector, average_monthly, percentile_25, percentile_50, percentile_75, region, year, source")
+      .select(selectCols)
       .eq("occupation", occupation)
       .eq("sector", sector)
       .order("year", { ascending: false })
       .limit(1)
       .maybeSingle();
 
-    // 2. Prefix/ILIKE fallback — e.g. "Specialistläkare akutsjukvård" → "%akutsjukvård%"
+    // 2. Fuzzy ILIKE — e.g. "Barnmorska" matches "Barnmorskor"
+    if (!data && !error) {
+      const res = await supabase
+        .from("salary_benchmarks")
+        .select(selectCols)
+        .eq("sector", sector)
+        .ilike("occupation", `%${occupation}%`)
+        .order("year", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (res.data) data = res.data;
+    }
+
+    // 3. Prefix/ILIKE fallback — e.g. "Specialistläkare akutsjukvård" → "%akutsjukvård%"
     if (!data && !error) {
       const parts = occupation.split(" ");
       if (parts.length > 1) {
         const suffix = parts.slice(1).join(" ");
         const res = await supabase
           .from("salary_benchmarks")
-          .select("occupation, sector, average_monthly, percentile_25, percentile_50, percentile_75, region, year, source")
+          .select(selectCols)
           .eq("sector", sector)
           .ilike("occupation", `%${suffix}%`)
           .order("year", { ascending: false })
@@ -64,13 +79,13 @@ serve(async (req) => {
       }
     }
 
-    // 3. Broad category fallback — e.g. "Specialistläkare" or "Sjuksköterska"
+    // 4. Broad category fallback — e.g. "Specialistläkare" or "Sjuksköterska"
     if (!data && !error) {
       const mainCategory = occupation.split(" ")[0];
       if (mainCategory) {
         const res = await supabase
           .from("salary_benchmarks")
-          .select("occupation, sector, average_monthly, percentile_25, percentile_50, percentile_75, region, year, source")
+          .select(selectCols)
           .eq("sector", sector)
           .ilike("occupation", `${mainCategory}%`)
           .order("year", { ascending: false })
@@ -78,6 +93,18 @@ serve(async (req) => {
           .maybeSingle();
         if (res.data) data = res.data;
       }
+    }
+
+    // 5. Cross-sector fallback — try any sector
+    if (!data && !error) {
+      const res = await supabase
+        .from("salary_benchmarks")
+        .select(selectCols)
+        .ilike("occupation", `%${occupation}%`)
+        .order("year", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (res.data) data = res.data;
     }
 
     if (!data) {
