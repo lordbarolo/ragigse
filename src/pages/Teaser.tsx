@@ -18,6 +18,7 @@ import { useTeaserData } from "@/hooks/useTeaserData";
 import TeaserHeader from "@/components/teaser/TeaserHeader";
 import OccupationInfo from "@/components/teaser/OccupationInfo";
 import EarningsBanner from "@/components/teaser/EarningsBanner";
+import GapCard from "@/components/teaser/GapCard";
 import PermanentBenchmarkCard from "@/components/teaser/PermanentBenchmarkCard";
 import ConsultantVerdictCard from "@/components/teaser/ConsultantVerdictCard";
 import ReferralDialog from "@/components/teaser/ReferralDialog";
@@ -106,6 +107,17 @@ export default function Teaser() {
           isPermanent={isPermanent}
           yrke={survey.yrke}
           kommun={survey.kommun}
+        />
+
+        <GapCard
+          diffPercent={diffPercent}
+          userHourly={userHourly}
+          marketHigh={result?.high ?? 0}
+          marketMax={undefined}
+          yrke={survey.yrke}
+          isPermanent={isPermanent}
+          userMonthly={userMonthly}
+          benchmarkP50={benchmarkMonthly?.p50}
         />
 
         
