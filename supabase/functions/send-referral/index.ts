@@ -71,7 +71,7 @@ serve(async (req) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            from: "CompCare.se <noreply@compcare.se>",
+            from: "CompCare.se <noreply@mail.compcare.se>",
             to: [referee_email],
             subject: "Din kollega tipsar: Har du rätt lön som konsult?",
             html: emailHtml,
