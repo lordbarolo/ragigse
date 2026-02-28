@@ -240,6 +240,7 @@ export default function Teaser() {
         onOpenChange={setReferralOpen}
         leadId={leadId}
         referrerEmail={survey.email}
+        region={regionName}
       />
     </div>
   );
