@@ -27,7 +27,7 @@ export function useCheckout() {
         if (data.report_id) {
           sessionStorage.setItem("reportId", data.report_id);
         }
-        window.open(data.url, "_blank");
+        window.location.href = data.url;
       }
     } catch {
       toast({ title: "Kunde inte starta betalning, försök igen", variant: "destructive" });
