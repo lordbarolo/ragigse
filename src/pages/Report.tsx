@@ -122,8 +122,8 @@ export default function Report() {
         {isFullAccess && (
           <div className="flex flex-col gap-3">
             <ShareButton
-              title="BraGig.se – Löneanalys"
-              text={`Jag kollade min lön som ${report.occupation} med BraGig.se — rekommenderar det!`}
+              title="CompCare.se – Löneanalys"
+              text={`Jag kollade min lön som ${report.occupation} med CompCare.se — rekommenderar det!`}
               className="w-full"
             />
             <div className="flex gap-3">
@@ -135,7 +135,7 @@ export default function Report() {
                 className="flex-1 gap-2"
                 onClick={() => {
                   const url = window.location.href;
-                  const text = `Jag har precis tagit reda på mitt verkliga löneutrymme som ${report.occupation} med BraGig.se — rekommenderar det!`;
+                  const text = `Jag har precis tagit reda på mitt verkliga löneutrymme som ${report.occupation} med CompCare.se — rekommenderar det!`;
                   window.open(
                     `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}&summary=${encodeURIComponent(text)}`,
                     "_blank", "width=600,height=500"
@@ -153,7 +153,7 @@ export default function Report() {
           Denna rapport baseras på offentliga ramavtalspriser och är avsedd som vägledning.
           Faktisk lön kan variera beroende på arbetsgivare, uppdrag och individuella avtal.
           <br />
-          © {new Date().getFullYear()} BraGig.se
+          © {new Date().getFullYear()} CompCare.se
         </p>
       </main>
     </div>
