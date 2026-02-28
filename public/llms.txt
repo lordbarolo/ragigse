@@ -1,10 +1,10 @@
-# BraGig.se
+# CompCare.se
 
-> BraGig.se hjälper sjuksköterskor i Sverige att ta reda på om de får rätt lön genom att jämföra deras erbjudande med faktiska ramavtalspriser som kommuner betalar för inhyrd personal.
+> CompCare.se hjälper sjuksköterskor i Sverige att ta reda på om de får rätt lön genom att jämföra deras erbjudande med faktiska ramavtalspriser som kommuner betalar för inhyrd personal.
 
 ## Om tjänsten
 
-BraGig.se är en löneanalysplattform riktad till sjuksköterskor, barnmorskor och läkare. Tjänsten baseras på officiella ramavtalspriser från 290 svenska vårdgivare och ger användare en objektiv bild av sitt marknadsvärde.
+CompCare.se är en löneanalysplattform riktad till sjuksköterskor, barnmorskor och läkare. Tjänsten baseras på officiella ramavtalspriser från 290 svenska vårdgivare och ger användare en objektiv bild av sitt marknadsvärde.
 
 Användaren fyller i yrkesroll, arbetsort och erfarenhet. Systemet jämför mot ramavtalspriser, gör avdrag för bemanningsföretagets marginal, och visar om ersättningen ligger under, på eller över marknadsnivå.
 
@@ -36,5 +36,5 @@ Den grundläggande lönejämförelsen är gratis. En detaljerad rapport med för
 
 ## Kontakt
 
-Webbplats: https://bragig.se
-FAQ: https://bragig.se/vanliga-fragor
+Webbplats: https://compcare.se
+FAQ: https://compcare.se/vanliga-fragor

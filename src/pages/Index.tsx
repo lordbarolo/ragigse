@@ -6,7 +6,7 @@ import { trackEvent } from "@/lib/trackEvent";
 
 const FAQ_ITEMS = [
   {
-    question: "Hur fungerar BraGig.se?",
+    question: "Hur fungerar CompCare.se?",
     answer: "Du fyller i din yrkesroll, arbetsort och erfarenhet. Vi jämför din nuvarande eller erbjudna konsultersättning med faktiska ramavtalspriser som offentliga vårdgivare betalar till bemanningsföretag för inhyrd personal. Därefter gör vi ett avdrag för marknadsmässig marginal till bemanningsföretaget. Det som kvarstår är det belopp som utgör ditt förhandlingsbara ersättningsutrymme.",
   },
   {
@@ -14,7 +14,7 @@ const FAQ_ITEMS = [
     answer: "Analysen baseras på officiella ramavtalspriser från 290 svenska vårdgivare, uppdaterade 2026.",
   },
   {
-    question: "Kostar det något?",
+    question: "Kostar det något att använda CompCare?",
     answer: "Den grundläggande jämförelsen av din konsultersättning är helt gratis. För en detaljerad rapport med förhandlingstips kan du välja att uppgradera.",
   },
   {
@@ -39,8 +39,8 @@ const faqJsonLd = {
 const webAppJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  name: "BraGig.se",
-  url: "https://bragig.se",
+  name: "CompCare.se",
+  url: "https://compcare.se",
   description:
     "Jämför din konsultersättning med faktiska ramavtalspriser för vårdkonsulter i 290 kommuner.",
   applicationCategory: "FinanceApplication",
@@ -71,7 +71,7 @@ const Index = () => {
       salaryType: "hourly",
       currentSalary: 500,
       commute: "none",
-      email: "test@bragig.se",
+      email: "test@compcare.se",
     };
     sessionStorage.setItem("surveyData", JSON.stringify(testData));
     navigate("/resultat");
@@ -163,7 +163,7 @@ const Index = () => {
 
       {/* Footer */}
       <footer className="border-t py-8 text-center text-sm text-muted-foreground space-y-2">
-        <p>© 2026 BraGig.se · Data från offentliga ramavtal</p>
+        <p>© 2026 CompCare.se · Data från offentliga ramavtal</p>
         <p className="text-xs text-muted-foreground/70">Fler branscher kommer snart</p>
         <Link to="/vanliga-fragor" className="text-primary hover:underline">
           Vanliga frågor om lön →

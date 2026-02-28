@@ -160,9 +160,9 @@ export default function Teaser() {
         <ReportPreviewList isPermanent={isPermanent} />
 
         <ShareButton
-          title="BraGig.se – Löneanalys"
+          title="CompCare.se – Löneanalys"
           text={`Jag kollade min lön som ${survey.yrke} i ${survey.kommun} — kolla din också!`}
-          url="https://bragig.se"
+          url="https://compcare.se"
           className="w-full"
         />
 

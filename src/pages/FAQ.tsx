@@ -4,7 +4,7 @@ import { ArrowLeft } from "lucide-react";
 
 const FAQ_ITEMS = [
   {
-    question: "Hur fungerar BraGig.se?",
+    question: "Hur fungerar CompCare.se?",
     answer:
       "Du fyller i din yrkesroll, arbetsort och erfarenhet. Vi jämför din nuvarande eller erbjudna ersättning med faktiska ramavtalspriser som offentliga vårdgivare betalar till bemanningsföretag för inhyrd personal. Därefter gör vi ett avdrag för marknadsmässig marginal till bemanningsföretaget. Det som kvarstår är det belopp som utgör ersättningsutrymmet som är förhandlingsbar.",
   },
@@ -14,7 +14,7 @@ const FAQ_ITEMS = [
       "Analysen baseras på officiella ramavtalspriser från 290 svenska vårdgivare, uppdaterade 2026.",
   },
   {
-    question: "Kostar det något att använda BraGig?",
+    question: "Kostar det något att använda CompCare?",
     answer:
       "Den grundläggande jämförelsen är helt gratis. För en detaljerad rapport med förhandlingstips kan du välja att uppgradera.",
   },
@@ -26,7 +26,7 @@ const FAQ_ITEMS = [
   {
     question: "Hur vet jag om jag är underbetald?",
     answer:
-      "Det bästa sättet är att jämföra din ersättning med vad offentliga vårdgivare faktiskt betalar för inhyrd personal via ramavtal. BraGig.se gör exakt detta — vi matchar din yrkesroll, arbetsort och erfarenhet mot officiella ramavtalspriser så du ser om ditt erbjudande ligger under, på eller över marknadsnivå.",
+      "Det bästa sättet är att jämföra din ersättning med vad offentliga vårdgivare faktiskt betalar för inhyrd personal via ramavtal. CompCare.se gör exakt detta — vi matchar din yrkesroll, arbetsort och erfarenhet mot officiella ramavtalspriser så du ser om ditt erbjudande ligger under, på eller över marknadsnivå.",
   },
   {
     question: "Vad är ramavtalspriser och varför är de relevanta?",
@@ -34,14 +34,14 @@ const FAQ_ITEMS = [
       "Ramavtalspriser är de timpris som offentliga vårdgivare har avtalat med bemanningsföretag. De speglar vad arbetsgivare faktiskt är villiga att betala för din kompetens — och ger därmed en mer realistisk bild av ditt marknadsvärde än generella lönestatistiker.",
   },
   {
-    question: "Hur kan jag använda BraGig-rapporten i en löneförhandling?",
+    question: "Hur kan jag använda CompCare-rapporten i en löneförhandling?",
     answer:
       "Rapporten visar exakt vad din vårdgivare betalar för inhyrd personal med din profil. I förhandlingen kan du referera till dessa siffror och argumentera att din ersättning bör spegla ditt faktiska marknadsvärde.",
   },
   {
     question: "Skiljer sig ersättningarna mycket mellan olika kommuner?",
     answer:
-      "Ja, skillnaderna kan vara stora. Storstadskommuner har generellt lägre ramavtalspriser tack vare större tillgång på personal, medan glesbygdskommuner kan betala 30–50% mer. BraGig.se visar data för alla 290 vårdgivare så du kan jämföra.",
+      "Ja, skillnaderna kan vara stora. Storstadskommuner har generellt lägre ramavtalspriser tack vare större tillgång på personal, medan glesbygdskommuner kan betala 30–50% mer. CompCare.se visar data för alla 290 vårdgivare så du kan jämföra.",
   },
   {
     question: "Hur ofta uppdateras datan?",
@@ -71,12 +71,12 @@ const faqJsonLd = {
 export default function FAQ() {
   useEffect(() => {
     document.title =
-      "Vanliga frågor om lön för sjuksköterskor | BraGig.se";
+      "Vanliga frågor om lön för sjuksköterskor | CompCare.se";
     const meta = document.querySelector('meta[name="description"]');
     if (meta) {
       meta.setAttribute(
         "content",
-        "Svar på vanliga frågor om sjuksköterskelöner, ramavtalspriser, löneförhandling och hur BraGig.se hjälper dig jämföra din lön."
+        "Svar på vanliga frågor om sjuksköterskelöner, ramavtalspriser, löneförhandling och hur CompCare.se hjälper dig jämföra din lön."
       );
     }
   }, []);
@@ -140,7 +140,7 @@ export default function FAQ() {
 
       {/* Footer */}
       <footer className="border-t py-8 text-center text-sm text-muted-foreground">
-        <p>© 2026 BraGig.se · Data från offentliga ramavtal</p>
+        <p>© 2026 CompCare.se · Data från offentliga ramavtal</p>
       </footer>
     </div>
   );

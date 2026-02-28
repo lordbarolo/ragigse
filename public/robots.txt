@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 Disallow: /dev/
 
-Sitemap: https://bragig.se/sitemap.xml
+Sitemap: https://compcare.se/sitemap.xml
 
 # AI crawlers
 User-agent: GPTBot
