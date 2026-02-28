@@ -90,7 +90,7 @@ export default function ReferralDialog({ open, onOpenChange, leadId, referrerEma
               <p className="text-sm text-foreground font-medium">E-post skickat!</p>
             </div>
             <p className="text-xs text-muted-foreground">
-              Din kollega har fått ett mejl med en länk till BraGig. När hen gör en lönekoll låses en lightrapport upp åt dig.
+              Din kollega har fått ett mejl med en länk till CompCare. När hen gör en lönekoll låses en lightrapport upp åt dig.
             </p>
           </div>
         )}

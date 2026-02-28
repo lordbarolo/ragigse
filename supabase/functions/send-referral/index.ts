@@ -41,7 +41,7 @@ serve(async (req) => {
     }
 
     // Build the confirmation link
-    const siteUrl = req.headers.get("origin") || "https://bragig.se";
+    const siteUrl = req.headers.get("origin") || "https://compcare.se";
     const confirmLink = `${siteUrl}/referral/${referral.token}`;
     const homepageLink = siteUrl;
 
@@ -59,7 +59,7 @@ serve(async (req) => {
           <p style="margin: 24px 0;">
             <a href="${homepageLink}" style="display: inline-block; padding: 12px 28px; background: linear-gradient(135deg, #1565c0, #0d47a1); color: #fff; text-decoration: none; border-radius: 8px; font-weight: 600;">Kolla din lön här</a>
           </p>
-          <p style="color: #666; font-size: 13px;">Hälsningar,<br/>Teamet på BraGig.se</p>
+          <p style="color: #666; font-size: 13px;">Hälsningar,<br/>Teamet på CompCare.se</p>
         </div>
       `;
 
@@ -71,7 +71,7 @@ serve(async (req) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            from: "BraGig.se <noreply@bragig.se>",
+            from: "CompCare.se <noreply@compcare.se>",
             to: [referee_email],
             subject: "Din kollega tipsar: Har du rätt lön som konsult?",
             html: emailHtml,
