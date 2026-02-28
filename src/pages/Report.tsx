@@ -124,6 +124,7 @@ export default function Report() {
             <ShareButton
               title="CompCare.se – Löneanalys"
               text={`Jag kollade min lön som ${report.occupation} med CompCare.se — rekommenderar det!`}
+              url={`${window.location.origin}/rapport/${report.id}`}
               className="w-full"
             />
             <div className="flex gap-3">
@@ -150,7 +151,7 @@ export default function Report() {
 
         <Separator />
         <p className="text-xs text-muted-foreground text-center leading-relaxed pb-8">
-          Denna rapport baseras på offentliga ramavtalspriser och är avsedd som vägledning.
+          Denna rapport baseras på gällande avtal från SKR och är avsedd som vägledning.
           Faktisk lön kan variera beroende på arbetsgivare, uppdrag och individuella avtal.
           <br />
           © {new Date().getFullYear()} CompCare.se

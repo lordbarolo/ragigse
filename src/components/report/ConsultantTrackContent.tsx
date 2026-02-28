@@ -62,6 +62,39 @@ export default function ConsultantTrackContent({
         </CardContent>
       </Card>
 
+      {/* Nästa steg — direkt efter mätaren för max impact */}
+      {isConsultantFullAccess && rec && (
+        <Card className="card-shadow border-primary/20">
+          <CardContent className="pt-6 space-y-4">
+            <SectionHeading icon={Lightbulb} title="Nästa steg — vad du ska säga" />
+            <div className="space-y-4 text-sm text-muted-foreground">
+              <ScriptBlock
+                step={1}
+                title="Boka möte"
+                text="Kontakta din bemanningskonsult och begär ett lönesamtal. Nämn att du har gjort en marknadsanalys."
+              />
+              <ScriptBlock
+                step={2}
+                title="Presentera data"
+                text={`"Jag har tagit fram ramavtalspriset för ${occupation} i min region. Kundpriset ligger på ${fmt(marketRate)} kr/h, och med 15% marginal borde min ${isEmployee ? 'bruttolön' : 'fakturering'} landa på ${fmt(rec.recommended_hourly_min)}–${fmt(rec.recommended_hourly_max)} kr/h."`}
+              />
+              <ScriptBlock
+                step={3}
+                title="Ställ frågan"
+                text={`"Jag vill att min ersättning justeras till minst ${fmt(rec.recommended_hourly_min)} kr/h. Kan vi hitta en lösning?"`}
+              />
+              {isEmployee && (
+                <ScriptBlock
+                  step={4}
+                  title="Bonus: fråga om pension"
+                  text={`"Ingår tjänstepension på minst 4.5% i min anställning? Det är standard i ramavtalet."`}
+                />
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* 1. Ramavtalspris */}
       <Card className="card-shadow">
         <CardContent className="pt-6 space-y-3">
@@ -244,40 +277,7 @@ export default function ConsultantTrackContent({
         </Card>
       )}
 
-      {/* 5. Nästa steg (full) */}
-      {isConsultantFullAccess && rec && (
-        <Card className="card-shadow border-primary/20">
-          <CardContent className="pt-6 space-y-4">
-            <SectionHeading icon={Lightbulb} title="Nästa steg — vad du ska säga" />
-            <div className="space-y-4 text-sm text-muted-foreground">
-              <ScriptBlock
-                step={1}
-                title="Boka möte"
-                text="Kontakta din bemanningskonsult och begär ett lönesamtal. Nämn att du har gjort en marknadsanalys."
-              />
-              <ScriptBlock
-                step={2}
-                title="Presentera data"
-                text={`"Jag har tagit fram ramavtalspriset för ${occupation} i min region. Kundpriset ligger på ${fmt(marketRate)} kr/h, och med 15% marginal borde min ${isEmployee ? 'bruttolön' : 'fakturering'} landa på ${fmt(rec.recommended_hourly_min)}–${fmt(rec.recommended_hourly_max)} kr/h."`}
-              />
-              <ScriptBlock
-                step={3}
-                title="Ställ frågan"
-                text={`"Jag vill att min ersättning justeras till minst ${fmt(rec.recommended_hourly_min)} kr/h. Kan vi hitta en lösning?"`}
-              />
-              {isEmployee && (
-                <ScriptBlock
-                  step={4}
-                  title="Bonus: fråga om pension"
-                  text={`"Ingår tjänstepension på minst 4.5% i min anställning? Det är standard i ramavtalet."`}
-                />
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* 6. Regionala jämförelser (full) */}
+      {/* 5. Regionala jämförelser (full) */}
       {isConsultantFullAccess && zoneComparisons && zoneComparisons.length > 0 && (
         <Card className="card-shadow">
           <CardContent className="pt-6 space-y-4">
