@@ -174,7 +174,7 @@ function MockResultCard({ t }: { t: ThemeTokens }) {
         {/* Bars */}
         {[
           { label: "Din nuvarande lön", value: "800 kr/h", width: "55%" },
-          { label: "Marknadspris (ramavtal)", value: "███", width: "80%", blur: true },
+          { label: "Vad regionen betalar bemanningsföretag", value: "███", width: "80%", blur: true },
           { label: "Rekommenderad lön", value: "███", width: "70%", blur: true },
         ].map((bar, i) => (
           <div key={i} style={{ marginBottom: 10 }}>
