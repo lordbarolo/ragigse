@@ -16,13 +16,15 @@ interface Props {
   referrerEmail: string;
   regionName: string;
   onPartialUnlock: () => void;
+  employmentType?: string;
 }
 
 export default function ConsultantVerdictCard({
   abVariant, isUnderpaid, userHourly, result, unlocked, partialUnlocked,
   exitIntentVisible, checkoutLoading, onCheckout, leadId, referrerEmail,
-  regionName, onPartialUnlock,
+  regionName, onPartialUnlock, employmentType,
 }: Props) {
+  const label = employmentType === "foretagare" ? "Din ersättning" : "Din lön";
   return (
     <Card className="card-shadow border-destructive/30 overflow-hidden">
       <div className="bg-destructive/10 p-4 flex items-center gap-3">
@@ -31,8 +33,8 @@ export default function ConsultantVerdictCard({
           {abVariant === "B"
             ? "Du är sannolikt underbetald enligt offentliga ramavtal."
             : isUnderpaid
-              ? "Din lön ligger under marknadspris"
-              : "Din lön ligger nära marknadspris"}
+              ? `${label} ligger under marknadspris`
+              : `${label} ligger nära marknadspris`}
         </p>
       </div>
       <CardContent className="pt-6">

@@ -1,8 +1,11 @@
 interface Props {
   kommun: string;
+  employmentType?: string;
 }
 
-export default function TeaserHeader({ kommun }: Props) {
+export default function TeaserHeader({ kommun, employmentType }: Props) {
+  const label = employmentType === "foretagare" ? "din ersättning" : "din lön";
+
   return (
     <header className="hero-gradient py-8 px-5 text-center">
       <div className="max-w-lg mx-auto">
@@ -10,7 +13,7 @@ export default function TeaserHeader({ kommun }: Props) {
           Din löneanalys är klar
         </h1>
         <p className="text-sm sm:text-base text-primary-foreground/80 mt-2">
-          Vi har jämfört din lön med ramavtalspriserna i {kommun}
+          Vi har jämfört {label} med ramavtalspriserna i {kommun}
         </p>
       </div>
     </header>

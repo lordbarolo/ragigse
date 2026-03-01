@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Survey from "@/components/Survey";
-import { Shield, TrendingUp, FileCheck } from "lucide-react";
+import { Shield } from "lucide-react";
 import { trackEvent } from "@/lib/trackEvent";
 
 const FAQ_ITEMS = [
@@ -92,37 +92,20 @@ const Index = () => {
       {/* Hero */}
       <header className="hero-gradient py-10 px-5 text-center sm:py-16">
         <div className="max-w-3xl mx-auto space-y-3">
-          <p className="text-xs sm:text-sm uppercase tracking-widest text-primary-foreground/60 font-semibold mb-2">
-            För vårdkonsulter
-          </p>
+          {/* Trust badge — above headline */}
+          <div className="flex items-center justify-center gap-2 text-xs sm:text-sm text-primary-foreground/60 font-medium">
+            <Shield className="w-4 h-4" />
+            <span>Baserat på officiella avtalspriser hos 290 kommuner och 21 regioner</span>
+          </div>
+
           <h1 className="text-3xl sm:text-4xl md:text-5xl text-primary-foreground leading-tight">
-            Får du rätt konsultersättning?
+            Får du rätt ersättning?
           </h1>
           <p className="text-base sm:text-lg md:text-xl text-primary-foreground/85 font-body max-w-2xl mx-auto">
-            75% av vårdkonsulter är underbetalda. Jämför din ersättning med
-            faktiska ramavtalspriser — gratis.
+            Jämför med officiella avtalspriser hos 290 kommuner och 21 regioner.
           </p>
         </div>
       </header>
-
-      {/* Trust badges */}
-      <section
-        className="border-b bg-card"
-        aria-label="Förtroendesignaler"
-      >
-        <div className="max-w-4xl mx-auto px-5 py-4 sm:py-6 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-8 text-xs sm:text-sm text-muted-foreground">
-          <span className="flex items-center gap-2">
-            <Shield className="w-4 h-4 text-accent" /> Baserat på officiella
-            ramavtal
-          </span>
-          <span className="flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-accent" /> 290 kommuner
-          </span>
-          <span className="flex items-center gap-2">
-            <FileCheck className="w-4 h-4 text-accent" /> Uppdaterat 2026
-          </span>
-        </div>
-      </section>
 
       {/* Survey */}
       <main className="px-4 py-8 sm:py-12">
