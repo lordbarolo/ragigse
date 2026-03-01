@@ -12,6 +12,8 @@ interface Props {
   userMonthly?: number;
   benchmarkP50?: number;
   employmentType?: string;
+  /** Noised market value for display (consultant track) */
+  noisedMarketHigh?: number;
 }
 
 /** Animated count-up hook */
@@ -53,25 +55,34 @@ export default function GapCard({
   userMonthly,
   benchmarkP50,
   employmentType,
+  noisedMarketHigh,
 }: Props) {
-  const counter = useCountUp(Math.abs(diffPercent));
-  const isUnderpaid = diffPercent > 0;
-
-  if (!isUnderpaid || diffPercent < 1) return null;
-
-  const unit = isPermanent ? "kr/mån" : "kr/h";
   const userVal = isPermanent ? (userMonthly ?? 0) : userHourly;
-  const marketVal = isPermanent ? (benchmarkP50 ?? 0) : marketHigh;
-  const maxVal = marketMax ?? Math.round(marketVal * 1.12);
+  const realMarketVal = isPermanent ? (benchmarkP50 ?? 0) : marketHigh;
 
+  // Display values: noised for consultant track, real for permanent
+  const displayMarketVal = isPermanent ? realMarketVal : (noisedMarketHigh ?? realMarketVal);
+
+  // Derive display percentage from noised values (anti reverse-engineering)
+  const displayDiffPercent = displayMarketVal > 0
+    ? Math.round(((displayMarketVal - userVal) / displayMarketVal) * 100)
+    : diffPercent;
+
+  const counter = useCountUp(Math.abs(displayDiffPercent));
+  const isUnderpaid = displayDiffPercent > 0;
+
+  if (!isUnderpaid || displayDiffPercent < 1) return null;
+
+  const maxVal = marketMax ?? Math.round(realMarketVal * 1.12);
+
+  // Monthly gain uses noised market values
   const monthlyGain = isPermanent
-    ? marketVal - userVal
-    : (marketHigh - userHourly) * 167;
+    ? displayMarketVal - userVal
+    : (displayMarketVal - userHourly) * 167;
 
-  const barMax = maxVal || marketVal;
+  const barMax = maxVal || realMarketVal;
   const userWidth = Math.min((userVal / barMax) * 100, 100);
-  const marketWidth = Math.min((marketVal / barMax) * 100, 100);
-  const maxWidth = 100;
+  const marketWidth = Math.min((displayMarketVal / barMax) * 100, 100);
 
   return (
     <div className="rounded-3xl overflow-hidden relative font-dm"
@@ -165,7 +176,7 @@ export default function GapCard({
               Marknadsvärde
             </p>
             <p className="font-syne text-[22px] font-bold tracking-tight" style={{ color: "hsl(var(--gap-accent))" }}>
-              {fmt(marketVal)} kr
+              {fmt(displayMarketVal)} kr
             </p>
             <p className="text-xs mt-0.5" style={{ color: "hsl(var(--gap-muted))" }}>
               {isPermanent ? "per månad" : "per timme"}
@@ -200,14 +211,11 @@ export default function GapCard({
           </div>
         )}
 
-        {/* Bars */}
+        {/* Bars — relative only, no exact kr/h values */}
         <div className="space-y-2.5 animate-gap-fade-in" style={{ animationDelay: "0.9s" }}>
           {[
-            { label: "Du idag", width: userWidth, fill: "hsl(var(--gap-danger))", val: `${fmt(userVal)} ${unit}` },
-            { label: "Marknad", width: marketWidth, fill: "hsl(var(--gap-accent))", val: `${fmt(marketVal)} ${unit}` },
-            ...(marketMax
-              ? [{ label: "Ramavtal max", width: maxWidth, fill: "hsl(0 0% 100% / 0.2)", val: `${fmt(maxVal)} ${unit}` }]
-              : []),
+            { label: "Du idag", width: userWidth, fill: "hsl(var(--gap-danger))" },
+            { label: "Marknad", width: marketWidth, fill: "hsl(var(--gap-accent))" },
           ].map((bar) => (
             <div key={bar.label} className="flex items-center gap-2.5">
               <span
@@ -229,12 +237,6 @@ export default function GapCard({
                   }}
                 />
               </div>
-              <span
-                className="text-xs font-medium w-[76px] text-right shrink-0"
-                style={{ color: "hsl(var(--gap-text))" }}
-              >
-                {bar.val}
-              </span>
             </div>
           ))}
         </div>

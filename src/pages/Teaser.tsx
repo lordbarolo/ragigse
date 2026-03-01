@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePricingEngine } from "@/hooks/usePricingEngine";
 import { useRates, useLocations } from "@/hooks/useCalculator";
@@ -72,8 +72,39 @@ export default function Teaser() {
     checkReferral();
   }, []);
 
-  const { isPermanent, result, benchmarkMonthly, userMonthly, userHourly, isUnderpaid, diffPercent } =
+  const { isPermanent, result, noisedResult, benchmarkMonthly, userMonthly, userHourly, isUnderpaid, diffPercent } =
     useTeaserData(survey, pricingResult, benchmarkResult);
+
+  // Find nearest kommun with higher zone price (for Variant 2 messaging)
+  const nearestHigherKommun = useMemo(() => {
+    if (isPermanent || !pricingResult || !rates || !locations) return null;
+
+    const currentRate = pricingResult.rate_customer_sek_per_hour;
+    const currentZon = pricingResult.zon;
+
+    // Identify matched yrkeskategori by exact rate + zone match
+    const matchedRate = rates.find(
+      (r) => r.zon === currentZon && r.timpris_kund === currentRate,
+    );
+    if (!matchedRate) return null;
+
+    // Find same yrkeskategori + typ in higher-priced zones
+    const higherRates = rates
+      .filter(
+        (r) =>
+          r.yrkeskategori === matchedRate.yrkeskategori &&
+          r.typ === matchedRate.typ &&
+          r.timpris_kund > currentRate &&
+          r.zon !== currentZon,
+      )
+      .sort((a, b) => a.timpris_kund - b.timpris_kund);
+
+    if (!higherRates.length) return null;
+
+    const higherZon = higherRates[0].zon;
+    const higherLoc = locations.find((l) => l.zon === higherZon);
+    return higherLoc?.kommun || null;
+  }, [isPermanent, pricingResult, rates, locations]);
 
   const onCheckout = (plan: "single" | "yearly") => {
     const leadId = sessionStorage.getItem("leadId") || "";
@@ -108,6 +139,7 @@ export default function Teaser() {
           yrke={survey.yrke}
           kommun={survey.kommun}
           employmentType={survey.employmentType}
+          nearestHigherKommun={nearestHigherKommun}
         />
 
         <GapCard
@@ -120,14 +152,13 @@ export default function Teaser() {
           userMonthly={userMonthly}
           benchmarkP50={benchmarkMonthly?.p50}
           employmentType={survey.employmentType}
+          noisedMarketHigh={noisedResult?.high}
         />
-
-        
 
         {!isPermanent && isUnderpaid && result && (
           <OpportunityGap
             userHourly={userHourly}
-            marketHigh={result.high}
+            marketHigh={noisedResult?.high ?? result.high}
             employmentType={survey.employmentType as "anstalld" | "foretagare"}
           />
         )}
@@ -157,7 +188,7 @@ export default function Teaser() {
             abVariant={abVariant}
             isUnderpaid={isUnderpaid}
             userHourly={userHourly}
-            result={result}
+            result={noisedResult ?? result}
             unlocked={unlocked}
             partialUnlocked={partialUnlocked}
             exitIntentVisible={exitIntentVisible}
