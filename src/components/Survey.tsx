@@ -458,8 +458,7 @@ export default function Survey() {
         {step === 3 && !selectedRegion && (
           <StepWrapper
             icon={<MapPin className="w-6 h-6" />}
-            title="Var jobbar du?"
-            subtitle="Välj region"
+            title="Vilken region?"
           >
             <div className="flex flex-col gap-2 max-h-[400px] overflow-y-auto">
               {regions.map((region) => (
@@ -479,7 +478,7 @@ export default function Survey() {
           <StepWrapper
             icon={<MapPin className="w-6 h-6" />}
             title="Vilken kommun?"
-            subtitle={`Kommuner i ${selectedRegion}`}
+            subtitle={`Kommuner i ${selectedRegion.split("/")[0]}`}
           >
             <SearchableSelect
               value={data.kommun}
