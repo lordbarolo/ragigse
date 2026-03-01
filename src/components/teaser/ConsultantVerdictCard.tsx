@@ -1,5 +1,4 @@
 import { TrendingDown } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
 import PaywallOverlay from "./PaywallOverlay";
 
 interface Props {
@@ -26,10 +25,10 @@ export default function ConsultantVerdictCard({
 }: Props) {
   const label = employmentType === "foretagare" ? "Din ersättning" : "Din lön";
   return (
-    <Card className="card-shadow border-destructive/30 overflow-hidden">
-      <div className="bg-destructive/10 p-4 flex items-center gap-3">
-        <TrendingDown className="w-5 h-5 text-destructive" />
-        <p className="font-semibold text-foreground">
+    <div className="rounded-lg border border-destructive/20 bg-card card-shadow overflow-hidden">
+      <div className="bg-destructive/5 border-b border-destructive/10 px-5 py-3 flex items-center gap-3">
+        <TrendingDown className="w-4 h-4 text-destructive" />
+        <p className="font-semibold text-sm text-foreground">
           {abVariant === "B"
             ? "Du är sannolikt underbetald enligt offentliga ramavtal."
             : isUnderpaid
@@ -37,7 +36,7 @@ export default function ConsultantVerdictCard({
               : `${label} ligger nära marknadspris`}
         </p>
       </div>
-      <CardContent className="pt-6">
+      <div className="p-5">
         <PaywallOverlay
           userHourly={userHourly}
           result={result}
@@ -53,7 +52,7 @@ export default function ConsultantVerdictCard({
           abVariant={abVariant}
           isUnderpaid={isUnderpaid}
         />
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

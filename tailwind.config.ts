@@ -14,10 +14,10 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['"DM Serif Display"', 'serif'],
+        display: ['"Inter"', 'sans-serif'],
         body: ['"Inter"', 'sans-serif'],
-        syne: ['"Syne"', 'sans-serif'],
-        dm: ['"DM Sans"', 'sans-serif'],
+        syne: ['"Inter"', 'sans-serif'],
+        dm: ['"Inter"', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",

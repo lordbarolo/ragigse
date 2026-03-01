@@ -288,14 +288,15 @@ export default function Survey() {
 
   return (
     <div className="w-full max-w-lg mx-auto">
-      {/* Progress bar */}
-      <div className="mb-8">
-        <div className="flex justify-end text-xs text-muted-foreground mb-2">
+      {/* Progress bar — thin Stripe-style */}
+      <div className="mb-10">
+        <div className="flex justify-between items-center text-xs text-muted-foreground mb-2">
+          <span className="font-medium">Steg {step} av {TOTAL_STEPS}</span>
           <span>{Math.round(progress)}%</span>
         </div>
-        <div className="h-2 bg-secondary rounded-full overflow-hidden">
+        <div className="h-1 bg-border rounded-full overflow-hidden">
           <div
-            className="h-full hero-gradient rounded-full transition-all duration-500 ease-out"
+            className="h-full bg-primary rounded-full transition-all duration-500 ease-out"
             style={{ width: `${progress}%` }}
           />
         </div>
@@ -326,13 +327,13 @@ export default function Survey() {
                     trackEvent("survey_step_completed", { step: 1 });
                     setStep(2);
                   }}
-                  className={`py-4 px-5 rounded-xl border text-left transition-colors ${
+                  className={`py-4 px-5 rounded-lg border text-left transition-all ${
                     occupationCategory === opt.value
-                      ? "border-primary bg-primary/5 ring-2 ring-primary/20"
-                      : "border-border bg-card [@media(hover:hover)]:hover:bg-accent [@media(hover:hover)]:hover:text-accent-foreground active:bg-accent/50"
+                      ? "border-primary bg-primary/5 ring-1 ring-primary/30"
+                      : "border-border bg-card hover:border-muted-foreground/30 hover:shadow-sm"
                   }`}
                 >
-                  <span className="text-sm font-medium">{opt.label}</span>
+                  <span className="text-sm font-semibold text-foreground">{opt.label}</span>
                   <p className="text-xs text-muted-foreground mt-0.5">{opt.desc}</p>
                 </button>
               ))}
@@ -364,7 +365,7 @@ export default function Survey() {
                       setStep(3);
                     }
                   }}
-                  className="py-4 px-5 rounded-xl border border-border bg-card text-left transition-colors [@media(hover:hover)]:hover:bg-accent [@media(hover:hover)]:hover:text-accent-foreground active:bg-accent/50"
+                  className="py-4 px-5 rounded-lg border border-border bg-card text-left transition-all hover:border-muted-foreground/30 hover:shadow-sm"
                 >
                   <span className="text-sm font-medium">{opt.label}</span>
                   {opt.desc && <p className="text-xs text-muted-foreground mt-0.5">{opt.desc}</p>}
@@ -405,7 +406,7 @@ export default function Survey() {
                       setStep(3);
                     }
                   }}
-                  className="py-4 px-5 rounded-xl border border-border bg-card text-left transition-colors [@media(hover:hover)]:hover:bg-accent [@media(hover:hover)]:hover:text-accent-foreground active:bg-accent/50"
+                  className="py-4 px-5 rounded-lg border border-border bg-card text-left transition-all hover:border-muted-foreground/30 hover:shadow-sm"
                 >
                   <span className="text-sm font-medium">{opt.label}</span>
                   <p className="text-xs text-muted-foreground mt-0.5">{opt.desc}</p>
@@ -465,7 +466,7 @@ export default function Survey() {
                 <button
                   key={region}
                   onClick={() => setSelectedRegion(region)}
-                  className="py-3 px-4 rounded-xl border border-border bg-card text-left text-sm font-medium transition-colors [@media(hover:hover)]:hover:bg-accent [@media(hover:hover)]:hover:text-accent-foreground active:bg-accent/50"
+                  className="py-3 px-4 rounded-lg border border-border bg-card text-left text-sm font-medium transition-all hover:border-muted-foreground/30 hover:shadow-sm"
                 >
                   {region}
                 </button>
@@ -520,10 +521,10 @@ export default function Survey() {
                     trackEvent("survey_step_completed", { step: 4 });
                     setTimeout(() => setStep(5), 300);
                   }}
-                  className={`py-4 px-5 rounded-xl border text-left transition-colors ${
+                  className={`py-4 px-5 rounded-lg border text-left transition-all ${
                     data.employmentType === opt.value
-                      ? "border-primary bg-primary/5 ring-2 ring-primary/20"
-                      : "border-border bg-card [@media(hover:hover)]:hover:bg-accent [@media(hover:hover)]:hover:text-accent-foreground active:bg-accent/50"
+                      ? "border-primary bg-primary/5 ring-1 ring-primary/30"
+                      : "border-border bg-card hover:border-muted-foreground/30 hover:shadow-sm"
                   }`}
                 >
                   <span className="text-sm font-medium">{opt.label}</span>
@@ -549,10 +550,10 @@ export default function Survey() {
                   <button
                     key={opt.value}
                     onClick={() => setData({ ...data, salaryType: opt.value })}
-                    className={`flex-1 py-3 px-4 rounded-xl border text-sm font-medium transition-colors ${
+                    className={`flex-1 py-3 px-4 rounded-lg border text-sm font-medium transition-all ${
                       data.salaryType === opt.value
-                        ? "border-primary bg-primary/5 ring-2 ring-primary/20"
-                        : "border-border bg-card [@media(hover:hover)]:hover:bg-accent [@media(hover:hover)]:hover:text-accent-foreground"
+                        ? "border-primary bg-primary/5 ring-1 ring-primary/30"
+                        : "border-border bg-card hover:border-muted-foreground/30"
                     }`}
                   >
                     {opt.label}
@@ -601,10 +602,10 @@ export default function Survey() {
                     trackEvent("survey_step_completed", { step: 6 });
                     setTimeout(() => setStep(7), 300);
                   }}
-                  className={`py-4 px-5 rounded-xl border text-left transition-colors ${
+                  className={`py-4 px-5 rounded-lg border text-left transition-all ${
                     commute === opt.value
-                      ? "border-primary bg-primary/5 ring-2 ring-primary/20"
-                      : "border-border bg-card [@media(hover:hover)]:hover:bg-accent [@media(hover:hover)]:hover:text-accent-foreground active:bg-accent/50"
+                      ? "border-primary bg-primary/5 ring-1 ring-primary/30"
+                      : "border-border bg-card hover:border-muted-foreground/30 hover:shadow-sm"
                   }`}
                 >
                   <span className="text-sm font-medium">{opt.label}</span>
@@ -646,22 +647,21 @@ export default function Survey() {
 
       {/* Navigation */}
       {step > 0 && (
-        <div className="flex gap-3 mt-8">
+        <div className="flex gap-3 mt-10">
           <button
             onClick={handleBack}
-            className="flex items-center gap-2 py-3 px-5 rounded-xl text-sm font-medium bg-secondary text-secondary-foreground hover:bg-muted transition-colors"
+            className="flex items-center gap-2 py-3 px-5 rounded-lg text-sm font-medium border border-border text-foreground hover:bg-muted transition-all"
           >
             <ChevronLeft className="w-4 h-4" />
             Tillbaka
           </button>
-          {/* Show continue button for steps that need manual next (5=ersättning, 7=email) */}
           {(step === 5 || step === 7) && (
             <button
               onClick={handleNext}
               disabled={!canProceed || saving}
-              className={`flex-1 flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl text-sm sm:text-base font-semibold transition-all duration-200 ${
+              className={`flex-1 flex items-center justify-center gap-2 py-3.5 px-6 rounded-lg text-sm sm:text-base font-semibold transition-all duration-200 ${
                 canProceed && !saving
-                  ? "hero-gradient text-primary-foreground card-shadow-hover"
+                  ? "bg-primary text-primary-foreground hover:opacity-90 shadow-sm"
                   : "bg-muted text-muted-foreground cursor-not-allowed"
               }`}
             >
@@ -697,16 +697,16 @@ function StepWrapper({
 }) {
   return (
     <div className="animate-in fade-in slide-in-from-right-4 duration-300 flex-1 flex flex-col">
-      <div className="flex items-center gap-3 mb-2">
-        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+      <div className="flex items-center gap-3 mb-1">
+        <div className="w-9 h-9 rounded-lg bg-primary/8 flex items-center justify-center text-primary">
           {icon}
         </div>
         <div>
-          <h2 className="text-lg sm:text-xl font-display text-foreground">{title}</h2>
-          {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
+          <h2 className="text-lg sm:text-xl font-bold text-foreground tracking-tight">{title}</h2>
+          {subtitle && <p className="text-sm text-muted-foreground mt-0.5">{subtitle}</p>}
         </div>
       </div>
-      <div className="mt-6 flex-1">{children}</div>
+      <div className="mt-7 flex-1">{children}</div>
     </div>
   );
 }
