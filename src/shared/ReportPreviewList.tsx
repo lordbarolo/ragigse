@@ -1,7 +1,7 @@
 import { ShieldCheck } from "lucide-react";
 
 const CONSULTANT_ITEMS = [
-  "Exakt beräknad bruttolön baserat på ramavtal",
+  "Ersättningen för de bäst betalda konsulterna",
   "Konkret förhandlingsspann med siffror",
   "Steg-för-steg script: vad du ska säga",
   "Lista på godkända leverantörer",
