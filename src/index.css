@@ -66,6 +66,8 @@
   .light-tool {
     --background: 0 0% 100%;
     --foreground: 0 0% 10%;
+    color: hsl(var(--foreground));
+    background-color: hsl(var(--background));
 
     --card: 220 14% 97%;
     --card-foreground: 0 0% 10%;
