@@ -10,6 +10,18 @@ interface PricingResult {
   zon?: string;
 }
 
+/** Session-stable noise factor ±3% to prevent reverse-engineering of exact rates */
+function getSessionNoiseFactor(): number {
+  const key = "teaserNoiseSeed";
+  let seed = sessionStorage.getItem(key);
+  if (!seed) {
+    seed = String(Math.random());
+    sessionStorage.setItem(key, seed);
+  }
+  // Map [0,1] → [0.97, 1.03]
+  return 0.97 + parseFloat(seed) * 0.06;
+}
+
 export function useTeaserData(
   survey: SurveyData | null,
   pricingResult: PricingResult | null,
@@ -20,6 +32,17 @@ export function useTeaserData(
 
   const result = pricingResult
     ? { low: pricingResult.recommended_hourly_min, high: pricingResult.recommended_hourly_max }
+    : null;
+
+  // Noise only for consultant track — permanent track uses official stats
+  const noiseFactor = useMemo(() => {
+    if (isPermanent) return 1;
+    return getSessionNoiseFactor();
+  }, [isPermanent]);
+
+  /** Noised market values for display — prevents reverse-engineering */
+  const noisedResult = result
+    ? { low: Math.round(result.low * noiseFactor), high: Math.round(result.high * noiseFactor) }
     : null;
 
   const benchmarkMonthly: BenchmarkMonthly | null = benchmarkResult
@@ -42,6 +65,7 @@ export function useTeaserData(
     return survey.salaryType === "hourly" ? survey.currentSalary : Math.round(survey.currentSalary / 167);
   }, [survey]);
 
+  // Threshold uses real values (not noised)
   const isUnderpaid = isPermanent
     ? (benchmarkMonthly ? userMonthly < benchmarkMonthly.p75 : false)
     : (result ? userHourly < result.high : false);
@@ -50,5 +74,5 @@ export function useTeaserData(
     ? (benchmarkMonthly ? benchmarkMonthly.gapPct : 0)
     : (result ? Math.round(((result.high - userHourly) / result.high) * 100) : 0);
 
-  return { isPermanent, result, benchmarkMonthly, userMonthly, userHourly, isUnderpaid, diffPercent };
+  return { isPermanent, result, noisedResult, benchmarkMonthly, userMonthly, userHourly, isUnderpaid, diffPercent };
 }
