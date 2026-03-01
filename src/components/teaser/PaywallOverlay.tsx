@@ -60,7 +60,7 @@ export default function PaywallOverlay({
       </div>
 
       {!unlocked && !partialUnlocked && (
-        <div className="absolute inset-0 top-[40px] flex items-start justify-center pt-2">
+        <div className="absolute inset-0 flex items-center justify-center">
           {!exitIntentVisible ? (
             <div className="backdrop-blur-md bg-card/80 rounded-lg p-6 text-center border border-border shadow-lg max-w-xs w-full">
               <Lock className="w-7 h-7 text-primary mx-auto mb-2" />
