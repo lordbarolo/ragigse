@@ -65,6 +65,7 @@ const Index = () => {
       category: "doctor",
       role: "Specialistläkare",
       specialization: "Allmänmedicin",
+      yrke: "Specialistläkare – Allmänmedicin",
       region: "Stockholm",
       kommun: "Stockholm",
       employmentType: "foretagare",
