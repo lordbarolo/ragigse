@@ -29,11 +29,7 @@ export default function ConsultantVerdictCard({
       <div className="bg-destructive/5 border-b border-destructive/10 px-5 py-3 flex items-center gap-3">
         <TrendingDown className="w-4 h-4 text-destructive" />
         <p className="font-semibold text-sm text-foreground">
-          {abVariant === "B"
-            ? "Du är sannolikt underbetald enligt offentliga ramavtal."
-            : isUnderpaid
-              ? `${label} ligger under vad regionen betalar`
-              : `${label} ligger nära vad regionen betalar`}
+          Du är sannolikt underbetald enligt offentliga ramavtal.
         </p>
       </div>
       <div className="p-5">
