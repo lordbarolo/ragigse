@@ -17,6 +17,7 @@ const E2ETest = lazy(() => import("./pages/E2ETest"));
 const AnalyticsDashboard = lazy(() => import("./pages/AnalyticsDashboard"));
 const Admin = lazy(() => import("./pages/Admin"));
 const FAQ = lazy(() => import("./pages/FAQ"));
+const ThemePreview = lazy(() => import("./pages/ThemePreview"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -47,6 +48,7 @@ const App = () => (
                 <Route path="/dev/e2e-test" element={<E2ETest />} />
                 <Route path="/dev/analytics" element={<AnalyticsDashboard />} />
                 <Route path="/dev/admin" element={<Admin />} />
+                <Route path="/dev/theme-preview" element={<ThemePreview />} />
               </>
             )}
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
