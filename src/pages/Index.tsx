@@ -89,30 +89,30 @@ const Index = () => {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppJsonLd) }}
       />
 
-      {/* Hero */}
-      <header className="hero-gradient py-10 px-5 text-center sm:py-16">
-        <div className="max-w-3xl mx-auto space-y-3">
-          {/* Trust badge — above headline */}
-          <div className="flex items-center justify-center gap-2 text-xs sm:text-sm text-primary-foreground/60 font-medium">
-            <Shield className="w-4 h-4" />
-            <span>Baserat på officiella avtalspriser hos 290 kommuner och 21 regioner</span>
+      {/* Hero — clean white with navy text, Stripe-style */}
+      <header className="py-16 px-5 text-center sm:py-24 border-b border-border">
+        <div className="max-w-2xl mx-auto space-y-5">
+          {/* Trust badge */}
+          <div className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground bg-muted rounded-full px-4 py-1.5">
+            <Shield className="w-3.5 h-3.5" />
+            <span>Baserat på officiella avtalspriser · 290 kommuner · 21 regioner</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl md:text-5xl text-primary-foreground leading-tight">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-foreground leading-[1.1] tracking-tight">
             Får du rätt ersättning?
           </h1>
-          <p className="text-base sm:text-lg md:text-xl text-primary-foreground/85 font-body max-w-2xl mx-auto">
-            Jämför med officiella avtalspriser hos 290 kommuner och 21 regioner.
+          <p className="text-lg sm:text-xl text-muted-foreground max-w-xl mx-auto leading-relaxed">
+            Jämför din lön med faktiska ramavtalspriser — gratis och anonymt.
           </p>
         </div>
       </header>
 
       {/* Survey */}
-      <main className="px-4 py-8 sm:py-12">
+      <main className="px-4 py-12 sm:py-16">
         {import.meta.env.DEV && (
           <button
             onClick={devSkip}
-            className="mx-auto mb-4 block text-xs px-3 py-1 rounded bg-muted text-muted-foreground hover:bg-accent/20 transition"
+            className="mx-auto mb-4 block text-xs px-3 py-1 rounded bg-muted text-muted-foreground hover:bg-muted/80 transition"
           >
             🧪 Dev: hoppa till /resultat
           </button>
@@ -121,18 +121,18 @@ const Index = () => {
       </main>
 
       {/* FAQ Section */}
-      <section className="bg-card border-t" aria-labelledby="faq-heading">
-        <div className="max-w-3xl mx-auto px-5 py-10 sm:py-14">
+      <section className="border-t border-border" aria-labelledby="faq-heading">
+        <div className="max-w-2xl mx-auto px-5 py-16 sm:py-20">
           <h2
             id="faq-heading"
-            className="text-2xl sm:text-3xl font-bold text-foreground text-center mb-8"
+            className="text-2xl sm:text-3xl font-bold text-foreground text-center mb-10"
           >
             Vanliga frågor
           </h2>
-          <dl className="space-y-6">
+          <dl className="space-y-8">
             {FAQ_ITEMS.map((item, i) => (
               <div key={i}>
-                <dt className="text-base font-semibold text-foreground mb-1">
+                <dt className="text-base font-semibold text-foreground mb-1.5">
                   {item.question}
                 </dt>
                 <dd className="text-sm text-muted-foreground leading-relaxed">
@@ -145,10 +145,10 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t py-8 text-center text-sm text-muted-foreground space-y-2">
+      <footer className="border-t border-border py-10 text-center text-sm text-muted-foreground space-y-2">
         <p>© 2026 CompCare.se · Data från offentliga ramavtal</p>
         <p className="text-xs text-muted-foreground/70">Fler branscher kommer snart</p>
-        <Link to="/vanliga-fragor" className="text-primary hover:underline">
+        <Link to="/vanliga-fragor" className="text-primary hover:underline text-sm">
           Vanliga frågor om lön →
         </Link>
       </footer>

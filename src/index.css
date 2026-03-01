@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Sans:wght@300;400;500&family=Inter:wght@400;500;600;700;800;900&family=DM+Serif+Display&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,40 +6,40 @@
 
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 220 25% 10%;
+    --background: 0 0% 100%;
+    --foreground: 210 50% 14%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 25% 10%;
+    --card-foreground: 210 50% 14%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 25% 10%;
+    --popover-foreground: 210 50% 14%;
 
-    --primary: 210 90% 42%;
+    --primary: 249 53% 68%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 30% 93%;
-    --secondary-foreground: 220 25% 10%;
+    --secondary: 210 20% 96%;
+    --secondary-foreground: 210 50% 14%;
 
-    --muted: 210 20% 95%;
-    --muted-foreground: 220 10% 46%;
+    --muted: 210 20% 96%;
+    --muted-foreground: 215 16% 47%;
 
-    --accent: 155 60% 40%;
+    --accent: 249 53% 68%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 84% 60%;
+    --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 20% 88%;
-    --input: 214 20% 88%;
-    --ring: 210 90% 42%;
+    --border: 214 18% 91%;
+    --input: 214 18% 91%;
+    --ring: 249 53% 68%;
 
-    --radius: 0.75rem;
+    --radius: 0.5rem;
 
-    --hero-gradient: linear-gradient(135deg, hsl(210 90% 42%), hsl(220 80% 30%));
-    --success-gradient: linear-gradient(135deg, hsl(155 60% 40%), hsl(155 50% 32%));
-    --card-shadow: 0 4px 24px -4px hsl(220 25% 10% / 0.08);
-    --card-shadow-hover: 0 8px 32px -4px hsl(220 25% 10% / 0.12);
+    --hero-gradient: linear-gradient(135deg, hsl(210 50% 14%), hsl(216 56% 20%));
+    --success-gradient: linear-gradient(135deg, hsl(160 60% 45%), hsl(160 50% 38%));
+    --card-shadow: 0 1px 3px 0 hsl(210 50% 14% / 0.04), 0 1px 2px -1px hsl(210 50% 14% / 0.04);
+    --card-shadow-hover: 0 4px 12px -2px hsl(210 50% 14% / 0.08), 0 2px 4px -2px hsl(210 50% 14% / 0.04);
 
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
@@ -48,19 +48,19 @@
     --sidebar-accent: 240 4.8% 95.9%;
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-ring: 249 53% 68%;
 
-    --font-display: 'DM Serif Display', serif;
+    --font-display: 'Inter', sans-serif;
     --font-body: 'Inter', sans-serif;
 
-    --gap-bg: 222 47% 8%;
-    --gap-card: 220 26% 14%;
-    --gap-border: 0 0% 100% / 0.07;
-    --gap-accent: 158 100% 45%;
-    --gap-accent-dim: 158 100% 45% / 0.12;
-    --gap-danger: 349 100% 65%;
-    --gap-text: 228 100% 97%;
-    --gap-muted: 228 100% 97% / 0.45;
+    --gap-bg: 210 50% 14%;
+    --gap-card: 216 56% 20%;
+    --gap-border: 0 0% 100% / 0.08;
+    --gap-accent: 160 60% 45%;
+    --gap-accent-dim: 160 60% 45% / 0.10;
+    --gap-danger: 0 72% 56%;
+    --gap-text: 0 0% 98%;
+    --gap-muted: 0 0% 98% / 0.50;
   }
 
   .dark {
@@ -70,19 +70,19 @@
     --card-foreground: 210 20% 95%;
     --popover: 220 20% 10%;
     --popover-foreground: 210 20% 95%;
-    --primary: 210 80% 55%;
+    --primary: 249 53% 68%;
     --primary-foreground: 0 0% 100%;
     --secondary: 220 15% 18%;
     --secondary-foreground: 210 20% 95%;
     --muted: 220 15% 15%;
     --muted-foreground: 215 15% 60%;
-    --accent: 155 50% 45%;
+    --accent: 249 53% 68%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 62% 30%;
     --destructive-foreground: 210 40% 98%;
     --border: 220 15% 18%;
     --input: 220 15% 18%;
-    --ring: 210 80% 55%;
+    --ring: 249 53% 68%;
     --sidebar-background: 240 5.9% 10%;
     --sidebar-foreground: 240 4.8% 95.9%;
     --sidebar-primary: 224.3 76.3% 48%;
@@ -90,7 +90,7 @@
     --sidebar-accent: 240 3.7% 15.9%;
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-ring: 249 53% 68%;
   }
 }
 
@@ -102,10 +102,13 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   h1, h2, h3 {
     font-family: var(--font-display);
+    letter-spacing: -0.025em;
   }
 }
 
