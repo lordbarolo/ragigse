@@ -108,8 +108,8 @@ const Index = () => {
         </div>
       </header>
 
-      {/* Survey */}
-      <main className="px-4 py-12 sm:py-16">
+      {/* Survey — light professional tool feel */}
+      <main className="light-tool px-4 py-12 sm:py-16 bg-background">
         {import.meta.env.DEV && (
           <button
             onClick={devSkip}
@@ -122,7 +122,7 @@ const Index = () => {
       </main>
 
       {/* FAQ Section */}
-      <section className="border-t border-border" aria-labelledby="faq-heading">
+      <section className="light-tool bg-background border-t border-border" aria-labelledby="faq-heading">
         <div className="max-w-2xl mx-auto px-5 py-16 sm:py-20">
           <h2
             id="faq-heading"
@@ -146,7 +146,7 @@ const Index = () => {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-border py-10 text-center text-sm text-muted-foreground space-y-2">
+      <footer className="light-tool bg-background border-t border-border py-10 text-center text-sm text-muted-foreground space-y-2">
         <p>© 2026 CompCare.se · Data från offentliga ramavtal</p>
         <p className="text-xs text-muted-foreground/70">Fler branscher kommer snart</p>
         <Link to="/vanliga-fragor" className="text-primary hover:underline text-sm">

@@ -123,7 +123,7 @@ export default function Teaser() {
   const regionName = pricingResult?.region || survey.kommun || "";
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen light-tool bg-background">
       <TeaserHeader kommun={survey.kommun} employmentType={survey.employmentType} />
 
       <main className="px-4 py-8 pb-12 max-w-lg mx-auto space-y-6">
