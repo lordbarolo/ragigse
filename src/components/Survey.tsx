@@ -122,7 +122,6 @@ export default function Survey() {
   // Derive yrke value from selections
   const resolvedYrke = useMemo(() => {
     if (occupationCategory === "lakare") {
-      if (doctorSubRole === "at") return "AT-läkare";
       if (doctorSubRole === "leg") return "Legitimerad läkare";
       if (doctorSubRole === "st") return "ST-läkare";
       if (doctorSubRole === "specialist" && specialization) {
@@ -291,8 +290,7 @@ export default function Survey() {
     <div className="w-full max-w-lg mx-auto">
       {/* Progress bar */}
       <div className="mb-8">
-        <div className="flex justify-between text-xs text-muted-foreground mb-2">
-          <span>Steg {step} av {TOTAL_STEPS}</span>
+        <div className="flex justify-end text-xs text-muted-foreground mb-2">
           <span>{Math.round(progress)}%</span>
         </div>
         <div className="h-2 bg-secondary rounded-full overflow-hidden">
@@ -346,14 +344,12 @@ export default function Survey() {
         {step === 2 && subStep === 0 && occupationCategory === "lakare" && (
           <StepWrapper
             icon={<Stethoscope className="w-6 h-6" />}
-            title="Vilken typ av läkare?"
-            subtitle="Välj din roll"
+            title="Välj specialisering"
           >
             <div className="flex flex-col gap-3">
               {([
                 { value: "specialist" as DoctorSubRole, label: "Specialistläkare", desc: "Färdig specialist" },
-                { value: "leg" as DoctorSubRole, label: "Leg. läkare", desc: "Legitimerad läkare utan specialistkompetens" },
-                { value: "at" as DoctorSubRole, label: "AT-läkare", desc: "Allmäntjänstgöring" },
+                { value: "leg" as DoctorSubRole, label: "Leg. läkare", desc: undefined },
                 { value: "st" as DoctorSubRole, label: "ST-läkare", desc: "Specialisttjänstgöring" },
               ]).map((opt) => (
                 <button
@@ -364,7 +360,6 @@ export default function Survey() {
                     if (opt.value === "st" || opt.value === "specialist") {
                       setSubStep(1);
                     } else {
-                      // No specialization needed, go to step 3
                       trackEvent("survey_step_completed", { step: 2 });
                       setStep(3);
                     }
@@ -372,7 +367,7 @@ export default function Survey() {
                   className="py-4 px-5 rounded-xl border border-border bg-card text-left transition-colors [@media(hover:hover)]:hover:bg-accent [@media(hover:hover)]:hover:text-accent-foreground active:bg-accent/50"
                 >
                   <span className="text-sm font-medium">{opt.label}</span>
-                  <p className="text-xs text-muted-foreground mt-0.5">{opt.desc}</p>
+                  {opt.desc && <p className="text-xs text-muted-foreground mt-0.5">{opt.desc}</p>}
                 </button>
               ))}
             </div>
@@ -381,7 +376,7 @@ export default function Survey() {
               onClick={() => { setOccupationCategory(""); setStep(1); }}
               className="mt-3 text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
-              ← Byt kategori
+              Inte läkare?
             </button>
           </StepWrapper>
         )}
@@ -701,7 +696,7 @@ function StepWrapper({
 }: {
   icon: React.ReactNode;
   title: string;
-  subtitle: string;
+  subtitle?: string;
   children: React.ReactNode;
 }) {
   return (
@@ -712,7 +707,7 @@ function StepWrapper({
         </div>
         <div>
           <h2 className="text-lg sm:text-xl font-display text-foreground">{title}</h2>
-          <p className="text-sm text-muted-foreground">{subtitle}</p>
+          {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
         </div>
       </div>
       <div className="mt-6 flex-1">{children}</div>
