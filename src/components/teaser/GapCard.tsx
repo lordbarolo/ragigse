@@ -11,6 +11,7 @@ interface Props {
   /** For permanent track — monthly values */
   userMonthly?: number;
   benchmarkP50?: number;
+  employmentType?: string;
 }
 
 /** Animated count-up hook */
@@ -51,6 +52,7 @@ export default function GapCard({
   isPermanent,
   userMonthly,
   benchmarkP50,
+  employmentType,
 }: Props) {
   const counter = useCountUp(Math.abs(diffPercent));
   const isUnderpaid = diffPercent > 0;
@@ -139,7 +141,7 @@ export default function GapCard({
               className="text-[11px] tracking-[0.08em] uppercase mb-1.5"
               style={{ color: "hsl(var(--gap-muted))" }}
             >
-              Din lön
+              {employmentType === "foretagare" ? "Din ersättning" : "Din lön"}
             </p>
             <p className="font-syne text-[22px] font-bold tracking-tight" style={{ color: "hsl(var(--gap-text))" }}>
               {fmt(userVal)} kr

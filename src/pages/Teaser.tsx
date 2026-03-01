@@ -96,7 +96,7 @@ export default function Teaser() {
 
   return (
     <div className="min-h-screen bg-background">
-      <TeaserHeader kommun={survey.kommun} />
+      <TeaserHeader kommun={survey.kommun} employmentType={survey.employmentType} />
 
       <main className="px-4 py-8 pb-12 max-w-lg mx-auto space-y-6">
         <OccupationInfo yrke={survey.yrke} kommun={survey.kommun} />
@@ -107,6 +107,7 @@ export default function Teaser() {
           isPermanent={isPermanent}
           yrke={survey.yrke}
           kommun={survey.kommun}
+          employmentType={survey.employmentType}
         />
 
         <GapCard
@@ -118,6 +119,7 @@ export default function Teaser() {
           isPermanent={isPermanent}
           userMonthly={userMonthly}
           benchmarkP50={benchmarkMonthly?.p50}
+          employmentType={survey.employmentType}
         />
 
         
@@ -165,6 +167,7 @@ export default function Teaser() {
             referrerEmail={survey.email}
             regionName={regionName}
             onPartialUnlock={() => setPartialUnlocked(true)}
+            employmentType={survey.employmentType}
           />
         )}
 
