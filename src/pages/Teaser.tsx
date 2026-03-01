@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePricingEngine } from "@/hooks/usePricingEngine";
 import { useRates, useLocations } from "@/hooks/useCalculator";
@@ -20,6 +20,8 @@ import EarningsBanner from "@/components/teaser/EarningsBanner";
 import PermanentBenchmarkCard from "@/components/teaser/PermanentBenchmarkCard";
 import ConsultantVerdictCard from "@/components/teaser/ConsultantVerdictCard";
 import ReportPreviewList from "@/shared/ReportPreviewList";
+import CheckoutButtons from "@/shared/CheckoutButtons";
+import ReferralBottomSheet from "@/components/teaser/ReferralBottomSheet";
 
 /** Teaser page — orchestrator for the results preview */
 export default function Teaser() {
@@ -32,6 +34,7 @@ export default function Teaser() {
   const { checkoutLoading, handleCheckout: checkout } = useCheckout();
   const [unlocked, setUnlocked] = useState(false);
   const [partialUnlocked, setPartialUnlocked] = useState(false);
+  const checkoutRef = useRef<HTMLDivElement>(null);
 
   const abVariant = sessionStorage.getItem("abVariant") || "A";
   const exitIntentDelay = abVariant === "B" ? 18_000 : 12_000;
@@ -188,6 +191,18 @@ export default function Teaser() {
 
         <ReportPreviewList isPermanent={isPermanent} />
       </main>
+
+      <div ref={checkoutRef}>
+        <CheckoutButtons checkoutLoading={checkoutLoading} onCheckout={onCheckout} layout="stacked" />
+      </div>
+
+      <ReferralBottomSheet
+        ctaRef={checkoutRef}
+        leadId={leadId}
+        referrerEmail={survey.email}
+        region={regionName}
+        onCheckout={onCheckout}
+      />
     </div>
   );
 }
