@@ -506,13 +506,12 @@ export default function Survey() {
         {step === 4 && (
           <StepWrapper
             icon={<Briefcase className="w-6 h-6" />}
-            title="Hur är du anställd?"
-            subtitle="Välj din anställningsform"
+            title="Vilken är din uppdragsform?"
           >
             <div className="flex flex-col gap-3">
               {([
-                { value: "anstalld" as const, label: "Anställd", desc: "Tillsvidareanställd eller vikarie hos arbetsgivare" },
-                { value: "foretagare" as const, label: "Företagare", desc: "Eget bolag, inhyrd via bemanningsföretag" },
+                { value: "anstalld" as const, label: "Anställd", desc: "Lön från arbetsgivare" },
+                { value: "foretagare" as const, label: "Eget bolag", desc: "Fakturerar via bemanningsföretag" },
               ]).map((opt) => (
                 <button
                   key={opt.value}
@@ -539,8 +538,7 @@ export default function Survey() {
         {step === 5 && (
           <StepWrapper
             icon={<TrendingUp className="w-6 h-6" />}
-            title="Vad har du i ersättning idag?"
-            subtitle="Ange din nuvarande lön eller timersättning"
+            title="Vad får du i ersättning idag?"
           >
             <div className="space-y-6">
               <div className="flex gap-3">
@@ -588,13 +586,12 @@ export default function Survey() {
         {step === 6 && (
           <StepWrapper
             icon={<Train className="w-6 h-6" />}
-            title="Pendlar du till jobbet?"
-            subtitle="Hjälper oss förstå din situation bättre"
+            title="Jobbar du på annan ort?"
           >
             <div className="flex flex-col gap-3">
               {([
-                { value: "veckovis" as CommuteType, label: "Veckovis", desc: "Jag reser till en annan ort varje vecka" },
-                { value: "dagligen" as CommuteType, label: "Dagligen", desc: "Jag pendlar till jobbet varje dag" },
+                { value: "veckovis" as CommuteType, label: "Veckovis", desc: "Bor på annan ort under uppdraget" },
+                { value: "dagligen" as CommuteType, label: "Dagligen", desc: "Reser fram och tillbaka varje dag" },
                 { value: "inte_alls" as CommuteType, label: "Inte alls", desc: "Jag bor nära arbetsplatsen" },
               ]).map((opt) => (
                 <button
@@ -622,8 +619,8 @@ export default function Survey() {
         {step === 7 && (
           <StepWrapper
             icon={<Mail className="w-6 h-6" />}
-            title="Få din löneanalys"
-            subtitle="Vi skickar resultatet till din e-post"
+            title="Vart skickar vi din analys?"
+            subtitle="Du ser resultatet direkt — vi skickar även en kopia till din e-post"
           >
             <div className="space-y-3">
               <Input
@@ -640,7 +637,7 @@ export default function Survey() {
                 }}
               />
               <p className="text-xs text-muted-foreground">
-                Vi delar aldrig din e-post med tredje part.
+                Din e-post delas aldrig vidare.
               </p>
             </div>
           </StepWrapper>
@@ -670,7 +667,7 @@ export default function Survey() {
             >
               {step === 7 ? (
                 <>
-                  {saving ? "Sparar..." : "Se min analys"}
+                  {saving ? "Sparar..." : "Visa min analys"}
                   {!saving && <ArrowRight className="w-5 h-5" />}
                 </>
               ) : (
