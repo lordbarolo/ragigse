@@ -32,8 +32,8 @@ export default function ConsultantVerdictCard({
           {abVariant === "B"
             ? "Du är sannolikt underbetald enligt offentliga ramavtal."
             : isUnderpaid
-              ? `${label} ligger under marknadspris`
-              : `${label} ligger nära marknadspris`}
+              ? `${label} ligger under vad regionen betalar`
+              : `${label} ligger nära vad regionen betalar`}
         </p>
       </div>
       <div className="p-5">

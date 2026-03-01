@@ -45,7 +45,7 @@ export default function EarningsBanner({
     return (
       <div className="rounded-lg border border-border bg-card p-6 text-center card-shadow">
         <p className="text-foreground text-base font-semibold leading-relaxed">
-          Din ersättning i {kommun} är nära marknadspriset — men
+          Din ersättning i {kommun} är nära vad regionen betalar — men
           i {nearestHigherKommun} betalas mer.
         </p>
         <p className="text-muted-foreground text-sm mt-2">

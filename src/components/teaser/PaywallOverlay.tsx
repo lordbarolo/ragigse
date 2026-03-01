@@ -43,7 +43,7 @@ export default function PaywallOverlay({
           color="bg-muted-foreground/30"
         />
         <BarRow
-          label="Marknadspris (ramavtal)"
+          label="Vad regionen betalar bemanningsföretag"
           value={result.high}
           max={result.high + 50}
           color="bg-primary"
@@ -108,7 +108,7 @@ export default function PaywallOverlay({
             <span className="text-sm font-semibold text-foreground">Upplåst via referens</span>
           </div>
           <p className="text-xs text-muted-foreground">
-            Marknadspriset visas. Köp rapporten för fullständig analys med förhandlingstips.
+            Regionens pris visas. Köp rapporten för fullständig analys med förhandlingstips.
           </p>
         </div>
       )}
