@@ -646,7 +646,7 @@ export default function Survey() {
       </div>
 
       {/* Navigation */}
-      {step > 0 && (
+      {step > 1 && (
         <div className="flex gap-3 mt-10">
           <button
             onClick={handleBack}
