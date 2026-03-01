@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
 /**
- * Half-circle salary gauge with animated needle.
- * Segments: Red (0-33%), Yellow (34-66%), Green (67-100%).
+ * Salary position card — shows percentage of market rate
+ * with color-coded label (red/yellow/green).
  */
 export default function SalaryGauge({
   currentHourly,
@@ -15,65 +15,35 @@ export default function SalaryGauge({
   marketHigh: number;
   blurred?: boolean;
 }) {
-  const [animatedAngle, setAnimatedAngle] = useState(0);
+  const [animatedPercent, setAnimatedPercent] = useState(0);
 
-  // 0% = 20% below marketLow, 50% = marketLow, 100% = marketHigh
-  const floor = marketLow * 0.8;
-  const range = marketHigh - floor;
-  const rawPercent = range > 0 ? ((currentHourly - floor) / range) * 100 : 50;
-  const percent = Math.max(0, Math.min(100, rawPercent));
-
-  // Map percent to angle: 0% = -90° (left), 100% = 90° (right)
-  const targetAngle = -90 + (percent / 100) * 180;
+  // Percent of market high
+  const rawPercent = marketHigh > 0 ? Math.round((currentHourly / marketHigh) * 100) : 0;
+  const percent = Math.max(0, Math.min(150, rawPercent));
 
   useEffect(() => {
-    const timer = setTimeout(() => setAnimatedAngle(targetAngle), 100);
+    const timer = setTimeout(() => setAnimatedPercent(percent), 100);
     return () => clearTimeout(timer);
-  }, [targetAngle]);
+  }, [percent]);
 
   let label: string;
   let labelColor: string;
-  if (percent < 33) {
-    label = "Röda";
+  let bgColor: string;
+  if (percent < 80) {
+    label = "Under marknad";
     labelColor = "text-destructive";
-  } else if (percent < 67) {
-    label = "Gula";
+    bgColor = "bg-destructive/10";
+  } else if (percent < 95) {
+    label = "Nära marknad";
     labelColor = "text-yellow-600 dark:text-yellow-400";
+    bgColor = "bg-yellow-500/10";
   } else {
-    label = "Gröna";
+    label = "I nivå med marknad";
     labelColor = "text-accent";
+    bgColor = "bg-accent/10";
   }
 
   const fmt = (v: number) => v.toLocaleString("sv-SE");
-
-  // SVG dimensions
-  const cx = 140;
-  const cy = 130;
-  const r = 100;
-  const strokeWidth = 22;
-
-  // Arc helper: angle in degrees (-90 = left, 90 = right)
-  const polarToCart = (angleDeg: number) => {
-    const rad = (angleDeg * Math.PI) / 180;
-    return {
-      x: cx + r * Math.cos(rad),
-      y: cy + r * Math.sin(rad),
-    };
-  };
-
-  const arcPath = (startDeg: number, endDeg: number) => {
-    // SVG arcs: 0° = right, we rotate -90 so our 0% is left
-    const s = polarToCart(startDeg - 180);
-    const e = polarToCart(endDeg - 180);
-    const largeArc = endDeg - startDeg > 180 ? 1 : 0;
-    return `M ${s.x} ${s.y} A ${r} ${r} 0 ${largeArc} 1 ${e.x} ${e.y}`;
-  };
-
-  // Needle endpoint
-  const needleAngleRad = ((animatedAngle - 180) * Math.PI) / 180;
-  const needleLen = r - strokeWidth / 2 - 4;
-  const needleX = cx + needleLen * Math.cos(needleAngleRad);
-  const needleY = cy + needleLen * Math.sin(needleAngleRad);
 
   return (
     <div className="relative">
@@ -87,72 +57,35 @@ export default function SalaryGauge({
       )}
 
       <div className={blurred ? "blur-sm select-none pointer-events-none" : ""}>
-        {/* Values on sides */}
-        <div className="flex justify-between items-end px-2 mb-1">
-          <div className="text-center">
-            <p className="text-[10px] text-muted-foreground">Nuvarande lön</p>
-            <p className="text-sm font-bold text-foreground">{fmt(currentHourly)} kr/h</p>
+        {/* Main percentage */}
+        <div className="text-center space-y-2">
+          <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">
+            Din position relativt marknad
+          </p>
+          <div className="flex items-baseline justify-center gap-1">
+            <span
+              className="text-5xl sm:text-6xl font-extrabold tracking-tighter text-foreground transition-all duration-1000"
+            >
+              {animatedPercent}
+            </span>
+            <span className="text-2xl font-bold text-muted-foreground">%</span>
           </div>
-          <div className="text-center">
-            <p className="text-[10px] text-muted-foreground">Marknadsvärde</p>
-            <p className="text-sm font-bold text-accent">{fmt(marketHigh)} kr/h</p>
-          </div>
+          <span className={`inline-block text-xs font-semibold px-3 py-1 rounded-full ${labelColor} ${bgColor}`}>
+            {label}
+          </span>
         </div>
 
-        {/* SVG Gauge */}
-        <div className="flex justify-center">
-          <svg viewBox="0 0 280 150" className="w-full max-w-[280px]" aria-hidden="true">
-            {/* Red segment: 0-33% → 0°-60° */}
-            <path
-              d={arcPath(0, 60)}
-              fill="none"
-              stroke="hsl(0 84% 60%)"
-              strokeWidth={strokeWidth}
-              strokeLinecap="round"
-              opacity={0.85}
-            />
-            {/* Yellow segment: 33-67% → 60°-120° */}
-            <path
-              d={arcPath(60, 120)}
-              fill="none"
-              stroke="hsl(45 93% 47%)"
-              strokeWidth={strokeWidth}
-              strokeLinecap="butt"
-              opacity={0.85}
-            />
-            {/* Green segment: 67-100% → 120°-180° */}
-            <path
-              d={arcPath(120, 180)}
-              fill="none"
-              stroke="hsl(155 60% 40%)"
-              strokeWidth={strokeWidth}
-              strokeLinecap="round"
-              opacity={0.85}
-            />
-
-            {/* Needle */}
-            <line
-              x1={cx}
-              y1={cy}
-              x2={needleX}
-              y2={needleY}
-              stroke="hsl(var(--foreground))"
-              strokeWidth={2.5}
-              strokeLinecap="round"
-              style={{ transition: "all 1.2s cubic-bezier(0.34, 1.56, 0.64, 1)" }}
-            />
-            {/* Center dot */}
-            <circle cx={cx} cy={cy} r={6} fill="hsl(var(--foreground))" />
-            <circle cx={cx} cy={cy} r={3} fill="hsl(var(--card))" />
-          </svg>
+        {/* Comparison row */}
+        <div className="grid grid-cols-2 gap-4 mt-6">
+          <div className="rounded-lg border border-border p-3 text-center">
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Din lön</p>
+            <p className="text-lg font-bold text-foreground">{fmt(currentHourly)} kr/h</p>
+          </div>
+          <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 text-center">
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Marknadsvärde</p>
+            <p className="text-lg font-bold text-primary">{fmt(marketHigh)} kr/h</p>
+          </div>
         </div>
-
-        {/* Label */}
-        <p className="text-center text-sm mt-1">
-          <span className="text-muted-foreground">Din lön ligger i det </span>
-          <span className={`font-semibold ${labelColor}`}>{label}</span>
-          <span className="text-muted-foreground"> fältet</span>
-        </p>
       </div>
     </div>
   );
