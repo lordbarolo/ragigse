@@ -39,7 +39,7 @@ export default function Teaser() {
   const checkoutRef = useRef<HTMLDivElement>(null);
 
   const abVariant = sessionStorage.getItem("abVariant") || "A";
-  const exitIntentDelay = abVariant === "B" ? 18_000 : 12_000;
+  const exitIntentDelay = abVariant === "B" ? 28_000 : 22_000;
   const exitIntentVisible = useExitIntent(exitIntentDelay);
 
   useEffect(() => {
