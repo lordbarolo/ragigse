@@ -1,3 +1,4 @@
+import { Lock } from "lucide-react";
 import { formatPartialValue } from "./formatters";
 
 /* ── SectionHeading ──────────────────────────────────── */
@@ -93,12 +94,15 @@ export function BarRow({
     <div>
       <div className="flex justify-between text-xs mb-1">
         <span className="text-muted-foreground">{label}</span>
-        <span
-          className={`font-semibold ${
-            blurred ? "blur-sm select-none" : "text-foreground"
-          }`}
-        >
-          {displayValue}
+        <span className="flex items-center gap-1">
+          <span
+            className={`font-semibold ${
+              blurred ? "blur-[8px] select-none pointer-events-none" : "text-foreground"
+            }`}
+          >
+            {displayValue}
+          </span>
+          {blurred && <Lock className="w-3 h-3 text-muted-foreground shrink-0" />}
         </span>
       </div>
       <div className="h-6 bg-secondary rounded-full overflow-hidden">
