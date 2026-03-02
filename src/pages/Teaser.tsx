@@ -21,6 +21,8 @@ import PermanentBenchmarkCard from "@/components/teaser/PermanentBenchmarkCard";
 import ConsultantVerdictCard from "@/components/teaser/ConsultantVerdictCard";
 import ReportPreviewList from "@/shared/ReportPreviewList";
 import CheckoutButtons from "@/shared/CheckoutButtons";
+import StickyCheckoutBar from "@/shared/StickyCheckoutBar";
+import InlineCtaLink from "@/shared/InlineCtaLink";
 import ReferralBottomSheet from "@/components/teaser/ReferralBottomSheet";
 
 /** Teaser page — orchestrator for the results preview */
@@ -126,7 +128,7 @@ export default function Teaser() {
     <div className="min-h-screen light-tool bg-background">
       <TeaserHeader kommun={survey.kommun} employmentType={survey.employmentType} />
 
-      <main className="px-4 py-8 pb-12 max-w-lg mx-auto space-y-6">
+      <main className="px-4 py-8 pb-40 max-w-lg mx-auto space-y-6">
         <OccupationInfo yrke={survey.yrke} kommun={survey.kommun} />
 
         <EarningsBanner
@@ -138,9 +140,6 @@ export default function Teaser() {
           employmentType={survey.employmentType}
           nearestHigherKommun={nearestHigherKommun}
         />
-
-
-
 
         {!isPermanent && isUnderpaid && result && (
           <OpportunityGap
@@ -156,17 +155,6 @@ export default function Teaser() {
             benchmarkMonthly={benchmarkMonthly}
             unlocked={unlocked}
             partialUnlocked={partialUnlocked}
-          />
-        )}
-
-        {!isPermanent && rates && pricingResult && (
-          <MarketInsight
-            occupation={survey.yrke}
-            currentZone={pricingResult.zon}
-            rates={rates}
-            employmentType={survey.employmentType as "anstalld" | "foretagare"}
-            locations={locations}
-            currentRegion={pricingResult.region}
           />
         )}
 
@@ -189,12 +177,28 @@ export default function Teaser() {
           />
         )}
 
+        {/* Inline CTA after bars/verdict */}
+        <InlineCtaLink checkoutLoading={checkoutLoading} onCheckout={onCheckout} />
+
+        {!isPermanent && rates && pricingResult && (
+          <MarketInsight
+            occupation={survey.yrke}
+            currentZone={pricingResult.zon}
+            rates={rates}
+            employmentType={survey.employmentType as "anstalld" | "foretagare"}
+            locations={locations}
+            currentRegion={pricingResult.region}
+          />
+        )}
+
         <ReportPreviewList isPermanent={isPermanent} />
+
+        <div ref={checkoutRef}>
+          <CheckoutButtons checkoutLoading={checkoutLoading} onCheckout={onCheckout} layout="stacked" />
+        </div>
       </main>
 
-      <div ref={checkoutRef}>
-        <CheckoutButtons checkoutLoading={checkoutLoading} onCheckout={onCheckout} layout="stacked" />
-      </div>
+      <StickyCheckoutBar checkoutLoading={checkoutLoading} onCheckout={onCheckout} />
 
       <ReferralBottomSheet
         ctaRef={checkoutRef}

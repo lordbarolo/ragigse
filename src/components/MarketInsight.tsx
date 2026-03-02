@@ -80,7 +80,7 @@ export default function MarketInsight({ occupation, currentZone, rates }: Market
                         {isCurrent && " (din zon)"}
                       </span>
                     </span>
-                    <span className={`font-medium ${isCurrent ? "font-bold text-foreground" : "text-muted-foreground"}`}>
+                    <span className={`font-medium ${isCurrent ? "font-bold text-foreground" : "text-muted-foreground blur-[8px] select-none pointer-events-none"}`}>
                       {fmt(z.timpris_kund)} kr/h
                     </span>
                   </div>
