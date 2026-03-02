@@ -24,6 +24,30 @@ export default function ConsultantVerdictCard({
   regionName, onPartialUnlock, employmentType,
 }: Props) {
   const label = employmentType === "foretagare" ? "Din ersättning" : "Din lön";
+  if (!isUnderpaid) {
+    return (
+      <div className="rounded-lg border border-border bg-card card-shadow overflow-hidden">
+        <div className="p-5">
+          <PaywallOverlay
+            userHourly={userHourly}
+            result={result}
+            unlocked={unlocked}
+            partialUnlocked={partialUnlocked}
+            exitIntentVisible={exitIntentVisible}
+            checkoutLoading={checkoutLoading}
+            onCheckout={onCheckout}
+            leadId={leadId}
+            referrerEmail={referrerEmail}
+            regionName={regionName}
+            onPartialUnlock={onPartialUnlock}
+            abVariant={abVariant}
+            isUnderpaid={isUnderpaid}
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-lg border border-destructive/20 bg-card card-shadow overflow-hidden">
       <div className="bg-destructive/5 border-b border-destructive/10 px-5 py-3 flex items-center gap-3">
