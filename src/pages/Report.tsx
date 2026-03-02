@@ -22,7 +22,27 @@ export default function Report() {
   const { checkoutLoading, handleCheckout: checkout } = useCheckout();
 
   useEffect(() => {
-    if (!reportId) { navigate("/"); return; }
+    // Dev helper: if reportId is literally ":reportId", fetch the latest report
+    if (!reportId || reportId === ":reportId") {
+      if (import.meta.env.DEV) {
+        const fetchLatest = async () => {
+          const { data } = await supabase
+            .from("reports")
+            .select("id")
+            .order("created_at", { ascending: false })
+            .limit(1);
+          if (data && data.length > 0) {
+            navigate(`/rapport/${data[0].id}`, { replace: true });
+          } else {
+            setLoading(false);
+          }
+        };
+        fetchLatest();
+      } else {
+        navigate("/");
+      }
+      return;
+    }
     const fetchReport = async () => {
       try {
         const { data, error } = await supabase.functions.invoke("get-report", {
