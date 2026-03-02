@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { BarChart3, MapPin, ChevronDown } from "lucide-react";
+import { useMemo } from "react";
+import { MapPin, Lock } from "lucide-react";
 
 interface ZoneRate {
   zon: string;
@@ -16,8 +16,6 @@ interface MarketInsightProps {
 }
 
 export default function MarketInsight({ occupation, currentZone, rates }: MarketInsightProps) {
-  const [open, setOpen] = useState(false);
-
   const zoneRates = useMemo(() => {
     const occupationRates = rates.filter((r) => r.yrkeskategori === occupation);
     if (occupationRates.length === 0) {
@@ -44,58 +42,62 @@ export default function MarketInsight({ occupation, currentZone, rates }: Market
   const fmt = (n: number) => new Intl.NumberFormat("sv-SE").format(n);
 
   return (
-    <div className="rounded-lg border border-border bg-card card-shadow overflow-hidden">
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        className="w-full flex items-center justify-between gap-2 p-4 text-left hover:bg-muted/50 transition-colors"
-      >
-        <div className="flex items-center gap-2">
-          <BarChart3 className="w-4 h-4 text-primary shrink-0" />
-          <span className="text-sm font-semibold text-foreground leading-snug">
-            Se vad regionerna betalar till bemanningsföretag
-          </span>
-        </div>
-        <ChevronDown className={`w-4 h-4 text-muted-foreground shrink-0 transition-transform ${open ? "rotate-180" : ""}`} />
-      </button>
+    <div className="rounded-lg border border-border bg-card card-shadow p-5 space-y-4">
+      <div className="flex items-center gap-2">
+        <MapPin className="w-5 h-5 text-primary shrink-0" />
+        <h3 className="text-base font-bold text-foreground">Regional jämförelse</h3>
+      </div>
 
-      {open && (
-        <div className="px-4 pb-5 space-y-4 animate-fade-in">
-          <p className="text-xs text-muted-foreground">
-            Ramavtalspriser för <span className="font-medium text-foreground">{occupation}</span> per zon (nationell priskatalog 2026).
-          </p>
+      <p className="text-sm text-muted-foreground">
+        Vad kunden betalar för {occupation} i alla zoner:
+      </p>
 
-          <div className="space-y-3">
-            {zoneRates.map((z) => {
-              const isCurrent = z.zon === currentZone;
-              const width = Math.max((z.timpris_kund / maxRate) * 100, 20);
+      <div className="space-y-3">
+        {zoneRates.map((z) => {
+          const isCurrent = z.zon === currentZone;
+          const width = Math.max((z.timpris_kund / maxRate) * 100, 20);
 
-              return (
-                <div key={z.zon}>
-                  <div className="flex items-center justify-between text-xs mb-1">
-                    <span className="flex items-center gap-1">
-                      {isCurrent && <MapPin className="w-3 h-3 text-primary" />}
-                      <span className={isCurrent ? "font-semibold text-foreground" : "text-muted-foreground"}>
-                        {z.zon}
-                        {isCurrent && " (din zon)"}
-                      </span>
+          return (
+            <div
+              key={z.zon}
+              className={`rounded-lg border p-4 ${
+                isCurrent
+                  ? "border-primary bg-primary/5"
+                  : "border-border bg-muted/30"
+              }`}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center gap-2">
+                  <span className={`text-sm font-bold ${isCurrent ? "text-foreground" : "text-foreground"}`}>
+                    {z.zon}
+                  </span>
+                  {isCurrent && (
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20">
+                      Din zon
                     </span>
-                    <span className={`font-medium ${isCurrent ? "font-bold text-foreground" : "text-muted-foreground blur-[8px] select-none pointer-events-none"}`}>
-                      {fmt(z.timpris_kund)} kr/h
-                    </span>
-                  </div>
-                  <div className="h-2 bg-muted rounded-full overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-all duration-700 ${isCurrent ? "bg-primary" : "bg-primary/20"}`}
-                      style={{ width: `${width}%` }}
-                    />
-                  </div>
+                  )}
                 </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
+                <div className="flex items-center gap-1">
+                  {!isCurrent && <Lock className="w-3 h-3 text-muted-foreground" />}
+                  <span className={`text-sm font-bold ${
+                    isCurrent ? "text-foreground" : "text-muted-foreground blur-[8px] select-none"
+                  }`}>
+                    {fmt(z.timpris_kund)} kr/h
+                  </span>
+                </div>
+              </div>
+              <div className="h-2 bg-muted rounded-full overflow-hidden">
+                <div
+                  className={`h-full rounded-full transition-all duration-700 ${
+                    isCurrent ? "bg-primary" : "bg-muted-foreground/30"
+                  }`}
+                  style={{ width: `${width}%` }}
+                />
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
