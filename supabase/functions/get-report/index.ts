@@ -47,6 +47,7 @@ serve(async (req) => {
     // Build response based on access level
     const response: Record<string, unknown> = {
       id: report.id,
+      lead_id: report.lead_id || null,
       status: report.status,
       occupation: report.occupation,
       employment_type: report.employment_type,
