@@ -24,6 +24,7 @@ import CheckoutButtons from "@/shared/CheckoutButtons";
 import StickyCheckoutBar from "@/shared/StickyCheckoutBar";
 import InlineCtaLink from "@/shared/InlineCtaLink";
 import ReferralBottomSheet from "@/components/teaser/ReferralBottomSheet";
+import HighEarnerCard from "@/components/teaser/HighEarnerCard";
 
 /** Teaser page — orchestrator for the results preview */
 export default function Teaser() {
@@ -71,7 +72,7 @@ export default function Teaser() {
     checkReferral();
   }, []);
 
-  const { isPermanent, result, noisedResult, benchmarkMonthly, userMonthly, userHourly, isUnderpaid, diffPercent } =
+  const { isPermanent, result, noisedResult, benchmarkMonthly, userMonthly, userHourly, isUnderpaid, diffPercent, isAboveThreshold } =
     useTeaserData(survey, pricingResult, benchmarkResult);
 
   // Find nearest kommun with higher zone price (for Variant 2 messaging)
@@ -139,9 +140,17 @@ export default function Teaser() {
           kommun={survey.kommun}
           employmentType={survey.employmentType}
           nearestHigherKommun={nearestHigherKommun}
+          isAboveThreshold={isAboveThreshold}
         />
 
-        {!isPermanent && isUnderpaid && result && (
+        {!isPermanent && isAboveThreshold && (
+          <HighEarnerCard
+            kommun={survey.kommun}
+            nearestHigherKommun={nearestHigherKommun}
+          />
+        )}
+
+        {!isPermanent && isUnderpaid && !isAboveThreshold && result && (
           <OpportunityGap
             userHourly={userHourly}
             marketHigh={noisedResult?.high ?? result.high}

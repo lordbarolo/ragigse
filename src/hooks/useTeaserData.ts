@@ -6,6 +6,7 @@ import type { BenchmarkMonthly } from "@/shared/types";
 interface PricingResult {
   recommended_hourly_min: number;
   recommended_hourly_max: number;
+  rate_customer_sek_per_hour?: number;
   region?: string;
   zon?: string;
 }
@@ -74,5 +75,9 @@ export function useTeaserData(
     ? (benchmarkMonthly ? benchmarkMonthly.gapPct : 0)
     : (result ? Math.round(((result.high - userHourly) / result.high) * 100) : 0);
 
-  return { isPermanent, result, noisedResult, benchmarkMonthly, userMonthly, userHourly, isUnderpaid, diffPercent };
+  // Consultant earning ≥96% of customer rate — no room for negotiation in this zone
+  const customerRate = pricingResult?.rate_customer_sek_per_hour ?? 0;
+  const isAboveThreshold = !isPermanent && customerRate > 0 && userHourly >= customerRate * 0.96;
+
+  return { isPermanent, result, noisedResult, benchmarkMonthly, userMonthly, userHourly, isUnderpaid, diffPercent, isAboveThreshold };
 }

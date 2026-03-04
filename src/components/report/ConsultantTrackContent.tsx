@@ -11,6 +11,9 @@ import {
   MapPin,
   Lightbulb,
   Info,
+  CheckCircle,
+  Clock,
+  Car,
 } from "lucide-react";
 import { fmt, formatPartialValue } from "@/shared/formatters";
 import { SectionHeading, StatBlock, CalcRow, ScriptBlock } from "@/shared/UIComponents";
@@ -47,6 +50,7 @@ export default function ConsultantTrackContent({
   const currentSalary = r.inputs.current_salary_sek;
   const salaryIsHourly = r.inputs.salary_type === "hourly";
   const currentHourly = salaryIsHourly ? currentSalary : (isEmployee ? Math.round(currentSalary / 167) : currentSalary);
+  const isAboveThreshold = marketRate > 0 && currentHourly >= marketRate * 0.96;
 
   return (
     <>
@@ -63,7 +67,7 @@ export default function ConsultantTrackContent({
       </Card>
 
       {/* Nästa steg — direkt efter mätaren för max impact */}
-      {isConsultantFullAccess && rec && (
+      {isConsultantFullAccess && rec && !isAboveThreshold && (
         <Card className="card-shadow border-primary/20">
           <CardContent className="pt-6 space-y-4">
             <SectionHeading icon={Lightbulb} title="Nästa steg — vad du ska säga" />
@@ -95,6 +99,51 @@ export default function ConsultantTrackContent({
         </Card>
       )}
 
+      {/* Toppskiktet — anpassad info för konsulter nära kundpris */}
+      {isConsultantFullAccess && isAboveThreshold && (
+        <Card className="card-shadow border-primary/20">
+          <CardContent className="pt-6 space-y-4">
+            <SectionHeading icon={CheckCircle} title="Du ligger redan i toppskiktet" />
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Din ersättning på {fmt(currentHourly)} kr/h motsvarar 96% eller mer av vad kunden betalar ({fmt(marketRate)} kr/h). 
+              Det innebär att det i praktiken inte finns ytterligare förhandlingsutrymme för grundtimpriset i din nuvarande zon.
+            </p>
+            <div className="space-y-3">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                Så kan du öka din totala ersättning
+              </p>
+              <div className="flex items-start gap-3 p-3 rounded-lg border border-border bg-muted/30">
+                <MapPin className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-foreground">Byt till en högre priszon</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Se den regionala jämförelsen nedan — vissa zoner har betydligt högre ramavtalspriser för samma roll.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 p-3 rounded-lg border border-border bg-muted/30">
+                <Clock className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-foreground">Jourersättning</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Jour- och beredskapstillägg ligger utanför grundtimpriset och kan ge ett betydande påslag på din totala ersättning. Förhandla specifika jourvillkor med ditt bemanningsföretag.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 p-3 rounded-lg border border-border bg-muted/30">
+                <Car className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-foreground">Reseersättning</p>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Om uppdraget kräver resa finns ofta möjlighet att förhandla reseersättning, boende och traktamente utöver grundtimpriset.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* 1. Ramavtalspris */}
       <Card className="card-shadow">
         <CardContent className="pt-6 space-y-3">
@@ -113,12 +162,18 @@ export default function ConsultantTrackContent({
       <Card className="card-shadow overflow-hidden">
         {isConsultantFullAccess && rec ? (
           <>
-            <div className="bg-accent/10 p-4 flex items-center gap-3">
-              <TrendingUp className="w-5 h-5 text-accent" />
+            <div className={`p-4 flex items-center gap-3 ${isAboveThreshold ? 'bg-primary/10' : 'bg-accent/10'}`}>
+              {isAboveThreshold ? (
+                <CheckCircle className="w-5 h-5 text-primary" />
+              ) : (
+                <TrendingUp className="w-5 h-5 text-accent" />
+              )}
               <p className="font-semibold text-foreground">
-                {delta && delta.monthly_vs_current_min > 0
-                  ? `Du kan tjäna upp till ${fmt(delta.monthly_vs_current_max)} kr mer per månad`
-                  : "Din ersättning ligger i linje med marknaden!"}
+                {isAboveThreshold
+                  ? "Din ersättning är redan nära kundpriset — bra förhandlat!"
+                  : delta && delta.monthly_vs_current_min > 0
+                    ? `Du kan tjäna upp till ${fmt(delta.monthly_vs_current_max)} kr mer per månad`
+                    : "Din ersättning ligger i linje med marknaden!"}
               </p>
             </div>
             <CardContent className="pt-6 space-y-5">
