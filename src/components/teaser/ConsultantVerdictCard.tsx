@@ -23,7 +23,7 @@ export default function ConsultantVerdictCard({
   exitIntentVisible, checkoutLoading, onCheckout, leadId, referrerEmail,
   regionName, onPartialUnlock, employmentType,
 }: Props) {
-  const label = employmentType === "foretagare" ? "Din ersättning" : "Din lön";
+  const label = "Din ersättning";
   if (!isUnderpaid) {
     return (
       <div className="rounded-lg border border-border bg-card card-shadow overflow-hidden">

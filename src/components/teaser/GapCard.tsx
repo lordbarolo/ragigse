@@ -102,7 +102,7 @@ export default function GapCard({
         <div className="grid grid-cols-2 gap-4 animate-gap-fade-in" style={{ animationDelay: "0.5s" }}>
           <div className="rounded-lg border border-border p-4">
             <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-1.5">
-              {employmentType === "foretagare" ? "Din ersättning" : "Din lön"}
+              Din ersättning
             </p>
             <p className="text-xl font-bold text-foreground tracking-tight">
               {fmt(userVal)} kr

@@ -72,7 +72,7 @@ export default function ReferralBottomSheet({ ctaRef, leadId, referrerEmail, reg
               Vill du se siffrorna utan att betala?
             </h3>
             <p className="text-sm text-muted-foreground">
-              Tipsa en kollega om Konsultlön — då låser vi upp rapporten åt dig.
+              Tipsa en kollega om CompCare — då låser vi upp rapporten åt dig.
             </p>
 
             <Button

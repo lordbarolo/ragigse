@@ -53,7 +53,7 @@ export default function ReferralLanding() {
                 onClick={() => navigate("/")}
                 className="mt-4 w-full py-3 rounded-xl font-semibold hero-gradient text-primary-foreground"
               >
-                Gör din egen löneanalys
+                Gör din egen ersättningsanalys
               </button>
             </>
           )}
@@ -64,7 +64,7 @@ export default function ReferralLanding() {
                 onClick={() => navigate("/")}
                 className="mt-4 w-full py-3 rounded-xl font-semibold hero-gradient text-primary-foreground"
               >
-                Gör en löneanalys
+                Gör en ersättningsanalys
               </button>
             </>
           )}

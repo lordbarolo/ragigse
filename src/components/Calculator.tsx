@@ -145,7 +145,7 @@ export default function Calculator() {
           <div className="success-gradient p-4">
             <CardTitle className="text-accent-foreground flex items-center gap-2 text-lg">
               <TrendingUp className="w-5 h-5" />
-              {result.employment_type === "anstalld" ? "Din beräknade bruttolön" : "Din beräknade timersättning"}
+              {result.employment_type === "anstalld" ? "Din beräknade bruttoersättning" : "Din beräknade timersättning"}
             </CardTitle>
           </div>
           <CardContent className="pt-6 space-y-4">
@@ -154,7 +154,7 @@ export default function Calculator() {
                 {result.recommended_hourly_min} – {result.recommended_hourly_max} kr
               </p>
               <p className="text-sm sm:text-base text-muted-foreground mt-1">
-                {result.employment_type === "anstalld" ? "per timme (bruttolön)" : "per timme (fakturerat)"}
+                {result.employment_type === "anstalld" ? "per timme (bruttoersättning)" : "per timme (fakturerat)"}
               </p>
             </div>
 

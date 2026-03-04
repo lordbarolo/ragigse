@@ -71,12 +71,12 @@ export default function ConsultantTrackContent({
               <ScriptBlock
                 step={1}
                 title="Boka möte"
-                text="Kontakta din bemanningskonsult och begär ett lönesamtal. Nämn att du har gjort en marknadsanalys."
+                text="Kontakta din bemanningskonsult och begär ett ersättningssamtal. Nämn att du har gjort en marknadsanalys."
               />
               <ScriptBlock
                 step={2}
                 title="Presentera data"
-                text={`"Jag har tagit fram ramavtalspriset för ${occupation} i min region. Kundpriset ligger på ${fmt(marketRate)} kr/h, och med 15% marginal borde min ${isEmployee ? 'bruttolön' : 'fakturering'} landa på ${fmt(rec.recommended_hourly_min)}–${fmt(rec.recommended_hourly_max)} kr/h."`}
+                text={`"Jag har tagit fram ramavtalspriset för ${occupation} i min region. Kundpriset ligger på ${fmt(marketRate)} kr/h, och med 15% marginal borde min ${isEmployee ? 'bruttoersättning' : 'fakturering'} landa på ${fmt(rec.recommended_hourly_min)}–${fmt(rec.recommended_hourly_max)} kr/h."`}
               />
               <ScriptBlock
                 step={3}
@@ -118,24 +118,24 @@ export default function ConsultantTrackContent({
               <p className="font-semibold text-foreground">
                 {delta && delta.monthly_vs_current_min > 0
                   ? `Du kan tjäna upp till ${fmt(delta.monthly_vs_current_max)} kr mer per månad`
-                  : "Din lön ligger i linje med marknaden!"}
+                  : "Din ersättning ligger i linje med marknaden!"}
               </p>
             </div>
             <CardContent className="pt-6 space-y-5">
               <div className="grid grid-cols-2 gap-4">
-                <StatBlock label="Din timlön" value={`${fmt(currentHourly)} kr`} muted />
+                <StatBlock label="Din timersättning" value={`${fmt(currentHourly)} kr`} muted />
                 <StatBlock
-                  label={isEmployee ? "Rekommenderad timlön" : "Rekommenderad ersättning"}
+                  label={isEmployee ? "Rekommenderad timersättning" : "Rekommenderad ersättning"}
                   value={`${fmt(rec.recommended_hourly_min)}–${fmt(rec.recommended_hourly_max)} kr`}
                   accent
                 />
                 <StatBlock
-                  label="Din månadslön"
+                  label="Din månadsersättning"
                   value={`${fmt(salaryIsHourly ? currentSalary * 167 : currentSalary)} kr`}
                   muted
                 />
                 <StatBlock
-                  label="Möjlig månadslön"
+                  label="Möjlig månadsersättning"
                   value={`${fmt(rec.recommended_monthly_min)}–${fmt(rec.recommended_monthly_max)} kr`}
                   accent
                 />
@@ -172,7 +172,7 @@ export default function ConsultantTrackContent({
 
               {delta && delta.monthly_vs_current_min > 0 && (
                 <div className="p-4 rounded-lg bg-destructive/5 border border-destructive/20">
-                  <p className="text-xs text-muted-foreground mb-1">Skillnad mot din nuvarande lön</p>
+                  <p className="text-xs text-muted-foreground mb-1">Skillnad mot din nuvarande ersättning</p>
                   <p className="text-lg font-bold text-destructive">
                     +{fmt(delta.monthly_vs_current_min)}–{fmt(delta.monthly_vs_current_max)} kr/mån
                   </p>
@@ -184,13 +184,13 @@ export default function ConsultantTrackContent({
           <>
             <div className="bg-destructive/10 p-4 flex items-center gap-3">
               <Lock className="w-5 h-5 text-destructive" />
-              <p className="font-semibold text-foreground">Rekommenderad lön — låst</p>
+              <p className="font-semibold text-foreground">Rekommenderad ersättning — låst</p>
             </div>
             <CardContent className="pt-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <StatBlock label="Din timlön" value={`${fmt(currentHourly)} kr`} muted />
+                <StatBlock label="Din timersättning" value={`${fmt(currentHourly)} kr`} muted />
                 <div className="p-3 rounded-lg bg-accent/10 relative overflow-hidden">
-                  <p className="text-xs text-muted-foreground mb-1">Rekommenderad timlön</p>
+                  <p className="text-xs text-muted-foreground mb-1">Rekommenderad timersättning</p>
                   <p className="text-base font-semibold text-accent blur-sm select-none">
                     {formatPartialValue(Math.round(marketRate * 0.6))} kr
                   </p>
@@ -212,7 +212,7 @@ export default function ConsultantTrackContent({
             <div className="space-y-3 text-sm text-muted-foreground">
               <CalcRow label="Ramavtalspris (vad kunden betalar)" value={`${fmt(marketRate)} kr/h`} />
               <CalcRow label="Bemanningsbolagets marginal (15%)" value={`−${fmt(Math.round(marketRate * margin))} kr/h`} />
-              <CalcRow label="Löneutrymme efter marginal" value={`${fmt(afterMargin)} kr/h`} />
+              <CalcRow label="Ersättningsutrymme efter marginal" value={`${fmt(afterMargin)} kr/h`} />
               {isEmployee ? (
                 <CalcRow
                   label="÷ 1,42 (arbetsgivaravg. + semester + pension)"
@@ -319,7 +319,7 @@ export default function ConsultantTrackContent({
                         />
                       </div>
                       <p className="text-xs text-muted-foreground">
-                        Rekommenderad {isEmployee ? 'bruttolön' : 'ersättning'}: {fmt(recHourly)}–{fmt(recHourlyHigh)} kr/h
+                        Rekommenderad {isEmployee ? 'bruttoersättning' : 'ersättning'}: {fmt(recHourly)}–{fmt(recHourlyHigh)} kr/h
                       </p>
                     </div>
                   );

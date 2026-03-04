@@ -96,7 +96,7 @@ export function getNegotiationTips(
     );
   } else {
     tips.push(
-      "Din lön ligger redan nära marknadspris — bra förhandlat! Fokusera på andra förmåner."
+      "Din ersättning ligger redan nära marknadspris — bra förhandlat! Fokusera på andra förmåner."
     );
   }
 

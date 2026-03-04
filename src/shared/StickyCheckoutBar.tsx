@@ -15,7 +15,7 @@ export default function StickyCheckoutBar({ checkoutLoading, onCheckout }: Props
           onClick={() => onCheckout("single")}
           className="w-full flex items-center justify-center gap-2 py-4 rounded-lg font-semibold text-base bg-primary text-primary-foreground hover:opacity-90 shadow-sm transition-all disabled:opacity-70"
         >
-          {checkoutLoading === "single" ? "Laddar..." : "Se din fulla löneanalys — 49 kr"}
+          {checkoutLoading === "single" ? "Laddar..." : "Se din fulla ersättningsanalys — 49 kr"}
           {checkoutLoading !== "single" && <ArrowRight className="w-5 h-5" />}
         </button>
         <p className="text-center text-xs text-muted-foreground mt-2">
