@@ -215,21 +215,21 @@ export default function ConsultantTrackContent({
                       {fmt(Math.round((rec.recommended_monthly_min + rec.recommended_monthly_max) / 2))} kr/mån
                     </p>
                   </div>
-                  <div className="p-3 rounded-lg bg-destructive/5 border border-destructive/20">
-                    <p className="text-[10px] font-medium text-destructive uppercase tracking-wide mb-1">Aggressive</p>
+                  <div className="p-3 rounded-lg bg-muted/50 border border-border">
+                    <p className="text-[10px] font-medium text-foreground uppercase tracking-wide mb-1">Ambitiöst</p>
                     <p className="text-base font-bold text-foreground">{fmt(rec.recommended_hourly_max)} kr/h</p>
                     <p className="text-[10px] text-muted-foreground mt-0.5">{fmt(rec.recommended_monthly_max)} kr/mån</p>
                   </div>
                 </div>
                 <p className="text-[11px] text-muted-foreground text-center">
-                  Safe = hög chans att få igenom · Target = rekommenderat · Aggressive = kräver stark erfarenhet
+                  Safe = hög chans att få igenom · Target = rekommenderat · Ambitiöst = kräver stark erfarenhet
                 </p>
               </div>
 
               {delta && delta.monthly_vs_current_min > 0 && (
-                <div className="p-4 rounded-lg bg-destructive/5 border border-destructive/20">
+                <div className="p-4 rounded-lg bg-accent/5 border border-accent/20">
                   <p className="text-xs text-muted-foreground mb-1">Skillnad mot din nuvarande ersättning</p>
-                  <p className="text-lg font-bold text-destructive">
+                  <p className="text-lg font-bold text-accent">
                     +{fmt(delta.monthly_vs_current_min)}–{fmt(delta.monthly_vs_current_max)} kr/mån
                   </p>
                 </div>
@@ -238,9 +238,9 @@ export default function ConsultantTrackContent({
           </>
         ) : (
           <>
-            <div className="bg-destructive/10 p-4 flex items-center gap-3">
-              <Lock className="w-5 h-5 text-destructive" />
-              <p className="font-semibold text-foreground">Rekommenderad ersättning — låst</p>
+            <div className="bg-muted/50 p-4 flex items-center gap-3">
+              <Lock className="w-5 h-5 text-muted-foreground" />
+              <p className="font-semibold text-foreground">Rekommenderad ersättning — lås upp</p>
             </div>
             <CardContent className="pt-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
