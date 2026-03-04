@@ -22,7 +22,7 @@ export default function PermanentTrackContent({ r, isFullAccess, occupation, kom
       {/* Benchmarkdata */}
       <Card className="card-shadow">
         <CardContent className="pt-6 space-y-4">
-          <SectionHeading icon={BarChart3} title="Marknadslöner" />
+          <SectionHeading icon={BarChart3} title="Marknadsersättningar" />
           <div className="grid grid-cols-3 gap-3 text-center">
             <div className="p-3 rounded-lg bg-muted/50 border border-border">
               <p className="text-[10px] text-muted-foreground uppercase tracking-wide mb-1">P25</p>
@@ -63,12 +63,12 @@ export default function PermanentTrackContent({ r, isFullAccess, occupation, kom
                 <p className="font-semibold text-foreground">
                   {gap.gap_vs_p75 > 0
                     ? `Du kan tjäna upp till ${fmt(gap.gap_vs_p75)} kr mer per månad`
-                    : "Din lön ligger redan i toppskiktet!"}
+                    : "Din ersättning ligger redan i toppskiktet!"}
                 </p>
               </div>
               <CardContent className="pt-6 space-y-4">
                 <div className="grid grid-cols-2 gap-4">
-                  <StatBlock label="Din nuvarande lön" value={`${fmt(gap.current_salary)} kr/mån`} muted />
+                  <StatBlock label="Din nuvarande ersättning" value={`${fmt(gap.current_salary)} kr/mån`} muted />
                   <StatBlock label="Marknadens P75" value={`${fmt(p75)} kr/mån`} accent />
                 </div>
                 {gap.gap_vs_p75 > 0 && (
@@ -87,12 +87,12 @@ export default function PermanentTrackContent({ r, isFullAccess, occupation, kom
                   <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Förhandlingstips</p>
                   <ul className="space-y-2">
                     {[
-                      `Referera till att medianlönen för ${occupation} är ${fmt(benchMarket?.percentile_50 ?? 0)} kr/mån enligt Medlingsinstitutet.`,
+                      `Referera till att medianersättningen för ${occupation} är ${fmt(benchMarket?.percentile_50 ?? 0)} kr/mån enligt Medlingsinstitutet.`,
                       gap.category === "large"
-                        ? "Ditt gap mot marknaden är stort — du har goda skäl att kräva en rejäl lönerevision."
+                        ? "Ditt gap mot marknaden är stort — du har goda skäl att kräva en rejäl ersättningsrevision."
                         : gap.category === "medium"
                         ? "Ditt gap mot marknaden är måttligt — begär en justering till minst mediannivå som start."
-                        : "Din lön ligger nära marknaden — fokusera på förmåner och nästa steg i karriären.",
+                        : "Din ersättning ligger nära marknaden — fokusera på förmåner och nästa steg i karriären.",
                       "Förbered dig med konkret statistik: 'Enligt SCB/MI ligger P75 för min yrkesgrupp på X kr.'",
                     ].map((tip, i) => (
                       <li key={i} className="flex items-start gap-2 text-sm">
@@ -112,7 +112,7 @@ export default function PermanentTrackContent({ r, isFullAccess, occupation, kom
               </div>
               <CardContent className="pt-6 space-y-4">
                 <div className="grid grid-cols-2 gap-4">
-                  <StatBlock label="Din nuvarande lön" value={`${fmt(gap.current_salary)} kr/mån`} muted />
+                  <StatBlock label="Din nuvarande ersättning" value={`${fmt(gap.current_salary)} kr/mån`} muted />
                   <div className="p-3 rounded-lg bg-accent/10 relative overflow-hidden">
                     <p className="text-xs text-muted-foreground mb-1">Förhandlingsutrymme</p>
                     <p className="text-base font-semibold text-accent blur-sm select-none">

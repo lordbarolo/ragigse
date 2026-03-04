@@ -86,10 +86,10 @@ function MockResultCard({ t }: { t: ThemeTokens }) {
       {/* Header */}
       <div style={{ textAlign: "center", marginBottom: 20 }}>
         <p style={{ fontSize: 11, letterSpacing: 1.5, color: t.textMuted, textTransform: "uppercase" }}>
-          CompCare · Löneanalys
+          CompCare · Ersättningsanalys
         </p>
         <h2 style={{ fontSize: 22, fontWeight: 700, color: t.text, margin: "8px 0 4px" }}>
-          Din löneanalys är klar
+          Din ersättningsanalys är klar
         </h2>
         <p style={{ fontSize: 13, color: t.textMuted }}>
           Vi har jämfört din ersättning med ramavtalspriserna i Stockholm
@@ -173,9 +173,9 @@ function MockResultCard({ t }: { t: ThemeTokens }) {
 
         {/* Bars */}
         {[
-          { label: "Din nuvarande lön", value: "800 kr/h", width: "55%" },
+          { label: "Din nuvarande ersättning", value: "800 kr/h", width: "55%" },
           { label: "Vad regionen betalar bemanningsföretag", value: "███", width: "80%", blur: true },
-          { label: "Rekommenderad lön", value: "███", width: "70%", blur: true },
+          { label: "Rekommenderad ersättning", value: "███", width: "70%", blur: true },
         ].map((bar, i) => (
           <div key={i} style={{ marginBottom: 10 }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
@@ -231,7 +231,7 @@ function MockResultCard({ t }: { t: ThemeTokens }) {
           boxShadow: `0 4px 14px ${t.primary}44`,
         }}
       >
-        Se din fulla löneanalys — 49 kr →
+        Se din fulla ersättningsanalys — 49 kr →
       </button>
       <p style={{ fontSize: 11, color: t.textMuted, textAlign: "center" }}>
         Engångsbetalning · Ingen bindningstid

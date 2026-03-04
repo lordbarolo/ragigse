@@ -57,7 +57,7 @@ serve(async (req) => {
           <p>En kollega till dig har precis använt vår lönekoll för att se om hen ligger rätt i förhållande till de senaste ramavtalspriserna i <strong>${regionDisplay}</strong>.</p>
           <p>Din kollega tyckte att även du borde göra en koll. Det tar bara 30 sekunder att se om du är en av de 75% som faktiskt är underbetalda i förhållande till vad kommunerna och regionerna faktiskt betalar bemanningsbolagen.</p>
           <p style="margin: 24px 0;">
-            <a href="${homepageLink}" style="display: inline-block; padding: 12px 28px; background: linear-gradient(135deg, #1565c0, #0d47a1); color: #fff; text-decoration: none; border-radius: 8px; font-weight: 600;">Kolla din lön här</a>
+            <a href="${homepageLink}" style="display: inline-block; padding: 12px 28px; background: linear-gradient(135deg, #1565c0, #0d47a1); color: #fff; text-decoration: none; border-radius: 8px; font-weight: 600;">Kolla din ersättning här</a>
           </p>
           <p style="color: #666; font-size: 13px;">Hälsningar,<br/>Teamet på CompCare.se</p>
         </div>
@@ -73,7 +73,7 @@ serve(async (req) => {
           body: JSON.stringify({
             from: "CompCare.se <noreply@mail.compcare.se>",
             to: [referee_email],
-            subject: "Din kollega tipsar: Har du rätt lön som konsult?",
+            subject: "Din kollega tipsar: Har du rätt ersättning som konsult?",
             html: emailHtml,
           }),
         });

@@ -511,7 +511,7 @@ export default function Survey() {
           >
             <div className="flex flex-col gap-3">
               {([
-                { value: "anstalld" as const, label: "Anställd", desc: "Lön från arbetsgivare" },
+                { value: "anstalld" as const, label: "Anställd", desc: "Ersättning från arbetsgivare" },
                 { value: "foretagare" as const, label: "Eget bolag", desc: "Fakturerar via bemanningsföretag" },
               ]).map((opt) => (
                 <button
@@ -577,7 +577,7 @@ export default function Survey() {
               <p className="text-xs text-muted-foreground">
                 {data.salaryType === "hourly"
                   ? "Ange din timersättning före skatt"
-                  : "Ange din månadslön före skatt"}
+                  : "Ange din månadsersättning före skatt"}
               </p>
             </div>
           </StepWrapper>

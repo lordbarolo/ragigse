@@ -34,7 +34,7 @@ const FAQ_ITEMS = [
       "Ramavtalspriser är de timpris som offentliga vårdgivare har avtalat med bemanningsföretag. De speglar vad arbetsgivare faktiskt är villiga att betala för din kompetens — och ger därmed en mer realistisk bild av ditt marknadsvärde än generella lönestatistiker.",
   },
   {
-    question: "Hur kan jag använda CompCare-rapporten i en löneförhandling?",
+    question: "Hur kan jag använda CompCare-rapporten i en förhandling?",
     answer:
       "Rapporten visar exakt vad din vårdgivare betalar för inhyrd personal med din profil. I förhandlingen kan du referera till dessa siffror och argumentera att din ersättning bör spegla ditt faktiska marknadsvärde.",
   },
@@ -71,12 +71,12 @@ const faqJsonLd = {
 export default function FAQ() {
   useEffect(() => {
     document.title =
-      "Vanliga frågor om lön för sjuksköterskor | CompCare.se";
+      "Vanliga frågor om ersättning för sjuksköterskor | CompCare.se";
     const meta = document.querySelector('meta[name="description"]');
     if (meta) {
       meta.setAttribute(
         "content",
-        "Svar på vanliga frågor om sjuksköterskelöner, ramavtalspriser, löneförhandling och hur CompCare.se hjälper dig jämföra din lön."
+        "Svar på vanliga frågor om ersättning, ramavtalspriser, förhandling och hur CompCare.se hjälper dig jämföra din ersättning."
       );
     }
   }, []);
@@ -93,10 +93,10 @@ export default function FAQ() {
       <header className="hero-gradient py-10 px-5 text-center sm:py-14">
         <div className="max-w-3xl mx-auto space-y-3">
           <h1 className="text-3xl sm:text-4xl text-primary-foreground leading-tight">
-            Vanliga frågor om lön
+            Vanliga frågor om ersättning
           </h1>
           <p className="text-base sm:text-lg text-primary-foreground/85 font-body max-w-2xl mx-auto">
-            Allt du behöver veta om sjuksköterskelöner, ramavtalspriser och
+            Allt du behöver veta om ersättningar, ramavtalspriser och
             hur du kan förhandla bättre.
           </p>
         </div>
@@ -123,7 +123,7 @@ export default function FAQ() {
         {/* CTA */}
         <section className="mt-12 text-center space-y-4">
           <h2 className="text-xl font-bold text-foreground">
-            Redo att jämföra din lön?
+            Redo att jämföra din ersättning?
           </h2>
           <p className="text-muted-foreground text-sm">
             Det tar bara 60 sekunder och är helt gratis.
@@ -133,7 +133,7 @@ export default function FAQ() {
             className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-md font-medium hover:bg-primary/90 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            Gör din löneanalys nu
+            Gör din ersättningsanalys nu
           </Link>
         </section>
       </main>

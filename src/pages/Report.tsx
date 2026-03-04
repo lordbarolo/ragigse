@@ -72,7 +72,7 @@ export default function Report() {
             {isFullAccess ? "Din personliga rapport" : "Förhandsgranskning"}
           </p>
           <h1 className="text-2xl sm:text-3xl text-primary-foreground leading-tight">
-            Löneanalys för {report.occupation}
+            Ersättningsanalys för {report.occupation}
           </h1>
           <p className="text-sm text-primary-foreground/80">
             {report.kommun} · {isPermanentTrack ? "Fast tjänst" : "Konsultuppdrag"}
@@ -121,8 +121,8 @@ export default function Report() {
         {isFullAccess && (
           <div className="flex flex-col gap-3">
             <ShareButton
-              title="CompCare.se – Löneanalys"
-              text={`Jag kollade min lön som ${report.occupation} med CompCare.se — rekommenderar det!`}
+              title="CompCare.se – Ersättningsanalys"
+              text={`Jag kollade min ersättning som ${report.occupation} med CompCare.se — rekommenderar det!`}
               url={`${window.location.origin}/rapport/${report.id}`}
               className="w-full"
             />
@@ -151,7 +151,7 @@ export default function Report() {
         <Separator />
         <p className="text-xs text-muted-foreground text-center leading-relaxed pb-8">
           Denna rapport baseras på gällande avtal från SKR och är avsedd som vägledning.
-          Faktisk lön kan variera beroende på arbetsgivare, uppdrag och individuella avtal.
+          Faktisk ersättning kan variera beroende på arbetsgivare, uppdrag och individuella avtal.
           <br />
           © {new Date().getFullYear()} CompCare.se
         </p>

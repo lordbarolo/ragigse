@@ -37,7 +37,7 @@ export default function PaywallOverlay({
     <div className="relative">
       <div className="space-y-4">
         <BarRow
-          label="Din nuvarande lön"
+          label="Din nuvarande ersättning"
           value={userHourly}
           max={result.high + 50}
           color="bg-muted-foreground/30"
@@ -50,7 +50,7 @@ export default function PaywallOverlay({
           blurred={true}
         />
         <BarRow
-          label="Rekommenderad lön"
+          label="Rekommenderad ersättning"
           value={result.low}
           max={result.high + 50}
           color="bg-primary/50"
