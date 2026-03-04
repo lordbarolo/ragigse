@@ -6,10 +6,11 @@ interface Props {
   kommun: string;
   employmentType?: string;
   nearestHigherKommun?: string | null;
+  isAboveThreshold?: boolean;
 }
 
 export default function EarningsBanner({
-  isUnderpaid, diffPercent, isPermanent, yrke, kommun, employmentType, nearestHigherKommun,
+  isUnderpaid, diffPercent, isPermanent, yrke, kommun, employmentType, nearestHigherKommun, isAboveThreshold,
 }: Props) {
   if (isPermanent) {
     if (!isUnderpaid || diffPercent <= 0) return null;
@@ -23,6 +24,19 @@ export default function EarningsBanner({
         </p>
         <p className="text-muted-foreground text-xs mt-2">
           Baserat på Medlingsinstitutets lönestatistik för {yrke}
+        </p>
+      </div>
+    );
+  }
+
+  if (isAboveThreshold) {
+    return (
+      <div className="rounded-lg border border-primary/20 bg-card p-6 text-center card-shadow">
+        <p className="text-foreground text-base font-semibold leading-relaxed">
+          Du ligger redan i toppskiktet i {kommun}.
+        </p>
+        <p className="text-muted-foreground text-sm mt-2">
+          Se hur du kan öka din totala ersättning via andra zoner, jour och reseersättning.
         </p>
       </div>
     );
