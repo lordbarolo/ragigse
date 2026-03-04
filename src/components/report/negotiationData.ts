@@ -105,7 +105,7 @@ export function getNegotiationTips(
     tips.push("Kontrollera att OB-tilläggen följer gällande kollektivavtal.");
     tips.push("Förhandla om utbildningsbudget och kompetensutveckling.");
   } else {
-    tips.push("Som egenföretagare bör du fakturera minst 85% av kundpriset.");
+    tips.push("Som egenföretagare bör du fakturera minst 90% av kundpriset.");
     tips.push("Om du tar risken för vite är det rimligt att förhandla en högre ersättning.");
   }
 
