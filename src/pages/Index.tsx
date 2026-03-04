@@ -110,7 +110,7 @@ const Index = () => {
 
       {/* Survey — light professional tool feel */}
       <main className="px-4 py-12 sm:py-16 bg-background">
-        {import.meta.env.DEV && (
+        {(import.meta.env.DEV || window.location.hostname.includes("lovableproject.com") || window.location.hostname.includes("lovable.app")) && (
           <button
             onClick={devSkip}
             className="mx-auto mb-4 block text-xs px-3 py-1 rounded bg-muted text-muted-foreground hover:bg-muted/80 transition"
