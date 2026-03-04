@@ -44,7 +44,8 @@ export default function ConsultantTrackContent({
   const rec = r.recommendation;
   const delta = r.delta;
   const isConsultantFullAccess = isFullAccess && !!rec;
-  const margin = 0.15;
+  const margin = isEmployee ? 0.15 : 0.10;
+  const marginLabel = isEmployee ? "15%" : "10%";
   const afterMargin = Math.round(marketRate * (1 - margin));
 
   const currentSalary = r.inputs.current_salary_sek;
@@ -80,7 +81,7 @@ export default function ConsultantTrackContent({
               <ScriptBlock
                 step={2}
                 title="Presentera data"
-                text={`"Jag har tagit fram ramavtalspriset för ${occupation} i min region. Kundpriset ligger på ${fmt(marketRate)} kr/h, och med 15% marginal borde min ${isEmployee ? 'bruttoersättning' : 'fakturering'} landa på ${fmt(rec.recommended_hourly_min)}–${fmt(rec.recommended_hourly_max)} kr/h."`}
+                text={`"Jag har tagit fram ramavtalspriset för ${occupation} i min region. Kundpriset ligger på ${fmt(marketRate)} kr/h, och med ${marginLabel} marginal borde min ${isEmployee ? 'bruttoersättning' : 'fakturering'} landa på ${fmt(rec.recommended_hourly_min)}–${fmt(rec.recommended_hourly_max)} kr/h."`}
               />
               <ScriptBlock
                 step={3}
@@ -266,7 +267,7 @@ export default function ConsultantTrackContent({
             <SectionHeading icon={Info} title="Antaganden & Beräkning" />
             <div className="space-y-3 text-sm text-muted-foreground">
               <CalcRow label="Ramavtalspris (vad kunden betalar)" value={`${fmt(marketRate)} kr/h`} />
-              <CalcRow label="Bemanningsbolagets marginal (15%)" value={`−${fmt(Math.round(marketRate * margin))} kr/h`} />
+              <CalcRow label={`Bemanningsbolagets marginal (${marginLabel})`} value={`−${fmt(Math.round(marketRate * margin))} kr/h`} />
               <CalcRow label="Ersättningsutrymme efter marginal" value={`${fmt(afterMargin)} kr/h`} />
               {isEmployee ? (
                 <CalcRow
@@ -275,8 +276,8 @@ export default function ConsultantTrackContent({
                 />
               ) : (
                 <p className="text-xs text-muted-foreground/70 pt-1">
-                  Som egenföretagare bör du fakturera 85–90% av kundpriset, dvs{" "}
-                  {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h.
+                  Som egenföretagare bör du fakturera 90% av kundpriset, dvs{" "}
+                  {fmt(rec.recommended_hourly_max)} kr/h.
                 </p>
               )}
             </div>
@@ -288,8 +289,8 @@ export default function ConsultantTrackContent({
               </div>
               <ul className="space-y-2 text-xs text-muted-foreground leading-relaxed">
                 <li>
-                  <span className="font-semibold text-foreground">Bemanningsbolagets marginal (15%):</span>{" "}
-                  Vi räknar med att bolaget behåller 15% av timpriset. Detta är en vanlig nivå vid ramavtalsuppdrag.
+                  <span className="font-semibold text-foreground">Bemanningsbolagets marginal ({marginLabel}):</span>{" "}
+                  Vi räknar med att bolaget behåller {marginLabel} av timpriset. {isEmployee ? "Detta är en vanlig nivå vid ramavtalsuppdrag." : "Som egenföretagare är marknadsmässig marginal 10%."}
                 </li>
                 {isEmployee && (
                   <li>
@@ -303,7 +304,9 @@ export default function ConsultantTrackContent({
                 </li>
               </ul>
               <p className="text-xs text-muted-foreground/70 pt-1">
-                Spannet {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h baseras på 10–15% marginal.
+                  {isEmployee
+                    ? `Spannet ${fmt(rec.recommended_hourly_min)}–${fmt(rec.recommended_hourly_max)} kr/h baseras på 10–15% marginal.`
+                    : `Ersättningen ${fmt(rec.recommended_hourly_max)} kr/h baseras på ${marginLabel} marginal.`}
               </p>
             </div>
           </CardContent>
@@ -348,7 +351,7 @@ export default function ConsultantTrackContent({
                   const zoneRate = zc.timpris_kund;
                   const recHourly = isEmployee
                     ? Math.round((zoneRate * 0.85) / 1.42)
-                    : Math.round(zoneRate * 0.85);
+                    : Math.round(zoneRate * 0.90);
                   const recHourlyHigh = isEmployee
                     ? Math.round((zoneRate * 0.90) / 1.42)
                     : Math.round(zoneRate * 0.90);
@@ -374,7 +377,7 @@ export default function ConsultantTrackContent({
                         />
                       </div>
                       <p className="text-xs text-muted-foreground">
-                        Rekommenderad {isEmployee ? 'bruttoersättning' : 'ersättning'}: {fmt(recHourly)}–{fmt(recHourlyHigh)} kr/h
+                        Rekommenderad {isEmployee ? 'bruttoersättning' : 'ersättning'}: {isEmployee ? `${fmt(recHourly)}–${fmt(recHourlyHigh)}` : fmt(recHourlyHigh)} kr/h
                       </p>
                     </div>
                   );
