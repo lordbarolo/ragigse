@@ -60,7 +60,7 @@ const Index = () => {
     trackEvent("landing_viewed");
   }, []);
 
-  const devSkip = () => {
+  const devSkip = (empType: "foretagare" | "anstalld") => {
     const testData = {
       category: "doctor",
       role: "Specialistläkare",
@@ -68,9 +68,9 @@ const Index = () => {
       yrke: "Specialistläkare allmänmedicin",
       region: "Stockholm",
       kommun: "Stockholm",
-      employmentType: "foretagare",
+      employmentType: empType,
       salaryType: "hourly",
-      currentSalary: 500,
+      currentSalary: empType === "foretagare" ? 500 : 400,
       commute: "none",
       email: "test@compcare.se",
     };
@@ -111,12 +111,20 @@ const Index = () => {
       {/* Survey — light professional tool feel */}
       <main className="px-4 py-12 sm:py-16 bg-background">
         {(import.meta.env.DEV || window.location.hostname.includes("lovableproject.com") || window.location.hostname.includes("lovable.app")) && (
-          <button
-            onClick={devSkip}
-            className="mx-auto mb-4 block text-xs px-3 py-1 rounded bg-muted text-muted-foreground hover:bg-muted/80 transition"
-          >
-            🧪 Dev: hoppa till /resultat
-          </button>
+          <div className="flex justify-center gap-2 mb-4">
+            <button
+              onClick={() => devSkip("foretagare")}
+              className="text-xs px-3 py-1 rounded bg-muted text-muted-foreground hover:bg-muted/80 transition"
+            >
+              🧪 Dev: företagare
+            </button>
+            <button
+              onClick={() => devSkip("anstalld")}
+              className="text-xs px-3 py-1 rounded bg-muted text-muted-foreground hover:bg-muted/80 transition"
+            >
+              🧪 Dev: anställd
+            </button>
+          </div>
         )}
         <Survey />
       </main>
