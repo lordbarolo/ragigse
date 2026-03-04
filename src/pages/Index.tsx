@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import Survey from "@/components/Survey";
 import { Shield } from "lucide-react";
 import { trackEvent } from "@/lib/trackEvent";
+import { supabase } from "@/integrations/supabase/client";
 
 const FAQ_ITEMS = [
   {
@@ -60,7 +61,7 @@ const Index = () => {
     trackEvent("landing_viewed");
   }, []);
 
-  const devSkip = (empType: "foretagare" | "anstalld") => {
+  const devSkip = async (empType: "foretagare" | "anstalld") => {
     const testData = {
       category: "doctor",
       role: "Specialistläkare",
@@ -74,8 +75,38 @@ const Index = () => {
       commute: "none",
       email: "test@compcare.se",
     };
-    sessionStorage.setItem("surveyData", JSON.stringify(testData));
-    navigate("/resultat");
+    const leadId = crypto.randomUUID();
+    try {
+      await supabase.from("leads").insert({
+        id: leadId,
+        email: testData.email,
+        employment_type: testData.employmentType,
+        yrke: testData.yrke,
+        kommun: testData.kommun,
+        salary_type: testData.salaryType,
+        current_salary: testData.currentSalary,
+      });
+      const { data: reportData } = await supabase.functions.invoke("create-report", {
+        body: {
+          lead_id: leadId,
+          email: testData.email,
+          occupation: testData.yrke,
+          employment_type: testData.employmentType,
+          kommun: testData.kommun,
+          current_salary: testData.currentSalary,
+          salary_type: testData.salaryType,
+          track: "consultant",
+        },
+      });
+      sessionStorage.setItem("leadId", leadId);
+      sessionStorage.setItem("surveyData", JSON.stringify(testData));
+      if (reportData?.report_id) sessionStorage.setItem("reportId", reportData.report_id);
+      if (reportData?.ab_variant) sessionStorage.setItem("abVariant", reportData.ab_variant);
+      navigate(`/resultat/${leadId}`);
+    } catch {
+      sessionStorage.setItem("surveyData", JSON.stringify(testData));
+      navigate(`/resultat/${leadId}`);
+    }
   };
 
   return (
