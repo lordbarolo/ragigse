@@ -37,7 +37,7 @@ export default function Report() {
 
   const onCheckout = (plan: "single" | "yearly") => {
     if (!report) return;
-    const leadId = sessionStorage.getItem("leadId") || "";
+    const leadId = report.lead_id || "";
     checkout(plan, { email: report.email || "", leadId, reportId: report.id });
   };
 

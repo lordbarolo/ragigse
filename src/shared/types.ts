@@ -55,6 +55,7 @@ export interface ZoneComparison {
 
 export interface ReportData {
   id: string;
+  lead_id?: string;
   status: string;
   access: "full" | "preview";
   occupation: string;
