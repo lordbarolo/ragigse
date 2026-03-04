@@ -109,8 +109,16 @@ serve(async (req) => {
     }
 
     const empType = employment_type as EmploymentType;
-    const range = calculateSalaryRange(timprisKund, empType, model);
-    const m = model ?? { share_min: 0.85, share_max: 0.90, employer_factor: 1.42, hours_per_month: 167 };
+    // For foretagare, market standard is 10% margin (share_min = 0.90)
+    const effectiveModel: MarginModel | undefined = model
+      ? (empType === "foretagare"
+        ? { ...model, share_min: model.share_max }
+        : model)
+      : (empType === "foretagare"
+        ? { share_min: 0.90, share_max: 0.90, employer_factor: 1.42, hours_per_month: 167 }
+        : undefined);
+    const range = calculateSalaryRange(timprisKund, empType, effectiveModel);
+    const m = effectiveModel ?? { share_min: 0.85, share_max: 0.90, employer_factor: 1.42, hours_per_month: 167 };
     const factor = empType === "anstalld" ? m.employer_factor : 1;
 
     const result = {
