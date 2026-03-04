@@ -34,34 +34,35 @@ export default function PaywallOverlay({
   isUnderpaid,
 }: Props) {
   return (
-    <div className="relative">
-      <div className="space-y-4">
-        <BarRow
-          label="Din nuvarande ersättning"
-          value={userHourly}
-          max={result.high + 50}
-          color="bg-muted-foreground/30"
-        />
-        <BarRow
-          label="Vad regionen betalar bemanningsföretag"
-          value={result.high}
-          max={result.high + 50}
-          color="bg-primary"
-          blurred={true}
-        />
-        <BarRow
-          label="Rekommenderad ersättning"
-          value={result.low}
-          max={result.high + 50}
-          color="bg-primary/50"
-          blurred={true}
-          partialReveal={false}
-        />
-      </div>
+    <div className="space-y-4">
+      {/* Bars with lock overlay */}
+      <div className="relative">
+        <div className="space-y-4">
+          <BarRow
+            label="Din nuvarande ersättning"
+            value={userHourly}
+            max={result.high + 50}
+            color="bg-muted-foreground/30"
+          />
+          <BarRow
+            label="Vad regionen betalar bemanningsföretag"
+            value={result.high}
+            max={result.high + 50}
+            color="bg-primary"
+            blurred={true}
+          />
+          <BarRow
+            label="Rekommenderad ersättning"
+            value={result.low}
+            max={result.high + 50}
+            color="bg-primary/50"
+            blurred={true}
+            partialReveal={false}
+          />
+        </div>
 
-      {!unlocked && !partialUnlocked && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          {!exitIntentVisible ? (
+        {!unlocked && !partialUnlocked && !exitIntentVisible && (
+          <div className="absolute inset-0 flex items-center justify-center">
             <div className="backdrop-blur-md bg-card/80 rounded-lg p-6 text-center border border-border shadow-lg max-w-xs w-full">
               <Lock className="w-7 h-7 text-primary mx-auto mb-2" />
               <p className="font-bold text-foreground text-sm">Lås upp full analys</p>
@@ -77,32 +78,27 @@ export default function PaywallOverlay({
                 {checkoutLoading === "single" ? "Laddar..." : "Köp rapport — 49 kr"}
                 {checkoutLoading !== "single" && <ArrowRight className="w-4 h-4" />}
               </button>
-              <button
-                data-cta
-                disabled={checkoutLoading !== null}
-                onClick={() => onCheckout("yearly")}
-                className="w-full flex items-center justify-center gap-2 py-2.5 mt-2 rounded-lg font-medium text-xs border border-border text-foreground hover:bg-muted transition-all disabled:opacity-70"
-              >
-                {checkoutLoading === "yearly" ? "Laddar..." : "Årsabonnemang — 495 kr/år"}
-              </button>
             </div>
-          ) : (
-            <div className="backdrop-blur-md bg-card/90 rounded-lg p-3 border border-border shadow-lg w-full animate-fade-in">
-              <ExitIntentReferral
-                visible={true}
-                leadId={leadId}
-                referrerEmail={referrerEmail}
-                region={regionName}
-                onUnlocked={onPartialUnlock}
-                inline
-              />
-            </div>
-          )}
+          </div>
+        )}
+      </div>
+
+      {/* Exit intent referral — shown below bars when triggered */}
+      {!unlocked && !partialUnlocked && exitIntentVisible && (
+        <div className="rounded-lg border border-border bg-card p-4 animate-fade-in card-shadow">
+          <ExitIntentReferral
+            visible={true}
+            leadId={leadId}
+            referrerEmail={referrerEmail}
+            region={regionName}
+            onUnlocked={onPartialUnlock}
+            inline
+          />
         </div>
       )}
 
       {unlocked && (
-        <div className="mt-4 p-3 rounded-lg bg-primary/5 border border-primary/20">
+        <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
           <div className="flex items-center gap-2 mb-1">
             <CheckCircle className="w-4 h-4 text-primary" />
             <span className="text-sm font-semibold text-foreground">Upplåst via referens</span>
