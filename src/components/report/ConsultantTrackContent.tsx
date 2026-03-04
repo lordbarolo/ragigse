@@ -149,13 +149,26 @@ export default function ConsultantTrackContent({
       <Card className="card-shadow">
         <CardContent className="pt-6 space-y-3">
           <SectionHeading icon={BarChart3} title="Ramavtalspris" />
-          <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
-            <p className="text-xs text-muted-foreground mb-1">Vad kunden betalar (ramavtal)</p>
-            <p className="text-2xl font-bold text-foreground">{fmt(marketRate)} kr/h</p>
-            <p className="text-xs text-muted-foreground mt-1">
-              Grundtimpris enligt ramavtal (OB/jour ej inkluderat)
-            </p>
-          </div>
+          {isConsultantFullAccess ? (
+            <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
+              <p className="text-xs text-muted-foreground mb-1">Vad kunden betalar (ramavtal)</p>
+              <p className="text-2xl font-bold text-foreground">{fmt(marketRate)} kr/h</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Grundtimpris enligt ramavtal (OB/jour ej inkluderat)
+              </p>
+            </div>
+          ) : (
+            <div className="p-4 rounded-lg bg-muted/50 border border-border">
+              <p className="text-xs text-muted-foreground mb-1">Vad kunden betalar (ramavtal)</p>
+              <div className="flex items-center gap-2 mb-1">
+                <Lock className="w-4 h-4 text-muted-foreground" />
+                <p className="text-2xl font-bold text-muted-foreground/40 select-none">■■■ kr/h</p>
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Lås upp ramavtalspriset och se exakt vad kunden betalar för din roll i din region.
+              </p>
+            </div>
+          )}
         </CardContent>
       </Card>
 
