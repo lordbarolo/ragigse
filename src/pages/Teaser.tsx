@@ -38,15 +38,13 @@ export default function Teaser() {
   const [benchmarkResult, setBenchmarkResult] = useState<BenchmarkResult | null>(null);
   const { checkoutLoading, handleCheckout: checkout } = useCheckout();
   const [unlocked, setUnlocked] = useState(false);
-  const [partialUnlocked, setPartialUnlocked] = useState(false);
+  const [partialUnlocked, setPartialUnlocked] = useState(true);
   const [loadError, setLoadError] = useState(false);
   const [leadId, setLeadId] = useState("");
   const [reportId, setReportId] = useState("");
   const checkoutRef = useRef<HTMLDivElement>(null);
 
-  const [abVariant, setAbVariant] = useState(sessionStorage.getItem("abVariant") || "A");
-  const exitIntentDelay = abVariant === "B" ? 28_000 : 22_000;
-  const exitIntentVisible = useExitIntent(exitIntentDelay);
+  const exitIntentVisible = useExitIntent(28_000);
 
   // Load data: try sessionStorage first (fresh from survey), then fetch from Supabase
   useEffect(() => {
@@ -63,14 +61,10 @@ export default function Teaser() {
       const parsed = JSON.parse(raw) as SurveyData;
       setSurvey(parsed);
       setReportId(sessionStorage.getItem("reportId") || "");
-      const savedAb = sessionStorage.getItem("abVariant");
-      if (savedAb) setAbVariant(savedAb);
       trackEvent("teaser_viewed");
 
       const savedBenchmark = sessionStorage.getItem("benchmarkResult");
       if (savedBenchmark) setBenchmarkResult(JSON.parse(savedBenchmark) as BenchmarkResult);
-
-      if (savedAb === "B") setPartialUnlocked(true);
 
       const savedTrack = (parsed as SurveyData & { track?: string }).track;
       if (parsed.yrke && parsed.kommun && parsed.employmentType && savedTrack !== "permanent") {
@@ -105,15 +99,12 @@ export default function Teaser() {
 
         setSurvey(surveyData);
         setReportId(data.report_id || "");
-        if (data.ab_variant) setAbVariant(data.ab_variant);
-        if (data.ab_variant === "B") setPartialUnlocked(true);
         if (data.unlocked_by_referral) setUnlocked(true);
 
         // Store in sessionStorage for subsequent navigations within this session
         sessionStorage.setItem("leadId", resolvedLeadId);
         sessionStorage.setItem("surveyData", JSON.stringify(surveyData));
         if (data.report_id) sessionStorage.setItem("reportId", data.report_id);
-        if (data.ab_variant) sessionStorage.setItem("abVariant", data.ab_variant);
 
         trackEvent("teaser_viewed");
 
@@ -242,7 +233,6 @@ export default function Teaser() {
 
         {!isPermanent && result && (
           <ConsultantVerdictCard
-            abVariant={abVariant}
             isUnderpaid={isUnderpaid}
             userHourly={userHourly}
             result={noisedResult ?? result}

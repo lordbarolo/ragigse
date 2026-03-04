@@ -14,7 +14,6 @@ interface Props {
   referrerEmail: string;
   regionName: string;
   onPartialUnlock: () => void;
-  abVariant: string;
   isUnderpaid: boolean;
 }
 
@@ -30,7 +29,6 @@ export default function PaywallOverlay({
   referrerEmail,
   regionName,
   onPartialUnlock,
-  abVariant,
   isUnderpaid,
 }: Props) {
   return (
