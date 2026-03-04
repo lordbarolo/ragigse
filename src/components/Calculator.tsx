@@ -165,7 +165,7 @@ export default function Calculator() {
               </div>
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Bemanningsbolagets marginal</span>
-                <span className="font-semibold">10–15%</span>
+                <span className="font-semibold">{result.employment_type === "foretagare" ? "10%" : "10–15%"}</span>
               </div>
               {result.employment_type === "anstalld" && (
                 <div className="flex justify-between">
@@ -187,7 +187,7 @@ export default function Calculator() {
               <strong className="text-foreground">Så räknar vi:</strong>{" "}
               {result.employment_type === "anstalld"
                 ? `Ramavtalspriset (${result.rate_customer_sek_per_hour} kr) minus 10–15% marginal, delat med 1.42 för arbetsgivaravgifter, semester och tjänstepension.`
-                : `Som egenföretagare får du 85–90% av ramavtalspriset (${result.rate_customer_sek_per_hour} kr) direkt.`}
+                : `Som egenföretagare får du 90% av ramavtalspriset (${result.rate_customer_sek_per_hour} kr) direkt, dvs ${result.recommended_hourly_max} kr/h.`}
             </div>
           </CardContent>
         </Card>
