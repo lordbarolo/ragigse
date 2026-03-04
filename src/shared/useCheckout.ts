@@ -25,7 +25,11 @@ export function useCheckout() {
       if (error) throw error;
       if (data?.url) {
         if (data.report_id) {
-          sessionStorage.setItem("reportId", data.report_id);
+          try {
+            sessionStorage.setItem("reportId", data.report_id);
+          } catch {
+            // Ignore storage issues (e.g. private mode) and continue redirect
+          }
         }
         window.location.href = data.url;
       }
