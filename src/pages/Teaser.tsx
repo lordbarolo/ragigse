@@ -21,9 +21,7 @@ import EarningsBanner from "@/components/teaser/EarningsBanner";
 import PermanentBenchmarkCard from "@/components/teaser/PermanentBenchmarkCard";
 import ConsultantVerdictCard from "@/components/teaser/ConsultantVerdictCard";
 import ReportPreviewList from "@/shared/ReportPreviewList";
-import CheckoutButtons from "@/shared/CheckoutButtons";
-import StickyCheckoutBar from "@/shared/StickyCheckoutBar";
-import InlineCtaLink from "@/shared/InlineCtaLink";
+import CheckoutCTA from "@/shared/CheckoutCTA";
 import ReferralBottomSheet from "@/components/teaser/ReferralBottomSheet";
 import HighEarnerCard from "@/components/teaser/HighEarnerCard";
 
@@ -249,17 +247,14 @@ export default function Teaser() {
           />
         )}
 
-        <InlineCtaLink checkoutLoading={checkoutLoading} onCheckout={onCheckout} />
-
+        <div ref={checkoutRef}>
+          <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="inline" />
+        </div>
 
         <ReportPreviewList isPermanent={isPermanent} />
-
-        <div ref={checkoutRef}>
-          <CheckoutButtons checkoutLoading={checkoutLoading} onCheckout={onCheckout} layout="stacked" />
-        </div>
       </main>
 
-      <StickyCheckoutBar checkoutLoading={checkoutLoading} onCheckout={onCheckout} />
+      <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="sticky" />
 
       <ReferralBottomSheet
         ctaRef={checkoutRef}

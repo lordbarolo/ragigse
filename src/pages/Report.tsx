@@ -12,7 +12,7 @@ import type { ReportData } from "@/shared/types";
 import PermanentTrackContent from "@/components/report/PermanentTrackContent";
 import ConsultantTrackContent from "@/components/report/ConsultantTrackContent";
 import ReportPreviewList from "@/shared/ReportPreviewList";
-import CheckoutButtons from "@/shared/CheckoutButtons";
+import CheckoutCTA from "@/shared/CheckoutCTA";
 
 export default function Report() {
   const { reportId } = useParams<{ reportId: string }>();
@@ -113,7 +113,7 @@ export default function Report() {
         {!isFullAccess && (
           <div className="space-y-4">
             <ReportPreviewList isPermanent={isPermanentTrack} />
-            <CheckoutButtons checkoutLoading={checkoutLoading} onCheckout={onCheckout} layout="stacked" />
+            <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="stacked" />
           </div>
         )}
 
