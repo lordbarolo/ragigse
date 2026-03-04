@@ -101,7 +101,7 @@ const Index = () => {
       sessionStorage.setItem("leadId", leadId);
       sessionStorage.setItem("surveyData", JSON.stringify(testData));
       if (reportData?.report_id) sessionStorage.setItem("reportId", reportData.report_id);
-      if (reportData?.ab_variant) sessionStorage.setItem("abVariant", reportData.ab_variant);
+      if (reportData?.ab_variant) sessionStorage.setItem("abVariant", reportData.ab_variant); // kept for analytics
       navigate(`/resultat/${leadId}`);
     } catch {
       sessionStorage.setItem("surveyData", JSON.stringify(testData));

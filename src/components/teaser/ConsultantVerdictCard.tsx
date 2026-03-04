@@ -2,7 +2,6 @@ import { TrendingDown } from "lucide-react";
 import PaywallOverlay from "./PaywallOverlay";
 
 interface Props {
-  abVariant: string;
   isUnderpaid: boolean;
   userHourly: number;
   result: { low: number; high: number };
@@ -19,11 +18,10 @@ interface Props {
 }
 
 export default function ConsultantVerdictCard({
-  abVariant, isUnderpaid, userHourly, result, unlocked, partialUnlocked,
+  isUnderpaid, userHourly, result, unlocked, partialUnlocked,
   exitIntentVisible, checkoutLoading, onCheckout, leadId, referrerEmail,
   regionName, onPartialUnlock, employmentType,
 }: Props) {
-  const label = "Din ersättning";
   if (!isUnderpaid) {
     return (
       <div className="rounded-lg border border-border bg-card card-shadow overflow-hidden">
@@ -40,7 +38,6 @@ export default function ConsultantVerdictCard({
             referrerEmail={referrerEmail}
             regionName={regionName}
             onPartialUnlock={onPartialUnlock}
-            abVariant={abVariant}
             isUnderpaid={isUnderpaid}
           />
         </div>
@@ -69,7 +66,6 @@ export default function ConsultantVerdictCard({
           referrerEmail={referrerEmail}
           regionName={regionName}
           onPartialUnlock={onPartialUnlock}
-          abVariant={abVariant}
           isUnderpaid={isUnderpaid}
         />
       </div>

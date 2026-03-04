@@ -247,7 +247,7 @@ export default function Survey() {
       sessionStorage.setItem("leadId", leadId);
       sessionStorage.setItem("reportId", reportData.report_id);
       sessionStorage.setItem("surveyData", JSON.stringify({ ...data, track }));
-      if (reportData.ab_variant) sessionStorage.setItem("abVariant", reportData.ab_variant);
+      if (reportData.ab_variant) sessionStorage.setItem("abVariant", reportData.ab_variant); // kept for analytics
       if (benchmarkResult) sessionStorage.setItem("benchmarkResult", JSON.stringify(benchmarkResult));
       trackEvent("survey_completed", { track });
       navigate(`/resultat/${leadId}`);
