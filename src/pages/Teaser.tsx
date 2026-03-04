@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useExitIntent } from "@/hooks/useExitIntent";
 import OpportunityGap from "@/components/OpportunityGap";
-import MarketInsight from "@/components/MarketInsight";
+
 import { trackEvent } from "@/lib/trackEvent";
 import { useCheckout } from "@/shared/useCheckout";
 import { useTeaserData } from "@/hooks/useTeaserData";
@@ -261,16 +261,6 @@ export default function Teaser() {
 
         <InlineCtaLink checkoutLoading={checkoutLoading} onCheckout={onCheckout} />
 
-        {!isPermanent && rates && pricingResult && (
-          <MarketInsight
-            occupation={survey.yrke}
-            currentZone={pricingResult.zon}
-            rates={rates}
-            employmentType={survey.employmentType as "anstalld" | "foretagare"}
-            locations={locations}
-            currentRegion={pricingResult.region}
-          />
-        )}
 
         <ReportPreviewList isPermanent={isPermanent} />
 
