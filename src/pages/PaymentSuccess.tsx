@@ -13,6 +13,8 @@ export default function PaymentSuccess() {
   const navigate = useNavigate();
   const [status, setStatus] = useState<"loading" | "success" | "error">("loading");
   const [countdown, setCountdown] = useState(REDIRECT_SECONDS);
+  const [reportId, setReportId] = useState<string | null>(null);
+  const [leadId, setLeadId] = useState<string | null>(null);
 
   useEffect(() => {
     const sessionId = searchParams.get("session_id");
@@ -34,8 +36,15 @@ export default function PaymentSuccess() {
 
         setStatus("success");
         trackEvent("payment_verified", { session_id: sessionId || "" });
-        if (data.report_id) {
-          sessionStorage.setItem("reportId", data.report_id);
+
+        // Store IDs from verification response
+        const resolvedReportId = data.report_id || sessionStorage.getItem("reportId");
+        const resolvedLeadId = data.lead_id || sessionStorage.getItem("leadId");
+        setReportId(resolvedReportId);
+        setLeadId(resolvedLeadId);
+
+        if (resolvedReportId) {
+          sessionStorage.setItem("reportId", resolvedReportId);
         }
       } catch {
         setStatus("error");
@@ -45,6 +54,12 @@ export default function PaymentSuccess() {
     verify();
   }, [searchParams]);
 
+  const getRedirectPath = () => {
+    if (reportId) return `/rapport/${reportId}`;
+    if (leadId) return `/resultat/${leadId}`;
+    return "/";
+  };
+
   // Auto-redirect countdown after success
   useEffect(() => {
     if (status !== "success") return;
@@ -53,8 +68,7 @@ export default function PaymentSuccess() {
       setCountdown((prev) => {
         if (prev <= 1) {
           clearInterval(timer);
-          const reportId = sessionStorage.getItem("reportId");
-          navigate(reportId ? `/rapport/${reportId}` : "/resultat");
+          navigate(getRedirectPath());
           return 0;
         }
         return prev - 1;
@@ -62,7 +76,7 @@ export default function PaymentSuccess() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [status, navigate]);
+  }, [status, navigate, reportId, leadId]);
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center px-4">
@@ -92,10 +106,7 @@ export default function PaymentSuccess() {
                 <CheckCircle className="w-3.5 h-3.5 text-accent" />
                 <span>Omdirigerar om {countdown} sekunder…</span>
               </div>
-              <Button onClick={() => {
-                const reportId = sessionStorage.getItem("reportId");
-                navigate(reportId ? `/rapport/${reportId}` : "/resultat");
-              }} className="w-full mt-2" size="lg">
+              <Button onClick={() => navigate(getRedirectPath())} className="w-full mt-2" size="lg">
                 Visa din rapport nu
                 <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
@@ -111,8 +122,8 @@ export default function PaymentSuccess() {
                 <a href="mailto:hej@compcare.se" className="text-primary underline">hej@compcare.se</a>{" "}
                 om du har betalat.
               </p>
-              <Button variant="outline" onClick={() => navigate("/resultat")} className="w-full mt-2">
-                Tillbaka till resultat
+              <Button variant="outline" onClick={() => navigate("/")} className="w-full mt-2">
+                Tillbaka till startsidan
               </Button>
             </>
           )}

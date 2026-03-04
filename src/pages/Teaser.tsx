@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { usePricingEngine } from "@/hooks/usePricingEngine";
 import { useRates, useLocations } from "@/hooks/useCalculator";
 import type { SurveyData } from "@/components/Survey";
 import type { BenchmarkResult } from "@/hooks/useBenchmarkEngine";
 import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 import { supabase } from "@/integrations/supabase/client";
 import { useExitIntent } from "@/hooks/useExitIntent";
@@ -28,6 +29,7 @@ import HighEarnerCard from "@/components/teaser/HighEarnerCard";
 
 /** Teaser page — orchestrator for the results preview */
 export default function Teaser() {
+  const { leadId: urlLeadId } = useParams<{ leadId: string }>();
   const navigate = useNavigate();
   const { calculate, result: pricingResult } = usePricingEngine();
   const { data: rates } = useRates();
@@ -37,32 +39,97 @@ export default function Teaser() {
   const { checkoutLoading, handleCheckout: checkout } = useCheckout();
   const [unlocked, setUnlocked] = useState(false);
   const [partialUnlocked, setPartialUnlocked] = useState(false);
+  const [loadError, setLoadError] = useState(false);
+  const [leadId, setLeadId] = useState("");
+  const [reportId, setReportId] = useState("");
   const checkoutRef = useRef<HTMLDivElement>(null);
 
-  const abVariant = sessionStorage.getItem("abVariant") || "A";
+  const [abVariant, setAbVariant] = useState(sessionStorage.getItem("abVariant") || "A");
   const exitIntentDelay = abVariant === "B" ? 28_000 : 22_000;
   const exitIntentVisible = useExitIntent(exitIntentDelay);
 
+  // Load data: try sessionStorage first (fresh from survey), then fetch from Supabase
   useEffect(() => {
-    const raw = sessionStorage.getItem("surveyData");
-    if (!raw) { navigate("/"); return; }
-    const parsed = JSON.parse(raw) as SurveyData;
-    setSurvey(parsed);
-    trackEvent("teaser_viewed");
-
-    const savedBenchmark = sessionStorage.getItem("benchmarkResult");
-    if (savedBenchmark) setBenchmarkResult(JSON.parse(savedBenchmark) as BenchmarkResult);
-
-    if (abVariant === "B") setPartialUnlocked(true);
-
-    const savedTrack = (parsed as SurveyData & { track?: string }).track;
-    if (parsed.yrke && parsed.kommun && parsed.employmentType && savedTrack !== "permanent") {
-      calculate(parsed.yrke, parsed.kommun, parsed.employmentType as "anstalld" | "foretagare");
+    const resolvedLeadId = urlLeadId || sessionStorage.getItem("leadId") || "";
+    if (!resolvedLeadId) {
+      navigate("/");
+      return;
     }
-  }, [navigate, abVariant]);
+    setLeadId(resolvedLeadId);
 
+    // Try sessionStorage first (populated during survey flow)
+    const raw = sessionStorage.getItem("surveyData");
+    if (raw) {
+      const parsed = JSON.parse(raw) as SurveyData;
+      setSurvey(parsed);
+      setReportId(sessionStorage.getItem("reportId") || "");
+      const savedAb = sessionStorage.getItem("abVariant");
+      if (savedAb) setAbVariant(savedAb);
+      trackEvent("teaser_viewed");
+
+      const savedBenchmark = sessionStorage.getItem("benchmarkResult");
+      if (savedBenchmark) setBenchmarkResult(JSON.parse(savedBenchmark) as BenchmarkResult);
+
+      if (savedAb === "B") setPartialUnlocked(true);
+
+      const savedTrack = (parsed as SurveyData & { track?: string }).track;
+      if (parsed.yrke && parsed.kommun && parsed.employmentType && savedTrack !== "permanent") {
+        calculate(parsed.yrke, parsed.kommun, parsed.employmentType as "anstalld" | "foretagare");
+      }
+      return;
+    }
+
+    // No sessionStorage — fetch from Supabase
+    const fetchLead = async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke("get-lead", {
+          body: { lead_id: resolvedLeadId },
+        });
+
+        if (error || !data?.lead) {
+          setLoadError(true);
+          return;
+        }
+
+        const lead = data.lead;
+        const surveyData: SurveyData & { track?: string } = {
+          email: lead.email,
+          employmentType: lead.employment_type as "anstalld" | "foretagare",
+          yrke: lead.yrke || "",
+          kommun: lead.kommun || "",
+          experience: lead.experience || 0,
+          salaryType: (lead.salary_type as "hourly" | "monthly") || "hourly",
+          currentSalary: lead.current_salary || 0,
+          track: "consultant",
+        };
+
+        setSurvey(surveyData);
+        setReportId(data.report_id || "");
+        if (data.ab_variant) setAbVariant(data.ab_variant);
+        if (data.ab_variant === "B") setPartialUnlocked(true);
+        if (data.unlocked_by_referral) setUnlocked(true);
+
+        // Store in sessionStorage for subsequent navigations within this session
+        sessionStorage.setItem("leadId", resolvedLeadId);
+        sessionStorage.setItem("surveyData", JSON.stringify(surveyData));
+        if (data.report_id) sessionStorage.setItem("reportId", data.report_id);
+        if (data.ab_variant) sessionStorage.setItem("abVariant", data.ab_variant);
+
+        trackEvent("teaser_viewed");
+
+        if (surveyData.yrke && surveyData.kommun && surveyData.employmentType && surveyData.track !== "permanent") {
+          calculate(surveyData.yrke, surveyData.kommun, surveyData.employmentType as "anstalld" | "foretagare");
+        }
+      } catch {
+        setLoadError(true);
+      }
+    };
+
+    fetchLead();
+  }, [urlLeadId, navigate]);
+
+  // Check referral unlock status
   useEffect(() => {
-    const leadId = sessionStorage.getItem("leadId");
     if (!leadId) return;
     const checkReferral = async () => {
       const { data } = await supabase
@@ -70,25 +137,23 @@ export default function Teaser() {
       if (data && data.length > 0) setUnlocked(true);
     };
     checkReferral();
-  }, []);
+  }, [leadId]);
 
   const { isPermanent, result, noisedResult, benchmarkMonthly, userMonthly, userHourly, isUnderpaid, diffPercent, isAboveThreshold } =
     useTeaserData(survey, pricingResult, benchmarkResult);
 
-  // Find nearest kommun with higher zone price (for Variant 2 messaging)
+  // Find nearest kommun with higher zone price
   const nearestHigherKommun = useMemo(() => {
     if (isPermanent || !pricingResult || !rates || !locations) return null;
 
     const currentRate = pricingResult.rate_customer_sek_per_hour;
     const currentZon = pricingResult.zon;
 
-    // Identify matched yrkeskategori by exact rate + zone match
     const matchedRate = rates.find(
       (r) => r.zon === currentZon && r.timpris_kund === currentRate,
     );
     if (!matchedRate) return null;
 
-    // Find same yrkeskategori + typ in higher-priced zones
     const higherRates = rates
       .filter(
         (r) =>
@@ -107,10 +172,19 @@ export default function Teaser() {
   }, [isPermanent, pricingResult, rates, locations]);
 
   const onCheckout = (plan: "single" | "yearly") => {
-    const leadId = sessionStorage.getItem("leadId") || "";
-    const reportId = sessionStorage.getItem("reportId") || "";
     checkout(plan, { email: survey?.email || "", leadId, reportId });
   };
+
+  // Error state
+  if (loadError) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4 p-6 text-center">
+        <h1 className="text-xl font-semibold text-foreground">Vi kunde inte hitta din analys</h1>
+        <p className="text-sm text-muted-foreground">Länken kan vara ogiltig eller ha gått ut.</p>
+        <Button onClick={() => navigate("/")}>Gör en ny analys</Button>
+      </div>
+    );
+  }
 
   if (!survey) return null;
 
@@ -122,7 +196,6 @@ export default function Teaser() {
     );
   }
 
-  const leadId = sessionStorage.getItem("leadId") || "";
   const regionName = pricingResult?.region || survey.kommun || "";
 
   return (
@@ -186,7 +259,6 @@ export default function Teaser() {
           />
         )}
 
-        {/* Inline CTA after bars/verdict */}
         <InlineCtaLink checkoutLoading={checkoutLoading} onCheckout={onCheckout} />
 
         {!isPermanent && rates && pricingResult && (

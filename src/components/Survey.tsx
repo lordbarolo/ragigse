@@ -250,7 +250,7 @@ export default function Survey() {
       if (reportData.ab_variant) sessionStorage.setItem("abVariant", reportData.ab_variant);
       if (benchmarkResult) sessionStorage.setItem("benchmarkResult", JSON.stringify(benchmarkResult));
       trackEvent("survey_completed", { track });
-      navigate("/resultat");
+      navigate(`/resultat/${leadId}`);
     } catch {
       toast.error("Kunde inte spara dina uppgifter. Försök igen.");
       setSaving(false);
