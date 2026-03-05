@@ -131,18 +131,20 @@ export default function Teaser() {
   const { isPermanent, result, noisedResult, benchmarkMonthly, userMonthly, userHourly, isUnderpaid, diffPercent, isAboveThreshold } =
     useTeaserData(survey, pricingResult, benchmarkResult);
 
-  // Find nearest kommun with higher zone price
+  // Find nearest kommun with higher zone price — prefer same region for geographic relevance
   const nearestHigherKommun = useMemo(() => {
     if (isPermanent || !pricingResult || !rates || !locations) return null;
 
     const currentRate = pricingResult.rate_customer_sek_per_hour;
     const currentZon = pricingResult.zon;
+    const currentKommun = survey?.kommun || "";
 
     const matchedRate = rates.find(
       (r) => r.zon === currentZon && r.timpris_kund === currentRate,
     );
     if (!matchedRate) return null;
 
+    // Find all zones with higher rates for this occupation
     const higherRates = rates
       .filter(
         (r) =>
@@ -155,10 +157,30 @@ export default function Teaser() {
 
     if (!higherRates.length) return null;
 
-    const higherZon = higherRates[0].zon;
-    const higherLoc = locations.find((l) => l.zon === higherZon);
-    return higherLoc?.kommun || null;
-  }, [isPermanent, pricingResult, rates, locations]);
+    const higherZones = new Set(higherRates.map((r) => r.zon));
+
+    // Find user's region
+    const userLocation = locations.find((l) => l.kommun === currentKommun);
+    const userRegion = userLocation?.region;
+
+    // Candidate kommuner in higher zones (exclude user's own kommun)
+    const candidates = locations.filter(
+      (l) => higherZones.has(l.zon) && l.kommun !== currentKommun,
+    );
+
+    if (!candidates.length) return null;
+
+    // Prefer same-region kommun first (geographically closest)
+    if (userRegion) {
+      const sameRegion = candidates.find((l) => l.region === userRegion);
+      if (sameRegion) return sameRegion.kommun;
+    }
+
+    // Fallback: pick first candidate in the cheapest higher zone
+    const cheapestHigherZon = higherRates[0].zon;
+    const fallback = candidates.find((l) => l.zon === cheapestHigherZon);
+    return fallback?.kommun || candidates[0].kommun;
+  }, [isPermanent, pricingResult, rates, locations, survey?.kommun]);
 
   const onCheckout = (plan: "single" | "yearly") => {
     checkout(plan, { email: survey?.email || "", leadId, reportId });
