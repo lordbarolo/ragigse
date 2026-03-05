@@ -1,4 +1,3 @@
-import { TrendingDown } from "lucide-react";
 import PaywallOverlay from "./PaywallOverlay";
 
 interface Props {

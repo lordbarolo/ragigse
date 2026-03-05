@@ -4,13 +4,12 @@ interface Props {
   isPermanent: boolean;
   yrke: string;
   kommun: string;
-  employmentType?: string;
   nearestHigherKommun?: string | null;
   isAboveThreshold?: boolean;
 }
 
 export default function EarningsBanner({
-  isUnderpaid, diffPercent, isPermanent, yrke, kommun, employmentType, nearestHigherKommun, isAboveThreshold,
+  isUnderpaid, diffPercent, isPermanent, yrke, kommun, nearestHigherKommun, isAboveThreshold,
 }: Props) {
   if (isPermanent) {
     if (!isUnderpaid || diffPercent <= 0) return null;
