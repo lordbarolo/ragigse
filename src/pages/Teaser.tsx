@@ -212,11 +212,12 @@ export default function Teaser() {
           />
         )}
 
-        {!isPermanent && isUnderpaid && !isAboveThreshold && result && (
+        {!isPermanent && !isAboveThreshold && result && (
           <OpportunityGap
             userHourly={userHourly}
             marketHigh={noisedResult?.high ?? result.high}
             employmentType={survey.employmentType as "anstalld" | "foretagare"}
+            nearestHigherKommun={nearestHigherKommun}
           />
         )}
 
