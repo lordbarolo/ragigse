@@ -21,7 +21,9 @@ export default function OpportunityGap({ userHourly, marketHigh, employmentType 
           </div>
           <div>
             <p className="text-base font-bold text-foreground leading-tight">
-              Du ligger {diffPercent}% under marknaden
+              {diffPercent >= 10
+                ? "Din lön kan öka med mer än 10%"
+                : "Din lön kan öka med mer än 5%"}
             </p>
             <p className="text-sm text-muted-foreground mt-1">
               Baserat på offentliga ramavtalspriser i din zon
