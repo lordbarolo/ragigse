@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ShieldCheck, Loader2, Download, Linkedin } from "lucide-react";
-import { toast } from "@/hooks/use-toast";
+
 import ShareButton from "@/components/ShareButton";
 import { useCheckout } from "@/shared/useCheckout";
 import type { ReportData } from "@/shared/types";
@@ -87,8 +87,6 @@ export default function Report() {
             Upplåst via kollegatips
           </div>
         )}
-
-        
 
         {isPermanentTrack ? (
           <PermanentTrackContent

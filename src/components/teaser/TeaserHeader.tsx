@@ -1,9 +1,8 @@
 interface Props {
   kommun: string;
-  employmentType?: string;
 }
 
-export default function TeaserHeader({ kommun, employmentType }: Props) {
+export default function TeaserHeader({ kommun }: Props) {
   const label = "din ersättning";
 
   return (
