@@ -47,7 +47,7 @@ serve(async (req) => {
     const rawKey = Deno.env.get("STRIPE_SECRET_KEY") || "";
     const stripeKey = rawKey.replace(/[^\x20-\x7E]/g, "").trim();
     const stripe = new Stripe(stripeKey, {
-      apiVersion: "2023-10-16",
+      apiVersion: "2025-08-27.basil",
     });
 
     // Check for existing customer
