@@ -152,18 +152,24 @@ export type Database = {
         Row: {
           id: string
           kommun: string
+          lat: number | null
+          lng: number | null
           region: string
           zon: string
         }
         Insert: {
           id?: string
           kommun: string
+          lat?: number | null
+          lng?: number | null
           region: string
           zon: string
         }
         Update: {
           id?: string
           kommun?: string
+          lat?: number | null
+          lng?: number | null
           region?: string
           zon?: string
         }
