@@ -219,7 +219,26 @@ export default function Teaser() {
       <TeaserHeader kommun={survey.kommun} />
 
       <main className="px-4 py-8 pb-40 max-w-lg mx-auto space-y-6">
-        <OccupationInfo yrke={survey.yrke} kommun={survey.kommun} />
+        <OccupationInfo
+          yrke={survey.yrke}
+          kommun={survey.kommun}
+          onChangeYrke={(newYrke) => {
+            const updated = { ...survey, yrke: newYrke };
+            setSurvey(updated);
+            sessionStorage.setItem("surveyData", JSON.stringify(updated));
+            if (newYrke && updated.kommun && updated.employmentType) {
+              calculate(newYrke, updated.kommun, updated.employmentType as "anstalld" | "foretagare");
+            }
+          }}
+          onChangeKommun={(newKommun) => {
+            const updated = { ...survey, kommun: newKommun };
+            setSurvey(updated);
+            sessionStorage.setItem("surveyData", JSON.stringify(updated));
+            if (updated.yrke && newKommun && updated.employmentType) {
+              calculate(updated.yrke, newKommun, updated.employmentType as "anstalld" | "foretagare");
+            }
+          }}
+        />
 
         <EarningsBanner
           isUnderpaid={isUnderpaid}
