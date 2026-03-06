@@ -131,7 +131,7 @@ export default function Teaser() {
   const { isPermanent, result, noisedResult, benchmarkMonthly, userMonthly, userHourly, isUnderpaid, diffPercent, isAboveThreshold } =
     useTeaserData(survey, pricingResult, benchmarkResult);
 
-  // Find nearest kommun with higher zone price — prefer same region for geographic relevance
+  // Find geographically nearest kommun in a higher-paying zone (haversine distance)
   const nearestHigherKommun = useMemo(() => {
     if (isPermanent || !pricingResult || !rates || !locations) return null;
 
@@ -144,42 +144,47 @@ export default function Teaser() {
     );
     if (!matchedRate) return null;
 
-    // Find all zones with higher rates for this occupation
-    const higherRates = rates
-      .filter(
-        (r) =>
-          r.yrkeskategori === matchedRate.yrkeskategori &&
-          r.typ === matchedRate.typ &&
-          r.timpris_kund > currentRate &&
-          r.zon !== currentZon,
-      )
-      .sort((a, b) => a.timpris_kund - b.timpris_kund);
-
+    const higherRates = rates.filter(
+      (r) =>
+        r.yrkeskategori === matchedRate.yrkeskategori &&
+        r.typ === matchedRate.typ &&
+        r.timpris_kund > currentRate &&
+        r.zon !== currentZon,
+    );
     if (!higherRates.length) return null;
 
     const higherZones = new Set(higherRates.map((r) => r.zon));
-
-    // Find user's region
     const userLocation = locations.find((l) => l.kommun === currentKommun);
-    const userRegion = userLocation?.region;
+    if (!userLocation?.lat || !userLocation?.lng) return null;
 
-    // Candidate kommuner in higher zones (exclude user's own kommun)
     const candidates = locations.filter(
-      (l) => higherZones.has(l.zon) && l.kommun !== currentKommun,
+      (l) => higherZones.has(l.zon) && l.kommun !== currentKommun && l.lat && l.lng,
     );
-
     if (!candidates.length) return null;
 
-    // Prefer same-region kommun first (geographically closest)
-    if (userRegion) {
-      const sameRegion = candidates.find((l) => l.region === userRegion);
-      if (sameRegion) return sameRegion.kommun;
+    // Haversine distance in km
+    const toRad = (deg: number) => (deg * Math.PI) / 180;
+    const haversine = (lat1: number, lng1: number, lat2: number, lng2: number) => {
+      const dLat = toRad(lat2 - lat1);
+      const dLng = toRad(lng2 - lng1);
+      const a =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+      return 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    };
+
+    let nearest = candidates[0];
+    let minDist = haversine(userLocation.lat, userLocation.lng, nearest.lat!, nearest.lng!);
+
+    for (let i = 1; i < candidates.length; i++) {
+      const d = haversine(userLocation.lat, userLocation.lng, candidates[i].lat!, candidates[i].lng!);
+      if (d < minDist) {
+        minDist = d;
+        nearest = candidates[i];
+      }
     }
 
-    // Fallback: pick first candidate in the cheapest higher zone
-    const cheapestHigherZon = higherRates[0].zon;
-    const fallback = candidates.find((l) => l.zon === cheapestHigherZon);
-    return fallback?.kommun || candidates[0].kommun;
+    return nearest.kommun;
   }, [isPermanent, pricingResult, rates, locations, survey?.kommun]);
 
   const onCheckout = (plan: "single" | "yearly") => {
