@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import Stripe from "https://esm.sh/stripe@14.21.0?target=deno";
+import Stripe from "https://esm.sh/stripe@18.5.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
@@ -26,7 +26,7 @@ serve(async (req) => {
     const rawKey = Deno.env.get("STRIPE_SECRET_KEY") || "";
     const stripeKey = rawKey.replace(/[^\x20-\x7E]/g, "").trim();
     const stripe = new Stripe(stripeKey, {
-      apiVersion: "2023-10-16",
+      apiVersion: "2025-08-27.basil",
     });
 
     const session = await stripe.checkout.sessions.retrieve(session_id);
@@ -59,16 +59,18 @@ serve(async (req) => {
         .eq("id", reportId);
     }
 
-    // Insert payment record (idempotent via unique stripe_session_id)
-    await supabase.from("payments").insert({
-      lead_id: leadId || null,
-      report_id: reportId || null,
-      stripe_session_id: session.id,
-      amount_ore: session.amount_total || 0,
-      currency: session.currency || "sek",
-      status: "paid",
-      plan: session.mode === "subscription" ? "yearly" : "single",
-    });
+    // Insert payment record (only if we have a lead_id, since it's NOT NULL)
+    if (leadId) {
+      await supabase.from("payments").insert({
+        lead_id: leadId,
+        report_id: reportId || null,
+        stripe_session_id: session.id,
+        amount_ore: session.amount_total || 0,
+        currency: session.currency || "sek",
+        status: "paid",
+        plan: session.mode === "subscription" ? "yearly" : "single",
+      });
+    }
 
     console.log(`Payment verified for lead ${leadId}, report ${reportId}`);
 
