@@ -230,7 +230,7 @@ export default function Teaser() {
   }, [isPermanent, pricingResult, rates, locations, survey?.kommun]);
 
   const onCheckout = (plan: "single" | "yearly") => {
-    checkout(plan, { email: survey?.email || "", leadId, reportId });
+    checkout(plan, { email: survey?.email || "", leadId, reportId, coupon: couponDiscount });
   };
 
   // Error state
@@ -336,13 +336,13 @@ export default function Teaser() {
         )}
 
         <div ref={checkoutRef}>
-          <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="inline" />
+          <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="inline" coupon={couponDiscount} />
         </div>
 
         <ReportPreviewList isPermanent={isPermanent} />
       </main>
 
-      <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="sticky" />
+      <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="sticky" coupon={couponDiscount} />
 
       <ReferralBottomSheet
         ctaRef={checkoutRef}
