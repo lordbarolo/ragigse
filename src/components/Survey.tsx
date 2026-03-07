@@ -657,8 +657,15 @@ export default function Survey() {
           </button>
           {(step === 5 || step === 7) && (
             <button
-              onClick={handleNext}
-              disabled={!canProceed || saving}
+              onClick={() => {
+                if (step === 5 && data.currentSalary <= 0) {
+                  toast.error("Ange ersättning innan du fortsätter");
+                  return;
+                }
+                if (!canProceed || saving) return;
+                handleNext();
+              }}
+              disabled={saving}
               className={`flex-1 flex items-center justify-center gap-2 py-3.5 px-6 rounded-lg text-sm sm:text-base font-semibold transition-all duration-200 ${
                 canProceed && !saving
                   ? "bg-primary text-primary-foreground hover:opacity-90 shadow-sm"
