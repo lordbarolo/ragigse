@@ -41,9 +41,9 @@ serve(async (req) => {
       );
     }
 
-    if (coupon.used) {
+    if (coupon.use_count >= coupon.max_uses) {
       return new Response(
-        JSON.stringify({ error: "Kupongkoden har redan använts" }),
+        JSON.stringify({ error: "Kupongkoden har redan använts maximalt antal gånger" }),
         { status: 410, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -57,10 +57,11 @@ serve(async (req) => {
 
     // For free coupons (100% discount): unlock report directly
     if (coupon.discount_type === "free" || (coupon.discount_type === "percent" && coupon.discount_value >= 100)) {
-      // Mark coupon as used
+      // Mark coupon usage
+      const newCount = (coupon.use_count || 0) + 1;
       await supabase
         .from("coupons")
-        .update({ used: true, used_at: new Date().toISOString(), used_by_report_id: report_id })
+        .update({ use_count: newCount, used: newCount >= coupon.max_uses, used_at: new Date().toISOString(), used_by_report_id: report_id })
         .eq("id", coupon.id);
 
       // Unlock the report
@@ -82,11 +83,11 @@ serve(async (req) => {
       );
     }
 
-    // For partial discounts: mark coupon as used and return discount info
-    // The create-checkout function will apply the Stripe discount
+    // For partial discounts: increment usage and return discount info
+    const newCount = (coupon.use_count || 0) + 1;
     await supabase
       .from("coupons")
-      .update({ used: true, used_at: new Date().toISOString(), used_by_report_id: report_id })
+      .update({ use_count: newCount, used: newCount >= coupon.max_uses, used_at: new Date().toISOString(), used_by_report_id: report_id })
       .eq("id", coupon.id);
 
     console.log(`Coupon ${code} redeemed (${coupon.discount_type}: ${coupon.discount_value}) for report ${report_id}`);
