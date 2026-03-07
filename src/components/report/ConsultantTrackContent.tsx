@@ -215,12 +215,12 @@ export default function ConsultantTrackContent({
                 <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Förhandlingsspann</p>
                 <div className="grid grid-cols-3 gap-2 text-center">
                   <div className="p-3 rounded-lg bg-accent/10 border border-accent/20">
-                    <p className="text-[10px] font-medium text-accent uppercase tracking-wide mb-1">Safe</p>
+                    <p className="text-[10px] font-medium text-accent uppercase tracking-wide mb-1">Säkert</p>
                     <p className="text-base font-bold text-foreground">{fmt(rec.recommended_hourly_min)} kr/h</p>
                     <p className="text-[10px] text-muted-foreground mt-0.5">{fmt(rec.recommended_monthly_min)} kr/mån</p>
                   </div>
                   <div className="p-3 rounded-lg bg-primary/10 border border-primary/20 ring-2 ring-primary/30">
-                    <p className="text-[10px] font-medium text-primary uppercase tracking-wide mb-1">Target</p>
+                    <p className="text-[10px] font-medium text-primary uppercase tracking-wide mb-1">Mål</p>
                     <p className="text-base font-bold text-foreground">
                       {fmt(Math.round((rec.recommended_hourly_min + rec.recommended_hourly_max) / 2))} kr/h
                     </p>
@@ -235,7 +235,7 @@ export default function ConsultantTrackContent({
                   </div>
                 </div>
                 <p className="text-[11px] text-muted-foreground text-center">
-                  Safe = hög chans att få igenom · Target = rekommenderat · Ambitiöst = kräver stark erfarenhet
+                  Säkert = hög chans att få igenom · Mål = rekommenderat · Ambitiöst = kräver stark erfarenhet
                 </p>
               </div>
 

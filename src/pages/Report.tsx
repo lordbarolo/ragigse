@@ -72,10 +72,13 @@ export default function Report() {
             {isFullAccess ? "Din personliga rapport" : "Förhandsgranskning"}
           </p>
           <h1 className="text-2xl sm:text-3xl text-primary-foreground leading-tight">
-            Ersättningsanalys för {report.occupation}
+            Ersättningsanalys
           </h1>
-          <p className="text-sm text-primary-foreground/80">
-            {report.kommun} · {isPermanentTrack ? "Fast tjänst" : "Konsultuppdrag"}
+          <p className="text-base font-medium text-primary-foreground/90">
+            {report.occupation} · {report.kommun}
+          </p>
+          <p className="text-sm text-primary-foreground/60">
+            {isPermanentTrack ? "Fast tjänst" : "Konsultuppdrag"} · {isEmployee ? "Anställd" : "Eget bolag"}
           </p>
         </div>
       </header>
