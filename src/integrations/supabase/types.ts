@@ -113,6 +113,7 @@ export type Database = {
           description: string | null
           discount_type: string
           discount_value: number
+          expires_at: string | null
           id: string
           used: boolean
           used_at: string | null
@@ -124,6 +125,7 @@ export type Database = {
           description?: string | null
           discount_type?: string
           discount_value?: number
+          expires_at?: string | null
           id?: string
           used?: boolean
           used_at?: string | null
@@ -135,6 +137,7 @@ export type Database = {
           description?: string | null
           discount_type?: string
           discount_value?: number
+          expires_at?: string | null
           id?: string
           used?: boolean
           used_at?: string | null
