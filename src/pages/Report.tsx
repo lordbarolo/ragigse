@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ShieldCheck, Loader2, Download, Linkedin } from "lucide-react";
+import { trackEvent } from "@/lib/trackEvent";
 
 import ShareButton from "@/components/ShareButton";
 import { useCheckout } from "@/shared/useCheckout";
@@ -21,6 +22,33 @@ export default function Report() {
   const [loading, setLoading] = useState(true);
   const { checkoutLoading, handleCheckout: checkout } = useCheckout();
 
+  const reportViewedRef = useRef(false);
+
+  // Section tracking via IntersectionObserver
+  const sectionTrackedRef = useRef<Set<string>>(new Set());
+  const sectionObserverRef = useRef<IntersectionObserver | null>(null);
+
+  const registerSectionRef = useCallback((section: string) => (el: HTMLDivElement | null) => {
+    if (!el || !sectionObserverRef.current) return;
+    el.dataset.section = section;
+    sectionObserverRef.current.observe(el);
+  }, []);
+
+  useEffect(() => {
+    sectionObserverRef.current = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const section = (entry.target as HTMLElement).dataset.section;
+          if (section && !sectionTrackedRef.current.has(section)) {
+            sectionTrackedRef.current.add(section);
+            trackEvent("report_section_viewed", { section });
+          }
+        }
+      });
+    }, { threshold: 0.3 });
+    return () => sectionObserverRef.current?.disconnect();
+  }, []);
+
   useEffect(() => {
     if (!reportId) { navigate("/"); return; }
     const fetchReport = async () => {
@@ -34,6 +62,14 @@ export default function Report() {
     };
     fetchReport();
   }, [reportId, navigate]);
+
+  // Track report_viewed once report loads
+  useEffect(() => {
+    if (report && !reportViewedRef.current) {
+      reportViewedRef.current = true;
+      trackEvent("report_viewed", { role: report.occupation || "", zone: report.kommun || "" });
+    }
+  }, [report]);
 
   const onCheckout = (plan: "single" | "yearly") => {
     if (!report) return;

@@ -356,12 +356,13 @@ export default function Survey() {
                 <button
                   key={opt.value}
                   onClick={() => {
+                    trackSurveyStarted();
                     setOccupationCategory(opt.value);
                     setDoctorSubRole("");
                     setNurseSubRole("");
                     setSpecialization("");
                     setSubStep(0);
-                    trackEvent("survey_step_completed", { step: 1 });
+                    trackStepCompleted(1);
                     setStep(2);
                   }}
                   className={`py-4 px-5 rounded-lg border text-left transition-all ${
