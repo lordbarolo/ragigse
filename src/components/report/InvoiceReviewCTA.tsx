@@ -55,7 +55,7 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }
 
     // Also insert into audit_optins for backward compat
     if (reportId) {
-      await supabase.from("audit_optins").insert({ report_id: reportId, email }).catch(() => {});
+      await supabase.from("audit_optins").insert({ report_id: reportId, email }).then(() => {});
       supabase.functions.invoke("send-audit-confirmation", { body: { email } }).catch(() => {});
     }
 
