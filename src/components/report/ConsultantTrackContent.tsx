@@ -434,6 +434,7 @@ export default function ConsultantTrackContent({
             </Collapsible>
           </CardContent>
         </Card>
+        </div>
       )}
     </>
   );
