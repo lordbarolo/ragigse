@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { CheckCircle, FileSearch } from "lucide-react";
+import { ShieldCheck, CheckCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Separator } from "@/components/ui/separator";
+import { Card, CardContent } from "@/components/ui/card";
 import { trackEvent } from "@/lib/trackEvent";
 
 interface Props {
@@ -11,27 +11,30 @@ interface Props {
   email: string;
   role?: string;
   zone?: string;
+  reportId?: string;
 }
 
-export default function InvoiceReviewCTA({ leadId, email, role, zone }: Props) {
-  const [checked, setChecked] = useState(false);
+export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }: Props) {
+  const [wantsReview, setWantsReview] = useState(false);
+  const [confirmedEmail, setConfirmedEmail] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [alreadyOptedIn, setAlreadyOptedIn] = useState(false);
 
-  // Check if already opted in — use edge function or try insert with unique constraint
   useEffect(() => {
-    // We can't SELECT due to RLS, so we track locally
     const key = `invoiceReview_${leadId}`;
     if (sessionStorage.getItem(key)) {
       setAlreadyOptedIn(true);
     }
   }, [leadId]);
 
+  const canSubmit = wantsReview && confirmedEmail && !loading && !submitted;
+
   const handleSubmit = async () => {
-    if (!checked || loading) return;
+    if (!canSubmit) return;
     setLoading(true);
 
+    // Insert into invoice_review_leads
     const { error } = await supabase.from("invoice_review_leads").insert({
       lead_id: leadId,
       email,
@@ -40,7 +43,6 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone }: Props) {
     });
 
     if (error) {
-      // Unique constraint = already opted in
       if (error.code === "23505") {
         setAlreadyOptedIn(true);
         sessionStorage.setItem(`invoiceReview_${leadId}`, "1");
@@ -51,6 +53,12 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone }: Props) {
       return;
     }
 
+    // Also insert into audit_optins for backward compat
+    if (reportId) {
+      await supabase.from("audit_optins").insert({ report_id: reportId, email }).catch(() => {});
+      supabase.functions.invoke("send-audit-confirmation", { body: { email } }).catch(() => {});
+    }
+
     sessionStorage.setItem(`invoiceReview_${leadId}`, "1");
     trackEvent("invoice_review_opted_in", { role: role || "", zone: zone || "" });
     setSubmitted(true);
@@ -59,64 +67,60 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone }: Props) {
 
   if (alreadyOptedIn || submitted) {
     return (
-      <div className="space-y-0">
-        <Separator />
-        <div className="rounded-lg border border-border bg-card p-5 my-6">
-          <div className="flex items-center gap-3">
-            <CheckCircle className="w-5 h-5 text-accent shrink-0" />
-            <div>
-              <p className="text-sm font-semibold text-foreground">Tack! Vi hör av oss inom 5 arbetsdagar.</p>
-              <p className="text-xs text-muted-foreground mt-0.5">Vi granskar dina fakturor och tidrapporter kostnadsfritt.</p>
-            </div>
-          </div>
-        </div>
-        <Separator />
-      </div>
+      <Card className="card-shadow border-primary/20">
+        <CardContent className="py-6 flex items-center gap-3 justify-center">
+          <CheckCircle className="w-5 h-5 text-primary" />
+          <p className="text-sm font-medium text-foreground">Tack! Vi återkommer till dig via e-post.</p>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <div className="space-y-0">
-      <Separator />
-      <div className="rounded-lg border border-border bg-card p-5 my-6 space-y-4">
-        <div className="flex items-start gap-3">
-          <FileSearch className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-          <div className="space-y-2">
-            <h3 className="text-base font-semibold text-foreground">
-              Har du fått rätt betalt för alla dina timmar?
-            </h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Många konsulter missar ersättning för OB, jour och helg. Compcare granskar dina fakturor
-              och tidrapporter utan kostnad — vi tar bara betalt om vi hittar pengar du missat.
-            </p>
-          </div>
+    <Card className="card-shadow border-primary/20">
+      <CardContent className="pt-6 space-y-4">
+        <div className="flex items-center gap-2">
+          <ShieldCheck className="w-5 h-5 text-primary shrink-0" />
+          <p className="font-semibold text-foreground text-sm">Kostnadsfri fakturaanalys</p>
         </div>
 
-        <p className="text-xs text-muted-foreground">
-          Kryssa i rutan så hör vi av oss till <span className="font-medium text-foreground">{email}</span>
-        </p>
-
-        <div className="flex items-start gap-2">
+        <div className="flex items-start gap-3">
           <Checkbox
             id="invoice-review"
-            checked={checked}
-            onCheckedChange={(v) => setChecked(v === true)}
+            checked={wantsReview}
+            onCheckedChange={(v) => setWantsReview(v === true)}
+            className="mt-0.5"
           />
-          <label htmlFor="invoice-review" className="text-sm text-muted-foreground cursor-pointer leading-tight">
-            Ja, kontakta mig för en kostnadsfri fakturagranskning
+          <label htmlFor="invoice-review" className="text-sm text-muted-foreground leading-relaxed cursor-pointer">
+            Har du fått fel ersättning senaste åren? Compcare erbjuder kostnadsfri analys av dina fakturor
+            och tidrapporter — upptäcker vi fel kan du få ersättning för upp till 24 månader bakåt i tiden.
+            Vill du att vi säkerställer att du fått betalt för alla timmar du jobbat?{" "}
+            <span className="font-medium text-foreground">Klicka ja så kontaktar vi dig via mail.</span>
           </label>
         </div>
 
-        <Button
-          onClick={handleSubmit}
-          disabled={!checked || loading}
-          size="sm"
-          className="w-full sm:w-auto"
-        >
-          {loading ? "Skickar..." : "Skicka"}
-        </Button>
-      </div>
-      <Separator />
-    </div>
+        {wantsReview && (
+          <div className="flex items-start gap-3 pl-0.5">
+            <Checkbox
+              id="confirm-email-review"
+              checked={confirmedEmail}
+              onCheckedChange={(v) => setConfirmedEmail(v === true)}
+              className="mt-0.5"
+            />
+            <label htmlFor="confirm-email-review" className="text-sm text-muted-foreground leading-relaxed cursor-pointer">
+              Jag bekräftar att min e-postadress är{" "}
+              <span className="font-medium text-foreground">{email}</span>
+            </label>
+          </div>
+        )}
+
+        {wantsReview && confirmedEmail && (
+          <Button onClick={handleSubmit} disabled={!canSubmit} className="w-full gap-2">
+            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
+            Ja, kontakta mig
+          </Button>
+        )}
+      </CardContent>
+    </Card>
   );
 }

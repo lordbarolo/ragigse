@@ -150,10 +150,8 @@ export default function Report() {
           />
         )}
 
-        {/* Audit opt-in form */}
-        {isFullAccess && report.email && (
-          <AuditOptInForm reportId={report.id} email={report.email} />
-        )}
+
+
 
         {/* Preview CTA */}
         {!isFullAccess && (
