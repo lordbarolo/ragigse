@@ -27,12 +27,12 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Look up coupon (case-insensitive via lowercasing)
-    const normalizedCode = code.trim().toLowerCase();
+    // Look up coupon (case-insensitive)
+    const normalizedCode = code.trim();
     const { data: coupon, error: couponErr } = await supabase
       .from("coupons")
       .select("*")
-      .eq("code", normalizedCode)
+      .ilike("code", normalizedCode)
       .single();
 
     if (couponErr || !coupon) {
