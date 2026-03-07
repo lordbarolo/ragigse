@@ -368,6 +368,7 @@ export default function ConsultantTrackContent({
           email={email}
           role={occupation}
           zone={userZone}
+          reportId={reportId}
         />
       )}
 

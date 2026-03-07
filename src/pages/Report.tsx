@@ -147,6 +147,7 @@ export default function Report() {
             registerSectionRef={registerSectionRef}
             leadId={report.lead_id}
             email={report.email}
+            reportId={report.id}
           />
         )}
 
