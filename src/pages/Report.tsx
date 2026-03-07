@@ -143,6 +143,7 @@ export default function Report() {
             kommun={report.kommun}
             zoneComparisons={report.zone_comparisons}
             userZone={report.user_zone}
+            registerSectionRef={registerSectionRef}
           />
         )}
 
