@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { usePricingEngine } from "@/hooks/usePricingEngine";
 import { useRates, useLocations } from "@/hooks/useCalculator";
@@ -47,6 +47,36 @@ export default function Teaser() {
   const couponRedeemed = useRef(false);
 
   const exitIntentVisible = useExitIntent(28_000);
+  const scrollTracked = useRef<Set<number>>(new Set());
+  const paywallViewedRef = useRef(false);
+
+  // Track paywall_viewed on mount
+  useEffect(() => {
+    if (survey && !paywallViewedRef.current) {
+      paywallViewedRef.current = true;
+      trackEvent("paywall_viewed", { role: survey.yrke, zone: survey.kommun });
+      // Store paywall entry time for payment_completed
+      sessionStorage.setItem("paywallEnteredAt", String(Date.now()));
+    }
+  }, [survey]);
+
+  // Track paywall scroll depth (50% and 75%)
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (docHeight <= 0) return;
+      const pct = (scrollTop / docHeight) * 100;
+      for (const threshold of [50, 75] as const) {
+        if (pct >= threshold && !scrollTracked.current.has(threshold)) {
+          scrollTracked.current.add(threshold);
+          trackEvent("paywall_scrolled", { scroll_depth_percent: threshold });
+        }
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Load data: try sessionStorage first (fresh from survey), then fetch from Supabase
   useEffect(() => {
@@ -230,6 +260,13 @@ export default function Teaser() {
   }, [isPermanent, pricingResult, rates, locations, survey?.kommun]);
 
   const onCheckout = (plan: "single" | "yearly") => {
+    const couponCode = searchParams.get("coupon") || null;
+    const price = couponDiscount
+      ? couponDiscount.discount_type === "free" ? 0
+        : couponDiscount.discount_type === "percent" ? Math.round(49 * (1 - couponDiscount.discount_value / 100))
+        : Math.max(0, 49 - couponDiscount.discount_value)
+      : 49;
+    trackEvent("paywall_cta_clicked", { price, coupon_applied: !!couponDiscount, coupon_code: couponCode });
     checkout(plan, { email: survey?.email || "", leadId, reportId, coupon: couponDiscount });
   };
 

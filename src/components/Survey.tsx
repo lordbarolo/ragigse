@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useLocations, useRates } from "@/hooks/useCalculator";
 import { usePricingEngine } from "@/hooks/usePricingEngine";
@@ -117,6 +117,34 @@ export default function Survey() {
 
   const isLoading = locLoading || ratesLoading;
 
+  // Timing refs for PostHog step/survey tracking
+  const surveyStartTime = useRef<number | null>(null);
+  const stepEntryTime = useRef<number>(Date.now());
+  const surveyStarted = useRef(false);
+
+  const STEP_NAMES = ["yrkeskategori", "specialisering", "kommun", "anstallningsform", "ersattning", "pendling", "epost"];
+
+  // Reset step timer when step changes
+  useEffect(() => {
+    stepEntryTime.current = Date.now();
+  }, [step]);
+
+  const trackStepCompleted = useCallback((stepNum: number) => {
+    const timeOnStep = Math.round((Date.now() - stepEntryTime.current) / 1000);
+    trackEvent("survey_step_completed", {
+      step_number: stepNum,
+      step_name: STEP_NAMES[stepNum - 1] || `step_${stepNum}`,
+      time_on_step_seconds: timeOnStep,
+    });
+  }, []);
+
+  const trackSurveyStarted = useCallback(() => {
+    if (surveyStarted.current) return;
+    surveyStarted.current = true;
+    surveyStartTime.current = Date.now();
+    trackEvent("survey_started");
+  }, []);
+
   const { calculate: pricingCalculate } = usePricingEngine();
   const { calculate: benchmarkCalculate, result: benchmarkResult } = useBenchmarkEngine();
 
@@ -205,7 +233,7 @@ export default function Survey() {
 
   const handleNext = async () => {
     if (step < TOTAL_STEPS) {
-      trackEvent("survey_step_completed", { step });
+      trackStepCompleted(step);
       setStep(step + 1);
       return;
     }
@@ -250,7 +278,14 @@ export default function Survey() {
       sessionStorage.setItem("surveyData", JSON.stringify({ ...data, track }));
       if (reportData.ab_variant) sessionStorage.setItem("abVariant", reportData.ab_variant); // kept for analytics
       if (benchmarkResult) sessionStorage.setItem("benchmarkResult", JSON.stringify(benchmarkResult));
-      trackEvent("survey_completed", { track });
+      trackStepCompleted(7);
+      const totalTime = surveyStartTime.current ? Math.round((Date.now() - surveyStartTime.current) / 1000) : 0;
+      trackEvent("survey_completed", {
+        total_steps: TOTAL_STEPS,
+        total_time_seconds: totalTime,
+        role: data.yrke,
+        zone: data.kommun,
+      });
       const couponCode = searchParams.get("coupon");
       const couponParam = couponCode ? `?coupon=${encodeURIComponent(couponCode)}` : "";
       navigate(`/resultat/${leadId}${couponParam}`);
@@ -321,12 +356,13 @@ export default function Survey() {
                 <button
                   key={opt.value}
                   onClick={() => {
+                    trackSurveyStarted();
                     setOccupationCategory(opt.value);
                     setDoctorSubRole("");
                     setNurseSubRole("");
                     setSpecialization("");
                     setSubStep(0);
-                    trackEvent("survey_step_completed", { step: 1 });
+                    trackStepCompleted(1);
                     setStep(2);
                   }}
                   className={`py-4 px-5 rounded-lg border text-left transition-all ${
@@ -363,7 +399,7 @@ export default function Survey() {
                     if (opt.value === "st" || opt.value === "specialist") {
                       setSubStep(1);
                     } else {
-                      trackEvent("survey_step_completed", { step: 2 });
+                      trackStepCompleted(2);
                       setStep(3);
                     }
                   }}
@@ -404,7 +440,7 @@ export default function Survey() {
                     if (opt.value === "specialist") {
                       setSubStep(1);
                     } else {
-                      trackEvent("survey_step_completed", { step: 2 });
+                      trackStepCompleted(2);
                       setStep(3);
                     }
                   }}
@@ -440,7 +476,7 @@ export default function Survey() {
               onValueChange={(v) => {
                 setSpecialization(v);
                 setTimeout(() => {
-                  trackEvent("survey_step_completed", { step: 2 });
+                  trackStepCompleted(2);
                   setStep(3);
                 }, 300);
               }}
@@ -488,7 +524,7 @@ export default function Survey() {
               onValueChange={(v) => {
                 setData({ ...data, kommun: v });
                 setTimeout(() => {
-                  trackEvent("survey_step_completed", { step: 3 });
+                  trackStepCompleted(3);
                   setStep(4);
                 }, 300);
               }}
@@ -520,7 +556,7 @@ export default function Survey() {
                   key={opt.value}
                   onClick={() => {
                     setData({ ...data, employmentType: opt.value });
-                    trackEvent("survey_step_completed", { step: 4 });
+                    trackStepCompleted(4);
                     setTimeout(() => setStep(5), 300);
                   }}
                   className={`py-4 px-5 rounded-lg border text-left transition-all ${
@@ -601,7 +637,7 @@ export default function Survey() {
                   key={opt.value}
                   onClick={() => {
                     setCommute(opt.value);
-                    trackEvent("survey_step_completed", { step: 6 });
+                    trackStepCompleted(6);
                     setTimeout(() => setStep(7), 300);
                   }}
                   className={`py-4 px-5 rounded-lg border text-left transition-all ${

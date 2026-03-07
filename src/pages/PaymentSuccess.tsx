@@ -37,6 +37,16 @@ export default function PaymentSuccess() {
         setStatus("success");
         trackEvent("payment_verified", { session_id: sessionId || "" });
 
+        // Track payment_completed with timing from paywall
+        const paywallEnteredAt = sessionStorage.getItem("paywallEnteredAt");
+        const timeFromPaywall = paywallEnteredAt ? Math.round((Date.now() - Number(paywallEnteredAt)) / 1000) : 0;
+        trackEvent("payment_completed", {
+          price: 49,
+          coupon_applied: false,
+          coupon_code: null,
+          time_from_paywall_seconds: timeFromPaywall,
+        });
+
         // Store IDs from verification response
         const resolvedReportId = data.report_id || sessionStorage.getItem("reportId");
         const resolvedLeadId = data.lead_id || sessionStorage.getItem("leadId");
