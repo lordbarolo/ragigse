@@ -23,7 +23,7 @@ export interface SurveyData {
   currentSalary: number;
 }
 
-const TOTAL_STEPS = 7;
+const TOTAL_STEPS = 6;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 type OccupationCategory = "" | "lakare" | "ssk";
@@ -122,7 +122,7 @@ export default function Survey() {
   const stepEntryTime = useRef<number>(Date.now());
   const surveyStarted = useRef(false);
 
-  const STEP_NAMES = ["yrkeskategori", "specialisering", "kommun", "anstallningsform", "ersattning", "pendling", "epost"];
+  const STEP_NAMES = ["yrkeskategori", "specialisering", "kommun", "anstallningsform", "ersattning", "epost"];
 
   // Reset step timer when step changes
   useEffect(() => {
@@ -225,8 +225,7 @@ export default function Survey() {
       case 3: return !!data.kommun;
       case 4: return !!data.employmentType;
       case 5: return data.currentSalary > 0;
-      case 6: return !!commute;
-      case 7: return EMAIL_REGEX.test(data.email.trim());
+      case 6: return EMAIL_REGEX.test(data.email.trim());
       default: return false;
     }
   })();
@@ -278,7 +277,7 @@ export default function Survey() {
       sessionStorage.setItem("surveyData", JSON.stringify({ ...data, track }));
       if (reportData.ab_variant) sessionStorage.setItem("abVariant", reportData.ab_variant); // kept for analytics
       if (benchmarkResult) sessionStorage.setItem("benchmarkResult", JSON.stringify(benchmarkResult));
-      trackStepCompleted(7);
+      trackStepCompleted(6);
       const totalTime = surveyStartTime.current ? Math.round((Date.now() - surveyStartTime.current) / 1000) : 0;
       trackEvent("survey_completed", {
         total_steps: TOTAL_STEPS,
@@ -621,41 +620,8 @@ export default function Survey() {
           </StepWrapper>
         )}
 
-        {/* Step 6: Pendlar du? */}
+        {/* Step 6: E-post */}
         {step === 6 && (
-          <StepWrapper
-            icon={<Train className="w-6 h-6" />}
-            title="Jobbar du på annan ort?"
-          >
-            <div className="flex flex-col gap-3">
-              {([
-                { value: "veckovis" as CommuteType, label: "Veckovis", desc: "Bor på annan ort under uppdraget" },
-                { value: "dagligen" as CommuteType, label: "Dagligen", desc: "Reser fram och tillbaka varje dag" },
-                { value: "inte_alls" as CommuteType, label: "Inte alls", desc: "Jag bor nära arbetsplatsen" },
-              ]).map((opt) => (
-                <button
-                  key={opt.value}
-                  onClick={() => {
-                    setCommute(opt.value);
-                    trackStepCompleted(6);
-                    setTimeout(() => setStep(7), 300);
-                  }}
-                  className={`py-4 px-5 rounded-lg border text-left transition-all ${
-                    commute === opt.value
-                      ? "border-primary bg-primary/5 ring-1 ring-primary/30"
-                      : "border-border bg-card hover:border-muted-foreground/30 hover:shadow-sm"
-                  }`}
-                >
-                  <span className="text-sm font-medium">{opt.label}</span>
-                  <p className="text-xs text-muted-foreground mt-0.5">{opt.desc}</p>
-                </button>
-              ))}
-            </div>
-          </StepWrapper>
-        )}
-
-        {/* Step 7: E-post */}
-        {step === 7 && (
           <StepWrapper
             icon={<Mail className="w-6 h-6" />}
             title="Vart skickar vi din analys?"
@@ -693,7 +659,7 @@ export default function Survey() {
             <ChevronLeft className="w-4 h-4" />
             Tillbaka
           </button>
-          {(step === 5 || step === 7) && (
+          {(step === 5 || step === 6) && (
             <button
               onClick={() => {
                 if (step === 5 && data.currentSalary <= 0) {
@@ -710,7 +676,7 @@ export default function Survey() {
                   : "bg-muted text-muted-foreground cursor-not-allowed"
               }`}
             >
-              {step === 7 ? (
+              {step === 6 ? (
                 <>
                   {saving ? "Sparar..." : "Visa min analys"}
                   {!saving && <ArrowRight className="w-5 h-5" />}
