@@ -8,6 +8,7 @@ import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 import { useExitIntent } from "@/hooks/useExitIntent";
 import OpportunityGap from "@/components/OpportunityGap";
 
