@@ -145,6 +145,8 @@ export default function Report() {
             zoneComparisons={report.zone_comparisons}
             userZone={report.user_zone}
             registerSectionRef={registerSectionRef}
+            leadId={report.lead_id}
+            email={report.email}
           />
         )}
 

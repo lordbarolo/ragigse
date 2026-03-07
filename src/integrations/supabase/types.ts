@@ -219,6 +219,47 @@ export type Database = {
         }
         Relationships: []
       }
+      invoice_review_leads: {
+        Row: {
+          contacted_at: string | null
+          created_at: string
+          email: string
+          id: string
+          lead_id: string
+          role: string | null
+          status: string
+          zone: string | null
+        }
+        Insert: {
+          contacted_at?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          lead_id: string
+          role?: string | null
+          status?: string
+          zone?: string | null
+        }
+        Update: {
+          contacted_at?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          lead_id?: string
+          role?: string | null
+          status?: string
+          zone?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_review_leads_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: true
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leads: {
         Row: {
           created_at: string
