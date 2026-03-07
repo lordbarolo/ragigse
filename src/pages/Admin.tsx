@@ -50,9 +50,18 @@ const ChangeIcon = ({ type }: { type: string }) => {
   }
 };
 
+interface AuditOptin {
+  id: string;
+  report_id: string;
+  email: string;
+  created_at: string;
+}
+
 export default function Admin() {
   const [versions, setVersions] = useState<ContractVersion[]>([]);
   const [loading, setLoading] = useState(true);
+  const [auditOptins, setAuditOptins] = useState<AuditOptin[]>([]);
+  const [auditLoading, setAuditLoading] = useState(true);
 
   // Import form state
   const [catalogName, setCatalogName] = useState("");
