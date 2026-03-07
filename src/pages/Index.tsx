@@ -139,7 +139,10 @@ const Index = () => {
             Se om du får för lite betalt
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-xl mx-auto leading-relaxed">
-            Jämför din ersättning på 60 sekunder — Anonymt och kostnadsfritt
+            Jämför din ersättning på 60 sekunder
+          </p>
+          <p className="text-base text-muted-foreground/80">
+            Anonymt och kostnadsfritt
           </p>
 
           {/* Social proof */}
