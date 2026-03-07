@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { posthog } from "@/lib/posthog";
+import { getUtmParams, getCouponCode } from "@/lib/captureParams";
 
 type EventName =
   | "landing_viewed"
@@ -28,11 +29,15 @@ export function trackEvent(
   const leadId = sessionStorage.getItem("leadId") || undefined;
   const reportId = sessionStorage.getItem("reportId") || undefined;
   const abVariant = sessionStorage.getItem("abVariant") || undefined;
+  const utm = getUtmParams();
+  const couponCode = getCouponCode();
 
-  const enrichedMetadata: Record<string, string | number | boolean | null> = {
+  const enrichedMetadata: Record<string, unknown> = {
     ...(metadata ?? {}),
     ...(reportId ? { report_id: reportId } : {}),
     ...(abVariant ? { ab_variant: abVariant } : {}),
+    ...(couponCode ? { coupon_code: couponCode } : {}),
+    ...(utm ? { utm } : {}),
   };
 
   // Send to PostHog
@@ -44,7 +49,7 @@ export function trackEvent(
     .insert([{
       event_name: eventName,
       lead_id: leadId || null,
-      metadata: enrichedMetadata,
+      metadata: enrichedMetadata as Record<string, string | number | boolean | null>,
     }])
     .then(({ error }) => {
       if (error) console.warn("[trackEvent]", error.message);
