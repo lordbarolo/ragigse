@@ -106,6 +106,42 @@ export type Database = {
         }
         Relationships: []
       }
+      coupons: {
+        Row: {
+          code: string
+          created_at: string
+          description: string | null
+          discount_type: string
+          discount_value: number
+          id: string
+          used: boolean
+          used_at: string | null
+          used_by_report_id: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          description?: string | null
+          discount_type?: string
+          discount_value?: number
+          id?: string
+          used?: boolean
+          used_at?: string | null
+          used_by_report_id?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          description?: string | null
+          discount_type?: string
+          discount_value?: number
+          id?: string
+          used?: boolean
+          used_at?: string | null
+          used_by_report_id?: string | null
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           created_at: string
