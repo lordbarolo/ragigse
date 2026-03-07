@@ -131,6 +131,44 @@ export default function Teaser() {
     checkReferral();
   }, [leadId]);
 
+  // Redeem coupon from URL param
+  useEffect(() => {
+    const couponCode = searchParams.get("coupon");
+    if (!couponCode || !reportId || couponRedeemed.current) return;
+    couponRedeemed.current = true;
+
+    const redeemCoupon = async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke("redeem-coupon", {
+          body: { code: couponCode, report_id: reportId },
+        });
+
+        if (error || !data) {
+          const errorMsg = data?.error || "Ogiltig kupongkod";
+          toast({ title: errorMsg, variant: "destructive" });
+          return;
+        }
+
+        if (data.status === "unlocked") {
+          toast({ title: data.message || "Rapporten är upplåst!" });
+          trackEvent("coupon_redeemed", { code: couponCode, type: "free" });
+          navigate(`/rapport/${reportId}`);
+          return;
+        }
+
+        if (data.status === "discount") {
+          setCouponDiscount({ discount_type: data.discount_type, discount_value: data.discount_value });
+          toast({ title: data.message || "Rabatt tillämpad!" });
+          trackEvent("coupon_redeemed", { code: couponCode, type: data.discount_type });
+        }
+      } catch {
+        toast({ title: "Kunde inte lösa in kupongkoden", variant: "destructive" });
+      }
+    };
+
+    redeemCoupon();
+  }, [reportId, searchParams, navigate]);
+
   const { isPermanent, result, noisedResult, benchmarkMonthly, userMonthly, userHourly, isUnderpaid, diffPercent, isAboveThreshold } =
     useTeaserData(survey, pricingResult, benchmarkResult);
 
