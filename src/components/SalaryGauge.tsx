@@ -56,7 +56,7 @@ export default function SalaryGauge({
         </div>
       )}
 
-      <div className={blurred ? "blur-sm select-none pointer-events-none" : ""}>
+      <div className={blurred ? "blur-[12px] select-none pointer-events-none" : ""}>
         {/* Main percentage */}
         <div className="text-center space-y-2">
           <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">
