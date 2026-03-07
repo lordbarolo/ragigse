@@ -4,6 +4,7 @@ interface Props {
   isUnderpaid: boolean;
   userHourly: number;
   result: { low: number; high: number };
+  customerRate?: number;
   unlocked: boolean;
   partialUnlocked: boolean;
   exitIntentVisible: boolean;
@@ -17,7 +18,7 @@ interface Props {
 }
 
 export default function ConsultantVerdictCard({
-  isUnderpaid, userHourly, result, unlocked, partialUnlocked,
+  isUnderpaid, userHourly, result, customerRate, unlocked, partialUnlocked,
   exitIntentVisible, checkoutLoading, onCheckout, leadId, referrerEmail,
   regionName, onPartialUnlock, employmentType,
 }: Props) {
