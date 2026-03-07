@@ -11,7 +11,7 @@ const FAQ_ITEMS = [
   {
     question: "Vilka data baseras analysen på?",
     answer:
-      "Analysen baseras på officiella ramavtalspriser från 290 svenska vårdgivare, uppdaterade 2026.",
+      "Analysen baseras på Regionernas officiella ramavtalspriser för 2026 och bemanningsbranschens standardmarginaler.",
   },
   {
     question: "Kostar det något att använda CompCare?",
