@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useLocations, useRates } from "@/hooks/useCalculator";
 import { usePricingEngine } from "@/hooks/usePricingEngine";
 import { useBenchmarkEngine } from "@/hooks/useBenchmarkEngine";
@@ -85,6 +85,7 @@ const nurseValueMap: Record<string, string> = {
 
 export default function Survey() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { data: locations, isLoading: locLoading } = useLocations();
   const { data: rates, isLoading: ratesLoading } = useRates();
   const [saving, setSaving] = useState(false);
@@ -250,7 +251,9 @@ export default function Survey() {
       if (reportData.ab_variant) sessionStorage.setItem("abVariant", reportData.ab_variant); // kept for analytics
       if (benchmarkResult) sessionStorage.setItem("benchmarkResult", JSON.stringify(benchmarkResult));
       trackEvent("survey_completed", { track });
-      navigate(`/resultat/${leadId}`);
+      const couponCode = searchParams.get("coupon");
+      const couponParam = couponCode ? `?coupon=${encodeURIComponent(couponCode)}` : "";
+      navigate(`/resultat/${leadId}${couponParam}`);
     } catch {
       toast.error("Kunde inte spara dina uppgifter. Försök igen.");
       setSaving(false);

@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Survey from "@/components/Survey";
 import { Shield } from "lucide-react";
 import { trackEvent } from "@/lib/trackEvent";
@@ -55,6 +55,7 @@ const webAppJsonLd = {
 };
 
 const Index = () => {
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -102,10 +103,14 @@ const Index = () => {
       sessionStorage.setItem("surveyData", JSON.stringify(testData));
       if (reportData?.report_id) sessionStorage.setItem("reportId", reportData.report_id);
       if (reportData?.ab_variant) sessionStorage.setItem("abVariant", reportData.ab_variant); // kept for analytics
-      navigate(`/resultat/${leadId}`);
+      const couponCode = searchParams.get("coupon");
+      const couponParam = couponCode ? `?coupon=${encodeURIComponent(couponCode)}` : "";
+      navigate(`/resultat/${leadId}${couponParam}`);
     } catch {
+      const couponCode2 = searchParams.get("coupon");
+      const couponParam2 = couponCode2 ? `?coupon=${encodeURIComponent(couponCode2)}` : "";
       sessionStorage.setItem("surveyData", JSON.stringify(testData));
-      navigate(`/resultat/${leadId}`);
+      navigate(`/resultat/${leadId}${couponParam2}`);
     }
   };
 
