@@ -115,6 +115,8 @@ export type Database = {
           discount_value: number
           expires_at: string | null
           id: string
+          max_uses: number
+          use_count: number
           used: boolean
           used_at: string | null
           used_by_report_id: string | null
@@ -127,6 +129,8 @@ export type Database = {
           discount_value?: number
           expires_at?: string | null
           id?: string
+          max_uses?: number
+          use_count?: number
           used?: boolean
           used_at?: string | null
           used_by_report_id?: string | null
@@ -139,6 +143,8 @@ export type Database = {
           discount_value?: number
           expires_at?: string | null
           id?: string
+          max_uses?: number
+          use_count?: number
           used?: boolean
           used_at?: string | null
           used_by_report_id?: string | null
