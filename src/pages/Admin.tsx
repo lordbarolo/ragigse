@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/hooks/use-toast";
-import { Loader2, Upload, PlayCircle, ArrowUpDown, TrendingUp, TrendingDown, Minus, Plus, Trash2 } from "lucide-react";
+import { Loader2, Upload, PlayCircle, ArrowUpDown, TrendingUp, TrendingDown, Minus, Plus, Trash2, ShieldCheck } from "lucide-react";
 
 interface ContractVersion {
   id: string;
@@ -50,9 +50,18 @@ const ChangeIcon = ({ type }: { type: string }) => {
   }
 };
 
+interface AuditOptin {
+  id: string;
+  report_id: string;
+  email: string;
+  created_at: string;
+}
+
 export default function Admin() {
   const [versions, setVersions] = useState<ContractVersion[]>([]);
   const [loading, setLoading] = useState(true);
+  const [auditOptins, setAuditOptins] = useState<AuditOptin[]>([]);
+  const [auditLoading, setAuditLoading] = useState(true);
 
   // Import form state
   const [catalogName, setCatalogName] = useState("");
@@ -84,8 +93,19 @@ export default function Admin() {
     setLoading(false);
   };
 
+  const fetchAuditOptins = async () => {
+    setAuditLoading(true);
+    const { data, error } = await supabase
+      .from("audit_optins")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (!error) setAuditOptins((data as AuditOptin[]) || []);
+    setAuditLoading(false);
+  };
+
   useEffect(() => {
     fetchVersions();
+    fetchAuditOptins();
   }, []);
 
   const handleImport = async () => {
@@ -186,6 +206,42 @@ export default function Admin() {
         <h1 className="text-3xl font-bold tracking-tight">Admin – Marknadsbevakning</h1>
         <p className="text-muted-foreground mt-1">Importera priskataloger, hantera versioner och kör diff-analyser.</p>
       </div>
+
+      {/* Audit Opt-ins */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2"><ShieldCheck className="w-5 h-5" /> Fakturaanalys – intresseanmälningar</CardTitle>
+          <CardDescription>{auditOptins.length} personer har tackat ja till kostnadsfri fakturaanalys.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {auditLoading ? (
+            <div className="flex justify-center py-8"><Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /></div>
+          ) : auditOptins.length === 0 ? (
+            <p className="text-muted-foreground text-center py-4">Inga intresseanmälningar ännu.</p>
+          ) : (
+            <div className="overflow-x-auto max-h-[400px] overflow-y-auto">
+              <table className="w-full text-sm">
+                <thead className="sticky top-0 bg-muted">
+                  <tr className="border-b text-left">
+                    <th className="p-2 font-medium">E-post</th>
+                    <th className="p-2 font-medium">Rapport-ID</th>
+                    <th className="p-2 font-medium">Datum</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {auditOptins.map((o) => (
+                    <tr key={o.id} className="border-b last:border-0">
+                      <td className="p-2 font-medium">{o.email}</td>
+                      <td className="p-2 font-mono text-xs text-muted-foreground">{o.report_id.slice(0, 8)}…</td>
+                      <td className="p-2 text-muted-foreground">{new Date(o.created_at).toLocaleString("sv-SE")}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       {/* Version History */}
       <Card>
