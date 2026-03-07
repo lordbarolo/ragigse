@@ -56,8 +56,49 @@ serve(async (req) => {
       );
     }
 
+    // Get the report to find the user's email
+    const { data: report } = await supabase
+      .from("reports")
+      .select("email")
+      .eq("id", report_id)
+      .single();
+
+    const userEmail = report?.email?.trim().toLowerCase();
+
+    // Check if this email has already used this coupon
+    if (userEmail) {
+      const { data: previousUses } = await supabase
+        .from("reports")
+        .select("id")
+        .eq("email", userEmail)
+        .eq("status", "paid")
+        .neq("id", report_id);
+
+      // Check if any of those reports were unlocked while this coupon was used
+      // We track by checking reports that share the coupon's used_by_report_id or
+      // by looking at reports with same email that already redeemed same coupon code
+      const { data: couponUsages } = await supabase
+        .from("coupon_usages")
+        .select("id")
+        .eq("coupon_id", coupon.id)
+        .eq("email", userEmail)
+        .limit(1);
+
+      if (couponUsages && couponUsages.length > 0) {
+        return new Response(
+          JSON.stringify({ error: "Du har redan använt denna kupongkod" }),
+          { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
+
     // For free coupons (100% discount): unlock report directly
     if (coupon.discount_type === "free" || (coupon.discount_type === "percent" && coupon.discount_value >= 100)) {
+      // Record usage per email
+      if (userEmail) {
+        await supabase.from("coupon_usages").insert({ coupon_id: coupon.id, email: userEmail, report_id });
+      }
+
       // Mark coupon usage
       const newCount = (coupon.use_count || 0) + 1;
       await supabase
