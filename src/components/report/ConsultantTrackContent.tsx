@@ -49,6 +49,7 @@ export default function ConsultantTrackContent({
   registerSectionRef,
   leadId,
   email,
+  reportId,
 }: Props) {
   const marketRate = r.market?.rate_customer_sek_per_hour ?? 0;
   const rec = r.recommendation;
