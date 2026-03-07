@@ -48,6 +48,13 @@ serve(async (req) => {
       );
     }
 
+    if (coupon.expires_at && new Date(coupon.expires_at) < new Date()) {
+      return new Response(
+        JSON.stringify({ error: "Kupongkoden har gått ut" }),
+        { status: 410, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // For free coupons (100% discount): unlock report directly
     if (coupon.discount_type === "free" || (coupon.discount_type === "percent" && coupon.discount_value >= 100)) {
       // Mark coupon as used
