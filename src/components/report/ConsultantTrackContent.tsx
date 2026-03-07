@@ -31,6 +31,7 @@ interface Props {
   kommun: string;
   zoneComparisons?: ZoneComparison[];
   userZone?: string;
+  registerSectionRef?: (section: string) => (el: HTMLDivElement | null) => void;
 }
 
 export default function ConsultantTrackContent({
@@ -41,6 +42,7 @@ export default function ConsultantTrackContent({
   kommun,
   zoneComparisons,
   userZone,
+  registerSectionRef,
 }: Props) {
   const marketRate = r.market?.rate_customer_sek_per_hour ?? 0;
   const rec = r.recommendation;
@@ -330,7 +332,7 @@ export default function ConsultantTrackContent({
 
       {/* 4. Förhandlingsrekommendationer (full) */}
       {isConsultantFullAccess && rec && (
-        <Card className="card-shadow">
+        <Card className="card-shadow" ref={registerSectionRef?.("negotiation_script") as unknown as React.Ref<HTMLDivElement>}>
           <CardContent className="pt-6 space-y-4">
             <SectionHeading icon={MessageSquareQuote} title="Förhandlingsrekommendationer" />
             <ul className="space-y-3">
@@ -352,7 +354,7 @@ export default function ConsultantTrackContent({
 
       {/* 5. Regionala jämförelser (full) */}
       {isConsultantFullAccess && zoneComparisons && zoneComparisons.length > 0 && (
-        <Card className="card-shadow">
+        <Card className="card-shadow" ref={registerSectionRef?.("regional_comparison") as unknown as React.Ref<HTMLDivElement>}>
           <CardContent className="pt-6 space-y-4">
             <SectionHeading icon={MapPin} title="Regional jämförelse" />
             <p className="text-sm text-muted-foreground">
@@ -404,7 +406,7 @@ export default function ConsultantTrackContent({
 
       {/* 7. Godkända leverantörer (full) */}
       {isConsultantFullAccess && (
-        <Card className="card-shadow">
+        <Card className="card-shadow" ref={registerSectionRef?.("supplier_list") as unknown as React.Ref<HTMLDivElement>}>
           <CardContent className="pt-6">
             <Collapsible>
               <CollapsibleTrigger className="flex items-center justify-between w-full group">
