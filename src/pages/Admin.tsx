@@ -207,6 +207,42 @@ export default function Admin() {
         <p className="text-muted-foreground mt-1">Importera priskataloger, hantera versioner och kör diff-analyser.</p>
       </div>
 
+      {/* Audit Opt-ins */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2"><ShieldCheck className="w-5 h-5" /> Fakturaanalys – intresseanmälningar</CardTitle>
+          <CardDescription>{auditOptins.length} personer har tackat ja till kostnadsfri fakturaanalys.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          {auditLoading ? (
+            <div className="flex justify-center py-8"><Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /></div>
+          ) : auditOptins.length === 0 ? (
+            <p className="text-muted-foreground text-center py-4">Inga intresseanmälningar ännu.</p>
+          ) : (
+            <div className="overflow-x-auto max-h-[400px] overflow-y-auto">
+              <table className="w-full text-sm">
+                <thead className="sticky top-0 bg-muted">
+                  <tr className="border-b text-left">
+                    <th className="p-2 font-medium">E-post</th>
+                    <th className="p-2 font-medium">Rapport-ID</th>
+                    <th className="p-2 font-medium">Datum</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {auditOptins.map((o) => (
+                    <tr key={o.id} className="border-b last:border-0">
+                      <td className="p-2 font-medium">{o.email}</td>
+                      <td className="p-2 font-mono text-xs text-muted-foreground">{o.report_id.slice(0, 8)}…</td>
+                      <td className="p-2 text-muted-foreground">{new Date(o.created_at).toLocaleString("sv-SE")}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       {/* Version History */}
       <Card>
         <CardHeader>
