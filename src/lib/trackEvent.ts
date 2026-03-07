@@ -12,7 +12,8 @@ type EventName =
   | "referral_sent"
   | "referral_confirmed"
   | "referral_unlock_shown"
-  | "exit_intent_shown";
+  | "exit_intent_shown"
+  | "coupon_redeemed";
 
 export function trackEvent(
   eventName: EventName,

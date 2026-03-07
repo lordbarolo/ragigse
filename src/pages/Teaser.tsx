@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { usePricingEngine } from "@/hooks/usePricingEngine";
 import { useRates, useLocations } from "@/hooks/useCalculator";
 import type { SurveyData } from "@/components/Survey";
@@ -8,6 +8,7 @@ import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "@/hooks/use-toast";
 import { useExitIntent } from "@/hooks/useExitIntent";
 import OpportunityGap from "@/components/OpportunityGap";
 
@@ -28,6 +29,7 @@ import HighEarnerCard from "@/components/teaser/HighEarnerCard";
 /** Teaser page — orchestrator for the results preview */
 export default function Teaser() {
   const { leadId: urlLeadId } = useParams<{ leadId: string }>();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { calculate, result: pricingResult } = usePricingEngine();
   const { data: rates } = useRates();
@@ -41,6 +43,8 @@ export default function Teaser() {
   const [leadId, setLeadId] = useState("");
   const [reportId, setReportId] = useState("");
   const checkoutRef = useRef<HTMLDivElement>(null);
+  const [couponDiscount, setCouponDiscount] = useState<{ discount_type: "percent" | "fixed" | "free"; discount_value: number } | null>(null);
+  const couponRedeemed = useRef(false);
 
   const exitIntentVisible = useExitIntent(28_000);
 
@@ -128,6 +132,44 @@ export default function Teaser() {
     checkReferral();
   }, [leadId]);
 
+  // Redeem coupon from URL param
+  useEffect(() => {
+    const couponCode = searchParams.get("coupon");
+    if (!couponCode || !reportId || couponRedeemed.current) return;
+    couponRedeemed.current = true;
+
+    const redeemCoupon = async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke("redeem-coupon", {
+          body: { code: couponCode, report_id: reportId },
+        });
+
+        if (error || !data) {
+          const errorMsg = data?.error || "Ogiltig kupongkod";
+          toast({ title: errorMsg, variant: "destructive" });
+          return;
+        }
+
+        if (data.status === "unlocked") {
+          toast({ title: data.message || "Rapporten är upplåst!" });
+          trackEvent("coupon_redeemed", { code: couponCode, type: "free" });
+          navigate(`/rapport/${reportId}`);
+          return;
+        }
+
+        if (data.status === "discount") {
+          setCouponDiscount({ discount_type: data.discount_type, discount_value: data.discount_value });
+          toast({ title: data.message || "Rabatt tillämpad!" });
+          trackEvent("coupon_redeemed", { code: couponCode, type: data.discount_type });
+        }
+      } catch {
+        toast({ title: "Kunde inte lösa in kupongkoden", variant: "destructive" });
+      }
+    };
+
+    redeemCoupon();
+  }, [reportId, searchParams, navigate]);
+
   const { isPermanent, result, noisedResult, benchmarkMonthly, userMonthly, userHourly, isUnderpaid, diffPercent, isAboveThreshold } =
     useTeaserData(survey, pricingResult, benchmarkResult);
 
@@ -188,7 +230,7 @@ export default function Teaser() {
   }, [isPermanent, pricingResult, rates, locations, survey?.kommun]);
 
   const onCheckout = (plan: "single" | "yearly") => {
-    checkout(plan, { email: survey?.email || "", leadId, reportId });
+    checkout(plan, { email: survey?.email || "", leadId, reportId, coupon: couponDiscount });
   };
 
   // Error state
@@ -294,13 +336,13 @@ export default function Teaser() {
         )}
 
         <div ref={checkoutRef}>
-          <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="inline" />
+          <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="inline" coupon={couponDiscount} />
         </div>
 
         <ReportPreviewList isPermanent={isPermanent} />
       </main>
 
-      <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="sticky" />
+      <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="sticky" coupon={couponDiscount} />
 
       <ReferralBottomSheet
         ctaRef={checkoutRef}
