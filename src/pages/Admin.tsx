@@ -93,8 +93,19 @@ export default function Admin() {
     setLoading(false);
   };
 
+  const fetchAuditOptins = async () => {
+    setAuditLoading(true);
+    const { data, error } = await supabase
+      .from("audit_optins")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (!error) setAuditOptins((data as AuditOptin[]) || []);
+    setAuditLoading(false);
+  };
+
   useEffect(() => {
     fetchVersions();
+    fetchAuditOptins();
   }, []);
 
   const handleImport = async () => {
