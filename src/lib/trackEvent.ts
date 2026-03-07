@@ -20,7 +20,8 @@ type EventName =
   | "paywall_scrolled"
   | "paywall_cta_clicked"
   | "payment_completed"
-  | "report_section_viewed";
+  | "report_section_viewed"
+  | "invoice_review_opted_in";
 
 export function trackEvent(
   eventName: EventName,
