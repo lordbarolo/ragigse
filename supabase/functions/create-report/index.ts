@@ -221,8 +221,18 @@ serve(async (req) => {
 
     // Calculate using shared module with DB model
     const empType = employment_type as EmploymentType;
-    const range = calculateSalaryRange(timprisKund, empType, model);
-    const factor = empType === "anstalld" ? m.employer_factor : 1;
+    // For foretagare, market standard is 14% margin (share = 0.86)
+    const FORETAGARE_SHARE = 0.86;
+    const effectiveModel: MarginModel | undefined = model
+      ? (empType === "foretagare"
+        ? { ...model, share_min: FORETAGARE_SHARE, share_max: FORETAGARE_SHARE }
+        : model)
+      : (empType === "foretagare"
+        ? { share_min: FORETAGARE_SHARE, share_max: FORETAGARE_SHARE, employer_factor: 1.42, hours_per_month: 167 }
+        : undefined);
+    const effectiveM = effectiveModel ?? m;
+    const range = calculateSalaryRange(timprisKund, empType, effectiveModel);
+    const factor = empType === "anstalld" ? effectiveM.employer_factor : 1;
 
     const currentMonthly =
       salary_type === "hourly"

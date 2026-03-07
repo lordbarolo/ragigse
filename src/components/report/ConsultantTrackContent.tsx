@@ -48,8 +48,8 @@ export default function ConsultantTrackContent({
   const rec = r.recommendation;
   const delta = r.delta;
   const isConsultantFullAccess = isFullAccess && !!rec;
-  const margin = isEmployee ? 0.15 : 0.10;
-  const marginLabel = isEmployee ? "15%" : "10%";
+  const margin = isEmployee ? 0.15 : 0.14;
+  const marginLabel = isEmployee ? "15%" : "14%";
   const afterMargin = Math.round(marketRate * (1 - margin));
 
   const currentSalary = r.inputs.current_salary_sek;
@@ -307,7 +307,7 @@ export default function ConsultantTrackContent({
               <ul className="space-y-2 text-xs text-muted-foreground leading-relaxed">
                 <li>
                   <span className="font-semibold text-foreground">Bemanningsbolagets marginal ({marginLabel}):</span>{" "}
-                  Vi räknar med att bolaget behåller {marginLabel} av timpriset. {isEmployee ? "Detta är en vanlig nivå vid ramavtalsuppdrag." : "Som egenföretagare är marknadsmässig marginal 10%."}
+                  Vi räknar med att bolaget behåller {marginLabel} av timpriset. {isEmployee ? "Detta är en vanlig nivå vid ramavtalsuppdrag." : "Som egenföretagare är marknadsmässig marginal 14%."}
                 </li>
                 {isEmployee && (
                   <li>
