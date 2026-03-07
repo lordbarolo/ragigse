@@ -151,7 +151,7 @@ const Index = () => {
 
       {/* Survey — direkt under hero utan extra avstånd */}
       <main className="px-4 py-8 sm:py-10 bg-background">
-        {(import.meta.env.DEV || window.location.hostname.includes("lovableproject.com") || window.location.hostname.includes("lovable.app")) && (
+        {(import.meta.env.DEV || window.location.hostname.includes("lovableproject.com") || window.location.hostname.includes("id-preview--")) && (
           <div className="flex justify-center gap-2 mb-4">
             <button
               onClick={() => devSkip("foretagare")}
