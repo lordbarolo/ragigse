@@ -78,7 +78,7 @@ export default function SalaryGauge({
         {/* Comparison row */}
         <div className="grid grid-cols-2 gap-4 mt-6">
           <div className="rounded-lg border border-border p-3 text-center">
-            <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Din lön</p>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-wider mb-1">Din ersättning</p>
             <p className="text-lg font-bold text-foreground">{fmt(currentHourly)} kr/h</p>
           </div>
           <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 text-center">
