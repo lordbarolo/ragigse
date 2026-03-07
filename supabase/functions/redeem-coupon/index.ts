@@ -125,6 +125,11 @@ serve(async (req) => {
       );
     }
 
+    // Record usage per email
+    if (userEmail) {
+      await supabase.from("coupon_usages").insert({ coupon_id: coupon.id, email: userEmail, report_id });
+    }
+
     // For partial discounts: increment usage and return discount info
     const newCount = (coupon.use_count || 0) + 1;
     await supabase
