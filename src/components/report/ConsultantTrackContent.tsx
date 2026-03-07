@@ -405,11 +405,13 @@ export default function ConsultantTrackContent({
             </div>
           </CardContent>
         </Card>
+        </div>
       )}
 
       {/* 7. Godkända leverantörer (full) */}
       {isConsultantFullAccess && (
-        <Card className="card-shadow" ref={registerSectionRef?.("supplier_list") as unknown as React.Ref<HTMLDivElement>}>
+        <div ref={registerSectionRef?.("supplier_list")}>
+        <Card className="card-shadow">
           <CardContent className="pt-6">
             <Collapsible>
               <CollapsibleTrigger className="flex items-center justify-between w-full group">
