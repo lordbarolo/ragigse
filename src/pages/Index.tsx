@@ -139,7 +139,7 @@ const Index = () => {
             Se om du får för lite betalt
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-xl mx-auto leading-relaxed">
-            Jämför din ersättning med faktiska ramavtalspriser — gratis på 60 sekunder.
+            Jämför din ersättning på 60 sekunder — Anonymt och kostnadsfritt
           </p>
 
           {/* Social proof */}
