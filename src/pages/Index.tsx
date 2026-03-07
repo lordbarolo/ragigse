@@ -145,19 +145,7 @@ const Index = () => {
             Anonymt och kostnadsfritt
           </p>
 
-          {/* Social proof */}
-          <div className="flex items-center justify-center gap-3 pt-2">
-            <div className="flex -space-x-2">
-              {[...Array(4)].map((_, i) => (
-                <div key={i} className="w-7 h-7 rounded-full bg-secondary border-2 border-background flex items-center justify-center text-[10px] font-bold text-muted-foreground">
-                  {["S", "L", "B", "A"][i]}
-                </div>
-              ))}
-            </div>
-            <p className="text-sm text-muted-foreground">
-              <span className="font-semibold text-foreground">1 200+</span> vårdkonsulter har redan jämfört
-            </p>
-          </div>
+
         </div>
       </header>
 
