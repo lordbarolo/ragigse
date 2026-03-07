@@ -126,8 +126,8 @@ const Index = () => {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppJsonLd) }}
       />
 
-      {/* Hero — clean white with navy text, Stripe-style */}
-      <header className="py-16 px-5 text-center sm:py-24 border-b border-border">
+      {/* Hero + Survey combined — enkäten syns direkt */}
+      <header className="py-12 px-5 text-center sm:py-16 border-b border-border">
         <div className="max-w-2xl mx-auto space-y-5">
           {/* Trust badge */}
           <div className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground bg-muted rounded-full px-4 py-1.5">
@@ -136,16 +136,30 @@ const Index = () => {
           </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-foreground leading-[1.1] tracking-tight">
-            Får du rätt ersättning?
+            Se om du får för lite betalt
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-xl mx-auto leading-relaxed">
-            Jämför din ersättning med faktiska ramavtalspriser — gratis och anonymt.
+            Jämför din ersättning med faktiska ramavtalspriser — gratis på 60 sekunder.
           </p>
+
+          {/* Social proof */}
+          <div className="flex items-center justify-center gap-3 pt-2">
+            <div className="flex -space-x-2">
+              {[...Array(4)].map((_, i) => (
+                <div key={i} className="w-7 h-7 rounded-full bg-secondary border-2 border-background flex items-center justify-center text-[10px] font-bold text-muted-foreground">
+                  {["S", "L", "B", "A"][i]}
+                </div>
+              ))}
+            </div>
+            <p className="text-sm text-muted-foreground">
+              <span className="font-semibold text-foreground">1 200+</span> vårdkonsulter har redan jämfört
+            </p>
+          </div>
         </div>
       </header>
 
-      {/* Survey — light professional tool feel */}
-      <main className="px-4 py-12 sm:py-16 bg-background">
+      {/* Survey — direkt under hero utan extra avstånd */}
+      <main className="px-4 py-8 sm:py-10 bg-background">
         {(import.meta.env.DEV || window.location.hostname.includes("lovableproject.com") || window.location.hostname.includes("lovable.app")) && (
           <div className="flex justify-center gap-2 mb-4">
             <button
