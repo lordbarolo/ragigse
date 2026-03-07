@@ -359,6 +359,7 @@ export default function Teaser() {
             isUnderpaid={isUnderpaid}
             userHourly={userHourly}
             result={noisedResult ?? result}
+            customerRate={pricingResult?.rate_customer_sek_per_hour ? Math.round(pricingResult.rate_customer_sek_per_hour * (noisedResult ? (noisedResult.high / result.high) : 1)) : undefined}
             unlocked={unlocked}
             partialUnlocked={partialUnlocked}
             exitIntentVisible={exitIntentVisible}
