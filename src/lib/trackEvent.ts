@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { posthog } from "@/lib/posthog";
 
 type EventName =
   | "landing_viewed"
@@ -29,7 +30,10 @@ export function trackEvent(
     ...(abVariant ? { ab_variant: abVariant } : {}),
   };
 
-  // Fire-and-forget — don't block UI
+  // Send to PostHog
+  posthog.capture(eventName, enrichedMetadata);
+
+  // Fire-and-forget to DB — don't block UI
   supabase
     .from("analytics_events")
     .insert([{
