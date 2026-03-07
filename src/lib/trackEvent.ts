@@ -1,5 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
-import { posthog } from "@/lib/posthog";
+import { posthog, isPostHogReady } from "@/lib/posthog";
 import { getUtmParams, getCouponCode } from "@/lib/captureParams";
 
 type EventName =
@@ -40,8 +40,10 @@ export function trackEvent(
     ...(utm ? { utm } : {}),
   };
 
-  // Send to PostHog
-  posthog.capture(eventName, enrichedMetadata);
+  // Send to PostHog (silent if not initialized)
+  if (isPostHogReady()) {
+    try { posthog.capture(eventName, enrichedMetadata); } catch { /* silent */ }
+  }
 
   // Fire-and-forget to DB — don't block UI
   supabase
