@@ -292,7 +292,6 @@ export default function Survey() {
       <div className="mb-10">
         <div className="flex justify-between items-center text-xs text-muted-foreground mb-2">
           <span className="font-medium">Steg {step} av {TOTAL_STEPS}</span>
-          <span>{Math.round(progress)}%</span>
         </div>
         <div className="h-1 bg-border rounded-full overflow-hidden">
           <div
