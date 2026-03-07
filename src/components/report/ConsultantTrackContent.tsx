@@ -1,4 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
+import InvoiceReviewCTA from "./InvoiceReviewCTA";
 import { Separator } from "@/components/ui/separator";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import {
@@ -32,6 +33,8 @@ interface Props {
   zoneComparisons?: ZoneComparison[];
   userZone?: string;
   registerSectionRef?: (section: string) => (el: HTMLDivElement | null) => void;
+  leadId?: string;
+  email?: string;
 }
 
 export default function ConsultantTrackContent({
@@ -43,6 +46,8 @@ export default function ConsultantTrackContent({
   zoneComparisons,
   userZone,
   registerSectionRef,
+  leadId,
+  email,
 }: Props) {
   const marketRate = r.market?.rate_customer_sek_per_hour ?? 0;
   const rec = r.recommendation;
@@ -352,6 +357,16 @@ export default function ConsultantTrackContent({
           </CardContent>
         </Card>
         </div>
+      )}
+
+      {/* Invoice Review CTA — after negotiation, before regional comparison */}
+      {isConsultantFullAccess && leadId && email && (
+        <InvoiceReviewCTA
+          leadId={leadId}
+          email={email}
+          role={occupation}
+          zone={userZone}
+        />
       )}
 
       {/* 5. Regionala jämförelser (full) */}
