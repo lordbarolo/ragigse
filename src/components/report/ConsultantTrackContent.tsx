@@ -35,6 +35,7 @@ interface Props {
   registerSectionRef?: (section: string) => (el: HTMLDivElement | null) => void;
   leadId?: string;
   email?: string;
+  reportId?: string;
 }
 
 export default function ConsultantTrackContent({
