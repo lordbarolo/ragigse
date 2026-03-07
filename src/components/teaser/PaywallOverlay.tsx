@@ -5,6 +5,7 @@ import { BarRow } from "@/shared/UIComponents";
 interface Props {
   userHourly: number;
   result: { low: number; high: number };
+  customerRate?: number;
   unlocked: boolean;
   partialUnlocked: boolean;
   exitIntentVisible: boolean;
@@ -20,6 +21,7 @@ interface Props {
 export default function PaywallOverlay({
   userHourly,
   result,
+  customerRate,
   unlocked,
   partialUnlocked,
   exitIntentVisible,
@@ -31,6 +33,10 @@ export default function PaywallOverlay({
   onPartialUnlock,
   isUnderpaid,
 }: Props) {
+  // Use customerRate for "what the region pays" bar, fall back to result.high
+  const regionPays = customerRate && customerRate > 0 ? customerRate : result.high;
+  const barMax = Math.max(regionPays, result.high, userHourly) + 50;
+
   return (
     <div className="space-y-4">
       {/* Bars with lock overlay */}
@@ -39,20 +45,20 @@ export default function PaywallOverlay({
           <BarRow
             label="Din nuvarande ersättning"
             value={userHourly}
-            max={result.high + 50}
+            max={barMax}
             color="bg-muted-foreground/30"
           />
           <BarRow
             label="Vad regionen betalar bemanningsföretag"
-            value={result.high}
-            max={result.high + 50}
+            value={regionPays}
+            max={barMax}
             color="bg-primary"
             blurred={true}
           />
           <BarRow
             label="Rekommenderad ersättning"
-            value={result.low}
-            max={result.high + 50}
+            value={result.high}
+            max={barMax}
             color="bg-primary/50"
             blurred={true}
             partialReveal={false}

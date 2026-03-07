@@ -22,35 +22,13 @@ export default function ConsultantVerdictCard({
   exitIntentVisible, checkoutLoading, onCheckout, leadId, referrerEmail,
   regionName, onPartialUnlock, employmentType,
 }: Props) {
-  if (!isUnderpaid) {
-    return (
-      <div className="rounded-lg border border-border bg-card card-shadow overflow-hidden">
-        <div className="p-5">
-          <PaywallOverlay
-            userHourly={userHourly}
-            result={result}
-            unlocked={unlocked}
-            partialUnlocked={partialUnlocked}
-            exitIntentVisible={exitIntentVisible}
-            checkoutLoading={checkoutLoading}
-            onCheckout={onCheckout}
-            leadId={leadId}
-            referrerEmail={referrerEmail}
-            regionName={regionName}
-            onPartialUnlock={onPartialUnlock}
-            isUnderpaid={isUnderpaid}
-          />
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="rounded-lg border border-border bg-card card-shadow overflow-hidden">
       <div className="p-5">
         <PaywallOverlay
           userHourly={userHourly}
           result={result}
+          customerRate={customerRate}
           unlocked={unlocked}
           partialUnlocked={partialUnlocked}
           exitIntentVisible={exitIntentVisible}
