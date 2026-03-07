@@ -12,7 +12,7 @@ import type { ReportData } from "@/shared/types";
 
 import PermanentTrackContent from "@/components/report/PermanentTrackContent";
 import ConsultantTrackContent from "@/components/report/ConsultantTrackContent";
-import AuditOptInForm from "@/components/report/AuditOptInForm";
+
 import ReportPreviewList from "@/shared/ReportPreviewList";
 import CheckoutCTA from "@/shared/CheckoutCTA";
 
@@ -147,13 +147,12 @@ export default function Report() {
             registerSectionRef={registerSectionRef}
             leadId={report.lead_id}
             email={report.email}
+            reportId={report.id}
           />
         )}
 
-        {/* Audit opt-in form */}
-        {isFullAccess && report.email && (
-          <AuditOptInForm reportId={report.id} email={report.email} />
-        )}
+
+
 
         {/* Preview CTA */}
         {!isFullAccess && (

@@ -35,6 +35,7 @@ interface Props {
   registerSectionRef?: (section: string) => (el: HTMLDivElement | null) => void;
   leadId?: string;
   email?: string;
+  reportId?: string;
 }
 
 export default function ConsultantTrackContent({
@@ -48,6 +49,7 @@ export default function ConsultantTrackContent({
   registerSectionRef,
   leadId,
   email,
+  reportId,
 }: Props) {
   const marketRate = r.market?.rate_customer_sek_per_hour ?? 0;
   const rec = r.recommendation;
@@ -366,6 +368,7 @@ export default function ConsultantTrackContent({
           email={email}
           role={occupation}
           zone={userZone}
+          reportId={reportId}
         />
       )}
 
