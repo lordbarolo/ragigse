@@ -38,6 +38,35 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_optins: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          report_id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          report_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          report_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_optins_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       contract_version_rates: {
         Row: {
           detaljer: string | null
