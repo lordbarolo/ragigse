@@ -29,6 +29,8 @@ export default function AuditOptInForm({ reportId, email }: Props) {
       if (!error) {
         setSubmitted(true);
         trackEvent("report_section_viewed", { section: "audit_optin_submitted" });
+        // Fire-and-forget confirmation email
+        supabase.functions.invoke("send-audit-confirmation", { body: { email } }).catch(() => {});
       }
     } catch {
       // silent
