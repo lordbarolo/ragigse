@@ -14,7 +14,12 @@ type EventName =
   | "referral_confirmed"
   | "referral_unlock_shown"
   | "exit_intent_shown"
-  | "coupon_redeemed";
+  | "coupon_redeemed"
+  | "paywall_viewed"
+  | "paywall_scrolled"
+  | "paywall_cta_clicked"
+  | "payment_completed"
+  | "report_section_viewed";
 
 export function trackEvent(
   eventName: EventName,
