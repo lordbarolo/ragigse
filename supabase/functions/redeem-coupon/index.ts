@@ -31,7 +31,7 @@ serve(async (req) => {
     const { data: coupon, error: couponErr } = await supabase
       .from("coupons")
       .select("*")
-      .eq("code", code.trim().toUpperCase())
+      .ilike("code", code.trim())
       .single();
 
     if (couponErr || !coupon) {
