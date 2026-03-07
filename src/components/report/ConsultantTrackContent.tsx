@@ -1,8 +1,10 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import {
   TrendingUp,
   Lock,
+  ChevronDown,
   ArrowRight,
   BarChart3,
   MessageSquareQuote,
@@ -215,12 +217,12 @@ export default function ConsultantTrackContent({
                 <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Förhandlingsspann</p>
                 <div className="grid grid-cols-3 gap-2 text-center">
                   <div className="p-3 rounded-lg bg-accent/10 border border-accent/20">
-                    <p className="text-[10px] font-medium text-accent uppercase tracking-wide mb-1">Säkert</p>
+                    <p className="text-[10px] font-medium text-accent uppercase tracking-wide mb-1">Realistiskt</p>
                     <p className="text-base font-bold text-foreground">{fmt(rec.recommended_hourly_min)} kr/h</p>
                     <p className="text-[10px] text-muted-foreground mt-0.5">{fmt(rec.recommended_monthly_min)} kr/mån</p>
                   </div>
                   <div className="p-3 rounded-lg bg-primary/10 border border-primary/20 ring-2 ring-primary/30">
-                    <p className="text-[10px] font-medium text-primary uppercase tracking-wide mb-1">Mål</p>
+                    <p className="text-[10px] font-medium text-primary uppercase tracking-wide mb-1">Rekommenderat</p>
                     <p className="text-base font-bold text-foreground">
                       {fmt(Math.round((rec.recommended_hourly_min + rec.recommended_hourly_max) / 2))} kr/h
                     </p>
@@ -235,7 +237,7 @@ export default function ConsultantTrackContent({
                   </div>
                 </div>
                 <p className="text-[11px] text-muted-foreground text-center">
-                  Säkert = hög chans att få igenom · Mål = rekommenderat · Ambitiöst = kräver stark erfarenhet
+                  Realistiskt = hög chans att få igenom · Rekommenderat = vad vi föreslår · Ambitiöst = kräver stark erfarenhet
                 </p>
               </div>
 
@@ -403,19 +405,26 @@ export default function ConsultantTrackContent({
       {/* 7. Godkända leverantörer (full) */}
       {isConsultantFullAccess && (
         <Card className="card-shadow">
-          <CardContent className="pt-6 space-y-4">
-            <SectionHeading icon={Building2} title="Godkända leverantörer (ramavtal)" />
-            <p className="text-sm text-muted-foreground">
-              Bemanningsföretag med ramavtal för {occupation}:
-            </p>
-            <div className="grid grid-cols-2 gap-2">
-              {APPROVED_SUPPLIERS.map((s) => (
-                <div key={s} className="flex items-center gap-2 p-2 rounded-lg bg-muted/50 text-sm">
-                  <Briefcase className="w-3.5 h-3.5 text-primary shrink-0" />
-                  <span className="text-foreground">{s}</span>
+          <CardContent className="pt-6">
+            <Collapsible>
+              <CollapsibleTrigger className="flex items-center justify-between w-full group">
+                <SectionHeading icon={Building2} title="Godkända leverantörer (ramavtal)" />
+                <ChevronDown className="w-5 h-5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
+              </CollapsibleTrigger>
+              <CollapsibleContent className="space-y-4 pt-4">
+                <p className="text-sm text-muted-foreground">
+                  Bemanningsföretag med ramavtal för {occupation}:
+                </p>
+                <div className="grid grid-cols-2 gap-2">
+                  {APPROVED_SUPPLIERS.map((s) => (
+                    <div key={s} className="flex items-center gap-2 p-2 rounded-lg bg-muted/50 text-sm">
+                      <Briefcase className="w-3.5 h-3.5 text-primary shrink-0" />
+                      <span className="text-foreground">{s}</span>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </CollapsibleContent>
+            </Collapsible>
           </CardContent>
         </Card>
       )}
