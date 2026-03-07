@@ -66,7 +66,7 @@ serve(async (req) => {
 
     <p style="font-size:15px;color:#334155;line-height:1.6;">
       Har du frågor under tiden? Svara på detta mail eller kontakta oss på 
-      <a href="mailto:hej@compcare.se" style="color:#0ea5e9;text-decoration:none;">hej@compcare.se</a>.
+      <a href="mailto:info@compcare.se" style="color:#0ea5e9;text-decoration:none;">info@compcare.se</a>.
     </p>
 
     <hr style="border:none;border-top:1px solid #e2e8f0;margin:32px 0;" />
