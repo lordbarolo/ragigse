@@ -332,7 +332,8 @@ export default function ConsultantTrackContent({
 
       {/* 4. Förhandlingsrekommendationer (full) */}
       {isConsultantFullAccess && rec && (
-        <Card className="card-shadow" ref={registerSectionRef?.("negotiation_script") as unknown as React.Ref<HTMLDivElement>}>
+        <div ref={registerSectionRef?.("negotiation_script")}>
+        <Card className="card-shadow">
           <CardContent className="pt-6 space-y-4">
             <SectionHeading icon={MessageSquareQuote} title="Förhandlingsrekommendationer" />
             <ul className="space-y-3">
