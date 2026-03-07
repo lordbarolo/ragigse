@@ -351,11 +351,13 @@ export default function ConsultantTrackContent({
             </ul>
           </CardContent>
         </Card>
+        </div>
       )}
 
       {/* 5. Regionala jämförelser (full) */}
       {isConsultantFullAccess && zoneComparisons && zoneComparisons.length > 0 && (
-        <Card className="card-shadow" ref={registerSectionRef?.("regional_comparison") as unknown as React.Ref<HTMLDivElement>}>
+        <div ref={registerSectionRef?.("regional_comparison")}>
+        <Card className="card-shadow">
           <CardContent className="pt-6 space-y-4">
             <SectionHeading icon={MapPin} title="Regional jämförelse" />
             <p className="text-sm text-muted-foreground">
