@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { usePricingEngine } from "@/hooks/usePricingEngine";
 import { useRates, useLocations } from "@/hooks/useCalculator";
 import type { SurveyData } from "@/components/Survey";
@@ -28,6 +28,7 @@ import HighEarnerCard from "@/components/teaser/HighEarnerCard";
 /** Teaser page — orchestrator for the results preview */
 export default function Teaser() {
   const { leadId: urlLeadId } = useParams<{ leadId: string }>();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { calculate, result: pricingResult } = usePricingEngine();
   const { data: rates } = useRates();
@@ -41,6 +42,8 @@ export default function Teaser() {
   const [leadId, setLeadId] = useState("");
   const [reportId, setReportId] = useState("");
   const checkoutRef = useRef<HTMLDivElement>(null);
+  const [couponDiscount, setCouponDiscount] = useState<{ discount_type: "percent" | "fixed" | "free"; discount_value: number } | null>(null);
+  const couponRedeemed = useRef(false);
 
   const exitIntentVisible = useExitIntent(28_000);
 
