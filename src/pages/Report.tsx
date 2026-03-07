@@ -12,6 +12,7 @@ import type { ReportData } from "@/shared/types";
 
 import PermanentTrackContent from "@/components/report/PermanentTrackContent";
 import ConsultantTrackContent from "@/components/report/ConsultantTrackContent";
+import AuditOptInForm from "@/components/report/AuditOptInForm";
 import ReportPreviewList from "@/shared/ReportPreviewList";
 import CheckoutCTA from "@/shared/CheckoutCTA";
 
