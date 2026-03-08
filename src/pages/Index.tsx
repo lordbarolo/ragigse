@@ -4,6 +4,7 @@ import Survey from "@/components/Survey";
 import { Shield } from "lucide-react";
 import { trackEvent } from "@/lib/trackEvent";
 import { supabase } from "@/integrations/supabase/client";
+import logo from "@/assets/logo.png";
 
 const FAQ_ITEMS = [
   {
