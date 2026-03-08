@@ -26,6 +26,7 @@ import ReportPreviewList from "@/shared/ReportPreviewList";
 import CheckoutCTA from "@/shared/CheckoutCTA";
 import ReferralBottomSheet from "@/components/teaser/ReferralBottomSheet";
 import HighEarnerCard from "@/components/teaser/HighEarnerCard";
+import EmailGate from "@/components/teaser/EmailGate";
 
 /** Teaser page — orchestrator for the results preview */
 export default function Teaser() {
