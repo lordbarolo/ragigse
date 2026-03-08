@@ -12,6 +12,10 @@ const PRICES: Record<string, { id: string; mode: "payment" | "subscription" }> =
     id: "price_1T89nmH6keeMaRQjc7ruhDC3",
     mode: "payment",
   },
+  single_29: {
+    id: "price_1T8hgPH6keeMaRQjCj9y7pWZ",
+    mode: "payment",
+  },
 };
 
 serve(async (req) => {
