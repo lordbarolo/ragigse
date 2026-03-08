@@ -91,7 +91,7 @@ export default function ReferralBottomSheet({ ctaRef, leadId, referrerEmail, reg
               onClick={handleNoThanks}
               className="w-full text-center text-sm text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
             >
-              Nej tack, jag betalar 49 kr
+              Nej tack, jag betalar {priceKr} kr
             </button>
           </div>
         </SheetContent>
