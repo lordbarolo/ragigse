@@ -264,7 +264,7 @@ export type Database = {
         Row: {
           created_at: string
           current_salary: number | null
-          email: string
+          email: string | null
           employment_type: string
           experience: number | null
           id: string
@@ -277,7 +277,7 @@ export type Database = {
         Insert: {
           created_at?: string
           current_salary?: number | null
-          email: string
+          email?: string | null
           employment_type: string
           experience?: number | null
           id?: string
@@ -290,7 +290,7 @@ export type Database = {
         Update: {
           created_at?: string
           current_salary?: number | null
-          email?: string
+          email?: string | null
           employment_type?: string
           experience?: number | null
           id?: string
