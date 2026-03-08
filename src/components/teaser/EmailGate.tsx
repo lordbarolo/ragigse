@@ -25,8 +25,8 @@ export default function EmailGate({ onEmailSubmit, loading, coupon, isFree, pric
     <div className="space-y-3">
       <div className="flex items-center gap-2 mb-1">
         <Mail className="w-4 h-4 text-muted-foreground" />
-        <label className="text-sm font-medium text-foreground">
-          Ange din e-post — vi skickar rapporten hit
+        <label className="text-sm font-medium text-foreground leading-snug">
+          Ange din e-post så visar vi: din rekommenderade ersättning, förhandlingsspann, vad vårdgivaren betalar till bemanningsföretag och ett utförligt förhandlingsunderlag som kan öka din ersättning redan imorgon.
         </label>
       </div>
       <Input
