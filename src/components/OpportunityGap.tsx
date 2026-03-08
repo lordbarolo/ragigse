@@ -7,16 +7,19 @@ interface OpportunityGapProps {
   nearestHigherKommun?: string | null;
 }
 
+function formatKr(value: number): string {
+  return value.toLocaleString("sv-SE");
+}
+
 export default function OpportunityGap({ userHourly, marketHigh, employmentType, nearestHigherKommun }: OpportunityGapProps) {
-  const diffPercent = Math.round(((marketHigh - userHourly) / marketHigh) * 100);
+  const diffHourly = Math.max(0, marketHigh - userHourly);
+  const diffMonthly = diffHourly * 167;
   const isUnderpaid = userHourly < marketHigh;
 
-  // Show for any positive gap
-  if (!isUnderpaid || diffPercent < 0) return null;
+  if (!isUnderpaid || diffHourly <= 0) return null;
 
-  const isSmallGap = diffPercent < 5;
+  const isSmallGap = diffHourly < 20; // roughly <5% at typical rates
 
-  // Small gap: show location-based message if available, otherwise hide
   if (isSmallGap && !nearestHigherKommun) return null;
 
   return (
@@ -34,14 +37,12 @@ export default function OpportunityGap({ userHourly, marketHigh, employmentType,
             <p className="text-base font-bold text-foreground leading-tight">
               {isSmallGap
                 ? `Du kan tjäna mer i ${nearestHigherKommun}`
-                : diffPercent >= 10
-                  ? `Din ${employmentType === "foretagare" ? "ersättning" : "lön"} kan öka med mer än 10%`
-                  : `Din ${employmentType === "foretagare" ? "ersättning" : "lön"} kan öka med mer än 5%`}
+                : `Din ${employmentType === "foretagare" ? "ersättning" : "lön"} kan öka med ${formatKr(diffHourly)} kr/h`}
             </p>
             <p className="text-sm text-muted-foreground mt-1">
               {isSmallGap
                 ? "Baserat på zonindelade ramavtalspriser"
-                : "Baserat på offentliga ramavtalspriser i din zon"}
+                : `Det motsvarar ca ${formatKr(diffMonthly)} kr/mån`}
             </p>
           </div>
         </div>
