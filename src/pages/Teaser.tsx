@@ -443,6 +443,10 @@ export default function Teaser() {
           kommun={survey.kommun}
           nearestHigherKommun={nearestHigherKommun}
           isAboveThreshold={isAboveThreshold}
+          userHourly={userHourly}
+          marketHigh={noisedResult?.high ?? result?.high ?? 0}
+          userMonthly={userMonthly}
+          benchmarkP75={benchmarkMonthly?.p75 ?? 0}
         />
 
         {!isPermanent && isAboveThreshold && (

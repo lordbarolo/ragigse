@@ -6,20 +6,30 @@ interface Props {
   kommun: string;
   nearestHigherKommun?: string | null;
   isAboveThreshold?: boolean;
+  userHourly?: number;
+  marketHigh?: number;
+  userMonthly?: number;
+  benchmarkP75?: number;
+}
+
+function formatKr(value: number): string {
+  return value.toLocaleString("sv-SE");
 }
 
 export default function EarningsBanner({
   isUnderpaid, diffPercent, isPermanent, yrke, kommun, nearestHigherKommun, isAboveThreshold,
+  userHourly = 0, marketHigh = 0, userMonthly = 0, benchmarkP75 = 0,
 }: Props) {
   if (isPermanent) {
     if (!isUnderpaid || diffPercent <= 0) return null;
+    const diffMonthly = Math.max(0, benchmarkP75 - userMonthly);
     return (
       <div className="rounded-lg border border-border bg-card p-6 text-center card-shadow">
         <p className="text-muted-foreground text-sm font-medium">
           Enligt officiell lönestatistik kan du tjäna
         </p>
         <p className="text-3xl sm:text-4xl font-extrabold text-foreground mt-2 tracking-tight">
-          upp till {diffPercent}% mer
+          {formatKr(diffMonthly)} kr/mån mer
         </p>
         <p className="text-muted-foreground text-xs mt-2">
           Baserat på Medlingsinstitutets lönestatistik för {yrke}
@@ -42,10 +52,14 @@ export default function EarningsBanner({
   }
 
   if (isUnderpaid && diffPercent > 0) {
+    const diffHourly = Math.max(0, marketHigh - userHourly);
     return (
       <div className="rounded-lg border border-border bg-card p-6 text-center card-shadow">
-        <p className="text-foreground text-base font-semibold leading-relaxed">
-          I {kommun} kan du tjäna mer än du gör idag.
+        <p className="text-muted-foreground text-sm font-medium">
+          Baserat på ramavtalspriserna i {kommun} kan du tjäna
+        </p>
+        <p className="text-3xl sm:text-4xl font-extrabold text-foreground mt-2 tracking-tight">
+          {formatKr(diffHourly)} kr/h mer
         </p>
         <p className="text-muted-foreground text-sm mt-2">
           Vill du se exakta belopp och få förhandlingstips?
