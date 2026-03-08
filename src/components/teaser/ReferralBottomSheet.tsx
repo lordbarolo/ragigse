@@ -10,9 +10,10 @@ interface Props {
   referrerEmail: string;
   region?: string;
   onCheckout: (plan: "single") => void;
+  priceKr?: number;
 }
 
-export default function ReferralBottomSheet({ ctaRef, leadId, referrerEmail, region, onCheckout }: Props) {
+export default function ReferralBottomSheet({ ctaRef, leadId, referrerEmail, region, onCheckout, priceKr = 49 }: Props) {
   const [visible, setVisible] = useState(false);
   const [referralOpen, setReferralOpen] = useState(false);
   const shownRef = useRef(false);
@@ -90,7 +91,7 @@ export default function ReferralBottomSheet({ ctaRef, leadId, referrerEmail, reg
               onClick={handleNoThanks}
               className="w-full text-center text-sm text-muted-foreground underline underline-offset-2 hover:text-foreground transition-colors"
             >
-              Nej tack, jag betalar 49 kr
+              Nej tack, jag betalar {priceKr} kr
             </button>
           </div>
         </SheetContent>

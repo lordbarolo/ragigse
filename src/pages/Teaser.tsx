@@ -519,6 +519,7 @@ export default function Teaser() {
         referrerEmail={survey.email}
         region={regionName}
         onCheckout={onCheckout}
+        priceKr={priceKr}
       />
     </div>
   );
