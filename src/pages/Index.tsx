@@ -204,9 +204,15 @@ const Index = () => {
       <footer className="bg-background border-t border-border py-10 text-center text-sm text-muted-foreground space-y-2">
         <p>© 2026 CompCare.se · Data från offentliga ramavtal</p>
         <p className="text-xs text-muted-foreground/70">Fler branscher kommer snart</p>
-        <Link to="/vanliga-fragor" className="text-primary hover:underline text-sm">
-          Vanliga frågor om ersättning →
-        </Link>
+        <div className="flex items-center justify-center gap-3">
+          <Link to="/vanliga-fragor" className="text-primary hover:underline text-sm">
+            Vanliga frågor om ersättning
+          </Link>
+          <span className="text-muted-foreground/50">·</span>
+          <Link to="/integritetspolicy" className="text-primary hover:underline text-sm">
+            Integritetspolicy
+          </Link>
+        </div>
       </footer>
     </div>
   );
