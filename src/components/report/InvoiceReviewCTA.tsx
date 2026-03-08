@@ -16,7 +16,7 @@ interface Props {
 
 export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }: Props) {
   const [wantsReview, setWantsReview] = useState(false);
-  const [confirmedEmail, setConfirmedEmail] = useState(false);
+  // confirmedEmail no longer needed — single opt-in checkbox
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [alreadyOptedIn, setAlreadyOptedIn] = useState(false);
@@ -28,7 +28,7 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }
     }
   }, [leadId]);
 
-  const canSubmit = wantsReview && confirmedEmail && !loading && !submitted;
+  const canSubmit = wantsReview && !loading && !submitted;
 
   const handleSubmit = async () => {
     if (!canSubmit) return;
@@ -100,25 +100,9 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }
           <label htmlFor="invoice-review" className="text-sm text-muted-foreground leading-relaxed cursor-pointer">
             Ja, kontakta mig för en kostnadsfri fakturagranskning
           </label>
-          </label>
         </div>
 
         {wantsReview && (
-          <div className="flex items-start gap-3 pl-0.5">
-            <Checkbox
-              id="confirm-email-review"
-              checked={confirmedEmail}
-              onCheckedChange={(v) => setConfirmedEmail(v === true)}
-              className="mt-0.5"
-            />
-            <label htmlFor="confirm-email-review" className="text-sm text-muted-foreground leading-relaxed cursor-pointer">
-              Jag bekräftar att min e-postadress är{" "}
-              <span className="font-medium text-foreground">{email}</span>
-            </label>
-          </div>
-        )}
-
-        {wantsReview && confirmedEmail && (
           <Button onClick={handleSubmit} disabled={!canSubmit} className="w-full gap-2">
             {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
             Ja, kontakta mig
