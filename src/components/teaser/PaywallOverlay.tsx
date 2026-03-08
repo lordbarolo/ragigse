@@ -30,52 +30,29 @@ export default function PaywallOverlay({
 
   return (
     <div className="space-y-4">
-      {/* Bars with lock overlay */}
-      <div className="relative">
-        <div className="space-y-4">
-          <BarRow
-            label="Din nuvarande ersättning"
-            value={userHourly}
-            max={barMax}
-            color="bg-muted-foreground/30"
-          />
-          <BarRow
-            label="Vad regionen betalar bemanningsföretag"
-            value={regionPays}
-            max={barMax}
-            color="bg-primary"
-            blurred={true}
-          />
-          <BarRow
-            label="Rekommenderad ersättning"
-            value={result.high}
-            max={barMax}
-            color="bg-primary/50"
-            partialReveal={false}
-            animateAndBlurAt={userHourly}
-          />
-        </div>
-
-        {!unlocked && !partialUnlocked && !exitIntentVisible && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="backdrop-blur-md bg-card/80 rounded-lg p-6 text-center border border-border shadow-lg max-w-xs w-full">
-              <Lock className="w-7 h-7 text-primary mx-auto mb-2" />
-              <p className="font-bold text-foreground text-sm">Lås upp full analys</p>
-              <p className="text-xs text-muted-foreground mt-1 mb-4">
-                Se exakta siffror och förhandlingstips
-              </p>
-              <button
-                data-cta
-                disabled={checkoutLoading !== null}
-                onClick={() => onCheckout("single")}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-lg font-semibold text-sm bg-primary text-primary-foreground hover:opacity-90 transition-all disabled:opacity-70"
-              >
-                {checkoutLoading === "single" ? "Laddar..." : `Köp rapport — ${priceKr} kr`}
-                {checkoutLoading !== "single" && <ArrowRight className="w-4 h-4" />}
-              </button>
-            </div>
-          </div>
-        )}
+      {/* Bars — always visible without overlay */}
+      <div className="space-y-4">
+        <BarRow
+          label="Din nuvarande ersättning"
+          value={userHourly}
+          max={barMax}
+          color="bg-muted-foreground/30"
+        />
+        <BarRow
+          label="Vad regionen betalar bemanningsföretag"
+          value={regionPays}
+          max={barMax}
+          color="bg-primary"
+          blurred={true}
+        />
+        <BarRow
+          label="Rekommenderad ersättning"
+          value={result.high}
+          max={barMax}
+          color="bg-primary/50"
+          partialReveal={false}
+          animateAndBlurAt={userHourly}
+        />
       </div>
 
       {/* Exit intent referral — shown below bars when triggered */}
