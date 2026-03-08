@@ -341,7 +341,7 @@ export default function Teaser() {
           : 49
         : 49;
       trackEvent("paywall_cta_clicked", { price, coupon_applied: !!couponDiscount, coupon_code: couponCode });
-      checkout("single", { email: emailValue, leadId, reportId, coupon: couponDiscount });
+      checkout("single", { email: emailValue, leadId, reportId: activeReportId, coupon: couponDiscount });
     }
   };
 
