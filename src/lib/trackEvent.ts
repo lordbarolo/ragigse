@@ -23,6 +23,8 @@ type EventName =
   | "report_section_viewed"
   | "invoice_review_opted_in"
   | "survey_step_viewed"
+  | "email_collected"
+  | "free_report_unlocked"
   | "time_on_page";
 
 export function trackEvent(

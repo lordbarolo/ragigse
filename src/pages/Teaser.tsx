@@ -26,6 +26,7 @@ import ReportPreviewList from "@/shared/ReportPreviewList";
 import CheckoutCTA from "@/shared/CheckoutCTA";
 import ReferralBottomSheet from "@/components/teaser/ReferralBottomSheet";
 import HighEarnerCard from "@/components/teaser/HighEarnerCard";
+import EmailGate from "@/components/teaser/EmailGate";
 
 /** Teaser page — orchestrator for the results preview */
 export default function Teaser() {
@@ -43,6 +44,8 @@ export default function Teaser() {
   const [loadError, setLoadError] = useState(false);
   const [leadId, setLeadId] = useState("");
   const [reportId, setReportId] = useState("");
+  const [email, setEmail] = useState("");
+  const [emailSaving, setEmailSaving] = useState(false);
   const checkoutRef = useRef<HTMLDivElement>(null);
   const [couponDiscount, setCouponDiscount] = useState<{ discount_type: "percent" | "fixed" | "free"; discount_value: number } | null>(null);
   const couponRedeemed = useRef(false);
@@ -261,7 +264,65 @@ export default function Teaser() {
     return nearest.kommun;
   }, [isPermanent, pricingResult, rates, locations, survey?.kommun]);
 
+  const isFree = couponDiscount?.discount_type === "free" ||
+    (couponDiscount?.discount_type === "percent" && couponDiscount.discount_value >= 100);
+
+  const saveEmail = async (emailValue: string) => {
+    setEmailSaving(true);
+    try {
+      await supabase.functions.invoke("save-email", {
+        body: { lead_id: leadId, report_id: reportId, email: emailValue },
+      });
+      setEmail(emailValue);
+      // Update sessionStorage
+      if (survey) {
+        const updated = { ...survey, email: emailValue };
+        sessionStorage.setItem("surveyData", JSON.stringify(updated));
+      }
+      trackEvent("email_collected", { source: "teaser" });
+    } catch {
+      toast({ title: "Kunde inte spara e-post, försök igen", variant: "destructive" });
+      setEmailSaving(false);
+      return;
+    }
+    setEmailSaving(false);
+  };
+
+  const handleEmailSubmit = async (emailValue: string) => {
+    await saveEmail(emailValue);
+    if (isFree) {
+      // Free coupon: redeem and go to report
+      try {
+        const couponCode = searchParams.get("coupon") || sessionStorage.getItem("couponCode");
+        if (couponCode) {
+          await supabase.functions.invoke("redeem-coupon", {
+            body: { code: couponCode, report_id: reportId },
+          });
+        }
+        trackEvent("free_report_unlocked", { coupon_code: couponCode });
+        navigate(`/rapport/${reportId}`);
+      } catch {
+        toast({ title: "Kunde inte öppna rapporten", variant: "destructive" });
+      }
+    } else {
+      // Paid: proceed to checkout
+      const couponCode = searchParams.get("coupon") || null;
+      const price = couponDiscount
+        ? couponDiscount.discount_type === "percent" ? Math.round(49 * (1 - couponDiscount.discount_value / 100))
+          : couponDiscount.discount_type === "fixed" ? Math.max(0, 49 - couponDiscount.discount_value)
+          : 49
+        : 49;
+      trackEvent("paywall_cta_clicked", { price, coupon_applied: !!couponDiscount, coupon_code: couponCode });
+      checkout("single", { email: emailValue, leadId, reportId, coupon: couponDiscount });
+    }
+  };
+
   const onCheckout = (plan: "single" | "yearly") => {
+    if (!email) {
+      // Scroll to email gate
+      checkoutRef.current?.scrollIntoView({ behavior: "smooth" });
+      return;
+    }
     const couponCode = searchParams.get("coupon") || null;
     const price = couponDiscount
       ? couponDiscount.discount_type === "free" ? 0
@@ -269,7 +330,7 @@ export default function Teaser() {
         : Math.max(0, 49 - couponDiscount.discount_value)
       : 49;
     trackEvent("paywall_cta_clicked", { price, coupon_applied: !!couponDiscount, coupon_code: couponCode });
-    checkout(plan, { email: survey?.email || "", leadId, reportId, coupon: couponDiscount });
+    checkout(plan, { email, leadId, reportId, coupon: couponDiscount });
   };
 
   // Error state
@@ -376,13 +437,26 @@ export default function Teaser() {
         )}
 
         <div ref={checkoutRef}>
-          <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="inline" coupon={couponDiscount} />
+          {!email ? (
+            <div className="rounded-lg border border-border bg-card p-5 card-shadow">
+              <EmailGate
+                onEmailSubmit={handleEmailSubmit}
+                loading={emailSaving || checkoutLoading !== null}
+                coupon={couponDiscount}
+                isFree={isFree}
+              />
+            </div>
+          ) : (
+            <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="inline" coupon={couponDiscount} />
+          )}
         </div>
 
         <ReportPreviewList isPermanent={isPermanent} />
       </main>
 
-      <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="sticky" coupon={couponDiscount} />
+      {email && !isFree && (
+        <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="sticky" coupon={couponDiscount} />
+      )}
 
       <ReferralBottomSheet
         ctaRef={checkoutRef}

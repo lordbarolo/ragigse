@@ -23,8 +23,7 @@ export interface SurveyData {
   currentSalary: number;
 }
 
-const TOTAL_STEPS = 6;
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const TOTAL_STEPS = 5;
 
 type OccupationCategory = "" | "lakare" | "ssk";
 type DoctorSubRole = "" | "at" | "st" | "leg" | "specialist";
@@ -122,7 +121,7 @@ export default function Survey() {
   const stepEntryTime = useRef<number>(Date.now());
   const surveyStarted = useRef(false);
 
-  const STEP_NAMES = ["yrkeskategori", "specialisering", "kommun", "anstallningsform", "ersattning", "epost"];
+  const STEP_NAMES = ["yrkeskategori", "specialisering", "kommun", "anstallningsform", "ersattning"];
 
   // Reset step timer and fire step_viewed when step changes
   useEffect(() => {
@@ -229,7 +228,6 @@ export default function Survey() {
       case 3: return !!data.kommun;
       case 4: return !!data.employmentType;
       case 5: return data.currentSalary > 0;
-      case 6: return EMAIL_REGEX.test(data.email.trim());
       default: return false;
     }
   })();
@@ -241,13 +239,12 @@ export default function Survey() {
       return;
     }
 
-    // Step 7: save & navigate
+    // Save & navigate (no email yet — collected on teaser)
     setSaving(true);
     try {
       const leadId = crypto.randomUUID();
       const { error } = await supabase.from("leads").insert({
         id: leadId,
-        email: data.email.trim().toLowerCase(),
         employment_type: data.employmentType,
         yrke: data.yrke,
         kommun: data.kommun,
@@ -261,7 +258,6 @@ export default function Survey() {
       const { data: reportData, error: reportError } = await supabase.functions.invoke("create-report", {
         body: {
           lead_id: leadId,
-          email: data.email.trim().toLowerCase(),
           occupation: data.yrke,
           employment_type: data.employmentType,
           kommun: data.kommun,
@@ -279,9 +275,9 @@ export default function Survey() {
       sessionStorage.setItem("leadId", leadId);
       sessionStorage.setItem("reportId", reportData.report_id);
       sessionStorage.setItem("surveyData", JSON.stringify({ ...data, track }));
-      if (reportData.ab_variant) sessionStorage.setItem("abVariant", reportData.ab_variant); // kept for analytics
+      if (reportData.ab_variant) sessionStorage.setItem("abVariant", reportData.ab_variant);
       if (benchmarkResult) sessionStorage.setItem("benchmarkResult", JSON.stringify(benchmarkResult));
-      trackStepCompleted(6);
+      trackStepCompleted(5);
       const totalTime = surveyStartTime.current ? Math.round((Date.now() - surveyStartTime.current) / 1000) : 0;
       trackEvent("survey_completed", {
         total_steps: TOTAL_STEPS,
@@ -624,33 +620,6 @@ export default function Survey() {
           </StepWrapper>
         )}
 
-        {/* Step 6: E-post */}
-        {step === 6 && (
-          <StepWrapper
-            icon={<Mail className="w-6 h-6" />}
-            title="Vart skickar vi din analys?"
-            subtitle="Du ser resultatet direkt — vi skickar även en kopia till din e-post"
-          >
-            <div className="space-y-3">
-              <Input
-                type="email"
-                inputMode="email"
-                autoComplete="email"
-                placeholder="namn@exempel.se"
-                value={data.email}
-                onChange={(e) => setData({ ...data, email: e.target.value })}
-                className="h-14 text-base"
-                autoFocus
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && canProceed) handleNext();
-                }}
-              />
-              <p className="text-xs text-muted-foreground">
-                Din e-post delas aldrig vidare.
-              </p>
-            </div>
-          </StepWrapper>
-        )}
       </div>
 
       {/* Navigation */}
@@ -663,10 +632,10 @@ export default function Survey() {
             <ChevronLeft className="w-4 h-4" />
             Tillbaka
           </button>
-          {(step === 5 || step === 6) && (
+          {step === 5 && (
             <button
               onClick={() => {
-                if (step === 5 && data.currentSalary <= 0) {
+                if (data.currentSalary <= 0) {
                   toast.error("Ange ersättning innan du fortsätter");
                   return;
                 }
@@ -680,17 +649,8 @@ export default function Survey() {
                   : "bg-muted text-muted-foreground cursor-not-allowed"
               }`}
             >
-              {step === 6 ? (
-                <>
-                  {saving ? "Sparar..." : "Visa min analys"}
-                  {!saving && <ArrowRight className="w-5 h-5" />}
-                </>
-              ) : (
-                <>
-                  Fortsätt
-                  <ChevronRight className="w-4 h-4" />
-                </>
-              )}
+              {saving ? "Sparar..." : "Visa min analys"}
+              {!saving && <ArrowRight className="w-5 h-5" />}
             </button>
           )}
         </div>
