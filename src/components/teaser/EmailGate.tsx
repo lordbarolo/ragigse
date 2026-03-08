@@ -14,6 +14,7 @@ interface Props {
   loading: boolean;
   coupon?: CouponInfo | null;
   isFree: boolean;
+  priceKr?: number;
 }
 
 export default function EmailGate({ onEmailSubmit, loading, coupon, isFree }: Props) {
