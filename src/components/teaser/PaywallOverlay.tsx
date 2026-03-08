@@ -16,6 +16,7 @@ interface Props {
   regionName: string;
   onPartialUnlock: () => void;
   isUnderpaid: boolean;
+  priceKr?: number;
 }
 
 export default function PaywallOverlay({
