@@ -87,10 +87,8 @@ export default function Survey() {
   const [occupationCategory, setOccupationCategory] = useState<OccupationCategory>("");
 
   // Step 2 state
-  const [doctorSubRole, setDoctorSubRole] = useState<DoctorSubRole>("");
-  const [nurseSubRole, setNurseSubRole] = useState<NurseSubRole>("");
-  const [specialization, setSpecialization] = useState("");
-  const [subStep, setSubStep] = useState(0); // 0=choose role, 1=choose specialization
+  // Step 2: single role value from dropdown
+  const [roleDropdownValue, setRoleDropdownValue] = useState("");
 
   // Step 3 state
   const [selectedRegion, setSelectedRegion] = useState("");
