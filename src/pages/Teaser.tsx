@@ -502,7 +502,7 @@ export default function Teaser() {
               />
             </div>
           ) : (
-            <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="inline" coupon={couponDiscount} />
+            <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="inline" coupon={couponDiscount} priceKr={priceKr} />
           )}
         </div>
 
