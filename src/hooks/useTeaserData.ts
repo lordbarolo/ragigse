@@ -75,9 +75,8 @@ export function useTeaserData(
     ? (benchmarkMonthly ? benchmarkMonthly.gapPct : 0)
     : (result ? Math.round(((result.high - userHourly) / result.high) * 100) : 0);
 
-  // Consultant earning ≥96% of customer rate — no room for negotiation in this zone
-  const customerRate = pricingResult?.rate_customer_sek_per_hour ?? 0;
-  const isAboveThreshold = !isPermanent && customerRate > 0 && userHourly >= customerRate * 0.96;
+  // Above threshold = user earns more than recommended max (after margin)
+  const isAboveThreshold = !isPermanent && result ? userHourly >= result.high : false;
 
   return { isPermanent, result, noisedResult, benchmarkMonthly, userMonthly, userHourly, isUnderpaid, diffPercent, isAboveThreshold };
 }
