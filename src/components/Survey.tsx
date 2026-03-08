@@ -133,24 +133,25 @@ export default function Survey() {
   const { calculate: pricingCalculate } = usePricingEngine();
   const { calculate: benchmarkCalculate, result: benchmarkResult } = useBenchmarkEngine();
 
-  // Derive yrke value from selections
+  // Derive yrke value from dropdown selection
   const resolvedYrke = useMemo(() => {
+    if (!roleDropdownValue) return "";
     if (occupationCategory === "lakare") {
-      if (doctorSubRole === "leg") return "Legitimerad läkare";
-      if (doctorSubRole === "st") return "ST-läkare";
-      if (doctorSubRole === "specialist" && specialization) {
-        return `Specialistläkare ${specialization.toLowerCase()}`;
-      }
+      if (roleDropdownValue === "__leg") return "Legitimerad läkare";
+      if (roleDropdownValue === "__st") return "ST-läkare";
+      if (roleDropdownValue === "__ovrig") return "Specialistläkare";
+      // It's a specialization name
+      return `Specialistläkare ${roleDropdownValue.toLowerCase()}`;
     }
     if (occupationCategory === "ssk") {
-      if (nurseSubRole === "allman") return "Sjuksköterska";
-      if (nurseSubRole === "barnmorska") return "Barnmorska";
-      if (nurseSubRole === "specialist" && specialization) {
-        return nurseValueMap[specialization] || specialization;
-      }
+      if (roleDropdownValue === "__allman") return "Sjuksköterska";
+      if (roleDropdownValue === "__barnmorska") return "Barnmorska";
+      if (roleDropdownValue === "__ovrig") return "Specialistsjuksköterska";
+      // It's a nurse specialization name
+      return nurseValueMap[roleDropdownValue] || roleDropdownValue;
     }
     return "";
-  }, [occupationCategory, doctorSubRole, nurseSubRole, specialization]);
+  }, [occupationCategory, roleDropdownValue]);
 
   // Keep data.yrke in sync
   useEffect(() => {
