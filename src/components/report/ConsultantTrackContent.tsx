@@ -429,34 +429,7 @@ export default function ConsultantTrackContent({
         </div>
       )}
 
-      {/* 7. Godkända leverantörer (full) */}
-      {isConsultantFullAccess && (
-        <div ref={registerSectionRef?.("supplier_list")}>
-        <Card className="card-shadow">
-          <CardContent className="pt-6">
-            <Collapsible>
-              <CollapsibleTrigger className="flex items-center justify-between w-full group">
-                <SectionHeading icon={Building2} title="Godkända leverantörer (ramavtal)" />
-                <ChevronDown className="w-5 h-5 text-muted-foreground transition-transform group-data-[state=open]:rotate-180" />
-              </CollapsibleTrigger>
-              <CollapsibleContent className="space-y-4 pt-4">
-                <p className="text-sm text-muted-foreground">
-                  Bemanningsföretag med ramavtal för {occupation}:
-                </p>
-                <div className="grid grid-cols-2 gap-2">
-                  {APPROVED_SUPPLIERS.map((s) => (
-                    <div key={s} className="flex items-center gap-2 p-2 rounded-lg bg-muted/50 text-sm">
-                      <Briefcase className="w-3.5 h-3.5 text-primary shrink-0" />
-                      <span className="text-foreground">{s}</span>
-                    </div>
-                  ))}
-                </div>
-              </CollapsibleContent>
-            </Collapsible>
-          </CardContent>
-        </Card>
-        </div>
-      )}
+      {/* 7. Godkända leverantörer — dold tillsvidare */}
     </>
   );
 }
