@@ -325,18 +325,20 @@ export default function Survey() {
 
   return (
     <div className="w-full max-w-lg mx-auto">
-      {/* Progress bar — thin Stripe-style */}
-      <div className="mb-10">
-        <div className="flex justify-between items-center text-xs text-muted-foreground mb-2">
-          <span className="font-medium">Steg {step} av {TOTAL_STEPS}</span>
+      {/* Progress bar — hidden on step 1 to save space */}
+      {step > 1 && (
+        <div className="mb-10">
+          <div className="flex justify-between items-center text-xs text-muted-foreground mb-2">
+            <span className="font-medium">Steg {step} av {TOTAL_STEPS}</span>
+          </div>
+          <div className="h-1 bg-border rounded-full overflow-hidden">
+            <div
+              className="h-full bg-primary rounded-full transition-all duration-500 ease-out"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
         </div>
-        <div className="h-1 bg-border rounded-full overflow-hidden">
-          <div
-            className="h-full bg-primary rounded-full transition-all duration-500 ease-out"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-      </div>
+      )}
 
       <div className="min-h-[280px] flex flex-col">
 
