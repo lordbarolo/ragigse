@@ -281,20 +281,52 @@ export default function Teaser() {
       return;
     }
 
+    // Ensure we have a reportId — if missing, create report on-the-fly
+    let activeReportId = reportId;
+    if (!activeReportId && leadId && survey) {
+      try {
+        const { data: rData, error: rErr } = await supabase.functions.invoke("create-report", {
+          body: {
+            lead_id: leadId,
+            email: emailValue,
+            occupation: survey.yrke,
+            employment_type: survey.employmentType,
+            kommun: survey.kommun,
+            current_salary: survey.currentSalary,
+            salary_type: survey.salaryType,
+            track: "consultant",
+          },
+        });
+        if (!rErr && rData?.report_id) {
+          activeReportId = rData.report_id;
+          setReportId(activeReportId);
+          sessionStorage.setItem("reportId", activeReportId);
+        }
+      } catch {
+        // Fall through — checkout will fail gracefully
+      }
+    }
+
+    if (!activeReportId) {
+      toast({ title: "Kunde inte skapa rapport, försök igen", variant: "destructive" });
+      setEmailSaving(false);
+      return;
+    }
+
     if (isFree) {
       // Free coupon: redeem and go to report
       try {
         const couponCode = searchParams.get("coupon") || sessionStorage.getItem("couponCode");
         if (couponCode) {
           const { data, error } = await supabase.functions.invoke("redeem-coupon", {
-            body: { code: couponCode, report_id: reportId },
+            body: { code: couponCode, report_id: activeReportId },
           });
           if (error) throw error;
           if (data?.error) throw new Error(data.error);
         }
         trackEvent("free_report_unlocked", { coupon_code: couponCode });
         setEmailSaving(false);
-        navigate(`/rapport/${reportId}`);
+        navigate(`/rapport/${activeReportId}`);
       } catch (err: any) {
         toast({ title: err?.message || "Kunde inte öppna rapporten", variant: "destructive" });
         setEmailSaving(false);
