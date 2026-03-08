@@ -10,6 +10,7 @@ interface Props {
   referrerEmail: string;
   region?: string;
   onCheckout: (plan: "single") => void;
+  priceKr?: number;
 }
 
 export default function ReferralBottomSheet({ ctaRef, leadId, referrerEmail, region, onCheckout }: Props) {
