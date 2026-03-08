@@ -3,6 +3,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Survey from "@/components/Survey";
 import { Shield } from "lucide-react";
 import { trackEvent } from "@/lib/trackEvent";
+import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 import { supabase } from "@/integrations/supabase/client";
 import logoDark from "@/assets/logo-dark.png";
 
@@ -58,6 +59,8 @@ const webAppJsonLd = {
 const Index = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+
+  useTimeOnPage("landing");
 
   useEffect(() => {
     trackEvent("landing_viewed");

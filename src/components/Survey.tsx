@@ -124,9 +124,13 @@ export default function Survey() {
 
   const STEP_NAMES = ["yrkeskategori", "specialisering", "kommun", "anstallningsform", "ersattning", "epost"];
 
-  // Reset step timer when step changes
+  // Reset step timer and fire step_viewed when step changes
   useEffect(() => {
     stepEntryTime.current = Date.now();
+    trackEvent("survey_step_viewed", {
+      step_number: step,
+      step_name: STEP_NAMES[step - 1] || `step_${step}`,
+    });
   }, [step]);
 
   const trackStepCompleted = useCallback((stepNum: number) => {

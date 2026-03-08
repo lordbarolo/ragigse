@@ -13,6 +13,7 @@ import { useExitIntent } from "@/hooks/useExitIntent";
 import OpportunityGap from "@/components/OpportunityGap";
 
 import { trackEvent } from "@/lib/trackEvent";
+import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 import { useCheckout } from "@/shared/useCheckout";
 import { useTeaserData } from "@/hooks/useTeaserData";
 
@@ -47,6 +48,7 @@ export default function Teaser() {
   const couponRedeemed = useRef(false);
 
   const exitIntentVisible = useExitIntent(28_000);
+  useTimeOnPage("teaser", !!survey);
   const scrollTracked = useRef<Set<number>>(new Set());
   const paywallViewedRef = useRef(false);
 
