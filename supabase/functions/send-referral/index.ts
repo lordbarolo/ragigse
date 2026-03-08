@@ -54,7 +54,7 @@ serve(async (req) => {
       const emailHtml = `
         <div style="font-family: 'Inter', Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #1a1a2e;">
           <p>Hej!</p>
-          <p>En kollega till dig har precis använt vår lönekoll för att se om hen ligger rätt i förhållande till de senaste ramavtalspriserna i <strong>${regionDisplay}</strong>.</p>
+          <p>En kollega till dig har precis använt vår ersättningskoll för att se om hen ligger rätt i förhållande till de senaste ramavtalspriserna i <strong>${regionDisplay}</strong>.</p>
           <p>Din kollega tyckte att även du borde göra en koll. Det tar bara 30 sekunder att se om du är en av de 75% som faktiskt är underbetalda i förhållande till vad kommunerna och regionerna faktiskt betalar bemanningsbolagen.</p>
           <p style="margin: 24px 0;">
             <a href="${homepageLink}" style="display: inline-block; padding: 12px 28px; background: linear-gradient(135deg, #1565c0, #0d47a1); color: #fff; text-decoration: none; border-radius: 8px; font-weight: 600;">Kolla din ersättning här</a>

@@ -180,7 +180,8 @@ export default function Report() {
                 className="flex-1 gap-2"
                 onClick={() => {
                   const shareUrl = window.location.origin;
-                  const text = `Jag har precis tagit reda på mitt verkliga löneutrymme som ${report.occupation} med CompCare.se — rekommenderar det!`;
+                  const word = report?.employment_type === "foretagare" ? "ersättningsutrymme" : "löneutrymme";
+                  const text = `Jag har precis tagit reda på mitt verkliga ${word} som ${report.occupation} med CompCare.se — rekommenderar det!`;
                   window.open(
                     `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}&summary=${encodeURIComponent(text)}`,
                     "_blank", "width=600,height=500"
