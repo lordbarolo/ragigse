@@ -55,14 +55,17 @@ export default function ConsultantTrackContent({
   const rec = r.recommendation;
   const delta = r.delta;
   const isConsultantFullAccess = isFullAccess && !!rec;
-  const margin = isEmployee ? 0.15 : 0.14;
-  const marginLabel = isEmployee ? "15%" : "14%";
+  const isDoctor = /läkare/i.test(occupation);
+  const margin = isEmployee ? 0.15 : (isDoctor ? 0.10 : 0.14);
+  const marginLabel = isEmployee ? "15%" : (isDoctor ? "10%" : "14%");
   const afterMargin = Math.round(marketRate * (1 - margin));
 
   const currentSalary = r.inputs.current_salary_sek;
   const salaryIsHourly = r.inputs.salary_type === "hourly";
   const currentHourly = salaryIsHourly ? currentSalary : (isEmployee ? Math.round(currentSalary / 167) : currentSalary);
-  const isAboveThreshold = marketRate > 0 && currentHourly >= marketRate * 0.96;
+  // Above threshold = user earns more than recommended max rate
+  const recommendedMax = rec ? rec.recommended_hourly_max : Math.round(marketRate * (1 - margin));
+  const isAboveThreshold = recommendedMax > 0 && currentHourly >= recommendedMax;
 
   return (
     <>
@@ -300,7 +303,7 @@ export default function ConsultantTrackContent({
                 />
               ) : (
                 <p className="text-xs text-muted-foreground/70 pt-1">
-                  Som egenföretagare bör du fakturera 90% av kundpriset, dvs{" "}
+                  Som egenföretagare bör du fakturera {Math.round((1 - margin) * 100)}% av kundpriset, dvs{" "}
                   {fmt(rec.recommended_hourly_max)} kr/h.
                 </p>
               )}
@@ -389,10 +392,10 @@ export default function ConsultantTrackContent({
                   const zoneRate = zc.timpris_kund;
                   const recHourly = isEmployee
                     ? Math.round((zoneRate * 0.85) / 1.42)
-                    : Math.round(zoneRate * 0.90);
+                    : Math.round(zoneRate * (1 - margin));
                   const recHourlyHigh = isEmployee
                     ? Math.round((zoneRate * 0.90) / 1.42)
-                    : Math.round(zoneRate * 0.90);
+                    : Math.round(zoneRate * (1 - margin));
                   const maxRate = Math.max(...zoneComparisons.map((z) => z.timpris_kund));
                   const barWidth = Math.round((zoneRate / maxRate) * 100);
                   return (
