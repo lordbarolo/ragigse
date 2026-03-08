@@ -13,7 +13,7 @@ export function useCheckout() {
 
   const handleCheckout = async (
     plan: "single" | "yearly",
-    opts: { email: string; leadId?: string; reportId?: string; coupon?: CouponDiscount | null }
+    opts: { email: string; leadId?: string; reportId?: string; coupon?: CouponDiscount | null; abVariant?: string }
   ) => {
     if (!opts.email) return;
     setCheckoutLoading(plan);
