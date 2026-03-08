@@ -264,7 +264,19 @@ export default function Teaser() {
         const { data, error } = await supabase.functions.invoke("redeem-coupon", {
           body: { code: couponCode, report_id: activeReportId },
         });
-        if (error) throw error;
+        // 409 = already redeemed for this email — report is already unlocked, just navigate
+        if (error && !data) {
+          // Try to parse error context for known "already used" case
+          try {
+            const errBody = await (error as any)?.context?.json?.();
+            if (errBody?.error?.includes("redan använt")) {
+              trackEvent("free_report_unlocked", { coupon_code: couponCode, already_redeemed: true });
+              navigate(`/rapport/${activeReportId}`);
+              return;
+            }
+          } catch { /* fall through to generic error */ }
+          throw error;
+        }
         if (data?.error) throw new Error(data.error);
       }
       trackEvent("free_report_unlocked", { coupon_code: couponCode });
