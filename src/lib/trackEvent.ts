@@ -21,7 +21,9 @@ type EventName =
   | "paywall_cta_clicked"
   | "payment_completed"
   | "report_section_viewed"
-  | "invoice_review_opted_in";
+  | "invoice_review_opted_in"
+  | "survey_step_viewed"
+  | "time_on_page";
 
 export function trackEvent(
   eventName: EventName,
