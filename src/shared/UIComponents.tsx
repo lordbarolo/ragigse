@@ -90,20 +90,39 @@ export function BarRow({
 
   const [currentWidth, setCurrentWidth] = useState(animateAndBlurAt != null ? 0 : targetWidth);
   const [isBlurred, setIsBlurred] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
   const rafRef = useRef<number>();
+  const rowRef = useRef<HTMLDivElement>(null);
+
+  // Start animation only when element is in upper 2/3 of viewport
+  useEffect(() => {
+    if (animateAndBlurAt == null || hasStarted) return;
+    const el = rowRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setHasStarted(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: "0px 0px -33% 0px", threshold: 0 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [animateAndBlurAt, hasStarted]);
 
   useEffect(() => {
-    if (animateAndBlurAt == null) return;
+    if (animateAndBlurAt == null || !hasStarted) return;
 
-    // Small delay before starting animation
     const timeout = setTimeout(() => {
       const startTime = performance.now();
-      const duration = 2000; // 2s animation
+      const duration = 2000;
 
       const tick = (now: number) => {
         const elapsed = now - startTime;
         const progress = Math.min(elapsed / duration, 1);
-        // Ease-out cubic
         const eased = 1 - Math.pow(1 - progress, 3);
         const w = eased * targetWidth;
         setCurrentWidth(w);
@@ -118,13 +137,13 @@ export function BarRow({
       };
 
       rafRef.current = requestAnimationFrame(tick);
-    }, 600);
+    }, 300);
 
     return () => {
       clearTimeout(timeout);
       if (rafRef.current) cancelAnimationFrame(rafRef.current);
     };
-  }, [animateAndBlurAt, targetWidth, blurThreshold]);
+  }, [hasStarted, animateAndBlurAt, targetWidth, blurThreshold]);
 
   const shouldBlur = animateAndBlurAt != null ? isBlurred : blurred;
 
