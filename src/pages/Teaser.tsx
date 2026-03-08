@@ -257,8 +257,22 @@ export default function Teaser() {
   const isFree = couponDiscount?.discount_type === "free" ||
     (couponDiscount?.discount_type === "percent" && couponDiscount.discount_value >= 100);
 
-
-
+  const unlockFreeReport = useCallback(async (activeReportId: string) => {
+    try {
+      const couponCode = searchParams.get("coupon") || sessionStorage.getItem("couponCode");
+      if (couponCode) {
+        const { data, error } = await supabase.functions.invoke("redeem-coupon", {
+          body: { code: couponCode, report_id: activeReportId },
+        });
+        if (error) throw error;
+        if (data?.error) throw new Error(data.error);
+      }
+      trackEvent("free_report_unlocked", { coupon_code: couponCode });
+      navigate(`/rapport/${activeReportId}`);
+    } catch (err: any) {
+      toast({ title: err?.message || "Kunde inte öppna rapporten", variant: "destructive" });
+    }
+  }, [navigate, searchParams]);
 
   const handleEmailSubmit = async (emailValue: string) => {
     setEmailSaving(true);
@@ -314,23 +328,9 @@ export default function Teaser() {
     }
 
     if (isFree) {
-      // Free coupon: redeem and go to report
-      try {
-        const couponCode = searchParams.get("coupon") || sessionStorage.getItem("couponCode");
-        if (couponCode) {
-          const { data, error } = await supabase.functions.invoke("redeem-coupon", {
-            body: { code: couponCode, report_id: activeReportId },
-          });
-          if (error) throw error;
-          if (data?.error) throw new Error(data.error);
-        }
-        trackEvent("free_report_unlocked", { coupon_code: couponCode });
-        setEmailSaving(false);
-        navigate(`/rapport/${activeReportId}`);
-      } catch (err: any) {
-        toast({ title: err?.message || "Kunde inte öppna rapporten", variant: "destructive" });
-        setEmailSaving(false);
-      }
+      // Free coupon: redeem and go directly to report (no Stripe)
+      setEmailSaving(false);
+      await unlockFreeReport(activeReportId);
     } else {
       // Paid: proceed to checkout
       setEmailSaving(false);
@@ -345,7 +345,7 @@ export default function Teaser() {
     }
   };
 
-  const onCheckout = (plan: "single" | "yearly") => {
+  const onCheckout = async (plan: "single" | "yearly") => {
     if (!email) {
       checkoutRef.current?.scrollIntoView({ behavior: "smooth" });
       return;
@@ -354,6 +354,12 @@ export default function Teaser() {
       toast({ title: "Rapport saknas — ladda om sidan och försök igen", variant: "destructive" });
       return;
     }
+
+    if (isFree) {
+      await unlockFreeReport(reportId);
+      return;
+    }
+
     const couponCode = searchParams.get("coupon") || null;
     const price = couponDiscount
       ? couponDiscount.discount_type === "free" ? 0
