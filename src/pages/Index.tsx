@@ -4,6 +4,7 @@ import Survey from "@/components/Survey";
 import { Shield } from "lucide-react";
 import { trackEvent } from "@/lib/trackEvent";
 import { supabase } from "@/integrations/supabase/client";
+import logo from "@/assets/logo.png";
 
 const FAQ_ITEMS = [
   {
@@ -129,6 +130,9 @@ const Index = () => {
       {/* Hero + Survey combined — enkäten syns direkt */}
       <header className="py-12 px-5 text-center sm:py-16 border-b border-border">
         <div className="max-w-2xl mx-auto space-y-5">
+          {/* Logo */}
+          <img src={logo} alt="CompCare logotyp" className="h-16 sm:h-20 mx-auto" />
+
           {/* Trust badge */}
           <div className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground bg-muted rounded-full px-4 py-1.5">
             <Shield className="w-3.5 h-3.5" />
