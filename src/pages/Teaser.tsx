@@ -498,6 +498,7 @@ export default function Teaser() {
                 loading={emailSaving || checkoutLoading !== null}
                 coupon={couponDiscount}
                 isFree={isFree}
+                priceKr={priceKr}
               />
             </div>
           ) : (
