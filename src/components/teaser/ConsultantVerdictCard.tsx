@@ -21,7 +21,7 @@ interface Props {
 export default function ConsultantVerdictCard({
   isUnderpaid, userHourly, result, customerRate, unlocked, partialUnlocked,
   exitIntentVisible, checkoutLoading, onCheckout, leadId, referrerEmail,
-  regionName, onPartialUnlock, employmentType,
+  regionName, onPartialUnlock, employmentType, priceKr,
 }: Props) {
   return (
     <div className="rounded-lg border border-border bg-card card-shadow overflow-hidden">
