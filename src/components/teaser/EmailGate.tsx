@@ -17,7 +17,7 @@ interface Props {
   priceKr?: number;
 }
 
-export default function EmailGate({ onEmailSubmit, loading, coupon, isFree }: Props) {
+export default function EmailGate({ onEmailSubmit, loading, coupon, isFree, priceKr = 49 }: Props) {
   const [email, setEmail] = useState("");
   const valid = EMAIL_REGEX.test(email.trim());
 
