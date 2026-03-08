@@ -257,26 +257,8 @@ export default function Teaser() {
   const isFree = couponDiscount?.discount_type === "free" ||
     (couponDiscount?.discount_type === "percent" && couponDiscount.discount_value >= 100);
 
-  const saveEmail = async (emailValue: string) => {
-    setEmailSaving(true);
-    try {
-      await supabase.functions.invoke("save-email", {
-        body: { lead_id: leadId, report_id: reportId, email: emailValue },
-      });
-      setEmail(emailValue);
-      // Update sessionStorage
-      if (survey) {
-        const updated = { ...survey, email: emailValue };
-        sessionStorage.setItem("surveyData", JSON.stringify(updated));
-      }
-      trackEvent("email_collected", { source: "teaser" });
-    } catch {
-      toast({ title: "Kunde inte spara e-post, försök igen", variant: "destructive" });
-      setEmailSaving(false);
-      return;
-    }
-    setEmailSaving(false);
-  };
+
+
 
   const handleEmailSubmit = async (emailValue: string) => {
     setEmailSaving(true);
