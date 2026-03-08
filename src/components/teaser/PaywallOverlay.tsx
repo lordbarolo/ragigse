@@ -51,8 +51,8 @@ export default function PaywallOverlay({
             value={result.high}
             max={barMax}
             color="bg-primary/50"
-            blurred={true}
             partialReveal={false}
+            animateAndBlurAt={userHourly}
           />
         </div>
 
