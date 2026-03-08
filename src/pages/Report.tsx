@@ -15,6 +15,7 @@ import ConsultantTrackContent from "@/components/report/ConsultantTrackContent";
 
 import ReportPreviewList from "@/shared/ReportPreviewList";
 import CheckoutCTA from "@/shared/CheckoutCTA";
+import ReportFeedback from "@/components/report/ReportFeedback";
 
 export default function Report() {
   const { reportId } = useParams<{ reportId: string }>();
@@ -151,6 +152,14 @@ export default function Report() {
           />
         )}
 
+        {/* Feedback — only for full access */}
+        {isFullAccess && report.lead_id && (
+          <ReportFeedback
+            leadId={report.lead_id}
+            role={report.occupation}
+            zone={report.user_zone}
+          />
+        )}
 
 
 

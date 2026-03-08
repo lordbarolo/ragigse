@@ -547,6 +547,36 @@ export type Database = {
           },
         ]
       }
+      report_feedback: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          lead_id: string
+          rating: string
+          role: string | null
+          zone: string | null
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          lead_id: string
+          rating: string
+          role?: string | null
+          zone?: string | null
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          lead_id?: string
+          rating?: string
+          role?: string | null
+          zone?: string | null
+        }
+        Relationships: []
+      }
       reports: {
         Row: {
           ab_variant: string
