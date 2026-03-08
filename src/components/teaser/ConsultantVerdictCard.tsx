@@ -40,6 +40,7 @@ export default function ConsultantVerdictCard({
           regionName={regionName}
           onPartialUnlock={onPartialUnlock}
           isUnderpaid={isUnderpaid}
+          priceKr={priceKr}
         />
       </div>
     </div>

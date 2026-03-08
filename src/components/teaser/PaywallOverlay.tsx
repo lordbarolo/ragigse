@@ -20,19 +20,9 @@ interface Props {
 }
 
 export default function PaywallOverlay({
-  userHourly,
-  result,
-  customerRate,
-  unlocked,
-  partialUnlocked,
-  exitIntentVisible,
-  checkoutLoading,
-  onCheckout,
-  leadId,
-  referrerEmail,
-  regionName,
-  onPartialUnlock,
-  isUnderpaid,
+  userHourly, result, customerRate, unlocked, partialUnlocked,
+  exitIntentVisible, checkoutLoading, onCheckout, leadId, referrerEmail,
+  regionName, onPartialUnlock, isUnderpaid, priceKr = 49,
 }: Props) {
   // Use customerRate for "what the region pays" bar, fall back to result.high
   const regionPays = customerRate && customerRate > 0 ? customerRate : result.high;
