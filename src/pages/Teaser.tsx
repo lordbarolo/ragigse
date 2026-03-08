@@ -164,9 +164,9 @@ export default function Teaser() {
     checkReferral();
   }, [leadId]);
 
-  // Redeem coupon from URL param
+  // Redeem coupon from URL param or sessionStorage
   useEffect(() => {
-    const couponCode = searchParams.get("coupon");
+    const couponCode = searchParams.get("coupon") || sessionStorage.getItem("couponCode");
     if (!couponCode || !reportId || couponRedeemed.current) return;
     couponRedeemed.current = true;
 
