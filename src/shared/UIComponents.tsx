@@ -73,6 +73,7 @@ export function BarRow({
   blurred = false,
   partialReveal = false,
   unit = "kr/h",
+  animateAndBlurAt,
 }: {
   label: string;
   value: number;
@@ -81,8 +82,51 @@ export function BarRow({
   blurred?: boolean;
   partialReveal?: boolean;
   unit?: string;
+  /** If set, bar animates from 0 and blurs once it passes this value's width */
+  animateAndBlurAt?: number;
 }) {
-  const width = Math.min((value / max) * 100, 100);
+  const targetWidth = Math.min((value / max) * 100, 100);
+  const blurThreshold = animateAndBlurAt != null ? Math.min((animateAndBlurAt / max) * 100, 100) : null;
+
+  const [currentWidth, setCurrentWidth] = useState(animateAndBlurAt != null ? 0 : targetWidth);
+  const [isBlurred, setIsBlurred] = useState(false);
+  const rafRef = useRef<number>();
+
+  useEffect(() => {
+    if (animateAndBlurAt == null) return;
+
+    // Small delay before starting animation
+    const timeout = setTimeout(() => {
+      const startTime = performance.now();
+      const duration = 2000; // 2s animation
+
+      const tick = (now: number) => {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        // Ease-out cubic
+        const eased = 1 - Math.pow(1 - progress, 3);
+        const w = eased * targetWidth;
+        setCurrentWidth(w);
+
+        if (blurThreshold != null && w >= blurThreshold && !isBlurred) {
+          setIsBlurred(true);
+        }
+
+        if (progress < 1) {
+          rafRef.current = requestAnimationFrame(tick);
+        }
+      };
+
+      rafRef.current = requestAnimationFrame(tick);
+    }, 600);
+
+    return () => {
+      clearTimeout(timeout);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+    };
+  }, [animateAndBlurAt, targetWidth, blurThreshold]);
+
+  const shouldBlur = animateAndBlurAt != null ? isBlurred : blurred;
 
   let displayValue: string;
   if (partialReveal) {
@@ -97,19 +141,19 @@ export function BarRow({
         <span className="text-muted-foreground">{label}</span>
         <span className="flex items-center gap-1">
           <span
-            className={`font-semibold ${
-              blurred ? "blur-[8px] select-none pointer-events-none" : "text-foreground"
+            className={`font-semibold transition-all duration-300 ${
+              shouldBlur ? "blur-[8px] select-none pointer-events-none" : "text-foreground"
             }`}
           >
             {displayValue}
           </span>
-          {blurred && <Lock className="w-3 h-3 text-muted-foreground shrink-0" />}
+          {shouldBlur && <Lock className="w-3 h-3 text-muted-foreground shrink-0" />}
         </span>
       </div>
       <div className="h-6 bg-secondary rounded-full overflow-hidden">
         <div
-          className={`h-full rounded-full transition-all duration-700 ${color}`}
-          style={{ width: `${width}%` }}
+          className={`h-full rounded-full ${color} ${animateAndBlurAt == null ? "transition-all duration-700" : ""}`}
+          style={{ width: `${currentWidth}%` }}
         />
       </div>
     </div>
