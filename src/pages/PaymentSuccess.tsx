@@ -129,7 +129,7 @@ export default function PaymentSuccess() {
               <h1 className="font-display text-2xl text-foreground">Något gick fel</h1>
               <p className="text-sm text-muted-foreground">
                 Betalningen kunde inte verifieras. Kontakta oss på{" "}
-                <a href="mailto:hej@compcare.se" className="text-primary underline">hej@compcare.se</a>{" "}
+                <a href="mailto:info@compcare.se" className="text-primary underline">info@compcare.se</a>{" "}
                 om du har betalat.
               </p>
               <Button variant="outline" onClick={() => navigate("/")} className="w-full mt-2">
