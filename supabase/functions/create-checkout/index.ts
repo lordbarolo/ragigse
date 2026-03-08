@@ -24,9 +24,11 @@ serve(async (req) => {
   }
 
   try {
-    const { plan, email, lead_id, report_id, coupon_discount_type, coupon_discount_value } = await req.json();
+    const { plan, email, lead_id, report_id, coupon_discount_type, coupon_discount_value, ab_variant } = await req.json();
 
-    const priceConfig = PRICES[plan];
+    // Use 29kr price if ab_variant is price_29
+    const effectivePlan = (ab_variant === "price_29" && plan === "single") ? "single_29" : plan;
+    const priceConfig = PRICES[effectivePlan];
     if (!priceConfig) {
       return new Response(JSON.stringify({ error: "Invalid plan" }), {
         status: 400,

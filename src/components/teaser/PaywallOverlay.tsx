@@ -79,7 +79,7 @@ export default function PaywallOverlay({
                 onClick={() => onCheckout("single")}
                 className="w-full flex items-center justify-center gap-2 py-3 rounded-lg font-semibold text-sm bg-primary text-primary-foreground hover:opacity-90 transition-all disabled:opacity-70"
               >
-                {checkoutLoading === "single" ? "Laddar..." : "Köp rapport — 49 kr"}
+                {checkoutLoading === "single" ? "Laddar..." : `Köp rapport — ${priceKr} kr`}
                 {checkoutLoading !== "single" && <ArrowRight className="w-4 h-4" />}
               </button>
             </div>

@@ -54,8 +54,8 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // All users go through the teaser flow (A/B test removed)
-    const abVariant = "A";
+    // Price A/B test: 50/50 split between 49kr and 29kr
+    const abVariant = Math.random() < 0.5 ? "price_49" : "price_29";
 
     // ── PERMANENT TRACK (fast tjänst) ──────────────────────────────────────────
     if (track === "permanent") {
