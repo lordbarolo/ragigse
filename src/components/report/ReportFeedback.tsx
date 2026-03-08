@@ -22,17 +22,14 @@ export default function ReportFeedback({ leadId, role, zone }: Props) {
   const [copied, setCopied] = useState(false);
   const [sending, setSending] = useState(false);
 
-  // Check if feedback already exists via edge function
+  // Check if feedback already exists
   useEffect(() => {
     if (!leadId) return;
-    const check = async () => {
-      const { count } = await supabase
-        .from("report_feedback")
-        .select("id", { count: "exact", head: true })
-        .eq("lead_id", leadId);
-      if (count && count > 0) setAlreadyFeedback(true);
-    };
-    check().catch(() => {});
+    supabase.functions.invoke("check-feedback", { body: { lead_id: leadId } })
+      .then(({ data }) => {
+        if (data?.has_feedback) setAlreadyFeedback(true);
+      })
+      .catch(() => {});
   }, [leadId]);
 
   if (alreadyFeedback) {
