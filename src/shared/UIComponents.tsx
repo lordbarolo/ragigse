@@ -147,15 +147,18 @@ export function BarRow({
 
   const shouldBlur = animateAndBlurAt != null ? isBlurred : blurred;
 
+  const hideValue = animateAndBlurAt != null;
   let displayValue: string;
-  if (partialReveal) {
+  if (hideValue) {
+    displayValue = "";
+  } else if (partialReveal) {
     displayValue = formatPartialValue(value) + ` ${unit}`;
   } else {
     displayValue = value + ` ${unit}`;
   }
 
   return (
-    <div>
+    <div ref={rowRef}>
       <div className="flex justify-between text-xs mb-1">
         <span className="text-muted-foreground">{label}</span>
         <span className="flex items-center gap-1">
