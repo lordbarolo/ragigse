@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ShieldCheck, Loader2, Download, Linkedin } from "lucide-react";
 import { trackEvent } from "@/lib/trackEvent";
+import logoDark from "@/assets/logo-dark.png";
 
 import ShareButton from "@/components/ShareButton";
 import { useCheckout } from "@/shared/useCheckout";
@@ -106,6 +107,7 @@ export default function Report() {
     <div className="min-h-screen bg-background">
       <header className="hero-gradient py-10 px-5 text-center">
         <div className="max-w-2xl mx-auto space-y-2">
+          <img src={logoDark} alt="CompCare" className="h-8 sm:h-9 mx-auto mb-4" />
           <p className="text-xs uppercase tracking-widest text-primary-foreground/60">
             {isFullAccess ? "Din personliga rapport" : "Förhandsgranskning"}
           </p>
