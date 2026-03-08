@@ -510,7 +510,7 @@ export default function Teaser() {
       </main>
 
       {email && !isFree && (
-        <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="sticky" coupon={couponDiscount} />
+        <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="sticky" coupon={couponDiscount} priceKr={priceKr} />
       )}
 
       <ReferralBottomSheet
