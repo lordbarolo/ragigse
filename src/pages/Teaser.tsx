@@ -347,8 +347,11 @@ export default function Teaser() {
 
   const onCheckout = (plan: "single" | "yearly") => {
     if (!email) {
-      // Scroll to email gate
       checkoutRef.current?.scrollIntoView({ behavior: "smooth" });
+      return;
+    }
+    if (!reportId) {
+      toast({ title: "Rapport saknas — ladda om sidan och försök igen", variant: "destructive" });
       return;
     }
     const couponCode = searchParams.get("coupon") || null;
