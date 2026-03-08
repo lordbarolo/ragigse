@@ -138,33 +138,23 @@ const Index = () => {
             <img src={logoDark} alt="CompCare" className="h-9 sm:h-10" />
           </Link>
 
+          {/* Trust badge */}
+          <div className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground bg-muted rounded-full px-4 py-1.5">
+            <Shield className="w-3.5 h-3.5" />
+            <span>Baserat på officiella avtalspriser · 290 kommuner · 21 regioner</span>
+          </div>
+
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-foreground leading-[1.1] tracking-tight">
-            Publicera ert behov av vårdpersonal.{" "}
-            <span className="text-primary">Få offerter redan idag.</span>
+            Se om du får för lite betalt
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-xl mx-auto leading-relaxed">
-            Snabb och pålitlig leverans från branschens bästa bemanningsföretag.
+            Jämför din ersättning på 60 sekunder
+          </p>
+          <p className="text-base text-muted-foreground/80">
+            Anonymt och kostnadsfritt
           </p>
 
-          <button
-            onClick={() => {
-              const surveyEl = document.getElementById("survey-section");
-              surveyEl?.scrollIntoView({ behavior: "smooth" });
-            }}
-            className="inline-flex items-center gap-2 px-8 py-3.5 rounded-lg bg-primary text-primary-foreground font-semibold text-base sm:text-lg shadow-sm hover:opacity-90 transition-all"
-          >
-            Publicera behov
-          </button>
 
-          {/* Trust badges */}
-          <div className="flex items-center justify-center gap-5 text-xs sm:text-sm text-muted-foreground">
-            <span className="flex items-center gap-1.5">
-              <Shield className="w-3.5 h-3.5" />
-              Ingen inloggning krävs
-            </span>
-            <span className="text-border">·</span>
-            <span>Svar ofta inom 2 timmar</span>
-          </div>
         </div>
       </header>
 
