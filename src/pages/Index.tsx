@@ -132,7 +132,7 @@ const Index = () => {
         <div className="max-w-2xl mx-auto space-y-5">
           {/* Logo */}
           <Link to="/" className="inline-block">
-            <img src={logoDark} alt="CompCare" className="h-8 sm:h-10" />
+            <img src={logoDark} alt="CompCare" className="h-9 sm:h-10" />
           </Link>
 
           {/* Trust badge */}
