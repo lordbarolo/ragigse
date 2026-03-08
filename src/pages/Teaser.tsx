@@ -167,43 +167,33 @@ export default function Teaser() {
     checkReferral();
   }, [leadId]);
 
-  // Redeem coupon from URL param or sessionStorage
+  // Validate coupon (without redeeming) to show correct UI
   useEffect(() => {
     const couponCode = searchParams.get("coupon") || sessionStorage.getItem("couponCode");
-    if (!couponCode || !reportId || couponRedeemed.current) return;
+    if (!couponCode || couponRedeemed.current) return;
     couponRedeemed.current = true;
 
-    const redeemCoupon = async () => {
+    const validateCoupon = async () => {
       try {
-        const { data, error } = await supabase.functions.invoke("redeem-coupon", {
-          body: { code: couponCode, report_id: reportId },
+        const { data, error } = await supabase.functions.invoke("validate-coupon", {
+          body: { code: couponCode },
         });
 
-        if (error || !data) {
+        if (error || !data?.valid) {
           const errorMsg = data?.error || "Ogiltig kupongkod";
           toast({ title: errorMsg, variant: "destructive" });
           return;
         }
 
-        if (data.status === "unlocked") {
-          toast({ title: data.message || "Rapporten är upplåst!" });
-          trackEvent("coupon_redeemed", { code: couponCode, type: "free" });
-          navigate(`/rapport/${reportId}`);
-          return;
-        }
-
-        if (data.status === "discount") {
-          setCouponDiscount({ discount_type: data.discount_type, discount_value: data.discount_value });
-          toast({ title: data.message || "Rabatt tillämpad!" });
-          trackEvent("coupon_redeemed", { code: couponCode, type: data.discount_type });
-        }
+        setCouponDiscount({ discount_type: data.discount_type, discount_value: data.discount_value });
+        toast({ title: "Kupong tillämpad!" });
       } catch {
-        toast({ title: "Kunde inte lösa in kupongkoden", variant: "destructive" });
+        toast({ title: "Kunde inte verifiera kupongkoden", variant: "destructive" });
       }
     };
 
-    redeemCoupon();
-  }, [reportId, searchParams, navigate]);
+    validateCoupon();
+  }, [searchParams]);
 
   const { isPermanent, result, noisedResult, benchmarkMonthly, userMonthly, userHourly, isUnderpaid, diffPercent, isAboveThreshold } =
     useTeaserData(survey, pricingResult, benchmarkResult);

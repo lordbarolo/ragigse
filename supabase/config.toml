@@ -41,3 +41,6 @@ verify_jwt = false
 
 [functions.save-email]
 verify_jwt = false
+
+[functions.validate-coupon]
+verify_jwt = false
