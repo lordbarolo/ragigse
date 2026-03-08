@@ -42,7 +42,7 @@ serve(async (req) => {
       sector,
     } = await req.json();
 
-    if (!email || !occupation || !employment_type || !kommun) {
+    if (!occupation || !employment_type || !kommun) {
       return new Response(
         JSON.stringify({ error: "Missing required fields" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -119,7 +119,7 @@ serve(async (req) => {
         .from("reports")
         .insert({
           lead_id: lead_id || null,
-          email,
+          email: email || null,
           status: "preview",
           result_json: resultJson,
           occupation,
@@ -276,7 +276,7 @@ serve(async (req) => {
       .from("reports")
       .insert({
         lead_id: lead_id || null,
-        email,
+        email: email || null,
         status: "preview",
         result_json: resultJson,
         occupation,
