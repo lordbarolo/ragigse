@@ -379,11 +379,11 @@ export default function Teaser() {
     const couponCode = searchParams.get("coupon") || null;
     const price = couponDiscount
       ? couponDiscount.discount_type === "free" ? 0
-        : couponDiscount.discount_type === "percent" ? Math.round(49 * (1 - couponDiscount.discount_value / 100))
-        : Math.max(0, 49 - couponDiscount.discount_value)
-      : 49;
-    trackEvent("paywall_cta_clicked", { price, coupon_applied: !!couponDiscount, coupon_code: couponCode });
-    checkout(plan, { email, leadId, reportId, coupon: couponDiscount });
+        : couponDiscount.discount_type === "percent" ? Math.round(priceKr * (1 - couponDiscount.discount_value / 100))
+        : Math.max(0, priceKr - couponDiscount.discount_value)
+      : priceKr;
+    trackEvent("paywall_cta_clicked", { price, coupon_applied: !!couponDiscount, coupon_code: couponCode, ab_variant: abVariant });
+    checkout(plan, { email, leadId, reportId, coupon: couponDiscount, abVariant });
   };
 
   // Error state
