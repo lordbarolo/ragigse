@@ -145,7 +145,7 @@ const Index = () => {
           </div>
 
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-foreground leading-[1.1] tracking-tight">
-            Se om du får för lite betalt
+            Personlig förhandlingsassistent för vårdpersonal
           </h1>
           <p className="text-lg sm:text-xl text-muted-foreground max-w-xl mx-auto leading-relaxed">
             Jämför din ersättning på 60 sekunder
