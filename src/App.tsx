@@ -17,6 +17,7 @@ const E2ETest = lazy(() => import("./pages/E2ETest"));
 const AnalyticsDashboard = lazy(() => import("./pages/AnalyticsDashboard"));
 const Admin = lazy(() => import("./pages/Admin"));
 const FAQ = lazy(() => import("./pages/FAQ"));
+const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const ThemePreview = lazy(() => import("./pages/ThemePreview"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
@@ -43,6 +44,7 @@ const App = () => (
             <Route path="/rapport/:reportId" element={<Report />} />
             <Route path="/jamfor" element={<Compare />} />
             <Route path="/vanliga-fragor" element={<FAQ />} />
+            <Route path="/integritetspolicy" element={<PrivacyPolicy />} />
             <Route path="/dev/theme-preview" element={<ThemePreview />} />
             {import.meta.env.DEV && (
               <>
