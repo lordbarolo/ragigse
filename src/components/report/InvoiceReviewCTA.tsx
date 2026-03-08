@@ -81,8 +81,14 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }
       <CardContent className="pt-6 space-y-4">
         <div className="flex items-center gap-2">
           <ShieldCheck className="w-5 h-5 text-primary shrink-0" />
-          <p className="font-semibold text-foreground text-sm">Kostnadsfri fakturaanalys</p>
+          <p className="font-semibold text-foreground text-sm">Har du fått rätt betalt för alla dina timmar?</p>
         </div>
+
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          Många konsulter missar ersättning för OB, jour och helg. Compcare granskar dina fakturor och tidrapporter utan kostnad
+          — vi tar bara betalt om vi hittar pengar du missat. Kryssa i rutan så hör vi av oss till{" "}
+          <span className="font-medium text-foreground">{email}</span>.
+        </p>
 
         <div className="flex items-start gap-3">
           <Checkbox
@@ -92,10 +98,8 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }
             className="mt-0.5"
           />
           <label htmlFor="invoice-review" className="text-sm text-muted-foreground leading-relaxed cursor-pointer">
-            Har du fått fel ersättning senaste åren? Compcare erbjuder kostnadsfri analys av dina fakturor
-            och tidrapporter — upptäcker vi fel kan du få ersättning för upp till 24 månader bakåt i tiden.
-            Vill du att vi säkerställer att du fått betalt för alla timmar du jobbat?{" "}
-            <span className="font-medium text-foreground">Klicka ja så kontaktar vi dig via mail.</span>
+            Ja, kontakta mig för en kostnadsfri fakturagranskning
+          </label>
           </label>
         </div>
 
