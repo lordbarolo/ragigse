@@ -14,9 +14,10 @@ interface Props {
   loading: boolean;
   coupon?: CouponInfo | null;
   isFree: boolean;
+  priceKr?: number;
 }
 
-export default function EmailGate({ onEmailSubmit, loading, coupon, isFree }: Props) {
+export default function EmailGate({ onEmailSubmit, loading, coupon, isFree, priceKr = 49 }: Props) {
   const [email, setEmail] = useState("");
   const valid = EMAIL_REGEX.test(email.trim());
 
@@ -62,7 +63,7 @@ export default function EmailGate({ onEmailSubmit, loading, coupon, isFree }: Pr
           ? "Laddar..."
           : isFree
             ? "Visa min rapport"
-            : "Köp rapport — 49 kr"}
+            : `Köp rapport — ${priceKr} kr`}
         {!loading && <ArrowRight className="w-5 h-5" />}
       </button>
     </div>

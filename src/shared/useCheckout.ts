@@ -13,7 +13,7 @@ export function useCheckout() {
 
   const handleCheckout = async (
     plan: "single" | "yearly",
-    opts: { email: string; leadId?: string; reportId?: string; coupon?: CouponDiscount | null }
+    opts: { email: string; leadId?: string; reportId?: string; coupon?: CouponDiscount | null; abVariant?: string }
   ) => {
     if (!opts.email) return;
     setCheckoutLoading(plan);
@@ -29,6 +29,10 @@ export function useCheckout() {
       if (opts.coupon) {
         body.coupon_discount_type = opts.coupon.discount_type;
         body.coupon_discount_value = opts.coupon.discount_value;
+      }
+
+      if (opts.abVariant) {
+        body.ab_variant = opts.abVariant;
       }
 
       const { data, error } = await supabase.functions.invoke("create-checkout", { body });

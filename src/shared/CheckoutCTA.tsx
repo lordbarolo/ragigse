@@ -10,26 +10,27 @@ interface Props {
   onCheckout: (plan: "single" | "yearly") => void;
   variant: "sticky" | "inline" | "stacked";
   coupon?: CouponInfo | null;
+  priceKr?: number;
 }
 
-function getPriceLabel(coupon?: CouponInfo | null): string {
-  if (!coupon) return "49 kr";
+function getPriceLabel(basePrice: number, coupon?: CouponInfo | null): string {
+  if (!coupon) return `${basePrice} kr`;
   if (coupon.discount_type === "free" || (coupon.discount_type === "percent" && coupon.discount_value >= 100)) {
     return "Gratis";
   }
   if (coupon.discount_type === "percent") {
-    const price = Math.round(49 * (1 - coupon.discount_value / 100));
+    const price = Math.round(basePrice * (1 - coupon.discount_value / 100));
     return `${price} kr`;
   }
   if (coupon.discount_type === "fixed") {
-    const price = Math.max(0, 49 - coupon.discount_value);
+    const price = Math.max(0, basePrice - coupon.discount_value);
     return `${price} kr`;
   }
-  return "49 kr";
+  return `${basePrice} kr`;
 }
 
-export default function CheckoutCTA({ checkoutLoading, onCheckout, variant, coupon }: Props) {
-  const priceLabel = getPriceLabel(coupon);
+export default function CheckoutCTA({ checkoutLoading, onCheckout, variant, coupon, priceKr = 49 }: Props) {
+  const priceLabel = getPriceLabel(priceKr, coupon);
   const hasCoupon = !!coupon;
 
   if (variant === "inline") {

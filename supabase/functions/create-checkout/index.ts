@@ -12,6 +12,10 @@ const PRICES: Record<string, { id: string; mode: "payment" | "subscription" }> =
     id: "price_1T89nmH6keeMaRQjc7ruhDC3",
     mode: "payment",
   },
+  single_29: {
+    id: "price_1T8hgPH6keeMaRQjCj9y7pWZ",
+    mode: "payment",
+  },
 };
 
 serve(async (req) => {
@@ -20,9 +24,11 @@ serve(async (req) => {
   }
 
   try {
-    const { plan, email, lead_id, report_id, coupon_discount_type, coupon_discount_value } = await req.json();
+    const { plan, email, lead_id, report_id, coupon_discount_type, coupon_discount_value, ab_variant } = await req.json();
 
-    const priceConfig = PRICES[plan];
+    // Use 29kr price if ab_variant is price_29
+    const effectivePlan = (ab_variant === "price_29" && plan === "single") ? "single_29" : plan;
+    const priceConfig = PRICES[effectivePlan];
     if (!priceConfig) {
       return new Response(JSON.stringify({ error: "Invalid plan" }), {
         status: 400,

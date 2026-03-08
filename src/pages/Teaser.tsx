@@ -198,6 +198,10 @@ export default function Teaser() {
   const { isPermanent, result, noisedResult, benchmarkMonthly, userMonthly, userHourly, isUnderpaid, diffPercent, isAboveThreshold } =
     useTeaserData(survey, pricingResult, benchmarkResult);
 
+  // Price A/B test: read variant from sessionStorage (set by create-report)
+  const abVariant = sessionStorage.getItem("abVariant") || "price_49";
+  const priceKr = abVariant === "price_29" ? 29 : 49;
+
   // Find geographically nearest kommun in a higher-paying zone (haversine distance)
   const nearestHigherKommun = useMemo(() => {
     if (isPermanent || !pricingResult || !rates || !locations) return null;
@@ -348,12 +352,12 @@ export default function Teaser() {
       setEmailSaving(false);
       const couponCode = searchParams.get("coupon") || null;
       const price = couponDiscount
-        ? couponDiscount.discount_type === "percent" ? Math.round(49 * (1 - couponDiscount.discount_value / 100))
-          : couponDiscount.discount_type === "fixed" ? Math.max(0, 49 - couponDiscount.discount_value)
-          : 49
-        : 49;
-      trackEvent("paywall_cta_clicked", { price, coupon_applied: !!couponDiscount, coupon_code: couponCode });
-      checkout("single", { email: emailValue, leadId, reportId: activeReportId, coupon: couponDiscount });
+        ? couponDiscount.discount_type === "percent" ? Math.round(priceKr * (1 - couponDiscount.discount_value / 100))
+          : couponDiscount.discount_type === "fixed" ? Math.max(0, priceKr - couponDiscount.discount_value)
+          : priceKr
+        : priceKr;
+      trackEvent("paywall_cta_clicked", { price, coupon_applied: !!couponDiscount, coupon_code: couponCode, ab_variant: abVariant });
+      checkout("single", { email: emailValue, leadId, reportId: activeReportId, coupon: couponDiscount, abVariant });
     }
   };
 
@@ -375,11 +379,11 @@ export default function Teaser() {
     const couponCode = searchParams.get("coupon") || null;
     const price = couponDiscount
       ? couponDiscount.discount_type === "free" ? 0
-        : couponDiscount.discount_type === "percent" ? Math.round(49 * (1 - couponDiscount.discount_value / 100))
-        : Math.max(0, 49 - couponDiscount.discount_value)
-      : 49;
-    trackEvent("paywall_cta_clicked", { price, coupon_applied: !!couponDiscount, coupon_code: couponCode });
-    checkout(plan, { email, leadId, reportId, coupon: couponDiscount });
+        : couponDiscount.discount_type === "percent" ? Math.round(priceKr * (1 - couponDiscount.discount_value / 100))
+        : Math.max(0, priceKr - couponDiscount.discount_value)
+      : priceKr;
+    trackEvent("paywall_cta_clicked", { price, coupon_applied: !!couponDiscount, coupon_code: couponCode, ab_variant: abVariant });
+    checkout(plan, { email, leadId, reportId, coupon: couponDiscount, abVariant });
   };
 
   // Error state
@@ -482,6 +486,7 @@ export default function Teaser() {
             regionName={regionName}
             onPartialUnlock={() => setPartialUnlocked(true)}
             employmentType={survey.employmentType}
+            priceKr={priceKr}
           />
         )}
 
@@ -493,10 +498,11 @@ export default function Teaser() {
                 loading={emailSaving || checkoutLoading !== null}
                 coupon={couponDiscount}
                 isFree={isFree}
+                priceKr={priceKr}
               />
             </div>
           ) : (
-            <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="inline" coupon={couponDiscount} />
+            <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="inline" coupon={couponDiscount} priceKr={priceKr} />
           )}
         </div>
 
@@ -504,7 +510,7 @@ export default function Teaser() {
       </main>
 
       {email && !isFree && (
-        <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="sticky" coupon={couponDiscount} />
+        <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="sticky" coupon={couponDiscount} priceKr={priceKr} />
       )}
 
       <ReferralBottomSheet

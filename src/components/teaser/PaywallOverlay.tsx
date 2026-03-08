@@ -16,22 +16,13 @@ interface Props {
   regionName: string;
   onPartialUnlock: () => void;
   isUnderpaid: boolean;
+  priceKr?: number;
 }
 
 export default function PaywallOverlay({
-  userHourly,
-  result,
-  customerRate,
-  unlocked,
-  partialUnlocked,
-  exitIntentVisible,
-  checkoutLoading,
-  onCheckout,
-  leadId,
-  referrerEmail,
-  regionName,
-  onPartialUnlock,
-  isUnderpaid,
+  userHourly, result, customerRate, unlocked, partialUnlocked,
+  exitIntentVisible, checkoutLoading, onCheckout, leadId, referrerEmail,
+  regionName, onPartialUnlock, isUnderpaid, priceKr = 49,
 }: Props) {
   // Use customerRate for "what the region pays" bar, fall back to result.high
   const regionPays = customerRate && customerRate > 0 ? customerRate : result.high;
@@ -79,7 +70,7 @@ export default function PaywallOverlay({
                 onClick={() => onCheckout("single")}
                 className="w-full flex items-center justify-center gap-2 py-3 rounded-lg font-semibold text-sm bg-primary text-primary-foreground hover:opacity-90 transition-all disabled:opacity-70"
               >
-                {checkoutLoading === "single" ? "Laddar..." : "Köp rapport — 49 kr"}
+                {checkoutLoading === "single" ? "Laddar..." : `Köp rapport — ${priceKr} kr`}
                 {checkoutLoading !== "single" && <ArrowRight className="w-4 h-4" />}
               </button>
             </div>
