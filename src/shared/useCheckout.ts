@@ -31,6 +31,10 @@ export function useCheckout() {
         body.coupon_discount_value = opts.coupon.discount_value;
       }
 
+      if (opts.abVariant) {
+        body.ab_variant = opts.abVariant;
+      }
+
       const { data, error } = await supabase.functions.invoke("create-checkout", { body });
       if (error) throw error;
       if (data?.url) {
