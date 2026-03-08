@@ -392,10 +392,10 @@ export default function ConsultantTrackContent({
                   const zoneRate = zc.timpris_kund;
                   const recHourly = isEmployee
                     ? Math.round((zoneRate * 0.85) / 1.42)
-                    : Math.round(zoneRate * 0.90);
+                    : Math.round(zoneRate * (1 - margin));
                   const recHourlyHigh = isEmployee
                     ? Math.round((zoneRate * 0.90) / 1.42)
-                    : Math.round(zoneRate * 0.90);
+                    : Math.round(zoneRate * (1 - margin));
                   const maxRate = Math.max(...zoneComparisons.map((z) => z.timpris_kund));
                   const barWidth = Math.round((zoneRate / maxRate) * 100);
                   return (
