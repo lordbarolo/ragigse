@@ -67,16 +67,6 @@ serve(async (req) => {
 
     // Check if this email has already used this coupon
     if (userEmail) {
-      const { data: previousUses } = await supabase
-        .from("reports")
-        .select("id")
-        .eq("email", userEmail)
-        .eq("status", "paid")
-        .neq("id", report_id);
-
-      // Check if any of those reports were unlocked while this coupon was used
-      // We track by checking reports that share the coupon's used_by_report_id or
-      // by looking at reports with same email that already redeemed same coupon code
       const { data: couponUsages } = await supabase
         .from("coupon_usages")
         .select("id")
@@ -85,6 +75,18 @@ serve(async (req) => {
         .limit(1);
 
       if (couponUsages && couponUsages.length > 0) {
+        // Idempotent: if coupon was already redeemed by this email, still unlock the current report
+        if (coupon.discount_type === "free" || (coupon.discount_type === "percent" && coupon.discount_value >= 100)) {
+          await supabase
+            .from("reports")
+            .update({ status: "paid", paid_at: new Date().toISOString() })
+            .eq("id", report_id);
+          console.log(`Coupon ${code} already used by ${userEmail}, but unlocking report ${report_id} idempotently`);
+          return new Response(
+            JSON.stringify({ status: "unlocked", discount_type: coupon.discount_type, discount_value: coupon.discount_value, message: "Rapporten är upplåst!" }),
+            { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
         return new Response(
           JSON.stringify({ error: "Du har redan använt denna kupongkod" }),
           { status: 409, headers: { ...corsHeaders, "Content-Type": "application/json" } }
