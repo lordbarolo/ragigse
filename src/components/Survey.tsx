@@ -345,7 +345,7 @@ export default function Survey() {
           <StepWrapper
             icon={<Stethoscope className="w-6 h-6" />}
             title="Vad jobbar du som?"
-            subtitle="Välj din yrkeskategori"
+            subtitle=""
           >
             <div className="flex flex-col gap-3">
               {([
