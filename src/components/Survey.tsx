@@ -26,8 +26,6 @@ export interface SurveyData {
 const TOTAL_STEPS = 5;
 
 type OccupationCategory = "" | "lakare" | "ssk";
-type DoctorSubRole = "" | "at" | "st" | "leg" | "specialist";
-type NurseSubRole = "" | "allman" | "barnmorska" | "specialist";
 type CommuteType = "veckovis" | "dagligen" | "inte_alls" | "";
 
 // Top 15 doctor specializations (most common)
