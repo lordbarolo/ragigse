@@ -13,7 +13,7 @@ interface Props {
   priceKr?: number;
 }
 
-export default function ReferralBottomSheet({ ctaRef, leadId, referrerEmail, region, onCheckout }: Props) {
+export default function ReferralBottomSheet({ ctaRef, leadId, referrerEmail, region, onCheckout, priceKr = 49 }: Props) {
   const [visible, setVisible] = useState(false);
   const [referralOpen, setReferralOpen] = useState(false);
   const shownRef = useRef(false);
