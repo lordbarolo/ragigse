@@ -303,7 +303,7 @@ export default function ConsultantTrackContent({
                 />
               ) : (
                 <p className="text-xs text-muted-foreground/70 pt-1">
-                  Som egenföretagare bör du fakturera 90% av kundpriset, dvs{" "}
+                  Som egenföretagare bör du fakturera {Math.round((1 - margin) * 100)}% av kundpriset, dvs{" "}
                   {fmt(rec.recommended_hourly_max)} kr/h.
                 </p>
               )}
