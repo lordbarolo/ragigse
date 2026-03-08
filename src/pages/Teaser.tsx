@@ -198,6 +198,10 @@ export default function Teaser() {
   const { isPermanent, result, noisedResult, benchmarkMonthly, userMonthly, userHourly, isUnderpaid, diffPercent, isAboveThreshold } =
     useTeaserData(survey, pricingResult, benchmarkResult);
 
+  // Price A/B test: read variant from sessionStorage (set by create-report)
+  const abVariant = sessionStorage.getItem("abVariant") || "price_49";
+  const priceKr = abVariant === "price_29" ? 29 : 49;
+
   // Find geographically nearest kommun in a higher-paying zone (haversine distance)
   const nearestHigherKommun = useMemo(() => {
     if (isPermanent || !pricingResult || !rates || !locations) return null;
