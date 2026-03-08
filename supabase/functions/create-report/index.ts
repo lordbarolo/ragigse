@@ -54,8 +54,8 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // A/B variant: 50/50 random assignment
-    const abVariant = Math.random() < 0.5 ? "A" : "B";
+    // All users go through the teaser flow (A/B test removed)
+    const abVariant = "A";
 
     // ── PERMANENT TRACK (fast tjänst) ──────────────────────────────────────────
     if (track === "permanent") {
