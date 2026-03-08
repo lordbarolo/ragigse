@@ -221,8 +221,9 @@ serve(async (req) => {
 
     // Calculate using shared module with DB model
     const empType = employment_type as EmploymentType;
-    // For foretagare, market standard is 14% margin (share = 0.86)
-    const FORETAGARE_SHARE = 0.86;
+    // For foretagare: doctors 10% margin (share=0.90), nurses 14% margin (share=0.86)
+    const isDoctor = /läkare/i.test(occupation);
+    const FORETAGARE_SHARE = isDoctor ? 0.90 : 0.86;
     const effectiveModel: MarginModel | undefined = model
       ? (empType === "foretagare"
         ? { ...model, share_min: FORETAGARE_SHARE, share_max: FORETAGARE_SHARE }
