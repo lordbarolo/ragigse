@@ -349,7 +349,7 @@ export default function Survey() {
           >
             <div className="flex flex-col gap-3">
               {([
-                { value: "lakare" as OccupationCategory, label: "Läkare", desc: "AT, ST, specialist eller legitimerad läkare" },
+                { value: "lakare" as OccupationCategory, label: "Läkare", desc: "ST, specialist eller legitimerad läkare" },
                 { value: "ssk" as OccupationCategory, label: "Sjuksköterska / Barnmorska", desc: "Allmänsjuksköterska, specialistsjuksköterska eller barnmorska" },
               ]).map((opt) => (
                 <button
