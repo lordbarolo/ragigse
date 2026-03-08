@@ -352,12 +352,12 @@ export default function Teaser() {
       setEmailSaving(false);
       const couponCode = searchParams.get("coupon") || null;
       const price = couponDiscount
-        ? couponDiscount.discount_type === "percent" ? Math.round(49 * (1 - couponDiscount.discount_value / 100))
-          : couponDiscount.discount_type === "fixed" ? Math.max(0, 49 - couponDiscount.discount_value)
-          : 49
-        : 49;
-      trackEvent("paywall_cta_clicked", { price, coupon_applied: !!couponDiscount, coupon_code: couponCode });
-      checkout("single", { email: emailValue, leadId, reportId: activeReportId, coupon: couponDiscount });
+        ? couponDiscount.discount_type === "percent" ? Math.round(priceKr * (1 - couponDiscount.discount_value / 100))
+          : couponDiscount.discount_type === "fixed" ? Math.max(0, priceKr - couponDiscount.discount_value)
+          : priceKr
+        : priceKr;
+      trackEvent("paywall_cta_clicked", { price, coupon_applied: !!couponDiscount, coupon_code: couponCode, ab_variant: abVariant });
+      checkout("single", { email: emailValue, leadId, reportId: activeReportId, coupon: couponDiscount, abVariant });
     }
   };
 
