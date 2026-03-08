@@ -118,7 +118,7 @@ export function BarRow({
 
     const timeout = setTimeout(() => {
       const startTime = performance.now();
-      const duration = 7000;
+      const duration = 2000;
 
       const tick = (now: number) => {
         const elapsed = now - startTime;
