@@ -7,8 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 import SearchableSelect from "@/components/SearchableSelect";
 import { Input } from "@/components/ui/input";
 import {
-  Stethoscope, MapPin, Mail, Briefcase,
-  ChevronRight, ChevronLeft, ArrowRight, TrendingUp, Train
+  Stethoscope, MapPin, Briefcase,
+  ChevronLeft, ArrowRight, TrendingUp,
 } from "lucide-react";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/trackEvent";
@@ -26,40 +26,22 @@ export interface SurveyData {
 const TOTAL_STEPS = 5;
 
 type OccupationCategory = "" | "lakare" | "ssk";
-type DoctorSubRole = "" | "at" | "st" | "leg" | "specialist";
-type NurseSubRole = "" | "allman" | "barnmorska" | "specialist";
 type CommuteType = "veckovis" | "dagligen" | "inte_alls" | "";
 
-// Doctor specialties
-const DOCTOR_SPECIALTIES = [
-  "Akutsjukvård", "Allmänmedicin", "Anestesi och intensivvård",
-  "Arbets- och miljömedicin", "Barn- och ungdomsallergologi",
-  "Barn- och ungdomshematologi och onkologi", "Barn- och ungdomskardiologi",
-  "Barn- och ungdomskirurgi", "Barn- och ungdomsmedicin",
-  "Barn- och ungdomsneurologi med habilitering", "Barn- och ungdomspsykiatri",
-  "Endokrinologi och diabetologi", "Geriatrik", "Gynekologisk onkologi",
-  "Handkirurgi", "Hematologi", "Hud- och könssjukdomar",
-  "Hörsel- och balansrubbningar", "Infektionssjukdomar", "Internmedicin",
-  "Kardiologi", "Kirurgi", "Klinisk farmakologi", "Klinisk fysiologi",
-  "Klinisk genetik", "Klinisk immunologi och transfusionsmedicin",
-  "Klinisk kemi", "Klinisk mikrobiologi", "Klinisk neurofysiologi",
-  "Klinisk patologi", "Kärlkirurgi", "Lungsjukdomar",
-  "Medicinsk gastroenterologi och hepatologi", "Neonatologi", "Neurokirurgi",
-  "Neurologi", "Neuroradiologi", "Njurmedicin", "Nuklearmedicin",
-  "Obstetrik och gynekologi", "Onkologi", "Ortopedi", "Palliativ medicin",
-  "Plastikkirurgi", "Psykiatri", "Radiologi", "Rehabiliteringsmedicin",
-  "Reumatologi", "Rättsmedicin", "Rättspsykiatri", "Röst- och talrubbningar",
-  "Socialmedicin", "Thoraxkirurgi", "Urologi", "Ögonsjukdomar",
-  "Öron-, näs- och halssjukdomar",
+// Top 15 doctor specializations (most common in Sweden)
+const TOP_DOCTOR_SPECIALTIES = [
+  "Allmänmedicin", "Anestesi och intensivvård", "Barn- och ungdomsmedicin",
+  "Geriatrik", "Infektionssjukdomar", "Internmedicin", "Kardiologi",
+  "Kirurgi", "Lungsjukdomar", "Neurologi", "Obstetrik och gynekologi",
+  "Onkologi", "Ortopedi", "Psykiatri", "Radiologi",
 ];
 
-// Nurse specializations
-const NURSE_SPECIALIZATIONS = [
+// Top 15 nurse specializations (most common)
+const TOP_NURSE_SPECIALIZATIONS = [
   "Akutsjukvård", "Ambulanssjukvård", "Anestesisjukvård", "Barn och ungdom",
-  "Diabetesvård", "Distriktssköterska", "Hjärtsjukvård", "Infektionssjukvård",
+  "Distriktssköterska", "Hjärtsjukvård", "Infektionssjukvård",
   "Intensivvård", "Kirurgisk vård", "Medicinsk vård", "Onkologi",
   "Operationssjukvård", "Palliativ vård", "Psykiatrisk vård", "Vård av äldre",
-  "Ögonsjukvård",
 ];
 
 const nurseValueMap: Record<string, string> = {
@@ -102,16 +84,13 @@ export default function Survey() {
   // Step 1 state
   const [occupationCategory, setOccupationCategory] = useState<OccupationCategory>("");
 
-  // Step 2 state
-  const [doctorSubRole, setDoctorSubRole] = useState<DoctorSubRole>("");
-  const [nurseSubRole, setNurseSubRole] = useState<NurseSubRole>("");
-  const [specialization, setSpecialization] = useState("");
-  const [subStep, setSubStep] = useState(0); // 0=choose role, 1=choose specialization
+  // Step 2: single dropdown value
+  const [roleDropdownValue, setRoleDropdownValue] = useState("");
 
   // Step 3 state
   const [selectedRegion, setSelectedRegion] = useState("");
 
-  // Step 6 state
+  // Commute state
   const [commute, setCommute] = useState<CommuteType>("");
 
   const isLoading = locLoading || ratesLoading;
@@ -123,7 +102,6 @@ export default function Survey() {
 
   const STEP_NAMES = ["yrkeskategori", "specialisering", "kommun", "anstallningsform", "ersattning"];
 
-  // Reset step timer and fire step_viewed when step changes
   useEffect(() => {
     stepEntryTime.current = Date.now();
     trackEvent("survey_step_viewed", {
@@ -151,38 +129,34 @@ export default function Survey() {
   const { calculate: pricingCalculate } = usePricingEngine();
   const { calculate: benchmarkCalculate, result: benchmarkResult } = useBenchmarkEngine();
 
-  // Derive yrke value from selections
+  // Derive yrke from the single dropdown value
   const resolvedYrke = useMemo(() => {
+    if (!roleDropdownValue) return "";
     if (occupationCategory === "lakare") {
-      if (doctorSubRole === "leg") return "Legitimerad läkare";
-      if (doctorSubRole === "st") return "ST-läkare";
-      if (doctorSubRole === "specialist" && specialization) {
-        return `Specialistläkare ${specialization.toLowerCase()}`;
-      }
+      if (roleDropdownValue === "__leg") return "Legitimerad läkare";
+      if (roleDropdownValue === "__st") return "ST-läkare";
+      if (roleDropdownValue === "__ovrig") return "Specialistläkare";
+      return `Specialistläkare ${roleDropdownValue.toLowerCase()}`;
     }
     if (occupationCategory === "ssk") {
-      if (nurseSubRole === "allman") return "Sjuksköterska";
-      if (nurseSubRole === "barnmorska") return "Barnmorska";
-      if (nurseSubRole === "specialist" && specialization) {
-        return nurseValueMap[specialization] || specialization;
-      }
+      if (roleDropdownValue === "__allman") return "Sjuksköterska";
+      if (roleDropdownValue === "__barnmorska") return "Barnmorska";
+      if (roleDropdownValue === "__ovrig") return "Specialistsjuksköterska";
+      return nurseValueMap[roleDropdownValue] || roleDropdownValue;
     }
     return "";
-  }, [occupationCategory, doctorSubRole, nurseSubRole, specialization]);
+  }, [occupationCategory, roleDropdownValue]);
 
-  // Keep data.yrke in sync
   useEffect(() => {
     if (resolvedYrke) setData((d) => ({ ...d, yrke: resolvedYrke }));
   }, [resolvedYrke]);
 
-  // Trigger pricing when we have yrke + kommun
   useEffect(() => {
     if (data.yrke && data.kommun && data.employmentType) {
       pricingCalculate(data.yrke, data.kommun, data.employmentType as "anstalld" | "foretagare");
     }
   }, [data.yrke, data.kommun, data.employmentType]);
 
-  // Trigger benchmark
   useEffect(() => {
     if (data.yrke && data.kommun && data.currentSalary > 0) {
       const currentMonthly = data.salaryType === "hourly" ? data.currentSalary * 167 : data.currentSalary;
@@ -190,7 +164,6 @@ export default function Survey() {
     }
   }, [data.yrke, data.kommun, data.currentSalary, data.salaryType]);
 
-  // Unique regions from locations
   const regions = useMemo(() => {
     if (!locations) return [];
     const seen = new Set<string>();
@@ -204,7 +177,6 @@ export default function Survey() {
       .sort((a, b) => a.localeCompare(b, "sv"));
   }, [locations]);
 
-  // Kommuner filtered by selected region
   const filteredKommuner = useMemo(() => {
     if (!locations || !selectedRegion) return [];
     return locations
@@ -213,18 +185,31 @@ export default function Survey() {
       .sort((a, b) => a.label.localeCompare(b.label, "sv"));
   }, [locations, selectedRegion]);
 
-  // Needs specialization?
-  const needsSpecialization =
-    (occupationCategory === "lakare" && (doctorSubRole === "st" || doctorSubRole === "specialist")) ||
-    (occupationCategory === "ssk" && nurseSubRole === "specialist");
+  // Dropdown options for step 2
+  const doctorRoleOptions = useMemo(() => [
+    { value: "__leg", label: "Leg. läkare", group: "" },
+    { value: "__st", label: "ST-läkare", group: "" },
+    ...TOP_DOCTOR_SPECIALTIES
+      .sort((a, b) => a.localeCompare(b, "sv"))
+      .map((s) => ({ value: s, label: s, group: "Specialisering" })),
+    { value: "__ovrig", label: "Övrig specialisering", group: "Specialisering" },
+  ], []);
 
-  // Progress: step 1 = 0%, step 7 done = 100%
+  const nurseRoleOptions = useMemo(() => [
+    { value: "__allman", label: "Allmänsjuksköterska", group: "" },
+    { value: "__barnmorska", label: "Barnmorska", group: "" },
+    ...TOP_NURSE_SPECIALIZATIONS
+      .sort((a, b) => a.localeCompare(b, "sv"))
+      .map((s) => ({ value: s, label: s, group: "Vidareutbildning (VUB)" })),
+    { value: "__ovrig", label: "Övrig VUB", group: "Vidareutbildning (VUB)" },
+  ], []);
+
   const progress = ((step - 1) / TOTAL_STEPS) * 100;
 
   const canProceed = (() => {
     switch (step) {
       case 1: return !!occupationCategory;
-      case 2: return !!resolvedYrke || (!needsSpecialization && (!!doctorSubRole || !!nurseSubRole));
+      case 2: return !!resolvedYrke;
       case 3: return !!data.kommun;
       case 4: return !!data.employmentType;
       case 5: return data.currentSalary > 0;
@@ -239,7 +224,6 @@ export default function Survey() {
       return;
     }
 
-    // Save & navigate (no email yet — collected on teaser)
     setSaving(true);
     try {
       const leadId = crypto.randomUUID();
@@ -266,7 +250,6 @@ export default function Survey() {
           salary_type: data.salaryType,
           track,
           commute,
-          specialization: needsSpecialization ? specialization : undefined,
         },
       });
 
@@ -295,15 +278,8 @@ export default function Survey() {
   };
 
   const handleBack = () => {
-    if (step === 2 && subStep > 0) {
-      setSubStep(0);
-      setSpecialization("");
-    } else if (step === 2 && subStep === 0) {
-      // Back to category
-      setDoctorSubRole("");
-      setNurseSubRole("");
-      setSpecialization("");
-      setSubStep(0);
+    if (step === 2) {
+      setRoleDropdownValue("");
       setStep(1);
     } else if (step === 3 && !data.kommun && selectedRegion) {
       setSelectedRegion("");
@@ -312,20 +288,9 @@ export default function Survey() {
     }
   };
 
-  // Specialization options for SearchableSelect
-  const specializationOptions = useMemo(() => {
-    if (occupationCategory === "lakare") {
-      return DOCTOR_SPECIALTIES.map((s) => ({ value: s, label: s }));
-    }
-    if (occupationCategory === "ssk") {
-      return NURSE_SPECIALIZATIONS.map((s) => ({ value: s, label: s }));
-    }
-    return [];
-  }, [occupationCategory]);
-
   return (
     <div className="w-full max-w-lg mx-auto">
-      {/* Progress bar — hidden on step 1 to save space */}
+      {/* Progress bar — hidden on step 1 */}
       {step > 1 && (
         <div className="mb-10">
           <div className="flex justify-between items-center text-xs text-muted-foreground mb-2">
@@ -347,7 +312,6 @@ export default function Survey() {
           <StepWrapper
             icon={<Stethoscope className="w-6 h-6" />}
             title="Vad jobbar du som?"
-            subtitle=""
           >
             <div className="flex flex-col gap-3">
               {([
@@ -359,10 +323,7 @@ export default function Survey() {
                   onClick={() => {
                     trackSurveyStarted();
                     setOccupationCategory(opt.value);
-                    setDoctorSubRole("");
-                    setNurseSubRole("");
-                    setSpecialization("");
-                    setSubStep(0);
+                    setRoleDropdownValue("");
                     trackStepCompleted(1);
                     setStep(2);
                   }}
@@ -380,116 +341,30 @@ export default function Survey() {
           </StepWrapper>
         )}
 
-        {/* Step 2: Sub-role + specialization */}
-        {step === 2 && subStep === 0 && occupationCategory === "lakare" && (
+        {/* Step 2: Single dropdown for role selection */}
+        {step === 2 && (
           <StepWrapper
             icon={<Stethoscope className="w-6 h-6" />}
-            title="Välj specialisering"
-          >
-            <div className="flex flex-col gap-3">
-              {([
-                { value: "specialist" as DoctorSubRole, label: "Specialistläkare", desc: "Färdig specialist" },
-                { value: "leg" as DoctorSubRole, label: "Leg. läkare", desc: undefined },
-                { value: "st" as DoctorSubRole, label: "ST-läkare", desc: "Specialisttjänstgöring" },
-              ]).map((opt) => (
-                <button
-                  key={opt.value}
-                  onClick={() => {
-                    setDoctorSubRole(opt.value);
-                    setSpecialization("");
-                    if (opt.value === "st" || opt.value === "specialist") {
-                      setSubStep(1);
-                    } else {
-                      trackStepCompleted(2);
-                      setStep(3);
-                    }
-                  }}
-                  className="py-4 px-5 rounded-lg border border-border bg-card text-left transition-all hover:border-muted-foreground/30 hover:shadow-sm"
-                >
-                  <span className="text-sm font-medium">{opt.label}</span>
-                  {opt.desc && <p className="text-xs text-muted-foreground mt-0.5">{opt.desc}</p>}
-                </button>
-              ))}
-            </div>
-            <button
-              type="button"
-              onClick={() => { setOccupationCategory(""); setStep(1); }}
-              className="mt-3 text-xs text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Inte läkare?
-            </button>
-          </StepWrapper>
-        )}
-
-        {step === 2 && subStep === 0 && occupationCategory === "ssk" && (
-          <StepWrapper
-            icon={<Stethoscope className="w-6 h-6" />}
-            title="Vilken typ av sjuksköterska?"
-            subtitle="Välj din roll"
-          >
-            <div className="flex flex-col gap-3">
-              {([
-                { value: "allman" as NurseSubRole, label: "Allmänsjuksköterska", desc: "Grundutbildad sjuksköterska" },
-                { value: "barnmorska" as NurseSubRole, label: "Barnmorska", desc: "Legitimerad barnmorska" },
-                { value: "specialist" as NurseSubRole, label: "Specialistsjuksköterska", desc: "Vidareutbildad specialist" },
-              ]).map((opt) => (
-                <button
-                  key={opt.value}
-                  onClick={() => {
-                    setNurseSubRole(opt.value);
-                    setSpecialization("");
-                    if (opt.value === "specialist") {
-                      setSubStep(1);
-                    } else {
-                      trackStepCompleted(2);
-                      setStep(3);
-                    }
-                  }}
-                  className="py-4 px-5 rounded-lg border border-border bg-card text-left transition-all hover:border-muted-foreground/30 hover:shadow-sm"
-                >
-                  <span className="text-sm font-medium">{opt.label}</span>
-                  <p className="text-xs text-muted-foreground mt-0.5">{opt.desc}</p>
-                </button>
-              ))}
-            </div>
-            <button
-              type="button"
-              onClick={() => { setOccupationCategory(""); setStep(1); }}
-              className="mt-3 text-xs text-muted-foreground hover:text-foreground transition-colors"
-            >
-              ← Byt kategori
-            </button>
-          </StepWrapper>
-        )}
-
-        {/* Step 2 sub-step 1: Specialization picker */}
-        {step === 2 && subStep === 1 && (
-          <StepWrapper
-            icon={<Stethoscope className="w-6 h-6" />}
-            title={occupationCategory === "lakare"
-              ? (doctorSubRole === "st" ? "Vilken ST-inriktning?" : "Vilken specialisering?")
-              : "Vilken specialisering?"
-            }
-            subtitle={doctorSubRole === "st" ? "Påverkar inte din ersättning, men hjälper oss förstå marknaden" : "Välj din specialisering"}
+            title={occupationCategory === "lakare" ? "Välj din roll" : "Välj din roll"}
           >
             <SearchableSelect
-              value={specialization}
+              value={roleDropdownValue}
               onValueChange={(v) => {
-                setSpecialization(v);
+                setRoleDropdownValue(v);
                 setTimeout(() => {
                   trackStepCompleted(2);
                   setStep(3);
                 }, 300);
               }}
-              placeholder="Välj specialisering"
-              options={specializationOptions}
+              placeholder={occupationCategory === "lakare" ? "Välj läkarroll eller specialisering..." : "Välj roll eller vidareutbildning..."}
+              options={occupationCategory === "lakare" ? doctorRoleOptions : nurseRoleOptions}
             />
             <button
               type="button"
-              onClick={() => { setSubStep(0); setSpecialization(""); }}
+              onClick={() => { setOccupationCategory(""); setRoleDropdownValue(""); setStep(1); }}
               className="mt-3 text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
-              ← Byt roll
+              ← Byt kategori
             </button>
           </StepWrapper>
         )}
