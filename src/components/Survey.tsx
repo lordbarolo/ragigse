@@ -30,36 +30,20 @@ type DoctorSubRole = "" | "at" | "st" | "leg" | "specialist";
 type NurseSubRole = "" | "allman" | "barnmorska" | "specialist";
 type CommuteType = "veckovis" | "dagligen" | "inte_alls" | "";
 
-// Doctor specialties
-const DOCTOR_SPECIALTIES = [
-  "Akutsjukvård", "Allmänmedicin", "Anestesi och intensivvård",
-  "Arbets- och miljömedicin", "Barn- och ungdomsallergologi",
-  "Barn- och ungdomshematologi och onkologi", "Barn- och ungdomskardiologi",
-  "Barn- och ungdomskirurgi", "Barn- och ungdomsmedicin",
-  "Barn- och ungdomsneurologi med habilitering", "Barn- och ungdomspsykiatri",
-  "Endokrinologi och diabetologi", "Geriatrik", "Gynekologisk onkologi",
-  "Handkirurgi", "Hematologi", "Hud- och könssjukdomar",
-  "Hörsel- och balansrubbningar", "Infektionssjukdomar", "Internmedicin",
-  "Kardiologi", "Kirurgi", "Klinisk farmakologi", "Klinisk fysiologi",
-  "Klinisk genetik", "Klinisk immunologi och transfusionsmedicin",
-  "Klinisk kemi", "Klinisk mikrobiologi", "Klinisk neurofysiologi",
-  "Klinisk patologi", "Kärlkirurgi", "Lungsjukdomar",
-  "Medicinsk gastroenterologi och hepatologi", "Neonatologi", "Neurokirurgi",
-  "Neurologi", "Neuroradiologi", "Njurmedicin", "Nuklearmedicin",
-  "Obstetrik och gynekologi", "Onkologi", "Ortopedi", "Palliativ medicin",
-  "Plastikkirurgi", "Psykiatri", "Radiologi", "Rehabiliteringsmedicin",
-  "Reumatologi", "Rättsmedicin", "Rättspsykiatri", "Röst- och talrubbningar",
-  "Socialmedicin", "Thoraxkirurgi", "Urologi", "Ögonsjukdomar",
-  "Öron-, näs- och halssjukdomar",
+// Top 15 doctor specializations (most common)
+const TOP_DOCTOR_SPECIALTIES = [
+  "Allmänmedicin", "Anestesi och intensivvård", "Barn- och ungdomsmedicin",
+  "Geriatrik", "Infektionssjukdomar", "Internmedicin", "Kardiologi",
+  "Kirurgi", "Lungsjukdomar", "Neurologi", "Obstetrik och gynekologi",
+  "Onkologi", "Ortopedi", "Psykiatri", "Radiologi",
 ];
 
-// Nurse specializations
-const NURSE_SPECIALIZATIONS = [
+// Top 15 nurse specializations (most common)
+const TOP_NURSE_SPECIALIZATIONS = [
   "Akutsjukvård", "Ambulanssjukvård", "Anestesisjukvård", "Barn och ungdom",
-  "Diabetesvård", "Distriktssköterska", "Hjärtsjukvård", "Infektionssjukvård",
+  "Distriktssköterska", "Hjärtsjukvård", "Infektionssjukvård",
   "Intensivvård", "Kirurgisk vård", "Medicinsk vård", "Onkologi",
   "Operationssjukvård", "Palliativ vård", "Psykiatrisk vård", "Vård av äldre",
-  "Ögonsjukvård",
 ];
 
 const nurseValueMap: Record<string, string> = {
