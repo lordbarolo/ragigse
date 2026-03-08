@@ -73,8 +73,8 @@ serve(async (req) => {
       },
     };
 
-    // Apply coupon discount if provided
-    if (coupon_discount_type && coupon_discount_value > 0) {
+    // Apply coupon discount if provided (only percent or fixed — "free" is handled client-side)
+    if (coupon_discount_value > 0 && (coupon_discount_type === "percent" || coupon_discount_type === "fixed")) {
       const couponParams: Record<string, unknown> = {
         duration: "once",
         max_redemptions: 1,
@@ -82,7 +82,7 @@ serve(async (req) => {
 
       if (coupon_discount_type === "percent") {
         couponParams.percent_off = Math.min(coupon_discount_value, 100);
-      } else if (coupon_discount_type === "fixed") {
+      } else {
         couponParams.amount_off = coupon_discount_value * 100; // Stripe uses öre
         couponParams.currency = "sek";
       }
