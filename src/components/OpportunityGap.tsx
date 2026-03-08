@@ -35,8 +35,8 @@ export default function OpportunityGap({ userHourly, marketHigh, employmentType,
               {isSmallGap
                 ? `Du kan tjäna mer i ${nearestHigherKommun}`
                 : diffPercent >= 10
-                  ? "Din lön kan öka med mer än 10%"
-                  : "Din lön kan öka med mer än 5%"}
+                  ? `Din ${employmentType === "foretagare" ? "ersättning" : "lön"} kan öka med mer än 10%`
+                  : `Din ${employmentType === "foretagare" ? "ersättning" : "lön"} kan öka med mer än 5%`}
             </p>
             <p className="text-sm text-muted-foreground mt-1">
               {isSmallGap
