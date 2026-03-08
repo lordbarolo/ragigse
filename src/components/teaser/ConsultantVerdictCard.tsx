@@ -15,6 +15,7 @@ interface Props {
   regionName: string;
   onPartialUnlock: () => void;
   employmentType?: string;
+  priceKr?: number;
 }
 
 export default function ConsultantVerdictCard({
