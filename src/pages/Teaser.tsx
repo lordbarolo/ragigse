@@ -486,6 +486,7 @@ export default function Teaser() {
             regionName={regionName}
             onPartialUnlock={() => setPartialUnlocked(true)}
             employmentType={survey.employmentType}
+            priceKr={priceKr}
           />
         )}
 
