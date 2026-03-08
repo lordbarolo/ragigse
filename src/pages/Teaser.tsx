@@ -257,14 +257,19 @@ export default function Teaser() {
   const isFree = couponDiscount?.discount_type === "free" ||
     (couponDiscount?.discount_type === "percent" && couponDiscount.discount_value >= 100);
 
-  const saveEmail = async (emailValue: string) => {
+
+
+
+  const handleEmailSubmit = async (emailValue: string) => {
     setEmailSaving(true);
     try {
-      await supabase.functions.invoke("save-email", {
+      // Save email to lead + report first, and wait for it
+      const { error: saveErr } = await supabase.functions.invoke("save-email", {
         body: { lead_id: leadId, report_id: reportId, email: emailValue },
       });
+      if (saveErr) throw saveErr;
+
       setEmail(emailValue);
-      // Update sessionStorage
       if (survey) {
         const updated = { ...survey, email: emailValue };
         sessionStorage.setItem("surveyData", JSON.stringify(updated));
@@ -275,27 +280,28 @@ export default function Teaser() {
       setEmailSaving(false);
       return;
     }
-    setEmailSaving(false);
-  };
 
-  const handleEmailSubmit = async (emailValue: string) => {
-    await saveEmail(emailValue);
     if (isFree) {
       // Free coupon: redeem and go to report
       try {
         const couponCode = searchParams.get("coupon") || sessionStorage.getItem("couponCode");
         if (couponCode) {
-          await supabase.functions.invoke("redeem-coupon", {
+          const { data, error } = await supabase.functions.invoke("redeem-coupon", {
             body: { code: couponCode, report_id: reportId },
           });
+          if (error) throw error;
+          if (data?.error) throw new Error(data.error);
         }
         trackEvent("free_report_unlocked", { coupon_code: couponCode });
+        setEmailSaving(false);
         navigate(`/rapport/${reportId}`);
-      } catch {
-        toast({ title: "Kunde inte öppna rapporten", variant: "destructive" });
+      } catch (err: any) {
+        toast({ title: err?.message || "Kunde inte öppna rapporten", variant: "destructive" });
+        setEmailSaving(false);
       }
     } else {
       // Paid: proceed to checkout
+      setEmailSaving(false);
       const couponCode = searchParams.get("coupon") || null;
       const price = couponDiscount
         ? couponDiscount.discount_type === "percent" ? Math.round(49 * (1 - couponDiscount.discount_value / 100))
