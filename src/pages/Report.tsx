@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ShieldCheck, Loader2, Download, Linkedin } from "lucide-react";
 import { trackEvent } from "@/lib/trackEvent";
+import logoDark from "@/assets/logo-dark.png";
 
 import ShareButton from "@/components/ShareButton";
 import { useCheckout } from "@/shared/useCheckout";
