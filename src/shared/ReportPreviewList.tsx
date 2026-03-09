@@ -8,10 +8,11 @@ const ITEMS = [
 ];
 
 export default function ReportPreviewList({ isPermanent }: { isPermanent: boolean }) {
+  return (
     <div className="rounded-lg border border-border bg-card card-shadow p-6">
       <h3 className="text-base font-bold text-foreground mb-4">I din rapport får du:</h3>
       <ul className="space-y-3 text-sm">
-        {items.map((item, i) => (
+        {ITEMS.map((item, i) => (
           <li key={i} className="flex items-start gap-2.5">
             <ShieldCheck className="w-4 h-4 text-primary mt-0.5 shrink-0" />
             <span className="text-muted-foreground">{item}</span>
