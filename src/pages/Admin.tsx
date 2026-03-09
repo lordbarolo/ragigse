@@ -10,7 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/hooks/use-toast";
-import { Loader2, Upload, PlayCircle, ArrowUpDown, TrendingUp, TrendingDown, Minus, Plus, Trash2, ShieldCheck } from "lucide-react";
+import { Loader2, Upload, PlayCircle, ArrowUpDown, TrendingUp, TrendingDown, Minus, Plus, Trash2, ShieldCheck, Lock } from "lucide-react";
 
 interface ContractVersion {
   id: string;
@@ -58,7 +58,11 @@ interface AuditOptin {
   created_at: string;
 }
 
+const ADMIN_PASS = "compcare2026";
+
 export default function Admin() {
+  const [authenticated, setAuthenticated] = useState(false);
+  const [passInput, setPassInput] = useState("");
   const [versions, setVersions] = useState<ContractVersion[]>([]);
   const [loading, setLoading] = useState(true);
   const [auditOptins, setAuditOptins] = useState<AuditOptin[]>([]);
@@ -105,9 +109,54 @@ export default function Admin() {
   };
 
   useEffect(() => {
-    fetchVersions();
-    fetchAuditOptins();
+    // Check sessionStorage for existing auth
+    if (sessionStorage.getItem("admin_auth") === "true") {
+      setAuthenticated(true);
+    }
   }, []);
+
+  useEffect(() => {
+    if (authenticated) {
+      fetchVersions();
+      fetchAuditOptins();
+    }
+  }, [authenticated]);
+
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (passInput === ADMIN_PASS) {
+      setAuthenticated(true);
+      sessionStorage.setItem("admin_auth", "true");
+    } else {
+      toast({ title: "Fel lösenord", variant: "destructive" });
+    }
+  };
+
+  if (!authenticated) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-sm">
+          <CardHeader className="text-center">
+            <Lock className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
+            <CardTitle>Admin</CardTitle>
+            <CardDescription>Ange lösenord för att fortsätta</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleLogin} className="space-y-4">
+              <Input
+                type="password"
+                placeholder="Lösenord"
+                value={passInput}
+                onChange={(e) => setPassInput(e.target.value)}
+                autoFocus
+              />
+              <Button type="submit" className="w-full">Logga in</Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   const handleImport = async () => {
     if (!catalogName || !versionLabel || !effectiveFrom || !ratesCsv.trim()) {
