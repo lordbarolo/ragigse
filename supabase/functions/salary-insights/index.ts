@@ -159,7 +159,7 @@ serve(async (req) => {
       JSON.stringify({
         total_leads_with_salary: (leads || []).filter((l) => l.current_salary && l.yrke).length,
         filtered_out,
-        hourly_bounds: { min: MIN_HOURLY, max: MAX_HOURLY },
+        hourly_bounds: BOUNDS,
         by_role: roleStats,
         by_kommun: kommunStats,
         by_role_kommun: roleKommunStats,
