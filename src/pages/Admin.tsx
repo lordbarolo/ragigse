@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import SalaryInsights from "@/components/admin/SalaryInsights";
+import FeedbackStats from "@/components/admin/FeedbackStats";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -256,6 +257,9 @@ export default function Admin() {
         <h1 className="text-3xl font-bold tracking-tight">Admin – Marknadsbevakning</h1>
         <p className="text-muted-foreground mt-1">Importera priskataloger, hantera versioner och kör diff-analyser.</p>
       </div>
+
+      {/* Feedback Stats */}
+      <FeedbackStats />
 
       {/* Salary Insights */}
       <SalaryInsights />
