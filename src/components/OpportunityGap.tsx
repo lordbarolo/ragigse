@@ -5,22 +5,25 @@ interface OpportunityGapProps {
   marketHigh: number;
   employmentType: "anstalld" | "foretagare";
   nearestHigherKommun?: string | null;
+  emailProvided?: boolean;
 }
 
 function formatKr(value: number): string {
   return value.toLocaleString("sv-SE");
 }
 
-export default function OpportunityGap({ userHourly, marketHigh, employmentType, nearestHigherKommun }: OpportunityGapProps) {
+export default function OpportunityGap({ userHourly, marketHigh, employmentType, nearestHigherKommun, emailProvided = false }: OpportunityGapProps) {
   const diffHourly = Math.max(0, marketHigh - userHourly);
   const diffMonthly = diffHourly * 167;
   const isUnderpaid = userHourly < marketHigh;
 
   if (!isUnderpaid || diffHourly <= 0) return null;
 
-  const isSmallGap = diffHourly < 20; // roughly <5% at typical rates
+  const isSmallGap = diffHourly < 20;
 
   if (isSmallGap && !nearestHigherKommun) return null;
+
+  const blurClass = !emailProvided ? "blur-md select-none" : "";
 
   return (
     <div className="rounded-lg border border-destructive/30 bg-card card-shadow overflow-hidden">
@@ -37,12 +40,12 @@ export default function OpportunityGap({ userHourly, marketHigh, employmentType,
             <p className="text-base font-bold text-foreground leading-tight">
               {isSmallGap
                 ? `Du kan tjäna mer i ${nearestHigherKommun}`
-                : `Din ${employmentType === "foretagare" ? "ersättning" : "lön"} kan öka med ${formatKr(diffHourly)} kr/h`}
+                : <>Din {employmentType === "foretagare" ? "ersättning" : "lön"} kan öka med <span className={blurClass}>{formatKr(diffHourly)} kr/h</span></>}
             </p>
             <p className="text-sm text-muted-foreground mt-1">
               {isSmallGap
                 ? "Baserat på zonindelade ramavtalspriser"
-                : `Det motsvarar ca ${formatKr(diffMonthly)} kr/mån`}
+                : <>Det motsvarar ca <span className={blurClass}>{formatKr(diffMonthly)} kr/mån</span></>}
             </p>
           </div>
         </div>
