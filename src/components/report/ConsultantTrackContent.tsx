@@ -95,7 +95,7 @@ export default function ConsultantTrackContent({
               <ScriptBlock
                 step={2}
                 title="Presentera data"
-                text={`"Jag har tagit fram ramavtalspriset för ${occupation} i min region. Kundpriset ligger på ${fmt(marketRate)} kr/h, och med ${marginLabel} marginal borde min ${isEmployee ? 'bruttoersättning' : 'fakturering'} landa på ${fmt(rec.recommended_hourly_min)}–${fmt(rec.recommended_hourly_max)} kr/h."`}
+                text={`"Jag har tagit fram ramavtalspriset för ${occupation} i min region. Kundpriset ligger på ${fmt(marketRate)} kr/h, och därför borde min ersättning landa runt ${fmt(rec.recommended_hourly_max)} kr/h efter er marginal."`}
               />
               <ScriptBlock
                 step={3}
