@@ -403,7 +403,7 @@ export default function Survey() {
               onValueChange={(v) => {
                 setData({ ...data, kommun: v });
                 setTimeout(() => {
-                  trackStepCompleted(3);
+                  trackStepCompleted(3, v);
                   setStep(4);
                 }, 300);
               }}
