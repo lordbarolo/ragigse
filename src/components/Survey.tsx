@@ -265,11 +265,19 @@ export default function Survey() {
       if (benchmarkResult) sessionStorage.setItem("benchmarkResult", JSON.stringify(benchmarkResult));
       trackStepCompleted(5, data.currentSalary);
       const totalTime = surveyStartTime.current ? Math.round((Date.now() - surveyStartTime.current) / 1000) : 0;
+      const hourlyRate = data.salaryType === "monthly"
+        ? Math.round(data.currentSalary / 167)
+        : data.currentSalary;
       trackEvent("survey_completed", {
         total_steps: TOTAL_STEPS,
         total_time_seconds: totalTime,
         role: data.yrke,
         zone: data.kommun,
+        current_hourly_rate: hourlyRate,
+        experience_years: data.experience,
+        employment_type: data.employmentType,
+        agency_name: null,
+        report_id: reportData.report_id,
       });
       const couponCode = searchParams.get("coupon");
       const couponParam = couponCode ? `?coupon=${encodeURIComponent(couponCode)}` : "";
