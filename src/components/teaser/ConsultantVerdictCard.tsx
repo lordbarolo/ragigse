@@ -16,12 +16,13 @@ interface Props {
   onPartialUnlock: () => void;
   employmentType?: string;
   priceKr?: number;
+  emailProvided?: boolean;
 }
 
 export default function ConsultantVerdictCard({
   isUnderpaid, userHourly, result, customerRate, unlocked, partialUnlocked,
   exitIntentVisible, checkoutLoading, onCheckout, leadId, referrerEmail,
-  regionName, onPartialUnlock, employmentType, priceKr,
+  regionName, onPartialUnlock, employmentType, priceKr, emailProvided = false,
 }: Props) {
   return (
     <div className="rounded-lg border border-border bg-card card-shadow overflow-hidden">
@@ -41,6 +42,7 @@ export default function ConsultantVerdictCard({
           onPartialUnlock={onPartialUnlock}
           isUnderpaid={isUnderpaid}
           priceKr={priceKr}
+          emailProvided={emailProvided}
         />
       </div>
     </div>

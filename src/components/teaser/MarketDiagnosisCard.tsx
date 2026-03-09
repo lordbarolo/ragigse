@@ -11,6 +11,8 @@ interface Props {
   yrke: string;
   kommun: string;
   isAboveThreshold?: boolean;
+  /** Whether the user has provided their email (unblurs values) */
+  emailProvided?: boolean;
 }
 
 function getPosition(diffPercent: number, isAboveThreshold: boolean): Position {
@@ -40,7 +42,7 @@ const positionConfig: Record<Position, { label: string; color: string; bgColor: 
   },
 };
 
-export default function MarketDiagnosisCard({ diffPercent, isPermanent, yrke, kommun, isAboveThreshold = false }: Props) {
+export default function MarketDiagnosisCard({ diffPercent, isPermanent, yrke, kommun, isAboveThreshold = false, emailProvided = false }: Props) {
   const trackedRef = useRef(false);
   const position = getPosition(diffPercent, isAboveThreshold);
   const config = positionConfig[position];
@@ -53,11 +55,18 @@ export default function MarketDiagnosisCard({ diffPercent, isPermanent, yrke, ko
     }
   }, []);
 
-  const diagnosisText = position === "above"
-    ? `Du ligger över medianen för ${yrke} i din region.`
-    : position === "near"
-      ? `Du ligger nära medianen för ${yrke} i din region — men det finns utrymme.`
-      : `Du ligger ${diffPercent}% under medianen för ${yrke} i din region.`;
+  // Show text label without percentage when blurred
+  const diagnosisText = !emailProvided
+    ? position === "above"
+      ? `Du ligger över medianen för ${yrke} i din region.`
+      : position === "near"
+        ? `Du ligger nära medianen för ${yrke} i din region.`
+        : `Du ligger under medianen för ${yrke} i din region.`
+    : position === "above"
+      ? `Du ligger över medianen för ${yrke} i din region.`
+      : position === "near"
+        ? `Du ligger nära medianen för ${yrke} i din region — men det finns utrymme.`
+        : `Du ligger ${diffPercent}% under medianen för ${yrke} i din region.`;
 
   return (
     <div className="rounded-xl border border-border bg-card p-6 card-shadow">
