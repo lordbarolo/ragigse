@@ -35,6 +35,12 @@ serve(async (req) => {
     const byKommunType: Record<string, Bucket> = {};
     const byRoleKommunType: Record<string, RoleKommunBucket> = {};
 
+    // Realistic hourly rate bounds (SEK/h)
+    const MIN_HOURLY = 100;
+    const MAX_HOURLY = 2000;
+
+    let filtered_out = 0;
+
     for (const lead of leads || []) {
       if (!lead.current_salary || !lead.yrke) continue;
 
@@ -42,6 +48,12 @@ serve(async (req) => {
         lead.salary_type === "monthly"
           ? Math.round(lead.current_salary / 167)
           : lead.current_salary;
+
+      // Skip unrealistic values
+      if (hourly < MIN_HOURLY || hourly > MAX_HOURLY) {
+        filtered_out++;
+        continue;
+      }
 
       const et = lead.employment_type || "unknown";
 
