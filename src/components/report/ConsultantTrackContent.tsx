@@ -336,17 +336,15 @@ export default function ConsultantTrackContent({
                     : `Ersättningen ${fmt(rec.recommended_hourly_max)} kr/h baseras på ${marginLabel} marginal.`}
               </p>
             </div>
-            {isEmployee && (
-              <div className="p-4 rounded-lg bg-muted/50 border border-border space-y-2">
-                <div className="flex items-center gap-2">
-                  <Briefcase className="w-4 h-4 text-primary shrink-0" />
-                  <p className="font-semibold text-foreground text-sm">Om ditt bemanningsföretag behåller mer än 15%</p>
-                </div>
-                <p className="text-xs text-muted-foreground leading-relaxed">
-                  Vissa bemanningsföretag tar en högre marginal. En del av den kan gå till kostnader som i vissa fall ligger på bemanningsföretaget, t.ex. resa och boende, introduktionskostnad, SITHS-kort samt HLR-utbildning. Fråga ditt bemanningsföretag vilka kostnader som ingår i deras marginal — det ger dig bättre underlag i förhandlingen.
-                </p>
+            <div className="p-4 rounded-lg bg-muted/50 border border-border space-y-2">
+              <div className="flex items-center gap-2">
+                <Briefcase className="w-4 h-4 text-primary shrink-0" />
+                <p className="font-semibold text-foreground text-sm">Om ditt bemanningsföretag behåller mer än {isEmployee ? "15%" : marginLabel}</p>
               </div>
-            )}
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                Vissa bemanningsföretag tar en högre marginal. En del av den kan gå till kostnader som i vissa fall ligger på bemanningsföretaget, t.ex. resa och boende, introduktionskostnad, SITHS-kort samt HLR-utbildning. Fråga ditt bemanningsföretag vilka kostnader som ingår i deras marginal — det ger dig bättre underlag i förhandlingen.
+              </p>
+            </div>
           </CardContent>
         </Card>
       )}
