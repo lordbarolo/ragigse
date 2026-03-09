@@ -21,45 +21,49 @@ serve(async (req) => {
     // Fetch all leads with salary data
     const { data: leads, error } = await supabase
       .from("leads")
-      .select("yrke, kommun, current_salary, salary_type, employment_type")
+      .select("yrke, kommun, current_salary, salary_type, employment_type, email, created_at")
       .not("current_salary", "is", null)
       .not("yrke", "is", null);
 
     if (error) throw error;
 
-    // Aggregate by role
-    const byRole: Record<string, { salaries: number[]; count: number }> = {};
-    // Aggregate by kommun
-    const byKommun: Record<string, { salaries: number[]; count: number }> = {};
-    // Aggregate by role + kommun
-    const byRoleKommun: Record<string, { salaries: number[]; count: number; role: string; kommun: string }> = {};
+    // --- Salary aggregation ---
+    type Bucket = { salaries: number[]; count: number };
+    type RoleKommunBucket = Bucket & { role: string; kommun: string };
+
+    const byRoleType: Record<string, Bucket> = {};
+    const byKommunType: Record<string, Bucket> = {};
+    const byRoleKommunType: Record<string, RoleKommunBucket> = {};
 
     for (const lead of leads || []) {
       if (!lead.current_salary || !lead.yrke) continue;
 
-      // Normalize hourly: if monthly, divide by 167
       const hourly =
         lead.salary_type === "monthly"
           ? Math.round(lead.current_salary / 167)
           : lead.current_salary;
 
-      // By role
-      if (!byRole[lead.yrke]) byRole[lead.yrke] = { salaries: [], count: 0 };
-      byRole[lead.yrke].salaries.push(hourly);
-      byRole[lead.yrke].count++;
+      const et = lead.employment_type || "unknown";
 
-      // By kommun
+      // By role + employment_type
+      const roleKey = `${lead.yrke}||${et}`;
+      if (!byRoleType[roleKey]) byRoleType[roleKey] = { salaries: [], count: 0 };
+      byRoleType[roleKey].salaries.push(hourly);
+      byRoleType[roleKey].count++;
+
+      // By kommun + employment_type
       if (lead.kommun) {
-        if (!byKommun[lead.kommun]) byKommun[lead.kommun] = { salaries: [], count: 0 };
-        byKommun[lead.kommun].salaries.push(hourly);
-        byKommun[lead.kommun].count++;
+        const kommunKey = `${lead.kommun}||${et}`;
+        if (!byKommunType[kommunKey]) byKommunType[kommunKey] = { salaries: [], count: 0 };
+        byKommunType[kommunKey].salaries.push(hourly);
+        byKommunType[kommunKey].count++;
 
-        // By role + kommun
-        const key = `${lead.yrke}||${lead.kommun}`;
-        if (!byRoleKommun[key])
-          byRoleKommun[key] = { salaries: [], count: 0, role: lead.yrke, kommun: lead.kommun };
-        byRoleKommun[key].salaries.push(hourly);
-        byRoleKommun[key].count++;
+        // By role + kommun + employment_type
+        const rkKey = `${lead.yrke}||${lead.kommun}||${et}`;
+        if (!byRoleKommunType[rkKey])
+          byRoleKommunType[rkKey] = { salaries: [], count: 0, role: lead.yrke, kommun: lead.kommun };
+        byRoleKommunType[rkKey].salaries.push(hourly);
+        byRoleKommunType[rkKey].count++;
       }
     }
 
@@ -75,19 +79,63 @@ serve(async (req) => {
       };
     };
 
-    const roleStats = Object.entries(byRole)
-      .map(([role, d]) => ({ role, count: d.count, ...stats(d.salaries) }))
+    const roleStats = Object.entries(byRoleType)
+      .map(([key, d]) => {
+        const [role, employment_type] = key.split("||");
+        return { role, employment_type, count: d.count, ...stats(d.salaries) };
+      })
       .sort((a, b) => b.count - a.count);
 
-    const kommunStats = Object.entries(byKommun)
-      .map(([kommun, d]) => ({ kommun, count: d.count, ...stats(d.salaries) }))
+    const kommunStats = Object.entries(byKommunType)
+      .map(([key, d]) => {
+        const [kommun, employment_type] = key.split("||");
+        return { kommun, employment_type, count: d.count, ...stats(d.salaries) };
+      })
       .sort((a, b) => b.count - a.count);
 
-    const roleKommunStats = Object.values(byRoleKommun)
+    const roleKommunStats = Object.values(byRoleKommunType)
       .filter((d) => d.count >= 2)
-      .map((d) => ({ role: d.role, kommun: d.kommun, count: d.count, ...stats(d.salaries) }))
+      .map((d) => {
+        // Extract employment_type from the key by finding this bucket
+        const entry = Object.entries(byRoleKommunType).find(([_, v]) => v === d)!;
+        const parts = entry[0].split("||");
+        const employment_type = parts[2] || "unknown";
+        return { role: d.role, kommun: d.kommun, employment_type, count: d.count, ...stats(d.salaries) };
+      })
       .sort((a, b) => b.count - a.count)
-      .slice(0, 50);
+      .slice(0, 100);
+
+    // --- Repeat survey users ---
+    // Group leads by email to find users who submitted more than once
+    const byEmail: Record<string, string[]> = {};
+    for (const lead of leads || []) {
+      if (!lead.email) continue;
+      if (!byEmail[lead.email]) byEmail[lead.email] = [];
+      byEmail[lead.email].push(lead.created_at);
+    }
+
+    let repeatCount = 0;
+    const returnDelaysHours: number[] = [];
+
+    for (const [_, timestamps] of Object.entries(byEmail)) {
+      if (timestamps.length < 2) continue;
+      repeatCount++;
+      const sorted = timestamps.map(t => new Date(t).getTime()).sort((a, b) => a - b);
+      for (let i = 1; i < sorted.length; i++) {
+        returnDelaysHours.push((sorted[i] - sorted[i - 1]) / (1000 * 60 * 60));
+      }
+    }
+
+    const avgReturnHours = returnDelaysHours.length > 0
+      ? Math.round(returnDelaysHours.reduce((a, b) => a + b, 0) / returnDelaysHours.length)
+      : null;
+    const medianReturnHours = returnDelaysHours.length > 0
+      ? (() => {
+          const s = [...returnDelaysHours].sort((a, b) => a - b);
+          const m = Math.floor(s.length / 2);
+          return Math.round(s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2);
+        })()
+      : null;
 
     return new Response(
       JSON.stringify({
@@ -95,6 +143,13 @@ serve(async (req) => {
         by_role: roleStats,
         by_kommun: kommunStats,
         by_role_kommun: roleKommunStats,
+        repeat_users: {
+          unique_emails: Object.keys(byEmail).length,
+          repeat_count: repeatCount,
+          total_revisits: returnDelaysHours.length,
+          avg_return_hours: avgReturnHours,
+          median_return_hours: medianReturnHours,
+        },
       }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
