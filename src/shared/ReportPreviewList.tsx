@@ -8,9 +8,6 @@ const ITEMS = [
 ];
 
 export default function ReportPreviewList({ isPermanent }: { isPermanent: boolean }) {
-  const items = isPermanent ? PERMANENT_ITEMS : CONSULTANT_ITEMS;
-
-  return (
     <div className="rounded-lg border border-border bg-card card-shadow p-6">
       <h3 className="text-base font-bold text-foreground mb-4">I din rapport får du:</h3>
       <ul className="space-y-3 text-sm">
