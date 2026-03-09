@@ -47,6 +47,8 @@ interface RepeatUsers {
 
 interface InsightsData {
   total_leads_with_salary: number;
+  filtered_out?: number;
+  hourly_bounds?: { min: number; max: number };
   by_role: RoleStat[];
   by_kommun: KommunStat[];
   by_role_kommun: RoleKommunStat[];
@@ -178,6 +180,11 @@ export default function SalaryInsights() {
                 <Badge variant="outline" className="text-sm">
                   {data.total_leads_with_salary} leads med lönedata
                 </Badge>
+                {data.filtered_out != null && data.filtered_out > 0 && (
+                  <Badge variant="secondary" className="text-sm">
+                    {data.filtered_out} filtrerade (utanför {data.hourly_bounds?.min}–{data.hourly_bounds?.max} kr/h)
+                  </Badge>
+                )}
                 {/* Employment type filter */}
                 <div className="flex rounded-md border border-input overflow-hidden text-sm">
                   {(["all", "anstalld", "foretagare"] as EtFilter[]).map((et) => (
