@@ -435,7 +435,7 @@ export default function Survey() {
                   key={opt.value}
                   onClick={() => {
                     setData({ ...data, employmentType: opt.value });
-                    trackStepCompleted(4);
+                    trackStepCompleted(4, opt.value);
                     setTimeout(() => setStep(5), 300);
                   }}
                   className={`py-4 px-5 rounded-lg border text-left transition-all ${
