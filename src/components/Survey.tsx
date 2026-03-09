@@ -110,12 +110,13 @@ export default function Survey() {
     });
   }, [step]);
 
-  const trackStepCompleted = useCallback((stepNum: number) => {
+  const trackStepCompleted = useCallback((stepNum: number, stepAnswer?: string | number) => {
     const timeOnStep = Math.round((Date.now() - stepEntryTime.current) / 1000);
     trackEvent("survey_step_completed", {
       step_number: stepNum,
       step_name: STEP_NAMES[stepNum - 1] || `step_${stepNum}`,
       time_on_step_seconds: timeOnStep,
+      step_answer: stepAnswer ?? null,
     });
   }, []);
 
@@ -219,7 +220,9 @@ export default function Survey() {
 
   const handleNext = async () => {
     if (step < TOTAL_STEPS) {
-      trackStepCompleted(step);
+      // Step 5 "next" = salary submission
+      const answer = step === 5 ? data.currentSalary : undefined;
+      trackStepCompleted(step, answer);
       setStep(step + 1);
       return;
     }
@@ -260,7 +263,7 @@ export default function Survey() {
       sessionStorage.setItem("surveyData", JSON.stringify({ ...data, track }));
       if (reportData.ab_variant) sessionStorage.setItem("abVariant", reportData.ab_variant);
       if (benchmarkResult) sessionStorage.setItem("benchmarkResult", JSON.stringify(benchmarkResult));
-      trackStepCompleted(5);
+      trackStepCompleted(5, data.currentSalary);
       const totalTime = surveyStartTime.current ? Math.round((Date.now() - surveyStartTime.current) / 1000) : 0;
       trackEvent("survey_completed", {
         total_steps: TOTAL_STEPS,
@@ -324,7 +327,7 @@ export default function Survey() {
                     trackSurveyStarted();
                     setOccupationCategory(opt.value);
                     setRoleDropdownValue("");
-                    trackStepCompleted(1);
+                    trackStepCompleted(1, opt.value);
                     setStep(2);
                   }}
                   className={`py-4 px-5 rounded-lg border text-left transition-all ${
@@ -352,7 +355,7 @@ export default function Survey() {
               onValueChange={(v) => {
                 setRoleDropdownValue(v);
                 setTimeout(() => {
-                  trackStepCompleted(2);
+                  trackStepCompleted(2, v);
                   setStep(3);
                 }, 300);
               }}
@@ -400,7 +403,7 @@ export default function Survey() {
               onValueChange={(v) => {
                 setData({ ...data, kommun: v });
                 setTimeout(() => {
-                  trackStepCompleted(3);
+                  trackStepCompleted(3, v);
                   setStep(4);
                 }, 300);
               }}
@@ -432,7 +435,7 @@ export default function Survey() {
                   key={opt.value}
                   onClick={() => {
                     setData({ ...data, employmentType: opt.value });
-                    trackStepCompleted(4);
+                    trackStepCompleted(4, opt.value);
                     setTimeout(() => setStep(5), 300);
                   }}
                   className={`py-4 px-5 rounded-lg border text-left transition-all ${
