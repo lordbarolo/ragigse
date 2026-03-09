@@ -48,7 +48,7 @@ interface RepeatUsers {
 interface InsightsData {
   total_leads_with_salary: number;
   filtered_out?: number;
-  hourly_bounds?: { min: number; max: number };
+  hourly_bounds?: Record<string, { min: number; max: number }>;
   by_role: RoleStat[];
   by_kommun: KommunStat[];
   by_role_kommun: RoleKommunStat[];
