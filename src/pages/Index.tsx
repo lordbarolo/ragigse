@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Survey from "@/components/Survey";
 import Navbar from "@/components/Navbar";
+import CompcareLogo from "@/components/CompcareLogo";
 import { Shield } from "lucide-react";
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
