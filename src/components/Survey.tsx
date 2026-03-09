@@ -327,7 +327,7 @@ export default function Survey() {
                     trackSurveyStarted();
                     setOccupationCategory(opt.value);
                     setRoleDropdownValue("");
-                    trackStepCompleted(1);
+                    trackStepCompleted(1, opt.value);
                     setStep(2);
                   }}
                   className={`py-4 px-5 rounded-lg border text-left transition-all ${
