@@ -221,8 +221,14 @@ export default function Survey() {
   const handleNext = async () => {
     if (step < TOTAL_STEPS) {
       // Step 5 "next" = salary submission
-      const answer = step === 5 ? data.currentSalary : undefined;
-      trackStepCompleted(step, answer);
+      const stepAnswers: Record<number, string | number> = {
+        1: occupationCategory,
+        2: roleDropdownValue,
+        3: data.kommun,
+        4: data.employmentType,
+        5: data.currentSalary,
+      };
+      trackStepCompleted(step, stepAnswers[step]);
       setStep(step + 1);
       return;
     }
@@ -275,7 +281,7 @@ export default function Survey() {
         zone: data.kommun,
         current_hourly_rate: hourlyRate,
         experience_years: data.experience,
-        employment_type: data.employmentType,
+        employment_type: data.employmentType === "foretagare" ? "Eget bolag" : "Fast",
         agency_name: null,
         report_id: reportData.report_id,
       });
