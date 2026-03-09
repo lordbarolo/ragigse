@@ -345,7 +345,7 @@ export default function ConsultantTrackContent({
         <div ref={registerSectionRef?.("negotiation_script")}>
         <Card className="card-shadow">
           <CardContent className="pt-6 space-y-4">
-            <SectionHeading icon={MessageSquareQuote} title="Förhandlingsrekommendationer" />
+            <SectionHeading icon={MessageSquareQuote} title="Förhandlingstips" />
             <ul className="space-y-3">
               {getNegotiationTips(
                 isEmployee,
