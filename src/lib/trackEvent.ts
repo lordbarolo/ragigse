@@ -27,7 +27,11 @@ type EventName =
   | "free_report_unlocked"
   | "report_feedback"
   | "report_feedback_comment"
-  | "time_on_page";
+  | "time_on_page"
+  | "diagnosis_shown"
+  | "income_impact_shown"
+  | "email_gate_viewed"
+  | "email_submitted";
 
 export function trackEvent(
   eventName: EventName,
