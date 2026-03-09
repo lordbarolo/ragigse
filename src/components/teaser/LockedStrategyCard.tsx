@@ -49,15 +49,6 @@ export default function LockedStrategyCard({ isPermanent }: Props) {
           ))}
         </div>
 
-        {/* Progress indicator */}
-        <div className="mt-5 flex items-center gap-2">
-          <div className="flex gap-1">
-            <div className="w-8 h-1.5 rounded-full bg-primary" />
-            <div className="w-8 h-1.5 rounded-full bg-primary/30" />
-            <div className="w-8 h-1.5 rounded-full bg-muted" />
-          </div>
-          <span className="text-xs text-muted-foreground font-medium">Steg 2 av 3</span>
-        </div>
       </div>
     </div>
   );
