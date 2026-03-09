@@ -281,7 +281,7 @@ export default function Survey() {
         zone: data.kommun,
         current_hourly_rate: hourlyRate,
         experience_years: data.experience,
-        employment_type: data.employmentType,
+        employment_type: data.employmentType === "foretagare" ? "Eget bolag" : "Fast",
         agency_name: null,
         report_id: reportData.report_id,
       });
