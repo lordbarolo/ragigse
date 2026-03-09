@@ -22,14 +22,13 @@ export default function EarningsBanner({
 }: Props) {
   if (isPermanent) {
     if (!isUnderpaid || diffPercent <= 0) return null;
-    const diffMonthly = Math.max(0, benchmarkP75 - userMonthly);
     return (
       <div className="rounded-lg border border-border bg-card p-6 text-center card-shadow">
         <p className="text-muted-foreground text-sm font-medium">
           Enligt officiell lönestatistik kan du tjäna
         </p>
         <p className="text-3xl sm:text-4xl font-extrabold text-foreground mt-2 tracking-tight">
-          {formatKr(diffMonthly)} kr/mån mer
+          {diffPercent}% mer
         </p>
         <p className="text-muted-foreground text-xs mt-2">
           Baserat på Medlingsinstitutets lönestatistik för {yrke}
