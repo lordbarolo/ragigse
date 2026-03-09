@@ -3,9 +3,9 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Survey from "@/components/Survey";
 import Navbar from "@/components/Navbar";
 import { Shield } from "lucide-react";
+import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 import { supabase } from "@/integrations/supabase/client";
-import CompcareLogo from "@/components/CompcareLogo";
 
 const FAQ_ITEMS = [
   {
