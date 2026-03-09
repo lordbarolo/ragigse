@@ -40,6 +40,7 @@
     --success-gradient: linear-gradient(135deg, hsl(168 65% 50%), hsl(168 55% 40%));
     --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
     --card-shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.4);
+    --input-glow: 0 0 0 1px hsl(199 93% 60% / 0.25), 0 0 8px hsl(199 93% 60% / 0.1);
 
     --sidebar-background: 222 53% 8%;
     --sidebar-foreground: 222 33% 93%;
