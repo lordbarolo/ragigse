@@ -220,7 +220,9 @@ export default function Survey() {
 
   const handleNext = async () => {
     if (step < TOTAL_STEPS) {
-      trackStepCompleted(step);
+      // Step 5 "next" = salary submission
+      const answer = step === 5 ? data.currentSalary : undefined;
+      trackStepCompleted(step, answer);
       setStep(step + 1);
       return;
     }
