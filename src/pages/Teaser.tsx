@@ -438,42 +438,38 @@ export default function Teaser() {
           }}
         />
 
-        <EarningsBanner
-          isUnderpaid={isUnderpaid}
+        {/* SECTION 1 — Market Diagnosis */}
+        <MarketDiagnosisCard
           diffPercent={diffPercent}
           isPermanent={isPermanent}
           yrke={survey.yrke}
           kommun={survey.kommun}
-          nearestHigherKommun={nearestHigherKommun}
           isAboveThreshold={isAboveThreshold}
         />
 
-        {!isPermanent && isAboveThreshold && (
-          <HighEarnerCard
-            kommun={survey.kommun}
-            nearestHigherKommun={nearestHigherKommun}
-          />
-        )}
+        {/* SECTION 2 — Economic Consequence */}
+        {(() => {
+          const diffHourly = !isPermanent && result ? Math.max(0, result.high - userHourly) : 0;
+          const diffMonthly = diffHourly * 167;
+          const p75 = benchmarkMonthly?.p75 ?? 0;
+          const monthlyGap = isPermanent ? p75 - userMonthly : diffMonthly;
+          if (monthlyGap > 0) {
+            return (
+              <IncomeImpactCard
+                diffHourly={diffHourly}
+                diffMonthly={diffMonthly}
+                isPermanent={isPermanent}
+                diffPercent={diffPercent}
+                userMonthly={userMonthly}
+                p75Monthly={p75}
+              />
+            );
+          }
+          return null;
+        })()}
 
+        {/* Consultant bars (kept for visual context) */}
         {!isPermanent && !isAboveThreshold && result && (
-          <OpportunityGap
-            userHourly={userHourly}
-            marketHigh={noisedResult?.high ?? result.high}
-            employmentType={survey.employmentType as "anstalld" | "foretagare"}
-            nearestHigherKommun={nearestHigherKommun}
-          />
-        )}
-
-        {isPermanent && benchmarkMonthly && (
-          <PermanentBenchmarkCard
-            userMonthly={userMonthly}
-            benchmarkMonthly={benchmarkMonthly}
-            unlocked={unlocked}
-            partialUnlocked={partialUnlocked}
-          />
-        )}
-
-        {!isPermanent && result && (
           <ConsultantVerdictCard
             isUnderpaid={isUnderpaid}
             userHourly={userHourly}
@@ -493,9 +489,28 @@ export default function Teaser() {
           />
         )}
 
+        {isPermanent && benchmarkMonthly && (
+          <PermanentBenchmarkCard
+            userMonthly={userMonthly}
+            benchmarkMonthly={benchmarkMonthly}
+            unlocked={unlocked}
+            partialUnlocked={partialUnlocked}
+          />
+        )}
+
+        {!isPermanent && isAboveThreshold && (
+          <HighEarnerCard
+            kommun={survey.kommun}
+            nearestHigherKommun={nearestHigherKommun}
+          />
+        )}
+
+        {/* SECTION 3 — Locked Strategy + Email Gate */}
+        <LockedStrategyCard isPermanent={isPermanent} />
+
         <div ref={checkoutRef}>
           {!email ? (
-            <div className="rounded-lg border border-border bg-card p-5 card-shadow">
+            <div className="rounded-xl border border-border bg-card p-5 card-shadow">
               <EmailGate
                 onEmailSubmit={handleEmailSubmit}
                 loading={emailSaving || checkoutLoading !== null}
