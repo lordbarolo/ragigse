@@ -5,7 +5,7 @@ import { Shield } from "lucide-react";
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 import { supabase } from "@/integrations/supabase/client";
-import logoDark from "@/assets/logo-dark.png";
+import CompcareLogo from "@/components/CompcareLogo";
 
 const FAQ_ITEMS = [
   {
@@ -135,7 +135,8 @@ const Index = () => {
         <div className="max-w-2xl mx-auto space-y-5">
           {/* Logo */}
           <Link to="/" className="inline-block">
-            <img src={logoDark} alt="CompCare" className="h-9 sm:h-10" />
+            <span className="block md:hidden"><CompcareLogo variant="wordmark" /></span>
+            <span className="hidden md:block"><CompcareLogo variant="full" /></span>
           </Link>
 
           {/* Trust badge */}
