@@ -6,10 +6,6 @@ interface Props {
   kommun: string;
   nearestHigherKommun?: string | null;
   isAboveThreshold?: boolean;
-  userHourly?: number;
-  marketHigh?: number;
-  userMonthly?: number;
-  benchmarkP75?: number;
 }
 
 function formatKr(value: number): string {
@@ -18,7 +14,6 @@ function formatKr(value: number): string {
 
 export default function EarningsBanner({
   isUnderpaid, diffPercent, isPermanent, yrke, kommun, nearestHigherKommun, isAboveThreshold,
-  userHourly = 0, marketHigh = 0, userMonthly = 0, benchmarkP75 = 0,
 }: Props) {
   if (isPermanent) {
     if (!isUnderpaid || diffPercent <= 0) return null;
