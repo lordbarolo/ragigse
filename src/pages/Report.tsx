@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ShieldCheck, Loader2, Download, Linkedin } from "lucide-react";
 import { trackEvent } from "@/lib/trackEvent";
+import { getCouponCode } from "@/lib/captureParams";
 import logoDark from "@/assets/logo-dark.png";
 
 import ShareButton from "@/components/ShareButton";
@@ -102,6 +103,7 @@ export default function Report() {
   const isPermanentTrack = r.track === "permanent";
   const isFullAccess = report.access === "full";
   const isEmployee = report.employment_type === "anstalld";
+  const isFriendCoupon = getCouponCode()?.toLowerCase() === "vänner500";
 
   return (
     <div className="min-h-screen bg-background">
@@ -183,9 +185,11 @@ export default function Report() {
               className="w-full"
             />
             <div className="flex gap-3">
-              <Button variant="outline" className="flex-1 gap-2" onClick={() => window.print()}>
-                <Download className="w-4 h-4" /> PDF
-              </Button>
+              {!isFriendCoupon && (
+                <Button variant="outline" className="flex-1 gap-2" onClick={() => window.print()}>
+                  <Download className="w-4 h-4" /> PDF
+                </Button>
+              )}
               <Button
                 variant="outline"
                 className="flex-1 gap-2"
