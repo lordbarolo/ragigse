@@ -17,16 +17,20 @@ interface Props {
   onPartialUnlock: () => void;
   isUnderpaid: boolean;
   priceKr?: number;
+  emailProvided?: boolean;
 }
 
 export default function PaywallOverlay({
   userHourly, result, customerRate, unlocked, partialUnlocked,
   exitIntentVisible, checkoutLoading, onCheckout, leadId, referrerEmail,
-  regionName, onPartialUnlock, isUnderpaid, priceKr = 49,
+  regionName, onPartialUnlock, isUnderpaid, priceKr = 49, emailProvided = false,
 }: Props) {
   // Use customerRate for "what the region pays" bar, fall back to result.high
   const regionPays = customerRate && customerRate > 0 ? customerRate : result.high;
   const barMax = Math.max(regionPays, result.high, userHourly) + 50;
+
+  // When email not provided, blur all monetary bars except user's own
+  const blurValues = !emailProvided;
 
   return (
     <div className="space-y-4">
@@ -43,7 +47,7 @@ export default function PaywallOverlay({
           value={regionPays}
           max={barMax}
           color="bg-primary"
-          blurred={true}
+          blurred={blurValues || true}
         />
         <BarRow
           label="Rekommenderad ersättning"
@@ -51,7 +55,8 @@ export default function PaywallOverlay({
           max={barMax}
           color="bg-primary/50"
           partialReveal={false}
-          animateAndBlurAt={userHourly}
+          animateAndBlurAt={blurValues ? userHourly : undefined}
+          blurred={blurValues}
         />
       </div>
 

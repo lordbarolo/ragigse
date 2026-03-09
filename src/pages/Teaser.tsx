@@ -445,6 +445,19 @@ export default function Teaser() {
           yrke={survey.yrke}
           kommun={survey.kommun}
           isAboveThreshold={isAboveThreshold}
+          emailProvided={!!email}
+        />
+
+        {/* Earnings Banner */}
+        <EarningsBanner
+          isUnderpaid={isUnderpaid}
+          diffPercent={diffPercent}
+          isPermanent={isPermanent}
+          yrke={survey.yrke}
+          kommun={survey.kommun}
+          nearestHigherKommun={nearestHigherKommun}
+          isAboveThreshold={isAboveThreshold}
+          emailProvided={!!email}
         />
 
         {/* SECTION 2 — Economic Consequence */}
@@ -462,6 +475,7 @@ export default function Teaser() {
                 diffPercent={diffPercent}
                 userMonthly={userMonthly}
                 p75Monthly={p75}
+                emailProvided={!!email}
               />
             );
           }
@@ -486,6 +500,7 @@ export default function Teaser() {
             onPartialUnlock={() => setPartialUnlocked(true)}
             employmentType={survey.employmentType}
             priceKr={priceKr}
+            emailProvided={!!email}
           />
         )}
 
@@ -495,6 +510,7 @@ export default function Teaser() {
             benchmarkMonthly={benchmarkMonthly}
             unlocked={unlocked}
             partialUnlocked={partialUnlocked}
+            emailProvided={!!email}
           />
         )}
 

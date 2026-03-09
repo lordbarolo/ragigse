@@ -23,6 +23,10 @@ export default function EmailGate({ onEmailSubmit, loading, coupon, isFree, pric
 
   return (
     <div className="space-y-3">
+      <p className="text-base font-semibold text-foreground text-center leading-snug">
+        Vi har räknat klart. Ange din e-post så visar vi dina siffror.
+      </p>
+
       <div className="flex items-center gap-2 mb-1">
         <Mail className="w-4 h-4 text-muted-foreground" />
         <div className="text-sm font-medium text-foreground leading-snug space-y-1.5">

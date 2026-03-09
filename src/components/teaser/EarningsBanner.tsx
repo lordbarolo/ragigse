@@ -6,15 +6,14 @@ interface Props {
   kommun: string;
   nearestHigherKommun?: string | null;
   isAboveThreshold?: boolean;
-}
-
-function formatKr(value: number): string {
-  return value.toLocaleString("sv-SE");
+  emailProvided?: boolean;
 }
 
 export default function EarningsBanner({
-  isUnderpaid, diffPercent, isPermanent, yrke, kommun, nearestHigherKommun, isAboveThreshold,
+  isUnderpaid, diffPercent, isPermanent, yrke, kommun, nearestHigherKommun, isAboveThreshold, emailProvided = false,
 }: Props) {
+  const blurClass = !emailProvided ? "blur-md select-none" : "";
+
   if (isPermanent) {
     if (!isUnderpaid || diffPercent <= 0) return null;
     return (
@@ -22,7 +21,7 @@ export default function EarningsBanner({
         <p className="text-muted-foreground text-sm font-medium">
           Enligt officiell lönestatistik kan du tjäna
         </p>
-        <p className="text-3xl sm:text-4xl font-extrabold text-foreground mt-2 tracking-tight">
+        <p className={`text-3xl sm:text-4xl font-extrabold text-foreground mt-2 tracking-tight ${blurClass}`}>
           {diffPercent}% mer
         </p>
         <p className="text-muted-foreground text-xs mt-2">
@@ -51,7 +50,7 @@ export default function EarningsBanner({
         <p className="text-muted-foreground text-sm font-medium">
           Baserat på ramavtalspriserna i {kommun} kan du tjäna
         </p>
-        <p className="text-3xl sm:text-4xl font-extrabold text-foreground mt-2 tracking-tight">
+        <p className={`text-3xl sm:text-4xl font-extrabold text-foreground mt-2 tracking-tight ${blurClass}`}>
           {diffPercent}% mer
         </p>
         <p className="text-muted-foreground text-sm mt-2">

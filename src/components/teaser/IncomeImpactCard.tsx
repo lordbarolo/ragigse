@@ -2,18 +2,13 @@ import { useEffect, useRef } from "react";
 import { trackEvent } from "@/lib/trackEvent";
 
 interface Props {
-  /** Hourly gap (market - user) in SEK */
   diffHourly: number;
-  /** Monthly gap in SEK */
   diffMonthly: number;
-  /** Whether this is permanent track */
   isPermanent: boolean;
-  /** Diff percent for permanent track */
   diffPercent?: number;
-  /** User monthly salary for permanent track */
   userMonthly?: number;
-  /** P75 monthly for permanent track */
   p75Monthly?: number;
+  emailProvided?: boolean;
 }
 
 function fmt(v: number): string {
@@ -27,6 +22,7 @@ export default function IncomeImpactCard({
   diffPercent = 0,
   userMonthly = 0,
   p75Monthly = 0,
+  emailProvided = false,
 }: Props) {
   const trackedRef = useRef(false);
 
@@ -51,13 +47,15 @@ export default function IncomeImpactCard({
 
   if (monthlyGap <= 0) return null;
 
+  const blurClass = !emailProvided ? "blur-md select-none" : "";
+
   return (
     <div className="rounded-xl border border-border bg-card p-6 card-shadow">
       <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
         Ekonomisk konsekvens
       </p>
 
-      <p className="text-3xl sm:text-4xl font-black text-foreground tracking-tight">
+      <p className={`text-3xl sm:text-4xl font-black text-foreground tracking-tight ${blurClass}`}>
         {fmt(yearlyGap)} kr/år
       </p>
       <p className="text-sm text-muted-foreground mt-1">
