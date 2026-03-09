@@ -11,6 +11,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useExitIntent } from "@/hooks/useExitIntent";
 import OpportunityGap from "@/components/OpportunityGap";
+import MarketDiagnosisCard from "@/components/teaser/MarketDiagnosisCard";
+import IncomeImpactCard from "@/components/teaser/IncomeImpactCard";
+import LockedStrategyCard from "@/components/teaser/LockedStrategyCard";
 
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
