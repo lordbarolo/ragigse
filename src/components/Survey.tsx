@@ -110,12 +110,13 @@ export default function Survey() {
     });
   }, [step]);
 
-  const trackStepCompleted = useCallback((stepNum: number) => {
+  const trackStepCompleted = useCallback((stepNum: number, stepAnswer?: string | number) => {
     const timeOnStep = Math.round((Date.now() - stepEntryTime.current) / 1000);
     trackEvent("survey_step_completed", {
       step_number: stepNum,
       step_name: STEP_NAMES[stepNum - 1] || `step_${stepNum}`,
       time_on_step_seconds: timeOnStep,
+      step_answer: stepAnswer ?? null,
     });
   }, []);
 
