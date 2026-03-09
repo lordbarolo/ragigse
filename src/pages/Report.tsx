@@ -185,9 +185,11 @@ export default function Report() {
               className="w-full"
             />
             <div className="flex gap-3">
-              <Button variant="outline" className="flex-1 gap-2" onClick={() => window.print()}>
-                <Download className="w-4 h-4" /> PDF
-              </Button>
+              {!isFriendCoupon && (
+                <Button variant="outline" className="flex-1 gap-2" onClick={() => window.print()}>
+                  <Download className="w-4 h-4" /> PDF
+                </Button>
+              )}
               <Button
                 variant="outline"
                 className="flex-1 gap-2"
