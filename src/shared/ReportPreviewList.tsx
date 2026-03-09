@@ -1,19 +1,10 @@
 import { ShieldCheck } from "lucide-react";
 
-const CONSULTANT_ITEMS = [
-  "Ersättningen för de bäst betalda konsulterna",
+const ITEMS = [
+  "Kunskap om vad kunden betalar för dig",
   "Konkret förhandlingsspann med siffror",
   "Steg-för-steg script: vad du ska säga",
-  "Få ett färdigt förhandlingsscript",
-  "Lista på godkända leverantörer",
-];
-
-const PERMANENT_ITEMS = [
-  "Exakt förhandlingsutrymme mot marknadens P75",
-  "Konkreta förhandlingsargument anpassade för dig",
-  "Jämförelse mot medianen och toppskiktet",
-  "Få ett färdigt förhandlingsscript",
-  "Se vad konsulter i samma roll tjänar",
+  "Info om orter som betalar mer än din nuvarande",
 ];
 
 export default function ReportPreviewList({ isPermanent }: { isPermanent: boolean }) {
