@@ -130,15 +130,11 @@ const Index = () => {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppJsonLd) }}
       />
 
-      {/* Hero + Survey combined — enkäten syns direkt */}
-      <header className="py-3 px-5 text-center sm:py-10 border-b border-border">
-        <div className="max-w-2xl mx-auto space-y-5">
-          {/* Logo */}
-          <Link to="/" className="inline-block">
-            <span className="block md:hidden"><CompcareLogo variant="wordmark" /></span>
-            <span className="hidden md:block"><CompcareLogo variant="full" /></span>
-          </Link>
+      <Navbar />
 
+      {/* Hero */}
+      <header className="py-8 sm:py-10 px-5 text-center border-b border-border">
+        <div className="max-w-2xl mx-auto space-y-5">
           {/* Trust badge */}
           <div className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground bg-muted rounded-full px-4 py-1.5">
             <Shield className="w-3.5 h-3.5" />
@@ -154,8 +150,6 @@ const Index = () => {
           <p className="text-base text-muted-foreground/80">
             Anonymt och kostnadsfritt
           </p>
-
-
         </div>
       </header>
 
