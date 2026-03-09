@@ -131,7 +131,7 @@ const Index = () => {
       />
 
       {/* Hero + Survey combined — enkäten syns direkt */}
-      <header className="py-6 px-5 text-center sm:py-10 border-b border-border">
+      <header className="py-3 px-5 text-center sm:py-10 border-b border-border">
         <div className="max-w-2xl mx-auto space-y-5">
           {/* Logo */}
           <Link to="/" className="inline-block">
