@@ -258,6 +258,9 @@ export default function Admin() {
         <p className="text-muted-foreground mt-1">Importera priskataloger, hantera versioner och kör diff-analyser.</p>
       </div>
 
+      {/* Feedback Stats */}
+      <FeedbackStats />
+
       {/* Salary Insights */}
       <SalaryInsights />
 
