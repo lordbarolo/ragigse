@@ -355,7 +355,7 @@ export default function Survey() {
               onValueChange={(v) => {
                 setRoleDropdownValue(v);
                 setTimeout(() => {
-                  trackStepCompleted(2);
+                  trackStepCompleted(2, v);
                   setStep(3);
                 }, 300);
               }}
