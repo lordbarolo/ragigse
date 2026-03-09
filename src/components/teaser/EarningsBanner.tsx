@@ -51,14 +51,13 @@ export default function EarningsBanner({
   }
 
   if (isUnderpaid && diffPercent > 0) {
-    const diffHourly = Math.max(0, marketHigh - userHourly);
     return (
       <div className="rounded-lg border border-border bg-card p-6 text-center card-shadow">
         <p className="text-muted-foreground text-sm font-medium">
           Baserat på ramavtalspriserna i {kommun} kan du tjäna
         </p>
         <p className="text-3xl sm:text-4xl font-extrabold text-foreground mt-2 tracking-tight">
-          {formatKr(diffHourly)} kr/h mer
+          {diffPercent}% mer
         </p>
         <p className="text-muted-foreground text-sm mt-2">
           Vill du se exakta belopp och få förhandlingstips?
