@@ -133,8 +133,13 @@ const Index = () => {
       <Navbar />
 
       {/* Hero */}
-      <header className="py-8 sm:py-10 px-5 text-center border-b border-border">
+      <header className="pt-20 md:pt-24 py-8 sm:py-10 px-5 text-center border-b border-border">
         <div className="max-w-2xl mx-auto space-y-5">
+          {/* Hero logo */}
+          <div className="flex justify-center mb-8">
+            <CompcareLogo variant="full" className="h-10 md:h-12" />
+          </div>
+
           {/* Trust badge */}
           <div className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground bg-muted rounded-full px-4 py-1.5">
             <Shield className="w-3.5 h-3.5" />
