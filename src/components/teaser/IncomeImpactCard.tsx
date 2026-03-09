@@ -58,18 +58,15 @@ export default function IncomeImpactCard({
       </p>
 
       <p className="text-3xl sm:text-4xl font-black text-foreground tracking-tight">
-        {fmt(yearlyGap)} kr
+        {fmt(yearlyGap)} kr/år
       </p>
       <p className="text-sm text-muted-foreground mt-1">
-        Så mycket mer kan du tjäna per år
+        Din ersättning kan öka med upp till detta belopp
       </p>
 
       <div className="mt-4 pt-4 border-t border-border">
         <p className="text-sm text-muted-foreground leading-relaxed">
-          {isPermanent
-            ? `Kollegor i din yrkesgrupp som ligger i övre kvartilen tjänar ${fmt(monthlyGap)} kr mer per månad.`
-            : `Det motsvarar ungefär ${fmt(monthlyGap)} kr mer per månad, eller ${fmt(diffHourly)} kr/h.`
-          }
+          Se hur vi räknat och få en fullständig analys i din personliga rapport.
         </p>
       </div>
     </div>
