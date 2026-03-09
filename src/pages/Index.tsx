@@ -5,7 +5,7 @@ import { Shield } from "lucide-react";
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 import { supabase } from "@/integrations/supabase/client";
-import logoDark from "@/assets/logo-dark.png";
+import CompcareLogo from "@/components/CompcareLogo";
 
 const FAQ_ITEMS = [
   {
