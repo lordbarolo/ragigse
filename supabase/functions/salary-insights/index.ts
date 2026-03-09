@@ -61,8 +61,6 @@ serve(async (req) => {
         continue;
       }
 
-      const et = lead.employment_type || "unknown";
-
       // By role + employment_type
       const roleKey = `${lead.yrke}||${et}`;
       if (!byRoleType[roleKey]) byRoleType[roleKey] = { salaries: [], count: 0 };
