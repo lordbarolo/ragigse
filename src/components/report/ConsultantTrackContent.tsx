@@ -197,32 +197,7 @@ export default function ConsultantTrackContent({
         </Card>
       )}
 
-      {/* 1. Ramavtalspris */}
-      <Card className="card-shadow">
-        <CardContent className="pt-6 space-y-3">
-          <SectionHeading icon={BarChart3} title="Ramavtalspris" />
-          {isConsultantFullAccess ? (
-            <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
-              <p className="text-xs text-muted-foreground mb-1">Vad regionen betalar till bemanningsföretag</p>
-              <p className="text-2xl font-bold text-foreground">{fmt(marketRate)} kr/h</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Grundtimpris enligt ramavtal (OB/jour ej inkluderat)
-              </p>
-            </div>
-          ) : (
-            <div className="p-4 rounded-lg bg-muted/50 border border-border">
-              <p className="text-xs text-muted-foreground mb-1">Vad regionen betalar till bemanningsföretag</p>
-              <div className="flex items-center gap-2 mb-1">
-                <Lock className="w-4 h-4 text-muted-foreground" />
-                <p className="text-2xl font-bold text-muted-foreground/40 select-none">■■■ kr/h</p>
-              </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                Lås upp ramavtalspriset och se exakt vad regionen betalar för din roll.
-              </p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+      {/* (Ramavtalspris is now the hero card above) */}
 
       {/* 2. Rekommenderad ersättning */}
       <Card className="card-shadow overflow-hidden">
