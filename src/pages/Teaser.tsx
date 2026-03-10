@@ -297,8 +297,8 @@ export default function Teaser() {
   const handleEmailSubmit = async (emailValue: string) => {
     setEmailSaving(true);
     try {
-      // Save email to lead + report first, and wait for it
-      const { error: saveErr } = await supabase.functions.invoke("save-email", {
+      // Save email + create account automatically
+      const { error: saveErr } = await supabase.functions.invoke("auto-create-account", {
         body: { lead_id: leadId, report_id: reportId, email: emailValue },
       });
       if (saveErr) throw saveErr;
