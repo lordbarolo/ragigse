@@ -13,7 +13,7 @@ import { useExitIntent } from "@/hooks/useExitIntent";
 import OpportunityGap from "@/components/OpportunityGap";
 import MarketDiagnosisCard from "@/components/teaser/MarketDiagnosisCard";
 import IncomeImpactCard from "@/components/teaser/IncomeImpactCard";
-import LockedStrategyCard from "@/components/teaser/LockedStrategyCard";
+import BlurredRateTeaser from "@/components/teaser/BlurredRateTeaser";
 
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
