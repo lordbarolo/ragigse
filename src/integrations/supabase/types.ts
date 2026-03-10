@@ -479,6 +479,30 @@ export type Database = {
           },
         ]
       }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       rates: {
         Row: {
           detaljer: string | null
@@ -596,6 +620,7 @@ export type Database = {
           salary_type: string | null
           status: string
           unlocked_by_referral: boolean
+          user_id: string | null
         }
         Insert: {
           ab_variant?: string
@@ -615,6 +640,7 @@ export type Database = {
           salary_type?: string | null
           status?: string
           unlocked_by_referral?: boolean
+          user_id?: string | null
         }
         Update: {
           ab_variant?: string
@@ -634,6 +660,7 @@ export type Database = {
           salary_type?: string | null
           status?: string
           unlocked_by_referral?: boolean
+          user_id?: string | null
         }
         Relationships: [
           {
