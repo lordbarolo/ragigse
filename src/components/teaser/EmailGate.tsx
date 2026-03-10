@@ -74,7 +74,9 @@ export default function EmailGate({ onEmailSubmit, loading, coupon, isFree, pric
             if (e.key === "Enter" && valid && !loading) onEmailSubmit(email.trim().toLowerCase());
           }}
         />
-        <p className="text-xs text-muted-foreground text-center">Din e-post delas aldrig vidare.</p>
+        <p className="text-xs text-muted-foreground text-center">
+          Vi skickar din analys till din e-post så att du kan komma tillbaka till den senare.
+        </p>
       </div>
 
       {coupon && isFree && (
