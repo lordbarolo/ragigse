@@ -50,7 +50,7 @@ export default function IncomeImpactCard({
   const blurClass = !emailProvided ? "blur-md select-none" : "";
 
   return (
-    <div className="rounded-xl border border-border bg-card p-6 card-shadow">
+    <div className="rounded-xl bg-card/50 p-6">
       <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">
         Ekonomisk konsekvens
       </p>
