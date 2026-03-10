@@ -299,91 +299,85 @@ export default function ConsultantTrackContent({
 
       {/* 3. Antaganden & Beräkning (full) */}
       {isConsultantFullAccess && rec && (
-        <Card className="card-shadow">
-          <CardContent className="pt-6 space-y-4">
-            <SectionHeading icon={Info} title="Antaganden & Beräkning" />
-            <div className="space-y-3 text-sm text-muted-foreground">
-              <CalcRow label="Ramavtalspris (vad kunden betalar)" value={`${fmt(marketRate)} kr/h`} />
-              <CalcRow label={`Bemanningsbolagets marginal (${marginLabel})`} value={`−${fmt(Math.round(marketRate * margin))} kr/h`} />
-              <CalcRow label="Ersättningsutrymme efter marginal" value={`${fmt(afterMargin)} kr/h`} />
-              {isEmployee ? (
-                <CalcRow
-                  label="÷ 1,42 (arbetsgivaravg. + semester + pension)"
-                  value={`= ${fmt(Math.round(afterMargin / 1.42))} kr/h brutto`}
-                />
-              ) : (
-                <p className="text-xs text-muted-foreground/70 pt-1">
-                  Som egenföretagare bör du fakturera {Math.round((1 - margin) * 100)}% av kundpriset, dvs{" "}
-                  {fmt(rec.recommended_hourly_max)} kr/h.
-                </p>
-              )}
-            </div>
-            <Separator />
-            <div className="p-4 rounded-lg bg-muted/50 border border-border space-y-3">
-              <div className="flex items-center gap-2">
-                <Info className="w-4 h-4 text-primary shrink-0" />
-                <p className="font-semibold text-foreground text-sm">Information om beräkningen</p>
-              </div>
-              <ul className="space-y-2 text-xs text-muted-foreground leading-relaxed">
-                <li>
-                  <span className="font-semibold text-foreground">Bemanningsbolagets marginal ({marginLabel}):</span>{" "}
-                  Vi räknar med att bolaget behåller {marginLabel} av timpriset. {isEmployee ? "Detta är en vanlig nivå vid ramavtalsuppdrag." : "Som egenföretagare är marknadsmässig marginal 14%."}
-                </li>
-                {isEmployee && (
-                  <li>
-                    <span className="font-semibold text-foreground">Arbetsgivaravgifter & omkostnader (faktor 1,42):</span>{" "}
-                    Täcker lagstadgade arbetsgivaravgifter (31,42%), tjänstepension, sjukförsäkring och semesterersättning.
-                  </li>
-                )}
-                <li>
-                  <span className="font-semibold text-foreground">Arbetsmånad:</span>{" "}
-                  Vi baserar månadsberäkningen på ett snitt om 167 arbetstimmar.
-                </li>
-              </ul>
+        <div className="rounded-xl bg-card/50 p-6 space-y-4">
+          <SectionHeading icon={Info} title="Antaganden & Beräkning" />
+          <div className="space-y-3 text-sm text-muted-foreground">
+            <CalcRow label="Ramavtalspris (vad kunden betalar)" value={`${fmt(marketRate)} kr/h`} />
+            <CalcRow label={`Bemanningsbolagets marginal (${marginLabel})`} value={`−${fmt(Math.round(marketRate * margin))} kr/h`} />
+            <CalcRow label="Ersättningsutrymme efter marginal" value={`${fmt(afterMargin)} kr/h`} />
+            {isEmployee ? (
+              <CalcRow
+                label="÷ 1,42 (arbetsgivaravg. + semester + pension)"
+                value={`= ${fmt(Math.round(afterMargin / 1.42))} kr/h brutto`}
+              />
+            ) : (
               <p className="text-xs text-muted-foreground/70 pt-1">
-                  {isEmployee
-                    ? `Spannet ${fmt(rec.recommended_hourly_min)}–${fmt(rec.recommended_hourly_max)} kr/h baseras på 10–15% marginal.`
-                    : `Ersättningen ${fmt(rec.recommended_hourly_max)} kr/h baseras på ${marginLabel} marginal.`}
+                Som egenföretagare bör du fakturera {Math.round((1 - margin) * 100)}% av kundpriset, dvs{" "}
+                {fmt(rec.recommended_hourly_max)} kr/h.
               </p>
+            )}
+          </div>
+          <Separator />
+          <div className="p-4 rounded-lg bg-muted/30 space-y-3">
+            <div className="flex items-center gap-2">
+              <Info className="w-4 h-4 text-primary shrink-0" />
+              <p className="font-semibold text-foreground text-sm">Information om beräkningen</p>
             </div>
-            <div className="p-4 rounded-lg bg-muted/50 border border-border space-y-2">
-              <div className="flex items-center gap-2">
-                <Briefcase className="w-4 h-4 text-primary shrink-0" />
-                <p className="font-semibold text-foreground text-sm">Om ditt bemanningsföretag behåller mer än {isEmployee ? "15%" : marginLabel}</p>
-              </div>
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Vissa bemanningsföretag tar en högre marginal. En del av den kan gå till kostnader som i vissa fall ligger på bemanningsföretaget, t.ex. resa och boende, introduktionskostnad, SITHS-kort samt HLR-utbildning. Fråga ditt bemanningsföretag vilka kostnader som ingår i deras marginal — det ger dig bättre underlag i förhandlingen.
-              </p>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* 4. Förhandlingsrekommendationer (full) */}
-      {isConsultantFullAccess && rec && (
-        <div ref={registerSectionRef?.("negotiation_script")}>
-        <Card className="card-shadow">
-          <CardContent className="pt-6 space-y-4">
-            <SectionHeading icon={MessageSquareQuote} title="Förhandlingstips" />
-            <ul className="space-y-3">
-              {getNegotiationTips(
-                isEmployee,
-                delta ? delta.monthly_vs_current_min > 0 : false,
-                delta ? Math.round((delta.monthly_vs_current_max / rec.recommended_monthly_max) * 100) : 0,
-                occupation
-              ).map((tip, i) => (
-                <li key={i} className="flex items-start gap-3 text-sm">
-                  <ArrowRight className="w-4 h-4 text-accent mt-0.5 shrink-0" />
-                  <span className="text-muted-foreground">{tip}</span>
+            <ul className="space-y-2 text-xs text-muted-foreground leading-relaxed">
+              <li>
+                <span className="font-semibold text-foreground">Bemanningsbolagets marginal ({marginLabel}):</span>{" "}
+                Vi räknar med att bolaget behåller {marginLabel} av timpriset. {isEmployee ? "Detta är en vanlig nivå vid ramavtalsuppdrag." : "Som egenföretagare är marknadsmässig marginal 14%."}
+              </li>
+              {isEmployee && (
+                <li>
+                  <span className="font-semibold text-foreground">Arbetsgivaravgifter & omkostnader (faktor 1,42):</span>{" "}
+                  Täcker lagstadgade arbetsgivaravgifter (31,42%), tjänstepension, sjukförsäkring och semesterersättning.
                 </li>
-              ))}
+              )}
+              <li>
+                <span className="font-semibold text-foreground">Arbetsmånad:</span>{" "}
+                Vi baserar månadsberäkningen på ett snitt om 167 arbetstimmar.
+              </li>
             </ul>
-          </CardContent>
-        </Card>
+            <p className="text-xs text-muted-foreground/70 pt-1">
+                {isEmployee
+                  ? `Spannet ${fmt(rec.recommended_hourly_min)}–${fmt(rec.recommended_hourly_max)} kr/h baseras på 10–15% marginal.`
+                  : `Ersättningen ${fmt(rec.recommended_hourly_max)} kr/h baseras på ${marginLabel} marginal.`}
+            </p>
+          </div>
+          <div className="p-4 rounded-lg bg-muted/30 space-y-2">
+            <div className="flex items-center gap-2">
+              <Briefcase className="w-4 h-4 text-primary shrink-0" />
+              <p className="font-semibold text-foreground text-sm">Om ditt bemanningsföretag behåller mer än {isEmployee ? "15%" : marginLabel}</p>
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Vissa bemanningsföretag tar en högre marginal. En del av den kan gå till kostnader som i vissa fall ligger på bemanningsföretaget, t.ex. resa och boende, introduktionskostnad, SITHS-kort samt HLR-utbildning. Fråga ditt bemanningsföretag vilka kostnader som ingår i deras marginal — det ger dig bättre underlag i förhandlingen.
+            </p>
+          </div>
         </div>
       )}
 
-      {/* Invoice Review CTA — after negotiation, before regional comparison */}
+      {/* 4. Förhandlingstips */}
+      {isConsultantFullAccess && rec && (
+        <div ref={registerSectionRef?.("negotiation_script")} className="rounded-xl bg-card/50 p-6 space-y-4">
+          <SectionHeading icon={MessageSquareQuote} title="Förhandlingstips" />
+          <ul className="space-y-3">
+            {getNegotiationTips(
+              isEmployee,
+              delta ? delta.monthly_vs_current_min > 0 : false,
+              delta ? Math.round((delta.monthly_vs_current_max / rec.recommended_monthly_max) * 100) : 0,
+              occupation
+            ).map((tip, i) => (
+              <li key={i} className="flex items-start gap-3 text-sm">
+                <ArrowRight className="w-4 h-4 text-accent mt-0.5 shrink-0" />
+                <span className="text-muted-foreground">{tip}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* Invoice Review CTA */}
       {isConsultantFullAccess && leadId && email && (
         <InvoiceReviewCTA
           leadId={leadId}
@@ -396,55 +390,51 @@ export default function ConsultantTrackContent({
 
       {/* 5. Regionala jämförelser (full) */}
       {isConsultantFullAccess && zoneComparisons && zoneComparisons.length > 0 && (
-        <div ref={registerSectionRef?.("regional_comparison")}>
-        <Card className="card-shadow">
-          <CardContent className="pt-6 space-y-4">
-            <SectionHeading icon={MapPin} title="Regional jämförelse" />
-            <p className="text-sm text-muted-foreground">
-              Vad kunden betalar för {occupation} i alla zoner:
-            </p>
-            <div className="space-y-3">
-              {[...zoneComparisons]
-                .sort((a, b) => a.zon.localeCompare(b.zon))
-                .map((zc) => {
-                  const isUserZone = zc.zon === userZone;
-                  const zoneRate = zc.timpris_kund;
-                  const recHourly = isEmployee
-                    ? Math.round((zoneRate * 0.85) / 1.42)
-                    : Math.round(zoneRate * (1 - margin));
-                  const recHourlyHigh = isEmployee
-                    ? Math.round((zoneRate * 0.90) / 1.42)
-                    : Math.round(zoneRate * (1 - margin));
-                  const maxRate = Math.max(...zoneComparisons.map((z) => z.timpris_kund));
-                  const barWidth = Math.round((zoneRate / maxRate) * 100);
-                  return (
-                    <div key={zc.zon} className={`p-3 rounded-lg border ${isUserZone ? 'border-primary bg-primary/5' : 'border-border bg-muted/30'}`}>
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-semibold text-foreground">{zc.zon}</span>
-                          {isUserZone && (
-                            <span className="text-[10px] font-medium bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full">
-                              Din zon
-                            </span>
-                          )}
-                        </div>
-                        <span className="text-sm font-bold text-foreground">{fmt(zoneRate)} kr/h</span>
+        <div ref={registerSectionRef?.("regional_comparison")} className="rounded-xl bg-card/50 p-6 space-y-4">
+          <SectionHeading icon={MapPin} title="Regional jämförelse" />
+          <p className="text-sm text-muted-foreground">
+            Vad regionen betalar för {occupation} i alla zoner:
+          </p>
+          <div className="space-y-3">
+            {[...zoneComparisons]
+              .sort((a, b) => a.zon.localeCompare(b.zon))
+              .map((zc) => {
+                const isUserZone = zc.zon === userZone;
+                const zoneRate = zc.timpris_kund;
+                const recHourly = isEmployee
+                  ? Math.round((zoneRate * 0.85) / 1.42)
+                  : Math.round(zoneRate * (1 - margin));
+                const recHourlyHigh = isEmployee
+                  ? Math.round((zoneRate * 0.90) / 1.42)
+                  : Math.round(zoneRate * (1 - margin));
+                const maxRate = Math.max(...zoneComparisons.map((z) => z.timpris_kund));
+                const barWidth = Math.round((zoneRate / maxRate) * 100);
+                return (
+                  <div key={zc.zon} className={`p-3 rounded-lg ${isUserZone ? 'border border-primary/30 bg-primary/5' : 'bg-muted/30'}`}>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm font-semibold text-foreground">{zc.zon}</span>
+                        {isUserZone && (
+                          <span className="text-[10px] font-medium bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full">
+                            Din zon
+                          </span>
+                        )}
                       </div>
-                      <div className="h-2 bg-secondary rounded-full overflow-hidden mb-1.5">
-                        <div
-                          className={`h-full rounded-full transition-all duration-700 ${isUserZone ? 'bg-primary' : 'bg-muted-foreground/40'}`}
-                          style={{ width: `${barWidth}%` }}
-                        />
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        Rekommenderad {isEmployee ? 'bruttoersättning' : 'ersättning'}: {isEmployee ? `${fmt(recHourly)}–${fmt(recHourlyHigh)}` : fmt(recHourlyHigh)} kr/h
-                      </p>
+                      <span className="text-sm font-bold text-foreground">{fmt(zoneRate)} kr/h</span>
                     </div>
-                  );
-                })}
-            </div>
-          </CardContent>
-        </Card>
+                    <div className="h-2 bg-secondary rounded-full overflow-hidden mb-1.5">
+                      <div
+                        className={`h-full rounded-full transition-all duration-700 ${isUserZone ? 'bg-primary' : 'bg-muted-foreground/40'}`}
+                        style={{ width: `${barWidth}%` }}
+                      />
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Rekommenderad {isEmployee ? 'bruttoersättning' : 'ersättning'}: {isEmployee ? `${fmt(recHourly)}–${fmt(recHourlyHigh)}` : fmt(recHourlyHigh)} kr/h
+                    </p>
+                  </div>
+                );
+              })}
+          </div>
         </div>
       )}
 
