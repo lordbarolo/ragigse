@@ -216,7 +216,10 @@ export default function Survey() {
       case 2: return !!resolvedYrke;
       case 3: return !!data.kommun;
       case 4: return !!data.employmentType;
-      case 5: return data.currentSalary > 0;
+      case 5: return !!data.isConsultant;
+      case 6: return !!data.employerType;
+      case 7: return !!data.workplaceSector;
+      case 8: return data.currentSalary > 0;
       default: return false;
     }
   })();
