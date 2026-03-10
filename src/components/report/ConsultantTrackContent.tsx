@@ -179,7 +179,7 @@ export default function ConsultantTrackContent({
                 <p className="text-2xl font-bold text-muted-foreground/40 select-none">■■■ kr/h</p>
               </div>
               <p className="text-xs text-muted-foreground mt-1">
-                Lås upp ramavtalspriset och se exakt vad kunden betalar för din roll i din region.
+                Lås upp ramavtalspriset och se exakt vad regionen betalar för din roll.
               </p>
             </div>
           )}
