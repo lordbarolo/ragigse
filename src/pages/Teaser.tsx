@@ -526,12 +526,15 @@ export default function Teaser() {
           />
         )}
 
-        {/* SECTION 3 — Locked Strategy + Email Gate */}
-        <LockedStrategyCard isPermanent={isPermanent} />
+        {/* Blurred rate teaser — shows what's in the report */}
+        {!isPermanent && !isAboveThreshold && (
+          <BlurredRateTeaser />
+        )}
 
+        {/* Email Gate with integrated value prop */}
         <div ref={checkoutRef}>
           {!email ? (
-            <div className="rounded-xl border border-border bg-card p-5 card-shadow">
+            <div className="rounded-xl border border-primary/20 bg-card p-5 card-shadow">
               <EmailGate
                 onEmailSubmit={handleEmailSubmit}
                 loading={emailSaving || checkoutLoading !== null}
@@ -544,8 +547,6 @@ export default function Teaser() {
             <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="inline" coupon={couponDiscount} priceKr={priceKr} />
           )}
         </div>
-
-        <ReportPreviewList isPermanent={isPermanent} />
       </main>
 
       {email && !isFree && (
