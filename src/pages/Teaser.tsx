@@ -404,7 +404,13 @@ export default function Teaser() {
   if (!survey) return null;
 
   if (!isPermanent && !result) {
-    return <CalculatingSpinner showSurvey={spinnerSurveyVariant === "spinner_survey"} />;
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4">
+        <CompcareLogo variant="wordmark" className="h-7 mb-6" />
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+        <p className="mt-4 text-sm text-muted-foreground">Analyserar marknadsdata...</p>
+      </div>
+    );
   }
 
   const regionName = pricingResult?.region || survey.kommun || "";
