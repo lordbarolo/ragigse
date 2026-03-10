@@ -4,7 +4,7 @@ import { usePricingEngine } from "@/hooks/usePricingEngine";
 import { useRates, useLocations } from "@/hooks/useCalculator";
 import type { SurveyData } from "@/components/Survey";
 import type { BenchmarkResult } from "@/hooks/useBenchmarkEngine";
-import CalculatingSpinner from "@/components/teaser/CalculatingSpinner";
+import CompcareLogo from "@/components/CompcareLogo";
 import { Button } from "@/components/ui/button";
 
 import { supabase } from "@/integrations/supabase/client";
