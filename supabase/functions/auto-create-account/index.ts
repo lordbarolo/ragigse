@@ -37,9 +37,8 @@ serve(async (req) => {
 
     if (existingUser) {
       userId = existingUser.id;
-      console.log("Existing user found:", userId);
     } else {
-      // 2. Create user with random password (they'll use magic link)
+      // Create user with random password (magic link only)
       const randomPassword = crypto.randomUUID() + crypto.randomUUID();
       const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
         email,
@@ -56,40 +55,47 @@ serve(async (req) => {
       }
 
       userId = newUser.user.id;
-      console.log("New user created:", userId);
     }
 
-    // 3. Update lead with email
+    // 2. Update lead with email
     if (lead_id) {
       await supabase.from("leads").update({ email }).eq("id", lead_id);
     }
 
-    // 4. Update report with email + user_id
+    // 3. Update report with email + user_id
+    let reportData: { occupation?: string; kommun?: string; employment_type?: string; current_salary?: number; result_json?: any } | null = null;
     if (report_id) {
       await supabase
         .from("reports")
         .update({ email, user_id: userId })
         .eq("id", report_id);
+
+      // Fetch report for analysis record + email
+      const { data: rpt } = await supabase
+        .from("reports")
+        .select("occupation, kommun, employment_type, current_salary, result_json")
+        .eq("id", report_id)
+        .maybeSingle();
+      reportData = rpt;
     }
 
-    // 5. Send magic link email via Supabase Auth (OTP)
-    // This sends a magic link email that the user can click to log in later
-    const siteUrl = Deno.env.get("SUPABASE_URL")!.replace(".supabase.co", "").includes("localhost")
-      ? "http://localhost:5173"
-      : "https://compcare.se";
+    // 4. Create analysis record
+    if (reportData) {
+      await supabase.from("analyses").insert({
+        user_id: userId,
+        role: reportData.occupation || null,
+        location: reportData.kommun || null,
+        employment_type: reportData.employment_type || null,
+        current_salary: reportData.current_salary || null,
+        result_data: reportData.result_json || null,
+      });
+    }
 
-    const { error: otpError } = await supabase.auth.admin.generateLink({
-      type: "magiclink",
-      email,
-      options: {
-        redirectTo: `${siteUrl}/mina-analyser`,
-      },
-    });
-
-    // Send email via Resend with magic link
+    // 5. Send email with magic link via Resend
     const resendApiKey = Deno.env.get("RESEND_API_KEY");
     if (resendApiKey) {
-      // Generate a fresh magic link for the email
+      const siteUrl = "https://compcare.se";
+
       const { data: linkData } = await supabase.auth.admin.generateLink({
         type: "magiclink",
         email,
@@ -98,27 +104,18 @@ serve(async (req) => {
         },
       });
 
-      const magicLink = linkData?.properties?.action_link || `${siteUrl}`;
-
-      // Fetch report data for email summary
-      let reportSummary = "";
-      if (report_id) {
-        const { data: reportData } = await supabase
-          .from("reports")
-          .select("occupation, kommun, employment_type")
-          .eq("id", report_id)
-          .maybeSingle();
-
-        if (reportData) {
-          reportSummary = `
-            <p style="margin: 0 0 4px; color: #374151;"><strong>Roll:</strong> ${reportData.occupation || "–"}</p>
-            <p style="margin: 0 0 4px; color: #374151;"><strong>Ort:</strong> ${reportData.kommun || "–"}</p>
-            <p style="margin: 0; color: #374151;"><strong>Typ:</strong> ${reportData.employment_type === "foretagare" ? "Eget bolag" : "Anställd"}</p>
-          `;
-        }
-      }
-
+      const magicLink = linkData?.properties?.action_link || siteUrl;
       const reportLink = report_id ? `${siteUrl}/rapport/${report_id}` : siteUrl;
+
+      let summaryHtml = "";
+      if (reportData) {
+        summaryHtml = `
+        <div style="background: #f3f4f6; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
+          <p style="margin: 0 0 4px; color: #374151;"><strong>Roll:</strong> ${reportData.occupation || "–"}</p>
+          <p style="margin: 0 0 4px; color: #374151;"><strong>Ort:</strong> ${reportData.kommun || "–"}</p>
+          <p style="margin: 0; color: #374151;"><strong>Typ:</strong> ${reportData.employment_type === "foretagare" ? "Eget bolag" : "Anställd"}</p>
+        </div>`;
+      }
 
       const emailHtml = `
 <!DOCTYPE html>
@@ -127,29 +124,19 @@ serve(async (req) => {
 <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #ffffff; padding: 40px 20px;">
   <div style="max-width: 480px; margin: 0 auto;">
     <h1 style="font-size: 22px; color: #111827; margin-bottom: 16px;">Din CompCare-analys är klar ✅</h1>
-    
-    ${reportSummary ? `
-    <div style="background: #f3f4f6; border-radius: 8px; padding: 16px; margin-bottom: 24px;">
-      ${reportSummary}
-    </div>
-    ` : ""}
-
+    ${summaryHtml}
     <p style="color: #374151; line-height: 1.6; margin-bottom: 24px;">
-      Vi har skapat ett konto åt dig så att du kan komma tillbaka till din analys när som helst.
+      Din ersättningsanalys finns redo att läsas. Klicka nedan för att se den.
     </p>
-
     <a href="${reportLink}" style="display: inline-block; background: #111827; color: #ffffff; padding: 14px 28px; border-radius: 8px; text-decoration: none; font-weight: 600; margin-bottom: 16px;">
       Se din analys
     </a>
-
     <p style="color: #6b7280; font-size: 14px; margin-top: 24px; line-height: 1.5;">
-      För att logga in igen i framtiden, klicka på länken nedan. Den skickar dig direkt till dina analyser:
+      Vill du komma tillbaka senare? Klicka på länken nedan så loggas du in direkt:
     </p>
-
     <a href="${magicLink}" style="display: inline-block; background: #f3f4f6; color: #111827; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 500; font-size: 14px; margin-top: 8px;">
-      Logga in med magic link →
+      Öppna mina analyser →
     </a>
-
     <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 32px 0;" />
     <p style="color: #9ca3af; font-size: 12px;">
       © ${new Date().getFullYear()} CompCare.se · Du får detta mail för att du använde CompCare.
@@ -159,7 +146,7 @@ serve(async (req) => {
 </html>`;
 
       try {
-        const resendRes = await fetch("https://api.resend.com/emails", {
+        await fetch("https://api.resend.com/emails", {
           method: "POST",
           headers: {
             Authorization: `Bearer ${resendApiKey}`,
@@ -172,13 +159,8 @@ serve(async (req) => {
             html: emailHtml,
           }),
         });
-
-        if (!resendRes.ok) {
-          console.error("Resend error:", await resendRes.text());
-        }
       } catch (emailErr) {
         console.error("Email send error:", emailErr);
-        // Don't fail the whole request if email fails
       }
     }
 

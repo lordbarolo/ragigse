@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      analyses: {
+        Row: {
+          created_at: string
+          current_salary: number | null
+          employment_type: string | null
+          id: string
+          location: string | null
+          result_data: Json | null
+          role: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_salary?: number | null
+          employment_type?: string | null
+          id?: string
+          location?: string | null
+          result_data?: Json | null
+          role?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_salary?: number | null
+          employment_type?: string | null
+          id?: string
+          location?: string | null
+          result_data?: Json | null
+          role?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       analytics_events: {
         Row: {
           created_at: string
@@ -482,23 +515,17 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string
-          email: string
           id: string
-          updated_at: string
           user_id: string
         }
         Insert: {
           created_at?: string
-          email: string
           id?: string
-          updated_at?: string
           user_id: string
         }
         Update: {
           created_at?: string
-          email?: string
           id?: string
-          updated_at?: string
           user_id?: string
         }
         Relationships: []
