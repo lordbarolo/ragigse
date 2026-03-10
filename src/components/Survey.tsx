@@ -619,7 +619,7 @@ export default function Survey() {
             <ChevronLeft className="w-4 h-4" />
             Tillbaka
           </button>
-          {step === 5 && (
+          {step === 8 && (
             <button
               onClick={() => {
                 if (data.currentSalary <= 0) {
