@@ -165,7 +165,7 @@ export default function ConsultantTrackContent({
           <SectionHeading icon={BarChart3} title="Ramavtalspris" />
           {isConsultantFullAccess ? (
             <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
-              <p className="text-xs text-muted-foreground mb-1">Vad kunden betalar (ramavtal)</p>
+              <p className="text-xs text-muted-foreground mb-1">Vad regionen betalar till bemanningsföretag</p>
               <p className="text-2xl font-bold text-foreground">{fmt(marketRate)} kr/h</p>
               <p className="text-xs text-muted-foreground mt-1">
                 Grundtimpris enligt ramavtal (OB/jour ej inkluderat)
