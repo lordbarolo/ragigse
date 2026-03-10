@@ -5,13 +5,11 @@ import { trackEvent } from "@/lib/trackEvent";
 type Position = "under" | "near" | "above";
 
 interface Props {
-  /** Percent difference vs market median. Positive = user is below median. */
   diffPercent: number;
   isPermanent: boolean;
   yrke: string;
   kommun: string;
   isAboveThreshold?: boolean;
-  /** Whether the user has provided their email (unblurs values) */
   emailProvided?: boolean;
 }
 
@@ -21,24 +19,24 @@ function getPosition(diffPercent: number, isAboveThreshold: boolean): Position {
   return "under";
 }
 
-const positionConfig: Record<Position, { label: string; color: string; bgColor: string; icon: typeof TrendingDown }> = {
+const positionConfig: Record<Position, { color: string; bgColor: string; icon: typeof TrendingDown; barColor: string }> = {
   under: {
-    label: "Under median",
     color: "text-destructive",
     bgColor: "bg-destructive/10",
     icon: TrendingDown,
+    barColor: "hsl(var(--destructive))",
   },
   near: {
-    label: "Nära median",
     color: "text-yellow-500",
     bgColor: "bg-yellow-500/10",
     icon: Minus,
+    barColor: "hsl(45, 93%, 47%)",
   },
   above: {
-    label: "Över median",
     color: "text-primary",
     bgColor: "bg-primary/10",
     icon: TrendingUp,
+    barColor: "hsl(var(--primary))",
   },
 };
 
@@ -55,38 +53,42 @@ export default function MarketDiagnosisCard({ diffPercent, isPermanent, yrke, ko
     }
   }, []);
 
-  // Show text label without percentage when blurred
-  const diagnosisText = !emailProvided
+  // Percentage to display
+  const displayPct = position === "above" ? 100 : position === "near" ? 100 - diffPercent : 100 - diffPercent;
+
+  const subtitle = !emailProvided
     ? position === "above"
-      ? `Du ligger över medianen för ${yrke} i din region.`
+      ? `Du ligger över marknadsvärdet`
       : position === "near"
-        ? `Du ligger nära medianen för ${yrke} i din region.`
-        : `Du ligger under medianen för ${yrke} i din region.`
+        ? `Du ligger nära marknadsvärdet`
+        : `Du ligger under marknadsvärdet`
     : position === "above"
-      ? `Du ligger över medianen för ${yrke} i din region.`
+      ? `Du ligger över marknadsvärdet`
       : position === "near"
-        ? `Du ligger nära medianen för ${yrke} i din region — men det finns utrymme.`
-        : `Du ligger ${diffPercent}% under medianen för ${yrke} i din region.`;
+        ? `Du ligger ${diffPercent}% under marknadsvärdet — men nära`
+        : `Du ligger ${diffPercent}% under marknadsvärdet`;
 
   return (
-    <div className="rounded-xl border border-border bg-card p-6 card-shadow">
+    <div className="rounded-xl bg-card/50 p-6">
       <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
-        Din löneposition
+        Din lön vs marknaden
       </p>
 
-      <div className="flex items-center gap-3 mb-4">
-        <div className={`p-2.5 rounded-lg ${config.bgColor}`}>
+      <div className="flex items-end gap-4 mb-4">
+        <p className="text-7xl font-bold bg-gradient-to-r from-foreground to-primary bg-clip-text text-transparent leading-none tracking-tight">
+          {displayPct}%
+        </p>
+        <div className={`p-2 rounded-lg ${config.bgColor} mb-2`}>
           <Icon className={`w-5 h-5 ${config.color}`} />
-        </div>
-        <div>
-          <p className="text-base font-bold text-foreground leading-tight">
-            {diagnosisText}
-          </p>
         </div>
       </div>
 
+      <p className="text-base text-muted-foreground mb-4">
+        {subtitle}
+      </p>
+
       {/* Position indicator */}
-      <div className="relative mt-4">
+      <div className="relative">
         <div className="flex justify-between text-[10px] text-muted-foreground mb-1.5">
           <span>Under</span>
           <span>Median</span>
@@ -97,15 +99,10 @@ export default function MarketDiagnosisCard({ diffPercent, isPermanent, yrke, ko
             className="h-full rounded-full transition-all duration-700 ease-out"
             style={{
               width: position === "above" ? "85%" : position === "near" ? "55%" : `${Math.max(15, 50 - diffPercent)}%`,
-              background: position === "above"
-                ? "hsl(var(--primary))"
-                : position === "near"
-                  ? "hsl(45, 93%, 47%)"
-                  : "hsl(var(--destructive))",
+              background: config.barColor,
             }}
           />
         </div>
-        {/* Median marker */}
         <div className="absolute top-[calc(100%-8px)] left-1/2 -translate-x-1/2 w-0.5 h-2 bg-muted-foreground/40 rounded-full" />
       </div>
 

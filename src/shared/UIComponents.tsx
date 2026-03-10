@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState } from "react";
 import { Lock } from "lucide-react";
 import { formatPartialValue } from "./formatters";
 
@@ -27,9 +27,9 @@ export function StatBlock({
   accent?: boolean;
 }) {
   return (
-    <div className={`p-3 rounded-lg ${accent ? "bg-accent/10" : "bg-muted/50"}`}>
-      <p className="text-xs text-muted-foreground mb-1">{label}</p>
-      <p className={`text-base font-semibold ${accent ? "text-accent" : "text-foreground"}`}>
+    <div className={`p-3 rounded-lg ${accent ? "bg-primary/[0.08] border border-primary/20" : "bg-muted/30"}`}>
+      <p className={`text-xs mb-1 ${accent ? "text-primary/70" : "text-muted-foreground"}`}>{label}</p>
+      <p className={`text-base font-semibold ${accent ? "text-primary" : "text-foreground"}`}>
         {value}
       </p>
     </div>
@@ -47,23 +47,53 @@ export function CalcRow({ label, value }: { label: string; value: string }) {
   );
 }
 
-/* ── ScriptBlock ─────────────────────────────────────── */
+/* ── ScriptBlock (with copy button) ──────────────────── */
 
 export function ScriptBlock({ step, title, text }: { step: number; title: string; text: string }) {
+  const [copied, setCopied] = useState(false);
+  const isQuote = text.startsWith('"') || text.startsWith('"') || text.startsWith('«');
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(text.replace(/^["«"]+|["»"]+$/g, ''));
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch { /* fallback: ignore */ }
+  };
+
   return (
-    <div className="flex gap-3">
-      <div className="flex-shrink-0 w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center">
-        <span className="text-xs font-bold text-primary">{step}</span>
+    <div className="flex gap-4 relative">
+      <div className="w-8 h-8 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center flex-shrink-0 z-10">
+        <span className="text-primary text-xs font-bold">{step}</span>
       </div>
-      <div>
+      <div className="flex-1">
         <p className="font-semibold text-foreground text-sm">{title}</p>
-        <p className="mt-1 text-muted-foreground italic">{text}</p>
+        {isQuote ? (
+          <div className="bg-muted/30 rounded-lg p-3 mt-2 relative group">
+            <p className="text-muted-foreground text-sm italic pr-8">{text}</p>
+            <button
+              onClick={handleCopy}
+              className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-primary"
+              title="Kopiera"
+            >
+              {copied ? (
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+              ) : (
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" /></svg>
+              )}
+            </button>
+          </div>
+        ) : (
+          <p className="mt-1 text-muted-foreground text-sm italic">{text}</p>
+        )}
       </div>
     </div>
   );
 }
 
 /* ── BarRow ───────────────────────────────────────────── */
+
+import { useEffect, useRef } from "react";
 
 export function BarRow({
   label,
@@ -82,7 +112,6 @@ export function BarRow({
   blurred?: boolean;
   partialReveal?: boolean;
   unit?: string;
-  /** If set, bar animates from 0 and blurs once it passes this value's width */
   animateAndBlurAt?: number;
 }) {
   const targetWidth = Math.min((value / max) * 100, 100);
@@ -94,7 +123,6 @@ export function BarRow({
   const rafRef = useRef<number>();
   const rowRef = useRef<HTMLDivElement>(null);
 
-  // Start animation only when element is in upper 2/3 of viewport
   useEffect(() => {
     if (animateAndBlurAt == null || hasStarted) return;
     const el = rowRef.current;

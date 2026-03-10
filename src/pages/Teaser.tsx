@@ -13,7 +13,7 @@ import { useExitIntent } from "@/hooks/useExitIntent";
 import OpportunityGap from "@/components/OpportunityGap";
 import MarketDiagnosisCard from "@/components/teaser/MarketDiagnosisCard";
 import IncomeImpactCard from "@/components/teaser/IncomeImpactCard";
-import LockedStrategyCard from "@/components/teaser/LockedStrategyCard";
+import BlurredRateTeaser from "@/components/teaser/BlurredRateTeaser";
 
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
@@ -421,7 +421,7 @@ export default function Teaser() {
     <div className="min-h-screen bg-background">
       <TeaserHeader kommun={survey.kommun} />
 
-      <main className="px-4 py-8 pb-40 max-w-lg mx-auto space-y-6">
+      <main className="px-4 py-8 pb-40 max-w-lg mx-auto space-y-4">
         <OccupationInfo
           yrke={survey.yrke}
           kommun={survey.kommun}
@@ -526,12 +526,15 @@ export default function Teaser() {
           />
         )}
 
-        {/* SECTION 3 — Locked Strategy + Email Gate */}
-        <LockedStrategyCard isPermanent={isPermanent} />
+        {/* Blurred rate teaser — shows what's in the report */}
+        {!isPermanent && !isAboveThreshold && (
+          <BlurredRateTeaser />
+        )}
 
+        {/* Email Gate with integrated value prop */}
         <div ref={checkoutRef}>
           {!email ? (
-            <div className="rounded-xl border border-border bg-card p-5 card-shadow">
+            <div className="rounded-xl border border-primary/20 bg-card p-5 card-shadow">
               <EmailGate
                 onEmailSubmit={handleEmailSubmit}
                 loading={emailSaving || checkoutLoading !== null}
@@ -544,8 +547,6 @@ export default function Teaser() {
             <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="inline" coupon={couponDiscount} priceKr={priceKr} />
           )}
         </div>
-
-        <ReportPreviewList isPermanent={isPermanent} />
       </main>
 
       {email && !isFree && (
