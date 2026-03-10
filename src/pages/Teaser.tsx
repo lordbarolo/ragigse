@@ -49,6 +49,15 @@ export default function Teaser() {
   const [reportId, setReportId] = useState("");
   const [email, setEmail] = useState("");
   const [emailSaving, setEmailSaving] = useState(false);
+
+  // A/B test: spinner micro-survey (50/50 split, persisted per session)
+  const [spinnerSurveyVariant] = useState(() => {
+    const stored = sessionStorage.getItem("spinnerSurveyVariant");
+    if (stored) return stored as "spinner_survey" | "control";
+    const variant = Math.random() < 0.5 ? "spinner_survey" : "control";
+    sessionStorage.setItem("spinnerSurveyVariant", variant);
+    return variant as "spinner_survey" | "control";
+  });
   const checkoutRef = useRef<HTMLDivElement>(null);
   const [couponDiscount, setCouponDiscount] = useState<{ discount_type: "percent" | "fixed" | "free"; discount_value: number } | null>(null);
   const couponRedeemed = useRef(false);
