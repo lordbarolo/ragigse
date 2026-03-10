@@ -533,9 +533,6 @@ export default function Teaser() {
         </div>
       </main>
 
-      {email && !isFree && (
-        <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="sticky" coupon={couponDiscount} priceKr={priceKr} />
-      )}
 
       <ReferralBottomSheet
         ctaRef={checkoutRef}
