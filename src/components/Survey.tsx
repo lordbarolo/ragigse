@@ -475,8 +475,92 @@ export default function Survey() {
           </StepWrapper>
         )}
 
-        {/* Step 5: Ersättning */}
+        {/* Step 5: Konsult eller fast? */}
         {step === 5 && (
+          <StepWrapper
+            icon={<Briefcase className="w-6 h-6" />}
+            title="Arbetar du som konsult eller har du en fast anställning?"
+          >
+            <div className="flex flex-col gap-3">
+              {(["Konsult", "Fast anställd"] as const).map((opt) => (
+                <button
+                  key={opt}
+                  onClick={() => {
+                    setData({ ...data, isConsultant: opt });
+                    trackStepCompleted(5, opt);
+                    setTimeout(() => setStep(6), 300);
+                  }}
+                  className={`py-4 px-5 rounded-lg border text-left transition-all ${
+                    data.isConsultant === opt
+                      ? "border-primary bg-primary/5 ring-1 ring-primary/30"
+                      : "border-border bg-card hover:border-muted-foreground/30 hover:shadow-sm"
+                  }`}
+                >
+                  <span className="text-sm font-medium">{opt}</span>
+                </button>
+              ))}
+            </div>
+          </StepWrapper>
+        )}
+
+        {/* Step 6: Arbetsgivartyp */}
+        {step === 6 && (
+          <StepWrapper
+            icon={<Briefcase className="w-6 h-6" />}
+            title="Är din arbetsgivare en:"
+          >
+            <div className="flex flex-col gap-3">
+              {(["Privat vårdgivare", "Offentlig vårdgivare", "Bemanningsföretag"] as const).map((opt) => (
+                <button
+                  key={opt}
+                  onClick={() => {
+                    setData({ ...data, employerType: opt });
+                    trackStepCompleted(6, opt);
+                    setTimeout(() => setStep(7), 300);
+                  }}
+                  className={`py-4 px-5 rounded-lg border text-left transition-all ${
+                    data.employerType === opt
+                      ? "border-primary bg-primary/5 ring-1 ring-primary/30"
+                      : "border-border bg-card hover:border-muted-foreground/30 hover:shadow-sm"
+                  }`}
+                >
+                  <span className="text-sm font-medium">{opt}</span>
+                </button>
+              ))}
+            </div>
+          </StepWrapper>
+        )}
+
+        {/* Step 7: Arbetsplats */}
+        {step === 7 && (
+          <StepWrapper
+            icon={<MapPin className="w-6 h-6" />}
+            title="Sker ditt arbete hos:"
+          >
+            <div className="flex flex-col gap-3">
+              {(["Region", "Kommun", "Privat"] as const).map((opt) => (
+                <button
+                  key={opt}
+                  onClick={() => {
+                    setData({ ...data, workplaceSector: opt });
+                    trackStepCompleted(7, opt);
+                    setTimeout(() => setStep(8), 300);
+                  }}
+                  className={`py-4 px-5 rounded-lg border text-left transition-all ${
+                    data.workplaceSector === opt
+                      ? "border-primary bg-primary/5 ring-1 ring-primary/30"
+                      : "border-border bg-card hover:border-muted-foreground/30 hover:shadow-sm"
+                  }`}
+                >
+                  <span className="text-sm font-medium">{opt}</span>
+                </button>
+              ))}
+            </div>
+          </StepWrapper>
+        )}
+
+        {/* Step 8: Ersättning */}
+        {step === 8 && (
           <StepWrapper
             icon={<TrendingUp className="w-6 h-6" />}
             title="Vad får du i ersättning idag?"
