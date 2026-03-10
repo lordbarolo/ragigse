@@ -421,7 +421,7 @@ export default function Teaser() {
     <div className="min-h-screen bg-background">
       <TeaserHeader kommun={survey.kommun} />
 
-      <main className="px-4 py-8 pb-40 max-w-lg mx-auto space-y-6">
+      <main className="px-4 py-8 pb-40 max-w-lg mx-auto space-y-4">
         <OccupationInfo
           yrke={survey.yrke}
           kommun={survey.kommun}
