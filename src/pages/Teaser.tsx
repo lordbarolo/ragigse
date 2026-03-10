@@ -529,9 +529,7 @@ export default function Teaser() {
                 priceKr={priceKr}
               />
             </div>
-          ) : (
-            <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="inline" coupon={couponDiscount} priceKr={priceKr} />
-          )}
+          ) : null}
         </div>
       </main>
 
