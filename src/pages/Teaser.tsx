@@ -4,7 +4,7 @@ import { usePricingEngine } from "@/hooks/usePricingEngine";
 import { useRates, useLocations } from "@/hooks/useCalculator";
 import type { SurveyData } from "@/components/Survey";
 import type { BenchmarkResult } from "@/hooks/useBenchmarkEngine";
-import { Loader2 } from "lucide-react";
+import CalculatingSpinner from "@/components/teaser/CalculatingSpinner";
 import { Button } from "@/components/ui/button";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -403,11 +403,7 @@ export default function Teaser() {
   if (!survey) return null;
 
   if (!isPermanent && !result) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="w-8 h-8 text-primary animate-spin" />
-      </div>
-    );
+    return <CalculatingSpinner />;
   }
 
   const regionName = pricingResult?.region || survey.kommun || "";
