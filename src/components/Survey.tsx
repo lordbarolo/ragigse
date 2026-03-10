@@ -232,7 +232,10 @@ export default function Survey() {
         2: roleDropdownValue,
         3: data.kommun,
         4: data.employmentType,
-        5: data.currentSalary,
+        5: data.isConsultant || "",
+        6: data.employerType || "",
+        7: data.workplaceSector || "",
+        8: data.currentSalary,
       };
       trackStepCompleted(step, stepAnswers[step]);
       setStep(step + 1);
