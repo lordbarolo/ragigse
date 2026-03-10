@@ -23,13 +23,9 @@ export default function Teaser() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { calculate, result: pricingResult } = usePricingEngine();
-  const { data: rates } = useRates();
-  const { data: locations } = useLocations();
   const [survey, setSurvey] = useState<SurveyData | null>(null);
   const [benchmarkResult, setBenchmarkResult] = useState<BenchmarkResult | null>(null);
-  const { checkoutLoading, handleCheckout: checkout } = useCheckout();
-  const [unlocked, setUnlocked] = useState(false);
-  const [partialUnlocked, setPartialUnlocked] = useState(true);
+  const { checkoutLoading } = useCheckout();
   const [loadError, setLoadError] = useState(false);
   const [leadId, setLeadId] = useState("");
   const [reportId, setReportId] = useState("");
@@ -40,10 +36,7 @@ export default function Teaser() {
   const [couponDiscount, setCouponDiscount] = useState<{ discount_type: "percent" | "fixed" | "free"; discount_value: number } | null>(null);
   const couponRedeemed = useRef(false);
 
-  const exitIntentVisible = useExitIntent(28_000);
   useTimeOnPage("teaser", !!survey);
-  const scrollTracked = useRef<Set<number>>(new Set());
-  const paywallViewedRef = useRef(false);
 
   // Track paywall_viewed on mount
   useEffect(() => {
