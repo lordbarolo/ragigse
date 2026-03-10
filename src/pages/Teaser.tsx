@@ -1,7 +1,6 @@
-import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { usePricingEngine } from "@/hooks/usePricingEngine";
-import { useRates, useLocations } from "@/hooks/useCalculator";
 import type { SurveyData } from "@/components/Survey";
 import type { BenchmarkResult } from "@/hooks/useBenchmarkEngine";
 import CompcareLogo from "@/components/CompcareLogo";
@@ -9,11 +8,6 @@ import { Button } from "@/components/ui/button";
 
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import { useExitIntent } from "@/hooks/useExitIntent";
-import OpportunityGap from "@/components/OpportunityGap";
-import MarketDiagnosisCard from "@/components/teaser/MarketDiagnosisCard";
-import IncomeImpactCard from "@/components/teaser/IncomeImpactCard";
-import BlurredRateTeaser from "@/components/teaser/BlurredRateTeaser";
 
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
@@ -21,14 +15,6 @@ import { useCheckout } from "@/shared/useCheckout";
 import { useTeaserData } from "@/hooks/useTeaserData";
 
 import TeaserHeader from "@/components/teaser/TeaserHeader";
-import OccupationInfo from "@/components/teaser/OccupationInfo";
-import EarningsBanner from "@/components/teaser/EarningsBanner";
-import PermanentBenchmarkCard from "@/components/teaser/PermanentBenchmarkCard";
-import ConsultantVerdictCard from "@/components/teaser/ConsultantVerdictCard";
-import ReportPreviewList from "@/shared/ReportPreviewList";
-import CheckoutCTA from "@/shared/CheckoutCTA";
-import ReferralBottomSheet from "@/components/teaser/ReferralBottomSheet";
-import HighEarnerCard from "@/components/teaser/HighEarnerCard";
 import EmailGate from "@/components/teaser/EmailGate";
 
 /** Teaser page — orchestrator for the results preview */
