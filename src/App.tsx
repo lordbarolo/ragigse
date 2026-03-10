@@ -19,6 +19,8 @@ const Admin = lazy(() => import("./pages/Admin"));
 const FAQ = lazy(() => import("./pages/FAQ"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const ThemePreview = lazy(() => import("./pages/ThemePreview"));
+const MyAnalyses = lazy(() => import("./pages/MyAnalyses"));
+const AuthCallback = lazy(() => import("./pages/AuthCallback"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
