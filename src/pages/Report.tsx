@@ -167,13 +167,6 @@ export default function Report() {
 
 
 
-        {/* Preview CTA */}
-        {!isFullAccess && (
-          <div className="space-y-4">
-            <ReportPreviewList isPermanent={isPermanentTrack} />
-            <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="stacked" />
-          </div>
-        )}
 
         {/* Full access actions */}
         {isFullAccess && (
