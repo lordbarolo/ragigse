@@ -47,6 +47,8 @@ const App = () => (
             <Route path="/jamfor" element={<Compare />} />
             <Route path="/vanliga-fragor" element={<FAQ />} />
             <Route path="/integritetspolicy" element={<PrivacyPolicy />} />
+            <Route path="/mina-analyser" element={<MyAnalyses />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/dev/theme-preview" element={<ThemePreview />} />
             {import.meta.env.DEV && (
