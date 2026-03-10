@@ -173,7 +173,7 @@ export default function ConsultantTrackContent({
             </div>
           ) : (
             <div className="p-4 rounded-lg bg-muted/50 border border-border">
-              <p className="text-xs text-muted-foreground mb-1">Vad kunden betalar (ramavtal)</p>
+              <p className="text-xs text-muted-foreground mb-1">Vad regionen betalar till bemanningsföretag</p>
               <div className="flex items-center gap-2 mb-1">
                 <Lock className="w-4 h-4 text-muted-foreground" />
                 <p className="text-2xl font-bold text-muted-foreground/40 select-none">■■■ kr/h</p>
