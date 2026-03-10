@@ -200,94 +200,93 @@ export default function ConsultantTrackContent({
       {/* (Ramavtalspris is now the hero card above) */}
 
       {/* 2. Rekommenderad ersättning */}
-      <Card className="card-shadow overflow-hidden">
+      <div className="space-y-4">
         {isConsultantFullAccess && rec ? (
           <>
-            <div className={`p-4 flex items-center gap-3 ${isAboveThreshold ? 'bg-primary/10' : 'bg-accent/10'}`}>
+            <div className="flex items-center gap-2">
               {isAboveThreshold ? (
                 <CheckCircle className="w-5 h-5 text-primary" />
               ) : (
                 <TrendingUp className="w-5 h-5 text-accent" />
               )}
-              <p className="font-semibold text-foreground">
+              <h3 className="text-lg font-semibold text-foreground">
                 {isAboveThreshold
                   ? "Din ersättning är redan nära kundpriset — bra förhandlat!"
                   : delta && delta.monthly_vs_current_min > 0
                     ? `Du kan tjäna upp till ${fmt(delta.monthly_vs_current_max)} kr mer per månad`
                     : "Din ersättning ligger i linje med marknaden!"}
-              </p>
+              </h3>
             </div>
-            <CardContent className="pt-6 space-y-5">
-              <div className="grid grid-cols-2 gap-4">
-                <StatBlock label="Din timersättning" value={`${fmt(currentHourly)} kr`} muted />
-                <StatBlock
-                  label={isEmployee ? "Rekommenderad timersättning" : "Rekommenderad ersättning"}
-                  value={`${fmt(rec.recommended_hourly_min)}–${fmt(rec.recommended_hourly_max)} kr`}
-                  accent
-                />
-                <StatBlock
-                  label="Din månadsersättning"
-                  value={`${fmt(salaryIsHourly ? currentSalary * 167 : currentSalary)} kr`}
-                  muted
-                />
-                <StatBlock
-                  label="Möjlig månadsersättning"
-                  value={`${fmt(rec.recommended_monthly_min)}–${fmt(rec.recommended_monthly_max)} kr`}
-                  accent
-                />
-              </div>
 
-              {/* Förhandlingsspann */}
-              <div className="p-4 rounded-lg bg-accent/5 border border-accent/20 space-y-3">
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Förhandlingsspann</p>
-                <div className="grid grid-cols-3 gap-2 text-center">
-                  <div className="p-3 rounded-lg bg-accent/10 border border-accent/20">
-                    <p className="text-[10px] font-medium text-accent uppercase tracking-wide mb-1">Realistiskt</p>
-                    <p className="text-base font-bold text-foreground">{fmt(rec.recommended_hourly_min)} kr/h</p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">{fmt(rec.recommended_monthly_min)} kr/mån</p>
-                  </div>
-                  <div className="p-3 rounded-lg bg-primary/10 border border-primary/20 ring-2 ring-primary/30">
-                    <p className="text-[10px] font-medium text-primary uppercase tracking-wide mb-1">Rekommenderat</p>
-                    <p className="text-base font-bold text-foreground">
-                      {fmt(Math.round((rec.recommended_hourly_min + rec.recommended_hourly_max) / 2))} kr/h
-                    </p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">
-                      {fmt(Math.round((rec.recommended_monthly_min + rec.recommended_monthly_max) / 2))} kr/mån
-                    </p>
-                  </div>
-                  <div className="p-3 rounded-lg bg-muted/50 border border-border">
-                    <p className="text-[10px] font-medium text-foreground uppercase tracking-wide mb-1">Ambitiöst</p>
-                    <p className="text-base font-bold text-foreground">{fmt(rec.recommended_hourly_max)} kr/h</p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">{fmt(rec.recommended_monthly_max)} kr/mån</p>
-                  </div>
+            <div className="grid grid-cols-2 gap-3">
+              <StatBlock label="Din timersättning" value={`${fmt(currentHourly)} kr`} muted />
+              <StatBlock
+                label={isEmployee ? "Rekommenderad timersättning" : "Rekommenderad ersättning"}
+                value={`${fmt(rec.recommended_hourly_min)}–${fmt(rec.recommended_hourly_max)} kr`}
+                accent
+              />
+              <StatBlock
+                label="Din månadsersättning"
+                value={`${fmt(salaryIsHourly ? currentSalary * 167 : currentSalary)} kr`}
+                muted
+              />
+              <StatBlock
+                label="Möjlig månadsersättning"
+                value={`${fmt(rec.recommended_monthly_min)}–${fmt(rec.recommended_monthly_max)} kr`}
+                accent
+              />
+            </div>
+
+            {/* Förhandlingsspann */}
+            <div className="p-4 rounded-xl bg-card/50 space-y-3">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Förhandlingsspann</p>
+              <div className="grid grid-cols-3 gap-2 text-center">
+                <div className="p-3 rounded-lg bg-muted/30">
+                  <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide mb-1">Realistiskt</p>
+                  <p className="text-base font-bold text-foreground">{fmt(rec.recommended_hourly_min)} kr/h</p>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">{fmt(rec.recommended_monthly_min)} kr/mån</p>
                 </div>
-                <p className="text-[11px] text-muted-foreground text-center">
-                  Realistiskt = hög chans att få igenom · Rekommenderat = vad vi föreslår · Ambitiöst = kräver stark erfarenhet
-                </p>
-              </div>
-
-              {delta && delta.monthly_vs_current_min > 0 && (
-                <div className="p-4 rounded-lg bg-accent/5 border border-accent/20">
-                  <p className="text-xs text-muted-foreground mb-1">Skillnad mot din nuvarande ersättning</p>
-                  <p className="text-lg font-bold text-accent">
-                    +{fmt(delta.monthly_vs_current_min)}–{fmt(delta.monthly_vs_current_max)} kr/mån
+                <div className="p-3 rounded-lg bg-primary/10 border border-primary/30 ring-2 ring-primary/20">
+                  <p className="text-[10px] font-medium text-primary uppercase tracking-wide mb-1">Rekommenderat</p>
+                  <p className="text-base font-bold text-foreground">
+                    {fmt(Math.round((rec.recommended_hourly_min + rec.recommended_hourly_max) / 2))} kr/h
+                  </p>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">
+                    {fmt(Math.round((rec.recommended_monthly_min + rec.recommended_monthly_max) / 2))} kr/mån
                   </p>
                 </div>
-              )}
-            </CardContent>
+                <div className="p-3 rounded-lg bg-muted/30">
+                  <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide mb-1">Ambitiöst</p>
+                  <p className="text-base font-bold text-foreground">{fmt(rec.recommended_hourly_max)} kr/h</p>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">{fmt(rec.recommended_monthly_max)} kr/mån</p>
+                </div>
+              </div>
+              <p className="text-[11px] text-muted-foreground text-center">
+                Realistiskt = hög chans att få igenom · Rekommenderat = vad vi föreslår · Ambitiöst = kräver stark erfarenhet
+              </p>
+            </div>
+
+            {delta && delta.monthly_vs_current_min > 0 && (
+              <div className="p-4 rounded-lg bg-accent/5 border border-accent/20">
+                <p className="text-xs text-muted-foreground mb-1">Skillnad mot din nuvarande ersättning</p>
+                <p className="text-lg font-bold text-accent">
+                  +{fmt(delta.monthly_vs_current_min)}–{fmt(delta.monthly_vs_current_max)} kr/mån
+                </p>
+              </div>
+            )}
           </>
         ) : (
-          <>
+          <div className="rounded-xl border border-border bg-card overflow-hidden card-shadow">
             <div className="bg-muted/50 p-4 flex items-center gap-3">
               <Lock className="w-5 h-5 text-muted-foreground" />
               <p className="font-semibold text-foreground">Rekommenderad ersättning — lås upp</p>
             </div>
-            <CardContent className="pt-6 space-y-4">
+            <div className="p-6 space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <StatBlock label="Din timersättning" value={`${fmt(currentHourly)} kr`} muted />
-                <div className="p-3 rounded-lg bg-accent/10 relative overflow-hidden">
+                <div className="p-3 rounded-lg bg-primary/[0.08] relative overflow-hidden">
                   <p className="text-xs text-muted-foreground mb-1">Rekommenderad timersättning</p>
-                  <p className="text-base font-semibold text-accent blur-sm select-none">
+                  <p className="text-base font-semibold text-primary blur-sm select-none">
                     {formatPartialValue(Math.round(marketRate * 0.6))} kr
                   </p>
                 </div>
@@ -295,10 +294,10 @@ export default function ConsultantTrackContent({
               <p className="text-sm text-muted-foreground text-center">
                 Lås upp den fullständiga analysen med exakta siffror, förhandlingsspann och personliga rekommendationer.
               </p>
-            </CardContent>
-          </>
+            </div>
+          </div>
         )}
-      </Card>
+      </div>
 
       {/* 3. Antaganden & Beräkning (full) */}
       {isConsultantFullAccess && rec && (
