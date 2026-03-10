@@ -347,22 +347,10 @@ export default function Teaser() {
       return;
     }
 
-    if (isFree) {
-      // Free coupon: redeem and go directly to report (no Stripe)
-      setEmailSaving(false);
-      await unlockFreeReport(activeReportId);
-    } else {
-      // Paid: proceed to checkout
-      setEmailSaving(false);
-      const couponCode = searchParams.get("coupon") || null;
-      const price = couponDiscount
-        ? couponDiscount.discount_type === "percent" ? Math.round(priceKr * (1 - couponDiscount.discount_value / 100))
-          : couponDiscount.discount_type === "fixed" ? Math.max(0, priceKr - couponDiscount.discount_value)
-          : priceKr
-        : priceKr;
-      trackEvent("paywall_cta_clicked", { price, coupon_applied: !!couponDiscount, coupon_code: couponCode, ab_variant: abVariant });
-      checkout("single", { email: emailValue, leadId, reportId: activeReportId, coupon: couponDiscount, abVariant });
-    }
+    // Navigate directly to full report (no payment required)
+    setEmailSaving(false);
+    trackEvent("email_gate_completed", { source: "teaser" });
+    navigate(`/rapport/${activeReportId}`);
   };
 
   const onCheckout = async (plan: "single" | "yearly") => {

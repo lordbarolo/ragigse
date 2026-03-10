@@ -93,11 +93,7 @@ export default function EmailGate({ onEmailSubmit, loading, coupon, isFree, pric
             : "bg-muted text-muted-foreground cursor-not-allowed"
         }`}
       >
-        {loading
-          ? "Laddar..."
-          : isFree
-            ? "Visa min rapport"
-            : `Köp rapport — ${priceKr} kr`}
+        {loading ? "Laddar..." : "Visa min rapport"}
         {!loading && <ArrowRight className="w-5 h-5" />}
       </button>
     </div>

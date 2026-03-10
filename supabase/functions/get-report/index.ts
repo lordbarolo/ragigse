@@ -40,11 +40,9 @@ serve(async (req) => {
       });
     }
 
-    // Determine access level
-    const isPaid = report.status === "paid";
     const isReferralUnlocked = report.unlocked_by_referral === true;
 
-    // Build response based on access level
+    // Build response — always full access (paywall removed)
     const response: Record<string, unknown> = {
       id: report.id,
       lead_id: report.lead_id || null,
@@ -56,66 +54,47 @@ serve(async (req) => {
       email: report.email,
       ab_variant: report.ab_variant || "A",
       unlocked_by_referral: isReferralUnlocked,
+      result_json: report.result_json,
+      access: "full",
     };
 
-    if (isPaid || isReferralUnlocked) {
-      // Full access
-      response.result_json = report.result_json;
-      response.access = "full";
+    // Fetch zone comparisons for the same occupation type
+    const occupation = report.occupation;
 
-      // Fetch zone comparisons for the same occupation type
-      const resultJson = report.result_json as Record<string, unknown> | null;
-      const occupation = report.occupation;
+    if (occupation) {
+      const { data: matchingRates } = await supabase
+        .from("rates")
+        .select("yrkeskategori, zon, timpris_kund")
+        .eq("yrkeskategori", occupation);
 
-      if (occupation) {
-        // Find the rate type matching this occupation
-        const { data: matchingRates } = await supabase
+      if (!matchingRates || matchingRates.length === 0) {
+        const { data: anyRate } = await supabase
           .from("rates")
-          .select("yrkeskategori, zon, timpris_kund")
-          .eq("yrkeskategori", occupation);
+          .select("typ")
+          .eq("yrkeskategori", occupation)
+          .limit(1);
 
-        if (!matchingRates || matchingRates.length === 0) {
-          // Try matching by typ instead
-          const { data: anyRate } = await supabase
+        if (anyRate && anyRate.length > 0) {
+          const { data: typeRates } = await supabase
             .from("rates")
-            .select("typ")
-            .eq("yrkeskategori", occupation)
-            .limit(1);
-
-          if (anyRate && anyRate.length > 0) {
-            const { data: typeRates } = await supabase
-              .from("rates")
-              .select("yrkeskategori, zon, timpris_kund")
-              .eq("typ", anyRate[0].typ);
-            response.zone_comparisons = typeRates || [];
-          }
-        } else {
-          response.zone_comparisons = matchingRates;
+            .select("yrkeskategori, zon, timpris_kund")
+            .eq("typ", anyRate[0].typ);
+          response.zone_comparisons = typeRates || [];
         }
+      } else {
+        response.zone_comparisons = matchingRates;
+      }
 
-        // Also get the user's zone from locations
-        if (report.kommun) {
-          const { data: loc } = await supabase
-            .from("locations")
-            .select("zon")
-            .eq("kommun", report.kommun)
-            .limit(1);
-          if (loc && loc.length > 0) {
-            response.user_zone = loc[0].zon;
-          }
+      if (report.kommun) {
+        const { data: loc } = await supabase
+          .from("locations")
+          .select("zon")
+          .eq("kommun", report.kommun)
+          .limit(1);
+        if (loc && loc.length > 0) {
+          response.user_zone = loc[0].zon;
         }
       }
-    } else {
-      // Preview: only expose inputs and partial market data for teaser
-      const resultJson = report.result_json as Record<string, unknown> | null;
-      if (resultJson) {
-        response.result_json = {
-          calc_version: resultJson.calc_version,
-          inputs: resultJson.inputs,
-          market: resultJson.market,
-        };
-      }
-      response.access = "preview";
     }
 
     return new Response(JSON.stringify(response), {
