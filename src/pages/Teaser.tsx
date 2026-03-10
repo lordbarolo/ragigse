@@ -412,7 +412,7 @@ export default function Teaser() {
   if (!survey) return null;
 
   if (!isPermanent && !result) {
-    return <CalculatingSpinner />;
+    return <CalculatingSpinner showSurvey={spinnerSurveyVariant === "spinner_survey"} />;
   }
 
   const regionName = pricingResult?.region || survey.kommun || "";
