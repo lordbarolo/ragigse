@@ -70,48 +70,86 @@ export default function ConsultantTrackContent({
   return (
     <>
       {/* Salary Gauge */}
-      <Card className="card-shadow">
-        <CardContent className="pt-6 pb-4">
-          <SalaryGauge
-            currentHourly={currentHourly}
-            marketLow={rec ? rec.recommended_hourly_min : Math.round(marketRate * 0.6)}
-            marketHigh={rec ? rec.recommended_hourly_max : Math.round(marketRate * 0.63)}
-            blurred={!isConsultantFullAccess}
-          />
-        </CardContent>
-      </Card>
+      <div className="rounded-xl bg-card/50 p-6">
+        <SalaryGauge
+          currentHourly={currentHourly}
+          marketLow={rec ? rec.recommended_hourly_min : Math.round(marketRate * 0.6)}
+          marketHigh={rec ? rec.recommended_hourly_max : Math.round(marketRate * 0.63)}
+          blurred={!isConsultantFullAccess}
+        />
+      </div>
 
-      {/* Nästa steg — direkt efter mätaren för max impact */}
-      {isConsultantFullAccess && rec && !isAboveThreshold && (
-        <Card className="card-shadow border-primary/20">
-          <CardContent className="pt-6 space-y-4">
-            <SectionHeading icon={Lightbulb} title="Nästa steg — vad du ska säga" />
-            <div className="space-y-4 text-sm text-muted-foreground">
-              <ScriptBlock
-                step={1}
-                title="Boka möte"
-                text="Kontakta din bemanningskonsult och begär ett ersättningssamtal. Nämn att du har gjort en marknadsanalys."
-              />
-              <ScriptBlock
-                step={2}
-                title="Presentera data"
-                text={`"Jag har tagit fram ramavtalspriset för ${occupation} i min region. Kundpriset ligger på ${fmt(marketRate)} kr/h, och därför borde min ersättning landa runt ${fmt(rec.recommended_hourly_max)} kr/h efter er marginal."`}
-              />
-              <ScriptBlock
-                step={3}
-                title="Ställ frågan"
-                text={`"Jag vill att min ersättning justeras. Kan vi hitta en lösning?"`}
-              />
-              {isEmployee && (
-                <ScriptBlock
-                  step={4}
-                  title="Bonus: fråga om pension"
-                  text={`"Ingår tjänstepension på minst 4.5% i min anställning? Det är standard i ramavtalet."`}
-                />
-              )}
+      {/* 1. Ramavtalspris — HERO CARD */}
+      <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/20 p-6">
+        {isConsultantFullAccess ? (
+          <>
+            <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider mb-1">
+              Vad regionen betalar till bemanningsföretag
+            </p>
+            <p className="text-5xl font-bold text-foreground">
+              {fmt(marketRate)} <span className="text-2xl text-muted-foreground">kr/h</span>
+            </p>
+            <p className="text-sm text-muted-foreground mt-2">
+              Grundtimpris enligt ramavtal (OB/jour ej inkluderat)
+            </p>
+          </>
+        ) : (
+          <>
+            <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider mb-1">
+              Vad regionen betalar till bemanningsföretag
+            </p>
+            <div className="flex items-center gap-2 mb-1">
+              <Lock className="w-5 h-5 text-muted-foreground" />
+              <p className="text-4xl font-bold text-muted-foreground/30 select-none">■■■ kr/h</p>
             </div>
-          </CardContent>
-        </Card>
+            <p className="text-xs text-muted-foreground mt-1">
+              Lås upp ramavtalspriset och se exakt vad regionen betalar för din roll.
+            </p>
+          </>
+        )}
+      </div>
+
+      {/* Nästa steg — premium action card with timeline */}
+      {isConsultantFullAccess && rec && !isAboveThreshold && (
+        <div className="relative rounded-2xl bg-gradient-to-b from-card to-card/50 border border-border p-6 overflow-hidden">
+          {/* Top accent line */}
+          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent" />
+
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+              <Lightbulb className="w-5 h-5 text-primary" />
+            </div>
+            <h2 className="text-xl font-bold text-foreground">Nästa steg — vad du ska säga</h2>
+          </div>
+
+          <div className="space-y-5 relative">
+            {/* Vertical timeline line */}
+            <div className="absolute left-[15px] top-2 bottom-2 w-[2px] bg-gradient-to-b from-primary/40 to-transparent" />
+
+            <ScriptBlock
+              step={1}
+              title="Boka möte"
+              text="Kontakta din bemanningskonsult och begär ett ersättningssamtal. Nämn att du har gjort en marknadsanalys."
+            />
+            <ScriptBlock
+              step={2}
+              title="Presentera data"
+              text={`"Jag har tagit fram ramavtalspriset för ${occupation} i min region. Kundpriset ligger på ${fmt(marketRate)} kr/h, och därför borde min ersättning landa runt ${fmt(rec.recommended_hourly_max)} kr/h efter er marginal."`}
+            />
+            <ScriptBlock
+              step={3}
+              title="Ställ frågan"
+              text={`"Jag vill att min ersättning justeras. Kan vi hitta en lösning?"`}
+            />
+            {isEmployee && (
+              <ScriptBlock
+                step={4}
+                title="Bonus: fråga om pension"
+                text={`"Ingår tjänstepension på minst 4.5% i min anställning? Det är standard i ramavtalet."`}
+              />
+            )}
+          </div>
+        </div>
       )}
 
       {/* Toppskiktet — anpassad info för konsulter nära kundpris */}
