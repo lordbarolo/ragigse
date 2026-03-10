@@ -154,47 +154,45 @@ export default function ConsultantTrackContent({
 
       {/* Toppskiktet — anpassad info för konsulter nära kundpris */}
       {isConsultantFullAccess && isAboveThreshold && (
-        <Card className="card-shadow border-primary/20">
-          <CardContent className="pt-6 space-y-4">
-            <SectionHeading icon={CheckCircle} title="Du ligger redan i toppskiktet" />
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Din ersättning på {fmt(currentHourly)} kr/h motsvarar 96% eller mer av vad kunden betalar ({fmt(marketRate)} kr/h). 
-              Det innebär att det i praktiken inte finns ytterligare förhandlingsutrymme för grundtimpriset i din nuvarande zon.
+        <div className="rounded-xl bg-card/50 p-6 space-y-4">
+          <SectionHeading icon={CheckCircle} title="Du ligger redan i toppskiktet" />
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Din ersättning på {fmt(currentHourly)} kr/h motsvarar 96% eller mer av vad kunden betalar ({fmt(marketRate)} kr/h). 
+            Det innebär att det i praktiken inte finns ytterligare förhandlingsutrymme för grundtimpriset i din nuvarande zon.
+          </p>
+          <div className="space-y-3">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+              Så kan du öka din totala ersättning
             </p>
-            <div className="space-y-3">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                Så kan du öka din totala ersättning
-              </p>
-              <div className="flex items-start gap-3 p-3 rounded-lg border border-border bg-muted/30">
-                <MapPin className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-sm font-medium text-foreground">Byt till en högre priszon</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    Se den regionala jämförelsen nedan — vissa zoner har betydligt högre ramavtalspriser för samma roll.
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3 p-3 rounded-lg border border-border bg-muted/30">
-                <Clock className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-sm font-medium text-foreground">Jourersättning</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    Jour- och beredskapstillägg ligger utanför grundtimpriset och kan ge ett betydande påslag på din totala ersättning. Förhandla specifika jourvillkor med ditt bemanningsföretag.
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3 p-3 rounded-lg border border-border bg-muted/30">
-                <Car className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-sm font-medium text-foreground">Reseersättning</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    Om uppdraget kräver resa finns ofta möjlighet att förhandla reseersättning, boende och traktamente utöver grundtimpriset.
-                  </p>
-                </div>
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/30">
+              <MapPin className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-foreground">Byt till en högre priszon</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Se den regionala jämförelsen nedan — vissa zoner har betydligt högre ramavtalspriser för samma roll.
+                </p>
               </div>
             </div>
-          </CardContent>
-        </Card>
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/30">
+              <Clock className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-foreground">Jourersättning</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Jour- och beredskapstillägg ligger utanför grundtimpriset och kan ge ett betydande påslag på din totala ersättning. Förhandla specifika jourvillkor med ditt bemanningsföretag.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/30">
+              <Car className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-foreground">Reseersättning</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Om uppdraget kräver resa finns ofta möjlighet att förhandla reseersättning, boende och traktamente utöver grundtimpriset.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* (Ramavtalspris is now the hero card above) */}
