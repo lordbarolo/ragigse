@@ -4,7 +4,7 @@ import { usePricingEngine } from "@/hooks/usePricingEngine";
 import { useRates, useLocations } from "@/hooks/useCalculator";
 import type { SurveyData } from "@/components/Survey";
 import type { BenchmarkResult } from "@/hooks/useBenchmarkEngine";
-import CalculatingSpinner from "@/components/teaser/CalculatingSpinner";
+import CompcareLogo from "@/components/CompcareLogo";
 import { Button } from "@/components/ui/button";
 
 import { supabase } from "@/integrations/supabase/client";
@@ -50,14 +50,6 @@ export default function Teaser() {
   const [email, setEmail] = useState("");
   const [emailSaving, setEmailSaving] = useState(false);
 
-  // A/B test: spinner micro-survey (50/50 split, persisted per session)
-  const [spinnerSurveyVariant] = useState(() => {
-    const stored = sessionStorage.getItem("spinnerSurveyVariant");
-    if (stored) return stored as "spinner_survey" | "control";
-    const variant = Math.random() < 0.5 ? "spinner_survey" : "control";
-    sessionStorage.setItem("spinnerSurveyVariant", variant);
-    return variant as "spinner_survey" | "control";
-  });
   const checkoutRef = useRef<HTMLDivElement>(null);
   const [couponDiscount, setCouponDiscount] = useState<{ discount_type: "percent" | "fixed" | "free"; discount_value: number } | null>(null);
   const couponRedeemed = useRef(false);
@@ -412,7 +404,13 @@ export default function Teaser() {
   if (!survey) return null;
 
   if (!isPermanent && !result) {
-    return <CalculatingSpinner showSurvey={spinnerSurveyVariant === "spinner_survey"} />;
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4">
+        <CompcareLogo variant="wordmark" className="h-7 mb-6" />
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+        <p className="mt-4 text-sm text-muted-foreground">Analyserar marknadsdata...</p>
+      </div>
+    );
   }
 
   const regionName = pricingResult?.region || survey.kommun || "";
