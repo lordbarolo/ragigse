@@ -349,7 +349,7 @@ export default function Teaser() {
 
     // Navigate directly to full report (no payment required)
     setEmailSaving(false);
-    trackEvent("email_gate_completed", { source: "teaser" });
+    trackEvent("email_collected", { source: "teaser_gate_completed" });
     navigate(`/rapport/${activeReportId}`);
   };
 
