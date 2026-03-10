@@ -21,9 +21,12 @@ export interface SurveyData {
   experience: number;
   salaryType: "hourly" | "monthly";
   currentSalary: number;
+  isConsultant?: string;
+  employerType?: string;
+  workplaceSector?: string;
 }
 
-const TOTAL_STEPS = 5;
+const TOTAL_STEPS = 8;
 
 type OccupationCategory = "" | "lakare" | "ssk";
 type CommuteType = "veckovis" | "dagligen" | "inte_alls" | "";
