@@ -100,7 +100,7 @@ export default function ConsultantTrackContent({
               <ScriptBlock
                 step={3}
                 title="Ställ frågan"
-                text={`"Jag vill att min ersättning justeras till minst ${fmt(rec.recommended_hourly_min)} kr/h. Kan vi hitta en lösning?"`}
+                text={`"Jag vill att min ersättning justeras. Kan vi hitta en lösning?"`}
               />
               {isEmployee && (
                 <ScriptBlock
