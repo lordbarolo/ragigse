@@ -71,6 +71,90 @@ export type Database = {
         }
         Relationships: []
       }
+      assignments: {
+        Row: {
+          agency_org_id: string | null
+          buyer_org_id: string | null
+          consultant_id: string
+          created_at: string
+          duration_weeks: number | null
+          end_date: string | null
+          hourly_rate: number | null
+          id: string
+          invoiced_total: number | null
+          region_id: string | null
+          specialty_id: string | null
+          start_date: string | null
+          status: string
+        }
+        Insert: {
+          agency_org_id?: string | null
+          buyer_org_id?: string | null
+          consultant_id: string
+          created_at?: string
+          duration_weeks?: number | null
+          end_date?: string | null
+          hourly_rate?: number | null
+          id?: string
+          invoiced_total?: number | null
+          region_id?: string | null
+          specialty_id?: string | null
+          start_date?: string | null
+          status?: string
+        }
+        Update: {
+          agency_org_id?: string | null
+          buyer_org_id?: string | null
+          consultant_id?: string
+          created_at?: string
+          duration_weeks?: number | null
+          end_date?: string | null
+          hourly_rate?: number | null
+          id?: string
+          invoiced_total?: number | null
+          region_id?: string | null
+          specialty_id?: string | null
+          start_date?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assignments_agency_org_id_fkey"
+            columns: ["agency_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignments_buyer_org_id_fkey"
+            columns: ["buyer_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignments_consultant_id_fkey"
+            columns: ["consultant_id"]
+            isOneToOne: false
+            referencedRelation: "consultant_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignments_region_id_fkey"
+            columns: ["region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignments_specialty_id_fkey"
+            columns: ["specialty_id"]
+            isOneToOne: false
+            referencedRelation: "specialties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_optins: {
         Row: {
           created_at: string
@@ -96,6 +180,202 @@ export type Database = {
             columns: ["report_id"]
             isOneToOne: false
             referencedRelation: "reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      benchmark_rates: {
+        Row: {
+          contract_version_id: string | null
+          created_at: string
+          id: string
+          percentile: number
+          rate_type: string
+          source: string | null
+          specialty_id: string | null
+          valid_from: string | null
+          valid_to: string | null
+          value: number
+          zone_id: string | null
+        }
+        Insert: {
+          contract_version_id?: string | null
+          created_at?: string
+          id?: string
+          percentile: number
+          rate_type: string
+          source?: string | null
+          specialty_id?: string | null
+          valid_from?: string | null
+          valid_to?: string | null
+          value: number
+          zone_id?: string | null
+        }
+        Update: {
+          contract_version_id?: string | null
+          created_at?: string
+          id?: string
+          percentile?: number
+          rate_type?: string
+          source?: string | null
+          specialty_id?: string | null
+          valid_from?: string | null
+          valid_to?: string | null
+          value?: number
+          zone_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "benchmark_rates_contract_version_id_fkey"
+            columns: ["contract_version_id"]
+            isOneToOne: false
+            referencedRelation: "contract_versions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "benchmark_rates_specialty_id_fkey"
+            columns: ["specialty_id"]
+            isOneToOne: false
+            referencedRelation: "specialties"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "benchmark_rates_zone_id_fkey"
+            columns: ["zone_id"]
+            isOneToOne: false
+            referencedRelation: "zones"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      compensation_reports: {
+        Row: {
+          calc_version: string
+          consultant_id: string
+          created_at: string
+          current_rate: number | null
+          id: string
+          market_p50: number | null
+          market_p75: number | null
+          market_p90: number | null
+          negotiation_gap: number | null
+          report_type: string
+          result_json: Json | null
+        }
+        Insert: {
+          calc_version?: string
+          consultant_id: string
+          created_at?: string
+          current_rate?: number | null
+          id?: string
+          market_p50?: number | null
+          market_p75?: number | null
+          market_p90?: number | null
+          negotiation_gap?: number | null
+          report_type: string
+          result_json?: Json | null
+        }
+        Update: {
+          calc_version?: string
+          consultant_id?: string
+          created_at?: string
+          current_rate?: number | null
+          id?: string
+          market_p50?: number | null
+          market_p75?: number | null
+          market_p90?: number | null
+          negotiation_gap?: number | null
+          report_type?: string
+          result_json?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "compensation_reports_consultant_id_fkey"
+            columns: ["consultant_id"]
+            isOneToOne: false
+            referencedRelation: "consultant_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      consultant_profiles: {
+        Row: {
+          care_setting: string | null
+          created_at: string
+          current_hourly_rate: number | null
+          current_monthly_salary: number | null
+          employment_type: string | null
+          experience_years: number | null
+          id: string
+          leadership: boolean | null
+          on_call: boolean | null
+          region_id: string | null
+          salary_type: string | null
+          sector: string | null
+          shift_pattern: string | null
+          specialty_id: string | null
+          staffing_agency_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          care_setting?: string | null
+          created_at?: string
+          current_hourly_rate?: number | null
+          current_monthly_salary?: number | null
+          employment_type?: string | null
+          experience_years?: number | null
+          id?: string
+          leadership?: boolean | null
+          on_call?: boolean | null
+          region_id?: string | null
+          salary_type?: string | null
+          sector?: string | null
+          shift_pattern?: string | null
+          specialty_id?: string | null
+          staffing_agency_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          care_setting?: string | null
+          created_at?: string
+          current_hourly_rate?: number | null
+          current_monthly_salary?: number | null
+          employment_type?: string | null
+          experience_years?: number | null
+          id?: string
+          leadership?: boolean | null
+          on_call?: boolean | null
+          region_id?: string | null
+          salary_type?: string | null
+          sector?: string | null
+          shift_pattern?: string | null
+          specialty_id?: string | null
+          staffing_agency_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultant_profiles_region_id_fkey"
+            columns: ["region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "consultant_profiles_specialty_id_fkey"
+            columns: ["specialty_id"]
+            isOneToOne: false
+            referencedRelation: "specialties"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "consultant_profiles_staffing_agency_id_fkey"
+            columns: ["staffing_agency_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -252,6 +532,60 @@ export type Database = {
         }
         Relationships: []
       }
+      invoice_lines: {
+        Row: {
+          assignment_id: string
+          consultant_id: string
+          created_at: string
+          date: string
+          hours: number
+          id: string
+          invoiced_amount: number
+          ob_type: string | null
+          on_call: boolean | null
+          rate: number
+        }
+        Insert: {
+          assignment_id: string
+          consultant_id: string
+          created_at?: string
+          date: string
+          hours: number
+          id?: string
+          invoiced_amount: number
+          ob_type?: string | null
+          on_call?: boolean | null
+          rate: number
+        }
+        Update: {
+          assignment_id?: string
+          consultant_id?: string
+          created_at?: string
+          date?: string
+          hours?: number
+          id?: string
+          invoiced_amount?: number
+          ob_type?: string | null
+          on_call?: boolean | null
+          rate?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_lines_assignment_id_fkey"
+            columns: ["assignment_id"]
+            isOneToOne: false
+            referencedRelation: "assignments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_lines_consultant_id_fkey"
+            columns: ["consultant_id"]
+            isOneToOne: false
+            referencedRelation: "consultant_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       invoice_review_leads: {
         Row: {
           contacted_at: string | null
@@ -400,6 +734,180 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      market_requests: {
+        Row: {
+          consultant_id: string | null
+          created_at: string
+          employment_type: string | null
+          id: string
+          region_id: string | null
+          request_type: string | null
+          result_json: Json | null
+          specialty_id: string | null
+        }
+        Insert: {
+          consultant_id?: string | null
+          created_at?: string
+          employment_type?: string | null
+          id?: string
+          region_id?: string | null
+          request_type?: string | null
+          result_json?: Json | null
+          specialty_id?: string | null
+        }
+        Update: {
+          consultant_id?: string | null
+          created_at?: string
+          employment_type?: string | null
+          id?: string
+          region_id?: string | null
+          request_type?: string | null
+          result_json?: Json | null
+          specialty_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_requests_consultant_id_fkey"
+            columns: ["consultant_id"]
+            isOneToOne: false
+            referencedRelation: "consultant_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_requests_region_id_fkey"
+            columns: ["region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_requests_specialty_id_fkey"
+            columns: ["specialty_id"]
+            isOneToOne: false
+            referencedRelation: "specialties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      offers: {
+        Row: {
+          accepted: boolean | null
+          agency_org_id: string | null
+          buyer_org_id: string | null
+          consultant_id: string
+          contract_length_weeks: number | null
+          created_at: string
+          hourly_rate: number | null
+          housing_included: boolean | null
+          id: string
+          on_call: boolean | null
+          region_id: string | null
+          specialty_id: string | null
+          travel_included: boolean | null
+        }
+        Insert: {
+          accepted?: boolean | null
+          agency_org_id?: string | null
+          buyer_org_id?: string | null
+          consultant_id: string
+          contract_length_weeks?: number | null
+          created_at?: string
+          hourly_rate?: number | null
+          housing_included?: boolean | null
+          id?: string
+          on_call?: boolean | null
+          region_id?: string | null
+          specialty_id?: string | null
+          travel_included?: boolean | null
+        }
+        Update: {
+          accepted?: boolean | null
+          agency_org_id?: string | null
+          buyer_org_id?: string | null
+          consultant_id?: string
+          contract_length_weeks?: number | null
+          created_at?: string
+          hourly_rate?: number | null
+          housing_included?: boolean | null
+          id?: string
+          on_call?: boolean | null
+          region_id?: string | null
+          specialty_id?: string | null
+          travel_included?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offers_agency_org_id_fkey"
+            columns: ["agency_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offers_buyer_org_id_fkey"
+            columns: ["buyer_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offers_consultant_id_fkey"
+            columns: ["consultant_id"]
+            isOneToOne: false
+            referencedRelation: "consultant_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offers_region_id_fkey"
+            columns: ["region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offers_specialty_id_fkey"
+            columns: ["specialty_id"]
+            isOneToOne: false
+            referencedRelation: "specialties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          created_at: string
+          headquarters_region_id: string | null
+          id: string
+          name: string
+          org_number: string | null
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          headquarters_region_id?: string | null
+          id?: string
+          name: string
+          org_number?: string | null
+          type: string
+        }
+        Update: {
+          created_at?: string
+          headquarters_region_id?: string | null
+          id?: string
+          name?: string
+          org_number?: string | null
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organizations_headquarters_region_id_fkey"
+            columns: ["headquarters_region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       payments: {
         Row: {
@@ -598,6 +1106,33 @@ export type Database = {
           },
         ]
       }
+      regions: {
+        Row: {
+          created_at: string
+          id: string
+          kommun: string
+          lat: number | null
+          lng: number | null
+          region: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kommun: string
+          lat?: number | null
+          lng?: number | null
+          region: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kommun?: string
+          lat?: number | null
+          lng?: number | null
+          region?: string
+        }
+        Relationships: []
+      }
       report_feedback: {
         Row: {
           comment: string | null
@@ -761,6 +1296,97 @@ export type Database = {
           year?: number
         }
         Relationships: []
+      }
+      specialties: {
+        Row: {
+          category: string
+          code: string | null
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          category: string
+          code?: string | null
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          category?: string
+          code?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      work_patterns: {
+        Row: {
+          consultant_id: string
+          created_at: string
+          hours_per_week: number | null
+          id: string
+          notes: string | null
+          ob_eligible: boolean | null
+          pattern_type: string
+        }
+        Insert: {
+          consultant_id: string
+          created_at?: string
+          hours_per_week?: number | null
+          id?: string
+          notes?: string | null
+          ob_eligible?: boolean | null
+          pattern_type: string
+        }
+        Update: {
+          consultant_id?: string
+          created_at?: string
+          hours_per_week?: number | null
+          id?: string
+          notes?: string | null
+          ob_eligible?: boolean | null
+          pattern_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "work_patterns_consultant_id_fkey"
+            columns: ["consultant_id"]
+            isOneToOne: false
+            referencedRelation: "consultant_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      zones: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          region_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          region_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          region_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "zones_region_id_fkey"
+            columns: ["region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
