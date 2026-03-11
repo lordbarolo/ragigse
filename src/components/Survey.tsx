@@ -21,12 +21,9 @@ export interface SurveyData {
   experience: number;
   salaryType: "hourly" | "monthly";
   currentSalary: number;
-  isConsultant?: string;
-  employerType?: string;
-  workplaceSector?: string;
 }
 
-const TOTAL_STEPS = 8;
+const TOTAL_STEPS = 5;
 
 type OccupationCategory = "" | "lakare" | "ssk";
 type CommuteType = "veckovis" | "dagligen" | "inte_alls" | "";
@@ -103,7 +100,7 @@ export default function Survey() {
   const stepEntryTime = useRef<number>(Date.now());
   const surveyStarted = useRef(false);
 
-  const STEP_NAMES = ["yrkeskategori", "specialisering", "kommun", "anstallningsform", "konsult_eller_fast", "arbetsgivartyp", "arbetsplats", "ersattning"];
+  const STEP_NAMES = ["yrkeskategori", "specialisering", "kommun", "anstallningsform", "ersattning"];
 
   useEffect(() => {
     stepEntryTime.current = Date.now();
@@ -216,10 +213,7 @@ export default function Survey() {
       case 2: return !!resolvedYrke;
       case 3: return !!data.kommun;
       case 4: return !!data.employmentType;
-      case 5: return !!data.isConsultant;
-      case 6: return !!data.employerType;
-      case 7: return !!data.workplaceSector;
-      case 8: return data.currentSalary > 0;
+      case 5: return data.currentSalary > 0;
       default: return false;
     }
   })();
@@ -232,10 +226,7 @@ export default function Survey() {
         2: roleDropdownValue,
         3: data.kommun,
         4: data.employmentType,
-        5: data.isConsultant || "",
-        6: data.employerType || "",
-        7: data.workplaceSector || "",
-        8: data.currentSalary,
+        5: data.currentSalary,
       };
       trackStepCompleted(step, stepAnswers[step]);
       setStep(step + 1);
@@ -278,7 +269,7 @@ export default function Survey() {
       sessionStorage.setItem("surveyData", JSON.stringify({ ...data, track }));
       if (reportData.ab_variant) sessionStorage.setItem("abVariant", reportData.ab_variant);
       if (benchmarkResult) sessionStorage.setItem("benchmarkResult", JSON.stringify(benchmarkResult));
-      trackStepCompleted(8, data.currentSalary);
+      trackStepCompleted(5, data.currentSalary);
       const totalTime = surveyStartTime.current ? Math.round((Date.now() - surveyStartTime.current) / 1000) : 0;
       const hourlyRate = data.salaryType === "monthly"
         ? Math.round(data.currentSalary / 167)
@@ -475,92 +466,8 @@ export default function Survey() {
           </StepWrapper>
         )}
 
-        {/* Step 5: Konsult eller fast? */}
+        {/* Step 5: Ersättning */}
         {step === 5 && (
-          <StepWrapper
-            icon={<Briefcase className="w-6 h-6" />}
-            title="Arbetar du som konsult eller har du en fast anställning?"
-          >
-            <div className="flex flex-col gap-3">
-              {(["Konsult", "Fast anställd"] as const).map((opt) => (
-                <button
-                  key={opt}
-                  onClick={() => {
-                    setData({ ...data, isConsultant: opt });
-                    trackStepCompleted(5, opt);
-                    setTimeout(() => setStep(6), 300);
-                  }}
-                  className={`py-4 px-5 rounded-lg border text-left transition-all ${
-                    data.isConsultant === opt
-                      ? "border-primary bg-primary/5 ring-1 ring-primary/30"
-                      : "border-border bg-card hover:border-muted-foreground/30 hover:shadow-sm"
-                  }`}
-                >
-                  <span className="text-sm font-medium">{opt}</span>
-                </button>
-              ))}
-            </div>
-          </StepWrapper>
-        )}
-
-        {/* Step 6: Arbetsgivartyp */}
-        {step === 6 && (
-          <StepWrapper
-            icon={<Briefcase className="w-6 h-6" />}
-            title="Är din arbetsgivare en:"
-          >
-            <div className="flex flex-col gap-3">
-              {(["Privat vårdgivare", "Offentlig vårdgivare", "Bemanningsföretag"] as const).map((opt) => (
-                <button
-                  key={opt}
-                  onClick={() => {
-                    setData({ ...data, employerType: opt });
-                    trackStepCompleted(6, opt);
-                    setTimeout(() => setStep(7), 300);
-                  }}
-                  className={`py-4 px-5 rounded-lg border text-left transition-all ${
-                    data.employerType === opt
-                      ? "border-primary bg-primary/5 ring-1 ring-primary/30"
-                      : "border-border bg-card hover:border-muted-foreground/30 hover:shadow-sm"
-                  }`}
-                >
-                  <span className="text-sm font-medium">{opt}</span>
-                </button>
-              ))}
-            </div>
-          </StepWrapper>
-        )}
-
-        {/* Step 7: Arbetsplats */}
-        {step === 7 && (
-          <StepWrapper
-            icon={<MapPin className="w-6 h-6" />}
-            title="Sker ditt arbete hos:"
-          >
-            <div className="flex flex-col gap-3">
-              {(["Region", "Kommun", "Privat"] as const).map((opt) => (
-                <button
-                  key={opt}
-                  onClick={() => {
-                    setData({ ...data, workplaceSector: opt });
-                    trackStepCompleted(7, opt);
-                    setTimeout(() => setStep(8), 300);
-                  }}
-                  className={`py-4 px-5 rounded-lg border text-left transition-all ${
-                    data.workplaceSector === opt
-                      ? "border-primary bg-primary/5 ring-1 ring-primary/30"
-                      : "border-border bg-card hover:border-muted-foreground/30 hover:shadow-sm"
-                  }`}
-                >
-                  <span className="text-sm font-medium">{opt}</span>
-                </button>
-              ))}
-            </div>
-          </StepWrapper>
-        )}
-
-        {/* Step 8: Ersättning */}
-        {step === 8 && (
           <StepWrapper
             icon={<TrendingUp className="w-6 h-6" />}
             title="Vad får du i ersättning idag?"
@@ -619,7 +526,7 @@ export default function Survey() {
             <ChevronLeft className="w-4 h-4" />
             Tillbaka
           </button>
-          {step === 8 && (
+          {step === 5 && (
             <button
               onClick={() => {
                 if (data.currentSalary <= 0) {

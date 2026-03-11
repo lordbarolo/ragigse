@@ -44,6 +44,3 @@ verify_jwt = false
 
 [functions.validate-coupon]
 verify_jwt = false
-
-[functions.auto-create-account]
-verify_jwt = false

@@ -1,56 +1,132 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
+import { usePricingEngine } from "@/hooks/usePricingEngine";
+import { useRates, useLocations } from "@/hooks/useCalculator";
 import type { SurveyData } from "@/components/Survey";
-import CompcareLogo from "@/components/CompcareLogo";
+import type { BenchmarkResult } from "@/hooks/useBenchmarkEngine";
+import CalculatingSpinner from "@/components/teaser/CalculatingSpinner";
 import { Button } from "@/components/ui/button";
+
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
+import { useExitIntent } from "@/hooks/useExitIntent";
+import OpportunityGap from "@/components/OpportunityGap";
+import MarketDiagnosisCard from "@/components/teaser/MarketDiagnosisCard";
+import IncomeImpactCard from "@/components/teaser/IncomeImpactCard";
+import LockedStrategyCard from "@/components/teaser/LockedStrategyCard";
+
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
+import { useCheckout } from "@/shared/useCheckout";
+import { useTeaserData } from "@/hooks/useTeaserData";
+
 import TeaserHeader from "@/components/teaser/TeaserHeader";
+import OccupationInfo from "@/components/teaser/OccupationInfo";
+import EarningsBanner from "@/components/teaser/EarningsBanner";
+import PermanentBenchmarkCard from "@/components/teaser/PermanentBenchmarkCard";
+import ConsultantVerdictCard from "@/components/teaser/ConsultantVerdictCard";
+import ReportPreviewList from "@/shared/ReportPreviewList";
+import CheckoutCTA from "@/shared/CheckoutCTA";
+import ReferralBottomSheet from "@/components/teaser/ReferralBottomSheet";
+import HighEarnerCard from "@/components/teaser/HighEarnerCard";
 import EmailGate from "@/components/teaser/EmailGate";
 
-/** Teaser page — clean email gate before showing the full report */
+/** Teaser page — orchestrator for the results preview */
 export default function Teaser() {
   const { leadId: urlLeadId } = useParams<{ leadId: string }>();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+  const { calculate, result: pricingResult } = usePricingEngine();
+  const { data: rates } = useRates();
+  const { data: locations } = useLocations();
   const [survey, setSurvey] = useState<SurveyData | null>(null);
+  const [benchmarkResult, setBenchmarkResult] = useState<BenchmarkResult | null>(null);
+  const { checkoutLoading, handleCheckout: checkout } = useCheckout();
+  const [unlocked, setUnlocked] = useState(false);
+  const [partialUnlocked, setPartialUnlocked] = useState(true);
   const [loadError, setLoadError] = useState(false);
   const [leadId, setLeadId] = useState("");
   const [reportId, setReportId] = useState("");
   const [email, setEmail] = useState("");
   const [emailSaving, setEmailSaving] = useState(false);
-
   const checkoutRef = useRef<HTMLDivElement>(null);
   const [couponDiscount, setCouponDiscount] = useState<{ discount_type: "percent" | "fixed" | "free"; discount_value: number } | null>(null);
   const couponRedeemed = useRef(false);
 
+  const exitIntentVisible = useExitIntent(28_000);
   useTimeOnPage("teaser", !!survey);
+  const scrollTracked = useRef<Set<number>>(new Set());
+  const paywallViewedRef = useRef(false);
 
-  // Load data
+  // Track paywall_viewed on mount
+  useEffect(() => {
+    if (survey && !paywallViewedRef.current) {
+      paywallViewedRef.current = true;
+      trackEvent("paywall_viewed", { role: survey.yrke, zone: survey.kommun });
+      // Store paywall entry time for payment_completed
+      sessionStorage.setItem("paywallEnteredAt", String(Date.now()));
+    }
+  }, [survey]);
+
+  // Track paywall scroll depth (50% and 75%)
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (docHeight <= 0) return;
+      const pct = (scrollTop / docHeight) * 100;
+      for (const threshold of [50, 75] as const) {
+        if (pct >= threshold && !scrollTracked.current.has(threshold)) {
+          scrollTracked.current.add(threshold);
+          trackEvent("paywall_scrolled", { scroll_depth_percent: threshold });
+        }
+      }
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Load data: try sessionStorage first (fresh from survey), then fetch from Supabase
   useEffect(() => {
     const resolvedLeadId = urlLeadId || sessionStorage.getItem("leadId") || "";
-    if (!resolvedLeadId) { navigate("/"); return; }
+    if (!resolvedLeadId) {
+      navigate("/");
+      return;
+    }
     setLeadId(resolvedLeadId);
 
+    // Try sessionStorage first (populated during survey flow)
     const raw = sessionStorage.getItem("surveyData");
     if (raw) {
-      setSurvey(JSON.parse(raw) as SurveyData);
+      const parsed = JSON.parse(raw) as SurveyData;
+      setSurvey(parsed);
       setReportId(sessionStorage.getItem("reportId") || "");
       trackEvent("teaser_viewed");
+
+      const savedBenchmark = sessionStorage.getItem("benchmarkResult");
+      if (savedBenchmark) setBenchmarkResult(JSON.parse(savedBenchmark) as BenchmarkResult);
+
+      const savedTrack = (parsed as SurveyData & { track?: string }).track;
+      if (parsed.yrke && parsed.kommun && parsed.employmentType && savedTrack !== "permanent") {
+        calculate(parsed.yrke, parsed.kommun, parsed.employmentType as "anstalld" | "foretagare");
+      }
       return;
     }
 
+    // No sessionStorage — fetch from Supabase
     const fetchLead = async () => {
       try {
         const { data, error } = await supabase.functions.invoke("get-lead", {
           body: { lead_id: resolvedLeadId },
         });
-        if (error || !data?.lead) { setLoadError(true); return; }
+
+        if (error || !data?.lead) {
+          setLoadError(true);
+          return;
+        }
 
         const lead = data.lead;
-        const surveyData: SurveyData = {
+        const surveyData: SurveyData & { track?: string } = {
           email: lead.email,
           employmentType: lead.employment_type as "anstalld" | "foretagare",
           yrke: lead.yrke || "",
@@ -58,55 +134,178 @@ export default function Teaser() {
           experience: lead.experience || 0,
           salaryType: (lead.salary_type as "hourly" | "monthly") || "hourly",
           currentSalary: lead.current_salary || 0,
+          track: "consultant",
         };
+
         setSurvey(surveyData);
         setReportId(data.report_id || "");
+        if (data.unlocked_by_referral) setUnlocked(true);
+
+        // Store in sessionStorage for subsequent navigations within this session
         sessionStorage.setItem("leadId", resolvedLeadId);
         sessionStorage.setItem("surveyData", JSON.stringify(surveyData));
         if (data.report_id) sessionStorage.setItem("reportId", data.report_id);
+
         trackEvent("teaser_viewed");
-      } catch { setLoadError(true); }
+
+        if (surveyData.yrke && surveyData.kommun && surveyData.employmentType && surveyData.track !== "permanent") {
+          calculate(surveyData.yrke, surveyData.kommun, surveyData.employmentType as "anstalld" | "foretagare");
+        }
+      } catch {
+        setLoadError(true);
+      }
     };
+
     fetchLead();
   }, [urlLeadId, navigate]);
 
-  // Validate coupon
+  // Check referral unlock status
+  useEffect(() => {
+    if (!leadId) return;
+    const checkReferral = async () => {
+      const { data } = await supabase
+        .from("referrals").select("clicked").eq("lead_id", leadId).eq("clicked", true).limit(1);
+      if (data && data.length > 0) setUnlocked(true);
+    };
+    checkReferral();
+  }, [leadId]);
+
+  // Validate coupon (without redeeming) to show correct UI
   useEffect(() => {
     const couponCode = searchParams.get("coupon") || sessionStorage.getItem("couponCode");
     if (!couponCode || couponRedeemed.current) return;
     couponRedeemed.current = true;
-    const validate = async () => {
+
+    const validateCoupon = async () => {
       try {
         const { data, error } = await supabase.functions.invoke("validate-coupon", {
           body: { code: couponCode },
         });
+
         if (error || !data?.valid) {
-          toast({ title: data?.error || "Ogiltig kupongkod", variant: "destructive" });
+          const errorMsg = data?.error || "Ogiltig kupongkod";
+          toast({ title: errorMsg, variant: "destructive" });
           return;
         }
+
         setCouponDiscount({ discount_type: data.discount_type, discount_value: data.discount_value });
         toast({ title: "Kupong tillämpad!" });
       } catch {
         toast({ title: "Kunde inte verifiera kupongkoden", variant: "destructive" });
       }
     };
-    validate();
+
+    validateCoupon();
   }, [searchParams]);
+
+  const { isPermanent, result, noisedResult, benchmarkMonthly, userMonthly, userHourly, isUnderpaid, diffPercent, isAboveThreshold } =
+    useTeaserData(survey, pricingResult, benchmarkResult);
+
+  // Price A/B test: read variant from sessionStorage (set by create-report)
+  const abVariant = sessionStorage.getItem("abVariant") || "price_49";
+  const priceKr = abVariant === "price_29" ? 29 : 49;
+
+  // Find geographically nearest kommun in a higher-paying zone (haversine distance)
+  const nearestHigherKommun = useMemo(() => {
+    if (isPermanent || !pricingResult || !rates || !locations) return null;
+
+    const currentRate = pricingResult.rate_customer_sek_per_hour;
+    const currentZon = pricingResult.zon;
+    const currentKommun = survey?.kommun || "";
+
+    const matchedRate = rates.find(
+      (r) => r.zon === currentZon && r.timpris_kund === currentRate,
+    );
+    if (!matchedRate) return null;
+
+    const higherRates = rates.filter(
+      (r) =>
+        r.yrkeskategori === matchedRate.yrkeskategori &&
+        r.typ === matchedRate.typ &&
+        r.timpris_kund > currentRate &&
+        r.zon !== currentZon,
+    );
+    if (!higherRates.length) return null;
+
+    const higherZones = new Set(higherRates.map((r) => r.zon));
+    const userLocation = locations.find((l) => l.kommun === currentKommun);
+    if (!userLocation?.lat || !userLocation?.lng) return null;
+
+    const candidates = locations.filter(
+      (l) => higherZones.has(l.zon) && l.kommun !== currentKommun && l.lat && l.lng,
+    );
+    if (!candidates.length) return null;
+
+    // Haversine distance in km
+    const toRad = (deg: number) => (deg * Math.PI) / 180;
+    const haversine = (lat1: number, lng1: number, lat2: number, lng2: number) => {
+      const dLat = toRad(lat2 - lat1);
+      const dLng = toRad(lng2 - lng1);
+      const a =
+        Math.sin(dLat / 2) ** 2 +
+        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+      return 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    };
+
+    let nearest = candidates[0];
+    let minDist = haversine(userLocation.lat, userLocation.lng, nearest.lat!, nearest.lng!);
+
+    for (let i = 1; i < candidates.length; i++) {
+      const d = haversine(userLocation.lat, userLocation.lng, candidates[i].lat!, candidates[i].lng!);
+      if (d < minDist) {
+        minDist = d;
+        nearest = candidates[i];
+      }
+    }
+
+    return nearest.kommun;
+  }, [isPermanent, pricingResult, rates, locations, survey?.kommun]);
 
   const isFree = couponDiscount?.discount_type === "free" ||
     (couponDiscount?.discount_type === "percent" && couponDiscount.discount_value >= 100);
 
+  const unlockFreeReport = useCallback(async (activeReportId: string) => {
+    try {
+      const couponCode = searchParams.get("coupon") || sessionStorage.getItem("couponCode");
+      if (couponCode) {
+        const { data, error } = await supabase.functions.invoke("redeem-coupon", {
+          body: { code: couponCode, report_id: activeReportId },
+        });
+        // 409 = already redeemed for this email — report is already unlocked, just navigate
+        if (error && !data) {
+          // Try to parse error context for known "already used" case
+          try {
+            const errBody = await (error as any)?.context?.json?.();
+            if (errBody?.error?.includes("redan använt")) {
+              trackEvent("free_report_unlocked", { coupon_code: couponCode, already_redeemed: true });
+              navigate(`/rapport/${activeReportId}`);
+              return;
+            }
+          } catch { /* fall through to generic error */ }
+          throw error;
+        }
+        if (data?.error) throw new Error(data.error);
+      }
+      trackEvent("free_report_unlocked", { coupon_code: couponCode });
+      navigate(`/rapport/${activeReportId}`);
+    } catch (err: any) {
+      toast({ title: err?.message || "Kunde inte öppna rapporten", variant: "destructive" });
+    }
+  }, [navigate, searchParams]);
+
   const handleEmailSubmit = async (emailValue: string) => {
     setEmailSaving(true);
     try {
-      const { error: saveErr } = await supabase.functions.invoke("auto-create-account", {
+      // Save email to lead + report first, and wait for it
+      const { error: saveErr } = await supabase.functions.invoke("save-email", {
         body: { lead_id: leadId, report_id: reportId, email: emailValue },
       });
       if (saveErr) throw saveErr;
 
       setEmail(emailValue);
       if (survey) {
-        sessionStorage.setItem("surveyData", JSON.stringify({ ...survey, email: emailValue }));
+        const updated = { ...survey, email: emailValue };
+        sessionStorage.setItem("surveyData", JSON.stringify(updated));
       }
       trackEvent("email_collected", { source: "teaser" });
     } catch {
@@ -115,15 +314,19 @@ export default function Teaser() {
       return;
     }
 
-    // Ensure reportId exists
+    // Ensure we have a reportId — if missing, create report on-the-fly
     let activeReportId = reportId;
     if (!activeReportId && leadId && survey) {
       try {
         const { data: rData, error: rErr } = await supabase.functions.invoke("create-report", {
           body: {
-            lead_id: leadId, email: emailValue, occupation: survey.yrke,
-            employment_type: survey.employmentType, kommun: survey.kommun,
-            current_salary: survey.currentSalary, salary_type: survey.salaryType,
+            lead_id: leadId,
+            email: emailValue,
+            occupation: survey.yrke,
+            employment_type: survey.employmentType,
+            kommun: survey.kommun,
+            current_salary: survey.currentSalary,
+            salary_type: survey.salaryType,
             track: "consultant",
           },
         });
@@ -132,7 +335,9 @@ export default function Teaser() {
           setReportId(activeReportId);
           sessionStorage.setItem("reportId", activeReportId);
         }
-      } catch { /* fall through */ }
+      } catch {
+        // Fall through — checkout will fail gracefully
+      }
     }
 
     if (!activeReportId) {
@@ -141,11 +346,50 @@ export default function Teaser() {
       return;
     }
 
-    setEmailSaving(false);
-    trackEvent("email_collected", { source: "teaser_gate_completed" });
-    navigate(`/rapport/${activeReportId}`);
+    if (isFree) {
+      // Free coupon: redeem and go directly to report (no Stripe)
+      setEmailSaving(false);
+      await unlockFreeReport(activeReportId);
+    } else {
+      // Paid: proceed to checkout
+      setEmailSaving(false);
+      const couponCode = searchParams.get("coupon") || null;
+      const price = couponDiscount
+        ? couponDiscount.discount_type === "percent" ? Math.round(priceKr * (1 - couponDiscount.discount_value / 100))
+          : couponDiscount.discount_type === "fixed" ? Math.max(0, priceKr - couponDiscount.discount_value)
+          : priceKr
+        : priceKr;
+      trackEvent("paywall_cta_clicked", { price, coupon_applied: !!couponDiscount, coupon_code: couponCode, ab_variant: abVariant });
+      checkout("single", { email: emailValue, leadId, reportId: activeReportId, coupon: couponDiscount, abVariant });
+    }
   };
 
+  const onCheckout = async (plan: "single" | "yearly") => {
+    if (!email) {
+      checkoutRef.current?.scrollIntoView({ behavior: "smooth" });
+      return;
+    }
+    if (!reportId) {
+      toast({ title: "Rapport saknas — ladda om sidan och försök igen", variant: "destructive" });
+      return;
+    }
+
+    if (isFree) {
+      await unlockFreeReport(reportId);
+      return;
+    }
+
+    const couponCode = searchParams.get("coupon") || null;
+    const price = couponDiscount
+      ? couponDiscount.discount_type === "free" ? 0
+        : couponDiscount.discount_type === "percent" ? Math.round(priceKr * (1 - couponDiscount.discount_value / 100))
+        : Math.max(0, priceKr - couponDiscount.discount_value)
+      : priceKr;
+    trackEvent("paywall_cta_clicked", { price, coupon_applied: !!couponDiscount, coupon_code: couponCode, ab_variant: abVariant });
+    checkout(plan, { email, leadId, reportId, coupon: couponDiscount, abVariant });
+  };
+
+  // Error state
   if (loadError) {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4 p-6 text-center">
@@ -158,34 +402,155 @@ export default function Teaser() {
 
   if (!survey) return null;
 
+  if (!isPermanent && !result) {
+    return <CalculatingSpinner />;
+  }
+
+  const regionName = pricingResult?.region || survey.kommun || "";
+
   return (
     <div className="min-h-screen bg-background">
       <TeaserHeader kommun={survey.kommun} />
 
-      <main className="px-4 py-8 max-w-lg mx-auto space-y-6">
-        <div className="text-center space-y-1">
-          <h1 className="text-xl font-bold text-foreground">Din analys är redo</h1>
-          <p className="text-sm text-muted-foreground">{survey.yrke} · {survey.kommun}</p>
-        </div>
+      <main className="px-4 py-8 pb-40 max-w-lg mx-auto space-y-6">
+        <OccupationInfo
+          yrke={survey.yrke}
+          kommun={survey.kommun}
+          onChangeYrke={(newYrke) => {
+            const updated = { ...survey, yrke: newYrke };
+            setSurvey(updated);
+            sessionStorage.setItem("surveyData", JSON.stringify(updated));
+            if (newYrke && updated.kommun && updated.employmentType) {
+              calculate(newYrke, updated.kommun, updated.employmentType as "anstalld" | "foretagare");
+            }
+          }}
+          onChangeKommun={(newKommun) => {
+            const updated = { ...survey, kommun: newKommun };
+            setSurvey(updated);
+            sessionStorage.setItem("surveyData", JSON.stringify(updated));
+            if (updated.yrke && newKommun && updated.employmentType) {
+              calculate(updated.yrke, newKommun, updated.employmentType as "anstalld" | "foretagare");
+            }
+          }}
+        />
+
+        {/* SECTION 1 — Market Diagnosis */}
+        <MarketDiagnosisCard
+          diffPercent={diffPercent}
+          isPermanent={isPermanent}
+          yrke={survey.yrke}
+          kommun={survey.kommun}
+          isAboveThreshold={isAboveThreshold}
+          emailProvided={!!email}
+        />
+
+        {/* Earnings Banner */}
+        <EarningsBanner
+          isUnderpaid={isUnderpaid}
+          diffPercent={diffPercent}
+          isPermanent={isPermanent}
+          yrke={survey.yrke}
+          kommun={survey.kommun}
+          nearestHigherKommun={nearestHigherKommun}
+          isAboveThreshold={isAboveThreshold}
+          emailProvided={!!email}
+        />
+
+        {/* SECTION 2 — Economic Consequence */}
+        {(() => {
+          const diffHourly = !isPermanent && result ? Math.max(0, result.high - userHourly) : 0;
+          const diffMonthly = diffHourly * 167;
+          const p75 = benchmarkMonthly?.p75 ?? 0;
+          const monthlyGap = isPermanent ? p75 - userMonthly : diffMonthly;
+          if (monthlyGap > 0) {
+            return (
+              <IncomeImpactCard
+                diffHourly={diffHourly}
+                diffMonthly={diffMonthly}
+                isPermanent={isPermanent}
+                diffPercent={diffPercent}
+                userMonthly={userMonthly}
+                p75Monthly={p75}
+                emailProvided={!!email}
+              />
+            );
+          }
+          return null;
+        })()}
+
+        {/* Consultant bars (kept for visual context) */}
+        {!isPermanent && !isAboveThreshold && result && (
+          <ConsultantVerdictCard
+            isUnderpaid={isUnderpaid}
+            userHourly={userHourly}
+            result={noisedResult ?? result}
+            customerRate={pricingResult?.rate_customer_sek_per_hour ? Math.round(pricingResult.rate_customer_sek_per_hour * (noisedResult ? (noisedResult.high / result.high) : 1)) : undefined}
+            unlocked={unlocked}
+            partialUnlocked={partialUnlocked}
+            exitIntentVisible={exitIntentVisible}
+            checkoutLoading={checkoutLoading}
+            onCheckout={onCheckout}
+            leadId={leadId}
+            referrerEmail={survey.email}
+            regionName={regionName}
+            onPartialUnlock={() => setPartialUnlocked(true)}
+            employmentType={survey.employmentType}
+            priceKr={priceKr}
+            emailProvided={!!email}
+          />
+        )}
+
+        {isPermanent && benchmarkMonthly && (
+          <PermanentBenchmarkCard
+            userMonthly={userMonthly}
+            benchmarkMonthly={benchmarkMonthly}
+            unlocked={unlocked}
+            partialUnlocked={partialUnlocked}
+            emailProvided={!!email}
+          />
+        )}
+
+        {!isPermanent && isAboveThreshold && (
+          <HighEarnerCard
+            kommun={survey.kommun}
+            nearestHigherKommun={nearestHigherKommun}
+          />
+        )}
+
+        {/* SECTION 3 — Locked Strategy + Email Gate */}
+        <LockedStrategyCard isPermanent={isPermanent} />
 
         <div ref={checkoutRef}>
           {!email ? (
-            <div className="rounded-xl border border-border bg-card p-6 card-shadow">
+            <div className="rounded-xl border border-border bg-card p-5 card-shadow">
               <EmailGate
                 onEmailSubmit={handleEmailSubmit}
-                loading={emailSaving}
+                loading={emailSaving || checkoutLoading !== null}
                 coupon={couponDiscount}
                 isFree={isFree}
+                priceKr={priceKr}
               />
             </div>
           ) : (
-            <div className="text-center py-8">
-              <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto" />
-              <p className="mt-4 text-sm text-muted-foreground">Öppnar din rapport...</p>
-            </div>
+            <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="inline" coupon={couponDiscount} priceKr={priceKr} />
           )}
         </div>
+
+        <ReportPreviewList isPermanent={isPermanent} />
       </main>
+
+      {email && !isFree && (
+        <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="sticky" coupon={couponDiscount} priceKr={priceKr} />
+      )}
+
+      <ReferralBottomSheet
+        ctaRef={checkoutRef}
+        leadId={leadId}
+        referrerEmail={survey.email}
+        region={regionName}
+        onCheckout={onCheckout}
+        priceKr={priceKr}
+      />
     </div>
   );
 }

@@ -125,7 +125,7 @@ export default function Report() {
         </div>
       </header>
 
-      <main className="px-4 py-8 max-w-2xl mx-auto space-y-4">
+      <main className="px-4 py-8 max-w-2xl mx-auto space-y-6">
         {report.unlocked_by_referral && (
           <div className="flex items-center justify-center gap-2 py-2 px-4 bg-accent/10 border border-accent/20 rounded-lg text-xs text-accent font-medium">
             <ShieldCheck className="w-4 h-4" />
@@ -167,6 +167,13 @@ export default function Report() {
 
 
 
+        {/* Preview CTA */}
+        {!isFullAccess && (
+          <div className="space-y-4">
+            <ReportPreviewList isPermanent={isPermanentTrack} />
+            <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="stacked" />
+          </div>
+        )}
 
         {/* Full access actions */}
         {isFullAccess && (
