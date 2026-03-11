@@ -25,7 +25,7 @@ import OccupationInfo from "@/components/teaser/OccupationInfo";
 import EarningsBanner from "@/components/teaser/EarningsBanner";
 import PermanentBenchmarkCard from "@/components/teaser/PermanentBenchmarkCard";
 import ConsultantVerdictCard from "@/components/teaser/ConsultantVerdictCard";
-import ReportPreviewList from "@/shared/ReportPreviewList";
+
 import CheckoutCTA from "@/shared/CheckoutCTA";
 import ReferralBottomSheet from "@/components/teaser/ReferralBottomSheet";
 import HighEarnerCard from "@/components/teaser/HighEarnerCard";
