@@ -33,25 +33,25 @@ export default function WowHero({ diffHourly, isPermanent, monthlyGap = 0, kommu
           </p>
         </div>
 
-        <p className="text-lg sm:text-xl font-bold leading-snug text-background/90">
-          Du ligger{" "}
-          <span className="text-primary">{fmt(hourlyGap)} kr/h</span>{" "}
-          under marknaden
+        <p className="text-sm text-background/60 font-medium">
+          Du kan tjäna upp till
+        </p>
+        <p className="text-3xl sm:text-4xl font-extrabold text-primary tracking-tight font-mono mt-1">
+          {fmt(monthly)} kr
+        </p>
+        <p className="text-sm text-background/60 font-medium mt-0.5">
+          mer per månad
         </p>
 
-        <p className="text-xs text-background/40 mt-3 mb-1 uppercase tracking-wider font-medium">
-          Det motsvarar
-        </p>
-
-        <div className="space-y-2 font-mono">
+        <div className="mt-5 pt-4 border-t border-background/10 space-y-2 font-mono">
           <div className="flex items-baseline gap-3">
             <span className="text-background/50 text-sm w-4 text-right">=</span>
-            <span className="text-background font-bold text-xl sm:text-2xl">{fmt(monthly)} kr</span>
-            <span className="text-background/50 text-sm">per månad</span>
+            <span className="text-background font-bold text-lg">{fmt(hourlyGap)} kr/h</span>
+            <span className="text-background/50 text-sm">under marknaden</span>
           </div>
           <div className="flex items-baseline gap-3">
             <span className="text-background/50 text-sm w-4 text-right">=</span>
-            <span className="text-primary font-extrabold text-3xl sm:text-4xl">{fmt(yearly)} kr</span>
+            <span className="text-primary font-bold text-2xl sm:text-3xl">{fmt(yearly)} kr</span>
             <span className="text-background/50 text-sm">per år</span>
           </div>
         </div>
