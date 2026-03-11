@@ -180,7 +180,7 @@ export default function AnalysisScreen() {
         <CompcareLogo />
       </header>
 
-      <main className="flex-1 flex flex-col items-center justify-center px-5 py-8 max-w-md mx-auto w-full">
+      <main className="flex-1 flex flex-col items-center px-5 pt-6 pb-10 sm:pt-12 max-w-md mx-auto w-full">
         {/* Progress section */}
         <div className="w-full space-y-6">
           <div className="text-center space-y-2">
