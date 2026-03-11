@@ -100,13 +100,16 @@ export default function AnalysisScreen() {
   /* ── Phase 4: finalize 85→100 ── */
   const finalize = useCallback((activeReportId: string) => {
     setPhase("finalizing");
+    emailPauseTime.current = elapsedSec;
     const start = Date.now();
-    const dur = 1800;
 
     const tick = () => {
       const elapsed = Date.now() - start;
-      const p = EMAIL_PAUSE + (elapsed / dur) * (100 - EMAIL_PAUSE);
+      const t = elapsed / PHASE2_DURATION;
+      const p = EMAIL_PAUSE + t * (100 - EMAIL_PAUSE);
       setProgress(Math.min(p, 100));
+      // Continue elapsed time for step reveals during finalize
+      setElapsedSec(emailPauseTime.current + elapsed / 1000);
       if (p >= 100) {
         setPhase("done");
         trackEvent("analysis_completed");
@@ -116,7 +119,7 @@ export default function AnalysisScreen() {
       rafRef.current = requestAnimationFrame(tick);
     };
     rafRef.current = requestAnimationFrame(tick);
-  }, [navigate]);
+  }, [navigate, elapsedSec]);
 
   /* ── Email submit ── */
   const handleEmailSubmit = async (emailValue: string) => {
