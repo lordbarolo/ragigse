@@ -9,7 +9,6 @@ import { getCouponCode } from "@/lib/captureParams";
 import logoDark from "@/assets/logo-dark.png";
 
 import ShareButton from "@/components/ShareButton";
-import { useCheckout } from "@/shared/useCheckout";
 import type { ReportData } from "@/shared/types";
 
 import PermanentTrackContent from "@/components/report/PermanentTrackContent";
