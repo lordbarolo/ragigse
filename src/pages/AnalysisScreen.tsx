@@ -206,35 +206,27 @@ export default function AnalysisScreen() {
           </div>
 
           {/* Dynamic step list */}
-          <div className="space-y-2.5">
-            {ANALYSIS_STEPS.map(({ icon: Icon, label, threshold }, i) => {
+          <div className="space-y-3">
+            {ANALYSIS_STEPS.map(({ label, threshold }, i) => {
               const done = progress >= threshold;
               const active = i === currentStepIdx && !done;
 
               return (
                 <div
                   key={i}
-                  className={`flex items-center gap-3 py-2 px-3 rounded-lg transition-all duration-500 ${
-                    done
-                      ? "opacity-100"
-                      : active
-                        ? "opacity-100 bg-primary/5"
-                        : "opacity-30"
+                  className={`flex items-center gap-3 transition-all duration-500 ${
+                    done ? "opacity-100" : active ? "opacity-100" : "opacity-0 h-0 overflow-hidden"
                   }`}
                 >
-                  <div className={`p-1.5 rounded-md shrink-0 transition-colors duration-300 ${
-                    done ? "bg-primary/15 text-primary" : active ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
+                  {done ? (
+                    <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
+                  ) : (
+                    <ArrowRight className="w-4 h-4 text-primary shrink-0 animate-pulse" />
+                  )}
+                  <span className={`text-sm ${
+                    done ? "text-muted-foreground" : "text-foreground font-medium"
                   }`}>
-                    {done ? (
-                      <CheckCircle2 className="w-4 h-4" />
-                    ) : (
-                      <Icon className="w-4 h-4" />
-                    )}
-                  </div>
-                  <span className={`text-sm transition-colors duration-300 ${
-                    done ? "text-foreground font-medium" : active ? "text-foreground" : "text-muted-foreground"
-                  }`}>
-                    {done ? label.replace("…", " ✓") : label}
+                    {label}
                   </span>
                 </div>
               );
