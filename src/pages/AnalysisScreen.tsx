@@ -67,30 +67,24 @@ export default function AnalysisScreen() {
 
   /* ── Eased progress: fast 0-60, slow 60-85 ── */
   const ease = (t: number): number => {
-    // t goes 0→1 over duration, output is 0→EMAIL_PAUSE
     if (t <= 0) return 0;
     if (t >= 1) return EMAIL_PAUSE;
-    // fast phase: 0→0.4 maps to 0→60
-    // slow phase: 0.4→1 maps to 60→85
-    if (t < 0.4) {
-      return (t / 0.4) * 60;
-    }
+    if (t < 0.4) return (t / 0.4) * 60;
     return 60 + ((t - 0.4) / 0.6) * 25;
   };
 
-  /* ── Phase 1-3: animate to 85% ── */
+  /* ── Phase 1-3: animate to 85% over 7s ── */
   useEffect(() => {
     if (phase !== "animating") return;
-    const duration = 5000; // 5s to reach 85%
     startRef.current = Date.now();
 
     const tick = () => {
       const elapsed = Date.now() - startRef.current;
-      const t = Math.min(elapsed / duration, 1);
-      const p = ease(t);
-      setProgress(p);
+      const t = Math.min(elapsed / PHASE1_DURATION, 1);
+      setProgress(ease(t));
+      setElapsedSec(elapsed / 1000);
 
-      if (p >= EMAIL_PAUSE) {
+      if (t >= 1) {
         setPhase("paused_for_email");
         trackEvent("analysis_email_pause");
         return;
