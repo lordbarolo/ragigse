@@ -404,7 +404,7 @@ export default function Teaser() {
     <div className="min-h-screen bg-background">
       <TeaserHeader kommun={survey.kommun} />
 
-      <main className="px-4 py-8 pb-40 max-w-lg mx-auto space-y-6">
+      <main className="px-4 py-8 pb-20 max-w-lg mx-auto space-y-6">
         <OccupationInfo
           yrke={survey.yrke}
           kommun={survey.kommun}
@@ -426,117 +426,44 @@ export default function Teaser() {
           }}
         />
 
-        {/* SECTION 1 — Market Diagnosis */}
+        {/* Market position — no blur, honest indicator */}
         <MarketDiagnosisCard
           diffPercent={diffPercent}
           isPermanent={isPermanent}
           yrke={survey.yrke}
           kommun={survey.kommun}
           isAboveThreshold={isAboveThreshold}
-          emailProvided={!!email}
+          emailProvided={false}
         />
 
-        {/* Earnings Banner */}
-        <EarningsBanner
-          isUnderpaid={isUnderpaid}
-          diffPercent={diffPercent}
-          isPermanent={isPermanent}
-          yrke={survey.yrke}
-          kommun={survey.kommun}
-          nearestHigherKommun={nearestHigherKommun}
-          isAboveThreshold={isAboveThreshold}
-          emailProvided={!!email}
-        />
-
-        {/* SECTION 2 — Economic Consequence */}
-        {(() => {
-          const diffHourly = !isPermanent && result ? Math.max(0, result.high - userHourly) : 0;
-          const diffMonthly = diffHourly * 167;
-          const p75 = benchmarkMonthly?.p75 ?? 0;
-          const monthlyGap = isPermanent ? p75 - userMonthly : diffMonthly;
-          if (monthlyGap > 0) {
-            return (
-              <IncomeImpactCard
-                diffHourly={diffHourly}
-                diffMonthly={diffMonthly}
-                isPermanent={isPermanent}
-                diffPercent={diffPercent}
-                userMonthly={userMonthly}
-                p75Monthly={p75}
-                emailProvided={!!email}
-              />
-            );
-          }
-          return null;
-        })()}
-
-        {/* Consultant bars (kept for visual context) */}
-        {!isPermanent && !isAboveThreshold && result && (
-          <ConsultantVerdictCard
-            isUnderpaid={isUnderpaid}
-            userHourly={userHourly}
-            result={noisedResult ?? result}
-            customerRate={pricingResult?.rate_customer_sek_per_hour ? Math.round(pricingResult.rate_customer_sek_per_hour * (noisedResult ? (noisedResult.high / result.high) : 1)) : undefined}
-            unlocked={unlocked}
-            partialUnlocked={partialUnlocked}
-            exitIntentVisible={exitIntentVisible}
-            checkoutLoading={checkoutLoading}
-            onCheckout={onCheckout}
-            leadId={leadId}
-            referrerEmail={survey.email}
-            regionName={regionName}
-            onPartialUnlock={() => setPartialUnlocked(true)}
-            employmentType={survey.employmentType}
-            priceKr={priceKr}
-            emailProvided={!!email}
-          />
+        {/* Email Gate — primary CTA at top */}
+        {!email && (
+          <div className="rounded-xl border border-primary/30 bg-card p-5 card-shadow">
+            <EmailGate
+              onEmailSubmit={handleEmailSubmit}
+              loading={emailSaving}
+            />
+          </div>
         )}
 
-        {isPermanent && benchmarkMonthly && (
-          <PermanentBenchmarkCard
-            userMonthly={userMonthly}
-            benchmarkMonthly={benchmarkMonthly}
-            unlocked={unlocked}
-            partialUnlocked={partialUnlocked}
-            emailProvided={!!email}
+        {/* What's in the report — honest preview */}
+        <div className="rounded-xl bg-foreground/[0.02] p-5">
+          <ReportPreviewList
+            isPermanent={isPermanent}
+            yrke={survey.yrke}
           />
-        )}
-
-        {!isPermanent && isAboveThreshold && (
-          <HighEarnerCard
-            kommun={survey.kommun}
-            nearestHigherKommun={nearestHigherKommun}
-          />
-        )}
-
-        {/* Blurred report teaser — shows what's behind the paywall */}
-        <BlurredReportTeaser onScrollToEmail={() => checkoutRef.current?.scrollIntoView({ behavior: "smooth" })} />
-
-        {/* SECTION 3 — Email Gate (free report) */}
-        <div ref={checkoutRef}>
-          {!email && (
-            <div className="rounded-xl border border-primary/20 bg-card p-5 card-shadow">
-              <EmailGate
-                onEmailSubmit={handleEmailSubmit}
-                loading={emailSaving}
-                coupon={null}
-                isFree={true}
-                priceKr={0}
-              />
-            </div>
-          )}
         </div>
 
+        {/* Second CTA at the bottom for those who scrolled */}
+        {!email && (
+          <div className="rounded-xl border border-primary/20 bg-card p-5 card-shadow">
+            <EmailGate
+              onEmailSubmit={handleEmailSubmit}
+              loading={emailSaving}
+            />
+          </div>
+        )}
       </main>
-
-      <ReferralBottomSheet
-        ctaRef={checkoutRef}
-        leadId={leadId}
-        referrerEmail={survey.email}
-        region={regionName}
-        onCheckout={onCheckout}
-        priceKr={0}
-      />
     </div>
   );
 }
