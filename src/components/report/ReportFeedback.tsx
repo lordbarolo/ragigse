@@ -22,7 +22,6 @@ export default function ReportFeedback({ leadId, role, zone }: Props) {
   const [copied, setCopied] = useState(false);
   const [sending, setSending] = useState(false);
 
-  // Check if feedback already exists
   useEffect(() => {
     if (!leadId) return;
     supabase.functions.invoke("check-feedback", { body: { lead_id: leadId } })
@@ -46,7 +45,6 @@ export default function ReportFeedback({ leadId, role, zone }: Props) {
     setRating(value);
     trackEvent("report_feedback", { rating: value, role: role || "", zone: zone || "" });
 
-    // Save immediately for "yes"
     if (value === "yes") {
       await supabase.from("report_feedback").insert({
         lead_id: leadId,
@@ -82,7 +80,6 @@ export default function ReportFeedback({ leadId, role, zone }: Props) {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  // After "Yes" — share CTA
   if (submitted && rating === "yes") {
     return (
       <Card className="border-border/50">
@@ -104,7 +101,6 @@ export default function ReportFeedback({ leadId, role, zone }: Props) {
     );
   }
 
-  // After comment submit
   if (submitted) {
     return (
       <Card className="border-border/50">
@@ -115,7 +111,6 @@ export default function ReportFeedback({ leadId, role, zone }: Props) {
     );
   }
 
-  // "Partial" or "No" — comment form
   if (rating === "partial" || rating === "no") {
     return (
       <Card className="border-border/50">
@@ -146,14 +141,13 @@ export default function ReportFeedback({ leadId, role, zone }: Props) {
     );
   }
 
-  // Initial state — rating buttons
   return (
     <Card className="border-border/50">
       <CardContent className="py-6 space-y-4">
         <div className="flex items-center justify-center gap-2">
           <MessageSquare className="w-4 h-4 text-muted-foreground" />
           <p className="text-sm font-medium text-muted-foreground">
-            Var den här rapporten värd pengarna?
+            Hjälpte denna analys dig förstå ditt marknadsvärde?
           </p>
         </div>
         <div className="flex justify-center gap-3">
