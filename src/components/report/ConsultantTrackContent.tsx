@@ -391,7 +391,7 @@ export default function ConsultantTrackContent({
           <CardContent className="pt-6 space-y-4">
             <SectionHeading icon={MapPin} title="Regional jämförelse" />
             <p className="text-sm text-muted-foreground">
-              Vad kunden betalar för {occupation} i alla zoner:
+              Vad regionen betalar till bemanningsföretag för {occupation} i alla zoner:
             </p>
             <div className="space-y-3">
               {[...zoneComparisons]
