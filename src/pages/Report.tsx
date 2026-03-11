@@ -158,8 +158,8 @@ export default function Report() {
           />
         )}
 
-        {/* Full access actions */}
-        {isFullAccess && (
+        {/* Share actions */}
+        <div className="flex flex-col gap-3">
           <div className="flex flex-col gap-3">
             <ShareButton
               title="CompCare.se – Ersättningsanalys"
