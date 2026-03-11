@@ -99,13 +99,15 @@ export default function ConversionFunnel() {
       }
 
       // Build main funnel
-      const funnel: FunnelStep[] = FUNNEL_STEPS.map((step, i) => {
+      const funnel: FunnelStep[] = [];
+      for (let i = 0; i < FUNNEL_STEPS.length; i++) {
+        const step = FUNNEL_STEPS[i];
         const count = counts[step.key] || 0;
         const prevCount = i === 0 ? count : (funnel[i - 1]?.count || 0);
         const dropoff = Math.max(0, prevCount - count);
         const dropoffPct = prevCount > 0 ? Math.round((dropoff / prevCount) * 100) : 0;
-        return { ...step, count, dropoff, dropoffPct };
-      });
+        funnel.push({ ...step, count, dropoff, dropoffPct });
+      }
 
       // Build survey dropoff
       const surveyDropoff: SurveyDropoff[] = SURVEY_STEP_NAMES.map((stepName) => {
