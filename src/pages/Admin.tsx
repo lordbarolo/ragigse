@@ -261,6 +261,9 @@ export default function Admin() {
       </div>
 
       {/* Conversion Funnel */}
+      <DailyVisitors />
+
+      {/* Conversion Funnel */}
       <ConversionFunnel />
 
       {/* Feedback Stats */}
