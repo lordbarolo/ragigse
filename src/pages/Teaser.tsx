@@ -18,6 +18,7 @@ import { useCheckout } from "@/shared/useCheckout";
 
 import TeaserHeader from "@/components/teaser/TeaserHeader";
 import OccupationInfo from "@/components/teaser/OccupationInfo";
+import WowHero from "@/components/teaser/WowHero";
 import MarketDiagnosisCard from "@/components/teaser/MarketDiagnosisCard";
 import EmailGate from "@/components/teaser/EmailGate";
 import ReportPreviewList from "@/components/teaser/ReportPreviewList";
