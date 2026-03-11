@@ -1,5 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import InvoiceReviewCTA from "./InvoiceReviewCTA";
+import PersonalInsights from "./PersonalInsights";
+import ColleagueComparison from "./ColleagueComparison";
 import { Separator } from "@/components/ui/separator";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import {
