@@ -13,7 +13,7 @@ import { useExitIntent } from "@/hooks/useExitIntent";
 import OpportunityGap from "@/components/OpportunityGap";
 import MarketDiagnosisCard from "@/components/teaser/MarketDiagnosisCard";
 import IncomeImpactCard from "@/components/teaser/IncomeImpactCard";
-import LockedStrategyCard from "@/components/teaser/LockedStrategyCard";
+import BlurredReportTeaser from "@/components/teaser/BlurredReportTeaser";
 
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
@@ -25,7 +25,7 @@ import OccupationInfo from "@/components/teaser/OccupationInfo";
 import EarningsBanner from "@/components/teaser/EarningsBanner";
 import PermanentBenchmarkCard from "@/components/teaser/PermanentBenchmarkCard";
 import ConsultantVerdictCard from "@/components/teaser/ConsultantVerdictCard";
-import ReportPreviewList from "@/shared/ReportPreviewList";
+
 import CheckoutCTA from "@/shared/CheckoutCTA";
 import ReferralBottomSheet from "@/components/teaser/ReferralBottomSheet";
 import HighEarnerCard from "@/components/teaser/HighEarnerCard";
@@ -517,12 +517,13 @@ export default function Teaser() {
           />
         )}
 
-        {/* SECTION 3 — Locked Strategy + Email Gate */}
-        <LockedStrategyCard isPermanent={isPermanent} />
+        {/* Blurred report teaser — shows what's behind the paywall */}
+        <BlurredReportTeaser onScrollToEmail={() => checkoutRef.current?.scrollIntoView({ behavior: "smooth" })} />
 
+        {/* SECTION 3 — Email Gate / Checkout */}
         <div ref={checkoutRef}>
           {!email ? (
-            <div className="rounded-xl border border-border bg-card p-5 card-shadow">
+            <div className="rounded-xl border border-primary/20 bg-card p-5 card-shadow">
               <EmailGate
                 onEmailSubmit={handleEmailSubmit}
                 loading={emailSaving || checkoutLoading !== null}
@@ -536,7 +537,6 @@ export default function Teaser() {
           )}
         </div>
 
-        <ReportPreviewList isPermanent={isPermanent} />
       </main>
 
       {email && !isFree && (
