@@ -189,8 +189,7 @@ export default function Report() {
                 <Linkedin className="w-4 h-4" /> LinkedIn
               </Button>
             </div>
-          </div>
-        )}
+        </div>
 
         <Separator />
         <p className="text-xs text-muted-foreground text-center leading-relaxed pb-8">
