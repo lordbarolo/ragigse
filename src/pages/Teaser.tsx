@@ -18,6 +18,7 @@ import { useCheckout } from "@/shared/useCheckout";
 
 import TeaserHeader from "@/components/teaser/TeaserHeader";
 import OccupationInfo from "@/components/teaser/OccupationInfo";
+import WowHero from "@/components/teaser/WowHero";
 import MarketDiagnosisCard from "@/components/teaser/MarketDiagnosisCard";
 import EmailGate from "@/components/teaser/EmailGate";
 import ReportPreviewList from "@/components/teaser/ReportPreviewList";
@@ -425,6 +426,16 @@ export default function Teaser() {
             }
           }}
         />
+
+        {/* WOW hero — immediate value proposition */}
+        {isUnderpaid && !isAboveThreshold && (
+          <WowHero
+            diffHourly={result ? result.high - userHourly : 0}
+            isPermanent={isPermanent}
+            monthlyGap={benchmarkMonthly ? benchmarkMonthly.p75 - userMonthly : 0}
+            kommun={survey.kommun}
+          />
+        )}
 
         {/* Market position — no blur, honest indicator */}
         <MarketDiagnosisCard
