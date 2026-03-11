@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      analyses: {
+        Row: {
+          created_at: string
+          current_salary: number | null
+          employment_type: string | null
+          id: string
+          location: string | null
+          result_data: Json | null
+          role: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_salary?: number | null
+          employment_type?: string | null
+          id?: string
+          location?: string | null
+          result_data?: Json | null
+          role?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_salary?: number | null
+          employment_type?: string | null
+          id?: string
+          location?: string | null
+          result_data?: Json | null
+          role?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       analytics_events: {
         Row: {
           created_at: string
@@ -479,6 +512,24 @@ export type Database = {
           },
         ]
       }
+      profiles: {
+        Row: {
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       rates: {
         Row: {
           detaljer: string | null
@@ -596,6 +647,7 @@ export type Database = {
           salary_type: string | null
           status: string
           unlocked_by_referral: boolean
+          user_id: string | null
         }
         Insert: {
           ab_variant?: string
@@ -615,6 +667,7 @@ export type Database = {
           salary_type?: string | null
           status?: string
           unlocked_by_referral?: boolean
+          user_id?: string | null
         }
         Update: {
           ab_variant?: string
@@ -634,6 +687,7 @@ export type Database = {
           salary_type?: string | null
           status?: string
           unlocked_by_referral?: boolean
+          user_id?: string | null
         }
         Relationships: [
           {

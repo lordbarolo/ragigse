@@ -120,7 +120,7 @@ export default function ConsultantTrackContent({
           <CardContent className="pt-6 space-y-4">
             <SectionHeading icon={CheckCircle} title="Du ligger redan i toppskiktet" />
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Din ersättning på {fmt(currentHourly)} kr/h motsvarar 96% eller mer av vad kunden betalar ({fmt(marketRate)} kr/h). 
+              Din ersättning på {fmt(currentHourly)} kr/h motsvarar 96% eller mer av vad regionen betalar till bemanningsföretag ({fmt(marketRate)} kr/h). 
               Det innebär att det i praktiken inte finns ytterligare förhandlingsutrymme för grundtimpriset i din nuvarande zon.
             </p>
             <div className="space-y-3">
@@ -293,7 +293,7 @@ export default function ConsultantTrackContent({
           <CardContent className="pt-6 space-y-4">
             <SectionHeading icon={Info} title="Antaganden & Beräkning" />
             <div className="space-y-3 text-sm text-muted-foreground">
-              <CalcRow label="Ramavtalspris (vad kunden betalar)" value={`${fmt(marketRate)} kr/h`} />
+              <CalcRow label="Ramavtalspris (vad regionen betalar)" value={`${fmt(marketRate)} kr/h`} />
               <CalcRow label={`Bemanningsbolagets marginal (${marginLabel})`} value={`−${fmt(Math.round(marketRate * margin))} kr/h`} />
               <CalcRow label="Ersättningsutrymme efter marginal" value={`${fmt(afterMargin)} kr/h`} />
               {isEmployee ? (
@@ -391,7 +391,7 @@ export default function ConsultantTrackContent({
           <CardContent className="pt-6 space-y-4">
             <SectionHeading icon={MapPin} title="Regional jämförelse" />
             <p className="text-sm text-muted-foreground">
-              Vad kunden betalar för {occupation} i alla zoner:
+              Vad regionen betalar till bemanningsföretag för {occupation} i alla zoner:
             </p>
             <div className="space-y-3">
               {[...zoneComparisons]

@@ -16,7 +16,7 @@ export default function HighEarnerCard({ kommun, nearestHigherKommun }: Props) {
       </div>
       <div className="p-5 space-y-4">
         <p className="text-sm text-muted-foreground leading-relaxed">
-          Din ersättning i {kommun} ligger på 96% eller mer av vad kunden betalar enligt ramavtalet. Det innebär att det i praktiken inte finns ytterligare förhandlingsutrymme i din nuvarande zon.
+          Din ersättning i {kommun} ligger på 96% eller mer av vad regionen betalar till bemanningsföretag enligt ramavtalet. Det innebär att det i praktiken inte finns ytterligare förhandlingsutrymme i din nuvarande zon.
         </p>
 
         <div className="space-y-3">

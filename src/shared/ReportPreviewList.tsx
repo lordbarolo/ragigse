@@ -1,7 +1,7 @@
 import { ShieldCheck } from "lucide-react";
 
 const ITEMS = [
-  "Kunskap om vad kunden betalar för dig",
+  "Kunskap om vad regionen betalar för dig",
   "Konkret förhandlingsspann med siffror",
   "Steg-för-steg script: vad du ska säga",
   "Info om orter som betalar mer än din nuvarande",
