@@ -141,16 +141,6 @@ export default function ConsultantTrackContent({
         </div>
       )}
 
-      {/* Salary Gauge */}
-      <div className="rounded-xl bg-foreground/[0.02] p-4 sm:p-5">
-        <SalaryGauge
-          currentHourly={currentHourly}
-          marketLow={rec ? rec.recommended_hourly_min : Math.round(marketRate * 0.6)}
-          marketHigh={rec ? rec.recommended_hourly_max : Math.round(marketRate * 0.63)}
-          blurred={!isConsultantFullAccess}
-        />
-      </div>
-
       {/* ═══ NIVÅ 2 — Din position (borderless) ═══ */}
       {isConsultantFullAccess && rec ? (
         <div className="space-y-4">
