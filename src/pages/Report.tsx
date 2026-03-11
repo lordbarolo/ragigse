@@ -150,23 +150,13 @@ export default function Report() {
           />
         )}
 
-        {/* Feedback — only for full access */}
-        {isFullAccess && report.lead_id && (
+        {/* Feedback */}
+        {report.lead_id && (
           <ReportFeedback
             leadId={report.lead_id}
             role={report.occupation}
             zone={report.user_zone}
           />
-        )}
-
-
-
-        {/* Preview CTA */}
-        {!isFullAccess && (
-          <div className="space-y-4">
-            <ReportPreviewList isPermanent={isPermanentTrack} />
-            <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="stacked" />
-          </div>
         )}
 
         {/* Full access actions */}

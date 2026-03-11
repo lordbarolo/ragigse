@@ -60,7 +60,7 @@ serve(async (req) => {
       unlocked_by_referral: isReferralUnlocked,
     };
 
-    if (isPaid || isReferralUnlocked || isOwner) {
+    if (hasEmail || isPaid || isReferralUnlocked || isOwner) {
       // Full access
       response.result_json = report.result_json;
       response.access = "full";
