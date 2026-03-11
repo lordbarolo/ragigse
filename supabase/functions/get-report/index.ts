@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { report_id } = await req.json();
+    const { report_id, auth_user_id } = await req.json();
 
     if (!report_id) {
       return new Response(JSON.stringify({ error: "Missing report_id" }), {
