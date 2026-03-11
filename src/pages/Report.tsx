@@ -75,12 +75,6 @@ export default function Report() {
     }
   }, [report]);
 
-  const onCheckout = (plan: "single" | "yearly") => {
-    if (!report) return;
-    const leadId = report.lead_id || "";
-    checkout(plan, { email: report.email || "", leadId, reportId: report.id });
-  };
-
   if (loading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
