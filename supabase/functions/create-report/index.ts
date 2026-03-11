@@ -17,6 +17,30 @@ function categorizeGap(currentSalary: number, p75: number): GapCategory {
   return "large";
 }
 
+// Map survey occupation names to DB occupation names
+const OCCUPATION_MAP: Record<string, string> = {
+  "Sjuksköterska": "Grundutbildade sjuksköterskor",
+  "Allmänsjuksköterska": "Grundutbildade sjuksköterskor",
+  "Barnmorska": "Barnmorskor",
+  "Specialistsjuksköterska": "Övriga specialistsjuksköterskor",
+  "Legitimerad läkare": "Övriga läkare",
+  "Specialistläkare": "Specialistläkare",
+  "ST-läkare": "ST-läkare",
+  "Anestesisjuksköterska": "Anestesisjuksköterskor",
+  "Intensivvårdssjuksköterska": "Intensivvårdssjuksköterskor",
+  "Operationssjuksköterska": "Operationssjuksköterskor",
+  "Barnsjuksköterska": "Barnsjuksköterskor",
+  "Ambulanssjuksköterska": "Ambulanssjuksköterskor m.fl.",
+  "Distriktssköterska": "Distriktssköterskor",
+  "Psykiatrisjuksköterska": "Psykiatrisjuksköterskor",
+  "Röntgensjuksköterska": "Röntgensjuksköterskor",
+  "Skolsköterska": "Skolsköterskor",
+  "Geriatriksjuksköterska": "Geriatriksjuksköterskor",
+  "Företagssköterska": "Företagssköterskor",
+  "Psykolog": "Psykologer",
+  "AT-läkare": "AT-läkare",
+};
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -60,15 +84,16 @@ serve(async (req) => {
     // ── PERMANENT TRACK (fast tjänst) ──────────────────────────────────────────
     if (track === "permanent") {
       const effectiveSector = sector || "privat";
+      const mappedOccupation = OCCUPATION_MAP[occupation] || occupation;
 
       const { data: benchData, error: benchError } = await supabase
         .from("salary_benchmarks")
         .select("occupation, sector, average_monthly, percentile_25, percentile_50, percentile_75, region, year, source")
-        .eq("occupation", occupation)
+        .eq("occupation", mappedOccupation)
         .eq("sector", effectiveSector)
         .order("year", { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (benchError || !benchData) {
         return new Response(
