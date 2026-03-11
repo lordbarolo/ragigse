@@ -52,6 +52,26 @@ export default function Teaser() {
   const checkoutRef = useRef<HTMLDivElement>(null);
   const [couponDiscount, setCouponDiscount] = useState<{ discount_type: "percent" | "fixed" | "free"; discount_value: number } | null>(null);
   const couponRedeemed = useRef(false);
+  const [authChecked, setAuthChecked] = useState(false);
+
+  // Check if user is already authenticated — skip EmailGate and redirect to full report
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        // User is authenticated — find their report and redirect
+        const rid = sessionStorage.getItem("reportId");
+        if (rid) {
+          navigate(`/rapport/${rid}`, { replace: true });
+          return;
+        }
+        // If no reportId in session, set email so EmailGate is skipped
+        setEmail(session.user.email || "");
+      }
+      setAuthChecked(true);
+    };
+    checkAuth();
+  }, [navigate]);
 
   const exitIntentVisible = useExitIntent(28_000);
   useTimeOnPage("teaser", !!survey);
