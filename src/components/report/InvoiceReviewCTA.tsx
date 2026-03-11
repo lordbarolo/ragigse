@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { ShieldCheck, CheckCircle, Loader2 } from "lucide-react";
+import { ShieldCheck, CheckCircle, Loader2, Clock, Moon, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,7 +16,6 @@ interface Props {
 
 export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }: Props) {
   const [wantsReview, setWantsReview] = useState(false);
-  // confirmedEmail no longer needed — single opt-in checkbox
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [alreadyOptedIn, setAlreadyOptedIn] = useState(false);
@@ -34,7 +33,6 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }
     if (!canSubmit) return;
     setLoading(true);
 
-    // Insert into invoice_review_leads
     const { error } = await supabase.from("invoice_review_leads").insert({
       lead_id: leadId,
       email,
@@ -53,7 +51,6 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }
       return;
     }
 
-    // Also insert into audit_optins for backward compat
     if (reportId) {
       await supabase.from("audit_optins").insert({ report_id: reportId, email }).then(() => {});
       supabase.functions.invoke("send-audit-confirmation", { body: { email } }).catch(() => {});
@@ -78,17 +75,31 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }
 
   return (
     <Card className="card-shadow border-primary/20">
-      <CardContent className="pt-6 space-y-4">
+      <CardContent className="pt-6 space-y-5">
         <div className="flex items-center gap-2">
           <ShieldCheck className="w-5 h-5 text-primary shrink-0" />
-          <p className="font-semibold text-foreground text-sm">Har du fått rätt betalt för alla dina timmar?</p>
+          <p className="font-semibold text-foreground text-base">Har du fått rätt betalt för alla dina timmar?</p>
         </div>
 
         <p className="text-sm text-muted-foreground leading-relaxed">
-          Många konsulter missar ersättning för OB, jour och helg. Compcare granskar dina fakturor och tidrapporter utan kostnad
-          — vi tar bara betalt om vi hittar pengar du missat. Kryssa i rutan så hör vi av oss till{" "}
-          <span className="font-medium text-foreground">{email}</span>.
+          Många konsulter missar ersättning för tillägg som inte faktureras korrekt. CompCare granskar dina fakturor och tidrapporter utan kostnad
+          — vi tar bara betalt om vi hittar pengar du missat.
         </p>
+
+        {/* Concrete examples of missed compensation */}
+        <div className="grid grid-cols-2 gap-2">
+          {[
+            { icon: Moon, label: "OB-tillägg" },
+            { icon: Clock, label: "Jour & beredskap" },
+            { icon: Calendar, label: "Helg & storhelg" },
+            { icon: ShieldCheck, label: "Avtalsenliga tillägg" },
+          ].map(({ icon: Icon, label }) => (
+            <div key={label} className="flex items-center gap-2 p-2.5 rounded-lg bg-foreground/[0.03]">
+              <Icon className="w-3.5 h-3.5 text-primary shrink-0" />
+              <span className="text-xs text-muted-foreground font-medium">{label}</span>
+            </div>
+          ))}
+        </div>
 
         <div className="flex items-start gap-3">
           <Checkbox
@@ -98,7 +109,8 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }
             className="mt-0.5"
           />
           <label htmlFor="invoice-review" className="text-sm text-muted-foreground leading-relaxed cursor-pointer">
-            Ja, kontakta mig för en kostnadsfri fakturagranskning
+            Ja, kontakta mig för en kostnadsfri fakturagranskning via{" "}
+            <span className="font-medium text-foreground">{email}</span>
           </label>
         </div>
 

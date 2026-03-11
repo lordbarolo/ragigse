@@ -93,15 +93,20 @@ export default function ConsultantTrackContent({
   const rec = r.recommendation;
   const delta = r.delta;
   const isConsultantFullAccess = isFullAccess && !!rec;
-  const isDoctor = /läkare/i.test(occupation);
-  const margin = isEmployee ? 0.15 : (isDoctor ? 0.10 : 0.14);
-  const marginLabel = isEmployee ? "15%" : (isDoctor ? "10%" : "14%");
-  const afterMargin = Math.round(marketRate * (1 - margin));
+
+  // Use share values from result_json (set by create-report based on employment type)
+  const shareMin = rec?.consultant_share_min ?? (isEmployee ? 0.85 : 0.85);
+  const shareMax = rec?.consultant_share_max ?? (isEmployee ? 0.90 : 0.92);
+  const marginMin = Math.round((1 - shareMax) * 100); // e.g. 8%
+  const marginMax = Math.round((1 - shareMin) * 100); // e.g. 15%
+  const marginLabel = `${marginMin}–${marginMax}%`;
+  const afterMarginMin = Math.round(marketRate * shareMin);
+  const afterMarginMax = Math.round(marketRate * shareMax);
 
   const currentSalary = r.inputs.current_salary_sek;
   const salaryIsHourly = r.inputs.salary_type === "hourly";
   const currentHourly = salaryIsHourly ? currentSalary : (isEmployee ? Math.round(currentSalary / 167) : currentSalary);
-  const recommendedMax = rec ? rec.recommended_hourly_max : Math.round(marketRate * (1 - margin));
+  const recommendedMax = rec ? rec.recommended_hourly_max : Math.round(marketRate * shareMax);
   const isAboveThreshold = recommendedMax > 0 && currentHourly >= recommendedMax;
 
   return (
@@ -261,13 +266,13 @@ export default function ConsultantTrackContent({
         <div className="space-y-3">
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Förhandlingsspann</p>
           <div className="grid grid-cols-3 gap-2 text-center">
-            {/* Realistiskt — neutral */}
+            {/* Realistiskt — low end of range */}
             <div className="p-3 rounded-lg bg-foreground/[0.03]">
               <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide mb-1">Realistiskt</p>
               <p className="text-base font-bold text-foreground">{fmt(rec.recommended_hourly_min)} kr/h</p>
               <p className="text-[10px] text-muted-foreground mt-0.5">{fmt(rec.recommended_monthly_min)} kr/mån</p>
             </div>
-            {/* Rekommenderat — primary highlight */}
+            {/* Rekommenderat — midpoint */}
             <div className="p-3 rounded-lg bg-primary/10 border border-primary/30 ring-2 ring-primary/20">
               <p className="text-[10px] font-medium text-primary uppercase tracking-wide mb-1">Rekommenderat</p>
               <p className="text-base font-bold text-foreground">
@@ -277,12 +282,18 @@ export default function ConsultantTrackContent({
                 {fmt(Math.round((rec.recommended_monthly_min + rec.recommended_monthly_max) / 2))} kr/mån
               </p>
             </div>
-            {/* Ambitiöst — neutral */}
-            <div className="p-3 rounded-lg bg-foreground/[0.03]">
-              <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide mb-1">Ambitiöst</p>
-              <p className="text-base font-bold text-foreground">{fmt(rec.recommended_hourly_max)} kr/h</p>
-              <p className="text-[10px] text-muted-foreground mt-0.5">{fmt(rec.recommended_monthly_max)} kr/mån</p>
-            </div>
+            {/* Ambitiöst — high end + 5% stretch */}
+            {(() => {
+              const ambitiousHourly = Math.round(rec.recommended_hourly_max * 1.05);
+              const ambitiousMonthly = ambitiousHourly * (rec.hours_per_month || 167);
+              return (
+                <div className="p-3 rounded-lg bg-foreground/[0.03]">
+                  <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide mb-1">Ambitiöst</p>
+                  <p className="text-base font-bold text-foreground">{fmt(ambitiousHourly)} kr/h</p>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">{fmt(ambitiousMonthly)} kr/mån</p>
+                </div>
+              );
+            })()}
           </div>
           <p className="text-[11px] text-muted-foreground text-center">
             Realistiskt = hög chans att få igenom · Rekommenderat = vad vi föreslår · Ambitiöst = kräver stark erfarenhet
@@ -394,17 +405,17 @@ export default function ConsultantTrackContent({
           <CollapsibleContent className="pt-4 space-y-4">
             <div className="space-y-3 text-sm text-muted-foreground">
               <CalcRow label="Ramavtalspris (vad regionen betalar)" value={`${fmt(marketRate)} kr/h`} />
-              <CalcRow label={`Bemanningsbolagets marginal (${marginLabel})`} value={`−${fmt(Math.round(marketRate * margin))} kr/h`} />
-              <CalcRow label="Ersättningsutrymme efter marginal" value={`${fmt(afterMargin)} kr/h`} />
+              <CalcRow label={`Bemanningsbolagets marginal (${marginLabel})`} value={`−${fmt(Math.round(marketRate * (1 - shareMax)))}–${fmt(Math.round(marketRate * (1 - shareMin)))} kr/h`} />
+              <CalcRow label="Ersättningsutrymme efter marginal" value={`${fmt(afterMarginMin)}–${fmt(afterMarginMax)} kr/h`} />
               {isEmployee ? (
                 <CalcRow
                   label="÷ 1,42 (arbetsgivaravg. + semester + pension)"
-                  value={`= ${fmt(Math.round(afterMargin / 1.42))} kr/h brutto`}
+                  value={`= ${fmt(Math.round(afterMarginMin / 1.42))}–${fmt(Math.round(afterMarginMax / 1.42))} kr/h brutto`}
                 />
               ) : (
                 <p className="text-xs text-muted-foreground/70 pt-1">
-                  Som egenföretagare bör du fakturera {Math.round((1 - margin) * 100)}% av kundpriset, dvs{" "}
-                  {fmt(rec.recommended_hourly_max)} kr/h.
+                  Som egenföretagare bör du fakturera {Math.round(shareMin * 100)}–{Math.round(shareMax * 100)}% av kundpriset, dvs{" "}
+                  {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h.
                 </p>
               )}
             </div>
@@ -417,7 +428,7 @@ export default function ConsultantTrackContent({
               <ul className="space-y-2 text-xs text-muted-foreground leading-relaxed">
                 <li>
                   <span className="font-semibold text-foreground">Bemanningsbolagets marginal ({marginLabel}):</span>{" "}
-                  Vi räknar med att bolaget behåller {marginLabel} av timpriset. {isEmployee ? "Detta är en vanlig nivå vid ramavtalsuppdrag." : "Som egenföretagare är marknadsmässig marginal 14%."}
+                  Vi räknar med att bolaget behåller {marginLabel} av timpriset. {isEmployee ? "Detta är en vanlig nivå vid ramavtalsuppdrag." : `Spannet beror på om bemanningsföretaget bär vitesrisken (högre marginal) eller inte (lägre marginal).`}
                 </li>
                 {isEmployee && (
                   <li>
@@ -432,8 +443,8 @@ export default function ConsultantTrackContent({
               </ul>
               <p className="text-xs text-muted-foreground/70 pt-1">
                   {isEmployee
-                    ? `Spannet ${fmt(rec.recommended_hourly_min)}–${fmt(rec.recommended_hourly_max)} kr/h baseras på 10–15% marginal.`
-                    : `Ersättningen ${fmt(rec.recommended_hourly_max)} kr/h baseras på ${marginLabel} marginal.`}
+                    ? `Spannet ${fmt(rec.recommended_hourly_min)}–${fmt(rec.recommended_hourly_max)} kr/h baseras på ${marginLabel} marginal.`
+                    : `Spannet ${fmt(rec.recommended_hourly_min)}–${fmt(rec.recommended_hourly_max)} kr/h baseras på ${marginLabel} marginal.`}
               </p>
             </div>
             <div className="p-4 rounded-lg bg-foreground/[0.03] space-y-2">
@@ -498,11 +509,11 @@ export default function ConsultantTrackContent({
                   const isUserZone = zc.zon === userZone;
                   const zoneRate = zc.timpris_kund;
                   const recHourly = isEmployee
-                    ? Math.round((zoneRate * 0.85) / 1.42)
-                    : Math.round(zoneRate * (1 - margin));
+                    ? Math.round((zoneRate * shareMin) / 1.42)
+                    : Math.round(zoneRate * shareMin);
                   const recHourlyHigh = isEmployee
-                    ? Math.round((zoneRate * 0.90) / 1.42)
-                    : Math.round(zoneRate * (1 - margin));
+                    ? Math.round((zoneRate * shareMax) / 1.42)
+                    : Math.round(zoneRate * shareMax);
                   const maxRate = Math.max(...zoneComparisons.map((z) => z.timpris_kund));
                   const barWidth = Math.round((zoneRate / maxRate) * 100);
                   return (
@@ -525,7 +536,7 @@ export default function ConsultantTrackContent({
                         />
                       </div>
                       <p className="text-xs text-muted-foreground">
-                        Rekommenderad {isEmployee ? 'bruttoersättning' : 'ersättning'}: {isEmployee ? `${fmt(recHourly)}–${fmt(recHourlyHigh)}` : fmt(recHourlyHigh)} kr/h
+                        Rekommenderad {isEmployee ? 'bruttoersättning' : 'ersättning'}: {fmt(recHourly)}–{fmt(recHourlyHigh)} kr/h
                       </p>
                     </div>
                   );
