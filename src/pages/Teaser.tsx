@@ -517,12 +517,13 @@ export default function Teaser() {
           />
         )}
 
-        {/* SECTION 3 — Locked Strategy + Email Gate */}
-        <LockedStrategyCard isPermanent={isPermanent} />
+        {/* Blurred report teaser — shows what's behind the paywall */}
+        <BlurredReportTeaser onScrollToEmail={() => checkoutRef.current?.scrollIntoView({ behavior: "smooth" })} />
 
+        {/* SECTION 3 — Email Gate / Checkout */}
         <div ref={checkoutRef}>
           {!email ? (
-            <div className="rounded-xl border border-border bg-card p-5 card-shadow">
+            <div className="rounded-xl border border-primary/20 bg-card p-5 card-shadow">
               <EmailGate
                 onEmailSubmit={handleEmailSubmit}
                 loading={emailSaving || checkoutLoading !== null}
@@ -536,7 +537,6 @@ export default function Teaser() {
           )}
         </div>
 
-        <ReportPreviewList isPermanent={isPermanent} />
       </main>
 
       {email && !isFree && (
