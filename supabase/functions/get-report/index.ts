@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { report_id } = await req.json();
+    const { report_id, auth_user_id } = await req.json();
 
     if (!report_id) {
       return new Response(JSON.stringify({ error: "Missing report_id" }), {
@@ -43,6 +43,7 @@ serve(async (req) => {
     // Determine access level
     const isPaid = report.status === "paid";
     const isReferralUnlocked = report.unlocked_by_referral === true;
+    const isOwner = auth_user_id && report.user_id === auth_user_id;
 
     // Build response based on access level
     const response: Record<string, unknown> = {
@@ -58,7 +59,7 @@ serve(async (req) => {
       unlocked_by_referral: isReferralUnlocked,
     };
 
-    if (isPaid || isReferralUnlocked) {
+    if (isPaid || isReferralUnlocked || isOwner) {
       // Full access
       response.result_json = report.result_json;
       response.access = "full";
