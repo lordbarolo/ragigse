@@ -84,15 +84,16 @@ serve(async (req) => {
     // ── PERMANENT TRACK (fast tjänst) ──────────────────────────────────────────
     if (track === "permanent") {
       const effectiveSector = sector || "privat";
+      const mappedOccupation = OCCUPATION_MAP[occupation] || occupation;
 
       const { data: benchData, error: benchError } = await supabase
         .from("salary_benchmarks")
         .select("occupation, sector, average_monthly, percentile_25, percentile_50, percentile_75, region, year, source")
-        .eq("occupation", occupation)
+        .eq("occupation", mappedOccupation)
         .eq("sector", effectiveSector)
         .order("year", { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (benchError || !benchData) {
         return new Response(
