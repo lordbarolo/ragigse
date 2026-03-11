@@ -6,9 +6,7 @@ import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
 import EmailGate from "@/components/teaser/EmailGate";
 import type { SurveyData } from "@/components/Survey";
-import {
-  BarChart3, MapPin, TrendingUp, Search, FileText, CheckCircle2,
-} from "lucide-react";
+import { CheckCircle2, ArrowRight, Loader2 } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 
 const ANALYSIS_STEPS = [
