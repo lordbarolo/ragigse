@@ -39,7 +39,7 @@ const App = () => (
         <Suspense fallback={<Loading />}>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/resultat/:leadId" element={<Teaser />} />
+            <Route path="/resultat/:leadId" element={<AnalysisScreen />} />
             <Route path="/referral/:token" element={<ReferralLanding />} />
             <Route path="/betalning-klar" element={<PaymentSuccess />} />
             <Route path="/rapport/:reportId" element={<Report />} />
