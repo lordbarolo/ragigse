@@ -17,6 +17,30 @@ function categorizeGap(currentSalary: number, p75: number): GapCategory {
   return "large";
 }
 
+// Map survey occupation names to DB occupation names
+const OCCUPATION_MAP: Record<string, string> = {
+  "Sjuksköterska": "Grundutbildade sjuksköterskor",
+  "Allmänsjuksköterska": "Grundutbildade sjuksköterskor",
+  "Barnmorska": "Barnmorskor",
+  "Specialistsjuksköterska": "Övriga specialistsjuksköterskor",
+  "Legitimerad läkare": "Övriga läkare",
+  "Specialistläkare": "Specialistläkare",
+  "ST-läkare": "ST-läkare",
+  "Anestesisjuksköterska": "Anestesisjuksköterskor",
+  "Intensivvårdssjuksköterska": "Intensivvårdssjuksköterskor",
+  "Operationssjuksköterska": "Operationssjuksköterskor",
+  "Barnsjuksköterska": "Barnsjuksköterskor",
+  "Ambulanssjuksköterska": "Ambulanssjuksköterskor m.fl.",
+  "Distriktssköterska": "Distriktssköterskor",
+  "Psykiatrisjuksköterska": "Psykiatrisjuksköterskor",
+  "Röntgensjuksköterska": "Röntgensjuksköterskor",
+  "Skolsköterska": "Skolsköterskor",
+  "Geriatriksjuksköterska": "Geriatriksjuksköterskor",
+  "Företagssköterska": "Företagssköterskor",
+  "Psykolog": "Psykologer",
+  "AT-läkare": "AT-läkare",
+};
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
