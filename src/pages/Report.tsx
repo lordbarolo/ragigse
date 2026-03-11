@@ -21,7 +21,6 @@ export default function Report() {
   const navigate = useNavigate();
   const [report, setReport] = useState<ReportData | null>(null);
   const [loading, setLoading] = useState(true);
-  const { checkoutLoading, handleCheckout: checkout } = useCheckout();
 
   const reportViewedRef = useRef(false);
 
