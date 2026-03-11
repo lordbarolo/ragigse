@@ -307,29 +307,24 @@ export default function Survey() {
 
   return (
     <div className="w-full max-w-lg mx-auto">
-      {/* Progress bar — hidden on step 1 */}
+      {/* Progress bar — thin, elegant, hidden on step 1 */}
       {step > 1 && (
-        <div className="mb-10">
-          <div className="flex justify-between items-center text-xs text-muted-foreground mb-2">
-            <span className="font-medium">Steg {step} av {TOTAL_STEPS}</span>
-          </div>
-          <div className="h-1 bg-border rounded-full overflow-hidden">
+        <div className="mb-8">
+          <div className="h-1 bg-border/50 rounded-full overflow-hidden">
             <div
               className="h-full bg-primary rounded-full transition-all duration-500 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>
+          <p className="text-xs text-muted-foreground mt-2">{step} av {TOTAL_STEPS}</p>
         </div>
       )}
 
-      <div className="min-h-[280px] flex flex-col">
+      <div className="min-h-[320px] flex flex-col">
 
         {/* Step 1: Yrkeskategori */}
         {step === 1 && (
-          <StepWrapper
-            icon={<Stethoscope className="w-6 h-6" />}
-            title="Vad jobbar du som?"
-          >
+          <StepWrapper title="Vad jobbar du som?">
             <div className="flex flex-col gap-3">
               {([
                 { value: "lakare" as OccupationCategory, label: "Läkare", desc: "ST, specialist eller legitimerad läkare" },
@@ -344,14 +339,10 @@ export default function Survey() {
                     trackStepCompleted(1, opt.value);
                     setStep(2);
                   }}
-                  className={`py-4 px-5 rounded-lg border text-left transition-all ${
-                    occupationCategory === opt.value
-                      ? "border-primary bg-primary/5 ring-1 ring-primary/30"
-                      : "border-border bg-card hover:border-muted-foreground/30 hover:shadow-sm"
-                  }`}
+                  className="group w-full py-5 px-5 rounded-xl border border-border bg-card text-left transition-all active:scale-[0.98] hover:border-primary/40 hover:bg-primary/[0.03]"
                 >
-                  <span className="text-sm font-semibold text-foreground">{opt.label}</span>
-                  <p className="text-xs text-muted-foreground mt-0.5">{opt.desc}</p>
+                  <span className="text-base font-semibold text-foreground">{opt.label}</span>
+                  <p className="text-sm text-muted-foreground mt-1">{opt.desc}</p>
                 </button>
               ))}
             </div>
@@ -360,10 +351,7 @@ export default function Survey() {
 
         {/* Step 2: Single dropdown for role selection */}
         {step === 2 && (
-          <StepWrapper
-            icon={<Stethoscope className="w-6 h-6" />}
-            title={occupationCategory === "lakare" ? "Välj din roll" : "Välj din roll"}
-          >
+          <StepWrapper title="Välj din roll">
             <SearchableSelect
               value={roleDropdownValue}
               onValueChange={(v) => {
@@ -379,7 +367,7 @@ export default function Survey() {
             <button
               type="button"
               onClick={() => { setOccupationCategory(""); setRoleDropdownValue(""); setStep(1); }}
-              className="mt-3 text-xs text-muted-foreground hover:text-foreground transition-colors"
+              className="mt-4 text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               ← Byt kategori
             </button>
@@ -388,16 +376,13 @@ export default function Survey() {
 
         {/* Step 3: Region → Kommun */}
         {step === 3 && !selectedRegion && (
-          <StepWrapper
-            icon={<MapPin className="w-6 h-6" />}
-            title="Vilken region?"
-          >
-            <div className="flex flex-col gap-2 max-h-[400px] overflow-y-auto">
+          <StepWrapper title="Vilken region?">
+            <div className="flex flex-col gap-2 max-h-[420px] overflow-y-auto -mx-1 px-1">
               {regions.map((region) => (
                 <button
                   key={region}
                   onClick={() => setSelectedRegion(region)}
-                  className="py-3 px-4 rounded-lg border border-border bg-card text-left text-sm font-medium transition-all hover:border-muted-foreground/30 hover:shadow-sm"
+                  className="w-full py-3.5 px-4 rounded-xl border border-border bg-card text-left text-sm font-medium transition-all active:scale-[0.98] hover:border-primary/40"
                 >
                   {region}
                 </button>
@@ -408,9 +393,8 @@ export default function Survey() {
 
         {step === 3 && selectedRegion && (
           <StepWrapper
-            icon={<MapPin className="w-6 h-6" />}
             title="Vilken kommun?"
-            subtitle={`Kommuner i ${selectedRegion.split("/")[0]}`}
+            subtitle={selectedRegion.split("/")[0]}
           >
             <SearchableSelect
               value={data.kommun}
@@ -427,7 +411,7 @@ export default function Survey() {
             <button
               type="button"
               onClick={() => { setSelectedRegion(""); setData({ ...data, kommun: "" }); }}
-              className="mt-3 text-xs text-muted-foreground hover:text-foreground transition-colors"
+              className="mt-4 text-sm text-muted-foreground hover:text-foreground transition-colors"
             >
               ← Byt region
             </button>
@@ -436,10 +420,7 @@ export default function Survey() {
 
         {/* Step 4: Anställningsform */}
         {step === 4 && (
-          <StepWrapper
-            icon={<Briefcase className="w-6 h-6" />}
-            title="Vilken är din uppdragsform?"
-          >
+          <StepWrapper title="Vilken är din uppdragsform?">
             <div className="flex flex-col gap-3">
               {([
                 { value: "anstalld" as const, label: "Anställd", desc: "Ersättning från arbetsgivare" },
@@ -452,14 +433,10 @@ export default function Survey() {
                     trackStepCompleted(4, opt.value);
                     setTimeout(() => setStep(5), 300);
                   }}
-                  className={`py-4 px-5 rounded-lg border text-left transition-all ${
-                    data.employmentType === opt.value
-                      ? "border-primary bg-primary/5 ring-1 ring-primary/30"
-                      : "border-border bg-card hover:border-muted-foreground/30 hover:shadow-sm"
-                  }`}
+                  className="group w-full py-5 px-5 rounded-xl border border-border bg-card text-left transition-all active:scale-[0.98] hover:border-primary/40 hover:bg-primary/[0.03]"
                 >
-                  <span className="text-sm font-medium">{opt.label}</span>
-                  <p className="text-xs text-muted-foreground mt-0.5">{opt.desc}</p>
+                  <span className="text-base font-medium text-foreground">{opt.label}</span>
+                  <p className="text-sm text-muted-foreground mt-1">{opt.desc}</p>
                 </button>
               ))}
             </div>
@@ -468,11 +445,8 @@ export default function Survey() {
 
         {/* Step 5: Ersättning */}
         {step === 5 && (
-          <StepWrapper
-            icon={<TrendingUp className="w-6 h-6" />}
-            title="Vad får du i ersättning idag?"
-          >
-            <div className="space-y-6">
+          <StepWrapper title="Vad får du i ersättning idag?">
+            <div className="space-y-5">
               <div className="flex gap-3">
                 {([
                   { value: "hourly" as const, label: "Per timme" },
@@ -481,10 +455,10 @@ export default function Survey() {
                   <button
                     key={opt.value}
                     onClick={() => setData({ ...data, salaryType: opt.value })}
-                    className={`flex-1 py-3 px-4 rounded-lg border text-sm font-medium transition-all ${
+                    className={`flex-1 py-3.5 px-4 rounded-xl border text-sm font-medium transition-all active:scale-[0.98] ${
                       data.salaryType === opt.value
-                        ? "border-primary bg-primary/5 ring-1 ring-primary/30"
-                        : "border-border bg-card hover:border-muted-foreground/30"
+                        ? "border-primary bg-primary/[0.06] text-foreground"
+                        : "border-border bg-card text-muted-foreground hover:border-primary/30"
                     }`}
                   >
                     {opt.label}
@@ -495,20 +469,20 @@ export default function Survey() {
                 <Input
                   type="number"
                   inputMode="numeric"
-                  placeholder={data.salaryType === "hourly" ? "Ex. 350" : "Ex. 45000"}
+                  placeholder={data.salaryType === "hourly" ? "350" : "45 000"}
                   value={data.currentSalary || ""}
                   onChange={(e) => setData({ ...data, currentSalary: Number(e.target.value) })}
-                  className="h-14 text-lg pr-16"
+                  className="h-16 text-2xl font-semibold pr-20 text-center"
                   autoFocus
                 />
-                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                <span className="absolute right-5 top-1/2 -translate-y-1/2 text-base text-muted-foreground font-medium">
                   {data.salaryType === "hourly" ? "kr/h" : "kr/mån"}
                 </span>
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-sm text-muted-foreground text-center">
                 {data.salaryType === "hourly"
-                  ? "Ange din timersättning före skatt"
-                  : "Ange din månadsersättning före skatt"}
+                  ? "Timersättning före skatt"
+                  : "Månadsersättning före skatt"}
               </p>
             </div>
           </StepWrapper>
@@ -518,10 +492,10 @@ export default function Survey() {
 
       {/* Navigation */}
       {step > 1 && (
-        <div className="flex gap-3 mt-10">
+        <div className="flex gap-3 mt-8">
           <button
             onClick={handleBack}
-            className="flex items-center gap-2 py-3 px-5 rounded-lg text-sm font-medium border border-border text-foreground hover:bg-muted transition-all"
+            className="flex items-center gap-1.5 py-3.5 px-5 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground transition-all active:scale-[0.97]"
           >
             <ChevronLeft className="w-4 h-4" />
             Tillbaka
@@ -537,13 +511,13 @@ export default function Survey() {
                 handleNext();
               }}
               disabled={saving}
-              className={`flex-1 flex items-center justify-center gap-2 py-3.5 px-6 rounded-lg text-sm sm:text-base font-semibold transition-all duration-200 ${
+              className={`flex-1 flex items-center justify-center gap-2 py-4 px-6 rounded-xl text-base font-semibold transition-all duration-200 active:scale-[0.97] ${
                 canProceed && !saving
-                  ? "bg-primary text-primary-foreground hover:opacity-90 shadow-sm"
+                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
                   : "bg-muted text-muted-foreground cursor-not-allowed"
               }`}
             >
-              {saving ? "Sparar..." : "Visa min analys"}
+              {saving ? "Analyserar…" : "Visa min analys"}
               {!saving && <ArrowRight className="w-5 h-5" />}
             </button>
           )}
@@ -554,28 +528,21 @@ export default function Survey() {
 }
 
 function StepWrapper({
-  icon,
   title,
   subtitle,
   children,
 }: {
-  icon: React.ReactNode;
   title: string;
   subtitle?: string;
   children: React.ReactNode;
 }) {
   return (
     <div className="animate-in fade-in slide-in-from-right-4 duration-300 flex-1 flex flex-col">
-      <div className="flex items-center gap-3 mb-1">
-        <div className="w-9 h-9 rounded-lg bg-primary/8 flex items-center justify-center text-primary">
-          {icon}
-        </div>
-        <div>
-          <h2 className="text-lg sm:text-xl font-bold text-foreground tracking-tight">{title}</h2>
-          {subtitle && <p className="text-sm text-muted-foreground mt-0.5">{subtitle}</p>}
-        </div>
+      <div className="mb-6">
+        <h2 className="text-2xl font-bold text-foreground tracking-tight">{title}</h2>
+        {subtitle && <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>}
       </div>
-      <div className="mt-7 flex-1">{children}</div>
+      <div className="flex-1">{children}</div>
     </div>
   );
 }

@@ -3,10 +3,9 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/trackEvent";
 import { toast } from "sonner";
-import { Progress } from "@/components/ui/progress";
 import EmailGate from "@/components/teaser/EmailGate";
 import type { SurveyData } from "@/components/Survey";
-import { CheckCircle2, ArrowRight, Loader2 } from "lucide-react";
+import { Check, ArrowRight } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 
 const ANALYSIS_STEPS = [
@@ -36,44 +35,30 @@ export default function AnalysisScreen() {
   const startTime = useRef(Date.now());
   const emailPauseShown = useRef(false);
 
-  // Load survey data from sessionStorage
   useEffect(() => {
     const resolvedLeadId = urlLeadId || sessionStorage.getItem("leadId") || "";
-    if (!resolvedLeadId) {
-      navigate("/");
-      return;
-    }
+    if (!resolvedLeadId) { navigate("/"); return; }
     setLeadId(resolvedLeadId);
     setReportId(sessionStorage.getItem("reportId") || "");
-
     const raw = sessionStorage.getItem("surveyData");
-    if (raw) {
-      setSurvey(JSON.parse(raw) as SurveyData);
-    }
+    if (raw) setSurvey(JSON.parse(raw) as SurveyData);
 
-    // Check if already authenticated → skip to report
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
         const rid = sessionStorage.getItem("reportId");
-        if (rid) {
-          navigate(`/rapport/${rid}`, { replace: true });
-        }
+        if (rid) navigate(`/rapport/${rid}`, { replace: true });
       }
     });
-
     trackEvent("analysis_started");
   }, [urlLeadId, navigate]);
 
-  // Animate progress 0 → EMAIL_PAUSE_AT over ~4 seconds
   useEffect(() => {
     if (paused || completing) return;
-
-    const duration = 4000; // 4s to reach 85%
+    const duration = 4000;
     const tick = () => {
       const elapsed = Date.now() - startTime.current;
       const pct = Math.min((elapsed / duration) * EMAIL_PAUSE_AT, EMAIL_PAUSE_AT);
       setProgress(pct);
-
       if (pct >= EMAIL_PAUSE_AT) {
         setPaused(true);
         emailPauseShown.current = true;
@@ -83,28 +68,20 @@ export default function AnalysisScreen() {
       animRef.current = requestAnimationFrame(tick);
     };
     animRef.current = requestAnimationFrame(tick);
-
-    return () => {
-      if (animRef.current) cancelAnimationFrame(animRef.current);
-    };
+    return () => { if (animRef.current) cancelAnimationFrame(animRef.current); };
   }, [paused, completing]);
 
-  // After email: animate 85 → 100 over 1.5s then navigate
   const completeAnalysis = useCallback((activeReportId: string) => {
     setCompleting(true);
     const completeStart = Date.now();
     const completeDuration = 1500;
-
     const tick = () => {
       const elapsed = Date.now() - completeStart;
       const pct = EMAIL_PAUSE_AT + (elapsed / completeDuration) * (FINAL_TARGET - EMAIL_PAUSE_AT);
       setProgress(Math.min(pct, FINAL_TARGET));
-
       if (pct >= FINAL_TARGET) {
         trackEvent("analysis_completed");
-        setTimeout(() => {
-          navigate(`/rapport/${activeReportId}`, { replace: true });
-        }, 400);
+        setTimeout(() => navigate(`/rapport/${activeReportId}`, { replace: true }), 400);
         return;
       }
       animRef.current = requestAnimationFrame(tick);
@@ -119,7 +96,6 @@ export default function AnalysisScreen() {
         body: { lead_id: leadId, report_id: reportId, email: emailValue },
       });
       if (saveErr) throw saveErr;
-
       if (survey) {
         const updated = { ...survey, email: emailValue };
         sessionStorage.setItem("surveyData", JSON.stringify(updated));
@@ -131,20 +107,14 @@ export default function AnalysisScreen() {
       return;
     }
 
-    // Ensure we have a reportId
     let activeReportId = reportId;
     if (!activeReportId && leadId && survey) {
       try {
         const { data: rData, error: rErr } = await supabase.functions.invoke("create-report", {
           body: {
-            lead_id: leadId,
-            email: emailValue,
-            occupation: survey.yrke,
-            employment_type: survey.employmentType,
-            kommun: survey.kommun,
-            current_salary: survey.currentSalary,
-            salary_type: survey.salaryType,
-            track: "consultant",
+            lead_id: leadId, email: emailValue, occupation: survey.yrke,
+            employment_type: survey.employmentType, kommun: survey.kommun,
+            current_salary: survey.currentSalary, salary_type: survey.salaryType, track: "consultant",
           },
         });
         if (!rErr && rData?.report_id) {
@@ -152,9 +122,7 @@ export default function AnalysisScreen() {
           setReportId(activeReportId);
           sessionStorage.setItem("reportId", activeReportId);
         }
-      } catch {
-        // Fall through
-      }
+      } catch { /* fall through */ }
     }
 
     if (!activeReportId) {
@@ -162,63 +130,62 @@ export default function AnalysisScreen() {
       setEmailSaving(false);
       return;
     }
-
     setEmailSaving(false);
     completeAnalysis(activeReportId);
   };
 
-  // Determine which step is "active"
   const activeStepIndex = ANALYSIS_STEPS.findIndex((s) => progress < s.threshold);
   const currentStepIdx = activeStepIndex === -1 ? ANALYSIS_STEPS.length - 1 : Math.max(0, activeStepIndex);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Header */}
-      <header className="px-4 pt-5 pb-2 flex justify-center">
+      <header className="px-5 pt-5 pb-3 flex justify-center">
         <CompcareLogo />
       </header>
 
-      <main className="flex-1 flex flex-col items-center px-5 pt-6 pb-10 sm:pt-12 max-w-md mx-auto w-full">
-        {/* Progress section */}
-        <div className="w-full space-y-6">
-          <div className="text-center space-y-1">
-            <h1 className="text-lg font-bold text-foreground">
-              {completing ? "Färdigställer din rapport…" : paused ? "Nästan klar!" : "Analyserar din ersättning"}
-            </h1>
-          </div>
+      <main className="flex-1 flex flex-col px-5 pt-8 pb-10 sm:pt-14 max-w-md mx-auto w-full">
+        <div className="w-full space-y-8">
+          {/* Title */}
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">
+            {completing ? "Färdigställer din rapport…" : paused ? "Nästan klar" : "Analyserar din ersättning"}
+          </h1>
 
-          {/* Progress bar */}
+          {/* Progress bar — custom, no radix component */}
           <div className="space-y-2">
-            <Progress value={progress} className="h-2.5" />
-            <div className="flex justify-between text-xs text-muted-foreground">
-              <span>{Math.round(progress)}%</span>
+            <div className="h-2 bg-border/40 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-primary rounded-full transition-[width] duration-100 ease-linear"
+                style={{ width: `${progress}%` }}
+              />
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-xs text-muted-foreground tabular-nums">{Math.round(progress)} %</span>
               {paused && !completing && (
-                <span className="text-primary font-medium animate-pulse">Väntar på e-post</span>
+                <span className="text-xs text-primary font-medium">Väntar på e-post</span>
               )}
             </div>
           </div>
 
-          {/* Dynamic step list */}
+          {/* Step list — minimal, one line each */}
           <div className="space-y-3">
             {ANALYSIS_STEPS.map(({ label, threshold }, i) => {
               const done = progress >= threshold;
               const active = i === currentStepIdx && !done;
+              if (!done && !active) return null;
 
               return (
                 <div
                   key={i}
-                  className={`flex items-center gap-3 transition-all duration-500 ${
-                    done ? "opacity-100" : active ? "opacity-100" : "opacity-0 h-0 overflow-hidden"
-                  }`}
+                  className="flex items-center gap-3 animate-in fade-in duration-300"
                 >
                   {done ? (
-                    <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
+                    <div className="w-5 h-5 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+                      <Check className="w-3 h-3 text-primary" />
+                    </div>
                   ) : (
-                    <ArrowRight className="w-4 h-4 text-primary shrink-0 animate-pulse" />
+                    <ArrowRight className="w-5 h-5 text-primary shrink-0 animate-pulse" />
                   )}
-                  <span className={`text-sm ${
-                    done ? "text-muted-foreground" : "text-foreground font-medium"
-                  }`}>
+                  <span className={`text-sm ${done ? "text-muted-foreground" : "text-foreground font-medium"}`}>
                     {label}
                   </span>
                 </div>
@@ -226,16 +193,24 @@ export default function AnalysisScreen() {
             })}
           </div>
 
-          {/* Email gate — appears when paused at 85% */}
+          {/* Email gate — seamless continuation */}
           {paused && !completing && (
-            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 mt-4 rounded-xl border border-primary/30 bg-card p-5 space-y-4">
-              <EmailGate
-                onEmailSubmit={handleEmailSubmit}
-                loading={emailSaving}
-              />
-              <p className="text-[11px] text-muted-foreground text-center">
-                Rapporten genereras direkt i appen. Du får även en kopia på e-post.
-              </p>
+            <div className="animate-in fade-in slide-in-from-bottom-3 duration-500 space-y-5">
+              <div className="h-px bg-border/50" />
+              <div className="space-y-4">
+                <div>
+                  <h2 className="text-lg font-bold text-foreground">
+                    Vart ska vi skicka din rapport?
+                  </h2>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Rapporten visas direkt. Du får även en kopia i din inkorg.
+                  </p>
+                </div>
+                <EmailGate
+                  onEmailSubmit={handleEmailSubmit}
+                  loading={emailSaving}
+                />
+              </div>
             </div>
           )}
         </div>
