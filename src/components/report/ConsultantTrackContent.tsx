@@ -93,10 +93,15 @@ export default function ConsultantTrackContent({
   const rec = r.recommendation;
   const delta = r.delta;
   const isConsultantFullAccess = isFullAccess && !!rec;
-  const isDoctor = /läkare/i.test(occupation);
-  const margin = isEmployee ? 0.15 : (isDoctor ? 0.10 : 0.14);
-  const marginLabel = isEmployee ? "15%" : (isDoctor ? "10%" : "14%");
-  const afterMargin = Math.round(marketRate * (1 - margin));
+
+  // Use share values from result_json (set by create-report based on employment type)
+  const shareMin = rec?.consultant_share_min ?? (isEmployee ? 0.85 : 0.85);
+  const shareMax = rec?.consultant_share_max ?? (isEmployee ? 0.90 : 0.92);
+  const marginMin = Math.round((1 - shareMax) * 100); // e.g. 8%
+  const marginMax = Math.round((1 - shareMin) * 100); // e.g. 15%
+  const marginLabel = `${marginMin}–${marginMax}%`;
+  const afterMarginMin = Math.round(marketRate * shareMin);
+  const afterMarginMax = Math.round(marketRate * shareMax);
 
   const currentSalary = r.inputs.current_salary_sek;
   const salaryIsHourly = r.inputs.salary_type === "hourly";
