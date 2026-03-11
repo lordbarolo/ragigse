@@ -282,8 +282,8 @@ serve(async (req) => {
         rate_customer_sek_per_hour: timprisKund,
       },
       recommendation: {
-        consultant_share_min: m.share_min,
-        consultant_share_max: m.share_max,
+        consultant_share_min: effectiveM.share_min,
+        consultant_share_max: effectiveM.share_max,
         employee_factor: factor,
         recommended_hourly_min: range.hourly_min,
         recommended_hourly_max: range.hourly_max,
