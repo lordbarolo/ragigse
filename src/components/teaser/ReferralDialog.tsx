@@ -61,9 +61,9 @@ export default function ReferralDialog({ open, onOpenChange, leadId, referrerEma
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Tipsa en kollega</DialogTitle>
+          <DialogTitle>Hur ligger dina kollegor till?</DialogTitle>
           <DialogDescription>
-            Ange din kollegas e-postadress. När hen klickar på länken låser vi upp en gratis lightrapport åt dig.
+            Skicka analysen till en kollega — hen får en egen ersättningskoll, och du låser upp din rapport gratis.
           </DialogDescription>
         </DialogHeader>
 

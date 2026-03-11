@@ -200,6 +200,37 @@ export default function ConsultantTrackContent({
               </p>
             </div>
           )}
+
+          {/* Personal insight: share of customer price */}
+          {marketRate > 0 && currentHourly > 0 && (
+            <div className="p-4 rounded-xl bg-foreground/[0.03] border border-border">
+              <div className="flex items-center gap-2 mb-2">
+                <BarChart3 className="w-4 h-4 text-primary shrink-0" />
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Din andel av kundpriset</p>
+              </div>
+              <div className="flex items-end gap-3">
+                <p className="text-2xl font-bold text-foreground tabular-nums">
+                  {Math.round((currentHourly / marketRate) * 100)}%
+                </p>
+                <p className="text-xs text-muted-foreground pb-1">
+                  av {fmt(marketRate)} kr/h som regionen betalar
+                </p>
+              </div>
+              <div className="h-2 bg-secondary rounded-full overflow-hidden mt-3">
+                <div
+                  className="h-full rounded-full bg-primary transition-all duration-700"
+                  style={{ width: `${Math.min(Math.round((currentHourly / marketRate) * 100), 100)}%` }}
+                />
+              </div>
+              <p className="text-[11px] text-muted-foreground mt-2">
+                {Math.round((currentHourly / marketRate) * 100) < 75
+                  ? "Du får en ovanligt låg andel — det finns tydligt förhandlingsutrymme."
+                  : Math.round((currentHourly / marketRate) * 100) < 85
+                    ? "Vanligt spann, men det finns utrymme att förhandla upp."
+                    : "Bra andel — du ligger nära marknadens övre gräns."}
+              </p>
+            </div>
+          )}
         </div>
       ) : (
         /* Locked version */

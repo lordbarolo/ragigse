@@ -70,10 +70,10 @@ export default function ReferralBottomSheet({ ctaRef, leadId, referrerEmail, reg
 
           <div className="space-y-4">
             <h3 className="text-lg font-bold text-foreground">
-              Vill du se siffrorna utan att betala?
+              Hur ligger dina kollegor till?
             </h3>
             <p className="text-sm text-muted-foreground">
-              Tipsa en kollega om CompCare — då låser vi upp rapporten åt dig.
+              Skicka analysen till en kollega — hen får en egen ersättningskoll, och du låser upp din rapport gratis.
             </p>
 
             <Button
