@@ -12,11 +12,11 @@ import {
 import CompcareLogo from "@/components/CompcareLogo";
 
 const ANALYSIS_STEPS = [
-  { icon: Search, label: "Hämtar ramavtalspriser…", threshold: 10 },
-  { icon: MapPin, label: "Identifierar din zon…", threshold: 25 },
-  { icon: BarChart3, label: "Jämför med marknaden…", threshold: 40 },
-  { icon: TrendingUp, label: "Beräknar förhandlingsutrymme…", threshold: 55 },
-  { icon: FileText, label: "Sammanställer din rapport…", threshold: 70 },
+  { label: "21 regioner", threshold: 15 },
+  { label: "290 kommuner", threshold: 30 },
+  { label: "Konsulter i samma specialitet", threshold: 50 },
+  { label: "Beräknar din position i marknaden", threshold: 70 },
+  { label: "Sammanställer din rapport", threshold: 85 },
 ];
 
 const EMAIL_PAUSE_AT = 85;
