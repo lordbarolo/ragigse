@@ -141,10 +141,30 @@ export default function ConsultantTrackContent({
         </div>
       )}
 
-      {/* ═══ NIVÅ 2 — Din position (borderless) ═══ */}
+      {/* ═══ NIVÅ 2 — Din position ═══ */}
       {isConsultantFullAccess && rec ? (
         <div className="space-y-4">
-          {/* Hourly comparison — prominent, first thing after gauge */}
+          {/* Hero insight — largest, first */}
+          {!isAboveThreshold && delta && delta.monthly_vs_current_max > 0 ? (
+            <div className="rounded-2xl bg-foreground text-background p-6">
+              <p className="text-sm text-background/60 font-medium">Du kan tjäna upp till</p>
+              <p className="text-3xl sm:text-4xl font-extrabold text-primary tracking-tight tabular-nums mt-1">
+                {fmt(delta.monthly_vs_current_max)} kr
+              </p>
+              <p className="text-sm text-background/60 font-medium mt-0.5">mer per månad</p>
+            </div>
+          ) : (
+            <div className="flex items-start gap-3">
+              <CheckCircle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+              <h3 className="text-lg font-semibold text-foreground leading-snug">
+                {isAboveThreshold
+                  ? "Din ersättning är redan nära kundpriset — bra förhandlat!"
+                  : "Din ersättning ligger i linje med marknaden!"}
+              </h3>
+            </div>
+          )}
+
+          {/* Hourly comparison */}
           <div className="grid grid-cols-2 gap-3">
             <div className="bg-foreground/[0.03] rounded-xl p-4">
               <p className="text-muted-foreground text-xs uppercase tracking-wide">Din lön</p>
@@ -156,24 +176,6 @@ export default function ConsultantTrackContent({
                 {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr
               </p>
             </div>
-          </div>
-
-          {/* Hero insight text */}
-          <div className="flex items-start gap-3">
-            {isAboveThreshold ? (
-              <CheckCircle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-            ) : delta && delta.monthly_vs_current_min > 0 ? (
-              <TrendingUp className="w-5 h-5 text-accent shrink-0 mt-0.5" />
-            ) : (
-              <CheckCircle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-            )}
-            <h3 className="text-base sm:text-lg font-semibold text-foreground leading-snug">
-              {isAboveThreshold
-                ? "Din ersättning är redan nära kundpriset — bra förhandlat!"
-                : delta && delta.monthly_vs_current_max > 0
-                  ? `Du kan tjäna upp till ${fmt(delta.monthly_vs_current_max)} kr mer per månad`
-                  : "Din ersättning ligger i linje med marknaden!"}
-            </h3>
           </div>
 
           {/* Monthly breakdown */}
