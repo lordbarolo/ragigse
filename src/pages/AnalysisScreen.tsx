@@ -181,17 +181,10 @@ export default function AnalysisScreen() {
       <main className="flex-1 flex flex-col items-center px-5 pt-6 pb-10 sm:pt-12 max-w-md mx-auto w-full">
         {/* Progress section */}
         <div className="w-full space-y-6">
-          <div className="text-center space-y-2">
-            <h1 className="text-xl font-bold text-foreground">
-              {completing ? "Färdigställer din rapport…" : paused ? "Nästan klar!" : "Analyserar din ersättning…"}
+          <div className="text-center space-y-1">
+            <h1 className="text-lg font-bold text-foreground">
+              {completing ? "Färdigställer din rapport…" : paused ? "Nästan klar!" : "Analyserar din ersättning"}
             </h1>
-            <p className="text-sm text-muted-foreground">
-              {completing
-                ? "Bara ett ögonblick till"
-                : paused
-                  ? "Vi behöver din e-post för att slutföra analysen"
-                  : "Vi jämför dina uppgifter med aktuella ramavtalspriser"}
-            </p>
           </div>
 
           {/* Progress bar */}
