@@ -293,45 +293,6 @@ export default function ConsultantTrackContent({
         </Card>
       )}
 
-      {/* ═══ NIVÅ 3 — Förhandlingsspann (3 kolumner) ═══ */}
-      {isConsultantFullAccess && rec && (
-        <div className="space-y-3">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Förhandlingsspann</p>
-          <div className="grid grid-cols-3 gap-2 text-center">
-            {/* Realistiskt — low end of range */}
-            <div className="p-3 rounded-lg bg-foreground/[0.03]">
-              <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide mb-1">Realistiskt</p>
-              <p className="text-base font-bold text-foreground">{fmt(rec.recommended_hourly_min)} kr/h</p>
-              <p className="text-[10px] text-muted-foreground mt-0.5">{fmt(rec.recommended_monthly_min)} kr/mån</p>
-            </div>
-            {/* Rekommenderat — midpoint */}
-            <div className="p-3 rounded-lg bg-primary/10 border border-primary/30 ring-2 ring-primary/20">
-              <p className="text-[10px] font-medium text-primary uppercase tracking-wide mb-1">Rekommenderat</p>
-              <p className="text-base font-bold text-foreground">
-                {fmt(Math.round((rec.recommended_hourly_min + rec.recommended_hourly_max) / 2))} kr/h
-              </p>
-              <p className="text-[10px] text-muted-foreground mt-0.5">
-                {fmt(Math.round((rec.recommended_monthly_min + rec.recommended_monthly_max) / 2))} kr/mån
-              </p>
-            </div>
-            {/* Ambitiöst — high end + 5% stretch */}
-            {(() => {
-              const ambitiousHourly = Math.round(rec.recommended_hourly_max * 1.05);
-              const ambitiousMonthly = ambitiousHourly * (rec.hours_per_month || 167);
-              return (
-                <div className="p-3 rounded-lg bg-foreground/[0.03]">
-                  <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide mb-1">Ambitiöst</p>
-                  <p className="text-base font-bold text-foreground">{fmt(ambitiousHourly)} kr/h</p>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">{fmt(ambitiousMonthly)} kr/mån</p>
-                </div>
-              );
-            })()}
-          </div>
-          <p className="text-[11px] text-muted-foreground text-center">
-            Realistiskt = hög chans att få igenom · Rekommenderat = vad vi föreslår · Ambitiöst = kräver stark erfarenhet
-          </p>
-        </div>
-      )}
 
       {/* ═══ Nästa steg — Premium action card ═══ */}
       {isConsultantFullAccess && rec && !isAboveThreshold && (
