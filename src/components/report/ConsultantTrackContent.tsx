@@ -120,7 +120,7 @@ export default function ConsultantTrackContent({
           <CardContent className="pt-6 space-y-4">
             <SectionHeading icon={CheckCircle} title="Du ligger redan i toppskiktet" />
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Din ersättning på {fmt(currentHourly)} kr/h motsvarar 96% eller mer av vad kunden betalar ({fmt(marketRate)} kr/h). 
+              Din ersättning på {fmt(currentHourly)} kr/h motsvarar 96% eller mer av vad regionen betalar till bemanningsföretag ({fmt(marketRate)} kr/h). 
               Det innebär att det i praktiken inte finns ytterligare förhandlingsutrymme för grundtimpriset i din nuvarande zon.
             </p>
             <div className="space-y-3">
