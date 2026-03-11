@@ -10,26 +10,17 @@ import { Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { useExitIntent } from "@/hooks/useExitIntent";
-import OpportunityGap from "@/components/OpportunityGap";
-import MarketDiagnosisCard from "@/components/teaser/MarketDiagnosisCard";
-import IncomeImpactCard from "@/components/teaser/IncomeImpactCard";
-import BlurredReportTeaser from "@/components/teaser/BlurredReportTeaser";
+import { useTeaserData } from "@/hooks/useTeaserData";
 
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 import { useCheckout } from "@/shared/useCheckout";
-import { useTeaserData } from "@/hooks/useTeaserData";
 
 import TeaserHeader from "@/components/teaser/TeaserHeader";
 import OccupationInfo from "@/components/teaser/OccupationInfo";
-import EarningsBanner from "@/components/teaser/EarningsBanner";
-import PermanentBenchmarkCard from "@/components/teaser/PermanentBenchmarkCard";
-import ConsultantVerdictCard from "@/components/teaser/ConsultantVerdictCard";
-
-import CheckoutCTA from "@/shared/CheckoutCTA";
-import ReferralBottomSheet from "@/components/teaser/ReferralBottomSheet";
-import HighEarnerCard from "@/components/teaser/HighEarnerCard";
+import MarketDiagnosisCard from "@/components/teaser/MarketDiagnosisCard";
 import EmailGate from "@/components/teaser/EmailGate";
+import ReportPreviewList from "@/components/teaser/ReportPreviewList";
 
 /** Teaser page — orchestrator for the results preview */
 export default function Teaser() {
