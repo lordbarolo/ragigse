@@ -4,8 +4,8 @@ import { usePricingEngine } from "@/hooks/usePricingEngine";
 import { useRates, useLocations } from "@/hooks/useCalculator";
 import type { SurveyData } from "@/components/Survey";
 import type { BenchmarkResult } from "@/hooks/useBenchmarkEngine";
-import CalculatingSpinner from "@/components/teaser/CalculatingSpinner";
 import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
