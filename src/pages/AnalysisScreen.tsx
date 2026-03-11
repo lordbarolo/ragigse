@@ -18,11 +18,14 @@ const STEPS = [
 ];
 
 /* ── Progress thresholds: when each step STARTS being active ── */
-const STEP_START = [0, 15, 30, 50, 85];
-/* When step completes (next step starts, or email pause) */
-const STEP_DONE = [15, 30, 50, 85, 100];
+/* 12s total: 7s to 85%, pause for email, then 5s to 100% after submit.
+   Steps appear every ~3s based on elapsed time. */
+const STEP_APPEAR_AT_SEC = [0, 1.5, 4.5, 7.5, 10.5]; // seconds when each step becomes active
+const STEP_DONE_AT_SEC   = [4.5, 7.5, 10.5, 13.5, 15]; // seconds when each step completes
 
 const EMAIL_PAUSE = 85;
+const PHASE1_DURATION = 7000; // 7s to reach 85%
+const PHASE2_DURATION = 5000; // 5s from 85→100 after email
 
 type Phase =
   | "animating"        // bar moving, steps revealing
@@ -36,6 +39,7 @@ export default function AnalysisScreen() {
 
   const [phase, setPhase] = useState<Phase>("animating");
   const [progress, setProgress] = useState(0);
+  const [elapsedSec, setElapsedSec] = useState(0);
   const [emailSaving, setEmailSaving] = useState(false);
   const [survey, setSurvey] = useState<SurveyData | null>(null);
   const [leadId, setLeadId] = useState("");
@@ -43,6 +47,7 @@ export default function AnalysisScreen() {
 
   const rafRef = useRef<number | null>(null);
   const startRef = useRef(Date.now());
+  const emailPauseTime = useRef(0);
 
   /* ── Init ── */
   useEffect(() => {
@@ -64,30 +69,24 @@ export default function AnalysisScreen() {
 
   /* ── Eased progress: fast 0-60, slow 60-85 ── */
   const ease = (t: number): number => {
-    // t goes 0→1 over duration, output is 0→EMAIL_PAUSE
     if (t <= 0) return 0;
     if (t >= 1) return EMAIL_PAUSE;
-    // fast phase: 0→0.4 maps to 0→60
-    // slow phase: 0.4→1 maps to 60→85
-    if (t < 0.4) {
-      return (t / 0.4) * 60;
-    }
+    if (t < 0.4) return (t / 0.4) * 60;
     return 60 + ((t - 0.4) / 0.6) * 25;
   };
 
-  /* ── Phase 1-3: animate to 85% ── */
+  /* ── Phase 1-3: animate to 85% over 7s ── */
   useEffect(() => {
     if (phase !== "animating") return;
-    const duration = 5000; // 5s to reach 85%
     startRef.current = Date.now();
 
     const tick = () => {
       const elapsed = Date.now() - startRef.current;
-      const t = Math.min(elapsed / duration, 1);
-      const p = ease(t);
-      setProgress(p);
+      const t = Math.min(elapsed / PHASE1_DURATION, 1);
+      setProgress(ease(t));
+      setElapsedSec(elapsed / 1000);
 
-      if (p >= EMAIL_PAUSE) {
+      if (t >= 1) {
         setPhase("paused_for_email");
         trackEvent("analysis_email_pause");
         return;
@@ -101,13 +100,16 @@ export default function AnalysisScreen() {
   /* ── Phase 4: finalize 85→100 ── */
   const finalize = useCallback((activeReportId: string) => {
     setPhase("finalizing");
+    emailPauseTime.current = elapsedSec;
     const start = Date.now();
-    const dur = 1800;
 
     const tick = () => {
       const elapsed = Date.now() - start;
-      const p = EMAIL_PAUSE + (elapsed / dur) * (100 - EMAIL_PAUSE);
+      const t = elapsed / PHASE2_DURATION;
+      const p = EMAIL_PAUSE + t * (100 - EMAIL_PAUSE);
       setProgress(Math.min(p, 100));
+      // Continue elapsed time for step reveals during finalize
+      setElapsedSec(emailPauseTime.current + elapsed / 1000);
       if (p >= 100) {
         setPhase("done");
         trackEvent("analysis_completed");
@@ -117,7 +119,7 @@ export default function AnalysisScreen() {
       rafRef.current = requestAnimationFrame(tick);
     };
     rafRef.current = requestAnimationFrame(tick);
-  }, [navigate]);
+  }, [navigate, elapsedSec]);
 
   /* ── Email submit ── */
   const handleEmailSubmit = async (emailValue: string) => {
@@ -165,10 +167,10 @@ export default function AnalysisScreen() {
     finalize(activeReportId);
   };
 
-  /* ── Derive step states ── */
+  /* ── Derive step states from elapsed seconds ── */
   const getStepState = (i: number): "hidden" | "active" | "done" => {
-    if (progress < STEP_START[i]) return "hidden";
-    if (progress >= STEP_DONE[i]) return "done";
+    if (elapsedSec < STEP_APPEAR_AT_SEC[i]) return "hidden";
+    if (elapsedSec >= STEP_DONE_AT_SEC[i]) return "done";
     return "active";
   };
 
