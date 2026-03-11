@@ -129,7 +129,7 @@ export default function Report() {
         {isPermanentTrack ? (
           <PermanentTrackContent
             r={r}
-            isFullAccess={isFullAccess}
+            isFullAccess={true}
             occupation={report.occupation}
             kommun={report.kommun}
           />
