@@ -193,20 +193,20 @@ export default function AnalysisScreen() {
           {headline}
         </h1>
 
-        {/* Progress bar */}
-        <div className="mb-2">
-          <div className="h-2.5 bg-muted rounded-full overflow-hidden">
+        {/* Progress bar — no CSS transition, driven purely by RAF for smoothness */}
+        <div className="mb-3">
+          <div className="h-3 bg-muted rounded-full overflow-hidden">
             <div
-              className="h-full bg-primary rounded-full transition-[width] duration-75 ease-linear"
+              className="h-full bg-primary rounded-full will-change-[width]"
               style={{ width: `${progress}%` }}
             />
           </div>
-          <div className="flex justify-between mt-1.5">
-            <span className="text-xs text-muted-foreground tabular-nums">
+          <div className="flex justify-between mt-2">
+            <span className="text-base font-medium text-muted-foreground tabular-nums">
               {Math.round(progress)} %
             </span>
             {phase === "paused_for_email" && (
-              <span className="text-xs text-primary font-medium">
+              <span className="text-base text-primary font-medium">
                 Väntar på e-post
               </span>
             )}
@@ -214,7 +214,7 @@ export default function AnalysisScreen() {
         </div>
 
         {/* Step list — revealed progressively */}
-        <div className="mt-6 space-y-0">
+        <div className="mt-8 space-y-1">
           {STEPS.map((label, i) => {
             const state = getStepState(i);
             if (state === "hidden") return null;
@@ -222,24 +222,24 @@ export default function AnalysisScreen() {
             return (
               <div
                 key={i}
-                className="flex items-center gap-3 py-2.5 animate-in fade-in slide-in-from-bottom-2 duration-500"
-                style={{ animationDelay: "0ms", animationFillMode: "both" }}
+                className="flex items-center gap-3.5 py-3 animate-in fade-in slide-in-from-bottom-3 duration-700"
+                style={{ animationFillMode: "both" }}
               >
                 {state === "done" ? (
-                  <div className="w-5 h-5 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
-                    <Check className="w-3 h-3 text-primary" />
+                  <div className="w-6 h-6 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+                    <Check className="w-3.5 h-3.5 text-primary" />
                   </div>
                 ) : (
-                  <span className="relative flex w-5 h-5 items-center justify-center shrink-0">
-                    <span className="absolute inline-flex h-3 w-3 rounded-full bg-primary/30 animate-ping" />
-                    <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-primary" />
+                  <span className="relative flex w-6 h-6 items-center justify-center shrink-0">
+                    <span className="absolute inline-flex h-3.5 w-3.5 rounded-full bg-primary/25 animate-ping [animation-duration:1.5s]" />
+                    <span className="relative inline-flex h-3 w-3 rounded-full bg-primary" />
                   </span>
                 )}
                 <span
-                  className={`text-sm transition-colors duration-300 ${
+                  className={`text-base transition-colors duration-500 ${
                     state === "done"
                       ? "text-muted-foreground"
-                      : "text-foreground font-medium"
+                      : "text-foreground font-semibold"
                   }`}
                 >
                   {label}
