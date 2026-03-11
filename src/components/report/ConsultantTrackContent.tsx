@@ -17,12 +17,14 @@ import {
   CheckCircle,
   Clock,
   Car,
+  Copy,
 } from "lucide-react";
 import { fmt, formatPartialValue } from "@/shared/formatters";
-import { SectionHeading, StatBlock, CalcRow, ScriptBlock } from "@/shared/UIComponents";
+import { SectionHeading, StatBlock, CalcRow } from "@/shared/UIComponents";
 import type { ResultJson, ZoneComparison } from "@/shared/types";
 import { getNegotiationTips, APPROVED_SUPPLIERS } from "./negotiationData";
 import SalaryGauge from "@/components/SalaryGauge";
+import { toast } from "@/hooks/use-toast";
 
 interface Props {
   r: ResultJson;
@@ -36,6 +38,42 @@ interface Props {
   leadId?: string;
   email?: string;
   reportId?: string;
+}
+
+/** Copyable script block with timeline styling */
+function ScriptStep({ step, title, text }: { step: number; title: string; text: string }) {
+  const isQuote = text.startsWith('"') || text.startsWith('\u201C');
+
+  const handleCopy = () => {
+    const cleanText = text.replace(/^[""\u201C]+|[""\u201D]+$/g, '');
+    navigator.clipboard.writeText(cleanText);
+    toast({ title: "Kopierat!" });
+  };
+
+  return (
+    <div className="flex gap-4 relative">
+      <div className="w-8 h-8 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center flex-shrink-0 z-10">
+        <span className="text-primary text-xs font-bold">{step}</span>
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="font-semibold text-foreground text-sm">{title}</p>
+        {isQuote ? (
+          <div className="bg-foreground/[0.04] rounded-lg p-3 mt-2 relative group">
+            <p className="text-muted-foreground text-sm italic pr-8">{text}</p>
+            <button
+              onClick={handleCopy}
+              className="absolute top-2 right-2 opacity-60 hover:opacity-100 transition-opacity text-muted-foreground hover:text-primary"
+              aria-label="Kopiera"
+            >
+              <Copy className="w-4 h-4" />
+            </button>
+          </div>
+        ) : (
+          <p className="mt-1 text-muted-foreground text-sm">{text}</p>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default function ConsultantTrackContent({
@@ -63,235 +101,266 @@ export default function ConsultantTrackContent({
   const currentSalary = r.inputs.current_salary_sek;
   const salaryIsHourly = r.inputs.salary_type === "hourly";
   const currentHourly = salaryIsHourly ? currentSalary : (isEmployee ? Math.round(currentSalary / 167) : currentSalary);
-  // Above threshold = user earns more than recommended max rate
   const recommendedMax = rec ? rec.recommended_hourly_max : Math.round(marketRate * (1 - margin));
   const isAboveThreshold = recommendedMax > 0 && currentHourly >= recommendedMax;
 
   return (
     <>
+      {/* ═══ NIVÅ 1 — Hero: Ramavtalspris ═══ */}
+      {isConsultantFullAccess ? (
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/20 p-6">
+          <p className="text-muted-foreground text-xs font-medium uppercase tracking-wider mb-1">
+            Vad regionen betalar till bemanningsföretag
+          </p>
+          <p className="text-5xl font-bold text-foreground">
+            {fmt(marketRate)} <span className="text-2xl text-muted-foreground">kr/h</span>
+          </p>
+          <p className="text-muted-foreground/60 text-sm mt-2">
+            Grundtimpris enligt ramavtal (OB/jour ej inkluderat)
+          </p>
+        </div>
+      ) : (
+        <div className="relative overflow-hidden rounded-2xl bg-muted/50 border border-border p-6">
+          <p className="text-muted-foreground text-xs font-medium uppercase tracking-wider mb-1">
+            Vad regionen betalar till bemanningsföretag
+          </p>
+          <div className="flex items-center gap-2 mb-1">
+            <Lock className="w-5 h-5 text-muted-foreground" />
+            <p className="text-4xl font-bold text-muted-foreground/30 select-none">■■■ kr/h</p>
+          </div>
+          <p className="text-muted-foreground text-sm mt-2">
+            Lås upp ramavtalspriset och se exakt vad regionen betalar för din roll.
+          </p>
+        </div>
+      )}
+
       {/* Salary Gauge */}
-      <Card className="card-shadow">
-        <CardContent className="pt-6 pb-4">
-          <SalaryGauge
-            currentHourly={currentHourly}
-            marketLow={rec ? rec.recommended_hourly_min : Math.round(marketRate * 0.6)}
-            marketHigh={rec ? rec.recommended_hourly_max : Math.round(marketRate * 0.63)}
-            blurred={!isConsultantFullAccess}
-          />
-        </CardContent>
-      </Card>
+      <div className="rounded-xl bg-foreground/[0.02] p-5">
+        <SalaryGauge
+          currentHourly={currentHourly}
+          marketLow={rec ? rec.recommended_hourly_min : Math.round(marketRate * 0.6)}
+          marketHigh={rec ? rec.recommended_hourly_max : Math.round(marketRate * 0.63)}
+          blurred={!isConsultantFullAccess}
+        />
+      </div>
 
-      {/* Nästa steg — direkt efter mätaren för max impact */}
-      {isConsultantFullAccess && rec && !isAboveThreshold && (
-        <Card className="card-shadow border-primary/20">
-          <CardContent className="pt-6 space-y-4">
-            <SectionHeading icon={Lightbulb} title="Nästa steg — vad du ska säga" />
-            <div className="space-y-4 text-sm text-muted-foreground">
-              <ScriptBlock
-                step={1}
-                title="Boka möte"
-                text="Kontakta din bemanningskonsult och begär ett ersättningssamtal. Nämn att du har gjort en marknadsanalys."
-              />
-              <ScriptBlock
-                step={2}
-                title="Presentera data"
-                text={`"Jag har tagit fram ramavtalspriset för ${occupation} i min region. Kundpriset ligger på ${fmt(marketRate)} kr/h, och därför borde min ersättning landa runt ${fmt(rec.recommended_hourly_max)} kr/h efter er marginal."`}
-              />
-              <ScriptBlock
-                step={3}
-                title="Ställ frågan"
-                text={`"Jag vill att min ersättning justeras. Kan vi hitta en lösning?"`}
-              />
-              {isEmployee && (
-                <ScriptBlock
-                  step={4}
-                  title="Bonus: fråga om pension"
-                  text={`"Ingår tjänstepension på minst 4.5% i min anställning? Det är standard i ramavtalet."`}
-                />
-              )}
+      {/* ═══ NIVÅ 2 — Din position (borderless) ═══ */}
+      {isConsultantFullAccess && rec ? (
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            {isAboveThreshold ? (
+              <CheckCircle className="w-5 h-5 text-primary" />
+            ) : delta && delta.monthly_vs_current_min > 0 ? (
+              <TrendingUp className="w-5 h-5 text-accent" />
+            ) : (
+              <CheckCircle className="w-5 h-5 text-primary" />
+            )}
+            <h3 className="text-lg font-semibold text-foreground">
+              {isAboveThreshold
+                ? "Din ersättning är redan nära kundpriset — bra förhandlat!"
+                : delta && delta.monthly_vs_current_max > 0
+                  ? `Du kan tjäna upp till ${fmt(delta.monthly_vs_current_max)} kr mer per månad`
+                  : "Din ersättning ligger i linje med marknaden!"}
+            </h3>
+          </div>
+
+          {/* 2x2 grid — no outer border */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-foreground/[0.03] rounded-xl p-4">
+              <p className="text-muted-foreground text-xs uppercase">Din timersättning</p>
+              <p className="text-xl font-bold text-foreground mt-1">{fmt(currentHourly)} kr</p>
             </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Toppskiktet — anpassad info för konsulter nära kundpris */}
-      {isConsultantFullAccess && isAboveThreshold && (
-        <Card className="card-shadow border-primary/20">
-          <CardContent className="pt-6 space-y-4">
-            <SectionHeading icon={CheckCircle} title="Du ligger redan i toppskiktet" />
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Din ersättning på {fmt(currentHourly)} kr/h motsvarar 96% eller mer av vad regionen betalar till bemanningsföretag ({fmt(marketRate)} kr/h). 
-              Det innebär att det i praktiken inte finns ytterligare förhandlingsutrymme för grundtimpriset i din nuvarande zon.
-            </p>
-            <div className="space-y-3">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                Så kan du öka din totala ersättning
+            <div className="bg-primary/[0.08] rounded-xl p-4 border border-primary/20">
+              <p className="text-primary/70 text-xs uppercase">
+                {isEmployee ? "Rekommenderad timersättning" : "Rekommenderad ersättning"}
               </p>
-              <div className="flex items-start gap-3 p-3 rounded-lg border border-border bg-muted/30">
-                <MapPin className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-sm font-medium text-foreground">Byt till en högre priszon</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    Se den regionala jämförelsen nedan — vissa zoner har betydligt högre ramavtalspriser för samma roll.
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3 p-3 rounded-lg border border-border bg-muted/30">
-                <Clock className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-sm font-medium text-foreground">Jourersättning</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    Jour- och beredskapstillägg ligger utanför grundtimpriset och kan ge ett betydande påslag på din totala ersättning. Förhandla specifika jourvillkor med ditt bemanningsföretag.
-                  </p>
-                </div>
-              </div>
-              <div className="flex items-start gap-3 p-3 rounded-lg border border-border bg-muted/30">
-                <Car className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-                <div>
-                  <p className="text-sm font-medium text-foreground">Reseersättning</p>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    Om uppdraget kräver resa finns ofta möjlighet att förhandla reseersättning, boende och traktamente utöver grundtimpriset.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* 1. Ramavtalspris */}
-      <Card className="card-shadow">
-        <CardContent className="pt-6 space-y-3">
-          <SectionHeading icon={BarChart3} title="Ramavtalspris" />
-          {isConsultantFullAccess ? (
-            <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
-              <p className="text-xs text-muted-foreground mb-1">Vad regionen betalar till bemanningsföretag</p>
-              <p className="text-2xl font-bold text-foreground">{fmt(marketRate)} kr/h</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Grundtimpris enligt ramavtal (OB/jour ej inkluderat)
+              <p className="text-xl font-bold text-primary mt-1">
+                {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr
               </p>
             </div>
-          ) : (
-            <div className="p-4 rounded-lg bg-muted/50 border border-border">
-              <p className="text-xs text-muted-foreground mb-1">Vad regionen betalar till bemanningsföretag</p>
-              <div className="flex items-center gap-2 mb-1">
-                <Lock className="w-4 h-4 text-muted-foreground" />
-                <p className="text-2xl font-bold text-muted-foreground/40 select-none">■■■ kr/h</p>
-              </div>
-              <p className="text-xs text-muted-foreground mt-1">
-                Lås upp ramavtalspriset och se exakt vad regionen betalar för din roll.
+            <div className="bg-foreground/[0.03] rounded-xl p-4">
+              <p className="text-muted-foreground text-xs uppercase">Din månadsersättning</p>
+              <p className="text-xl font-bold text-foreground mt-1">
+                {fmt(salaryIsHourly ? currentSalary * 167 : currentSalary)} kr
+              </p>
+            </div>
+            <div className="bg-primary/[0.08] rounded-xl p-4 border border-primary/20">
+              <p className="text-primary/70 text-xs uppercase">Möjlig månadsersättning</p>
+              <p className="text-xl font-bold text-primary mt-1">
+                {fmt(rec.recommended_monthly_min)}–{fmt(rec.recommended_monthly_max)} kr
+              </p>
+            </div>
+          </div>
+
+          {delta && delta.monthly_vs_current_min > 0 && (
+            <div className="p-4 rounded-lg bg-accent/5 border border-accent/20">
+              <p className="text-xs text-muted-foreground mb-1">Skillnad mot din nuvarande ersättning</p>
+              <p className="text-lg font-bold text-accent">
+                +{fmt(delta.monthly_vs_current_min)}–{fmt(delta.monthly_vs_current_max)} kr/mån
               </p>
             </div>
           )}
-        </CardContent>
-      </Card>
-
-      {/* 2. Rekommenderad ersättning */}
-      <Card className="card-shadow overflow-hidden">
-        {isConsultantFullAccess && rec ? (
-          <>
-            <div className={`p-4 flex items-center gap-3 ${isAboveThreshold ? 'bg-primary/10' : 'bg-accent/10'}`}>
-              {isAboveThreshold ? (
-                <CheckCircle className="w-5 h-5 text-primary" />
-              ) : (
-                <TrendingUp className="w-5 h-5 text-accent" />
-              )}
-              <p className="font-semibold text-foreground">
-                {isAboveThreshold
-                  ? "Din ersättning är redan nära kundpriset — bra förhandlat!"
-                  : delta && delta.monthly_vs_current_min > 0
-                    ? `Du kan tjäna upp till ${fmt(delta.monthly_vs_current_max)} kr mer per månad`
-                    : "Din ersättning ligger i linje med marknaden!"}
-              </p>
-            </div>
-            <CardContent className="pt-6 space-y-5">
-              <div className="grid grid-cols-2 gap-4">
-                <StatBlock label="Din timersättning" value={`${fmt(currentHourly)} kr`} muted />
-                <StatBlock
-                  label={isEmployee ? "Rekommenderad timersättning" : "Rekommenderad ersättning"}
-                  value={`${fmt(rec.recommended_hourly_min)}–${fmt(rec.recommended_hourly_max)} kr`}
-                  accent
-                />
-                <StatBlock
-                  label="Din månadsersättning"
-                  value={`${fmt(salaryIsHourly ? currentSalary * 167 : currentSalary)} kr`}
-                  muted
-                />
-                <StatBlock
-                  label="Möjlig månadsersättning"
-                  value={`${fmt(rec.recommended_monthly_min)}–${fmt(rec.recommended_monthly_max)} kr`}
-                  accent
-                />
-              </div>
-
-              {/* Förhandlingsspann */}
-              <div className="p-4 rounded-lg bg-accent/5 border border-accent/20 space-y-3">
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Förhandlingsspann</p>
-                <div className="grid grid-cols-3 gap-2 text-center">
-                  <div className="p-3 rounded-lg bg-accent/10 border border-accent/20">
-                    <p className="text-[10px] font-medium text-accent uppercase tracking-wide mb-1">Realistiskt</p>
-                    <p className="text-base font-bold text-foreground">{fmt(rec.recommended_hourly_min)} kr/h</p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">{fmt(rec.recommended_monthly_min)} kr/mån</p>
-                  </div>
-                  <div className="p-3 rounded-lg bg-primary/10 border border-primary/20 ring-2 ring-primary/30">
-                    <p className="text-[10px] font-medium text-primary uppercase tracking-wide mb-1">Rekommenderat</p>
-                    <p className="text-base font-bold text-foreground">
-                      {fmt(Math.round((rec.recommended_hourly_min + rec.recommended_hourly_max) / 2))} kr/h
-                    </p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">
-                      {fmt(Math.round((rec.recommended_monthly_min + rec.recommended_monthly_max) / 2))} kr/mån
-                    </p>
-                  </div>
-                  <div className="p-3 rounded-lg bg-muted/50 border border-border">
-                    <p className="text-[10px] font-medium text-foreground uppercase tracking-wide mb-1">Ambitiöst</p>
-                    <p className="text-base font-bold text-foreground">{fmt(rec.recommended_hourly_max)} kr/h</p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">{fmt(rec.recommended_monthly_max)} kr/mån</p>
-                  </div>
-                </div>
-                <p className="text-[11px] text-muted-foreground text-center">
-                  Realistiskt = hög chans att få igenom · Rekommenderat = vad vi föreslår · Ambitiöst = kräver stark erfarenhet
+        </div>
+      ) : (
+        /* Locked version */
+        <Card className="card-shadow overflow-hidden">
+          <div className="bg-muted/50 p-4 flex items-center gap-3">
+            <Lock className="w-5 h-5 text-muted-foreground" />
+            <p className="font-semibold text-foreground">Rekommenderad ersättning — lås upp</p>
+          </div>
+          <CardContent className="pt-6 space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <StatBlock label="Din timersättning" value={`${fmt(currentHourly)} kr`} muted />
+              <div className="p-3 rounded-lg bg-accent/10 relative overflow-hidden">
+                <p className="text-xs text-muted-foreground mb-1">Rekommenderad timersättning</p>
+                <p className="text-base font-semibold text-accent blur-sm select-none">
+                  {formatPartialValue(Math.round(marketRate * 0.6))} kr
                 </p>
               </div>
-
-              {delta && delta.monthly_vs_current_min > 0 && (
-                <div className="p-4 rounded-lg bg-accent/5 border border-accent/20">
-                  <p className="text-xs text-muted-foreground mb-1">Skillnad mot din nuvarande ersättning</p>
-                  <p className="text-lg font-bold text-accent">
-                    +{fmt(delta.monthly_vs_current_min)}–{fmt(delta.monthly_vs_current_max)} kr/mån
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </>
-        ) : (
-          <>
-            <div className="bg-muted/50 p-4 flex items-center gap-3">
-              <Lock className="w-5 h-5 text-muted-foreground" />
-              <p className="font-semibold text-foreground">Rekommenderad ersättning — lås upp</p>
             </div>
-            <CardContent className="pt-6 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <StatBlock label="Din timersättning" value={`${fmt(currentHourly)} kr`} muted />
-                <div className="p-3 rounded-lg bg-accent/10 relative overflow-hidden">
-                  <p className="text-xs text-muted-foreground mb-1">Rekommenderad timersättning</p>
-                  <p className="text-base font-semibold text-accent blur-sm select-none">
-                    {formatPartialValue(Math.round(marketRate * 0.6))} kr
-                  </p>
-                </div>
-              </div>
-              <p className="text-sm text-muted-foreground text-center">
-                Lås upp den fullständiga analysen med exakta siffror, förhandlingsspann och personliga rekommendationer.
-              </p>
-            </CardContent>
-          </>
-        )}
-      </Card>
+            <p className="text-sm text-muted-foreground text-center">
+              Lås upp den fullständiga analysen med exakta siffror, förhandlingsspann och personliga rekommendationer.
+            </p>
+          </CardContent>
+        </Card>
+      )}
 
-      {/* 3. Antaganden & Beräkning (full) */}
+      {/* ═══ NIVÅ 3 — Förhandlingsspann (3 kolumner) ═══ */}
       {isConsultantFullAccess && rec && (
-        <Card className="card-shadow">
-          <CardContent className="pt-6 space-y-4">
-            <SectionHeading icon={Info} title="Antaganden & Beräkning" />
+        <div className="space-y-3">
+          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Förhandlingsspann</p>
+          <div className="grid grid-cols-3 gap-2 text-center">
+            {/* Realistiskt — neutral */}
+            <div className="p-3 rounded-lg bg-foreground/[0.03]">
+              <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide mb-1">Realistiskt</p>
+              <p className="text-base font-bold text-foreground">{fmt(rec.recommended_hourly_min)} kr/h</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">{fmt(rec.recommended_monthly_min)} kr/mån</p>
+            </div>
+            {/* Rekommenderat — primary highlight */}
+            <div className="p-3 rounded-lg bg-primary/10 border border-primary/30 ring-2 ring-primary/20">
+              <p className="text-[10px] font-medium text-primary uppercase tracking-wide mb-1">Rekommenderat</p>
+              <p className="text-base font-bold text-foreground">
+                {fmt(Math.round((rec.recommended_hourly_min + rec.recommended_hourly_max) / 2))} kr/h
+              </p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">
+                {fmt(Math.round((rec.recommended_monthly_min + rec.recommended_monthly_max) / 2))} kr/mån
+              </p>
+            </div>
+            {/* Ambitiöst — neutral */}
+            <div className="p-3 rounded-lg bg-foreground/[0.03]">
+              <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wide mb-1">Ambitiöst</p>
+              <p className="text-base font-bold text-foreground">{fmt(rec.recommended_hourly_max)} kr/h</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">{fmt(rec.recommended_monthly_max)} kr/mån</p>
+            </div>
+          </div>
+          <p className="text-[11px] text-muted-foreground text-center">
+            Realistiskt = hög chans att få igenom · Rekommenderat = vad vi föreslår · Ambitiöst = kräver stark erfarenhet
+          </p>
+        </div>
+      )}
+
+      {/* ═══ Nästa steg — Premium action card ═══ */}
+      {isConsultantFullAccess && rec && !isAboveThreshold && (
+        <div className="relative rounded-2xl bg-gradient-to-b from-foreground/[0.06] to-foreground/[0.02] border border-foreground/10 p-6 overflow-hidden">
+          {/* Top accent line */}
+          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent" />
+
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+              <Lightbulb className="w-5 h-5 text-primary" />
+            </div>
+            <h2 className="text-xl font-bold text-foreground">Nästa steg — vad du ska säga</h2>
+          </div>
+
+          {/* Timeline */}
+          <div className="space-y-5 relative">
+            <div className="absolute left-[15px] top-2 bottom-2 w-[2px] bg-gradient-to-b from-primary/40 to-transparent" />
+
+            <ScriptStep
+              step={1}
+              title="Boka möte"
+              text="Kontakta din bemanningskonsult och begär ett ersättningssamtal. Nämn att du har gjort en marknadsanalys."
+            />
+            <ScriptStep
+              step={2}
+              title="Presentera data"
+              text={`"Jag har tagit fram ramavtalspriset för ${occupation} i min region. Kundpriset ligger på ${fmt(marketRate)} kr/h, och därför borde min ersättning landa runt ${fmt(rec.recommended_hourly_max)} kr/h efter er marginal."`}
+            />
+            <ScriptStep
+              step={3}
+              title="Ställ frågan"
+              text={`"Jag vill att min ersättning justeras. Kan vi hitta en lösning?"`}
+            />
+            {isEmployee && (
+              <ScriptStep
+                step={4}
+                title="Bonus: fråga om pension"
+                text={`"Ingår tjänstepension på minst 4.5% i min anställning? Det är standard i ramavtalet."`}
+              />
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Toppskiktet — för konsulter nära kundpris */}
+      {isConsultantFullAccess && isAboveThreshold && (
+        <div className="relative rounded-2xl bg-gradient-to-b from-foreground/[0.06] to-foreground/[0.02] border border-foreground/10 p-6 overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent" />
+
+          <div className="flex items-center gap-3 mb-4">
+            <CheckCircle className="w-5 h-5 text-primary" />
+            <h2 className="text-lg font-bold text-foreground">Du ligger redan i toppskiktet</h2>
+          </div>
+          <p className="text-sm text-muted-foreground leading-relaxed mb-4">
+            Din ersättning på {fmt(currentHourly)} kr/h motsvarar 96% eller mer av vad regionen betalar till bemanningsföretag ({fmt(marketRate)} kr/h). 
+            Det innebär att det i praktiken inte finns ytterligare förhandlingsutrymme för grundtimpriset i din nuvarande zon.
+          </p>
+          <div className="space-y-3">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+              Så kan du öka din totala ersättning
+            </p>
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-foreground/[0.04]">
+              <MapPin className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-foreground">Byt till en högre priszon</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Se den regionala jämförelsen nedan — vissa zoner har betydligt högre ramavtalspriser för samma roll.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-foreground/[0.04]">
+              <Clock className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-foreground">Jourersättning</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Jour- och beredskapstillägg ligger utanför grundtimpriset och kan ge ett betydande påslag på din totala ersättning.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-foreground/[0.04]">
+              <Car className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+              <div>
+                <p className="text-sm font-medium text-foreground">Reseersättning</p>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  Om uppdraget kräver resa finns ofta möjlighet att förhandla reseersättning, boende och traktamente utöver grundtimpriset.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Antaganden & Beräkning */}
+      {isConsultantFullAccess && rec && (
+        <Collapsible>
+          <CollapsibleTrigger className="w-full flex items-center justify-between p-4 rounded-xl bg-foreground/[0.03] hover:bg-foreground/[0.05] transition-colors">
+            <div className="flex items-center gap-2">
+              <Info className="w-4 h-4 text-primary" />
+              <span className="text-sm font-semibold text-foreground">Antaganden & Beräkning</span>
+            </div>
+            <ChevronDown className="w-4 h-4 text-muted-foreground transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
+          </CollapsibleTrigger>
+          <CollapsibleContent className="pt-4 space-y-4">
             <div className="space-y-3 text-sm text-muted-foreground">
               <CalcRow label="Ramavtalspris (vad regionen betalar)" value={`${fmt(marketRate)} kr/h`} />
               <CalcRow label={`Bemanningsbolagets marginal (${marginLabel})`} value={`−${fmt(Math.round(marketRate * margin))} kr/h`} />
@@ -309,7 +378,7 @@ export default function ConsultantTrackContent({
               )}
             </div>
             <Separator />
-            <div className="p-4 rounded-lg bg-muted/50 border border-border space-y-3">
+            <div className="p-4 rounded-lg bg-foreground/[0.03] space-y-3">
               <div className="flex items-center gap-2">
                 <Info className="w-4 h-4 text-primary shrink-0" />
                 <p className="font-semibold text-foreground text-sm">Information om beräkningen</p>
@@ -336,7 +405,7 @@ export default function ConsultantTrackContent({
                     : `Ersättningen ${fmt(rec.recommended_hourly_max)} kr/h baseras på ${marginLabel} marginal.`}
               </p>
             </div>
-            <div className="p-4 rounded-lg bg-muted/50 border border-border space-y-2">
+            <div className="p-4 rounded-lg bg-foreground/[0.03] space-y-2">
               <div className="flex items-center gap-2">
                 <Briefcase className="w-4 h-4 text-primary shrink-0" />
                 <p className="font-semibold text-foreground text-sm">Om ditt bemanningsföretag behåller mer än {isEmployee ? "15%" : marginLabel}</p>
@@ -345,15 +414,14 @@ export default function ConsultantTrackContent({
                 Vissa bemanningsföretag tar en högre marginal. En del av den kan gå till kostnader som i vissa fall ligger på bemanningsföretaget, t.ex. resa och boende, introduktionskostnad, SITHS-kort samt HLR-utbildning. Fråga ditt bemanningsföretag vilka kostnader som ingår i deras marginal — det ger dig bättre underlag i förhandlingen.
               </p>
             </div>
-          </CardContent>
-        </Card>
+          </CollapsibleContent>
+        </Collapsible>
       )}
 
-      {/* 4. Förhandlingsrekommendationer (full) */}
+      {/* Förhandlingstips */}
       {isConsultantFullAccess && rec && (
         <div ref={registerSectionRef?.("negotiation_script")}>
-        <Card className="card-shadow">
-          <CardContent className="pt-6 space-y-4">
+          <div className="rounded-xl bg-foreground/[0.03] p-5 space-y-4">
             <SectionHeading icon={MessageSquareQuote} title="Förhandlingstips" />
             <ul className="space-y-3">
               {getNegotiationTips(
@@ -368,12 +436,11 @@ export default function ConsultantTrackContent({
                 </li>
               ))}
             </ul>
-          </CardContent>
-        </Card>
+          </div>
         </div>
       )}
 
-      {/* Invoice Review CTA — after negotiation, before regional comparison */}
+      {/* Invoice Review CTA */}
       {isConsultantFullAccess && leadId && email && (
         <InvoiceReviewCTA
           leadId={leadId}
@@ -384,7 +451,7 @@ export default function ConsultantTrackContent({
         />
       )}
 
-      {/* 5. Regionala jämförelser (full) */}
+      {/* Regional jämförelse */}
       {isConsultantFullAccess && zoneComparisons && zoneComparisons.length > 0 && (
         <div ref={registerSectionRef?.("regional_comparison")}>
         <Card className="card-shadow">
@@ -408,7 +475,7 @@ export default function ConsultantTrackContent({
                   const maxRate = Math.max(...zoneComparisons.map((z) => z.timpris_kund));
                   const barWidth = Math.round((zoneRate / maxRate) * 100);
                   return (
-                    <div key={zc.zon} className={`p-3 rounded-lg border ${isUserZone ? 'border-primary bg-primary/5' : 'border-border bg-muted/30'}`}>
+                    <div key={zc.zon} className={`p-3 rounded-lg border ${isUserZone ? 'border-primary bg-primary/5' : 'border-border bg-foreground/[0.03]'}`}>
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
                           <span className="text-sm font-semibold text-foreground">{zc.zon}</span>
@@ -437,8 +504,6 @@ export default function ConsultantTrackContent({
         </Card>
         </div>
       )}
-
-      {/* 7. Godkända leverantörer — dold tillsvidare */}
     </>
   );
 }
