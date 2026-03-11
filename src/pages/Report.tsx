@@ -136,7 +136,7 @@ export default function Report() {
         ) : (
           <ConsultantTrackContent
             r={r}
-            isFullAccess={isFullAccess}
+            isFullAccess={true}
             isEmployee={isEmployee}
             occupation={report.occupation}
             kommun={report.kommun}
