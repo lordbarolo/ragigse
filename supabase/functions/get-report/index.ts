@@ -40,7 +40,8 @@ serve(async (req) => {
       });
     }
 
-    // Determine access level
+    // Determine access level — reports are free once email is provided
+    const hasEmail = !!report.email;
     const isPaid = report.status === "paid";
     const isReferralUnlocked = report.unlocked_by_referral === true;
     const isOwner = auth_user_id && report.user_id === auth_user_id;
@@ -59,7 +60,7 @@ serve(async (req) => {
       unlocked_by_referral: isReferralUnlocked,
     };
 
-    if (isPaid || isReferralUnlocked || isOwner) {
+    if (hasEmail || isPaid || isReferralUnlocked || isOwner) {
       // Full access
       response.result_json = report.result_json;
       response.access = "full";
