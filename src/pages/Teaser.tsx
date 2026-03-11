@@ -521,28 +521,22 @@ export default function Teaser() {
         {/* Blurred report teaser — shows what's behind the paywall */}
         <BlurredReportTeaser onScrollToEmail={() => checkoutRef.current?.scrollIntoView({ behavior: "smooth" })} />
 
-        {/* SECTION 3 — Email Gate / Checkout */}
+        {/* SECTION 3 — Email Gate (free report) */}
         <div ref={checkoutRef}>
-          {!email ? (
+          {!email && (
             <div className="rounded-xl border border-primary/20 bg-card p-5 card-shadow">
               <EmailGate
                 onEmailSubmit={handleEmailSubmit}
-                loading={emailSaving || checkoutLoading !== null}
-                coupon={couponDiscount}
-                isFree={isFree}
-                priceKr={priceKr}
+                loading={emailSaving}
+                coupon={null}
+                isFree={true}
+                priceKr={0}
               />
             </div>
-          ) : (
-            <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="inline" coupon={couponDiscount} priceKr={priceKr} />
           )}
         </div>
 
       </main>
-
-      {email && !isFree && (
-        <CheckoutCTA checkoutLoading={checkoutLoading} onCheckout={onCheckout} variant="sticky" coupon={couponDiscount} priceKr={priceKr} />
-      )}
 
       <ReferralBottomSheet
         ctaRef={checkoutRef}
@@ -550,7 +544,7 @@ export default function Teaser() {
         referrerEmail={survey.email}
         region={regionName}
         onCheckout={onCheckout}
-        priceKr={priceKr}
+        priceKr={0}
       />
     </div>
   );
