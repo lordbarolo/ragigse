@@ -14,8 +14,6 @@ import type { ReportData } from "@/shared/types";
 import PermanentTrackContent from "@/components/report/PermanentTrackContent";
 import ConsultantTrackContent from "@/components/report/ConsultantTrackContent";
 
-import ReportPreviewList from "@/shared/ReportPreviewList";
-import CheckoutCTA from "@/shared/CheckoutCTA";
 import ReportFeedback from "@/components/report/ReportFeedback";
 
 export default function Report() {
