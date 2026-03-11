@@ -19,13 +19,38 @@ function categorizeGap(currentSalary: number, p75: number): GapCategory {
 
 // Map survey occupation names to DB occupation names
 const OCCUPATION_MAP: Record<string, string> = {
+  // Base nurse types
   "Sjuksköterska": "Grundutbildade sjuksköterskor",
   "Allmänsjuksköterska": "Grundutbildade sjuksköterskor",
   "Barnmorska": "Barnmorskor",
   "Specialistsjuksköterska": "Övriga specialistsjuksköterskor",
+
+  // Specialist nurse compound names from survey
+  "Specialistsjuksköterska akutsjukvård": "Övriga specialistsjuksköterskor",
+  "Specialistsjuksköterska ambulanssjukvård": "Ambulanssjuksköterskor m.fl.",
+  "Specialistsjuksköterska anestesi": "Anestesisjuksköterskor",
+  "Specialistsjuksköterska barn och ungdom": "Barnsjuksköterskor",
+  "Specialistsjuksköterska diabetesvård": "Övriga specialistsjuksköterskor",
+  "Distriktssjuksköterska": "Distriktssköterskor",
+  "Specialistsjuksköterska hjärtsjukvård": "Övriga specialistsjuksköterskor",
+  "Specialistsjuksköterska infektionssjukvård": "Övriga specialistsjuksköterskor",
+  "Specialistsjuksköterska intensivvård": "Intensivvårdssjuksköterskor",
+  "Specialistsjuksköterska kirurgisk vård": "Operationssjuksköterskor",
+  "Specialistsjuksköterska medicinsk vård": "Övriga specialistsjuksköterskor",
+  "Specialistsjuksköterska onkologisk vård": "Övriga specialistsjuksköterskor",
+  "Specialistsjuksköterska operationssjukvård": "Operationssjuksköterskor",
+  "Specialistsjuksköterska palliativ vård": "Övriga specialistsjuksköterskor",
+  "Specialistsjuksköterska psykiatrisk vård": "Psykiatrisjuksköterskor",
+  "Specialistsjuksköterska vård av äldre": "Geriatriksjuksköterskor",
+  "Specialistsjuksköterska ögonsjukvård": "Övriga specialistsjuksköterskor",
+
+  // Doctors
   "Legitimerad läkare": "Övriga läkare",
   "Specialistläkare": "Specialistläkare",
   "ST-läkare": "ST-läkare",
+  "AT-läkare": "AT-läkare",
+
+  // Short forms
   "Anestesisjuksköterska": "Anestesisjuksköterskor",
   "Intensivvårdssjuksköterska": "Intensivvårdssjuksköterskor",
   "Operationssjuksköterska": "Operationssjuksköterskor",
@@ -38,7 +63,6 @@ const OCCUPATION_MAP: Record<string, string> = {
   "Geriatriksjuksköterska": "Geriatriksjuksköterskor",
   "Företagssköterska": "Företagssköterskor",
   "Psykolog": "Psykologer",
-  "AT-läkare": "AT-läkare",
 };
 
 serve(async (req) => {
