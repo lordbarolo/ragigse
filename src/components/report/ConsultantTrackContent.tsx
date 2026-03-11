@@ -443,8 +443,8 @@ export default function ConsultantTrackContent({
               </ul>
               <p className="text-xs text-muted-foreground/70 pt-1">
                   {isEmployee
-                    ? `Spannet ${fmt(rec.recommended_hourly_min)}–${fmt(rec.recommended_hourly_max)} kr/h baseras på 10–15% marginal.`
-                    : `Ersättningen ${fmt(rec.recommended_hourly_max)} kr/h baseras på ${marginLabel} marginal.`}
+                    ? `Spannet ${fmt(rec.recommended_hourly_min)}–${fmt(rec.recommended_hourly_max)} kr/h baseras på ${marginLabel} marginal.`
+                    : `Spannet ${fmt(rec.recommended_hourly_min)}–${fmt(rec.recommended_hourly_max)} kr/h baseras på ${marginLabel} marginal.`}
               </p>
             </div>
             <div className="p-4 rounded-lg bg-foreground/[0.03] space-y-2">
