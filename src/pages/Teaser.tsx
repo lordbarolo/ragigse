@@ -316,7 +316,7 @@ export default function Teaser() {
   const handleEmailSubmit = async (emailValue: string) => {
     setEmailSaving(true);
     try {
-      // Save email to lead + report first, and wait for it
+      // Save email to lead + report (also creates auth user + consultant profile)
       const { error: saveErr } = await supabase.functions.invoke("save-email", {
         body: { lead_id: leadId, report_id: reportId, email: emailValue },
       });
@@ -334,7 +334,7 @@ export default function Teaser() {
       return;
     }
 
-    // Ensure we have a reportId — if missing, create report on-the-fly
+    // Ensure we have a reportId
     let activeReportId = reportId;
     if (!activeReportId && leadId && survey) {
       try {
@@ -356,7 +356,7 @@ export default function Teaser() {
           sessionStorage.setItem("reportId", activeReportId);
         }
       } catch {
-        // Fall through — checkout will fail gracefully
+        // Fall through
       }
     }
 
@@ -366,22 +366,11 @@ export default function Teaser() {
       return;
     }
 
-    if (isFree) {
-      // Free coupon: redeem and go directly to report (no Stripe)
-      setEmailSaving(false);
-      await unlockFreeReport(activeReportId);
-    } else {
-      // Paid: proceed to checkout
-      setEmailSaving(false);
-      const couponCode = searchParams.get("coupon") || null;
-      const price = couponDiscount
-        ? couponDiscount.discount_type === "percent" ? Math.round(priceKr * (1 - couponDiscount.discount_value / 100))
-          : couponDiscount.discount_type === "fixed" ? Math.max(0, priceKr - couponDiscount.discount_value)
-          : priceKr
-        : priceKr;
-      trackEvent("paywall_cta_clicked", { price, coupon_applied: !!couponDiscount, coupon_code: couponCode, ab_variant: abVariant });
-      checkout("single", { email: emailValue, leadId, reportId: activeReportId, coupon: couponDiscount, abVariant });
-    }
+    setEmailSaving(false);
+
+    // Report is free — navigate directly to full report
+    trackEvent("free_report_unlocked", { source: "email_gate" });
+    navigate(`/rapport/${activeReportId}`);
   };
 
   const onCheckout = async (plan: "single" | "yearly") => {
@@ -393,20 +382,8 @@ export default function Teaser() {
       toast({ title: "Rapport saknas — ladda om sidan och försök igen", variant: "destructive" });
       return;
     }
-
-    if (isFree) {
-      await unlockFreeReport(reportId);
-      return;
-    }
-
-    const couponCode = searchParams.get("coupon") || null;
-    const price = couponDiscount
-      ? couponDiscount.discount_type === "free" ? 0
-        : couponDiscount.discount_type === "percent" ? Math.round(priceKr * (1 - couponDiscount.discount_value / 100))
-        : Math.max(0, priceKr - couponDiscount.discount_value)
-      : priceKr;
-    trackEvent("paywall_cta_clicked", { price, coupon_applied: !!couponDiscount, coupon_code: couponCode, ab_variant: abVariant });
-    checkout(plan, { email, leadId, reportId, coupon: couponDiscount, abVariant });
+    // Free flow — go directly to report
+    navigate(`/rapport/${reportId}`);
   };
 
   // Error state
