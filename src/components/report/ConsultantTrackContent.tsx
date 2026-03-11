@@ -293,7 +293,7 @@ export default function ConsultantTrackContent({
           <CardContent className="pt-6 space-y-4">
             <SectionHeading icon={Info} title="Antaganden & Beräkning" />
             <div className="space-y-3 text-sm text-muted-foreground">
-              <CalcRow label="Ramavtalspris (vad kunden betalar)" value={`${fmt(marketRate)} kr/h`} />
+              <CalcRow label="Ramavtalspris (vad regionen betalar)" value={`${fmt(marketRate)} kr/h`} />
               <CalcRow label={`Bemanningsbolagets marginal (${marginLabel})`} value={`−${fmt(Math.round(marketRate * margin))} kr/h`} />
               <CalcRow label="Ersättningsutrymme efter marginal" value={`${fmt(afterMargin)} kr/h`} />
               {isEmployee ? (
