@@ -154,6 +154,21 @@ export default function ConsultantTrackContent({
       {/* ═══ NIVÅ 2 — Din position (borderless) ═══ */}
       {isConsultantFullAccess && rec ? (
         <div className="space-y-4">
+          {/* Hourly comparison — prominent, first thing after gauge */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-foreground/[0.03] rounded-xl p-4">
+              <p className="text-muted-foreground text-xs uppercase tracking-wide">Din lön</p>
+              <p className="text-2xl font-bold text-foreground mt-1 tabular-nums">{fmt(currentHourly)} kr/h</p>
+            </div>
+            <div className="bg-primary/[0.08] rounded-xl p-4 border border-primary/20">
+              <p className="text-primary/70 text-xs uppercase tracking-wide">Möjlig ersättningsnivå</p>
+              <p className="text-2xl font-bold text-primary mt-1 tabular-nums">
+                {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr
+              </p>
+            </div>
+          </div>
+
+          {/* Hero insight text */}
           <div className="flex items-start gap-3">
             {isAboveThreshold ? (
               <CheckCircle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
@@ -171,20 +186,8 @@ export default function ConsultantTrackContent({
             </h3>
           </div>
 
-          {/* Stacked on mobile, 2-col on sm+ */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div className="bg-foreground/[0.03] rounded-xl p-4">
-              <p className="text-muted-foreground text-xs uppercase tracking-wide">Din timersättning</p>
-              <p className="text-2xl font-bold text-foreground mt-1 tabular-nums">{fmt(currentHourly)} kr</p>
-            </div>
-            <div className="bg-primary/[0.08] rounded-xl p-4 border border-primary/20">
-              <p className="text-primary/70 text-xs uppercase tracking-wide">
-                {isEmployee ? "Rekommenderad timersättning" : "Rekommenderad ersättning"}
-              </p>
-              <p className="text-2xl font-bold text-primary mt-1 tabular-nums">
-                {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr
-              </p>
-            </div>
+          {/* Monthly breakdown */}
+          <div className="grid grid-cols-2 gap-3">
             <div className="bg-foreground/[0.03] rounded-xl p-4">
               <p className="text-muted-foreground text-xs uppercase tracking-wide">Din månadsersättning</p>
               <p className="text-2xl font-bold text-foreground mt-1 tabular-nums">
