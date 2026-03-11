@@ -95,7 +95,6 @@ export default function Report() {
 
   const r = report.result_json;
   const isPermanentTrack = r.track === "permanent";
-  const isFullAccess = report.access === "full";
   const isEmployee = report.employment_type === "anstalld";
   const isFriendCoupon = getCouponCode()?.toLowerCase() === "vänner500";
 
