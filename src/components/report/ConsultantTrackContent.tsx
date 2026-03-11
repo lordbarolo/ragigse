@@ -428,7 +428,7 @@ export default function ConsultantTrackContent({
               <ul className="space-y-2 text-xs text-muted-foreground leading-relaxed">
                 <li>
                   <span className="font-semibold text-foreground">Bemanningsbolagets marginal ({marginLabel}):</span>{" "}
-                  Vi räknar med att bolaget behåller {marginLabel} av timpriset. {isEmployee ? "Detta är en vanlig nivå vid ramavtalsuppdrag." : "Som egenföretagare är marknadsmässig marginal 14%."}
+                  Vi räknar med att bolaget behåller {marginLabel} av timpriset. {isEmployee ? "Detta är en vanlig nivå vid ramavtalsuppdrag." : `Spannet beror på om bemanningsföretaget bär vitesrisken (högre marginal) eller inte (lägre marginal).`}
                 </li>
                 {isEmployee && (
                   <li>
