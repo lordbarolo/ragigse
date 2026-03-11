@@ -31,7 +31,10 @@ type EventName =
   | "diagnosis_shown"
   | "income_impact_shown"
   | "email_gate_viewed"
-  | "email_submitted";
+  | "email_submitted"
+  | "analysis_started"
+  | "analysis_email_pause"
+  | "analysis_completed";
 
 export function trackEvent(
   eventName: EventName,
