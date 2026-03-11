@@ -309,6 +309,7 @@ export type Database = {
           id: string
           leadership: boolean | null
           on_call: boolean | null
+          onboarding_step: number
           region_id: string | null
           salary_type: string | null
           sector: string | null
@@ -328,6 +329,7 @@ export type Database = {
           id?: string
           leadership?: boolean | null
           on_call?: boolean | null
+          onboarding_step?: number
           region_id?: string | null
           salary_type?: string | null
           sector?: string | null
@@ -347,6 +349,7 @@ export type Database = {
           id?: string
           leadership?: boolean | null
           on_call?: boolean | null
+          onboarding_step?: number
           region_id?: string | null
           salary_type?: string | null
           sector?: string | null
