@@ -108,19 +108,19 @@ export default function ConsultantTrackContent({
     <>
       {/* ═══ NIVÅ 1 — Hero: Ramavtalspris ═══ */}
       {isConsultantFullAccess ? (
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/20 p-6">
-          <p className="text-muted-foreground text-xs font-medium uppercase tracking-wider mb-1">
-            Vad regionen betalar till bemanningsföretag
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/20 p-5 sm:p-6">
+          <p className="text-muted-foreground text-xs font-medium uppercase tracking-wider mb-2">
+            Vad regionen betalar bemanningsföretaget
           </p>
-          <p className="text-5xl font-bold text-foreground">
-            {fmt(marketRate)} <span className="text-2xl text-muted-foreground">kr/h</span>
+          <p className="text-4xl sm:text-5xl font-bold text-foreground tabular-nums">
+            {fmt(marketRate)} <span className="text-xl sm:text-2xl text-muted-foreground font-medium">kr/h</span>
           </p>
           <p className="text-muted-foreground/60 text-sm mt-2">
-            Grundtimpris enligt ramavtal (OB/jour ej inkluderat)
+            Grundtimpris enligt ramavtal · OB/jour ej inkluderat
           </p>
         </div>
       ) : (
-        <div className="relative overflow-hidden rounded-2xl bg-muted/50 border border-border p-6">
+        <div className="relative overflow-hidden rounded-2xl bg-muted/50 border border-border p-5 sm:p-6">
           <p className="text-muted-foreground text-xs font-medium uppercase tracking-wider mb-1">
             Vad regionen betalar till bemanningsföretag
           </p>
@@ -135,7 +135,7 @@ export default function ConsultantTrackContent({
       )}
 
       {/* Salary Gauge */}
-      <div className="rounded-xl bg-foreground/[0.02] p-5">
+      <div className="rounded-xl bg-foreground/[0.02] p-4 sm:p-5">
         <SalaryGauge
           currentHourly={currentHourly}
           marketLow={rec ? rec.recommended_hourly_min : Math.round(marketRate * 0.6)}
@@ -147,15 +147,15 @@ export default function ConsultantTrackContent({
       {/* ═══ NIVÅ 2 — Din position (borderless) ═══ */}
       {isConsultantFullAccess && rec ? (
         <div className="space-y-4">
-          <div className="flex items-center gap-2">
+          <div className="flex items-start gap-3">
             {isAboveThreshold ? (
-              <CheckCircle className="w-5 h-5 text-primary" />
+              <CheckCircle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
             ) : delta && delta.monthly_vs_current_min > 0 ? (
-              <TrendingUp className="w-5 h-5 text-accent" />
+              <TrendingUp className="w-5 h-5 text-accent shrink-0 mt-0.5" />
             ) : (
-              <CheckCircle className="w-5 h-5 text-primary" />
+              <CheckCircle className="w-5 h-5 text-primary shrink-0 mt-0.5" />
             )}
-            <h3 className="text-lg font-semibold text-foreground">
+            <h3 className="text-base sm:text-lg font-semibold text-foreground leading-snug">
               {isAboveThreshold
                 ? "Din ersättning är redan nära kundpriset — bra förhandlat!"
                 : delta && delta.monthly_vs_current_max > 0
@@ -164,38 +164,38 @@ export default function ConsultantTrackContent({
             </h3>
           </div>
 
-          {/* 2x2 grid — no outer border */}
-          <div className="grid grid-cols-2 gap-3">
+          {/* Stacked on mobile, 2-col on sm+ */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="bg-foreground/[0.03] rounded-xl p-4">
-              <p className="text-muted-foreground text-xs uppercase">Din timersättning</p>
-              <p className="text-xl font-bold text-foreground mt-1">{fmt(currentHourly)} kr</p>
+              <p className="text-muted-foreground text-xs uppercase tracking-wide">Din timersättning</p>
+              <p className="text-2xl font-bold text-foreground mt-1 tabular-nums">{fmt(currentHourly)} kr</p>
             </div>
             <div className="bg-primary/[0.08] rounded-xl p-4 border border-primary/20">
-              <p className="text-primary/70 text-xs uppercase">
+              <p className="text-primary/70 text-xs uppercase tracking-wide">
                 {isEmployee ? "Rekommenderad timersättning" : "Rekommenderad ersättning"}
               </p>
-              <p className="text-xl font-bold text-primary mt-1">
+              <p className="text-2xl font-bold text-primary mt-1 tabular-nums">
                 {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr
               </p>
             </div>
             <div className="bg-foreground/[0.03] rounded-xl p-4">
-              <p className="text-muted-foreground text-xs uppercase">Din månadsersättning</p>
-              <p className="text-xl font-bold text-foreground mt-1">
+              <p className="text-muted-foreground text-xs uppercase tracking-wide">Din månadsersättning</p>
+              <p className="text-2xl font-bold text-foreground mt-1 tabular-nums">
                 {fmt(salaryIsHourly ? currentSalary * 167 : currentSalary)} kr
               </p>
             </div>
             <div className="bg-primary/[0.08] rounded-xl p-4 border border-primary/20">
-              <p className="text-primary/70 text-xs uppercase">Möjlig månadsersättning</p>
-              <p className="text-xl font-bold text-primary mt-1">
+              <p className="text-primary/70 text-xs uppercase tracking-wide">Möjlig månadsersättning</p>
+              <p className="text-2xl font-bold text-primary mt-1 tabular-nums">
                 {fmt(rec.recommended_monthly_min)}–{fmt(rec.recommended_monthly_max)} kr
               </p>
             </div>
           </div>
 
           {delta && delta.monthly_vs_current_min > 0 && (
-            <div className="p-4 rounded-lg bg-accent/5 border border-accent/20">
+            <div className="p-4 rounded-xl bg-accent/5 border border-accent/20">
               <p className="text-xs text-muted-foreground mb-1">Skillnad mot din nuvarande ersättning</p>
-              <p className="text-lg font-bold text-accent">
+              <p className="text-xl font-bold text-accent tabular-nums">
                 +{fmt(delta.monthly_vs_current_min)}–{fmt(delta.monthly_vs_current_max)} kr/mån
               </p>
             </div>

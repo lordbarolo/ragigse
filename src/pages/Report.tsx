@@ -100,27 +100,25 @@ export default function Report() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="hero-gradient py-10 px-5 text-center">
-        <div className="max-w-2xl mx-auto space-y-2">
-          <img src={logoDark} alt="CompCare" className="h-8 sm:h-9 mx-auto mb-4" />
-          <p className="text-xs uppercase tracking-widest text-primary-foreground/60">
-            Din personliga rapport
-          </p>
-          <h1 className="text-2xl sm:text-3xl text-primary-foreground leading-tight">
+      {/* Header — compact, mobile-first */}
+      <header className="hero-gradient px-5 pt-8 pb-8 sm:pt-10 sm:pb-10">
+        <div className="max-w-lg mx-auto space-y-3">
+          <img src={logoDark} alt="CompCare" className="h-7 mb-5" />
+          <p className="text-xs uppercase tracking-widest text-primary-foreground/50 font-medium">
             Ersättningsanalys
-          </h1>
-          <p className="text-base font-medium text-primary-foreground/90">
-            {report.occupation} · {report.kommun}
           </p>
-          <p className="text-sm text-primary-foreground/60">
-            {isPermanentTrack ? "Fast tjänst" : "Konsultuppdrag"} · {isEmployee ? "Anställd" : "Eget bolag"}
+          <h1 className="text-xl sm:text-2xl font-bold text-primary-foreground leading-snug">
+            {report.occupation}
+          </h1>
+          <p className="text-sm text-primary-foreground/70">
+            {report.kommun} · {isPermanentTrack ? "Fast tjänst" : "Konsultuppdrag"} · {isEmployee ? "Anställd" : "Eget bolag"}
           </p>
         </div>
       </header>
 
-      <main className="px-4 py-8 max-w-2xl mx-auto space-y-4">
+      <main className="px-5 py-6 max-w-lg mx-auto space-y-5">
         {report.unlocked_by_referral && (
-          <div className="flex items-center justify-center gap-2 py-2 px-4 bg-accent/10 border border-accent/20 rounded-lg text-xs text-accent font-medium">
+          <div className="flex items-center gap-2 py-2.5 px-4 bg-accent/10 border border-accent/20 rounded-xl text-xs text-accent font-medium">
             <ShieldCheck className="w-4 h-4" />
             Upplåst via kollegatips
           </div>
@@ -158,8 +156,8 @@ export default function Report() {
           />
         )}
 
-        {/* Share actions */}
-        <div className="flex flex-col gap-3">
+        {/* Share actions — stacked on mobile */}
+        <div className="space-y-3">
           <ShareButton
             title="CompCare.se – Ersättningsanalys"
             text={`Jag kollade min ersättning som ${report.occupation} med CompCare.se — rekommenderar det!`}
@@ -168,13 +166,13 @@ export default function Report() {
           />
           <div className="flex gap-3">
             {!isFriendCoupon && (
-              <Button variant="outline" className="flex-1 gap-2" onClick={() => window.print()}>
+              <Button variant="outline" className="flex-1 gap-2 h-12 rounded-xl" onClick={() => window.print()}>
                 <Download className="w-4 h-4" /> PDF
               </Button>
             )}
             <Button
               variant="outline"
-              className="flex-1 gap-2"
+              className="flex-1 gap-2 h-12 rounded-xl"
               onClick={() => {
                 const shareUrl = window.location.origin;
                 const word = report?.employment_type === "foretagare" ? "ersättningsutrymme" : "löneutrymme";
@@ -191,7 +189,7 @@ export default function Report() {
         </div>
 
         <Separator />
-        <p className="text-xs text-muted-foreground text-center leading-relaxed pb-8">
+        <p className="text-xs text-muted-foreground text-center leading-relaxed pb-6">
           Denna rapport baseras på gällande avtal från SKR och är avsedd som vägledning.
           Faktisk ersättning kan variera beroende på arbetsgivare, uppdrag och individuella avtal.
           <br />
