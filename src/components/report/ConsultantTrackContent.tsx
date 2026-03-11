@@ -332,49 +332,6 @@ export default function ConsultantTrackContent({
       )}
 
 
-      {/* ═══ Nästa steg — Premium action card ═══ */}
-      {isConsultantFullAccess && rec && !isAboveThreshold && (
-        <div className="relative rounded-2xl bg-gradient-to-b from-foreground/[0.06] to-foreground/[0.02] border border-foreground/10 p-6 overflow-hidden">
-          {/* Top accent line */}
-          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent" />
-
-          <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-              <Lightbulb className="w-5 h-5 text-primary" />
-            </div>
-            <h2 className="text-xl font-bold text-foreground">Nästa steg — vad du ska säga</h2>
-          </div>
-
-          {/* Timeline */}
-          <div className="space-y-5 relative">
-            <div className="absolute left-[15px] top-2 bottom-2 w-[2px] bg-gradient-to-b from-primary/40 to-transparent" />
-
-            <ScriptStep
-              step={1}
-              title="Boka möte"
-              text="Kontakta din bemanningskonsult och begär ett ersättningssamtal. Nämn att du har gjort en marknadsanalys."
-            />
-            <ScriptStep
-              step={2}
-              title="Presentera data"
-              text={`"Jag har tagit fram ramavtalspriset för ${occupation} i min region. Kundpriset ligger på ${fmt(marketRate)} kr/h, och därför borde min ersättning landa runt ${fmt(rec.recommended_hourly_max)} kr/h efter er marginal."`}
-            />
-            <ScriptStep
-              step={3}
-              title="Ställ frågan"
-              text={`"Jag vill att min ersättning justeras. Kan vi hitta en lösning?"`}
-            />
-            {isEmployee && (
-              <ScriptStep
-                step={4}
-                title="Bonus: fråga om pension"
-                text={`"Ingår tjänstepension på minst 4.5% i min anställning? Det är standard i ramavtalet."`}
-              />
-            )}
-          </div>
-        </div>
-      )}
-
       {/* Toppskiktet — för konsulter nära kundpris */}
       {isConsultantFullAccess && isAboveThreshold && (
         <div className="relative rounded-2xl bg-gradient-to-b from-foreground/[0.06] to-foreground/[0.02] border border-foreground/10 p-6 overflow-hidden">
