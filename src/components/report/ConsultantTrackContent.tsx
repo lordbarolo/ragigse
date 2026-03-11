@@ -106,7 +106,7 @@ export default function ConsultantTrackContent({
   const currentSalary = r.inputs.current_salary_sek;
   const salaryIsHourly = r.inputs.salary_type === "hourly";
   const currentHourly = salaryIsHourly ? currentSalary : (isEmployee ? Math.round(currentSalary / 167) : currentSalary);
-  const recommendedMax = rec ? rec.recommended_hourly_max : Math.round(marketRate * (1 - margin));
+  const recommendedMax = rec ? rec.recommended_hourly_max : Math.round(marketRate * shareMax);
   const isAboveThreshold = recommendedMax > 0 && currentHourly >= recommendedMax;
 
   return (
