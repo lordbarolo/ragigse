@@ -405,17 +405,17 @@ export default function ConsultantTrackContent({
           <CollapsibleContent className="pt-4 space-y-4">
             <div className="space-y-3 text-sm text-muted-foreground">
               <CalcRow label="Ramavtalspris (vad regionen betalar)" value={`${fmt(marketRate)} kr/h`} />
-              <CalcRow label={`Bemanningsbolagets marginal (${marginLabel})`} value={`−${fmt(Math.round(marketRate * margin))} kr/h`} />
-              <CalcRow label="Ersättningsutrymme efter marginal" value={`${fmt(afterMargin)} kr/h`} />
+              <CalcRow label={`Bemanningsbolagets marginal (${marginLabel})`} value={`−${fmt(Math.round(marketRate * (1 - shareMax)))}–${fmt(Math.round(marketRate * (1 - shareMin)))} kr/h`} />
+              <CalcRow label="Ersättningsutrymme efter marginal" value={`${fmt(afterMarginMin)}–${fmt(afterMarginMax)} kr/h`} />
               {isEmployee ? (
                 <CalcRow
                   label="÷ 1,42 (arbetsgivaravg. + semester + pension)"
-                  value={`= ${fmt(Math.round(afterMargin / 1.42))} kr/h brutto`}
+                  value={`= ${fmt(Math.round(afterMarginMin / 1.42))}–${fmt(Math.round(afterMarginMax / 1.42))} kr/h brutto`}
                 />
               ) : (
                 <p className="text-xs text-muted-foreground/70 pt-1">
-                  Som egenföretagare bör du fakturera {Math.round((1 - margin) * 100)}% av kundpriset, dvs{" "}
-                  {fmt(rec.recommended_hourly_max)} kr/h.
+                  Som egenföretagare bör du fakturera {Math.round(shareMin * 100)}–{Math.round(shareMax * 100)}% av kundpriset, dvs{" "}
+                  {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h.
                 </p>
               )}
             </div>
