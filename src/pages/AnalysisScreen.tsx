@@ -167,10 +167,10 @@ export default function AnalysisScreen() {
     finalize(activeReportId);
   };
 
-  /* ── Derive step states ── */
+  /* ── Derive step states from elapsed seconds ── */
   const getStepState = (i: number): "hidden" | "active" | "done" => {
-    if (progress < STEP_START[i]) return "hidden";
-    if (progress >= STEP_DONE[i]) return "done";
+    if (elapsedSec < STEP_APPEAR_AT_SEC[i]) return "hidden";
+    if (elapsedSec >= STEP_DONE_AT_SEC[i]) return "done";
     return "active";
   };
 
