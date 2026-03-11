@@ -484,6 +484,37 @@ export default function ConsultantTrackContent({
         </div>
       )}
 
+      {/* ═══ SEKTION 4 — Personliga Insights ═══ */}
+      {isConsultantFullAccess && rec && (
+        <div ref={registerSectionRef?.("personal_insights")}>
+          <PersonalInsights
+            r={r}
+            currentHourly={currentHourly}
+            isEmployee={isEmployee}
+            occupation={occupation}
+            userZone={userZone}
+            zoneComparisons={zoneComparisons}
+          />
+        </div>
+      )}
+
+      {/* ═══ SEKTION 5 — Kollegajämförelse ═══ */}
+      {isConsultantFullAccess && (
+        <div ref={registerSectionRef?.("colleague_comparison")}>
+          <ColleagueComparison
+            occupation={occupation}
+            percentilePosition={
+              marketRate > 0 && currentHourly > 0
+                ? (Math.round((currentHourly / marketRate) * 100) >= 90 ? 85
+                  : Math.round((currentHourly / marketRate) * 100) >= 85 ? 70
+                  : Math.round((currentHourly / marketRate) * 100) >= 75 ? 45
+                  : Math.round((currentHourly / marketRate) * 100) >= 65 ? 25 : 10)
+                : 0
+            }
+          />
+        </div>
+      )}
+
       {/* Invoice Review CTA */}
       {isConsultantFullAccess && leadId && email && (
         <InvoiceReviewCTA
