@@ -246,15 +246,15 @@ serve(async (req) => {
 
     // Calculate using shared module with DB model
     const empType = employment_type as EmploymentType;
-    // For foretagare: doctors 10% margin (share=0.90), nurses 14% margin (share=0.86)
-    const isDoctor = /läkare/i.test(occupation);
-    const FORETAGARE_SHARE = isDoctor ? 0.90 : 0.86;
+    // For foretagare: 8-15% margin (85-92% to consultant)
+    const FORETAGARE_SHARE_MIN = 0.85;
+    const FORETAGARE_SHARE_MAX = 0.92;
     const effectiveModel: MarginModel | undefined = model
       ? (empType === "foretagare"
-        ? { ...model, share_min: FORETAGARE_SHARE, share_max: FORETAGARE_SHARE }
+        ? { ...model, share_min: FORETAGARE_SHARE_MIN, share_max: FORETAGARE_SHARE_MAX }
         : model)
       : (empType === "foretagare"
-        ? { share_min: FORETAGARE_SHARE, share_max: FORETAGARE_SHARE, employer_factor: 1.42, hours_per_month: 167 }
+        ? { share_min: FORETAGARE_SHARE_MIN, share_max: FORETAGARE_SHARE_MAX, employer_factor: 1.42, hours_per_month: 167 }
         : undefined);
     const effectiveM = effectiveModel ?? m;
     const range = calculateSalaryRange(timprisKund, empType, effectiveModel);
@@ -282,8 +282,8 @@ serve(async (req) => {
         rate_customer_sek_per_hour: timprisKund,
       },
       recommendation: {
-        consultant_share_min: m.share_min,
-        consultant_share_max: m.share_max,
+        consultant_share_min: effectiveM.share_min,
+        consultant_share_max: effectiveM.share_max,
         employee_factor: factor,
         recommended_hourly_min: range.hourly_min,
         recommended_hourly_max: range.hourly_max,
