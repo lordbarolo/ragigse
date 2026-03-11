@@ -18,11 +18,14 @@ const STEPS = [
 ];
 
 /* ── Progress thresholds: when each step STARTS being active ── */
-const STEP_START = [0, 15, 30, 50, 85];
-/* When step completes (next step starts, or email pause) */
-const STEP_DONE = [15, 30, 50, 85, 100];
+/* 12s total: 7s to 85%, pause for email, then 5s to 100% after submit.
+   Steps appear every ~3s based on elapsed time. */
+const STEP_APPEAR_AT_SEC = [0, 1.5, 4.5, 7.5, 10.5]; // seconds when each step becomes active
+const STEP_DONE_AT_SEC   = [4.5, 7.5, 10.5, 13.5, 15]; // seconds when each step completes
 
 const EMAIL_PAUSE = 85;
+const PHASE1_DURATION = 7000; // 7s to reach 85%
+const PHASE2_DURATION = 5000; // 5s from 85→100 after email
 
 type Phase =
   | "animating"        // bar moving, steps revealing
