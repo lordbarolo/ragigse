@@ -6,17 +6,15 @@ import { toast } from "sonner";
 import { Progress } from "@/components/ui/progress";
 import EmailGate from "@/components/teaser/EmailGate";
 import type { SurveyData } from "@/components/Survey";
-import {
-  BarChart3, MapPin, TrendingUp, Search, FileText, CheckCircle2,
-} from "lucide-react";
+import { CheckCircle2, ArrowRight, Loader2 } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 
 const ANALYSIS_STEPS = [
-  { icon: Search, label: "Hämtar ramavtalspriser…", threshold: 10 },
-  { icon: MapPin, label: "Identifierar din zon…", threshold: 25 },
-  { icon: BarChart3, label: "Jämför med marknaden…", threshold: 40 },
-  { icon: TrendingUp, label: "Beräknar förhandlingsutrymme…", threshold: 55 },
-  { icon: FileText, label: "Sammanställer din rapport…", threshold: 70 },
+  { label: "21 regioner", threshold: 15 },
+  { label: "290 kommuner", threshold: 30 },
+  { label: "Konsulter i samma specialitet", threshold: 50 },
+  { label: "Beräknar din position i marknaden", threshold: 70 },
+  { label: "Sammanställer din rapport", threshold: 85 },
 ];
 
 const EMAIL_PAUSE_AT = 85;
@@ -183,17 +181,10 @@ export default function AnalysisScreen() {
       <main className="flex-1 flex flex-col items-center px-5 pt-6 pb-10 sm:pt-12 max-w-md mx-auto w-full">
         {/* Progress section */}
         <div className="w-full space-y-6">
-          <div className="text-center space-y-2">
-            <h1 className="text-xl font-bold text-foreground">
-              {completing ? "Färdigställer din rapport…" : paused ? "Nästan klar!" : "Analyserar din ersättning…"}
+          <div className="text-center space-y-1">
+            <h1 className="text-lg font-bold text-foreground">
+              {completing ? "Färdigställer din rapport…" : paused ? "Nästan klar!" : "Analyserar din ersättning"}
             </h1>
-            <p className="text-sm text-muted-foreground">
-              {completing
-                ? "Bara ett ögonblick till"
-                : paused
-                  ? "Vi behöver din e-post för att slutföra analysen"
-                  : "Vi jämför dina uppgifter med aktuella ramavtalspriser"}
-            </p>
           </div>
 
           {/* Progress bar */}
@@ -208,35 +199,27 @@ export default function AnalysisScreen() {
           </div>
 
           {/* Dynamic step list */}
-          <div className="space-y-2.5">
-            {ANALYSIS_STEPS.map(({ icon: Icon, label, threshold }, i) => {
+          <div className="space-y-3">
+            {ANALYSIS_STEPS.map(({ label, threshold }, i) => {
               const done = progress >= threshold;
               const active = i === currentStepIdx && !done;
 
               return (
                 <div
                   key={i}
-                  className={`flex items-center gap-3 py-2 px-3 rounded-lg transition-all duration-500 ${
-                    done
-                      ? "opacity-100"
-                      : active
-                        ? "opacity-100 bg-primary/5"
-                        : "opacity-30"
+                  className={`flex items-center gap-3 transition-all duration-500 ${
+                    done ? "opacity-100" : active ? "opacity-100" : "opacity-0 h-0 overflow-hidden"
                   }`}
                 >
-                  <div className={`p-1.5 rounded-md shrink-0 transition-colors duration-300 ${
-                    done ? "bg-primary/15 text-primary" : active ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"
+                  {done ? (
+                    <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
+                  ) : (
+                    <ArrowRight className="w-4 h-4 text-primary shrink-0 animate-pulse" />
+                  )}
+                  <span className={`text-sm ${
+                    done ? "text-muted-foreground" : "text-foreground font-medium"
                   }`}>
-                    {done ? (
-                      <CheckCircle2 className="w-4 h-4" />
-                    ) : (
-                      <Icon className="w-4 h-4" />
-                    )}
-                  </div>
-                  <span className={`text-sm transition-colors duration-300 ${
-                    done ? "text-foreground font-medium" : active ? "text-foreground" : "text-muted-foreground"
-                  }`}>
-                    {done ? label.replace("…", " ✓") : label}
+                    {label}
                   </span>
                 </div>
               );
