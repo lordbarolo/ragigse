@@ -427,6 +427,16 @@ export default function Teaser() {
           }}
         />
 
+        {/* WOW hero — immediate value proposition */}
+        {isUnderpaid && !isAboveThreshold && (
+          <WowHero
+            diffHourly={result ? result.high - userHourly : 0}
+            isPermanent={isPermanent}
+            monthlyGap={benchmarkMonthly ? benchmarkMonthly.p75 - userMonthly : 0}
+            kommun={survey.kommun}
+          />
+        )}
+
         {/* Market position — no blur, honest indicator */}
         <MarketDiagnosisCard
           diffPercent={diffPercent}
