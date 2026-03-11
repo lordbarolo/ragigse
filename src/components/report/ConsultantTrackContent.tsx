@@ -536,7 +536,7 @@ export default function ConsultantTrackContent({
                         />
                       </div>
                       <p className="text-xs text-muted-foreground">
-                        Rekommenderad {isEmployee ? 'bruttoersättning' : 'ersättning'}: {isEmployee ? `${fmt(recHourly)}–${fmt(recHourlyHigh)}` : fmt(recHourlyHigh)} kr/h
+                        Rekommenderad {isEmployee ? 'bruttoersättning' : 'ersättning'}: {fmt(recHourly)}–{fmt(recHourlyHigh)} kr/h
                       </p>
                     </div>
                   );
