@@ -104,7 +104,7 @@ export default function Report() {
         <div className="max-w-2xl mx-auto space-y-2">
           <img src={logoDark} alt="CompCare" className="h-8 sm:h-9 mx-auto mb-4" />
           <p className="text-xs uppercase tracking-widest text-primary-foreground/60">
-            {isFullAccess ? "Din personliga rapport" : "Förhandsgranskning"}
+            Din personliga rapport
           </p>
           <h1 className="text-2xl sm:text-3xl text-primary-foreground leading-tight">
             Ersättningsanalys
