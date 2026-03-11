@@ -108,19 +108,19 @@ export default function ConsultantTrackContent({
     <>
       {/* ═══ NIVÅ 1 — Hero: Ramavtalspris ═══ */}
       {isConsultantFullAccess ? (
-        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/20 p-6">
-          <p className="text-muted-foreground text-xs font-medium uppercase tracking-wider mb-1">
-            Vad regionen betalar till bemanningsföretag
+        <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 to-transparent border border-primary/20 p-5 sm:p-6">
+          <p className="text-muted-foreground text-xs font-medium uppercase tracking-wider mb-2">
+            Vad regionen betalar bemanningsföretaget
           </p>
-          <p className="text-5xl font-bold text-foreground">
-            {fmt(marketRate)} <span className="text-2xl text-muted-foreground">kr/h</span>
+          <p className="text-4xl sm:text-5xl font-bold text-foreground tabular-nums">
+            {fmt(marketRate)} <span className="text-xl sm:text-2xl text-muted-foreground font-medium">kr/h</span>
           </p>
           <p className="text-muted-foreground/60 text-sm mt-2">
-            Grundtimpris enligt ramavtal (OB/jour ej inkluderat)
+            Grundtimpris enligt ramavtal · OB/jour ej inkluderat
           </p>
         </div>
       ) : (
-        <div className="relative overflow-hidden rounded-2xl bg-muted/50 border border-border p-6">
+        <div className="relative overflow-hidden rounded-2xl bg-muted/50 border border-border p-5 sm:p-6">
           <p className="text-muted-foreground text-xs font-medium uppercase tracking-wider mb-1">
             Vad regionen betalar till bemanningsföretag
           </p>
@@ -135,7 +135,7 @@ export default function ConsultantTrackContent({
       )}
 
       {/* Salary Gauge */}
-      <div className="rounded-xl bg-foreground/[0.02] p-5">
+      <div className="rounded-xl bg-foreground/[0.02] p-4 sm:p-5">
         <SalaryGauge
           currentHourly={currentHourly}
           marketLow={rec ? rec.recommended_hourly_min : Math.round(marketRate * 0.6)}
