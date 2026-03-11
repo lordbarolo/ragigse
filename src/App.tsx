@@ -8,6 +8,7 @@ import { Loader2 } from "lucide-react";
 import Index from "./pages/Index";
 
 // Lazy-loaded routes for code splitting
+const AnalysisScreen = lazy(() => import("./pages/AnalysisScreen"));
 const Teaser = lazy(() => import("./pages/Teaser"));
 const ReferralLanding = lazy(() => import("./pages/ReferralLanding"));
 const Report = lazy(() => import("./pages/Report"));
@@ -38,7 +39,7 @@ const App = () => (
         <Suspense fallback={<Loading />}>
           <Routes>
             <Route path="/" element={<Index />} />
-            <Route path="/resultat/:leadId" element={<Teaser />} />
+            <Route path="/resultat/:leadId" element={<AnalysisScreen />} />
             <Route path="/referral/:token" element={<ReferralLanding />} />
             <Route path="/betalning-klar" element={<PaymentSuccess />} />
             <Route path="/rapport/:reportId" element={<Report />} />
