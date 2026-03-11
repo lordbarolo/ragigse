@@ -39,6 +39,7 @@ export default function AnalysisScreen() {
 
   const [phase, setPhase] = useState<Phase>("animating");
   const [progress, setProgress] = useState(0);
+  const [elapsedSec, setElapsedSec] = useState(0);
   const [emailSaving, setEmailSaving] = useState(false);
   const [survey, setSurvey] = useState<SurveyData | null>(null);
   const [leadId, setLeadId] = useState("");
@@ -46,6 +47,7 @@ export default function AnalysisScreen() {
 
   const rafRef = useRef<number | null>(null);
   const startRef = useRef(Date.now());
+  const emailPauseTime = useRef(0);
 
   /* ── Init ── */
   useEffect(() => {
