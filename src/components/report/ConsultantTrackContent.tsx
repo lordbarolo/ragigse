@@ -509,11 +509,11 @@ export default function ConsultantTrackContent({
                   const isUserZone = zc.zon === userZone;
                   const zoneRate = zc.timpris_kund;
                   const recHourly = isEmployee
-                    ? Math.round((zoneRate * 0.85) / 1.42)
-                    : Math.round(zoneRate * (1 - margin));
+                    ? Math.round((zoneRate * shareMin) / 1.42)
+                    : Math.round(zoneRate * shareMin);
                   const recHourlyHigh = isEmployee
-                    ? Math.round((zoneRate * 0.90) / 1.42)
-                    : Math.round(zoneRate * (1 - margin));
+                    ? Math.round((zoneRate * shareMax) / 1.42)
+                    : Math.round(zoneRate * shareMax);
                   const maxRate = Math.max(...zoneComparisons.map((z) => z.timpris_kund));
                   const barWidth = Math.round((zoneRate / maxRate) * 100);
                   return (
