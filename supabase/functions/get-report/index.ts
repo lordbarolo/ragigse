@@ -40,7 +40,8 @@ serve(async (req) => {
       });
     }
 
-    // Determine access level
+    // Determine access level — reports are free once email is provided
+    const hasEmail = !!report.email;
     const isPaid = report.status === "paid";
     const isReferralUnlocked = report.unlocked_by_referral === true;
     const isOwner = auth_user_id && report.user_id === auth_user_id;
