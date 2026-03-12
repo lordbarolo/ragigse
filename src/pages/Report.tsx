@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { ShieldCheck, Loader2, Download, Linkedin } from "lucide-react";
+import { Loader2, Download, Linkedin } from "lucide-react";
 import { trackEvent } from "@/lib/trackEvent";
 import { getCouponCode } from "@/lib/captureParams";
 import CompcareLogo from "@/components/CompcareLogo";
@@ -120,13 +120,7 @@ export default function Report() {
         </div>
       </header>
 
-      <main className="px-5 py-8 max-w-lg mx-auto space-y-6">
-        {report.unlocked_by_referral && (
-          <div className="flex items-center gap-2 py-2.5 px-4 bg-accent/10 border border-accent/20 rounded-xl text-xs text-accent font-medium">
-            <ShieldCheck className="w-4 h-4" />
-            Upplåst via kollegatips
-          </div>
-        )}
+      <main className="px-4 py-6 max-w-lg mx-auto space-y-2.5">
 
         {isPermanentTrack ? (
           <PermanentTrackContent
