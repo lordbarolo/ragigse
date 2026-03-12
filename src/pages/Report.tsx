@@ -119,6 +119,11 @@ export default function Report() {
           </div>
         </div>
       </header>
+      <div className="bg-muted/60 border-b border-border px-5 py-2.5">
+        <p className="text-[11px] text-muted-foreground text-center max-w-lg mx-auto leading-snug">
+          Rapportens belopp avser villkor för regionernas nationella upphandling av hyrpersonal.
+        </p>
+      </div>
 
       <main className="px-4 py-6 max-w-lg mx-auto space-y-2.5">
 
