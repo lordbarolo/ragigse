@@ -5,11 +5,13 @@ export default function ShareButton({
   text,
   url,
   className = "",
+  label = "Dela med en kollega",
 }: {
   title: string;
   text: string;
   url?: string;
   className?: string;
+  label?: string;
 }) {
   const shareUrl = url || window.location.href;
 
@@ -36,7 +38,7 @@ export default function ShareButton({
       className={`flex items-center justify-center gap-2 py-3 rounded-lg font-medium text-sm border border-border text-foreground hover:bg-muted transition-all ${className}`}
     >
       <Share2 className="w-4 h-4" />
-      Dela med en kollega
+      {label}
     </button>
   );
 }
