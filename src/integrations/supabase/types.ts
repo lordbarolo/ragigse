@@ -623,6 +623,42 @@ export type Database = {
         }
         Relationships: []
       }
+      followup_emails: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          lead_id: string
+          report_id: string | null
+          scheduled_for: string
+          sent_at: string | null
+          sequence_step: number
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          lead_id: string
+          report_id?: string | null
+          scheduled_for: string
+          sent_at?: string | null
+          sequence_step?: number
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          lead_id?: string
+          report_id?: string | null
+          scheduled_for?: string
+          sent_at?: string | null
+          sequence_step?: number
+          status?: string
+        }
+        Relationships: []
+      }
       invoice_lines: {
         Row: {
           assignment_id: string
@@ -727,6 +763,7 @@ export type Database = {
           experience: number | null
           id: string
           kommun: string | null
+          ob_share: string | null
           paid: boolean
           salary_type: string | null
           updated_at: string
@@ -740,6 +777,7 @@ export type Database = {
           experience?: number | null
           id?: string
           kommun?: string | null
+          ob_share?: string | null
           paid?: boolean
           salary_type?: string | null
           updated_at?: string
@@ -753,6 +791,7 @@ export type Database = {
           experience?: number | null
           id?: string
           kommun?: string | null
+          ob_share?: string | null
           paid?: boolean
           salary_type?: string | null
           updated_at?: string
