@@ -80,6 +80,7 @@ export default function Survey() {
     experience: 5,
     salaryType: "hourly",
     currentSalary: 0,
+    obShare: "",
   });
 
   // Step 1 state
