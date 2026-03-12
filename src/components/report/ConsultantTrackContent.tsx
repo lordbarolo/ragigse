@@ -434,6 +434,16 @@ export default function ConsultantTrackContent({
           </div>
         </div>
       )}
+      {/* ═══ 4b. PRISHISTORIK ═══ */}
+      {isConsultantFullAccess && priceHistory && priceHistory.length > 0 && (
+        <div ref={registerSectionRef?.("price_history")}>
+          <PriceHistory
+            changes={priceHistory}
+            userZone={userZone}
+            occupation={occupation}
+          />
+        </div>
+      )}
 
       {/* ═══ 5. DIN ANDEL AV KUNDPRISET ═══ */}
       {isConsultantFullAccess && marketRate > 0 && currentHourly > 0 && (

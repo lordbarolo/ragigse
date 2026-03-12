@@ -142,6 +142,7 @@ export default function Report() {
             leadId={report.lead_id}
             email={report.email}
             reportId={report.id}
+            priceHistory={report.price_history}
           />
         )}
 
