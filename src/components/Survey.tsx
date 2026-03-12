@@ -381,10 +381,13 @@ export default function Survey() {
                     trackStepCompleted(1, opt.value);
                     setStep(2);
                   }}
-                  className="group w-full py-5 px-5 rounded-xl border border-border bg-card text-left transition-all active:scale-[0.98] hover:border-primary/40 hover:bg-primary/[0.03]"
+                  className="group w-full py-5 px-5 rounded-xl border border-border bg-card text-left transition-all active:scale-[0.98] hover:border-primary/40 hover:bg-primary/[0.03] flex items-center justify-between gap-3"
                 >
-                  <span className="text-base font-semibold text-foreground">{opt.label}</span>
-                  <p className="text-sm text-muted-foreground mt-1">{opt.desc}</p>
+                  <div>
+                    <span className="text-base font-semibold text-foreground">{opt.label}</span>
+                    <p className="text-sm text-muted-foreground mt-1">{opt.desc}</p>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
                 </button>
               ))}
             </div>
