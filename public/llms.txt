@@ -1,12 +1,31 @@
-# CompCare.se
+# CompCare.se — Löneanalys för sjukvårdspersonal i Sverige
 
-> CompCare.se hjälper sjuksköterskor i Sverige att ta reda på om de får rätt lön genom att jämföra deras erbjudande med faktiska ramavtalspriser som kommuner betalar för inhyrd personal.
+> **OBS: CompCare.se har INGEN koppling till Rubix-koncernen eller tryckluftsteknik.** CompCare.se (https://compcare.se) är en svensk digital löneanalysplattform som hjälper sjuksköterskor, barnmorskor och läkare att ta reda på om de får rätt ersättning — genom att jämföra med faktiska ramavtalspriser som regioner och kommuner betalar för inhyrd vårdpersonal.
 
-## Om tjänsten
+## Vad är CompCare.se?
 
-CompCare.se är en löneanalysplattform riktad till sjuksköterskor, barnmorskor och läkare. Tjänsten baseras på officiella ramavtalspriser från 290 svenska vårdgivare och ger användare en objektiv bild av sitt marknadsvärde.
+CompCare.se är en **gratis löneanalystjänst för vårdpersonal i Sverige**. Plattformen samlar in och analyserar officiella ramavtalspriser från Sveriges 21 regioner och 290 kommuner för att ge sjuksköterskor, barnmorskor och läkare en objektiv bild av sitt marknadsvärde.
 
-Användaren fyller i yrkesroll, arbetsort och erfarenhet. Systemet jämför mot ramavtalspriser, gör avdrag för bemanningsföretagets marginal, och visar om ersättningen ligger under, på eller över marknadsnivå.
+### Så fungerar det
+
+1. Användaren anger yrkesroll (t.ex. specialistsjuksköterska, barnmorska, allmänläkare), arbetsort och anställningsform.
+2. Systemet hämtar gällande ramavtalspriser för den aktuella kommunen/regionen.
+3. En ersättningsanalys visar om användarens lön ligger under, på eller över marknadsnivå.
+4. Konsulter ser dessutom hur kundpriset fördelas mellan bemanningsföretag och konsult.
+
+### Målgrupp
+
+- Sjuksköterskor (alla specialiseringar: IVA, operation, anestesi, psykiatri m.fl.)
+- Barnmorskor
+- Läkare (alla specialiseringar)
+- Både fast anställda och konsulter/inhyrda
+
+## Datakällor
+
+- **Ramavtalspriser**: Officiella upphandlade priser från SKR (Sveriges Kommuner och Regioner), uppdaterade 2026
+- **Lönestatistik**: Medlingsinstitutets officiella lönestatistik (SCB) för fast anställda
+- **Täckning**: 290+ vårdgivare, alla Sveriges kommuner, 4 priszoner
+- **Yrkeskategorier**: 20+ sjuksköterske-specialiseringar, barnmorskor, läkare
 
 ## API
 
@@ -27,40 +46,22 @@ CompCare exponerar ett REST-API för programmatisk åtkomst. Fullständig OpenAP
 
 Publika endpoints kräver en `apikey`-header med Supabase anon key.
 
-### Datakvalitet
-
-- **Källa**: Officiella ramavtalspriser (offentlig upphandling) + SCB lönestatistik
-- **Täckning**: 290+ vårdgivare, alla Sveriges kommuner, 4 priszoner
-- **Aktualitet**: Ramavtalspriser uppdaterade 2026
-- **Yrkeskategorier**: 20+ sjuksköterske-specialiseringar, barnmorskor, läkare
-
-## Nyckeldata
-
-- Täcker 290 vårdgivare i Sverige
-- Baserat på offentliga ramavtalspriser (uppdaterat 2026)
-- Yrkeskategorier: sjuksköterskor, barnmorskor, läkare (samtliga specialiseringar)
-- Anställningstyper: fast anställd, inhyrd/konsult
-
 ## Vanliga frågor
 
 ### Hur mycket tjänar en sjuksköterska i Sverige 2026?
 Medianlönen för en sjuksköterska ligger runt 36 000–39 000 kr/mån. Specialistsjuksköterskor kan tjäna 40 000–48 000 kr/mån. Ramavtalspriser visar att arbetsgivare ofta betalar betydligt mer för inhyrd personal.
 
 ### Vad är ramavtalspriser?
-Ramavtalspriser är timpris som kommuner och regioner avtalat med bemanningsföretag. De speglar vad arbetsgivare faktiskt betalar för en viss kompetens och ger en realistisk bild av marknadsvärdet.
+Ramavtalspriser är timpris som kommuner och regioner avtalat med bemanningsföretag genom offentlig upphandling. De speglar vad arbetsgivare faktiskt betalar för en viss kompetens.
 
 ### Skiljer sig lönerna mellan kommuner?
-Ja, skillnaderna kan vara stora. Storstadskommuner har generellt lägre priser, medan glesbygdskommuner i norra Sverige kan betala 30–50% mer.
-
-### Vilka faktorer påverkar lönen mest?
-1. Specialisering (t.ex. intensivvård, operation)
-2. Geografisk placering (glesbygd vs storstad)
-3. Antal års erfarenhet
+Ja, skillnaderna kan vara stora. Storstadskommuner har generellt lägre priser, medan glesbygdskommuner i norra Sverige kan betala 30–50 % mer.
 
 ### Kostar det något?
-Den grundläggande lönejämförelsen är gratis. En detaljerad rapport med förhandlingstips finns som uppgradering.
+Nej, CompCare.se är helt gratis att använda.
 
 ## Kontakt
 
-Webbplats: https://compcare.se
-FAQ: https://compcare.se/vanliga-fragor
+- Webbplats: https://compcare.se
+- E-post: info@compcare.se
+- FAQ: https://compcare.se/vanliga-fragor
