@@ -20,6 +20,7 @@ const Admin = lazy(() => import("./pages/Admin"));
 const FAQ = lazy(() => import("./pages/FAQ"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const ThemePreview = lazy(() => import("./pages/ThemePreview"));
+const SharePreview = lazy(() => import("./pages/SharePreview"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
