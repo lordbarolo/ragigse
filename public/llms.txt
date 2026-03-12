@@ -8,6 +8,32 @@ CompCare.se är en löneanalysplattform riktad till sjuksköterskor, barnmorskor
 
 Användaren fyller i yrkesroll, arbetsort och erfarenhet. Systemet jämför mot ramavtalspriser, gör avdrag för bemanningsföretagets marginal, och visar om ersättningen ligger under, på eller över marknadsnivå.
 
+## API
+
+CompCare exponerar ett REST-API för programmatisk åtkomst. Fullständig OpenAPI 3.1-specifikation finns på:
+- OpenAPI JSON: https://compcare.se/openapi.json
+
+### Tillgängliga endpoints
+
+| Endpoint | Beskrivning |
+|----------|-------------|
+| `POST /pricing-engine` | Beräkna konsultersättning baserat på yrke, kommun och anställningstyp |
+| `POST /salary-benchmark-engine` | Hämta lönepercentiler (p25/p50/p75) för fast anställda |
+| `POST /create-report` | Generera en fullständig ersättningsanalys |
+| `POST /get-report` | Hämta en tidigare skapad rapport |
+| `POST /run-price-diff` | Jämför priser mellan ramavtalsversioner |
+
+### Autentisering
+
+Publika endpoints kräver en `apikey`-header med Supabase anon key.
+
+### Datakvalitet
+
+- **Källa**: Officiella ramavtalspriser (offentlig upphandling) + SCB lönestatistik
+- **Täckning**: 290+ vårdgivare, alla Sveriges kommuner, 4 priszoner
+- **Aktualitet**: Ramavtalspriser uppdaterade 2026
+- **Yrkeskategorier**: 20+ sjuksköterske-specialiseringar, barnmorskor, läkare
+
 ## Nyckeldata
 
 - Täcker 290 vårdgivare i Sverige
