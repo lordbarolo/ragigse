@@ -381,10 +381,13 @@ export default function Survey() {
                     trackStepCompleted(1, opt.value);
                     setStep(2);
                   }}
-                  className="group w-full py-5 px-5 rounded-xl border border-border bg-card text-left transition-all active:scale-[0.98] hover:border-primary/40 hover:bg-primary/[0.03]"
+                  className="group w-full py-5 px-5 rounded-xl border border-border bg-card text-left transition-all active:scale-[0.98] hover:border-primary/40 hover:bg-primary/[0.03] flex items-center justify-between gap-3"
                 >
-                  <span className="text-base font-semibold text-foreground">{opt.label}</span>
-                  <p className="text-sm text-muted-foreground mt-1">{opt.desc}</p>
+                  <div>
+                    <span className="text-base font-semibold text-foreground">{opt.label}</span>
+                    <p className="text-sm text-muted-foreground mt-1">{opt.desc}</p>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
                 </button>
               ))}
             </div>
@@ -424,9 +427,10 @@ export default function Survey() {
                 <button
                   key={region}
                   onClick={() => setSelectedRegion(region)}
-                  className="w-full py-3.5 px-4 rounded-xl border border-border bg-card text-left text-sm font-medium transition-all active:scale-[0.98] hover:border-primary/40"
+                  className="group w-full py-3.5 px-4 rounded-xl border border-border bg-card text-left text-sm font-medium transition-all active:scale-[0.98] hover:border-primary/40 flex items-center justify-between"
                 >
-                  {region}
+                  <span>{region}</span>
+                  <ArrowRight className="w-4 h-4 text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
                 </button>
               ))}
             </div>
@@ -630,7 +634,7 @@ function StepWrapper({
   return (
     <div className="animate-in fade-in slide-in-from-right-4 duration-300 flex-1 flex flex-col">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold text-foreground tracking-tight">{title}</h2>
+        <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight leading-tight">{title}</h2>
         {subtitle && <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>}
       </div>
       <div className="flex-1">{children}</div>
