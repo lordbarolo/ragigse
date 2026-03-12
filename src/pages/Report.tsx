@@ -158,8 +158,8 @@ export default function Report() {
         <div className="space-y-3 pt-2">
           <ShareButton
             title="CompCare.se – Ersättningsanalys"
-            text={`Jag kollade min ersättning som ${report.occupation} med CompCare.se — rekommenderar det!`}
-            url={window.location.origin}
+            text={`Hur stor är egentligen skillnaden mellan konsult och fast tjänst? Se din ersättning mot marknaden.`}
+            url={`${window.location.origin}/dela?yrke=${encodeURIComponent(report.occupation || "")}`}
             className="w-full"
           />
           <div className="flex gap-3">
@@ -172,9 +172,8 @@ export default function Report() {
               variant="outline"
               className="flex-1 gap-2 h-12 rounded-xl border-border/50 hover:border-border"
               onClick={() => {
-                const shareUrl = window.location.origin;
-                const word = report?.employment_type === "foretagare" ? "ersättningsutrymme" : "löneutrymme";
-                const text = `Jag har precis tagit reda på mitt verkliga ${word} som ${report.occupation} med CompCare.se — rekommenderar det!`;
+                const shareUrl = `${window.location.origin}/dela?yrke=${encodeURIComponent(report.occupation || "")}`;
+                const text = `Hur stor är egentligen skillnaden mellan konsult och fast tjänst? Se din ersättning mot marknaden.`;
                 window.open(
                   `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}&summary=${encodeURIComponent(text)}`,
                   "_blank", "width=600,height=500"

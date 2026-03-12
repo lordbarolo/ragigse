@@ -34,7 +34,8 @@ type EventName =
   | "email_submitted"
   | "analysis_started"
   | "analysis_email_pause"
-  | "analysis_completed";
+  | "analysis_completed"
+  | "share_preview_cta_clicked";
 
 export function trackEvent(
   eventName: EventName,

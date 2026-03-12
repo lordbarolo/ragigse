@@ -20,6 +20,7 @@ const Admin = lazy(() => import("./pages/Admin"));
 const FAQ = lazy(() => import("./pages/FAQ"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const ThemePreview = lazy(() => import("./pages/ThemePreview"));
+const SharePreview = lazy(() => import("./pages/SharePreview"));
 const NotFound = lazy(() => import("./pages/NotFound"));
 
 const queryClient = new QueryClient();
@@ -47,6 +48,7 @@ const App = () => (
             <Route path="/vanliga-fragor" element={<FAQ />} />
             <Route path="/integritetspolicy" element={<PrivacyPolicy />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/dela" element={<SharePreview />} />
             <Route path="/dev/theme-preview" element={<ThemePreview />} />
             {import.meta.env.DEV && (
               <>
