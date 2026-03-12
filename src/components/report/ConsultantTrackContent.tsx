@@ -42,6 +42,7 @@ interface Props {
   leadId?: string;
   email?: string;
   reportId?: string;
+  priceHistory?: PriceChange[];
 }
 
 /** Copyable script block with timeline styling */
