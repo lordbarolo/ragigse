@@ -53,6 +53,17 @@ export interface ZoneComparison {
   timpris_kund: number;
 }
 
+export interface PriceChange {
+  yrkeskategori: string;
+  zon: string;
+  old_timpris: number | null;
+  new_timpris: number;
+  diff_abs: number;
+  diff_pct: number;
+  change_type: string;
+  detected_at: string;
+}
+
 export interface ReportData {
   id: string;
   lead_id?: string;
@@ -67,6 +78,7 @@ export interface ReportData {
   result_json: ResultJson;
   zone_comparisons?: ZoneComparison[];
   user_zone?: string;
+  price_history?: PriceChange[];
 }
 
 export interface BenchmarkMonthly {

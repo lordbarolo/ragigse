@@ -21,9 +21,10 @@ export interface SurveyData {
   experience: number;
   salaryType: "hourly" | "monthly";
   currentSalary: number;
+  obShare: string;
 }
 
-const TOTAL_STEPS = 5;
+const TOTAL_STEPS = 6;
 
 type OccupationCategory = "" | "lakare" | "ssk";
 type CommuteType = "veckovis" | "dagligen" | "inte_alls" | "";
@@ -79,6 +80,7 @@ export default function Survey() {
     experience: 5,
     salaryType: "hourly",
     currentSalary: 0,
+    obShare: "",
   });
 
   // Step 1 state
@@ -100,7 +102,7 @@ export default function Survey() {
   const stepEntryTime = useRef<number>(Date.now());
   const surveyStarted = useRef(false);
 
-  const STEP_NAMES = ["yrkeskategori", "specialisering", "kommun", "anstallningsform", "ersattning"];
+  const STEP_NAMES = ["yrkeskategori", "specialisering", "kommun", "anstallningsform", "ersattning", "ob_andel"];
 
   useEffect(() => {
     stepEntryTime.current = Date.now();
@@ -214,6 +216,7 @@ export default function Survey() {
       case 3: return !!data.kommun;
       case 4: return !!data.employmentType;
       case 5: return data.currentSalary > 0;
+      case 6: return true; // OB is optional
       default: return false;
     }
   })();
@@ -227,6 +230,7 @@ export default function Survey() {
         3: data.kommun,
         4: data.employmentType,
         5: data.currentSalary,
+        6: data.obShare,
       };
       trackStepCompleted(step, stepAnswers[step]);
       setStep(step + 1);
@@ -244,6 +248,7 @@ export default function Survey() {
         experience: data.experience,
         salary_type: data.salaryType,
         current_salary: data.currentSalary,
+        ob_share: data.obShare || null,
       });
       if (error) throw error;
 
@@ -259,6 +264,7 @@ export default function Survey() {
           salary_type: data.salaryType,
           track,
           commute,
+          ob_share: data.obShare || null,
         },
       });
 
@@ -269,7 +275,7 @@ export default function Survey() {
       sessionStorage.setItem("surveyData", JSON.stringify({ ...data, track }));
       if (reportData.ab_variant) sessionStorage.setItem("abVariant", reportData.ab_variant);
       if (benchmarkResult) sessionStorage.setItem("benchmarkResult", JSON.stringify(benchmarkResult));
-      trackStepCompleted(5, data.currentSalary);
+      trackStepCompleted(6, data.obShare);
       const totalTime = surveyStartTime.current ? Math.round((Date.now() - surveyStartTime.current) / 1000) : 0;
       const hourlyRate = data.salaryType === "monthly"
         ? Math.round(data.currentSalary / 167)
@@ -524,6 +530,38 @@ export default function Survey() {
           </StepWrapper>
         )}
 
+        {/* Step 6: OB-andel */}
+        {step === 6 && (
+          <StepWrapper title="Hur stor del av din ersättning utgörs av OB, beredskap eller jour?">
+            <div className="flex flex-col gap-3">
+              {([
+                { value: "ingen", label: "Ingen", desc: "Jag har ingen OB, jour eller beredskap" },
+                { value: "liten", label: "Liten del (< 10%)", desc: "Enstaka pass med OB-tillägg" },
+                { value: "medel", label: "Medel (10–25%)", desc: "Regelbundna kvällar, helger eller jour" },
+                { value: "stor", label: "Stor del (> 25%)", desc: "Mycket natt, jour och beredskap" },
+              ]).map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => {
+                    setData({ ...data, obShare: opt.value });
+                  }}
+                  className={`group w-full py-4 px-5 rounded-xl border text-left transition-all active:scale-[0.98] ${
+                    data.obShare === opt.value
+                      ? "border-primary bg-primary/[0.06]"
+                      : "border-border bg-card hover:border-primary/40 hover:bg-primary/[0.03]"
+                  }`}
+                >
+                  <span className="text-base font-medium text-foreground">{opt.label}</span>
+                  <p className="text-sm text-muted-foreground mt-0.5">{opt.desc}</p>
+                </button>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground text-center mt-4">
+              Detta hjälper oss ge mer precisa rekommendationer.
+            </p>
+          </StepWrapper>
+        )}
+
       </div>
 
       {/* Navigation */}
@@ -543,6 +581,23 @@ export default function Survey() {
                   toast.error("Ange ersättning innan du fortsätter");
                   return;
                 }
+                if (!canProceed) return;
+                trackStepCompleted(5, data.currentSalary);
+                setStep(6);
+              }}
+              className={`flex-1 flex items-center justify-center gap-2 py-4 px-6 rounded-xl text-base font-semibold transition-all duration-200 active:scale-[0.97] ${
+                canProceed
+                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                  : "bg-muted text-muted-foreground cursor-not-allowed"
+              }`}
+            >
+              Nästa
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          )}
+          {step === 6 && (
+            <button
+              onClick={() => {
                 if (!canProceed || saving) return;
                 handleNext();
               }}

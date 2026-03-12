@@ -142,6 +142,7 @@ export default function Report() {
             leadId={report.lead_id}
             email={report.email}
             reportId={report.id}
+            priceHistory={report.price_history}
           />
         )}
 
@@ -164,7 +165,30 @@ export default function Report() {
           />
           <div className="flex gap-3">
             {!isFriendCoupon && (
-              <Button variant="outline" className="flex-1 gap-2 h-12 rounded-xl border-border/50 hover:border-border" onClick={() => window.print()}>
+              <Button variant="outline" className="flex-1 gap-2 h-12 rounded-xl border-border/50 hover:border-border" onClick={async () => {
+                try {
+                  const { data, error } = await supabase.functions.invoke("generate-pdf", {
+                    body: { report_id: report.id },
+                  });
+                  if (error || !data?.pdf_base64) {
+                    window.print();
+                    return;
+                  }
+                  const byteChars = atob(data.pdf_base64);
+                  const byteArray = new Uint8Array(byteChars.length);
+                  for (let i = 0; i < byteChars.length; i++) byteArray[i] = byteChars.charCodeAt(i);
+                  const blob = new Blob([byteArray], { type: "application/pdf" });
+                  const url = URL.createObjectURL(blob);
+                  const a = document.createElement("a");
+                  a.href = url;
+                  a.download = data.filename || "CompCare_Rapport.pdf";
+                  a.click();
+                  URL.revokeObjectURL(url);
+                  trackEvent("pdf_downloaded", { report_id: report.id });
+                } catch {
+                  window.print();
+                }
+              }}>
                 <Download className="w-4 h-4" /> PDF
               </Button>
             )}

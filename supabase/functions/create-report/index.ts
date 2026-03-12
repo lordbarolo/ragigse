@@ -64,6 +64,7 @@ serve(async (req) => {
       salary_type,
       track,
       sector,
+      ob_share,
     } = await req.json();
 
     if (!occupation || !employment_type || !kommun) {
@@ -325,6 +326,25 @@ serve(async (req) => {
     }
 
     console.log(`Report created: ${report.id} for ${email}`);
+
+    // Schedule followup drip emails if we have an email
+    if (email && lead_id) {
+      const now = new Date();
+      const emails = [
+        { sequence_step: 1, scheduled_for: new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000).toISOString() },
+        { sequence_step: 2, scheduled_for: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString() },
+        { sequence_step: 3, scheduled_for: new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000).toISOString() },
+      ];
+      await supabase.from("followup_emails").insert(
+        emails.map((e) => ({
+          lead_id,
+          report_id: report.id,
+          email,
+          ...e,
+        }))
+      );
+      console.log(`Scheduled ${emails.length} followup emails for ${email}`);
+    }
 
     return new Response(
       JSON.stringify({ report_id: report.id, ab_variant: abVariant }),

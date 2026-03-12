@@ -2,6 +2,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import InvoiceReviewCTA from "./InvoiceReviewCTA";
 import PersonalInsights from "./PersonalInsights";
 import ColleagueComparison from "./ColleagueComparison";
+import PriceHistory from "./PriceHistory";
+import type { PriceChange } from "@/shared/types";
 import { Separator } from "@/components/ui/separator";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import {
@@ -40,6 +42,7 @@ interface Props {
   leadId?: string;
   email?: string;
   reportId?: string;
+  priceHistory?: PriceChange[];
 }
 
 /** Copyable script block with timeline styling */
@@ -102,6 +105,7 @@ export default function ConsultantTrackContent({
   leadId,
   email,
   reportId,
+  priceHistory,
 }: Props) {
   const marketRate = r.market?.rate_customer_sek_per_hour ?? 0;
   const rec = r.recommendation;
@@ -428,6 +432,16 @@ export default function ConsultantTrackContent({
                 );
               })}
           </div>
+        </div>
+      )}
+      {/* ═══ 4b. PRISHISTORIK ═══ */}
+      {isConsultantFullAccess && priceHistory && priceHistory.length > 0 && (
+        <div ref={registerSectionRef?.("price_history")}>
+          <PriceHistory
+            changes={priceHistory}
+            userZone={userZone}
+            occupation={occupation}
+          />
         </div>
       )}
 
