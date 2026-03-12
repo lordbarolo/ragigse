@@ -8,6 +8,7 @@ Sitemap: https://compcare.se/sitemap.xml
 User-agent: GPTBot
 Allow: /
 Allow: /llms.txt
+Allow: /openapi.json
 
 User-agent: Google-Extended
 Allow: /

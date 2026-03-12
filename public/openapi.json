@@ -1,0 +1,428 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "CompCare API",
+    "version": "1.0.0",
+    "description": "Salary intelligence API for healthcare professionals in Sweden. Provides market rate lookups, salary benchmarks, and compensation analysis based on official framework agreement prices (ramavtalspriser) from 290+ Swedish healthcare providers.",
+    "contact": {
+      "name": "CompCare",
+      "url": "https://compcare.se"
+    },
+    "license": {
+      "name": "Proprietary"
+    }
+  },
+  "servers": [
+    {
+      "url": "https://ubhhlunhdqbokjvwfebb.supabase.co/functions/v1",
+      "description": "Production"
+    }
+  ],
+  "paths": {
+    "/pricing-engine": {
+      "post": {
+        "operationId": "getConsultantPricing",
+        "summary": "Calculate consultant compensation range",
+        "description": "Returns recommended hourly and monthly compensation for a healthcare consultant based on occupation, municipality (kommun), and employment type. Uses official framework agreement prices and margin models.",
+        "tags": ["Pricing"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PricingRequest"
+              },
+              "example": {
+                "occupation": "Sjuksköterska",
+                "kommun": "Stockholm",
+                "employment_type": "anstalld"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful pricing calculation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PricingResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing required fields",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "No rate found for occupation/zone combination",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/salary-benchmark-engine": {
+      "post": {
+        "operationId": "getSalaryBenchmark",
+        "summary": "Get salary benchmark for permanent employees",
+        "description": "Returns salary percentiles (p25, p50, p75) for a given occupation and sector (privat/offentlig). Optionally compares against a current salary to calculate gap analysis.",
+        "tags": ["Benchmarks"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BenchmarkRequest"
+              },
+              "example": {
+                "occupation": "Sjuksköterska",
+                "sector": "offentlig",
+                "current_salary": 35000
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful benchmark lookup",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BenchmarkResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing required fields",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          },
+          "500": {
+            "description": "No benchmark data available",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/create-report": {
+      "post": {
+        "operationId": "createCompensationReport",
+        "summary": "Generate a full compensation report",
+        "description": "Creates a detailed compensation analysis report for either consultant or permanent track. Returns a report_id that can be used to retrieve the full report.",
+        "tags": ["Reports"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateReportRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Report created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateReportResponse"
+                }
+              }
+            }
+          },
+          "400": { "description": "Missing required fields" },
+          "404": { "description": "No rate/benchmark data found" }
+        }
+      }
+    },
+    "/get-report": {
+      "post": {
+        "operationId": "getReport",
+        "summary": "Retrieve a compensation report",
+        "description": "Fetches a previously created report by ID. Access level (full or preview) depends on whether email has been provided, payment status, or referral unlock.",
+        "tags": ["Reports"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetReportRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Report retrieved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetReportResponse"
+                }
+              }
+            }
+          },
+          "404": { "description": "Report not found" }
+        }
+      }
+    },
+    "/run-price-diff": {
+      "post": {
+        "operationId": "runPriceDiff",
+        "summary": "Compare prices between contract versions",
+        "description": "Calculates price differences between two contract catalog versions. Detects increases, decreases, new entries, and removed rates. Results are stored in price_changes table.",
+        "tags": ["Market Intelligence"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PriceDiffRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Diff completed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PriceDiffResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PricingRequest": {
+        "type": "object",
+        "required": ["occupation", "kommun", "employment_type"],
+        "properties": {
+          "occupation": {
+            "type": "string",
+            "description": "Healthcare occupation, e.g. 'Sjuksköterska', 'Specialistsjuksköterska', 'Barnmorska', 'Specialistläkare'",
+            "examples": ["Sjuksköterska", "Anestesisjuksköterska", "Barnmorska"]
+          },
+          "kommun": {
+            "type": "string",
+            "description": "Swedish municipality name",
+            "examples": ["Stockholm", "Göteborg", "Kiruna"]
+          },
+          "employment_type": {
+            "type": "string",
+            "enum": ["anstalld", "foretagare"],
+            "description": "'anstalld' = employed via staffing agency, 'foretagare' = self-employed/contractor"
+          }
+        }
+      },
+      "PricingResponse": {
+        "type": "object",
+        "properties": {
+          "occupation": { "type": "string" },
+          "kommun": { "type": "string" },
+          "zon": { "type": "string", "description": "Price zone (Zon 1-4)" },
+          "region": { "type": "string" },
+          "employment_type": { "type": "string" },
+          "rate_customer_sek_per_hour": { "type": "integer", "description": "What the healthcare provider pays per hour (framework agreement price)" },
+          "consultant_share_min": { "type": "number", "description": "Minimum consultant share ratio (e.g. 0.85)" },
+          "consultant_share_max": { "type": "number", "description": "Maximum consultant share ratio (e.g. 0.90)" },
+          "employee_factor": { "type": "number", "description": "Employer cost factor for employed consultants (typically 1.42)" },
+          "hours_per_month": { "type": "integer", "description": "Standard hours per month (typically 167)" },
+          "recommended_hourly_min": { "type": "integer", "description": "Recommended minimum hourly rate in SEK" },
+          "recommended_hourly_max": { "type": "integer", "description": "Recommended maximum hourly rate in SEK" },
+          "recommended_monthly_min": { "type": "integer", "description": "Recommended minimum monthly salary in SEK" },
+          "recommended_monthly_max": { "type": "integer", "description": "Recommended maximum monthly salary in SEK" }
+        }
+      },
+      "BenchmarkRequest": {
+        "type": "object",
+        "required": ["occupation", "sector"],
+        "properties": {
+          "occupation": {
+            "type": "string",
+            "description": "Healthcare occupation name"
+          },
+          "sector": {
+            "type": "string",
+            "enum": ["privat", "offentlig", "landsting", "kommun"],
+            "description": "Employment sector"
+          },
+          "current_salary": {
+            "type": "integer",
+            "description": "Optional current monthly salary in SEK for gap analysis"
+          }
+        }
+      },
+      "BenchmarkResponse": {
+        "type": "object",
+        "properties": {
+          "occupation": { "type": "string" },
+          "sector": { "type": "string" },
+          "region": { "type": "string", "nullable": true },
+          "year": { "type": "integer", "description": "Data year" },
+          "source": { "type": "string", "description": "Data source (e.g. SCB)" },
+          "percentile_25": { "type": "integer", "description": "25th percentile monthly salary" },
+          "percentile_50": { "type": "integer", "description": "Median monthly salary" },
+          "percentile_75": { "type": "integer", "description": "75th percentile monthly salary" },
+          "current_salary": { "type": "integer", "description": "Provided current salary (if given)" },
+          "gap_vs_p75": { "type": "integer", "description": "Gap between current and p75 in SEK" },
+          "gap_pct": { "type": "integer", "description": "Gap as percentage" },
+          "category": { "type": "string", "enum": ["small", "medium", "large"], "description": "Gap category" }
+        }
+      },
+      "CreateReportRequest": {
+        "type": "object",
+        "required": ["occupation", "employment_type", "kommun"],
+        "properties": {
+          "occupation": { "type": "string" },
+          "employment_type": { "type": "string", "enum": ["anstalld", "foretagare"] },
+          "kommun": { "type": "string" },
+          "email": { "type": "string", "format": "email" },
+          "lead_id": { "type": "string", "format": "uuid" },
+          "experience": { "type": "integer" },
+          "current_salary": { "type": "integer" },
+          "salary_type": { "type": "string", "enum": ["monthly", "hourly"] },
+          "track": { "type": "string", "enum": ["consultant", "permanent"], "description": "Report track. Default: consultant" },
+          "sector": { "type": "string", "description": "Required for permanent track" }
+        }
+      },
+      "CreateReportResponse": {
+        "type": "object",
+        "properties": {
+          "report_id": { "type": "string", "format": "uuid" },
+          "ab_variant": { "type": "string" }
+        }
+      },
+      "GetReportRequest": {
+        "type": "object",
+        "required": ["report_id"],
+        "properties": {
+          "report_id": { "type": "string", "format": "uuid" },
+          "auth_user_id": { "type": "string", "format": "uuid" }
+        }
+      },
+      "GetReportResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "status": { "type": "string" },
+          "access": { "type": "string", "enum": ["full", "preview"] },
+          "occupation": { "type": "string" },
+          "employment_type": { "type": "string" },
+          "kommun": { "type": "string" },
+          "result_json": { "type": "object", "description": "Full calculation results (only in full access)" },
+          "zone_comparisons": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "yrkeskategori": { "type": "string" },
+                "zon": { "type": "string" },
+                "timpris_kund": { "type": "integer" }
+              }
+            }
+          },
+          "user_zone": { "type": "string" }
+        }
+      },
+      "PriceDiffRequest": {
+        "type": "object",
+        "required": ["new_version_id"],
+        "properties": {
+          "old_version_id": { "type": "string", "format": "uuid" },
+          "new_version_id": { "type": "string", "format": "uuid" }
+        }
+      },
+      "PriceDiffResponse": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" },
+          "summary": {
+            "type": "object",
+            "properties": {
+              "total": { "type": "integer" },
+              "increases": { "type": "integer" },
+              "decreases": { "type": "integer" },
+              "new_entries": { "type": "integer" },
+              "removed": { "type": "integer" },
+              "unchanged": { "type": "integer" }
+            }
+          },
+          "changes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "yrkeskategori": { "type": "string" },
+                "zon": { "type": "string" },
+                "old_timpris": { "type": "integer", "nullable": true },
+                "new_timpris": { "type": "integer" },
+                "diff_abs": { "type": "integer" },
+                "diff_pct": { "type": "number" },
+                "change_type": { "type": "string", "enum": ["increase", "decrease", "new", "removed", "unchanged"] }
+              }
+            }
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string" }
+        }
+      }
+    },
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "apikey",
+        "description": "Supabase anon key for public endpoints"
+      }
+    }
+  },
+  "security": [
+    { "ApiKeyAuth": [] }
+  ],
+  "tags": [
+    {
+      "name": "Pricing",
+      "description": "Consultant compensation calculations based on framework agreement prices"
+    },
+    {
+      "name": "Benchmarks",
+      "description": "Salary benchmarks for permanent employees from official statistics"
+    },
+    {
+      "name": "Reports",
+      "description": "Full compensation analysis reports"
+    },
+    {
+      "name": "Market Intelligence",
+      "description": "Price monitoring and contract version comparisons"
+    }
+  ]
+}
