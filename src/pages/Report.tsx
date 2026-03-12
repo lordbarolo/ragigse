@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { ShieldCheck, Loader2, Download, Linkedin } from "lucide-react";
+import { Loader2, Download, Linkedin } from "lucide-react";
 import { trackEvent } from "@/lib/trackEvent";
 import { getCouponCode } from "@/lib/captureParams";
 import CompcareLogo from "@/components/CompcareLogo";
