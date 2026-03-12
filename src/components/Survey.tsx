@@ -581,6 +581,23 @@ export default function Survey() {
                   toast.error("Ange ersättning innan du fortsätter");
                   return;
                 }
+                if (!canProceed) return;
+                trackStepCompleted(5, data.currentSalary);
+                setStep(6);
+              }}
+              className={`flex-1 flex items-center justify-center gap-2 py-4 px-6 rounded-xl text-base font-semibold transition-all duration-200 active:scale-[0.97] ${
+                canProceed
+                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                  : "bg-muted text-muted-foreground cursor-not-allowed"
+              }`}
+            >
+              Nästa
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          )}
+          {step === 6 && (
+            <button
+              onClick={() => {
                 if (!canProceed || saving) return;
                 handleNext();
               }}
