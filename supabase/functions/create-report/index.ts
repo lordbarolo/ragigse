@@ -64,6 +64,7 @@ serve(async (req) => {
       salary_type,
       track,
       sector,
+      ob_share,
     } = await req.json();
 
     if (!occupation || !employment_type || !kommun) {
