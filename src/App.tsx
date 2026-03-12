@@ -48,6 +48,7 @@ const App = () => (
             <Route path="/vanliga-fragor" element={<FAQ />} />
             <Route path="/integritetspolicy" element={<PrivacyPolicy />} />
             <Route path="/admin" element={<Admin />} />
+            <Route path="/dela" element={<SharePreview />} />
             <Route path="/dev/theme-preview" element={<ThemePreview />} />
             {import.meta.env.DEV && (
               <>
