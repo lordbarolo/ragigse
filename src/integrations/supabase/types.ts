@@ -298,6 +298,47 @@ export type Database = {
           },
         ]
       }
+      consultant_documents: {
+        Row: {
+          consultant_id: string
+          document_type: string
+          expires_at: string | null
+          file_name: string
+          file_url: string
+          id: string
+          notes: string | null
+          uploaded_at: string
+        }
+        Insert: {
+          consultant_id: string
+          document_type: string
+          expires_at?: string | null
+          file_name: string
+          file_url: string
+          id?: string
+          notes?: string | null
+          uploaded_at?: string
+        }
+        Update: {
+          consultant_id?: string
+          document_type?: string
+          expires_at?: string | null
+          file_name?: string
+          file_url?: string
+          id?: string
+          notes?: string | null
+          uploaded_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultant_documents_consultant_id_fkey"
+            columns: ["consultant_id"]
+            isOneToOne: false
+            referencedRelation: "consultant_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       consultant_profiles: {
         Row: {
           care_setting: string | null
@@ -379,6 +420,53 @@ export type Database = {
             columns: ["staffing_agency_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      consultant_references: {
+        Row: {
+          consultant_id: string
+          created_at: string
+          id: string
+          notes: string | null
+          reference_email: string | null
+          reference_name: string
+          reference_org: string | null
+          reference_phone: string | null
+          reference_role: string | null
+          relationship: string | null
+        }
+        Insert: {
+          consultant_id: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          reference_email?: string | null
+          reference_name: string
+          reference_org?: string | null
+          reference_phone?: string | null
+          reference_role?: string | null
+          relationship?: string | null
+        }
+        Update: {
+          consultant_id?: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          reference_email?: string | null
+          reference_name?: string
+          reference_org?: string | null
+          reference_phone?: string | null
+          reference_role?: string | null
+          relationship?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultant_references_consultant_id_fkey"
+            columns: ["consultant_id"]
+            isOneToOne: false
+            referencedRelation: "consultant_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -1169,6 +1257,7 @@ export type Database = {
       reports: {
         Row: {
           ab_variant: string
+          consultant_profile_id: string | null
           created_at: string
           current_salary: number | null
           email: string | null
@@ -1189,6 +1278,7 @@ export type Database = {
         }
         Insert: {
           ab_variant?: string
+          consultant_profile_id?: string | null
           created_at?: string
           current_salary?: number | null
           email?: string | null
@@ -1209,6 +1299,7 @@ export type Database = {
         }
         Update: {
           ab_variant?: string
+          consultant_profile_id?: string | null
           created_at?: string
           current_salary?: number | null
           email?: string | null
@@ -1228,6 +1319,13 @@ export type Database = {
           user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "reports_consultant_profile_id_fkey"
+            columns: ["consultant_profile_id"]
+            isOneToOne: false
+            referencedRelation: "consultant_profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "reports_lead_id_fkey"
             columns: ["lead_id"]
