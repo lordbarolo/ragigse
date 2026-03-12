@@ -140,11 +140,21 @@ serve(async (req) => {
         }
       }
 
-      // 5. Link report to auth user
+      // 5. Link report to auth user and consultant profile
       if (report_id) {
+        // Get consultant_profile_id for this user
+        const { data: cpData } = await supabase
+          .from("consultant_profiles")
+          .select("id")
+          .eq("user_id", userId)
+          .single();
+
         await supabase
           .from("reports")
-          .update({ user_id: userId })
+          .update({
+            user_id: userId,
+            consultant_profile_id: cpData?.id || null,
+          })
           .eq("id", report_id);
       }
 
