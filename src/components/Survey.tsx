@@ -427,9 +427,10 @@ export default function Survey() {
                 <button
                   key={region}
                   onClick={() => setSelectedRegion(region)}
-                  className="w-full py-3.5 px-4 rounded-xl border border-border bg-card text-left text-sm font-medium transition-all active:scale-[0.98] hover:border-primary/40"
+                  className="group w-full py-3.5 px-4 rounded-xl border border-border bg-card text-left text-sm font-medium transition-all active:scale-[0.98] hover:border-primary/40 flex items-center justify-between"
                 >
-                  {region}
+                  <span>{region}</span>
+                  <ArrowRight className="w-4 h-4 text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
                 </button>
               ))}
             </div>
