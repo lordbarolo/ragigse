@@ -231,23 +231,6 @@ export default function ConsultantTrackContent({
                 </div>
               </div>
 
-              {/* Marker track */}
-              <div className="pt-2.5 pb-1.5">
-                <div className="relative h-0.5 bg-foreground/[0.07] rounded-full mx-1.5">
-                  <div
-                    className="absolute left-0 top-0 h-full bg-gradient-to-r from-primary/40 to-primary/60 rounded-full"
-                    style={{ width: `${fillPct}%` }}
-                  />
-                  {/* Your salary marker */}
-                  <div
-                    className="absolute flex flex-col items-center"
-                    style={{ left: `${yourPct}%`, top: '-4px' }}
-                  >
-                    <div className="w-2.5 h-2.5 rounded-full bg-accent border-2 border-background shadow-[0_0_8px_rgba(52,211,153,0.5)]" />
-                    <span className="text-[8px] text-accent font-semibold whitespace-nowrap mt-1">Din lön · {fmt(currentHourly)}</span>
-                  </div>
-                </div>
-              </div>
 
               <p className="text-[9px] text-foreground/[0.2] text-center leading-relaxed pt-1.5">
                 Realistiskt = hög chans att få igenom · Rekommenderat = vad marknaden ger · Ambitiöst = kräver stark erfarenhet
