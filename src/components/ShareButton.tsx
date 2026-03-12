@@ -5,11 +5,13 @@ export default function ShareButton({
   text,
   url,
   className = "",
+  label = "Dela med en kollega",
 }: {
   title: string;
   text: string;
   url?: string;
   className?: string;
+  label?: string;
 }) {
   const shareUrl = url || window.location.href;
 
