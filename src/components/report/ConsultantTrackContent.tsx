@@ -123,6 +123,11 @@ export default function ConsultantTrackContent({
   const recommendedMax = rec ? rec.recommended_hourly_max : Math.round(marketRate * shareMax);
   const isAboveThreshold = recommendedMax > 0 && currentHourly >= recommendedMax;
 
+  // For employees, the comparable cost is gross salary × employer factor (1.42)
+  const employerFactor = rec?.employee_factor ?? 1.42;
+  const costToCompare = isEmployee ? Math.round(currentHourly * employerFactor) : currentHourly;
+  const sharePercent = marketRate > 0 ? Math.round((costToCompare / marketRate) * 100) : 0;
+
   const monoClass = "font-[var(--font-mono)]";
 
   return (

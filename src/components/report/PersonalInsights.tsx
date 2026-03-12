@@ -23,7 +23,10 @@ export default function PersonalInsights({
   const rec = r.recommendation;
   if (!rec || marketRate <= 0 || currentHourly <= 0) return null;
 
-  const shareOfCustomerPrice = Math.round((currentHourly / marketRate) * 100);
+  // For employees, compare total employment cost (salary × 1.42) to customer rate
+  const employerFactor = 1.42;
+  const costToCompare = isEmployee ? Math.round(currentHourly * employerFactor) : currentHourly;
+  const shareOfCustomerPrice = Math.round((costToCompare / marketRate) * 100);
   const medianShare = isEmployee ? 85 : 90;
 
   // Zone price difference insight
