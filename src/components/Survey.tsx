@@ -238,42 +238,15 @@ export default function Survey() {
     }
 
     setSaving(true);
-    try {
-      const leadId = crypto.randomUUID();
-      const { error } = await supabase.from("leads").insert({
-        id: leadId,
-        employment_type: data.employmentType,
-        yrke: data.yrke,
-        kommun: data.kommun,
-        experience: data.experience,
-        salary_type: data.salaryType,
-        current_salary: data.currentSalary,
-        ob_share: data.obShare || null,
-      });
-      if (error) throw error;
+    const leadId = crypto.randomUUID();
+    const track = "consultant";
+    const couponCode = searchParams.get("coupon");
+    const couponParam = couponCode ? `?coupon=${encodeURIComponent(couponCode)}` : "";
 
-      const track = "consultant";
-      const { data: reportData, error: reportError } = await supabase.functions.invoke("create-report", {
-        body: {
-          lead_id: leadId,
-          occupation: data.yrke,
-          employment_type: data.employmentType,
-          kommun: data.kommun,
-          experience: data.experience,
-          current_salary: data.currentSalary,
-          salary_type: data.salaryType,
-          track,
-          commute,
-          ob_share: data.obShare || null,
-        },
-      });
-
-      if (reportError || !reportData?.report_id) throw new Error("Failed to create report");
-
+    // Helper: navigate to teaser regardless of report creation outcome
+    const navigateToTeaser = () => {
       sessionStorage.setItem("leadId", leadId);
-      sessionStorage.setItem("reportId", reportData.report_id);
       sessionStorage.setItem("surveyData", JSON.stringify({ ...data, track }));
-      if (reportData.ab_variant) sessionStorage.setItem("abVariant", reportData.ab_variant);
       if (benchmarkResult) sessionStorage.setItem("benchmarkResult", JSON.stringify(benchmarkResult));
       trackStepCompleted(6, data.obShare);
       const totalTime = surveyStartTime.current ? Math.round((Date.now() - surveyStartTime.current) / 1000) : 0;
@@ -289,14 +262,71 @@ export default function Survey() {
         experience_years: data.experience,
         employment_type: data.employmentType === "foretagare" ? "Eget bolag" : "Fast",
         agency_name: null,
-        report_id: reportData.report_id,
+        report_id: sessionStorage.getItem("reportId") || null,
       });
-      const couponCode = searchParams.get("coupon");
-      const couponParam = couponCode ? `?coupon=${encodeURIComponent(couponCode)}` : "";
       navigate(`/resultat/${leadId}${couponParam}`);
-    } catch {
-      toast.error("Kunde inte spara dina uppgifter. Försök igen.");
-      setSaving(false);
+    };
+
+    try {
+      console.log("[Survey] Inserting lead:", leadId);
+      const { error } = await supabase.from("leads").insert({
+        id: leadId,
+        employment_type: data.employmentType,
+        yrke: data.yrke,
+        kommun: data.kommun,
+        experience: data.experience,
+        salary_type: data.salaryType,
+        current_salary: data.currentSalary,
+        ob_share: data.obShare || null,
+      });
+      if (error) {
+        console.error("[Survey] Lead insert failed:", error);
+        throw error;
+      }
+      console.log("[Survey] Lead inserted, calling create-report...");
+
+      // Race create-report against a 3s timeout
+      const reportPromise = supabase.functions.invoke("create-report", {
+        body: {
+          lead_id: leadId,
+          occupation: data.yrke,
+          employment_type: data.employmentType,
+          kommun: data.kommun,
+          experience: data.experience,
+          current_salary: data.currentSalary,
+          salary_type: data.salaryType,
+          track,
+          commute,
+          ob_share: data.obShare || null,
+        },
+      });
+
+      const timeoutPromise = new Promise<{ data: null; error: Error }>((resolve) =>
+        setTimeout(() => resolve({ data: null, error: new Error("create-report timeout (3s)") }), 3000)
+      );
+
+      const { data: reportData, error: reportError } = await Promise.race([reportPromise, timeoutPromise]);
+
+      if (reportError || !reportData?.report_id) {
+        console.warn("[Survey] create-report failed or timed out:", reportError?.message || "no report_id");
+        // Still navigate — teaser can fetch data via get-lead
+        navigateToTeaser();
+        return;
+      }
+
+      console.log("[Survey] Report created:", reportData.report_id);
+      sessionStorage.setItem("reportId", reportData.report_id);
+      if (reportData.ab_variant) sessionStorage.setItem("abVariant", reportData.ab_variant);
+      navigateToTeaser();
+    } catch (err) {
+      console.error("[Survey] Survey completion error:", err);
+      // Even on error, try to navigate so the user isn't stuck
+      try {
+        navigateToTeaser();
+      } catch {
+        toast.error("Kunde inte spara dina uppgifter. Försök igen.");
+        setSaving(false);
+      }
     }
   };
 
