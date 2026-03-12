@@ -158,8 +158,8 @@ export default function Report() {
         <div className="space-y-3 pt-2">
           <ShareButton
             title="CompCare.se – Ersättningsanalys"
-            text={`Jag kollade min ersättning som ${report.occupation} med CompCare.se — rekommenderar det!`}
-            url={window.location.origin}
+            text={`Hur stor är egentligen skillnaden mellan konsult och fast tjänst? Se din ersättning mot marknaden.`}
+            url={`${window.location.origin}/dela?yrke=${encodeURIComponent(report.occupation || "")}`}
             className="w-full"
           />
           <div className="flex gap-3">
