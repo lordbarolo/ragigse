@@ -146,6 +146,7 @@ export default function Teaser() {
           experience: lead.experience || 0,
           salaryType: (lead.salary_type as "hourly" | "monthly") || "hourly",
           currentSalary: lead.current_salary || 0,
+          obShare: "",
           track: "consultant",
         };
 
