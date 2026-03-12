@@ -305,11 +305,29 @@ export default function Survey() {
     }
   };
 
+  // Display-friendly role name
+  const displayRole = useMemo(() => {
+    if (!roleDropdownValue) return "";
+    if (occupationCategory === "lakare") {
+      if (roleDropdownValue === "__leg") return "Leg. läkare";
+      if (roleDropdownValue === "__st") return "ST-läkare";
+      if (roleDropdownValue === "__ovrig") return "Specialistläkare";
+      return roleDropdownValue;
+    }
+    if (occupationCategory === "ssk") {
+      if (roleDropdownValue === "__allman") return "Allmänsjuksköterska";
+      if (roleDropdownValue === "__barnmorska") return "Barnmorska";
+      if (roleDropdownValue === "__ovrig") return "Specialistsjuksköterska";
+      return roleDropdownValue;
+    }
+    return "";
+  }, [occupationCategory, roleDropdownValue]);
+
   return (
     <div className="w-full max-w-lg mx-auto">
       {/* Progress bar — thin, elegant, hidden on step 1 */}
       {step > 1 && (
-        <div className="mb-8">
+        <div className="mb-4">
           <div className="h-1 bg-border/50 rounded-full overflow-hidden">
             <div
               className="h-full bg-primary rounded-full transition-all duration-500 ease-out"
@@ -317,6 +335,24 @@ export default function Survey() {
             />
           </div>
           <p className="text-xs text-muted-foreground mt-2">{step} av {TOTAL_STEPS}</p>
+        </div>
+      )}
+
+      {/* Context chips — show selected role & kommun */}
+      {step > 2 && (displayRole || data.kommun) && (
+        <div className="flex flex-wrap items-center gap-1.5 mb-6">
+          {displayRole && (
+            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-foreground/70 bg-foreground/[0.05] border border-foreground/[0.08] rounded-full px-3 py-1">
+              <Stethoscope className="w-3 h-3 text-primary/70" />
+              {displayRole}
+            </span>
+          )}
+          {data.kommun && (
+            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-foreground/70 bg-foreground/[0.05] border border-foreground/[0.08] rounded-full px-3 py-1">
+              <MapPin className="w-3 h-3 text-primary/70" />
+              {data.kommun}
+            </span>
+          )}
         </div>
       )}
 
