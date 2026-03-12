@@ -6,7 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { ShieldCheck, Loader2, Download, Linkedin } from "lucide-react";
 import { trackEvent } from "@/lib/trackEvent";
 import { getCouponCode } from "@/lib/captureParams";
-import logoDark from "@/assets/logo-dark.png";
+import CompcareLogo from "@/components/CompcareLogo";
 
 import ShareButton from "@/components/ShareButton";
 import type { ReportData } from "@/shared/types";
@@ -53,7 +53,6 @@ export default function Report() {
     if (!reportId) { navigate("/"); return; }
     const fetchReport = async () => {
       try {
-        // Pass auth user id so get-report can grant full access to owner
         const { data: { session } } = await supabase.auth.getSession();
         const authUserId = session?.user?.id || null;
 
@@ -67,7 +66,6 @@ export default function Report() {
     fetchReport();
   }, [reportId, navigate]);
 
-  // Track report_viewed once report loads
   useEffect(() => {
     if (report && !reportViewedRef.current) {
       reportViewedRef.current = true;
@@ -100,23 +98,29 @@ export default function Report() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header — compact, mobile-first */}
-      <header className="hero-gradient px-5 pt-8 pb-8 sm:pt-10 sm:pb-10">
-        <div className="max-w-lg mx-auto space-y-3">
-          <img src={logoDark} alt="CompCare" className="h-7 mb-5" />
-          <p className="text-xs uppercase tracking-widest text-primary-foreground/50 font-medium">
+      {/* Header — premium, mobile-first */}
+      <header className="relative overflow-hidden hero-gradient px-5 pt-8 pb-10 sm:pt-10 sm:pb-12">
+        {/* Subtle decorative element */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
+        <div className="max-w-lg mx-auto space-y-4 relative z-10">
+          <CompcareLogo variant="full" className="mb-6" />
+          <p className="text-[10px] uppercase tracking-[0.2em] text-primary-foreground/40 font-medium">
             Ersättningsanalys
           </p>
-          <h1 className="text-xl sm:text-2xl font-bold text-primary-foreground leading-snug">
+          <h1 className="text-2xl sm:text-3xl font-bold text-primary-foreground leading-tight tracking-tight">
             {report.occupation}
           </h1>
-          <p className="text-sm text-primary-foreground/70">
-            {report.kommun} · {isPermanentTrack ? "Fast tjänst" : "Konsultuppdrag"} · {isEmployee ? "Anställd" : "Eget bolag"}
-          </p>
+          <div className="flex items-center gap-2 text-sm text-primary-foreground/60">
+            <span>{report.kommun}</span>
+            <span className="w-1 h-1 rounded-full bg-primary-foreground/30" />
+            <span>{isPermanentTrack ? "Fast tjänst" : "Konsultuppdrag"}</span>
+            <span className="w-1 h-1 rounded-full bg-primary-foreground/30" />
+            <span>{isEmployee ? "Anställd" : "Eget bolag"}</span>
+          </div>
         </div>
       </header>
 
-      <main className="px-5 py-6 max-w-lg mx-auto space-y-5">
+      <main className="px-5 py-8 max-w-lg mx-auto space-y-6">
         {report.unlocked_by_referral && (
           <div className="flex items-center gap-2 py-2.5 px-4 bg-accent/10 border border-accent/20 rounded-xl text-xs text-accent font-medium">
             <ShieldCheck className="w-4 h-4" />
@@ -156,8 +160,8 @@ export default function Report() {
           />
         )}
 
-        {/* Share actions — stacked on mobile */}
-        <div className="space-y-3">
+        {/* Share actions */}
+        <div className="space-y-3 pt-2">
           <ShareButton
             title="CompCare.se – Ersättningsanalys"
             text={`Jag kollade min ersättning som ${report.occupation} med CompCare.se — rekommenderar det!`}
@@ -166,13 +170,13 @@ export default function Report() {
           />
           <div className="flex gap-3">
             {!isFriendCoupon && (
-              <Button variant="outline" className="flex-1 gap-2 h-12 rounded-xl" onClick={() => window.print()}>
+              <Button variant="outline" className="flex-1 gap-2 h-12 rounded-xl border-border/50 hover:border-border" onClick={() => window.print()}>
                 <Download className="w-4 h-4" /> PDF
               </Button>
             )}
             <Button
               variant="outline"
-              className="flex-1 gap-2 h-12 rounded-xl"
+              className="flex-1 gap-2 h-12 rounded-xl border-border/50 hover:border-border"
               onClick={() => {
                 const shareUrl = window.location.origin;
                 const word = report?.employment_type === "foretagare" ? "ersättningsutrymme" : "löneutrymme";
@@ -188,13 +192,20 @@ export default function Report() {
           </div>
         </div>
 
-        <Separator />
-        <p className="text-xs text-muted-foreground text-center leading-relaxed pb-6">
-          Denna rapport baseras på gällande avtal från SKR och är avsedd som vägledning.
-          Faktisk ersättning kan variera beroende på arbetsgivare, uppdrag och individuella avtal.
-          <br />
-          © {new Date().getFullYear()} CompCare.se
-        </p>
+        {/* Footer */}
+        <div className="pt-4">
+          <Separator className="mb-6 opacity-30" />
+          <div className="text-center space-y-3 pb-8">
+            <CompcareLogo variant="wordmark" className="mx-auto opacity-40 !h-5" />
+            <p className="text-[11px] text-muted-foreground/60 leading-relaxed max-w-xs mx-auto">
+              Denna rapport baseras på gällande avtal från SKR och är avsedd som vägledning.
+              Faktisk ersättning kan variera beroende på arbetsgivare, uppdrag och individuella avtal.
+            </p>
+            <p className="text-[10px] text-muted-foreground/40">
+              © {new Date().getFullYear()} CompCare.se
+            </p>
+          </div>
+        </div>
       </main>
     </div>
   );
