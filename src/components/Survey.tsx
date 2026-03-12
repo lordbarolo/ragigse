@@ -216,6 +216,7 @@ export default function Survey() {
       case 3: return !!data.kommun;
       case 4: return !!data.employmentType;
       case 5: return data.currentSalary > 0;
+      case 6: return true; // OB is optional
       default: return false;
     }
   })();
