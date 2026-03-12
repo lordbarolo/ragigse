@@ -230,6 +230,7 @@ export default function Survey() {
         3: data.kommun,
         4: data.employmentType,
         5: data.currentSalary,
+        6: data.obShare,
       };
       trackStepCompleted(step, stepAnswers[step]);
       setStep(step + 1);
