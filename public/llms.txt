@@ -12,6 +12,8 @@ CompCare.se är en **gratis löneanalystjänst för vårdpersonal i Sverige**. P
 2. Systemet hämtar gällande ramavtalspriser för den aktuella kommunen/regionen.
 3. En ersättningsanalys visar om användarens lön ligger under, på eller över marknadsnivå.
 4. Konsulter ser dessutom hur kundpriset fördelas mellan bemanningsföretag och konsult.
+5. Prishistorik visar hur timpriset har förändrats mellan avtalsversioner.
+6. En brandad PDF-rapport kan genereras för nedladdning.
 
 ### Målgrupp
 
@@ -22,10 +24,11 @@ CompCare.se är en **gratis löneanalystjänst för vårdpersonal i Sverige**. P
 
 ## Datakällor
 
-- **Ramavtalspriser**: Officiella upphandlade priser från SKR (Sveriges Kommuner och Regioner), uppdaterade 2026
+- **Ramavtalspriser**: Officiella upphandlade priser från SKR (Sveriges Kommuner och Regioner), avtalsversion SKR 2026 v1.0
 - **Lönestatistik**: Medlingsinstitutets officiella lönestatistik (SCB) för fast anställda
 - **Täckning**: 290+ vårdgivare, alla Sveriges kommuner, 4 priszoner
 - **Yrkeskategorier**: 20+ sjuksköterske-specialiseringar, barnmorskor, läkare
+- **Uppdateringsfrekvens**: Data uppdateras löpande när nya avtalsversioner publiceras
 
 ## API
 
@@ -39,12 +42,25 @@ CompCare exponerar ett REST-API för programmatisk åtkomst. Fullständig OpenAP
 | `POST /pricing-engine` | Beräkna konsultersättning baserat på yrke, kommun och anställningstyp |
 | `POST /salary-benchmark-engine` | Hämta lönepercentiler (p25/p50/p75) för fast anställda |
 | `POST /create-report` | Generera en fullständig ersättningsanalys |
-| `POST /get-report` | Hämta en tidigare skapad rapport |
+| `POST /get-report` | Hämta en tidigare skapad rapport (inkl. prishistorik) |
+| `POST /generate-pdf` | Generera en brandad PDF-rapport från en befintlig rapport |
 | `POST /run-price-diff` | Jämför priser mellan ramavtalsversioner |
 
 ### Autentisering
 
 Publika endpoints kräver en `apikey`-header med Supabase anon key.
+
+### Datakvalitet i API-svar
+
+API-svaren kan inkludera ett `data_quality`-objekt med metadata om dataursprung och aktualitet:
+
+| Fält | Beskrivning |
+|------|-------------|
+| `source` | Datakälla, t.ex. "SKR ramavtal 2026" eller "SCB lönestatistik 2025" |
+| `data_freshness` | Datum då underliggande data senast uppdaterades (ISO 8601) |
+| `contract_version` | Aktiv ramavtalsversion, t.ex. "SKR 2026 v1.0" |
+| `sample_size` | Antal datapunkter (för lönestatistik). Null för prisuppslag. |
+| `coverage` | Geografisk täckning, t.ex. "290+ kommuner, 4 priszoner" |
 
 ## Vanliga frågor
 
@@ -59,6 +75,9 @@ Ja, skillnaderna kan vara stora. Storstadskommuner har generellt lägre priser, 
 
 ### Kostar det något?
 Nej, CompCare.se är helt gratis att använda.
+
+### Kan jag ladda ner min rapport som PDF?
+Ja, efter att rapporten genererats kan du ladda ner en brandad PDF via generate-pdf-endpointen eller direkt i gränssnittet.
 
 ## Kontakt
 

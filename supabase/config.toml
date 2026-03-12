@@ -44,3 +44,27 @@ verify_jwt = false
 
 [functions.validate-coupon]
 verify_jwt = false
+
+[functions.generate-pdf]
+verify_jwt = false
+
+[functions.send-followup-emails]
+verify_jwt = false
+
+[functions.check-feedback]
+verify_jwt = false
+
+[functions.feedback-stats]
+verify_jwt = false
+
+[functions.salary-insights]
+verify_jwt = false
+
+[functions.send-audit-confirmation]
+verify_jwt = false
+
+[functions.stripe-webhook]
+verify_jwt = false
+
+[functions.send-referral]
+verify_jwt = false
