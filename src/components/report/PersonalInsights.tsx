@@ -69,7 +69,9 @@ export default function PersonalInsights({
 
   insights.push({
     icon: BarChart3,
-    text: `Din ersättning motsvarar ${shareOfCustomerPrice} % av kundpriset. Medianen är ${medianShare} %.`,
+    text: isEmployee
+      ? `Din lönekostnad (brutto × 1,42) motsvarar ${shareOfCustomerPrice} % av kundpriset. Medianen är ${medianShare} %.`
+      : `Din ersättning motsvarar ${shareOfCustomerPrice} % av kundpriset. Medianen är ${medianShare} %.`,
   });
 
   return (
