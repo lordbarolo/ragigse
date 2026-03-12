@@ -264,6 +264,7 @@ export default function Survey() {
           salary_type: data.salaryType,
           track,
           commute,
+          ob_share: data.obShare || null,
         },
       });
 
