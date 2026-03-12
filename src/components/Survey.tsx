@@ -102,7 +102,7 @@ export default function Survey() {
   const stepEntryTime = useRef<number>(Date.now());
   const surveyStarted = useRef(false);
 
-  const STEP_NAMES = ["yrkeskategori", "specialisering", "kommun", "anstallningsform", "ersattning"];
+  const STEP_NAMES = ["yrkeskategori", "specialisering", "kommun", "anstallningsform", "ersattning", "ob_andel"];
 
   useEffect(() => {
     stepEntryTime.current = Date.now();
