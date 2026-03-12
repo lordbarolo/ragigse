@@ -51,8 +51,9 @@
     --sidebar-border: 222 39% 19%;
     --sidebar-ring: 199 93% 60%;
 
-    --font-display: 'Inter', sans-serif;
-    --font-body: 'Inter', sans-serif;
+    --font-display: 'DM Sans', 'Inter', sans-serif;
+    --font-body: 'DM Sans', 'Inter', sans-serif;
+    --font-mono: 'DM Mono', monospace;
 
     --gap-bg: 222 53% 8%;
     --gap-card: 222 42% 13%;
