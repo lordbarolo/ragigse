@@ -134,7 +134,7 @@ const Index = () => {
       <Navbar />
 
       {/* Hero */}
-      <header className="pt-20 md:pt-22 pb-8 sm:pb-10 px-5 text-center border-b border-border">
+      <header className="pt-16 md:pt-18 pb-6 sm:pb-8 px-5 text-center border-b border-border">
         <div className="max-w-2xl mx-auto space-y-5">
 
           {/* Trust badge */}
