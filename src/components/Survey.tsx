@@ -530,6 +530,38 @@ export default function Survey() {
           </StepWrapper>
         )}
 
+        {/* Step 6: OB-andel */}
+        {step === 6 && (
+          <StepWrapper title="Hur stor del av din ersättning utgörs av OB, beredskap eller jour?">
+            <div className="flex flex-col gap-3">
+              {([
+                { value: "ingen", label: "Ingen", desc: "Jag har ingen OB, jour eller beredskap" },
+                { value: "liten", label: "Liten del (< 10%)", desc: "Enstaka pass med OB-tillägg" },
+                { value: "medel", label: "Medel (10–25%)", desc: "Regelbundna kvällar, helger eller jour" },
+                { value: "stor", label: "Stor del (> 25%)", desc: "Mycket natt, jour och beredskap" },
+              ]).map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => {
+                    setData({ ...data, obShare: opt.value });
+                  }}
+                  className={`group w-full py-4 px-5 rounded-xl border text-left transition-all active:scale-[0.98] ${
+                    data.obShare === opt.value
+                      ? "border-primary bg-primary/[0.06]"
+                      : "border-border bg-card hover:border-primary/40 hover:bg-primary/[0.03]"
+                  }`}
+                >
+                  <span className="text-base font-medium text-foreground">{opt.label}</span>
+                  <p className="text-sm text-muted-foreground mt-0.5">{opt.desc}</p>
+                </button>
+              ))}
+            </div>
+            <p className="text-xs text-muted-foreground text-center mt-4">
+              Detta hjälper oss ge mer precisa rekommendationer.
+            </p>
+          </StepWrapper>
+        )}
+
       </div>
 
       {/* Navigation */}
