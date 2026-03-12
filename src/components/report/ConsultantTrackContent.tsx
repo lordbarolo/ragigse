@@ -123,6 +123,11 @@ export default function ConsultantTrackContent({
   const recommendedMax = rec ? rec.recommended_hourly_max : Math.round(marketRate * shareMax);
   const isAboveThreshold = recommendedMax > 0 && currentHourly >= recommendedMax;
 
+  // For employees, the comparable cost is gross salary × employer factor (1.42)
+  const employerFactor = rec?.employee_factor ?? 1.42;
+  const costToCompare = isEmployee ? Math.round(currentHourly * employerFactor) : currentHourly;
+  const sharePercent = marketRate > 0 ? Math.round((costToCompare / marketRate) * 100) : 0;
+
   const monoClass = "font-[var(--font-mono)]";
 
   return (
@@ -429,20 +434,29 @@ export default function ConsultantTrackContent({
       {/* ═══ 5. DIN ANDEL AV KUNDPRISET ═══ */}
       {isConsultantFullAccess && marketRate > 0 && currentHourly > 0 && (
         <div>
-          <SectionLabel>Din andel av kundpriset</SectionLabel>
+          <SectionLabel>{isEmployee ? "Din lönekostnad vs kundpriset" : "Din andel av kundpriset"}</SectionLabel>
           <div className="rounded-[18px] bg-foreground/[0.035] border border-foreground/[0.07] p-4.5 px-4">
             <div className="flex justify-between items-start mb-3.5">
               <div>
                 <span className={`${monoClass} text-[42px] font-medium text-accent tracking-tight leading-none block`}>
-                  {Math.round((currentHourly / marketRate) * 100)}%
+                  {sharePercent}%
                 </span>
                 <span className="text-[11px] text-foreground/[0.3] mt-1 block">
-                  av {fmt(marketRate)} kr/h som regionen betalar
+                  {isEmployee ? (
+                    <>lönekostnad {fmt(costToCompare)} kr/h av {fmt(marketRate)} kr/h</>
+                  ) : (
+                    <>av {fmt(marketRate)} kr/h som regionen betalar</>
+                  )}
                 </span>
+                {isEmployee && (
+                  <span className="text-[10px] text-foreground/[0.2] mt-0.5 block">
+                    Brutto {fmt(currentHourly)} kr/h × {employerFactor} (arbetsgivaravg. + pension)
+                  </span>
+                )}
               </div>
               <div className="text-right">
                 <span className="text-[9px] tracking-[0.6px] uppercase text-foreground/[0.2] block mb-1">Marknadsmedian</span>
-                <span className={`${monoClass} text-[11px] text-foreground/[0.4] block`}>90%</span>
+                <span className={`${monoClass} text-[11px] text-foreground/[0.4] block`}>{isEmployee ? "85%" : "90%"}</span>
                 <span className="text-[9px] tracking-[0.6px] uppercase text-foreground/[0.2] block mt-1.5 mb-0.5">Vanligt spann</span>
                 <span className={`${monoClass} text-[11px] text-foreground/[0.4] block`}>85–92%</span>
               </div>
@@ -452,26 +466,33 @@ export default function ConsultantTrackContent({
             <div className="relative h-1.5 bg-foreground/[0.06] rounded overflow-visible mb-2.5">
               <div
                 className="absolute left-0 top-0 h-full rounded bg-gradient-to-r from-primary/50 to-accent"
-                style={{ width: `${Math.min(Math.round((currentHourly / marketRate) * 100), 100)}%` }}
+                style={{ width: `${Math.min(sharePercent, 100)}%` }}
               />
               <div
                 className="absolute top-[-2px] w-px h-[10px] bg-foreground/[0.3]"
-                style={{ left: `${Math.min(Math.round((currentHourly / marketRate) * 100), 100)}%` }}
+                style={{ left: `${Math.min(sharePercent, 100)}%` }}
               />
             </div>
 
             <p className="text-[11px] text-foreground/[0.3] leading-relaxed">
-              {Math.round((currentHourly / marketRate) * 100) > 100 ? (
+              {sharePercent > 100 ? (
                 <>
-                  Över 100% är möjligt som egenföretagare — du fakturerar direkt utan mellanhand och bär då risker som annars ligger på bemanningsföretaget, t.ex. viten och administration.
+                  {isEmployee
+                    ? <>Din lönekostnad överstiger kundpriset — kontrollera att arbetsgivaren inte subventionerar din tjänst.</>
+                    : <>Över 100% är möjligt som egenföretagare — du fakturerar direkt utan mellanhand och bär då risker som annars ligger på bemanningsföretaget, t.ex. viten och administration.</>
+                  }
                 </>
-              ) : Math.round((currentHourly / marketRate) * 100) >= 85 ? (
+              ) : sharePercent >= 85 ? (
                 <>
-                  Bra andel — du ligger nära marknadens övre gräns. <strong className="text-foreground/50 font-medium">Vanligt spann: 85–92%</strong>.
+                  Bra andel — {isEmployee ? "din lönekostnad" : "du"} ligger nära marknadens övre gräns. <strong className="text-foreground/50 font-medium">Vanligt spann: 85–92%</strong>.
                 </>
               ) : (
                 <>
-                  Du får en relativt låg andel av kundpriset — det finns tydligt förhandlingsutrymme. <strong className="text-foreground/50 font-medium">Vanligt spann: 85–92%</strong>.
+                  {isEmployee
+                    ? <>Din totala lönekostnad utgör en låg andel av kundpriset — det finns tydligt förhandlingsutrymme.</>
+                    : <>Du får en relativt låg andel av kundpriset — det finns tydligt förhandlingsutrymme.</>
+                  }{" "}
+                  <strong className="text-foreground/50 font-medium">Vanligt spann: 85–92%</strong>.
                 </>
               )}
             </p>
@@ -488,7 +509,7 @@ export default function ConsultantTrackContent({
             <h2 className="text-lg font-bold text-foreground">Du ligger redan i toppskiktet</h2>
           </div>
           <p className="text-sm text-muted-foreground leading-relaxed mb-5">
-            Din ersättning på {fmt(currentHourly)} kr/h motsvarar {Math.round((currentHourly / marketRate) * 100)}% av vad regionen betalar till bemanningsföretag ({fmt(marketRate)} kr/h).
+            Din ersättning på {fmt(currentHourly)} kr/h{isEmployee ? ` (lönekostnad ${fmt(costToCompare)} kr/h)` : ""} motsvarar {sharePercent}% av vad regionen betalar till bemanningsföretag ({fmt(marketRate)} kr/h).
             Det innebär att det i praktiken inte finns ytterligare förhandlingsutrymme för grundtimpriset i din nuvarande zon.
           </p>
           <div className="space-y-2.5">
