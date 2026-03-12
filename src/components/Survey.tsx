@@ -248,6 +248,7 @@ export default function Survey() {
         experience: data.experience,
         salary_type: data.salaryType,
         current_salary: data.currentSalary,
+        ob_share: data.obShare || null,
       });
       if (error) throw error;
 
