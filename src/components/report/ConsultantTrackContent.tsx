@@ -509,7 +509,7 @@ export default function ConsultantTrackContent({
             <h2 className="text-lg font-bold text-foreground">Du ligger redan i toppskiktet</h2>
           </div>
           <p className="text-sm text-muted-foreground leading-relaxed mb-5">
-            Din ersättning på {fmt(currentHourly)} kr/h motsvarar {Math.round((currentHourly / marketRate) * 100)}% av vad regionen betalar till bemanningsföretag ({fmt(marketRate)} kr/h).
+            Din ersättning på {fmt(currentHourly)} kr/h{isEmployee ? ` (lönekostnad ${fmt(costToCompare)} kr/h)` : ""} motsvarar {sharePercent}% av vad regionen betalar till bemanningsföretag ({fmt(marketRate)} kr/h).
             Det innebär att det i praktiken inte finns ytterligare förhandlingsutrymme för grundtimpriset i din nuvarande zon.
           </p>
           <div className="space-y-2.5">
