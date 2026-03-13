@@ -15,7 +15,7 @@ interface Props {
   userZone?: string;
 }
 
-export default function PermanentTrackContent({ r, isFullAccess, occupation, kommun }: Props) {
+export default function PermanentTrackContent({ r, isFullAccess, occupation, kommun, leadId, userZone }: Props) {
   const gap = r.gap_analysis;
   const benchMarket = r.market;
   const p75 = benchMarket?.percentile_75 ?? 0;
