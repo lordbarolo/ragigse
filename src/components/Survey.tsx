@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import SearchableSelect from "@/components/SearchableSelect";
 import { Input } from "@/components/ui/input";
 import {
-  Stethoscope, MapPin, Briefcase,
+  Stethoscope, MapPin, Briefcase, ChevronDown,
   ChevronLeft, ArrowRight, TrendingUp,
 } from "lucide-react";
 import { toast } from "sonner";
