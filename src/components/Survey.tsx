@@ -483,7 +483,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
         {/* Step 3: Region → Kommun */}
         {step === 3 && !selectedRegion && (
           <StepWrapper title="Vilken region?">
-            <div className="flex flex-col gap-2 max-h-[420px] overflow-y-auto -mx-1 px-1">
+            <div className="flex flex-col gap-2 max-h-[420px] overflow-y-auto -mx-1 px-1 rounded-xl border border-primary/30 shadow-[var(--input-glow)] p-2 scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-primary/25 hover:[&::-webkit-scrollbar-thumb]:bg-primary/40">
               {regions.map((region) => (
                 <button
                   key={region}
