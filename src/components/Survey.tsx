@@ -69,6 +69,7 @@ const nurseValueMap: Record<string, string> = {
 interface SurveyProps {
   initialCategory?: OccupationCategory;
   initialRole?: string;
+  onBack?: () => void;
 }
 
 export default function Survey({ initialCategory, initialRole }: SurveyProps = {}) {
