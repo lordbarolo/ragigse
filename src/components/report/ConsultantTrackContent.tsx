@@ -82,14 +82,13 @@ function ScriptStep({ step, title, text }: { step: number; title: string; text: 
   );
 }
 
-/** Section label with trailing line */
+/** Section label */
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex items-center gap-2.5 mb-3">
+    <div className="mb-3">
       <span className="text-[10px] font-semibold tracking-[1.4px] uppercase text-foreground/[0.28] whitespace-nowrap">
         {children}
       </span>
-      <div className="flex-1 h-px bg-foreground/[0.06]" />
     </div>
   );
 }
