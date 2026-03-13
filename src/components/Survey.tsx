@@ -713,12 +713,12 @@ function StepWrapper({
   children: React.ReactNode;
 }) {
   return (
-    <div className="animate-in fade-in slide-in-from-right-4 duration-300 flex-1 flex flex-col">
-      <div className="mb-6">
+    <div className="animate-in fade-in slide-in-from-right-4 duration-300 flex-1 flex flex-col justify-center">
+      <div className="mb-6 text-center">
         <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight leading-tight">{title}</h2>
         {subtitle && <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>}
       </div>
-      <div className="flex-1">{children}</div>
+      <div className="flex-1 flex flex-col">{children}</div>
     </div>
   );
 }
