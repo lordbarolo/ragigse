@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/trackEvent";
+import { posthog, isPostHogReady } from "@/lib/posthog";
 
 export interface SurveyData {
   email: string;
