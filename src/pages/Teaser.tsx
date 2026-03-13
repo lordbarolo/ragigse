@@ -21,6 +21,7 @@ import OccupationInfo from "@/components/teaser/OccupationInfo";
 import WowHero from "@/components/teaser/WowHero";
 import MarketDiagnosisCard from "@/components/teaser/MarketDiagnosisCard";
 import EmailGate from "@/components/teaser/EmailGate";
+import EmailHookMessage from "@/components/teaser/EmailHookMessage";
 import ReportPreviewList from "@/components/teaser/ReportPreviewList";
 
 /** Teaser page — orchestrator for the results preview */
