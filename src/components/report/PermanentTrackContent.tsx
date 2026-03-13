@@ -4,12 +4,15 @@ import { fmt, formatPartialValue } from "@/shared/formatters";
 import { SectionHeading, StatBlock } from "@/shared/UIComponents";
 import type { ResultJson } from "@/shared/types";
 import ConsultantRateLookup from "./ConsultantRateLookup";
+import ReportFeedback from "./ReportFeedback";
 
 interface Props {
   r: ResultJson;
   isFullAccess: boolean;
   occupation: string;
   kommun: string;
+  leadId?: string;
+  userZone?: string;
 }
 
 export default function PermanentTrackContent({ r, isFullAccess, occupation, kommun }: Props) {

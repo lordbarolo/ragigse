@@ -151,14 +151,6 @@ export default function Report() {
           />
         )}
 
-        {/* Feedback */}
-        {report.lead_id && (
-          <ReportFeedback
-            leadId={report.lead_id}
-            role={report.occupation}
-            zone={report.user_zone}
-          />
-        )}
 
         {/* Share actions */}
         <div className="space-y-3 pt-2">
