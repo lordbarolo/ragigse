@@ -419,7 +419,7 @@ export default function Teaser() {
     const kommun = survey?.kommun || "";
     const zon = pricingResult?.zon || "";
 
-    const occupation = survey?.occupation || "";
+    const occupation = survey?.yrke || "";
 
     if (isPermanent) {
       if (!benchmarkMonthly) return null;
