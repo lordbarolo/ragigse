@@ -496,56 +496,57 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
           </StepWrapper>
         )}
 
-        {/* Step 3: Region → Kommun */}
-        {step === 3 && !selectedRegion && (
-          <StepWrapper title="Vilken region?">
-            <div className="relative rounded-xl border border-primary/30 shadow-[var(--input-glow)]">
-              <div className="flex flex-col gap-2 max-h-[420px] overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-primary/25 hover:[&::-webkit-scrollbar-thumb]:bg-primary/40">
-                {regions.map((region) => (
-                  <button
-                    key={region}
-                    onClick={() => setSelectedRegion(region)}
-                    className="group w-full py-3.5 px-4 rounded-xl border border-border bg-card text-left text-sm font-medium transition-all active:scale-[0.98] hover:border-primary/40 flex items-center justify-between shrink-0"
-                  >
-                    <span>{region}</span>
-                    <ArrowRight className="w-4 h-4 text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
-                  </button>
-                ))}
+        {step === 3 && (
+          <StepWrapper title="Var jobbar du?">
+            <div className="space-y-3">
+              {/* Search input */}
+              <div className="relative">
+                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/50" />
+                <Input
+                  ref={searchInputRef}
+                  type="text"
+                  value={kommunSearch}
+                  onChange={(e) => setKommunSearch(e.target.value)}
+                  placeholder="Sök kommun, t.ex. Göteborg..."
+                  className="h-14 pl-12 text-base"
+                  autoFocus
+                />
               </div>
-              {/* Bottom fade to indicate scrollability */}
-              <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-16 rounded-b-xl bg-gradient-to-t from-card to-transparent" />
-            </div>
-            <p className="text-xs text-muted-foreground/60 text-center mt-2 flex items-center justify-center gap-1">
-              <ChevronDown className="w-3 h-3 animate-bounce" />
-              Scrolla för fler regioner
-            </p>
-          </StepWrapper>
-        )}
 
-        {step === 3 && selectedRegion && (
-          <StepWrapper
-            title="Vilken kommun?"
-            subtitle={selectedRegion.split("/")[0]}
-          >
-            <SearchableSelect
-              value={data.kommun}
-              onValueChange={(v) => {
-                setData({ ...data, kommun: v });
-                setTimeout(() => {
-                  trackStepCompleted(3, v);
-                  setStep(4);
-                }, 300);
-              }}
-              placeholder={isLoading ? "Laddar..." : "Välj kommun"}
-              options={filteredKommuner}
-            />
-            <button
-              type="button"
-              onClick={() => { setSelectedRegion(""); setData({ ...data, kommun: "" }); }}
-              className="mt-4 text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              ← Byt region
-            </button>
+              {/* Results */}
+              <div className="rounded-xl border border-border overflow-hidden">
+                <div className="flex flex-col max-h-[320px] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-primary/25">
+                  {filteredKommunerSearch.length === 0 ? (
+                    <p className="py-8 text-center text-sm text-muted-foreground">Inga kommuner hittades</p>
+                  ) : (
+                    filteredKommunerSearch.map((k) => (
+                      <button
+                        key={k.kommun}
+                        onClick={() => {
+                          setData({ ...data, kommun: k.kommun });
+                          setSelectedRegion(k.region);
+                          trackStepCompleted(3, k.kommun);
+                          setTimeout(() => setStep(4), 200);
+                        }}
+                        className="group w-full py-3 px-4 text-left text-sm transition-all hover:bg-primary/[0.04] flex items-center justify-between border-b border-border/50 last:border-b-0"
+                      >
+                        <div>
+                          <span className="font-medium text-foreground">{k.kommun}</span>
+                          <span className="ml-2 text-xs text-muted-foreground">{k.region}</span>
+                        </div>
+                        <ArrowRight className="w-4 h-4 text-muted-foreground/20 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
+                      </button>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              {!kommunSearch && (
+                <p className="text-xs text-muted-foreground/50 text-center">
+                  Börja skriva för att hitta din uppdragsort
+                </p>
+              )}
+            </div>
           </StepWrapper>
         )}
 
