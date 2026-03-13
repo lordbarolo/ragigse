@@ -321,15 +321,6 @@ export default function ConsultantTrackContent({
         </div>
       )}
 
-      {/* ═══ Feedback ═══ */}
-      {leadId && (
-        <ReportFeedback
-          leadId={leadId}
-          role={occupation}
-          zone={userZone}
-        />
-      )}
-
       {/* ═══ Nästa steg ═══ */}
       {isConsultantFullAccess && rec && !isAboveThreshold && (
         <div className="relative rounded-2xl bg-gradient-to-b from-foreground/[0.06] to-foreground/[0.02] border border-foreground/10 p-6 overflow-hidden">
@@ -366,6 +357,15 @@ export default function ConsultantTrackContent({
             )}
           </div>
         </div>
+      )}
+
+      {/* ═══ Feedback ═══ */}
+      {leadId && (
+        <ReportFeedback
+          leadId={leadId}
+          role={occupation}
+          zone={userZone}
+        />
       )}
 
       {/* ═══ 4. REGIONAL JÄMFÖRELSE ═══ */}

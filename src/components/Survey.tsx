@@ -565,22 +565,20 @@ export default function Survey() {
           </StepWrapper>
         )}
 
-        {/* Step 6: OB-andel */}
+        {/* Step 6: Inhyrd eller fast anställd */}
         {step === 6 && (
-          <StepWrapper title="Hur stor del av din ersättning utgörs av OB, beredskap eller jour?">
+          <StepWrapper title="Arbetar du som inhyrd eller fast anställd?">
             <div className="flex flex-col gap-3">
               {([
-                { value: "ingen", label: "Ingen", desc: "Jag har ingen OB, jour eller beredskap" },
-                { value: "liten", label: "Liten del (< 10%)", desc: "Enstaka pass med OB-tillägg" },
-                { value: "medel", label: "Medel (10–25%)", desc: "Regelbundna kvällar, helger eller jour" },
-                { value: "stor", label: "Stor del (> 25%)", desc: "Mycket natt, jour och beredskap" },
+                { value: "inhyrd", label: "Inhyrd", desc: "Jag arbetar via bemanningsföretag" },
+                { value: "fast", label: "Fast anställd", desc: "Jag är anställd direkt av arbetsgivaren" },
               ]).map((opt) => (
                 <button
                   key={opt.value}
                   onClick={() => {
                     setData({ ...data, obShare: opt.value });
                   }}
-                  className={`group w-full py-4 px-5 rounded-xl border text-left transition-all active:scale-[0.98] ${
+                  className={`group w-full py-5 px-5 rounded-xl border text-left transition-all active:scale-[0.98] ${
                     data.obShare === opt.value
                       ? "border-primary bg-primary/[0.06]"
                       : "border-border bg-card hover:border-primary/40 hover:bg-primary/[0.03]"
@@ -591,9 +589,6 @@ export default function Survey() {
                 </button>
               ))}
             </div>
-            <p className="text-xs text-muted-foreground text-center mt-4">
-              Detta hjälper oss ge mer precisa rekommendationer.
-            </p>
           </StepWrapper>
         )}
 
