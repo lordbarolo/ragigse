@@ -488,13 +488,6 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
               placeholder={occupationCategory === "lakare" ? "Välj läkarroll eller specialisering..." : "Välj roll eller vidareutbildning..."}
               options={occupationCategory === "lakare" ? doctorRoleOptions : nurseRoleOptions}
             />
-            <button
-              type="button"
-              onClick={() => { setOccupationCategory(""); setRoleDropdownValue(""); setStep(1); }}
-              className="mt-4 text-sm text-muted-foreground hover:text-foreground transition-colors"
-            >
-              ← Byt kategori
-            </button>
           </StepWrapper>
         )}
 
