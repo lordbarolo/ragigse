@@ -508,6 +508,7 @@ export default function Teaser() {
         {/* Email Gate — primary CTA at top */}
         {!email && (
           <div className="rounded-xl border border-primary/30 bg-card p-5 card-shadow">
+            {emailHookProps && <EmailHookMessage {...emailHookProps} />}
             <EmailGate
               onEmailSubmit={handleEmailSubmit}
               loading={emailSaving}
