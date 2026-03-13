@@ -1,10 +1,12 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/trackEvent";
 import { toast } from "sonner";
 import EmailGate from "@/components/teaser/EmailGate";
+import EmailHookMessage from "@/components/teaser/EmailHookMessage";
 import type { SurveyData } from "@/components/Survey";
+import type { PricingResult } from "@/hooks/usePricingEngine";
 import { Check } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 
