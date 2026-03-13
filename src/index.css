@@ -75,35 +75,7 @@
     /* Bold Nordic — no override, inherits :root */
   }
 
-  .dark {
-    --background: 222 47% 6%;
-    --foreground: 220 30% 94%;
-    --card: 222 38% 10%;
-    --card-foreground: 220 30% 94%;
-    --popover: 222 38% 10%;
-    --popover-foreground: 220 30% 94%;
-    --primary: 199 89% 60%;
-    --primary-foreground: 222 47% 8%;
-    --secondary: 222 30% 14%;
-    --secondary-foreground: 220 30% 94%;
-    --muted: 222 25% 12%;
-    --muted-foreground: 220 20% 58%;
-    --accent: 168 74% 50%;
-    --accent-foreground: 222 47% 8%;
-    --destructive: 350 80% 55%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 222 25% 16%;
-    --input: 222 25% 16%;
-    --ring: 199 89% 60%;
-    --sidebar-background: 222 47% 6%;
-    --sidebar-foreground: 220 30% 94%;
-    --sidebar-primary: 199 89% 60%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 222 25% 12%;
-    --sidebar-accent-foreground: 220 30% 94%;
-    --sidebar-border: 222 25% 16%;
-    --sidebar-ring: 199 89% 60%;
-  }
+  /* dark mode same as root for this design */
 }
 
 @layer base {
