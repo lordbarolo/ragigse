@@ -72,6 +72,40 @@ export default function AnalysisScreen() {
     trackEvent("analysis_started");
   }, [urlLeadId, navigate]);
 
+  /* ── Background retry: create report if missing (timeout fallback) ── */
+  const retryAttempted = useRef(false);
+  useEffect(() => {
+    if (!leadId || !survey || reportId || retryAttempted.current) return;
+    retryAttempted.current = true;
+
+    const retryCreateReport = async () => {
+      console.log("[AnalysisScreen] reportId missing — retrying create-report in background");
+      try {
+        const { data, error } = await supabase.functions.invoke("create-report", {
+          body: {
+            lead_id: leadId,
+            occupation: survey.yrke,
+            employment_type: survey.employmentType,
+            kommun: survey.kommun,
+            current_salary: survey.currentSalary,
+            salary_type: survey.salaryType,
+            track: (survey as SurveyData & { track?: string }).track || "consultant",
+          },
+        });
+        if (!error && data?.report_id) {
+          console.log("[AnalysisScreen] Background retry succeeded, reportId:", data.report_id);
+          setReportId(data.report_id);
+          sessionStorage.setItem("reportId", data.report_id);
+        } else {
+          console.warn("[AnalysisScreen] Background retry failed:", error || data);
+        }
+      } catch (err) {
+        console.warn("[AnalysisScreen] Background retry error:", err);
+      }
+    };
+    retryCreateReport();
+  }, [leadId, survey, reportId]);
+
   /* ── Eased progress: fast 0-60, slow 60-85 ── */
   const ease = (t: number): number => {
     if (t <= 0) return 0;
