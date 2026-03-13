@@ -60,6 +60,8 @@ export default function AnalysisScreen() {
     setReportId(sessionStorage.getItem("reportId") || "");
     const raw = sessionStorage.getItem("surveyData");
     if (raw) setSurvey(JSON.parse(raw) as SurveyData);
+    const pricingRaw = sessionStorage.getItem("pricingResult");
+    if (pricingRaw) setPricing(JSON.parse(pricingRaw) as PricingResult);
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
