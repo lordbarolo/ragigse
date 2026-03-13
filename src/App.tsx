@@ -57,11 +57,9 @@ const App = () => (
             <Route path="/admin" element={<Admin />} />
             <Route path="/dela" element={<SharePreview />} />
             <Route path="/dev/theme-preview" element={<ThemePreview />} />
+            <Route path="/dev/analytics" element={<AnalyticsDashboard />} />
             {import.meta.env.DEV && (
-              <>
-                <Route path="/dev/e2e-test" element={<E2ETest />} />
-                <Route path="/dev/analytics" element={<AnalyticsDashboard />} />
-              </>
+              <Route path="/dev/e2e-test" element={<E2ETest />} />
             )}
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
