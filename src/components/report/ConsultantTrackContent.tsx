@@ -29,6 +29,7 @@ import { SectionHeading, StatBlock, CalcRow } from "@/shared/UIComponents";
 import type { ResultJson, ZoneComparison } from "@/shared/types";
 import { getNegotiationTips, APPROVED_SUPPLIERS } from "./negotiationData";
 import { toast } from "@/hooks/use-toast";
+import ReportFeedback from "./ReportFeedback";
 
 interface Props {
   r: ResultJson;
