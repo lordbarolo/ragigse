@@ -240,6 +240,11 @@ export default function Survey() {
     setSaving(true);
     const leadId = crypto.randomUUID();
     const track = "consultant";
+
+    // Identify user in PostHog so all funnel events share the same distinct_id
+    if (isPostHogReady()) {
+      try { posthog.identify(leadId); } catch { /* silent */ }
+    }
     const couponCode = searchParams.get("coupon");
     const couponParam = couponCode ? `?coupon=${encodeURIComponent(couponCode)}` : "";
 
