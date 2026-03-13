@@ -14,9 +14,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        sans: ['"Sora"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        sans: ['"Inter"', '"Sora"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
         display: ['"Sora"', 'sans-serif'],
-        body: ['"Sora"', 'sans-serif'],
+        body: ['"Inter"', '"Sora"', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -84,6 +84,10 @@ export default {
         "gap-fade-in": {
           from: { opacity: "0", transform: "translateY(8px)" },
           to: { opacity: "1", transform: "translateY(0)" },
+        },
+        tick: {
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(-50%)" },
         },
       },
       animation: {

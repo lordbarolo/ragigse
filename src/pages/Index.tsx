@@ -1,43 +1,30 @@
-import { useEffect } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import Survey from "@/components/Survey";
-import Navbar from "@/components/Navbar";
-import CompcareLogo from "@/components/CompcareLogo";
-import { Shield } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
-import { supabase } from "@/integrations/supabase/client";
 
-const FAQ_ITEMS = [
-  {
-    question: "Hur fungerar CompCare.se?",
-    answer: "Du fyller i din yrkesroll, arbetsort och erfarenhet. Vi jämför din nuvarande eller erbjudna konsultersättning med faktiska ramavtalspriser som offentliga vårdgivare betalar till bemanningsföretag för inhyrd personal. Därefter gör vi ett avdrag för marknadsmässig marginal till bemanningsföretaget. Det som kvarstår är det belopp som utgör ditt förhandlingsbara ersättningsutrymme.",
-  },
-  {
-    question: "Vilka data baseras analysen på?",
-    answer: "Analysen baseras på Regionernas officiella ramavtalspriser för 2026 och bemanningsbranschens standardmarginaler.",
-  },
-  {
-    question: "Kostar det något att använda CompCare?",
-    answer: "Den grundläggande jämförelsen av din konsultersättning är helt gratis. För en detaljerad rapport med förhandlingstips kan du välja att uppgradera.",
-  },
-  {
-    question: "Vilka yrkesgrupper stöds?",
-    answer: "Just nu fokuserar vi på konsulterande sjuksköterskor, barnmorskor och läkare. Samtliga specialiseringar har unik data. Fler kompetenser kommer snart.",
-  },
-];
+import Ticker from "@/components/landing/Ticker";
+import LandingNav from "@/components/landing/LandingNav";
+import Hero from "@/components/landing/Hero";
+import StatBar from "@/components/landing/StatBar";
+import RoleSelector from "@/components/landing/RoleSelector";
+import Steps from "@/components/landing/Steps";
+import ReportPreview from "@/components/landing/ReportPreview";
+import OBSection from "@/components/landing/OBSection";
+import DataSection from "@/components/landing/DataSection";
+import BottomCTA from "@/components/landing/BottomCTA";
+import LandingFooter from "@/components/landing/LandingFooter";
+import Survey from "@/components/Survey";
 
 const faqJsonLd = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  mainEntity: FAQ_ITEMS.map((item) => ({
-    "@type": "Question",
-    name: item.question,
-    acceptedAnswer: {
-      "@type": "Answer",
-      text: item.answer,
-    },
-  })),
+  mainEntity: [
+    { "@type": "Question", name: "Hur fungerar CompCare.se?", acceptedAnswer: { "@type": "Answer", text: "Du fyller i din yrkesroll, arbetsort och erfarenhet. Vi jämför din nuvarande eller erbjudna konsultersättning med faktiska ramavtalspriser som offentliga vårdgivare betalar till bemanningsföretag för inhyrd personal." } },
+    { "@type": "Question", name: "Vilka data baseras analysen på?", acceptedAnswer: { "@type": "Answer", text: "Analysen baseras på Regionernas officiella ramavtalspriser för 2026 och bemanningsbranschens standardmarginaler." } },
+    { "@type": "Question", name: "Kostar det något att använda CompCare?", acceptedAnswer: { "@type": "Answer", text: "Den grundläggande jämförelsen av din konsultersättning är helt gratis. För en detaljerad rapport med förhandlingstips kan du välja att uppgradera." } },
+    { "@type": "Question", name: "Vilka yrkesgrupper stöds?", acceptedAnswer: { "@type": "Answer", text: "Just nu fokuserar vi på konsulterande sjuksköterskor, barnmorskor och läkare. Samtliga specialiseringar har unik data." } },
+  ],
 };
 
 const webAppJsonLd = {
@@ -45,186 +32,56 @@ const webAppJsonLd = {
   "@type": "WebApplication",
   name: "CompCare.se",
   url: "https://compcare.se",
-  description:
-    "Jämför din konsultersättning med faktiska ramavtalspriser för vårdkonsulter i 290 kommuner.",
+  description: "Jämför din konsultersättning med faktiska ramavtalspriser för vårdkonsulter i 290 kommuner.",
   applicationCategory: "FinanceApplication",
   operatingSystem: "All",
-  offers: {
-    "@type": "Offer",
-    price: "0",
-    priceCurrency: "SEK",
-    description: "Gratis jämförelse av konsultersättning",
-  },
+  offers: { "@type": "Offer", price: "0", priceCurrency: "SEK", description: "Gratis jämförelse av konsultersättning" },
 };
 
-const Index = () => {
-  const [searchParams] = useSearchParams();
+export default function Index() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const surveyRef = useRef<HTMLDivElement>(null);
+  const [showSurvey, setShowSurvey] = useState(false);
+  const [prefillCategory, setPrefillCategory] = useState<string>("");
+  const [prefillRole, setPrefillRole] = useState<string>("");
 
   useTimeOnPage("landing");
+  useEffect(() => { trackEvent("landing_viewed"); }, []);
 
-  useEffect(() => {
-    trackEvent("landing_viewed");
-  }, []);
-
-  const devSkip = async (empType: "foretagare" | "anstalld") => {
-    const testData = {
-      category: "doctor",
-      role: "Specialistläkare",
-      specialization: "Allmänmedicin",
-      yrke: "Specialistläkare allmänmedicin",
-      region: "Stockholm",
-      kommun: "Stockholm",
-      employmentType: empType,
-      salaryType: "hourly",
-      currentSalary: empType === "foretagare" ? 500 : 400,
-      commute: "none",
-      email: "test@compcare.se",
-    };
-    const leadId = crypto.randomUUID();
-    try {
-      await supabase.from("leads").insert({
-        id: leadId,
-        email: testData.email,
-        employment_type: testData.employmentType,
-        yrke: testData.yrke,
-        kommun: testData.kommun,
-        salary_type: testData.salaryType,
-        current_salary: testData.currentSalary,
-      });
-      // Call pricing engine and create report in parallel
-      const [reportRes, pricingRes] = await Promise.all([
-        supabase.functions.invoke("create-report", {
-          body: {
-            lead_id: leadId,
-            email: testData.email,
-            occupation: testData.yrke,
-            employment_type: testData.employmentType,
-            kommun: testData.kommun,
-            current_salary: testData.currentSalary,
-            salary_type: testData.salaryType,
-            track: "consultant",
-          },
-        }),
-        supabase.functions.invoke("pricing-engine", {
-          body: { occupation: testData.yrke, kommun: testData.kommun, employment_type: testData.employmentType },
-        }),
-      ]);
-      const reportData = reportRes.data;
-      const pricingData = pricingRes.data;
-      sessionStorage.setItem("leadId", leadId);
-      sessionStorage.setItem("surveyData", JSON.stringify(testData));
-      if (reportData?.report_id) sessionStorage.setItem("reportId", reportData.report_id);
-      if (reportData?.ab_variant) sessionStorage.setItem("abVariant", reportData.ab_variant);
-      if (pricingData && !pricingData.error) sessionStorage.setItem("pricingResult", JSON.stringify(pricingData));
-      const couponCode = searchParams.get("coupon");
-      const couponParam = couponCode ? `?coupon=${encodeURIComponent(couponCode)}` : "";
-      navigate(`/resultat/${leadId}${couponParam}`);
-    } catch {
-      const couponCode2 = searchParams.get("coupon");
-      const couponParam2 = couponCode2 ? `?coupon=${encodeURIComponent(couponCode2)}` : "";
-      sessionStorage.setItem("surveyData", JSON.stringify(testData));
-      navigate(`/resultat/${leadId}${couponParam2}`);
-    }
+  const handleRoleSelect = (category: "lakare" | "ssk", prefill?: string) => {
+    setPrefillCategory(category);
+    setPrefillRole(prefill || "");
+    setShowSurvey(true);
+    setTimeout(() => {
+      surveyRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 100);
   };
 
   return (
     <div className="min-h-screen bg-background">
-      {/* JSON-LD Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppJsonLd) }}
-      />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppJsonLd) }} />
 
-      <Navbar />
+      <Ticker />
+      <LandingNav />
+      <Hero />
+      <StatBar />
+      <RoleSelector onRoleSelect={handleRoleSelect} />
 
-      {/* Hero */}
-      <header className="pt-16 md:pt-18 pb-6 sm:pb-8 px-5 text-center border-b border-border">
-        <div className="max-w-2xl mx-auto space-y-5">
-
-          {/* Trust badge */}
-          <div className="inline-flex items-center gap-2 text-xs font-medium text-muted-foreground bg-muted rounded-full px-4 py-1.5">
-            <Shield className="w-3.5 h-3.5" />
-            <span>Baserat på officiella avtalspriser · 290 kommuner · 21 regioner</span>
-          </div>
-
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold text-foreground leading-[1.1] tracking-tight">
-            Se om du får för lite betalt
-          </h1>
-          <p className="text-lg sm:text-xl text-muted-foreground max-w-xl mx-auto leading-relaxed">
-            Jämför din ersättning på 60 sekunder
-          </p>
-          <p className="text-base text-muted-foreground/80">
-            Anonymt och kostnadsfritt
-          </p>
+      {/* Survey — slides in when a role is selected */}
+      {showSurvey && (
+        <div ref={surveyRef} className="px-4 py-10 bg-background border-t border-foreground/[0.07]">
+          <Survey />
         </div>
-      </header>
+      )}
 
-      {/* Survey — direkt under hero utan extra avstånd */}
-      <main className="px-4 py-8 sm:py-10 bg-background">
-        {(import.meta.env.DEV || window.location.hostname.includes("lovableproject.com") || window.location.hostname.includes("id-preview--")) && (
-          <div className="flex justify-center gap-2 mb-4">
-            <button
-              onClick={() => devSkip("foretagare")}
-              className="text-xs px-3 py-1 rounded bg-muted text-muted-foreground hover:bg-muted/80 transition"
-            >
-              🧪 Dev: företagare
-            </button>
-            <button
-              onClick={() => devSkip("anstalld")}
-              className="text-xs px-3 py-1 rounded bg-muted text-muted-foreground hover:bg-muted/80 transition"
-            >
-              🧪 Dev: anställd
-            </button>
-          </div>
-        )}
-        <Survey />
-      </main>
-
-      {/* FAQ Section */}
-      <section className="bg-background border-t border-border" aria-labelledby="faq-heading">
-        <div className="max-w-2xl mx-auto px-5 py-16 sm:py-20">
-          <h2
-            id="faq-heading"
-            className="text-2xl sm:text-3xl font-bold text-foreground text-center mb-10"
-          >
-            Vanliga frågor
-          </h2>
-          <dl className="space-y-8">
-            {FAQ_ITEMS.map((item, i) => (
-              <div key={i}>
-                <dt className="text-base font-semibold text-foreground mb-1.5">
-                  {item.question}
-                </dt>
-                <dd className="text-sm text-muted-foreground leading-relaxed">
-                  {item.answer}
-                </dd>
-              </div>
-            ))}
-          </dl>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-background border-t border-border py-10 text-center text-sm text-muted-foreground space-y-2">
-        <p>© 2026 CompCare.se · Data från offentliga ramavtal</p>
-        <p className="text-xs text-muted-foreground/70">Fler branscher kommer snart</p>
-        <div className="flex items-center justify-center gap-3">
-          <Link to="/vanliga-fragor" className="text-primary hover:underline text-sm">
-            Vanliga frågor om ersättning
-          </Link>
-          <span className="text-muted-foreground/50">·</span>
-          <Link to="/integritetspolicy" className="text-primary hover:underline text-sm">
-            Integritetspolicy
-          </Link>
-        </div>
-      </footer>
+      <Steps />
+      <ReportPreview />
+      <OBSection />
+      <DataSection />
+      <BottomCTA />
+      <LandingFooter />
     </div>
   );
-};
-
-export default Index;
+}
