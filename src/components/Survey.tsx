@@ -504,7 +504,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                   value={kommunSearch}
                   onChange={(e) => setKommunSearch(e.target.value)}
                   placeholder="Sök kommun, t.ex. Göteborg..."
-                  className="h-14 pl-12 text-base"
+                  className="h-28 pl-12 text-2xl"
                   autoFocus
                 />
               </div>
