@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import SearchableSelect from "@/components/SearchableSelect";
 import { Input } from "@/components/ui/input";
 import {
-  Stethoscope, MapPin, Briefcase,
+  Stethoscope, MapPin, Briefcase, ChevronDown,
   ChevronLeft, ArrowRight, TrendingUp,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -483,18 +483,26 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
         {/* Step 3: Region → Kommun */}
         {step === 3 && !selectedRegion && (
           <StepWrapper title="Vilken region?">
-            <div className="flex flex-col gap-2 max-h-[420px] overflow-y-auto -mx-1 px-1 rounded-xl border border-primary/30 shadow-[var(--input-glow)] p-2 scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-primary/25 hover:[&::-webkit-scrollbar-thumb]:bg-primary/40">
-              {regions.map((region) => (
-                <button
-                  key={region}
-                  onClick={() => setSelectedRegion(region)}
-                  className="group w-full py-3.5 px-4 rounded-xl border border-border bg-card text-left text-sm font-medium transition-all active:scale-[0.98] hover:border-primary/40 flex items-center justify-between"
-                >
-                  <span>{region}</span>
-                  <ArrowRight className="w-4 h-4 text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
-                </button>
-              ))}
+            <div className="relative rounded-xl border border-primary/30 shadow-[var(--input-glow)]">
+              <div className="flex flex-col gap-2 max-h-[420px] overflow-y-auto p-2 scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-primary/25 hover:[&::-webkit-scrollbar-thumb]:bg-primary/40">
+                {regions.map((region) => (
+                  <button
+                    key={region}
+                    onClick={() => setSelectedRegion(region)}
+                    className="group w-full py-3.5 px-4 rounded-xl border border-border bg-card text-left text-sm font-medium transition-all active:scale-[0.98] hover:border-primary/40 flex items-center justify-between shrink-0"
+                  >
+                    <span>{region}</span>
+                    <ArrowRight className="w-4 h-4 text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
+                  </button>
+                ))}
+              </div>
+              {/* Bottom fade to indicate scrollability */}
+              <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-16 rounded-b-xl bg-gradient-to-t from-card to-transparent" />
             </div>
+            <p className="text-xs text-muted-foreground/60 text-center mt-2 flex items-center justify-center gap-1">
+              <ChevronDown className="w-3 h-3 animate-bounce" />
+              Scrolla för fler regioner
+            </p>
           </StepWrapper>
         )}
 
