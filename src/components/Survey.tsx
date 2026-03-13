@@ -107,6 +107,8 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
 
   // Step 3 state
   const [selectedRegion, setSelectedRegion] = useState("");
+  const [kommunSearch, setKommunSearch] = useState("");
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   // Commute state
   const [commute, setCommute] = useState<CommuteType>("");
