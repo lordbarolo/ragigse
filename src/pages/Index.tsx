@@ -71,7 +71,7 @@ export default function Index() {
 
       {/* Survey — slides in when a role is selected */}
       {showSurvey && (
-        <div ref={surveyRef} className="px-4 py-16 bg-background border-t border-foreground/[0.07] min-h-[70vh] flex items-center justify-center">
+        <div ref={surveyRef} className="px-4 pt-24 pb-16 bg-background border-t border-foreground/[0.07]">
           <Survey initialCategory={prefillCategory as "lakare" | "ssk" | ""} initialRole={prefillRole} onBack={() => setShowSurvey(false)} />
         </div>
       )}
