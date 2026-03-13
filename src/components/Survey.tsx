@@ -494,7 +494,11 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
 
         {step === 3 && (
           <StepWrapper title="Var jobbar du?">
-            <div className="space-y-3">
+            <div className="space-y-4 flex flex-col items-center justify-center flex-1">
+              <p className="text-sm text-muted-foreground text-center max-w-xs">
+                Inom en region kan det finnas 3 olika prisnivåer. Ange kommun för en träffsäker analys av din ersättning.
+              </p>
+
               {/* Search input */}
               <div className="relative">
                 <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/50" />
@@ -709,12 +713,12 @@ function StepWrapper({
   children: React.ReactNode;
 }) {
   return (
-    <div className="animate-in fade-in slide-in-from-right-4 duration-300 flex-1 flex flex-col">
-      <div className="mb-6">
+    <div className="animate-in fade-in slide-in-from-right-4 duration-300 flex-1 flex flex-col justify-center">
+      <div className="mb-6 text-center">
         <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight leading-tight">{title}</h2>
         {subtitle && <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>}
       </div>
-      <div className="flex-1">{children}</div>
+      <div className="flex-1 flex flex-col">{children}</div>
     </div>
   );
 }
