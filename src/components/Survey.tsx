@@ -382,6 +382,7 @@ export default function Survey({ initialCategory, initialRole }: SurveyProps = {
     if (occupationCategory === "ssk") {
       if (roleDropdownValue === "__allman") return "Allmänsjuksköterska";
       if (roleDropdownValue === "__barnmorska") return "Barnmorska";
+      if (roleDropdownValue === "__rontgen") return "Röntgensjuksköterska";
       if (roleDropdownValue === "__ovrig") return "Specialistsjuksköterska";
       return roleDropdownValue;
     }
