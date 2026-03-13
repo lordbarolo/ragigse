@@ -21,6 +21,7 @@ import OccupationInfo from "@/components/teaser/OccupationInfo";
 import WowHero from "@/components/teaser/WowHero";
 import MarketDiagnosisCard from "@/components/teaser/MarketDiagnosisCard";
 import EmailGate from "@/components/teaser/EmailGate";
+import EmailHookMessage from "@/components/teaser/EmailHookMessage";
 import ReportPreviewList from "@/components/teaser/ReportPreviewList";
 
 /** Teaser page — orchestrator for the results preview */
@@ -379,6 +380,62 @@ export default function Teaser() {
     navigate(`/rapport/${reportId}`);
   };
 
+  // ── Compute email hook tier & props ──
+  const emailHookProps = useMemo(() => {
+    const kommun = survey?.kommun || "";
+    const zon = pricingResult?.zon || "";
+
+    if (isPermanent) {
+      if (!benchmarkMonthly) return null;
+      const gap = benchmarkMonthly.p75 - userMonthly;
+      const hourlyGap = Math.round(gap / 167);
+      if (gap > 0) {
+        return { tier: "underpaid" as const, hourlyGap, monthlyGap: gap, kommun };
+      }
+      return { tier: "above_market" as const, hourlyGap: 0, monthlyGap: 0, kommun, zon, pctEarningMore: 25 };
+    }
+
+    if (!result) return null;
+
+    if (isAboveThreshold) {
+      return {
+        tier: "above_market" as const,
+        hourlyGap: 0,
+        monthlyGap: 0,
+        kommun,
+        zon,
+        pctEarningMore: 10,
+      };
+    }
+
+    if (isUnderpaid) {
+      const hourlyGap = result.high - userHourly;
+      const monthlyGap = hourlyGap * 167;
+      return { tier: "underpaid" as const, hourlyGap, monthlyGap, kommun };
+    }
+
+    const ceilingHourly = result.high;
+    const roomToGrow = ceilingHourly - userHourly;
+    if (roomToGrow > 0) {
+      return {
+        tier: "at_market" as const,
+        hourlyGap: roomToGrow,
+        monthlyGap: roomToGrow * 167,
+        kommun,
+        ceilingRate: ceilingHourly,
+      };
+    }
+
+    return {
+      tier: "above_market" as const,
+      hourlyGap: 0,
+      monthlyGap: 0,
+      kommun,
+      zon,
+      pctEarningMore: 10,
+    };
+  }, [survey, isPermanent, result, pricingResult, benchmarkMonthly, userHourly, userMonthly, isUnderpaid, isAboveThreshold]);
+
   // Error state
   if (loadError) {
     return (
@@ -451,6 +508,7 @@ export default function Teaser() {
         {/* Email Gate — primary CTA at top */}
         {!email && (
           <div className="rounded-xl border border-primary/30 bg-card p-5 card-shadow">
+            {emailHookProps && <EmailHookMessage {...emailHookProps} />}
             <EmailGate
               onEmailSubmit={handleEmailSubmit}
               loading={emailSaving}
@@ -469,6 +527,7 @@ export default function Teaser() {
         {/* Second CTA at the bottom for those who scrolled */}
         {!email && (
           <div className="rounded-xl border border-primary/20 bg-card p-5 card-shadow">
+            {emailHookProps && <EmailHookMessage {...emailHookProps} />}
             <EmailGate
               onEmailSubmit={handleEmailSubmit}
               loading={emailSaving}
