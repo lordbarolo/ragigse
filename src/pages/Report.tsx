@@ -14,7 +14,7 @@ import type { ReportData } from "@/shared/types";
 import PermanentTrackContent from "@/components/report/PermanentTrackContent";
 import ConsultantTrackContent from "@/components/report/ConsultantTrackContent";
 
-import ReportFeedback from "@/components/report/ReportFeedback";
+
 
 export default function Report() {
   const { reportId } = useParams<{ reportId: string }>();
