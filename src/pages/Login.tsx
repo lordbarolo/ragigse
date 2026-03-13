@@ -1,0 +1,126 @@
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import { Loader2, ArrowLeft } from "lucide-react";
+import CompcareLogo from "@/components/CompcareLogo";
+
+export default function Login() {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
+
+    if (error) {
+      toast({
+        title: "Inloggning misslyckades",
+        description: error.message === "Invalid login credentials"
+          ? "Fel e-post eller lösenord"
+          : error.message,
+        variant: "destructive",
+      });
+      setLoading(false);
+      return;
+    }
+
+    toast({ title: "Inloggad!" });
+    navigate("/profil");
+  };
+
+  const handleForgotPassword = async () => {
+    if (!email) {
+      toast({ title: "Ange din e-postadress först", variant: "destructive" });
+      return;
+    }
+    setLoading(true);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/aterstall-losenord`,
+    });
+    setLoading(false);
+    if (error) {
+      toast({ title: "Något gick fel", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: "Återställningslänk skickad", description: "Kolla din inbox" });
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <div className="w-full max-w-md space-y-6">
+        <div className="flex justify-center">
+          <Link to="/">
+            <CompcareLogo variant="full" />
+          </Link>
+        </div>
+
+        <Card className="border-border/50 bg-card/80 backdrop-blur">
+          <CardHeader className="text-center">
+            <CardTitle className="text-xl font-semibold text-foreground">Logga in</CardTitle>
+            <CardDescription>Logga in för att se dina rapporter och profil</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleLogin} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">E-post</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="din@email.se"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Lösenord</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+              </div>
+              <Button type="submit" className="w-full" disabled={loading}>
+                {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                Logga in
+              </Button>
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                className="w-full text-sm text-muted-foreground hover:text-primary transition-colors"
+              >
+                Glömt lösenord?
+              </button>
+            </form>
+
+            <div className="mt-6 text-center text-sm text-muted-foreground">
+              Har du inget konto?{" "}
+              <Link to="/registrera" className="text-primary hover:underline font-medium">
+                Skapa konto
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+
+        <div className="text-center">
+          <Link to="/" className="text-sm text-muted-foreground hover:text-primary inline-flex items-center gap-1">
+            <ArrowLeft className="w-3 h-3" /> Tillbaka till startsidan
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
