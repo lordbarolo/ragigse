@@ -355,17 +355,17 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
   };
 
   const handleBack = () => {
-    if (step === 2 && initialCategory) {
-      // Came from landing page with category pre-set, can't go back further in survey
-      return;
+    if (step === 3 && !data.kommun && selectedRegion) {
+      setSelectedRegion("");
+    } else if (step === 3 && !selectedRegion && initialRole) {
+      // Barnmorska at region list — go back to landing
+      onBack?.();
+    } else if (step === 2 && initialCategory) {
+      // Came from landing with category pre-set — go back to landing
+      onBack?.();
     } else if (step === 2) {
       setRoleDropdownValue("");
       setStep(1);
-    } else if (step === 3 && !data.kommun && selectedRegion) {
-      setSelectedRegion("");
-    } else if (step === 3 && initialRole) {
-      // Came from landing page with role pre-set (barnmorska), can't go back
-      return;
     } else if (step > 1) {
       setStep(step - 1);
     }
