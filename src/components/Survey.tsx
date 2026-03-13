@@ -103,8 +103,6 @@ export default function Survey({ initialCategory, initialRole }: SurveyProps = {
   // Step 2: single dropdown value
   const [roleDropdownValue, setRoleDropdownValue] = useState(initialRole || "");
 
-  // Step 2: single dropdown value
-  const [roleDropdownValue, setRoleDropdownValue] = useState("");
 
   // Step 3 state
   const [selectedRegion, setSelectedRegion] = useState("");
