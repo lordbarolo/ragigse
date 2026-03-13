@@ -199,6 +199,20 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
       .sort((a, b) => a.localeCompare(b, "sv"));
   }, [locations]);
 
+  // All kommuner for search-first flow
+  const allKommuner = useMemo(() => {
+    if (!locations) return [];
+    return locations
+      .map((l) => ({ kommun: l.kommun, region: l.region }))
+      .sort((a, b) => a.kommun.localeCompare(b.kommun, "sv"));
+  }, [locations]);
+
+  const filteredKommunerSearch = useMemo(() => {
+    if (!kommunSearch.trim()) return allKommuner.slice(0, 10); // show top 10 initially
+    const q = kommunSearch.toLowerCase();
+    return allKommuner.filter((k) => k.kommun.toLowerCase().includes(q));
+  }, [allKommuner, kommunSearch]);
+
   const filteredKommuner = useMemo(() => {
     if (!locations || !selectedRegion) return [];
     return locations
