@@ -92,22 +92,31 @@ const Index = () => {
         salary_type: testData.salaryType,
         current_salary: testData.currentSalary,
       });
-      const { data: reportData } = await supabase.functions.invoke("create-report", {
-        body: {
-          lead_id: leadId,
-          email: testData.email,
-          occupation: testData.yrke,
-          employment_type: testData.employmentType,
-          kommun: testData.kommun,
-          current_salary: testData.currentSalary,
-          salary_type: testData.salaryType,
-          track: "consultant",
-        },
-      });
+      // Call pricing engine and create report in parallel
+      const [reportRes, pricingRes] = await Promise.all([
+        supabase.functions.invoke("create-report", {
+          body: {
+            lead_id: leadId,
+            email: testData.email,
+            occupation: testData.yrke,
+            employment_type: testData.employmentType,
+            kommun: testData.kommun,
+            current_salary: testData.currentSalary,
+            salary_type: testData.salaryType,
+            track: "consultant",
+          },
+        }),
+        supabase.functions.invoke("pricing-engine", {
+          body: { occupation: testData.yrke, kommun: testData.kommun, employment_type: testData.employmentType },
+        }),
+      ]);
+      const reportData = reportRes.data;
+      const pricingData = pricingRes.data;
       sessionStorage.setItem("leadId", leadId);
       sessionStorage.setItem("surveyData", JSON.stringify(testData));
       if (reportData?.report_id) sessionStorage.setItem("reportId", reportData.report_id);
-      if (reportData?.ab_variant) sessionStorage.setItem("abVariant", reportData.ab_variant); // kept for analytics
+      if (reportData?.ab_variant) sessionStorage.setItem("abVariant", reportData.ab_variant);
+      if (pricingData && !pricingData.error) sessionStorage.setItem("pricingResult", JSON.stringify(pricingData));
       const couponCode = searchParams.get("coupon");
       const couponParam = couponCode ? `?coupon=${encodeURIComponent(couponCode)}` : "";
       navigate(`/resultat/${leadId}${couponParam}`);
