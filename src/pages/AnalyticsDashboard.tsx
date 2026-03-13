@@ -32,7 +32,7 @@ const STEP_LABELS: Record<string, string> = {
   payment_verified: "Betalning verifierad",
 };
 
-const DASHBOARD_PASSWORD = "analyt1cs2026";
+const DASHBOARD_PASSWORD = "Compcare2026";
 
 export default function AnalyticsDashboard() {
   const [authenticated, setAuthenticated] = useState(false);
