@@ -40,7 +40,7 @@ export default function EmailHookMessage({
   const roleName = occupation?.toLowerCase() || "din roll";
 
   return (
-    <div className="space-y-4 mb-5">
+    <div className="space-y-4 mb-5 animate-fade-in">
       <div className="flex items-start gap-3">
         <div className="p-2 rounded-lg bg-muted shrink-0 mt-0.5">
           <Icon className={`w-4 h-4 ${accentClass}`} />
