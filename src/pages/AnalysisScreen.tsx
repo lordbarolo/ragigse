@@ -46,6 +46,7 @@ export default function AnalysisScreen() {
   const [survey, setSurvey] = useState<SurveyData | null>(null);
   const [leadId, setLeadId] = useState("");
   const [reportId, setReportId] = useState("");
+  const [pricing, setPricing] = useState<PricingResult | null>(null);
 
   const rafRef = useRef<number | null>(null);
   const startRef = useRef(Date.now());
