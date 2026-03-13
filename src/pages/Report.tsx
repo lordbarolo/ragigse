@@ -14,7 +14,7 @@ import type { ReportData } from "@/shared/types";
 import PermanentTrackContent from "@/components/report/PermanentTrackContent";
 import ConsultantTrackContent from "@/components/report/ConsultantTrackContent";
 
-import ReportFeedback from "@/components/report/ReportFeedback";
+
 
 export default function Report() {
   const { reportId } = useParams<{ reportId: string }>();
@@ -133,6 +133,8 @@ export default function Report() {
             isFullAccess={true}
             occupation={report.occupation}
             kommun={report.kommun}
+            leadId={report.lead_id}
+            userZone={report.user_zone}
           />
         ) : (
           <ConsultantTrackContent
@@ -151,14 +153,6 @@ export default function Report() {
           />
         )}
 
-        {/* Feedback */}
-        {report.lead_id && (
-          <ReportFeedback
-            leadId={report.lead_id}
-            role={report.occupation}
-            zone={report.user_zone}
-          />
-        )}
 
         {/* Share actions */}
         <div className="space-y-3 pt-2">

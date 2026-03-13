@@ -4,15 +4,18 @@ import { fmt, formatPartialValue } from "@/shared/formatters";
 import { SectionHeading, StatBlock } from "@/shared/UIComponents";
 import type { ResultJson } from "@/shared/types";
 import ConsultantRateLookup from "./ConsultantRateLookup";
+import ReportFeedback from "./ReportFeedback";
 
 interface Props {
   r: ResultJson;
   isFullAccess: boolean;
   occupation: string;
   kommun: string;
+  leadId?: string;
+  userZone?: string;
 }
 
-export default function PermanentTrackContent({ r, isFullAccess, occupation, kommun }: Props) {
+export default function PermanentTrackContent({ r, isFullAccess, occupation, kommun, leadId, userZone }: Props) {
   const gap = r.gap_analysis;
   const benchMarket = r.market;
   const p75 = benchMarket?.percentile_75 ?? 0;
@@ -81,6 +84,10 @@ export default function PermanentTrackContent({ r, isFullAccess, occupation, kom
                       </p>
                     )}
                   </div>
+                )}
+                {/* Feedback */}
+                {leadId && (
+                  <ReportFeedback leadId={leadId} role={occupation} zone={userZone} />
                 )}
                 {/* Negotiation tips */}
                 <div className="space-y-2 pt-2">
