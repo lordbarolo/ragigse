@@ -216,6 +216,7 @@ export default function Survey({ initialCategory, initialRole }: SurveyProps = {
   const nurseRoleOptions = useMemo(() => [
     { value: "__allman", label: "Allmänsjuksköterska", group: "" },
     { value: "__barnmorska", label: "Barnmorska", group: "" },
+    { value: "__rontgen", label: "Röntgensjuksköterska", group: "" },
     ...TOP_NURSE_SPECIALIZATIONS
       .sort((a, b) => a.localeCompare(b, "sv"))
       .map((s) => ({ value: s, label: s, group: "Vidareutbildning (VUB)" })),
