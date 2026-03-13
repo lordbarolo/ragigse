@@ -82,14 +82,13 @@ function ScriptStep({ step, title, text }: { step: number; title: string; text: 
   );
 }
 
-/** Section label with trailing line */
+/** Section label */
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex items-center gap-2.5 mb-3">
+    <div className="mb-3">
       <span className="text-[10px] font-semibold tracking-[1.4px] uppercase text-foreground/[0.28] whitespace-nowrap">
         {children}
       </span>
-      <div className="flex-1 h-px bg-foreground/[0.06]" />
     </div>
   );
 }
@@ -322,15 +321,6 @@ export default function ConsultantTrackContent({
         </div>
       )}
 
-      {/* ═══ Feedback ═══ */}
-      {leadId && (
-        <ReportFeedback
-          leadId={leadId}
-          role={occupation}
-          zone={userZone}
-        />
-      )}
-
       {/* ═══ Nästa steg ═══ */}
       {isConsultantFullAccess && rec && !isAboveThreshold && (
         <div className="relative rounded-2xl bg-gradient-to-b from-foreground/[0.06] to-foreground/[0.02] border border-foreground/10 p-6 overflow-hidden">
@@ -367,6 +357,15 @@ export default function ConsultantTrackContent({
             )}
           </div>
         </div>
+      )}
+
+      {/* ═══ Feedback ═══ */}
+      {leadId && (
+        <ReportFeedback
+          leadId={leadId}
+          role={occupation}
+          zone={userZone}
+        />
       )}
 
       {/* ═══ 4. REGIONAL JÄMFÖRELSE ═══ */}
