@@ -403,6 +403,67 @@ export default function Teaser() {
 
   const regionName = pricingResult?.region || survey.kommun || "";
 
+  // ── Compute email hook tier & props ──
+  const emailHookProps = useMemo(() => {
+    const kommun = survey?.kommun || "";
+    const zon = pricingResult?.zon || "";
+
+    if (isPermanent) {
+      // Permanent track — use benchmark data
+      if (!benchmarkMonthly) return null;
+      const gap = benchmarkMonthly.p75 - userMonthly;
+      const hourlyGap = Math.round(gap / 167);
+      if (gap > 0) {
+        return { tier: "underpaid" as const, hourlyGap, monthlyGap: gap, kommun };
+      }
+      return { tier: "above_market" as const, hourlyGap: 0, monthlyGap: 0, kommun, zon, pctEarningMore: 25 };
+    }
+
+    if (!result) return null;
+
+    const customerRate = pricingResult?.rate_customer_sek_per_hour || 0;
+
+    if (isAboveThreshold) {
+      // Above market — top earner
+      return {
+        tier: "above_market" as const,
+        hourlyGap: 0,
+        monthlyGap: 0,
+        kommun,
+        zon,
+        pctEarningMore: 10, // Top 10% still earn more (conservative estimate)
+      };
+    }
+
+    if (isUnderpaid) {
+      const hourlyGap = result.high - userHourly;
+      const monthlyGap = hourlyGap * 167;
+      return { tier: "underpaid" as const, hourlyGap, monthlyGap, kommun };
+    }
+
+    // At market level — show ceiling
+    const ceilingHourly = result.high;
+    const roomToGrow = ceilingHourly - userHourly;
+    if (roomToGrow > 0) {
+      return {
+        tier: "at_market" as const,
+        hourlyGap: roomToGrow,
+        monthlyGap: roomToGrow * 167,
+        kommun,
+        ceilingRate: ceilingHourly,
+      };
+    }
+
+    return {
+      tier: "above_market" as const,
+      hourlyGap: 0,
+      monthlyGap: 0,
+      kommun,
+      zon,
+      pctEarningMore: 10,
+    };
+  }, [survey, isPermanent, result, pricingResult, benchmarkMonthly, userHourly, userMonthly, isUnderpaid, isAboveThreshold]);
+
   return (
     <div className="min-h-screen bg-background">
       <TeaserHeader kommun={survey.kommun} />
