@@ -226,17 +226,16 @@ export default function AnalysisScreen() {
     const isUnderpaid = userHourly < marketHigh;
 
     if (isAbove) {
-      return { tier: "above_market" as const, hourlyGap: 0, monthlyGap: 0, kommun, zon, pctEarningMore: 10 };
+      return { tier: "above_market" as const, hourlyGap: 0, monthlyGap: 0, kommun, zon, pctEarningMore: 10, currentRate: userHourly, occupation: survey.yrke };
     }
 
     const gap = marketHigh - userHourly;
-    // "At market" = within 5% of market high
     const pctBelow = gap / marketHigh;
     if (pctBelow <= 0.05) {
-      return { tier: "at_market" as const, hourlyGap: gap, monthlyGap: gap * 167, kommun, ceilingRate: marketHigh };
+      return { tier: "at_market" as const, hourlyGap: gap, monthlyGap: gap * 167, kommun, ceilingRate: marketHigh, currentRate: userHourly, occupation: survey.yrke };
     }
 
-    return { tier: "underpaid" as const, hourlyGap: gap, monthlyGap: gap * 167, kommun };
+    return { tier: "underpaid" as const, hourlyGap: gap, monthlyGap: gap * 167, kommun, currentRate: userHourly, occupation: survey.yrke };
   }, [survey, pricing]);
 
   const headline =

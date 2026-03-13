@@ -419,14 +419,16 @@ export default function Teaser() {
     const kommun = survey?.kommun || "";
     const zon = pricingResult?.zon || "";
 
+    const occupation = survey?.yrke || "";
+
     if (isPermanent) {
       if (!benchmarkMonthly) return null;
       const gap = benchmarkMonthly.p75 - userMonthly;
       const hourlyGap = Math.round(gap / 167);
       if (gap > 0) {
-        return { tier: "underpaid" as const, hourlyGap, monthlyGap: gap, kommun };
+        return { tier: "underpaid" as const, hourlyGap, monthlyGap: gap, kommun, currentRate: userHourly, occupation };
       }
-      return { tier: "above_market" as const, hourlyGap: 0, monthlyGap: 0, kommun, zon, pctEarningMore: 25 };
+      return { tier: "above_market" as const, hourlyGap: 0, monthlyGap: 0, kommun, zon, pctEarningMore: 25, currentRate: userHourly, occupation };
     }
 
     if (!result) return null;
@@ -439,13 +441,15 @@ export default function Teaser() {
         kommun,
         zon,
         pctEarningMore: 10,
+        currentRate: userHourly,
+        occupation,
       };
     }
 
     if (isUnderpaid) {
       const hourlyGap = result.high - userHourly;
       const monthlyGap = hourlyGap * 167;
-      return { tier: "underpaid" as const, hourlyGap, monthlyGap, kommun };
+      return { tier: "underpaid" as const, hourlyGap, monthlyGap, kommun, currentRate: userHourly, occupation };
     }
 
     const ceilingHourly = result.high;
@@ -457,6 +461,8 @@ export default function Teaser() {
         monthlyGap: roomToGrow * 167,
         kommun,
         ceilingRate: ceilingHourly,
+        currentRate: userHourly,
+        occupation,
       };
     }
 
@@ -467,6 +473,8 @@ export default function Teaser() {
       kommun,
       zon,
       pctEarningMore: 10,
+      currentRate: userHourly,
+      occupation,
     };
   }, [survey, isPermanent, result, pricingResult, benchmarkMonthly, userHourly, userMonthly, isUnderpaid, isAboveThreshold]);
 
