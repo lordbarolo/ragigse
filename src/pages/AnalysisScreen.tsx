@@ -284,12 +284,18 @@ export default function AnalysisScreen() {
         {phase === "paused_for_email" && (
           <div className="mt-8 animate-in fade-in slide-in-from-bottom-4 duration-600">
             <div className="h-px bg-border/50 mb-6" />
-            <h2 className="text-lg font-bold text-foreground">
-              Vart ska vi skicka din rapport?
-            </h2>
-            <p className="text-sm text-muted-foreground mt-1 mb-4">
-              Rapporten visas direkt. Du får även en kopia i din inkorg.
-            </p>
+            {emailHookProps ? (
+              <EmailHookMessage {...emailHookProps} />
+            ) : (
+              <>
+                <h2 className="text-lg font-bold text-foreground">
+                  Vart ska vi skicka din rapport?
+                </h2>
+                <p className="text-sm text-muted-foreground mt-1 mb-4">
+                  Rapporten visas direkt. Du får även en kopia i din inkorg.
+                </p>
+              </>
+            )}
             <EmailGate onEmailSubmit={handleEmailSubmit} loading={emailSaving} />
           </div>
         )}
