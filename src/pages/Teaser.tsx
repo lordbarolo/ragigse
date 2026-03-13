@@ -173,6 +173,40 @@ export default function Teaser() {
     fetchLead();
   }, [urlLeadId, navigate]);
 
+  // ── Background retry: create report if missing (timeout fallback) ──
+  const retryAttempted = useRef(false);
+  useEffect(() => {
+    if (!leadId || !survey || reportId || retryAttempted.current) return;
+    retryAttempted.current = true;
+
+    const retryCreateReport = async () => {
+      console.log("[Teaser] reportId missing — retrying create-report in background");
+      try {
+        const { data, error } = await supabase.functions.invoke("create-report", {
+          body: {
+            lead_id: leadId,
+            occupation: survey.yrke,
+            employment_type: survey.employmentType,
+            kommun: survey.kommun,
+            current_salary: survey.currentSalary,
+            salary_type: survey.salaryType,
+            track: (survey as SurveyData & { track?: string }).track || "consultant",
+          },
+        });
+        if (!error && data?.report_id) {
+          console.log("[Teaser] Background retry succeeded, reportId:", data.report_id);
+          setReportId(data.report_id);
+          sessionStorage.setItem("reportId", data.report_id);
+        } else {
+          console.warn("[Teaser] Background retry failed:", error || data);
+        }
+      } catch (err) {
+        console.warn("[Teaser] Background retry error:", err);
+      }
+    };
+    retryCreateReport();
+  }, [leadId, survey, reportId]);
+
   // Check referral unlock status
   useEffect(() => {
     if (!leadId) return;
