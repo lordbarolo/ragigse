@@ -1,10 +1,12 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/trackEvent";
 import { toast } from "sonner";
 import EmailGate from "@/components/teaser/EmailGate";
+import EmailHookMessage from "@/components/teaser/EmailHookMessage";
 import type { SurveyData } from "@/components/Survey";
+import type { PricingResult } from "@/hooks/usePricingEngine";
 import { Check } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 
@@ -44,6 +46,7 @@ export default function AnalysisScreen() {
   const [survey, setSurvey] = useState<SurveyData | null>(null);
   const [leadId, setLeadId] = useState("");
   const [reportId, setReportId] = useState("");
+  const [pricing, setPricing] = useState<PricingResult | null>(null);
 
   const rafRef = useRef<number | null>(null);
   const startRef = useRef(Date.now());
@@ -57,6 +60,8 @@ export default function AnalysisScreen() {
     setReportId(sessionStorage.getItem("reportId") || "");
     const raw = sessionStorage.getItem("surveyData");
     if (raw) setSurvey(JSON.parse(raw) as SurveyData);
+    const pricingRaw = sessionStorage.getItem("pricingResult");
+    if (pricingRaw) setPricing(JSON.parse(pricingRaw) as PricingResult);
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
@@ -174,6 +179,32 @@ export default function AnalysisScreen() {
     return "active";
   };
 
+  // ── Compute personalized email hook message ──
+  const emailHookProps = useMemo(() => {
+    if (!survey || !pricing) return null;
+    const kommun = survey.kommun || "";
+    const zon = pricing.zon || "";
+    const userHourly = survey.salaryType === "hourly"
+      ? survey.currentSalary
+      : Math.round(survey.currentSalary / 167);
+    const marketHigh = pricing.recommended_hourly_max;
+    const isAbove = userHourly >= marketHigh;
+    const isUnderpaid = userHourly < marketHigh;
+
+    if (isAbove) {
+      return { tier: "above_market" as const, hourlyGap: 0, monthlyGap: 0, kommun, zon, pctEarningMore: 10 };
+    }
+
+    const gap = marketHigh - userHourly;
+    // "At market" = within 5% of market high
+    const pctBelow = gap / marketHigh;
+    if (pctBelow <= 0.05) {
+      return { tier: "at_market" as const, hourlyGap: gap, monthlyGap: gap * 167, kommun, ceilingRate: marketHigh };
+    }
+
+    return { tier: "underpaid" as const, hourlyGap: gap, monthlyGap: gap * 167, kommun };
+  }, [survey, pricing]);
+
   const headline =
     phase === "finalizing" || phase === "done"
       ? "Färdigställer din rapport…"
@@ -253,12 +284,18 @@ export default function AnalysisScreen() {
         {phase === "paused_for_email" && (
           <div className="mt-8 animate-in fade-in slide-in-from-bottom-4 duration-600">
             <div className="h-px bg-border/50 mb-6" />
-            <h2 className="text-lg font-bold text-foreground">
-              Vart ska vi skicka din rapport?
-            </h2>
-            <p className="text-sm text-muted-foreground mt-1 mb-4">
-              Rapporten visas direkt. Du får även en kopia i din inkorg.
-            </p>
+            {emailHookProps ? (
+              <EmailHookMessage {...emailHookProps} />
+            ) : (
+              <>
+                <h2 className="text-lg font-bold text-foreground">
+                  Vart ska vi skicka din rapport?
+                </h2>
+                <p className="text-sm text-muted-foreground mt-1 mb-4">
+                  Rapporten visas direkt. Du får även en kopia i din inkorg.
+                </p>
+              </>
+            )}
             <EmailGate onEmailSubmit={handleEmailSubmit} loading={emailSaving} />
           </div>
         )}
