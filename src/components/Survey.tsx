@@ -129,7 +129,7 @@ export default function Survey() {
     trackEvent("survey_started");
   }, []);
 
-  const { calculate: pricingCalculate } = usePricingEngine();
+  const { calculate: pricingCalculate, result: pricingResult } = usePricingEngine();
   const { calculate: benchmarkCalculate, result: benchmarkResult } = useBenchmarkEngine();
 
   // Derive yrke from the single dropdown value
