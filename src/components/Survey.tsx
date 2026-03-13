@@ -66,13 +66,26 @@ const nurseValueMap: Record<string, string> = {
   "Ögonsjukvård": "Specialistsjuksköterska ögonsjukvård",
 };
 
-export default function Survey() {
+interface SurveyProps {
+  initialCategory?: OccupationCategory;
+  initialRole?: string;
+}
+
+export default function Survey({ initialCategory, initialRole }: SurveyProps = {}) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { data: locations, isLoading: locLoading } = useLocations();
   const { data: rates, isLoading: ratesLoading } = useRates();
   const [saving, setSaving] = useState(false);
-  const [step, setStep] = useState(1);
+
+  // Determine initial step based on prefill
+  const getInitialStep = () => {
+    if (initialRole) return 3; // Role fully determined (e.g. barnmorska) → skip to region
+    if (initialCategory) return 2; // Category set → show role dropdown
+    return 1;
+  };
+
+  const [step, setStep] = useState(getInitialStep);
   const [data, setData] = useState<SurveyData>({
     email: "",
     employmentType: "",
@@ -85,7 +98,10 @@ export default function Survey() {
   });
 
   // Step 1 state
-  const [occupationCategory, setOccupationCategory] = useState<OccupationCategory>("");
+  const [occupationCategory, setOccupationCategory] = useState<OccupationCategory>(initialCategory || "");
+
+  // Step 2: single dropdown value
+  const [roleDropdownValue, setRoleDropdownValue] = useState(initialRole || "");
 
   // Step 2: single dropdown value
   const [roleDropdownValue, setRoleDropdownValue] = useState("");

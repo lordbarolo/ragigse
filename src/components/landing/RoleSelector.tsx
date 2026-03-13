@@ -6,7 +6,6 @@ const ROLES = [
   { icon: "🩺", title: "Läkare", sub: "ST-läkare, specialist eller legitimerad läkare", category: "lakare" as const },
   { icon: "💉", title: "Sjuksköterska", sub: "Allmänsjuksköterska eller specialistsjuksköterska", category: "ssk" as const },
   { icon: "👶", title: "Barnmorska", sub: "Legitimerad med specialistutbildning", category: "ssk" as const, prefill: "__barnmorska" },
-  { icon: "📡", title: "Röntgensjuksköterska", sub: "Legitimerad röntgensjuksköterska", category: "ssk" as const, prefill: "__ovrig" },
 ];
 
 export default function RoleSelector({ onRoleSelect }: Props) {
