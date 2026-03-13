@@ -4,17 +4,15 @@ type Tier = "underpaid" | "at_market" | "above_market";
 
 interface Props {
   tier: Tier;
-  /** Hourly gap (positive = underpaid amount, for at_market = room to ceiling) */
   hourlyGap: number;
-  /** Monthly equivalent of the gap */
   monthlyGap: number;
   kommun: string;
-  /** For at_market: the ceiling rate */
   ceilingRate?: number;
-  /** For above_market: zone name */
   zon?: string;
-  /** For above_market: % of consultants earning more */
   pctEarningMore?: number;
+  /** The user's current rate (hourly or monthly depending on context) */
+  currentRate?: number;
+  occupation?: string;
 }
 
 function fmt(n: number): string {
@@ -35,8 +33,11 @@ export default function EmailHookMessage({
   ceilingRate,
   zon,
   pctEarningMore,
+  currentRate,
+  occupation,
 }: Props) {
   const { icon: Icon, accentClass } = config[tier];
+  const roleName = occupation?.toLowerCase() || "din roll";
 
   return (
     <div className="space-y-4 mb-5">
@@ -48,16 +49,17 @@ export default function EmailHookMessage({
           {tier === "underpaid" && (
             <>
               <p className="text-[15px] font-semibold text-foreground leading-snug">
-                Analysen visar att ersättningen för din roll i {kommun} ligger{" "}
-                <span className={accentClass}>{fmt(hourlyGap)} kr/tim</span> högre
-                än din nuvarande nivå.
+                Analysen visar att{" "}
+                {currentRate ? (
+                  <span className="text-muted-foreground">{fmt(currentRate)} kr/tim</span>
+                ) : (
+                  "din ersättning"
+                )}{" "}
+                ligger <span className={accentClass}>under marknaden</span> för{" "}
+                {roleName} i {kommun}.
               </p>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Det motsvarar en skillnad på{" "}
-                <span className="font-semibold text-foreground">
-                  {fmt(monthlyGap)} kr per månad
-                </span>
-                .
+                Vi skickar den fullständiga analysen kostnadsfritt till din e-post.
               </p>
             </>
           )}
@@ -65,16 +67,17 @@ export default function EmailHookMessage({
           {tier === "at_market" && (
             <>
               <p className="text-[15px] font-semibold text-foreground leading-snug">
-                Din ersättning ligger i linje med marknaden. Ramavtalet för din
-                roll i {kommun} har ett tak på{" "}
-                <span className={accentClass}>{fmt(ceilingRate || 0)} kr/tim</span>.
+                Analysen visar att{" "}
+                {currentRate ? (
+                  <span className="text-muted-foreground">{fmt(currentRate)} kr/tim</span>
+                ) : (
+                  "din ersättning"
+                )}{" "}
+                ligger <span className={accentClass}>i linje med marknaden</span> för{" "}
+                {roleName} i {kommun}.
               </p>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Skillnaden mot taket är{" "}
-                <span className="font-semibold text-foreground">
-                  {fmt(hourlyGap)} kr/tim
-                </span>
-                .
+                Vi skickar den fullständiga analysen kostnadsfritt till din e-post.
               </p>
             </>
           )}
@@ -82,12 +85,17 @@ export default function EmailHookMessage({
           {tier === "above_market" && (
             <>
               <p className="text-[15px] font-semibold text-foreground leading-snug">
-                Du ligger över snittet för din roll i {kommun}.{" "}
-                <span className={accentClass}>{pctEarningMore}%</span> av
-                konsulter i zon {zon} har en högre ersättning.
+                Analysen visar att{" "}
+                {currentRate ? (
+                  <span className="text-muted-foreground">{fmt(currentRate)} kr/tim</span>
+                ) : (
+                  "din ersättning"
+                )}{" "}
+                ligger <span className={accentClass}>över marknaden</span> för{" "}
+                {roleName} i {kommun}.
               </p>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Den fullständiga rapporten visar detaljerna.
+                Vi skickar den fullständiga analysen kostnadsfritt till din e-post.
               </p>
             </>
           )}
@@ -96,9 +104,7 @@ export default function EmailHookMessage({
 
       {/* CTA label */}
       <p className="text-sm font-semibold text-foreground">
-        {tier === "underpaid" && "Ange din e-post för att se hela analysen."}
-        {tier === "at_market" && "Ange din e-post för att se hela analysen."}
-        {tier === "above_market" && "Ange din e-post för att se hela analysen."}
+        Ange din e-post för att få hela analysen.
       </p>
     </div>
   );
