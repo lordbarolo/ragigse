@@ -371,11 +371,13 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
   };
 
   const handleBack = () => {
-    if (step === 3 && !data.kommun && selectedRegion) {
-      setSelectedRegion("");
-    } else if (step === 3 && !selectedRegion && initialRole) {
-      // Barnmorska at region list — go back to landing
+    if (step === 3 && initialRole) {
       onBack?.();
+    } else if (step === 3) {
+      setKommunSearch("");
+      setSelectedRegion("");
+      setData({ ...data, kommun: "" });
+      setStep(2);
     } else if (step === 2 && initialCategory) {
       // Came from landing with category pre-set — go back to landing
       onBack?.();
