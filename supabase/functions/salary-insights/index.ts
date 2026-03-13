@@ -23,7 +23,8 @@ serve(async (req) => {
       .from("leads")
       .select("yrke, kommun, current_salary, salary_type, employment_type, email, created_at")
       .not("current_salary", "is", null)
-      .not("yrke", "is", null);
+      .not("yrke", "is", null)
+      .not("email", "eq", "test@compcare.se");
 
     if (error) throw error;
 
