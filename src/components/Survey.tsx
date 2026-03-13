@@ -382,6 +382,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
       // Came from landing with category pre-set — go back to landing
       onBack?.();
     } else if (step === 2) {
+      setOccupationCategory("");
       setRoleDropdownValue("");
       setStep(1);
     } else if (step > 1) {
