@@ -22,6 +22,10 @@ const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const ThemePreview = lazy(() => import("./pages/ThemePreview"));
 const SharePreview = lazy(() => import("./pages/SharePreview"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+const Login = lazy(() => import("./pages/Login"));
+const Signup = lazy(() => import("./pages/Signup"));
+const ResetPassword = lazy(() => import("./pages/ResetPassword"));
+const Profile = lazy(() => import("./pages/Profile"));
 
 const queryClient = new QueryClient();
 
@@ -54,6 +58,10 @@ const App = () => (
             <Route path="/jamfor" element={<Compare />} />
             <Route path="/vanliga-fragor" element={<FAQ />} />
             <Route path="/integritetspolicy" element={<PrivacyPolicy />} />
+            <Route path="/logga-in" element={<Login />} />
+            <Route path="/registrera" element={<Signup />} />
+            <Route path="/aterstall-losenord" element={<ResetPassword />} />
+            <Route path="/profil" element={<Profile />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/dela" element={<SharePreview />} />
             <Route path="/dev/theme-preview" element={<ThemePreview />} />
