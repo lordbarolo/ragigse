@@ -179,6 +179,32 @@ export default function AnalysisScreen() {
     return "active";
   };
 
+  // ── Compute personalized email hook message ──
+  const emailHookProps = useMemo(() => {
+    if (!survey || !pricing) return null;
+    const kommun = survey.kommun || "";
+    const zon = pricing.zon || "";
+    const userHourly = survey.salaryType === "hourly"
+      ? survey.currentSalary
+      : Math.round(survey.currentSalary / 167);
+    const marketHigh = pricing.recommended_hourly_max;
+    const isAbove = userHourly >= marketHigh;
+    const isUnderpaid = userHourly < marketHigh;
+
+    if (isAbove) {
+      return { tier: "above_market" as const, hourlyGap: 0, monthlyGap: 0, kommun, zon, pctEarningMore: 10 };
+    }
+
+    const gap = marketHigh - userHourly;
+    // "At market" = within 5% of market high
+    const pctBelow = gap / marketHigh;
+    if (pctBelow <= 0.05) {
+      return { tier: "at_market" as const, hourlyGap: gap, monthlyGap: gap * 167, kommun, ceilingRate: marketHigh };
+    }
+
+    return { tier: "underpaid" as const, hourlyGap: gap, monthlyGap: gap * 167, kommun };
+  }, [survey, pricing]);
+
   const headline =
     phase === "finalizing" || phase === "done"
       ? "Färdigställer din rapport…"
