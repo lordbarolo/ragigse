@@ -66,13 +66,26 @@ const nurseValueMap: Record<string, string> = {
   "Ögonsjukvård": "Specialistsjuksköterska ögonsjukvård",
 };
 
-export default function Survey() {
+interface SurveyProps {
+  initialCategory?: OccupationCategory;
+  initialRole?: string;
+}
+
+export default function Survey({ initialCategory, initialRole }: SurveyProps = {}) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { data: locations, isLoading: locLoading } = useLocations();
   const { data: rates, isLoading: ratesLoading } = useRates();
   const [saving, setSaving] = useState(false);
-  const [step, setStep] = useState(1);
+
+  // Determine initial step based on prefill
+  const getInitialStep = () => {
+    if (initialRole) return 3; // Role fully determined (e.g. barnmorska) → skip to region
+    if (initialCategory) return 2; // Category set → show role dropdown
+    return 1;
+  };
+
+  const [step, setStep] = useState(getInitialStep);
   const [data, setData] = useState<SurveyData>({
     email: "",
     employmentType: "",
@@ -85,10 +98,11 @@ export default function Survey() {
   });
 
   // Step 1 state
-  const [occupationCategory, setOccupationCategory] = useState<OccupationCategory>("");
+  const [occupationCategory, setOccupationCategory] = useState<OccupationCategory>(initialCategory || "");
 
   // Step 2: single dropdown value
-  const [roleDropdownValue, setRoleDropdownValue] = useState("");
+  const [roleDropdownValue, setRoleDropdownValue] = useState(initialRole || "");
+
 
   // Step 3 state
   const [selectedRegion, setSelectedRegion] = useState("");
@@ -145,6 +159,7 @@ export default function Survey() {
     if (occupationCategory === "ssk") {
       if (roleDropdownValue === "__allman") return "Sjuksköterska";
       if (roleDropdownValue === "__barnmorska") return "Barnmorska";
+      if (roleDropdownValue === "__rontgen") return "Röntgensjuksköterska";
       if (roleDropdownValue === "__ovrig") return "Specialistsjuksköterska";
       return nurseValueMap[roleDropdownValue] || roleDropdownValue;
     }
@@ -202,6 +217,7 @@ export default function Survey() {
   const nurseRoleOptions = useMemo(() => [
     { value: "__allman", label: "Allmänsjuksköterska", group: "" },
     { value: "__barnmorska", label: "Barnmorska", group: "" },
+    { value: "__rontgen", label: "Röntgensjuksköterska", group: "" },
     ...TOP_NURSE_SPECIALIZATIONS
       .sort((a, b) => a.localeCompare(b, "sv"))
       .map((s) => ({ value: s, label: s, group: "Vidareutbildning (VUB)" })),
@@ -338,11 +354,17 @@ export default function Survey() {
   };
 
   const handleBack = () => {
-    if (step === 2) {
+    if (step === 2 && initialCategory) {
+      // Came from landing page with category pre-set, can't go back further in survey
+      return;
+    } else if (step === 2) {
       setRoleDropdownValue("");
       setStep(1);
     } else if (step === 3 && !data.kommun && selectedRegion) {
       setSelectedRegion("");
+    } else if (step === 3 && initialRole) {
+      // Came from landing page with role pre-set (barnmorska), can't go back
+      return;
     } else if (step > 1) {
       setStep(step - 1);
     }
@@ -360,6 +382,7 @@ export default function Survey() {
     if (occupationCategory === "ssk") {
       if (roleDropdownValue === "__allman") return "Allmänsjuksköterska";
       if (roleDropdownValue === "__barnmorska") return "Barnmorska";
+      if (roleDropdownValue === "__rontgen") return "Röntgensjuksköterska";
       if (roleDropdownValue === "__ovrig") return "Specialistsjuksköterska";
       return roleDropdownValue;
     }
