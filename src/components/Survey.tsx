@@ -72,7 +72,7 @@ interface SurveyProps {
   onBack?: () => void;
 }
 
-export default function Survey({ initialCategory, initialRole }: SurveyProps = {}) {
+export default function Survey({ initialCategory, initialRole, onBack }: SurveyProps = {}) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { data: locations, isLoading: locLoading } = useLocations();
