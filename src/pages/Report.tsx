@@ -133,6 +133,8 @@ export default function Report() {
             isFullAccess={true}
             occupation={report.occupation}
             kommun={report.kommun}
+            leadId={report.lead_id}
+            userZone={report.user_zone}
           />
         ) : (
           <ConsultantTrackContent

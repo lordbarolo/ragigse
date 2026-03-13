@@ -85,6 +85,10 @@ export default function PermanentTrackContent({ r, isFullAccess, occupation, kom
                     )}
                   </div>
                 )}
+                {/* Feedback */}
+                {leadId && (
+                  <ReportFeedback leadId={leadId} role={occupation} zone={userZone} />
+                )}
                 {/* Negotiation tips */}
                 <div className="space-y-2 pt-2">
                   <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Förhandlingstips</p>
