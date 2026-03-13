@@ -494,7 +494,11 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
 
         {step === 3 && (
           <StepWrapper title="Var jobbar du?">
-            <div className="space-y-3">
+            <div className="space-y-4 flex flex-col items-center justify-center flex-1">
+              <p className="text-sm text-muted-foreground text-center max-w-xs">
+                Inom en region kan det finnas 3 olika prisnivåer. Ange kommun för en träffsäker analys av din ersättning.
+              </p>
+
               {/* Search input */}
               <div className="relative">
                 <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/50" />
