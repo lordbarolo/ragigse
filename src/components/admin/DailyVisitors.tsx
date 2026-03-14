@@ -20,21 +20,17 @@ export default function DailyVisitors() {
       const fromDate = new Date();
       fromDate.setDate(fromDate.getDate() - period);
 
-      const { data: events, error } = await supabase
-        .from("analytics_events")
-        .select("created_at")
-        .eq("event_name", "landing_viewed")
-        .gte("created_at", fromDate.toISOString())
-        .order("created_at", { ascending: true })
-        .limit(10000);
+      const { data: res, error } = await supabase.functions.invoke("analytics-dashboard", {
+        body: { from: fromDate.toISOString().slice(0, 10) },
+      });
 
       if (error) throw error;
 
-      // Group by day
+      // Build day map from timeSeries
       const byDay: Record<string, number> = {};
-      for (const e of events || []) {
-        const day = e.created_at.slice(0, 10);
-        byDay[day] = (byDay[day] || 0) + 1;
+      for (const entry of res.timeSeries || []) {
+        const landingCount = entry.events?.landing_viewed || 0;
+        byDay[entry.date] = landingCount;
       }
 
       // Fill missing days
@@ -111,7 +107,6 @@ export default function DailyVisitors() {
                     className="w-full bg-primary/70 rounded-t transition-all duration-300 hover:bg-primary"
                     style={{ height: `${h}%` }}
                   />
-                  {/* Tooltip */}
                   <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block z-10">
                     <div className="bg-foreground text-background text-[10px] rounded px-1.5 py-0.5 whitespace-nowrap font-mono">
                       {d.date.slice(5)} · {d.count}
