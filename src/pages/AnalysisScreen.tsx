@@ -426,23 +426,6 @@ export default function AnalysisScreen() {
                 </span>
               </div>
 
-              {/* What you get list */}
-              <div className="px-5 py-3 border-b border-foreground/[0.04]">
-                <p className="text-[11px] font-display font-semibold tracking-[0.08em] uppercase text-foreground/35 mb-2">
-                  I din rapport
-                </p>
-                {[
-                  "Rekommenderad ersättning för din roll & zon",
-                  "Vad vårdgivaren betalar bemanningsföretaget",
-                  "Förhandlingstips anpassade till din situation",
-                ].map((t) => (
-                  <div key={t} className="flex items-start gap-2 py-1">
-                    <Check className="w-3.5 h-3.5 text-[hsl(var(--green))] shrink-0 mt-0.5" />
-                    <span className="text-[13px] text-foreground/60">{t}</span>
-                  </div>
-                ))}
-              </div>
-
               {/* Email input inside card */}
               <div className="px-5 pb-5 pt-4 flex flex-col gap-2.5">
                 <div className="relative flex items-center">
