@@ -13,7 +13,12 @@ export default function ShareButton({
   className?: string;
   label?: string;
 }) {
-  const shareUrl = url || window.location.href;
+  const rawUrl = url || window.location.href;
+  const shareUrlObj = new URL(rawUrl);
+  shareUrlObj.searchParams.set("utm_source", "referral");
+  shareUrlObj.searchParams.set("utm_medium", "share");
+  shareUrlObj.searchParams.set("utm_campaign", "colleague_share");
+  const shareUrl = shareUrlObj.toString();
 
   const handleShare = async () => {
     if (navigator.share) {

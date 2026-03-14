@@ -42,8 +42,9 @@ serve(async (req) => {
 
     // Build the confirmation link
     const siteUrl = req.headers.get("origin") || "https://compcare.se";
-    const confirmLink = `${siteUrl}/referral/${referral.token}`;
-    const homepageLink = siteUrl;
+    const utmParams = "utm_source=referral&utm_medium=email&utm_campaign=colleague_tip";
+    const confirmLink = `${siteUrl}/referral/${referral.token}?${utmParams}`;
+    const homepageLink = `${siteUrl}/?${utmParams}`;
 
     // Send email via Resend if API key is configured and email sending requested
     let emailSent = false;

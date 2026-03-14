@@ -75,7 +75,7 @@ export default function ReportFeedback({ leadId, role, zone }: Props) {
   };
 
   const handleCopy = async () => {
-    await navigator.clipboard.writeText("https://compcare.se");
+    await navigator.clipboard.writeText("https://compcare.se/?utm_source=referral&utm_medium=clipboard&utm_campaign=report_share");
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
