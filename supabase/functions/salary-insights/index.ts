@@ -92,26 +92,26 @@ serve(async (req) => {
 
     const roleStats = Object.entries(byRoleType)
       .map(([key, d]) => {
-        const [role, employment_type] = key.split("||");
-        return { role, employment_type, count: d.count, ...stats(d.salaries) };
+        const [role, employment_type, salary_type] = key.split("||");
+        return { role, employment_type, salary_type, count: d.count, ...stats(d.salaries) };
       })
       .sort((a, b) => b.count - a.count);
 
     const kommunStats = Object.entries(byKommunType)
       .map(([key, d]) => {
-        const [kommun, employment_type] = key.split("||");
-        return { kommun, employment_type, count: d.count, ...stats(d.salaries) };
+        const [kommun, employment_type, salary_type] = key.split("||");
+        return { kommun, employment_type, salary_type, count: d.count, ...stats(d.salaries) };
       })
       .sort((a, b) => b.count - a.count);
 
     const roleKommunStats = Object.values(byRoleKommunType)
       .filter((d) => d.count >= 2)
       .map((d) => {
-        // Extract employment_type from the key by finding this bucket
         const entry = Object.entries(byRoleKommunType).find(([_, v]) => v === d)!;
         const parts = entry[0].split("||");
         const employment_type = parts[2] || "unknown";
-        return { role: d.role, kommun: d.kommun, employment_type, count: d.count, ...stats(d.salaries) };
+        const salary_type = parts[3] || "unknown";
+        return { role: d.role, kommun: d.kommun, employment_type, salary_type, count: d.count, ...stats(d.salaries) };
       })
       .sort((a, b) => b.count - a.count)
       .slice(0, 100);
