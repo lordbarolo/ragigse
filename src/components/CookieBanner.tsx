@@ -1,0 +1,61 @@
+import { useState, useEffect } from "react";
+import { getConsent, setConsent } from "@/lib/cookieConsent";
+import { initPostHog } from "@/lib/posthog";
+import { Link } from "react-router-dom";
+
+export default function CookieBanner() {
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const consent = getConsent();
+    if (consent === null) {
+      setVisible(true);
+    } else if (consent === "accepted") {
+      initPostHog();
+    }
+  }, []);
+
+  const handleAccept = () => {
+    setConsent("accepted");
+    initPostHog();
+    setVisible(false);
+  };
+
+  const handleReject = () => {
+    setConsent("rejected");
+    setVisible(false);
+  };
+
+  if (!visible) return null;
+
+  return (
+    <div className="fixed bottom-0 inset-x-0 z-[100] safe-area-bottom animate-in slide-in-from-bottom-4 duration-400">
+      <div className="mx-3 mb-3 rounded-2xl border border-foreground/[0.08] bg-card/95 backdrop-blur-xl shadow-[0_-4px_30px_rgba(0,0,0,0.4)] p-4 sm:p-5 max-w-lg sm:mx-auto">
+        <p className="text-sm text-foreground/80 leading-relaxed mb-3">
+          Vi använder cookies för att förbättra din upplevelse och analysera 
+          hur tjänsten används.{" "}
+          <Link
+            to="/integritetspolicy"
+            className="text-primary hover:underline font-medium"
+          >
+            Läs mer
+          </Link>
+        </p>
+        <div className="flex gap-2">
+          <button
+            onClick={handleReject}
+            className="flex-1 py-2.5 px-4 rounded-xl text-sm font-medium text-muted-foreground border border-border hover:border-foreground/20 hover:text-foreground transition-all active:scale-[0.98]"
+          >
+            Avvisa
+          </button>
+          <button
+            onClick={handleAccept}
+            className="flex-1 py-2.5 px-4 rounded-xl text-sm font-semibold bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all active:scale-[0.98]"
+          >
+            Acceptera
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}

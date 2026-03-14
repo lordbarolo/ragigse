@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useLocations, useRates } from "@/hooks/useCalculator";
 import { usePricingEngine } from "@/hooks/usePricingEngine";
 import { useBenchmarkEngine } from "@/hooks/useBenchmarkEngine";
@@ -747,6 +747,13 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
           )}
         </div>
       )}
+
+      <p className="text-center text-xs text-muted-foreground/50 mt-8">
+        Dina uppgifter hanteras enligt vår{" "}
+        <Link to="/integritetspolicy" className="text-primary/70 hover:text-primary underline underline-offset-2 transition-colors">
+          integritetspolicy
+        </Link>.
+      </p>
     </div>
   );
 }
