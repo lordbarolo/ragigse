@@ -94,18 +94,18 @@ export default function DailyVisitors() {
         ) : data.length === 0 ? (
           <p className="text-muted-foreground text-center py-8">Ingen data ännu.</p>
         ) : (
-          <div className="flex items-end gap-[2px] h-40">
+          <div className="flex items-end gap-[2px]" style={{ height: 160 }}>
             {data.map((d) => {
-              const h = maxCount > 0 ? Math.max(2, (d.count / maxCount) * 100) : 2;
+              const h = maxCount > 0 ? Math.max(2, Math.round((d.count / maxCount) * 160)) : 2;
               return (
                 <div
                   key={d.date}
-                  className="flex-1 group relative"
-                  style={{ minWidth: 0 }}
+                  className="flex-1 group relative flex items-end"
+                  style={{ minWidth: 0, height: '100%' }}
                 >
                   <div
                     className="w-full bg-primary/70 rounded-t transition-all duration-300 hover:bg-primary"
-                    style={{ height: `${h}%` }}
+                    style={{ height: `${h}px` }}
                   />
                   <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block z-10">
                     <div className="bg-foreground text-background text-[10px] rounded px-1.5 py-0.5 whitespace-nowrap font-mono">
