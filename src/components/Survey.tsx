@@ -30,20 +30,22 @@ const TOTAL_STEPS = 6;
 type OccupationCategory = "" | "lakare" | "ssk";
 type CommuteType = "veckovis" | "dagligen" | "inte_alls" | "";
 
-// Top 15 doctor specializations (most common in Sweden)
+// Top doctor specializations — ordered by search frequency
 const TOP_DOCTOR_SPECIALTIES = [
-  "Allmänmedicin", "Anestesi och intensivvård", "Barn- och ungdomsmedicin",
-  "Geriatrik", "Infektionssjukdomar", "Internmedicin", "Kardiologi",
-  "Kirurgi", "Lungsjukdomar", "Neurologi", "Obstetrik och gynekologi",
-  "Onkologi", "Ortopedi", "Psykiatri", "Radiologi",
+  "Allmänmedicin", "Anestesi och intensivvård", "Internmedicin",
+  "Barn- och ungdomsmedicin", "Psykiatri", "Radiologi",
+  "Geriatrik", "Kardiologi", "Kirurgi",
+  "Obstetrik och gynekologi", "Onkologi", "Ortopedi",
+  "Infektionssjukdomar", "Lungsjukdomar", "Neurologi",
 ];
 
-// Top 15 nurse specializations (most common)
+// Top nurse specializations — ordered by search frequency
 const TOP_NURSE_SPECIALIZATIONS = [
-  "Akutsjukvård", "Ambulanssjukvård", "Anestesisjukvård", "Barn och ungdom",
-  "Distriktssköterska", "Hjärtsjukvård", "Infektionssjukvård",
-  "Intensivvård", "Kirurgisk vård", "Medicinsk vård", "Onkologi",
-  "Operationssjukvård", "Palliativ vård", "Psykiatrisk vård", "Vård av äldre",
+  "Intensivvård", "Psykiatrisk vård", "Ambulanssjukvård",
+  "Barn och ungdom", "Operationssjukvård", "Anestesisjukvård",
+  "Akutsjukvård", "Hjärtsjukvård", "Distriktssköterska",
+  "Kirurgisk vård", "Palliativ vård", "Vård av äldre",
+  "Medicinsk vård", "Onkologi", "Infektionssjukvård",
 ];
 
 const nurseValueMap: Record<string, string> = {
@@ -226,7 +228,6 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
     { value: "__leg", label: "Leg. läkare", group: "" },
     { value: "__st", label: "ST-läkare", group: "" },
     ...TOP_DOCTOR_SPECIALTIES
-      .sort((a, b) => a.localeCompare(b, "sv"))
       .map((s) => ({ value: s, label: s, group: "Specialisering" })),
     { value: "__ovrig", label: "Övrig specialisering", group: "Specialisering" },
   ], []);
@@ -236,7 +237,6 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
     { value: "__barnmorska", label: "Barnmorska", group: "" },
     { value: "__rontgen", label: "Röntgensjuksköterska", group: "" },
     ...TOP_NURSE_SPECIALIZATIONS
-      .sort((a, b) => a.localeCompare(b, "sv"))
       .map((s) => ({ value: s, label: s, group: "Vidareutbildning (VUB)" })),
     { value: "__ovrig", label: "Övrig VUB", group: "Vidareutbildning (VUB)" },
   ], []);
