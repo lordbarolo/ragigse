@@ -130,7 +130,7 @@ serve(async (req) => {
         conversionRates,
         referralEvents,
         revenueByVariant,
-        timeSeries: timeSeries.slice(-30), // Last 30 days
+        timeSeries,
         totalEvents: (events || []).length,
       }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
