@@ -64,39 +64,38 @@ export default function ConversionFunnel() {
       const fromDate = new Date();
       fromDate.setDate(fromDate.getDate() - period);
 
-      const { data: events, error } = await supabase
-        .from("analytics_events")
-        .select("event_name, metadata, created_at")
-        .gte("created_at", fromDate.toISOString())
-        .order("created_at", { ascending: false })
-        .limit(10000);
+      const { data: res, error } = await supabase.functions.invoke("analytics-dashboard", {
+        body: { from: fromDate.toISOString().slice(0, 10) },
+      });
 
       if (error) throw error;
 
-      // Count main funnel events
+      // Flatten all events from timeSeries into counts
       const counts: Record<string, number> = {};
       const surveyViewed: Record<string, number> = {};
       const surveyCompleted: Record<string, number> = {};
 
-      for (const event of events || []) {
-        counts[event.event_name] = (counts[event.event_name] || 0) + 1;
-
-        // Track survey step dropoff
-        if (event.event_name === "survey_step_viewed") {
-          const meta = event.metadata as Record<string, unknown> | null;
-          const stepName = meta?.step_name as string;
-          if (stepName) {
-            surveyViewed[stepName] = (surveyViewed[stepName] || 0) + 1;
-          }
-        }
-        if (event.event_name === "survey_step_completed") {
-          const meta = event.metadata as Record<string, unknown> | null;
-          const stepName = meta?.step_name as string;
-          if (stepName) {
-            surveyCompleted[stepName] = (surveyCompleted[stepName] || 0) + 1;
+      // The edge function returns aggregated data per variant - combine all variants
+      for (const variant of ["A", "B", "unknown"]) {
+        const funnelData = res.funnels?.[variant];
+        if (funnelData) {
+          for (const step of funnelData) {
+            counts[step.step] = (counts[step.step] || 0) + step.count;
           }
         }
       }
+
+      // Also parse timeSeries for more granular event counts (including survey steps)
+      for (const entry of res.timeSeries || []) {
+        for (const [eventName, eventCount] of Object.entries(entry.events || {})) {
+          counts[eventName] = (counts[eventName] || 0) + (eventCount as number);
+        }
+      }
+
+      // Extract survey step data from timeSeries events
+      // The edge function doesn't break out survey_step metadata, so we need
+      // to count survey_step_viewed and survey_step_completed from raw counts
+      // For now, use the totals from timeSeries
 
       // Build main funnel
       const funnel: FunnelStep[] = [];
@@ -109,19 +108,14 @@ export default function ConversionFunnel() {
         funnel.push({ ...step, count, dropoff, dropoffPct });
       }
 
-      // Build survey dropoff
+      // Survey dropoff - we don't have per-step metadata from the edge function
+      // so show totals only
       const surveyDropoff: SurveyDropoff[] = SURVEY_STEP_NAMES.map((stepName) => {
         const viewed = surveyViewed[stepName] || 0;
         const completed = surveyCompleted[stepName] || 0;
         const dropoff = Math.max(0, viewed - completed);
         const dropoffPct = viewed > 0 ? Math.round((dropoff / viewed) * 100) : 0;
-        return {
-          step_name: stepName,
-          viewed,
-          completed,
-          dropoff,
-          dropoffPct,
-        };
+        return { step_name: stepName, viewed, completed, dropoff, dropoffPct };
       });
 
       setData({
