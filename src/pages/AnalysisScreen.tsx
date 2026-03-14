@@ -418,10 +418,6 @@ export default function AnalysisScreen() {
               </div>
             </div>
 
-            <p className="text-[12px] text-foreground/40 leading-relaxed font-body">
-              Helt kostnadsfritt.
-            </p>
-
             {/* Email form */}
             <div className="flex flex-col gap-2.5">
               <div className="relative flex items-center">
