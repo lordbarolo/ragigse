@@ -628,16 +628,81 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                 { value: "inhyrd", label: "Inhyrd", desc: "Jag arbetar via bemanningsföretag" },
                 { value: "fast", label: "Fast anställd", desc: "Jag är anställd direkt av arbetsgivaren" },
               ]).map((opt) => (
-                <button
+              <button
                   key={opt.value}
                   onClick={() => {
-                    setData({ ...data, obShare: opt.value });
+                    const updated = { ...data, obShare: opt.value };
+                    setData(updated);
+                    trackStepCompleted(6, opt.value);
+                    // Directly submit with updated data
+                    setSaving(true);
+                    const leadId = crypto.randomUUID();
+                    const track = "consultant";
+                    if (isPostHogReady()) {
+                      try { posthog.identify(leadId); } catch { /* silent */ }
+                    }
+                    const couponCode = searchParams.get("coupon");
+                    const couponParam = couponCode ? `?coupon=${encodeURIComponent(couponCode)}` : "";
+                    const doSubmit = async () => {
+                      try {
+                        await supabase.from("leads").insert({
+                          id: leadId,
+                          employment_type: updated.employmentType,
+                          yrke: updated.yrke,
+                          kommun: updated.kommun,
+                          experience: updated.experience,
+                          salary_type: updated.salaryType,
+                          current_salary: updated.currentSalary,
+                          ob_share: opt.value || null,
+                        });
+                        const reportPromise = supabase.functions.invoke("create-report", {
+                          body: {
+                            lead_id: leadId,
+                            occupation: updated.yrke,
+                            employment_type: updated.employmentType,
+                            kommun: updated.kommun,
+                            experience: updated.experience,
+                            current_salary: updated.currentSalary,
+                            salary_type: updated.salaryType,
+                            track,
+                            commute,
+                            ob_share: opt.value || null,
+                          },
+                        });
+                        const timeoutPromise = new Promise<{ data: null; error: Error }>((resolve) =>
+                          setTimeout(() => resolve({ data: null, error: new Error("timeout") }), 3000)
+                        );
+                        const { data: reportData } = await Promise.race([reportPromise, timeoutPromise]);
+                        if (reportData?.report_id) {
+                          sessionStorage.setItem("reportId", reportData.report_id);
+                          if (reportData.ab_variant) sessionStorage.setItem("abVariant", reportData.ab_variant);
+                        }
+                      } catch (err) {
+                        console.error("[Survey] Submit error:", err);
+                      }
+                      sessionStorage.setItem("leadId", leadId);
+                      sessionStorage.setItem("surveyData", JSON.stringify({ ...updated, track }));
+                      if (benchmarkResult) sessionStorage.setItem("benchmarkResult", JSON.stringify(benchmarkResult));
+                      if (pricingResult) sessionStorage.setItem("pricingResult", JSON.stringify(pricingResult));
+                      const totalTime = surveyStartTime.current ? Math.round((Date.now() - surveyStartTime.current) / 1000) : 0;
+                      const hourlyRate = updated.salaryType === "monthly" ? Math.round(updated.currentSalary / 167) : updated.currentSalary;
+                      trackEvent("survey_completed", {
+                        total_steps: TOTAL_STEPS,
+                        total_time_seconds: totalTime,
+                        role: updated.yrke,
+                        zone: updated.kommun,
+                        current_hourly_rate: hourlyRate,
+                        experience_years: updated.experience,
+                        employment_type: updated.employmentType === "foretagare" ? "Eget bolag" : "Fast",
+                        agency_name: null,
+                        report_id: sessionStorage.getItem("reportId") || null,
+                      });
+                      navigate(`/resultat/${leadId}${couponParam}`);
+                    };
+                    doSubmit();
                   }}
-                  className={`group w-full py-5 px-5 rounded-xl border text-left transition-all active:scale-[0.98] ${
-                    data.obShare === opt.value
-                      ? "border-primary bg-primary/[0.06]"
-                      : "border-border bg-card hover:border-primary/40 hover:bg-primary/[0.03]"
-                  }`}
+                  disabled={saving}
+                  className="group w-full py-5 px-5 rounded-xl border border-border bg-card text-left transition-all active:scale-[0.98] hover:border-primary/40 hover:bg-primary/[0.03] disabled:opacity-50"
                 >
                   <span className="text-base font-medium text-foreground">{opt.label}</span>
                   <p className="text-sm text-muted-foreground mt-0.5">{opt.desc}</p>
@@ -678,23 +743,6 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
             >
               Nästa
               <ArrowRight className="w-5 h-5" />
-            </button>
-          )}
-          {step === 6 && (
-            <button
-              onClick={() => {
-                if (!canProceed || saving) return;
-                handleNext();
-              }}
-              disabled={saving}
-              className={`flex-1 flex items-center justify-center gap-2 py-4 px-6 rounded-xl text-base font-semibold transition-all duration-200 active:scale-[0.97] ${
-                canProceed && !saving
-                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
-                  : "bg-muted text-muted-foreground cursor-not-allowed"
-              }`}
-            >
-              {saving ? "Analyserar…" : "Visa min analys"}
-              {!saving && <ArrowRight className="w-5 h-5" />}
             </button>
           )}
         </div>
