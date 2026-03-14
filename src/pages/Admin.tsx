@@ -267,6 +267,9 @@ export default function Admin() {
       {/* Conversion Funnel */}
       <ConversionFunnel />
 
+      {/* Referral Stats */}
+      <ReferralStats />
+
       {/* Feedback Stats */}
       <FeedbackStats />
 
