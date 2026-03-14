@@ -661,8 +661,8 @@ export default function ConsultantTrackContent({
       {/* ═══ Förklarande text ═══ */}
       <div className="rounded-xl bg-foreground/[0.02] border border-border/30 p-5 space-y-3">
         <div className="flex items-center gap-2 mb-1">
-          <Info className="w-4 h-4 text-muted-foreground/50" />
-          <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-muted-foreground/40">Så fungerar analysen</span>
+          <Info className="w-4 h-4 text-foreground/60" />
+          <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-foreground/70">Så fungerar analysen</span>
         </div>
         <ul className="space-y-2.5">
           {[
@@ -671,7 +671,7 @@ export default function ConsultantTrackContent({
             "Konsultens ersättning är normalt en andel av detta pris.",
             "CompCare analyserar ramavtal och historiska avrop för att visa hur ersättningen i genomsnitt fördelas.",
           ].map((text, i) => (
-            <li key={i} className="flex items-start gap-2.5 text-[12px] leading-relaxed text-muted-foreground/50">
+            <li key={i} className="flex items-start gap-2.5 text-[12px] leading-relaxed text-foreground/70">
               <span className="mt-1.5 w-1 h-1 rounded-full bg-muted-foreground/20 shrink-0" />
               {text}
             </li>
