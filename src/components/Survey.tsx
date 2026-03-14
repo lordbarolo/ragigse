@@ -625,7 +625,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
         {/* Step 6: Inhyrd eller fast anställd */}
         {step === 6 && (
           <StepWrapper title="Arbetar du som inhyrd eller fast anställd?">
-            <div className="flex flex-col gap-3">
+            <div className="rounded-2xl border border-border bg-card p-5 flex flex-col gap-3">
               {([
                 { value: "inhyrd", label: "Inhyrd", desc: "Jag arbetar via bemanningsföretag" },
                 { value: "fast", label: "Fast anställd", desc: "Jag är anställd direkt av arbetsgivaren" },
