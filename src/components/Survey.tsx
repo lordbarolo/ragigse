@@ -565,7 +565,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                     trackStepCompleted(4, opt.value);
                     setTimeout(() => setStep(5), 300);
                   }}
-                  className="group w-full py-5 px-5 rounded-xl border border-border border-l-2 border-l-primary/40 bg-card text-left transition-all active:scale-[0.98] hover:border-primary/40 hover:bg-primary/[0.03]"
+                  className="group w-full py-5 px-5 rounded-xl border border-border !border-l-[3px] !border-l-primary bg-card text-left transition-all active:scale-[0.98] hover:border-primary/40 hover:bg-primary/[0.03]"
                 >
                   <span className="text-base font-medium text-foreground">{opt.label}</span>
                   <p className="text-sm text-muted-foreground mt-1">{opt.desc}</p>
