@@ -461,7 +461,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                     trackStepCompleted(1, opt.value);
                     setStep(2);
                   }}
-                  className="group w-full py-5 px-5 rounded-xl border border-border bg-card text-left transition-all active:scale-[0.98] hover:border-primary/40 hover:bg-primary/[0.03] flex items-center justify-between gap-3"
+                  className="group w-full py-5 px-5 rounded-xl border border-border border-l-2 border-l-primary/40 bg-card text-left transition-all active:scale-[0.98] hover:border-primary/40 hover:bg-primary/[0.03] flex items-center justify-between gap-3"
                 >
                   <div>
                     <span className="text-base font-semibold text-foreground">{opt.label}</span>
