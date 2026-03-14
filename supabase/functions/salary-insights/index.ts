@@ -43,37 +43,70 @@ serve(async (req) => {
 
     let filtered_out = 0;
 
+    // --- Pass 1: collect salaries per role+salary_type for IQR calculation ---
+    type LeadEntry = { salary: number; yrke: string; kommun?: string; et: string; st: string };
+    const validLeads: LeadEntry[] = [];
+    const salariesByRole: Record<string, number[]> = {};
+
     for (const lead of leads || []) {
       if (!lead.current_salary || !lead.yrke || !lead.salary_type) continue;
 
-      const st = lead.salary_type; // "hourly" or "monthly"
+      const st = lead.salary_type;
       const bounds = st === "monthly" ? MONTHLY_BOUNDS : HOURLY_BOUNDS;
 
-      // Skip unrealistic values
       if (lead.current_salary < bounds.min || lead.current_salary > bounds.max) {
         filtered_out++;
         continue;
       }
 
-      const salary = lead.current_salary;
-      const et = lead.employment_type || "unknown";
+      const roleIqrKey = `${lead.yrke}||${st}`;
+      if (!salariesByRole[roleIqrKey]) salariesByRole[roleIqrKey] = [];
+      salariesByRole[roleIqrKey].push(lead.current_salary);
 
-      // Key includes salary_type so hourly and monthly are never mixed
-      const roleKey = `${lead.yrke}||${et}||${st}`;
+      validLeads.push({
+        salary: lead.current_salary,
+        yrke: lead.yrke,
+        kommun: lead.kommun || undefined,
+        et: lead.employment_type || "unknown",
+        st,
+      });
+    }
+
+    // Compute IQR fences per role+salary_type
+    const iqrFences: Record<string, { lo: number; hi: number }> = {};
+    for (const [key, arr] of Object.entries(salariesByRole)) {
+      const sorted = [...arr].sort((a, b) => a - b);
+      const q1 = sorted[Math.floor(sorted.length * 0.25)];
+      const q3 = sorted[Math.floor(sorted.length * 0.75)];
+      const iqr = q3 - q1;
+      iqrFences[key] = { lo: q1 - 1.5 * iqr, hi: q3 + 1.5 * iqr };
+    }
+
+    // --- Pass 2: aggregate, skipping IQR outliers ---
+    let iqr_filtered = 0;
+
+    for (const entry of validLeads) {
+      const fence = iqrFences[`${entry.yrke}||${entry.st}`];
+      if (fence && (entry.salary < fence.lo || entry.salary > fence.hi)) {
+        iqr_filtered++;
+        continue;
+      }
+
+      const roleKey = `${entry.yrke}||${entry.et}||${entry.st}`;
       if (!byRoleType[roleKey]) byRoleType[roleKey] = { salaries: [], count: 0 };
-      byRoleType[roleKey].salaries.push(salary);
+      byRoleType[roleKey].salaries.push(entry.salary);
       byRoleType[roleKey].count++;
 
-      if (lead.kommun) {
-        const kommunKey = `${lead.kommun}||${et}||${st}`;
+      if (entry.kommun) {
+        const kommunKey = `${entry.kommun}||${entry.et}||${entry.st}`;
         if (!byKommunType[kommunKey]) byKommunType[kommunKey] = { salaries: [], count: 0 };
-        byKommunType[kommunKey].salaries.push(salary);
+        byKommunType[kommunKey].salaries.push(entry.salary);
         byKommunType[kommunKey].count++;
 
-        const rkKey = `${lead.yrke}||${lead.kommun}||${et}||${st}`;
+        const rkKey = `${entry.yrke}||${entry.kommun}||${entry.et}||${entry.st}`;
         if (!byRoleKommunType[rkKey])
-          byRoleKommunType[rkKey] = { salaries: [], count: 0, role: lead.yrke, kommun: lead.kommun };
-        byRoleKommunType[rkKey].salaries.push(salary);
+          byRoleKommunType[rkKey] = { salaries: [], count: 0, role: entry.yrke, kommun: entry.kommun };
+        byRoleKommunType[rkKey].salaries.push(entry.salary);
         byRoleKommunType[rkKey].count++;
       }
     }
@@ -152,6 +185,7 @@ serve(async (req) => {
       JSON.stringify({
         total_leads_with_salary: (leads || []).filter((l) => l.current_salary && l.yrke).length,
         filtered_out,
+        iqr_filtered,
         bounds: { hourly: HOURLY_BOUNDS, monthly: MONTHLY_BOUNDS },
         by_role: roleStats,
         by_kommun: kommunStats,
