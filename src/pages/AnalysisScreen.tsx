@@ -187,11 +187,19 @@ export default function AnalysisScreen() {
   const showPhase3 = phase === "paused_for_email";
   const fact = FACTS[factIndex];
 
+  const LOADING_MESSAGES = [
+    "Hämtar prisdata för din region…",
+    "Matchar mot ramavtalsdata…",
+    "Jämför din ersättning med kollegor…",
+    "Beräknar förhandlingsutrymme…",
+    "Genererar personliga rekommendationer…",
+  ];
+  const loadingMsgIndex = Math.min(Math.floor(elapsedSec / 1.5), LOADING_MESSAGES.length - 1);
   const statusText = phase === "finalizing" || phase === "done"
     ? "Färdigställer rapport…"
     : phase === "paused_for_email"
-      ? "Väntar på e-post…"
-      : "Hämtar ramavtalsdata…";
+      ? "Analysen klar"
+      : LOADING_MESSAGES[loadingMsgIndex];
 
   return (
     <div className="min-h-screen bg-background relative overflow-x-hidden flex flex-col items-center">

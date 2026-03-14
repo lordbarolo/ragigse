@@ -8,7 +8,7 @@ import SearchableSelect from "@/components/SearchableSelect";
 import { Input } from "@/components/ui/input";
 import {
   Stethoscope, MapPin, Briefcase,
-  ChevronLeft, ArrowRight, TrendingUp,
+  ChevronLeft, ArrowRight, TrendingUp, Check,
 } from "lucide-react";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/trackEvent";
