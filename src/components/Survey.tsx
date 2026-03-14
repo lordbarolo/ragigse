@@ -628,16 +628,14 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                 { value: "inhyrd", label: "Inhyrd", desc: "Jag arbetar via bemanningsföretag" },
                 { value: "fast", label: "Fast anställd", desc: "Jag är anställd direkt av arbetsgivaren" },
               ]).map((opt) => (
-                <button
+              <button
                   key={opt.value}
                   onClick={() => {
-                    setData({ ...data, obShare: opt.value });
+                    setData((prev) => ({ ...prev, obShare: opt.value }));
+                    trackStepCompleted(6, opt.value);
+                    setTimeout(() => handleNext(), 300);
                   }}
-                  className={`group w-full py-5 px-5 rounded-xl border text-left transition-all active:scale-[0.98] ${
-                    data.obShare === opt.value
-                      ? "border-primary bg-primary/[0.06]"
-                      : "border-border bg-card hover:border-primary/40 hover:bg-primary/[0.03]"
-                  }`}
+                  className="group w-full py-5 px-5 rounded-xl border border-border bg-card text-left transition-all active:scale-[0.98] hover:border-primary/40 hover:bg-primary/[0.03]"
                 >
                   <span className="text-base font-medium text-foreground">{opt.label}</span>
                   <p className="text-sm text-muted-foreground mt-0.5">{opt.desc}</p>
