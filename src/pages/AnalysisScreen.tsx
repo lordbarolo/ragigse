@@ -3,37 +3,38 @@ import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/trackEvent";
 import { toast } from "sonner";
-import EmailGate from "@/components/teaser/EmailGate";
-import EmailHookMessage from "@/components/teaser/EmailHookMessage";
 import type { SurveyData } from "@/components/Survey";
 import type { PricingResult } from "@/hooks/usePricingEngine";
-import { Check } from "lucide-react";
-import CompcareLogo from "@/components/CompcareLogo";
+import { Check, Mail, ArrowRight, Lock } from "lucide-react";
 
-/* ── Analysis steps ── */
+/* ── Steps with icons & subtitles ── */
 const STEPS = [
-  "21 regioner",
-  "290 kommuner",
-  "Konsulter i samma specialitet",
-  "Beräknar din position i marknaden",
-  "Sammanställer din rapport",
+  { icon: "📋", label: "Hämtar ramavtalsdata", sub: "SKR RS 202203983 · 2026" },
+  { icon: "🗺", label: "Matchar din zon", sub: "Identifierar geografisk prissättning" },
+  { icon: "👩‍⚕️", label: "Jämför med din specialitet", sub: "Filtrerar på yrkeskategori" },
+  { icon: "📊", label: "Beräknar förhandlingsspann", sub: "Realistiskt · Rekommenderat · Ambitiöst" },
+  { icon: "💡", label: "Genererar förhandlingstips", sub: "Anpassade till din situation" },
 ];
 
-/* ── Progress thresholds: when each step STARTS being active ── */
-/* 12s total: 7s to 85%, pause for email, then 5s to 100% after submit.
-   Steps appear every ~3s based on elapsed time. */
-const STEP_APPEAR_AT_SEC = [0, 1.5, 4.5, 7.5, 10.5]; // seconds when each step becomes active
-const STEP_DONE_AT_SEC   = [4.5, 7.5, 10.5, 13.5, 15]; // seconds when each step completes
+const FACTS = [
+  { icon: "📋", eyebrow: "Visste du?", text: <>SKR:s ramavtal sätter <strong>takpriset</strong> som regioner betalar bemanningsföretagen – men vad konsulten får beror på avtal med förmedlaren.</>, source: "SKR RS 202203983" },
+  { icon: "📊", eyebrow: "Marknadsspann", text: <>Konsultersättningen varierar med <strong>20–40 %</strong> inom samma yrkeskategori beroende på zon, erfarenhet och förhandling.</>, source: "CompCare marknadsdata 2026" },
+  { icon: "💡", eyebrow: "Förhandlingstips", text: <>Konsulter som känner till det <strong>exakta kundpriset</strong> förhandlar i snitt 12 % högre ersättning.</>, source: "Branschanalys 2025" },
+];
+
+const STEP_APPEAR_AT_SEC = [0, 1.5, 4.5, 7.5, 10.5];
+const STEP_DONE_AT_SEC = [4.5, 7.5, 10.5, 13.5, 15];
 
 const EMAIL_PAUSE = 85;
-const PHASE1_DURATION = 7000; // 7s to reach 85%
-const PHASE2_DURATION = 5000; // 5s from 85→100 after email
+const PHASE1_DURATION = 7000;
+const PHASE2_DURATION = 5000;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-type Phase =
-  | "animating"        // bar moving, steps revealing
-  | "paused_for_email" // bar paused at 85%, email visible
-  | "finalizing"       // bar 85→100 after email
-  | "done";            // navigating to report
+type Phase = "animating" | "paused_for_email" | "finalizing" | "done";
+
+function fmt(n: number): string {
+  return Math.abs(n).toLocaleString("sv-SE");
+}
 
 export default function AnalysisScreen() {
   const { leadId: urlLeadId } = useParams<{ leadId: string }>();
@@ -47,6 +48,8 @@ export default function AnalysisScreen() {
   const [leadId, setLeadId] = useState("");
   const [reportId, setReportId] = useState("");
   const [pricing, setPricing] = useState<PricingResult | null>(null);
+  const [factIndex, setFactIndex] = useState(0);
+  const [email, setEmail] = useState("");
 
   const rafRef = useRef<number | null>(null);
   const startRef = useRef(Date.now());
@@ -72,41 +75,29 @@ export default function AnalysisScreen() {
     trackEvent("analysis_started");
   }, [urlLeadId, navigate]);
 
-  /* ── Background retry: create report if missing (timeout fallback) ── */
+  /* ── Retry create report ── */
   const retryAttempted = useRef(false);
   useEffect(() => {
     if (!leadId || !survey || reportId || retryAttempted.current) return;
     retryAttempted.current = true;
-
-    const retryCreateReport = async () => {
-      console.log("[AnalysisScreen] reportId missing — retrying create-report in background");
+    (async () => {
       try {
         const { data, error } = await supabase.functions.invoke("create-report", {
-          body: {
-            lead_id: leadId,
-            occupation: survey.yrke,
-            employment_type: survey.employmentType,
-            kommun: survey.kommun,
-            current_salary: survey.currentSalary,
-            salary_type: survey.salaryType,
-            track: (survey as SurveyData & { track?: string }).track || "consultant",
-          },
+          body: { lead_id: leadId, occupation: survey.yrke, employment_type: survey.employmentType, kommun: survey.kommun, current_salary: survey.currentSalary, salary_type: survey.salaryType, track: (survey as SurveyData & { track?: string }).track || "consultant" },
         });
-        if (!error && data?.report_id) {
-          console.log("[AnalysisScreen] Background retry succeeded, reportId:", data.report_id);
-          setReportId(data.report_id);
-          sessionStorage.setItem("reportId", data.report_id);
-        } else {
-          console.warn("[AnalysisScreen] Background retry failed:", error || data);
-        }
-      } catch (err) {
-        console.warn("[AnalysisScreen] Background retry error:", err);
-      }
-    };
-    retryCreateReport();
+        if (!error && data?.report_id) { setReportId(data.report_id); sessionStorage.setItem("reportId", data.report_id); }
+      } catch {}
+    })();
   }, [leadId, survey, reportId]);
 
-  /* ── Eased progress: fast 0-60, slow 60-85 ── */
+  /* ── Fact rotation ── */
+  useEffect(() => {
+    if (phase !== "animating") return;
+    const interval = setInterval(() => setFactIndex(i => (i + 1) % FACTS.length), 4000);
+    return () => clearInterval(interval);
+  }, [phase]);
+
+  /* ── Eased progress ── */
   const ease = (t: number): number => {
     if (t <= 0) return 0;
     if (t >= 1) return EMAIL_PAUSE;
@@ -114,222 +105,366 @@ export default function AnalysisScreen() {
     return 60 + ((t - 0.4) / 0.6) * 25;
   };
 
-  /* ── Phase 1-3: animate to 85% over 7s ── */
+  /* ── Phase 1: animate to 85% ── */
   useEffect(() => {
     if (phase !== "animating") return;
     startRef.current = Date.now();
-
     const tick = () => {
       const elapsed = Date.now() - startRef.current;
       const t = Math.min(elapsed / PHASE1_DURATION, 1);
       setProgress(ease(t));
       setElapsedSec(elapsed / 1000);
-
-      if (t >= 1) {
-        setPhase("paused_for_email");
-        trackEvent("analysis_email_pause");
-        return;
-      }
+      if (t >= 1) { setPhase("paused_for_email"); trackEvent("analysis_email_pause"); return; }
       rafRef.current = requestAnimationFrame(tick);
     };
     rafRef.current = requestAnimationFrame(tick);
     return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current); };
   }, [phase]);
 
-  /* ── Phase 4: finalize 85→100 ── */
+  /* ── Phase 4: finalize ── */
   const finalize = useCallback((activeReportId: string) => {
     setPhase("finalizing");
     emailPauseTime.current = elapsedSec;
     const start = Date.now();
-
     const tick = () => {
       const elapsed = Date.now() - start;
       const t = elapsed / PHASE2_DURATION;
       const p = EMAIL_PAUSE + t * (100 - EMAIL_PAUSE);
       setProgress(Math.min(p, 100));
-      // Continue elapsed time for step reveals during finalize
       setElapsedSec(emailPauseTime.current + elapsed / 1000);
-      if (p >= 100) {
-        setPhase("done");
-        trackEvent("analysis_completed");
-        setTimeout(() => navigate(`/rapport/${activeReportId}`, { replace: true }), 500);
-        return;
-      }
+      if (p >= 100) { setPhase("done"); trackEvent("analysis_completed"); setTimeout(() => navigate(`/rapport/${activeReportId}`, { replace: true }), 500); return; }
       rafRef.current = requestAnimationFrame(tick);
     };
     rafRef.current = requestAnimationFrame(tick);
   }, [navigate, elapsedSec]);
 
   /* ── Email submit ── */
-  const handleEmailSubmit = async (emailValue: string) => {
+  const handleEmailSubmit = async () => {
+    const emailValue = email.trim().toLowerCase();
+    if (!EMAIL_REGEX.test(emailValue)) return;
     setEmailSaving(true);
     try {
-      const { error } = await supabase.functions.invoke("save-email", {
-        body: { lead_id: leadId, report_id: reportId, email: emailValue },
-      });
+      const { error } = await supabase.functions.invoke("save-email", { body: { lead_id: leadId, report_id: reportId, email: emailValue } });
       if (error) throw error;
-      if (survey) {
-        const updated = { ...survey, email: emailValue };
-        sessionStorage.setItem("surveyData", JSON.stringify(updated));
-      }
+      if (survey) { sessionStorage.setItem("surveyData", JSON.stringify({ ...survey, email: emailValue })); }
       trackEvent("email_collected", { source: "analysis_screen" });
-    } catch {
-      toast.error("Kunde inte spara e-post, försök igen.");
-      setEmailSaving(false);
-      return;
-    }
+    } catch { toast.error("Kunde inte spara e-post, försök igen."); setEmailSaving(false); return; }
 
     let activeReportId = reportId;
     if (!activeReportId && leadId && survey) {
       try {
-        const { data, error } = await supabase.functions.invoke("create-report", {
-          body: {
-            lead_id: leadId, email: emailValue, occupation: survey.yrke,
-            employment_type: survey.employmentType, kommun: survey.kommun,
-            current_salary: survey.currentSalary, salary_type: survey.salaryType, track: "consultant",
-          },
-        });
-        if (!error && data?.report_id) {
-          activeReportId = data.report_id;
-          setReportId(activeReportId);
-          sessionStorage.setItem("reportId", activeReportId);
-        }
-      } catch { /* fall through */ }
+        const { data, error } = await supabase.functions.invoke("create-report", { body: { lead_id: leadId, email: emailValue, occupation: survey.yrke, employment_type: survey.employmentType, kommun: survey.kommun, current_salary: survey.currentSalary, salary_type: survey.salaryType, track: "consultant" } });
+        if (!error && data?.report_id) { activeReportId = data.report_id; setReportId(activeReportId); sessionStorage.setItem("reportId", activeReportId); }
+      } catch {}
     }
-
-    if (!activeReportId) {
-      toast.error("Kunde inte skapa rapport, försök igen.");
-      setEmailSaving(false);
-      return;
-    }
+    if (!activeReportId) { toast.error("Kunde inte skapa rapport, försök igen."); setEmailSaving(false); return; }
     setEmailSaving(false);
     finalize(activeReportId);
   };
 
-  /* ── Derive step states from elapsed seconds ── */
   const getStepState = (i: number): "hidden" | "active" | "done" => {
     if (elapsedSec < STEP_APPEAR_AT_SEC[i]) return "hidden";
     if (elapsedSec >= STEP_DONE_AT_SEC[i]) return "done";
     return "active";
   };
 
-  // ── Compute personalized email hook message ──
-  const emailHookProps = useMemo(() => {
+  /* ── Derived teaser data ── */
+  const teaserData = useMemo(() => {
     if (!survey || !pricing) return null;
-    const kommun = survey.kommun || "";
-    const zon = pricing.zon || "";
-    const userHourly = survey.salaryType === "hourly"
-      ? survey.currentSalary
-      : Math.round(survey.currentSalary / 167);
-    const marketHigh = pricing.recommended_hourly_max;
-    const isAbove = userHourly >= marketHigh;
-    const isUnderpaid = userHourly < marketHigh;
-
-    if (isAbove) {
-      return { tier: "above_market" as const, hourlyGap: 0, monthlyGap: 0, kommun, zon, pctEarningMore: 10, currentRate: userHourly, occupation: survey.yrke };
-    }
-
-    const gap = marketHigh - userHourly;
-    const pctBelow = gap / marketHigh;
-    if (pctBelow <= 0.05) {
-      return { tier: "at_market" as const, hourlyGap: gap, monthlyGap: gap * 167, kommun, ceilingRate: marketHigh, currentRate: userHourly, occupation: survey.yrke };
-    }
-
-    return { tier: "underpaid" as const, hourlyGap: gap, monthlyGap: gap * 167, kommun, currentRate: userHourly, occupation: survey.yrke };
+    const userHourly = survey.salaryType === "hourly" ? survey.currentSalary : Math.round(survey.currentSalary / 167);
+    const customerRate = pricing.rate_customer_sek_per_hour || 616;
+    const low = pricing.recommended_hourly_min || 470;
+    const high = pricing.recommended_hourly_max || 560;
+    const isUnderpaid = userHourly < high;
+    const roleName = survey.yrke || "Sjuksköterska";
+    const zone = pricing.zon || "Zon 1";
+    return { userHourly, customerRate, low, high, isUnderpaid, roleName, zone };
   }, [survey, pricing]);
 
-  const headline =
-    phase === "finalizing" || phase === "done"
-      ? "Färdigställer din rapport…"
-      : phase === "paused_for_email"
-        ? "Nästan klar"
-        : "Analyserar din ersättning";
+  const validEmail = EMAIL_REGEX.test(email.trim());
+  const showPhase1 = phase === "animating";
+  const showPhase2 = phase === "paused_for_email";
+  const showPhase3 = phase === "paused_for_email";
+  const fact = FACTS[factIndex];
+
+  const statusText = phase === "finalizing" || phase === "done"
+    ? "Färdigställer rapport…"
+    : phase === "paused_for_email"
+      ? "Väntar på e-post…"
+      : "Hämtar ramavtalsdata…";
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <header className="px-5 pt-5 pb-3 flex justify-center">
-        <CompcareLogo />
-      </header>
+    <div className="min-h-screen bg-background relative overflow-x-hidden flex flex-col items-center">
+      {/* ── Background effects ── */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute inset-0" style={{
+          background: "radial-gradient(ellipse 60% 50% at 15% 20%, rgba(0,194,255,0.14) 0%, transparent 55%), radial-gradient(ellipse 50% 45% at 85% 80%, rgba(99,102,241,0.10) 0%, transparent 55%)",
+        }} />
+        <div className="absolute inset-0" style={{
+          backgroundImage: "linear-gradient(rgba(255,255,255,0.018) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.018) 1px, transparent 1px)",
+          backgroundSize: "52px 52px",
+          maskImage: "radial-gradient(ellipse 80% 80% at 50% 40%, black 0%, transparent 80%)",
+          WebkitMaskImage: "radial-gradient(ellipse 80% 80% at 50% 40%, black 0%, transparent 80%)",
+        }} />
+      </div>
 
-      <main className="flex-1 flex flex-col px-5 pt-10 pb-10 max-w-md mx-auto w-full">
-        {/* Headline */}
-        <h1 className="text-2xl font-bold text-foreground tracking-tight mb-8">
-          {headline}
-        </h1>
+      {/* ── Nav ── */}
+      <nav className="relative z-10 w-full flex items-center justify-center py-5 px-6 border-b border-foreground/[0.07]">
+        <span className="font-display text-lg font-extrabold tracking-tight">
+          comp<span className="text-primary">care</span>
+        </span>
+      </nav>
 
-        {/* Progress bar — no CSS transition, driven purely by RAF for smoothness */}
-        <div className="mb-3">
-          <div className="h-3 bg-muted rounded-full overflow-hidden">
-            <div
-              className="h-full bg-primary rounded-full will-change-[width]"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-          <div className="flex justify-between mt-2">
-            <span className="text-base font-medium text-muted-foreground tabular-nums">
-              {Math.round(progress)} %
-            </span>
-            {phase === "paused_for_email" && (
-              <span className="text-base text-primary font-medium">
-                Väntar på e-post
-              </span>
-            )}
-          </div>
-        </div>
+      {/* ── Main ── */}
+      <main className="relative z-10 w-full max-w-[480px] px-6 pt-10 pb-8 flex-1 flex flex-col">
 
-        {/* Step list — revealed progressively */}
-        <div className="mt-8 space-y-1">
-          {STEPS.map((label, i) => {
-            const state = getStepState(i);
-            if (state === "hidden") return null;
+        {/* ═══════ PHASE 1: Analysis ═══════ */}
+        {showPhase1 && (
+          <div className="flex flex-col gap-8 animate-fade-in">
+            {/* Header */}
+            <div>
+              <p className="font-display text-[11px] font-semibold tracking-[0.12em] uppercase text-primary mb-2.5">
+                Analyserar din data
+              </p>
+              <h1 className="font-display text-[28px] font-extrabold tracking-tight leading-[1.1]">
+                Vad kommer<br />rapporten <span className="text-primary">visa?</span>
+              </h1>
+            </div>
 
-            return (
-              <div
-                key={i}
-                className="flex items-center gap-3.5 py-3 animate-in fade-in slide-in-from-bottom-3 duration-700"
-                style={{ animationFillMode: "both" }}
-              >
-                {state === "done" ? (
-                  <div className="w-6 h-6 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
-                    <Check className="w-3.5 h-3.5 text-primary" />
+            {/* Progress */}
+            <div>
+              <div className="h-1.5 bg-foreground/[0.08] rounded-full overflow-visible relative">
+                <div
+                  className="h-full rounded-full relative"
+                  style={{
+                    width: `${progress}%`,
+                    background: "linear-gradient(90deg, rgba(0,194,255,0.6), hsl(var(--primary)))",
+                    transition: "none",
+                  }}
+                >
+                  <span
+                    className="absolute right-0 top-1/2 w-3 h-3 rounded-full bg-primary"
+                    style={{
+                      transform: "translate(50%, -50%)",
+                      boxShadow: "0 0 10px rgba(0,194,255,0.7)",
+                    }}
+                  />
+                </div>
+              </div>
+              <div className="flex justify-between mt-2.5">
+                <span className="font-display text-xs font-bold text-primary tabular-nums">
+                  {Math.round(progress)} %
+                </span>
+                <span className="text-xs text-foreground/40">{statusText}</span>
+              </div>
+            </div>
+
+            {/* Steps */}
+            <div className="flex flex-col gap-2.5">
+              {STEPS.map((step, i) => {
+                const state = getStepState(i);
+                if (state === "hidden") return (
+                  <div key={i} className="flex items-center gap-3.5 px-4 py-3 rounded-[10px] bg-foreground/[0.03] border border-transparent opacity-40">
+                    <div className="w-7 h-7 rounded-full bg-foreground/[0.05] border border-foreground/10 flex items-center justify-center shrink-0 text-sm">
+                      {step.icon}
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-display text-[13px] font-semibold text-foreground/50">{step.label}</div>
+                      <div className="text-[11px] text-foreground/[0.35] mt-0.5">{step.sub}</div>
+                    </div>
                   </div>
+                );
+                const isDone = state === "done";
+                return (
+                  <div
+                    key={i}
+                    className={`flex items-center gap-3.5 px-4 py-3 rounded-[10px] border transition-all duration-400 ${
+                      isDone
+                        ? "bg-[hsl(var(--green))]/[0.06] border-[hsl(var(--green))]/[0.18]"
+                        : "bg-primary/[0.06] border-primary/20"
+                    }`}
+                    style={{ animation: state === "active" ? "fadeUp 0.4s ease both" : undefined }}
+                  >
+                    <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 text-sm ${
+                      isDone
+                        ? "bg-[hsl(var(--green))]/15 border border-[hsl(var(--green))]/30"
+                        : "bg-primary/[0.12] border border-primary/30"
+                    }`}>
+                      {step.icon}
+                    </div>
+                    <div className="flex-1">
+                      <div className={`font-display text-[13px] font-semibold ${isDone ? "text-foreground/65" : "text-foreground"}`}>{step.label}</div>
+                      <div className={`text-[11px] mt-0.5 ${isDone ? "text-foreground/[0.35]" : "text-primary/60"}`}>{step.sub}</div>
+                    </div>
+                    {isDone ? (
+                      <span className="text-[hsl(var(--green))] text-xs">✓</span>
+                    ) : (
+                      <div className="w-3.5 h-3.5 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Fact card */}
+            <div
+              key={factIndex}
+              className="bg-card border border-foreground/[0.07] rounded-xl p-4 flex items-start gap-3.5 relative overflow-hidden animate-fade-in"
+            >
+              <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-primary to-primary/20" />
+              <span className="text-xl shrink-0 mt-0.5">{fact.icon}</span>
+              <div>
+                <div className="text-[10px] font-display font-semibold tracking-[0.1em] uppercase text-primary/70 mb-1">
+                  {fact.eyebrow}
+                </div>
+                <div className="text-[13px] text-foreground/75 leading-relaxed">
+                  {fact.text}
+                </div>
+                <div className="text-[10px] text-foreground/25 mt-1.5 font-display">{fact.source}</div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ═══════ PHASE 2+3: Preview + Email ═══════ */}
+        {showPhase2 && (
+          <div className="flex flex-col gap-5 animate-fade-in">
+            {/* Title */}
+            <div>
+              <p className="font-display text-[11px] font-semibold tracking-[0.12em] uppercase text-primary mb-2.5">
+                Analysen klar
+              </p>
+              <h1 className="font-display text-[22px] font-extrabold tracking-tight leading-[1.15] mb-1">
+                Din analys<br />väntar på <span className="text-primary">dig</span>
+              </h1>
+              <p className="text-sm text-foreground/50 font-light leading-relaxed">
+                Förhandlingstipsen och den fullständiga analysen skickas direkt till din inkorg. Inget nyhetsbrev utan din tillåtelse.
+              </p>
+            </div>
+
+            {/* Result summary */}
+            {teaserData && (
+              <div className="bg-primary/[0.06] border border-primary/15 rounded-[10px] px-4 py-3.5 text-sm text-foreground/80 leading-relaxed">
+                Din ersättning på <strong className={teaserData.isUnderpaid ? "text-[hsl(var(--amber))]" : "text-[hsl(var(--green))]"}>
+                  {fmt(teaserData.userHourly)} kr/h
+                </strong> ligger {teaserData.isUnderpaid ? "under" : "över"} marknadsspannet för {teaserData.roleName.toLowerCase()} i {teaserData.zone.toLowerCase()}.
+              </div>
+            )}
+
+            {/* Locked preview card */}
+            <div className="bg-card border border-primary/20 rounded-[14px] relative overflow-hidden">
+              <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-primary to-indigo-500/60" />
+
+              {/* Teaser header */}
+              <div className="flex items-center justify-between px-5 py-3.5 border-b border-foreground/[0.06]">
+                <span className="text-[11px] text-foreground/40 font-display font-medium">
+                  {teaserData ? `${teaserData.roleName} · ${teaserData.zone}` : "Sjuksköterska · Zon 1"}
+                </span>
+                {teaserData?.isUnderpaid ? (
+                  <span className="bg-[hsl(var(--amber))]/[0.12] text-[hsl(var(--amber))] border border-[hsl(var(--amber))]/25 rounded-full px-2.5 py-0.5 text-[11px] font-display font-bold">
+                    Under marknad
+                  </span>
                 ) : (
-                  <span className="relative flex w-6 h-6 items-center justify-center shrink-0">
-                    <span className="absolute inline-flex h-3.5 w-3.5 rounded-full bg-primary/25 animate-ping [animation-duration:1.5s]" />
-                    <span className="relative inline-flex h-3 w-3 rounded-full bg-primary" />
+                  <span className="bg-[hsl(var(--green))]/[0.12] text-[hsl(var(--green))] border border-[hsl(var(--green))]/25 rounded-full px-2.5 py-0.5 text-[11px] font-display font-bold">
+                    Över marknad
                   </span>
                 )}
-                <span
-                  className={`text-base transition-colors duration-500 ${
-                    state === "done"
-                      ? "text-muted-foreground"
-                      : "text-foreground font-semibold"
-                  }`}
-                >
-                  {label}
-                </span>
               </div>
-            );
-          })}
-        </div>
 
-        {/* Email gate — only when paused */}
-        {phase === "paused_for_email" && (
-          <div className="mt-8 animate-in fade-in slide-in-from-bottom-4 duration-600">
-            <div className="h-px bg-border/50 mb-6" />
-            {emailHookProps ? (
-              <EmailHookMessage {...emailHookProps} />
-            ) : (
-              <>
-                <h2 className="text-lg font-bold text-foreground">
-                  Vart ska vi skicka din rapport?
-                </h2>
-                <p className="text-sm text-muted-foreground mt-1 mb-4">
-                  Rapporten visas direkt. Du får även en kopia i din inkorg.
-                </p>
-              </>
-            )}
-            <EmailGate onEmailSubmit={handleEmailSubmit} loading={emailSaving} />
+              {/* Metrics */}
+              <div className="px-5 py-1">
+                {[
+                  { dot: "hsl(var(--primary))", label: "Regionens kundpris", val: teaserData ? `${fmt(teaserData.customerRate)} kr/h` : "616 kr/h" },
+                  { dot: "hsl(var(--primary) / 0.5)", label: "Förhandlingsspann", val: teaserData ? `${fmt(teaserData.low)}–${fmt(teaserData.high)} kr/h` : "470–560 kr/h" },
+                  { dot: teaserData?.isUnderpaid ? "hsl(var(--amber))" : "hsl(var(--green))", label: "Din ersättning", val: teaserData ? `${fmt(teaserData.userHourly)} kr/h` : "558 kr/h" },
+                ].map((m, i) => (
+                  <div key={i} className="flex items-center justify-between py-2.5 border-b border-foreground/[0.04] last:border-b-0">
+                    <div className="flex items-center gap-2.5">
+                      <span className="w-[7px] h-[7px] rounded-full shrink-0" style={{ background: m.dot }} />
+                      <span className="text-[13px] text-foreground/55">{m.label}</span>
+                    </div>
+                    <span className="font-display text-[15px] font-bold">{m.val}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* Blurred gap strip */}
+              <div className="mx-5 mb-4 mt-1 rounded-lg px-3.5 py-2.5 font-display text-xs font-medium blur-[4px] select-none"
+                style={{
+                  background: teaserData?.isUnderpaid ? "rgba(245,158,11,0.07)" : "rgba(16,185,129,0.07)",
+                  border: `1px solid ${teaserData?.isUnderpaid ? "rgba(245,158,11,0.2)" : "rgba(16,185,129,0.2)"}`,
+                  color: teaserData?.isUnderpaid ? "hsl(var(--amber))" : "hsl(var(--green))",
+                }}
+              >
+                Din ersättning är 37 kr/h under realistiskt spann · −6 364 kr/månad
+              </div>
+            </div>
+
+            {/* Email form */}
+            <div className="flex flex-col gap-2.5">
+              <div className="relative flex items-center">
+                <Mail className="absolute left-4 w-4 h-4 text-foreground/30 pointer-events-none" />
+                <input
+                  type="email"
+                  inputMode="email"
+                  autoComplete="email"
+                  placeholder="namn@exempel.se"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter" && validEmail && !emailSaving) handleEmailSubmit(); }}
+                  className="w-full bg-card border-[1.5px] border-foreground/[0.12] rounded-xl text-foreground font-body text-[15px] py-4 pl-11 pr-4 outline-none transition-all focus:border-primary focus:shadow-[0_0_0_3px_rgba(0,194,255,0.1)] placeholder:text-foreground/25"
+                />
+              </div>
+              <button
+                disabled={!validEmail || emailSaving}
+                onClick={handleEmailSubmit}
+                className={`w-full font-display font-bold text-base py-4 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-[0.98] ${
+                  validEmail && !emailSaving
+                    ? "bg-primary text-primary-foreground shadow-[0_0_28px_rgba(0,194,255,0.25)] hover:-translate-y-px hover:shadow-[0_0_40px_rgba(0,194,255,0.38)]"
+                    : "bg-muted text-muted-foreground cursor-not-allowed"
+                }`}
+              >
+                {emailSaving ? "Skickar…" : "Visa min rapport"}
+                {!emailSaving && <ArrowRight className="w-5 h-5" />}
+              </button>
+              <div className="flex items-center justify-center gap-4 flex-wrap">
+                {["Skickas direkt", "Inget lösenord", "Inget nyhetsbrev"].map((t) => (
+                  <span key={t} className="text-[11px] text-foreground/30 flex items-center gap-1 font-display font-medium">
+                    <span className="text-[hsl(var(--green))] text-[10px] font-bold">✓</span> {t}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ═══════ FINALIZING ═══════ */}
+        {(phase === "finalizing" || phase === "done") && (
+          <div className="flex flex-col items-center justify-center flex-1 gap-6 animate-fade-in">
+            <div className="w-12 h-12 rounded-full bg-primary/15 flex items-center justify-center">
+              {phase === "done" ? (
+                <Check className="w-6 h-6 text-primary" />
+              ) : (
+                <div className="w-6 h-6 border-2 border-primary/20 border-t-primary rounded-full animate-spin" />
+              )}
+            </div>
+            <div className="text-center">
+              <h2 className="font-display text-xl font-bold mb-2">
+                {phase === "done" ? "Klar!" : "Färdigställer din rapport…"}
+              </h2>
+              <div className="h-1.5 w-48 bg-foreground/[0.08] rounded-full overflow-hidden mx-auto">
+                <div
+                  className="h-full rounded-full"
+                  style={{
+                    width: `${progress}%`,
+                    background: "linear-gradient(90deg, rgba(0,194,255,0.6), hsl(var(--primary)))",
+                  }}
+                />
+              </div>
+              <span className="font-display text-xs font-bold text-primary mt-2 inline-block tabular-nums">
+                {Math.round(progress)} %
+              </span>
+            </div>
           </div>
         )}
       </main>
