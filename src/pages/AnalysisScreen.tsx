@@ -26,8 +26,8 @@ const STEP_APPEAR_AT_SEC = [0, 1.0, 2.5, 4.0, 5.5];
 const STEP_DONE_AT_SEC = [2.5, 4.0, 5.5, 6.5, 7.0];
 
 const EMAIL_PAUSE = 85;
-const PHASE1_DURATION = 7000;
-const PHASE2_DURATION = 5000;
+const PHASE1_DURATION = 5000;
+const PHASE2_DURATION = 3000;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 type Phase = "animating" | "paused_for_email" | "finalizing" | "done";
