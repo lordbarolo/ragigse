@@ -228,7 +228,6 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
     { value: "__leg", label: "Leg. läkare", group: "" },
     { value: "__st", label: "ST-läkare", group: "" },
     ...TOP_DOCTOR_SPECIALTIES
-      .sort((a, b) => a.localeCompare(b, "sv"))
       .map((s) => ({ value: s, label: s, group: "Specialisering" })),
     { value: "__ovrig", label: "Övrig specialisering", group: "Specialisering" },
   ], []);
@@ -238,7 +237,6 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
     { value: "__barnmorska", label: "Barnmorska", group: "" },
     { value: "__rontgen", label: "Röntgensjuksköterska", group: "" },
     ...TOP_NURSE_SPECIALIZATIONS
-      .sort((a, b) => a.localeCompare(b, "sv"))
       .map((s) => ({ value: s, label: s, group: "Vidareutbildning (VUB)" })),
     { value: "__ovrig", label: "Övrig VUB", group: "Vidareutbildning (VUB)" },
   ], []);
