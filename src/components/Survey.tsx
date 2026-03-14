@@ -541,11 +541,20 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                           trackStepCompleted(3, k.kommun);
                           setTimeout(() => setStep(4), 200);
                         }}
-                        className="group w-full py-3 px-4 text-left text-sm transition-all hover:bg-primary/[0.04] flex items-center justify-between border-b border-border/50 last:border-b-0"
+                        className={`group w-full py-3 px-4 text-left text-sm transition-all flex items-center justify-between border-b border-border/50 last:border-b-0 ${
+                          data.kommun === k.kommun
+                            ? "bg-primary/[0.08] border-l-2 border-l-primary"
+                            : "hover:bg-primary/[0.04]"
+                        }`}
                       >
-                        <div>
-                          <span className="font-medium text-foreground">{k.kommun}</span>
-                          <span className="ml-2 text-xs text-muted-foreground">{k.region}</span>
+                        <div className="flex items-center gap-2">
+                          {data.kommun === k.kommun && (
+                            <Check className="w-4 h-4 text-primary shrink-0" />
+                          )}
+                          <div>
+                            <span className="font-medium text-foreground">{k.kommun}</span>
+                            <span className="ml-2 text-xs text-muted-foreground">{k.region}</span>
+                          </div>
                         </div>
                         <ArrowRight className="w-4 h-4 text-muted-foreground/20 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
                       </button>
