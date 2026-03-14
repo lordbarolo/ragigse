@@ -477,6 +477,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
         {/* Step 2: Single dropdown for role selection */}
         {step === 2 && (
           <StepWrapper title="Välj din roll">
+            <div className="rounded-2xl border border-border bg-card p-5">
             <SearchableSelect
               value={roleDropdownValue}
               onValueChange={(v) => {
