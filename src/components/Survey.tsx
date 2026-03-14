@@ -461,11 +461,22 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                     trackStepCompleted(1, opt.value);
                     setStep(2);
                   }}
-                  className="group w-full py-5 px-5 rounded-xl border border-border !border-l-[3px] !border-l-primary bg-card text-left transition-all active:scale-[0.98] hover:border-primary/40 hover:bg-primary/[0.03] flex items-center justify-between gap-3"
+                  className={`group w-full py-5 px-5 rounded-xl border !border-l-[3px] bg-card text-left transition-all active:scale-[0.98] flex items-center justify-between gap-3 ${
+                    occupationCategory === opt.value
+                      ? "border-primary !border-l-primary bg-primary/[0.06] ring-1 ring-primary/20"
+                      : "border-border !border-l-primary hover:border-primary/40 hover:bg-primary/[0.03]"
+                  }`}
                 >
-                  <div>
-                    <span className="text-base font-semibold text-foreground">{opt.label}</span>
-                    <p className="text-sm text-muted-foreground mt-1">{opt.desc}</p>
+                  <div className="flex items-center gap-3">
+                    {occupationCategory === opt.value && (
+                      <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center shrink-0">
+                        <Check className="w-3 h-3 text-primary-foreground" />
+                      </div>
+                    )}
+                    <div>
+                      <span className="text-base font-semibold text-foreground">{opt.label}</span>
+                      <p className="text-sm text-muted-foreground mt-1">{opt.desc}</p>
+                    </div>
                   </div>
                   <ArrowRight className="w-5 h-5 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
                 </button>
