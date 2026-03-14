@@ -634,7 +634,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                 <Input
                   type="number"
                   inputMode="numeric"
-                  placeholder={data.salaryType === "hourly" ? "350" : "45 000"}
+                  placeholder="Ange ersättning"
                   value={data.currentSalary || ""}
                   onChange={(e) => setData({ ...data, currentSalary: Number(e.target.value) })}
                   className="h-16 text-2xl font-semibold pr-20 text-center"
