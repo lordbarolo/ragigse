@@ -371,11 +371,10 @@ export default function AnalysisScreen() {
                 )}
               </div>
 
-              {/* Metrics */}
+            {/* Metrics */}
               <div className="px-5 py-1">
                 {[
                   { dot: "hsl(var(--primary))", label: "Regionens kundpris", val: teaserData ? `${fmt(teaserData.customerRate)} kr/h` : "616 kr/h" },
-                  { dot: "hsl(var(--primary) / 0.5)", label: "Förhandlingsspann", val: teaserData ? `${fmt(teaserData.low)}–${fmt(teaserData.high)} kr/h` : "470–560 kr/h" },
                   { dot: teaserData?.isUnderpaid ? "hsl(var(--amber))" : "hsl(var(--green))", label: "Din ersättning", val: teaserData ? `${fmt(teaserData.userHourly)} kr/h` : "558 kr/h" },
                 ].map((m, i) => (
                   <div key={i} className="flex items-center justify-between py-2.5 border-b border-foreground/[0.04] last:border-b-0">
@@ -388,15 +387,34 @@ export default function AnalysisScreen() {
                 ))}
               </div>
 
-              {/* Blurred gap strip */}
-              <div className="mx-5 mb-4 mt-1 rounded-lg px-3.5 py-2.5 font-display text-xs font-medium blur-[4px] select-none"
+              {/* Locked negotiation row */}
+              <div
+                className="mx-5 mb-4 mt-2 rounded-lg px-3.5 py-3 flex items-center justify-between cursor-pointer transition-all hover:bg-foreground/[0.04] group"
                 style={{
-                  background: teaserData?.isUnderpaid ? "rgba(245,158,11,0.07)" : "rgba(16,185,129,0.07)",
-                  border: `1px solid ${teaserData?.isUnderpaid ? "rgba(245,158,11,0.2)" : "rgba(16,185,129,0.2)"}`,
-                  color: teaserData?.isUnderpaid ? "hsl(var(--amber))" : "hsl(var(--green))",
+                  background: "rgba(0,194,255,0.04)",
+                  border: "1px solid rgba(0,194,255,0.15)",
+                }}
+                onClick={() => {
+                  if (!validEmail) {
+                    // Shake the email input to draw attention
+                    const emailInput = document.querySelector('input[type="email"]') as HTMLElement;
+                    if (emailInput) {
+                      emailInput.classList.add('animate-shake');
+                      emailInput.focus();
+                      setTimeout(() => emailInput.classList.remove('animate-shake'), 500);
+                    }
+                    toast.error("Ange din e-postadress för att låsa upp förhandlingsspannet");
+                  }
                 }}
               >
-                Din ersättning är 37 kr/h under realistiskt spann · −6 364 kr/månad
+                <div className="flex items-center gap-2.5">
+                  <Lock className="w-3.5 h-3.5 text-primary/60" />
+                  <span className="text-[13px] text-foreground/55 font-display font-medium">Ditt förhandlingsutrymme</span>
+                </div>
+                <span className="text-[11px] text-primary/70 font-display font-semibold flex items-center gap-1 group-hover:text-primary transition-colors">
+                  Lås upp
+                  <ArrowRight className="w-3 h-3" />
+                </span>
               </div>
             </div>
 
