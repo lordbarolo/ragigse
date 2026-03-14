@@ -456,6 +456,7 @@ export default function AnalysisScreen() {
                 </div>
               </div>
             </div>
+          </div>
         )}
 
         {/* ═══════ FINALIZING ═══════ */}
