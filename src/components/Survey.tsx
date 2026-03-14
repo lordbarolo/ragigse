@@ -477,6 +477,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
         {/* Step 2: Single dropdown for role selection */}
         {step === 2 && (
           <StepWrapper title="Välj din roll">
+            <div className="rounded-2xl border border-border bg-card p-5">
             <SearchableSelect
               value={roleDropdownValue}
               onValueChange={(v) => {
@@ -489,12 +490,13 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
               placeholder={occupationCategory === "lakare" ? "Välj läkarroll eller specialisering..." : "Välj roll eller vidareutbildning..."}
               options={occupationCategory === "lakare" ? doctorRoleOptions : nurseRoleOptions}
             />
+            </div>
           </StepWrapper>
         )}
 
         {step === 3 && (
           <StepWrapper title="Var jobbar du?">
-            <div className="space-y-4 flex flex-col items-center justify-center flex-1">
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-4 flex flex-col items-center justify-center flex-1">
               <p className="text-sm text-muted-foreground text-center max-w-xs">
                 Inom en region kan det finnas 3 olika prisnivåer. Ange kommun för en träffsäker analys av din ersättning.
               </p>
@@ -553,7 +555,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
         {/* Step 4: Anställningsform */}
         {step === 4 && (
           <StepWrapper title="Vilken är din uppdragsform?">
-            <div className="flex flex-col gap-3">
+            <div className="rounded-2xl border border-border bg-card p-5 flex flex-col gap-3">
               {([
                 { value: "anstalld" as const, label: "Anställd", desc: "Ersättning från arbetsgivare" },
                 { value: "foretagare" as const, label: "Eget bolag", desc: "Fakturerar via bemanningsföretag" },
@@ -623,7 +625,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
         {/* Step 6: Inhyrd eller fast anställd */}
         {step === 6 && (
           <StepWrapper title="Arbetar du som inhyrd eller fast anställd?">
-            <div className="flex flex-col gap-3">
+            <div className="rounded-2xl border border-border bg-card p-5 flex flex-col gap-3">
               {([
                 { value: "inhyrd", label: "Inhyrd", desc: "Jag arbetar via bemanningsföretag" },
                 { value: "fast", label: "Fast anställd", desc: "Jag är anställd direkt av arbetsgivaren" },
