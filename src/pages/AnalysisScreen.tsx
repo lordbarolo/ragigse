@@ -416,44 +416,44 @@ export default function AnalysisScreen() {
                   <ArrowRight className="w-3 h-3" />
                 </span>
               </div>
-            </div>
 
-            {/* Email form */}
-            <div className="flex flex-col gap-2.5">
-              <div className="relative flex items-center">
-                <Mail className="absolute left-4 w-4 h-4 text-foreground/30 pointer-events-none" />
-                <input
-                  type="email"
-                  inputMode="email"
-                  autoComplete="email"
-                  placeholder="namn@exempel.se"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === "Enter" && validEmail && !emailSaving) handleEmailSubmit(); }}
-                  className="w-full bg-card border-[1.5px] border-foreground/[0.12] rounded-xl text-foreground font-body text-[15px] py-4 pl-11 pr-4 outline-none transition-all focus:border-primary focus:shadow-[0_0_0_3px_rgba(0,194,255,0.1)] placeholder:text-foreground/25"
-                />
-              </div>
-              <p className="text-[13px] text-foreground/50 leading-relaxed font-body text-center mt-1">
-                Din e-post gör att du kan komma tillbaka och se din personliga analys utan att fylla i enkäten igen.
-              </p>
-              <button
-                disabled={!validEmail || emailSaving}
-                onClick={handleEmailSubmit}
-                className={`w-full font-display font-bold text-base py-4 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-[0.98] ${
-                  validEmail && !emailSaving
-                    ? "bg-primary text-primary-foreground shadow-[0_0_28px_rgba(0,194,255,0.25)] hover:-translate-y-px hover:shadow-[0_0_40px_rgba(0,194,255,0.38)]"
-                    : "bg-muted text-muted-foreground cursor-not-allowed"
-                }`}
-              >
-                {emailSaving ? "Skickar…" : "Visa min rapport"}
-                {!emailSaving && <ArrowRight className="w-5 h-5" />}
-              </button>
-              <div className="flex items-center justify-center gap-4 flex-wrap">
-                {["Skickas direkt", "Inget lösenord", "Inget nyhetsbrev"].map((t) => (
-                  <span key={t} className="text-[11px] text-foreground/30 flex items-center gap-1 font-display font-medium">
-                    <span className="text-[hsl(var(--green))] text-[10px] font-bold">✓</span> {t}
-                  </span>
-                ))}
+              {/* Email input inside card */}
+              <div className="px-5 pb-5 pt-1 flex flex-col gap-2.5">
+                <div className="relative flex items-center">
+                  <Mail className="absolute left-4 w-4 h-4 text-foreground/30 pointer-events-none" />
+                  <input
+                    type="email"
+                    inputMode="email"
+                    autoComplete="email"
+                    placeholder="namn@exempel.se"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter" && validEmail && !emailSaving) handleEmailSubmit(); }}
+                    className="w-full bg-background/60 border-[1.5px] border-foreground/[0.12] rounded-xl text-foreground font-body text-[15px] py-4 pl-11 pr-4 outline-none transition-all focus:border-primary focus:shadow-[0_0_0_3px_rgba(0,194,255,0.1)] placeholder:text-foreground/25"
+                  />
+                </div>
+                <p className="text-[13px] text-foreground/50 leading-relaxed font-body text-center">
+                  Din e-post gör att du kan komma tillbaka och se din personliga analys utan att fylla i enkäten igen.
+                </p>
+                <button
+                  disabled={!validEmail || emailSaving}
+                  onClick={handleEmailSubmit}
+                  className={`w-full font-display font-bold text-base py-4 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-[0.98] ${
+                    validEmail && !emailSaving
+                      ? "bg-primary text-primary-foreground shadow-[0_0_28px_rgba(0,194,255,0.25)] hover:-translate-y-px hover:shadow-[0_0_40px_rgba(0,194,255,0.38)]"
+                      : "bg-muted text-muted-foreground cursor-not-allowed"
+                  }`}
+                >
+                  {emailSaving ? "Skickar…" : "Visa min rapport"}
+                  {!emailSaving && <ArrowRight className="w-5 h-5" />}
+                </button>
+                <div className="flex items-center justify-center gap-4 flex-wrap">
+                  {["Skickas direkt", "Inget lösenord", "Inget nyhetsbrev"].map((t) => (
+                    <span key={t} className="text-[11px] text-foreground/30 flex items-center gap-1 font-display font-medium">
+                      <span className="text-[hsl(var(--green))] text-[10px] font-bold">✓</span> {t}
+                    </span>
+                  ))}
+                </div>
               </div>
             </div>
           </div>
