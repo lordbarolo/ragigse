@@ -4,7 +4,7 @@ const ITEMS = [
   "Barnmorska zon 2: 824 kr/h",
   "290 kommuner · 21 regioner täcks",
   "OB vardagnatt: +82 kr/h · Storhelgnatt: +222 kr/h",
-  "Reseschablon 300–625 km: 2 750 kr/pass",
+  "Reseschablon 300–625 km: 2 750 kr/14 dagar",
   "Uppdaterat 2026-01-01",
 ];
 
