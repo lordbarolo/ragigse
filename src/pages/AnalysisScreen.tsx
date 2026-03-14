@@ -419,7 +419,7 @@ export default function AnalysisScreen() {
             </div>
 
             <p className="text-[12px] text-foreground/40 leading-relaxed font-body">
-              Helt kostnadsfritt. Din e-post gör att du kan komma tillbaka och se din personliga analys utan att fylla i enkäten igen.
+              Helt kostnadsfritt.
             </p>
 
             {/* Email form */}
