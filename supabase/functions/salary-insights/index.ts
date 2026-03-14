@@ -37,50 +37,43 @@ serve(async (req) => {
     const byKommunType: Record<string, Bucket> = {};
     const byRoleKommunType: Record<string, RoleKommunBucket> = {};
 
-    // Realistic hourly rate bounds (SEK/h) by employment type
-    const BOUNDS: Record<string, { min: number; max: number }> = {
-      anstalld:   { min: 200, max: 1500 },
-      foretagare: { min: 300, max: 2000 },
-    };
-    const DEFAULT_BOUNDS = { min: 200, max: 1500 };
+    // Realistic bounds by salary_type
+    const HOURLY_BOUNDS = { min: 200, max: 2000 };
+    const MONTHLY_BOUNDS = { min: 25000, max: 120000 };
 
     let filtered_out = 0;
 
     for (const lead of leads || []) {
-      if (!lead.current_salary || !lead.yrke) continue;
+      if (!lead.current_salary || !lead.yrke || !lead.salary_type) continue;
 
-      const hourly =
-        lead.salary_type === "monthly"
-          ? Math.round(lead.current_salary / 167)
-          : lead.current_salary;
-
-      const et = lead.employment_type || "unknown";
-      const bounds = BOUNDS[et] || DEFAULT_BOUNDS;
+      const st = lead.salary_type; // "hourly" or "monthly"
+      const bounds = st === "monthly" ? MONTHLY_BOUNDS : HOURLY_BOUNDS;
 
       // Skip unrealistic values
-      if (hourly < bounds.min || hourly > bounds.max) {
+      if (lead.current_salary < bounds.min || lead.current_salary > bounds.max) {
         filtered_out++;
         continue;
       }
 
-      // By role + employment_type
-      const roleKey = `${lead.yrke}||${et}`;
+      const salary = lead.current_salary;
+      const et = lead.employment_type || "unknown";
+
+      // Key includes salary_type so hourly and monthly are never mixed
+      const roleKey = `${lead.yrke}||${et}||${st}`;
       if (!byRoleType[roleKey]) byRoleType[roleKey] = { salaries: [], count: 0 };
-      byRoleType[roleKey].salaries.push(hourly);
+      byRoleType[roleKey].salaries.push(salary);
       byRoleType[roleKey].count++;
 
-      // By kommun + employment_type
       if (lead.kommun) {
-        const kommunKey = `${lead.kommun}||${et}`;
+        const kommunKey = `${lead.kommun}||${et}||${st}`;
         if (!byKommunType[kommunKey]) byKommunType[kommunKey] = { salaries: [], count: 0 };
-        byKommunType[kommunKey].salaries.push(hourly);
+        byKommunType[kommunKey].salaries.push(salary);
         byKommunType[kommunKey].count++;
 
-        // By role + kommun + employment_type
-        const rkKey = `${lead.yrke}||${lead.kommun}||${et}`;
+        const rkKey = `${lead.yrke}||${lead.kommun}||${et}||${st}`;
         if (!byRoleKommunType[rkKey])
           byRoleKommunType[rkKey] = { salaries: [], count: 0, role: lead.yrke, kommun: lead.kommun };
-        byRoleKommunType[rkKey].salaries.push(hourly);
+        byRoleKommunType[rkKey].salaries.push(salary);
         byRoleKommunType[rkKey].count++;
       }
     }
