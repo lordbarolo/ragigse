@@ -456,6 +456,9 @@ export default function AnalysisScreen() {
                   </span>
                 ))}
               </div>
+              <p className="text-[13px] text-foreground/50 leading-relaxed font-body text-center mt-1">
+                Din e-post gör att du kan komma tillbaka och se din personliga analys utan att fylla i enkäten igen.
+              </p>
             </div>
           </div>
         )}
