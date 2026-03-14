@@ -331,14 +331,15 @@ export default function AnalysisScreen() {
           <div className="flex flex-col gap-5 animate-fade-in">
             {/* Title */}
             <div>
-              <p className="font-display text-[11px] font-semibold tracking-[0.12em] uppercase text-primary mb-2.5">
-                Analysen klar
-              </p>
-              <h1 className="font-display text-[22px] font-extrabold tracking-tight leading-[1.15] mb-1">
-                Din analys<br />väntar på <span className="text-primary">dig</span>
+              <div className="inline-flex items-center gap-2 bg-[hsl(var(--green))]/[0.08] border border-[hsl(var(--green))]/20 rounded-full px-3.5 py-1.5 mb-3">
+                <Check className="w-3.5 h-3.5 text-[hsl(var(--green))]" />
+                <span className="text-[12px] font-display font-bold text-[hsl(var(--green))]">Din personliga rapport är klar</span>
+              </div>
+              <h1 className="font-display text-[22px] font-extrabold tracking-tight leading-[1.15] mb-1.5">
+                Ange din mejl för att<br /><span className="text-primary">se den direkt</span>
               </h1>
               <p className="text-sm text-foreground/50 font-light leading-relaxed">
-                Förhandlingstipsen och den fullständiga analysen skickas direkt till din inkorg. Inget nyhetsbrev utan din tillåtelse.
+                Rapporten visas omedelbart — vi skickar också en kopia till din inkorg.
               </p>
             </div>
 
