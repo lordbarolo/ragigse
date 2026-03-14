@@ -8,7 +8,7 @@ import SearchableSelect from "@/components/SearchableSelect";
 import { Input } from "@/components/ui/input";
 import {
   Stethoscope, MapPin, Briefcase,
-  ChevronLeft, ArrowRight, TrendingUp,
+  ChevronLeft, ArrowRight, TrendingUp, Check,
 } from "lucide-react";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/trackEvent";
@@ -461,11 +461,22 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                     trackStepCompleted(1, opt.value);
                     setStep(2);
                   }}
-                  className="group w-full py-5 px-5 rounded-xl border border-border !border-l-[3px] !border-l-primary bg-card text-left transition-all active:scale-[0.98] hover:border-primary/40 hover:bg-primary/[0.03] flex items-center justify-between gap-3"
+                  className={`group w-full py-5 px-5 rounded-xl border !border-l-[3px] bg-card text-left transition-all active:scale-[0.98] flex items-center justify-between gap-3 ${
+                    occupationCategory === opt.value
+                      ? "border-primary !border-l-primary bg-primary/[0.06] ring-1 ring-primary/20"
+                      : "border-border !border-l-primary hover:border-primary/40 hover:bg-primary/[0.03]"
+                  }`}
                 >
-                  <div>
-                    <span className="text-base font-semibold text-foreground">{opt.label}</span>
-                    <p className="text-sm text-muted-foreground mt-1">{opt.desc}</p>
+                  <div className="flex items-center gap-3">
+                    {occupationCategory === opt.value && (
+                      <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center shrink-0">
+                        <Check className="w-3 h-3 text-primary-foreground" />
+                      </div>
+                    )}
+                    <div>
+                      <span className="text-base font-semibold text-foreground">{opt.label}</span>
+                      <p className="text-sm text-muted-foreground mt-1">{opt.desc}</p>
+                    </div>
                   </div>
                   <ArrowRight className="w-5 h-5 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
                 </button>
@@ -530,11 +541,20 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                           trackStepCompleted(3, k.kommun);
                           setTimeout(() => setStep(4), 200);
                         }}
-                        className="group w-full py-3 px-4 text-left text-sm transition-all hover:bg-primary/[0.04] flex items-center justify-between border-b border-border/50 last:border-b-0"
+                        className={`group w-full py-3 px-4 text-left text-sm transition-all flex items-center justify-between border-b border-border/50 last:border-b-0 ${
+                          data.kommun === k.kommun
+                            ? "bg-primary/[0.08] border-l-2 border-l-primary"
+                            : "hover:bg-primary/[0.04]"
+                        }`}
                       >
-                        <div>
-                          <span className="font-medium text-foreground">{k.kommun}</span>
-                          <span className="ml-2 text-xs text-muted-foreground">{k.region}</span>
+                        <div className="flex items-center gap-2">
+                          {data.kommun === k.kommun && (
+                            <Check className="w-4 h-4 text-primary shrink-0" />
+                          )}
+                          <div>
+                            <span className="font-medium text-foreground">{k.kommun}</span>
+                            <span className="ml-2 text-xs text-muted-foreground">{k.region}</span>
+                          </div>
                         </div>
                         <ArrowRight className="w-4 h-4 text-muted-foreground/20 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
                       </button>
@@ -560,17 +580,28 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                 { value: "anstalld" as const, label: "Anställd", desc: "Lön från vårdgivare eller bemanningsföretag" },
                 { value: "foretagare" as const, label: "Eget bolag", desc: "Fakturerar via bemanningsföretag eller direkt till slutkund" },
               ]).map((opt) => (
-                <button
+               <button
                   key={opt.value}
                   onClick={() => {
                     setData({ ...data, employmentType: opt.value });
                     trackStepCompleted(4, opt.value);
                     setTimeout(() => setStep(5), 300);
                   }}
-                  className="group w-full py-5 px-5 rounded-xl border border-border !border-l-[3px] !border-l-primary bg-card text-left transition-all active:scale-[0.98] hover:border-primary/40 hover:bg-primary/[0.03]"
+                  className={`group w-full py-5 px-5 rounded-xl border !border-l-[3px] bg-card text-left transition-all active:scale-[0.98] flex items-center gap-3 ${
+                    data.employmentType === opt.value
+                      ? "border-primary !border-l-primary bg-primary/[0.06] ring-1 ring-primary/20"
+                      : "border-border !border-l-primary hover:border-primary/40 hover:bg-primary/[0.03]"
+                  }`}
                 >
-                  <span className="text-base font-medium text-foreground">{opt.label}</span>
-                  <p className="text-sm text-muted-foreground mt-1">{opt.desc}</p>
+                  {data.employmentType === opt.value && (
+                    <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center shrink-0">
+                      <Check className="w-3 h-3 text-primary-foreground" />
+                    </div>
+                  )}
+                  <div>
+                    <span className="text-base font-medium text-foreground">{opt.label}</span>
+                    <p className="text-sm text-muted-foreground mt-1">{opt.desc}</p>
+                  </div>
                 </button>
               ))}
             </div>

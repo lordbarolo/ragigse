@@ -22,12 +22,12 @@ const FACTS = [
   { icon: "💡", eyebrow: "Förhandlingstips", text: <>Konsulter som känner till det <strong>exakta kundpriset</strong> förhandlar i snitt 12 % högre ersättning.</>, source: "Branschanalys 2025" },
 ];
 
-const STEP_APPEAR_AT_SEC = [0, 1.5, 4.5, 7.5, 10.5];
-const STEP_DONE_AT_SEC = [4.5, 7.5, 10.5, 13.5, 15];
+const STEP_APPEAR_AT_SEC = [0, 1.0, 2.5, 4.0, 5.5];
+const STEP_DONE_AT_SEC = [2.5, 4.0, 5.5, 6.5, 7.0];
 
 const EMAIL_PAUSE = 85;
-const PHASE1_DURATION = 7000;
-const PHASE2_DURATION = 5000;
+const PHASE1_DURATION = 5000;
+const PHASE2_DURATION = 3000;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 type Phase = "animating" | "paused_for_email" | "finalizing" | "done";
@@ -187,11 +187,19 @@ export default function AnalysisScreen() {
   const showPhase3 = phase === "paused_for_email";
   const fact = FACTS[factIndex];
 
+  const LOADING_MESSAGES = [
+    "Hämtar prisdata för din region…",
+    "Matchar mot ramavtalsdata…",
+    "Jämför din ersättning med kollegor…",
+    "Beräknar förhandlingsutrymme…",
+    "Genererar personliga rekommendationer…",
+  ];
+  const loadingMsgIndex = Math.min(Math.floor(elapsedSec / 1.5), LOADING_MESSAGES.length - 1);
   const statusText = phase === "finalizing" || phase === "done"
     ? "Färdigställer rapport…"
     : phase === "paused_for_email"
-      ? "Väntar på e-post…"
-      : "Hämtar ramavtalsdata…";
+      ? "Analysen klar"
+      : LOADING_MESSAGES[loadingMsgIndex];
 
   return (
     <div className="min-h-screen bg-background relative overflow-x-hidden flex flex-col items-center">
@@ -331,14 +339,15 @@ export default function AnalysisScreen() {
           <div className="flex flex-col gap-5 animate-fade-in">
             {/* Title */}
             <div>
-              <p className="font-display text-[11px] font-semibold tracking-[0.12em] uppercase text-primary mb-2.5">
-                Analysen klar
-              </p>
-              <h1 className="font-display text-[22px] font-extrabold tracking-tight leading-[1.15] mb-1">
-                Din analys<br />väntar på <span className="text-primary">dig</span>
+              <div className="inline-flex items-center gap-2 bg-[hsl(var(--green))]/[0.08] border border-[hsl(var(--green))]/20 rounded-full px-3.5 py-1.5 mb-3">
+                <Check className="w-3.5 h-3.5 text-[hsl(var(--green))]" />
+                <span className="text-[12px] font-display font-bold text-[hsl(var(--green))]">Din personliga rapport är klar</span>
+              </div>
+              <h1 className="font-display text-[22px] font-extrabold tracking-tight leading-[1.15] mb-1.5">
+                Ange din mejl för att<br /><span className="text-primary">se den direkt</span>
               </h1>
               <p className="text-sm text-foreground/50 font-light leading-relaxed">
-                Förhandlingstipsen och den fullständiga analysen skickas direkt till din inkorg. Inget nyhetsbrev utan din tillåtelse.
+                Rapporten visas omedelbart — vi skickar också en kopia till din inkorg.
               </p>
             </div>
 
@@ -417,8 +426,25 @@ export default function AnalysisScreen() {
                 </span>
               </div>
 
+              {/* What you get list */}
+              <div className="px-5 py-3 border-b border-foreground/[0.04]">
+                <p className="text-[11px] font-display font-semibold tracking-[0.08em] uppercase text-foreground/35 mb-2">
+                  I din rapport
+                </p>
+                {[
+                  "Rekommenderad ersättning för din roll & zon",
+                  "Vad vårdgivaren betalar bemanningsföretaget",
+                  "Förhandlingstips anpassade till din situation",
+                ].map((t) => (
+                  <div key={t} className="flex items-start gap-2 py-1">
+                    <Check className="w-3.5 h-3.5 text-[hsl(var(--green))] shrink-0 mt-0.5" />
+                    <span className="text-[13px] text-foreground/60">{t}</span>
+                  </div>
+                ))}
+              </div>
+
               {/* Email input inside card */}
-              <div className="px-5 pb-5 pt-1 flex flex-col gap-2.5">
+              <div className="px-5 pb-5 pt-4 flex flex-col gap-2.5">
                 <div className="relative flex items-center">
                   <Mail className="absolute left-4 w-4 h-4 text-foreground/30 pointer-events-none" />
                   <input
@@ -430,11 +456,9 @@ export default function AnalysisScreen() {
                     onChange={(e) => setEmail(e.target.value)}
                     onKeyDown={(e) => { if (e.key === "Enter" && validEmail && !emailSaving) handleEmailSubmit(); }}
                     className="w-full bg-background/60 border-[1.5px] border-foreground/[0.12] rounded-xl text-foreground font-body text-[15px] py-4 pl-11 pr-4 outline-none transition-all focus:border-primary focus:shadow-[0_0_0_3px_rgba(0,194,255,0.1)] placeholder:text-foreground/25"
+                    autoFocus
                   />
                 </div>
-                <p className="text-[13px] text-foreground/50 leading-relaxed font-body text-center">
-                  Din e-post gör att du kan komma tillbaka och se din personliga analys utan att fylla i enkäten igen.
-                </p>
                 <button
                   disabled={!validEmail || emailSaving}
                   onClick={handleEmailSubmit}
@@ -448,7 +472,7 @@ export default function AnalysisScreen() {
                   {!emailSaving && <ArrowRight className="w-5 h-5" />}
                 </button>
                 <div className="flex items-center justify-center gap-4 flex-wrap">
-                  {["Skickas direkt", "Inget lösenord", "Inget nyhetsbrev"].map((t) => (
+                  {["Visas direkt", "Ingen inloggning", "Inget nyhetsbrev"].map((t) => (
                     <span key={t} className="text-[11px] text-foreground/30 flex items-center gap-1 font-display font-medium">
                       <span className="text-[hsl(var(--green))] text-[10px] font-bold">✓</span> {t}
                     </span>
