@@ -22,8 +22,8 @@ const FACTS = [
   { icon: "💡", eyebrow: "Förhandlingstips", text: <>Konsulter som känner till det <strong>exakta kundpriset</strong> förhandlar i snitt 12 % högre ersättning.</>, source: "Branschanalys 2025" },
 ];
 
-const STEP_APPEAR_AT_SEC = [0, 1.5, 4.5, 7.5, 10.5];
-const STEP_DONE_AT_SEC = [4.5, 7.5, 10.5, 13.5, 15];
+const STEP_APPEAR_AT_SEC = [0, 1.0, 2.5, 4.0, 5.5];
+const STEP_DONE_AT_SEC = [2.5, 4.0, 5.5, 6.5, 7.0];
 
 const EMAIL_PAUSE = 85;
 const PHASE1_DURATION = 7000;
