@@ -437,6 +437,9 @@ export default function AnalysisScreen() {
                   className="w-full bg-card border-[1.5px] border-foreground/[0.12] rounded-xl text-foreground font-body text-[15px] py-4 pl-11 pr-4 outline-none transition-all focus:border-primary focus:shadow-[0_0_0_3px_rgba(0,194,255,0.1)] placeholder:text-foreground/25"
                 />
               </div>
+              <p className="text-[13px] text-foreground/50 leading-relaxed font-body text-center mt-1">
+                Din e-post gör att du kan komma tillbaka och se din personliga analys utan att fylla i enkäten igen.
+              </p>
               <button
                 disabled={!validEmail || emailSaving}
                 onClick={handleEmailSubmit}
@@ -456,9 +459,6 @@ export default function AnalysisScreen() {
                   </span>
                 ))}
               </div>
-              <p className="text-[13px] text-foreground/50 leading-relaxed font-body text-center mt-1">
-                Din e-post gör att du kan komma tillbaka och se din personliga analys utan att fylla i enkäten igen.
-              </p>
             </div>
           </div>
         )}
