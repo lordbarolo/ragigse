@@ -580,17 +580,28 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                 { value: "anstalld" as const, label: "Anställd", desc: "Lön från vårdgivare eller bemanningsföretag" },
                 { value: "foretagare" as const, label: "Eget bolag", desc: "Fakturerar via bemanningsföretag eller direkt till slutkund" },
               ]).map((opt) => (
-                <button
+               <button
                   key={opt.value}
                   onClick={() => {
                     setData({ ...data, employmentType: opt.value });
                     trackStepCompleted(4, opt.value);
                     setTimeout(() => setStep(5), 300);
                   }}
-                  className="group w-full py-5 px-5 rounded-xl border border-border !border-l-[3px] !border-l-primary bg-card text-left transition-all active:scale-[0.98] hover:border-primary/40 hover:bg-primary/[0.03]"
+                  className={`group w-full py-5 px-5 rounded-xl border !border-l-[3px] bg-card text-left transition-all active:scale-[0.98] flex items-center gap-3 ${
+                    data.employmentType === opt.value
+                      ? "border-primary !border-l-primary bg-primary/[0.06] ring-1 ring-primary/20"
+                      : "border-border !border-l-primary hover:border-primary/40 hover:bg-primary/[0.03]"
+                  }`}
                 >
-                  <span className="text-base font-medium text-foreground">{opt.label}</span>
-                  <p className="text-sm text-muted-foreground mt-1">{opt.desc}</p>
+                  {data.employmentType === opt.value && (
+                    <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center shrink-0">
+                      <Check className="w-3 h-3 text-primary-foreground" />
+                    </div>
+                  )}
+                  <div>
+                    <span className="text-base font-medium text-foreground">{opt.label}</span>
+                    <p className="text-sm text-muted-foreground mt-1">{opt.desc}</p>
+                  </div>
                 </button>
               ))}
             </div>
