@@ -558,7 +558,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
             <div className="rounded-2xl border border-border bg-card p-5 flex flex-col gap-3">
               {([
                 { value: "anstalld" as const, label: "Anställd", desc: "Ersättning från arbetsgivare" },
-                { value: "foretagare" as const, label: "Eget bolag", desc: "Fakturerar via bemanningsföretag" },
+                { value: "foretagare" as const, label: "Eget bolag", desc: "Fakturerar via bemanningsföretag eller direkt till slutkund" },
               ]).map((opt) => (
                 <button
                   key={opt.value}
