@@ -1,5 +1,6 @@
 const ITEMS = [
-  "SKR Ramavtal 2026 · Sjuksköterska zon 1: 616 kr/h",
+  "SKR Ramavtal 2026 · Regionernas pris till bemanningsföretag",
+  "Sjuksköterska zon 1: 616 kr/h",
   "Anestesisjuksköterska zon 3: 880 kr/h",
   "Barnmorska zon 2: 824 kr/h",
   "290 kommuner · 21 regioner täcks",
