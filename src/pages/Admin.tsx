@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import SalaryInsights from "@/components/admin/SalaryInsights";
 import ConversionFunnel from "@/components/admin/ConversionFunnel";
 import DailyVisitors from "@/components/admin/DailyVisitors";
+import ReferralStats from "@/components/admin/ReferralStats";
 import FeedbackStats from "@/components/admin/FeedbackStats";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
