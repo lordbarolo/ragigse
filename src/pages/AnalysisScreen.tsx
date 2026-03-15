@@ -420,9 +420,9 @@ export default function AnalysisScreen() {
                   <Lock className="w-3.5 h-3.5 text-primary/60" />
                   <span className="text-[14px] text-foreground/75 font-display font-medium">Ditt förhandlingsutrymme</span>
                 </div>
-                <span className="text-[11px] text-primary/70 font-display font-semibold flex items-center gap-1 group-hover:text-primary transition-colors">
+                <span className="text-[12px] text-primary font-display font-bold flex items-center gap-1 group-hover:text-primary transition-colors">
                   Lås upp
-                  <ArrowRight className="w-3 h-3" />
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </span>
               </div>
 
