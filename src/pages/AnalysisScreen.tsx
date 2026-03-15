@@ -277,8 +277,8 @@ export default function AnalysisScreen() {
                       {step.icon}
                     </div>
                     <div className="flex-1">
-                      <div className="font-display text-[13px] font-semibold text-foreground/50">{step.label}</div>
-                      <div className="text-[11px] text-foreground/[0.35] mt-0.5">{step.sub}</div>
+                     <div className="font-display text-[14px] font-semibold text-foreground/50">{step.label}</div>
+                      <div className="text-[12px] text-foreground/35 mt-0.5">{step.sub}</div>
                     </div>
                   </div>
                 );
