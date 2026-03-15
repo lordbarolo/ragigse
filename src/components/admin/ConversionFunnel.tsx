@@ -75,13 +75,11 @@ export default function ConversionFunnel() {
       const surveyViewed: Record<string, number> = {};
       const surveyCompleted: Record<string, number> = {};
 
-      // The edge function returns aggregated data per variant - combine all variants
-      for (const variant of ["A", "B", "unknown"]) {
-        const funnelData = res.funnels?.[variant];
-        if (funnelData) {
-          for (const step of funnelData) {
-            counts[step.step] = (counts[step.step] || 0) + step.count;
-          }
+      // Use the combined "all" funnel from the edge function
+      const allFunnel = res.funnels?.["all"];
+      if (allFunnel) {
+        for (const step of allFunnel) {
+          counts[step.step] = (counts[step.step] || 0) + step.count;
         }
       }
 
