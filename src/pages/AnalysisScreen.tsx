@@ -234,7 +234,7 @@ export default function AnalysisScreen() {
               <p className="font-display text-[11px] font-semibold tracking-[0.12em] uppercase text-primary mb-2.5">
                 Analyserar din data
               </p>
-              <h1 className="font-display text-[28px] font-extrabold tracking-tight leading-[1.1]">
+              <h1 className="font-display text-[28px] sm:text-[32px] font-extrabold tracking-tight leading-[1.1]">
                 Vad kommer<br />rapporten <span className="text-primary">visa?</span>
               </h1>
             </div>
