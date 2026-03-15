@@ -1,6 +1,6 @@
 export default function Hero() {
   return (
-    <section className="relative flex flex-col items-center text-center px-6 pt-10 pb-6 overflow-hidden">
+    <section className="relative flex flex-col items-center text-center px-6 pt-6 pb-3 overflow-hidden">
       {/* Mesh gradient */}
       <div
         className="absolute inset-0 pointer-events-none"
