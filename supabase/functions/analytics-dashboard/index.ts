@@ -119,9 +119,10 @@ serve(async (req) => {
 
     // Conversion rates
     const conversionRates: Record<string, { sessions: number; conversions: number; rate: string }> = {};
-    for (const v of ["A", "B"]) {
-      const sessions = variants[v]?.["teaser_viewed"] || 0;
-      const conversions = variants[v]?.["payment_verified"] || 0;
+    for (const v of ["A", "B", "all"]) {
+      const counts = v === "all" ? combinedCounts : (variants[v] || {});
+      const sessions = counts?.["landing_viewed"] || 0;
+      const conversions = counts?.["email_collected"] || 0;
       conversionRates[v] = {
         sessions,
         conversions,
