@@ -30,7 +30,7 @@ const FUNNEL_STEPS = [
   { key: "landing_viewed", label: "Landningssida" },
   { key: "survey_started", label: "Enkät påbörjad" },
   { key: "survey_completed", label: "Enkät slutförd" },
-  { key: "paywall_scrolled", label: "Teaser scrollad" },
+  { key: "analysis_started", label: "Analys startad" },
   { key: "email_collected", label: "E-post lämnad" },
   { key: "report_viewed", label: "Rapport visad" },
   { key: "report_section_viewed", label: "Rapport scrollad" },
