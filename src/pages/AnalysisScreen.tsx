@@ -418,7 +418,7 @@ export default function AnalysisScreen() {
               >
                 <div className="flex items-center gap-2.5">
                   <Lock className="w-3.5 h-3.5 text-primary/60" />
-                  <span className="text-[13px] text-foreground/55 font-display font-medium">Ditt förhandlingsutrymme</span>
+                  <span className="text-[14px] text-foreground/75 font-display font-medium">Ditt förhandlingsutrymme</span>
                 </div>
                 <span className="text-[11px] text-primary/70 font-display font-semibold flex items-center gap-1 group-hover:text-primary transition-colors">
                   Lås upp
