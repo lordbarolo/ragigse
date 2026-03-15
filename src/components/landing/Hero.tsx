@@ -1,6 +1,6 @@
 export default function Hero() {
   return (
-    <section className="relative flex flex-col items-center text-center px-6 pt-10 pb-6 overflow-hidden">
+    <section className="relative flex flex-col items-center text-center px-6 pt-6 pb-3 overflow-hidden">
       {/* Mesh gradient */}
       <div
         className="absolute inset-0 pointer-events-none"
@@ -26,14 +26,14 @@ export default function Hero() {
 
       <div className="relative z-10 max-w-[720px] w-full">
         {/* Source badge */}
-        <div className="inline-flex items-center gap-2 bg-primary/[0.08] border border-primary/20 rounded-full px-3.5 pr-3 py-1 font-display text-xs font-medium text-primary tracking-wide mb-5">
+        <div className="inline-flex items-center gap-2 bg-primary/[0.08] border border-primary/20 rounded-full px-3.5 pr-3 py-1 font-display text-xs font-medium text-primary tracking-wide mb-3">
           <span className="w-5 h-5 rounded-full bg-primary/15 flex items-center justify-center text-[10px]">🛡</span>
           Officiella avtalspriser · SKR Ramavtal 2026
         </div>
 
         <h1
-          className="font-display font-extrabold leading-[1.04] tracking-[-0.04em] text-foreground mb-3"
-          style={{ fontSize: "clamp(30px, 7vw, 60px)" }}
+          className="font-display font-extrabold leading-[1.04] tracking-[-0.04em] text-foreground mb-2"
+          style={{ fontSize: "clamp(26px, 6.5vw, 56px)" }}
         >
           Vad betalar <span className="text-primary">regionen</span><br className="sm:hidden" /> för din <span className="bg-gradient-to-r from-[#a78bfa] to-[#60a5fa] bg-clip-text text-transparent">kompetens?</span>
         </h1>
