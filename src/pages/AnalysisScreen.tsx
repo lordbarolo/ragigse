@@ -456,7 +456,7 @@ export default function AnalysisScreen() {
                 </button>
                 <div className="flex items-center justify-center gap-4 flex-wrap">
                   {["Visas direkt", "Ingen inloggning", "Inget nyhetsbrev"].map((t) => (
-                    <span key={t} className="text-[11px] text-foreground/30 flex items-center gap-1 font-display font-medium">
+                    <span key={t} className="text-[12px] text-foreground/45 flex items-center gap-1 font-display font-medium">
                       <span className="text-[hsl(var(--green))] text-[10px] font-bold">✓</span> {t}
                     </span>
                   ))}
