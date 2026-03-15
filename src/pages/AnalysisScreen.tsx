@@ -234,7 +234,7 @@ export default function AnalysisScreen() {
               <p className="font-display text-[11px] font-semibold tracking-[0.12em] uppercase text-primary mb-2.5">
                 Analyserar din data
               </p>
-              <h1 className="font-display text-[28px] font-extrabold tracking-tight leading-[1.1]">
+              <h1 className="font-display text-[28px] sm:text-[32px] font-extrabold tracking-tight leading-[1.1]">
                 Vad kommer<br />rapporten <span className="text-primary">visa?</span>
               </h1>
             </div>
@@ -277,8 +277,8 @@ export default function AnalysisScreen() {
                       {step.icon}
                     </div>
                     <div className="flex-1">
-                      <div className="font-display text-[13px] font-semibold text-foreground/50">{step.label}</div>
-                      <div className="text-[11px] text-foreground/[0.35] mt-0.5">{step.sub}</div>
+                     <div className="font-display text-[14px] font-semibold text-foreground/50">{step.label}</div>
+                      <div className="text-[12px] text-foreground/35 mt-0.5">{step.sub}</div>
                     </div>
                   </div>
                 );
@@ -301,8 +301,8 @@ export default function AnalysisScreen() {
                       {step.icon}
                     </div>
                     <div className="flex-1">
-                      <div className={`font-display text-[13px] font-semibold ${isDone ? "text-foreground/65" : "text-foreground"}`}>{step.label}</div>
-                      <div className={`text-[11px] mt-0.5 ${isDone ? "text-foreground/[0.35]" : "text-primary/60"}`}>{step.sub}</div>
+                      <div className={`font-display text-[14px] font-semibold ${isDone ? "text-foreground/65" : "text-foreground"}`}>{step.label}</div>
+                      <div className={`text-[12px] mt-0.5 ${isDone ? "text-foreground/35" : "text-primary/60"}`}>{step.sub}</div>
                     </div>
                     {isDone ? (
                       <span className="text-[hsl(var(--green))] text-xs">✓</span>
@@ -325,10 +325,10 @@ export default function AnalysisScreen() {
                 <div className="text-[10px] font-display font-semibold tracking-[0.1em] uppercase text-primary/70 mb-1">
                   {fact.eyebrow}
                 </div>
-                <div className="text-[13px] text-foreground/75 leading-relaxed">
+                <div className="text-[14px] text-foreground/75 leading-relaxed">
                   {fact.text}
                 </div>
-                <div className="text-[10px] text-foreground/25 mt-1.5 font-display">{fact.source}</div>
+                <div className="text-[12px] text-foreground/35 mt-1.5 font-display">{fact.source}</div>
               </div>
             </div>
           </div>
@@ -341,20 +341,20 @@ export default function AnalysisScreen() {
             <div>
               <div className="inline-flex items-center gap-2 bg-[hsl(var(--green))]/[0.08] border border-[hsl(var(--green))]/20 rounded-full px-3.5 py-1.5 mb-3">
                 <Check className="w-3.5 h-3.5 text-[hsl(var(--green))]" />
-                <span className="text-[12px] font-display font-bold text-[hsl(var(--green))]">Din personliga rapport är klar</span>
+                <span className="text-[11px] font-display font-semibold tracking-[0.1em] uppercase text-[hsl(var(--green))]">Analysen klar</span>
               </div>
-              <h1 className="font-display text-[22px] font-extrabold tracking-tight leading-[1.15] mb-1.5">
-                Ange din mejl för att<br /><span className="text-primary">se den direkt</span>
+              <h1 className="font-display text-[28px] sm:text-[32px] font-extrabold tracking-tight leading-[1.1] mb-2">
+                Din analys<br />väntar på <span className="text-primary">dig</span>
               </h1>
-              <p className="text-sm text-foreground/50 font-light leading-relaxed">
-                Rapporten visas omedelbart — vi skickar också en kopia till din inkorg.
+              <p className="text-[15px] text-foreground/75 leading-relaxed">
+                Förhandlingstipsen och den fullständiga analysen skickas direkt till din inkorg. Inget nyhetsbrev utan din tillåtelse.
               </p>
             </div>
 
             {/* Result summary */}
             {teaserData && (
-              <div className="bg-primary/[0.06] border border-primary/15 rounded-[10px] px-4 py-3.5 text-sm text-foreground/80 leading-relaxed">
-                Din ersättning på <strong className={teaserData.isUnderpaid ? "text-[hsl(var(--amber))]" : "text-[hsl(var(--green))]"}>
+              <div className="bg-primary/[0.06] border border-primary/15 rounded-[10px] px-4 py-3.5 text-[15px] text-foreground/75 leading-relaxed">
+                Din ersättning på <strong className={`font-extrabold ${teaserData.isUnderpaid ? "text-[hsl(var(--amber))]" : "text-[hsl(var(--green))]"}`}>
                   {fmt(teaserData.userHourly)} kr/h
                 </strong> ligger {teaserData.isUnderpaid ? "under" : "över"} marknadsspannet för {teaserData.roleName.toLowerCase()} i {teaserData.zone.toLowerCase()}.
               </div>
@@ -366,7 +366,7 @@ export default function AnalysisScreen() {
 
               {/* Teaser header */}
               <div className="flex items-center justify-between px-5 py-3.5 border-b border-foreground/[0.06]">
-                <span className="text-[11px] text-foreground/40 font-display font-medium">
+                <span className="text-[11px] text-foreground/45 font-display font-medium tracking-[0.1em]">
                   {teaserData ? `${teaserData.roleName} · ${teaserData.zone}` : "Sjuksköterska · Zon 1"}
                 </span>
                 {teaserData?.isUnderpaid ? (
@@ -389,9 +389,9 @@ export default function AnalysisScreen() {
                   <div key={i} className="flex items-center justify-between py-2.5 border-b border-foreground/[0.04] last:border-b-0">
                     <div className="flex items-center gap-2.5">
                       <span className="w-[7px] h-[7px] rounded-full shrink-0" style={{ background: m.dot }} />
-                      <span className="text-[13px] text-foreground/55">{m.label}</span>
+                      <span className="text-[14px] text-foreground/75">{m.label}</span>
                     </div>
-                    <span className="font-display text-[15px] font-bold">{m.val}</span>
+                    <span className="font-display text-[17px] font-extrabold text-foreground">{m.val}</span>
                   </div>
                 ))}
               </div>
@@ -418,11 +418,11 @@ export default function AnalysisScreen() {
               >
                 <div className="flex items-center gap-2.5">
                   <Lock className="w-3.5 h-3.5 text-primary/60" />
-                  <span className="text-[13px] text-foreground/55 font-display font-medium">Ditt förhandlingsutrymme</span>
+                  <span className="text-[14px] text-foreground/75 font-display font-medium">Ditt förhandlingsutrymme</span>
                 </div>
-                <span className="text-[11px] text-primary/70 font-display font-semibold flex items-center gap-1 group-hover:text-primary transition-colors">
+                <span className="text-[12px] text-primary font-display font-bold flex items-center gap-1 group-hover:text-primary transition-colors">
                   Lås upp
-                  <ArrowRight className="w-3 h-3" />
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </span>
               </div>
 
@@ -438,7 +438,7 @@ export default function AnalysisScreen() {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     onKeyDown={(e) => { if (e.key === "Enter" && validEmail && !emailSaving) handleEmailSubmit(); }}
-                    className="w-full bg-background/60 border-[1.5px] border-foreground/[0.12] rounded-xl text-foreground font-body text-[15px] py-4 pl-11 pr-4 outline-none transition-all focus:border-primary focus:shadow-[0_0_0_3px_rgba(0,194,255,0.1)] placeholder:text-foreground/25"
+                    className="w-full bg-background/60 border-[1.5px] border-foreground/[0.12] rounded-xl text-foreground font-body text-[16px] py-4 pl-11 pr-4 outline-none transition-all focus:border-primary focus:shadow-[0_0_0_3px_rgba(0,194,255,0.1)] placeholder:text-foreground/35"
                     autoFocus
                   />
                 </div>
@@ -456,7 +456,7 @@ export default function AnalysisScreen() {
                 </button>
                 <div className="flex items-center justify-center gap-4 flex-wrap">
                   {["Visas direkt", "Ingen inloggning", "Inget nyhetsbrev"].map((t) => (
-                    <span key={t} className="text-[11px] text-foreground/30 flex items-center gap-1 font-display font-medium">
+                    <span key={t} className="text-[12px] text-foreground/45 flex items-center gap-1 font-display font-medium">
                       <span className="text-[hsl(var(--green))] text-[10px] font-bold">✓</span> {t}
                     </span>
                   ))}
