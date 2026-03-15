@@ -141,6 +141,7 @@ export default function Index() {
             </div>
             <span className="relative z-10 text-primary text-xl flex-shrink-0 group-hover:translate-x-1 transition-transform">→</span>
           </button>
+          </div>
         </div>
       </main>
 
