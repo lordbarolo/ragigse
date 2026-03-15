@@ -343,11 +343,11 @@ export default function AnalysisScreen() {
                 <Check className="w-3.5 h-3.5 text-[hsl(var(--green))]" />
                 <span className="text-[12px] font-display font-bold text-[hsl(var(--green))]">Din personliga rapport är klar</span>
               </div>
-              <h1 className="font-display text-[22px] font-extrabold tracking-tight leading-[1.15] mb-1.5">
-                Ange din mejl för att<br /><span className="text-primary">se den direkt</span>
+              <h1 className="font-display text-[28px] sm:text-[32px] font-extrabold tracking-tight leading-[1.1] mb-2">
+                Din analys<br />väntar på <span className="text-primary">dig</span>
               </h1>
-              <p className="text-sm text-foreground/50 font-light leading-relaxed">
-                Rapporten visas omedelbart — vi skickar också en kopia till din inkorg.
+              <p className="text-[15px] text-foreground/75 leading-relaxed">
+                Förhandlingstipsen och den fullständiga analysen skickas direkt till din inkorg. Inget nyhetsbrev utan din tillåtelse.
               </p>
             </div>
 
