@@ -93,9 +93,20 @@ serve(async (req) => {
       dailyCounts[day][event.event_name] = (dailyCounts[day][event.event_name] || 0) + 1;
     }
 
-    // Build funnel for each variant
+    // Build funnel for each variant (including unknown and combined)
     const funnels: Record<string, Array<{ step: string; count: number; rate: number }>> = {};
-    for (const v of ["A", "B"]) {
+    
+    // Build combined counts across all variants
+    const combinedCounts: Record<string, number> = {};
+    for (const v of ["A", "B", "unknown"]) {
+      const counts = variants[v] || {};
+      for (const [k, val] of Object.entries(counts)) {
+        combinedCounts[k] = (combinedCounts[k] || 0) + val;
+      }
+    }
+    
+    for (const v of ["A", "B", "all"]) {
+      const counts = v === "all" ? combinedCounts : (variants[v] || {});
       const counts = variants[v] || {};
       const funnel = funnelSteps.map((step, i) => {
         const count = counts[step] || 0;
