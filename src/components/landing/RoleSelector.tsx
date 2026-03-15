@@ -19,7 +19,7 @@ export default function RoleSelector({ onRoleSelect }: Props) {
             className="group relative overflow-hidden flex items-center gap-4 bg-[hsl(var(--dark-2))] border border-foreground/[0.12] !border-l-[3px] !border-l-primary rounded-[16px] p-4 pl-4 text-left cursor-pointer transition-all hover:border-primary/40 hover:bg-[hsl(var(--dark-3))] hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(0,0,0,0.3),0_0_0_1px_hsl(196_100%_50%/0.1)]"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.04] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-            <div className="relative z-10 w-12 h-12 rounded-[12px] bg-primary/10 border border-primary/15 flex items-center justify-center text-[22px] flex-shrink-0">
+            <div className="relative z-10 w-10 h-10 rounded-[10px] bg-primary/10 border border-primary/15 flex items-center justify-center text-[20px] flex-shrink-0">
               {r.icon}
             </div>
             <div className="relative z-10 flex-1">
