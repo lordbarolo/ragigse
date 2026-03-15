@@ -366,7 +366,7 @@ export default function AnalysisScreen() {
 
               {/* Teaser header */}
               <div className="flex items-center justify-between px-5 py-3.5 border-b border-foreground/[0.06]">
-                <span className="text-[11px] text-foreground/40 font-display font-medium">
+                <span className="text-[11px] text-foreground/45 font-display font-medium tracking-[0.1em]">
                   {teaserData ? `${teaserData.roleName} · ${teaserData.zone}` : "Sjuksköterska · Zon 1"}
                 </span>
                 {teaserData?.isUnderpaid ? (
