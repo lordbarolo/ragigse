@@ -66,8 +66,8 @@ export default function Index() {
       <Ticker />
       <LandingNav />
       <Hero />
-      <StatBar />
       <RoleSelector onRoleSelect={handleRoleSelect} />
+      <StatBar />
 
       {/* Survey — slides in when a role is selected */}
       {showSurvey && (
