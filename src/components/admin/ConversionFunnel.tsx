@@ -30,7 +30,7 @@ const FUNNEL_STEPS = [
   { key: "landing_viewed", label: "Landningssida" },
   { key: "survey_started", label: "Enkät påbörjad" },
   { key: "survey_completed", label: "Enkät slutförd" },
-  { key: "paywall_scrolled", label: "Teaser scrollad" },
+  { key: "analysis_started", label: "Analys startad" },
   { key: "email_collected", label: "E-post lämnad" },
   { key: "report_viewed", label: "Rapport visad" },
   { key: "report_section_viewed", label: "Rapport scrollad" },
@@ -75,13 +75,11 @@ export default function ConversionFunnel() {
       const surveyViewed: Record<string, number> = {};
       const surveyCompleted: Record<string, number> = {};
 
-      // The edge function returns aggregated data per variant - combine all variants
-      for (const variant of ["A", "B", "unknown"]) {
-        const funnelData = res.funnels?.[variant];
-        if (funnelData) {
-          for (const step of funnelData) {
-            counts[step.step] = (counts[step.step] || 0) + step.count;
-          }
+      // Use the combined "all" funnel from the edge function
+      const allFunnel = res.funnels?.["all"];
+      if (allFunnel) {
+        for (const step of allFunnel) {
+          counts[step.step] = (counts[step.step] || 0) + step.count;
         }
       }
 
