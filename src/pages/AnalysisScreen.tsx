@@ -341,7 +341,7 @@ export default function AnalysisScreen() {
             <div>
               <div className="inline-flex items-center gap-2 bg-[hsl(var(--green))]/[0.08] border border-[hsl(var(--green))]/20 rounded-full px-3.5 py-1.5 mb-3">
                 <Check className="w-3.5 h-3.5 text-[hsl(var(--green))]" />
-                <span className="text-[12px] font-display font-bold text-[hsl(var(--green))]">Din personliga rapport är klar</span>
+                <span className="text-[11px] font-display font-semibold tracking-[0.1em] uppercase text-[hsl(var(--green))]">Analysen klar</span>
               </div>
               <h1 className="font-display text-[28px] sm:text-[32px] font-extrabold tracking-tight leading-[1.1] mb-2">
                 Din analys<br />väntar på <span className="text-primary">dig</span>
