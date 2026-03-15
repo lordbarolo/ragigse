@@ -389,9 +389,9 @@ export default function AnalysisScreen() {
                   <div key={i} className="flex items-center justify-between py-2.5 border-b border-foreground/[0.04] last:border-b-0">
                     <div className="flex items-center gap-2.5">
                       <span className="w-[7px] h-[7px] rounded-full shrink-0" style={{ background: m.dot }} />
-                      <span className="text-[13px] text-foreground/55">{m.label}</span>
+                      <span className="text-[14px] text-foreground/75">{m.label}</span>
                     </div>
-                    <span className="font-display text-[15px] font-bold">{m.val}</span>
+                    <span className="font-display text-[17px] font-extrabold text-foreground">{m.val}</span>
                   </div>
                 ))}
               </div>
