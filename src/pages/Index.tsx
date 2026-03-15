@@ -111,7 +111,7 @@ export default function Index() {
           </p>
 
           {/* Role cards */}
-          <div className="w-full max-w-[420px] flex flex-col gap-2.5">
+        <div className="w-full max-w-[420px] flex flex-col gap-2.5">
             <button
             onClick={() => handleRoleSelect("lakare")}
             className="group relative overflow-hidden flex items-center gap-4 bg-[hsl(var(--dark-2))] border border-foreground/[0.12] !border-l-[3px] !border-l-primary rounded-[16px] p-4 text-left cursor-pointer transition-all hover:border-primary/40 hover:bg-[hsl(var(--dark-3))] hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(0,0,0,0.3),0_0_0_1px_hsl(196_100%_50%/0.1)]"
