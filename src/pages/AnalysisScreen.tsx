@@ -325,7 +325,7 @@ export default function AnalysisScreen() {
                 <div className="text-[10px] font-display font-semibold tracking-[0.1em] uppercase text-primary/70 mb-1">
                   {fact.eyebrow}
                 </div>
-                <div className="text-[13px] text-foreground/75 leading-relaxed">
+                <div className="text-[14px] text-foreground/75 leading-relaxed">
                   {fact.text}
                 </div>
                 <div className="text-[10px] text-foreground/25 mt-1.5 font-display">{fact.source}</div>
