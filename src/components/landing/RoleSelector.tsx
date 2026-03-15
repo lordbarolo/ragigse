@@ -10,8 +10,8 @@ const ROLES = [
 
 export default function RoleSelector({ onRoleSelect }: Props) {
   return (
-    <section id="roles" className="px-6 pt-4 pb-10 max-w-[720px] mx-auto">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+    <section id="roles" className="px-5 pt-2 pb-6 max-w-[720px] mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
         {ROLES.map((r) => (
           <button
             key={r.title}
