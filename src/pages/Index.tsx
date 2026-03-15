@@ -75,39 +75,44 @@ export default function Index() {
         </span>
       </nav>
 
-      {/* Main content — vertically centered */}
-      <main className="flex-1 flex flex-col items-center justify-center px-5 gap-6">
-        {/* Badge */}
-        <div className="inline-flex items-center gap-2 bg-primary/[0.08] border border-primary/20 rounded-full px-3.5 py-1 font-display text-[11px] font-medium text-primary tracking-wider">
-          <span className="w-5 h-5 rounded-full bg-primary/15 flex items-center justify-center text-[10px]">🛡</span>
-          Officiella avtalspriser · 290 kommuner · 21 regioner
+      {/* Main content — upper half: badge+headline, lower half: role cards */}
+      <main className="flex-1 flex flex-col items-center px-5">
+        {/* Upper section — pushes badge+headline to ~30% from top */}
+        <div className="flex flex-col items-center justify-center" style={{ height: '52%' }}>
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 bg-primary/[0.08] border border-primary/20 rounded-full px-3.5 py-1 font-display text-[11px] font-medium text-primary tracking-wider mb-5">
+            <span className="w-5 h-5 rounded-full bg-primary/15 flex items-center justify-center text-[10px]">🛡</span>
+            Officiella avtalspriser · 290 kommuner · 21 regioner
+          </div>
+
+          {/* Headline */}
+          <div className="text-center max-w-[480px]">
+            <h1
+              className="font-display font-extrabold leading-[1.06] tracking-[-0.04em] text-foreground"
+              style={{ fontSize: "clamp(28px, 7vw, 48px)" }}
+            >
+              Vad betalar{" "}
+              <span className="text-primary">regionen</span> för{" "}
+              <span className="bg-gradient-to-r from-[#a78bfa] to-[#60a5fa] bg-clip-text text-transparent">
+                din kompetens?
+              </span>
+            </h1>
+            <p className="text-foreground/55 text-[15px] leading-relaxed mt-3 max-w-[380px] mx-auto">
+              Jämför din ersättning mot offentliga ramavtalspriser på 60 sekunder.
+            </p>
+          </div>
         </div>
 
-        {/* Headline */}
-        <div className="text-center max-w-[480px]">
-          <h1
-            className="font-display font-extrabold leading-[1.06] tracking-[-0.04em] text-foreground"
-            style={{ fontSize: "clamp(28px, 7vw, 48px)" }}
-          >
-            Vad betalar{" "}
-            <span className="text-primary">regionen</span> för{" "}
-            <span className="bg-gradient-to-r from-[#a78bfa] to-[#60a5fa] bg-clip-text text-transparent">
-              din kompetens?
-            </span>
-          </h1>
-          <p className="text-foreground/55 text-[15px] leading-relaxed mt-3 max-w-[380px] mx-auto">
-            Jämför din ersättning mot offentliga ramavtalspriser på 60 sekunder.
+        {/* Lower section — role cards in thumb zone */}
+        <div className="flex flex-col items-center gap-4 w-full">
+          {/* Role label */}
+          <p className="text-foreground/40 text-[11px] font-medium tracking-[0.1em] uppercase font-display">
+            Vad jobbar du som?
           </p>
-        </div>
 
-        {/* Role label */}
-        <p className="text-foreground/40 text-[11px] font-medium tracking-[0.1em] uppercase font-display">
-          Vad jobbar du som?
-        </p>
-
-        {/* Role cards */}
+          {/* Role cards */}
         <div className="w-full max-w-[420px] flex flex-col gap-2.5">
-          <button
+            <button
             onClick={() => handleRoleSelect("lakare")}
             className="group relative overflow-hidden flex items-center gap-4 bg-[hsl(var(--dark-2))] border border-foreground/[0.12] !border-l-[3px] !border-l-primary rounded-[16px] p-4 text-left cursor-pointer transition-all hover:border-primary/40 hover:bg-[hsl(var(--dark-3))] hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(0,0,0,0.3),0_0_0_1px_hsl(196_100%_50%/0.1)]"
           >
@@ -136,6 +141,7 @@ export default function Index() {
             </div>
             <span className="relative z-10 text-primary text-xl flex-shrink-0 group-hover:translate-x-1 transition-transform">→</span>
           </button>
+          </div>
         </div>
       </main>
 
