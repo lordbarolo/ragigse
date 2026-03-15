@@ -301,8 +301,8 @@ export default function AnalysisScreen() {
                       {step.icon}
                     </div>
                     <div className="flex-1">
-                      <div className={`font-display text-[13px] font-semibold ${isDone ? "text-foreground/65" : "text-foreground"}`}>{step.label}</div>
-                      <div className={`text-[11px] mt-0.5 ${isDone ? "text-foreground/[0.35]" : "text-primary/60"}`}>{step.sub}</div>
+                      <div className={`font-display text-[14px] font-semibold ${isDone ? "text-foreground/65" : "text-foreground"}`}>{step.label}</div>
+                      <div className={`text-[12px] mt-0.5 ${isDone ? "text-foreground/35" : "text-primary/60"}`}>{step.sub}</div>
                     </div>
                     {isDone ? (
                       <span className="text-[hsl(var(--green))] text-xs">✓</span>
