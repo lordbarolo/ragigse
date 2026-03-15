@@ -353,8 +353,8 @@ export default function AnalysisScreen() {
 
             {/* Result summary */}
             {teaserData && (
-              <div className="bg-primary/[0.06] border border-primary/15 rounded-[10px] px-4 py-3.5 text-sm text-foreground/80 leading-relaxed">
-                Din ersättning på <strong className={teaserData.isUnderpaid ? "text-[hsl(var(--amber))]" : "text-[hsl(var(--green))]"}>
+              <div className="bg-primary/[0.06] border border-primary/15 rounded-[10px] px-4 py-3.5 text-[15px] text-foreground/75 leading-relaxed">
+                Din ersättning på <strong className={`font-extrabold ${teaserData.isUnderpaid ? "text-[hsl(var(--amber))]" : "text-[hsl(var(--green))]"}`}>
                   {fmt(teaserData.userHourly)} kr/h
                 </strong> ligger {teaserData.isUnderpaid ? "under" : "över"} marknadsspannet för {teaserData.roleName.toLowerCase()} i {teaserData.zone.toLowerCase()}.
               </div>
