@@ -1,20 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
-
-import Ticker from "@/components/landing/Ticker";
-import LandingNav from "@/components/landing/LandingNav";
-import Hero from "@/components/landing/Hero";
-import StatBar from "@/components/landing/StatBar";
-import RoleSelector from "@/components/landing/RoleSelector";
-import Steps from "@/components/landing/Steps";
-import ReportPreview from "@/components/landing/ReportPreview";
-import OBSection from "@/components/landing/OBSection";
-import DataSection from "@/components/landing/DataSection";
-import BottomCTA from "@/components/landing/BottomCTA";
-import LandingFooter from "@/components/landing/LandingFooter";
 import Survey from "@/components/Survey";
+import LandingFooter from "@/components/landing/LandingFooter";
 
 const faqJsonLd = {
   "@context": "https://schema.org",
@@ -41,10 +30,10 @@ const webAppJsonLd = {
 export default function Index() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const surveyRef = useRef<HTMLDivElement>(null);
   const [showSurvey, setShowSurvey] = useState(false);
   const [prefillCategory, setPrefillCategory] = useState<string>("");
   const [prefillRole, setPrefillRole] = useState<string>("");
+  const surveyRef = useRef<HTMLDivElement>(null);
 
   useTimeOnPage("landing");
   useEffect(() => { trackEvent("landing_viewed"); }, []);
@@ -58,30 +47,107 @@ export default function Index() {
     }, 100);
   };
 
+  if (showSurvey) {
+    return (
+      <div className="min-h-screen bg-background">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppJsonLd) }} />
+        <div ref={surveyRef} className="px-4 pt-8 pb-16 bg-background min-h-screen flex flex-col">
+          <Survey
+            initialCategory={prefillCategory as "lakare" | "ssk" | ""}
+            initialRole={prefillRole}
+            onBack={() => setShowSurvey(false)}
+          />
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="h-[100dvh] bg-background flex flex-col overflow-hidden">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppJsonLd) }} />
 
-      <Ticker />
-      <LandingNav />
-      <Hero />
-      <RoleSelector onRoleSelect={handleRoleSelect} />
-      <StatBar />
+      {/* Nav */}
+      <nav className="flex items-center justify-between px-5 h-[52px] flex-shrink-0">
+        <span className="font-display text-lg font-extrabold tracking-tight text-foreground">
+          comp<em className="text-primary not-italic">care</em>
+        </span>
+      </nav>
 
-      {/* Survey — slides in when a role is selected */}
-      {showSurvey && (
-        <div ref={surveyRef} className="px-4 pt-24 pb-16 bg-background border-t border-foreground/[0.07]">
-          <Survey initialCategory={prefillCategory as "lakare" | "ssk" | ""} initialRole={prefillRole} onBack={() => setShowSurvey(false)} />
+      {/* Main content — vertically centered */}
+      <main className="flex-1 flex flex-col items-center justify-center px-5 gap-6">
+        {/* Badge */}
+        <div className="inline-flex items-center gap-2 bg-primary/[0.08] border border-primary/20 rounded-full px-3.5 py-1 font-display text-[11px] font-medium text-primary tracking-wider">
+          <span className="w-5 h-5 rounded-full bg-primary/15 flex items-center justify-center text-[10px]">🛡</span>
+          Officiella avtalspriser · 290 kommuner · 21 regioner
         </div>
-      )}
 
-      <Steps />
-      <ReportPreview />
-      <OBSection />
-      <DataSection />
-      <BottomCTA />
-      <LandingFooter />
+        {/* Headline */}
+        <div className="text-center max-w-[480px]">
+          <h1
+            className="font-display font-extrabold leading-[1.06] tracking-[-0.04em] text-foreground"
+            style={{ fontSize: "clamp(28px, 7vw, 48px)" }}
+          >
+            Vad betalar{" "}
+            <span className="text-primary">regionen</span> för{" "}
+            <span className="bg-gradient-to-r from-[#a78bfa] to-[#60a5fa] bg-clip-text text-transparent">
+              din kompetens?
+            </span>
+          </h1>
+          <p className="text-foreground/55 text-[15px] leading-relaxed mt-3 max-w-[380px] mx-auto">
+            Jämför din ersättning mot offentliga ramavtalspriser på 60 sekunder.
+          </p>
+        </div>
+
+        {/* Role label */}
+        <p className="text-foreground/40 text-[11px] font-medium tracking-[0.1em] uppercase font-display">
+          Vad jobbar du som?
+        </p>
+
+        {/* Role cards */}
+        <div className="w-full max-w-[420px] flex flex-col gap-2.5">
+          <button
+            onClick={() => handleRoleSelect("lakare")}
+            className="group relative overflow-hidden flex items-center gap-4 bg-[hsl(var(--dark-2))] border border-foreground/[0.12] !border-l-[3px] !border-l-primary rounded-[16px] p-4 text-left cursor-pointer transition-all hover:border-primary/40 hover:bg-[hsl(var(--dark-3))] hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(0,0,0,0.3),0_0_0_1px_hsl(196_100%_50%/0.1)]"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.04] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative z-10 w-10 h-10 rounded-[10px] bg-primary/10 border border-primary/15 flex items-center justify-center text-[20px] flex-shrink-0">
+              🩺
+            </div>
+            <div className="relative z-10 flex-1">
+              <div className="font-display text-[15px] font-bold tracking-[-0.02em] mb-0.5">Läkare</div>
+              <div className="text-[12px] text-foreground/55 leading-snug">ST, specialist eller legitimerad läkare</div>
+            </div>
+            <span className="relative z-10 text-primary text-xl flex-shrink-0 group-hover:translate-x-1 transition-transform">→</span>
+          </button>
+
+          <button
+            onClick={() => handleRoleSelect("ssk")}
+            className="group relative overflow-hidden flex items-center gap-4 bg-[hsl(var(--dark-2))] border border-foreground/[0.12] !border-l-[3px] !border-l-primary rounded-[16px] p-4 text-left cursor-pointer transition-all hover:border-primary/40 hover:bg-[hsl(var(--dark-3))] hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(0,0,0,0.3),0_0_0_1px_hsl(196_100%_50%/0.1)]"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.04] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative z-10 w-10 h-10 rounded-[10px] bg-primary/10 border border-primary/15 flex items-center justify-center text-[20px] flex-shrink-0">
+              💉
+            </div>
+            <div className="relative z-10 flex-1">
+              <div className="font-display text-[15px] font-bold tracking-[-0.02em] mb-0.5">Sjuksköterska / Barnmorska</div>
+              <div className="text-[12px] text-foreground/55 leading-snug">Allmän, specialist eller barnmorska</div>
+            </div>
+            <span className="relative z-10 text-primary text-xl flex-shrink-0 group-hover:translate-x-1 transition-transform">→</span>
+          </button>
+        </div>
+      </main>
+
+      {/* Bottom trust bar */}
+      <footer className="flex-shrink-0 flex items-center justify-center gap-4 sm:gap-6 py-4 px-5">
+        {["Anonymt", "Kostnadsfritt", "60 sekunder", "Ingen registrering"].map((label) => (
+          <span key={label} className="text-foreground/30 text-[11px] font-medium tracking-wide font-display flex items-center gap-1.5">
+            <span className="w-1 h-1 rounded-full bg-foreground/20" />
+            {label}
+          </span>
+        ))}
+      </footer>
     </div>
   );
 }
