@@ -26,7 +26,7 @@ export default function Hero() {
 
       <div className="relative z-10 max-w-[720px] w-full">
         {/* Source badge */}
-        <div className="inline-flex items-center gap-2 bg-primary/[0.08] border border-primary/20 rounded-full px-3.5 pr-3 py-1 font-display text-xs font-medium text-primary tracking-wide mb-5">
+        <div className="inline-flex items-center gap-2 bg-primary/[0.08] border border-primary/20 rounded-full px-3.5 pr-3 py-1 font-display text-xs font-medium text-primary tracking-wide mb-3">
           <span className="w-5 h-5 rounded-full bg-primary/15 flex items-center justify-center text-[10px]">🛡</span>
           Officiella avtalspriser · SKR Ramavtal 2026
         </div>
