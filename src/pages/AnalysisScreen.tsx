@@ -328,7 +328,7 @@ export default function AnalysisScreen() {
                 <div className="text-[14px] text-foreground/75 leading-relaxed">
                   {fact.text}
                 </div>
-                <div className="text-[10px] text-foreground/25 mt-1.5 font-display">{fact.source}</div>
+                <div className="text-[12px] text-foreground/35 mt-1.5 font-display">{fact.source}</div>
               </div>
             </div>
           </div>
