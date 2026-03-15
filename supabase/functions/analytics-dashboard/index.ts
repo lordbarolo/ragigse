@@ -41,14 +41,15 @@ serve(async (req) => {
 
     if (error) throw error;
 
-    // Define funnel steps
+    // Define funnel steps matching current user flow
     const funnelSteps = [
       "landing_viewed",
       "survey_started",
       "survey_completed",
-      "teaser_viewed",
-      "checkout_started",
-      "payment_verified",
+      "analysis_started",
+      "email_collected",
+      "report_viewed",
+      "report_section_viewed",
     ];
 
     // Aggregate by variant
