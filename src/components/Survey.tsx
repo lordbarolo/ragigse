@@ -600,7 +600,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                   )}
                   <div>
                     <span className="text-base font-medium text-foreground">{opt.label}</span>
-                    <p className="text-sm text-muted-foreground mt-1">{opt.desc}</p>
+                    <p className="text-body-sm mt-1">{opt.desc}</p>
                   </div>
                 </button>
               ))}
