@@ -114,8 +114,8 @@ export default function Index() {
             <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.04] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
             <div className="relative z-10 w-10 h-10 rounded-[10px] bg-primary/10 border border-primary/15 flex items-center justify-center text-[20px] flex-shrink-0">🩺</div>
             <div className="relative z-10 flex-1">
-              <div className="font-display text-[15px] font-bold tracking-[-0.02em] mb-0.5">Läkare</div>
-              <div className="text-body-sm leading-snug">ST, specialist eller legitimerad läkare</div>
+               <div className="font-display tracking-[-0.02em] mb-0.5" style={{ fontSize: '17px', fontWeight: 700 }}>Läkare</div>
+               <div className="leading-snug" style={{ fontSize: '13px', fontWeight: 400, color: 'rgba(255,255,255,0.55)' }}>ST, specialist eller legitimerad läkare</div>
             </div>
             <span className="relative z-10 text-primary text-xl flex-shrink-0 group-hover:translate-x-1 transition-transform">→</span>
           </button>
