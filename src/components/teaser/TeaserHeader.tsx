@@ -13,9 +13,9 @@ export default function TeaserHeader({ kommun }: Props) {
           <h1 className="text-2xl sm:text-3xl font-extrabold text-foreground leading-tight tracking-tight">
             Din löneanalys är klar
           </h1>
-          <p className="text-sm sm:text-base text-muted-foreground mt-2">
-            Vi har jämfört din ersättning med marknadsdata i {kommun}
-          </p>
+           <p className="text-body mt-2">
+             Vi har jämfört din ersättning med marknadsdata i {kommun}
+           </p>
         </div>
       </header>
     </>
