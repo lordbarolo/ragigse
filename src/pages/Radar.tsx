@@ -1,12 +1,44 @@
 import { useState, useMemo } from "react";
-import { Radio, Search } from "lucide-react";
+import { Radio, Search, Loader2 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import RadarFilters from "@/components/radar/RadarFilters";
 import PredictionCard from "@/components/radar/PredictionCard";
 import PredictionDetail from "@/components/radar/PredictionDetail";
 import RadarEmptyState from "@/components/radar/RadarEmptyState";
 import BottomNav from "@/components/radar/BottomNav";
-import { MOCK_PREDICTIONS, Prediction } from "@/components/radar/radarMockData";
+import { Prediction } from "@/components/radar/radarMockData";
 import { useToast } from "@/hooks/use-toast";
+
+interface RadarResponse {
+  predictions: Prediction[];
+  filters: {
+    competences: string[];
+    locations: string[];
+    buyers: string[];
+  };
+}
+
+async function fetchPredictions(filters: {
+  competence: string;
+  location: string;
+  buyer: string;
+}): Promise<RadarResponse> {
+  const params = new URLSearchParams();
+  if (filters.competence) params.set("competence", filters.competence);
+  if (filters.location) params.set("location", filters.location);
+  if (filters.buyer) params.set("buyer", filters.buyer);
+
+  const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
+  const url = `https://${projectId}.supabase.co/functions/v1/radar-predictions?${params.toString()}`;
+  const res = await fetch(url, {
+    headers: {
+      apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+    },
+  });
+
+  if (!res.ok) throw new Error("Kunde inte hämta prognoser");
+  return res.json();
+}
 
 export default function Radar() {
   const [filters, setFilters] = useState({ competence: "", location: "", buyer: "" });
@@ -14,14 +46,14 @@ export default function Radar() {
   const [detailOpen, setDetailOpen] = useState(false);
   const { toast } = useToast();
 
-  const filtered = useMemo(() => {
-    return MOCK_PREDICTIONS.filter((p) => {
-      if (filters.competence && p.competence !== filters.competence) return false;
-      if (filters.location && p.location !== filters.location) return false;
-      if (filters.buyer && p.buyer !== filters.buyer) return false;
-      return true;
-    });
-  }, [filters]);
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["radar-predictions", filters],
+    queryFn: () => fetchPredictions(filters),
+    staleTime: 60_000,
+  });
+
+  const predictions = data?.predictions ?? [];
+  const filterOptions = data?.filters ?? { competences: [], locations: [], buyers: [] };
 
   const handleOpen = (p: Prediction) => {
     setSelectedPrediction(p);
@@ -85,16 +117,26 @@ export default function Radar() {
           competence={filters.competence}
           location={filters.location}
           buyer={filters.buyer}
+          filterOptions={filterOptions}
           onChange={setFilters}
         />
       </div>
 
       {/* Prediction list */}
       <section id="radar-list" className="px-5 pt-4 space-y-3">
-        {filtered.length === 0 ? (
+        {isLoading ? (
+          <div className="flex flex-col items-center justify-center py-16 text-muted-foreground gap-3">
+            <Loader2 className="w-6 h-6 animate-spin text-primary" />
+            <span className="text-[13px]">Analyserar mönster…</span>
+          </div>
+        ) : error ? (
+          <div className="text-center py-16 text-destructive text-[13px]">
+            Kunde inte hämta prognoser. Försök igen.
+          </div>
+        ) : predictions.length === 0 ? (
           <RadarEmptyState />
         ) : (
-          filtered.map((p) => (
+          predictions.map((p) => (
             <PredictionCard
               key={p.id}
               prediction={p}

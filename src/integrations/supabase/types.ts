@@ -248,6 +248,39 @@ export type Database = {
           },
         ]
       }
+      calloff_history: {
+        Row: {
+          buyer: string
+          calloff_date: string
+          created_at: string | null
+          duration_weeks: number | null
+          id: string
+          location: string
+          yrkeskategori: string
+          zon: string
+        }
+        Insert: {
+          buyer: string
+          calloff_date: string
+          created_at?: string | null
+          duration_weeks?: number | null
+          id?: string
+          location: string
+          yrkeskategori: string
+          zon: string
+        }
+        Update: {
+          buyer?: string
+          calloff_date?: string
+          created_at?: string | null
+          duration_weeks?: number | null
+          id?: string
+          location?: string
+          yrkeskategori?: string
+          zon?: string
+        }
+        Relationships: []
+      }
       compensation_reports: {
         Row: {
           calc_version: string
