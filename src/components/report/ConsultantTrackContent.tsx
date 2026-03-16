@@ -65,7 +65,7 @@ function ScriptStep({ step, title, text }: { step: number; title: string; text: 
         <p className="font-semibold text-foreground text-sm">{title}</p>
         {isQuote ? (
           <div className="bg-foreground/[0.04] rounded-lg p-3 mt-2 relative group">
-            <p className="text-muted-foreground text-sm italic pr-8">{text}</p>
+            <p className="text-body-sm italic pr-8">{text}</p>
             <button
               onClick={handleCopy}
               className="absolute top-2 right-2 opacity-60 hover:opacity-100 transition-opacity text-muted-foreground hover:text-primary"
@@ -75,7 +75,7 @@ function ScriptStep({ step, title, text }: { step: number; title: string; text: 
             </button>
           </div>
         ) : (
-          <p className="mt-1 text-muted-foreground text-sm">{text}</p>
+          <p className="text-body-sm mt-1">{text}</p>
         )}
       </div>
     </div>
@@ -86,7 +86,7 @@ function ScriptStep({ step, title, text }: { step: number; title: string; text: 
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div className="mb-3">
-      <span className="text-[10px] font-semibold tracking-[1.4px] uppercase text-foreground/[0.28] whitespace-nowrap">
+      <span className="text-micro font-semibold tracking-[1.4px] uppercase whitespace-nowrap">
         {children}
       </span>
     </div>
@@ -149,7 +149,7 @@ export default function ConsultantTrackContent({
                 <p className="text-sm font-semibold text-accent leading-snug mb-1">
                   Din ersättning ligger i marknadens övre skikt
                 </p>
-                <p className="text-xs text-foreground/[0.45] leading-relaxed">
+                <p className="text-hint leading-relaxed">
                   Du ligger redan över det rekommenderade spannet för din roll och zon. Fokus bör ligga på tillägg snarare än grundtimpriset.
                 </p>
               </div>
@@ -163,7 +163,7 @@ export default function ConsultantTrackContent({
                 <p className="text-sm font-semibold text-accent leading-snug mb-1">
                   Du kan tjäna upp till {fmt(delta.monthly_vs_current_max)} kr mer per månad
                 </p>
-                <p className="text-xs text-foreground/[0.45] leading-relaxed">
+                <p className="text-hint leading-relaxed">
                   Baserat på ramavtalspriset i din region finns det utrymme att förhandla upp din ersättning.
                 </p>
               </div>
@@ -177,7 +177,7 @@ export default function ConsultantTrackContent({
                 <p className="text-sm font-semibold text-accent leading-snug mb-1">
                   Din ersättning ligger i linje med marknaden
                 </p>
-                <p className="text-xs text-foreground/[0.45] leading-relaxed">
+                <p className="text-hint leading-relaxed">
                   Du ligger nära den rekommenderade nivån. Se nedan för detaljer.
                 </p>
               </div>
@@ -210,29 +210,29 @@ export default function ConsultantTrackContent({
               <div className="grid grid-cols-3 gap-1.5">
                 {/* Realistiskt */}
                 <div className="rounded-[14px] bg-foreground/[0.035] border border-foreground/[0.07] p-3 text-center">
-                  <span className="text-[8px] font-bold tracking-[0.8px] uppercase text-foreground/[0.3] block mb-1.5">Realistiskt</span>
+                  <span className="text-micro font-bold tracking-[0.8px] uppercase block mb-1.5">Realistiskt</span>
                   <span className={`${monoClass} text-[19px] font-medium text-foreground/[0.8] tracking-tight leading-none block mb-0.5`}>{fmt(realisticH)}</span>
-                  <span className="text-[10px] text-foreground/[0.25] block mb-1">kr/h</span>
-                  <span className={`${monoClass} text-[9px] text-foreground/[0.2] block`}>{fmt(realisticM)} kr/mån</span>
+                  <span className="text-micro block mb-1">kr/h</span>
+                  <span className={`${monoClass} text-micro block`}>{fmt(realisticM)} kr/mån</span>
                 </div>
                 {/* Rekommenderat */}
                 <div className="rounded-[14px] bg-primary/[0.08] border border-primary/[0.3] p-3 text-center">
-                  <span className="text-[8px] font-bold tracking-[0.8px] uppercase text-primary block mb-1.5">Rekommenderat</span>
+                  <span className="text-micro font-bold tracking-[0.8px] uppercase text-primary block mb-1.5">Rekommenderat</span>
                   <span className={`${monoClass} text-[19px] font-medium text-primary tracking-tight leading-none block mb-0.5`}>{fmt(recommendedH)}</span>
-                  <span className="text-[10px] text-foreground/[0.25] block mb-1">kr/h</span>
-                  <span className={`${monoClass} text-[9px] text-primary/[0.5] block`}>{fmt(recommendedM)} kr/mån</span>
+                  <span className="text-micro block mb-1">kr/h</span>
+                  <span className={`${monoClass} text-micro text-primary/[0.5] block`}>{fmt(recommendedM)} kr/mån</span>
                 </div>
                 {/* Ambitiöst */}
                 <div className="rounded-[14px] bg-foreground/[0.035] border border-foreground/[0.07] p-3 text-center">
-                  <span className="text-[8px] font-bold tracking-[0.8px] uppercase text-foreground/[0.3] block mb-1.5">Ambitiöst</span>
+                  <span className="text-micro font-bold tracking-[0.8px] uppercase block mb-1.5">Ambitiöst</span>
                   <span className={`${monoClass} text-[19px] font-medium text-foreground/[0.8] tracking-tight leading-none block mb-0.5`}>{fmt(ambitiousH)}</span>
-                  <span className="text-[10px] text-foreground/[0.25] block mb-1">kr/h</span>
-                  <span className={`${monoClass} text-[9px] text-foreground/[0.2] block`}>{fmt(ambitiousM)} kr/mån</span>
+                  <span className="text-micro block mb-1">kr/h</span>
+                  <span className={`${monoClass} text-micro block`}>{fmt(ambitiousM)} kr/mån</span>
                 </div>
               </div>
 
 
-              <p className="text-[9px] text-foreground/[0.2] text-center leading-relaxed pt-1.5">
+              <p className="text-micro text-center leading-relaxed pt-1.5">
                 Realistiskt = hög chans att få igenom · Rekommenderat = vad marknaden ger · Ambitiöst = kräver stark erfarenhet
               </p>
             </div>
@@ -248,13 +248,13 @@ export default function ConsultantTrackContent({
             <div className="grid grid-cols-2 gap-4">
               <StatBlock label="Din timersättning" value={`${fmt(currentHourly)} kr`} muted />
               <div className="p-3 rounded-lg bg-accent/10 relative overflow-hidden">
-                <p className="text-xs text-muted-foreground mb-1">Rekommenderad timersättning</p>
+                <p className="text-hint mb-1">Rekommenderad timersättning</p>
                 <p className="text-base font-semibold text-accent blur-sm select-none">
                   {formatPartialValue(Math.round(marketRate * 0.6))} kr
                 </p>
               </div>
             </div>
-            <p className="text-sm text-muted-foreground text-center">
+            <p className="text-body-sm text-center">
               Lås upp den fullständiga analysen med exakta siffror, förhandlingsspann och personliga rekommendationer.
             </p>
           </div>
@@ -269,11 +269,11 @@ export default function ConsultantTrackContent({
             {/* Din lön row */}
             <div className="flex items-center justify-between p-3.5 bg-accent/[0.04]">
               <div>
-                <p className="text-[10px] font-semibold tracking-[0.8px] uppercase text-foreground/[0.28] mb-1">Din lön</p>
+                <p className="text-micro font-semibold tracking-[0.8px] uppercase mb-1">Din lön</p>
                 <p className={`${monoClass} text-[22px] font-medium tracking-tight text-accent`}>{fmt(currentHourly)} kr/h</p>
-                <p className={`${monoClass} text-[10px] text-foreground/[0.2] mt-0.5`}>{fmt(currentMonthly)} kr/mån</p>
+                <p className={`${monoClass} text-micro mt-0.5`}>{fmt(currentMonthly)} kr/mån</p>
               </div>
-              <span className="text-[9px] font-semibold tracking-[0.5px] bg-accent/[0.12] text-accent border border-accent/[0.2] rounded-full px-2.5 py-1 whitespace-nowrap">
+              <span className="text-micro font-semibold tracking-[0.5px] bg-accent/[0.12] text-accent border border-accent/[0.2] rounded-full px-2.5 py-1 whitespace-nowrap">
                 Din nivå
               </span>
             </div>
@@ -281,11 +281,11 @@ export default function ConsultantTrackContent({
             {/* Marknadsspann row */}
             <div className="flex items-center justify-between p-3.5 border-t border-foreground/[0.05]">
               <div>
-                <p className="text-[10px] font-semibold tracking-[0.8px] uppercase text-foreground/[0.28] mb-1">Marknadsspann</p>
+                <p className="text-micro font-semibold tracking-[0.8px] uppercase mb-1">Marknadsspann</p>
                 <p className={`${monoClass} text-[22px] font-medium tracking-tight text-primary/[0.7]`}>{fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h</p>
-                <p className={`${monoClass} text-[10px] text-foreground/[0.2] mt-0.5`}>{fmt(rec.recommended_monthly_min)}–{fmt(rec.recommended_monthly_max)} kr/mån</p>
+                <p className={`${monoClass} text-micro mt-0.5`}>{fmt(rec.recommended_monthly_min)}–{fmt(rec.recommended_monthly_max)} kr/mån</p>
               </div>
-              <span className="text-[9px] font-semibold tracking-[0.5px] bg-primary/[0.08] text-primary/[0.8] border border-primary/[0.2] rounded-full px-2.5 py-1 whitespace-nowrap">
+              <span className="text-micro font-semibold tracking-[0.5px] bg-primary/[0.08] text-primary/[0.8] border border-primary/[0.2] rounded-full px-2.5 py-1 whitespace-nowrap">
                 Marknad
               </span>
             </div>
@@ -296,7 +296,7 @@ export default function ConsultantTrackContent({
                 <div className="flex-1 h-[3px] bg-foreground/[0.05] rounded-sm overflow-hidden">
                   <div className="h-full rounded-sm bg-accent" style={{ width: '100%' }} />
                 </div>
-                <span className={`${monoClass} text-[9px] text-foreground/[0.2] w-16 text-right flex-shrink-0`}>{fmt(currentHourly)} kr/h</span>
+                <span className={`${monoClass} text-micro w-16 text-right flex-shrink-0`}>{fmt(currentHourly)} kr/h</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="flex-1 h-[3px] bg-foreground/[0.05] rounded-sm overflow-hidden">
@@ -305,7 +305,7 @@ export default function ConsultantTrackContent({
                     style={{ width: `${Math.round((rec.recommended_hourly_max / Math.max(currentHourly, rec.recommended_hourly_max, marketRate)) * 100)}%` }}
                   />
                 </div>
-                <span className={`${monoClass} text-[9px] text-foreground/[0.2] w-16 text-right flex-shrink-0`}>{fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)}</span>
+                <span className={`${monoClass} text-micro w-16 text-right flex-shrink-0`}>{fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)}</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="flex-1 h-[3px] bg-foreground/[0.05] rounded-sm overflow-hidden">
@@ -314,7 +314,7 @@ export default function ConsultantTrackContent({
                     style={{ width: `${Math.round((marketRate / Math.max(currentHourly, rec.recommended_hourly_max, marketRate)) * 100)}%` }}
                   />
                 </div>
-                <span className={`${monoClass} text-[9px] text-foreground/[0.2] w-16 text-right flex-shrink-0`}>{fmt(marketRate)} kr/h ↑</span>
+                <span className={`${monoClass} text-micro w-16 text-right flex-shrink-0`}>{fmt(marketRate)} kr/h ↑</span>
               </div>
             </div>
           </div>
@@ -372,7 +372,7 @@ export default function ConsultantTrackContent({
       {isConsultantFullAccess && zoneComparisons && zoneComparisons.length > 0 && (
         <div ref={registerSectionRef?.("regional_comparison")}>
           <SectionLabel>Regional jämförelse</SectionLabel>
-          <p className="text-xs text-foreground/[0.35] mb-3 leading-relaxed">
+          <p className="text-hint mb-3 leading-relaxed">
             Vad regionen betalar bemanningsföretag för {occupation} per zon:
           </p>
           <div className="space-y-1.5">
@@ -400,9 +400,9 @@ export default function ConsultantTrackContent({
                   >
                     <div className="flex justify-between items-center mb-2">
                       <div className="flex items-center gap-2">
-                        <span className="text-[13px] font-semibold text-foreground/[0.7]">{zc.zon}</span>
+                        <span className="text-body-sm font-semibold">{zc.zon}</span>
                         {isUserZone && (
-                          <span className="text-[8px] font-bold tracking-[0.6px] uppercase bg-primary/[0.15] text-primary rounded-[10px] px-2 py-0.5">
+                          <span className="text-micro font-bold tracking-[0.6px] uppercase bg-primary/[0.15] text-primary rounded-[10px] px-2 py-0.5">
                             Din zon
                           </span>
                         )}
@@ -417,7 +417,7 @@ export default function ConsultantTrackContent({
                         style={{ width: `${barWidth}%` }}
                       />
                     </div>
-                    <p className={`${monoClass} text-[10px] text-foreground/[0.2]`}>
+                    <p className={`${monoClass} text-micro`}>
                       Konsultersättning: {fmt(recHourlyLow)}–{fmt(recHourlyHigh)} kr/h
                     </p>
                   </div>
@@ -447,7 +447,7 @@ export default function ConsultantTrackContent({
                 <span className={`${monoClass} text-[42px] font-medium text-accent tracking-tight leading-none block`}>
                   {sharePercent}%
                 </span>
-                <span className="text-[11px] text-foreground/[0.3] mt-1 block">
+                <span className="text-caption mt-1 block">
                   {isEmployee ? (
                     <>lönekostnad {fmt(costToCompare)} kr/h av {fmt(marketRate)} kr/h</>
                   ) : (
@@ -455,16 +455,16 @@ export default function ConsultantTrackContent({
                   )}
                 </span>
                 {isEmployee && (
-                  <span className="text-[10px] text-foreground/[0.2] mt-0.5 block">
+                  <span className="text-micro mt-0.5 block">
                     Brutto {fmt(currentHourly)} kr/h × {employerFactor} (arbetsgivaravg. + pension)
                   </span>
                 )}
               </div>
               <div className="text-right">
-                <span className="text-[9px] tracking-[0.6px] uppercase text-foreground/[0.2] block mb-1">Marknadsmedian</span>
-                <span className={`${monoClass} text-[11px] text-foreground/[0.4] block`}>{isEmployee ? "85%" : "90%"}</span>
-                <span className="text-[9px] tracking-[0.6px] uppercase text-foreground/[0.2] block mt-1.5 mb-0.5">Vanligt spann</span>
-                <span className={`${monoClass} text-[11px] text-foreground/[0.4] block`}>85–92%</span>
+                <span className="text-micro tracking-[0.6px] uppercase block mb-1">Marknadsmedian</span>
+                <span className={`${monoClass} text-caption block`}>{isEmployee ? "85%" : "90%"}</span>
+                <span className="text-micro tracking-[0.6px] uppercase block mt-1.5 mb-0.5">Vanligt spann</span>
+                <span className={`${monoClass} text-caption block`}>85–92%</span>
               </div>
             </div>
 
@@ -480,7 +480,7 @@ export default function ConsultantTrackContent({
               />
             </div>
 
-            <p className="text-[11px] text-foreground/[0.3] leading-relaxed">
+            <p className="text-caption leading-relaxed">
               {sharePercent > 100 ? (
                 <>
                   {isEmployee
@@ -514,12 +514,12 @@ export default function ConsultantTrackContent({
             <CheckCircle className="w-5 h-5 text-primary" />
             <h2 className="text-lg font-bold text-foreground">Du ligger redan i toppskiktet</h2>
           </div>
-          <p className="text-sm text-muted-foreground leading-relaxed mb-5">
+          <p className="text-body-sm leading-relaxed mb-5">
             Din ersättning på {fmt(currentHourly)} kr/h{isEmployee ? ` (lönekostnad ${fmt(costToCompare)} kr/h)` : ""} motsvarar {sharePercent}% av vad regionen betalar till bemanningsföretag ({fmt(marketRate)} kr/h).
             Det innebär att det i praktiken inte finns ytterligare förhandlingsutrymme för grundtimpriset i din nuvarande zon.
           </p>
           <div className="space-y-2.5">
-            <p className="text-[10px] font-semibold text-muted-foreground/70 uppercase tracking-[0.15em]">
+            <p className="text-caption">
               Så kan du öka din totala ersättning
             </p>
             {[
@@ -531,7 +531,7 @@ export default function ConsultantTrackContent({
                 <Icon className="w-4 h-4 text-primary mt-0.5 shrink-0" />
                 <div>
                   <p className="text-sm font-medium text-foreground">{title}</p>
-                  <p className="text-xs text-muted-foreground/60 mt-0.5 leading-relaxed">{desc}</p>
+                  <p className="text-hint mt-0.5 leading-relaxed">{desc}</p>
                 </div>
               </div>
             ))}
@@ -550,7 +550,7 @@ export default function ConsultantTrackContent({
             <ChevronDown className="w-4 h-4 text-muted-foreground transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
           </CollapsibleTrigger>
           <CollapsibleContent className="pt-4 space-y-4">
-            <div className="space-y-3 text-sm text-muted-foreground">
+            <div className="space-y-3 text-body-sm">
               <CalcRow label="Ramavtalspris (vad regionen betalar)" value={`${fmt(marketRate)} kr/h`} />
               <CalcRow label={`Bemanningsbolagets marginal (${marginLabel})`} value={`−${fmt(Math.round(marketRate * (1 - shareMax)))}–${fmt(Math.round(marketRate * (1 - shareMin)))} kr/h`} />
               <CalcRow label="Ersättningsutrymme efter marginal" value={`${fmt(afterMarginMin)}–${fmt(afterMarginMax)} kr/h`} />
@@ -560,7 +560,7 @@ export default function ConsultantTrackContent({
                   value={`= ${fmt(Math.round(afterMarginMin / 1.42))}–${fmt(Math.round(afterMarginMax / 1.42))} kr/h brutto`}
                 />
               ) : (
-                <p className="text-xs text-muted-foreground/60 pt-1">
+                <p className="text-hint pt-1">
                   Som egenföretagare bör du fakturera {Math.round(shareMin * 100)}–{Math.round(shareMax * 100)}% av kundpriset, dvs{" "}
                   {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h.
                 </p>
@@ -572,7 +572,7 @@ export default function ConsultantTrackContent({
                 <Info className="w-4 h-4 text-primary shrink-0" />
                 <p className="font-semibold text-foreground text-sm">Information om beräkningen</p>
               </div>
-              <ul className="space-y-2 text-xs text-muted-foreground/70 leading-relaxed">
+              <ul className="space-y-2 text-hint leading-relaxed">
                 <li>
                   <span className="font-semibold text-foreground">Bemanningsbolagets marginal ({marginLabel}):</span>{" "}
                   Vi räknar med att bolaget behåller {marginLabel} av timpriset. {isEmployee ? "Detta är en vanlig nivå vid ramavtalsuppdrag." : `Spannet beror på om bemanningsföretaget bär vitesrisken (högre marginal) eller inte (lägre marginal).`}
@@ -588,7 +588,7 @@ export default function ConsultantTrackContent({
                   Vi baserar månadsberäkningen på ett snitt om 167 arbetstimmar.
                 </li>
               </ul>
-              <p className="text-[11px] text-muted-foreground/50 pt-1">
+              <p className="text-caption pt-1">
                 {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h baseras på {marginLabel} marginal.
               </p>
             </div>
@@ -597,7 +597,7 @@ export default function ConsultantTrackContent({
                 <Briefcase className="w-4 h-4 text-primary shrink-0" />
                 <p className="font-semibold text-foreground text-sm">Om ditt bemanningsföretag behåller mer än {isEmployee ? "15%" : marginLabel}</p>
               </div>
-              <p className="text-xs text-muted-foreground/70 leading-relaxed">
+              <p className="text-hint leading-relaxed">
                 Vissa bemanningsföretag tar en högre marginal. En del av den kan gå till kostnader som i vissa fall ligger på bemanningsföretaget, t.ex. resa och boende, introduktionskostnad, SITHS-kort samt HLR-utbildning. Fråga ditt bemanningsföretag vilka kostnader som ingår i deras marginal — det ger dig bättre underlag i förhandlingen.
               </p>
             </div>
@@ -617,9 +617,9 @@ export default function ConsultantTrackContent({
                 delta ? Math.round((delta.monthly_vs_current_max / rec.recommended_monthly_max) * 100) : 0,
                 occupation
               ).map((tip, i) => (
-                <li key={i} className="flex items-start gap-3 text-sm">
+                <li key={i} className="flex items-start gap-3">
                   <ArrowRight className="w-4 h-4 text-accent mt-0.5 shrink-0" />
-                  <span className="text-muted-foreground">{tip}</span>
+                  <span className="text-body-sm">{tip}</span>
                 </li>
               ))}
             </ul>
@@ -662,7 +662,7 @@ export default function ConsultantTrackContent({
       <div className="rounded-xl bg-foreground/[0.02] border border-border/30 p-5 space-y-3">
         <div className="flex items-center gap-2 mb-1">
           <Info className="w-4 h-4 text-foreground/60" />
-          <span className="text-[10px] font-semibold tracking-[0.12em] uppercase text-foreground/70">Så fungerar analysen</span>
+          <span className="text-caption">Så fungerar analysen</span>
         </div>
         <ul className="space-y-2.5">
           {[
@@ -671,7 +671,7 @@ export default function ConsultantTrackContent({
             "Konsultens ersättning är normalt en andel av detta pris.",
             "CompCare analyserar ramavtal och historiska avrop för att visa hur ersättningen i genomsnitt fördelas.",
           ].map((text, i) => (
-            <li key={i} className="flex items-start gap-2.5 text-[12px] leading-relaxed text-foreground/70">
+            <li key={i} className="flex items-start gap-2.5 text-hint leading-relaxed">
               <span className="mt-1.5 w-1 h-1 rounded-full bg-muted-foreground/20 shrink-0" />
               {text}
             </li>

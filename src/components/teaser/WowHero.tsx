@@ -33,13 +33,13 @@ export default function WowHero({ diffHourly, isPermanent, monthlyGap = 0, kommu
           </p>
         </div>
 
-        <p className="text-sm text-background/60 font-medium">
+        <p className="text-body-sm text-background/60 font-medium">
           Du kan tjäna upp till
         </p>
         <p className="text-3xl sm:text-4xl font-extrabold text-primary tracking-tight font-mono mt-1">
           {fmt(monthly)} kr
         </p>
-        <p className="text-sm text-background/60 font-medium mt-0.5">
+        <p className="text-body-sm text-background/60 font-medium mt-0.5">
           mer per månad
         </p>
 
@@ -58,13 +58,15 @@ export default function WowHero({ diffHourly, isPermanent, monthlyGap = 0, kommu
       </div>
 
       {/* Trust badges */}
-      <div className="flex items-center gap-2 px-1">
-        <ShieldCheck className="w-3.5 h-3.5 text-primary shrink-0" />
-        <p className="text-[11px] text-muted-foreground">
-          {isPermanent
-            ? "Baserat på Medlingsinstitutets officiella lönestatistik 2024"
-            : `Baserat på SKR:s ramavtalspriser 2026 · Officiella regionpriser i ${kommun}`}
-        </p>
+      <div className="flex items-center justify-center gap-4 flex-wrap">
+        <div className="flex items-center gap-1.5">
+          <ShieldCheck className="w-3.5 h-3.5 text-primary" />
+          <span className="text-caption">Officiella ramavtalspriser</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <ShieldCheck className="w-3.5 h-3.5 text-primary" />
+          <span className="text-caption">Beräknat i realtid</span>
+        </div>
       </div>
     </div>
   );

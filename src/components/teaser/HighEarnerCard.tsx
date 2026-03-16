@@ -15,12 +15,12 @@ export default function HighEarnerCard({ kommun, nearestHigherKommun }: Props) {
         </p>
       </div>
       <div className="p-5 space-y-4">
-        <p className="text-sm text-muted-foreground leading-relaxed">
+        <p className="text-body-sm leading-relaxed">
           Din ersättning i {kommun} ligger på 96% eller mer av vad regionen betalar till bemanningsföretag enligt ramavtalet. Det innebär att det i praktiken inte finns ytterligare förhandlingsutrymme i din nuvarande zon.
         </p>
 
         <div className="space-y-3">
-          <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+          <p className="text-caption">
             Så kan du öka din ersättning
           </p>
 
@@ -29,7 +29,7 @@ export default function HighEarnerCard({ kommun, nearestHigherKommun }: Props) {
               <MapPin className="w-4 h-4 text-primary mt-0.5 shrink-0" />
               <div>
                 <p className="text-sm font-medium text-foreground">Byt till en högre priszon</p>
-                <p className="text-xs text-muted-foreground mt-0.5">
+                <p className="text-hint mt-0.5">
                   {nearestHigherKommun
                     ? `I t.ex. ${nearestHigherKommun} betalas ett högre timpris för samma roll. Överväg uppdrag i en annan zon för att öka din ersättning.`
                     : "Vissa kommuner och regioner har högre ramavtalspriser. Överväg uppdrag i en annan zon."}
@@ -41,7 +41,7 @@ export default function HighEarnerCard({ kommun, nearestHigherKommun }: Props) {
               <Clock className="w-4 h-4 text-primary mt-0.5 shrink-0" />
               <div>
                 <p className="text-sm font-medium text-foreground">Jourersättning</p>
-                <p className="text-xs text-muted-foreground mt-0.5">
+                <p className="text-hint mt-0.5">
                   Jour- och beredskapstillägg ligger utanför grundtimpriset och kan ge ett betydande påslag på din totala ersättning.
                 </p>
               </div>
@@ -51,7 +51,7 @@ export default function HighEarnerCard({ kommun, nearestHigherKommun }: Props) {
               <Car className="w-4 h-4 text-primary mt-0.5 shrink-0" />
               <div>
                 <p className="text-sm font-medium text-foreground">Reseersättning</p>
-                <p className="text-xs text-muted-foreground mt-0.5">
+                <p className="text-hint mt-0.5">
                   Om uppdraget kräver resa finns ofta möjlighet att förhandla reseersättning, boende och traktamente utöver grundtimpriset.
                 </p>
               </div>

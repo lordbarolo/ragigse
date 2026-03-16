@@ -33,7 +33,7 @@ export default function LockedStrategyCard({ isPermanent }: Props) {
       <div className="p-6">
         <div className="flex items-center gap-2 mb-4">
           <Lock className="w-4 h-4 text-muted-foreground" />
-          <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          <p className="text-caption">
             Ditt personliga nästa steg
           </p>
         </div>
