@@ -58,6 +58,7 @@ const App = () => (
             <Route path="/betalning-klar" element={<PaymentSuccess />} />
             <Route path="/rapport/:reportId" element={<Report />} />
             <Route path="/jamfor" element={<Compare />} />
+            <Route path="/radar" element={<Radar />} />
             <Route path="/vanliga-fragor" element={<FAQ />} />
             <Route path="/integritetspolicy" element={<PrivacyPolicy />} />
             <Route path="/logga-in" element={<Login />} />
