@@ -29,7 +29,7 @@ export default function ColleagueComparison({ occupation, percentilePosition }: 
             </h3>
           </div>
 
-          <p className="text-xs text-foreground/35 leading-relaxed mb-4">
+          <p className="text-hint leading-relaxed mb-4">
             Skicka analysen till en kollega och jämför era ersättningar.
           </p>
         </div>
