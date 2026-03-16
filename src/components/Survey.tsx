@@ -644,11 +644,11 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                   {data.salaryType === "hourly" ? "kr/h" : "kr/mån"}
                 </span>
               </div>
-              <p className="text-sm text-muted-foreground text-center">
-                {data.salaryType === "hourly"
-                  ? "Timersättning före skatt"
-                  : "Månadsersättning före skatt"}
-              </p>
+               <p className="text-body-sm text-center">
+                 {data.salaryType === "hourly"
+                   ? "Timersättning före skatt"
+                   : "Månadsersättning före skatt"}
+               </p>
             </div>
           </StepWrapper>
         )}
