@@ -70,7 +70,7 @@ export default function Index() {
 
       {/* Nav */}
       <nav className="flex items-center justify-between px-5 h-[52px] flex-shrink-0">
-        <span className="font-display text-lg font-extrabold tracking-tight text-foreground">
+        <span className="font-display font-extrabold tracking-tight text-foreground" style={{ fontSize: '18px' }}>
           comp<em className="text-primary not-italic">care</em>
         </span>
       </nav>
@@ -78,7 +78,7 @@ export default function Index() {
       {/* All content as one block, pushed to lower half */}
       <main className="flex-1 flex flex-col items-center justify-end px-5" style={{ paddingBottom: '10dvh' }}>
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 bg-primary/[0.08] border border-primary/20 rounded-full px-3.5 py-1 font-display text-[11px] font-medium text-primary tracking-wider mb-5">
+        <div className="inline-flex items-center gap-2 bg-primary/[0.08] border border-primary/20 rounded-full px-3.5 py-1 font-display text-primary tracking-wider mb-5" style={{ fontSize: '11px', fontWeight: 500 }}>
           <span className="w-5 h-5 rounded-full bg-primary/15 flex items-center justify-center text-[10px]">🛡</span>
           Officiella avtalspriser · 290 kommuner · 21 regioner
         </div>
@@ -86,8 +86,8 @@ export default function Index() {
         {/* Headline */}
         <div className="text-center max-w-[480px] mb-8">
           <h1
-            className="font-display font-extrabold leading-[1.06] tracking-[-0.04em] text-foreground"
-            style={{ fontSize: "clamp(28px, 7vw, 48px)" }}
+            className="font-display text-foreground"
+            style={{ fontSize: '34px', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1.06 }}
           >
             Vad betalar{" "}
             <span className="text-primary">regionen</span> för{" "}
@@ -95,13 +95,13 @@ export default function Index() {
               din kompetens?
             </span>
           </h1>
-          <p className="text-body leading-relaxed mt-3 max-w-[380px] mx-auto">
+          <p className="mt-3 max-w-[380px] mx-auto" style={{ fontSize: '15px', fontWeight: 300, color: 'rgba(255,255,255,0.65)', lineHeight: 1.6 }}>
             Jämför din ersättning mot offentliga ramavtalspriser på 60 sekunder.
           </p>
         </div>
 
         {/* Role label */}
-        <p className="text-caption mb-4">
+        <p className="font-display uppercase mb-4" style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.10em', color: 'rgba(255,255,255,0.35)' }}>
           Vad jobbar du som?
         </p>
 
@@ -114,8 +114,8 @@ export default function Index() {
             <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.04] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
             <div className="relative z-10 w-10 h-10 rounded-[10px] bg-primary/10 border border-primary/15 flex items-center justify-center text-[20px] flex-shrink-0">🩺</div>
             <div className="relative z-10 flex-1">
-              <div className="font-display text-[15px] font-bold tracking-[-0.02em] mb-0.5">Läkare</div>
-              <div className="text-body-sm leading-snug">ST, specialist eller legitimerad läkare</div>
+               <div className="font-display tracking-[-0.02em] mb-0.5" style={{ fontSize: '17px', fontWeight: 700 }}>Läkare</div>
+               <div className="leading-snug" style={{ fontSize: '13px', fontWeight: 400, color: 'rgba(255,255,255,0.55)' }}>ST, specialist eller legitimerad läkare</div>
             </div>
             <span className="relative z-10 text-primary text-xl flex-shrink-0 group-hover:translate-x-1 transition-transform">→</span>
           </button>
@@ -127,8 +127,8 @@ export default function Index() {
             <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.04] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
             <div className="relative z-10 w-10 h-10 rounded-[10px] bg-primary/10 border border-primary/15 flex items-center justify-center text-[20px] flex-shrink-0">💉</div>
             <div className="relative z-10 flex-1">
-              <div className="font-display text-[15px] font-bold tracking-[-0.02em] mb-0.5">Sjuksköterska / Barnmorska</div>
-              <div className="text-body-sm leading-snug">Allmän, specialist eller barnmorska</div>
+               <div className="font-display tracking-[-0.02em] mb-0.5" style={{ fontSize: '17px', fontWeight: 700 }}>Sjuksköterska / Barnmorska</div>
+               <div className="leading-snug" style={{ fontSize: '13px', fontWeight: 400, color: 'rgba(255,255,255,0.55)' }}>Allmän, specialist eller barnmorska</div>
             </div>
             <span className="relative z-10 text-primary text-xl flex-shrink-0 group-hover:translate-x-1 transition-transform">→</span>
           </button>
@@ -137,7 +137,7 @@ export default function Index() {
         {/* Trust bar — 16px below cards */}
         <div className="flex items-center justify-center gap-4 sm:gap-6 mt-4">
           {["Anonymt", "Kostnadsfritt", "60 sekunder", "Ingen registrering"].map((label) => (
-             <span key={label} className="text-micro font-medium tracking-wide font-display flex items-center gap-1.5">
+             <span key={label} className="font-display flex items-center gap-1.5" style={{ fontSize: '11px', fontWeight: 500, color: 'rgba(255,255,255,0.30)' }}>
                <span className="w-1 h-1 rounded-full bg-foreground/20" />
               {label}
             </span>
