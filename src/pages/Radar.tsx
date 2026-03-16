@@ -29,13 +29,6 @@ async function fetchPredictions(filters: {
   if (filters.location) params.set("location", filters.location);
   if (filters.buyer) params.set("buyer", filters.buyer);
 
-  const { data, error } = await supabase.functions.invoke("radar-predictions", {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-    body: undefined,
-  });
-
-  // supabase.functions.invoke doesn't support query params, so we use fetch directly
   const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
   const url = `https://${projectId}.supabase.co/functions/v1/radar-predictions?${params.toString()}`;
   const res = await fetch(url, {
