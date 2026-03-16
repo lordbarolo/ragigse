@@ -161,10 +161,10 @@ export default function ConsultantTrackContent({
               </div>
               <div>
                 <p className="text-sm font-semibold text-accent leading-snug mb-1">
-                  Du kan tjäna upp till {fmt(delta.monthly_vs_current_max)} kr mer per månad
+                  Skillnad mot marknadsspannet: {fmt(delta.monthly_vs_current_max)} kr/mån
                 </p>
                 <p className="text-hint leading-relaxed">
-                  Baserat på ramavtalspriset i din region finns det utrymme att förhandla upp din ersättning.
+                  Baserat på ramavtalspriset i din region.
                 </p>
               </div>
             </div>
