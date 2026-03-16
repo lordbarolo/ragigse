@@ -70,7 +70,7 @@ export default function Index() {
 
       {/* Nav */}
       <nav className="flex items-center justify-between px-5 h-[52px] flex-shrink-0">
-        <span className="font-display text-lg font-extrabold tracking-tight text-foreground">
+        <span className="font-display font-extrabold tracking-tight text-foreground" style={{ fontSize: '18px' }}>
           comp<em className="text-primary not-italic">care</em>
         </span>
       </nav>
