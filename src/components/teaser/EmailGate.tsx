@@ -44,9 +44,9 @@ export default function EmailGate({ onEmailSubmit, loading }: Props) {
         {!loading && <ArrowRight className="w-5 h-5" />}
       </button>
 
-      <p className="text-xs text-muted-foreground text-center">
-        Vi delar aldrig din e-post med tredje part.
-      </p>
+       <p className="text-hint text-center">
+         Vi delar aldrig din e-post med tredje part.
+       </p>
     </div>
   );
 }

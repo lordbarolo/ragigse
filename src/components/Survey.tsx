@@ -420,7 +420,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
               style={{ width: `${progress}%` }}
             />
           </div>
-          <p className="text-xs text-muted-foreground mt-2">{step} av {TOTAL_STEPS}</p>
+          <p className="text-hint mt-2">{step} av {TOTAL_STEPS}</p>
         </div>
       )}
 
@@ -475,7 +475,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                     )}
                     <div>
                       <span className="text-base font-semibold text-foreground">{opt.label}</span>
-                      <p className="text-sm text-muted-foreground mt-1">{opt.desc}</p>
+                       <p className="text-body-sm mt-1">{opt.desc}</p>
                     </div>
                   </div>
                   <ArrowRight className="w-5 h-5 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
@@ -508,8 +508,8 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
         {step === 3 && (
           <StepWrapper title="Var jobbar du?">
             <div className="rounded-2xl border border-border bg-card p-5 space-y-4 flex flex-col items-center justify-center flex-1">
-              <p className="text-sm text-muted-foreground text-center max-w-xs">
-                Inom en region kan det finnas 3 olika prisnivåer. Ange kommun för en träffsäker analys av din ersättning.
+               <p className="text-body-sm text-center max-w-xs">
+                 Inom en region kan det finnas 3 olika prisnivåer. Ange kommun för en träffsäker analys av din ersättning.
               </p>
 
               {/* Search input */}
@@ -530,7 +530,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
               <div className="rounded-xl border border-border overflow-hidden">
                 <div className="flex flex-col max-h-[320px] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-primary/25">
                   {filteredKommunerSearch.length === 0 ? (
-                    <p className="py-8 text-center text-sm text-muted-foreground">Inga kommuner hittades</p>
+                    <p className="py-8 text-center text-body-sm">Inga kommuner hittades</p>
                   ) : (
                     filteredKommunerSearch.map((k) => (
                       <button
@@ -564,9 +564,9 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
               </div>
 
               {!kommunSearch && (
-                <p className="text-xs text-muted-foreground/50 text-center">
-                  Börja skriva för att hitta din uppdragsort
-                </p>
+               <p className="text-hint text-center">
+                   Börja skriva för att hitta din uppdragsort
+                 </p>
               )}
             </div>
           </StepWrapper>
@@ -600,7 +600,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                   )}
                   <div>
                     <span className="text-base font-medium text-foreground">{opt.label}</span>
-                    <p className="text-sm text-muted-foreground mt-1">{opt.desc}</p>
+                    <p className="text-body-sm mt-1">{opt.desc}</p>
                   </div>
                 </button>
               ))}
@@ -644,11 +644,11 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                   {data.salaryType === "hourly" ? "kr/h" : "kr/mån"}
                 </span>
               </div>
-              <p className="text-sm text-muted-foreground text-center">
-                {data.salaryType === "hourly"
-                  ? "Timersättning före skatt"
-                  : "Månadsersättning före skatt"}
-              </p>
+               <p className="text-body-sm text-center">
+                 {data.salaryType === "hourly"
+                   ? "Timersättning före skatt"
+                   : "Månadsersättning före skatt"}
+               </p>
             </div>
           </StepWrapper>
         )}
@@ -738,7 +738,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                   className="group w-full py-5 px-5 rounded-xl border border-border !border-l-[3px] !border-l-primary bg-card text-left transition-all active:scale-[0.98] hover:border-primary/40 hover:bg-primary/[0.03] disabled:opacity-50"
                 >
                   <span className="text-base font-medium text-foreground">{opt.label}</span>
-                  <p className="text-sm text-muted-foreground mt-0.5">{opt.desc}</p>
+                  <p className="text-body-sm mt-0.5">{opt.desc}</p>
                 </button>
               ))}
             </div>
@@ -781,7 +781,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
         </div>
       )}
 
-      <p className="text-center text-xs text-muted-foreground/50 mt-8">
+      <p className="text-center text-micro mt-8">
         Dina uppgifter hanteras enligt vår{" "}
         <Link to="/integritetspolicy" className="text-primary/70 hover:text-primary underline underline-offset-2 transition-colors">
           integritetspolicy
@@ -804,7 +804,7 @@ function StepWrapper({
     <div className="animate-in fade-in slide-in-from-right-4 duration-300 flex-1 flex flex-col justify-center">
       <div className="mb-6 text-center">
         <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight leading-tight">{title}</h2>
-        {subtitle && <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>}
+        {subtitle && <p className="text-body-sm mt-1">{subtitle}</p>}
       </div>
       <div className="flex-1 flex flex-col">{children}</div>
     </div>

@@ -10,23 +10,23 @@ export default function BlurredReportTeaser({ onScrollToEmail }: Props) {
       {/* Blurred fake content */}
       <div className="blur-sm opacity-40 pointer-events-none space-y-3">
         <div className="p-4 rounded-xl bg-foreground/[0.03]">
-          <p className="text-muted-foreground text-sm font-semibold">Ramavtalspris</p>
-          <p className="text-2xl font-bold text-foreground">••• kr/h</p>
-          <p className="text-xs text-muted-foreground mt-1">Grundtimpris enligt ramavtal</p>
+           <p className="text-body-sm font-semibold">Ramavtalspris</p>
+           <p className="text-2xl font-bold text-foreground">••• kr/h</p>
+           <p className="text-hint mt-1">Grundtimpris enligt ramavtal</p>
         </div>
         <div className="p-4 rounded-xl bg-foreground/[0.03]">
-          <p className="text-muted-foreground text-sm font-semibold">Förhandlingsspann</p>
-          <div className="flex gap-4 mt-1">
-            <div>
-              <p className="text-xs text-muted-foreground">Realistiskt</p>
-              <p className="text-lg font-bold text-foreground">••• kr</p>
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground">Rekommenderat</p>
-              <p className="text-lg font-bold text-foreground">••• kr</p>
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground">Ambitiöst</p>
+           <p className="text-body-sm font-semibold">Förhandlingsspann</p>
+           <div className="flex gap-4 mt-1">
+             <div>
+               <p className="text-hint">Realistiskt</p>
+               <p className="text-lg font-bold text-foreground">••• kr</p>
+             </div>
+             <div>
+               <p className="text-hint">Rekommenderat</p>
+               <p className="text-lg font-bold text-foreground">••• kr</p>
+             </div>
+             <div>
+               <p className="text-hint">Ambitiöst</p>
               <p className="text-lg font-bold text-foreground">••• kr</p>
             </div>
           </div>

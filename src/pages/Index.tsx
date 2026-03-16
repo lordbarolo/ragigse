@@ -95,13 +95,13 @@ export default function Index() {
               din kompetens?
             </span>
           </h1>
-          <p className="text-foreground/55 text-[15px] leading-relaxed mt-3 max-w-[380px] mx-auto">
+          <p className="text-body leading-relaxed mt-3 max-w-[380px] mx-auto">
             Jämför din ersättning mot offentliga ramavtalspriser på 60 sekunder.
           </p>
         </div>
 
         {/* Role label */}
-        <p className="text-foreground/40 text-[11px] font-medium tracking-[0.1em] uppercase font-display mb-4">
+        <p className="text-caption mb-4">
           Vad jobbar du som?
         </p>
 
@@ -115,7 +115,7 @@ export default function Index() {
             <div className="relative z-10 w-10 h-10 rounded-[10px] bg-primary/10 border border-primary/15 flex items-center justify-center text-[20px] flex-shrink-0">🩺</div>
             <div className="relative z-10 flex-1">
               <div className="font-display text-[15px] font-bold tracking-[-0.02em] mb-0.5">Läkare</div>
-              <div className="text-[12px] text-foreground/55 leading-snug">ST, specialist eller legitimerad läkare</div>
+              <div className="text-body-sm leading-snug">ST, specialist eller legitimerad läkare</div>
             </div>
             <span className="relative z-10 text-primary text-xl flex-shrink-0 group-hover:translate-x-1 transition-transform">→</span>
           </button>
@@ -128,7 +128,7 @@ export default function Index() {
             <div className="relative z-10 w-10 h-10 rounded-[10px] bg-primary/10 border border-primary/15 flex items-center justify-center text-[20px] flex-shrink-0">💉</div>
             <div className="relative z-10 flex-1">
               <div className="font-display text-[15px] font-bold tracking-[-0.02em] mb-0.5">Sjuksköterska / Barnmorska</div>
-              <div className="text-[12px] text-foreground/55 leading-snug">Allmän, specialist eller barnmorska</div>
+              <div className="text-body-sm leading-snug">Allmän, specialist eller barnmorska</div>
             </div>
             <span className="relative z-10 text-primary text-xl flex-shrink-0 group-hover:translate-x-1 transition-transform">→</span>
           </button>
@@ -137,8 +137,8 @@ export default function Index() {
         {/* Trust bar — 16px below cards */}
         <div className="flex items-center justify-center gap-4 sm:gap-6 mt-4">
           {["Anonymt", "Kostnadsfritt", "60 sekunder", "Ingen registrering"].map((label) => (
-            <span key={label} className="text-foreground/30 text-[11px] font-medium tracking-wide font-display flex items-center gap-1.5">
-              <span className="w-1 h-1 rounded-full bg-foreground/20" />
+             <span key={label} className="text-micro font-medium tracking-wide font-display flex items-center gap-1.5">
+               <span className="w-1 h-1 rounded-full bg-foreground/20" />
               {label}
             </span>
           ))}
