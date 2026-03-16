@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Lock, TrendingUp, Users, FileText } from "lucide-react";
+import { Lock, BarChart3, Users, FileText } from "lucide-react";
 import { trackEvent } from "@/lib/trackEvent";
 
 interface Props {
@@ -18,13 +18,13 @@ export default function LockedStrategyCard({ isPermanent }: Props) {
 
   const items = isPermanent
     ? [
-        { icon: TrendingUp, text: "Hur du kan förhandla upp din lön" },
+        { icon: BarChart3, text: "Fullständig marknadsjämförelse" },
         { icon: Users, text: "Vad kollegor i din yrkesgrupp tjänar" },
-        { icon: FileText, text: "Steg-för-steg förhandlingsguide" },
+        { icon: FileText, text: "Detaljerad data per percentil" },
       ]
     : [
-        { icon: TrendingUp, text: "Hur du kan förhandla upp din ersättning" },
-        { icon: Users, text: "Din möjliga konsultintäkt" },
+        { icon: BarChart3, text: "Fullständig marknadsjämförelse" },
+        { icon: Users, text: "Konsultmarknadens ersättningsspann" },
         { icon: FileText, text: "Vad andra i din roll tjänar" },
       ];
 
@@ -34,7 +34,7 @@ export default function LockedStrategyCard({ isPermanent }: Props) {
         <div className="flex items-center gap-2 mb-4">
           <Lock className="w-4 h-4 text-muted-foreground" />
           <p className="text-caption">
-            Ditt personliga nästa steg
+            Din fullständiga analys
           </p>
         </div>
 

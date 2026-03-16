@@ -24,14 +24,14 @@ function getPosition(diffPercent: number, isAboveThreshold: boolean): Position {
 const positionConfig: Record<Position, { label: string; color: string; bgColor: string; icon: typeof TrendingDown }> = {
   under: {
     label: "Under median",
-    color: "text-destructive",
-    bgColor: "bg-destructive/10",
+    color: "text-primary",
+    bgColor: "bg-primary/10",
     icon: TrendingDown,
   },
   near: {
     label: "Nära median",
-    color: "text-yellow-500",
-    bgColor: "bg-yellow-500/10",
+    color: "text-primary",
+    bgColor: "bg-primary/10",
     icon: Minus,
   },
   above: {
@@ -55,23 +55,22 @@ export default function MarketDiagnosisCard({ diffPercent, isPermanent, yrke, ko
     }
   }, []);
 
-  // Show text label without percentage when blurred
   const diagnosisText = !emailProvided
     ? position === "above"
-      ? `Du ligger över medianen för ${yrke} i din region.`
+      ? `Din ersättning ligger över medianen för ${yrke} i din region.`
       : position === "near"
-        ? `Du ligger nära medianen för ${yrke} i din region.`
-        : `Du ligger under medianen för ${yrke} i din region.`
+        ? `Din ersättning ligger nära medianen för ${yrke} i din region.`
+        : `Din ersättning ligger under medianen för ${yrke} i din region.`
     : position === "above"
-      ? `Du ligger över medianen för ${yrke} i din region.`
+      ? `Din ersättning ligger över medianen för ${yrke} i din region.`
       : position === "near"
-        ? `Du ligger nära medianen för ${yrke} i din region — men det finns utrymme.`
-        : `Du ligger ${diffPercent}% under medianen för ${yrke} i din region.`;
+        ? `Din ersättning ligger nära medianen för ${yrke} i din region — se rapporten för fullständig jämförelse.`
+        : `Din ersättning ligger ${diffPercent}% under medianen för ${yrke} i din region.`;
 
   return (
     <div className="rounded-xl border border-border bg-card p-6 card-shadow">
       <p className="text-caption mb-4">
-        Din löneposition
+        Din position i marknaden
       </p>
 
       <div className="flex items-center gap-3 mb-4">
@@ -94,14 +93,9 @@ export default function MarketDiagnosisCard({ diffPercent, isPermanent, yrke, ko
         </div>
         <div className="h-2 rounded-full bg-muted overflow-hidden">
           <div
-            className="h-full rounded-full transition-all duration-700 ease-out"
+            className="h-full rounded-full transition-all duration-700 ease-out bg-primary"
             style={{
               width: position === "above" ? "85%" : position === "near" ? "55%" : `${Math.max(15, 50 - diffPercent)}%`,
-              background: position === "above"
-                ? "hsl(var(--primary))"
-                : position === "near"
-                  ? "hsl(45, 93%, 47%)"
-                  : "hsl(var(--destructive))",
             }}
           />
         </div>

@@ -19,10 +19,10 @@ export default function EarningsBanner({
     return (
       <div className="rounded-lg border border-border bg-card p-6 text-center card-shadow">
         <p className="text-body-sm font-medium">
-          Enligt officiell lönestatistik kan du tjäna
+          Enligt officiell lönestatistik ligger din ersättning
         </p>
         <p className={`text-3xl sm:text-4xl font-extrabold text-foreground mt-2 tracking-tight ${blurClass}`}>
-          {diffPercent}% mer
+          {diffPercent}% under medianen
         </p>
         <p className="text-hint mt-2">
           Baserat på Medlingsinstitutets lönestatistik för {yrke}
@@ -35,10 +35,10 @@ export default function EarningsBanner({
     return (
       <div className="rounded-lg border border-primary/20 bg-card p-6 text-center card-shadow">
         <p className="text-foreground text-base font-semibold leading-relaxed">
-          Du ligger redan i toppskiktet i {kommun}.
+          Din ersättning ligger i marknadens övre skikt i {kommun}.
         </p>
         <p className="text-body-sm mt-2">
-          Se hur du kan öka din totala ersättning via andra zoner, jour och reseersättning.
+          Se jämförelse med andra zoner, jour- och reseersättning i rapporten.
         </p>
       </div>
     );
@@ -48,13 +48,13 @@ export default function EarningsBanner({
     return (
       <div className="rounded-lg border border-border bg-card p-6 text-center card-shadow">
         <p className="text-body-sm font-medium">
-          Baserat på ramavtalspriserna i {kommun} kan du tjäna
+          Baserat på ramavtalspriserna i {kommun} ligger din ersättning
         </p>
         <p className={`text-3xl sm:text-4xl font-extrabold text-foreground mt-2 tracking-tight ${blurClass}`}>
-          {diffPercent}% mer
+          {diffPercent}% under medianen
         </p>
         <p className="text-body-sm mt-2">
-          Vill du se exakta belopp och få förhandlingstips?
+          Se fullständig jämförelse i rapporten
         </p>
       </div>
     );
@@ -64,11 +64,11 @@ export default function EarningsBanner({
     return (
       <div className="rounded-lg border border-border bg-card p-6 text-center card-shadow">
         <p className="text-foreground text-base font-semibold leading-relaxed">
-          Din ersättning i {kommun} är nära vad regionen betalar — men
-          i {nearestHigherKommun} betalas mer.
+          Din ersättning i {kommun} är nära marknadsspannet — men
+          i {nearestHigherKommun} gäller andra ramavtalspriser.
         </p>
         <p className="text-body-sm mt-2">
-          Vill du veta hur mycket och få förhandlingstips?
+          Se fullständig jämförelse i rapporten
         </p>
       </div>
     );
