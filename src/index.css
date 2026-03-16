@@ -69,6 +69,13 @@
     --gap-danger: 0 84% 60%;
     --gap-text: 0 0% 98%;
     --gap-muted: 0 0% 98% / 0.50;
+
+    /* Typography opacity tokens */
+    --text-strong: 1;
+    --text-default: 0.75;
+    --text-secondary: 0.65;
+    --text-muted: 0.45;
+    --text-subtle: 0.30;
   }
 
   .light-tool {
