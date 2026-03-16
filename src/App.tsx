@@ -27,6 +27,7 @@ const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Profile = lazy(() => import("./pages/Profile"));
+const Radar = lazy(() => import("./pages/Radar"));
 
 const queryClient = new QueryClient();
 
@@ -57,6 +58,7 @@ const App = () => (
             <Route path="/betalning-klar" element={<PaymentSuccess />} />
             <Route path="/rapport/:reportId" element={<Report />} />
             <Route path="/jamfor" element={<Compare />} />
+            <Route path="/radar" element={<Radar />} />
             <Route path="/vanliga-fragor" element={<FAQ />} />
             <Route path="/integritetspolicy" element={<PrivacyPolicy />} />
             <Route path="/logga-in" element={<Login />} />
