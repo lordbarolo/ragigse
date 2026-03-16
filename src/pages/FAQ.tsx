@@ -6,12 +6,12 @@ const FAQ_ITEMS = [
   {
     question: "Hur fungerar CompCare.se?",
     answer:
-      "Du fyller i din yrkesroll, arbetsort och erfarenhet. Vi jämför din nuvarande eller erbjudna ersättning med faktiska ramavtalspriser som offentliga vårdgivare betalar till bemanningsföretag för inhyrd personal. Därefter gör vi ett avdrag för marknadsmässig marginal till bemanningsföretaget. Det som kvarstår är det belopp som utgör ersättningsutrymmet som är förhandlingsbar.",
+      "Du fyller i yrkesroll, arbetsort och erfarenhet. Vi jämför din ersättning med officiella ramavtalspriser som offentliga vårdgivare betalar till bemanningsföretag. Därefter drar vi av en marknadsmässig marginal. Resultatet visar hur din ersättning förhåller sig till marknadsspannet.",
   },
   {
     question: "Vilka data baseras analysen på?",
     answer:
-      "Analysen baseras på Regionernas officiella ramavtalspriser för 2026 och bemanningsbranschens standardmarginaler.",
+      "Analysen baseras på regionernas officiella ramavtalspriser för 2026 och bemanningsbranschens standardmarginaler.",
   },
   {
     question: "Kostar det något att använda CompCare?",
@@ -21,27 +21,27 @@ const FAQ_ITEMS = [
   {
     question: "Vilka yrkesgrupper stöds?",
     answer:
-      "Just nu fokuserar vi på sjuksköterskor, barnmorskor och läkare. Samtliga specialiseringar har unik data. Fler kompetenser kommer snart.",
+      "Just nu täcker vi sjuksköterskor, barnmorskor och läkare — samtliga specialiseringar har unik data. Fler yrkesgrupper kommer snart.",
   },
   {
     question: "Hur ligger min ersättning jämfört med marknaden?",
     answer:
-      "Det bästa sättet är att jämföra din ersättning med vad offentliga vårdgivare faktiskt betalar för inhyrd personal via ramavtal. CompCare.se gör exakt detta — vi matchar din yrkesroll, arbetsort och erfarenhet mot officiella ramavtalspriser så du ser om din ersättning ligger under, på eller över marknadsspannet.",
+      "CompCare matchar din yrkesroll, arbetsort och erfarenhet mot officiella ramavtalspriser och visar om din ersättning ligger under, på eller över marknadsspannet.",
   },
   {
     question: "Vad är ramavtalspriser och varför är de relevanta?",
     answer:
-      "Ramavtalspriser är de timpris som offentliga vårdgivare har avtalat med bemanningsföretag. De speglar vad arbetsgivare faktiskt betalar för inhyrd personal — och ger därmed en referenspunkt för vad vårdgivare betalar för din kompetens.",
+      "Ramavtalspriser är de timpris som offentliga vårdgivare har avtalat med bemanningsföretag. De visar vad som faktiskt betalas för inhyrd personal och fungerar som en referenspunkt för ersättningsnivåer.",
   },
   {
-    question: "Hur kan jag använda CompCare-rapporten?",
+    question: "Vad innehåller CompCare-rapporten?",
     answer:
-      "Rapporten visar exakt vad din vårdgivare betalar för inhyrd personal med din profil. Du kan referera till officiella ramavtalspriser som datapunkt i ett ersättningssamtal.",
+      "Rapporten visar ramavtalspriser för din yrkesroll och zon, ersättningsspannet efter marginal, samt hur din ersättning förhåller sig till marknadens percentiler.",
   },
   {
-    question: "Skiljer sig ersättningarna mycket mellan olika kommuner?",
+    question: "Skiljer sig ersättningarna mellan olika kommuner?",
     answer:
-      "Ja, skillnaderna kan vara stora. Storstadskommuner har generellt lägre ramavtalspriser tack vare större tillgång på personal, medan glesbygdskommuner kan betala 30–50% mer. CompCare.se visar data för alla 290 vårdgivare så du kan jämföra.",
+      "Ja, skillnaderna kan vara stora. Storstadskommuner har generellt lägre ramavtalspriser tack vare större tillgång på personal, medan glesbygdskommuner kan betala 30–50% mer. CompCare visar data för alla 290 vårdgivare.",
   },
   {
     question: "Hur ofta uppdateras datan?",
@@ -71,7 +71,7 @@ const faqJsonLd = {
 export default function FAQ() {
   useEffect(() => {
     document.title =
-      "Vanliga frågor om ersättning för sjuksköterskor | CompCare.se";
+      "Vanliga frågor om ramavtalspriser och ersättning | CompCare.se";
     const meta = document.querySelector('meta[name="description"]');
     if (meta) {
       meta.setAttribute(

@@ -329,7 +329,7 @@ export default function ConsultantTrackContent({
             <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
               <Lightbulb className="w-5 h-5 text-primary" />
             </div>
-            <h2 className="text-lg sm:text-xl font-bold text-foreground">Marknadsdata — så kan den användas</h2>
+            <h2 className="text-lg sm:text-xl font-bold text-foreground">Marknadsdata för din roll och zon</h2>
           </div>
           <div className="space-y-5 relative">
             <div className="absolute left-[15px] top-2 bottom-2 w-[2px] bg-gradient-to-b from-primary/40 to-transparent" />

@@ -89,7 +89,7 @@ export function getNegotiationTips(
 
   if (isUnderpaid) {
     tips.push(
-      `Ramavtalspriset ligger ${diffPercent}% över din nuvarande ersättning. Ramavtalspriserna kan användas som referens i ett ersättningssamtal.`
+      `Ramavtalspriset för ${yrke} ligger ${diffPercent}% över din nuvarande ersättning.`
     );
   } else {
     tips.push(
@@ -98,10 +98,10 @@ export function getNegotiationTips(
   }
 
   if (isEmployee) {
-    tips.push("Tjänstepensionen uppgår normalt till minst 4,5% — det ingår i ramavtalets kalkyl.");
-    tips.push("OB-tilläggen regleras av gällande kollektivavtal.");
+    tips.push("Tjänstepension på minst 4,5% ingår i ramavtalets kalkyl.");
+    tips.push("OB-tillägg regleras av gällande kollektivavtal.");
   } else {
-    tips.push("Som företagare ligger faktureringsandelen normalt på 85–90% av bemanningsföretagets pris mot kund.");
+    tips.push("Faktureringsandelen i branschen ligger normalt på 85–90% av bemanningsföretagets pris mot kund.");
   }
 
   tips.push(
