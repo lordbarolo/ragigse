@@ -530,7 +530,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
               <div className="rounded-xl border border-border overflow-hidden">
                 <div className="flex flex-col max-h-[320px] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-primary/25">
                   {filteredKommunerSearch.length === 0 ? (
-                    <p className="py-8 text-center text-sm text-muted-foreground">Inga kommuner hittades</p>
+                    <p className="py-8 text-center text-body-sm">Inga kommuner hittades</p>
                   ) : (
                     filteredKommunerSearch.map((k) => (
                       <button
