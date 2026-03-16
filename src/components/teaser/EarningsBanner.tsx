@@ -18,13 +18,13 @@ export default function EarningsBanner({
     if (!isUnderpaid || diffPercent <= 0) return null;
     return (
       <div className="rounded-lg border border-border bg-card p-6 text-center card-shadow">
-        <p className="text-muted-foreground text-sm font-medium">
+        <p className="text-body-sm font-medium">
           Enligt officiell lönestatistik kan du tjäna
         </p>
         <p className={`text-3xl sm:text-4xl font-extrabold text-foreground mt-2 tracking-tight ${blurClass}`}>
           {diffPercent}% mer
         </p>
-        <p className="text-muted-foreground text-xs mt-2">
+        <p className="text-hint mt-2">
           Baserat på Medlingsinstitutets lönestatistik för {yrke}
         </p>
       </div>
@@ -37,7 +37,7 @@ export default function EarningsBanner({
         <p className="text-foreground text-base font-semibold leading-relaxed">
           Du ligger redan i toppskiktet i {kommun}.
         </p>
-        <p className="text-muted-foreground text-sm mt-2">
+        <p className="text-body-sm mt-2">
           Se hur du kan öka din totala ersättning via andra zoner, jour och reseersättning.
         </p>
       </div>
@@ -47,13 +47,13 @@ export default function EarningsBanner({
   if (isUnderpaid && diffPercent > 0) {
     return (
       <div className="rounded-lg border border-border bg-card p-6 text-center card-shadow">
-        <p className="text-muted-foreground text-sm font-medium">
+        <p className="text-body-sm font-medium">
           Baserat på ramavtalspriserna i {kommun} kan du tjäna
         </p>
         <p className={`text-3xl sm:text-4xl font-extrabold text-foreground mt-2 tracking-tight ${blurClass}`}>
           {diffPercent}% mer
         </p>
-        <p className="text-muted-foreground text-sm mt-2">
+        <p className="text-body-sm mt-2">
           Vill du se exakta belopp och få förhandlingstips?
         </p>
       </div>
@@ -67,7 +67,7 @@ export default function EarningsBanner({
           Din ersättning i {kommun} är nära vad regionen betalar — men
           i {nearestHigherKommun} betalas mer.
         </p>
-        <p className="text-muted-foreground text-sm mt-2">
+        <p className="text-body-sm mt-2">
           Vill du veta hur mycket och få förhandlingstips?
         </p>
       </div>

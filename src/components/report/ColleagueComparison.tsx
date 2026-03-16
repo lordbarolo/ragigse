@@ -11,7 +11,7 @@ export default function ColleagueComparison({ occupation, percentilePosition }: 
     <div>
       {/* Section label */}
       <div className="flex items-center gap-2 mb-3">
-        <span className="text-[10px] font-semibold tracking-[1.4px] uppercase text-foreground/28">
+        <span className="text-micro font-semibold tracking-[1.4px] uppercase">
           Kollegajämförelse
         </span>
         <div className="flex-1 h-px bg-foreground/[0.06]" />
@@ -29,7 +29,7 @@ export default function ColleagueComparison({ occupation, percentilePosition }: 
             </h3>
           </div>
 
-          <p className="text-xs text-foreground/35 leading-relaxed mb-4">
+          <p className="text-hint leading-relaxed mb-4">
             Skicka analysen till en kollega och jämför era ersättningar.
           </p>
         </div>
@@ -40,7 +40,7 @@ export default function ColleagueComparison({ occupation, percentilePosition }: 
             <span className="text-2xl font-bold text-accent tabular-nums font-mono tracking-tight">
               {percentilePosition}%
             </span>
-            <p className="text-[11px] text-foreground/35 leading-relaxed">
+            <p className="text-caption leading-relaxed">
               Du ligger över {percentilePosition} % av användarna som gjort analysen.
             </p>
           </div>

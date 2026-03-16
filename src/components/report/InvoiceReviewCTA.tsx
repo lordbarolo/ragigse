@@ -81,7 +81,7 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }
           <p className="font-semibold text-foreground text-base">Har du fått rätt betalt för alla dina timmar?</p>
         </div>
 
-        <p className="text-sm text-muted-foreground leading-relaxed">
+        <p className="text-body-sm leading-relaxed">
           Många konsulter missar ersättning för tillägg som inte faktureras korrekt. CompCare granskar dina fakturor och tidrapporter utan kostnad
           — vi tar bara betalt om vi hittar pengar du missat.
         </p>
@@ -96,7 +96,7 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }
           ].map(({ icon: Icon, label }) => (
             <div key={label} className="flex items-center gap-2 p-2.5 rounded-lg bg-foreground/[0.03]">
               <Icon className="w-3.5 h-3.5 text-primary shrink-0" />
-              <span className="text-xs text-muted-foreground font-medium">{label}</span>
+              <span className="text-hint font-medium">{label}</span>
             </div>
           ))}
         </div>
@@ -108,7 +108,7 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }
             onCheckedChange={(v) => setWantsReview(v === true)}
             className="mt-0.5"
           />
-          <label htmlFor="invoice-review" className="text-sm text-muted-foreground leading-relaxed cursor-pointer">
+          <label htmlFor="invoice-review" className="text-body-sm leading-relaxed cursor-pointer">
             Ja, kontakta mig för en kostnadsfri fakturagranskning via{" "}
             <span className="font-medium text-foreground">{email}</span>
           </label>

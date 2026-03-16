@@ -70,7 +70,7 @@ export default function MarketDiagnosisCard({ diffPercent, isPermanent, yrke, ko
 
   return (
     <div className="rounded-xl border border-border bg-card p-6 card-shadow">
-      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">
+      <p className="text-caption mb-4">
         Din löneposition
       </p>
 
@@ -87,7 +87,7 @@ export default function MarketDiagnosisCard({ diffPercent, isPermanent, yrke, ko
 
       {/* Position indicator */}
       <div className="relative mt-4">
-        <div className="flex justify-between text-[10px] text-muted-foreground mb-1.5">
+        <div className="flex justify-between text-micro mb-1.5">
           <span>Under</span>
           <span>Median</span>
           <span>Över</span>
@@ -109,7 +109,7 @@ export default function MarketDiagnosisCard({ diffPercent, isPermanent, yrke, ko
         <div className="absolute top-[calc(100%-8px)] left-1/2 -translate-x-1/2 w-0.5 h-2 bg-muted-foreground/40 rounded-full" />
       </div>
 
-      <p className="text-xs text-muted-foreground mt-3">
+      <p className="text-hint mt-3">
         {isPermanent
           ? "Baserat på Medlingsinstitutets lönestatistik"
           : `Baserat på ramavtalspriser i ${kommun}`}
