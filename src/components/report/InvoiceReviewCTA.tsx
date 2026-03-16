@@ -108,7 +108,7 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }
             onCheckedChange={(v) => setWantsReview(v === true)}
             className="mt-0.5"
           />
-          <label htmlFor="invoice-review" className="text-sm text-muted-foreground leading-relaxed cursor-pointer">
+          <label htmlFor="invoice-review" className="text-body-sm leading-relaxed cursor-pointer">
             Ja, kontakta mig för en kostnadsfri fakturagranskning via{" "}
             <span className="font-medium text-foreground">{email}</span>
           </label>

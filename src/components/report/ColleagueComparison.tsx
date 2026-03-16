@@ -40,7 +40,7 @@ export default function ColleagueComparison({ occupation, percentilePosition }: 
             <span className="text-2xl font-bold text-accent tabular-nums font-mono tracking-tight">
               {percentilePosition}%
             </span>
-            <p className="text-[11px] text-foreground/35 leading-relaxed">
+            <p className="text-caption leading-relaxed">
               Du ligger över {percentilePosition} % av användarna som gjort analysen.
             </p>
           </div>
