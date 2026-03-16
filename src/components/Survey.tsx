@@ -420,7 +420,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
               style={{ width: `${progress}%` }}
             />
           </div>
-          <p className="text-xs text-muted-foreground mt-2">{step} av {TOTAL_STEPS}</p>
+          <p className="text-hint mt-2">{step} av {TOTAL_STEPS}</p>
         </div>
       )}
 
