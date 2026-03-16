@@ -78,7 +78,7 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }
       <CardContent className="pt-6 space-y-5">
         <div className="flex items-center gap-2">
           <ShieldCheck className="w-5 h-5 text-primary shrink-0" />
-          <p className="font-semibold text-foreground text-base">Har du fått rätt betalt för alla dina timmar?</p>
+          <p className="font-semibold text-foreground text-base">Stämmer dina fakturor med avtalsvillkoren?</p>
         </div>
 
         <p className="text-body-sm leading-relaxed">
