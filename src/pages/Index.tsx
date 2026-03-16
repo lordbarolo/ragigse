@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 import Survey from "@/components/Survey";
-import LandingFooter from "@/components/landing/LandingFooter";
+
 
 const faqJsonLd = {
   "@context": "https://schema.org",
