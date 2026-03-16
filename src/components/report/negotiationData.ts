@@ -89,28 +89,23 @@ export function getNegotiationTips(
 
   if (isUnderpaid) {
     tips.push(
-      `Enligt ramavtalet bör din ersättning ligga ${diffPercent}% högre. Använd detta som utgångspunkt i förhandlingen.`
-    );
-    tips.push(
-      "Begär ett möte med din bemanningskonsult och presentera ramavtalspriserna som referens."
+      `Ramavtalspriset ligger ${diffPercent}% över din nuvarande ersättning. Ramavtalspriserna kan användas som referens i ett ersättningssamtal.`
     );
   } else {
     tips.push(
-      "Din ersättning ligger redan nära marknadspris — bra förhandlat! Fokusera på andra förmåner."
+      "Din ersättning ligger nära marknadsspannet."
     );
   }
 
   if (isEmployee) {
-    tips.push("Fråga om tjänstepensionen uppgår till minst 4.5% — det ingår i ramavtalets kalkyl.");
-    tips.push("Kontrollera att OB-tilläggen följer gällande kollektivavtal.");
-    tips.push("Förhandla om utbildningsbudget och kompetensutveckling.");
+    tips.push("Tjänstepensionen uppgår normalt till minst 4,5% — det ingår i ramavtalets kalkyl.");
+    tips.push("OB-tilläggen regleras av gällande kollektivavtal.");
   } else {
-    tips.push("Som företagare kan du fakturera 85-90% av bemanningsföretagets pris mot kund.");
-    tips.push("Om du tar risken för vite är det rimligt att förhandla en högre ersättning.");
+    tips.push("Som företagare ligger faktureringsandelen normalt på 85–90% av bemanningsföretagets pris mot kund.");
   }
 
   tips.push(
-    `Nämn att du är medveten om ramavtalspriserna för ${yrke} i din zon — det signalerar att du är insatt.`
+    `Ramavtalspriserna för ${yrke} varierar per zon — se den regionala jämförelsen för fullständig data.`
   );
 
   return tips;

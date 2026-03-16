@@ -78,12 +78,12 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }
       <CardContent className="pt-6 space-y-5">
         <div className="flex items-center gap-2">
           <ShieldCheck className="w-5 h-5 text-primary shrink-0" />
-          <p className="font-semibold text-foreground text-base">Har du fått rätt betalt för alla dina timmar?</p>
+          <p className="font-semibold text-foreground text-base">Stämmer dina fakturor med avtalsvillkoren?</p>
         </div>
 
         <p className="text-body-sm leading-relaxed">
-          Många konsulter missar ersättning för tillägg som inte faktureras korrekt. CompCare granskar dina fakturor och tidrapporter utan kostnad
-          — vi tar bara betalt om vi hittar pengar du missat.
+          Fakturor kan ibland avvika från avtalade tillägg. CompCare granskar dina fakturor och tidrapporter utan kostnad
+          — vi tar bara betalt om vi hittar en avvikelse.
         </p>
 
         {/* Concrete examples of missed compensation */}

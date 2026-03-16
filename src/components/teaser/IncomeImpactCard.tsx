@@ -52,14 +52,14 @@ export default function IncomeImpactCard({
   return (
     <div className="rounded-xl border border-border bg-card p-6 card-shadow">
       <p className="text-caption mb-3">
-        Ekonomisk konsekvens
+        Skillnad mot marknadsspannet
       </p>
 
       <p className={`text-3xl sm:text-4xl font-black text-foreground tracking-tight ${blurClass}`}>
         {fmt(yearlyGap)} kr/år
       </p>
       <p className="text-body-sm mt-1">
-        Din ersättning kan öka med upp till detta belopp
+        Skillnaden mellan din ersättning och marknadsspannets övre gräns, omräknat på årsbasis
       </p>
 
       <div className="mt-4 pt-4 border-t border-border">

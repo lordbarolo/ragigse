@@ -65,8 +65,8 @@ export default function PermanentTrackContent({ r, isFullAccess, occupation, kom
                 <TrendingUp className={`w-5 h-5 ${gap.gap_vs_p75 > 0 ? "text-accent" : "text-green-600"}`} />
                 <p className="font-semibold text-foreground">
                   {gap.gap_vs_p75 > 0
-                    ? `Du kan tjäna upp till ${fmt(gap.gap_vs_p75)} kr mer per månad`
-                    : "Din ersättning ligger redan i toppskiktet!"}
+                    ? `Skillnad mot P75: ${fmt(gap.gap_vs_p75)} kr/mån`
+                    : "Din ersättning ligger över P75"}
                 </p>
               </div>
               <CardContent className="pt-6 space-y-4">
@@ -76,11 +76,11 @@ export default function PermanentTrackContent({ r, isFullAccess, occupation, kom
                 </div>
                 {gap.gap_vs_p75 > 0 && (
                   <div className="p-4 rounded-lg bg-accent/5 border border-accent/20">
-                    <p className="text-hint mb-1">Förhandlingsutrymme mot P75</p>
+                    <p className="text-hint mb-1">Avstånd till P75</p>
                     <p className="text-2xl font-bold text-accent">+{fmt(gap.gap_vs_p75)} kr/mån</p>
                     {gap.gap_pct !== null && (
                       <p className="text-hint mt-1">
-                        ({gap.gap_pct}% under toppskiktet för din yrkesgrupp)
+                        ({gap.gap_pct}% under P75 för din yrkesgrupp)
                       </p>
                     )}
                   </div>
@@ -89,18 +89,18 @@ export default function PermanentTrackContent({ r, isFullAccess, occupation, kom
                 {leadId && (
                   <ReportFeedback leadId={leadId} role={occupation} zone={userZone} />
                 )}
-                {/* Negotiation tips */}
+                {/* Marknadsdata */}
                 <div className="space-y-2 pt-2">
-                  <p className="text-caption">Förhandlingstips</p>
+                  <p className="text-caption">Marknadsdata</p>
                   <ul className="space-y-2">
                     {[
-                      `Referera till att medianersättningen för ${occupation} är ${fmt(benchMarket?.percentile_50 ?? 0)} kr/mån enligt Medlingsinstitutet.`,
+                      `Medianersättningen för ${occupation} är ${fmt(benchMarket?.percentile_50 ?? 0)} kr/mån enligt Medlingsinstitutet.`,
                       gap.category === "large"
-                        ? "Ditt gap mot marknaden är stort — du har goda skäl att kräva en rejäl ersättningsrevision."
+                        ? "Skillnaden mot medianen är betydande."
                         : gap.category === "medium"
-                        ? "Ditt gap mot marknaden är måttligt — begär en justering till minst mediannivå som start."
-                        : "Din ersättning ligger nära marknaden — fokusera på förmåner och nästa steg i karriären.",
-                      "Förbered dig med konkret statistik: 'Enligt SCB/MI ligger P75 för min yrkesgrupp på X kr.'",
+                        ? "Din ersättning ligger under medianen."
+                        : "Din ersättning ligger nära marknaden.",
+                      "Statistiken baseras på SCB/Medlingsinstitutet och visar lönefördelningen per yrkesgrupp.",
                     ].map((tip, i) => (
                       <li key={i} className="flex items-start gap-2">
                         <ArrowRight className="w-4 h-4 text-accent mt-0.5 shrink-0" />
@@ -113,22 +113,22 @@ export default function PermanentTrackContent({ r, isFullAccess, occupation, kom
             </>
           ) : (
             <>
-              <div className="bg-destructive/10 p-4 flex items-center gap-3">
-                <Lock className="w-5 h-5 text-destructive" />
+              <div className="bg-muted/50 p-4 flex items-center gap-3">
+                <Lock className="w-5 h-5 text-muted-foreground" />
                 <p className="font-semibold text-foreground">Din gap-analys — låst</p>
               </div>
               <CardContent className="pt-6 space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <StatBlock label="Din nuvarande ersättning" value={`${fmt(gap.current_salary)} kr/mån`} muted />
                   <div className="p-3 rounded-lg bg-accent/10 relative overflow-hidden">
-                    <p className="text-hint mb-1">Förhandlingsutrymme</p>
+                    <p className="text-hint mb-1">Avstånd till P75</p>
                     <p className="text-base font-semibold text-accent blur-sm select-none">
                       {formatPartialValue(gap.gap_vs_p75 > 0 ? gap.gap_vs_p75 : 500)} kr/mån
                     </p>
                   </div>
                 </div>
                 <p className="text-body-sm text-center">
-                  Lås upp för att se exakt förhandlingsutrymme, konkreta tips och din jämförelse mot marknaden.
+                  Lås upp för att se fullständig jämförelse med marknadsdata.
                 </p>
               </CardContent>
             </>

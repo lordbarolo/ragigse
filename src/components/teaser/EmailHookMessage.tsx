@@ -1,4 +1,4 @@
-import { TrendingDown, Scale, Trophy } from "lucide-react";
+import { BarChart3, Scale, Trophy } from "lucide-react";
 
 type Tier = "underpaid" | "at_market" | "above_market";
 
@@ -19,8 +19,8 @@ function fmt(n: number): string {
   return Math.abs(n).toLocaleString("sv-SE");
 }
 
-const config: Record<Tier, { icon: typeof TrendingDown; accentClass: string }> = {
-  underpaid: { icon: TrendingDown, accentClass: "text-destructive" },
+const config: Record<Tier, { icon: typeof BarChart3; accentClass: string }> = {
+  underpaid: { icon: BarChart3, accentClass: "text-primary" },
   at_market: { icon: Scale, accentClass: "text-primary" },
   above_market: { icon: Trophy, accentClass: "text-amber-500" },
 };
@@ -55,7 +55,7 @@ export default function EmailHookMessage({
                 ) : (
                   "din ersättning"
                 )}{" "}
-                ligger <span className={accentClass}>under marknaden</span> för{" "}
+                ligger <span className={accentClass}>under marknadsspannet</span> för{" "}
                 {roleName} i {kommun}.
               </p>
               <p className="text-sm text-muted-foreground leading-relaxed">

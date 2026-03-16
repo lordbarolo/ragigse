@@ -1,4 +1,4 @@
-import { AlertTriangle, MapPin } from "lucide-react";
+import { BarChart3, MapPin } from "lucide-react";
 
 interface OpportunityGapProps {
   userHourly: number;
@@ -26,21 +26,21 @@ export default function OpportunityGap({ userHourly, marketHigh, employmentType,
   const blurClass = !emailProvided ? "blur-md select-none" : "";
 
   return (
-    <div className="rounded-lg border border-destructive/30 bg-card card-shadow overflow-hidden">
+    <div className="rounded-lg border border-border bg-card card-shadow overflow-hidden">
       <div className="p-5 space-y-4">
         <div className="flex items-start gap-3">
-          <div className="p-2 rounded-lg bg-destructive/10 shrink-0">
+          <div className="p-2 rounded-lg bg-primary/10 shrink-0">
             {isSmallGap ? (
-              <MapPin className="w-4 h-4 text-destructive" />
+              <MapPin className="w-4 h-4 text-primary" />
             ) : (
-              <AlertTriangle className="w-4 h-4 text-destructive" />
+              <BarChart3 className="w-4 h-4 text-primary" />
             )}
           </div>
           <div>
             <p className="text-base font-bold text-foreground leading-tight">
               {isSmallGap
-                ? `Du kan tjäna mer i ${nearestHigherKommun}`
-                : <>Din {employmentType === "foretagare" ? "ersättning" : "lön"} kan öka med <span className={blurClass}>{formatKr(diffHourly)} kr/h</span></>}
+                ? `Andra ramavtalspriser i ${nearestHigherKommun}`
+                : <>Skillnad mot marknadsspannets övre gräns: <span className={blurClass}>{formatKr(diffHourly)} kr/h</span></>}
             </p>
             <p className="text-sm text-muted-foreground mt-1">
               {isSmallGap
@@ -67,7 +67,7 @@ export default function OpportunityGap({ userHourly, marketHigh, employmentType,
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-card/70 backdrop-blur-[2px]">
               <span className="text-lg mb-1">🔒</span>
               <p className="text-sm font-semibold text-foreground text-center px-4 leading-snug">
-                Se exakt hur mycket du förlorar — och hur du förhandlar upp det
+                Se fullständig jämförelse med marknadsdata
               </p>
             </div>
           </div>

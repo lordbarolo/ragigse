@@ -1,5 +1,5 @@
 import { fmt } from "@/shared/formatters";
-import { ShieldCheck, TrendingDown } from "lucide-react";
+import { ShieldCheck, BarChart3 } from "lucide-react";
 
 interface Props {
   /** Hourly gap (user vs market recommended max) */
@@ -25,29 +25,29 @@ export default function WowHero({ diffHourly, isPermanent, monthlyGap = 0, kommu
     <div className="space-y-3">
       <div className="rounded-2xl bg-foreground text-background p-6 sm:p-8">
         <div className="flex items-center gap-2.5 mb-5">
-          <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center">
-            <TrendingDown className="w-4 h-4 text-accent" />
+          <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center">
+            <BarChart3 className="w-4 h-4 text-primary" />
           </div>
-          <p className="text-sm font-bold uppercase tracking-wider text-accent">
-            Din ersättning ligger under marknaden
+          <p className="text-sm font-bold uppercase tracking-wider text-primary">
+            Din ersättning jämfört med marknaden
           </p>
         </div>
 
         <p className="text-body-sm text-background/60 font-medium">
-          Du kan tjäna upp till
+          Skillnad mot marknadsspannet
         </p>
         <p className="text-3xl sm:text-4xl font-extrabold text-primary tracking-tight font-mono mt-1">
           {fmt(monthly)} kr
         </p>
         <p className="text-body-sm text-background/60 font-medium mt-0.5">
-          mer per månad
+          per månad
         </p>
 
         <div className="mt-5 pt-4 border-t border-background/10 space-y-2 font-mono">
           <div className="flex items-baseline gap-3">
             <span className="text-background/50 text-sm w-4 text-right">=</span>
             <span className="text-background font-bold text-lg">{fmt(hourlyGap)} kr/h</span>
-            <span className="text-background/50 text-sm">under marknaden</span>
+            <span className="text-background/50 text-sm">avstånd till övre gräns</span>
           </div>
           <div className="flex items-baseline gap-3">
             <span className="text-background/50 text-sm w-4 text-right">=</span>

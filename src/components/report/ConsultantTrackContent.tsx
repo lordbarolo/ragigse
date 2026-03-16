@@ -161,10 +161,10 @@ export default function ConsultantTrackContent({
               </div>
               <div>
                 <p className="text-sm font-semibold text-accent leading-snug mb-1">
-                  Du kan tjäna upp till {fmt(delta.monthly_vs_current_max)} kr mer per månad
+                  Skillnad mot marknadsspannet: {fmt(delta.monthly_vs_current_max)} kr/mån
                 </p>
                 <p className="text-hint leading-relaxed">
-                  Baserat på ramavtalspriset i din region finns det utrymme att förhandla upp din ersättning.
+                  Baserat på ramavtalspriset i din region.
                 </p>
               </div>
             </div>
@@ -329,30 +329,30 @@ export default function ConsultantTrackContent({
             <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
               <Lightbulb className="w-5 h-5 text-primary" />
             </div>
-            <h2 className="text-lg sm:text-xl font-bold text-foreground">Nästa steg — vad du ska säga</h2>
+            <h2 className="text-lg sm:text-xl font-bold text-foreground">Marknadsdata — så kan den användas</h2>
           </div>
           <div className="space-y-5 relative">
             <div className="absolute left-[15px] top-2 bottom-2 w-[2px] bg-gradient-to-b from-primary/40 to-transparent" />
             <ScriptStep
               step={1}
-              title="Boka möte"
-              text="Kontakta din bemanningskonsult och begär ett ersättningssamtal. Nämn att du har gjort en marknadsanalys."
+              title="Samla underlag"
+              text="Gå igenom din marknadsanalys och notera ramavtalspriset samt det rekommenderade ersättningsspannet för din roll och zon."
             />
             <ScriptStep
               step={2}
-              title="Presentera data"
-              text={`"Jag har tagit fram ramavtalspriset för ${occupation} i min region. Kundpriset ligger på ${fmt(marketRate)} kr/h, och därför borde min ersättning landa runt ${fmt(rec.recommended_hourly_max)} kr/h efter er marginal."`}
+              title="Referera till marknadsdata"
+              text={`"Ramavtalspriset för ${occupation} i min region är ${fmt(marketRate)} kr/h. Hur förhåller sig min ersättning till det?"`}
             />
             <ScriptStep
               step={3}
-              title="Ställ frågan"
-              text={`"Jag vill att min ersättning justeras. Kan vi hitta en lösning?"`}
+              title="Inled dialog"
+              text={`"Jag vill diskutera min ersättning utifrån aktuell marknadsdata."`}
             />
             {isEmployee && (
               <ScriptStep
                 step={4}
-                title="Bonus: fråga om pension"
-                text={`"Ingår tjänstepension på minst 4.5% i min anställning? Det är standard i ramavtalet."`}
+                title="Fråga om pension"
+                text={`"Ingår tjänstepension på minst 4,5% i min anställning? Det är standard i ramavtalet."`}
               />
             )}
           </div>
@@ -495,8 +495,8 @@ export default function ConsultantTrackContent({
               ) : (
                 <>
                   {isEmployee
-                    ? <>Din totala lönekostnad utgör en låg andel av kundpriset — det finns tydligt förhandlingsutrymme.</>
-                    : <>Du får en relativt låg andel av kundpriset — det finns tydligt förhandlingsutrymme.</>
+                    ? <>Din totala lönekostnad utgör en låg andel av kundpriset — andelen ligger under marknadens genomsnitt.</>
+                    : <>Du får en relativt låg andel av kundpriset — andelen ligger under marknadens genomsnitt.</>
                   }{" "}
                   <strong className="text-foreground/50 font-medium">Vanligt spann: 85–92%</strong>.
                 </>
@@ -520,7 +520,7 @@ export default function ConsultantTrackContent({
           </p>
           <div className="space-y-2.5">
             <p className="text-caption">
-              Så kan du öka din totala ersättning
+              Ytterligare ersättningskomponenter
             </p>
             {[
               { icon: MapPin, title: "Byt till en högre priszon", desc: "Se den regionala jämförelsen — vissa zoner har betydligt högre ramavtalspriser för samma roll." },
