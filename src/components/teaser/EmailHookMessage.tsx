@@ -103,8 +103,8 @@ export default function EmailHookMessage({
       </div>
 
       {/* CTA label */}
-      <p className="text-sm font-semibold text-foreground">
-        Ange din e-post för att få hela analysen.
+      <p className="text-sm text-muted-foreground">
+        Rapporten skickas direkt till din inkorg.
       </p>
     </div>
   );

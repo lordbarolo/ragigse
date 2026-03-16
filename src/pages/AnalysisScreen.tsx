@@ -396,34 +396,12 @@ export default function AnalysisScreen() {
                 ))}
               </div>
 
-              {/* Locked negotiation row */}
-              <div
-                className="mx-5 mb-4 mt-2 rounded-lg px-3.5 py-3 flex items-center justify-between cursor-pointer transition-all hover:bg-foreground/[0.04] group"
-                style={{
-                  background: "rgba(0,194,255,0.04)",
-                  border: "1px solid rgba(0,194,255,0.15)",
-                }}
-                onClick={() => {
-                  if (!validEmail) {
-                    // Shake the email input to draw attention
-                    const emailInput = document.querySelector('input[type="email"]') as HTMLElement;
-                    if (emailInput) {
-                      emailInput.classList.add('animate-shake');
-                      emailInput.focus();
-                      setTimeout(() => emailInput.classList.remove('animate-shake'), 500);
-                    }
-                    toast.error("Ange din e-postadress för att låsa upp förhandlingsspannet");
-                  }
-                }}
-              >
-                <div className="flex items-center gap-2.5">
-                  <Lock className="w-3.5 h-3.5 text-primary/60" />
-                  <span className="text-[14px] text-foreground/75 font-display font-medium">Ditt förhandlingsutrymme</span>
-                </div>
-                <span className="text-[12px] text-primary font-display font-bold flex items-center gap-1 group-hover:text-primary transition-colors">
-                  Lås upp
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </span>
+              {/* Friendly email prompt */}
+              <div className="mx-5 mb-2 mt-3 flex items-center gap-2.5 text-muted-foreground">
+                <Mail className="w-4 h-4 shrink-0" />
+                <p className="text-[13px] leading-snug">
+                  Ange din e-post så skickar vi hela analysen direkt
+                </p>
               </div>
 
               {/* Email input inside card */}
