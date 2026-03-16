@@ -82,8 +82,8 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }
         </div>
 
         <p className="text-body-sm leading-relaxed">
-          Många konsulter missar ersättning för tillägg som inte faktureras korrekt. CompCare granskar dina fakturor och tidrapporter utan kostnad
-          — vi tar bara betalt om vi hittar pengar du missat.
+          Fakturor kan ibland avvika från avtalade tillägg. CompCare granskar dina fakturor och tidrapporter utan kostnad
+          — vi tar bara betalt om vi hittar en avvikelse.
         </p>
 
         {/* Concrete examples of missed compensation */}

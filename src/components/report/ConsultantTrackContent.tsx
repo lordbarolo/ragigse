@@ -520,7 +520,7 @@ export default function ConsultantTrackContent({
           </p>
           <div className="space-y-2.5">
             <p className="text-caption">
-              Så kan du öka din totala ersättning
+              Ytterligare ersättningskomponenter
             </p>
             {[
               { icon: MapPin, title: "Byt till en högre priszon", desc: "Se den regionala jämförelsen — vissa zoner har betydligt högre ramavtalspriser för samma roll." },

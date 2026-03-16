@@ -16,7 +16,7 @@ const FAQ_ITEMS = [
   {
     question: "Kostar det något att använda CompCare?",
     answer:
-      "Den grundläggande jämförelsen är helt gratis. För en detaljerad rapport med förhandlingstips kan du välja att uppgradera.",
+      "Den grundläggande jämförelsen är helt gratis. För en detaljerad rapport kan du välja att uppgradera.",
   },
   {
     question: "Vilka yrkesgrupper stöds?",
@@ -24,19 +24,19 @@ const FAQ_ITEMS = [
       "Just nu fokuserar vi på sjuksköterskor, barnmorskor och läkare. Samtliga specialiseringar har unik data. Fler kompetenser kommer snart.",
   },
   {
-    question: "Hur vet jag om jag är underbetald?",
+    question: "Hur ligger min ersättning jämfört med marknaden?",
     answer:
-      "Det bästa sättet är att jämföra din ersättning med vad offentliga vårdgivare faktiskt betalar för inhyrd personal via ramavtal. CompCare.se gör exakt detta — vi matchar din yrkesroll, arbetsort och erfarenhet mot officiella ramavtalspriser så du ser om ditt erbjudande ligger under, på eller över marknadsnivå.",
+      "Det bästa sättet är att jämföra din ersättning med vad offentliga vårdgivare faktiskt betalar för inhyrd personal via ramavtal. CompCare.se gör exakt detta — vi matchar din yrkesroll, arbetsort och erfarenhet mot officiella ramavtalspriser så du ser om din ersättning ligger under, på eller över marknadsspannet.",
   },
   {
     question: "Vad är ramavtalspriser och varför är de relevanta?",
     answer:
-      "Ramavtalspriser är de timpris som offentliga vårdgivare har avtalat med bemanningsföretag. De speglar vad arbetsgivare faktiskt är villiga att betala för din kompetens — och ger därmed en mer realistisk bild av ditt marknadsvärde än generella lönestatistiker.",
+      "Ramavtalspriser är de timpris som offentliga vårdgivare har avtalat med bemanningsföretag. De speglar vad arbetsgivare faktiskt betalar för inhyrd personal — och ger därmed en referenspunkt för vad vårdgivare betalar för din kompetens.",
   },
   {
-    question: "Hur kan jag använda CompCare-rapporten i en förhandling?",
+    question: "Hur kan jag använda CompCare-rapporten?",
     answer:
-      "Rapporten visar exakt vad din vårdgivare betalar för inhyrd personal med din profil. I förhandlingen kan du referera till dessa siffror och argumentera att din ersättning bör spegla ditt faktiska marknadsvärde.",
+      "Rapporten visar exakt vad din vårdgivare betalar för inhyrd personal med din profil. Du kan referera till officiella ramavtalspriser som datapunkt i ett ersättningssamtal.",
   },
   {
     question: "Skiljer sig ersättningarna mycket mellan olika kommuner?",
@@ -76,7 +76,7 @@ export default function FAQ() {
     if (meta) {
       meta.setAttribute(
         "content",
-        "Svar på vanliga frågor om ersättning, ramavtalspriser, förhandling och hur CompCare.se hjälper dig jämföra din ersättning."
+        "Svar på vanliga frågor om ersättning, ramavtalspriser och hur CompCare.se hjälper dig jämföra din ersättning med marknadsdata."
       );
     }
   }, []);
@@ -97,7 +97,7 @@ export default function FAQ() {
           </h1>
           <p className="text-base sm:text-lg text-primary-foreground/85 font-body max-w-2xl mx-auto">
             Allt du behöver veta om ersättningar, ramavtalspriser och
-            hur du kan förhandla bättre.
+            marknadsdata.
           </p>
         </div>
       </header>
