@@ -93,7 +93,7 @@ export default function Index() {
               din kompetens?
             </span>
           </h1>
-          <p className="mt-3 max-w-[380px] mx-auto" style={{ fontSize: '15px', fontWeight: 300, color: 'rgba(255,255,255,0.65)', lineHeight: 1.6 }}>
+          <p className="mt-[20px] max-w-[380px] mx-auto" style={{ fontSize: '17px', fontWeight: 300, color: 'rgba(255,255,255,0.65)', lineHeight: 1.6 }}>
             Jämför din ersättning mot offentliga ramavtalspriser på 60 sekunder.
           </p>
         </div>
