@@ -137,7 +137,7 @@ export default function Index() {
         {/* Trust bar — 16px below cards */}
         <div className="flex items-center justify-center gap-4 sm:gap-6 mt-4">
           {["Anonymt", "Kostnadsfritt", "60 sekunder", "Ingen registrering"].map((label) => (
-             <span key={label} className="text-micro font-medium tracking-wide font-display flex items-center gap-1.5">
+             <span key={label} className="font-display flex items-center gap-1.5" style={{ fontSize: '11px', fontWeight: 500, color: 'rgba(255,255,255,0.30)' }}>
                <span className="w-1 h-1 rounded-full bg-foreground/20" />
               {label}
             </span>
