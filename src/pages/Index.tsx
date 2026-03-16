@@ -101,7 +101,7 @@ export default function Index() {
         </div>
 
         {/* Role label */}
-        <p className="text-foreground/40 text-[11px] font-medium tracking-[0.1em] uppercase font-display mb-4">
+        <p className="text-caption mb-4">
           Vad jobbar du som?
         </p>
 
