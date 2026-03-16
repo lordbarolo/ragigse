@@ -76,7 +76,7 @@ export default function Index() {
       {/* All content as one block, pushed to lower half */}
       <main className="flex-1 flex flex-col items-center justify-end px-5" style={{ paddingBottom: '10dvh' }}>
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 bg-primary/[0.08] border border-primary/20 rounded-full px-3.5 py-1 font-display text-primary tracking-wider mb-5" style={{ fontSize: '11px', fontWeight: 500 }}>
+        <div className="inline-flex items-center gap-2 bg-primary/[0.08] border border-primary/20 rounded-full font-display text-primary tracking-wider mb-[20px]" style={{ fontSize: '13px', fontWeight: 500, padding: '8px 18px' }}>
           <span className="w-5 h-5 rounded-full bg-primary/15 flex items-center justify-center text-[10px]">🛡</span>
           Officiella avtalspriser · 290 kommuner · 21 regioner
         </div>
@@ -85,7 +85,7 @@ export default function Index() {
         <div className="text-center max-w-[480px] mb-8">
           <h1
             className="font-display text-foreground"
-            style={{ fontSize: '34px', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1.06 }}
+            style={{ fontSize: '48px', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1.06 }}
           >
             Vad betalar{" "}
             <span className="text-primary">regionen</span> för{" "}
@@ -93,7 +93,7 @@ export default function Index() {
               din kompetens?
             </span>
           </h1>
-          <p className="mt-3 max-w-[380px] mx-auto" style={{ fontSize: '15px', fontWeight: 300, color: 'rgba(255,255,255,0.65)', lineHeight: 1.6 }}>
+          <p className="mt-[20px] max-w-[380px] mx-auto" style={{ fontSize: '17px', fontWeight: 300, color: 'rgba(255,255,255,0.65)', lineHeight: 1.6 }}>
             Jämför din ersättning mot offentliga ramavtalspriser på 60 sekunder.
           </p>
         </div>
