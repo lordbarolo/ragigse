@@ -11,7 +11,7 @@ export default function ColleagueComparison({ occupation, percentilePosition }: 
     <div>
       {/* Section label */}
       <div className="flex items-center gap-2 mb-3">
-        <span className="text-[10px] font-semibold tracking-[1.4px] uppercase text-foreground/28">
+        <span className="text-micro font-semibold tracking-[1.4px] uppercase">
           Kollegajämförelse
         </span>
         <div className="flex-1 h-px bg-foreground/[0.06]" />
