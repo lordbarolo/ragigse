@@ -81,7 +81,7 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }
           <p className="font-semibold text-foreground text-base">Har du fått rätt betalt för alla dina timmar?</p>
         </div>
 
-        <p className="text-sm text-muted-foreground leading-relaxed">
+        <p className="text-body-sm leading-relaxed">
           Många konsulter missar ersättning för tillägg som inte faktureras korrekt. CompCare granskar dina fakturor och tidrapporter utan kostnad
           — vi tar bara betalt om vi hittar pengar du missat.
         </p>
