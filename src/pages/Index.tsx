@@ -95,7 +95,7 @@ export default function Index() {
               din kompetens?
             </span>
           </h1>
-          <p className="text-foreground/55 text-[15px] leading-relaxed mt-3 max-w-[380px] mx-auto">
+          <p className="text-body leading-relaxed mt-3 max-w-[380px] mx-auto">
             Jämför din ersättning mot offentliga ramavtalspriser på 60 sekunder.
           </p>
         </div>
