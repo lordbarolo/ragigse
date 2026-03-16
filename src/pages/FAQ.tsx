@@ -71,7 +71,7 @@ const faqJsonLd = {
 export default function FAQ() {
   useEffect(() => {
     document.title =
-      "Vanliga frågor om ersättning för sjuksköterskor | CompCare.se";
+      "Vanliga frågor om ramavtalspriser och ersättning | CompCare.se";
     const meta = document.querySelector('meta[name="description"]');
     if (meta) {
       meta.setAttribute(
