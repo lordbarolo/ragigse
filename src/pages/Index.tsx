@@ -86,8 +86,8 @@ export default function Index() {
         {/* Headline */}
         <div className="text-center max-w-[480px] mb-8">
           <h1
-            className="font-display font-extrabold leading-[1.06] tracking-[-0.04em] text-foreground"
-            style={{ fontSize: "clamp(28px, 7vw, 48px)" }}
+            className="font-display text-foreground"
+            style={{ fontSize: '34px', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1.06 }}
           >
             Vad betalar{" "}
             <span className="text-primary">regionen</span> för{" "}
