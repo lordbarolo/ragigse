@@ -397,10 +397,13 @@ export default function AnalysisScreen() {
               </div>
 
               {/* Friendly email prompt */}
-              <div className="mx-5 mb-2 mt-3 flex items-center gap-2.5 text-muted-foreground">
-                <Mail className="w-4 h-4 shrink-0" />
-                <p className="text-[13px] leading-snug">
-                  Ange din e-post så skickar vi hela analysen direkt
+              <div className="mx-5 mb-2 mt-4 space-y-1">
+                <h3 className="text-[16px] font-semibold text-foreground flex items-center gap-2">
+                  <Mail className="w-4 h-4 shrink-0 text-primary" />
+                  Ange din e-post
+                </h3>
+                <p className="text-[14px] text-foreground/60 leading-snug pl-6">
+                  Så skickar vi hela analysen direkt
                 </p>
               </div>
 
@@ -434,8 +437,8 @@ export default function AnalysisScreen() {
                 </button>
                 <div className="flex items-center justify-center gap-4 flex-wrap">
                   {["Visas direkt", "Ingen inloggning", "Inget nyhetsbrev"].map((t) => (
-                    <span key={t} className="text-[12px] text-foreground/45 flex items-center gap-1 font-display font-medium">
-                      <span className="text-[hsl(var(--green))] text-[10px] font-bold">✓</span> {t}
+                    <span key={t} className="text-[13px] text-foreground/45 flex items-center gap-1 font-display font-medium">
+                      <span className="text-[hsl(var(--green))] text-[12px] font-bold">✓</span> {t}
                     </span>
                   ))}
                 </div>
