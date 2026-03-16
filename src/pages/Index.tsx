@@ -1,9 +1,9 @@
 import { useEffect, useState, useRef } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 import Survey from "@/components/Survey";
-import LandingFooter from "@/components/landing/LandingFooter";
+
 
 const faqJsonLd = {
   "@context": "https://schema.org",
@@ -28,8 +28,6 @@ const webAppJsonLd = {
 };
 
 export default function Index() {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
   const [showSurvey, setShowSurvey] = useState(false);
   const [prefillCategory, setPrefillCategory] = useState<string>("");
   const [prefillRole, setPrefillRole] = useState<string>("");
