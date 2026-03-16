@@ -5,7 +5,7 @@ import { trackEvent } from "@/lib/trackEvent";
 import { toast } from "sonner";
 import type { SurveyData } from "@/components/Survey";
 import type { PricingResult } from "@/hooks/usePricingEngine";
-import { Check, Mail, ArrowRight, Lock } from "lucide-react";
+import { Check, Mail, ArrowRight } from "lucide-react";
 
 /* ── Steps with icons & subtitles ── */
 const STEPS = [
