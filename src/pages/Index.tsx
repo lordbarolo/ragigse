@@ -128,7 +128,7 @@ export default function Index() {
             <div className="relative z-10 w-10 h-10 rounded-[10px] bg-primary/10 border border-primary/15 flex items-center justify-center text-[20px] flex-shrink-0">💉</div>
             <div className="relative z-10 flex-1">
               <div className="font-display text-[15px] font-bold tracking-[-0.02em] mb-0.5">Sjuksköterska / Barnmorska</div>
-              <div className="text-[12px] text-foreground/55 leading-snug">Allmän, specialist eller barnmorska</div>
+              <div className="text-body-sm leading-snug">Allmän, specialist eller barnmorska</div>
             </div>
             <span className="relative z-10 text-primary text-xl flex-shrink-0 group-hover:translate-x-1 transition-transform">→</span>
           </button>
