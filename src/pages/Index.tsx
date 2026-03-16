@@ -101,7 +101,7 @@ export default function Index() {
         </div>
 
         {/* Role label */}
-        <p className="text-caption mb-4">
+        <p className="font-display uppercase mb-4" style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.10em', color: 'rgba(255,255,255,0.35)' }}>
           Vad jobbar du som?
         </p>
 
