@@ -487,20 +487,35 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
 
         {/* Step 2: Single dropdown for role selection */}
         {step === 2 && (
-          <StepWrapper title="Välj din roll">
-            <div className="rounded-2xl border border-border bg-card p-5">
-            <SearchableSelect
-              value={roleDropdownValue}
-              onValueChange={(v) => {
-                setRoleDropdownValue(v);
-                setTimeout(() => {
-                  trackStepCompleted(2, v);
-                  setStep(3);
-                }, 300);
-              }}
-              placeholder={occupationCategory === "lakare" ? "Välj läkarroll eller specialisering..." : "Välj roll eller vidareutbildning..."}
-              options={occupationCategory === "lakare" ? doctorRoleOptions : nurseRoleOptions}
-            />
+          <StepWrapper title="Välj din roll" subtitle="Vi behöver veta din specialisering för att matcha rätt avtalspriser.">
+            <div className="flex flex-col flex-1">
+              {/* Upper decorative area */}
+              <div className="flex-1 flex flex-col items-center justify-center gap-4 py-6">
+                {occupationCategory === "lakare" ? (
+                  <Stethoscope className="w-24 h-24 text-muted-foreground/10" strokeWidth={1} />
+                ) : (
+                  <Briefcase className="w-24 h-24 text-muted-foreground/10" strokeWidth={1} />
+                )}
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/50 px-3 py-1 text-xs text-muted-foreground">
+                  {occupationCategory === "lakare" ? "Läkare" : "Sjuksköterska"}
+                </span>
+              </div>
+
+              {/* Dropdown card pushed to bottom */}
+              <div className="mt-auto rounded-2xl border border-border bg-card p-5">
+                <SearchableSelect
+                  value={roleDropdownValue}
+                  onValueChange={(v) => {
+                    setRoleDropdownValue(v);
+                    setTimeout(() => {
+                      trackStepCompleted(2, v);
+                      setStep(3);
+                    }, 300);
+                  }}
+                  placeholder={occupationCategory === "lakare" ? "Välj läkarroll eller specialisering..." : "Välj roll eller vidareutbildning..."}
+                  options={occupationCategory === "lakare" ? doctorRoleOptions : nurseRoleOptions}
+                />
+              </div>
             </div>
           </StepWrapper>
         )}
