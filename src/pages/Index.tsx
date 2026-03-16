@@ -76,7 +76,7 @@ export default function Index() {
       {/* All content as one block, pushed to lower half */}
       <main className="flex-1 flex flex-col items-center justify-end px-5" style={{ paddingBottom: '10dvh' }}>
         {/* Badge */}
-        <div className="inline-flex items-center gap-2 bg-primary/[0.08] border border-primary/20 rounded-full px-3.5 py-1 font-display text-primary tracking-wider mb-5" style={{ fontSize: '11px', fontWeight: 500 }}>
+        <div className="inline-flex items-center gap-2 bg-primary/[0.08] border border-primary/20 rounded-full font-display text-primary tracking-wider mb-[20px]" style={{ fontSize: '13px', fontWeight: 500, padding: '8px 18px' }}>
           <span className="w-5 h-5 rounded-full bg-primary/15 flex items-center justify-center text-[10px]">🛡</span>
           Officiella avtalspriser · 290 kommuner · 21 regioner
         </div>
