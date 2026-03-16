@@ -1,11 +1,15 @@
 import { useState } from "react";
-import { COMPETENCES, LOCATIONS, BUYERS } from "./radarMockData";
 import { ChevronDown, X } from "lucide-react";
 
 interface RadarFiltersProps {
   competence: string;
   location: string;
   buyer: string;
+  filterOptions: {
+    competences: string[];
+    locations: string[];
+    buyers: string[];
+  };
   onChange: (filters: { competence: string; location: string; buyer: string }) => void;
 }
 
@@ -73,25 +77,25 @@ function FilterPill({
   );
 }
 
-export default function RadarFilters({ competence, location, buyer, onChange }: RadarFiltersProps) {
+export default function RadarFilters({ competence, location, buyer, filterOptions, onChange }: RadarFiltersProps) {
   return (
     <div className="flex flex-wrap gap-2">
       <FilterPill
         label="Kompetens"
         value={competence}
-        options={COMPETENCES}
+        options={filterOptions.competences}
         onChange={(v) => onChange({ competence: v, location, buyer })}
       />
       <FilterPill
         label="Ort"
         value={location}
-        options={LOCATIONS}
+        options={filterOptions.locations}
         onChange={(v) => onChange({ competence, location: v, buyer })}
       />
       <FilterPill
         label="Beställare"
         value={buyer}
-        options={BUYERS}
+        options={filterOptions.buyers}
         onChange={(v) => onChange({ competence, location, buyer: v })}
       />
     </div>
