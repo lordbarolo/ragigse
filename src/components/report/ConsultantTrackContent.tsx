@@ -495,8 +495,8 @@ export default function ConsultantTrackContent({
               ) : (
                 <>
                   {isEmployee
-                    ? <>Din totala lönekostnad utgör en låg andel av kundpriset — det finns tydligt förhandlingsutrymme.</>
-                    : <>Du får en relativt låg andel av kundpriset — det finns tydligt förhandlingsutrymme.</>
+                    ? <>Din totala lönekostnad utgör en låg andel av kundpriset — andelen ligger under marknadens genomsnitt.</>
+                    : <>Du får en relativt låg andel av kundpriset — andelen ligger under marknadens genomsnitt.</>
                   }{" "}
                   <strong className="text-foreground/50 font-medium">Vanligt spann: 85–92%</strong>.
                 </>
