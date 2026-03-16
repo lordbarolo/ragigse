@@ -116,4 +116,45 @@
   .safe-area-bottom {
     padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
   }
+
+  /* ── Global typography utilities ──────────────────── */
+
+  /* Body text — default readable paragraph style */
+  .text-body {
+    font-size: 15px;
+    line-height: 1.6;
+    color: hsl(var(--foreground) / 0.75);
+  }
+
+  /* Body small — secondary descriptions */
+  .text-body-sm {
+    font-size: 13px;
+    line-height: 1.5;
+    color: hsl(var(--foreground) / 0.65);
+  }
+
+  /* Caption — eyebrow labels, step counters */
+  .text-caption {
+    font-size: 11px;
+    line-height: 1.4;
+    color: hsl(var(--foreground) / 0.45);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-family: var(--font-display);
+  }
+
+  /* Hint — subtle helper text, footnotes */
+  .text-hint {
+    font-size: 12px;
+    line-height: 1.5;
+    color: hsl(var(--foreground) / 0.40);
+  }
+
+  /* Micro — source refs, legal, smallest allowed */
+  .text-micro {
+    font-size: 10px;
+    line-height: 1.4;
+    color: hsl(var(--foreground) / 0.30);
+  }
 }
