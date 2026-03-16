@@ -96,7 +96,7 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }
           ].map(({ icon: Icon, label }) => (
             <div key={label} className="flex items-center gap-2 p-2.5 rounded-lg bg-foreground/[0.03]">
               <Icon className="w-3.5 h-3.5 text-primary shrink-0" />
-              <span className="text-xs text-muted-foreground font-medium">{label}</span>
+              <span className="text-hint font-medium">{label}</span>
             </div>
           ))}
         </div>
