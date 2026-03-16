@@ -28,8 +28,6 @@ const webAppJsonLd = {
 };
 
 export default function Index() {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
   const [showSurvey, setShowSurvey] = useState(false);
   const [prefillCategory, setPrefillCategory] = useState<string>("");
   const [prefillRole, setPrefillRole] = useState<string>("");
