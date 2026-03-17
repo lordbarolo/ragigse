@@ -1494,6 +1494,30 @@ export type Database = {
         }
         Relationships: []
       }
+      uppdrag_notifications: {
+        Row: {
+          created_at: string
+          id: string
+          region: string
+          roll: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          region: string
+          roll: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          region?: string
+          roll?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       work_patterns: {
         Row: {
           consultant_id: string
