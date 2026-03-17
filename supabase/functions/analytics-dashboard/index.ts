@@ -107,7 +107,6 @@ serve(async (req) => {
     
     for (const v of ["A", "B", "all"]) {
       const counts = v === "all" ? combinedCounts : (variants[v] || {});
-      const counts = variants[v] || {};
       const funnel = funnelSteps.map((step, i) => {
         const count = counts[step] || 0;
         const prevCount = i === 0 ? count : (counts[funnelSteps[i - 1]] || 0);
