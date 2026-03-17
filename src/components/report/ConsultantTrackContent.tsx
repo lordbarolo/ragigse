@@ -146,12 +146,12 @@ export default function ConsultantTrackContent({
                 <CheckCircle className="w-4 h-4 text-accent" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-accent leading-snug mb-1">
-                  Din ersättning ligger i marknadens övre skikt
-                </p>
-                <p className="text-hint leading-relaxed">
-                  Du ligger redan över det rekommenderade spannet för din roll och zon. Fokus bör ligga på tillägg snarare än grundtimpriset.
-                </p>
+               <p className="text-sm font-semibold text-accent leading-snug mb-1">
+                   Din ersättning ligger i marknadens övre skikt
+                 </p>
+                 <p className="text-hint leading-relaxed">
+                   Ersättningen överstiger det beräknade marknadsspannet för din roll och zon.
+                 </p>
               </div>
             </div>
           ) : delta && delta.monthly_vs_current_max > 0 ? (
