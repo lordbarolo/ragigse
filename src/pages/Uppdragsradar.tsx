@@ -13,11 +13,13 @@ import ReactMarkdown from "react-markdown";
 
 interface RegionPrediction {
   region_namn: string;
-  senaste_avrop_datum: string;
-  snitt_dagar_mellan_avrop: number;
+  senaste_uppdrag_datum: string;
+  snitt_dagar_mellan_uppdrag: number;
   predikterat_nasta_datum: string;
-  antal_historiska_avrop: number;
+  antal_historiska_uppdrag: number;
   dagar_kvar: number;
+  senaste_kund: string;
+  medianpris: number | null;
 }
 
 interface PredictionsResponse {
