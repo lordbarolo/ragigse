@@ -71,3 +71,9 @@ verify_jwt = false
 
 [functions.radar-predictions]
 verify_jwt = false
+
+[functions.get-avrop-predictions]
+verify_jwt = false
+
+[functions.uppdragsradar-chat]
+verify_jwt = false
