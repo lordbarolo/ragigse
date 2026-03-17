@@ -321,41 +321,38 @@ export default function ConsultantTrackContent({
         </div>
       )}
 
-      {/* ═══ Nästa steg ═══ */}
+      {/* ═══ Sammanfattning av marknadsdata ═══ */}
       {isConsultantFullAccess && rec && !isAboveThreshold && (
         <div className="relative rounded-2xl bg-gradient-to-b from-foreground/[0.06] to-foreground/[0.02] border border-foreground/10 p-6 overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent" />
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-              <Lightbulb className="w-5 h-5 text-primary" />
+              <BarChart3 className="w-5 h-5 text-primary" />
             </div>
-            <h2 className="text-lg sm:text-xl font-bold text-foreground">Marknadsdata för din roll och zon</h2>
+            <h2 className="text-lg sm:text-xl font-bold text-foreground">Sammanfattning</h2>
           </div>
-          <div className="space-y-5 relative">
-            <div className="absolute left-[15px] top-2 bottom-2 w-[2px] bg-gradient-to-b from-primary/40 to-transparent" />
-            <ScriptStep
-              step={1}
-              title="Samla underlag"
-              text="Gå igenom din marknadsanalys och notera ramavtalspriset samt det rekommenderade ersättningsspannet för din roll och zon."
-            />
-            <ScriptStep
-              step={2}
-              title="Referera till marknadsdata"
-              text={`"Ramavtalspriset för ${occupation} i min region är ${fmt(marketRate)} kr/h. Hur förhåller sig min ersättning till det?"`}
-            />
-            <ScriptStep
-              step={3}
-              title="Inled dialog"
-              text={`"Jag vill diskutera min ersättning utifrån aktuell marknadsdata."`}
-            />
+          <ul className="space-y-3">
+            <li className="flex items-start gap-3">
+              <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+              <span className="text-body-sm leading-relaxed">
+                Ramavtalspriset för {occupation} i {userZone || "din zon"} är {fmt(marketRate)} kr/h.
+              </span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+              <span className="text-body-sm leading-relaxed">
+                Marknadsspannet efter marginal ligger på {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h.
+              </span>
+            </li>
             {isEmployee && (
-              <ScriptStep
-                step={4}
-                title="Fråga om pension"
-                text={`"Ingår tjänstepension på minst 4,5% i min anställning? Det är standard i ramavtalet."`}
-              />
+              <li className="flex items-start gap-3">
+                <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                <span className="text-body-sm leading-relaxed">
+                  Tjänstepension på minst 4,5% ingår i ramavtalets kalkylmodell.
+                </span>
+              </li>
             )}
-          </div>
+          </ul>
         </div>
       )}
 
