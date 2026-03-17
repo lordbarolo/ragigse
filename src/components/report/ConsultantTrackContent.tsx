@@ -602,11 +602,11 @@ export default function ConsultantTrackContent({
         </Collapsible>
       )}
 
-      {/* Förhandlingstips */}
+      {/* Marknadsnoteringar */}
       {isConsultantFullAccess && rec && (
         <div ref={registerSectionRef?.("negotiation_script")}>
           <div className="rounded-xl bg-foreground/[0.02] border border-border/30 p-5 space-y-4">
-            <SectionHeading icon={MessageSquareQuote} title="Förhandlingstips" />
+            <SectionHeading icon={BarChart3} title="Marknadsnoteringar" />
             <ul className="space-y-3">
               {getNegotiationTips(
                 isEmployee,
