@@ -111,7 +111,7 @@ export default function FeedbackStats() {
                         <tr key={role} className="border-b last:border-0">
                           <td className="py-2">{role}</td>
                           <td className="py-2 text-center text-green-600 font-mono">{ratings["yes"] || 0}</td>
-                          <td className="py-2 text-center text-yellow-600 font-mono">{ratings["partially"] || 0}</td>
+                          <td className="py-2 text-center text-yellow-600 font-mono">{ratings["partial"] || 0}</td>
                           <td className="py-2 text-center text-red-600 font-mono">{ratings["no"] || 0}</td>
                         </tr>
                       ))}
