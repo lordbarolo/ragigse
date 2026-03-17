@@ -487,13 +487,13 @@ export default function ConsultantTrackContent({
                 </>
               ) : sharePercent >= 85 ? (
                 <>
-                  Bra andel — {isEmployee ? "din lönekostnad" : "du"} ligger nära marknadens övre gräns. <strong className="text-foreground/50 font-medium">Vanligt spann: 85–92%</strong>.
+                  {isEmployee ? "Lönekostnaden" : "Andelen"} ligger nära marknadens övre gräns. <strong className="text-foreground/50 font-medium">Vanligt spann: 85–92%</strong>.
                 </>
               ) : (
                 <>
                   {isEmployee
-                    ? <>Din totala lönekostnad utgör en låg andel av kundpriset — andelen ligger under marknadens genomsnitt.</>
-                    : <>Du får en relativt låg andel av kundpriset — andelen ligger under marknadens genomsnitt.</>
+                    ? <>Lönekostnaden utgör en lägre andel av kundpriset än marknadens genomsnitt.</>
+                    : <>Andelen av kundpriset ligger under marknadens genomsnitt.</>
                   }{" "}
                   <strong className="text-foreground/50 font-medium">Vanligt spann: 85–92%</strong>.
                 </>
