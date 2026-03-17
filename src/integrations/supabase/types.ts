@@ -1407,6 +1407,63 @@ export type Database = {
           },
         ]
       }
+      requests: {
+        Row: {
+          created_at: string
+          customer: string
+          customer_type: string | null
+          deadline: string | null
+          filled: boolean | null
+          has_offers: boolean | null
+          id: string
+          n_offers: number | null
+          price_max: number | null
+          price_median: number | null
+          price_min: number | null
+          region: string
+          request_id: string | null
+          response_window_days: number | null
+          role: string
+          specialization: string | null
+        }
+        Insert: {
+          created_at?: string
+          customer: string
+          customer_type?: string | null
+          deadline?: string | null
+          filled?: boolean | null
+          has_offers?: boolean | null
+          id?: string
+          n_offers?: number | null
+          price_max?: number | null
+          price_median?: number | null
+          price_min?: number | null
+          region: string
+          request_id?: string | null
+          response_window_days?: number | null
+          role: string
+          specialization?: string | null
+        }
+        Update: {
+          created_at?: string
+          customer?: string
+          customer_type?: string | null
+          deadline?: string | null
+          filled?: boolean | null
+          has_offers?: boolean | null
+          id?: string
+          n_offers?: number | null
+          price_max?: number | null
+          price_median?: number | null
+          price_min?: number | null
+          region?: string
+          request_id?: string | null
+          response_window_days?: number | null
+          role?: string
+          specialization?: string | null
+        }
+        Relationships: []
+      }
       salary_benchmarks: {
         Row: {
           average_monthly: number
