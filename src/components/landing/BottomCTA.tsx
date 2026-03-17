@@ -16,7 +16,7 @@ export default function BottomCTA() {
 
       <div className="relative z-10 max-w-[600px] mx-auto">
         <h2 className="font-display font-extrabold tracking-[-0.04em] leading-[1.08] mb-[18px]" style={{ fontSize: "clamp(30px, 5vw, 52px)" }}>
-          Se vad din roll<br />är <em className="not-italic text-primary">värd idag.</em>
+          Se marknadsdata<br />för <em className="not-italic text-primary">din roll.</em>
         </h2>
         <p className="text-[17px] text-foreground/65 mb-9 font-light">
           Anonymt. Kostnadsfritt. Klart på 60 sekunder.

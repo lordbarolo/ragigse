@@ -146,12 +146,12 @@ export default function ConsultantTrackContent({
                 <CheckCircle className="w-4 h-4 text-accent" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-accent leading-snug mb-1">
-                  Din ersättning ligger i marknadens övre skikt
-                </p>
-                <p className="text-hint leading-relaxed">
-                  Du ligger redan över det rekommenderade spannet för din roll och zon. Fokus bör ligga på tillägg snarare än grundtimpriset.
-                </p>
+               <p className="text-sm font-semibold text-accent leading-snug mb-1">
+                   Din ersättning ligger i marknadens övre skikt
+                 </p>
+                 <p className="text-hint leading-relaxed">
+                   Ersättningen överstiger det beräknade marknadsspannet för din roll och zon.
+                 </p>
               </div>
             </div>
           ) : delta && delta.monthly_vs_current_max > 0 ? (
@@ -174,12 +174,12 @@ export default function ConsultantTrackContent({
                 <CheckCircle className="w-4 h-4 text-accent" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-accent leading-snug mb-1">
-                  Din ersättning ligger i linje med marknaden
-                </p>
-                <p className="text-hint leading-relaxed">
-                  Du ligger nära den rekommenderade nivån. Se nedan för detaljer.
-                </p>
+                 <p className="text-sm font-semibold text-accent leading-snug mb-1">
+                   Din ersättning ligger i linje med marknaden
+                 </p>
+                 <p className="text-hint leading-relaxed">
+                   Ersättningen ligger inom det beräknade marknadsspannet. Se nedan för detaljer.
+                 </p>
               </div>
             </div>
           )}
@@ -208,23 +208,23 @@ export default function ConsultantTrackContent({
             <div>
               <SectionLabel>Förhandlingsspann · {userZone || "Din zon"}</SectionLabel>
               <div className="grid grid-cols-3 gap-1.5">
-                {/* Realistiskt */}
+                {/* Undre spann */}
                 <div className="rounded-[14px] bg-foreground/[0.035] border border-foreground/[0.07] p-3 text-center">
-                  <span className="text-micro font-bold tracking-[0.8px] uppercase block mb-1.5">Realistiskt</span>
+                  <span className="text-micro font-bold tracking-[0.8px] uppercase block mb-1.5">Undre spann</span>
                   <span className={`${monoClass} text-[19px] font-medium text-foreground/[0.8] tracking-tight leading-none block mb-0.5`}>{fmt(realisticH)}</span>
                   <span className="text-micro block mb-1">kr/h</span>
                   <span className={`${monoClass} text-micro block`}>{fmt(realisticM)} kr/mån</span>
                 </div>
-                {/* Rekommenderat */}
+                {/* Medianspann */}
                 <div className="rounded-[14px] bg-primary/[0.08] border border-primary/[0.3] p-3 text-center">
-                  <span className="text-micro font-bold tracking-[0.8px] uppercase text-primary block mb-1.5">Rekommenderat</span>
+                  <span className="text-micro font-bold tracking-[0.8px] uppercase text-primary block mb-1.5">Median</span>
                   <span className={`${monoClass} text-[19px] font-medium text-primary tracking-tight leading-none block mb-0.5`}>{fmt(recommendedH)}</span>
                   <span className="text-micro block mb-1">kr/h</span>
                   <span className={`${monoClass} text-micro text-primary/[0.5] block`}>{fmt(recommendedM)} kr/mån</span>
                 </div>
-                {/* Ambitiöst */}
+                {/* Övre spann */}
                 <div className="rounded-[14px] bg-foreground/[0.035] border border-foreground/[0.07] p-3 text-center">
-                  <span className="text-micro font-bold tracking-[0.8px] uppercase block mb-1.5">Ambitiöst</span>
+                  <span className="text-micro font-bold tracking-[0.8px] uppercase block mb-1.5">Övre spann</span>
                   <span className={`${monoClass} text-[19px] font-medium text-foreground/[0.8] tracking-tight leading-none block mb-0.5`}>{fmt(ambitiousH)}</span>
                   <span className="text-micro block mb-1">kr/h</span>
                   <span className={`${monoClass} text-micro block`}>{fmt(ambitiousM)} kr/mån</span>
@@ -233,7 +233,7 @@ export default function ConsultantTrackContent({
 
 
               <p className="text-micro text-center leading-relaxed pt-1.5">
-                Realistiskt = hög chans att få igenom · Rekommenderat = vad marknaden ger · Ambitiöst = kräver stark erfarenhet
+                Baserat på ramavtalspris och branschens marginaler i {userZone || "din zon"}.
               </p>
             </div>
           );
@@ -242,20 +242,20 @@ export default function ConsultantTrackContent({
         <div className="rounded-2xl border border-border/50 overflow-hidden">
           <div className="bg-muted/50 p-4 flex items-center gap-3">
             <Lock className="w-5 h-5 text-muted-foreground" />
-            <p className="font-semibold text-foreground">Rekommenderad ersättning — lås upp</p>
+            <p className="font-semibold text-foreground">Marknadsspann — fullständig version</p>
           </div>
           <div className="p-5 space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <StatBlock label="Din timersättning" value={`${fmt(currentHourly)} kr`} muted />
               <div className="p-3 rounded-lg bg-accent/10 relative overflow-hidden">
-                <p className="text-hint mb-1">Rekommenderad timersättning</p>
+                <p className="text-hint mb-1">Marknadsspann</p>
                 <p className="text-base font-semibold text-accent blur-sm select-none">
                   {formatPartialValue(Math.round(marketRate * 0.6))} kr
                 </p>
               </div>
             </div>
             <p className="text-body-sm text-center">
-              Lås upp den fullständiga analysen med exakta siffror, förhandlingsspann och personliga rekommendationer.
+              Den fullständiga analysen med exakta siffror och regionala jämförelser finns i den utökade rapporten.
             </p>
           </div>
         </div>
@@ -321,41 +321,38 @@ export default function ConsultantTrackContent({
         </div>
       )}
 
-      {/* ═══ Nästa steg ═══ */}
+      {/* ═══ Sammanfattning av marknadsdata ═══ */}
       {isConsultantFullAccess && rec && !isAboveThreshold && (
         <div className="relative rounded-2xl bg-gradient-to-b from-foreground/[0.06] to-foreground/[0.02] border border-foreground/10 p-6 overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent" />
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-              <Lightbulb className="w-5 h-5 text-primary" />
+              <BarChart3 className="w-5 h-5 text-primary" />
             </div>
-            <h2 className="text-lg sm:text-xl font-bold text-foreground">Marknadsdata för din roll och zon</h2>
+            <h2 className="text-lg sm:text-xl font-bold text-foreground">Sammanfattning</h2>
           </div>
-          <div className="space-y-5 relative">
-            <div className="absolute left-[15px] top-2 bottom-2 w-[2px] bg-gradient-to-b from-primary/40 to-transparent" />
-            <ScriptStep
-              step={1}
-              title="Samla underlag"
-              text="Gå igenom din marknadsanalys och notera ramavtalspriset samt det rekommenderade ersättningsspannet för din roll och zon."
-            />
-            <ScriptStep
-              step={2}
-              title="Referera till marknadsdata"
-              text={`"Ramavtalspriset för ${occupation} i min region är ${fmt(marketRate)} kr/h. Hur förhåller sig min ersättning till det?"`}
-            />
-            <ScriptStep
-              step={3}
-              title="Inled dialog"
-              text={`"Jag vill diskutera min ersättning utifrån aktuell marknadsdata."`}
-            />
+          <ul className="space-y-3">
+            <li className="flex items-start gap-3">
+              <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+              <span className="text-body-sm leading-relaxed">
+                Ramavtalspriset för {occupation} i {userZone || "din zon"} är {fmt(marketRate)} kr/h.
+              </span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+              <span className="text-body-sm leading-relaxed">
+                Marknadsspannet efter marginal ligger på {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h.
+              </span>
+            </li>
             {isEmployee && (
-              <ScriptStep
-                step={4}
-                title="Fråga om pension"
-                text={`"Ingår tjänstepension på minst 4,5% i min anställning? Det är standard i ramavtalet."`}
-              />
+              <li className="flex items-start gap-3">
+                <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                <span className="text-body-sm leading-relaxed">
+                  Tjänstepension på minst 4,5% ingår i ramavtalets kalkylmodell.
+                </span>
+              </li>
             )}
-          </div>
+          </ul>
         </div>
       )}
 
@@ -490,13 +487,13 @@ export default function ConsultantTrackContent({
                 </>
               ) : sharePercent >= 85 ? (
                 <>
-                  Bra andel — {isEmployee ? "din lönekostnad" : "du"} ligger nära marknadens övre gräns. <strong className="text-foreground/50 font-medium">Vanligt spann: 85–92%</strong>.
+                  {isEmployee ? "Lönekostnaden" : "Andelen"} ligger nära marknadens övre gräns. <strong className="text-foreground/50 font-medium">Vanligt spann: 85–92%</strong>.
                 </>
               ) : (
                 <>
                   {isEmployee
-                    ? <>Din totala lönekostnad utgör en låg andel av kundpriset — andelen ligger under marknadens genomsnitt.</>
-                    : <>Du får en relativt låg andel av kundpriset — andelen ligger under marknadens genomsnitt.</>
+                    ? <>Lönekostnaden utgör en lägre andel av kundpriset än marknadens genomsnitt.</>
+                    : <>Andelen av kundpriset ligger under marknadens genomsnitt.</>
                   }{" "}
                   <strong className="text-foreground/50 font-medium">Vanligt spann: 85–92%</strong>.
                 </>
@@ -512,20 +509,19 @@ export default function ConsultantTrackContent({
           <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent" />
           <div className="flex items-center gap-3 mb-4">
             <CheckCircle className="w-5 h-5 text-primary" />
-            <h2 className="text-lg font-bold text-foreground">Du ligger redan i toppskiktet</h2>
+            <h2 className="text-lg font-bold text-foreground">Ersättningen ligger i marknadens övre skikt</h2>
           </div>
           <p className="text-body-sm leading-relaxed mb-5">
             Din ersättning på {fmt(currentHourly)} kr/h{isEmployee ? ` (lönekostnad ${fmt(costToCompare)} kr/h)` : ""} motsvarar {sharePercent}% av vad regionen betalar till bemanningsföretag ({fmt(marketRate)} kr/h).
-            Det innebär att det i praktiken inte finns ytterligare förhandlingsutrymme för grundtimpriset i din nuvarande zon.
           </p>
           <div className="space-y-2.5">
             <p className="text-caption">
-              Ytterligare ersättningskomponenter
+              Övriga ersättningskomponenter i ramavtalet
             </p>
             {[
-              { icon: MapPin, title: "Byt till en högre priszon", desc: "Se den regionala jämförelsen — vissa zoner har betydligt högre ramavtalspriser för samma roll." },
-              { icon: Clock, title: "Jourersättning", desc: "Jour- och beredskapstillägg ligger utanför grundtimpriset och kan ge ett betydande påslag." },
-              { icon: Car, title: "Reseersättning", desc: "Om uppdraget kräver resa finns ofta möjlighet att förhandla reseersättning, boende och traktamente." },
+              { icon: MapPin, title: "Zonpriser", desc: "Ramavtalspriserna varierar per zon — se den regionala jämförelsen för samtliga zoner." },
+              { icon: Clock, title: "Jourersättning", desc: "Jour- och beredskapstillägg regleras separat och ligger utanför grundtimpriset." },
+              { icon: Car, title: "Reseersättning", desc: "Vid uppdrag som kräver resa kan reseersättning, boende och traktamente tillkomma enligt avtal." },
             ].map(({ icon: Icon, title, desc }) => (
               <div key={title} className="flex items-start gap-3 p-3.5 rounded-xl bg-foreground/[0.03] border border-border/30">
                 <Icon className="w-4 h-4 text-primary mt-0.5 shrink-0" />
@@ -595,21 +591,21 @@ export default function ConsultantTrackContent({
             <div className="p-4 rounded-xl bg-foreground/[0.02] border border-border/30 space-y-2">
               <div className="flex items-center gap-2">
                 <Briefcase className="w-4 h-4 text-primary shrink-0" />
-                <p className="font-semibold text-foreground text-sm">Om ditt bemanningsföretag behåller mer än {isEmployee ? "15%" : marginLabel}</p>
+                <p className="font-semibold text-foreground text-sm">Om marginalen överstiger {isEmployee ? "15%" : marginLabel}</p>
               </div>
               <p className="text-hint leading-relaxed">
-                Vissa bemanningsföretag tar en högre marginal. En del av den kan gå till kostnader som i vissa fall ligger på bemanningsföretaget, t.ex. resa och boende, introduktionskostnad, SITHS-kort samt HLR-utbildning. Fråga ditt bemanningsföretag vilka kostnader som ingår i deras marginal — det ger dig bättre underlag i förhandlingen.
+                Vissa bemanningsföretag tar en högre marginal. En del av den kan gå till kostnader som i vissa fall ligger på bemanningsföretaget, t.ex. resa och boende, introduktionskostnad, SITHS-kort samt HLR-utbildning.
               </p>
             </div>
           </CollapsibleContent>
         </Collapsible>
       )}
 
-      {/* Förhandlingstips */}
+      {/* Marknadsnoteringar */}
       {isConsultantFullAccess && rec && (
         <div ref={registerSectionRef?.("negotiation_script")}>
           <div className="rounded-xl bg-foreground/[0.02] border border-border/30 p-5 space-y-4">
-            <SectionHeading icon={MessageSquareQuote} title="Förhandlingstips" />
+            <SectionHeading icon={BarChart3} title="Marknadsnoteringar" />
             <ul className="space-y-3">
               {getNegotiationTips(
                 isEmployee,

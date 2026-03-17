@@ -123,17 +123,17 @@ export default function FAQ() {
         {/* CTA */}
         <section className="mt-12 text-center space-y-4">
           <h2 className="text-xl font-bold text-foreground">
-            Redo att jämföra din ersättning?
+            Jämför din ersättning med marknadsdata
           </h2>
           <p className="text-muted-foreground text-sm">
-            Det tar bara 60 sekunder och är helt gratis.
+            Det tar 60 sekunder. Ingen registrering krävs.
           </p>
           <Link
             to="/"
             className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-md font-medium hover:bg-primary/90 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            Gör din ersättningsanalys nu
+            Till marknadsanalysen
           </Link>
         </section>
       </main>
