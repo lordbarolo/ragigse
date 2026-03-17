@@ -17,58 +17,66 @@ Deno.serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
-    // Fetch aggregated data for context
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    const { data: calloffs } = await supabase
-      .from("calloff_history")
-      .select("*")
-      .eq("yrkeskategori", roll)
-      .order("calloff_date", { ascending: false })
+    // Fetch data from requests table
+    const { data: requests } = await supabase
+      .from("requests")
+      .select("customer, role, specialization, created_at, region, filled, price_median, price_min, price_max")
+      .eq("role", roll)
+      .order("created_at", { ascending: false })
       .limit(500);
 
-    // Build stats: top 5 regions by frequency, latest date per region, prediction
-    const regionMap = new Map<string, { count: number; dates: string[] }>();
-    for (const row of calloffs || []) {
-      const key = row.location;
-      if (!regionMap.has(key)) regionMap.set(key, { count: 0, dates: [] });
+    // Build stats per region
+    const regionMap = new Map<string, { count: number; dates: string[]; prices: number[]; customers: Set<string>; filledCount: number }>();
+    for (const row of requests || []) {
+      const key = row.region;
+      if (!regionMap.has(key)) regionMap.set(key, { count: 0, dates: [], prices: [], customers: new Set(), filledCount: 0 });
       const entry = regionMap.get(key)!;
       entry.count++;
-      entry.dates.push(row.calloff_date);
+      entry.dates.push(row.created_at);
+      if (row.price_median) entry.prices.push(row.price_median);
+      entry.customers.add(row.customer);
+      if (row.filled) entry.filledCount++;
     }
 
     const today = new Date();
     const regionStats = [...regionMap.entries()]
-      .map(([region, { count, dates }]) => {
-        dates.sort((a: string, b: string) => new Date(b).getTime() - new Date(a).getTime());
+      .map(([region, { count, dates, prices, customers, filledCount }]) => {
+        dates.sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
         const intervals: number[] = [];
         for (let i = 0; i < dates.length - 1 && i < 10; i++) {
           const diff = (new Date(dates[i]).getTime() - new Date(dates[i + 1]).getTime()) / (1000 * 60 * 60 * 24);
-          intervals.push(Math.round(diff));
+          if (diff > 0) intervals.push(Math.round(diff));
         }
         const avgInterval = intervals.length > 0 ? Math.round(intervals.reduce((a, b) => a + b, 0) / intervals.length) : null;
         const predictedNext = avgInterval ? new Date(new Date(dates[0]).getTime() + avgInterval * 86400000).toISOString().split("T")[0] : "okänt";
-        return { region, count, senaste: dates[0], avgInterval, predictedNext };
+        const avgPrice = prices.length > 0 ? Math.round(prices.reduce((a, b) => a + b, 0) / prices.length) : null;
+        const fillRate = count > 0 ? Math.round((filledCount / count) * 100) : 0;
+        return { region, count, senaste: dates[0].split("T")[0], avgInterval, predictedNext, avgPrice, customers: [...customers].slice(0, 3), fillRate };
       })
       .sort((a, b) => b.count - a.count)
-      .slice(0, 10);
+      .slice(0, 15);
 
     const statsText = regionStats
-      .map((r) => `- ${r.region}: ${r.count} uppdrag, senaste ${r.senaste}, snittintervall ${r.avgInterval ?? '?'} dagar, prediktion nästa: ${r.predictedNext}`)
+      .map((r) => `- ${r.region}: ${r.count} uppdrag, senaste ${r.senaste}, snittintervall ${r.avgInterval ?? '?'} dagar, prognos nästa: ${r.predictedNext}, snittpris ${r.avgPrice ?? '?'} kr/tim, tillsättningsgrad ${r.fillRate}%, kunder: ${r.customers.join(', ')}`)
       .join("\n");
+
+    const totalRequests = requests?.length || 0;
+    const totalFilled = requests?.filter(r => r.filled).length || 0;
 
     const systemPrompt = `Du är en AI-assistent specialiserad på den svenska bemanningsmarknaden inom vård och omsorg. Konsulten har rollen "${roll}".
 
-Här är aggregerad data från uppdragsdatabasen för denna roll:
+Här är aggregerad data från uppdragsdatabasen för denna roll (totalt ${totalRequests} uppdrag, ${totalFilled} tillsatta):
 
 ${statsText}
 
 Dagens datum: ${today.toISOString().split("T")[0]}
 
-Svara alltid på svenska. Var konkret — ange specifika regionnamn, datum och siffror. Ge inte generella råd. Om du inte har data för en fråga, säg det tydligt. Använd ordet "uppdrag" istället för "avrop".`;
+Svara alltid på svenska. Var konkret — ange specifika regionnamn, datum, priser och siffror. Ge inte generella råd. Om du inte har data för en fråga, säg det tydligt. Använd ordet "uppdrag" istället för "avrop". Priset avser timpris till kund (regionens pris till bemanningsföretag).`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
