@@ -115,7 +115,7 @@ export default function PermanentTrackContent({ r, isFullAccess, occupation, kom
             <>
               <div className="bg-muted/50 p-4 flex items-center gap-3">
                 <Lock className="w-5 h-5 text-muted-foreground" />
-                <p className="font-semibold text-foreground">Din gap-analys — låst</p>
+                <p className="font-semibold text-foreground">Gap-analys — fullständig version</p>
               </div>
               <CardContent className="pt-6 space-y-4">
                 <div className="grid grid-cols-2 gap-4">
@@ -128,7 +128,7 @@ export default function PermanentTrackContent({ r, isFullAccess, occupation, kom
                   </div>
                 </div>
                 <p className="text-body-sm text-center">
-                  Lås upp för att se fullständig jämförelse med marknadsdata.
+                  Den fullständiga jämförelsen med marknadsdata finns i den utökade rapporten.
                 </p>
               </CardContent>
             </>

@@ -591,10 +591,10 @@ export default function ConsultantTrackContent({
             <div className="p-4 rounded-xl bg-foreground/[0.02] border border-border/30 space-y-2">
               <div className="flex items-center gap-2">
                 <Briefcase className="w-4 h-4 text-primary shrink-0" />
-                <p className="font-semibold text-foreground text-sm">Om ditt bemanningsföretag behåller mer än {isEmployee ? "15%" : marginLabel}</p>
+                <p className="font-semibold text-foreground text-sm">Om marginalen överstiger {isEmployee ? "15%" : marginLabel}</p>
               </div>
               <p className="text-hint leading-relaxed">
-                Vissa bemanningsföretag tar en högre marginal. En del av den kan gå till kostnader som i vissa fall ligger på bemanningsföretaget, t.ex. resa och boende, introduktionskostnad, SITHS-kort samt HLR-utbildning. Fråga ditt bemanningsföretag vilka kostnader som ingår i deras marginal — det ger dig bättre underlag i förhandlingen.
+                Vissa bemanningsföretag tar en högre marginal. En del av den kan gå till kostnader som i vissa fall ligger på bemanningsföretaget, t.ex. resa och boende, introduktionskostnad, SITHS-kort samt HLR-utbildning.
               </p>
             </div>
           </CollapsibleContent>

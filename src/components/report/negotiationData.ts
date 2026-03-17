@@ -85,28 +85,28 @@ export function getNegotiationTips(
   diffPercent: number,
   yrke: string
 ): string[] {
-  const tips: string[] = [];
+  const observations: string[] = [];
 
   if (isUnderpaid) {
-    tips.push(
+    observations.push(
       `Ramavtalspriset för ${yrke} ligger ${diffPercent}% över din nuvarande ersättning.`
     );
   } else {
-    tips.push(
-      "Din ersättning ligger nära marknadsspannet."
+    observations.push(
+      "Din ersättning ligger inom marknadsspannet."
     );
   }
 
   if (isEmployee) {
-    tips.push("Tjänstepension på minst 4,5% ingår i ramavtalets kalkyl.");
-    tips.push("OB-tillägg regleras av gällande kollektivavtal.");
+    observations.push("Tjänstepension på minst 4,5% ingår i ramavtalets kalkylmodell.");
+    observations.push("OB-tillägg regleras av gällande kollektivavtal.");
   } else {
-    tips.push("Faktureringsandelen i branschen ligger normalt på 85–90% av bemanningsföretagets pris mot kund.");
+    observations.push("Faktureringsandelen i branschen ligger normalt på 85–90% av bemanningsföretagets pris mot kund.");
   }
 
-  tips.push(
+  observations.push(
     `Ramavtalspriserna för ${yrke} varierar per zon — se den regionala jämförelsen för fullständig data.`
   );
 
-  return tips;
+  return observations;
 }
