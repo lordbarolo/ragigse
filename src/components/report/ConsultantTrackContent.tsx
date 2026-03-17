@@ -242,20 +242,20 @@ export default function ConsultantTrackContent({
         <div className="rounded-2xl border border-border/50 overflow-hidden">
           <div className="bg-muted/50 p-4 flex items-center gap-3">
             <Lock className="w-5 h-5 text-muted-foreground" />
-            <p className="font-semibold text-foreground">Rekommenderad ersättning — lås upp</p>
+            <p className="font-semibold text-foreground">Marknadsspann — fullständig version</p>
           </div>
           <div className="p-5 space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <StatBlock label="Din timersättning" value={`${fmt(currentHourly)} kr`} muted />
               <div className="p-3 rounded-lg bg-accent/10 relative overflow-hidden">
-                <p className="text-hint mb-1">Rekommenderad timersättning</p>
+                <p className="text-hint mb-1">Marknadsspann</p>
                 <p className="text-base font-semibold text-accent blur-sm select-none">
                   {formatPartialValue(Math.round(marketRate * 0.6))} kr
                 </p>
               </div>
             </div>
             <p className="text-body-sm text-center">
-              Lås upp den fullständiga analysen med exakta siffror, förhandlingsspann och personliga rekommendationer.
+              Den fullständiga analysen med exakta siffror och regionala jämförelser finns i den utökade rapporten.
             </p>
           </div>
         </div>
