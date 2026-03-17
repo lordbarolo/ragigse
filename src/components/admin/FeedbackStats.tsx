@@ -23,7 +23,7 @@ interface FeedbackData {
 
 const ratingConfig: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
   yes: { label: "Ja", icon: <ThumbsUp className="w-4 h-4" />, color: "bg-green-100 text-green-700 border-green-200" },
-  partially: { label: "Delvis", icon: <Minus className="w-4 h-4" />, color: "bg-yellow-100 text-yellow-700 border-yellow-200" },
+  partial: { label: "Delvis", icon: <Minus className="w-4 h-4" />, color: "bg-yellow-100 text-yellow-700 border-yellow-200" },
   no: { label: "Nej", icon: <ThumbsDown className="w-4 h-4" />, color: "bg-red-100 text-red-700 border-red-200" },
 };
 
@@ -111,7 +111,7 @@ export default function FeedbackStats() {
                         <tr key={role} className="border-b last:border-0">
                           <td className="py-2">{role}</td>
                           <td className="py-2 text-center text-green-600 font-mono">{ratings["yes"] || 0}</td>
-                          <td className="py-2 text-center text-yellow-600 font-mono">{ratings["partially"] || 0}</td>
+                          <td className="py-2 text-center text-yellow-600 font-mono">{ratings["partial"] || 0}</td>
                           <td className="py-2 text-center text-red-600 font-mono">{ratings["no"] || 0}</td>
                         </tr>
                       ))}
