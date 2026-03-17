@@ -174,12 +174,12 @@ export default function ConsultantTrackContent({
                 <CheckCircle className="w-4 h-4 text-accent" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-accent leading-snug mb-1">
-                  Din ersättning ligger i linje med marknaden
-                </p>
-                <p className="text-hint leading-relaxed">
-                  Du ligger nära den rekommenderade nivån. Se nedan för detaljer.
-                </p>
+                 <p className="text-sm font-semibold text-accent leading-snug mb-1">
+                   Din ersättning ligger i linje med marknaden
+                 </p>
+                 <p className="text-hint leading-relaxed">
+                   Ersättningen ligger inom det beräknade marknadsspannet. Se nedan för detaljer.
+                 </p>
               </div>
             </div>
           )}
