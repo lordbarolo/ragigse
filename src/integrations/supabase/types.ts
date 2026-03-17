@@ -1409,58 +1409,94 @@ export type Database = {
       }
       requests: {
         Row: {
-          created_at: string
+          avg_req_score: number | null
+          avg_total_score: number | null
+          contract_price: number | null
+          created_at: string | null
           customer: string
-          customer_type: string | null
+          customer_type: string
           deadline: string | null
-          filled: boolean | null
-          has_offers: boolean | null
-          id: string
-          n_offers: number | null
+          filled: boolean
+          has_offers: boolean
+          inserted_at: string
+          is_public: boolean
+          level: string | null
+          n_offers: number
+          n_offers_reported: number | null
+          n_unique_suppliers: number | null
+          pct_meets_scope: number | null
           price_max: number | null
           price_median: number | null
           price_min: number | null
-          region: string
-          request_id: string | null
+          price_std: number | null
+          region: string | null
+          request_id: number
           response_window_days: number | null
-          role: string
+          role: string | null
+          rubrik_raw: string | null
           specialization: string | null
+          unit: string | null
+          winning_supplier: string | null
         }
         Insert: {
-          created_at?: string
+          avg_req_score?: number | null
+          avg_total_score?: number | null
+          contract_price?: number | null
+          created_at?: string | null
           customer: string
-          customer_type?: string | null
+          customer_type: string
           deadline?: string | null
-          filled?: boolean | null
-          has_offers?: boolean | null
-          id?: string
-          n_offers?: number | null
+          filled?: boolean
+          has_offers?: boolean
+          inserted_at?: string
+          is_public?: boolean
+          level?: string | null
+          n_offers?: number
+          n_offers_reported?: number | null
+          n_unique_suppliers?: number | null
+          pct_meets_scope?: number | null
           price_max?: number | null
           price_median?: number | null
           price_min?: number | null
-          region: string
-          request_id?: string | null
+          price_std?: number | null
+          region?: string | null
+          request_id: number
           response_window_days?: number | null
-          role: string
+          role?: string | null
+          rubrik_raw?: string | null
           specialization?: string | null
+          unit?: string | null
+          winning_supplier?: string | null
         }
         Update: {
-          created_at?: string
+          avg_req_score?: number | null
+          avg_total_score?: number | null
+          contract_price?: number | null
+          created_at?: string | null
           customer?: string
-          customer_type?: string | null
+          customer_type?: string
           deadline?: string | null
-          filled?: boolean | null
-          has_offers?: boolean | null
-          id?: string
-          n_offers?: number | null
+          filled?: boolean
+          has_offers?: boolean
+          inserted_at?: string
+          is_public?: boolean
+          level?: string | null
+          n_offers?: number
+          n_offers_reported?: number | null
+          n_unique_suppliers?: number | null
+          pct_meets_scope?: number | null
           price_max?: number | null
           price_median?: number | null
           price_min?: number | null
-          region?: string
-          request_id?: string | null
+          price_std?: number | null
+          region?: string | null
+          request_id?: number
           response_window_days?: number | null
-          role?: string
+          role?: string | null
+          rubrik_raw?: string | null
           specialization?: string | null
+          unit?: string | null
+          winning_supplier?: string | null
         }
         Relationships: []
       }
