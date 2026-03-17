@@ -23,7 +23,7 @@ interface FeedbackData {
 
 const ratingConfig: Record<string, { label: string; icon: React.ReactNode; color: string }> = {
   yes: { label: "Ja", icon: <ThumbsUp className="w-4 h-4" />, color: "bg-green-100 text-green-700 border-green-200" },
-  partially: { label: "Delvis", icon: <Minus className="w-4 h-4" />, color: "bg-yellow-100 text-yellow-700 border-yellow-200" },
+  partial: { label: "Delvis", icon: <Minus className="w-4 h-4" />, color: "bg-yellow-100 text-yellow-700 border-yellow-200" },
   no: { label: "Nej", icon: <ThumbsDown className="w-4 h-4" />, color: "bg-red-100 text-red-700 border-red-200" },
 };
 
