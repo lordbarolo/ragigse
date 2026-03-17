@@ -310,18 +310,22 @@ export default function Uppdragsradar() {
                           <div className="flex flex-wrap gap-x-4 gap-y-1 text-[12px] text-muted-foreground">
                             <span className="flex items-center gap-1">
                               <Calendar className="w-3 h-3" />
-                              Senaste: {p.senaste_avrop_datum}
+                              Senaste: {p.senaste_uppdrag_datum}
                             </span>
                             <span className="flex items-center gap-1">
                               <Clock className="w-3 h-3" />
-                              Snitt: {p.snitt_dagar_mellan_avrop}d
+                              Snitt: {p.snitt_dagar_mellan_uppdrag}d
                             </span>
                             <span>
-                              {p.antal_historiska_avrop} historiska uppdrag
+                              {p.antal_historiska_uppdrag} historiska uppdrag
                             </span>
+                            {p.medianpris && (
+                              <span>{p.medianpris} kr/tim</span>
+                            )}
                           </div>
                           <div className="mt-2 text-[12px] text-muted-foreground">
                             Prognos nästa: <span className="text-foreground font-medium">{p.predikterat_nasta_datum}</span>
+                            {p.senaste_kund && <span className="ml-2">· {p.senaste_kund}</span>}
                           </div>
                         </div>
                         <div className="flex flex-col items-end gap-2 shrink-0">
