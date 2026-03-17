@@ -509,20 +509,19 @@ export default function ConsultantTrackContent({
           <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent" />
           <div className="flex items-center gap-3 mb-4">
             <CheckCircle className="w-5 h-5 text-primary" />
-            <h2 className="text-lg font-bold text-foreground">Du ligger redan i toppskiktet</h2>
+            <h2 className="text-lg font-bold text-foreground">Ersättningen ligger i marknadens övre skikt</h2>
           </div>
           <p className="text-body-sm leading-relaxed mb-5">
             Din ersättning på {fmt(currentHourly)} kr/h{isEmployee ? ` (lönekostnad ${fmt(costToCompare)} kr/h)` : ""} motsvarar {sharePercent}% av vad regionen betalar till bemanningsföretag ({fmt(marketRate)} kr/h).
-            Det innebär att det i praktiken inte finns ytterligare förhandlingsutrymme för grundtimpriset i din nuvarande zon.
           </p>
           <div className="space-y-2.5">
             <p className="text-caption">
-              Ytterligare ersättningskomponenter
+              Övriga ersättningskomponenter i ramavtalet
             </p>
             {[
-              { icon: MapPin, title: "Byt till en högre priszon", desc: "Se den regionala jämförelsen — vissa zoner har betydligt högre ramavtalspriser för samma roll." },
-              { icon: Clock, title: "Jourersättning", desc: "Jour- och beredskapstillägg ligger utanför grundtimpriset och kan ge ett betydande påslag." },
-              { icon: Car, title: "Reseersättning", desc: "Om uppdraget kräver resa finns ofta möjlighet att förhandla reseersättning, boende och traktamente." },
+              { icon: MapPin, title: "Zonpriser", desc: "Ramavtalspriserna varierar per zon — se den regionala jämförelsen för samtliga zoner." },
+              { icon: Clock, title: "Jourersättning", desc: "Jour- och beredskapstillägg regleras separat och ligger utanför grundtimpriset." },
+              { icon: Car, title: "Reseersättning", desc: "Vid uppdrag som kräver resa kan reseersättning, boende och traktamente tillkomma enligt avtal." },
             ].map(({ icon: Icon, title, desc }) => (
               <div key={title} className="flex items-start gap-3 p-3.5 rounded-xl bg-foreground/[0.03] border border-border/30">
                 <Icon className="w-4 h-4 text-primary mt-0.5 shrink-0" />
