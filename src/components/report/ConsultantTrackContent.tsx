@@ -208,23 +208,23 @@ export default function ConsultantTrackContent({
             <div>
               <SectionLabel>Förhandlingsspann · {userZone || "Din zon"}</SectionLabel>
               <div className="grid grid-cols-3 gap-1.5">
-                {/* Realistiskt */}
+                {/* Undre spann */}
                 <div className="rounded-[14px] bg-foreground/[0.035] border border-foreground/[0.07] p-3 text-center">
-                  <span className="text-micro font-bold tracking-[0.8px] uppercase block mb-1.5">Realistiskt</span>
+                  <span className="text-micro font-bold tracking-[0.8px] uppercase block mb-1.5">Undre spann</span>
                   <span className={`${monoClass} text-[19px] font-medium text-foreground/[0.8] tracking-tight leading-none block mb-0.5`}>{fmt(realisticH)}</span>
                   <span className="text-micro block mb-1">kr/h</span>
                   <span className={`${monoClass} text-micro block`}>{fmt(realisticM)} kr/mån</span>
                 </div>
-                {/* Rekommenderat */}
+                {/* Medianspann */}
                 <div className="rounded-[14px] bg-primary/[0.08] border border-primary/[0.3] p-3 text-center">
-                  <span className="text-micro font-bold tracking-[0.8px] uppercase text-primary block mb-1.5">Rekommenderat</span>
+                  <span className="text-micro font-bold tracking-[0.8px] uppercase text-primary block mb-1.5">Median</span>
                   <span className={`${monoClass} text-[19px] font-medium text-primary tracking-tight leading-none block mb-0.5`}>{fmt(recommendedH)}</span>
                   <span className="text-micro block mb-1">kr/h</span>
                   <span className={`${monoClass} text-micro text-primary/[0.5] block`}>{fmt(recommendedM)} kr/mån</span>
                 </div>
-                {/* Ambitiöst */}
+                {/* Övre spann */}
                 <div className="rounded-[14px] bg-foreground/[0.035] border border-foreground/[0.07] p-3 text-center">
-                  <span className="text-micro font-bold tracking-[0.8px] uppercase block mb-1.5">Ambitiöst</span>
+                  <span className="text-micro font-bold tracking-[0.8px] uppercase block mb-1.5">Övre spann</span>
                   <span className={`${monoClass} text-[19px] font-medium text-foreground/[0.8] tracking-tight leading-none block mb-0.5`}>{fmt(ambitiousH)}</span>
                   <span className="text-micro block mb-1">kr/h</span>
                   <span className={`${monoClass} text-micro block`}>{fmt(ambitiousM)} kr/mån</span>
@@ -233,7 +233,7 @@ export default function ConsultantTrackContent({
 
 
               <p className="text-micro text-center leading-relaxed pt-1.5">
-                Realistiskt = hög chans att få igenom · Rekommenderat = vad marknaden ger · Ambitiöst = kräver stark erfarenhet
+                Baserat på ramavtalspris och branschens marginaler i {userZone || "din zon"}.
               </p>
             </div>
           );
