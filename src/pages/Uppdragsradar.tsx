@@ -64,12 +64,14 @@ export default function Uppdragsradar() {
   const [isStreaming, setIsStreaming] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
-  // Redirect to login if not authenticated
+  const isDev = import.meta.env.DEV || window.location.hostname.includes("lovableproject.com") || window.location.hostname.includes("id-preview--");
+
+  // Redirect to login if not authenticated (skip in dev)
   useEffect(() => {
-    if (!authLoading && !user) {
+    if (!isDev && !authLoading && !user) {
       navigate("/logga-in", { replace: true });
     }
-  }, [authLoading, user, navigate]);
+  }, [authLoading, user, navigate, isDev]);
 
   // Fetch predictions when roll is selected
   const { data, isLoading, error } = useQuery({
