@@ -174,6 +174,9 @@ export default function Radar() {
         onClose={() => setDetailOpen(false)}
       />
 
+      {/* Reijdar AI chat */}
+      <ReijdarChat selectedRole={filters.competence} />
+
       {/* Bottom nav */}
       <BottomNav />
     </div>
