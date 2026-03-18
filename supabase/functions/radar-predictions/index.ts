@@ -129,9 +129,11 @@ Deno.serve(async (req) => {
     }
 
     for (const r of (requestRows || []) as any[]) {
+      const normalized = normalizeRole(r.role);
+      if (!normalized) continue; // skip unmappable roles like "Övrig"
       unified.push({
         buyer: r.customer,
-        competence: r.role,
+        competence: normalized,
         location: r.region || "Okänd",
         zon: "",
         duration_weeks: null,
