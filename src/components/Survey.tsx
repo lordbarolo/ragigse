@@ -772,7 +772,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
             <ChevronLeft className="w-4 h-4" />
             Tillbaka
           </button>
-          {step === 5 && (
+          {step === 6 && (
             <button
               onClick={() => {
                 if (data.currentSalary <= 0) {
@@ -780,17 +780,18 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                   return;
                 }
                 if (!canProceed) return;
-                trackStepCompleted(5, data.currentSalary);
-                setStep(6);
+                trackStepCompleted(6, data.currentSalary);
+                handleNext();
               }}
+              disabled={saving}
               className={`flex-1 flex items-center justify-center gap-2 py-4 px-6 rounded-xl text-base font-semibold transition-all duration-200 active:scale-[0.97] ${
-                canProceed
+                canProceed && !saving
                   ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
                   : "bg-muted text-muted-foreground cursor-not-allowed"
               }`}
             >
-              Nästa
-              <ArrowRight className="w-5 h-5" />
+              {saving ? "Analyserar..." : "Visa min analys"}
+              {!saving && <ArrowRight className="w-5 h-5" />}
             </button>
           )}
         </div>
