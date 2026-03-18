@@ -1291,6 +1291,373 @@ export type Database = {
         }
         Relationships: []
       }
+      ref_pings: {
+        Row: {
+          confirmed_until: string | null
+          created_at: string
+          expires_at: string
+          id: string
+          reference_id: string
+          requested_by: string
+          requester_name: string
+          responded_at: string | null
+          response_token: string
+          sent_at: string
+          status: Database["public"]["Enums"]["ref_ping_status"]
+        }
+        Insert: {
+          confirmed_until?: string | null
+          created_at?: string
+          expires_at: string
+          id?: string
+          reference_id: string
+          requested_by: string
+          requester_name: string
+          responded_at?: string | null
+          response_token: string
+          sent_at?: string
+          status?: Database["public"]["Enums"]["ref_ping_status"]
+        }
+        Update: {
+          confirmed_until?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          reference_id?: string
+          requested_by?: string
+          requester_name?: string
+          responded_at?: string | null
+          response_token?: string
+          sent_at?: string
+          status?: Database["public"]["Enums"]["ref_ping_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ref_pings_reference_id_fkey"
+            columns: ["reference_id"]
+            isOneToOne: false
+            referencedRelation: "ref_references"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ref_pings_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ref_profile_views: {
+        Row: {
+          created_at: string
+          id: string
+          profile_id: string
+          referrer: string | null
+          viewer_fingerprint: string | null
+          viewer_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          profile_id: string
+          referrer?: string | null
+          viewer_fingerprint?: string | null
+          viewer_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          profile_id?: string
+          referrer?: string | null
+          viewer_fingerprint?: string | null
+          viewer_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ref_profile_views_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ref_profile_views_viewer_id_fkey"
+            columns: ["viewer_id"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ref_profiles: {
+        Row: {
+          bankid_verified: boolean
+          bio: string | null
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          license_number: string | null
+          linkedin_url: string | null
+          phone: string | null
+          profile_status: string | null
+          role_type: string | null
+          score_breakdown: Json | null
+          score_updated_at: string | null
+          specialty: string | null
+          status_checklist: Json | null
+          status_updated_at: string | null
+          trust_score: number | null
+          trust_tier: string | null
+          updated_at: string
+          years_licensed: number | null
+        }
+        Insert: {
+          bankid_verified?: boolean
+          bio?: string | null
+          created_at?: string
+          email: string
+          full_name: string
+          id: string
+          license_number?: string | null
+          linkedin_url?: string | null
+          phone?: string | null
+          profile_status?: string | null
+          role_type?: string | null
+          score_breakdown?: Json | null
+          score_updated_at?: string | null
+          specialty?: string | null
+          status_checklist?: Json | null
+          status_updated_at?: string | null
+          trust_score?: number | null
+          trust_tier?: string | null
+          updated_at?: string
+          years_licensed?: number | null
+        }
+        Update: {
+          bankid_verified?: boolean
+          bio?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          license_number?: string | null
+          linkedin_url?: string | null
+          phone?: string | null
+          profile_status?: string | null
+          role_type?: string | null
+          score_breakdown?: Json | null
+          score_updated_at?: string | null
+          specialty?: string | null
+          status_checklist?: Json | null
+          status_updated_at?: string | null
+          trust_score?: number | null
+          trust_tier?: string | null
+          updated_at?: string
+          years_licensed?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ref_profiles_role_type_fkey"
+            columns: ["role_type"]
+            isOneToOne: false
+            referencedRelation: "ref_role_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ref_references: {
+        Row: {
+          bankid_signature_id: string | null
+          competencies: Json | null
+          confirmed_at: string | null
+          created_at: string
+          giver_email: string
+          giver_id: string | null
+          giver_name: string | null
+          id: string
+          individual_id: string
+          invite_token: string
+          period_end: string | null
+          period_start: string
+          recommendation_score: number | null
+          reference_text: string | null
+          relationship: string
+          revoked_at: string | null
+          status: Database["public"]["Enums"]["ref_reference_status"]
+          workplace: string
+        }
+        Insert: {
+          bankid_signature_id?: string | null
+          competencies?: Json | null
+          confirmed_at?: string | null
+          created_at?: string
+          giver_email: string
+          giver_id?: string | null
+          giver_name?: string | null
+          id?: string
+          individual_id: string
+          invite_token: string
+          period_end?: string | null
+          period_start: string
+          recommendation_score?: number | null
+          reference_text?: string | null
+          relationship: string
+          revoked_at?: string | null
+          status?: Database["public"]["Enums"]["ref_reference_status"]
+          workplace: string
+        }
+        Update: {
+          bankid_signature_id?: string | null
+          competencies?: Json | null
+          confirmed_at?: string | null
+          created_at?: string
+          giver_email?: string
+          giver_id?: string | null
+          giver_name?: string | null
+          id?: string
+          individual_id?: string
+          invite_token?: string
+          period_end?: string | null
+          period_start?: string
+          recommendation_score?: number | null
+          reference_text?: string | null
+          relationship?: string
+          revoked_at?: string | null
+          status?: Database["public"]["Enums"]["ref_reference_status"]
+          workplace?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ref_references_giver_id_fkey"
+            columns: ["giver_id"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ref_references_individual_id_fkey"
+            columns: ["individual_id"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ref_role_profiles: {
+        Row: {
+          decay_end_months: number
+          decay_rate_per_month: number
+          description: string | null
+          gold_months: number
+          id: string
+          label: string
+          short_label: string
+          warn_months: number | null
+        }
+        Insert: {
+          decay_end_months: number
+          decay_rate_per_month?: number
+          description?: string | null
+          gold_months: number
+          id: string
+          label: string
+          short_label: string
+          warn_months?: number | null
+        }
+        Update: {
+          decay_end_months?: number
+          decay_rate_per_month?: number
+          description?: string | null
+          gold_months?: number
+          id?: string
+          label?: string
+          short_label?: string
+          warn_months?: number | null
+        }
+        Relationships: []
+      }
+      ref_user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["ref_app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["ref_app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["ref_app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      ref_verifications: {
+        Row: {
+          checked_at: string
+          created_at: string | null
+          id: string
+          notes: string | null
+          profile_id: string
+          result: string
+          type: string
+          valid_until: string
+        }
+        Insert: {
+          checked_at?: string
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          profile_id: string
+          result: string
+          type: string
+          valid_until?: string
+        }
+        Update: {
+          checked_at?: string
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          profile_id?: string
+          result?: string
+          type?: string
+          valid_until?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ref_verifications_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ref_verified_domains: {
+        Row: {
+          created_at: string | null
+          domain: string
+          id: string
+          org_name: string
+        }
+        Insert: {
+          created_at?: string | null
+          domain: string
+          id?: string
+          org_name: string
+        }
+        Update: {
+          created_at?: string | null
+          domain?: string
+          id?: string
+          org_name?: string
+        }
+        Relationships: []
+      }
       referrals: {
         Row: {
           clicked: boolean
@@ -1743,10 +2110,98 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      ref_calculate_profile_status: {
+        Args: { p_profile_id: string }
+        Returns: Json
+      }
+      ref_calculate_trust_score: {
+        Args: { p_profile_id: string }
+        Returns: Json
+      }
+      ref_create_ping: {
+        Args: { _reference_id: string; _requester_name: string }
+        Returns: string
+      }
+      ref_get_ping_by_token: {
+        Args: { _token: string }
+        Returns: {
+          competencies: Json
+          confirmed_at: string
+          expires_at: string
+          id: string
+          individual_name: string
+          individual_specialty: string
+          period_end: string
+          period_start: string
+          recommendation_score: number
+          reference_id: string
+          reference_text: string
+          relationship: string
+          requester_name: string
+          responded_at: string
+          response_token: string
+          sent_at: string
+          status: Database["public"]["Enums"]["ref_ping_status"]
+          workplace: string
+        }[]
+      }
+      ref_get_reference_by_invite_token: {
+        Args: { _token: string }
+        Returns: {
+          competencies: Json
+          confirmed_at: string
+          created_at: string
+          giver_email: string
+          giver_id: string
+          giver_name: string
+          id: string
+          individual_id: string
+          individual_name: string
+          individual_specialty: string
+          invite_token: string
+          period_end: string
+          period_start: string
+          recommendation_score: number
+          reference_text: string
+          relationship: string
+          status: Database["public"]["Enums"]["ref_reference_status"]
+          workplace: string
+        }[]
+      }
+      ref_has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["ref_app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      ref_log_profile_view: {
+        Args: { _fingerprint?: string; _profile_id: string; _referrer?: string }
+        Returns: undefined
+      }
+      ref_respond_to_ping: {
+        Args: {
+          _status: Database["public"]["Enums"]["ref_ping_status"]
+          _token: string
+        }
+        Returns: undefined
+      }
+      ref_submit_reference: {
+        Args: {
+          _competencies: Json
+          _giver_id: string
+          _giver_name: string
+          _recommendation_score: number
+          _reference_text: string
+          _token: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
-      [_ in never]: never
+      ref_app_role: "individual" | "reference_giver" | "client"
+      ref_ping_status: "sent" | "confirmed" | "denied" | "expired" | "dismissed"
+      ref_reference_status: "pending" | "active" | "revoked" | "expired"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1873,6 +2328,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      ref_app_role: ["individual", "reference_giver", "client"],
+      ref_ping_status: ["sent", "confirmed", "denied", "expired", "dismissed"],
+      ref_reference_status: ["pending", "active", "revoked", "expired"],
+    },
   },
 } as const
