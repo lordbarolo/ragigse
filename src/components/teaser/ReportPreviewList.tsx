@@ -18,7 +18,7 @@ const CONSULTANT_ITEMS = [
   },
   {
     icon: TrendingUp,
-    title: "Lönegap-analys",
+    title: "Ersättningsgap-analys",
     desc: "Hur din nuvarande ersättning förhåller sig till marknaden",
   },
   {
@@ -29,7 +29,7 @@ const CONSULTANT_ITEMS = [
   {
     icon: MessageSquare,
     title: "Förhandlingsscript",
-    desc: "Steg-för-steg — exakt vad du ska säga i lönesamtalet",
+    desc: "Steg-för-steg — exakt vad du ska säga i ersättningssamtalet",
   },
 ];
 

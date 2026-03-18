@@ -266,10 +266,10 @@ export default function ConsultantTrackContent({
         <div>
           <SectionLabel>Ersättningsjämförelse</SectionLabel>
           <div className="rounded-[18px] bg-foreground/[0.035] border border-foreground/[0.07] overflow-hidden">
-            {/* Din lön row */}
+            {/* Din ersättning row */}
             <div className="flex items-center justify-between p-3.5 bg-accent/[0.04]">
               <div>
-                <p className="text-micro font-semibold tracking-[0.8px] uppercase mb-1">Din lön</p>
+                <p className="text-micro font-semibold tracking-[0.8px] uppercase mb-1">{isEmployee ? "Din lön" : "Din ersättning"}</p>
                 <p className={`${monoClass} text-[22px] font-medium tracking-tight text-accent`}>{fmt(currentHourly)} kr/h</p>
                 <p className={`${monoClass} text-micro mt-0.5`}>{fmt(currentMonthly)} kr/mån</p>
               </div>

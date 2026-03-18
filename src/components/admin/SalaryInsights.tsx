@@ -69,8 +69,8 @@ const ET_LABELS: Record<string, string> = {
 };
 
 const ST_LABELS: Record<string, string> = {
-  hourly: "Timlön",
-  monthly: "Månadslön",
+  hourly: "Timersättning",
+  monthly: "Månadsersättning",
   all: "Alla",
 };
 
@@ -136,7 +136,7 @@ export default function SalaryInsights() {
     const rows = filterRows(data.by_role);
     downloadCsv(
       "ersattning_per_roll.csv",
-      ["Yrkesroll", "Anställningstyp", "Lönetyp", "Antal", "Snitt", "Median", "Min", "Max"],
+      ["Yrkesroll", "Anställningstyp", "Ersättningstyp", "Antal", "Snitt", "Median", "Min", "Max"],
       rows.map((r) => [r.role, etLabel(r.employment_type), stLabel(r.salary_type), String(r.count), String(r.avg), String(r.median), String(r.min), String(r.max)])
     );
   };
@@ -146,7 +146,7 @@ export default function SalaryInsights() {
     const rows = filterRows(data.by_kommun).slice(0, 50);
     downloadCsv(
       "ersattning_per_kommun.csv",
-      ["Kommun", "Anställningstyp", "Lönetyp", "Antal", "Snitt", "Median", "Min", "Max"],
+      ["Kommun", "Anställningstyp", "Ersättningstyp", "Antal", "Snitt", "Median", "Min", "Max"],
       rows.map((k) => [k.kommun, etLabel(k.employment_type), stLabel(k.salary_type), String(k.count), String(k.avg), String(k.median), String(k.min), String(k.max)])
     );
   };
@@ -157,7 +157,7 @@ export default function SalaryInsights() {
     const kommunRows = filterRows(data.by_kommun).map((k) => ["kommun", "", k.kommun, etLabel(k.employment_type), stLabel(k.salary_type), String(k.count), String(k.avg), String(k.median), String(k.min), String(k.max)]);
     downloadCsv(
       "ersattningsanalys_komplett.csv",
-      ["Kategori", "Yrkesroll", "Kommun", "Anställningstyp", "Lönetyp", "Antal", "Snitt", "Median", "Min", "Max"],
+      ["Kategori", "Yrkesroll", "Kommun", "Anställningstyp", "Ersättningstyp", "Antal", "Snitt", "Median", "Min", "Max"],
       [...roleRows, ...kommunRows]
     );
   };
@@ -165,7 +165,7 @@ export default function SalaryInsights() {
   const FilterBar = () => (
     <div className="flex items-center gap-3 flex-wrap">
       <Badge variant="outline" className="text-sm">
-        {data!.total_leads_with_salary} leads med lönedata
+        {data!.total_leads_with_salary} leads med ersättningsdata
       </Badge>
       {(data!.filtered_out ?? 0) > 0 && (
         <Badge variant="secondary" className="text-sm">
@@ -244,7 +244,7 @@ export default function SalaryInsights() {
         <CardContent>
           {!data && !loading && (
             <p className="text-muted-foreground text-center py-6 text-sm">
-              Klicka "Ladda data" för att hämta aggregerad lönestatistik.
+              Klicka "Ladda data" för att hämta aggregerad ersättningsstatistik.
             </p>
           )}
 
@@ -266,7 +266,7 @@ export default function SalaryInsights() {
                       <tr className="text-left">
                         <th className="p-2 font-medium">Yrkesroll</th>
                         <th className="p-2 font-medium">Typ</th>
-                        <th className="p-2 font-medium">Lönetyp</th>
+                        <th className="p-2 font-medium">Ersättningstyp</th>
                         <th className="p-2 font-medium text-right">Antal</th>
                         <th className="p-2 font-medium text-right">Snitt</th>
                         <th className="p-2 font-medium text-right">Median</th>
@@ -315,7 +315,7 @@ export default function SalaryInsights() {
                       <tr className="text-left">
                         <th className="p-2 font-medium">Kommun</th>
                         <th className="p-2 font-medium">Typ</th>
-                        <th className="p-2 font-medium">Lönetyp</th>
+                        <th className="p-2 font-medium">Ersättningstyp</th>
                         <th className="p-2 font-medium text-right">Antal</th>
                         <th className="p-2 font-medium text-right">Snitt</th>
                         <th className="p-2 font-medium text-right">Median</th>
@@ -361,7 +361,7 @@ export default function SalaryInsights() {
                           <th className="p-2 font-medium">Yrkesroll</th>
                           <th className="p-2 font-medium">Kommun</th>
                           <th className="p-2 font-medium">Typ</th>
-                          <th className="p-2 font-medium">Lönetyp</th>
+                          <th className="p-2 font-medium">Ersättningstyp</th>
                           <th className="p-2 font-medium text-right">Antal</th>
                           <th className="p-2 font-medium text-right">Snitt</th>
                           <th className="p-2 font-medium text-right">Median</th>
