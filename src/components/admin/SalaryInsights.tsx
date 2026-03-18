@@ -136,7 +136,7 @@ export default function SalaryInsights() {
     const rows = filterRows(data.by_role);
     downloadCsv(
       "ersattning_per_roll.csv",
-      ["Yrkesroll", "Anställningstyp", "Lönetyp", "Antal", "Snitt", "Median", "Min", "Max"],
+      ["Yrkesroll", "Anställningstyp", "Ersättningstyp", "Antal", "Snitt", "Median", "Min", "Max"],
       rows.map((r) => [r.role, etLabel(r.employment_type), stLabel(r.salary_type), String(r.count), String(r.avg), String(r.median), String(r.min), String(r.max)])
     );
   };
