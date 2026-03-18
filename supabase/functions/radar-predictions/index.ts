@@ -6,11 +6,11 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-interface CalloffRow {
+interface UnifiedRow {
   buyer: string;
-  yrkeskategori: string;
-  zon: string;
+  competence: string;
   location: string;
+  zon: string;
   duration_weeks: number | null;
   calloff_date: string;
 }
@@ -47,25 +47,71 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    let query = supabase
+    // Build queries for both tables in parallel
+    let historyQuery = supabase
       .from("calloff_history")
-      .select("*")
+      .select("buyer, yrkeskategori, zon, location, duration_weeks, calloff_date")
       .order("calloff_date", { ascending: false });
 
-    if (competenceFilter) query = query.eq("yrkeskategori", competenceFilter);
-    if (locationFilter) query = query.eq("location", locationFilter);
-    if (buyerFilter) query = query.eq("buyer", buyerFilter);
+    let importsQuery = supabase
+      .from("calloff_imports")
+      .select("customer, role, region, calloff_date, duration_weeks")
+      .not("calloff_date", "is", null)
+      .not("customer", "is", null)
+      .not("role", "is", null)
+      .order("calloff_date", { ascending: false });
 
-    const { data: rows, error } = await query;
-    if (error) throw error;
+    if (competenceFilter) {
+      historyQuery = historyQuery.eq("yrkeskategori", competenceFilter);
+      importsQuery = importsQuery.eq("role", competenceFilter);
+    }
+    if (locationFilter) {
+      historyQuery = historyQuery.eq("location", locationFilter);
+      importsQuery = importsQuery.eq("region", locationFilter);
+    }
+    if (buyerFilter) {
+      historyQuery = historyQuery.eq("buyer", buyerFilter);
+      importsQuery = importsQuery.eq("customer", buyerFilter);
+    }
+
+    const [{ data: historyRows, error: e1 }, { data: importRows, error: e2 }] =
+      await Promise.all([historyQuery, importsQuery]);
+
+    if (e1) throw e1;
+    if (e2) throw e2;
+
+    // Normalize both sources into UnifiedRow[]
+    const unified: UnifiedRow[] = [];
+
+    for (const r of (historyRows || []) as any[]) {
+      unified.push({
+        buyer: r.buyer,
+        competence: r.yrkeskategori,
+        location: r.location,
+        zon: r.zon,
+        duration_weeks: r.duration_weeks,
+        calloff_date: r.calloff_date,
+      });
+    }
+
+    for (const r of (importRows || []) as any[]) {
+      unified.push({
+        buyer: r.customer,
+        competence: r.role,
+        location: r.region || "Okänd",
+        zon: "",
+        duration_weeks: r.duration_weeks,
+        calloff_date: r.calloff_date,
+      });
+    }
 
     const today = new Date();
     const todayMs = today.getTime();
 
-    // Group by buyer + yrkeskategori + location
-    const groups = new Map<string, CalloffRow[]>();
-    for (const row of rows as CalloffRow[]) {
-      const key = `${row.buyer}|${row.yrkeskategori}|${row.location}`;
+    // Group by buyer + competence + location
+    const groups = new Map<string, UnifiedRow[]>();
+    for (const row of unified) {
+      const key = `${row.buyer}|${row.competence}|${row.location}`;
       if (!groups.has(key)) groups.set(key, []);
       groups.get(key)!.push(row);
     }
@@ -74,7 +120,6 @@ Deno.serve(async (req) => {
 
     for (const [key, calloffs] of groups) {
       const [buyer, competence, location] = key.split("|");
-      // Sort by date descending
       calloffs.sort(
         (a, b) =>
           new Date(b.calloff_date).getTime() -
@@ -82,9 +127,8 @@ Deno.serve(async (req) => {
       );
 
       const count = calloffs.length;
-      if (count < 2) continue; // Need at least 2 for interval
+      if (count < 2) continue;
 
-      // Calculate intervals between consecutive calloffs
       const intervals: number[] = [];
       for (let i = 0; i < calloffs.length - 1; i++) {
         const d1 = new Date(calloffs[i].calloff_date).getTime();
@@ -100,17 +144,13 @@ Deno.serve(async (req) => {
         (todayMs - lastDate.getTime()) / (1000 * 60 * 60 * 24)
       );
 
-      // Determine status based on where we are in the interval cycle
       const ratio = daysSinceLast / avgInterval;
       let status: "high" | "medium" | "watch";
       let forecastWindow: string;
 
       if (ratio >= 0.8) {
         status = "high";
-        const weeksLeft = Math.max(
-          1,
-          Math.round(((avgInterval - daysSinceLast) / 7) * 1)
-        );
+        const weeksLeft = Math.max(1, Math.round((avgInterval - daysSinceLast) / 7));
         forecastWindow =
           weeksLeft <= 1
             ? "Sannolikt inom 1 vecka"
@@ -157,27 +197,23 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Sort: high first, then medium, then watch. Within same status, by daysSinceLast/avgInterval ratio desc
+    // Sort: high first, then medium, then watch
     const statusOrder = { high: 0, medium: 1, watch: 2 };
     predictions.sort((a, b) => {
       if (statusOrder[a.status] !== statusOrder[b.status])
         return statusOrder[a.status] - statusOrder[b.status];
-      // Higher ratio = more urgent
       const ratioA =
-        parseInt(a.lastActivity.match(/(\d+)/)?.[1] || "0") /
-        a.avgIntervalDays;
+        parseInt(a.lastActivity.match(/(\d+)/)?.[1] || "0") / a.avgIntervalDays;
       const ratioB =
-        parseInt(b.lastActivity.match(/(\d+)/)?.[1] || "0") /
-        b.avgIntervalDays;
+        parseInt(b.lastActivity.match(/(\d+)/)?.[1] || "0") / b.avgIntervalDays;
       return ratioB - ratioA;
     });
 
-    // Also return distinct filter values
-    const allRows = rows as CalloffRow[];
+    // Return distinct filter values from merged data
     const filters = {
-      competences: [...new Set(allRows.map((r) => r.yrkeskategori))].sort(),
-      locations: [...new Set(allRows.map((r) => r.location))].sort(),
-      buyers: [...new Set(allRows.map((r) => r.buyer))].sort(),
+      competences: [...new Set(unified.map((r) => r.competence))].sort(),
+      locations: [...new Set(unified.map((r) => r.location))].sort(),
+      buyers: [...new Set(unified.map((r) => r.buyer))].sort(),
     };
 
     return new Response(JSON.stringify({ predictions, filters }), {
