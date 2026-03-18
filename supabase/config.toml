@@ -77,3 +77,6 @@ verify_jwt = false
 
 [functions.uppdragsradar-chat]
 verify_jwt = false
+
+[functions.bankid-verify]
+verify_jwt = false
