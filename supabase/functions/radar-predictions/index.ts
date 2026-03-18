@@ -80,7 +80,7 @@ Deno.serve(async (req) => {
 
     let importsQuery = supabase
       .from("calloff_imports")
-      .select("customer, role, region, calloff_date, duration_weeks")
+      .select("customer, role, region, calloff_date, duration_weeks, customer_type")
       .not("calloff_date", "is", null)
       .not("customer", "is", null)
       .not("role", "is", null)
