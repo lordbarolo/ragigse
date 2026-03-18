@@ -18,6 +18,7 @@ interface PublicProfileData {
   years_licensed: number | null;
   trust_score: number;
   trust_tier: string;
+  score_updated_at: string | null;
   score_breakdown: {
     role: { earned: number; max: number; chiefs: number; colleagues: number };
     domain: { earned: number; max: number; verified_count: number };
@@ -259,7 +260,10 @@ export default function PublicProfile() {
         )}
 
         {/* Footer */}
-        <div className="mt-12 text-center text-xs text-muted-foreground">
+        <div className="mt-12 text-center text-xs text-muted-foreground space-y-1">
+          {data.score_updated_at && (
+            <p>Senast verifierad: {new Date(data.score_updated_at).toLocaleDateString("sv-SE")}</p>
+          )}
           <p>Verifierad profil via CompCare</p>
         </div>
       </div>
