@@ -202,13 +202,13 @@ Deno.serve(async (req) => {
       }
 
       const reasons: string[] = [
-        `${count} avrop senaste 18 månaderna hos ${buyer}`,
+        `${count} uppdrag senaste 18 månaderna hos ${buyer}`,
         `Genomsnittligt intervall: ${avgInterval} dagar`,
-        `Senaste avropet var ${daysSinceLast} dagar sedan`,
+        `Senaste uppdraget var ${daysSinceLast} dagar sedan`,
       ];
 
       if (ratio >= 0.9) {
-        reasons.push("Nästa avropsfönster har sannolikt redan öppnat");
+        reasons.push("Nästa uppdragsfönster har sannolikt redan öppnat");
       }
 
       const history = calloffs.map((c) => ({
