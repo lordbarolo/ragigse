@@ -165,7 +165,7 @@ export default function SalaryInsights() {
   const FilterBar = () => (
     <div className="flex items-center gap-3 flex-wrap">
       <Badge variant="outline" className="text-sm">
-        {data!.total_leads_with_salary} leads med lönedata
+        {data!.total_leads_with_salary} leads med ersättningsdata
       </Badge>
       {(data!.filtered_out ?? 0) > 0 && (
         <Badge variant="secondary" className="text-sm">
