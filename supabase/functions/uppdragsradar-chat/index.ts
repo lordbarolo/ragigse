@@ -22,17 +22,42 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Fetch data from requests table
-    const { data: requests } = await supabase
-      .from("requests")
-      .select("customer, role, specialization, created_at, region, filled, price_median, price_min, price_max")
-      .eq("role", roll)
-      .order("created_at", { ascending: false })
-      .limit(500);
+    // Fetch from both tables in parallel
+    const [{ data: requests }, { data: imports }] = await Promise.all([
+      supabase
+        .from("requests")
+        .select("customer, role, specialization, created_at, region, filled, price_median, price_min, price_max")
+        .eq("role", roll)
+        .order("created_at", { ascending: false })
+        .limit(500),
+      supabase
+        .from("calloff_imports")
+        .select("customer, role, specialization, calloff_date, region, filled, price_median, price_min, price_max")
+        .eq("role", roll)
+        .order("calloff_date", { ascending: false })
+        .limit(500),
+    ]);
+
+    // Normalize imports to match requests shape
+    const normalizedImports = (imports || []).map((r: any) => ({
+      customer: r.customer || "Okänd",
+      role: r.role,
+      specialization: r.specialization,
+      created_at: r.calloff_date,
+      region: r.region,
+      filled: r.filled ?? false,
+      price_median: r.price_median,
+      price_min: r.price_min,
+      price_max: r.price_max,
+    }));
+
+    const allData = [...(requests || []), ...normalizedImports].filter(
+      (r: any) => r.region && r.created_at
+    );
 
     // Build stats per region
     const regionMap = new Map<string, { count: number; dates: string[]; prices: number[]; customers: Set<string>; filledCount: number }>();
-    for (const row of requests || []) {
+    for (const row of allData) {
       const key = row.region;
       if (!regionMap.has(key)) regionMap.set(key, { count: 0, dates: [], prices: [], customers: new Set(), filledCount: 0 });
       const entry = regionMap.get(key)!;
@@ -65,8 +90,8 @@ Deno.serve(async (req) => {
       .map((r) => `- ${r.region}: ${r.count} uppdrag, senaste ${r.senaste}, snittintervall ${r.avgInterval ?? '?'} dagar, prognos nästa: ${r.predictedNext}, snittpris ${r.avgPrice ?? '?'} kr/tim, tillsättningsgrad ${r.fillRate}%, kunder: ${r.customers.join(', ')}`)
       .join("\n");
 
-    const totalRequests = requests?.length || 0;
-    const totalFilled = requests?.filter(r => r.filled).length || 0;
+    const totalRequests = allData.length;
+    const totalFilled = allData.filter((r: any) => r.filled).length;
 
     const systemPrompt = `Du är en AI-assistent specialiserad på den svenska bemanningsmarknaden inom vård och omsorg. Konsulten har rollen "${roll}".
 
