@@ -133,7 +133,7 @@ Deno.serve(async (req) => {
 
     for (const r of (importRows || []) as any[]) {
       unified.push({
-        buyer: r.customer,
+        buyer: r.customer_type === "Privat" ? "Privat" : r.customer,
         competence: r.role,
         location: r.region || "Okänd",
         zon: "",
