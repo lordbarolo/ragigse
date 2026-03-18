@@ -18,7 +18,7 @@ const CONSULTANT_ITEMS = [
   },
   {
     icon: TrendingUp,
-    title: "Lönegap-analys",
+    title: "Ersättningsgap-analys",
     desc: "Hur din nuvarande ersättning förhåller sig till marknaden",
   },
   {
