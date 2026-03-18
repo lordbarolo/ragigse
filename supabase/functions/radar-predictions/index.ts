@@ -47,7 +47,7 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Build queries for both tables in parallel
+    // Build queries for all three tables in parallel
     let historyQuery = supabase
       .from("calloff_history")
       .select("buyer, yrkeskategori, zon, location, duration_weeks, calloff_date")
@@ -61,26 +61,38 @@ Deno.serve(async (req) => {
       .not("role", "is", null)
       .order("calloff_date", { ascending: false });
 
+    let requestsQuery = supabase
+      .from("requests")
+      .select("customer, role, region, created_at")
+      .not("created_at", "is", null)
+      .not("customer", "is", null)
+      .not("role", "is", null)
+      .order("created_at", { ascending: false });
+
     if (competenceFilter) {
       historyQuery = historyQuery.eq("yrkeskategori", competenceFilter);
       importsQuery = importsQuery.eq("role", competenceFilter);
+      requestsQuery = requestsQuery.eq("role", competenceFilter);
     }
     if (locationFilter) {
       historyQuery = historyQuery.eq("location", locationFilter);
       importsQuery = importsQuery.eq("region", locationFilter);
+      requestsQuery = requestsQuery.eq("region", locationFilter);
     }
     if (buyerFilter) {
       historyQuery = historyQuery.eq("buyer", buyerFilter);
       importsQuery = importsQuery.eq("customer", buyerFilter);
+      requestsQuery = requestsQuery.eq("customer", buyerFilter);
     }
 
-    const [{ data: historyRows, error: e1 }, { data: importRows, error: e2 }] =
-      await Promise.all([historyQuery, importsQuery]);
+    const [{ data: historyRows, error: e1 }, { data: importRows, error: e2 }, { data: requestRows, error: e3 }] =
+      await Promise.all([historyQuery, importsQuery, requestsQuery]);
 
     if (e1) throw e1;
     if (e2) throw e2;
+    if (e3) throw e3;
 
-    // Normalize both sources into UnifiedRow[]
+    // Normalize all three sources into UnifiedRow[]
     const unified: UnifiedRow[] = [];
 
     for (const r of (historyRows || []) as any[]) {
@@ -102,6 +114,17 @@ Deno.serve(async (req) => {
         zon: "",
         duration_weeks: r.duration_weeks,
         calloff_date: r.calloff_date,
+      });
+    }
+
+    for (const r of (requestRows || []) as any[]) {
+      unified.push({
+        buyer: r.customer,
+        competence: r.role,
+        location: r.region || "Okänd",
+        zon: "",
+        duration_weeks: null,
+        calloff_date: r.created_at,
       });
     }
 
