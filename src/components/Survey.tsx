@@ -263,8 +263,8 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
         2: roleDropdownValue,
         3: data.kommun,
         4: data.employmentType,
-        5: data.currentSalary,
-        6: data.obShare,
+        5: data.obShare,
+        6: data.currentSalary,
       };
       trackStepCompleted(step, stepAnswers[step]);
       setStep(step + 1);
