@@ -146,7 +146,7 @@ export default function SalaryInsights() {
     const rows = filterRows(data.by_kommun).slice(0, 50);
     downloadCsv(
       "ersattning_per_kommun.csv",
-      ["Kommun", "Anställningstyp", "Lönetyp", "Antal", "Snitt", "Median", "Min", "Max"],
+      ["Kommun", "Anställningstyp", "Ersättningstyp", "Antal", "Snitt", "Median", "Min", "Max"],
       rows.map((k) => [k.kommun, etLabel(k.employment_type), stLabel(k.salary_type), String(k.count), String(k.avg), String(k.median), String(k.min), String(k.max)])
     );
   };
