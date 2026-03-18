@@ -88,7 +88,7 @@ Deno.serve(async (req) => {
 
     let requestsQuery = supabase
       .from("requests")
-      .select("customer, role, region, created_at")
+      .select("customer, role, region, created_at, customer_type")
       .not("created_at", "is", null)
       .not("customer", "is", null)
       .not("role", "is", null)
