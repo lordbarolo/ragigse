@@ -5,6 +5,7 @@ import ConversionFunnel from "@/components/admin/ConversionFunnel";
 import DailyVisitors from "@/components/admin/DailyVisitors";
 import ReferralStats from "@/components/admin/ReferralStats";
 import FeedbackStats from "@/components/admin/FeedbackStats";
+import { useAdminAnalytics } from "@/hooks/useAdminAnalytics";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -72,6 +73,10 @@ export default function Admin() {
   const [auditOptins, setAuditOptins] = useState<AuditOptin[]>([]);
   const [auditLoading, setAuditLoading] = useState(true);
 
+  // Shared analytics period
+  const [analyticsPeriod, setAnalyticsPeriod] = useState<7 | 30 | 90>(30);
+  const { data: analyticsData, loading: analyticsLoading, refetch: refetchAnalytics } = useAdminAnalytics(analyticsPeriod);
+
   // Import form state
   const [catalogName, setCatalogName] = useState("");
   const [versionLabel, setVersionLabel] = useState("");
@@ -113,7 +118,6 @@ export default function Admin() {
   };
 
   useEffect(() => {
-    // Check sessionStorage for existing auth
     if (sessionStorage.getItem("admin_auth") === "true") {
       setAuthenticated(true);
     }
@@ -170,26 +174,11 @@ export default function Admin() {
 
     setImporting(true);
     try {
-      // 1. Create version
-      const { data: version, error: vErr } = await supabase
-        .from("contract_versions")
-        .insert({
-          catalog_name: catalogName,
-          version_label: versionLabel,
-          effective_from: effectiveFrom,
-          notes: notes || null,
-        })
-        .select()
-        .single();
-
-      if (vErr) throw vErr;
-
-      // 2. Parse CSV: yrkeskategori;zon;typ;timpris_kund;detaljer
+      // Parse CSV: yrkeskategori;zon;typ;timpris_kund;detaljer
       const lines = ratesCsv.trim().split("\n").filter(l => l.trim());
       const rates = lines.map((line) => {
         const [yrkeskategori, zon, typ, timpris_kund, detaljer] = line.split(";").map(s => s.trim());
         return {
-          version_id: version.id,
           yrkeskategori,
           zon,
           typ,
@@ -202,13 +191,20 @@ export default function Admin() {
         throw new Error("Ogiltigt timpris – kontrollera CSV-formatet");
       }
 
-      const { error: rErr } = await supabase
-        .from("contract_version_rates")
-        .insert(rates);
+      const { data: result, error } = await supabase.functions.invoke("import-contract", {
+        body: {
+          catalog_name: catalogName,
+          version_label: versionLabel,
+          effective_from: effectiveFrom,
+          notes: notes || null,
+          rates,
+        },
+      });
 
-      if (rErr) throw rErr;
+      if (error) throw error;
+      if (result?.error) throw new Error(result.error);
 
-      toast({ title: "Import klar", description: `${rates.length} rader importerade för ${versionLabel}` });
+      toast({ title: "Import klar", description: `${result.rows_imported} rader importerade för ${versionLabel}` });
       setCatalogName("");
       setVersionLabel("");
       setEffectiveFrom("");
@@ -254,18 +250,47 @@ export default function Admin() {
     }
   };
 
+  // Period selector for analytics sections
+  const PeriodSelector = () => (
+    <div className="flex items-center gap-2">
+      {([7, 30, 90] as const).map((p) => (
+        <Button
+          key={p}
+          variant={analyticsPeriod === p ? "default" : "outline"}
+          size="sm"
+          onClick={() => setAnalyticsPeriod(p)}
+        >
+          {p}d
+        </Button>
+      ))}
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-background p-4 md:p-8 max-w-6xl mx-auto space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Admin – Marknadsbevakning</h1>
-        <p className="text-muted-foreground mt-1">Importera priskataloger, hantera versioner och kör diff-analyser.</p>
+      <div className="flex items-center justify-between flex-wrap gap-3">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Admin – Marknadsbevakning</h1>
+          <p className="text-muted-foreground mt-1">Importera priskataloger, hantera versioner och kör diff-analyser.</p>
+        </div>
+        <PeriodSelector />
       </div>
 
-      {/* Conversion Funnel */}
-      <DailyVisitors />
+      {/* Daily Visitors - shared analytics data */}
+      <DailyVisitors
+        data={analyticsData}
+        loading={analyticsLoading}
+        period={analyticsPeriod}
+        onRefresh={refetchAnalytics}
+      />
 
-      {/* Conversion Funnel */}
-      <ConversionFunnel />
+      {/* Conversion Funnel - shared analytics data */}
+      <ConversionFunnel
+        data={analyticsData}
+        loading={analyticsLoading}
+        period={analyticsPeriod}
+        onRefresh={refetchAnalytics}
+      />
 
       {/* Referral Stats */}
       <ReferralStats />
@@ -436,7 +461,6 @@ export default function Admin() {
             Kör diff
           </Button>
 
-          {/* Summary */}
           {diffSummary && (
             <>
               <Separator />
@@ -451,7 +475,6 @@ export default function Admin() {
             </>
           )}
 
-          {/* Results table */}
           {diffResults && diffResults.length > 0 && (
             <div className="overflow-x-auto max-h-[400px] overflow-y-auto border rounded-md">
               <table className="w-full text-sm">
