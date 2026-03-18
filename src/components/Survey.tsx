@@ -122,7 +122,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
   const stepEntryTime = useRef<number>(Date.now());
   const surveyStarted = useRef(false);
 
-  const STEP_NAMES = ["yrkeskategori", "specialisering", "kommun", "anstallningsform", "ersattning", "inhyrd_eller_fast"];
+  const STEP_NAMES = ["yrkeskategori", "specialisering", "kommun", "anstallningsform", "uppdragsgivare", "ersattning"];
 
   useEffect(() => {
     stepEntryTime.current = Date.now();
@@ -249,8 +249,8 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
       case 2: return !!resolvedYrke;
       case 3: return !!data.kommun;
       case 4: return !!data.employmentType;
-      case 5: return data.currentSalary > 0;
-      case 6: return true; // OB is optional
+      case 5: return !!data.obShare;
+      case 6: return data.currentSalary > 0;
       default: return false;
     }
   })();
@@ -263,8 +263,8 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
         2: roleDropdownValue,
         3: data.kommun,
         4: data.employmentType,
-        5: data.currentSalary,
-        6: data.obShare,
+        5: data.obShare,
+        6: data.currentSalary,
       };
       trackStepCompleted(step, stepAnswers[step]);
       setStep(step + 1);
@@ -589,7 +589,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
 
         {/* Step 4: Anställningsform */}
         {step === 4 && (
-          <StepWrapper title="Vilken är din uppdragsform?">
+          <StepWrapper title="Är du anställd eller egen företagare?">
             <div className="rounded-2xl border border-border bg-card p-5 flex flex-col gap-3">
               {([
                 { value: "anstalld" as const, label: "Anställd", desc: "Lön från vårdgivare eller bemanningsföretag" },
@@ -623,8 +623,43 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
           </StepWrapper>
         )}
 
-        {/* Step 5: Ersättning */}
+        {/* Step 5: Uppdragsgivare */}
         {step === 5 && (
+          <StepWrapper title="Vem är din uppdragsgivare?">
+            <div className="rounded-2xl border border-border bg-card p-5 flex flex-col gap-3">
+              {([
+                { value: "bemanningsforetag", label: "Bemanningsföretag" },
+                { value: "region", label: "Region" },
+                { value: "kommun", label: "Kommun" },
+                { value: "privat_vardgivare", label: "Privat vårdgivare" },
+              ]).map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => {
+                    setData({ ...data, obShare: opt.value });
+                    trackStepCompleted(5, opt.value);
+                    setTimeout(() => setStep(6), 300);
+                  }}
+                  className={`group w-full py-5 px-5 rounded-xl border !border-l-[3px] bg-card text-left transition-all active:scale-[0.98] flex items-center gap-3 ${
+                    data.obShare === opt.value
+                      ? "border-primary !border-l-primary bg-primary/[0.06] ring-1 ring-primary/20"
+                      : "border-border !border-l-primary hover:border-primary/40 hover:bg-primary/[0.03]"
+                  }`}
+                >
+                  {data.obShare === opt.value && (
+                    <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center shrink-0">
+                      <Check className="w-3 h-3 text-primary-foreground" />
+                    </div>
+                  )}
+                  <span className="text-base font-medium text-foreground">{opt.label}</span>
+                </button>
+              ))}
+            </div>
+          </StepWrapper>
+        )}
+
+        {/* Step 6: Ersättning (final step) */}
+        {step === 6 && (
           <StepWrapper title="Vad får du i ersättning idag?">
             <div className="rounded-2xl border border-border bg-card p-5 space-y-5">
               <div className="flex gap-3">
@@ -668,97 +703,6 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
           </StepWrapper>
         )}
 
-        {/* Step 6: Inhyrd eller fast anställd */}
-        {step === 6 && (
-          <StepWrapper title="Arbetar du som inhyrd eller fast anställd?">
-            <div className="rounded-2xl border border-border bg-card p-5 flex flex-col gap-3">
-              {([
-                { value: "inhyrd", label: "Inhyrd", desc: "Jag arbetar via bemanningsföretag" },
-                { value: "fast", label: "Fast anställd", desc: "Jag är anställd direkt av arbetsgivaren" },
-              ]).map((opt) => (
-              <button
-                  key={opt.value}
-                  onClick={() => {
-                    const updated = { ...data, obShare: opt.value };
-                    setData(updated);
-                    trackStepCompleted(6, opt.value);
-                    // Directly submit with updated data
-                    setSaving(true);
-                    const leadId = crypto.randomUUID();
-                    const track = "consultant";
-                    if (isPostHogReady()) {
-                      try { posthog.identify(leadId); } catch { /* silent */ }
-                    }
-                    const couponCode = searchParams.get("coupon");
-                    const couponParam = couponCode ? `?coupon=${encodeURIComponent(couponCode)}` : "";
-                    const doSubmit = async () => {
-                      try {
-                        await supabase.from("leads").insert({
-                          id: leadId,
-                          employment_type: updated.employmentType,
-                          yrke: updated.yrke,
-                          kommun: updated.kommun,
-                          experience: updated.experience,
-                          salary_type: updated.salaryType,
-                          current_salary: updated.currentSalary,
-                          ob_share: opt.value || null,
-                        });
-                        const reportPromise = supabase.functions.invoke("create-report", {
-                          body: {
-                            lead_id: leadId,
-                            occupation: updated.yrke,
-                            employment_type: updated.employmentType,
-                            kommun: updated.kommun,
-                            experience: updated.experience,
-                            current_salary: updated.currentSalary,
-                            salary_type: updated.salaryType,
-                            track,
-                            commute,
-                            ob_share: opt.value || null,
-                          },
-                        });
-                        const timeoutPromise = new Promise<{ data: null; error: Error }>((resolve) =>
-                          setTimeout(() => resolve({ data: null, error: new Error("timeout") }), 3000)
-                        );
-                        const { data: reportData } = await Promise.race([reportPromise, timeoutPromise]);
-                        if (reportData?.report_id) {
-                          sessionStorage.setItem("reportId", reportData.report_id);
-                          if (reportData.ab_variant) sessionStorage.setItem("abVariant", reportData.ab_variant);
-                        }
-                      } catch (err) {
-                        console.error("[Survey] Submit error:", err);
-                      }
-                      sessionStorage.setItem("leadId", leadId);
-                      sessionStorage.setItem("surveyData", JSON.stringify({ ...updated, track }));
-                      if (benchmarkResult) sessionStorage.setItem("benchmarkResult", JSON.stringify(benchmarkResult));
-                      if (pricingResult) sessionStorage.setItem("pricingResult", JSON.stringify(pricingResult));
-                      const totalTime = surveyStartTime.current ? Math.round((Date.now() - surveyStartTime.current) / 1000) : 0;
-                      const hourlyRate = updated.salaryType === "monthly" ? Math.round(updated.currentSalary / 167) : updated.currentSalary;
-                      trackEvent("survey_completed", {
-                        total_steps: TOTAL_STEPS,
-                        total_time_seconds: totalTime,
-                        role: updated.yrke,
-                        zone: updated.kommun,
-                        current_hourly_rate: hourlyRate,
-                        experience_years: updated.experience,
-                        employment_type: updated.employmentType === "foretagare" ? "Eget bolag" : "Fast",
-                        agency_name: null,
-                        report_id: sessionStorage.getItem("reportId") || null,
-                      });
-                      navigate(`/resultat/${leadId}${couponParam}`);
-                    };
-                    doSubmit();
-                  }}
-                  disabled={saving}
-                  className="group w-full py-5 px-5 rounded-xl border border-border !border-l-[3px] !border-l-primary bg-card text-left transition-all active:scale-[0.98] hover:border-primary/40 hover:bg-primary/[0.03] disabled:opacity-50"
-                >
-                  <span className="text-base font-medium text-foreground">{opt.label}</span>
-                  <p className="text-body-sm mt-0.5">{opt.desc}</p>
-                </button>
-              ))}
-            </div>
-          </StepWrapper>
-        )}
 
       </div>
 
@@ -772,7 +716,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
             <ChevronLeft className="w-4 h-4" />
             Tillbaka
           </button>
-          {step === 5 && (
+          {step === 6 && (
             <button
               onClick={() => {
                 if (data.currentSalary <= 0) {
@@ -780,17 +724,18 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                   return;
                 }
                 if (!canProceed) return;
-                trackStepCompleted(5, data.currentSalary);
-                setStep(6);
+                trackStepCompleted(6, data.currentSalary);
+                handleNext();
               }}
+              disabled={saving}
               className={`flex-1 flex items-center justify-center gap-2 py-4 px-6 rounded-xl text-base font-semibold transition-all duration-200 active:scale-[0.97] ${
-                canProceed
+                canProceed && !saving
                   ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
                   : "bg-muted text-muted-foreground cursor-not-allowed"
               }`}
             >
-              Nästa
-              <ArrowRight className="w-5 h-5" />
+              {saving ? "Analyserar..." : "Visa min analys"}
+              {!saving && <ArrowRight className="w-5 h-5" />}
             </button>
           )}
         </div>
