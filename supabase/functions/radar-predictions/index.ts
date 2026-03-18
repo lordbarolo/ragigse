@@ -17,6 +17,11 @@ function normalizeRole(role: string): string {
   return role;
 }
 
+const SWEDISH_MONTHS = [
+  "januari", "februari", "mars", "april", "maj", "juni",
+  "juli", "augusti", "september", "oktober", "november", "december",
+];
+
 interface UnifiedRow {
   buyer: string;
   competence: string;
@@ -40,6 +45,15 @@ interface Prediction {
   summary: string;
   reasons: string[];
   history: { date: string; description: string }[];
+}
+
+/** Format a timespan in months into a human-readable Swedish string */
+function formatTimespan(months: number): string {
+  if (months >= 24) {
+    const years = Math.round(months / 12);
+    return `senaste ${years} åren`;
+  }
+  return `senaste ${months} månaderna`;
 }
 
 Deno.serve(async (req) => {
@@ -143,6 +157,8 @@ Deno.serve(async (req) => {
 
     const today = new Date();
     const todayMs = today.getTime();
+    const currentMonth = today.getMonth(); // 0-indexed
+    const nextMonth = (currentMonth + 1) % 12;
 
     // Group by buyer + competence + location
     const groups = new Map<string, UnifiedRow[]>();
@@ -176,10 +192,30 @@ Deno.serve(async (req) => {
       );
 
       const lastDate = new Date(calloffs[0].calloff_date);
+      const oldestDate = new Date(calloffs[calloffs.length - 1].calloff_date);
       const daysSinceLast = Math.round(
         (todayMs - lastDate.getTime()) / (1000 * 60 * 60 * 24)
       );
 
+      // --- Dynamic timespan ---
+      const spanMonths = Math.max(1, Math.round(
+        (todayMs - oldestDate.getTime()) / (1000 * 60 * 60 * 24 * 30.44)
+      ));
+      const timespanLabel = formatTimespan(spanMonths);
+
+      // --- Recency gate ---
+      // Caps maximum status based on how recently the last activity was
+      const monthsSinceLast = daysSinceLast / 30.44;
+      let maxStatus: "high" | "medium" | "watch";
+      if (monthsSinceLast > 24) {
+        maxStatus = "watch";
+      } else if (monthsSinceLast > 12) {
+        maxStatus = "medium";
+      } else {
+        maxStatus = "high";
+      }
+
+      // --- Base status from ratio ---
       const ratio = daysSinceLast / avgInterval;
       let status: "high" | "medium" | "watch";
       let forecastWindow: string;
@@ -201,14 +237,60 @@ Deno.serve(async (req) => {
         forecastWindow = `Bevaka kommande ${Math.max(4, weeksUntil)}–${Math.max(6, weeksUntil + 2)} veckor`;
       }
 
+      // --- Seasonal signal boost ---
+      // Count how many historical calloffs fall in the current or next month
+      const seasonalMatches = calloffs.filter((c) => {
+        const m = new Date(c.calloff_date).getMonth();
+        return m === currentMonth || m === nextMonth;
+      }).length;
+
+      // Count distinct years for seasonal context
+      const seasonalYears = new Set(
+        calloffs
+          .filter((c) => {
+            const m = new Date(c.calloff_date).getMonth();
+            return m === currentMonth || m === nextMonth;
+          })
+          .map((c) => new Date(c.calloff_date).getFullYear())
+      ).size;
+
+      const totalYearsSpan = Math.max(1, Math.ceil(spanMonths / 12));
+
+      // Boost: ≥2 seasonal matches in distinct years AND last activity < 24 months
+      if (seasonalMatches >= 2 && seasonalYears >= 2 && monthsSinceLast <= 24) {
+        if (status === "watch") status = "medium";
+        else if (status === "medium") status = "high";
+      }
+
+      // --- Apply recency gate (cap status) ---
+      const statusOrder = { watch: 0, medium: 1, high: 2 };
+      if (statusOrder[status] > statusOrder[maxStatus]) {
+        status = maxStatus;
+      }
+
+      // --- Build reasons with dynamic copy ---
       const reasons: string[] = [
-        `${count} uppdrag senaste 18 månaderna hos ${buyer}`,
+        `${count} uppdrag ${timespanLabel} hos ${buyer}`,
         `Genomsnittligt intervall: ${avgInterval} dagar`,
         `Senaste uppdraget var ${daysSinceLast} dagar sedan`,
       ];
 
-      if (ratio >= 0.9) {
+      if (ratio >= 0.9 && maxStatus === "high") {
         reasons.push("Nästa uppdragsfönster har sannolikt redan öppnat");
+      }
+
+      if (monthsSinceLast > 24) {
+        reasons.push("Inget uppdrag senaste 24 månaderna – lägre sannolikhet");
+      } else if (monthsSinceLast > 12) {
+        reasons.push("Inget uppdrag senaste 12 månaderna – avvaktande");
+      }
+
+      // Seasonal reason
+      if (seasonalMatches >= 2 && seasonalYears >= 2) {
+        const monthName = SWEDISH_MONTHS[currentMonth];
+        reasons.push(
+          `Historiskt mönster: uppdrag i ${monthName} ${seasonalYears} av ${totalYearsSpan} år`
+        );
       }
 
       const history = calloffs.map((c) => ({
@@ -223,21 +305,21 @@ Deno.serve(async (req) => {
         location,
         status,
         forecastWindow,
-        historicalSignal: `${count} liknande uppdrag senaste 18 månader`,
+        historicalSignal: `${count} liknande uppdrag ${timespanLabel}`,
         lastActivity: `Senaste uppdrag: ${daysSinceLast} dagar sedan`,
         calloffCount: count,
         avgIntervalDays: avgInterval,
-        summary: `${competence} hos ${buyer} har haft ${count} uppdrag med ett genomsnittligt intervall på ${avgInterval} dagar.`,
+        summary: `${competence} hos ${buyer} har haft ${count} uppdrag med ett genomsnittligt intervall på ${avgInterval} dagar (${timespanLabel}).`,
         reasons,
         history,
       });
     }
 
     // Sort: high first, then medium, then watch
-    const statusOrder = { high: 0, medium: 1, watch: 2 };
+    const sortOrder = { high: 0, medium: 1, watch: 2 };
     predictions.sort((a, b) => {
-      if (statusOrder[a.status] !== statusOrder[b.status])
-        return statusOrder[a.status] - statusOrder[b.status];
+      if (sortOrder[a.status] !== sortOrder[b.status])
+        return sortOrder[a.status] - sortOrder[b.status];
       const ratioA =
         parseInt(a.lastActivity.match(/(\d+)/)?.[1] || "0") / a.avgIntervalDays;
       const ratioB =
