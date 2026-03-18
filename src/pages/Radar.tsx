@@ -44,6 +44,7 @@ export default function Radar() {
   const [filters, setFilters] = useState({ competence: "", location: "", buyer: "" });
   const [selectedPrediction, setSelectedPrediction] = useState<Prediction | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
+  const [sortByProbability, setSortByProbability] = useState(true);
   const { toast } = useToast();
 
   const { data, isLoading, error } = useQuery({
@@ -52,7 +53,12 @@ export default function Radar() {
     staleTime: 60_000,
   });
 
-  const predictions = data?.predictions ?? [];
+  const rawPredictions = data?.predictions ?? [];
+  const predictions = useMemo(() => {
+    if (!sortByProbability) return rawPredictions;
+    const statusOrder = { high: 0, medium: 1, watch: 2 };
+    return [...rawPredictions].sort((a, b) => statusOrder[a.status] - statusOrder[b.status]);
+  }, [rawPredictions, sortByProbability]);
   const filterOptions = data?.filters ?? { competences: [], locations: [], buyers: [] };
 
   const handleOpen = (p: Prediction) => {
@@ -113,13 +119,26 @@ export default function Radar() {
 
       {/* Filters — sticky on mobile */}
       <div className="sticky top-0 z-30 bg-background/95 backdrop-blur-md border-b border-border px-5 py-3">
-        <RadarFilters
-          competence={filters.competence}
-          location={filters.location}
-          buyer={filters.buyer}
-          filterOptions={filterOptions}
-          onChange={setFilters}
-        />
+        <div className="flex items-center justify-between gap-2 mb-2">
+          <RadarFilters
+            competence={filters.competence}
+            location={filters.location}
+            buyer={filters.buyer}
+            filterOptions={filterOptions}
+            onChange={setFilters}
+          />
+        </div>
+        <button
+          onClick={() => setSortByProbability((v) => !v)}
+          className={`flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[12px] font-medium transition-colors ${
+            sortByProbability
+              ? "border-primary/40 bg-primary/10 text-primary"
+              : "border-border bg-card text-muted-foreground"
+          }`}
+        >
+          <Radio className="w-3 h-3" />
+          Sannolikhet hög → låg
+        </button>
       </div>
 
       {/* Prediction list */}
