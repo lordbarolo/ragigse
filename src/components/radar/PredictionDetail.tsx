@@ -66,7 +66,7 @@ export default function PredictionDetail({ prediction, open, onClose }: Predicti
           <div className="space-y-2 text-[13px] text-foreground/80">
             <div className="flex items-center gap-2">
               <Clock className="w-4 h-4 text-primary flex-shrink-0" />
-              <span>{prediction.calloffCount} liknande uppdrag senaste 12 månader</span>
+              <span>{prediction.historicalSignal}</span>
             </div>
             <div className="flex items-center gap-2">
               <Radio className="w-4 h-4 text-primary flex-shrink-0" />
