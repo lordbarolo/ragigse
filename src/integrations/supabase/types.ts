@@ -2145,6 +2145,7 @@ export type Database = {
           workplace: string
         }[]
       }
+      ref_get_public_profile: { Args: { _profile_id: string }; Returns: Json }
       ref_get_reference_by_invite_token: {
         Args: { _token: string }
         Returns: {
