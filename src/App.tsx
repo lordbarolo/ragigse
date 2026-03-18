@@ -29,6 +29,8 @@ const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Radar = lazy(() => import("./pages/Radar"));
 const Uppdragsradar = lazy(() => import("./pages/Uppdragsradar"));
+const ReferenceForm = lazy(() => import("./pages/ReferenceForm"));
+const PingResponse = lazy(() => import("./pages/PingResponse"));
 
 const queryClient = new QueryClient();
 
@@ -67,6 +69,8 @@ const App = () => (
             <Route path="/registrera" element={<Signup />} />
             <Route path="/aterstall-losenord" element={<ResetPassword />} />
             <Route path="/profil" element={<Profile />} />
+            <Route path="/referens/:token" element={<ReferenceForm />} />
+            <Route path="/ping/:token" element={<PingResponse />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/dela" element={<SharePreview />} />
             <Route path="/dev/theme-preview" element={<ThemePreview />} />
