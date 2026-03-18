@@ -6,7 +6,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-interface RequestRow {
+interface UnifiedRow {
   customer: string;
   role: string;
   specialization: string | null;
@@ -27,6 +27,55 @@ interface RegionPrediction {
   medianpris: number | null;
 }
 
+/** Fetch from requests table */
+async function fetchRequests(supabase: any, roll: string): Promise<UnifiedRow[]> {
+  const { data } = await supabase
+    .from("requests")
+    .select("customer, role, specialization, created_at, region, filled, price_median")
+    .eq("role", roll)
+    .order("created_at", { ascending: false });
+  return (data || []).map((r: any) => ({
+    customer: r.customer,
+    role: r.role,
+    specialization: r.specialization,
+    created_at: r.created_at,
+    region: r.region,
+    filled: r.filled ?? false,
+    price_median: r.price_median,
+  }));
+}
+
+/** Fetch from calloff_imports table */
+async function fetchImports(supabase: any, roll: string): Promise<UnifiedRow[]> {
+  const { data } = await supabase
+    .from("calloff_imports")
+    .select("customer, role, specialization, calloff_date, region, filled, price_median")
+    .eq("role", roll)
+    .order("calloff_date", { ascending: false });
+  return (data || []).map((r: any) => ({
+    customer: r.customer || "Okänd",
+    role: r.role,
+    specialization: r.specialization,
+    created_at: r.calloff_date,
+    region: r.region,
+    filled: r.filled ?? false,
+    price_median: r.price_median,
+  }));
+}
+
+/** Get all unique roles from both tables */
+async function fetchAllRoles(supabase: any): Promise<string[]> {
+  const [{ data: r1 }, { data: r2 }] = await Promise.all([
+    supabase.from("requests").select("role").limit(2000),
+    supabase.from("calloff_imports").select("role").limit(2000),
+  ]);
+  const roles = new Set<string>();
+  for (const r of [...(r1 || []), ...(r2 || [])]) {
+    if (r.role) roles.add(r.role);
+  }
+  return [...roles].sort();
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -43,30 +92,27 @@ Deno.serve(async (req) => {
 
     // If no roll specified, just return available roles
     if (!roll || roll === "__all_roles__") {
-      const { data: allRows } = await supabase
-        .from("requests")
-        .select("role")
-        .limit(2000);
-      const roller = [...new Set((allRows || []).map((r: any) => r.role))].sort();
+      const roller = await fetchAllRoles(supabase);
       return new Response(JSON.stringify({ predictions: [], roller }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const { data: rows, error } = await supabase
-      .from("requests")
-      .select("customer, role, specialization, created_at, region, filled, price_median")
-      .eq("role", roll)
-      .order("created_at", { ascending: false });
+    // Fetch from both sources and merge
+    const [requestRows, importRows] = await Promise.all([
+      fetchRequests(supabase, roll),
+      fetchImports(supabase, roll),
+    ]);
 
-    if (error) throw error;
+    const allRows: UnifiedRow[] = [...requestRows, ...importRows]
+      .filter((r) => r.region && r.created_at);
 
     const today = new Date();
     const todayMs = today.getTime();
 
     // Group by region
-    const groups = new Map<string, RequestRow[]>();
-    for (const row of rows as RequestRow[]) {
+    const groups = new Map<string, UnifiedRow[]>();
+    for (const row of allRows) {
       const key = row.region;
       if (!groups.has(key)) groups.set(key, []);
       groups.get(key)!.push(row);
@@ -75,15 +121,13 @@ Deno.serve(async (req) => {
     const predictions: RegionPrediction[] = [];
 
     for (const [regionNamn, reqs] of groups) {
-      if (reqs.length < 3) continue; // Min 3 historical
+      if (reqs.length < 3) continue;
 
-      // Sort descending by created_at
       reqs.sort(
         (a, b) =>
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
 
-      // Calculate intervals between consecutive requests
       const intervals: number[] = [];
       for (let i = 0; i < reqs.length - 1; i++) {
         const d1 = new Date(reqs[i].created_at).getTime();
@@ -103,8 +147,7 @@ Deno.serve(async (req) => {
       const predictedNext = new Date(predictedNextMs);
       const daysLeft = Math.round((predictedNextMs - todayMs) / (1000 * 60 * 60 * 24));
 
-      // Median price from recent requests
-      const prices = reqs.filter(r => r.price_median).map(r => r.price_median!);
+      const prices = reqs.filter((r) => r.price_median).map((r) => r.price_median!);
       const medianpris = prices.length > 0 ? prices[Math.floor(prices.length / 2)] : null;
 
       predictions.push({
@@ -119,15 +162,9 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Sort by dagar_kvar ascending
     predictions.sort((a, b) => a.dagar_kvar - b.dagar_kvar);
 
-    // Return available roles
-    const { data: allRows } = await supabase
-      .from("requests")
-      .select("role")
-      .limit(2000);
-    const roller = [...new Set((allRows || []).map((r: any) => r.role))].sort();
+    const roller = await fetchAllRoles(supabase);
 
     return new Response(JSON.stringify({ predictions, roller }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
