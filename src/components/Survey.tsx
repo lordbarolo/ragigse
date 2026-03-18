@@ -122,7 +122,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
   const stepEntryTime = useRef<number>(Date.now());
   const surveyStarted = useRef(false);
 
-  const STEP_NAMES = ["yrkeskategori", "specialisering", "kommun", "anstallningsform", "ersattning", "inhyrd_eller_fast"];
+  const STEP_NAMES = ["yrkeskategori", "specialisering", "kommun", "anstallningsform", "uppdragsgivare", "ersattning"];
 
   useEffect(() => {
     stepEntryTime.current = Date.now();
