@@ -244,7 +244,7 @@ export default function SalaryInsights() {
         <CardContent>
           {!data && !loading && (
             <p className="text-muted-foreground text-center py-6 text-sm">
-              Klicka "Ladda data" för att hämta aggregerad lönestatistik.
+              Klicka "Ladda data" för att hämta aggregerad ersättningsstatistik.
             </p>
           )}
 
