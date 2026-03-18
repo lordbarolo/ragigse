@@ -202,18 +202,18 @@ Deno.serve(async (req) => {
       }
 
       const reasons: string[] = [
-        `${count} avrop senaste 18 månaderna hos ${buyer}`,
+        `${count} uppdrag senaste 18 månaderna hos ${buyer}`,
         `Genomsnittligt intervall: ${avgInterval} dagar`,
-        `Senaste avropet var ${daysSinceLast} dagar sedan`,
+        `Senaste uppdraget var ${daysSinceLast} dagar sedan`,
       ];
 
       if (ratio >= 0.9) {
-        reasons.push("Nästa avropsfönster har sannolikt redan öppnat");
+        reasons.push("Nästa uppdragsfönster har sannolikt redan öppnat");
       }
 
       const history = calloffs.map((c) => ({
         date: c.calloff_date,
-        description: `Avrop ${competence.toLowerCase()}, ${c.duration_weeks || "?"} veckor`,
+        description: `Uppdrag ${competence.toLowerCase()}, ${c.duration_weeks || "?"} veckor`,
       }));
 
       predictions.push({
@@ -223,11 +223,11 @@ Deno.serve(async (req) => {
         location,
         status,
         forecastWindow,
-        historicalSignal: `${count} liknande avrop senaste 18 månader`,
-        lastActivity: `Senaste avrop: ${daysSinceLast} dagar sedan`,
+        historicalSignal: `${count} liknande uppdrag senaste 18 månader`,
+        lastActivity: `Senaste uppdrag: ${daysSinceLast} dagar sedan`,
         calloffCount: count,
         avgIntervalDays: avgInterval,
-        summary: `${competence} hos ${buyer} har avropats ${count} gånger med ett genomsnittligt intervall på ${avgInterval} dagar.`,
+        summary: `${competence} hos ${buyer} har haft ${count} uppdrag med ett genomsnittligt intervall på ${avgInterval} dagar.`,
         reasons,
         history,
       });
