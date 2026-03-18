@@ -31,6 +31,7 @@ const Radar = lazy(() => import("./pages/Radar"));
 const Uppdragsradar = lazy(() => import("./pages/Uppdragsradar"));
 const ReferenceForm = lazy(() => import("./pages/ReferenceForm"));
 const PingResponse = lazy(() => import("./pages/PingResponse"));
+const PublicProfile = lazy(() => import("./pages/PublicProfile"));
 
 const queryClient = new QueryClient();
 
