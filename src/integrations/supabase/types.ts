@@ -281,6 +281,66 @@ export type Database = {
         }
         Relationships: []
       }
+      calloff_imports: {
+        Row: {
+          calloff_date: string | null
+          customer: string | null
+          customer_type: string | null
+          duration_weeks: number | null
+          filled: boolean | null
+          id: string
+          imported_at: string
+          level: string | null
+          price_max: number | null
+          price_median: number | null
+          price_min: number | null
+          raw_data: Json | null
+          region: string | null
+          role: string | null
+          source: string | null
+          specialization: string | null
+          unit: string | null
+        }
+        Insert: {
+          calloff_date?: string | null
+          customer?: string | null
+          customer_type?: string | null
+          duration_weeks?: number | null
+          filled?: boolean | null
+          id?: string
+          imported_at?: string
+          level?: string | null
+          price_max?: number | null
+          price_median?: number | null
+          price_min?: number | null
+          raw_data?: Json | null
+          region?: string | null
+          role?: string | null
+          source?: string | null
+          specialization?: string | null
+          unit?: string | null
+        }
+        Update: {
+          calloff_date?: string | null
+          customer?: string | null
+          customer_type?: string | null
+          duration_weeks?: number | null
+          filled?: boolean | null
+          id?: string
+          imported_at?: string
+          level?: string | null
+          price_max?: number | null
+          price_median?: number | null
+          price_min?: number | null
+          raw_data?: Json | null
+          region?: string | null
+          role?: string | null
+          source?: string | null
+          specialization?: string | null
+          unit?: string | null
+        }
+        Relationships: []
+      }
       compensation_reports: {
         Row: {
           calc_version: string
