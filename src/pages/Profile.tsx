@@ -159,10 +159,10 @@ function ProfileDetailsCard({ profile, employmentLabel, formatSalary }: { profil
           <div><p className="text-xs text-muted-foreground">Anställning</p><p className="text-foreground font-medium">{employmentLabel(profile.employment_type)}</p></div>
         </div>
         {profile.current_hourly_rate && (
-          <div className="col-span-2"><p className="text-xs text-muted-foreground">Nuvarande timlön</p><p className="text-foreground font-semibold text-lg">{formatSalary(profile.current_hourly_rate)} kr/h</p></div>
+          <div className="col-span-2"><p className="text-xs text-muted-foreground">{profile.employment_type === "foretagare" ? "Nuvarande timersättning" : "Nuvarande timlön"}</p><p className="text-foreground font-semibold text-lg">{formatSalary(profile.current_hourly_rate)} kr/h</p></div>
         )}
         {profile.current_monthly_salary && (
-          <div className="col-span-2"><p className="text-xs text-muted-foreground">Nuvarande månadslön</p><p className="text-foreground font-semibold text-lg">{formatSalary(profile.current_monthly_salary)} kr/mån</p></div>
+          <div className="col-span-2"><p className="text-xs text-muted-foreground">{profile.employment_type === "foretagare" ? "Nuvarande månadsersättning" : "Nuvarande månadslön"}</p><p className="text-foreground font-semibold text-lg">{formatSalary(profile.current_monthly_salary)} kr/mån</p></div>
         )}
       </CardContent>
     </Card>

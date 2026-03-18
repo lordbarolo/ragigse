@@ -9,7 +9,7 @@ const STEPS = [
     icon: "💰",
     title: "Ange din ersättning",
     desc: "Ange din timersättning eller månadslön. Vi räknar automatiskt om och jämför mot vad regionen betalar till bemanningsföretaget.",
-    detail: { label: "", text: "Din lön jämförs mot regionens kundpris, inte mot andra konsulters uppgifter." },
+    detail: { label: "", text: "Din ersättning jämförs mot regionens kundpris, inte mot andra konsulters uppgifter." },
   },
   {
     icon: "📊",
