@@ -6,6 +6,7 @@ import PredictionCard from "@/components/radar/PredictionCard";
 import PredictionDetail from "@/components/radar/PredictionDetail";
 import RadarEmptyState from "@/components/radar/RadarEmptyState";
 import BottomNav from "@/components/radar/BottomNav";
+import ReijdarChat from "@/components/radar/ReijdarChat";
 import { Prediction } from "@/components/radar/radarMockData";
 import { useToast } from "@/hooks/use-toast";
 
