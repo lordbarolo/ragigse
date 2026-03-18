@@ -44,6 +44,7 @@ export default function Radar() {
   const [filters, setFilters] = useState({ competence: "", location: "", buyer: "" });
   const [selectedPrediction, setSelectedPrediction] = useState<Prediction | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
+  const [sortByProbability, setSortByProbability] = useState(true);
   const { toast } = useToast();
 
   const { data, isLoading, error } = useQuery({
