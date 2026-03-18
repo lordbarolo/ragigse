@@ -589,7 +589,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
 
         {/* Step 4: Anställningsform */}
         {step === 4 && (
-          <StepWrapper title="Vilken är din uppdragsform?">
+          <StepWrapper title="Är du anställd eller egen företagare?">
             <div className="rounded-2xl border border-border bg-card p-5 flex flex-col gap-3">
               {([
                 { value: "anstalld" as const, label: "Anställd", desc: "Lön från vårdgivare eller bemanningsföretag" },
