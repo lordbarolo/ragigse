@@ -18,6 +18,7 @@ interface PublicProfileData {
   years_licensed: number | null;
   trust_score: number;
   trust_tier: string;
+  score_updated_at: string | null;
   score_breakdown: {
     role: { earned: number; max: number; chiefs: number; colleagues: number };
     domain: { earned: number; max: number; verified_count: number };
