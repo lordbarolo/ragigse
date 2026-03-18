@@ -1,63 +1,41 @@
-import { useState, useEffect, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2, RefreshCw } from "lucide-react";
+import type { AdminAnalyticsData } from "@/hooks/useAdminAnalytics";
 
-interface DayData {
-  date: string;
-  count: number;
+interface Props {
+  data: AdminAnalyticsData | null;
+  loading: boolean;
+  period: number;
+  onRefresh: () => void;
 }
 
-export default function DailyVisitors() {
-  const [data, setData] = useState<DayData[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [period, setPeriod] = useState<7 | 30 | 90>(30);
+export default function DailyVisitors({ data, loading, period, onRefresh }: Props) {
+  // Build day data from shared analytics
+  const dayData = (() => {
+    if (!data) return [];
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const fromDate = new Date();
-      fromDate.setDate(fromDate.getDate() - period);
-
-      const { data: res, error } = await supabase.functions.invoke("analytics-dashboard", {
-        body: { from: fromDate.toISOString().slice(0, 10) },
-      });
-
-      if (error) throw error;
-
-      // Build day map from timeSeries
-      const byDay: Record<string, number> = {};
-      for (const entry of res.timeSeries || []) {
-        const landingCount = entry.events?.landing_viewed || 0;
-        byDay[entry.date] = landingCount;
-      }
-
-      // Fill missing days
-      const result: DayData[] = [];
-      const cursor = new Date(fromDate);
-      const today = new Date();
-      while (cursor <= today) {
-        const key = cursor.toISOString().slice(0, 10);
-        result.push({ date: key, count: byDay[key] || 0 });
-        cursor.setDate(cursor.getDate() + 1);
-      }
-
-      setData(result);
-    } catch (err: any) {
-      console.error("DailyVisitors fetch error:", err);
-    } finally {
-      setLoading(false);
+    const byDay: Record<string, number> = {};
+    for (const entry of data.timeSeries || []) {
+      byDay[entry.date] = entry.events?.landing_viewed || 0;
     }
-  }, [period]);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    const fromDate = new Date();
+    fromDate.setDate(fromDate.getDate() - period);
+    const result: { date: string; count: number }[] = [];
+    const cursor = new Date(fromDate);
+    const today = new Date();
+    while (cursor <= today) {
+      const key = cursor.toISOString().slice(0, 10);
+      result.push({ date: key, count: byDay[key] || 0 });
+      cursor.setDate(cursor.getDate() + 1);
+    }
+    return result;
+  })();
 
-  const maxCount = Math.max(1, ...data.map((d) => d.count));
-  const total = data.reduce((s, d) => s + d.count, 0);
-  const avg = data.length > 0 ? Math.round(total / data.length) : 0;
+  const maxCount = Math.max(1, ...dayData.map((d) => d.count));
+  const total = dayData.reduce((s, d) => s + d.count, 0);
+  const avg = dayData.length > 0 ? Math.round(total / dayData.length) : 0;
 
   return (
     <Card>
@@ -69,33 +47,21 @@ export default function DailyVisitors() {
               Totalt {total.toLocaleString("sv-SE")} · snitt {avg}/dag · senaste {period}d
             </CardDescription>
           </div>
-          <div className="flex items-center gap-2">
-            {([7, 30, 90] as const).map((p) => (
-              <Button
-                key={p}
-                variant={period === p ? "default" : "outline"}
-                size="sm"
-                onClick={() => setPeriod(p)}
-              >
-                {p}d
-              </Button>
-            ))}
-            <Button variant="ghost" size="sm" onClick={fetchData} disabled={loading}>
-              <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
-            </Button>
-          </div>
+          <Button variant="ghost" size="sm" onClick={onRefresh} disabled={loading}>
+            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+          </Button>
         </div>
       </CardHeader>
       <CardContent>
-        {loading && data.length === 0 ? (
+        {loading && dayData.length === 0 ? (
           <div className="flex justify-center py-12">
             <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
           </div>
-        ) : data.length === 0 ? (
+        ) : dayData.length === 0 ? (
           <p className="text-muted-foreground text-center py-8">Ingen data ännu.</p>
         ) : (
           <div className="flex items-end gap-[2px]" style={{ height: 160 }}>
-            {data.map((d) => {
+            {dayData.map((d) => {
               const h = maxCount > 0 ? Math.max(2, Math.round((d.count / maxCount) * 160)) : 2;
               return (
                 <div

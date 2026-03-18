@@ -1,8 +1,7 @@
-import { useState, useEffect, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, RefreshCw, ChevronDown, ChevronUp } from "lucide-react";
+import { Loader2, RefreshCw } from "lucide-react";
+import type { AdminAnalyticsData } from "@/hooks/useAdminAnalytics";
 
 interface FunnelStep {
   key: string;
@@ -10,20 +9,6 @@ interface FunnelStep {
   count: number;
   dropoff: number;
   dropoffPct: number;
-}
-
-interface SurveyDropoff {
-  step_name: string;
-  viewed: number;
-  completed: number;
-  dropoff: number;
-  dropoffPct: number;
-}
-
-interface FunnelData {
-  funnel: FunnelStep[];
-  surveyDropoff: SurveyDropoff[];
-  period: string;
 }
 
 const FUNNEL_STEPS = [
@@ -36,101 +21,51 @@ const FUNNEL_STEPS = [
   { key: "report_section_viewed", label: "Rapport scrollad" },
 ];
 
-const SURVEY_STEP_NAMES = [
-  "yrkeskategori",
-  "specialisering",
-  "kommun",
-  "anstallningsform",
-  "ersattning",
-];
+interface Props {
+  data: AdminAnalyticsData | null;
+  loading: boolean;
+  period: number;
+  onRefresh: () => void;
+}
 
-const SURVEY_STEP_LABELS: Record<string, string> = {
-  yrkeskategori: "1. Yrkeskategori",
-  specialisering: "2. Specialisering",
-  kommun: "3. Kommun",
-  anstallningsform: "4. Anställningsform",
-  ersattning: "5. Ersättning",
-};
+export default function ConversionFunnel({ data, loading, period, onRefresh }: Props) {
+  // Build funnel from shared analytics data
+  const funnel: FunnelStep[] = (() => {
+    if (!data) return [];
 
-export default function ConversionFunnel() {
-  const [data, setData] = useState<FunnelData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [showDropoff, setShowDropoff] = useState(false);
-  const [period, setPeriod] = useState<7 | 30 | 90>(30);
+    const allFunnel = data.funnels?.["all"];
+    const counts: Record<string, number> = {};
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const fromDate = new Date();
-      fromDate.setDate(fromDate.getDate() - period);
-
-      const { data: res, error } = await supabase.functions.invoke("analytics-dashboard", {
-        body: { from: fromDate.toISOString().slice(0, 10) },
-      });
-
-      if (error) throw error;
-
-      // Flatten all events from timeSeries into counts
-      const counts: Record<string, number> = {};
-      const surveyViewed: Record<string, number> = {};
-      const surveyCompleted: Record<string, number> = {};
-
-      // Use the combined "all" funnel from the edge function
-      const allFunnel = res.funnels?.["all"];
-      if (allFunnel) {
-        for (const step of allFunnel) {
-          counts[step.step] = (counts[step.step] || 0) + step.count;
-        }
+    if (allFunnel) {
+      for (const step of allFunnel) {
+        counts[step.step] = (counts[step.step] || 0) + step.count;
       }
-
-      // Also parse timeSeries for more granular event counts (including survey steps)
-      for (const entry of res.timeSeries || []) {
-        for (const [eventName, eventCount] of Object.entries(entry.events || {})) {
-          counts[eventName] = (counts[eventName] || 0) + (eventCount as number);
-        }
-      }
-
-      // Extract survey step data from timeSeries events
-      // The edge function doesn't break out survey_step metadata, so we need
-      // to count survey_step_viewed and survey_step_completed from raw counts
-      // For now, use the totals from timeSeries
-
-      // Build main funnel
-      const funnel: FunnelStep[] = [];
-      for (let i = 0; i < FUNNEL_STEPS.length; i++) {
-        const step = FUNNEL_STEPS[i];
-        const count = counts[step.key] || 0;
-        const prevCount = i === 0 ? count : (funnel[i - 1]?.count || 0);
-        const dropoff = Math.max(0, prevCount - count);
-        const dropoffPct = prevCount > 0 ? Math.round((dropoff / prevCount) * 100) : 0;
-        funnel.push({ ...step, count, dropoff, dropoffPct });
-      }
-
-      // Survey dropoff - we don't have per-step metadata from the edge function
-      // so show totals only
-      const surveyDropoff: SurveyDropoff[] = SURVEY_STEP_NAMES.map((stepName) => {
-        const viewed = surveyViewed[stepName] || 0;
-        const completed = surveyCompleted[stepName] || 0;
-        const dropoff = Math.max(0, viewed - completed);
-        const dropoffPct = viewed > 0 ? Math.round((dropoff / viewed) * 100) : 0;
-        return { step_name: stepName, viewed, completed, dropoff, dropoffPct };
-      });
-
-      setData({
-        funnel,
-        surveyDropoff,
-        period: `Senaste ${period} dagarna`,
-      });
-    } catch (err: any) {
-      console.error("Funnel fetch error:", err);
-    } finally {
-      setLoading(false);
     }
-  }, [period]);
 
-  useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    // Also add from timeSeries for completeness
+    for (const entry of data.timeSeries || []) {
+      for (const [eventName, eventCount] of Object.entries(entry.events || {})) {
+        if (!counts[eventName]) {
+          counts[eventName] = 0;
+        }
+        // Only use timeSeries if funnel didn't have the count
+        if (!allFunnel?.some((s) => s.step === eventName)) {
+          counts[eventName] += eventCount as number;
+        }
+      }
+    }
+
+    const result: FunnelStep[] = [];
+    for (let i = 0; i < FUNNEL_STEPS.length; i++) {
+      const step = FUNNEL_STEPS[i];
+      const count = counts[step.key] || 0;
+      const prevCount = i === 0 ? count : (result[i - 1]?.count || 0);
+      const dropoff = Math.max(0, prevCount - count);
+      const dropoffPct = prevCount > 0 ? Math.round((dropoff / prevCount) * 100) : 0;
+      result.push({ ...step, count, dropoff, dropoffPct });
+    }
+    return result;
+  })();
 
   if (loading && !data) {
     return (
@@ -142,7 +77,7 @@ export default function ConversionFunnel() {
     );
   }
 
-  const maxCount = data?.funnel[0]?.count || 1;
+  const maxCount = funnel[0]?.count || 1;
 
   return (
     <Card>
@@ -150,32 +85,19 @@ export default function ConversionFunnel() {
         <div className="flex items-center justify-between">
           <div>
             <CardTitle className="text-lg">Konverteringstratt</CardTitle>
-            <CardDescription>{data?.period}</CardDescription>
+            <CardDescription>Senaste {period} dagarna</CardDescription>
           </div>
-          <div className="flex items-center gap-2">
-            {([7, 30, 90] as const).map((p) => (
-              <Button
-                key={p}
-                variant={period === p ? "default" : "outline"}
-                size="sm"
-                onClick={() => setPeriod(p)}
-              >
-                {p}d
-              </Button>
-            ))}
-            <Button variant="ghost" size="sm" onClick={fetchData} disabled={loading}>
-              <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
-            </Button>
-          </div>
+          <Button variant="ghost" size="sm" onClick={onRefresh} disabled={loading}>
+            <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
+          </Button>
         </div>
       </CardHeader>
-      <CardContent className="space-y-6">
-        {/* Main Funnel */}
+      <CardContent>
         <div className="space-y-2">
-          {data?.funnel.map((step, i) => {
+          {funnel.map((step, i) => {
             const barWidth = maxCount > 0 ? Math.max(4, (step.count / maxCount) * 100) : 4;
-            const convRate = i > 0 && data.funnel[i - 1].count > 0
-              ? Math.round((step.count / data.funnel[i - 1].count) * 100)
+            const convRate = i > 0 && funnel[i - 1].count > 0
+              ? Math.round((step.count / funnel[i - 1].count) * 100)
               : 100;
 
             return (
@@ -207,43 +129,6 @@ export default function ConversionFunnel() {
               </div>
             );
           })}
-        </div>
-
-        {/* Survey step dropoff — expandable */}
-        <div>
-          <button
-            onClick={() => setShowDropoff(!showDropoff)}
-            className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
-          >
-            {showDropoff ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-            Avhopp per enkätsteg
-          </button>
-
-          {showDropoff && data && (
-            <div className="mt-3 space-y-1">
-              <div className="grid grid-cols-4 gap-2 text-[11px] font-medium text-muted-foreground uppercase tracking-wide pb-1 border-b border-border">
-                <span>Steg</span>
-                <span className="text-right">Visade</span>
-                <span className="text-right">Slutförde</span>
-                <span className="text-right">Avhopp</span>
-              </div>
-              {data.surveyDropoff.map((s) => (
-                <div
-                  key={s.step_name}
-                  className="grid grid-cols-4 gap-2 text-sm py-1.5 border-b border-border/50 last:border-0"
-                >
-                  <span className="text-foreground font-medium">
-                    {SURVEY_STEP_LABELS[s.step_name] || s.step_name}
-                  </span>
-                  <span className="text-right font-mono text-muted-foreground">{s.viewed}</span>
-                  <span className="text-right font-mono text-muted-foreground">{s.completed}</span>
-                  <span className={`text-right font-mono ${s.dropoffPct > 30 ? "text-destructive" : "text-muted-foreground"}`}>
-                    {s.dropoff} ({s.dropoffPct}%)
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
       </CardContent>
     </Card>
