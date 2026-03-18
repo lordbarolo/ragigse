@@ -315,7 +315,7 @@ export default function SalaryInsights() {
                       <tr className="text-left">
                         <th className="p-2 font-medium">Kommun</th>
                         <th className="p-2 font-medium">Typ</th>
-                        <th className="p-2 font-medium">Lönetyp</th>
+                        <th className="p-2 font-medium">Ersättningstyp</th>
                         <th className="p-2 font-medium text-right">Antal</th>
                         <th className="p-2 font-medium text-right">Snitt</th>
                         <th className="p-2 font-medium text-right">Median</th>
