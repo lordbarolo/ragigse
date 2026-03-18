@@ -47,7 +47,7 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Build queries for both tables in parallel
+    // Build queries for all three tables in parallel
     let historyQuery = supabase
       .from("calloff_history")
       .select("buyer, yrkeskategori, zon, location, duration_weeks, calloff_date")
@@ -61,17 +61,28 @@ Deno.serve(async (req) => {
       .not("role", "is", null)
       .order("calloff_date", { ascending: false });
 
+    let requestsQuery = supabase
+      .from("requests")
+      .select("customer, role, region, created_at")
+      .not("created_at", "is", null)
+      .not("customer", "is", null)
+      .not("role", "is", null)
+      .order("created_at", { ascending: false });
+
     if (competenceFilter) {
       historyQuery = historyQuery.eq("yrkeskategori", competenceFilter);
       importsQuery = importsQuery.eq("role", competenceFilter);
+      requestsQuery = requestsQuery.eq("role", competenceFilter);
     }
     if (locationFilter) {
       historyQuery = historyQuery.eq("location", locationFilter);
       importsQuery = importsQuery.eq("region", locationFilter);
+      requestsQuery = requestsQuery.eq("region", locationFilter);
     }
     if (buyerFilter) {
       historyQuery = historyQuery.eq("buyer", buyerFilter);
       importsQuery = importsQuery.eq("customer", buyerFilter);
+      requestsQuery = requestsQuery.eq("customer", buyerFilter);
     }
 
     const [{ data: historyRows, error: e1 }, { data: importRows, error: e2 }] =
