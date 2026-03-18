@@ -6,6 +6,17 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+// Normalize role names from requests table to match CompCare survey taxonomy
+const ROLE_NORMALIZE: Record<string, string> = {
+  "Distriktssköterska": "Distriktssjuksköterska",
+  "Övrig": "", // exclude — too generic to map
+};
+
+function normalizeRole(role: string): string {
+  if (ROLE_NORMALIZE.hasOwnProperty(role)) return ROLE_NORMALIZE[role];
+  return role;
+}
+
 interface UnifiedRow {
   buyer: string;
   competence: string;
@@ -118,9 +129,11 @@ Deno.serve(async (req) => {
     }
 
     for (const r of (requestRows || []) as any[]) {
+      const normalized = normalizeRole(r.role);
+      if (!normalized) continue; // skip unmappable roles like "Övrig"
       unified.push({
         buyer: r.customer,
-        competence: r.role,
+        competence: normalized,
         location: r.region || "Okänd",
         zon: "",
         duration_weeks: null,
