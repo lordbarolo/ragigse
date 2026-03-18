@@ -53,7 +53,12 @@ export default function Radar() {
     staleTime: 60_000,
   });
 
-  const predictions = data?.predictions ?? [];
+  const rawPredictions = data?.predictions ?? [];
+  const predictions = useMemo(() => {
+    if (!sortByProbability) return rawPredictions;
+    const statusOrder = { high: 0, medium: 1, watch: 2 };
+    return [...rawPredictions].sort((a, b) => statusOrder[a.status] - statusOrder[b.status]);
+  }, [rawPredictions, sortByProbability]);
   const filterOptions = data?.filters ?? { competences: [], locations: [], buyers: [] };
 
   const handleOpen = (p: Prediction) => {
