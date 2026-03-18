@@ -213,7 +213,7 @@ Deno.serve(async (req) => {
 
       const history = calloffs.map((c) => ({
         date: c.calloff_date,
-        description: `Avrop ${competence.toLowerCase()}, ${c.duration_weeks || "?"} veckor`,
+        description: `Uppdrag ${competence.toLowerCase()}, ${c.duration_weeks || "?"} veckor`,
       }));
 
       predictions.push({
