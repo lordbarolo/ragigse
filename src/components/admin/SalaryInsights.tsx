@@ -69,8 +69,8 @@ const ET_LABELS: Record<string, string> = {
 };
 
 const ST_LABELS: Record<string, string> = {
-  hourly: "Timlön",
-  monthly: "Månadslön",
+  hourly: "Timersättning",
+  monthly: "Månadsersättning",
   all: "Alla",
 };
 
