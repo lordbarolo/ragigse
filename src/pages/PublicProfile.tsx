@@ -260,7 +260,10 @@ export default function PublicProfile() {
         )}
 
         {/* Footer */}
-        <div className="mt-12 text-center text-xs text-muted-foreground">
+        <div className="mt-12 text-center text-xs text-muted-foreground space-y-1">
+          {data.score_updated_at && (
+            <p>Senast verifierad: {new Date(data.score_updated_at).toLocaleDateString("sv-SE")}</p>
+          )}
           <p>Verifierad profil via CompCare</p>
         </div>
       </div>
