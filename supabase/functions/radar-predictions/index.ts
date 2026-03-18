@@ -80,7 +80,7 @@ Deno.serve(async (req) => {
 
     let importsQuery = supabase
       .from("calloff_imports")
-      .select("customer, role, region, calloff_date, duration_weeks")
+      .select("customer, role, region, calloff_date, duration_weeks, customer_type")
       .not("calloff_date", "is", null)
       .not("customer", "is", null)
       .not("role", "is", null)
@@ -88,7 +88,7 @@ Deno.serve(async (req) => {
 
     let requestsQuery = supabase
       .from("requests")
-      .select("customer, role, region, created_at")
+      .select("customer, role, region, created_at, customer_type")
       .not("created_at", "is", null)
       .not("customer", "is", null)
       .not("role", "is", null)
@@ -105,9 +105,16 @@ Deno.serve(async (req) => {
       requestsQuery = requestsQuery.eq("region", locationFilter);
     }
     if (buyerFilter) {
-      historyQuery = historyQuery.eq("buyer", buyerFilter);
-      importsQuery = importsQuery.eq("customer", buyerFilter);
-      requestsQuery = requestsQuery.eq("customer", buyerFilter);
+      if (buyerFilter === "Privat") {
+        // For private buyers, filter by customer_type instead of name
+        importsQuery = importsQuery.eq("customer_type", "Privat");
+        requestsQuery = requestsQuery.eq("customer_type", "Privat");
+        // calloff_history has no customer_type — skip (no private buyers there)
+      } else {
+        historyQuery = historyQuery.eq("buyer", buyerFilter);
+        importsQuery = importsQuery.eq("customer", buyerFilter);
+        requestsQuery = requestsQuery.eq("customer", buyerFilter);
+      }
     }
 
     const [{ data: historyRows, error: e1 }, { data: importRows, error: e2 }, { data: requestRows, error: e3 }] =
@@ -133,7 +140,7 @@ Deno.serve(async (req) => {
 
     for (const r of (importRows || []) as any[]) {
       unified.push({
-        buyer: r.customer,
+        buyer: r.customer_type === "Privat" ? "Privat" : r.customer,
         competence: r.role,
         location: r.region || "Okänd",
         zon: "",
@@ -146,7 +153,7 @@ Deno.serve(async (req) => {
       const normalized = normalizeRole(r.role);
       if (!normalized) continue; // skip unmappable roles like "Övrig"
       unified.push({
-        buyer: r.customer,
+        buyer: r.customer_type === "Privat" ? "Privat" : r.customer,
         competence: normalized,
         location: r.region || "Okänd",
         zon: "",
