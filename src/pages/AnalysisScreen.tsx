@@ -375,7 +375,7 @@ export default function AnalysisScreen() {
             {/* 4. Email field with explanation + 5. CTA + 6. Microcopy */}
             <div className="flex flex-col gap-3">
               <p className="text-[13px] text-foreground/50 leading-relaxed">
-                Vi skickar hela rapporten till din mail utan kostnad.
+                Vi skickar hela rapporten till din mail så att du kan spara och jämföra senare. Dela den gärna till kollegor.
               </p>
               <div className="relative flex items-center">
                 <Mail className="absolute left-4 w-4 h-4 text-foreground/30 pointer-events-none" />
