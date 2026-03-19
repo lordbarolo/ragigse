@@ -419,7 +419,7 @@ export default function AnalysisScreen() {
 
             {/* 7. Price comparison card with Skillnad row */}
             <div className="bg-card border border-primary/20 rounded-[14px] relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-primary to-indigo-500/60" />
+              <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-primary to-primary/30" />
 
               <div className="flex items-center justify-between px-5 py-3.5 border-b border-foreground/[0.06]">
                 <span className="text-[11px] text-foreground/45 font-display font-medium tracking-[0.1em]">
