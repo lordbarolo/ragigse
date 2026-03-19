@@ -342,7 +342,7 @@ export default function AnalysisScreen() {
         {/* ═══════ PHASE 2+3: Preview + Email ═══════ */}
         {showPhase2 && (
           <div className="flex flex-col gap-5 animate-fade-in">
-            {/* Title */}
+            {/* 1. Status badge */}
             <div>
               <div className="inline-flex items-center gap-2 bg-[hsl(var(--green))]/[0.08] border border-[hsl(var(--green))]/20 rounded-full px-3.5 py-1.5 mb-3">
                 <Check className="w-3.5 h-3.5 text-[hsl(var(--green))]" />
@@ -350,15 +350,15 @@ export default function AnalysisScreen() {
               </div>
             </div>
 
-            {/* Report contents list */}
+            {/* 2. Report contents list — compact */}
             <div>
               <h2 className="font-display text-[20px] font-extrabold tracking-tight text-foreground mb-3">
                 Din rapport innehåller
               </h2>
-              <div className="space-y-2.5">
+              <div className="space-y-2">
                 {(teaserData?.isPermanent ? PERMANENT_ITEMS : CONSULTANT_ITEMS).map(({ icon: Icon, title, desc }, i) => (
                   <div key={i} className="flex items-start gap-3">
-                    <div className="p-1.5 rounded-lg bg-primary/10 shrink-0 mt-0.5">
+                    <div className="p-1 rounded-lg bg-primary/10 shrink-0 mt-0.5">
                       <Icon className="w-4 h-4 text-primary" />
                     </div>
                     <div>
@@ -370,26 +370,21 @@ export default function AnalysisScreen() {
               </div>
             </div>
 
-            {/* Insight + Email input + button */}
-            <div className="flex flex-col gap-3">
-              {/* Personal insight nudge */}
-              {teaserData?.isUnderpaid && (
-                <div className="flex items-center gap-2.5 bg-[hsl(var(--amber))]/[0.07] border border-[hsl(var(--amber))]/20 rounded-xl px-4 py-3">
-                  <span className="text-lg shrink-0">📉</span>
-                  <p className="text-[14px] text-foreground/80 leading-snug">
-                    Du ligger <strong className="text-[hsl(var(--amber))] font-bold">{fmt(teaserData.high - teaserData.userHourly)} kr/h under</strong> vad regionen betalar.
-                  </p>
-                </div>
-              )}
-              {teaserData && !teaserData.isUnderpaid && (
-                <div className="flex items-center gap-2.5 bg-[hsl(var(--green))]/[0.07] border border-[hsl(var(--green))]/20 rounded-xl px-4 py-3">
-                  <span className="text-lg shrink-0">📈</span>
-                  <p className="text-[14px] text-foreground/80 leading-snug">
-                    Du ligger <strong className="text-[hsl(var(--green))] font-bold">{fmt(teaserData.userHourly - teaserData.low)} kr/h över</strong> lägsta marknadsnivå.
-                  </p>
-                </div>
-              )}
+            {/* 3. Neutral insight row */}
+            {teaserData && (
+              <div className="flex items-center gap-2.5 bg-foreground/[0.04] border border-foreground/[0.08] rounded-xl px-4 py-3">
+                <BarChart3 className="w-4 h-4 text-foreground/45 shrink-0" />
+                <p className="text-[14px] text-foreground/75 leading-snug">
+                  Skillnad mot regionens nivå: <strong className="text-foreground font-bold">{fmt(Math.abs(teaserData.high - teaserData.userHourly))} kr/h</strong>
+                </p>
+              </div>
+            )}
 
+            {/* 4. Email field with explanation + 5. CTA + 6. Microcopy */}
+            <div className="flex flex-col gap-3">
+              <p className="text-[13px] text-foreground/50 leading-relaxed">
+                Vi skickar hela rapporten till din mail så att du kan spara och jämföra senare.
+              </p>
               <div className="relative flex items-center">
                 <Mail className="absolute left-4 w-4 h-4 text-foreground/30 pointer-events-none" />
                 <input
@@ -424,7 +419,7 @@ export default function AnalysisScreen() {
               </p>
             </div>
 
-            {/* Price comparison card */}
+            {/* 7. Price comparison card with Skillnad row */}
             <div className="bg-card border border-primary/20 rounded-[14px] relative overflow-hidden">
               <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-primary to-indigo-500/60" />
 
@@ -432,23 +427,18 @@ export default function AnalysisScreen() {
                 <span className="text-[11px] text-foreground/45 font-display font-medium tracking-[0.1em]">
                   {teaserData ? `${teaserData.roleName} · ${teaserData.zone}` : "Sjuksköterska · Zon 1"}
                 </span>
-                {teaserData?.isUnderpaid ? (
-                  <span className="bg-[hsl(var(--amber))]/[0.12] text-[hsl(var(--amber))] border border-[hsl(var(--amber))]/25 rounded-full px-2.5 py-0.5 text-[11px] font-display font-bold">
-                    Under marknad
-                  </span>
-                ) : (
-                  <span className="bg-[hsl(var(--green))]/[0.12] text-[hsl(var(--green))] border border-[hsl(var(--green))]/25 rounded-full px-2.5 py-0.5 text-[11px] font-display font-bold">
-                    Över marknad
-                  </span>
-                )}
+                <span className="bg-foreground/[0.06] text-foreground/50 border border-foreground/[0.08] rounded-full px-2.5 py-0.5 text-[11px] font-display font-bold">
+                  Jämförelse
+                </span>
               </div>
 
               <div className="px-5 py-1">
                 {[
                   { dot: "hsl(var(--primary))", label: "Regionens kundpris", val: teaserData ? `${fmt(teaserData.customerRate)} kr/h` : "616 kr/h" },
-                  { dot: teaserData?.isUnderpaid ? "hsl(var(--amber))" : "hsl(var(--green))", label: "Din ersättning", val: teaserData ? `${fmt(teaserData.userHourly)} kr/h` : "558 kr/h" },
+                  { dot: "hsl(var(--foreground) / 0.5)", label: "Din ersättning", val: teaserData ? `${fmt(teaserData.userHourly)} kr/h` : "558 kr/h" },
+                  { dot: "hsl(var(--foreground) / 0.3)", label: "Skillnad", val: teaserData ? `${fmt(Math.abs(teaserData.high - teaserData.userHourly))} kr/h` : "58 kr/h" },
                 ].map((m, i) => (
-                  <div key={i} className="flex items-center justify-between py-2.5 border-b border-foreground/[0.04] last:border-b-0">
+                  <div key={i} className={`flex items-center justify-between py-2.5 ${i < 2 ? "border-b border-foreground/[0.04]" : ""}`}>
                     <div className="flex items-center gap-2.5">
                       <span className="w-[7px] h-[7px] rounded-full shrink-0" style={{ background: m.dot }} />
                       <span className="text-[14px] text-foreground/75">{m.label}</span>
@@ -458,21 +448,16 @@ export default function AnalysisScreen() {
                 ))}
               </div>
 
-              {/* Average salary comparison */}
               {teaserData && (
                 <div className="px-5 pb-4 pt-1">
-                  <p className="text-[13px] text-foreground/55 leading-relaxed">
-                    Genomsnittslönen för <strong className="text-foreground/75">{teaserData.zone}</strong> är{" "}
-                    <strong className={`${teaserData.userHourly < teaserData.low ? "text-[hsl(var(--amber))]" : teaserData.userHourly > teaserData.high ? "text-[hsl(var(--green))]" : "text-foreground/75"}`}>
-                      {teaserData.userHourly < teaserData.low ? "högre" : teaserData.userHourly > teaserData.high ? "lägre" : "i närheten av"}
-                    </strong>{" "}
-                    {teaserData.userHourly < teaserData.low || teaserData.userHourly > teaserData.high ? "än " : ""}din ersättning.
+                  <p className="text-[13px] text-foreground/45 leading-relaxed">
+                    Se fullständig analys i rapporten
                   </p>
                 </div>
               )}
             </div>
 
-            {/* Cost info card */}
+            {/* 8. Cost info card */}
             <div className="bg-card border border-foreground/[0.07] rounded-[14px] p-4 flex items-start gap-3">
               <Info className="w-4 h-4 text-foreground/40 shrink-0 mt-0.5" />
               <p className="text-[13px] text-foreground/55 leading-relaxed">
