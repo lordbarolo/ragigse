@@ -124,6 +124,14 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
 
   const STEP_NAMES = ["yrkeskategori", "specialisering", "kommun", "anstallningsform", "uppdragsgivare", "ersattning"];
 
+  // Fire survey_started immediately when survey mounts with a pre-selected category
+  // (step 1 is skipped so the click handler there never runs)
+  useEffect(() => {
+    if (initialCategory) {
+      trackSurveyStarted();
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     stepEntryTime.current = Date.now();
     trackEvent("survey_step_viewed", {
