@@ -393,7 +393,7 @@ export default function AnalysisScreen() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   onKeyDown={(e) => { if (e.key === "Enter" && validEmail && !emailSaving) handleEmailSubmit(); }}
-                  className="w-full bg-background/60 border-[1.5px] border-foreground/[0.12] rounded-xl text-foreground font-body text-[16px] py-4 pl-11 pr-4 outline-none transition-all focus:border-primary focus:shadow-[0_0_0_3px_rgba(0,194,255,0.1)] placeholder:text-foreground/35"
+                  className="w-full bg-background/60 border-[1.5px] border-foreground/[0.12] rounded-xl text-foreground font-body text-[16px] py-4 pl-11 pr-4 outline-none transition-all focus:border-primary focus:shadow-[0_0_0_3px_hsl(var(--primary)/0.1)] placeholder:text-foreground/35"
                   autoFocus
                 />
               </div>
@@ -402,7 +402,7 @@ export default function AnalysisScreen() {
                 onClick={handleEmailSubmit}
                 className={`w-full font-display font-bold text-base py-4 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-[0.98] ${
                   validEmail && !emailSaving
-                    ? "bg-primary text-primary-foreground shadow-[0_0_28px_rgba(0,194,255,0.25)] hover:-translate-y-px hover:shadow-[0_0_40px_rgba(0,194,255,0.38)]"
+                    ? "bg-primary text-primary-foreground shadow-[0_0_28px_hsl(var(--primary)/0.25)] hover:-translate-y-px hover:shadow-[0_0_40px_hsl(var(--primary)/0.38)]"
                     : "bg-muted text-muted-foreground cursor-not-allowed"
                 }`}
               >
