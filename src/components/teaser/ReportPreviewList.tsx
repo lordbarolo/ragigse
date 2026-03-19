@@ -5,7 +5,7 @@ interface Props {
   yrke: string;
 }
 
-const CONSULTANT_ITEMS = [
+export const CONSULTANT_ITEMS = [
   {
     icon: BarChart3,
     title: "Ramavtalspris",
