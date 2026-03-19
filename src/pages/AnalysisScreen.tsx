@@ -5,7 +5,7 @@ import { trackEvent } from "@/lib/trackEvent";
 import { toast } from "sonner";
 import type { SurveyData } from "@/components/Survey";
 import type { PricingResult } from "@/hooks/usePricingEngine";
-import { Check, Mail, ArrowRight } from "lucide-react";
+import { Check, Mail, ArrowRight, Info } from "lucide-react";
 import { CONSULTANT_ITEMS, PERMANENT_ITEMS } from "@/components/teaser/ReportPreviewList";
 
 /* ── Steps with icons & subtitles ── */
@@ -348,32 +348,69 @@ export default function AnalysisScreen() {
                 <Check className="w-3.5 h-3.5 text-[hsl(var(--green))]" />
                 <span className="text-[11px] font-display font-semibold tracking-[0.1em] uppercase text-[hsl(var(--green))]">Analysen klar</span>
               </div>
-              <h1 className="font-display text-[28px] sm:text-[32px] font-extrabold tracking-tight leading-[1.1] mb-2">
-                Din analys<br />väntar på <span className="text-primary">dig</span>
-              </h1>
-              <p className="text-[15px] text-foreground/75 leading-relaxed">
-                Förhandlingstipsen och den fullständiga analysen skickas direkt till din inkorg. Inget nyhetsbrev utan din tillåtelse.
-              </p>
             </div>
 
-            {/* Result summary */}
-            {teaserData && (
-              <div className="bg-primary/[0.06] border border-primary/15 rounded-[10px] px-4 py-3.5 text-[15px] text-foreground/75 leading-relaxed">
-                Din ersättning på <strong className={`font-extrabold ${teaserData.isUnderpaid ? "text-[hsl(var(--amber))]" : "text-[hsl(var(--green))]"}`}>
-                  {fmt(teaserData.userHourly)} kr/h
-                </strong> ligger{" "}
-                <strong className={`font-extrabold ${teaserData.isUnderpaid ? "text-[hsl(var(--amber))]" : "text-[hsl(var(--green))]"}`}>
-                  {teaserData.diffPercent} % {teaserData.isUnderpaid ? "under" : "över"}
-                </strong>{" "}
-                marknadsspannet för {teaserData.roleName.toLowerCase()} i {teaserData.zone.toLowerCase()}.
+            {/* Report contents list */}
+            <div>
+              <h2 className="font-display text-[20px] font-extrabold tracking-tight text-foreground mb-3">
+                Din rapport innehåller
+              </h2>
+              <div className="space-y-2.5">
+                {(teaserData?.isPermanent ? PERMANENT_ITEMS : CONSULTANT_ITEMS).map(({ icon: Icon, title, desc }, i) => (
+                  <div key={i} className="flex items-start gap-3">
+                    <div className="p-1.5 rounded-lg bg-primary/10 shrink-0 mt-0.5">
+                      <Icon className="w-4 h-4 text-primary" />
+                    </div>
+                    <div>
+                      <p className="text-[15px] font-semibold text-foreground leading-tight">{title}</p>
+                      <p className="text-[13px] text-foreground/55 mt-0.5">{desc}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
-            )}
+            </div>
 
-            {/* Locked preview card */}
+            {/* Email input + button */}
+            <div className="flex flex-col gap-2.5">
+              <div className="relative flex items-center">
+                <Mail className="absolute left-4 w-4 h-4 text-foreground/30 pointer-events-none" />
+                <input
+                  type="email"
+                  inputMode="email"
+                  autoComplete="email"
+                  placeholder="namn@exempel.se"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter" && validEmail && !emailSaving) handleEmailSubmit(); }}
+                  className="w-full bg-background/60 border-[1.5px] border-foreground/[0.12] rounded-xl text-foreground font-body text-[16px] py-4 pl-11 pr-4 outline-none transition-all focus:border-primary focus:shadow-[0_0_0_3px_rgba(0,194,255,0.1)] placeholder:text-foreground/35"
+                  autoFocus
+                />
+              </div>
+              <button
+                disabled={!validEmail || emailSaving}
+                onClick={handleEmailSubmit}
+                className={`w-full font-display font-bold text-base py-4 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-[0.98] ${
+                  validEmail && !emailSaving
+                    ? "bg-primary text-primary-foreground shadow-[0_0_28px_rgba(0,194,255,0.25)] hover:-translate-y-px hover:shadow-[0_0_40px_rgba(0,194,255,0.38)]"
+                    : "bg-muted text-muted-foreground cursor-not-allowed"
+                }`}
+              >
+                {emailSaving ? "Skickar…" : "Visa min rapport"}
+                {!emailSaving && <ArrowRight className="w-5 h-5" />}
+              </button>
+              <div className="flex items-center justify-center gap-4 flex-wrap">
+                {["Visas direkt", "Ingen inloggning"].map((t) => (
+                  <span key={t} className="text-[13px] text-foreground/45 flex items-center gap-1 font-display font-medium">
+                    <span className="text-[hsl(var(--green))] text-[12px] font-bold">✓</span> {t}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Price comparison card */}
             <div className="bg-card border border-primary/20 rounded-[14px] relative overflow-hidden">
               <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-primary to-indigo-500/60" />
 
-              {/* Teaser header */}
               <div className="flex items-center justify-between px-5 py-3.5 border-b border-foreground/[0.06]">
                 <span className="text-[11px] text-foreground/45 font-display font-medium tracking-[0.1em]">
                   {teaserData ? `${teaserData.roleName} · ${teaserData.zone}` : "Sjuksköterska · Zon 1"}
@@ -389,7 +426,6 @@ export default function AnalysisScreen() {
                 )}
               </div>
 
-            {/* Metrics */}
               <div className="px-5 py-1">
                 {[
                   { dot: "hsl(var(--primary))", label: "Regionens kundpris", val: teaserData ? `${fmt(teaserData.customerRate)} kr/h` : "616 kr/h" },
@@ -405,63 +441,26 @@ export default function AnalysisScreen() {
                 ))}
               </div>
 
-              {/* Friendly email prompt + report contents */}
-              <div className="mx-5 mb-2 mt-4 space-y-3">
-                <h3 className="text-[16px] font-semibold text-foreground flex items-center gap-2">
-                  <Mail className="w-4 h-4 shrink-0 text-primary" />
-                  Ange din e-post för att få hela din rapport
-                </h3>
-                <div>
-                  <p className="text-[11px] font-display font-semibold tracking-[0.08em] uppercase text-foreground/45 mb-2">
-                    Det här ingår:
+              {/* Average salary comparison */}
+              {teaserData && (
+                <div className="px-5 pb-4 pt-1">
+                  <p className="text-[13px] text-foreground/55 leading-relaxed">
+                    Genomsnittslönen för <strong className="text-foreground/75">{teaserData.zone}</strong> är{" "}
+                    <strong className={`${teaserData.userHourly < teaserData.low ? "text-[hsl(var(--amber))]" : teaserData.userHourly > teaserData.high ? "text-[hsl(var(--green))]" : "text-foreground/75"}`}>
+                      {teaserData.userHourly < teaserData.low ? "högre" : teaserData.userHourly > teaserData.high ? "lägre" : "i närheten av"}
+                    </strong>{" "}
+                    {teaserData.userHourly < teaserData.low || teaserData.userHourly > teaserData.high ? "än " : ""}din ersättning.
                   </p>
-                  <div className="space-y-2">
-                    {(teaserData?.isPermanent ? PERMANENT_ITEMS : CONSULTANT_ITEMS).map(({ icon: Icon, title }, i) => (
-                      <div key={i} className="flex items-center gap-2.5">
-                        <Icon className="w-3.5 h-3.5 text-primary shrink-0" />
-                        <span className="text-[13px] text-foreground/70">{title}</span>
-                      </div>
-                    ))}
-                  </div>
                 </div>
-              </div>
+              )}
+            </div>
 
-              {/* Email input inside card */}
-              <div className="px-5 pb-5 pt-4 flex flex-col gap-2.5">
-                <div className="relative flex items-center">
-                  <Mail className="absolute left-4 w-4 h-4 text-foreground/30 pointer-events-none" />
-                  <input
-                    type="email"
-                    inputMode="email"
-                    autoComplete="email"
-                    placeholder="namn@exempel.se"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === "Enter" && validEmail && !emailSaving) handleEmailSubmit(); }}
-                    className="w-full bg-background/60 border-[1.5px] border-foreground/[0.12] rounded-xl text-foreground font-body text-[16px] py-4 pl-11 pr-4 outline-none transition-all focus:border-primary focus:shadow-[0_0_0_3px_rgba(0,194,255,0.1)] placeholder:text-foreground/35"
-                    autoFocus
-                  />
-                </div>
-                <button
-                  disabled={!validEmail || emailSaving}
-                  onClick={handleEmailSubmit}
-                  className={`w-full font-display font-bold text-base py-4 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-[0.98] ${
-                    validEmail && !emailSaving
-                      ? "bg-primary text-primary-foreground shadow-[0_0_28px_rgba(0,194,255,0.25)] hover:-translate-y-px hover:shadow-[0_0_40px_rgba(0,194,255,0.38)]"
-                      : "bg-muted text-muted-foreground cursor-not-allowed"
-                  }`}
-                >
-                  {emailSaving ? "Skickar…" : "Visa min rapport"}
-                  {!emailSaving && <ArrowRight className="w-5 h-5" />}
-                </button>
-                <div className="flex items-center justify-center gap-4 flex-wrap">
-                  {["Visas direkt", "Ingen inloggning", "Inget nyhetsbrev"].map((t) => (
-                    <span key={t} className="text-[13px] text-foreground/45 flex items-center gap-1 font-display font-medium">
-                      <span className="text-[hsl(var(--green))] text-[12px] font-bold">✓</span> {t}
-                    </span>
-                  ))}
-                </div>
-              </div>
+            {/* Cost info card */}
+            <div className="bg-card border border-foreground/[0.07] rounded-[14px] p-4 flex items-start gap-3">
+              <Info className="w-4 h-4 text-foreground/40 shrink-0 mt-0.5" />
+              <p className="text-[13px] text-foreground/55 leading-relaxed">
+                Kostnader för resa, boende, introduktion, SITHS-kort, HLR-utbildning m.m kan påverka ersättningen som erbjuds av uppdragsgivare.
+              </p>
             </div>
           </div>
         )}
