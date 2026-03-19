@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { Radio, Search, Loader2 } from "lucide-react";
+import ReijdarPromo from "@/components/radar/ReijdarPromo";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import RadarFilters from "@/components/radar/RadarFilters";
 import PredictionCard from "@/components/radar/PredictionCard";
@@ -234,12 +235,15 @@ export default function Radar() {
         ) : (
           <>
             {predictions.map((p, i) => (
-              <div key={p.id} ref={i === predictions.length - 1 ? lastElementRef : undefined}>
-                <PredictionCard
-                  prediction={p}
-                  onOpen={handleOpen}
-                  onWatch={handleWatch}
-                />
+              <div key={p.id}>
+                <div ref={i === predictions.length - 1 ? lastElementRef : undefined}>
+                  <PredictionCard
+                    prediction={p}
+                    onOpen={handleOpen}
+                    onWatch={handleWatch}
+                  />
+                </div>
+                {(i === 2 || i === predictions.length - 1) && <div className="mt-3"><ReijdarPromo /></div>}
               </div>
             ))}
             {isFetchingNextPage && (
