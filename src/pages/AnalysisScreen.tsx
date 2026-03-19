@@ -442,7 +442,7 @@ export default function AnalysisScreen() {
 
               <div className="px-5 pb-4 pt-1">
                 <p className="text-[13px] text-foreground/45 leading-relaxed">
-                  Se fullständig analys i rapporten
+                  Beloppen säger inte allt. Se rapporten för utförlig analys.
                 </p>
               </div>
             </div>
