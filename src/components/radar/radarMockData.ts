@@ -1,4 +1,5 @@
 export type PredictionStatus = "high" | "medium" | "watch";
+export type ProbabilityLevel = 1 | 2 | 3;
 
 export interface HistoricalCalloff {
   date: string;
@@ -11,6 +12,9 @@ export interface Prediction {
   competence: string;
   location: string;
   status: PredictionStatus;
+  probabilityLevel: ProbabilityLevel;
+  seasonalSignal: string | null;
+  predictedDate: string | null;
   forecastWindow: string;
   historicalSignal: string;
   lastActivity: string;

@@ -1,23 +1,23 @@
 import { Prediction } from "./radarMockData";
-import { Radio, Eye, MapPin, Building2, Clock } from "lucide-react";
+import { Eye, MapPin, Building2, Clock, Radio } from "lucide-react";
 
-const STATUS_CONFIG = {
-  high: {
-    label: "Hög sannolikhet snart",
-    dotClass: "bg-accent",
-    borderClass: "border-l-accent",
-  },
-  medium: {
-    label: "Möjligt inom kort",
-    dotClass: "bg-amber-400",
-    borderClass: "border-l-amber-400",
-  },
-  watch: {
-    label: "Bevaka framöver",
-    dotClass: "bg-muted-foreground",
-    borderClass: "border-l-muted-foreground",
-  },
-} as const;
+function ProbabilityBalls({ level }: { level: 1 | 2 | 3 }) {
+  return (
+    <div className="flex items-center gap-1" title={`Sannolikhet: ${level}/3`}>
+      {[1, 2, 3].map((i) => (
+        <span
+          key={i}
+          className={`w-3 h-3 rounded-full ${
+            i <= level ? "bg-primary" : "bg-muted"
+          }`}
+        />
+      ))}
+      <span className="text-[11px] text-muted-foreground ml-1.5">
+        {level === 3 ? "Hög sannolikhet" : level === 2 ? "Återkommande mönster" : "Historisk bas"}
+      </span>
+    </div>
+  );
+}
 
 interface PredictionCardProps {
   prediction: Prediction;
@@ -26,19 +26,17 @@ interface PredictionCardProps {
 }
 
 export default function PredictionCard({ prediction, onOpen, onWatch }: PredictionCardProps) {
-  const cfg = STATUS_CONFIG[prediction.status];
-
   return (
-    <div
-      className={`bg-card border border-border ${cfg.borderClass} border-l-[3px] rounded-2xl p-4 space-y-3 transition-shadow hover:shadow-[var(--card-shadow-hover)]`}
-    >
-      {/* Status */}
-      <div className="flex items-center gap-2">
-        <span className={`w-2 h-2 rounded-full ${cfg.dotClass} flex-shrink-0`} />
-        <span className="text-[12px] font-medium tracking-wide text-muted-foreground uppercase">
-          {cfg.label}
-        </span>
-      </div>
+    <div className="bg-card border border-border rounded-2xl p-4 space-y-3 transition-shadow hover:shadow-[var(--card-shadow-hover)]">
+      {/* Probability */}
+      <ProbabilityBalls level={prediction.probabilityLevel} />
+
+      {/* Seasonal signal */}
+      {prediction.seasonalSignal && (
+        <div className="text-[11px] text-accent font-medium bg-accent/10 border border-accent/20 rounded-lg px-2.5 py-1.5">
+          🔄 {prediction.seasonalSignal}
+        </div>
+      )}
 
       {/* Buyer + competence */}
       <div>
