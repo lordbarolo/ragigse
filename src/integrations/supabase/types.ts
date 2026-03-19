@@ -1261,6 +1261,74 @@ export type Database = {
         }
         Relationships: []
       }
+      radar_notifications: {
+        Row: {
+          created_at: string
+          id: string
+          months_before: number
+          scheduled_for: string
+          sent_at: string | null
+          status: string
+          watchlist_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          months_before: number
+          scheduled_for: string
+          sent_at?: string | null
+          status?: string
+          watchlist_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          months_before?: number
+          scheduled_for?: string
+          sent_at?: string | null
+          status?: string
+          watchlist_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "radar_notifications_watchlist_id_fkey"
+            columns: ["watchlist_id"]
+            isOneToOne: false
+            referencedRelation: "radar_watchlist"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      radar_watchlist: {
+        Row: {
+          buyer: string
+          competence: string
+          created_at: string
+          id: string
+          location: string
+          predicted_date: string | null
+          user_id: string
+        }
+        Insert: {
+          buyer: string
+          competence: string
+          created_at?: string
+          id?: string
+          location: string
+          predicted_date?: string | null
+          user_id: string
+        }
+        Update: {
+          buyer?: string
+          competence?: string
+          created_at?: string
+          id?: string
+          location?: string
+          predicted_date?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       rates: {
         Row: {
           detaljer: string | null
