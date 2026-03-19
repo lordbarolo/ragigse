@@ -445,7 +445,7 @@ export default function AnalysisScreen() {
               {teaserData &&
             <div className="px-5 pb-4 pt-1">
                   <p className="text-[13px] text-foreground/55 leading-relaxed">
-                    Snittlönen för <strong className="text-foreground/75">{survey?.yrke || "din roll"}</strong> är{" "}
+                    Snittlönen för {survey?.yrke || "din roll"} är{" "}
                     <strong className={`${teaserData.userHourly < teaserData.low ? "text-[hsl(var(--amber))]" : teaserData.userHourly > teaserData.high ? "text-[hsl(var(--green))]" : "text-foreground/75"}`}>
                       {teaserData.userHourly < teaserData.low ? "högre" : teaserData.userHourly > teaserData.high ? "lägre" : "i nivå"}
                     </strong>{" "}
