@@ -447,9 +447,9 @@ export default function AnalysisScreen() {
                   <p className="text-[13px] text-foreground/55 leading-relaxed">
                     Snittlönen för <strong className="text-foreground/75">{survey?.yrke || "din roll"}</strong> är{" "}
                     <strong className={`${teaserData.userHourly < teaserData.low ? "text-[hsl(var(--amber))]" : teaserData.userHourly > teaserData.high ? "text-[hsl(var(--green))]" : "text-foreground/75"}`}>
-                      {teaserData.userHourly < teaserData.low ? "högre" : teaserData.userHourly > teaserData.high ? "lägre" : "i nivå med"}
+                      {teaserData.userHourly < teaserData.low ? "högre" : teaserData.userHourly > teaserData.high ? "lägre" : "i nivå"}
                     </strong>{" "}
-                    din ersättning på <strong className="text-foreground/75">{fmt(teaserData.userHourly)} kr/h</strong>.
+                    jämfört med dig
                   </p>
                 </div>
             }
