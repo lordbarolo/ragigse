@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import type { SurveyData } from "@/components/Survey";
 import type { PricingResult } from "@/hooks/usePricingEngine";
 import { Check, Mail, ArrowRight } from "lucide-react";
+import { CONSULTANT_ITEMS, PERMANENT_ITEMS } from "@/components/teaser/ReportPreviewList";
 
 /* ── Steps with icons & subtitles ── */
 const STEPS = [
