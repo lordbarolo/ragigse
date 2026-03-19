@@ -350,8 +350,44 @@ export default function AnalysisScreen() {
               </div>
             </div>
 
+            {/* Insight card — visually dominant "aha" */}
+            <div className="bg-card border border-primary/20 rounded-[16px] relative overflow-hidden mt-1 mb-1">
+              <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-primary to-primary/30" />
+
+              <div className="flex items-center justify-between px-5 py-3.5 border-b border-foreground/[0.06]">
+                <span className="text-[12px] text-foreground/50 font-display font-semibold tracking-[0.08em]">
+                  {teaserData ? `${teaserData.roleName} · ${teaserData.zone}` : "Sjuksköterska · Zon 1"}
+                </span>
+                <span className="bg-foreground/[0.06] text-foreground/50 border border-foreground/[0.08] rounded-full px-2.5 py-0.5 text-[11px] font-display font-bold">
+                  Jämförelse
+                </span>
+              </div>
+
+              <div className="px-5 py-2">
+                {[
+                  { dot: "hsl(var(--primary))", label: "Regionens kundpris", val: teaserData ? `${fmt(teaserData.customerRate)} kr/h` : "616 kr/h" },
+                  { dot: "hsl(var(--foreground) / 0.5)", label: "Din ersättning", val: teaserData ? `${fmt(teaserData.userHourly)} kr/h` : "558 kr/h" },
+                  { dot: "hsl(var(--foreground) / 0.3)", label: "Skillnad", val: teaserData ? `${fmt(Math.abs(teaserData.high - teaserData.userHourly))} kr/h` : "58 kr/h" },
+                ].map((m, i) => (
+                  <div key={i} className={`flex items-center justify-between py-3 ${i < 2 ? "border-b border-foreground/[0.05]" : ""}`}>
+                    <div className="flex items-center gap-2.5">
+                      <span className="w-2 h-2 rounded-full shrink-0" style={{ background: m.dot }} />
+                      <span className="text-[15px] text-foreground/80">{m.label}</span>
+                    </div>
+                    <span className="font-display text-[19px] font-extrabold text-foreground">{m.val}</span>
+                  </div>
+                ))}
+              </div>
+
+              <div className="px-5 pb-4 pt-1">
+                <p className="text-[13px] text-foreground/45 leading-relaxed">
+                  Beloppen säger inte allt. Se rapporten för utförlig analys.
+                </p>
+              </div>
+            </div>
+
             <div>
-              <h2 className="font-display text-[20px] font-extrabold tracking-tight text-foreground mb-1.5">
+              <h2 className="font-display text-[18px] font-extrabold tracking-tight text-foreground mb-1.5">
                 Din rapport innehåller
               </h2>
               <div className="space-y-1">
