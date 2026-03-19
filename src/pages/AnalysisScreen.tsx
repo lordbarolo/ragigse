@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import type { SurveyData } from "@/components/Survey";
 import type { PricingResult } from "@/hooks/usePricingEngine";
 import { Check, Mail, ArrowRight } from "lucide-react";
+import { CONSULTANT_ITEMS, PERMANENT_ITEMS } from "@/components/teaser/ReportPreviewList";
 
 /* ── Steps with icons & subtitles ── */
 const STEPS = [
@@ -178,7 +179,11 @@ export default function AnalysisScreen() {
     const isUnderpaid = userHourly < high;
     const roleName = survey.yrke || "Sjuksköterska";
     const zone = pricing.zon || "Zon 1";
-    return { userHourly, customerRate, low, high, isUnderpaid, roleName, zone };
+    const diffPercent = isUnderpaid
+      ? Math.round(((high - userHourly) / high) * 100)
+      : Math.round(((userHourly - low) / low) * 100);
+    const isPermanent = (survey as SurveyData & { track?: string }).track === "permanent";
+    return { userHourly, customerRate, low, high, isUnderpaid, roleName, zone, diffPercent, isPermanent };
   }, [survey, pricing]);
 
   const validEmail = EMAIL_REGEX.test(email.trim());
@@ -356,7 +361,11 @@ export default function AnalysisScreen() {
               <div className="bg-primary/[0.06] border border-primary/15 rounded-[10px] px-4 py-3.5 text-[15px] text-foreground/75 leading-relaxed">
                 Din ersättning på <strong className={`font-extrabold ${teaserData.isUnderpaid ? "text-[hsl(var(--amber))]" : "text-[hsl(var(--green))]"}`}>
                   {fmt(teaserData.userHourly)} kr/h
-                </strong> ligger {teaserData.isUnderpaid ? "under" : "över"} marknadsspannet för {teaserData.roleName.toLowerCase()} i {teaserData.zone.toLowerCase()}.
+                </strong> ligger{" "}
+                <strong className={`font-extrabold ${teaserData.isUnderpaid ? "text-[hsl(var(--amber))]" : "text-[hsl(var(--green))]"}`}>
+                  {teaserData.diffPercent} % {teaserData.isUnderpaid ? "under" : "över"}
+                </strong>{" "}
+                marknadsspannet för {teaserData.roleName.toLowerCase()} i {teaserData.zone.toLowerCase()}.
               </div>
             )}
 
@@ -396,15 +405,25 @@ export default function AnalysisScreen() {
                 ))}
               </div>
 
-              {/* Friendly email prompt */}
-              <div className="mx-5 mb-2 mt-4 space-y-1">
+              {/* Friendly email prompt + report contents */}
+              <div className="mx-5 mb-2 mt-4 space-y-3">
                 <h3 className="text-[16px] font-semibold text-foreground flex items-center gap-2">
                   <Mail className="w-4 h-4 shrink-0 text-primary" />
-                  Ange din e-post
+                  Ange din e-post för att få hela din rapport
                 </h3>
-                <p className="text-[14px] text-foreground/60 leading-snug pl-6">
-                  Så skickar vi hela analysen direkt
-                </p>
+                <div>
+                  <p className="text-[11px] font-display font-semibold tracking-[0.08em] uppercase text-foreground/45 mb-2">
+                    Det här ingår:
+                  </p>
+                  <div className="space-y-2">
+                    {(teaserData?.isPermanent ? PERMANENT_ITEMS : CONSULTANT_ITEMS).map(({ icon: Icon, title }, i) => (
+                      <div key={i} className="flex items-center gap-2.5">
+                        <Icon className="w-3.5 h-3.5 text-primary shrink-0" />
+                        <span className="text-[13px] text-foreground/70">{title}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
 
               {/* Email input inside card */}

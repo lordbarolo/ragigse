@@ -5,7 +5,7 @@ interface Props {
   yrke: string;
 }
 
-const CONSULTANT_ITEMS = [
+export const CONSULTANT_ITEMS = [
   {
     icon: BarChart3,
     title: "Ramavtalspris",
@@ -33,7 +33,7 @@ const CONSULTANT_ITEMS = [
   },
 ];
 
-const PERMANENT_ITEMS = [
+export const PERMANENT_ITEMS = [
   {
     icon: BarChart3,
     title: "Lönestatistik",
