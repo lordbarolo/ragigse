@@ -405,15 +405,25 @@ export default function AnalysisScreen() {
                 ))}
               </div>
 
-              {/* Friendly email prompt */}
-              <div className="mx-5 mb-2 mt-4 space-y-1">
+              {/* Friendly email prompt + report contents */}
+              <div className="mx-5 mb-2 mt-4 space-y-3">
                 <h3 className="text-[16px] font-semibold text-foreground flex items-center gap-2">
                   <Mail className="w-4 h-4 shrink-0 text-primary" />
-                  Ange din e-post
+                  Ange din e-post för att få hela din rapport
                 </h3>
-                <p className="text-[14px] text-foreground/60 leading-snug pl-6">
-                  Så skickar vi hela analysen direkt
-                </p>
+                <div>
+                  <p className="text-[11px] font-display font-semibold tracking-[0.08em] uppercase text-foreground/45 mb-2">
+                    Det här ingår:
+                  </p>
+                  <div className="space-y-2">
+                    {(teaserData?.isPermanent ? PERMANENT_ITEMS : CONSULTANT_ITEMS).map(({ icon: Icon, title }, i) => (
+                      <div key={i} className="flex items-center gap-2.5">
+                        <Icon className="w-3.5 h-3.5 text-primary shrink-0" />
+                        <span className="text-[13px] text-foreground/70">{title}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
 
               {/* Email input inside card */}

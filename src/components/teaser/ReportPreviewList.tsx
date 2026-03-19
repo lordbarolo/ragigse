@@ -33,7 +33,7 @@ export const CONSULTANT_ITEMS = [
   },
 ];
 
-const PERMANENT_ITEMS = [
+export const PERMANENT_ITEMS = [
   {
     icon: BarChart3,
     title: "Lönestatistik",
