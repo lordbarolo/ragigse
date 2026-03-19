@@ -6,10 +6,12 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-// Normalize role names from requests table to match CompCare survey taxonomy
 const ROLE_NORMALIZE: Record<string, string> = {
   "Distriktssköterska": "Distriktssjuksköterska",
-  "Övrig": "", // exclude — too generic to map
+  "Övrig": "",
+  "Sjukgymnast": "Fysioterapeut",
+  "Mentalskötare": "Mentalskötare",
+  "Undersköterska": "Undersköterska",
 };
 
 function normalizeRole(role: string): string {
@@ -31,29 +33,22 @@ interface UnifiedRow {
   calloff_date: string;
 }
 
-interface Prediction {
-  id: string;
-  buyer: string;
-  competence: string;
-  location: string;
-  status: "high" | "medium" | "watch";
-  forecastWindow: string;
-  historicalSignal: string;
-  lastActivity: string;
-  calloffCount: number;
-  avgIntervalDays: number;
-  summary: string;
-  reasons: string[];
-  history: { date: string; description: string }[];
-}
-
-/** Format a timespan in months into a human-readable Swedish string */
-function formatTimespan(months: number): string {
-  if (months >= 24) {
-    const years = Math.round(months / 12);
-    return `senaste ${years} åren`;
+/** Paginated fetch — fetches all rows from a Supabase query in 1000-row batches */
+async function fetchAll(supabase: any, table: string, select: string, filters: (q: any) => any, orderCol: string) {
+  const PAGE_SIZE = 1000;
+  let allRows: any[] = [];
+  let offset = 0;
+  while (true) {
+    let query = supabase.from(table).select(select).order(orderCol, { ascending: false }).range(offset, offset + PAGE_SIZE - 1);
+    query = filters(query);
+    const { data, error } = await query;
+    if (error) throw error;
+    if (!data || data.length === 0) break;
+    allRows = allRows.concat(data);
+    if (data.length < PAGE_SIZE) break;
+    offset += PAGE_SIZE;
   }
-  return `senaste ${months} månaderna`;
+  return allRows;
 }
 
 Deno.serve(async (req) => {
@@ -66,106 +61,82 @@ Deno.serve(async (req) => {
     const competenceFilter = url.searchParams.get("competence") || "";
     const locationFilter = url.searchParams.get("location") || "";
     const buyerFilter = url.searchParams.get("buyer") || "";
+    const page = parseInt(url.searchParams.get("page") || "0");
+    const pageSize = parseInt(url.searchParams.get("pageSize") || "20");
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Build queries for all three tables in parallel
-    let historyQuery = supabase
-      .from("calloff_history")
-      .select("buyer, yrkeskategori, zon, location, duration_weeks, calloff_date")
-      .order("calloff_date", { ascending: false });
-
-    let importsQuery = supabase
-      .from("calloff_imports")
-      .select("customer, role, region, calloff_date, duration_weeks, customer_type")
-      .not("calloff_date", "is", null)
-      .not("customer", "is", null)
-      .not("role", "is", null)
-      .order("calloff_date", { ascending: false });
-
-    let requestsQuery = supabase
-      .from("requests")
-      .select("customer, role, region, created_at, customer_type")
-      .not("created_at", "is", null)
-      .not("customer", "is", null)
-      .not("role", "is", null)
-      .order("created_at", { ascending: false });
-
-    if (competenceFilter) {
-      historyQuery = historyQuery.eq("yrkeskategori", competenceFilter);
-      importsQuery = importsQuery.eq("role", competenceFilter);
-      requestsQuery = requestsQuery.eq("role", competenceFilter);
-    }
-    if (locationFilter) {
-      historyQuery = historyQuery.eq("location", locationFilter);
-      importsQuery = importsQuery.eq("region", locationFilter);
-      requestsQuery = requestsQuery.eq("region", locationFilter);
-    }
-    if (buyerFilter) {
-      if (buyerFilter === "Privat") {
-        // For private buyers, filter by customer_type instead of name
-        importsQuery = importsQuery.eq("customer_type", "Privat");
-        requestsQuery = requestsQuery.eq("customer_type", "Privat");
-        // calloff_history has no customer_type — skip (no private buyers there)
-      } else {
-        historyQuery = historyQuery.eq("buyer", buyerFilter);
-        importsQuery = importsQuery.eq("customer", buyerFilter);
-        requestsQuery = requestsQuery.eq("customer", buyerFilter);
+    const applyFilters = (competenceCol: string, locationCol: string, buyerCol: string, hasCustType: boolean) => (q: any) => {
+      if (competenceFilter) q = q.eq(competenceCol, competenceFilter);
+      if (locationFilter) q = q.eq(locationCol, locationFilter);
+      if (buyerFilter) {
+        if (buyerFilter === "Privat" && hasCustType) {
+          q = q.eq("customer_type", "Privat");
+        } else {
+          q = q.eq(buyerCol, buyerFilter);
+        }
       }
-    }
+      return q;
+    };
 
-    const [{ data: historyRows, error: e1 }, { data: importRows, error: e2 }, { data: requestRows, error: e3 }] =
-      await Promise.all([historyQuery, importsQuery, requestsQuery]);
+    const [historyRows, importRows, requestRows] = await Promise.all([
+      fetchAll(supabase, "calloff_history",
+        "buyer, yrkeskategori, zon, location, duration_weeks, calloff_date",
+        applyFilters("yrkeskategori", "location", "buyer", false),
+        "calloff_date"),
+      fetchAll(supabase, "calloff_imports",
+        "customer, role, region, calloff_date, duration_weeks, customer_type",
+        (q: any) => {
+          q = q.not("calloff_date", "is", null).not("customer", "is", null).not("role", "is", null);
+          return applyFilters("role", "region", "customer", true)(q);
+        },
+        "calloff_date"),
+      fetchAll(supabase, "requests",
+        "customer, role, region, created_at, customer_type",
+        (q: any) => {
+          q = q.not("created_at", "is", null).not("customer", "is", null).not("role", "is", null);
+          return applyFilters("role", "region", "customer", true)(q);
+        },
+        "created_at"),
+    ]);
 
-    if (e1) throw e1;
-    if (e2) throw e2;
-    if (e3) throw e3;
-
-    // Normalize all three sources into UnifiedRow[]
+    // Normalize into UnifiedRow[]
     const unified: UnifiedRow[] = [];
 
-    for (const r of (historyRows || []) as any[]) {
+    for (const r of historyRows) {
       unified.push({
-        buyer: r.buyer,
-        competence: r.yrkeskategori,
-        location: r.location,
-        zon: r.zon,
-        duration_weeks: r.duration_weeks,
-        calloff_date: r.calloff_date,
+        buyer: r.buyer, competence: r.yrkeskategori, location: r.location,
+        zon: r.zon, duration_weeks: r.duration_weeks, calloff_date: r.calloff_date,
       });
     }
 
-    for (const r of (importRows || []) as any[]) {
+    for (const r of importRows) {
       unified.push({
         buyer: r.customer_type === "Privat" ? "Privat" : r.customer,
-        competence: r.role,
-        location: r.region || "Okänd",
-        zon: "",
-        duration_weeks: r.duration_weeks,
-        calloff_date: r.calloff_date,
+        competence: r.role, location: r.region || "Okänd",
+        zon: "", duration_weeks: r.duration_weeks, calloff_date: r.calloff_date,
       });
     }
 
-    for (const r of (requestRows || []) as any[]) {
+    for (const r of requestRows) {
       const normalized = normalizeRole(r.role);
-      if (!normalized) continue; // skip unmappable roles like "Övrig"
+      if (!normalized) continue;
       unified.push({
         buyer: r.customer_type === "Privat" ? "Privat" : r.customer,
-        competence: normalized,
-        location: r.region || "Okänd",
-        zon: "",
-        duration_weeks: null,
-        calloff_date: r.created_at,
+        competence: normalized, location: r.region || "Okänd",
+        zon: "", duration_weeks: null, calloff_date: r.created_at,
       });
     }
 
     const today = new Date();
     const todayMs = today.getTime();
-    const currentMonth = today.getMonth(); // 0-indexed
+    const currentMonth = today.getMonth();
     const nextMonth = (currentMonth + 1) % 12;
+    const threeMonthsAgo = new Date(today);
+    threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
 
     // Group by buyer + competence + location
     const groups = new Map<string, UnifiedRow[]>();
@@ -175,15 +146,11 @@ Deno.serve(async (req) => {
       groups.get(key)!.push(row);
     }
 
-    const predictions: Prediction[] = [];
+    const predictions: any[] = [];
 
     for (const [key, calloffs] of groups) {
       const [buyer, competence, location] = key.split("|");
-      calloffs.sort(
-        (a, b) =>
-          new Date(b.calloff_date).getTime() -
-          new Date(a.calloff_date).getTime()
-      );
+      calloffs.sort((a, b) => new Date(b.calloff_date).getTime() - new Date(a.calloff_date).getTime());
 
       const count = calloffs.length;
       if (count < 2) continue;
@@ -194,154 +161,141 @@ Deno.serve(async (req) => {
         const d2 = new Date(calloffs[i + 1].calloff_date).getTime();
         intervals.push(Math.round((d1 - d2) / (1000 * 60 * 60 * 24)));
       }
-      const avgInterval = Math.round(
-        intervals.reduce((a, b) => a + b, 0) / intervals.length
-      );
+      const avgInterval = Math.round(intervals.reduce((a, b) => a + b, 0) / intervals.length);
 
       const lastDate = new Date(calloffs[0].calloff_date);
       const oldestDate = new Date(calloffs[calloffs.length - 1].calloff_date);
-      const daysSinceLast = Math.round(
-        (todayMs - lastDate.getTime()) / (1000 * 60 * 60 * 24)
-      );
-
-      // --- Dynamic timespan ---
-      const spanMonths = Math.max(1, Math.round(
-        (todayMs - oldestDate.getTime()) / (1000 * 60 * 60 * 24 * 30.44)
-      ));
-      const timespanLabel = formatTimespan(spanMonths);
-
-      // --- Recency gate ---
-      // Caps maximum status based on how recently the last activity was
+      const daysSinceLast = Math.round((todayMs - lastDate.getTime()) / (1000 * 60 * 60 * 24));
       const monthsSinceLast = daysSinceLast / 30.44;
-      let maxStatus: "high" | "medium" | "watch";
-      if (monthsSinceLast > 24) {
-        maxStatus = "watch";
-      } else if (monthsSinceLast > 12) {
-        maxStatus = "medium";
+      const spanMonths = Math.max(1, Math.round((todayMs - oldestDate.getTime()) / (1000 * 60 * 60 * 24 * 30.44)));
+
+      // --- Predicted next date ---
+      const predictedNextMs = lastDate.getTime() + avgInterval * 86400000;
+      const predictedDate = new Date(predictedNextMs).toISOString().split("T")[0];
+
+      // --- Spåkulor (1-3) probability system ---
+      const hasOneYearHistory = spanMonths >= 12;
+      
+      // Check for recurring pattern: same month across ≥2 years
+      const monthYearMap = new Map<number, Set<number>>();
+      for (const c of calloffs) {
+        const d = new Date(c.calloff_date);
+        const m = d.getMonth();
+        if (!monthYearMap.has(m)) monthYearMap.set(m, new Set());
+        monthYearMap.get(m)!.add(d.getFullYear());
+      }
+      const hasRecurringPattern = [...monthYearMap.values()].some(years => years.size >= 2);
+
+      // Recent activity (last 3 months)
+      const recentCount = calloffs.filter(c => new Date(c.calloff_date) >= threeMonthsAgo).length;
+      const hasRecentActivity = recentCount > 0;
+
+      let probabilityLevel: 1 | 2 | 3;
+      if (hasRecurringPattern && count >= 3 && hasRecentActivity) {
+        probabilityLevel = 3;
+      } else if (hasRecurringPattern) {
+        probabilityLevel = 2;
+      } else if (hasOneYearHistory) {
+        probabilityLevel = 1;
       } else {
-        maxStatus = "high";
+        probabilityLevel = 1; // minimum if we have ≥2 data points
       }
 
-      // --- Base status from ratio ---
-      const ratio = daysSinceLast / avgInterval;
-      let status: "high" | "medium" | "watch";
-      let forecastWindow: string;
-
-      if (ratio >= 0.8) {
-        status = "high";
-        const weeksLeft = Math.max(1, Math.round((avgInterval - daysSinceLast) / 7));
-        forecastWindow =
-          weeksLeft <= 1
-            ? "Sannolikt inom 1 vecka"
-            : `Sannolikt inom ${weeksLeft}–${weeksLeft + 2} veckor`;
-      } else if (ratio >= 0.5) {
-        status = "medium";
-        const weeksUntil = Math.round((avgInterval * 0.8 - daysSinceLast) / 7);
-        forecastWindow = `Möjligt inom ${Math.max(2, weeksUntil)}–${Math.max(4, weeksUntil + 2)} veckor`;
-      } else {
-        status = "watch";
-        const weeksUntil = Math.round((avgInterval * 0.8 - daysSinceLast) / 7);
-        forecastWindow = `Bevaka kommande ${Math.max(4, weeksUntil)}–${Math.max(6, weeksUntil + 2)} veckor`;
-      }
-
-      // --- Seasonal signal boost ---
-      // Count how many historical calloffs fall in the current or next month
-      const seasonalMatches = calloffs.filter((c) => {
+      // --- Seasonal signal ---
+      const seasonalMatches = calloffs.filter(c => {
         const m = new Date(c.calloff_date).getMonth();
         return m === currentMonth || m === nextMonth;
-      }).length;
+      });
+      const seasonalYears = new Set(seasonalMatches.map(c => new Date(c.calloff_date).getFullYear())).size;
+      let seasonalSignal: string | null = null;
+      if (seasonalMatches.length >= 2 && seasonalYears >= 2) {
+        const monthName = SWEDISH_MONTHS[currentMonth];
+        seasonalSignal = `Avrop i ${monthName} ${seasonalYears} av senaste åren — sannolikt återkommande`;
+      }
 
-      // Count distinct years for seasonal context
-      const seasonalYears = new Set(
-        calloffs
-          .filter((c) => {
-            const m = new Date(c.calloff_date).getMonth();
-            return m === currentMonth || m === nextMonth;
-          })
-          .map((c) => new Date(c.calloff_date).getFullYear())
-      ).size;
+      // --- Status from ratio (for sorting/display) ---
+      let maxStatus: "high" | "medium" | "watch";
+      if (monthsSinceLast > 24) maxStatus = "watch";
+      else if (monthsSinceLast > 12) maxStatus = "medium";
+      else maxStatus = "high";
 
-      const totalYearsSpan = Math.max(1, Math.ceil(spanMonths / 12));
+      const ratio = daysSinceLast / avgInterval;
+      let status: "high" | "medium" | "watch";
+      if (ratio >= 0.8) status = "high";
+      else if (ratio >= 0.5) status = "medium";
+      else status = "watch";
 
-      // Boost: ≥2 seasonal matches in distinct years AND last activity < 24 months
-      if (seasonalMatches >= 2 && seasonalYears >= 2 && monthsSinceLast <= 24) {
+      // Seasonal boost
+      if (seasonalMatches.length >= 2 && seasonalYears >= 2 && monthsSinceLast <= 24) {
         if (status === "watch") status = "medium";
         else if (status === "medium") status = "high";
       }
 
-      // --- Apply recency gate (cap status) ---
+      // Apply recency gate
       const statusOrder = { watch: 0, medium: 1, high: 2 };
-      if (statusOrder[status] > statusOrder[maxStatus]) {
-        status = maxStatus;
+      if (statusOrder[status] > statusOrder[maxStatus]) status = maxStatus;
+
+      const timespanLabel = spanMonths >= 24
+        ? `senaste ${Math.round(spanMonths / 12)} åren`
+        : `senaste ${spanMonths} månaderna`;
+
+      let forecastWindow: string;
+      if (ratio >= 0.8) {
+        const weeksLeft = Math.max(1, Math.round((avgInterval - daysSinceLast) / 7));
+        forecastWindow = weeksLeft <= 1 ? "Sannolikt inom 1 vecka" : `Sannolikt inom ${weeksLeft}–${weeksLeft + 2} veckor`;
+      } else if (ratio >= 0.5) {
+        const weeksUntil = Math.round((avgInterval * 0.8 - daysSinceLast) / 7);
+        forecastWindow = `Möjligt inom ${Math.max(2, weeksUntil)}–${Math.max(4, weeksUntil + 2)} veckor`;
+      } else {
+        const weeksUntil = Math.round((avgInterval * 0.8 - daysSinceLast) / 7);
+        forecastWindow = `Bevaka kommande ${Math.max(4, weeksUntil)}–${Math.max(6, weeksUntil + 2)} veckor`;
       }
 
-      // --- Build reasons with dynamic copy ---
       const reasons: string[] = [
         `${count} uppdrag ${timespanLabel} hos ${buyer}`,
         `Genomsnittligt intervall: ${avgInterval} dagar`,
         `Senaste uppdraget var ${daysSinceLast} dagar sedan`,
       ];
+      if (seasonalSignal) reasons.push(seasonalSignal);
+      if (monthsSinceLast > 24) reasons.push("Inget uppdrag senaste 24 månaderna – lägre sannolikhet");
+      else if (monthsSinceLast > 12) reasons.push("Inget uppdrag senaste 12 månaderna – avvaktande");
 
-      if (ratio >= 0.9 && maxStatus === "high") {
-        reasons.push("Nästa uppdragsfönster har sannolikt redan öppnat");
-      }
-
-      if (monthsSinceLast > 24) {
-        reasons.push("Inget uppdrag senaste 24 månaderna – lägre sannolikhet");
-      } else if (monthsSinceLast > 12) {
-        reasons.push("Inget uppdrag senaste 12 månaderna – avvaktande");
-      }
-
-      // Seasonal reason
-      if (seasonalMatches >= 2 && seasonalYears >= 2) {
-        const monthName = SWEDISH_MONTHS[currentMonth];
-        reasons.push(
-          `Historiskt mönster: uppdrag i ${monthName} ${seasonalYears} av ${totalYearsSpan} år`
-        );
-      }
-
-      const history = calloffs.map((c) => ({
+      const history = calloffs.slice(0, 10).map(c => ({
         date: c.calloff_date,
         description: `Uppdrag ${competence.toLowerCase()}, ${c.duration_weeks || "?"} veckor`,
       }));
 
       predictions.push({
-        id: `pred-${buyer.replace(/\s/g, "")}-${competence.replace(/\s/g, "")}`,
-        buyer,
-        competence,
-        location,
-        status,
+        id: `pred-${buyer.replace(/\s/g, "")}-${competence.replace(/\s/g, "")}-${location.replace(/\s/g, "")}`,
+        buyer, competence, location, status,
+        probabilityLevel, seasonalSignal, predictedDate,
         forecastWindow,
         historicalSignal: `${count} liknande uppdrag ${timespanLabel}`,
         lastActivity: `Senaste uppdrag: ${daysSinceLast} dagar sedan`,
-        calloffCount: count,
-        avgIntervalDays: avgInterval,
+        calloffCount: count, avgIntervalDays: avgInterval,
         summary: `${competence} hos ${buyer} har haft ${count} uppdrag med ett genomsnittligt intervall på ${avgInterval} dagar (${timespanLabel}).`,
-        reasons,
-        history,
+        reasons, history,
       });
     }
 
-    // Sort: high first, then medium, then watch
+    // Sort by probability level desc, then status
     const sortOrder = { high: 0, medium: 1, watch: 2 };
     predictions.sort((a, b) => {
-      if (sortOrder[a.status] !== sortOrder[b.status])
-        return sortOrder[a.status] - sortOrder[b.status];
-      const ratioA =
-        parseInt(a.lastActivity.match(/(\d+)/)?.[1] || "0") / a.avgIntervalDays;
-      const ratioB =
-        parseInt(b.lastActivity.match(/(\d+)/)?.[1] || "0") / b.avgIntervalDays;
-      return ratioB - ratioA;
+      if (b.probabilityLevel !== a.probabilityLevel) return b.probabilityLevel - a.probabilityLevel;
+      return sortOrder[a.status as keyof typeof sortOrder] - sortOrder[b.status as keyof typeof sortOrder];
     });
 
-    // Return distinct filter values from merged data
+    // Paginate
+    const total = predictions.length;
+    const paged = predictions.slice(page * pageSize, (page + 1) * pageSize);
+
     const filters = {
-      competences: [...new Set(unified.map((r) => r.competence))].sort(),
-      locations: [...new Set(unified.map((r) => r.location))].sort(),
-      buyers: [...new Set(unified.map((r) => r.buyer))].sort(),
+      competences: [...new Set(unified.map(r => r.competence))].sort(),
+      locations: [...new Set(unified.map(r => r.location))].sort(),
+      buyers: [...new Set(unified.map(r => r.buyer))].sort(),
     };
 
-    return new Response(JSON.stringify({ predictions, filters }), {
+    return new Response(JSON.stringify({ predictions: paged, total, filters }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {

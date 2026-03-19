@@ -80,3 +80,6 @@ verify_jwt = false
 
 [functions.bankid-verify]
 verify_jwt = false
+
+[functions.radar-notify]
+verify_jwt = false

@@ -1,15 +1,22 @@
 import { Prediction } from "./radarMockData";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Building2, MapPin, Clock, Radio, Info, CheckCircle2 } from "lucide-react";
-import { useState } from "react";
+import { Building2, MapPin, Clock, Radio, Info } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
-const READINESS_ITEMS = [
-  "CV uppdaterat",
-  "Legitimation redo",
-  "Referenser redo",
-  "Tillgänglighet uppdaterad",
-];
+function ProbabilityBalls({ level }: { level: 1 | 2 | 3 }) {
+  return (
+    <div className="flex items-center gap-1.5">
+      {[1, 2, 3].map((i) => (
+        <span key={i} className={`w-4 h-4 rounded-full ${i <= level ? "bg-primary" : "bg-muted"}`} />
+      ))}
+      <span className="text-[12px] text-muted-foreground ml-2">
+        {level === 3 ? "Hög sannolikhet" : level === 2 ? "Återkommande mönster" : "Historisk bas"}
+      </span>
+    </div>
+  );
+}
 
 interface PredictionDetailProps {
   prediction: Prediction | null;
@@ -18,20 +25,33 @@ interface PredictionDetailProps {
 }
 
 export default function PredictionDetail({ prediction, open, onClose }: PredictionDetailProps) {
-  const [checked, setChecked] = useState<Record<string, boolean>>({});
+  const { user } = useAuth();
   const { toast } = useToast();
 
   if (!prediction) return null;
 
-  const handleWatch = () => {
-    toast({
-      title: "Bevakning skapad",
-      description: `Du bevakar nu ${prediction.competence} i ${prediction.location}.`,
-    });
-  };
+  const handleWatch = async () => {
+    if (!user) {
+      toast({ title: "Logga in", description: "Du behöver ett konto för att bevaka uppdrag." });
+      return;
+    }
 
-  const toggleCheck = (item: string) => {
-    setChecked((prev) => ({ ...prev, [item]: !prev[item] }));
+    const { error } = await supabase.from("radar_watchlist").insert({
+      user_id: user.id,
+      competence: prediction.competence,
+      location: prediction.location,
+      buyer: prediction.buyer,
+      predicted_date: prediction.predictedDate,
+    });
+
+    if (error) {
+      toast({ title: "Kunde inte spara", description: error.message, variant: "destructive" });
+    } else {
+      toast({
+        title: "Bevakning skapad ✓",
+        description: `Du bevakar nu ${prediction.competence} hos ${prediction.buyer}. Påminnelser skickas 3, 2 och 1 månad innan.`,
+      });
+    }
   };
 
   return (
@@ -42,48 +62,42 @@ export default function PredictionDetail({ prediction, open, onClose }: Predicti
             {prediction.competence}
           </SheetTitle>
           <div className="flex flex-wrap gap-3 text-[13px] text-muted-foreground">
-            <span className="flex items-center gap-1.5">
-              <Building2 className="w-3.5 h-3.5" />
-              {prediction.buyer}
-            </span>
-            <span className="flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5" />
-              {prediction.location}
-            </span>
+            <span className="flex items-center gap-1.5"><Building2 className="w-3.5 h-3.5" />{prediction.buyer}</span>
+            <span className="flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5" />{prediction.location}</span>
           </div>
         </SheetHeader>
 
+        {/* Probability */}
+        <div className="mb-4">
+          <ProbabilityBalls level={prediction.probabilityLevel} />
+        </div>
+
+        {/* Seasonal signal */}
+        {prediction.seasonalSignal && (
+          <div className="text-[12px] text-accent font-medium bg-accent/10 border border-accent/20 rounded-lg px-3 py-2 mb-4">
+            🔄 {prediction.seasonalSignal}
+          </div>
+        )}
+
         {/* Summary */}
-        <p className="text-[14px] leading-relaxed text-foreground/80 mb-5">
-          {prediction.summary}
-        </p>
+        <p className="text-[14px] leading-relaxed text-foreground/80 mb-5">{prediction.summary}</p>
 
         {/* Signals */}
         <section className="mb-5">
-          <h4 className="text-[12px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">
-            Historiska signaler
-          </h4>
+          <h4 className="text-[12px] font-semibold uppercase tracking-wider text-muted-foreground mb-2">Historiska signaler</h4>
           <div className="space-y-2 text-[13px] text-foreground/80">
-            <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-primary flex-shrink-0" />
-              <span>{prediction.historicalSignal}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Radio className="w-4 h-4 text-primary flex-shrink-0" />
-              <span>Genomsnittligt intervall: {prediction.avgIntervalDays} dagar</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-primary flex-shrink-0" />
-              <span>{prediction.lastActivity}</span>
-            </div>
+            <div className="flex items-center gap-2"><Clock className="w-4 h-4 text-primary flex-shrink-0" /><span>{prediction.historicalSignal}</span></div>
+            <div className="flex items-center gap-2"><Radio className="w-4 h-4 text-primary flex-shrink-0" /><span>Genomsnittligt intervall: {prediction.avgIntervalDays} dagar</span></div>
+            <div className="flex items-center gap-2"><Clock className="w-4 h-4 text-primary flex-shrink-0" /><span>{prediction.lastActivity}</span></div>
+            {prediction.predictedDate && (
+              <div className="flex items-center gap-2"><Radio className="w-4 h-4 text-accent flex-shrink-0" /><span>Förväntat nästa: {prediction.predictedDate}</span></div>
+            )}
           </div>
         </section>
 
         {/* Timeline */}
         <section className="mb-5">
-          <h4 className="text-[12px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-            Tidslinje
-          </h4>
+          <h4 className="text-[12px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">Tidslinje</h4>
           <div className="relative pl-4 border-l-2 border-border space-y-3">
             {prediction.history.map((h, i) => (
               <div key={i} className="relative">
@@ -95,17 +109,15 @@ export default function PredictionDetail({ prediction, open, onClose }: Predicti
           </div>
         </section>
 
-        {/* Why */}
+        {/* Reasons */}
         <section className="mb-5">
           <h4 className="text-[12px] font-semibold uppercase tracking-wider text-muted-foreground mb-2 flex items-center gap-1.5">
-            <Info className="w-3.5 h-3.5" />
-            Varför visas detta?
+            <Info className="w-3.5 h-3.5" />Varför visas detta?
           </h4>
           <ul className="space-y-1.5 text-[13px] text-foreground/70">
             {prediction.reasons.map((r, i) => (
               <li key={i} className="flex items-start gap-2">
-                <span className="w-1 h-1 rounded-full bg-primary mt-2 flex-shrink-0" />
-                {r}
+                <span className="w-1 h-1 rounded-full bg-primary mt-2 flex-shrink-0" />{r}
               </li>
             ))}
           </ul>
@@ -114,36 +126,11 @@ export default function PredictionDetail({ prediction, open, onClose }: Predicti
         {/* Watch CTA */}
         <button
           onClick={handleWatch}
-          className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary text-primary-foreground py-3 text-[14px] font-semibold transition-colors hover:bg-primary/90 mb-6"
+          className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary text-primary-foreground py-3 text-[14px] font-semibold transition-colors hover:bg-primary/90"
         >
           <Radio className="w-4 h-4" />
           Bevaka denna kombination
         </button>
-
-        {/* Readiness */}
-        <section>
-          <h4 className="text-[12px] font-semibold uppercase tracking-wider text-muted-foreground mb-3">
-            Var redo om uppdraget kommer
-          </h4>
-          <div className="space-y-2">
-            {READINESS_ITEMS.map((item) => (
-              <button
-                key={item}
-                onClick={() => toggleCheck(item)}
-                className="flex items-center gap-3 w-full text-left rounded-lg border border-border px-3.5 py-2.5 transition-colors hover:bg-secondary"
-              >
-                <CheckCircle2
-                  className={`w-4.5 h-4.5 flex-shrink-0 transition-colors ${
-                    checked[item] ? "text-accent" : "text-muted-foreground/40"
-                  }`}
-                />
-                <span className={`text-[13px] ${checked[item] ? "text-foreground" : "text-muted-foreground"}`}>
-                  {item}
-                </span>
-              </button>
-            ))}
-          </div>
-        </section>
       </SheetContent>
     </Sheet>
   );
