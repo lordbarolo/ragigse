@@ -370,8 +370,26 @@ export default function AnalysisScreen() {
               </div>
             </div>
 
-            {/* Email input + button */}
-            <div className="flex flex-col gap-2.5">
+            {/* Insight + Email input + button */}
+            <div className="flex flex-col gap-3">
+              {/* Personal insight nudge */}
+              {teaserData?.isUnderpaid && (
+                <div className="flex items-center gap-2.5 bg-[hsl(var(--amber))]/[0.07] border border-[hsl(var(--amber))]/20 rounded-xl px-4 py-3">
+                  <span className="text-lg shrink-0">📉</span>
+                  <p className="text-[14px] text-foreground/80 leading-snug">
+                    Du ligger <strong className="text-[hsl(var(--amber))] font-bold">{fmt(teaserData.high - teaserData.userHourly)} kr/h under</strong> vad regionen betalar.
+                  </p>
+                </div>
+              )}
+              {teaserData && !teaserData.isUnderpaid && (
+                <div className="flex items-center gap-2.5 bg-[hsl(var(--green))]/[0.07] border border-[hsl(var(--green))]/20 rounded-xl px-4 py-3">
+                  <span className="text-lg shrink-0">📈</span>
+                  <p className="text-[14px] text-foreground/80 leading-snug">
+                    Du ligger <strong className="text-[hsl(var(--green))] font-bold">{fmt(teaserData.userHourly - teaserData.low)} kr/h över</strong> lägsta marknadsnivå.
+                  </p>
+                </div>
+              )}
+
               <div className="relative flex items-center">
                 <Mail className="absolute left-4 w-4 h-4 text-foreground/30 pointer-events-none" />
                 <input
@@ -395,16 +413,15 @@ export default function AnalysisScreen() {
                     : "bg-muted text-muted-foreground cursor-not-allowed"
                 }`}
               >
-                {emailSaving ? "Skickar…" : "Visa min rapport"}
+                {emailSaving ? "Skickar…" : "Få hela analysen"}
                 {!emailSaving && <ArrowRight className="w-5 h-5" />}
               </button>
-              <div className="flex items-center justify-center gap-4 flex-wrap">
-                {["Visas direkt", "Ingen inloggning"].map((t) => (
-                  <span key={t} className="text-[13px] text-foreground/45 flex items-center gap-1 font-display font-medium">
-                    <span className="text-[hsl(var(--green))] text-[12px] font-bold">✓</span> {t}
-                  </span>
-                ))}
-              </div>
+              <p className="text-[13px] text-foreground/50 text-center leading-relaxed">
+                Få lokal jämförelse, verkliga ersättningsnivåer och argument för olika ersättningsnivåer
+              </p>
+              <p className="text-[12px] text-foreground/35 text-center">
+                Ingen spam · Skickas direkt
+              </p>
             </div>
 
             {/* Price comparison card */}
