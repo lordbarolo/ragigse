@@ -456,12 +456,12 @@ export default function AnalysisScreen() {
             </div>
 
             {/* Cost info card */}
-            <div className="bg-card border border-foreground/[0.07] rounded-[14px] p-4 flex items-start gap-3">
-              <Info className="w-4 h-4 text-foreground/40 shrink-0 mt-0.5" />
-              <p className="text-[13px] text-foreground/55 leading-relaxed">
-                Kostnader för resa, boende, introduktion, SITHS-kort, HLR-utbildning m.m kan påverka ersättningen som erbjuds av uppdragsgivare.
-              </p>
-            </div>
+            
+
+
+
+
+          
           </div>
         }
 
