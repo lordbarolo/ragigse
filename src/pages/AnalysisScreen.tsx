@@ -179,7 +179,11 @@ export default function AnalysisScreen() {
     const isUnderpaid = userHourly < high;
     const roleName = survey.yrke || "Sjuksköterska";
     const zone = pricing.zon || "Zon 1";
-    return { userHourly, customerRate, low, high, isUnderpaid, roleName, zone };
+    const diffPercent = isUnderpaid
+      ? Math.round(((high - userHourly) / high) * 100)
+      : Math.round(((userHourly - low) / low) * 100);
+    const isPermanent = (survey as SurveyData & { track?: string }).track === "permanent";
+    return { userHourly, customerRate, low, high, isUnderpaid, roleName, zone, diffPercent, isPermanent };
   }, [survey, pricing]);
 
   const validEmail = EMAIL_REGEX.test(email.trim());
