@@ -370,13 +370,7 @@ export default function AnalysisScreen() {
               </div>
             </div>
 
-            {/* 3. Neutral insight row */}
-            <div className="flex items-center gap-2.5 bg-foreground/[0.04] border border-foreground/[0.08] rounded-xl px-4 py-3">
-              <BarChart3 className="w-4 h-4 text-foreground/45 shrink-0" />
-              <p className="text-[14px] text-foreground/75 leading-snug">
-                Skillnad mot regionens nivå: <strong className="text-foreground font-bold">{teaserData ? fmt(Math.abs(teaserData.high - teaserData.userHourly)) : "58"} kr/h</strong>
-              </p>
-            </div>
+
 
             {/* 4. Email field with explanation + 5. CTA + 6. Microcopy */}
             <div className="flex flex-col gap-3">
