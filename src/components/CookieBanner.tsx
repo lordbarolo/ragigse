@@ -8,11 +8,36 @@ export default function CookieBanner() {
 
   useEffect(() => {
     const consent = getConsent();
-    if (consent === null) {
+    if (consent === "accepted") { initPostHog(); return; }
+    if (consent === "rejected") return;
+
+    // No consent yet — delay banner until scroll/time/interaction
+    let shown = false;
+    const show = () => {
+      if (shown) return;
+      shown = true;
       setVisible(true);
-    } else if (consent === "accepted") {
-      initPostHog();
-    }
+      cleanup();
+    };
+
+    const timer = setTimeout(show, 8000);
+
+    const onScroll = () => { if (window.scrollY > 50) show(); };
+    window.addEventListener("scroll", onScroll, { passive: true });
+
+    const onClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.closest?.("button")) show();
+    };
+    document.addEventListener("click", onClick, true);
+
+    const cleanup = () => {
+      clearTimeout(timer);
+      window.removeEventListener("scroll", onScroll);
+      document.removeEventListener("click", onClick, true);
+    };
+
+    return cleanup;
   }, []);
 
   const handleAccept = () => {
