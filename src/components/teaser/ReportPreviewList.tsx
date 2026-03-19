@@ -8,28 +8,28 @@ interface Props {
 export const CONSULTANT_ITEMS = [
   {
     icon: BarChart3,
-    title: "Ramavtalspris",
-    desc: "Vad regionen betalar bemanningsföretaget för din roll och zon",
+    title: "Möjlig ersättningsnivå",
+    desc: "",
   },
   {
     icon: Target,
-    title: "Rekommenderad ersättning",
-    desc: "Ditt förhandlingsspann baserat på aktuella marknadspriser",
+    title: "Skillnad mellan din nivå och snitt",
+    desc: "",
   },
   {
     icon: TrendingUp,
-    title: "Ersättningsgap-analys",
-    desc: "Hur din nuvarande ersättning förhåller sig till marknaden",
+    title: "Vad betalar grannregionerna",
+    desc: "",
   },
   {
     icon: MapPin,
-    title: "Zonjämförelse",
-    desc: "Se hur ersättningen varierar mellan olika zoner",
+    title: "Förhandlingsargument",
+    desc: "",
   },
   {
     icon: MessageSquare,
-    title: "Förhandlingsscript",
-    desc: "Steg-för-steg — exakt vad du ska säga i ersättningssamtalet",
+    title: "Bemanningsföretagets verkliga marginal",
+    desc: "",
   },
 ];
 
