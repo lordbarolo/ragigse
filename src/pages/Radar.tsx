@@ -190,7 +190,7 @@ export default function Radar() {
           Radar analyserar historiska uppdrag och visar återkommande mönster i efterfrågan.
         </p>
         <p className="text-[12px] text-muted-foreground/70 leading-relaxed max-w-[380px] mb-5">
-          🔮 = Vissa tecken · 🔮🔮 = Återkommande mönster · 🔮🔮🔮 = Hög sannolikhet
+          🔮 = Viss chans  · 🔮🔮 = Tydlig chans · 🔮🔮🔮 = Stor chans
         </p>
         <div className="flex gap-2.5">
           <button className="flex items-center gap-2 rounded-xl bg-primary text-primary-foreground px-4 py-2.5 text-[13px] font-semibold transition-colors hover:bg-primary/90">
