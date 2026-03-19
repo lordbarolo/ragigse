@@ -375,7 +375,7 @@ export default function AnalysisScreen() {
             {/* 4. Email field with explanation + 5. CTA + 6. Microcopy */}
             <div className="flex flex-col gap-3">
               <p className="text-[13px] text-foreground/50 leading-relaxed">
-                Vi skickar hela rapporten till din mail så att du kan spara och jämföra senare.
+                Vi skickar hela rapporten till din mail så att du kan spara och jämföra senare. Dela den gärna till kollegor.
               </p>
               <div className="relative flex items-center">
                 <Mail className="absolute left-4 w-4 h-4 text-foreground/30 pointer-events-none" />
@@ -442,7 +442,7 @@ export default function AnalysisScreen() {
 
               <div className="px-5 pb-4 pt-1">
                 <p className="text-[13px] text-foreground/45 leading-relaxed">
-                  Se fullständig analys i rapporten
+                  Beloppen säger inte allt. Se rapporten för utförlig analys.
                 </p>
               </div>
             </div>
