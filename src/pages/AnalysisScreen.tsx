@@ -371,14 +371,12 @@ export default function AnalysisScreen() {
             </div>
 
             {/* 3. Neutral insight row */}
-            {teaserData && (
-              <div className="flex items-center gap-2.5 bg-foreground/[0.04] border border-foreground/[0.08] rounded-xl px-4 py-3">
-                <BarChart3 className="w-4 h-4 text-foreground/45 shrink-0" />
-                <p className="text-[14px] text-foreground/75 leading-snug">
-                  Skillnad mot regionens nivå: <strong className="text-foreground font-bold">{fmt(Math.abs(teaserData.high - teaserData.userHourly))} kr/h</strong>
-                </p>
-              </div>
-            )}
+            <div className="flex items-center gap-2.5 bg-foreground/[0.04] border border-foreground/[0.08] rounded-xl px-4 py-3">
+              <BarChart3 className="w-4 h-4 text-foreground/45 shrink-0" />
+              <p className="text-[14px] text-foreground/75 leading-snug">
+                Skillnad mot regionens nivå: <strong className="text-foreground font-bold">{teaserData ? fmt(Math.abs(teaserData.high - teaserData.userHourly)) : "58"} kr/h</strong>
+              </p>
+            </div>
 
             {/* 4. Email field with explanation + 5. CTA + 6. Microcopy */}
             <div className="flex flex-col gap-3">
@@ -395,7 +393,7 @@ export default function AnalysisScreen() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   onKeyDown={(e) => { if (e.key === "Enter" && validEmail && !emailSaving) handleEmailSubmit(); }}
-                  className="w-full bg-background/60 border-[1.5px] border-foreground/[0.12] rounded-xl text-foreground font-body text-[16px] py-4 pl-11 pr-4 outline-none transition-all focus:border-primary focus:shadow-[0_0_0_3px_rgba(0,194,255,0.1)] placeholder:text-foreground/35"
+                  className="w-full bg-background/60 border-[1.5px] border-foreground/[0.12] rounded-xl text-foreground font-body text-[16px] py-4 pl-11 pr-4 outline-none transition-all focus:border-primary focus:shadow-[0_0_0_3px_hsl(var(--primary)/0.1)] placeholder:text-foreground/35"
                   autoFocus
                 />
               </div>
@@ -404,7 +402,7 @@ export default function AnalysisScreen() {
                 onClick={handleEmailSubmit}
                 className={`w-full font-display font-bold text-base py-4 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-[0.98] ${
                   validEmail && !emailSaving
-                    ? "bg-primary text-primary-foreground shadow-[0_0_28px_rgba(0,194,255,0.25)] hover:-translate-y-px hover:shadow-[0_0_40px_rgba(0,194,255,0.38)]"
+                    ? "bg-primary text-primary-foreground shadow-[0_0_28px_hsl(var(--primary)/0.25)] hover:-translate-y-px hover:shadow-[0_0_40px_hsl(var(--primary)/0.38)]"
                     : "bg-muted text-muted-foreground cursor-not-allowed"
                 }`}
               >
@@ -421,7 +419,7 @@ export default function AnalysisScreen() {
 
             {/* 7. Price comparison card with Skillnad row */}
             <div className="bg-card border border-primary/20 rounded-[14px] relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-primary to-indigo-500/60" />
+              <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-primary to-primary/30" />
 
               <div className="flex items-center justify-between px-5 py-3.5 border-b border-foreground/[0.06]">
                 <span className="text-[11px] text-foreground/45 font-display font-medium tracking-[0.1em]">
@@ -448,13 +446,11 @@ export default function AnalysisScreen() {
                 ))}
               </div>
 
-              {teaserData && (
-                <div className="px-5 pb-4 pt-1">
-                  <p className="text-[13px] text-foreground/45 leading-relaxed">
-                    Se fullständig analys i rapporten
-                  </p>
-                </div>
-              )}
+              <div className="px-5 pb-4 pt-1">
+                <p className="text-[13px] text-foreground/45 leading-relaxed">
+                  Se fullständig analys i rapporten
+                </p>
+              </div>
             </div>
 
             {/* 8. Cost info card */}
