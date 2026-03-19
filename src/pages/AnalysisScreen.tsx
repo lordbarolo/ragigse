@@ -350,21 +350,15 @@ export default function AnalysisScreen() {
               </div>
             </div>
 
-            {/* 2. Report contents list — compact */}
             <div>
-              <h2 className="font-display text-[20px] font-extrabold tracking-tight text-foreground mb-3">
+              <h2 className="font-display text-[20px] font-extrabold tracking-tight text-foreground mb-1.5">
                 Din rapport innehåller
               </h2>
-              <div className="space-y-2">
-                {(teaserData?.isPermanent ? PERMANENT_ITEMS : CONSULTANT_ITEMS).map(({ icon: Icon, title, desc }, i) => (
-                  <div key={i} className="flex items-start gap-3">
-                    <div className="p-1 rounded-lg bg-primary/10 shrink-0 mt-0.5">
-                      <Icon className="w-4 h-4 text-primary" />
-                    </div>
-                    <div>
-                      <p className="text-[15px] font-semibold text-foreground leading-tight">{title}</p>
-                      <p className="text-[13px] text-foreground/55 mt-0.5">{desc}</p>
-                    </div>
+              <div className="space-y-1">
+                {(teaserData?.isPermanent ? PERMANENT_ITEMS : CONSULTANT_ITEMS).map(({ icon: Icon, title }, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <Icon className="w-3.5 h-3.5 text-primary shrink-0" />
+                    <p className="text-[14px] font-medium text-foreground leading-snug">{title}</p>
                   </div>
                 ))}
               </div>
