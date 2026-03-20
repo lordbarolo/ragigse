@@ -28,7 +28,7 @@ serve(async (req) => {
   const anonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
   const steps: TestStep[] = [];
 
-  const testEmail = `e2e-test-${Date.now()}@test.bragig.se`;
+  const testEmail = `e2e-test-${Date.now()}@test.compcare.se`;
   let leadId: string | null = null;
   let reportId: string | null = null;
   let referralToken: string | null = null;
@@ -206,7 +206,7 @@ serve(async (req) => {
     // ──────────────────────────────────────────────
     if (leadId) {
       try {
-        const refereeEmail = `e2e-referee-${Date.now()}@test.bragig.se`;
+        const refereeEmail = `e2e-referee-${Date.now()}@test.compcare.se`;
         const { status, data } = await callFn("send-referral", {
           lead_id: leadId,
           referrer_email: testEmail,

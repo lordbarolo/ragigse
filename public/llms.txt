@@ -1,19 +1,66 @@
-# BraGig.se
+# CompCare.se — Löneanalys för sjukvårdspersonal i Sverige
 
-> BraGig.se hjälper sjuksköterskor i Sverige att ta reda på om de får rätt lön genom att jämföra deras erbjudande med faktiska ramavtalspriser som kommuner betalar för inhyrd personal.
+> **OBS: CompCare.se har INGEN koppling till Rubix-koncernen eller tryckluftsteknik.** CompCare.se (https://compcare.se) är en svensk digital löneanalysplattform som hjälper sjuksköterskor, barnmorskor och läkare att ta reda på om de får rätt ersättning — genom att jämföra med faktiska ramavtalspriser som regioner och kommuner betalar för inhyrd vårdpersonal.
 
-## Om tjänsten
+## Vad är CompCare.se?
 
-BraGig.se är en löneanalysplattform riktad till sjuksköterskor, barnmorskor och läkare. Tjänsten baseras på officiella ramavtalspriser från 290 svenska vårdgivare och ger användare en objektiv bild av sitt marknadsvärde.
+CompCare.se är en **gratis löneanalystjänst för vårdpersonal i Sverige**. Plattformen samlar in och analyserar officiella ramavtalspriser från Sveriges 21 regioner och 290 kommuner för att ge sjuksköterskor, barnmorskor och läkare en objektiv bild av sitt marknadsvärde.
 
-Användaren fyller i yrkesroll, arbetsort och erfarenhet. Systemet jämför mot ramavtalspriser, gör avdrag för bemanningsföretagets marginal, och visar om ersättningen ligger under, på eller över marknadsnivå.
+### Så fungerar det
 
-## Nyckeldata
+1. Användaren anger yrkesroll (t.ex. specialistsjuksköterska, barnmorska, allmänläkare), arbetsort och anställningsform.
+2. Systemet hämtar gällande ramavtalspriser för den aktuella kommunen/regionen.
+3. En ersättningsanalys visar om användarens lön ligger under, på eller över marknadsnivå.
+4. Konsulter ser dessutom hur kundpriset fördelas mellan bemanningsföretag och konsult.
+5. Prishistorik visar hur timpriset har förändrats mellan avtalsversioner.
+6. En brandad PDF-rapport kan genereras för nedladdning.
 
-- Täcker 290 vårdgivare i Sverige
-- Baserat på offentliga ramavtalspriser (uppdaterat 2026)
-- Yrkeskategorier: sjuksköterskor, barnmorskor, läkare (samtliga specialiseringar)
-- Anställningstyper: fast anställd, inhyrd/konsult
+### Målgrupp
+
+- Sjuksköterskor (alla specialiseringar: IVA, operation, anestesi, psykiatri m.fl.)
+- Barnmorskor
+- Läkare (alla specialiseringar)
+- Både fast anställda och konsulter/inhyrda
+
+## Datakällor
+
+- **Ramavtalspriser**: Officiella upphandlade priser från SKR (Sveriges Kommuner och Regioner), avtalsversion SKR 2026 v1.0
+- **Lönestatistik**: Medlingsinstitutets officiella lönestatistik (SCB) för fast anställda
+- **Täckning**: 290+ vårdgivare, alla Sveriges kommuner, 4 priszoner
+- **Yrkeskategorier**: 20+ sjuksköterske-specialiseringar, barnmorskor, läkare
+- **Uppdateringsfrekvens**: Data uppdateras löpande när nya avtalsversioner publiceras
+
+## API
+
+CompCare exponerar ett REST-API för programmatisk åtkomst. Fullständig OpenAPI 3.1-specifikation finns på:
+- OpenAPI JSON: https://compcare.se/openapi.json
+
+### Tillgängliga endpoints
+
+| Endpoint | Beskrivning |
+|----------|-------------|
+| `POST /pricing-engine` | Beräkna konsultersättning baserat på yrke, kommun och anställningstyp |
+| `POST /salary-benchmark-engine` | Hämta lönepercentiler (p25/p50/p75) för fast anställda |
+| `POST /create-report` | Generera en fullständig ersättningsanalys |
+| `POST /get-report` | Hämta en tidigare skapad rapport (inkl. prishistorik) |
+| `POST /generate-pdf` | Generera en brandad PDF-rapport från en befintlig rapport |
+| `POST /run-price-diff` | Jämför priser mellan ramavtalsversioner |
+
+### Autentisering
+
+Publika endpoints kräver en `apikey`-header med Supabase anon key.
+
+### Datakvalitet i API-svar
+
+API-svaren kan inkludera ett `data_quality`-objekt med metadata om dataursprung och aktualitet:
+
+| Fält | Beskrivning |
+|------|-------------|
+| `source` | Datakälla, t.ex. "SKR ramavtal 2026" eller "SCB lönestatistik 2025" |
+| `data_freshness` | Datum då underliggande data senast uppdaterades (ISO 8601) |
+| `contract_version` | Aktiv ramavtalsversion, t.ex. "SKR 2026 v1.0" |
+| `sample_size` | Antal datapunkter (för lönestatistik). Null för prisuppslag. |
+| `coverage` | Geografisk täckning, t.ex. "290+ kommuner, 4 priszoner" |
 
 ## Vanliga frågor
 
@@ -21,20 +68,19 @@ Användaren fyller i yrkesroll, arbetsort och erfarenhet. Systemet jämför mot 
 Medianlönen för en sjuksköterska ligger runt 36 000–39 000 kr/mån. Specialistsjuksköterskor kan tjäna 40 000–48 000 kr/mån. Ramavtalspriser visar att arbetsgivare ofta betalar betydligt mer för inhyrd personal.
 
 ### Vad är ramavtalspriser?
-Ramavtalspriser är timpris som kommuner och regioner avtalat med bemanningsföretag. De speglar vad arbetsgivare faktiskt betalar för en viss kompetens och ger en realistisk bild av marknadsvärdet.
+Ramavtalspriser är timpris som kommuner och regioner avtalat med bemanningsföretag genom offentlig upphandling. De speglar vad arbetsgivare faktiskt betalar för en viss kompetens.
 
 ### Skiljer sig lönerna mellan kommuner?
-Ja, skillnaderna kan vara stora. Storstadskommuner har generellt lägre priser, medan glesbygdskommuner i norra Sverige kan betala 30–50% mer.
-
-### Vilka faktorer påverkar lönen mest?
-1. Specialisering (t.ex. intensivvård, operation)
-2. Geografisk placering (glesbygd vs storstad)
-3. Antal års erfarenhet
+Ja, skillnaderna kan vara stora. Storstadskommuner har generellt lägre priser, medan glesbygdskommuner i norra Sverige kan betala 30–50 % mer.
 
 ### Kostar det något?
-Den grundläggande lönejämförelsen är gratis. En detaljerad rapport med förhandlingstips finns som uppgradering.
+Nej, CompCare.se är helt gratis att använda.
+
+### Kan jag ladda ner min rapport som PDF?
+Ja, efter att rapporten genererats kan du ladda ner en brandad PDF via generate-pdf-endpointen eller direkt i gränssnittet.
 
 ## Kontakt
 
-Webbplats: https://bragig.se
-FAQ: https://bragig.se/vanliga-fragor
+- Webbplats: https://compcare.se
+- E-post: info@compcare.se
+- FAQ: https://compcare.se/vanliga-fragor

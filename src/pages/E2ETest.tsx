@@ -35,10 +35,8 @@ export default function E2ETest() {
 
       if (fnError) throw fnError;
       setResult(data as TestResult);
-      console.log("[E2E Test Results]", data);
     } catch (e: any) {
       setError(e.message || "Unknown error");
-      console.error("[E2E Test Error]", e);
     } finally {
       setRunning(false);
     }

@@ -30,5 +30,56 @@ verify_jwt = false
 [functions.pricing-engine]
 verify_jwt = false
 
+[functions.get-lead]
+verify_jwt = false
+
 [functions.salary-benchmark-engine]
+verify_jwt = false
+
+[functions.redeem-coupon]
+verify_jwt = false
+
+[functions.save-email]
+verify_jwt = false
+
+[functions.validate-coupon]
+verify_jwt = false
+
+[functions.generate-pdf]
+verify_jwt = false
+
+[functions.send-followup-emails]
+verify_jwt = false
+
+[functions.check-feedback]
+verify_jwt = false
+
+[functions.feedback-stats]
+verify_jwt = false
+
+[functions.salary-insights]
+verify_jwt = false
+
+[functions.send-audit-confirmation]
+verify_jwt = false
+
+[functions.stripe-webhook]
+verify_jwt = false
+
+[functions.send-referral]
+verify_jwt = false
+
+[functions.radar-predictions]
+verify_jwt = false
+
+[functions.get-avrop-predictions]
+verify_jwt = false
+
+[functions.uppdragsradar-chat]
+verify_jwt = false
+
+[functions.bankid-verify]
+verify_jwt = false
+
+[functions.radar-notify]
 verify_jwt = false

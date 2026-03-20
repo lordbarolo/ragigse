@@ -4,24 +4,75 @@ interface Props {
   isPermanent: boolean;
   yrke: string;
   kommun: string;
+  nearestHigherKommun?: string | null;
+  isAboveThreshold?: boolean;
+  emailProvided?: boolean;
 }
 
-export default function EarningsBanner({ isUnderpaid, diffPercent, isPermanent, yrke, kommun }: Props) {
-  if (!isUnderpaid || diffPercent <= 0) return null;
+export default function EarningsBanner({
+  isUnderpaid, diffPercent, isPermanent, yrke, kommun, nearestHigherKommun, isAboveThreshold, emailProvided = false,
+}: Props) {
+  const blurClass = !emailProvided ? "blur-md select-none" : "";
 
-  return (
-    <div className="hero-gradient rounded-2xl p-5 text-center card-shadow">
-      <p className="text-primary-foreground/80 text-sm font-medium">
-        {isPermanent ? "Enligt officiell lönestatistik kan du tjäna" : "Enligt ramavtalen kan du tjäna"}
-      </p>
-      <p className="text-3xl sm:text-4xl font-bold font-display text-primary-foreground mt-1">
-        upp till {diffPercent}% mer
-      </p>
-      <p className="text-primary-foreground/70 text-xs mt-2">
-        {isPermanent
-          ? `Baserat på Medlingsinstitutets lönestatistik för ${yrke}`
-          : `Baserat på offentliga ramavtalspriser för ${yrke} i ${kommun}`}
-      </p>
-    </div>
-  );
+  if (isPermanent) {
+    if (!isUnderpaid || diffPercent <= 0) return null;
+    return (
+      <div className="rounded-lg border border-border bg-card p-6 text-center card-shadow">
+        <p className="text-body-sm font-medium">
+          Enligt officiell lönestatistik ligger din ersättning
+        </p>
+        <p className={`text-3xl sm:text-4xl font-extrabold text-foreground mt-2 tracking-tight ${blurClass}`}>
+          {diffPercent}% under medianen
+        </p>
+        <p className="text-hint mt-2">
+          Baserat på Medlingsinstitutets lönestatistik för {yrke}
+        </p>
+      </div>
+    );
+  }
+
+  if (isAboveThreshold) {
+    return (
+      <div className="rounded-lg border border-primary/20 bg-card p-6 text-center card-shadow">
+        <p className="text-foreground text-base font-semibold leading-relaxed">
+          Din ersättning ligger i marknadens övre skikt i {kommun}.
+        </p>
+        <p className="text-body-sm mt-2">
+          Se jämförelse med andra zoner, jour- och reseersättning i rapporten.
+        </p>
+      </div>
+    );
+  }
+
+  if (isUnderpaid && diffPercent > 0) {
+    return (
+      <div className="rounded-lg border border-border bg-card p-6 text-center card-shadow">
+        <p className="text-body-sm font-medium">
+          Baserat på ramavtalspriserna i {kommun} ligger din ersättning
+        </p>
+        <p className={`text-3xl sm:text-4xl font-extrabold text-foreground mt-2 tracking-tight ${blurClass}`}>
+          {diffPercent}% under medianen
+        </p>
+        <p className="text-body-sm mt-2">
+          Se fullständig jämförelse i rapporten
+        </p>
+      </div>
+    );
+  }
+
+  if (!isUnderpaid && nearestHigherKommun) {
+    return (
+      <div className="rounded-lg border border-border bg-card p-6 text-center card-shadow">
+        <p className="text-foreground text-base font-semibold leading-relaxed">
+          Din ersättning i {kommun} är nära marknadsspannet — men
+          i {nearestHigherKommun} gäller andra ramavtalspriser.
+        </p>
+        <p className="text-body-sm mt-2">
+          Se fullständig jämförelse i rapporten
+        </p>
+      </div>
+    );
+  }
+
+  return null;
 }

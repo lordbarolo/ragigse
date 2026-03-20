@@ -17,6 +17,30 @@ function categorizeGap(currentSalary: number, p75: number): GapCategory {
   return "large";
 }
 
+// Map survey occupation names to DB occupation names
+const OCCUPATION_MAP: Record<string, string> = {
+  "Sjuksköterska": "Grundutbildade sjuksköterskor",
+  "Allmänsjuksköterska": "Grundutbildade sjuksköterskor",
+  "Barnmorska": "Barnmorskor",
+  "Specialistsjuksköterska": "Övriga specialistsjuksköterskor",
+  "Legitimerad läkare": "Övriga läkare",
+  "Specialistläkare": "Specialistläkare",
+  "ST-läkare": "ST-läkare",
+  "Anestesisjuksköterska": "Anestesisjuksköterskor",
+  "Intensivvårdssjuksköterska": "Intensivvårdssjuksköterskor",
+  "Operationssjuksköterska": "Operationssjuksköterskor",
+  "Barnsjuksköterska": "Barnsjuksköterskor",
+  "Ambulanssjuksköterska": "Ambulanssjuksköterskor m.fl.",
+  "Distriktssköterska": "Distriktssköterskor",
+  "Psykiatrisjuksköterska": "Psykiatrisjuksköterskor",
+  "Röntgensjuksköterska": "Röntgensjuksköterskor",
+  "Skolsköterska": "Skolsköterskor",
+  "Geriatriksjuksköterska": "Geriatriksjuksköterskor",
+  "Företagssköterska": "Företagssköterskor",
+  "Psykolog": "Psykologer",
+  "AT-läkare": "AT-läkare",
+};
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -40,9 +64,10 @@ serve(async (req) => {
       salary_type,
       track,
       sector,
+      ob_share,
     } = await req.json();
 
-    if (!email || !occupation || !employment_type || !kommun) {
+    if (!occupation || !employment_type || !kommun) {
       return new Response(
         JSON.stringify({ error: "Missing required fields" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -54,21 +79,22 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // A/B variant: 50/50 random assignment
-    const abVariant = Math.random() < 0.5 ? "A" : "B";
+    // Price A/B test: 50/50 split between 49kr and 29kr
+    const abVariant = Math.random() < 0.5 ? "price_49" : "price_29";
 
     // ── PERMANENT TRACK (fast tjänst) ──────────────────────────────────────────
     if (track === "permanent") {
       const effectiveSector = sector || "privat";
+      const mappedOccupation = OCCUPATION_MAP[occupation] || occupation;
 
       const { data: benchData, error: benchError } = await supabase
         .from("salary_benchmarks")
         .select("occupation, sector, average_monthly, percentile_25, percentile_50, percentile_75, region, year, source")
-        .eq("occupation", occupation)
+        .eq("occupation", mappedOccupation)
         .eq("sector", effectiveSector)
         .order("year", { ascending: false })
         .limit(1)
-        .single();
+        .maybeSingle();
 
       if (benchError || !benchData) {
         return new Response(
@@ -119,7 +145,7 @@ serve(async (req) => {
         .from("reports")
         .insert({
           lead_id: lead_id || null,
-          email,
+          email: email || null,
           status: "preview",
           result_json: resultJson,
           occupation,
@@ -221,8 +247,19 @@ serve(async (req) => {
 
     // Calculate using shared module with DB model
     const empType = employment_type as EmploymentType;
-    const range = calculateSalaryRange(timprisKund, empType, model);
-    const factor = empType === "anstalld" ? m.employer_factor : 1;
+    // For foretagare: 8-15% margin (85-92% to consultant)
+    const FORETAGARE_SHARE_MIN = 0.85;
+    const FORETAGARE_SHARE_MAX = 0.92;
+    const effectiveModel: MarginModel | undefined = model
+      ? (empType === "foretagare"
+        ? { ...model, share_min: FORETAGARE_SHARE_MIN, share_max: FORETAGARE_SHARE_MAX }
+        : model)
+      : (empType === "foretagare"
+        ? { share_min: FORETAGARE_SHARE_MIN, share_max: FORETAGARE_SHARE_MAX, employer_factor: 1.42, hours_per_month: 167 }
+        : undefined);
+    const effectiveM = effectiveModel ?? m;
+    const range = calculateSalaryRange(timprisKund, empType, effectiveModel);
+    const factor = empType === "anstalld" ? effectiveM.employer_factor : 1;
 
     const currentMonthly =
       salary_type === "hourly"
@@ -246,8 +283,8 @@ serve(async (req) => {
         rate_customer_sek_per_hour: timprisKund,
       },
       recommendation: {
-        consultant_share_min: m.share_min,
-        consultant_share_max: m.share_max,
+        consultant_share_min: effectiveM.share_min,
+        consultant_share_max: effectiveM.share_max,
         employee_factor: factor,
         recommended_hourly_min: range.hourly_min,
         recommended_hourly_max: range.hourly_max,
@@ -266,7 +303,7 @@ serve(async (req) => {
       .from("reports")
       .insert({
         lead_id: lead_id || null,
-        email,
+        email: email || null,
         status: "preview",
         result_json: resultJson,
         occupation,
@@ -289,6 +326,25 @@ serve(async (req) => {
     }
 
     console.log(`Report created: ${report.id} for ${email}`);
+
+    // Schedule followup drip emails if we have an email
+    if (email && lead_id) {
+      const now = new Date();
+      const emails = [
+        { sequence_step: 1, scheduled_for: new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000).toISOString() },
+        { sequence_step: 2, scheduled_for: new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString() },
+        { sequence_step: 3, scheduled_for: new Date(now.getTime() + 14 * 24 * 60 * 60 * 1000).toISOString() },
+      ];
+      await supabase.from("followup_emails").insert(
+        emails.map((e) => ({
+          lead_id,
+          report_id: report.id,
+          email,
+          ...e,
+        }))
+      );
+      console.log(`Scheduled ${emails.length} followup emails for ${email}`);
+    }
 
     return new Response(
       JSON.stringify({ report_id: report.id, ab_variant: abVariant }),

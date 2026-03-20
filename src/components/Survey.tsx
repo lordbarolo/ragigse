@@ -1,5 +1,5 @@
-import { useState, useMemo, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useMemo, useEffect, useRef, useCallback } from "react";
+import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useLocations, useRates } from "@/hooks/useCalculator";
 import { usePricingEngine } from "@/hooks/usePricingEngine";
 import { useBenchmarkEngine } from "@/hooks/useBenchmarkEngine";
@@ -7,11 +7,12 @@ import { supabase } from "@/integrations/supabase/client";
 import SearchableSelect from "@/components/SearchableSelect";
 import { Input } from "@/components/ui/input";
 import {
-  Stethoscope, MapPin, Mail, Briefcase,
-  ChevronRight, ChevronLeft, ArrowRight, TrendingUp, Train
+  Stethoscope, MapPin, Briefcase,
+  ChevronLeft, ArrowRight, TrendingUp, Check,
 } from "lucide-react";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/trackEvent";
+import { posthog, isPostHogReady } from "@/lib/posthog";
 
 export interface SurveyData {
   email: string;
@@ -21,46 +22,30 @@ export interface SurveyData {
   experience: number;
   salaryType: "hourly" | "monthly";
   currentSalary: number;
+  obShare: string;
 }
 
-const TOTAL_STEPS = 7;
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const TOTAL_STEPS = 6;
 
 type OccupationCategory = "" | "lakare" | "ssk";
-type DoctorSubRole = "" | "at" | "st" | "leg" | "specialist";
-type NurseSubRole = "" | "allman" | "barnmorska" | "specialist";
 type CommuteType = "veckovis" | "dagligen" | "inte_alls" | "";
 
-// Doctor specialties
-const DOCTOR_SPECIALTIES = [
-  "Akutsjukvård", "Allmänmedicin", "Anestesi och intensivvård",
-  "Arbets- och miljömedicin", "Barn- och ungdomsallergologi",
-  "Barn- och ungdomshematologi och onkologi", "Barn- och ungdomskardiologi",
-  "Barn- och ungdomskirurgi", "Barn- och ungdomsmedicin",
-  "Barn- och ungdomsneurologi med habilitering", "Barn- och ungdomspsykiatri",
-  "Endokrinologi och diabetologi", "Geriatrik", "Gynekologisk onkologi",
-  "Handkirurgi", "Hematologi", "Hud- och könssjukdomar",
-  "Hörsel- och balansrubbningar", "Infektionssjukdomar", "Internmedicin",
-  "Kardiologi", "Kirurgi", "Klinisk farmakologi", "Klinisk fysiologi",
-  "Klinisk genetik", "Klinisk immunologi och transfusionsmedicin",
-  "Klinisk kemi", "Klinisk mikrobiologi", "Klinisk neurofysiologi",
-  "Klinisk patologi", "Kärlkirurgi", "Lungsjukdomar",
-  "Medicinsk gastroenterologi och hepatologi", "Neonatologi", "Neurokirurgi",
-  "Neurologi", "Neuroradiologi", "Njurmedicin", "Nuklearmedicin",
-  "Obstetrik och gynekologi", "Onkologi", "Ortopedi", "Palliativ medicin",
-  "Plastikkirurgi", "Psykiatri", "Radiologi", "Rehabiliteringsmedicin",
-  "Reumatologi", "Rättsmedicin", "Rättspsykiatri", "Röst- och talrubbningar",
-  "Socialmedicin", "Thoraxkirurgi", "Urologi", "Ögonsjukdomar",
-  "Öron-, näs- och halssjukdomar",
+// Top doctor specializations — ordered by search frequency
+const TOP_DOCTOR_SPECIALTIES = [
+  "Allmänmedicin", "Anestesi och intensivvård", "Internmedicin",
+  "Barn- och ungdomsmedicin", "Psykiatri", "Radiologi",
+  "Geriatrik", "Kardiologi", "Kirurgi",
+  "Obstetrik och gynekologi", "Onkologi", "Ortopedi",
+  "Infektionssjukdomar", "Lungsjukdomar", "Neurologi",
 ];
 
-// Nurse specializations
-const NURSE_SPECIALIZATIONS = [
-  "Akutsjukvård", "Ambulanssjukvård", "Anestesisjukvård", "Barn och ungdom",
-  "Diabetesvård", "Distriktssköterska", "Hjärtsjukvård", "Infektionssjukvård",
-  "Intensivvård", "Kirurgisk vård", "Medicinsk vård", "Onkologi",
-  "Operationssjukvård", "Palliativ vård", "Psykiatrisk vård", "Vård av äldre",
-  "Ögonsjukvård",
+// Top nurse specializations — ordered by search frequency
+const TOP_NURSE_SPECIALIZATIONS = [
+  "Intensivvård", "Psykiatrisk vård", "Ambulanssjukvård",
+  "Barn och ungdom", "Operationssjukvård", "Anestesisjukvård",
+  "Akutsjukvård", "Hjärtsjukvård", "Distriktssköterska",
+  "Kirurgisk vård", "Palliativ vård", "Vård av äldre",
+  "Medicinsk vård", "Onkologi", "Infektionssjukvård",
 ];
 
 const nurseValueMap: Record<string, string> = {
@@ -83,12 +68,27 @@ const nurseValueMap: Record<string, string> = {
   "Ögonsjukvård": "Specialistsjuksköterska ögonsjukvård",
 };
 
-export default function Survey() {
+interface SurveyProps {
+  initialCategory?: OccupationCategory;
+  initialRole?: string;
+  onBack?: () => void;
+}
+
+export default function Survey({ initialCategory, initialRole, onBack }: SurveyProps = {}) {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { data: locations, isLoading: locLoading } = useLocations();
   const { data: rates, isLoading: ratesLoading } = useRates();
   const [saving, setSaving] = useState(false);
-  const [step, setStep] = useState(1);
+
+  // Determine initial step based on prefill
+  const getInitialStep = () => {
+    if (initialRole) return 3; // Role fully determined (e.g. barnmorska) → skip to region
+    if (initialCategory) return 2; // Category set → show role dropdown
+    return 1;
+  };
+
+  const [step, setStep] = useState(getInitialStep);
   const [data, setData] = useState<SurveyData>({
     email: "",
     employmentType: "",
@@ -97,61 +97,98 @@ export default function Survey() {
     experience: 5,
     salaryType: "hourly",
     currentSalary: 0,
+    obShare: "",
   });
 
   // Step 1 state
-  const [occupationCategory, setOccupationCategory] = useState<OccupationCategory>("");
+  const [occupationCategory, setOccupationCategory] = useState<OccupationCategory>(initialCategory || "");
 
-  // Step 2 state
-  const [doctorSubRole, setDoctorSubRole] = useState<DoctorSubRole>("");
-  const [nurseSubRole, setNurseSubRole] = useState<NurseSubRole>("");
-  const [specialization, setSpecialization] = useState("");
-  const [subStep, setSubStep] = useState(0); // 0=choose role, 1=choose specialization
+  // Step 2: single dropdown value
+  const [roleDropdownValue, setRoleDropdownValue] = useState(initialRole || "");
+
 
   // Step 3 state
   const [selectedRegion, setSelectedRegion] = useState("");
+  const [kommunSearch, setKommunSearch] = useState("");
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
-  // Step 6 state
+  // Commute state
   const [commute, setCommute] = useState<CommuteType>("");
 
   const isLoading = locLoading || ratesLoading;
 
-  const { calculate: pricingCalculate } = usePricingEngine();
+  // Timing refs for PostHog step/survey tracking
+  const surveyStartTime = useRef<number | null>(null);
+  const stepEntryTime = useRef<number>(Date.now());
+  const surveyStarted = useRef(false);
+
+  const STEP_NAMES = ["yrkeskategori", "specialisering", "kommun", "anstallningsform", "uppdragsgivare", "ersattning"];
+
+  // Fire survey_started immediately when survey mounts with a pre-selected category
+  // (step 1 is skipped so the click handler there never runs)
+  useEffect(() => {
+    if (initialCategory) {
+      trackSurveyStarted();
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    stepEntryTime.current = Date.now();
+    trackEvent("survey_step_viewed", {
+      step_number: step,
+      step_name: STEP_NAMES[step - 1] || `step_${step}`,
+    });
+  }, [step]);
+
+  const trackStepCompleted = useCallback((stepNum: number, stepAnswer?: string | number) => {
+    const timeOnStep = Math.round((Date.now() - stepEntryTime.current) / 1000);
+    trackEvent("survey_step_completed", {
+      step_number: stepNum,
+      step_name: STEP_NAMES[stepNum - 1] || `step_${stepNum}`,
+      time_on_step_seconds: timeOnStep,
+      step_answer: stepAnswer ?? null,
+    });
+  }, []);
+
+  const trackSurveyStarted = useCallback(() => {
+    if (surveyStarted.current) return;
+    surveyStarted.current = true;
+    surveyStartTime.current = Date.now();
+    trackEvent("survey_started");
+  }, []);
+
+  const { calculate: pricingCalculate, result: pricingResult } = usePricingEngine();
   const { calculate: benchmarkCalculate, result: benchmarkResult } = useBenchmarkEngine();
 
-  // Derive yrke value from selections
+  // Derive yrke from the single dropdown value
   const resolvedYrke = useMemo(() => {
+    if (!roleDropdownValue) return "";
     if (occupationCategory === "lakare") {
-      if (doctorSubRole === "at") return "AT-läkare";
-      if (doctorSubRole === "leg") return "Legitimerad läkare";
-      if (doctorSubRole === "st") return "ST-läkare";
-      if (doctorSubRole === "specialist" && specialization) {
-        return `Specialistläkare ${specialization.toLowerCase()}`;
-      }
+      if (roleDropdownValue === "__leg") return "Legitimerad läkare";
+      if (roleDropdownValue === "__st") return "ST-läkare";
+      if (roleDropdownValue === "__ovrig") return "Specialistläkare";
+      return `Specialistläkare ${roleDropdownValue.toLowerCase()}`;
     }
     if (occupationCategory === "ssk") {
-      if (nurseSubRole === "allman") return "Sjuksköterska";
-      if (nurseSubRole === "barnmorska") return "Barnmorska";
-      if (nurseSubRole === "specialist" && specialization) {
-        return nurseValueMap[specialization] || specialization;
-      }
+      if (roleDropdownValue === "__allman") return "Sjuksköterska";
+      if (roleDropdownValue === "__barnmorska") return "Barnmorska";
+      if (roleDropdownValue === "__rontgen") return "Röntgensjuksköterska";
+      if (roleDropdownValue === "__ovrig") return "Specialistsjuksköterska";
+      return nurseValueMap[roleDropdownValue] || roleDropdownValue;
     }
     return "";
-  }, [occupationCategory, doctorSubRole, nurseSubRole, specialization]);
+  }, [occupationCategory, roleDropdownValue]);
 
-  // Keep data.yrke in sync
   useEffect(() => {
     if (resolvedYrke) setData((d) => ({ ...d, yrke: resolvedYrke }));
   }, [resolvedYrke]);
 
-  // Trigger pricing when we have yrke + kommun
   useEffect(() => {
     if (data.yrke && data.kommun && data.employmentType) {
       pricingCalculate(data.yrke, data.kommun, data.employmentType as "anstalld" | "foretagare");
     }
   }, [data.yrke, data.kommun, data.employmentType]);
 
-  // Trigger benchmark
   useEffect(() => {
     if (data.yrke && data.kommun && data.currentSalary > 0) {
       const currentMonthly = data.salaryType === "hourly" ? data.currentSalary * 167 : data.currentSalary;
@@ -159,7 +196,6 @@ export default function Survey() {
     }
   }, [data.yrke, data.kommun, data.currentSalary, data.salaryType]);
 
-  // Unique regions from locations
   const regions = useMemo(() => {
     if (!locations) return [];
     const seen = new Set<string>();
@@ -173,7 +209,20 @@ export default function Survey() {
       .sort((a, b) => a.localeCompare(b, "sv"));
   }, [locations]);
 
-  // Kommuner filtered by selected region
+  // All kommuner for search-first flow
+  const allKommuner = useMemo(() => {
+    if (!locations) return [];
+    return locations
+      .map((l) => ({ kommun: l.kommun, region: l.region }))
+      .sort((a, b) => a.kommun.localeCompare(b.kommun, "sv"));
+  }, [locations]);
+
+  const filteredKommunerSearch = useMemo(() => {
+    if (!kommunSearch.trim()) return allKommuner.slice(0, 10); // show top 10 initially
+    const q = kommunSearch.toLowerCase();
+    return allKommuner.filter((k) => k.kommun.toLowerCase().includes(q));
+  }, [allKommuner, kommunSearch]);
+
   const filteredKommuner = useMemo(() => {
     if (!locations || !selectedRegion) return [];
     return locations
@@ -182,55 +231,112 @@ export default function Survey() {
       .sort((a, b) => a.label.localeCompare(b.label, "sv"));
   }, [locations, selectedRegion]);
 
-  // Needs specialization?
-  const needsSpecialization =
-    (occupationCategory === "lakare" && (doctorSubRole === "st" || doctorSubRole === "specialist")) ||
-    (occupationCategory === "ssk" && nurseSubRole === "specialist");
+  // Dropdown options for step 2
+  const doctorRoleOptions = useMemo(() => [
+    { value: "__leg", label: "Leg. läkare", group: "" },
+    { value: "__st", label: "ST-läkare", group: "" },
+    ...TOP_DOCTOR_SPECIALTIES
+      .map((s) => ({ value: s, label: s, group: "Specialisering" })),
+    { value: "__ovrig", label: "Övrig specialisering", group: "Specialisering" },
+  ], []);
 
-  // Progress: step 1 = 0%, step 7 done = 100%
+  const nurseRoleOptions = useMemo(() => [
+    { value: "__allman", label: "Allmänsjuksköterska", group: "" },
+    { value: "__barnmorska", label: "Barnmorska", group: "" },
+    { value: "__rontgen", label: "Röntgensjuksköterska", group: "" },
+    ...TOP_NURSE_SPECIALIZATIONS
+      .map((s) => ({ value: s, label: s, group: "Vidareutbildning (VUB)" })),
+    { value: "__ovrig", label: "Övrig VUB", group: "Vidareutbildning (VUB)" },
+  ], []);
+
   const progress = ((step - 1) / TOTAL_STEPS) * 100;
 
   const canProceed = (() => {
     switch (step) {
       case 1: return !!occupationCategory;
-      case 2: return !!resolvedYrke || (!needsSpecialization && (!!doctorSubRole || !!nurseSubRole));
+      case 2: return !!resolvedYrke;
       case 3: return !!data.kommun;
       case 4: return !!data.employmentType;
-      case 5: return data.currentSalary > 0;
-      case 6: return !!commute;
-      case 7: return EMAIL_REGEX.test(data.email.trim());
+      case 5: return !!data.obShare;
+      case 6: return data.currentSalary > 0;
       default: return false;
     }
   })();
 
   const handleNext = async () => {
     if (step < TOTAL_STEPS) {
-      trackEvent("survey_step_completed", { step });
+      // Step 5 "next" = salary submission
+      const stepAnswers: Record<number, string | number> = {
+        1: occupationCategory,
+        2: roleDropdownValue,
+        3: data.kommun,
+        4: data.employmentType,
+        5: data.obShare,
+        6: data.currentSalary,
+      };
+      trackStepCompleted(step, stepAnswers[step]);
       setStep(step + 1);
       return;
     }
 
-    // Step 7: save & navigate
     setSaving(true);
+    const leadId = crypto.randomUUID();
+    const track = "consultant";
+
+    // Identify user in PostHog so all funnel events share the same distinct_id
+    if (isPostHogReady()) {
+      try { posthog.identify(leadId); } catch { /* silent */ }
+    }
+    const couponCode = searchParams.get("coupon");
+    const couponParam = couponCode ? `?coupon=${encodeURIComponent(couponCode)}` : "";
+
+    // Helper: navigate to teaser regardless of report creation outcome
+    const navigateToTeaser = () => {
+      sessionStorage.setItem("leadId", leadId);
+      sessionStorage.setItem("surveyData", JSON.stringify({ ...data, track }));
+      if (benchmarkResult) sessionStorage.setItem("benchmarkResult", JSON.stringify(benchmarkResult));
+      if (pricingResult) sessionStorage.setItem("pricingResult", JSON.stringify(pricingResult));
+      trackStepCompleted(6, data.obShare);
+      const totalTime = surveyStartTime.current ? Math.round((Date.now() - surveyStartTime.current) / 1000) : 0;
+      const hourlyRate = data.salaryType === "monthly"
+        ? Math.round(data.currentSalary / 167)
+        : data.currentSalary;
+      trackEvent("survey_completed", {
+        total_steps: TOTAL_STEPS,
+        total_time_seconds: totalTime,
+        role: data.yrke,
+        zone: data.kommun,
+        current_hourly_rate: hourlyRate,
+        experience_years: data.experience,
+        employment_type: data.employmentType === "foretagare" ? "Eget bolag" : "Fast",
+        agency_name: null,
+        report_id: sessionStorage.getItem("reportId") || null,
+      });
+      navigate(`/resultat/${leadId}${couponParam}`);
+    };
+
     try {
-      const leadId = crypto.randomUUID();
+      console.log("[Survey] Inserting lead:", leadId);
       const { error } = await supabase.from("leads").insert({
         id: leadId,
-        email: data.email.trim().toLowerCase(),
         employment_type: data.employmentType,
         yrke: data.yrke,
         kommun: data.kommun,
         experience: data.experience,
         salary_type: data.salaryType,
         current_salary: data.currentSalary,
+        ob_share: data.obShare || null,
       });
-      if (error) throw error;
+      if (error) {
+        console.error("[Survey] Lead insert failed:", error);
+        throw error;
+      }
+      console.log("[Survey] Lead inserted, calling create-report...");
 
-      const track = "consultant";
-      const { data: reportData, error: reportError } = await supabase.functions.invoke("create-report", {
+      // Race create-report against a 3s timeout
+      const reportPromise = supabase.functions.invoke("create-report", {
         body: {
           lead_id: leadId,
-          email: data.email.trim().toLowerCase(),
           occupation: data.yrke,
           employment_type: data.employmentType,
           kommun: data.kommun,
@@ -239,316 +345,331 @@ export default function Survey() {
           salary_type: data.salaryType,
           track,
           commute,
-          specialization: needsSpecialization ? specialization : undefined,
+          ob_share: data.obShare || null,
         },
       });
 
-      if (reportError || !reportData?.report_id) throw new Error("Failed to create report");
+      const timeoutPromise = new Promise<{ data: null; error: Error }>((resolve) =>
+        setTimeout(() => resolve({ data: null, error: new Error("create-report timeout (3s)") }), 3000)
+      );
 
-      sessionStorage.setItem("leadId", leadId);
+      const { data: reportData, error: reportError } = await Promise.race([reportPromise, timeoutPromise]);
+
+      if (reportError || !reportData?.report_id) {
+        console.warn("[Survey] create-report failed or timed out:", reportError?.message || "no report_id");
+        // Still navigate — teaser can fetch data via get-lead
+        navigateToTeaser();
+        return;
+      }
+
+      console.log("[Survey] Report created:", reportData.report_id);
       sessionStorage.setItem("reportId", reportData.report_id);
-      sessionStorage.setItem("surveyData", JSON.stringify({ ...data, track }));
       if (reportData.ab_variant) sessionStorage.setItem("abVariant", reportData.ab_variant);
-      if (benchmarkResult) sessionStorage.setItem("benchmarkResult", JSON.stringify(benchmarkResult));
-      trackEvent("survey_completed", { track });
-      navigate("/resultat");
-    } catch {
-      toast.error("Kunde inte spara dina uppgifter. Försök igen.");
-      setSaving(false);
+      navigateToTeaser();
+    } catch (err) {
+      console.error("[Survey] Survey completion error:", err);
+      // Even on error, try to navigate so the user isn't stuck
+      try {
+        navigateToTeaser();
+      } catch {
+        toast.error("Kunde inte spara dina uppgifter. Försök igen.");
+        setSaving(false);
+      }
     }
   };
 
   const handleBack = () => {
-    if (step === 2 && subStep > 0) {
-      setSubStep(0);
-      setSpecialization("");
-    } else if (step === 2 && subStep === 0) {
-      // Back to category
-      setDoctorSubRole("");
-      setNurseSubRole("");
-      setSpecialization("");
-      setSubStep(0);
-      setStep(1);
-    } else if (step === 3 && !data.kommun && selectedRegion) {
+    if (step === 3 && initialRole) {
+      onBack?.();
+    } else if (step === 3) {
+      setKommunSearch("");
       setSelectedRegion("");
+      setData({ ...data, kommun: "" });
+      setStep(2);
+    } else if (step === 2 && initialCategory) {
+      // Came from landing with category pre-set — go back to landing
+      onBack?.();
+    } else if (step === 2) {
+      setOccupationCategory("");
+      setRoleDropdownValue("");
+      setStep(1);
     } else if (step > 1) {
       setStep(step - 1);
     }
   };
 
-  // Specialization options for SearchableSelect
-  const specializationOptions = useMemo(() => {
+  // Display-friendly role name
+  const displayRole = useMemo(() => {
+    if (!roleDropdownValue) return "";
     if (occupationCategory === "lakare") {
-      return DOCTOR_SPECIALTIES.map((s) => ({ value: s, label: s }));
+      if (roleDropdownValue === "__leg") return "Leg. läkare";
+      if (roleDropdownValue === "__st") return "ST-läkare";
+      if (roleDropdownValue === "__ovrig") return "Specialistläkare";
+      return roleDropdownValue;
     }
     if (occupationCategory === "ssk") {
-      return NURSE_SPECIALIZATIONS.map((s) => ({ value: s, label: s }));
+      if (roleDropdownValue === "__allman") return "Allmänsjuksköterska";
+      if (roleDropdownValue === "__barnmorska") return "Barnmorska";
+      if (roleDropdownValue === "__rontgen") return "Röntgensjuksköterska";
+      if (roleDropdownValue === "__ovrig") return "Specialistsjuksköterska";
+      return roleDropdownValue;
     }
-    return [];
-  }, [occupationCategory]);
+    return "";
+  }, [occupationCategory, roleDropdownValue]);
 
   return (
     <div className="w-full max-w-lg mx-auto">
-      {/* Progress bar */}
-      <div className="mb-8">
-        <div className="flex justify-between text-xs text-muted-foreground mb-2">
-          <span>Steg {step} av {TOTAL_STEPS}</span>
-          <span>{Math.round(progress)}%</span>
+      {/* Progress bar — thin, elegant, hidden on step 1 */}
+      {step > 1 && (
+        <div className="mb-4">
+          <div className="h-1 bg-border/50 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-primary rounded-full transition-all duration-500 ease-out"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+          <p className="text-hint mt-2">{step} av {TOTAL_STEPS}</p>
         </div>
-        <div className="h-2 bg-secondary rounded-full overflow-hidden">
-          <div
-            className="h-full hero-gradient rounded-full transition-all duration-500 ease-out"
-            style={{ width: `${progress}%` }}
-          />
-        </div>
-      </div>
+      )}
 
-      <div className="min-h-[280px] flex flex-col">
+      {/* Context chips — show selected role & kommun */}
+      {step > 2 && (displayRole || data.kommun) && (
+        <div className="flex flex-wrap items-center gap-1.5 mb-6">
+          {displayRole && (
+            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-foreground/70 bg-foreground/[0.05] border border-foreground/[0.08] rounded-full px-3 py-1">
+              <Stethoscope className="w-3 h-3 text-primary/70" />
+              {displayRole}
+            </span>
+          )}
+          {data.kommun && (
+            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-foreground/70 bg-foreground/[0.05] border border-foreground/[0.08] rounded-full px-3 py-1">
+              <MapPin className="w-3 h-3 text-primary/70" />
+              {data.kommun}
+            </span>
+          )}
+        </div>
+      )}
+
+      <div className="min-h-[320px] flex flex-col">
 
         {/* Step 1: Yrkeskategori */}
         {step === 1 && (
-          <StepWrapper
-            icon={<Stethoscope className="w-6 h-6" />}
-            title="Vad jobbar du som?"
-            subtitle="Välj din yrkeskategori"
-          >
+          <StepWrapper title="Vad jobbar du som?">
             <div className="flex flex-col gap-3">
               {([
-                { value: "lakare" as OccupationCategory, label: "Läkare", desc: "AT, ST, specialist eller legitimerad läkare" },
+                { value: "lakare" as OccupationCategory, label: "Läkare", desc: "ST, specialist eller legitimerad läkare" },
                 { value: "ssk" as OccupationCategory, label: "Sjuksköterska / Barnmorska", desc: "Allmänsjuksköterska, specialistsjuksköterska eller barnmorska" },
               ]).map((opt) => (
                 <button
                   key={opt.value}
                   onClick={() => {
+                    trackSurveyStarted();
                     setOccupationCategory(opt.value);
-                    setDoctorSubRole("");
-                    setNurseSubRole("");
-                    setSpecialization("");
-                    setSubStep(0);
-                    trackEvent("survey_step_completed", { step: 1 });
+                    setRoleDropdownValue("");
+                    trackStepCompleted(1, opt.value);
                     setStep(2);
                   }}
-                  className={`py-4 px-5 rounded-xl border text-left transition-colors ${
+                  className={`group w-full py-5 px-5 rounded-xl border !border-l-[3px] bg-card text-left transition-all active:scale-[0.98] flex items-center justify-between gap-3 ${
                     occupationCategory === opt.value
-                      ? "border-primary bg-primary/5 ring-2 ring-primary/20"
-                      : "border-border bg-card [@media(hover:hover)]:hover:bg-accent [@media(hover:hover)]:hover:text-accent-foreground active:bg-accent/50"
+                      ? "border-primary !border-l-primary bg-primary/[0.06] ring-1 ring-primary/20"
+                      : "border-border !border-l-primary hover:border-primary/40 hover:bg-primary/[0.03]"
                   }`}
                 >
-                  <span className="text-sm font-medium">{opt.label}</span>
-                  <p className="text-xs text-muted-foreground mt-0.5">{opt.desc}</p>
+                  <div className="flex items-center gap-3">
+                    {occupationCategory === opt.value && (
+                      <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center shrink-0">
+                        <Check className="w-3 h-3 text-primary-foreground" />
+                      </div>
+                    )}
+                    <div>
+                      <span className="text-base font-semibold text-foreground">{opt.label}</span>
+                       <p className="text-body-sm mt-1">{opt.desc}</p>
+                    </div>
+                  </div>
+                  <ArrowRight className="w-5 h-5 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
                 </button>
               ))}
             </div>
           </StepWrapper>
         )}
 
-        {/* Step 2: Sub-role + specialization */}
-        {step === 2 && subStep === 0 && occupationCategory === "lakare" && (
-          <StepWrapper
-            icon={<Stethoscope className="w-6 h-6" />}
-            title="Vilken typ av läkare?"
-            subtitle="Välj din roll"
-          >
-            <div className="flex flex-col gap-3">
-              {([
-                { value: "specialist" as DoctorSubRole, label: "Specialistläkare", desc: "Färdig specialist" },
-                { value: "leg" as DoctorSubRole, label: "Leg. läkare", desc: "Legitimerad läkare utan specialistkompetens" },
-                { value: "at" as DoctorSubRole, label: "AT-läkare", desc: "Allmäntjänstgöring" },
-                { value: "st" as DoctorSubRole, label: "ST-läkare", desc: "Specialisttjänstgöring" },
-              ]).map((opt) => (
-                <button
-                  key={opt.value}
-                  onClick={() => {
-                    setDoctorSubRole(opt.value);
-                    setSpecialization("");
-                    if (opt.value === "st" || opt.value === "specialist") {
-                      setSubStep(1);
-                    } else {
-                      // No specialization needed, go to step 3
-                      trackEvent("survey_step_completed", { step: 2 });
+        {/* Step 2: Single dropdown for role selection */}
+        {step === 2 && (
+          <StepWrapper title="Välj din roll" subtitle="Vi behöver veta din specialisering för att matcha rätt avtalspriser.">
+            <div className="flex flex-col flex-1">
+              {/* Upper decorative area */}
+              <div className="flex-1 flex flex-col items-center justify-center gap-4 py-6">
+                {occupationCategory === "lakare" ? (
+                  <Stethoscope className="w-24 h-24 text-muted-foreground/10" strokeWidth={1} />
+                ) : (
+                  <Briefcase className="w-24 h-24 text-muted-foreground/10" strokeWidth={1} />
+                )}
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/50 px-3 py-1 text-xs text-muted-foreground">
+                  {occupationCategory === "lakare" ? "Läkare" : "Sjuksköterska"}
+                </span>
+              </div>
+
+              {/* Dropdown card pushed to bottom */}
+              <div className="mt-auto rounded-2xl border border-border bg-card p-5">
+                <SearchableSelect
+                  value={roleDropdownValue}
+                  onValueChange={(v) => {
+                    setRoleDropdownValue(v);
+                    setTimeout(() => {
+                      trackStepCompleted(2, v);
                       setStep(3);
-                    }
+                    }, 300);
                   }}
-                  className="py-4 px-5 rounded-xl border border-border bg-card text-left transition-colors [@media(hover:hover)]:hover:bg-accent [@media(hover:hover)]:hover:text-accent-foreground active:bg-accent/50"
-                >
-                  <span className="text-sm font-medium">{opt.label}</span>
-                  <p className="text-xs text-muted-foreground mt-0.5">{opt.desc}</p>
-                </button>
-              ))}
-            </div>
-            <button
-              type="button"
-              onClick={() => { setOccupationCategory(""); setStep(1); }}
-              className="mt-3 text-xs text-muted-foreground hover:text-foreground transition-colors"
-            >
-              ← Byt kategori
-            </button>
-          </StepWrapper>
-        )}
-
-        {step === 2 && subStep === 0 && occupationCategory === "ssk" && (
-          <StepWrapper
-            icon={<Stethoscope className="w-6 h-6" />}
-            title="Vilken typ av sjuksköterska?"
-            subtitle="Välj din roll"
-          >
-            <div className="flex flex-col gap-3">
-              {([
-                { value: "allman" as NurseSubRole, label: "Allmänsjuksköterska", desc: "Grundutbildad sjuksköterska" },
-                { value: "barnmorska" as NurseSubRole, label: "Barnmorska", desc: "Legitimerad barnmorska" },
-                { value: "specialist" as NurseSubRole, label: "Specialistsjuksköterska", desc: "Vidareutbildad specialist" },
-              ]).map((opt) => (
-                <button
-                  key={opt.value}
-                  onClick={() => {
-                    setNurseSubRole(opt.value);
-                    setSpecialization("");
-                    if (opt.value === "specialist") {
-                      setSubStep(1);
-                    } else {
-                      trackEvent("survey_step_completed", { step: 2 });
-                      setStep(3);
-                    }
-                  }}
-                  className="py-4 px-5 rounded-xl border border-border bg-card text-left transition-colors [@media(hover:hover)]:hover:bg-accent [@media(hover:hover)]:hover:text-accent-foreground active:bg-accent/50"
-                >
-                  <span className="text-sm font-medium">{opt.label}</span>
-                  <p className="text-xs text-muted-foreground mt-0.5">{opt.desc}</p>
-                </button>
-              ))}
-            </div>
-            <button
-              type="button"
-              onClick={() => { setOccupationCategory(""); setStep(1); }}
-              className="mt-3 text-xs text-muted-foreground hover:text-foreground transition-colors"
-            >
-              ← Byt kategori
-            </button>
-          </StepWrapper>
-        )}
-
-        {/* Step 2 sub-step 1: Specialization picker */}
-        {step === 2 && subStep === 1 && (
-          <StepWrapper
-            icon={<Stethoscope className="w-6 h-6" />}
-            title={occupationCategory === "lakare"
-              ? (doctorSubRole === "st" ? "Vilken ST-inriktning?" : "Vilken specialisering?")
-              : "Vilken specialisering?"
-            }
-            subtitle={doctorSubRole === "st" ? "Påverkar inte din ersättning, men hjälper oss förstå marknaden" : "Välj din specialisering"}
-          >
-            <SearchableSelect
-              value={specialization}
-              onValueChange={(v) => {
-                setSpecialization(v);
-                setTimeout(() => {
-                  trackEvent("survey_step_completed", { step: 2 });
-                  setStep(3);
-                }, 300);
-              }}
-              placeholder="Välj specialisering"
-              options={specializationOptions}
-            />
-            <button
-              type="button"
-              onClick={() => { setSubStep(0); setSpecialization(""); }}
-              className="mt-3 text-xs text-muted-foreground hover:text-foreground transition-colors"
-            >
-              ← Byt roll
-            </button>
-          </StepWrapper>
-        )}
-
-        {/* Step 3: Region → Kommun */}
-        {step === 3 && !selectedRegion && (
-          <StepWrapper
-            icon={<MapPin className="w-6 h-6" />}
-            title="Var jobbar du?"
-            subtitle="Välj region"
-          >
-            <div className="flex flex-col gap-2 max-h-[400px] overflow-y-auto">
-              {regions.map((region) => (
-                <button
-                  key={region}
-                  onClick={() => setSelectedRegion(region)}
-                  className="py-3 px-4 rounded-xl border border-border bg-card text-left text-sm font-medium transition-colors [@media(hover:hover)]:hover:bg-accent [@media(hover:hover)]:hover:text-accent-foreground active:bg-accent/50"
-                >
-                  {region}
-                </button>
-              ))}
+                  placeholder={occupationCategory === "lakare" ? "Välj läkarroll eller specialisering..." : "Välj roll eller vidareutbildning..."}
+                  options={occupationCategory === "lakare" ? doctorRoleOptions : nurseRoleOptions}
+                />
+              </div>
             </div>
           </StepWrapper>
         )}
 
-        {step === 3 && selectedRegion && (
-          <StepWrapper
-            icon={<MapPin className="w-6 h-6" />}
-            title="Vilken kommun?"
-            subtitle={`Kommuner i ${selectedRegion}`}
-          >
-            <SearchableSelect
-              value={data.kommun}
-              onValueChange={(v) => {
-                setData({ ...data, kommun: v });
-                setTimeout(() => {
-                  trackEvent("survey_step_completed", { step: 3 });
-                  setStep(4);
-                }, 300);
-              }}
-              placeholder={isLoading ? "Laddar..." : "Välj kommun"}
-              options={filteredKommuner}
-            />
-            <button
-              type="button"
-              onClick={() => { setSelectedRegion(""); setData({ ...data, kommun: "" }); }}
-              className="mt-3 text-xs text-muted-foreground hover:text-foreground transition-colors"
-            >
-              ← Byt region
-            </button>
+        {step === 3 && (
+          <StepWrapper title="Var jobbar du?">
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-4 flex flex-col items-center justify-center flex-1">
+               <p className="text-body-sm text-center max-w-xs">
+                 Inom en region kan det finnas 3 olika prisnivåer. Ange kommun för en träffsäker analys av din ersättning.
+              </p>
+
+              {/* Search input */}
+              <div className="relative">
+                <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground/50" />
+                <Input
+                  ref={searchInputRef}
+                  type="text"
+                  value={kommunSearch}
+                  onChange={(e) => setKommunSearch(e.target.value)}
+                  placeholder="Sök kommun, t.ex. Göteborg..."
+                  className="h-28 pl-12 text-2xl"
+                  autoFocus
+                />
+              </div>
+
+              {/* Results */}
+              <div className="rounded-xl border border-border overflow-hidden">
+                <div className="flex flex-col max-h-[320px] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-primary/25">
+                  {filteredKommunerSearch.length === 0 ? (
+                    <p className="py-8 text-center text-body-sm">Inga kommuner hittades</p>
+                  ) : (
+                    filteredKommunerSearch.map((k) => (
+                      <button
+                        key={k.kommun}
+                        onClick={() => {
+                          setData({ ...data, kommun: k.kommun });
+                          setSelectedRegion(k.region);
+                          trackStepCompleted(3, k.kommun);
+                          setTimeout(() => setStep(4), 200);
+                        }}
+                        className={`group w-full py-3 px-4 text-left text-sm transition-all flex items-center justify-between border-b border-border/50 last:border-b-0 ${
+                          data.kommun === k.kommun
+                            ? "bg-primary/[0.08] border-l-2 border-l-primary"
+                            : "hover:bg-primary/[0.04]"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          {data.kommun === k.kommun && (
+                            <Check className="w-4 h-4 text-primary shrink-0" />
+                          )}
+                          <div>
+                            <span className="font-medium text-foreground">{k.kommun}</span>
+                            <span className="ml-2 text-xs text-muted-foreground">{k.region}</span>
+                          </div>
+                        </div>
+                        <ArrowRight className="w-4 h-4 text-muted-foreground/20 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
+                      </button>
+                    ))
+                  )}
+                </div>
+              </div>
+
+              {!kommunSearch && (
+               <p className="text-hint text-center">
+                   Börja skriva för att hitta din uppdragsort
+                 </p>
+              )}
+            </div>
           </StepWrapper>
         )}
 
         {/* Step 4: Anställningsform */}
         {step === 4 && (
-          <StepWrapper
-            icon={<Briefcase className="w-6 h-6" />}
-            title="Hur är du anställd?"
-            subtitle="Välj din anställningsform"
-          >
-            <div className="flex flex-col gap-3">
+          <StepWrapper title="Är du anställd eller egen företagare?">
+            <div className="rounded-2xl border border-border bg-card p-5 flex flex-col gap-3">
               {([
-                { value: "anstalld" as const, label: "Anställd", desc: "Tillsvidareanställd eller vikarie hos arbetsgivare" },
-                { value: "foretagare" as const, label: "Företagare", desc: "Eget bolag, inhyrd via bemanningsföretag" },
+                { value: "anstalld" as const, label: "Anställd", desc: "Lön från vårdgivare eller bemanningsföretag" },
+                { value: "foretagare" as const, label: "Eget bolag", desc: "Fakturerar via bemanningsföretag eller direkt till slutkund" },
               ]).map((opt) => (
-                <button
+               <button
                   key={opt.value}
                   onClick={() => {
                     setData({ ...data, employmentType: opt.value });
-                    trackEvent("survey_step_completed", { step: 4 });
+                    trackStepCompleted(4, opt.value);
                     setTimeout(() => setStep(5), 300);
                   }}
-                  className={`py-4 px-5 rounded-xl border text-left transition-colors ${
+                  className={`group w-full py-5 px-5 rounded-xl border !border-l-[3px] bg-card text-left transition-all active:scale-[0.98] flex items-center gap-3 ${
                     data.employmentType === opt.value
-                      ? "border-primary bg-primary/5 ring-2 ring-primary/20"
-                      : "border-border bg-card [@media(hover:hover)]:hover:bg-accent [@media(hover:hover)]:hover:text-accent-foreground active:bg-accent/50"
+                      ? "border-primary !border-l-primary bg-primary/[0.06] ring-1 ring-primary/20"
+                      : "border-border !border-l-primary hover:border-primary/40 hover:bg-primary/[0.03]"
                   }`}
                 >
-                  <span className="text-sm font-medium">{opt.label}</span>
-                  <p className="text-xs text-muted-foreground mt-0.5">{opt.desc}</p>
+                  {data.employmentType === opt.value && (
+                    <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center shrink-0">
+                      <Check className="w-3 h-3 text-primary-foreground" />
+                    </div>
+                  )}
+                  <div>
+                    <span className="text-base font-medium text-foreground">{opt.label}</span>
+                    <p className="text-body-sm mt-1">{opt.desc}</p>
+                  </div>
                 </button>
               ))}
             </div>
           </StepWrapper>
         )}
 
-        {/* Step 5: Ersättning */}
+        {/* Step 5: Uppdragsgivare */}
         {step === 5 && (
-          <StepWrapper
-            icon={<TrendingUp className="w-6 h-6" />}
-            title="Vad har du i ersättning idag?"
-            subtitle="Ange din nuvarande lön eller timersättning"
-          >
-            <div className="space-y-6">
+          <StepWrapper title="Vem är din uppdragsgivare?">
+            <div className="rounded-2xl border border-border bg-card p-5 flex flex-col gap-3">
+              {([
+                { value: "bemanningsforetag", label: "Bemanningsföretag" },
+                { value: "region", label: "Region" },
+                { value: "kommun", label: "Kommun" },
+                { value: "privat_vardgivare", label: "Privat vårdgivare" },
+              ]).map((opt) => (
+                <button
+                  key={opt.value}
+                  onClick={() => {
+                    setData({ ...data, obShare: opt.value });
+                    trackStepCompleted(5, opt.value);
+                    setTimeout(() => setStep(6), 300);
+                  }}
+                  className={`group w-full py-5 px-5 rounded-xl border !border-l-[3px] bg-card text-left transition-all active:scale-[0.98] flex items-center gap-3 ${
+                    data.obShare === opt.value
+                      ? "border-primary !border-l-primary bg-primary/[0.06] ring-1 ring-primary/20"
+                      : "border-border !border-l-primary hover:border-primary/40 hover:bg-primary/[0.03]"
+                  }`}
+                >
+                  {data.obShare === opt.value && (
+                    <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center shrink-0">
+                      <Check className="w-3 h-3 text-primary-foreground" />
+                    </div>
+                  )}
+                  <span className="text-base font-medium text-foreground">{opt.label}</span>
+                </button>
+              ))}
+            </div>
+          </StepWrapper>
+        )}
+
+        {/* Step 6: Ersättning (final step) */}
+        {step === 6 && (
+          <StepWrapper title="Vad får du i ersättning idag?">
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-5">
               <div className="flex gap-3">
                 {([
                   { value: "hourly" as const, label: "Per timme" },
@@ -557,10 +678,10 @@ export default function Survey() {
                   <button
                     key={opt.value}
                     onClick={() => setData({ ...data, salaryType: opt.value })}
-                    className={`flex-1 py-3 px-4 rounded-xl border text-sm font-medium transition-colors ${
+                    className={`flex-1 py-3.5 px-4 rounded-xl border text-sm font-medium transition-all active:scale-[0.98] ${
                       data.salaryType === opt.value
-                        ? "border-primary bg-primary/5 ring-2 ring-primary/20"
-                        : "border-border bg-card [@media(hover:hover)]:hover:bg-accent [@media(hover:hover)]:hover:text-accent-foreground"
+                        ? "border-primary bg-primary/[0.06] text-foreground"
+                        : "border-border bg-card text-muted-foreground hover:border-primary/30"
                     }`}
                   >
                     {opt.label}
@@ -571,151 +692,89 @@ export default function Survey() {
                 <Input
                   type="number"
                   inputMode="numeric"
-                  placeholder={data.salaryType === "hourly" ? "Ex. 350" : "Ex. 45000"}
+                  placeholder="Ange ersättning"
                   value={data.currentSalary || ""}
                   onChange={(e) => setData({ ...data, currentSalary: Number(e.target.value) })}
-                  className="h-14 text-lg pr-16"
+                  className="h-16 text-2xl font-semibold pr-20 text-center"
                   autoFocus
                 />
-                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
+                <span className="absolute right-5 top-1/2 -translate-y-1/2 text-base text-muted-foreground font-medium">
                   {data.salaryType === "hourly" ? "kr/h" : "kr/mån"}
                 </span>
               </div>
-              <p className="text-xs text-muted-foreground">
-                {data.salaryType === "hourly"
-                  ? "Ange din timersättning före skatt"
-                  : "Ange din månadslön före skatt"}
-              </p>
+               <p className="text-body-sm text-center">
+                 {data.salaryType === "hourly"
+                   ? "Timersättning före skatt"
+                   : "Månadsersättning före skatt"}
+               </p>
             </div>
           </StepWrapper>
         )}
 
-        {/* Step 6: Pendlar du? */}
-        {step === 6 && (
-          <StepWrapper
-            icon={<Train className="w-6 h-6" />}
-            title="Pendlar du till jobbet?"
-            subtitle="Hjälper oss förstå din situation bättre"
-          >
-            <div className="flex flex-col gap-3">
-              {([
-                { value: "veckovis" as CommuteType, label: "Veckovis", desc: "Jag reser till en annan ort varje vecka" },
-                { value: "dagligen" as CommuteType, label: "Dagligen", desc: "Jag pendlar till jobbet varje dag" },
-                { value: "inte_alls" as CommuteType, label: "Inte alls", desc: "Jag bor nära arbetsplatsen" },
-              ]).map((opt) => (
-                <button
-                  key={opt.value}
-                  onClick={() => {
-                    setCommute(opt.value);
-                    trackEvent("survey_step_completed", { step: 6 });
-                    setTimeout(() => setStep(7), 300);
-                  }}
-                  className={`py-4 px-5 rounded-xl border text-left transition-colors ${
-                    commute === opt.value
-                      ? "border-primary bg-primary/5 ring-2 ring-primary/20"
-                      : "border-border bg-card [@media(hover:hover)]:hover:bg-accent [@media(hover:hover)]:hover:text-accent-foreground active:bg-accent/50"
-                  }`}
-                >
-                  <span className="text-sm font-medium">{opt.label}</span>
-                  <p className="text-xs text-muted-foreground mt-0.5">{opt.desc}</p>
-                </button>
-              ))}
-            </div>
-          </StepWrapper>
-        )}
 
-        {/* Step 7: E-post */}
-        {step === 7 && (
-          <StepWrapper
-            icon={<Mail className="w-6 h-6" />}
-            title="Få din löneanalys"
-            subtitle="Vi skickar resultatet till din e-post"
-          >
-            <div className="space-y-3">
-              <Input
-                type="email"
-                inputMode="email"
-                autoComplete="email"
-                placeholder="namn@exempel.se"
-                value={data.email}
-                onChange={(e) => setData({ ...data, email: e.target.value })}
-                className="h-14 text-base"
-                autoFocus
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && canProceed) handleNext();
-                }}
-              />
-              <p className="text-xs text-muted-foreground">
-                Vi delar aldrig din e-post med tredje part.
-              </p>
-            </div>
-          </StepWrapper>
-        )}
       </div>
 
       {/* Navigation */}
-      {step > 0 && (
+      {step > 1 && (
         <div className="flex gap-3 mt-8">
           <button
             onClick={handleBack}
-            className="flex items-center gap-2 py-3 px-5 rounded-xl text-sm font-medium bg-secondary text-secondary-foreground hover:bg-muted transition-colors"
+            className="flex items-center gap-1.5 py-3.5 px-5 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground transition-all active:scale-[0.97]"
           >
             <ChevronLeft className="w-4 h-4" />
             Tillbaka
           </button>
-          {/* Show continue button for steps that need manual next (5=ersättning, 7=email) */}
-          {(step === 5 || step === 7) && (
+          {step === 6 && (
             <button
-              onClick={handleNext}
-              disabled={!canProceed || saving}
-              className={`flex-1 flex items-center justify-center gap-2 py-3.5 px-6 rounded-xl text-sm sm:text-base font-semibold transition-all duration-200 ${
+              onClick={() => {
+                if (data.currentSalary <= 0) {
+                  toast.error("Ange ersättning innan du fortsätter");
+                  return;
+                }
+                if (!canProceed) return;
+                trackStepCompleted(6, data.currentSalary);
+                handleNext();
+              }}
+              disabled={saving}
+              className={`flex-1 flex items-center justify-center gap-2 py-4 px-6 rounded-xl text-base font-semibold transition-all duration-200 active:scale-[0.97] ${
                 canProceed && !saving
-                  ? "hero-gradient text-primary-foreground card-shadow-hover"
+                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
                   : "bg-muted text-muted-foreground cursor-not-allowed"
               }`}
             >
-              {step === 7 ? (
-                <>
-                  {saving ? "Sparar..." : "Se min analys"}
-                  {!saving && <ArrowRight className="w-5 h-5" />}
-                </>
-              ) : (
-                <>
-                  Fortsätt
-                  <ChevronRight className="w-4 h-4" />
-                </>
-              )}
+              {saving ? "Analyserar..." : "Visa min analys"}
+              {!saving && <ArrowRight className="w-5 h-5" />}
             </button>
           )}
         </div>
       )}
+
+      <p className="text-center text-micro mt-8">
+        Dina uppgifter hanteras enligt vår{" "}
+        <Link to="/integritetspolicy" className="text-primary/70 hover:text-primary underline underline-offset-2 transition-colors">
+          integritetspolicy
+        </Link>.
+      </p>
     </div>
   );
 }
 
 function StepWrapper({
-  icon,
   title,
   subtitle,
   children,
 }: {
-  icon: React.ReactNode;
   title: string;
-  subtitle: string;
+  subtitle?: string;
   children: React.ReactNode;
 }) {
   return (
-    <div className="animate-in fade-in slide-in-from-right-4 duration-300 flex-1 flex flex-col">
-      <div className="flex items-center gap-3 mb-2">
-        <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-          {icon}
-        </div>
-        <div>
-          <h2 className="text-lg sm:text-xl font-display text-foreground">{title}</h2>
-          <p className="text-sm text-muted-foreground">{subtitle}</p>
-        </div>
+    <div className="animate-in fade-in slide-in-from-right-4 duration-300 flex-1 flex flex-col justify-center">
+      <div className="mb-6 text-center">
+        <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight leading-tight">{title}</h2>
+        {subtitle && <p className="text-body-sm mt-1">{subtitle}</p>}
       </div>
-      <div className="mt-6 flex-1">{children}</div>
+      <div className="flex-1 flex flex-col">{children}</div>
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { useState } from "react";
 
 export default function Compare() {
   const [reportId] = useState(() => sessionStorage.getItem("reportId") || "");
+  const [leadId] = useState(() => sessionStorage.getItem("leadId") || "");
 
   return (
     <div className="h-screen flex flex-col">
@@ -21,10 +22,10 @@ export default function Compare() {
       <div className="flex-1 flex">
         <div className="w-1/2 border-r border-border relative">
           <div className="absolute top-2 left-2 z-10 bg-blue-500 text-white text-xs font-bold px-2 py-1 rounded">
-            A — Teaser (/resultat)
+            A — Teaser (/resultat/:leadId)
           </div>
           <iframe
-            src="/resultat"
+            src={leadId ? `/resultat/${leadId}` : "/"}
             className="w-full h-full border-0"
             title="Variant A – Teaser"
           />

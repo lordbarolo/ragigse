@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { report_id } = await req.json();
+    const { report_id, auth_user_id } = await req.json();
 
     if (!report_id) {
       return new Response(JSON.stringify({ error: "Missing report_id" }), {
@@ -31,7 +31,7 @@ serve(async (req) => {
       .from("reports")
       .select("*")
       .eq("id", report_id)
-      .single();
+      .maybeSingle();
 
     if (error || !report) {
       return new Response(JSON.stringify({ error: "Report not found" }), {
@@ -40,13 +40,16 @@ serve(async (req) => {
       });
     }
 
-    // Determine access level
+    // Determine access level — reports are free once email is provided
+    const hasEmail = !!report.email;
     const isPaid = report.status === "paid";
     const isReferralUnlocked = report.unlocked_by_referral === true;
+    const isOwner = auth_user_id && report.user_id === auth_user_id;
 
     // Build response based on access level
     const response: Record<string, unknown> = {
       id: report.id,
+      lead_id: report.lead_id || null,
       status: report.status,
       occupation: report.occupation,
       employment_type: report.employment_type,
@@ -57,7 +60,7 @@ serve(async (req) => {
       unlocked_by_referral: isReferralUnlocked,
     };
 
-    if (isPaid || isReferralUnlocked) {
+    if (hasEmail || isPaid || isReferralUnlocked || isOwner) {
       // Full access
       response.result_json = report.result_json;
       response.access = "full";
@@ -92,7 +95,7 @@ serve(async (req) => {
           response.zone_comparisons = matchingRates;
         }
 
-        // Also get the user's zone from locations
+      // Also get the user's zone from locations
         if (report.kommun) {
           const { data: loc } = await supabase
             .from("locations")
@@ -101,6 +104,17 @@ serve(async (req) => {
             .limit(1);
           if (loc && loc.length > 0) {
             response.user_zone = loc[0].zon;
+          }
+
+          // Fetch price history for this occupation
+          const { data: priceChanges } = await supabase
+            .from("price_changes")
+            .select("yrkeskategori, zon, old_timpris, new_timpris, diff_abs, diff_pct, change_type, detected_at")
+            .eq("yrkeskategori", occupation)
+            .order("detected_at", { ascending: false })
+            .limit(10);
+          if (priceChanges && priceChanges.length > 0) {
+            response.price_history = priceChanges;
           }
         }
       }

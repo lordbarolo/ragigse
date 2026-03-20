@@ -109,8 +109,18 @@ serve(async (req) => {
     }
 
     const empType = employment_type as EmploymentType;
-    const range = calculateSalaryRange(timprisKund, empType, model);
-    const m = model ?? { share_min: 0.85, share_max: 0.90, employer_factor: 1.42, hours_per_month: 167 };
+    // For foretagare: 8-15% margin (85-92% to consultant)
+    const FORETAGARE_SHARE_MIN = 0.85;
+    const FORETAGARE_SHARE_MAX = 0.92;
+    const effectiveModel: MarginModel | undefined = model
+      ? (empType === "foretagare"
+        ? { ...model, share_min: FORETAGARE_SHARE_MIN, share_max: FORETAGARE_SHARE_MAX }
+        : model)
+      : (empType === "foretagare"
+        ? { share_min: FORETAGARE_SHARE_MIN, share_max: FORETAGARE_SHARE_MAX, employer_factor: 1.42, hours_per_month: 167 }
+        : undefined);
+    const range = calculateSalaryRange(timprisKund, empType, effectiveModel);
+    const m = effectiveModel ?? { share_min: 0.85, share_max: 0.90, employer_factor: 1.42, hours_per_month: 167 };
     const factor = empType === "anstalld" ? m.employer_factor : 1;
 
     const result = {

@@ -5,6 +5,7 @@ import { BarRow } from "@/shared/UIComponents";
 interface Props {
   userHourly: number;
   result: { low: number; high: number };
+  customerRate?: number;
   unlocked: boolean;
   partialUnlocked: boolean;
   exitIntentVisible: boolean;
@@ -14,103 +15,73 @@ interface Props {
   referrerEmail: string;
   regionName: string;
   onPartialUnlock: () => void;
-  abVariant: string;
   isUnderpaid: boolean;
+  priceKr?: number;
+  emailProvided?: boolean;
 }
 
 export default function PaywallOverlay({
-  userHourly,
-  result,
-  unlocked,
-  partialUnlocked,
-  exitIntentVisible,
-  checkoutLoading,
-  onCheckout,
-  leadId,
-  referrerEmail,
-  regionName,
-  onPartialUnlock,
-  abVariant,
-  isUnderpaid,
+  userHourly, result, customerRate, unlocked, partialUnlocked,
+  exitIntentVisible, checkoutLoading, onCheckout, leadId, referrerEmail,
+  regionName, onPartialUnlock, isUnderpaid, priceKr = 49, emailProvided = false,
 }: Props) {
+  // Use customerRate for "what the region pays" bar, fall back to result.high
+  const regionPays = customerRate && customerRate > 0 ? customerRate : result.high;
+  const barMax = Math.max(regionPays, result.high, userHourly) + 50;
+
+  // When email not provided, blur all monetary bars except user's own
+  const blurValues = !emailProvided;
+
   return (
-    <div className="relative">
+    <div className="space-y-4">
+      {/* Bars — always visible without overlay */}
       <div className="space-y-4">
         <BarRow
-          label="Din nuvarande lön"
+          label="Din nuvarande ersättning"
           value={userHourly}
-          max={result.high + 50}
+          max={barMax}
           color="bg-muted-foreground/30"
         />
         <BarRow
-          label="Marknadspris (ramavtal)"
-          value={result.high}
-          max={result.high + 50}
+          label="Vad regionen betalar bemanningsföretag"
+          value={regionPays}
+          max={barMax}
           color="bg-primary"
-          blurred={true}
+          blurred={blurValues || true}
         />
         <BarRow
-          label="Rekommenderad lön"
-          value={result.low}
-          max={result.high + 50}
-          color="bg-accent"
-          blurred={!unlocked && !partialUnlocked}
-          partialReveal={partialUnlocked && !unlocked}
+          label="Rekommenderad ersättning"
+          value={result.high}
+          max={barMax}
+          color="bg-primary/50"
+          partialReveal={false}
+          animateAndBlurAt={blurValues ? userHourly : undefined}
+          blurred={blurValues}
         />
       </div>
 
-      {/* Blur overlay / exit-intent inline referral */}
-      {!unlocked && !partialUnlocked && (
-        <div className="absolute inset-0 top-[60px] flex items-center justify-center">
-          {!exitIntentVisible ? (
-            <div className="backdrop-blur-md bg-card/60 rounded-xl p-6 text-center border border-border card-shadow max-w-xs w-full">
-              <Lock className="w-8 h-8 text-primary mx-auto mb-2" />
-              <p className="font-semibold text-foreground text-sm">Lås upp full analys</p>
-              <p className="text-xs text-muted-foreground mt-1 mb-4">
-                Se exakta siffror och förhandlingstips
-              </p>
-              <button
-                data-cta
-                disabled={checkoutLoading !== null}
-                onClick={() => onCheckout("single")}
-                className="w-full flex items-center justify-center gap-2 py-3 rounded-lg font-semibold text-sm hero-gradient text-primary-foreground transition-all disabled:opacity-70"
-              >
-                {checkoutLoading === "single" ? "Laddar..." : "Köp rapport — 49 kr"}
-                {checkoutLoading !== "single" && <ArrowRight className="w-4 h-4" />}
-              </button>
-              <button
-                data-cta
-                disabled={checkoutLoading !== null}
-                onClick={() => onCheckout("yearly")}
-                className="w-full flex items-center justify-center gap-2 py-2.5 mt-2 rounded-lg font-medium text-xs border border-primary text-primary hover:bg-primary/5 transition-all disabled:opacity-70"
-              >
-                {checkoutLoading === "yearly" ? "Laddar..." : "Årsabonnemang — 495 kr/år"}
-              </button>
-            </div>
-          ) : (
-            <div className="backdrop-blur-md bg-card/80 rounded-xl p-3 border border-accent/30 card-shadow w-full animate-fade-in">
-              <ExitIntentReferral
-                visible={true}
-                leadId={leadId}
-                referrerEmail={referrerEmail}
-                region={regionName}
-                onUnlocked={onPartialUnlock}
-                inline
-              />
-            </div>
-          )}
+      {/* Exit intent referral — shown below bars when triggered */}
+      {!unlocked && !partialUnlocked && exitIntentVisible && (
+        <div className="rounded-lg border border-border bg-card p-4 animate-fade-in card-shadow">
+          <ExitIntentReferral
+            visible={true}
+            leadId={leadId}
+            referrerEmail={referrerEmail}
+            region={regionName}
+            onUnlocked={onPartialUnlock}
+            inline
+          />
         </div>
       )}
 
-      {/* Unlocked partial result */}
       {unlocked && (
-        <div className="mt-4 p-3 rounded-lg bg-accent/10 border border-accent/20">
+        <div className="p-3 rounded-lg bg-primary/5 border border-primary/20">
           <div className="flex items-center gap-2 mb-1">
-            <CheckCircle className="w-4 h-4 text-accent" />
+            <CheckCircle className="w-4 h-4 text-primary" />
             <span className="text-sm font-semibold text-foreground">Upplåst via referens</span>
           </div>
           <p className="text-xs text-muted-foreground">
-            Marknadspriset visas. Köp rapporten för fullständig analys med förhandlingstips.
+            Regionens pris visas. Köp rapporten för fullständig analys med förhandlingstips.
           </p>
         </div>
       )}

@@ -57,33 +57,3 @@ export function calculateSalaryRange(
     monthly_max: hourly_max * hpm,
   };
 }
-
-/**
- * Single-value salary estimate (mid-point of the range).
- */
-export function estimateHourlySalary(
-  timpris_kund: number,
-  employmentType: EmploymentType,
-  model?: MarginModel
-): number {
-  const shareMin = model?.share_min ?? SHARE_MIN;
-  const shareMax = model?.share_max ?? SHARE_MAX;
-  const empFactor = model?.employer_factor ?? EMPLOYER_FACTOR;
-  const shareMid = (shareMin + shareMax) / 2;
-
-  const factor = employmentType === "anstalld" ? empFactor : 1;
-  return Math.round((timpris_kund * shareMid) / factor);
-}
-
-/**
- * Compute the delta between recommended monthly salary and current salary.
- */
-export function monthlyDelta(
-  recommended: SalaryRange,
-  currentMonthlySalary: number
-): { min: number; max: number } {
-  return {
-    min: recommended.monthly_min - currentMonthlySalary,
-    max: recommended.monthly_max - currentMonthlySalary,
-  };
-}

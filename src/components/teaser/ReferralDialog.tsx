@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { CheckCircle, Copy } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
 import { trackEvent } from "@/lib/trackEvent";
@@ -18,12 +18,13 @@ interface Props {
   onOpenChange: (open: boolean) => void;
   leadId: string;
   referrerEmail: string;
+  region?: string;
 }
 
-export default function ReferralDialog({ open, onOpenChange, leadId, referrerEmail }: Props) {
+export default function ReferralDialog({ open, onOpenChange, leadId, referrerEmail, region }: Props) {
   const [refereeEmail, setRefereeEmail] = useState("");
   const [sending, setSending] = useState(false);
-  const [referralLink, setReferralLink] = useState<string | null>(null);
+  const [sent, setSent] = useState(false);
 
   const handleSend = async () => {
     if (!leadId || !refereeEmail) return;
@@ -36,17 +37,19 @@ export default function ReferralDialog({ open, onOpenChange, leadId, referrerEma
 
     setSending(true);
     try {
-      const { data, error } = await supabase.functions.invoke("send-referral", {
+      const { error } = await supabase.functions.invoke("send-referral", {
         body: {
           lead_id: leadId,
           referrer_email: referrerEmail,
           referee_email: refereeEmail,
+          region,
+          send_email: true,
         },
       });
       if (error) throw error;
-      setReferralLink(data.confirm_link);
+      setSent(true);
       trackEvent("referral_sent");
-      toast({ title: "Länk skapad! När din kollega klickar på den låses en lightrapport upp för dig." });
+      toast({ title: "E-post skickat till din kollega!" });
     } catch {
       toast({ title: "Något gick fel, försök igen", variant: "destructive" });
     } finally {
@@ -54,24 +57,17 @@ export default function ReferralDialog({ open, onOpenChange, leadId, referrerEma
     }
   };
 
-  const copyLink = () => {
-    if (referralLink) {
-      navigator.clipboard.writeText(referralLink);
-      toast({ title: "Länk kopierad!" });
-    }
-  };
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Tipsa en kollega</DialogTitle>
+          <DialogTitle>Hur ligger dina kollegor till?</DialogTitle>
           <DialogDescription>
-            Ange din kollegas e-postadress. När hen klickar på länken låser vi upp en gratis lightrapport åt dig.
+            Skicka analysen till en kollega — hen får en egen ersättningskoll, och du låser upp din rapport gratis.
           </DialogDescription>
         </DialogHeader>
 
-        {!referralLink ? (
+        {!sent ? (
           <div className="space-y-4">
             <Input
               type="email"
@@ -84,23 +80,17 @@ export default function ReferralDialog({ open, onOpenChange, leadId, referrerEma
               disabled={sending || !refereeEmail}
               className="w-full"
             >
-              {sending ? "Skickar..." : "Skapa referenslänk"}
+              {sending ? "Skickar..." : "Skicka tips via e-post"}
             </Button>
           </div>
         ) : (
           <div className="space-y-4">
             <div className="flex items-center gap-2">
               <CheckCircle className="w-5 h-5 text-accent shrink-0" />
-              <p className="text-sm text-foreground font-medium">Länken är redo!</p>
-            </div>
-            <div className="flex gap-2">
-              <Input value={referralLink} readOnly className="text-xs" />
-              <Button variant="outline" size="icon" onClick={copyLink}>
-                <Copy className="w-4 h-4" />
-              </Button>
+              <p className="text-sm text-foreground font-medium">E-post skickat!</p>
             </div>
             <p className="text-xs text-muted-foreground">
-              Skicka länken till din kollega. När hen klickar på den låses en lightrapport upp åt dig.
+              Din kollega har fått ett mejl med en länk till CompCare. När hen gör en ersättningskoll låses en lightrapport upp åt dig.
             </p>
           </div>
         )}

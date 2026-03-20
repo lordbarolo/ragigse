@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=DM+Serif+Display&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,83 +6,83 @@
 
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 220 25% 10%;
+    --background: 220 60% 5%;
+    --foreground: 0 0% 100%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 220 25% 10%;
+    --card: 220 42% 9%;
+    --card-foreground: 0 0% 100%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 25% 10%;
+    --popover: 220 42% 9%;
+    --popover-foreground: 0 0% 100%;
 
-    --primary: 210 90% 42%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 196 100% 50%;
+    --primary-foreground: 220 60% 5%;
 
-    --secondary: 210 30% 93%;
-    --secondary-foreground: 220 25% 10%;
+    --secondary: 220 35% 14%;
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 210 20% 95%;
-    --muted-foreground: 220 10% 46%;
+    --muted: 220 30% 11%;
+    --muted-foreground: 220 15% 55%;
 
-    --accent: 155 60% 40%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 160 65% 50%;
+    --accent-foreground: 220 60% 5%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 20% 88%;
-    --input: 214 20% 88%;
-    --ring: 210 90% 42%;
+    --border: 0 0% 100% / 0.07;
+    --input: 0 0% 100% / 0.07;
+    --ring: 196 100% 50%;
 
     --radius: 0.75rem;
 
-    --hero-gradient: linear-gradient(135deg, hsl(210 90% 42%), hsl(220 80% 30%));
-    --success-gradient: linear-gradient(135deg, hsl(155 60% 40%), hsl(155 50% 32%));
-    --card-shadow: 0 4px 24px -4px hsl(220 25% 10% / 0.08);
-    --card-shadow-hover: 0 8px 32px -4px hsl(220 25% 10% / 0.12);
+    --dark-2: 220 42% 9%;
+    --dark-3: 220 30% 14%;
+    --cyan: 196 100% 50%;
+    --amber: 38 92% 50%;
+    --green: 160 60% 45%;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --hero-gradient: linear-gradient(135deg, hsl(220 60% 5%), hsl(220 42% 9%));
+    --success-gradient: linear-gradient(135deg, hsl(160 65% 50%), hsl(160 55% 40%));
+    --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    --card-shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.4);
+    --input-glow: 0 0 0 1px hsl(196 100% 50% / 0.25), 0 0 8px hsl(196 100% 50% / 0.1);
 
-    --font-display: 'DM Serif Display', serif;
-    --font-body: 'Inter', sans-serif;
+    --sidebar-background: 220 60% 5%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 196 100% 50%;
+    --sidebar-primary-foreground: 220 60% 5%;
+    --sidebar-accent: 220 30% 11%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 0 0% 100% / 0.07;
+    --sidebar-ring: 196 100% 50%;
+
+    --font-display: 'Sora', sans-serif;
+    --font-body: 'Inter', 'Sora', sans-serif;
+    --font-mono: monospace;
+
+    --gap-bg: 220 60% 5%;
+    --gap-card: 220 42% 9%;
+    --gap-border: 0 0% 100% / 0.08;
+    --gap-accent: 160 65% 50%;
+    --gap-accent-dim: 160 65% 50% / 0.10;
+    --gap-danger: 0 84% 60%;
+    --gap-text: 0 0% 98%;
+    --gap-muted: 0 0% 98% / 0.50;
+
+    /* Typography opacity tokens */
+    --text-strong: 1;
+    --text-default: 0.75;
+    --text-secondary: 0.65;
+    --text-muted: 0.45;
+    --text-subtle: 0.30;
   }
 
-  .dark {
-    --background: 220 25% 6%;
-    --foreground: 210 20% 95%;
-    --card: 220 20% 10%;
-    --card-foreground: 210 20% 95%;
-    --popover: 220 20% 10%;
-    --popover-foreground: 210 20% 95%;
-    --primary: 210 80% 55%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 220 15% 18%;
-    --secondary-foreground: 210 20% 95%;
-    --muted: 220 15% 15%;
-    --muted-foreground: 215 15% 60%;
-    --accent: 155 50% 45%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 62% 30%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 220 15% 18%;
-    --input: 220 15% 18%;
-    --ring: 210 80% 55%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+  .light-tool {
+    /* Bold Nordic — no override, inherits :root */
   }
+
+  /* dark mode same as root for this design */
 }
 
 @layer base {
@@ -93,10 +93,13 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   h1, h2, h3 {
     font-family: var(--font-display);
+    letter-spacing: -0.025em;
   }
 }
 
@@ -119,5 +122,46 @@
 
   .safe-area-bottom {
     padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  }
+
+  /* ── Global typography utilities ──────────────────── */
+
+  /* Body text — default readable paragraph style */
+  .text-body {
+    font-size: 15px;
+    line-height: 1.6;
+    color: hsl(var(--foreground) / 0.75);
+  }
+
+  /* Body small — secondary descriptions */
+  .text-body-sm {
+    font-size: 13px;
+    line-height: 1.5;
+    color: hsl(var(--foreground) / 0.65);
+  }
+
+  /* Caption — eyebrow labels, step counters */
+  .text-caption {
+    font-size: 11px;
+    line-height: 1.4;
+    color: hsl(var(--foreground) / 0.45);
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-family: var(--font-display);
+  }
+
+  /* Hint — subtle helper text, footnotes */
+  .text-hint {
+    font-size: 12px;
+    line-height: 1.5;
+    color: hsl(var(--foreground) / 0.40);
+  }
+
+  /* Micro — source refs, legal, smallest allowed */
+  .text-micro {
+    font-size: 10px;
+    line-height: 1.4;
+    color: hsl(var(--foreground) / 0.30);
   }
 }

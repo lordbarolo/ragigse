@@ -4,44 +4,44 @@ import { ArrowLeft } from "lucide-react";
 
 const FAQ_ITEMS = [
   {
-    question: "Hur fungerar BraGig.se?",
+    question: "Hur fungerar CompCare.se?",
     answer:
-      "Du fyller i din yrkesroll, arbetsort och erfarenhet. Vi jämför din nuvarande eller erbjudna ersättning med faktiska ramavtalspriser som offentliga vårdgivare betalar till bemanningsföretag för inhyrd personal. Därefter gör vi ett avdrag för marknadsmässig marginal till bemanningsföretaget. Det som kvarstår är det belopp som utgör ersättningsutrymmet som är förhandlingsbar.",
+      "Du fyller i yrkesroll, arbetsort och erfarenhet. Vi jämför din ersättning med officiella ramavtalspriser som offentliga vårdgivare betalar till bemanningsföretag. Därefter drar vi av en marknadsmässig marginal. Resultatet visar hur din ersättning förhåller sig till marknadsspannet.",
   },
   {
     question: "Vilka data baseras analysen på?",
     answer:
-      "Analysen baseras på officiella ramavtalspriser från 290 svenska vårdgivare, uppdaterade 2026.",
+      "Analysen baseras på regionernas officiella ramavtalspriser för 2026 och bemanningsbranschens standardmarginaler.",
   },
   {
-    question: "Kostar det något att använda BraGig?",
+    question: "Kostar det något att använda CompCare?",
     answer:
-      "Den grundläggande jämförelsen är helt gratis. För en detaljerad rapport med förhandlingstips kan du välja att uppgradera.",
+      "Den grundläggande jämförelsen är helt gratis. För en detaljerad rapport kan du välja att uppgradera.",
   },
   {
     question: "Vilka yrkesgrupper stöds?",
     answer:
-      "Just nu fokuserar vi på sjuksköterskor, barnmorskor och läkare. Samtliga specialiseringar har unik data. Fler kompetenser kommer snart.",
+      "Just nu täcker vi sjuksköterskor, barnmorskor och läkare — samtliga specialiseringar har unik data. Fler yrkesgrupper kommer snart.",
   },
   {
-    question: "Hur vet jag om jag är underbetald?",
+    question: "Hur ligger min ersättning jämfört med marknaden?",
     answer:
-      "Det bästa sättet är att jämföra din ersättning med vad offentliga vårdgivare faktiskt betalar för inhyrd personal via ramavtal. BraGig.se gör exakt detta — vi matchar din yrkesroll, arbetsort och erfarenhet mot officiella ramavtalspriser så du ser om ditt erbjudande ligger under, på eller över marknadsnivå.",
+      "CompCare matchar din yrkesroll, arbetsort och erfarenhet mot officiella ramavtalspriser och visar om din ersättning ligger under, på eller över marknadsspannet.",
   },
   {
     question: "Vad är ramavtalspriser och varför är de relevanta?",
     answer:
-      "Ramavtalspriser är de timpris som offentliga vårdgivare har avtalat med bemanningsföretag. De speglar vad arbetsgivare faktiskt är villiga att betala för din kompetens — och ger därmed en mer realistisk bild av ditt marknadsvärde än generella lönestatistiker.",
+      "Ramavtalspriser är de timpris som offentliga vårdgivare har avtalat med bemanningsföretag. De visar vad som faktiskt betalas för inhyrd personal och fungerar som en referenspunkt för ersättningsnivåer.",
   },
   {
-    question: "Hur kan jag använda BraGig-rapporten i en löneförhandling?",
+    question: "Vad innehåller CompCare-rapporten?",
     answer:
-      "Rapporten visar exakt vad din vårdgivare betalar för inhyrd personal med din profil. I förhandlingen kan du referera till dessa siffror och argumentera att din ersättning bör spegla ditt faktiska marknadsvärde.",
+      "Rapporten visar ramavtalspriser för din yrkesroll och zon, ersättningsspannet efter marginal, samt hur din ersättning förhåller sig till marknadens percentiler.",
   },
   {
-    question: "Skiljer sig ersättningarna mycket mellan olika kommuner?",
+    question: "Skiljer sig ersättningarna mellan olika kommuner?",
     answer:
-      "Ja, skillnaderna kan vara stora. Storstadskommuner har generellt lägre ramavtalspriser tack vare större tillgång på personal, medan glesbygdskommuner kan betala 30–50% mer. BraGig.se visar data för alla 290 vårdgivare så du kan jämföra.",
+      "Ja, skillnaderna kan vara stora. Storstadskommuner har generellt lägre ramavtalspriser tack vare större tillgång på personal, medan glesbygdskommuner kan betala 30–50% mer. CompCare visar data för alla 290 vårdgivare.",
   },
   {
     question: "Hur ofta uppdateras datan?",
@@ -71,12 +71,12 @@ const faqJsonLd = {
 export default function FAQ() {
   useEffect(() => {
     document.title =
-      "Vanliga frågor om lön för sjuksköterskor | BraGig.se";
+      "Vanliga frågor om ramavtalspriser och ersättning | CompCare.se";
     const meta = document.querySelector('meta[name="description"]');
     if (meta) {
       meta.setAttribute(
         "content",
-        "Svar på vanliga frågor om sjuksköterskelöner, ramavtalspriser, löneförhandling och hur BraGig.se hjälper dig jämföra din lön."
+        "Svar på vanliga frågor om ersättning, ramavtalspriser och hur CompCare.se hjälper dig jämföra din ersättning med marknadsdata."
       );
     }
   }, []);
@@ -93,11 +93,11 @@ export default function FAQ() {
       <header className="hero-gradient py-10 px-5 text-center sm:py-14">
         <div className="max-w-3xl mx-auto space-y-3">
           <h1 className="text-3xl sm:text-4xl text-primary-foreground leading-tight">
-            Vanliga frågor om lön
+            Vanliga frågor om ersättning
           </h1>
           <p className="text-base sm:text-lg text-primary-foreground/85 font-body max-w-2xl mx-auto">
-            Allt du behöver veta om sjuksköterskelöner, ramavtalspriser och
-            hur du kan förhandla bättre.
+            Allt du behöver veta om ersättningar, ramavtalspriser och
+            marknadsdata.
           </p>
         </div>
       </header>
@@ -123,24 +123,24 @@ export default function FAQ() {
         {/* CTA */}
         <section className="mt-12 text-center space-y-4">
           <h2 className="text-xl font-bold text-foreground">
-            Redo att jämföra din lön?
+            Jämför din ersättning med marknadsdata
           </h2>
           <p className="text-muted-foreground text-sm">
-            Det tar bara 60 sekunder och är helt gratis.
+            Det tar 60 sekunder. Ingen registrering krävs.
           </p>
           <Link
             to="/"
             className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-md font-medium hover:bg-primary/90 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            Gör din löneanalys nu
+            Till marknadsanalysen
           </Link>
         </section>
       </main>
 
       {/* Footer */}
       <footer className="border-t py-8 text-center text-sm text-muted-foreground">
-        <p>© 2026 BraGig.se · Data från offentliga ramavtal</p>
+        <p>© 2026 CompCare.se · Data från offentliga ramavtal</p>
       </footer>
     </div>
   );

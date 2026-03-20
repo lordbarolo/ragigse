@@ -17,13 +17,62 @@ function categorizeGap(currentSalary: number, p75: number): GapCategory {
   return "large";
 }
 
+// Map survey occupation names to DB occupation names
+const OCCUPATION_MAP: Record<string, string> = {
+  // Base nurse types
+  "Sjuksköterska": "Grundutbildade sjuksköterskor",
+  "Allmänsjuksköterska": "Grundutbildade sjuksköterskor",
+  "Barnmorska": "Barnmorskor",
+  "Specialistsjuksköterska": "Övriga specialistsjuksköterskor",
+
+  // Specialist nurse compound names from survey
+  "Specialistsjuksköterska akutsjukvård": "Övriga specialistsjuksköterskor",
+  "Specialistsjuksköterska ambulanssjukvård": "Ambulanssjuksköterskor m.fl.",
+  "Specialistsjuksköterska anestesi": "Anestesisjuksköterskor",
+  "Specialistsjuksköterska barn och ungdom": "Barnsjuksköterskor",
+  "Specialistsjuksköterska diabetesvård": "Övriga specialistsjuksköterskor",
+  "Distriktssjuksköterska": "Distriktssköterskor",
+  "Specialistsjuksköterska hjärtsjukvård": "Övriga specialistsjuksköterskor",
+  "Specialistsjuksköterska infektionssjukvård": "Övriga specialistsjuksköterskor",
+  "Specialistsjuksköterska intensivvård": "Intensivvårdssjuksköterskor",
+  "Specialistsjuksköterska kirurgisk vård": "Operationssjuksköterskor",
+  "Specialistsjuksköterska medicinsk vård": "Övriga specialistsjuksköterskor",
+  "Specialistsjuksköterska onkologisk vård": "Övriga specialistsjuksköterskor",
+  "Specialistsjuksköterska operationssjukvård": "Operationssjuksköterskor",
+  "Specialistsjuksköterska palliativ vård": "Övriga specialistsjuksköterskor",
+  "Specialistsjuksköterska psykiatrisk vård": "Psykiatrisjuksköterskor",
+  "Specialistsjuksköterska vård av äldre": "Geriatriksjuksköterskor",
+  "Specialistsjuksköterska ögonsjukvård": "Övriga specialistsjuksköterskor",
+
+  // Doctors
+  "Legitimerad läkare": "Övriga läkare",
+  "Specialistläkare": "Specialistläkare",
+  "ST-läkare": "ST-läkare",
+  "AT-läkare": "AT-läkare",
+
+  // Short forms
+  "Anestesisjuksköterska": "Anestesisjuksköterskor",
+  "Intensivvårdssjuksköterska": "Intensivvårdssjuksköterskor",
+  "Operationssjuksköterska": "Operationssjuksköterskor",
+  "Barnsjuksköterska": "Barnsjuksköterskor",
+  "Ambulanssjuksköterska": "Ambulanssjuksköterskor m.fl.",
+  "Distriktssköterska": "Distriktssköterskor",
+  "Psykiatrisjuksköterska": "Psykiatrisjuksköterskor",
+  "Röntgensjuksköterska": "Röntgensjuksköterskor",
+  "Skolsköterska": "Skolsköterskor",
+  "Geriatriksjuksköterska": "Geriatriksjuksköterskor",
+  "Företagssköterska": "Företagssköterskor",
+  "Psykolog": "Psykologer",
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { occupation, sector, current_salary } = await req.json();
+    const { occupation: rawOccupation, sector, current_salary } = await req.json();
+    const occupation = OCCUPATION_MAP[rawOccupation] || rawOccupation;
 
     if (!occupation || !sector) {
       return new Response(
@@ -37,19 +86,121 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    const { data, error } = await supabase
+    const selectCols = "occupation, sector, average_monthly, percentile_25, percentile_50, percentile_75, region, year, source";
+
+    // 1. Exact match
+    let { data, error } = await supabase
       .from("salary_benchmarks")
-      .select("occupation, sector, average_monthly, percentile_25, percentile_50, percentile_75, region, year, source")
+      .select(selectCols)
       .eq("occupation", occupation)
       .eq("sector", sector)
       .order("year", { ascending: false })
       .limit(1)
-      .single();
+      .maybeSingle();
 
-    if (error || !data) {
+    // 2. Fuzzy ILIKE — e.g. "Barnmorska" matches "Barnmorskor"
+    if (!data && !error) {
+      const res = await supabase
+        .from("salary_benchmarks")
+        .select(selectCols)
+        .eq("sector", sector)
+        .ilike("occupation", `%${occupation}%`)
+        .order("year", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (res.data) data = res.data;
+    }
+
+    // 3. Prefix/ILIKE fallback — e.g. "Specialistläkare akutsjukvård" → "%akutsjukvård%"
+    if (!data && !error) {
+      const parts = occupation.split(" ");
+      if (parts.length > 1) {
+        const suffix = parts.slice(1).join(" ");
+        const res = await supabase
+          .from("salary_benchmarks")
+          .select(selectCols)
+          .eq("sector", sector)
+          .ilike("occupation", `%${suffix}%`)
+          .order("year", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (res.data) data = res.data;
+      }
+    }
+
+    // 4. Broad category fallback — e.g. "Specialistläkare" or "Sjuksköterska"
+    if (!data && !error) {
+      const mainCategory = occupation.split(" ")[0];
+      if (mainCategory) {
+        const res = await supabase
+          .from("salary_benchmarks")
+          .select(selectCols)
+          .eq("sector", sector)
+          .ilike("occupation", `${mainCategory}%`)
+          .order("year", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (res.data) data = res.data;
+      }
+    }
+
+    // 5. Stem fallback — e.g. "Barnmorska" -> "%barnmorsk%"
+    if (!data && !error) {
+      const stem = occupation
+        .trim()
+        .toLowerCase()
+        .replace(/(orna|arna|erna|or|ar|er|a|e|n)$/u, "");
+
+      if (stem.length >= 4) {
+        const res = await supabase
+          .from("salary_benchmarks")
+          .select(selectCols)
+          .eq("sector", sector)
+          .ilike("occupation", `%${stem}%`)
+          .order("year", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+        if (res.data) data = res.data;
+      }
+    }
+
+    // 6. Cross-sector fallback — try any sector
+    if (!data && !error) {
+      const res = await supabase
+        .from("salary_benchmarks")
+        .select(selectCols)
+        .ilike("occupation", `%${occupation}%`)
+        .order("year", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (res.data) data = res.data;
+    }
+
+    if (!data) {
+      const stem = occupation
+        .trim()
+        .toLowerCase()
+        .replace(/(orna|arna|erna|or|ar|er|a|e|n)$/u, "");
+
+      if (stem.length >= 4) {
+        const stemAnySector = await supabase
+          .from("salary_benchmarks")
+          .select(selectCols)
+          .ilike("occupation", `%${stem}%`)
+          .order("year", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (stemAnySector.data) {
+          data = stemAnySector.data;
+        }
+      }
+    }
+
+    if (!data) {
       return new Response(
-        JSON.stringify({ error: "No benchmark data found for this occupation and sector" }),
-        { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({ error: "No benchmark data available" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 

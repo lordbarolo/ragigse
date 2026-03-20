@@ -1,149 +1,147 @@
-import { useEffect } from "react";
-import { Link } from "react-router-dom";
-import Survey from "@/components/Survey";
-import { Shield, TrendingUp, FileCheck } from "lucide-react";
-import { trackEvent } from "@/lib/trackEvent";
+import { useEffect, useState, useRef } from "react";
 
-const FAQ_ITEMS = [
-  {
-    question: "Hur fungerar BraGig.se?",
-    answer: "Du fyller i din yrkesroll, arbetsort och erfarenhet. Vi jämför din nuvarande eller erbjudna konsultersättning med faktiska ramavtalspriser som offentliga vårdgivare betalar till bemanningsföretag för inhyrd personal. Därefter gör vi ett avdrag för marknadsmässig marginal till bemanningsföretaget. Det som kvarstår är det belopp som utgör ditt förhandlingsbara ersättningsutrymme.",
-  },
-  {
-    question: "Vilka data baseras analysen på?",
-    answer: "Analysen baseras på officiella ramavtalspriser från 290 svenska vårdgivare, uppdaterade 2026.",
-  },
-  {
-    question: "Kostar det något?",
-    answer: "Den grundläggande jämförelsen av din konsultersättning är helt gratis. För en detaljerad rapport med förhandlingstips kan du välja att uppgradera.",
-  },
-  {
-    question: "Vilka yrkesgrupper stöds?",
-    answer: "Just nu fokuserar vi på konsulterande sjuksköterskor, barnmorskor och läkare. Samtliga specialiseringar har unik data. Fler kompetenser kommer snart.",
-  },
-];
+import { trackEvent } from "@/lib/trackEvent";
+import { useTimeOnPage } from "@/hooks/useTimeOnPage";
+import Survey from "@/components/Survey";
+
 
 const faqJsonLd = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
-  mainEntity: FAQ_ITEMS.map((item) => ({
-    "@type": "Question",
-    name: item.question,
-    acceptedAnswer: {
-      "@type": "Answer",
-      text: item.answer,
-    },
-  })),
+  mainEntity: [
+    { "@type": "Question", name: "Hur fungerar CompCare.se?", acceptedAnswer: { "@type": "Answer", text: "Du fyller i din yrkesroll, arbetsort och erfarenhet. Vi jämför din nuvarande eller erbjudna konsultersättning med faktiska ramavtalspriser som offentliga vårdgivare betalar till bemanningsföretag för inhyrd personal." } },
+    { "@type": "Question", name: "Vilka data baseras analysen på?", acceptedAnswer: { "@type": "Answer", text: "Analysen baseras på Regionernas officiella ramavtalspriser för 2026 och bemanningsbranschens standardmarginaler." } },
+    { "@type": "Question", name: "Kostar det något att använda CompCare?", acceptedAnswer: { "@type": "Answer", text: "Den grundläggande jämförelsen av din konsultersättning är helt gratis. För en detaljerad rapport med förhandlingstips kan du välja att uppgradera." } },
+    { "@type": "Question", name: "Vilka yrkesgrupper stöds?", acceptedAnswer: { "@type": "Answer", text: "Just nu fokuserar vi på konsulterande sjuksköterskor, barnmorskor och läkare. Samtliga specialiseringar har unik data." } },
+  ],
 };
 
 const webAppJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  name: "BraGig.se",
-  url: "https://bragig.se",
-  description:
-    "Jämför din konsultersättning med faktiska ramavtalspriser för vårdkonsulter i 290 kommuner.",
+  name: "CompCare.se",
+  url: "https://compcare.se",
+  description: "Jämför din konsultersättning med faktiska ramavtalspriser för vårdkonsulter i 290 kommuner.",
   applicationCategory: "FinanceApplication",
   operatingSystem: "All",
-  offers: {
-    "@type": "Offer",
-    price: "0",
-    priceCurrency: "SEK",
-    description: "Gratis jämförelse av konsultersättning",
-  },
+  offers: { "@type": "Offer", price: "0", priceCurrency: "SEK", description: "Gratis jämförelse av konsultersättning" },
 };
 
-const Index = () => {
-  useEffect(() => {
-    trackEvent("landing_viewed");
-  }, []);
+export default function Index() {
+  const [showSurvey, setShowSurvey] = useState(false);
+  const [prefillCategory, setPrefillCategory] = useState<string>("");
+  const [prefillRole, setPrefillRole] = useState<string>("");
+  const surveyRef = useRef<HTMLDivElement>(null);
+
+  useTimeOnPage("landing");
+  useEffect(() => { trackEvent("landing_viewed"); }, []);
+
+  const handleRoleSelect = (category: "lakare" | "ssk", prefill?: string) => {
+    setPrefillCategory(category);
+    setPrefillRole(prefill || "");
+    setShowSurvey(true);
+    setTimeout(() => {
+      surveyRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 100);
+  };
+
+  if (showSurvey) {
+    return (
+      <div className="min-h-screen bg-background">
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppJsonLd) }} />
+        <div ref={surveyRef} className="px-4 pt-8 pb-16 bg-background min-h-screen flex flex-col">
+          <Survey
+            initialCategory={prefillCategory as "lakare" | "ssk" | ""}
+            initialRole={prefillRole}
+            onBack={() => setShowSurvey(false)}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* JSON-LD Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppJsonLd) }}
-      />
+    <div className="h-[100dvh] bg-background flex flex-col overflow-hidden">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppJsonLd) }} />
 
-      {/* Hero */}
-      <header className="hero-gradient py-10 px-5 text-center sm:py-16">
-        <div className="max-w-3xl mx-auto space-y-3">
-          <p className="text-xs sm:text-sm uppercase tracking-widest text-primary-foreground/60 font-semibold mb-2">
-            För vårdkonsulter
-          </p>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl text-primary-foreground leading-tight">
-            Får du rätt konsultersättning?
-          </h1>
-          <p className="text-base sm:text-lg md:text-xl text-primary-foreground/85 font-body max-w-2xl mx-auto">
-            75% av vårdkonsulter är underbetalda. Jämför din ersättning med
-            faktiska ramavtalspriser — gratis.
-          </p>
+      {/* Nav */}
+      <nav className="flex items-center justify-between px-5 h-[52px] flex-shrink-0">
+        <span className="font-display font-extrabold tracking-tight text-foreground" style={{ fontSize: '18px' }}>
+          comp<em className="text-primary not-italic">care</em>
+        </span>
+      </nav>
+
+      {/* All content as one block, pushed to lower half */}
+      <main className="flex-1 flex flex-col items-center justify-end px-5" style={{ paddingBottom: '10dvh' }}>
+        {/* Badge */}
+        <div className="inline-flex items-center gap-2 bg-primary/[0.08] border border-primary/20 rounded-full font-display text-primary tracking-wider mb-[20px]" style={{ fontSize: '13px', fontWeight: 500, padding: '8px 18px' }}>
+          <span className="w-5 h-5 rounded-full bg-primary/15 flex items-center justify-center text-[10px]">🛡</span>
+          Officiella avtalspriser · 290 kommuner · 21 regioner
         </div>
-      </header>
 
-      {/* Trust badges */}
-      <section
-        className="border-b bg-card"
-        aria-label="Förtroendesignaler"
-      >
-        <div className="max-w-4xl mx-auto px-5 py-4 sm:py-6 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-8 text-xs sm:text-sm text-muted-foreground">
-          <span className="flex items-center gap-2">
-            <Shield className="w-4 h-4 text-accent" /> Baserat på officiella
-            ramavtal
-          </span>
-          <span className="flex items-center gap-2">
-            <TrendingUp className="w-4 h-4 text-accent" /> 290 kommuner
-          </span>
-          <span className="flex items-center gap-2">
-            <FileCheck className="w-4 h-4 text-accent" /> Uppdaterat 2026
-          </span>
-        </div>
-      </section>
-
-      {/* Survey */}
-      <main className="px-4 py-8 sm:py-12">
-        <Survey />
-      </main>
-
-      {/* FAQ Section */}
-      <section className="bg-card border-t" aria-labelledby="faq-heading">
-        <div className="max-w-3xl mx-auto px-5 py-10 sm:py-14">
-          <h2
-            id="faq-heading"
-            className="text-2xl sm:text-3xl font-bold text-foreground text-center mb-8"
+        {/* Headline */}
+        <div className="text-center max-w-[480px] mb-8">
+          <h1
+            className="font-display text-foreground"
+            style={{ fontSize: '48px', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1.06 }}
           >
-            Vanliga frågor
-          </h2>
-          <dl className="space-y-6">
-            {FAQ_ITEMS.map((item, i) => (
-              <div key={i}>
-                <dt className="text-base font-semibold text-foreground mb-1">
-                  {item.question}
-                </dt>
-                <dd className="text-sm text-muted-foreground leading-relaxed">
-                  {item.answer}
-                </dd>
-              </div>
-            ))}
-          </dl>
+            Vad betalar{" "}
+            <span className="text-primary">regionen</span> för{" "}
+            <span className="bg-gradient-to-r from-[#a78bfa] to-[#60a5fa] bg-clip-text text-transparent">
+              din kompetens?
+            </span>
+          </h1>
+          <p className="mt-[20px] max-w-[380px] mx-auto" style={{ fontSize: '17px', fontWeight: 300, color: 'rgba(255,255,255,0.65)', lineHeight: 1.6 }}>
+            Jämför din ersättning mot offentliga ramavtalspriser på 60 sekunder.
+          </p>
         </div>
-      </section>
 
-      {/* Footer */}
-      <footer className="border-t py-8 text-center text-sm text-muted-foreground space-y-2">
-        <p>© 2026 BraGig.se · Data från offentliga ramavtal</p>
-        <p className="text-xs text-muted-foreground/70">Fler branscher kommer snart</p>
-        <Link to="/vanliga-fragor" className="text-primary hover:underline">
-          Vanliga frågor om lön →
-        </Link>
-      </footer>
+        {/* Role label */}
+        <p className="font-display uppercase mb-4" style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.10em', color: 'rgba(255,255,255,0.35)' }}>
+          Vad jobbar du som?
+        </p>
+
+        {/* Role cards */}
+        <div className="w-full max-w-[420px] flex flex-col gap-2.5">
+          <button
+            onClick={() => handleRoleSelect("lakare")}
+            className="group relative overflow-hidden flex items-center gap-4 bg-[hsl(var(--dark-2))] border border-foreground/[0.12] !border-l-[3px] !border-l-primary rounded-[16px] p-4 text-left cursor-pointer transition-all hover:border-primary/40 hover:bg-[hsl(var(--dark-3))] hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(0,0,0,0.3),0_0_0_1px_hsl(196_100%_50%/0.1)]"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.04] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative z-10 w-10 h-10 rounded-[10px] bg-primary/10 border border-primary/15 flex items-center justify-center text-[20px] flex-shrink-0">🩺</div>
+            <div className="relative z-10 flex-1">
+               <div className="font-display tracking-[-0.02em] mb-0.5" style={{ fontSize: '17px', fontWeight: 700 }}>Läkare</div>
+               <div className="leading-snug" style={{ fontSize: '13px', fontWeight: 400, color: 'rgba(255,255,255,0.55)' }}>ST, specialist eller legitimerad läkare</div>
+            </div>
+            <span className="relative z-10 text-primary text-xl flex-shrink-0 group-hover:translate-x-1 transition-transform">→</span>
+          </button>
+
+          <button
+            onClick={() => handleRoleSelect("ssk")}
+            className="group relative overflow-hidden flex items-center gap-4 bg-[hsl(var(--dark-2))] border border-foreground/[0.12] !border-l-[3px] !border-l-primary rounded-[16px] p-4 text-left cursor-pointer transition-all hover:border-primary/40 hover:bg-[hsl(var(--dark-3))] hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(0,0,0,0.3),0_0_0_1px_hsl(196_100%_50%/0.1)]"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.04] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative z-10 w-10 h-10 rounded-[10px] bg-primary/10 border border-primary/15 flex items-center justify-center text-[20px] flex-shrink-0">💉</div>
+            <div className="relative z-10 flex-1">
+               <div className="font-display tracking-[-0.02em] mb-0.5" style={{ fontSize: '17px', fontWeight: 700 }}>Sjuksköterska / Barnmorska</div>
+               <div className="leading-snug" style={{ fontSize: '13px', fontWeight: 400, color: 'rgba(255,255,255,0.55)' }}>Allmän, specialist eller barnmorska</div>
+            </div>
+            <span className="relative z-10 text-primary text-xl flex-shrink-0 group-hover:translate-x-1 transition-transform">→</span>
+          </button>
+        </div>
+
+        {/* Trust bar — 16px below cards */}
+        <div className="flex items-center justify-center gap-4 sm:gap-6 mt-4">
+          {["Anonymt", "Kostnadsfritt", "60 sekunder", "Ingen registrering"].map((label) => (
+             <span key={label} className="font-display flex items-center gap-1.5" style={{ fontSize: '11px', fontWeight: 500, color: 'rgba(255,255,255,0.30)' }}>
+               <span className="w-1 h-1 rounded-full bg-foreground/20" />
+              {label}
+            </span>
+          ))}
+        </div>
+      </main>
     </div>
   );
-};
-
-export default Index;
+}

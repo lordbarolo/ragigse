@@ -1,5 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import Stripe from "https://esm.sh/stripe@14.21.0?target=deno";
+import Stripe from "https://esm.sh/stripe@18.5.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -9,12 +9,12 @@ const corsHeaders = {
 
 const PRICES: Record<string, { id: string; mode: "payment" | "subscription" }> = {
   single: {
-    id: "price_1T13d0H6keeMaRQjsw9HDiSa",
+    id: "price_1T89nmH6keeMaRQjc7ruhDC3",
     mode: "payment",
   },
-  yearly: {
-    id: "price_1T13dRH6keeMaRQjtsLtvDEm",
-    mode: "subscription",
+  single_29: {
+    id: "price_1T8hgPH6keeMaRQjCj9y7pWZ",
+    mode: "payment",
   },
 };
 
@@ -24,9 +24,11 @@ serve(async (req) => {
   }
 
   try {
-    const { plan, email, lead_id, report_id } = await req.json();
+    const { plan, email, lead_id, report_id, coupon_discount_type, coupon_discount_value, ab_variant } = await req.json();
 
-    const priceConfig = PRICES[plan];
+    // Use 29kr price if ab_variant is price_29
+    const effectivePlan = (ab_variant === "price_29" && plan === "single") ? "single_29" : plan;
+    const priceConfig = PRICES[effectivePlan];
     if (!priceConfig) {
       return new Response(JSON.stringify({ error: "Invalid plan" }), {
         status: 400,
@@ -51,7 +53,7 @@ serve(async (req) => {
     const rawKey = Deno.env.get("STRIPE_SECRET_KEY") || "";
     const stripeKey = rawKey.replace(/[^\x20-\x7E]/g, "").trim();
     const stripe = new Stripe(stripeKey, {
-      apiVersion: "2023-10-16",
+      apiVersion: "2025-08-27.basil",
     });
 
     // Check for existing customer
@@ -61,9 +63,10 @@ serve(async (req) => {
       customerId = customers.data[0].id;
     }
 
-    const origin = req.headers.get("origin") || "https://bragig.se";
+    const origin = req.headers.get("origin") || "https://compcare.se";
 
-    const session = await stripe.checkout.sessions.create({
+    // Build checkout session params
+    const sessionParams: Record<string, unknown> = {
       customer: customerId,
       customer_email: customerId ? undefined : email,
       line_items: [{ price: priceConfig.id, quantity: 1 }],
@@ -74,7 +77,27 @@ serve(async (req) => {
         lead_id: lead_id || "",
         report_id,
       },
-    });
+    };
+
+    // Apply coupon discount if provided (only percent or fixed — "free" is handled client-side)
+    if (coupon_discount_value > 0 && (coupon_discount_type === "percent" || coupon_discount_type === "fixed")) {
+      const couponParams: Record<string, unknown> = {
+        duration: "once",
+        max_redemptions: 1,
+      };
+
+      if (coupon_discount_type === "percent") {
+        couponParams.percent_off = Math.min(coupon_discount_value, 100);
+      } else {
+        couponParams.amount_off = coupon_discount_value * 100; // Stripe uses öre
+        couponParams.currency = "sek";
+      }
+
+      const stripeCoupon = await stripe.coupons.create(couponParams);
+      sessionParams.discounts = [{ coupon: stripeCoupon.id }];
+    }
+
+    const session = await stripe.checkout.sessions.create(sessionParams as Parameters<typeof stripe.checkout.sessions.create>[0]);
 
     console.log(`Checkout session created: ${session.id} for ${email}, plan: ${plan}, report: ${report_id}`);
 

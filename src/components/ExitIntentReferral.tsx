@@ -105,7 +105,7 @@ export default function ExitIntentReferral({ visible, leadId, referrerEmail, reg
               </h3>
             </div>
             <p className="text-sm text-muted-foreground">
-              Tipsa en kollega om tjänsten så låser vi upp den första siffran i din rekommenderade lön direkt.
+              Tipsa en kollega om tjänsten så låser vi upp den första siffran i din rekommenderade ersättning direkt.
             </p>
             <div className="flex gap-2">
               <Input

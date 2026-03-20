@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      analyses: {
+        Row: {
+          created_at: string
+          current_salary: number | null
+          employment_type: string | null
+          id: string
+          location: string | null
+          result_data: Json | null
+          role: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          current_salary?: number | null
+          employment_type?: string | null
+          id?: string
+          location?: string | null
+          result_data?: Json | null
+          role?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          current_salary?: number | null
+          employment_type?: string | null
+          id?: string
+          location?: string | null
+          result_data?: Json | null
+          role?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       analytics_events: {
         Row: {
           created_at: string
@@ -37,6 +70,499 @@ export type Database = {
           metadata?: Json | null
         }
         Relationships: []
+      }
+      assignments: {
+        Row: {
+          agency_org_id: string | null
+          buyer_org_id: string | null
+          consultant_id: string
+          created_at: string
+          duration_weeks: number | null
+          end_date: string | null
+          hourly_rate: number | null
+          id: string
+          invoiced_total: number | null
+          region_id: string | null
+          specialty_id: string | null
+          start_date: string | null
+          status: string
+        }
+        Insert: {
+          agency_org_id?: string | null
+          buyer_org_id?: string | null
+          consultant_id: string
+          created_at?: string
+          duration_weeks?: number | null
+          end_date?: string | null
+          hourly_rate?: number | null
+          id?: string
+          invoiced_total?: number | null
+          region_id?: string | null
+          specialty_id?: string | null
+          start_date?: string | null
+          status?: string
+        }
+        Update: {
+          agency_org_id?: string | null
+          buyer_org_id?: string | null
+          consultant_id?: string
+          created_at?: string
+          duration_weeks?: number | null
+          end_date?: string | null
+          hourly_rate?: number | null
+          id?: string
+          invoiced_total?: number | null
+          region_id?: string | null
+          specialty_id?: string | null
+          start_date?: string | null
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assignments_agency_org_id_fkey"
+            columns: ["agency_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignments_buyer_org_id_fkey"
+            columns: ["buyer_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignments_consultant_id_fkey"
+            columns: ["consultant_id"]
+            isOneToOne: false
+            referencedRelation: "consultant_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignments_region_id_fkey"
+            columns: ["region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignments_specialty_id_fkey"
+            columns: ["specialty_id"]
+            isOneToOne: false
+            referencedRelation: "specialties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      audit_optins: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          report_id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          report_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          report_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_optins_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      benchmark_rates: {
+        Row: {
+          contract_version_id: string | null
+          created_at: string
+          id: string
+          percentile: number
+          rate_type: string
+          source: string | null
+          specialty_id: string | null
+          valid_from: string | null
+          valid_to: string | null
+          value: number
+          zone_id: string | null
+        }
+        Insert: {
+          contract_version_id?: string | null
+          created_at?: string
+          id?: string
+          percentile: number
+          rate_type: string
+          source?: string | null
+          specialty_id?: string | null
+          valid_from?: string | null
+          valid_to?: string | null
+          value: number
+          zone_id?: string | null
+        }
+        Update: {
+          contract_version_id?: string | null
+          created_at?: string
+          id?: string
+          percentile?: number
+          rate_type?: string
+          source?: string | null
+          specialty_id?: string | null
+          valid_from?: string | null
+          valid_to?: string | null
+          value?: number
+          zone_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "benchmark_rates_contract_version_id_fkey"
+            columns: ["contract_version_id"]
+            isOneToOne: false
+            referencedRelation: "contract_versions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "benchmark_rates_specialty_id_fkey"
+            columns: ["specialty_id"]
+            isOneToOne: false
+            referencedRelation: "specialties"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "benchmark_rates_zone_id_fkey"
+            columns: ["zone_id"]
+            isOneToOne: false
+            referencedRelation: "zones"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      calloff_history: {
+        Row: {
+          buyer: string
+          calloff_date: string
+          created_at: string | null
+          duration_weeks: number | null
+          id: string
+          location: string
+          yrkeskategori: string
+          zon: string
+        }
+        Insert: {
+          buyer: string
+          calloff_date: string
+          created_at?: string | null
+          duration_weeks?: number | null
+          id?: string
+          location: string
+          yrkeskategori: string
+          zon: string
+        }
+        Update: {
+          buyer?: string
+          calloff_date?: string
+          created_at?: string | null
+          duration_weeks?: number | null
+          id?: string
+          location?: string
+          yrkeskategori?: string
+          zon?: string
+        }
+        Relationships: []
+      }
+      calloff_imports: {
+        Row: {
+          calloff_date: string | null
+          customer: string | null
+          customer_type: string | null
+          duration_weeks: number | null
+          filled: boolean | null
+          id: string
+          imported_at: string
+          level: string | null
+          price_max: number | null
+          price_median: number | null
+          price_min: number | null
+          raw_data: Json | null
+          region: string | null
+          role: string | null
+          source: string | null
+          specialization: string | null
+          unit: string | null
+        }
+        Insert: {
+          calloff_date?: string | null
+          customer?: string | null
+          customer_type?: string | null
+          duration_weeks?: number | null
+          filled?: boolean | null
+          id?: string
+          imported_at?: string
+          level?: string | null
+          price_max?: number | null
+          price_median?: number | null
+          price_min?: number | null
+          raw_data?: Json | null
+          region?: string | null
+          role?: string | null
+          source?: string | null
+          specialization?: string | null
+          unit?: string | null
+        }
+        Update: {
+          calloff_date?: string | null
+          customer?: string | null
+          customer_type?: string | null
+          duration_weeks?: number | null
+          filled?: boolean | null
+          id?: string
+          imported_at?: string
+          level?: string | null
+          price_max?: number | null
+          price_median?: number | null
+          price_min?: number | null
+          raw_data?: Json | null
+          region?: string | null
+          role?: string | null
+          source?: string | null
+          specialization?: string | null
+          unit?: string | null
+        }
+        Relationships: []
+      }
+      compensation_reports: {
+        Row: {
+          calc_version: string
+          consultant_id: string
+          created_at: string
+          current_rate: number | null
+          id: string
+          market_p50: number | null
+          market_p75: number | null
+          market_p90: number | null
+          negotiation_gap: number | null
+          report_type: string
+          result_json: Json | null
+        }
+        Insert: {
+          calc_version?: string
+          consultant_id: string
+          created_at?: string
+          current_rate?: number | null
+          id?: string
+          market_p50?: number | null
+          market_p75?: number | null
+          market_p90?: number | null
+          negotiation_gap?: number | null
+          report_type: string
+          result_json?: Json | null
+        }
+        Update: {
+          calc_version?: string
+          consultant_id?: string
+          created_at?: string
+          current_rate?: number | null
+          id?: string
+          market_p50?: number | null
+          market_p75?: number | null
+          market_p90?: number | null
+          negotiation_gap?: number | null
+          report_type?: string
+          result_json?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "compensation_reports_consultant_id_fkey"
+            columns: ["consultant_id"]
+            isOneToOne: false
+            referencedRelation: "consultant_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      consultant_documents: {
+        Row: {
+          consultant_id: string
+          document_type: string
+          expires_at: string | null
+          file_name: string
+          file_url: string
+          id: string
+          notes: string | null
+          uploaded_at: string
+        }
+        Insert: {
+          consultant_id: string
+          document_type: string
+          expires_at?: string | null
+          file_name: string
+          file_url: string
+          id?: string
+          notes?: string | null
+          uploaded_at?: string
+        }
+        Update: {
+          consultant_id?: string
+          document_type?: string
+          expires_at?: string | null
+          file_name?: string
+          file_url?: string
+          id?: string
+          notes?: string | null
+          uploaded_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultant_documents_consultant_id_fkey"
+            columns: ["consultant_id"]
+            isOneToOne: false
+            referencedRelation: "consultant_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      consultant_profiles: {
+        Row: {
+          care_setting: string | null
+          created_at: string
+          current_hourly_rate: number | null
+          current_monthly_salary: number | null
+          employment_type: string | null
+          experience_years: number | null
+          id: string
+          leadership: boolean | null
+          on_call: boolean | null
+          onboarding_step: number
+          region_id: string | null
+          salary_type: string | null
+          sector: string | null
+          shift_pattern: string | null
+          specialty_id: string | null
+          staffing_agency_id: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          care_setting?: string | null
+          created_at?: string
+          current_hourly_rate?: number | null
+          current_monthly_salary?: number | null
+          employment_type?: string | null
+          experience_years?: number | null
+          id?: string
+          leadership?: boolean | null
+          on_call?: boolean | null
+          onboarding_step?: number
+          region_id?: string | null
+          salary_type?: string | null
+          sector?: string | null
+          shift_pattern?: string | null
+          specialty_id?: string | null
+          staffing_agency_id?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          care_setting?: string | null
+          created_at?: string
+          current_hourly_rate?: number | null
+          current_monthly_salary?: number | null
+          employment_type?: string | null
+          experience_years?: number | null
+          id?: string
+          leadership?: boolean | null
+          on_call?: boolean | null
+          onboarding_step?: number
+          region_id?: string | null
+          salary_type?: string | null
+          sector?: string | null
+          shift_pattern?: string | null
+          specialty_id?: string | null
+          staffing_agency_id?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultant_profiles_region_id_fkey"
+            columns: ["region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "consultant_profiles_specialty_id_fkey"
+            columns: ["specialty_id"]
+            isOneToOne: false
+            referencedRelation: "specialties"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "consultant_profiles_staffing_agency_id_fkey"
+            columns: ["staffing_agency_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      consultant_references: {
+        Row: {
+          consultant_id: string
+          created_at: string
+          id: string
+          notes: string | null
+          reference_email: string | null
+          reference_name: string
+          reference_org: string | null
+          reference_phone: string | null
+          reference_role: string | null
+          relationship: string | null
+        }
+        Insert: {
+          consultant_id: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          reference_email?: string | null
+          reference_name: string
+          reference_org?: string | null
+          reference_phone?: string | null
+          reference_role?: string | null
+          relationship?: string | null
+        }
+        Update: {
+          consultant_id?: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          reference_email?: string | null
+          reference_name?: string
+          reference_org?: string | null
+          reference_phone?: string | null
+          reference_role?: string | null
+          relationship?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultant_references_consultant_id_fkey"
+            columns: ["consultant_id"]
+            isOneToOne: false
+            referencedRelation: "consultant_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       contract_version_rates: {
         Row: {
@@ -106,15 +632,231 @@ export type Database = {
         }
         Relationships: []
       }
+      coupon_usages: {
+        Row: {
+          coupon_id: string
+          created_at: string
+          email: string
+          id: string
+          report_id: string
+        }
+        Insert: {
+          coupon_id: string
+          created_at?: string
+          email: string
+          id?: string
+          report_id: string
+        }
+        Update: {
+          coupon_id?: string
+          created_at?: string
+          email?: string
+          id?: string
+          report_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "coupon_usages_coupon_id_fkey"
+            columns: ["coupon_id"]
+            isOneToOne: false
+            referencedRelation: "coupons"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "coupon_usages_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      coupons: {
+        Row: {
+          code: string
+          created_at: string
+          description: string | null
+          discount_type: string
+          discount_value: number
+          expires_at: string | null
+          id: string
+          max_uses: number
+          use_count: number
+          used: boolean
+          used_at: string | null
+          used_by_report_id: string | null
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          description?: string | null
+          discount_type?: string
+          discount_value?: number
+          expires_at?: string | null
+          id?: string
+          max_uses?: number
+          use_count?: number
+          used?: boolean
+          used_at?: string | null
+          used_by_report_id?: string | null
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          description?: string | null
+          discount_type?: string
+          discount_value?: number
+          expires_at?: string | null
+          id?: string
+          max_uses?: number
+          use_count?: number
+          used?: boolean
+          used_at?: string | null
+          used_by_report_id?: string | null
+        }
+        Relationships: []
+      }
+      followup_emails: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          lead_id: string
+          report_id: string | null
+          scheduled_for: string
+          sent_at: string | null
+          sequence_step: number
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          lead_id: string
+          report_id?: string | null
+          scheduled_for: string
+          sent_at?: string | null
+          sequence_step?: number
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          lead_id?: string
+          report_id?: string | null
+          scheduled_for?: string
+          sent_at?: string | null
+          sequence_step?: number
+          status?: string
+        }
+        Relationships: []
+      }
+      invoice_lines: {
+        Row: {
+          assignment_id: string
+          consultant_id: string
+          created_at: string
+          date: string
+          hours: number
+          id: string
+          invoiced_amount: number
+          ob_type: string | null
+          on_call: boolean | null
+          rate: number
+        }
+        Insert: {
+          assignment_id: string
+          consultant_id: string
+          created_at?: string
+          date: string
+          hours: number
+          id?: string
+          invoiced_amount: number
+          ob_type?: string | null
+          on_call?: boolean | null
+          rate: number
+        }
+        Update: {
+          assignment_id?: string
+          consultant_id?: string
+          created_at?: string
+          date?: string
+          hours?: number
+          id?: string
+          invoiced_amount?: number
+          ob_type?: string | null
+          on_call?: boolean | null
+          rate?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_lines_assignment_id_fkey"
+            columns: ["assignment_id"]
+            isOneToOne: false
+            referencedRelation: "assignments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoice_lines_consultant_id_fkey"
+            columns: ["consultant_id"]
+            isOneToOne: false
+            referencedRelation: "consultant_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoice_review_leads: {
+        Row: {
+          contacted_at: string | null
+          created_at: string
+          email: string
+          id: string
+          lead_id: string
+          role: string | null
+          status: string
+          zone: string | null
+        }
+        Insert: {
+          contacted_at?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          lead_id: string
+          role?: string | null
+          status?: string
+          zone?: string | null
+        }
+        Update: {
+          contacted_at?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          lead_id?: string
+          role?: string | null
+          status?: string
+          zone?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_review_leads_lead_id_fkey"
+            columns: ["lead_id"]
+            isOneToOne: true
+            referencedRelation: "leads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       leads: {
         Row: {
           created_at: string
           current_salary: number | null
-          email: string
+          email: string | null
           employment_type: string
           experience: number | null
           id: string
           kommun: string | null
+          ob_share: string | null
           paid: boolean
           salary_type: string | null
           updated_at: string
@@ -123,11 +865,12 @@ export type Database = {
         Insert: {
           created_at?: string
           current_salary?: number | null
-          email: string
+          email?: string | null
           employment_type: string
           experience?: number | null
           id?: string
           kommun?: string | null
+          ob_share?: string | null
           paid?: boolean
           salary_type?: string | null
           updated_at?: string
@@ -136,11 +879,12 @@ export type Database = {
         Update: {
           created_at?: string
           current_salary?: number | null
-          email?: string
+          email?: string | null
           employment_type?: string
           experience?: number | null
           id?: string
           kommun?: string | null
+          ob_share?: string | null
           paid?: boolean
           salary_type?: string | null
           updated_at?: string
@@ -152,18 +896,24 @@ export type Database = {
         Row: {
           id: string
           kommun: string
+          lat: number | null
+          lng: number | null
           region: string
           zon: string
         }
         Insert: {
           id?: string
           kommun: string
+          lat?: number | null
+          lng?: number | null
           region: string
           zon: string
         }
         Update: {
           id?: string
           kommun?: string
+          lat?: number | null
+          lng?: number | null
           region?: string
           zon?: string
         }
@@ -207,6 +957,180 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      market_requests: {
+        Row: {
+          consultant_id: string | null
+          created_at: string
+          employment_type: string | null
+          id: string
+          region_id: string | null
+          request_type: string | null
+          result_json: Json | null
+          specialty_id: string | null
+        }
+        Insert: {
+          consultant_id?: string | null
+          created_at?: string
+          employment_type?: string | null
+          id?: string
+          region_id?: string | null
+          request_type?: string | null
+          result_json?: Json | null
+          specialty_id?: string | null
+        }
+        Update: {
+          consultant_id?: string | null
+          created_at?: string
+          employment_type?: string | null
+          id?: string
+          region_id?: string | null
+          request_type?: string | null
+          result_json?: Json | null
+          specialty_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "market_requests_consultant_id_fkey"
+            columns: ["consultant_id"]
+            isOneToOne: false
+            referencedRelation: "consultant_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_requests_region_id_fkey"
+            columns: ["region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "market_requests_specialty_id_fkey"
+            columns: ["specialty_id"]
+            isOneToOne: false
+            referencedRelation: "specialties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      offers: {
+        Row: {
+          accepted: boolean | null
+          agency_org_id: string | null
+          buyer_org_id: string | null
+          consultant_id: string
+          contract_length_weeks: number | null
+          created_at: string
+          hourly_rate: number | null
+          housing_included: boolean | null
+          id: string
+          on_call: boolean | null
+          region_id: string | null
+          specialty_id: string | null
+          travel_included: boolean | null
+        }
+        Insert: {
+          accepted?: boolean | null
+          agency_org_id?: string | null
+          buyer_org_id?: string | null
+          consultant_id: string
+          contract_length_weeks?: number | null
+          created_at?: string
+          hourly_rate?: number | null
+          housing_included?: boolean | null
+          id?: string
+          on_call?: boolean | null
+          region_id?: string | null
+          specialty_id?: string | null
+          travel_included?: boolean | null
+        }
+        Update: {
+          accepted?: boolean | null
+          agency_org_id?: string | null
+          buyer_org_id?: string | null
+          consultant_id?: string
+          contract_length_weeks?: number | null
+          created_at?: string
+          hourly_rate?: number | null
+          housing_included?: boolean | null
+          id?: string
+          on_call?: boolean | null
+          region_id?: string | null
+          specialty_id?: string | null
+          travel_included?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "offers_agency_org_id_fkey"
+            columns: ["agency_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offers_buyer_org_id_fkey"
+            columns: ["buyer_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offers_consultant_id_fkey"
+            columns: ["consultant_id"]
+            isOneToOne: false
+            referencedRelation: "consultant_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offers_region_id_fkey"
+            columns: ["region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "offers_specialty_id_fkey"
+            columns: ["specialty_id"]
+            isOneToOne: false
+            referencedRelation: "specialties"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          created_at: string
+          headquarters_region_id: string | null
+          id: string
+          name: string
+          org_number: string | null
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          headquarters_region_id?: string | null
+          id?: string
+          name: string
+          org_number?: string | null
+          type: string
+        }
+        Update: {
+          created_at?: string
+          headquarters_region_id?: string | null
+          id?: string
+          name?: string
+          org_number?: string | null
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organizations_headquarters_region_id_fkey"
+            columns: ["headquarters_region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       payments: {
         Row: {
@@ -319,6 +1243,92 @@ export type Database = {
           },
         ]
       }
+      profiles: {
+        Row: {
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      radar_notifications: {
+        Row: {
+          created_at: string
+          id: string
+          months_before: number
+          scheduled_for: string
+          sent_at: string | null
+          status: string
+          watchlist_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          months_before: number
+          scheduled_for: string
+          sent_at?: string | null
+          status?: string
+          watchlist_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          months_before?: number
+          scheduled_for?: string
+          sent_at?: string | null
+          status?: string
+          watchlist_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "radar_notifications_watchlist_id_fkey"
+            columns: ["watchlist_id"]
+            isOneToOne: false
+            referencedRelation: "radar_watchlist"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      radar_watchlist: {
+        Row: {
+          buyer: string
+          competence: string
+          created_at: string
+          id: string
+          location: string
+          predicted_date: string | null
+          user_id: string
+        }
+        Insert: {
+          buyer: string
+          competence: string
+          created_at?: string
+          id?: string
+          location: string
+          predicted_date?: string | null
+          user_id: string
+        }
+        Update: {
+          buyer?: string
+          competence?: string
+          created_at?: string
+          id?: string
+          location?: string
+          predicted_date?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       rates: {
         Row: {
           detaljer: string | null
@@ -346,6 +1356,373 @@ export type Database = {
           typ?: string
           yrkeskategori?: string
           zon?: string
+        }
+        Relationships: []
+      }
+      ref_pings: {
+        Row: {
+          confirmed_until: string | null
+          created_at: string
+          expires_at: string
+          id: string
+          reference_id: string
+          requested_by: string
+          requester_name: string
+          responded_at: string | null
+          response_token: string
+          sent_at: string
+          status: Database["public"]["Enums"]["ref_ping_status"]
+        }
+        Insert: {
+          confirmed_until?: string | null
+          created_at?: string
+          expires_at: string
+          id?: string
+          reference_id: string
+          requested_by: string
+          requester_name: string
+          responded_at?: string | null
+          response_token: string
+          sent_at?: string
+          status?: Database["public"]["Enums"]["ref_ping_status"]
+        }
+        Update: {
+          confirmed_until?: string | null
+          created_at?: string
+          expires_at?: string
+          id?: string
+          reference_id?: string
+          requested_by?: string
+          requester_name?: string
+          responded_at?: string | null
+          response_token?: string
+          sent_at?: string
+          status?: Database["public"]["Enums"]["ref_ping_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ref_pings_reference_id_fkey"
+            columns: ["reference_id"]
+            isOneToOne: false
+            referencedRelation: "ref_references"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ref_pings_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ref_profile_views: {
+        Row: {
+          created_at: string
+          id: string
+          profile_id: string
+          referrer: string | null
+          viewer_fingerprint: string | null
+          viewer_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          profile_id: string
+          referrer?: string | null
+          viewer_fingerprint?: string | null
+          viewer_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          profile_id?: string
+          referrer?: string | null
+          viewer_fingerprint?: string | null
+          viewer_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ref_profile_views_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ref_profile_views_viewer_id_fkey"
+            columns: ["viewer_id"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ref_profiles: {
+        Row: {
+          bankid_verified: boolean
+          bio: string | null
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          license_number: string | null
+          linkedin_url: string | null
+          phone: string | null
+          profile_status: string | null
+          role_type: string | null
+          score_breakdown: Json | null
+          score_updated_at: string | null
+          specialty: string | null
+          status_checklist: Json | null
+          status_updated_at: string | null
+          trust_score: number | null
+          trust_tier: string | null
+          updated_at: string
+          years_licensed: number | null
+        }
+        Insert: {
+          bankid_verified?: boolean
+          bio?: string | null
+          created_at?: string
+          email: string
+          full_name: string
+          id: string
+          license_number?: string | null
+          linkedin_url?: string | null
+          phone?: string | null
+          profile_status?: string | null
+          role_type?: string | null
+          score_breakdown?: Json | null
+          score_updated_at?: string | null
+          specialty?: string | null
+          status_checklist?: Json | null
+          status_updated_at?: string | null
+          trust_score?: number | null
+          trust_tier?: string | null
+          updated_at?: string
+          years_licensed?: number | null
+        }
+        Update: {
+          bankid_verified?: boolean
+          bio?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          license_number?: string | null
+          linkedin_url?: string | null
+          phone?: string | null
+          profile_status?: string | null
+          role_type?: string | null
+          score_breakdown?: Json | null
+          score_updated_at?: string | null
+          specialty?: string | null
+          status_checklist?: Json | null
+          status_updated_at?: string | null
+          trust_score?: number | null
+          trust_tier?: string | null
+          updated_at?: string
+          years_licensed?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ref_profiles_role_type_fkey"
+            columns: ["role_type"]
+            isOneToOne: false
+            referencedRelation: "ref_role_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ref_references: {
+        Row: {
+          bankid_signature_id: string | null
+          competencies: Json | null
+          confirmed_at: string | null
+          created_at: string
+          giver_email: string
+          giver_id: string | null
+          giver_name: string | null
+          id: string
+          individual_id: string
+          invite_token: string
+          period_end: string | null
+          period_start: string
+          recommendation_score: number | null
+          reference_text: string | null
+          relationship: string
+          revoked_at: string | null
+          status: Database["public"]["Enums"]["ref_reference_status"]
+          workplace: string
+        }
+        Insert: {
+          bankid_signature_id?: string | null
+          competencies?: Json | null
+          confirmed_at?: string | null
+          created_at?: string
+          giver_email: string
+          giver_id?: string | null
+          giver_name?: string | null
+          id?: string
+          individual_id: string
+          invite_token: string
+          period_end?: string | null
+          period_start: string
+          recommendation_score?: number | null
+          reference_text?: string | null
+          relationship: string
+          revoked_at?: string | null
+          status?: Database["public"]["Enums"]["ref_reference_status"]
+          workplace: string
+        }
+        Update: {
+          bankid_signature_id?: string | null
+          competencies?: Json | null
+          confirmed_at?: string | null
+          created_at?: string
+          giver_email?: string
+          giver_id?: string | null
+          giver_name?: string | null
+          id?: string
+          individual_id?: string
+          invite_token?: string
+          period_end?: string | null
+          period_start?: string
+          recommendation_score?: number | null
+          reference_text?: string | null
+          relationship?: string
+          revoked_at?: string | null
+          status?: Database["public"]["Enums"]["ref_reference_status"]
+          workplace?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ref_references_giver_id_fkey"
+            columns: ["giver_id"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ref_references_individual_id_fkey"
+            columns: ["individual_id"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ref_role_profiles: {
+        Row: {
+          decay_end_months: number
+          decay_rate_per_month: number
+          description: string | null
+          gold_months: number
+          id: string
+          label: string
+          short_label: string
+          warn_months: number | null
+        }
+        Insert: {
+          decay_end_months: number
+          decay_rate_per_month?: number
+          description?: string | null
+          gold_months: number
+          id: string
+          label: string
+          short_label: string
+          warn_months?: number | null
+        }
+        Update: {
+          decay_end_months?: number
+          decay_rate_per_month?: number
+          description?: string | null
+          gold_months?: number
+          id?: string
+          label?: string
+          short_label?: string
+          warn_months?: number | null
+        }
+        Relationships: []
+      }
+      ref_user_roles: {
+        Row: {
+          id: string
+          role: Database["public"]["Enums"]["ref_app_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          role: Database["public"]["Enums"]["ref_app_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          role?: Database["public"]["Enums"]["ref_app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      ref_verifications: {
+        Row: {
+          checked_at: string
+          created_at: string | null
+          id: string
+          notes: string | null
+          profile_id: string
+          result: string
+          type: string
+          valid_until: string
+        }
+        Insert: {
+          checked_at?: string
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          profile_id: string
+          result: string
+          type: string
+          valid_until?: string
+        }
+        Update: {
+          checked_at?: string
+          created_at?: string | null
+          id?: string
+          notes?: string | null
+          profile_id?: string
+          result?: string
+          type?: string
+          valid_until?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ref_verifications_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ref_verified_domains: {
+        Row: {
+          created_at: string | null
+          domain: string
+          id: string
+          org_name: string
+        }
+        Insert: {
+          created_at?: string | null
+          domain: string
+          id?: string
+          org_name: string
+        }
+        Update: {
+          created_at?: string | null
+          domain?: string
+          id?: string
+          org_name?: string
         }
         Relationships: []
       }
@@ -387,9 +1764,67 @@ export type Database = {
           },
         ]
       }
+      regions: {
+        Row: {
+          created_at: string
+          id: string
+          kommun: string
+          lat: number | null
+          lng: number | null
+          region: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kommun: string
+          lat?: number | null
+          lng?: number | null
+          region: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kommun?: string
+          lat?: number | null
+          lng?: number | null
+          region?: string
+        }
+        Relationships: []
+      }
+      report_feedback: {
+        Row: {
+          comment: string | null
+          created_at: string
+          id: string
+          lead_id: string
+          rating: string
+          role: string | null
+          zone: string | null
+        }
+        Insert: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          lead_id: string
+          rating: string
+          role?: string | null
+          zone?: string | null
+        }
+        Update: {
+          comment?: string | null
+          created_at?: string
+          id?: string
+          lead_id?: string
+          rating?: string
+          role?: string | null
+          zone?: string | null
+        }
+        Relationships: []
+      }
       reports: {
         Row: {
           ab_variant: string
+          consultant_profile_id: string | null
           created_at: string
           current_salary: number | null
           email: string | null
@@ -406,9 +1841,11 @@ export type Database = {
           salary_type: string | null
           status: string
           unlocked_by_referral: boolean
+          user_id: string | null
         }
         Insert: {
           ab_variant?: string
+          consultant_profile_id?: string | null
           created_at?: string
           current_salary?: number | null
           email?: string | null
@@ -425,9 +1862,11 @@ export type Database = {
           salary_type?: string | null
           status?: string
           unlocked_by_referral?: boolean
+          user_id?: string | null
         }
         Update: {
           ab_variant?: string
+          consultant_profile_id?: string | null
           created_at?: string
           current_salary?: number | null
           email?: string | null
@@ -444,8 +1883,16 @@ export type Database = {
           salary_type?: string | null
           status?: string
           unlocked_by_referral?: boolean
+          user_id?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "reports_consultant_profile_id_fkey"
+            columns: ["consultant_profile_id"]
+            isOneToOne: false
+            referencedRelation: "consultant_profiles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "reports_lead_id_fkey"
             columns: ["lead_id"]
@@ -454,6 +1901,99 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      requests: {
+        Row: {
+          avg_req_score: number | null
+          avg_total_score: number | null
+          contract_price: number | null
+          created_at: string | null
+          customer: string
+          customer_type: string
+          deadline: string | null
+          filled: boolean
+          has_offers: boolean
+          inserted_at: string
+          is_public: boolean
+          level: string | null
+          n_offers: number
+          n_offers_reported: number | null
+          n_unique_suppliers: number | null
+          pct_meets_scope: number | null
+          price_max: number | null
+          price_median: number | null
+          price_min: number | null
+          price_std: number | null
+          region: string | null
+          request_id: number
+          response_window_days: number | null
+          role: string | null
+          rubrik_raw: string | null
+          specialization: string | null
+          unit: string | null
+          winning_supplier: string | null
+        }
+        Insert: {
+          avg_req_score?: number | null
+          avg_total_score?: number | null
+          contract_price?: number | null
+          created_at?: string | null
+          customer: string
+          customer_type: string
+          deadline?: string | null
+          filled?: boolean
+          has_offers?: boolean
+          inserted_at?: string
+          is_public?: boolean
+          level?: string | null
+          n_offers?: number
+          n_offers_reported?: number | null
+          n_unique_suppliers?: number | null
+          pct_meets_scope?: number | null
+          price_max?: number | null
+          price_median?: number | null
+          price_min?: number | null
+          price_std?: number | null
+          region?: string | null
+          request_id: number
+          response_window_days?: number | null
+          role?: string | null
+          rubrik_raw?: string | null
+          specialization?: string | null
+          unit?: string | null
+          winning_supplier?: string | null
+        }
+        Update: {
+          avg_req_score?: number | null
+          avg_total_score?: number | null
+          contract_price?: number | null
+          created_at?: string | null
+          customer?: string
+          customer_type?: string
+          deadline?: string | null
+          filled?: boolean
+          has_offers?: boolean
+          inserted_at?: string
+          is_public?: boolean
+          level?: string | null
+          n_offers?: number
+          n_offers_reported?: number | null
+          n_unique_suppliers?: number | null
+          pct_meets_scope?: number | null
+          price_max?: number | null
+          price_median?: number | null
+          price_min?: number | null
+          price_std?: number | null
+          region?: string | null
+          request_id?: number
+          response_window_days?: number | null
+          role?: string | null
+          rubrik_raw?: string | null
+          specialization?: string | null
+          unit?: string | null
+          winning_supplier?: string | null
+        }
+        Relationships: []
       }
       salary_benchmarks: {
         Row: {
@@ -518,15 +2058,219 @@ export type Database = {
         }
         Relationships: []
       }
+      specialties: {
+        Row: {
+          category: string
+          code: string | null
+          created_at: string
+          id: string
+          name: string
+        }
+        Insert: {
+          category: string
+          code?: string | null
+          created_at?: string
+          id?: string
+          name: string
+        }
+        Update: {
+          category?: string
+          code?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      uppdrag_notifications: {
+        Row: {
+          created_at: string
+          id: string
+          region: string
+          roll: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          region: string
+          roll: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          region?: string
+          roll?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      work_patterns: {
+        Row: {
+          consultant_id: string
+          created_at: string
+          hours_per_week: number | null
+          id: string
+          notes: string | null
+          ob_eligible: boolean | null
+          pattern_type: string
+        }
+        Insert: {
+          consultant_id: string
+          created_at?: string
+          hours_per_week?: number | null
+          id?: string
+          notes?: string | null
+          ob_eligible?: boolean | null
+          pattern_type: string
+        }
+        Update: {
+          consultant_id?: string
+          created_at?: string
+          hours_per_week?: number | null
+          id?: string
+          notes?: string | null
+          ob_eligible?: boolean | null
+          pattern_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "work_patterns_consultant_id_fkey"
+            columns: ["consultant_id"]
+            isOneToOne: false
+            referencedRelation: "consultant_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      zones: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          region_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          region_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          region_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "zones_region_id_fkey"
+            columns: ["region_id"]
+            isOneToOne: false
+            referencedRelation: "regions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      ref_calculate_profile_status: {
+        Args: { p_profile_id: string }
+        Returns: Json
+      }
+      ref_calculate_trust_score: {
+        Args: { p_profile_id: string }
+        Returns: Json
+      }
+      ref_create_ping: {
+        Args: { _reference_id: string; _requester_name: string }
+        Returns: string
+      }
+      ref_get_ping_by_token: {
+        Args: { _token: string }
+        Returns: {
+          competencies: Json
+          confirmed_at: string
+          expires_at: string
+          id: string
+          individual_name: string
+          individual_specialty: string
+          period_end: string
+          period_start: string
+          recommendation_score: number
+          reference_id: string
+          reference_text: string
+          relationship: string
+          requester_name: string
+          responded_at: string
+          response_token: string
+          sent_at: string
+          status: Database["public"]["Enums"]["ref_ping_status"]
+          workplace: string
+        }[]
+      }
+      ref_get_public_profile: { Args: { _profile_id: string }; Returns: Json }
+      ref_get_reference_by_invite_token: {
+        Args: { _token: string }
+        Returns: {
+          competencies: Json
+          confirmed_at: string
+          created_at: string
+          giver_email: string
+          giver_id: string
+          giver_name: string
+          id: string
+          individual_id: string
+          individual_name: string
+          individual_specialty: string
+          invite_token: string
+          period_end: string
+          period_start: string
+          recommendation_score: number
+          reference_text: string
+          relationship: string
+          status: Database["public"]["Enums"]["ref_reference_status"]
+          workplace: string
+        }[]
+      }
+      ref_has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["ref_app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      ref_log_profile_view: {
+        Args: { _fingerprint?: string; _profile_id: string; _referrer?: string }
+        Returns: undefined
+      }
+      ref_respond_to_ping: {
+        Args: {
+          _status: Database["public"]["Enums"]["ref_ping_status"]
+          _token: string
+        }
+        Returns: undefined
+      }
+      ref_submit_reference: {
+        Args: {
+          _competencies: Json
+          _giver_id: string
+          _giver_name: string
+          _recommendation_score: number
+          _reference_text: string
+          _token: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
-      [_ in never]: never
+      ref_app_role: "individual" | "reference_giver" | "client"
+      ref_ping_status: "sent" | "confirmed" | "denied" | "expired" | "dismissed"
+      ref_reference_status: "pending" | "active" | "revoked" | "expired"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -653,6 +2397,10 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      ref_app_role: ["individual", "reference_giver", "client"],
+      ref_ping_status: ["sent", "confirmed", "denied", "expired", "dismissed"],
+      ref_reference_status: ["pending", "active", "revoked", "expired"],
+    },
   },
 } as const

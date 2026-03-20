@@ -41,14 +41,15 @@ serve(async (req) => {
 
     if (error) throw error;
 
-    // Define funnel steps
+    // Define funnel steps matching current user flow
     const funnelSteps = [
       "landing_viewed",
       "survey_started",
       "survey_completed",
-      "teaser_viewed",
-      "checkout_started",
-      "payment_verified",
+      "analysis_started",
+      "email_collected",
+      "report_viewed",
+      "report_section_viewed",
     ];
 
     // Aggregate by variant
@@ -92,10 +93,20 @@ serve(async (req) => {
       dailyCounts[day][event.event_name] = (dailyCounts[day][event.event_name] || 0) + 1;
     }
 
-    // Build funnel for each variant
+    // Build funnel for each variant (including unknown and combined)
     const funnels: Record<string, Array<{ step: string; count: number; rate: number }>> = {};
-    for (const v of ["A", "B"]) {
+    
+    // Build combined counts across all variants
+    const combinedCounts: Record<string, number> = {};
+    for (const v of ["A", "B", "unknown"]) {
       const counts = variants[v] || {};
+      for (const [k, val] of Object.entries(counts)) {
+        combinedCounts[k] = (combinedCounts[k] || 0) + val;
+      }
+    }
+    
+    for (const v of ["A", "B", "all"]) {
+      const counts = v === "all" ? combinedCounts : (variants[v] || {});
       const funnel = funnelSteps.map((step, i) => {
         const count = counts[step] || 0;
         const prevCount = i === 0 ? count : (counts[funnelSteps[i - 1]] || 0);
@@ -107,9 +118,10 @@ serve(async (req) => {
 
     // Conversion rates
     const conversionRates: Record<string, { sessions: number; conversions: number; rate: string }> = {};
-    for (const v of ["A", "B"]) {
-      const sessions = variants[v]?.["teaser_viewed"] || 0;
-      const conversions = variants[v]?.["payment_verified"] || 0;
+    for (const v of ["A", "B", "all"]) {
+      const counts = v === "all" ? combinedCounts : (variants[v] || {});
+      const sessions = counts?.["landing_viewed"] || 0;
+      const conversions = counts?.["email_collected"] || 0;
       conversionRates[v] = {
         sessions,
         conversions,
@@ -130,7 +142,7 @@ serve(async (req) => {
         conversionRates,
         referralEvents,
         revenueByVariant,
-        timeSeries: timeSeries.slice(-30), // Last 30 days
+        timeSeries,
         totalEvents: (events || []).length,
       }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }

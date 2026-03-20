@@ -1,8 +1,15 @@
 import { Card, CardContent } from "@/components/ui/card";
+import InvoiceReviewCTA from "./InvoiceReviewCTA";
+import PersonalInsights from "./PersonalInsights";
+import ColleagueComparison from "./ColleagueComparison";
+import PriceHistory from "./PriceHistory";
+import type { PriceChange } from "@/shared/types";
 import { Separator } from "@/components/ui/separator";
+import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import {
   TrendingUp,
   Lock,
+  ChevronDown,
   ArrowRight,
   BarChart3,
   MessageSquareQuote,
@@ -11,12 +18,18 @@ import {
   MapPin,
   Lightbulb,
   Info,
+  CheckCircle,
+  Clock,
+  Car,
+  Copy,
+  ShieldCheck,
 } from "lucide-react";
 import { fmt, formatPartialValue } from "@/shared/formatters";
-import { SectionHeading, StatBlock, CalcRow, ScriptBlock } from "@/shared/UIComponents";
+import { SectionHeading, StatBlock, CalcRow } from "@/shared/UIComponents";
 import type { ResultJson, ZoneComparison } from "@/shared/types";
 import { getNegotiationTips, APPROVED_SUPPLIERS } from "./negotiationData";
-import SalaryGauge from "@/components/SalaryGauge";
+import { toast } from "@/hooks/use-toast";
+import ReportFeedback from "./ReportFeedback";
 
 interface Props {
   r: ResultJson;
@@ -26,6 +39,58 @@ interface Props {
   kommun: string;
   zoneComparisons?: ZoneComparison[];
   userZone?: string;
+  registerSectionRef?: (section: string) => (el: HTMLDivElement | null) => void;
+  leadId?: string;
+  email?: string;
+  reportId?: string;
+  priceHistory?: PriceChange[];
+}
+
+/** Copyable script block with timeline styling */
+function ScriptStep({ step, title, text }: { step: number; title: string; text: string }) {
+  const isQuote = text.startsWith('"') || text.startsWith('\u201C');
+
+  const handleCopy = () => {
+    const cleanText = text.replace(/^[""\u201C]+|[""\u201D]+$/g, '');
+    navigator.clipboard.writeText(cleanText);
+    toast({ title: "Kopierat!" });
+  };
+
+  return (
+    <div className="flex gap-4 relative">
+      <div className="w-8 h-8 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center flex-shrink-0 z-10">
+        <span className="text-primary text-xs font-bold">{step}</span>
+      </div>
+      <div className="flex-1 min-w-0">
+        <p className="font-semibold text-foreground text-sm">{title}</p>
+        {isQuote ? (
+          <div className="bg-foreground/[0.04] rounded-lg p-3 mt-2 relative group">
+            <p className="text-body-sm italic pr-8">{text}</p>
+            <button
+              onClick={handleCopy}
+              className="absolute top-2 right-2 opacity-60 hover:opacity-100 transition-opacity text-muted-foreground hover:text-primary"
+              aria-label="Kopiera"
+            >
+              <Copy className="w-4 h-4" />
+            </button>
+          </div>
+        ) : (
+          <p className="text-body-sm mt-1">{text}</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/** Section label */
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="mb-3">
+      <span className="text-micro font-semibold tracking-[1.4px] uppercase whitespace-nowrap">
+        {children}
+      </span>
+    </div>
+  );
 }
 
 export default function ConsultantTrackContent({
@@ -36,172 +101,475 @@ export default function ConsultantTrackContent({
   kommun,
   zoneComparisons,
   userZone,
+  registerSectionRef,
+  leadId,
+  email,
+  reportId,
+  priceHistory,
 }: Props) {
   const marketRate = r.market?.rate_customer_sek_per_hour ?? 0;
   const rec = r.recommendation;
   const delta = r.delta;
   const isConsultantFullAccess = isFullAccess && !!rec;
-  const margin = 0.15;
-  const afterMargin = Math.round(marketRate * (1 - margin));
+
+  const shareMin = rec?.consultant_share_min ?? (isEmployee ? 0.85 : 0.85);
+  const shareMax = rec?.consultant_share_max ?? (isEmployee ? 0.90 : 0.92);
+  const marginMin = Math.round((1 - shareMax) * 100);
+  const marginMax = Math.round((1 - shareMin) * 100);
+  const marginLabel = `${marginMin}–${marginMax}%`;
+  const afterMarginMin = Math.round(marketRate * shareMin);
+  const afterMarginMax = Math.round(marketRate * shareMax);
 
   const currentSalary = r.inputs.current_salary_sek;
   const salaryIsHourly = r.inputs.salary_type === "hourly";
   const currentHourly = salaryIsHourly ? currentSalary : (isEmployee ? Math.round(currentSalary / 167) : currentSalary);
+  const currentMonthly = salaryIsHourly ? currentSalary * 167 : currentSalary;
+  const recommendedMax = rec ? rec.recommended_hourly_max : Math.round(marketRate * shareMax);
+  const isAboveThreshold = recommendedMax > 0 && currentHourly >= recommendedMax;
+
+  // For employees, the comparable cost is gross salary × employer factor (1.42)
+  const employerFactor = rec?.employee_factor ?? 1.42;
+  const costToCompare = isEmployee ? Math.round(currentHourly * employerFactor) : currentHourly;
+  const sharePercent = marketRate > 0 ? Math.round((costToCompare / marketRate) * 100) : 0;
+
+  const monoClass = "font-[var(--font-mono)]";
 
   return (
-    <>
-      {/* Salary Gauge */}
-      <Card className="card-shadow">
-        <CardContent className="pt-6 pb-4">
-          <SalaryGauge
-            currentHourly={currentHourly}
-            marketLow={rec ? rec.recommended_hourly_min : Math.round(marketRate * 0.6)}
-            marketHigh={rec ? rec.recommended_hourly_max : Math.round(marketRate * 0.63)}
-            blurred={!isConsultantFullAccess}
-          />
-        </CardContent>
-      </Card>
+    <div className="space-y-2.5">
 
-      {/* 1. Ramavtalspris */}
-      <Card className="card-shadow">
-        <CardContent className="pt-6 space-y-3">
-          <SectionHeading icon={BarChart3} title="Ramavtalspris" />
-          <div className="p-4 rounded-lg bg-primary/5 border border-primary/20">
-            <p className="text-xs text-muted-foreground mb-1">Vad kunden betalar (ramavtal)</p>
-            <p className="text-2xl font-bold text-foreground">{fmt(marketRate)} kr/h</p>
-            <p className="text-xs text-muted-foreground mt-1">
-              Grundtimpris enligt ramavtal (OB/jour ej inkluderat)
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* 2. Rekommenderad ersättning */}
-      <Card className="card-shadow overflow-hidden">
-        {isConsultantFullAccess && rec ? (
-          <>
-            <div className="bg-accent/10 p-4 flex items-center gap-3">
-              <TrendingUp className="w-5 h-5 text-accent" />
-              <p className="font-semibold text-foreground">
-                {delta && delta.monthly_vs_current_min > 0
-                  ? `Du kan tjäna upp till ${fmt(delta.monthly_vs_current_max)} kr mer per månad`
-                  : "Din lön ligger i linje med marknaden!"}
-              </p>
-            </div>
-            <CardContent className="pt-6 space-y-5">
-              <div className="grid grid-cols-2 gap-4">
-                <StatBlock label="Din timlön" value={`${fmt(currentHourly)} kr`} muted />
-                <StatBlock
-                  label={isEmployee ? "Rekommenderad timlön" : "Rekommenderad ersättning"}
-                  value={`${fmt(rec.recommended_hourly_min)}–${fmt(rec.recommended_hourly_max)} kr`}
-                  accent
-                />
-                <StatBlock
-                  label="Din månadslön"
-                  value={`${fmt(salaryIsHourly ? currentSalary * 167 : currentSalary)} kr`}
-                  muted
-                />
-                <StatBlock
-                  label="Möjlig månadslön"
-                  value={`${fmt(rec.recommended_monthly_min)}–${fmt(rec.recommended_monthly_max)} kr`}
-                  accent
-                />
+      {/* ═══ 1. STATUS BADGE — Din position ═══ */}
+      {isConsultantFullAccess && (
+        <div className="px-0">
+          {isAboveThreshold ? (
+            <div className="flex items-start gap-3 rounded-[14px] p-3.5 bg-accent/[0.07] border border-accent/[0.18]">
+              <div className="w-8 h-8 rounded-full bg-accent/[0.15] flex items-center justify-center flex-shrink-0 mt-0.5">
+                <CheckCircle className="w-4 h-4 text-accent" />
               </div>
-
-              {/* Förhandlingsspann */}
-              <div className="p-4 rounded-lg bg-accent/5 border border-accent/20 space-y-3">
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Förhandlingsspann</p>
-                <div className="grid grid-cols-3 gap-2 text-center">
-                  <div className="p-3 rounded-lg bg-accent/10 border border-accent/20">
-                    <p className="text-[10px] font-medium text-accent uppercase tracking-wide mb-1">Safe</p>
-                    <p className="text-base font-bold text-foreground">{fmt(rec.recommended_hourly_min)} kr/h</p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">{fmt(rec.recommended_monthly_min)} kr/mån</p>
-                  </div>
-                  <div className="p-3 rounded-lg bg-primary/10 border border-primary/20 ring-2 ring-primary/30">
-                    <p className="text-[10px] font-medium text-primary uppercase tracking-wide mb-1">Target</p>
-                    <p className="text-base font-bold text-foreground">
-                      {fmt(Math.round((rec.recommended_hourly_min + rec.recommended_hourly_max) / 2))} kr/h
-                    </p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">
-                      {fmt(Math.round((rec.recommended_monthly_min + rec.recommended_monthly_max) / 2))} kr/mån
-                    </p>
-                  </div>
-                  <div className="p-3 rounded-lg bg-destructive/5 border border-destructive/20">
-                    <p className="text-[10px] font-medium text-destructive uppercase tracking-wide mb-1">Aggressive</p>
-                    <p className="text-base font-bold text-foreground">{fmt(rec.recommended_hourly_max)} kr/h</p>
-                    <p className="text-[10px] text-muted-foreground mt-0.5">{fmt(rec.recommended_monthly_max)} kr/mån</p>
-                  </div>
-                </div>
-                <p className="text-[11px] text-muted-foreground text-center">
-                  Safe = hög chans att få igenom · Target = rekommenderat · Aggressive = kräver stark erfarenhet
+              <div>
+               <p className="text-sm font-semibold text-accent leading-snug mb-1">
+                   Din ersättning ligger i marknadens övre skikt
+                 </p>
+                 <p className="text-hint leading-relaxed">
+                   Ersättningen överstiger det beräknade marknadsspannet för din roll och zon.
+                 </p>
+              </div>
+            </div>
+          ) : delta && delta.monthly_vs_current_max > 0 ? (
+            <div className="flex items-start gap-3 rounded-[14px] p-3.5 bg-accent/[0.07] border border-accent/[0.18]">
+              <div className="w-8 h-8 rounded-full bg-accent/[0.15] flex items-center justify-center flex-shrink-0 mt-0.5">
+                <TrendingUp className="w-4 h-4 text-accent" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-accent leading-snug mb-1">
+                  Skillnad mot marknadsspannet: {fmt(delta.monthly_vs_current_max)} kr/mån
+                </p>
+                <p className="text-hint leading-relaxed">
+                  Baserat på ramavtalspriset i din region.
                 </p>
               </div>
-
-              {delta && delta.monthly_vs_current_min > 0 && (
-                <div className="p-4 rounded-lg bg-destructive/5 border border-destructive/20">
-                  <p className="text-xs text-muted-foreground mb-1">Skillnad mot din nuvarande lön</p>
-                  <p className="text-lg font-bold text-destructive">
-                    +{fmt(delta.monthly_vs_current_min)}–{fmt(delta.monthly_vs_current_max)} kr/mån
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </>
-        ) : (
-          <>
-            <div className="bg-destructive/10 p-4 flex items-center gap-3">
-              <Lock className="w-5 h-5 text-destructive" />
-              <p className="font-semibold text-foreground">Rekommenderad lön — låst</p>
             </div>
-            <CardContent className="pt-6 space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <StatBlock label="Din timlön" value={`${fmt(currentHourly)} kr`} muted />
-                <div className="p-3 rounded-lg bg-accent/10 relative overflow-hidden">
-                  <p className="text-xs text-muted-foreground mb-1">Rekommenderad timlön</p>
-                  <p className="text-base font-semibold text-accent blur-sm select-none">
-                    {formatPartialValue(Math.round(marketRate * 0.6))} kr
-                  </p>
+          ) : (
+            <div className="flex items-start gap-3 rounded-[14px] p-3.5 bg-accent/[0.07] border border-accent/[0.18]">
+              <div className="w-8 h-8 rounded-full bg-accent/[0.15] flex items-center justify-center flex-shrink-0 mt-0.5">
+                <CheckCircle className="w-4 h-4 text-accent" />
+              </div>
+              <div>
+                 <p className="text-sm font-semibold text-accent leading-snug mb-1">
+                   Din ersättning ligger i linje med marknaden
+                 </p>
+                 <p className="text-hint leading-relaxed">
+                   Ersättningen ligger inom det beräknade marknadsspannet. Se nedan för detaljer.
+                 </p>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ═══ 2. FÖRHANDLINGSSPANN ═══ */}
+      {isConsultantFullAccess && rec ? (
+        (() => {
+          const realisticH = rec.recommended_hourly_min;
+          const recommendedH = Math.round((rec.recommended_hourly_min + rec.recommended_hourly_max) / 2);
+          const ambitiousH = Math.round(rec.recommended_hourly_max * 1.05);
+          const hpm = rec.hours_per_month || 167;
+          const realisticM = realisticH * hpm;
+          const recommendedM = recommendedH * hpm;
+          const ambitiousM = ambitiousH * hpm;
+
+          // Calculate marker position on track
+          const minH = realisticH;
+          const maxH = ambitiousH;
+          const range = maxH - minH;
+          const fillPct = range > 0 ? Math.min(Math.round(((recommendedH - minH) / range) * 100), 100) : 50;
+          const yourPct = range > 0 ? Math.min(Math.max(Math.round(((currentHourly - minH) / range) * 100), 0), 105) : 50;
+
+          return (
+            <div>
+              <SectionLabel>Förhandlingsspann · {userZone || "Din zon"}</SectionLabel>
+              <div className="grid grid-cols-3 gap-1.5">
+                {/* Undre spann */}
+                <div className="rounded-[14px] bg-foreground/[0.035] border border-foreground/[0.07] p-3 text-center">
+                  <span className="text-micro font-bold tracking-[0.8px] uppercase block mb-1.5">Undre spann</span>
+                  <span className={`${monoClass} text-[19px] font-medium text-foreground/[0.8] tracking-tight leading-none block mb-0.5`}>{fmt(realisticH)}</span>
+                  <span className="text-micro block mb-1">kr/h</span>
+                  <span className={`${monoClass} text-micro block`}>{fmt(realisticM)} kr/mån</span>
+                </div>
+                {/* Medianspann */}
+                <div className="rounded-[14px] bg-primary/[0.08] border border-primary/[0.3] p-3 text-center">
+                  <span className="text-micro font-bold tracking-[0.8px] uppercase text-primary block mb-1.5">Median</span>
+                  <span className={`${monoClass} text-[19px] font-medium text-primary tracking-tight leading-none block mb-0.5`}>{fmt(recommendedH)}</span>
+                  <span className="text-micro block mb-1">kr/h</span>
+                  <span className={`${monoClass} text-micro text-primary/[0.5] block`}>{fmt(recommendedM)} kr/mån</span>
+                </div>
+                {/* Övre spann */}
+                <div className="rounded-[14px] bg-foreground/[0.035] border border-foreground/[0.07] p-3 text-center">
+                  <span className="text-micro font-bold tracking-[0.8px] uppercase block mb-1.5">Övre spann</span>
+                  <span className={`${monoClass} text-[19px] font-medium text-foreground/[0.8] tracking-tight leading-none block mb-0.5`}>{fmt(ambitiousH)}</span>
+                  <span className="text-micro block mb-1">kr/h</span>
+                  <span className={`${monoClass} text-micro block`}>{fmt(ambitiousM)} kr/mån</span>
                 </div>
               </div>
-              <p className="text-sm text-muted-foreground text-center">
-                Lås upp den fullständiga analysen med exakta siffror, förhandlingsspann och personliga rekommendationer.
-              </p>
-            </CardContent>
-          </>
-        )}
-      </Card>
 
-      {/* 3. Antaganden & Beräkning (full) */}
+
+              <p className="text-micro text-center leading-relaxed pt-1.5">
+                Baserat på ramavtalspris och branschens marginaler i {userZone || "din zon"}.
+              </p>
+            </div>
+          );
+        })()
+      ) : !isConsultantFullAccess ? (
+        <div className="rounded-2xl border border-border/50 overflow-hidden">
+          <div className="bg-muted/50 p-4 flex items-center gap-3">
+            <Lock className="w-5 h-5 text-muted-foreground" />
+            <p className="font-semibold text-foreground">Marknadsspann — fullständig version</p>
+          </div>
+          <div className="p-5 space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <StatBlock label="Din timersättning" value={`${fmt(currentHourly)} kr`} muted />
+              <div className="p-3 rounded-lg bg-accent/10 relative overflow-hidden">
+                <p className="text-hint mb-1">Marknadsspann</p>
+                <p className="text-base font-semibold text-accent blur-sm select-none">
+                  {formatPartialValue(Math.round(marketRate * 0.6))} kr
+                </p>
+              </div>
+            </div>
+            <p className="text-body-sm text-center">
+              Den fullständiga analysen med exakta siffror och regionala jämförelser finns i den utökade rapporten.
+            </p>
+          </div>
+        </div>
+      ) : null}
+
+      {/* ═══ 3. ERSÄTTNINGSJÄMFÖRELSE ═══ */}
       {isConsultantFullAccess && rec && (
-        <Card className="card-shadow">
-          <CardContent className="pt-6 space-y-4">
-            <SectionHeading icon={Info} title="Antaganden & Beräkning" />
-            <div className="space-y-3 text-sm text-muted-foreground">
-              <CalcRow label="Ramavtalspris (vad kunden betalar)" value={`${fmt(marketRate)} kr/h`} />
-              <CalcRow label="Bemanningsbolagets marginal (15%)" value={`−${fmt(Math.round(marketRate * margin))} kr/h`} />
-              <CalcRow label="Löneutrymme efter marginal" value={`${fmt(afterMargin)} kr/h`} />
+        <div>
+          <SectionLabel>Ersättningsjämförelse</SectionLabel>
+          <div className="rounded-[18px] bg-foreground/[0.035] border border-foreground/[0.07] overflow-hidden">
+            {/* Din ersättning row */}
+            <div className="flex items-center justify-between p-3.5 bg-accent/[0.04]">
+              <div>
+                <p className="text-micro font-semibold tracking-[0.8px] uppercase mb-1">{isEmployee ? "Din lön" : "Din ersättning"}</p>
+                <p className={`${monoClass} text-[22px] font-medium tracking-tight text-accent`}>{fmt(currentHourly)} kr/h</p>
+                <p className={`${monoClass} text-micro mt-0.5`}>{fmt(currentMonthly)} kr/mån</p>
+              </div>
+              <span className="text-micro font-semibold tracking-[0.5px] bg-accent/[0.12] text-accent border border-accent/[0.2] rounded-full px-2.5 py-1 whitespace-nowrap">
+                Din nivå
+              </span>
+            </div>
+
+            {/* Marknadsspann row */}
+            <div className="flex items-center justify-between p-3.5 border-t border-foreground/[0.05]">
+              <div>
+                <p className="text-micro font-semibold tracking-[0.8px] uppercase mb-1">Marknadsspann</p>
+                <p className={`${monoClass} text-[22px] font-medium tracking-tight text-primary/[0.7]`}>{fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h</p>
+                <p className={`${monoClass} text-micro mt-0.5`}>{fmt(rec.recommended_monthly_min)}–{fmt(rec.recommended_monthly_max)} kr/mån</p>
+              </div>
+              <span className="text-micro font-semibold tracking-[0.5px] bg-primary/[0.08] text-primary/[0.8] border border-primary/[0.2] rounded-full px-2.5 py-1 whitespace-nowrap">
+                Marknad
+              </span>
+            </div>
+
+            {/* Visual comparison bars */}
+            <div className="px-4 pt-1 pb-3.5 flex flex-col gap-1.5">
+              <div className="flex items-center gap-2">
+                <div className="flex-1 h-[3px] bg-foreground/[0.05] rounded-sm overflow-hidden">
+                  <div className="h-full rounded-sm bg-accent" style={{ width: '100%' }} />
+                </div>
+                <span className={`${monoClass} text-micro w-16 text-right flex-shrink-0`}>{fmt(currentHourly)} kr/h</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="flex-1 h-[3px] bg-foreground/[0.05] rounded-sm overflow-hidden">
+                  <div
+                    className="h-full rounded-sm bg-primary/50"
+                    style={{ width: `${Math.round((rec.recommended_hourly_max / Math.max(currentHourly, rec.recommended_hourly_max, marketRate)) * 100)}%` }}
+                  />
+                </div>
+                <span className={`${monoClass} text-micro w-16 text-right flex-shrink-0`}>{fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="flex-1 h-[3px] bg-foreground/[0.05] rounded-sm overflow-hidden">
+                  <div
+                    className="h-full rounded-sm bg-foreground/[0.15]"
+                    style={{ width: `${Math.round((marketRate / Math.max(currentHourly, rec.recommended_hourly_max, marketRate)) * 100)}%` }}
+                  />
+                </div>
+                <span className={`${monoClass} text-micro w-16 text-right flex-shrink-0`}>{fmt(marketRate)} kr/h ↑</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══ Sammanfattning av marknadsdata ═══ */}
+      {isConsultantFullAccess && rec && !isAboveThreshold && (
+        <div className="relative rounded-2xl bg-gradient-to-b from-foreground/[0.06] to-foreground/[0.02] border border-foreground/10 p-6 overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent" />
+          <div className="flex items-center gap-3 mb-6">
+            <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
+              <BarChart3 className="w-5 h-5 text-primary" />
+            </div>
+            <h2 className="text-lg sm:text-xl font-bold text-foreground">Sammanfattning</h2>
+          </div>
+          <ul className="space-y-3">
+            <li className="flex items-start gap-3">
+              <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+              <span className="text-body-sm leading-relaxed">
+                Regionens ersättning till bemanningsföretag för {occupation} i {userZone || "din zon"} är {fmt(marketRate)} kr/h.
+              </span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+              <span className="text-body-sm leading-relaxed">
+                Vanlig ersättning till konsult är {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h.
+              </span>
+            </li>
+            <li className="flex items-start gap-3">
+              <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+              <span className="text-body-sm leading-relaxed">
+                Kostnader som kan påverka ersättningen: resa, boende, Siths-kort, HLR-utb, intro.
+              </span>
+            </li>
+          </ul>
+        </div>
+      )}
+
+      {/* ═══ Feedback ═══ */}
+      {leadId && (
+        <ReportFeedback
+          leadId={leadId}
+          role={occupation}
+          zone={userZone}
+        />
+      )}
+
+      {/* ═══ 4. REGIONAL JÄMFÖRELSE ═══ */}
+      {isConsultantFullAccess && zoneComparisons && zoneComparisons.length > 0 && (
+        <div ref={registerSectionRef?.("regional_comparison")}>
+          <SectionLabel>Regional jämförelse</SectionLabel>
+          <p className="text-hint mb-3 leading-relaxed">
+            Vad regionen betalar bemanningsföretag för {occupation} per zon:
+          </p>
+          <div className="space-y-1.5">
+            {[...zoneComparisons]
+              .sort((a, b) => a.zon.localeCompare(b.zon))
+              .map((zc) => {
+                const isUserZone = zc.zon === userZone;
+                const zoneRate = zc.timpris_kund;
+                const recHourlyLow = isEmployee
+                  ? Math.round((zoneRate * shareMin) / 1.42)
+                  : Math.round(zoneRate * shareMin);
+                const recHourlyHigh = isEmployee
+                  ? Math.round((zoneRate * shareMax) / 1.42)
+                  : Math.round(zoneRate * shareMax);
+                const maxRate = Math.max(...zoneComparisons.map((z) => z.timpris_kund));
+                const barWidth = Math.round((zoneRate / maxRate) * 100);
+                return (
+                  <div
+                    key={zc.zon}
+                    className={`rounded-[14px] p-3 pb-2.5 ${
+                      isUserZone
+                        ? 'bg-primary/[0.07] border border-primary/[0.2]'
+                        : 'bg-foreground/[0.03] border border-foreground/[0.06]'
+                    }`}
+                  >
+                    <div className="flex justify-between items-center mb-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-body-sm font-semibold">{zc.zon}</span>
+                        {isUserZone && (
+                          <span className="text-micro font-bold tracking-[0.6px] uppercase bg-primary/[0.15] text-primary rounded-[10px] px-2 py-0.5">
+                            Din zon
+                          </span>
+                        )}
+                      </div>
+                      <span className={`${monoClass} text-[15px] font-medium ${isUserZone ? 'text-primary' : 'text-foreground/[0.6]'}`}>
+                        {fmt(zoneRate)} kr/h
+                      </span>
+                    </div>
+                    <div className="h-[3px] bg-foreground/[0.06] rounded-sm overflow-hidden mb-1.5">
+                      <div
+                        className={`h-full rounded-sm ${isUserZone ? 'bg-primary' : 'bg-foreground/[0.15]'}`}
+                        style={{ width: `${barWidth}%` }}
+                      />
+                    </div>
+                    <p className={`${monoClass} text-micro`}>
+                      Konsultersättning: {fmt(recHourlyLow)}–{fmt(recHourlyHigh)} kr/h
+                    </p>
+                  </div>
+                );
+              })}
+          </div>
+        </div>
+      )}
+      {/* ═══ 4b. PRISHISTORIK ═══ */}
+      {isConsultantFullAccess && priceHistory && priceHistory.length > 0 && (
+        <div ref={registerSectionRef?.("price_history")}>
+          <PriceHistory
+            changes={priceHistory}
+            userZone={userZone}
+            occupation={occupation}
+          />
+        </div>
+      )}
+
+      {/* ═══ 5. DIN ANDEL AV KUNDPRISET ═══ */}
+      {isConsultantFullAccess && marketRate > 0 && currentHourly > 0 && (
+        <div>
+          <SectionLabel>{isEmployee ? "Din lönekostnad vs kundpriset" : "Din andel av kundpriset"}</SectionLabel>
+          <div className="rounded-[18px] bg-foreground/[0.035] border border-foreground/[0.07] p-4.5 px-4">
+            <div className="flex justify-between items-start mb-3.5">
+              <div>
+                <span className={`${monoClass} text-[42px] font-medium text-accent tracking-tight leading-none block`}>
+                  {sharePercent}%
+                </span>
+                <span className="text-caption mt-1 block">
+                  {isEmployee ? (
+                    <>lönekostnad {fmt(costToCompare)} kr/h av {fmt(marketRate)} kr/h</>
+                  ) : (
+                    <>av {fmt(marketRate)} kr/h som regionen betalar</>
+                  )}
+                </span>
+                {isEmployee && (
+                  <span className="text-micro mt-0.5 block">
+                    Brutto {fmt(currentHourly)} kr/h × {employerFactor} (arbetsgivaravg. + pension)
+                  </span>
+                )}
+              </div>
+              <div className="text-right">
+                <span className="text-micro tracking-[0.6px] uppercase block mb-1">Marknadsmedian</span>
+                <span className={`${monoClass} text-caption block`}>{isEmployee ? "85%" : "90%"}</span>
+                <span className="text-micro tracking-[0.6px] uppercase block mt-1.5 mb-0.5">Vanligt spann</span>
+                <span className={`${monoClass} text-caption block`}>85–92%</span>
+              </div>
+            </div>
+
+            {/* Gradient bar */}
+            <div className="relative h-1.5 bg-foreground/[0.06] rounded overflow-visible mb-2.5">
+              <div
+                className="absolute left-0 top-0 h-full rounded bg-gradient-to-r from-primary/50 to-accent"
+                style={{ width: `${Math.min(sharePercent, 100)}%` }}
+              />
+              <div
+                className="absolute top-[-2px] w-px h-[10px] bg-foreground/[0.3]"
+                style={{ left: `${Math.min(sharePercent, 100)}%` }}
+              />
+            </div>
+
+            <p className="text-caption leading-relaxed">
+              {sharePercent > 100 ? (
+                <>
+                  {isEmployee
+                    ? <>Din lönekostnad överstiger kundpriset — kontrollera att arbetsgivaren inte subventionerar din tjänst.</>
+                    : <>Över 100% är möjligt som egenföretagare — du fakturerar direkt utan mellanhand och bär då risker som annars ligger på bemanningsföretaget, t.ex. viten och administration.</>
+                  }
+                </>
+              ) : sharePercent >= 85 ? (
+                <>
+                  {isEmployee ? "Lönekostnaden" : "Andelen"} ligger nära marknadens övre gräns. <strong className="text-foreground/50 font-medium">Vanligt spann: 85–92%</strong>.
+                </>
+              ) : (
+                <>
+                  {isEmployee
+                    ? <>Lönekostnaden utgör en lägre andel av kundpriset än marknadens genomsnitt.</>
+                    : <>Andelen av kundpriset ligger under marknadens genomsnitt.</>
+                  }{" "}
+                  <strong className="text-foreground/50 font-medium">Vanligt spann: 85–92%</strong>.
+                </>
+              )}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* ═══ Toppskiktet — för konsulter nära kundpris ═══ */}
+      {isConsultantFullAccess && isAboveThreshold && (
+        <div className="relative rounded-2xl bg-gradient-to-b from-foreground/[0.06] to-foreground/[0.02] border border-foreground/10 p-6 overflow-hidden">
+          <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent" />
+          <div className="flex items-center gap-3 mb-4">
+            <CheckCircle className="w-5 h-5 text-primary" />
+            <h2 className="text-lg font-bold text-foreground">Ersättningen ligger i marknadens övre skikt</h2>
+          </div>
+          <p className="text-body-sm leading-relaxed mb-5">
+            Din ersättning på {fmt(currentHourly)} kr/h{isEmployee ? ` (lönekostnad ${fmt(costToCompare)} kr/h)` : ""} motsvarar {sharePercent}% av vad regionen betalar till bemanningsföretag ({fmt(marketRate)} kr/h).
+          </p>
+          <div className="space-y-2.5">
+            <p className="text-caption">
+              Övriga ersättningskomponenter i ramavtalet
+            </p>
+            {[
+              { icon: MapPin, title: "Zonpriser", desc: "Ramavtalspriserna varierar per zon — se den regionala jämförelsen för samtliga zoner." },
+              { icon: Clock, title: "Jourersättning", desc: "Jour- och beredskapstillägg regleras separat och ligger utanför grundtimpriset." },
+              { icon: Car, title: "Reseersättning", desc: "Vid uppdrag som kräver resa kan reseersättning, boende och traktamente tillkomma enligt avtal." },
+            ].map(({ icon: Icon, title, desc }) => (
+              <div key={title} className="flex items-start gap-3 p-3.5 rounded-xl bg-foreground/[0.03] border border-border/30">
+                <Icon className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-sm font-medium text-foreground">{title}</p>
+                  <p className="text-hint mt-0.5 leading-relaxed">{desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Antaganden & Beräkning */}
+      {isConsultantFullAccess && rec && (
+        <Collapsible>
+          <CollapsibleTrigger className="w-full flex items-center justify-between p-4 rounded-xl bg-foreground/[0.03] border border-border/30 hover:bg-foreground/[0.05] transition-colors">
+            <div className="flex items-center gap-2">
+              <Info className="w-4 h-4 text-primary" />
+              <span className="text-sm font-semibold text-foreground">Antaganden & Beräkning</span>
+            </div>
+            <ChevronDown className="w-4 h-4 text-muted-foreground transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
+          </CollapsibleTrigger>
+          <CollapsibleContent className="pt-4 space-y-4">
+            <div className="space-y-3 text-body-sm">
+              <CalcRow label="Ramavtalspris (vad regionen betalar)" value={`${fmt(marketRate)} kr/h`} />
+              <CalcRow label={`Bemanningsbolagets marginal (${marginLabel})`} value={`−${fmt(Math.round(marketRate * (1 - shareMax)))}–${fmt(Math.round(marketRate * (1 - shareMin)))} kr/h`} />
+              <CalcRow label="Ersättningsutrymme efter marginal" value={`${fmt(afterMarginMin)}–${fmt(afterMarginMax)} kr/h`} />
               {isEmployee ? (
                 <CalcRow
                   label="÷ 1,42 (arbetsgivaravg. + semester + pension)"
-                  value={`= ${fmt(Math.round(afterMargin / 1.42))} kr/h brutto`}
+                  value={`= ${fmt(Math.round(afterMarginMin / 1.42))}–${fmt(Math.round(afterMarginMax / 1.42))} kr/h brutto`}
                 />
               ) : (
-                <p className="text-xs text-muted-foreground/70 pt-1">
-                  Som egenföretagare bör du fakturera 85–90% av kundpriset, dvs{" "}
+                <p className="text-hint pt-1">
+                  Som egenföretagare bör du fakturera {Math.round(shareMin * 100)}–{Math.round(shareMax * 100)}% av kundpriset, dvs{" "}
                   {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h.
                 </p>
               )}
             </div>
-            <Separator />
-            <div className="p-4 rounded-lg bg-muted/50 border border-border space-y-3">
+            <Separator className="opacity-20" />
+            <div className="p-4 rounded-xl bg-foreground/[0.02] border border-border/30 space-y-3">
               <div className="flex items-center gap-2">
                 <Info className="w-4 h-4 text-primary shrink-0" />
                 <p className="font-semibold text-foreground text-sm">Information om beräkningen</p>
               </div>
-              <ul className="space-y-2 text-xs text-muted-foreground leading-relaxed">
+              <ul className="space-y-2 text-hint leading-relaxed">
                 <li>
-                  <span className="font-semibold text-foreground">Bemanningsbolagets marginal (15%):</span>{" "}
-                  Vi räknar med att bolaget behåller 15% av timpriset. Detta är en vanlig nivå vid ramavtalsuppdrag.
+                  <span className="font-semibold text-foreground">Bemanningsbolagets marginal ({marginLabel}):</span>{" "}
+                  Vi räknar med att bolaget behåller {marginLabel} av timpriset. {isEmployee ? "Detta är en vanlig nivå vid ramavtalsuppdrag." : `Spannet beror på om bemanningsföretaget bär vitesrisken (högre marginal) eller inte (lägre marginal).`}
                 </li>
                 {isEmployee && (
                   <li>
@@ -214,19 +582,28 @@ export default function ConsultantTrackContent({
                   Vi baserar månadsberäkningen på ett snitt om 167 arbetstimmar.
                 </li>
               </ul>
-              <p className="text-xs text-muted-foreground/70 pt-1">
-                Spannet {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h baseras på 10–15% marginal.
+              <p className="text-caption pt-1">
+                {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h baseras på {marginLabel} marginal.
               </p>
             </div>
-          </CardContent>
-        </Card>
+            <div className="p-4 rounded-xl bg-foreground/[0.02] border border-border/30 space-y-2">
+              <div className="flex items-center gap-2">
+                <Briefcase className="w-4 h-4 text-primary shrink-0" />
+                <p className="font-semibold text-foreground text-sm">Om marginalen överstiger {isEmployee ? "15%" : marginLabel}</p>
+              </div>
+              <p className="text-hint leading-relaxed">
+                Vissa bemanningsföretag tar en högre marginal. En del av den kan gå till kostnader som i vissa fall ligger på bemanningsföretaget, t.ex. resa och boende, introduktionskostnad, SITHS-kort samt HLR-utbildning.
+              </p>
+            </div>
+          </CollapsibleContent>
+        </Collapsible>
       )}
 
-      {/* 4. Förhandlingsrekommendationer (full) */}
+      {/* Marknadsnoteringar */}
       {isConsultantFullAccess && rec && (
-        <Card className="card-shadow">
-          <CardContent className="pt-6 space-y-4">
-            <SectionHeading icon={MessageSquareQuote} title="Förhandlingsrekommendationer" />
+        <div ref={registerSectionRef?.("negotiation_script")}>
+          <div className="rounded-xl bg-foreground/[0.02] border border-border/30 p-5 space-y-4">
+            <SectionHeading icon={BarChart3} title="Marknadsnoteringar" />
             <ul className="space-y-3">
               {getNegotiationTips(
                 isEmployee,
@@ -234,120 +611,78 @@ export default function ConsultantTrackContent({
                 delta ? Math.round((delta.monthly_vs_current_max / rec.recommended_monthly_max) * 100) : 0,
                 occupation
               ).map((tip, i) => (
-                <li key={i} className="flex items-start gap-3 text-sm">
+                <li key={i} className="flex items-start gap-3">
                   <ArrowRight className="w-4 h-4 text-accent mt-0.5 shrink-0" />
-                  <span className="text-muted-foreground">{tip}</span>
+                  <span className="text-body-sm">{tip}</span>
                 </li>
               ))}
             </ul>
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
-      {/* 5. Nästa steg (full) */}
+      {/* ═══ Personliga Insights ═══ */}
       {isConsultantFullAccess && rec && (
-        <Card className="card-shadow border-primary/20">
-          <CardContent className="pt-6 space-y-4">
-            <SectionHeading icon={Lightbulb} title="Nästa steg — vad du ska säga" />
-            <div className="space-y-4 text-sm text-muted-foreground">
-              <ScriptBlock
-                step={1}
-                title="Boka möte"
-                text="Kontakta din bemanningskonsult och begär ett lönesamtal. Nämn att du har gjort en marknadsanalys."
-              />
-              <ScriptBlock
-                step={2}
-                title="Presentera data"
-                text={`"Jag har tagit fram ramavtalspriset för ${occupation} i min region. Kundpriset ligger på ${fmt(marketRate)} kr/h, och med 15% marginal borde min ${isEmployee ? 'bruttolön' : 'fakturering'} landa på ${fmt(rec.recommended_hourly_min)}–${fmt(rec.recommended_hourly_max)} kr/h."`}
-              />
-              <ScriptBlock
-                step={3}
-                title="Ställ frågan"
-                text={`"Jag vill att min ersättning justeras till minst ${fmt(rec.recommended_hourly_min)} kr/h. Kan vi hitta en lösning?"`}
-              />
-              {isEmployee && (
-                <ScriptBlock
-                  step={4}
-                  title="Bonus: fråga om pension"
-                  text={`"Ingår tjänstepension på minst 4.5% i min anställning? Det är standard i ramavtalet."`}
-                />
-              )}
-            </div>
-          </CardContent>
-        </Card>
+        <div ref={registerSectionRef?.("personal_insights")}>
+          <PersonalInsights
+            r={r}
+            currentHourly={currentHourly}
+            isEmployee={isEmployee}
+            occupation={occupation}
+            userZone={userZone}
+            zoneComparisons={zoneComparisons}
+          />
+        </div>
       )}
 
-      {/* 6. Regionala jämförelser (full) */}
-      {isConsultantFullAccess && zoneComparisons && zoneComparisons.length > 0 && (
-        <Card className="card-shadow">
-          <CardContent className="pt-6 space-y-4">
-            <SectionHeading icon={MapPin} title="Regional jämförelse" />
-            <p className="text-sm text-muted-foreground">
-              Vad kunden betalar för {occupation} i alla zoner:
-            </p>
-            <div className="space-y-3">
-              {[...zoneComparisons]
-                .sort((a, b) => a.zon.localeCompare(b.zon))
-                .map((zc) => {
-                  const isUserZone = zc.zon === userZone;
-                  const zoneRate = zc.timpris_kund;
-                  const recHourly = isEmployee
-                    ? Math.round((zoneRate * 0.85) / 1.42)
-                    : Math.round(zoneRate * 0.85);
-                  const recHourlyHigh = isEmployee
-                    ? Math.round((zoneRate * 0.90) / 1.42)
-                    : Math.round(zoneRate * 0.90);
-                  const maxRate = Math.max(...zoneComparisons.map((z) => z.timpris_kund));
-                  const barWidth = Math.round((zoneRate / maxRate) * 100);
-                  return (
-                    <div key={zc.zon} className={`p-3 rounded-lg border ${isUserZone ? 'border-primary bg-primary/5' : 'border-border bg-muted/30'}`}>
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-semibold text-foreground">{zc.zon}</span>
-                          {isUserZone && (
-                            <span className="text-[10px] font-medium bg-primary text-primary-foreground px-1.5 py-0.5 rounded-full">
-                              Din zon
-                            </span>
-                          )}
-                        </div>
-                        <span className="text-sm font-bold text-foreground">{fmt(zoneRate)} kr/h</span>
-                      </div>
-                      <div className="h-2 bg-secondary rounded-full overflow-hidden mb-1.5">
-                        <div
-                          className={`h-full rounded-full transition-all duration-700 ${isUserZone ? 'bg-primary' : 'bg-muted-foreground/40'}`}
-                          style={{ width: `${barWidth}%` }}
-                        />
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        Rekommenderad {isEmployee ? 'bruttolön' : 'ersättning'}: {fmt(recHourly)}–{fmt(recHourlyHigh)} kr/h
-                      </p>
-                    </div>
-                  );
-                })}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* 7. Godkända leverantörer (full) */}
+      {/* ═══ Kollegajämförelse ═══ */}
       {isConsultantFullAccess && (
-        <Card className="card-shadow">
-          <CardContent className="pt-6 space-y-4">
-            <SectionHeading icon={Building2} title="Godkända leverantörer (ramavtal)" />
-            <p className="text-sm text-muted-foreground">
-              Bemanningsföretag med ramavtal för {occupation}:
-            </p>
-            <div className="grid grid-cols-2 gap-2">
-              {APPROVED_SUPPLIERS.map((s) => (
-                <div key={s} className="flex items-center gap-2 p-2 rounded-lg bg-muted/50 text-sm">
-                  <Briefcase className="w-3.5 h-3.5 text-primary shrink-0" />
-                  <span className="text-foreground">{s}</span>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+        <div ref={registerSectionRef?.("colleague_comparison")}>
+          <ColleagueComparison
+            occupation={occupation}
+            percentilePosition={
+              marketRate > 0 && currentHourly > 0
+                ? (Math.round((currentHourly / marketRate) * 100) >= 90 ? 85
+                  : Math.round((currentHourly / marketRate) * 100) >= 85 ? 70
+                  : Math.round((currentHourly / marketRate) * 100) >= 75 ? 45
+                  : Math.round((currentHourly / marketRate) * 100) >= 65 ? 25 : 10)
+                : 0
+            }
+          />
+        </div>
       )}
-    </>
+
+      {/* ═══ Förklarande text ═══ */}
+      <div className="rounded-xl bg-foreground/[0.02] border border-border/30 p-5 space-y-3">
+        <div className="flex items-center gap-2 mb-1">
+          <Info className="w-4 h-4 text-foreground/60" />
+          <span className="text-caption">Så fungerar analysen</span>
+        </div>
+        <ul className="space-y-2.5">
+          {[
+            "Regioner upphandlar bemanning genom ramavtal där ett kundpris fastställs.",
+            "Bemanningsföretaget ansvarar för rekrytering, administration och risk i uppdraget.",
+            "Konsultens ersättning är normalt en andel av detta pris.",
+            "CompCare analyserar ramavtal och historiska uppdrag för att visa hur ersättningen i genomsnitt fördelas.",
+          ].map((text, i) => (
+            <li key={i} className="flex items-start gap-2.5 text-hint leading-relaxed">
+              <span className="mt-1.5 w-1 h-1 rounded-full bg-muted-foreground/20 shrink-0" />
+              {text}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Invoice Review CTA */}
+      {isConsultantFullAccess && leadId && email && (
+        <InvoiceReviewCTA
+          leadId={leadId}
+          email={email}
+          role={occupation}
+          zone={userZone}
+          reportId={reportId}
+        />
+      )}
+    </div>
   );
 }
