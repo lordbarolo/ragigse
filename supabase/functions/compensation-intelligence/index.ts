@@ -895,18 +895,28 @@ serve(async (req) => {
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
   );
 
-  // Route: POST with action=publish-benchmarks
+  // Route: publish-benchmarks via body action or query param
   const url = new URL(req.url);
-  const action = url.searchParams.get("action");
+  const actionParam = url.searchParams.get("action");
 
-  if (req.method === "POST" && action === "publish-benchmarks") {
+  if (req.method === "POST") {
+    // Try to peek at body for action routing
+    const cloned = req.clone();
+    let bodyAction: string | undefined;
     try {
-      return await publishBenchmarks(supabase);
-    } catch (error) {
-      console.error("publish-benchmarks error:", error);
-      return new Response(JSON.stringify({ status: "error", message: error.message }), {
-        status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
+      const peek = await cloned.json();
+      bodyAction = peek?.action;
+    } catch { /* not json or no action */ }
+
+    if (actionParam === "publish-benchmarks" || bodyAction === "publish-benchmarks") {
+      try {
+        return await publishBenchmarks(supabase);
+      } catch (error) {
+        console.error("publish-benchmarks error:", error);
+        return new Response(JSON.stringify({ status: "error", message: error.message }), {
+          status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
     }
   }
 
