@@ -17,7 +17,6 @@ serve(async (req) => {
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
   );
 
-  // Return distinct canonical roles from normalized roles table
   const { data: roles, error } = await supabase
     .from("roles")
     .select("id, code, name, parent_role_id, active")
@@ -31,17 +30,14 @@ serve(async (req) => {
     });
   }
 
-  // Also return aliases grouped by role
   const { data: aliasData } = await supabase
     .from("role_aliases")
     .select("alias, role_id")
     .order("alias");
 
-  const roleIds = new Set((roles || []).map((r) => r.id));
   const aliasMap: Record<string, string[]> = {};
   for (const row of aliasData || []) {
     if (!aliasMap[row.role_id]) aliasMap[row.role_id] = [];
-    // Don't include alias if it equals the role name
     const role = (roles || []).find((r) => r.id === row.role_id);
     if (role && row.alias !== role.name) {
       aliasMap[row.role_id].push(row.alias);
