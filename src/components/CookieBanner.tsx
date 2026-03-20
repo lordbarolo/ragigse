@@ -20,7 +20,7 @@ export default function CookieBanner() {
       cleanup();
     };
 
-    const timer = setTimeout(show, 8000);
+    const timer = setTimeout(show, 10000);
 
     const onScroll = () => { if (window.scrollY > 50) show(); };
     window.addEventListener("scroll", onScroll, { passive: true });
