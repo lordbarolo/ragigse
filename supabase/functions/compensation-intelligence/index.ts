@@ -421,60 +421,67 @@ async function capLookupRate(
       ? { share_min: FORETAGARE_SHARE_MIN, share_max: FORETAGARE_SHARE_MAX, employer_factor: 1.42, hours_per_month: 167 }
       : undefined;
 
-  // 2. Look up rate using role.code (canonical name) and zone from resolved geography
+  // 2. Look up rate — try raw input first (rates uses singular forms), then canonical
   let timprisKund = 0;
   let matchedOccupation = role.name;
   let fallbackUsed: string | undefined;
   const zoneName = geo.zone_name;
+  const rawRole = (params.role ?? params.role_a) as string | undefined;
+
+  // Collect all names to try: raw input, canonical code, role name, and all aliases
+  const namesToTry: string[] = [];
+  if (rawRole) namesToTry.push(rawRole);
+  if (role.code !== rawRole) namesToTry.push(role.code);
+  if (role.name !== role.code && role.name !== rawRole) namesToTry.push(role.name);
 
   if (zoneName) {
-    // Exact match on canonical role code + zone
-    const { data: rateData } = await supabase
-      .from("rates")
-      .select("timpris_kund, yrkeskategori")
-      .eq("yrkeskategori", role.code)
-      .eq("zon", zoneName)
-      .limit(1);
-
-    if (rateData && rateData.length > 0) {
-      timprisKund = rateData[0].timpris_kund;
-      matchedOccupation = rateData[0].yrkeskategori;
-    }
-
-    // ILIKE on role name
-    if (timprisKund === 0) {
-      const { data: ilikeRate } = await supabase
+    // Try each name candidate for exact match
+    for (const candidate of namesToTry) {
+      if (timprisKund > 0) break;
+      const { data: rateData } = await supabase
         .from("rates")
         .select("timpris_kund, yrkeskategori")
-        .ilike("yrkeskategori", `%${role.name}%`)
+        .eq("yrkeskategori", candidate)
         .eq("zon", zoneName)
         .limit(1);
-      if (ilikeRate && ilikeRate.length > 0) {
-        timprisKund = ilikeRate[0].timpris_kund;
-        matchedOccupation = ilikeRate[0].yrkeskategori;
-        fallbackUsed = "ilike_role_name";
+      if (rateData && rateData.length > 0) {
+        timprisKund = rateData[0].timpris_kund;
+        matchedOccupation = rateData[0].yrkeskategori;
+        if (candidate !== namesToTry[0]) fallbackUsed = "canonical_match";
       }
     }
 
-    // Fallback: occupation → typ → zon
+    // ILIKE fallback on all candidates
     if (timprisKund === 0) {
-      const { data: anyRate } = await supabase
-        .from("rates")
-        .select("typ")
-        .eq("yrkeskategori", role.code)
-        .limit(1);
-
-      if (anyRate && anyRate.length > 0) {
-        const { data: zoneRate } = await supabase
+      for (const candidate of namesToTry) {
+        if (timprisKund > 0) break;
+        const { data: ilikeRate } = await supabase
           .from("rates")
-          .select("timpris_kund")
-          .eq("typ", anyRate[0].typ)
+          .select("timpris_kund, yrkeskategori")
+          .ilike("yrkeskategori", `%${candidate}%`)
           .eq("zon", zoneName)
           .limit(1);
+        if (ilikeRate && ilikeRate.length > 0) {
+          timprisKund = ilikeRate[0].timpris_kund;
+          matchedOccupation = ilikeRate[0].yrkeskategori;
+          fallbackUsed = "ilike";
+        }
+      }
+    }
 
-        if (zoneRate && zoneRate.length > 0) {
-          timprisKund = zoneRate[0].timpris_kund;
-          fallbackUsed = "typ_zon";
+    // Fallback: typ → zon
+    if (timprisKund === 0) {
+      for (const candidate of namesToTry) {
+        if (timprisKund > 0) break;
+        const { data: anyRate } = await supabase
+          .from("rates").select("typ").eq("yrkeskategori", candidate).limit(1);
+        if (anyRate && anyRate.length > 0) {
+          const { data: zoneRate } = await supabase
+            .from("rates").select("timpris_kund").eq("typ", anyRate[0].typ).eq("zon", zoneName).limit(1);
+          if (zoneRate && zoneRate.length > 0) {
+            timprisKund = zoneRate[0].timpris_kund;
+            fallbackUsed = "typ_zon";
+          }
         }
       }
     }
