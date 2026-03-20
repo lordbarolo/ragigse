@@ -26,9 +26,27 @@ interface PolicyResult {
   applied_rules: string[];
 }
 
+interface ResolvedRole {
+  role_id: string;
+  code: string;
+  name: string;
+  method: string;
+  confidence: number;
+}
+
+interface ResolvedGeography {
+  geo_id: string;
+  name: string;
+  type: string;
+  zone_name: string | null;
+  region_name: string | null;
+  method: string;
+  confidence: number;
+}
+
 interface ResolvedEntities {
-  role?: { canonical: string; method: string; confidence: number };
-  geography?: { kommun: string; zon: string; region: string; method: string; confidence: number };
+  role?: ResolvedRole;
+  geography?: ResolvedGeography;
 }
 
 interface CIRequest {
@@ -48,42 +66,62 @@ interface CIResponse {
   error?: string;
 }
 
-// ── Entity Resolver ──────────────────────────────────────────────────────────
+// ── Entity Resolver (normalized tables) ──────────────────────────────────────
 
 async function resolveRole(
   supabase: ReturnType<typeof createClient>,
   rawRole: string
-): Promise<{ canonical: string; method: string; confidence: number } | null> {
-  // 1. Exact match in role_aliases
+): Promise<ResolvedRole | null> {
+  // Helper to fetch role by id
+  async function fetchRole(roleId: string): Promise<ResolvedRole | null> {
+    const { data: role } = await supabase
+      .from("roles")
+      .select("id, code, name")
+      .eq("id", roleId)
+      .single();
+    if (!role) return null;
+    return { role_id: role.id, code: role.code, name: role.name, method: "", confidence: 0 };
+  }
+
+  // 1. Exact alias match
   const { data: exact } = await supabase
     .from("role_aliases")
-    .select("canonical_name")
+    .select("role_id")
     .ilike("alias", rawRole)
     .limit(1)
     .maybeSingle();
 
-  if (exact) return { canonical: exact.canonical_name, method: "alias_exact", confidence: 1.0 };
+  if (exact) {
+    const role = await fetchRole(exact.role_id);
+    if (role) return { ...role, method: "alias_exact", confidence: 1.0 };
+  }
 
-  // 2. ILIKE fuzzy
+  // 2. Fuzzy alias match
   const { data: fuzzy } = await supabase
     .from("role_aliases")
-    .select("canonical_name")
+    .select("role_id")
     .ilike("alias", `%${rawRole}%`)
     .limit(1)
     .maybeSingle();
 
-  if (fuzzy) return { canonical: fuzzy.canonical_name, method: "alias_fuzzy", confidence: 0.8 };
+  if (fuzzy) {
+    const role = await fetchRole(fuzzy.role_id);
+    if (role) return { ...role, method: "alias_fuzzy", confidence: 0.8 };
+  }
 
-  // 3. Stem fallback
+  // 3. Stem match on roles.name directly
   const stem = rawRole.trim().toLowerCase().replace(/(orna|arna|erna|or|ar|er|a|e|n)$/u, "");
   if (stem.length >= 4) {
     const { data: stemMatch } = await supabase
-      .from("role_aliases")
-      .select("canonical_name")
-      .ilike("canonical_name", `%${stem}%`)
+      .from("roles")
+      .select("id, code, name")
+      .ilike("name", `%${stem}%`)
+      .eq("active", true)
       .limit(1)
       .maybeSingle();
-    if (stemMatch) return { canonical: stemMatch.canonical_name, method: "stem", confidence: 0.6 };
+    if (stemMatch) {
+      return { role_id: stemMatch.id, code: stemMatch.code, name: stemMatch.name, method: "stem", confidence: 0.6 };
+    }
   }
 
   return null;
@@ -92,62 +130,103 @@ async function resolveRole(
 async function resolveGeography(
   supabase: ReturnType<typeof createClient>,
   rawGeo: string
-): Promise<{ kommun: string; zon: string; region: string; method: string; confidence: number } | null> {
-  // 1. Exact match in geography_aliases
+): Promise<ResolvedGeography | null> {
+  // Helper to fetch geo and build hierarchy
+  async function fetchGeo(geoId: string, method: string, confidence: number): Promise<ResolvedGeography | null> {
+    const { data: g } = await supabase
+      .from("geographies")
+      .select("id, name, type, code, parent_id")
+      .eq("id", geoId)
+      .single();
+    if (!g) return null;
+    const hierarchy = await resolveGeoHierarchy(supabase, g);
+    return { geo_id: g.id, name: g.name, type: g.type, ...hierarchy, method, confidence };
+  }
+
+  // 1. Exact alias match
   const { data: exact } = await supabase
     .from("geography_aliases")
-    .select("canonical_kommun, canonical_zon, canonical_region")
+    .select("geo_id")
     .ilike("alias", rawGeo)
     .limit(1)
     .maybeSingle();
 
   if (exact) {
-    return {
-      kommun: exact.canonical_kommun,
-      zon: exact.canonical_zon,
-      region: exact.canonical_region,
-      method: "alias_exact",
-      confidence: 1.0,
-    };
+    const geo = await fetchGeo(exact.geo_id, "alias_exact", 1.0);
+    if (geo) return geo;
   }
 
-  // 2. Fuzzy match
+  // 2. Fuzzy alias match
   const { data: fuzzy } = await supabase
     .from("geography_aliases")
-    .select("canonical_kommun, canonical_zon, canonical_region")
+    .select("geo_id")
     .ilike("alias", `%${rawGeo}%`)
     .limit(1)
     .maybeSingle();
 
   if (fuzzy) {
-    return {
-      kommun: fuzzy.canonical_kommun,
-      zon: fuzzy.canonical_zon,
-      region: fuzzy.canonical_region,
-      method: "alias_fuzzy",
-      confidence: 0.8,
-    };
+    const geo = await fetchGeo(fuzzy.geo_id, "alias_fuzzy", 0.8);
+    if (geo) return geo;
   }
 
-  // 3. Direct locations table fallback
-  const { data: locData } = await supabase
-    .from("locations")
-    .select("kommun, zon, region")
-    .ilike("kommun", rawGeo)
+  // 3. Direct geographies lookup by name
+  const { data: direct } = await supabase
+    .from("geographies")
+    .select("id, name, type, code, parent_id")
+    .ilike("name", rawGeo)
     .limit(1)
     .maybeSingle();
 
-  if (locData) {
-    return {
-      kommun: locData.kommun,
-      zon: locData.zon,
-      region: locData.region,
-      method: "locations_direct",
-      confidence: 0.7,
-    };
+  if (direct) {
+    const hierarchy = await resolveGeoHierarchy(supabase, direct);
+    return { geo_id: direct.id, name: direct.name, type: direct.type, ...hierarchy, method: "geo_direct", confidence: 0.7 };
   }
 
   return null;
+}
+
+/**
+ * Walk up the geographies parent chain to find zone and region names.
+ */
+async function resolveGeoHierarchy(
+  supabase: ReturnType<typeof createClient>,
+  geo: { id: string; name: string; type: string; parent_id: string | null }
+): Promise<{ zone_name: string | null; region_name: string | null }> {
+  let zone_name: string | null = null;
+  let region_name: string | null = null;
+
+  // If this IS a zone or region, set directly
+  if (geo.type === "zone") zone_name = geo.name;
+  if (geo.type === "region") region_name = geo.name;
+
+  // Walk up parent chain
+  let parentId = geo.parent_id;
+  let depth = 0;
+  while (parentId && depth < 5) {
+    const { data: parent } = await supabase
+      .from("geographies")
+      .select("id, name, type, parent_id")
+      .eq("id", parentId)
+      .single();
+    if (!parent) break;
+    if (parent.type === "zone") zone_name = parent.name;
+    if (parent.type === "region") region_name = parent.name;
+    parentId = parent.parent_id;
+    depth++;
+  }
+
+  // For municipalities: also find zone via locations table (since zones aren't in the parent chain)
+  if (geo.type === "municipality" && !zone_name) {
+    const { data: loc } = await supabase
+      .from("locations")
+      .select("zon")
+      .ilike("kommun", geo.name)
+      .limit(1)
+      .maybeSingle();
+    if (loc) zone_name = loc.zon;
+  }
+
+  return { zone_name, region_name };
 }
 
 // ── Policy Layer ─────────────────────────────────────────────────────────────
@@ -202,9 +281,6 @@ function checkQueryBreadth(params: Record<string, unknown>, capability: string):
     if (!params.role) {
       return { pass: false, rule: "query_breadth", reason: "Role parameter is required" };
     }
-    if (!params.sector) {
-      return { pass: false, rule: "query_breadth", reason: "Sector parameter is required" };
-    }
   }
   return { pass: true, rule: "query_breadth" };
 }
@@ -232,13 +308,12 @@ async function checkAntiEnumeration(
     return { pass: true, rule: "anti_enumeration" };
   }
 
-  // Check if same geography but different roles
   const geos = new Set<string>();
   const roles = new Set<string>();
   for (const q of recentQueries) {
     const entities = q.resolved_entities_json as ResolvedEntities | null;
-    if (entities?.geography) geos.add(entities.geography.kommun);
-    if (entities?.role) roles.add(entities.role.canonical);
+    if (entities?.geography) geos.add(entities.geography.geo_id);
+    if (entities?.role) roles.add(entities.role.role_id);
   }
 
   if (geos.size <= 1 && roles.size >= profile.policy_rules.anti_enum_max_sequential) {
@@ -255,7 +330,6 @@ async function evaluatePolicy(
   clientIp: string,
   clientType: string
 ): Promise<{ result: PolicyResult; profile: ClientProfile }> {
-  // Load client profile
   const { data: profileData } = await supabase
     .from("client_profiles")
     .select("*")
@@ -280,17 +354,10 @@ async function evaluatePolicy(
       };
 
   const rules: PolicyRuleResult[] = [];
-
-  // 1. Capability access
   rules.push(checkCapabilityAccess(capability, profile));
-
-  // 2. Query breadth
   rules.push(checkQueryBreadth(params, capability));
-
-  // 3. Rate limit
   rules.push(await checkRateLimit(supabase, clientIp, profile));
 
-  // 4. Anti-enumeration (only for lookup capabilities)
   if (capability === "lookup_rate" || capability === "compare_roles") {
     rules.push(await checkAntiEnumeration(supabase, clientIp, capability, profile));
   }
@@ -300,29 +367,21 @@ async function evaluatePolicy(
 
   if (failedRules.length > 0) {
     return {
-      result: {
-        status: "blocked",
-        reason: failedRules[0].reason,
-        applied_rules: appliedRules,
-      },
+      result: { status: "blocked", reason: failedRules[0].reason, applied_rules: appliedRules },
       profile,
     };
   }
 
-  return {
-    result: { status: "allowed", applied_rules: appliedRules },
-    profile,
-  };
+  return { result: { status: "allowed", applied_rules: appliedRules }, profile };
 }
 
 // ── Capability Layer ─────────────────────────────────────────────────────────
 
-// HARD RULE: These capabilities ONLY read from these tables
 const ALLOWED_TABLES = {
-  lookup_rate: ["rates", "locations", "margin_models"],
-  compare_roles: ["rates", "locations", "margin_models"],
-  salary_benchmark: ["salary_benchmarks"],
-  salary_position: ["salary_benchmarks"],
+  lookup_rate: ["rates", "margin_models", "geographies", "roles"],
+  compare_roles: ["rates", "margin_models", "geographies", "roles"],
+  salary_benchmark: ["salary_benchmarks", "roles", "geographies"],
+  salary_position: ["salary_benchmarks", "roles", "geographies"],
 } as const;
 
 async function capLookupRate(
@@ -352,7 +411,6 @@ async function capLookupRate(
       }
     : undefined;
 
-  // Foretagare adjustment
   const FORETAGARE_SHARE_MIN = 0.85;
   const FORETAGARE_SHARE_MAX = 0.92;
   const effectiveModel: MarginModel | undefined = baseModel
@@ -363,74 +421,68 @@ async function capLookupRate(
       ? { share_min: FORETAGARE_SHARE_MIN, share_max: FORETAGARE_SHARE_MAX, employer_factor: 1.42, hours_per_month: 167 }
       : undefined;
 
-  // 2. Look up rate with fallback chain
+  // 2. Look up rate — try raw input first (rates uses singular forms), then canonical
   let timprisKund = 0;
-  let matchedOccupation = role.canonical;
+  let matchedOccupation = role.name;
   let fallbackUsed: string | undefined;
+  const zoneName = geo.zone_name;
   const rawRole = (params.role ?? params.role_a) as string | undefined;
 
-  // Try exact match on canonical name
-  const { data: rateData } = await supabase
-    .from("rates")
-    .select("timpris_kund, yrkeskategori")
-    .eq("yrkeskategori", role.canonical)
-    .eq("zon", geo.zon)
-    .limit(1);
+  // Collect all names to try: raw input, canonical code, role name, and all aliases
+  const namesToTry: string[] = [];
+  if (rawRole) namesToTry.push(rawRole);
+  if (role.code !== rawRole) namesToTry.push(role.code);
+  if (role.name !== role.code && role.name !== rawRole) namesToTry.push(role.name);
 
-  if (rateData && rateData.length > 0) {
-    timprisKund = rateData[0].timpris_kund;
-    matchedOccupation = rateData[0].yrkeskategori;
-  }
-
-  // Try ILIKE on canonical name
-  if (timprisKund === 0) {
-    const { data: ilikeRate } = await supabase
-      .from("rates")
-      .select("timpris_kund, yrkeskategori")
-      .ilike("yrkeskategori", `%${role.canonical}%`)
-      .eq("zon", geo.zon)
-      .limit(1);
-    if (ilikeRate && ilikeRate.length > 0) {
-      timprisKund = ilikeRate[0].timpris_kund;
-      matchedOccupation = ilikeRate[0].yrkeskategori;
-      fallbackUsed = "ilike_canonical";
-    }
-  }
-
-  // Try raw input directly against rates
-  if (timprisKund === 0 && rawRole && rawRole !== role.canonical) {
-    const { data: rawRate } = await supabase
-      .from("rates")
-      .select("timpris_kund, yrkeskategori")
-      .ilike("yrkeskategori", `%${rawRole}%`)
-      .eq("zon", geo.zon)
-      .limit(1);
-    if (rawRate && rawRate.length > 0) {
-      timprisKund = rawRate[0].timpris_kund;
-      matchedOccupation = rawRate[0].yrkeskategori;
-      fallbackUsed = "raw_input";
-    }
-  }
-
-  // Fallback: occupation → typ → zon
-  if (timprisKund === 0) {
-    const { data: anyRate } = await supabase
-      .from("rates")
-      .select("typ")
-      .eq("yrkeskategori", role.canonical)
-      .limit(1);
-
-    if (anyRate && anyRate.length > 0) {
-      const { data: zoneRate } = await supabase
+  if (zoneName) {
+    // Try each name candidate for exact match
+    for (const candidate of namesToTry) {
+      if (timprisKund > 0) break;
+      const { data: rateData } = await supabase
         .from("rates")
-        .select("timpris_kund")
-        .eq("typ", anyRate[0].typ)
-        .eq("zon", geo.zon)
+        .select("timpris_kund, yrkeskategori")
+        .eq("yrkeskategori", candidate)
+        .eq("zon", zoneName)
         .limit(1);
+      if (rateData && rateData.length > 0) {
+        timprisKund = rateData[0].timpris_kund;
+        matchedOccupation = rateData[0].yrkeskategori;
+        if (candidate !== namesToTry[0]) fallbackUsed = "canonical_match";
+      }
+    }
 
-      if (zoneRate && zoneRate.length > 0) {
-        timprisKund = zoneRate[0].timpris_kund;
-        fallbackUsed = "typ_zon";
+    // ILIKE fallback on all candidates
+    if (timprisKund === 0) {
+      for (const candidate of namesToTry) {
+        if (timprisKund > 0) break;
+        const { data: ilikeRate } = await supabase
+          .from("rates")
+          .select("timpris_kund, yrkeskategori")
+          .ilike("yrkeskategori", `%${candidate}%`)
+          .eq("zon", zoneName)
+          .limit(1);
+        if (ilikeRate && ilikeRate.length > 0) {
+          timprisKund = ilikeRate[0].timpris_kund;
+          matchedOccupation = ilikeRate[0].yrkeskategori;
+          fallbackUsed = "ilike";
+        }
+      }
+    }
+
+    // Fallback: typ → zon
+    if (timprisKund === 0) {
+      for (const candidate of namesToTry) {
+        if (timprisKund > 0) break;
+        const { data: anyRate } = await supabase
+          .from("rates").select("typ").eq("yrkeskategori", candidate).limit(1);
+        if (anyRate && anyRate.length > 0) {
+          const { data: zoneRate } = await supabase
+            .from("rates").select("timpris_kund").eq("typ", anyRate[0].typ).eq("zon", zoneName).limit(1);
+          if (zoneRate && zoneRate.length > 0) {
+            timprisKund = zoneRate[0].timpris_kund;
+            fallbackUsed = "typ_zon";
+          }
+        }
       }
     }
   }
@@ -446,9 +498,11 @@ async function capLookupRate(
   return {
     data: {
       occupation: matchedOccupation,
-      kommun: geo.kommun,
-      zon: geo.zon,
-      region: geo.region,
+      role_id: role.role_id,
+      geo_id: geo.geo_id,
+      kommun: geo.name,
+      zon: geo.zone_name,
+      region: geo.region_name,
       employment_type: empType,
       rate_customer_sek_per_hour: timprisKund,
       consultant_share_min: m.share_min,
@@ -517,67 +571,88 @@ async function capSalaryBenchmark(
   params: Record<string, unknown>,
   sampleSizeMin: number
 ): Promise<{ data: Record<string, unknown>; source_metadata: Record<string, unknown>; fallback_used?: string }> {
-  // HARD RULE: ONLY salary_benchmarks table
-  const occupation = resolved.role!.canonical;
-  const sector = params.sector as string;
-  const selectCols = "occupation, sector, average_monthly, percentile_25, percentile_50, percentile_75, region, year, source, sample_size";
+  // HARD RULE: ONLY salary_benchmarks table, threshold_passed = true
+  const roleId = resolved.role!.role_id;
+  const roleName = resolved.role!.name;
+  const geoId = resolved.geography?.geo_id ?? null;
+  const regionId = resolved.geography?.geo_id ?? null;
+
+  const selectCols = "id, period_key, role_id, region_id, municipality_id, sample_size, mean_salary, median_salary, p25_salary, p75_salary";
 
   let data: Record<string, unknown> | null = null;
   let fallbackUsed: string | undefined;
 
-  // 1. Exact match
-  const { data: exact } = await supabase
-    .from("salary_benchmarks")
-    .select(selectCols)
-    .eq("occupation", occupation)
-    .eq("sector", sector)
-    .order("year", { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  if (exact) {
-    data = exact;
-  }
-
-  // 2. ILIKE
-  if (!data) {
-    const { data: fuzzy } = await supabase
+  // 1. Exact match: role_id + municipality_id (if geo resolved to municipality)
+  if (geoId && resolved.geography?.type === "municipality") {
+    const { data: exact } = await supabase
       .from("salary_benchmarks")
       .select(selectCols)
-      .eq("sector", sector)
-      .ilike("occupation", `%${occupation}%`)
-      .order("year", { ascending: false })
+      .eq("role_id", roleId)
+      .eq("municipality_id", geoId)
+      .eq("threshold_passed", true)
+      .order("period_key", { ascending: false })
       .limit(1)
       .maybeSingle();
-    if (fuzzy) { data = fuzzy; fallbackUsed = "ilike"; }
+    if (exact) data = exact;
   }
 
-  // 3. Stem
-  if (!data) {
-    const stem = occupation.trim().toLowerCase().replace(/(orna|arna|erna|or|ar|er|a|e|n)$/u, "");
-    if (stem.length >= 4) {
-      const { data: stemMatch } = await supabase
-        .from("salary_benchmarks")
-        .select(selectCols)
-        .eq("sector", sector)
-        .ilike("occupation", `%${stem}%`)
-        .order("year", { ascending: false })
+  // 2. Fallback: role_id + region_id
+  if (!data && resolved.geography) {
+    // Find the region geo_id from hierarchy
+    let regionGeoId: string | null = null;
+    if (resolved.geography.type === "region") {
+      regionGeoId = resolved.geography.geo_id;
+    } else if (resolved.geography.region_name) {
+      const { data: regionGeo } = await supabase
+        .from("geographies")
+        .select("id")
+        .eq("type", "region")
+        .eq("name", resolved.geography.region_name)
         .limit(1)
         .maybeSingle();
-      if (stemMatch) { data = stemMatch; fallbackUsed = "stem"; }
+      if (regionGeo) regionGeoId = regionGeo.id;
+    }
+
+    if (regionGeoId) {
+      const { data: regionMatch } = await supabase
+        .from("salary_benchmarks")
+        .select(selectCols)
+        .eq("role_id", roleId)
+        .eq("region_id", regionGeoId)
+        .eq("threshold_passed", true)
+        .order("period_key", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (regionMatch) { data = regionMatch; fallbackUsed = "region"; }
     }
   }
 
-  // 4. Cross-sector fallback
+  // 3. Fallback: role_id only (national level — no geo filter)
   if (!data) {
-    const { data: crossSector } = await supabase
+    const { data: national } = await supabase
       .from("salary_benchmarks")
       .select(selectCols)
-      .ilike("occupation", `%${occupation}%`)
-      .order("year", { ascending: false })
+      .eq("role_id", roleId)
+      .eq("threshold_passed", true)
+      .is("municipality_id", null)
+      .is("region_id", null)
+      .order("period_key", { ascending: false })
       .limit(1)
       .maybeSingle();
-    if (crossSector) { data = crossSector; fallbackUsed = "cross_sector"; }
+    if (national) { data = national; fallbackUsed = fallbackUsed ? `${fallbackUsed}→national` : "national"; }
+  }
+
+  // 4. Last resort: role_id only, any geo
+  if (!data) {
+    const { data: anyGeo } = await supabase
+      .from("salary_benchmarks")
+      .select(selectCols)
+      .eq("role_id", roleId)
+      .eq("threshold_passed", true)
+      .order("period_key", { ascending: false })
+      .limit(1)
+      .maybeSingle();
+    if (anyGeo) { data = anyGeo; fallbackUsed = "any_geo"; }
   }
 
   if (!data) {
@@ -590,25 +665,32 @@ async function capSalaryBenchmark(
     throw new Error("INSUFFICIENT_SAMPLE");
   }
 
-  const p25 = (data.percentile_25 as number) ?? Math.round((data.average_monthly as number) * 0.92);
-  const p50 = (data.percentile_50 as number) ?? (data.average_monthly as number);
-  const p75 = (data.percentile_75 as number) ?? Math.round((data.average_monthly as number) * 1.08);
+  const p25 = data.p25_salary as number | null;
+  const median = data.median_salary as number | null;
+  const p75 = data.p75_salary as number | null;
+  const mean = data.mean_salary as number | null;
+
+  // Use mean as fallback for missing percentiles
+  const effectiveMedian = median ?? mean ?? 0;
+  const effectiveP25 = p25 ?? Math.round(effectiveMedian * 0.92);
+  const effectiveP75 = p75 ?? Math.round(effectiveMedian * 1.08);
 
   return {
     data: {
-      occupation: data.occupation,
-      sector: data.sector,
-      region: data.region,
-      year: data.year,
-      source: data.source,
-      percentile_25: p25,
-      percentile_50: p50,
-      percentile_75: p75,
+      occupation: roleName,
+      role_id: roleId,
+      region_id: data.region_id,
+      municipality_id: data.municipality_id,
+      period_key: data.period_key,
+      percentile_25: effectiveP25,
+      percentile_50: effectiveMedian,
+      percentile_75: effectiveP75,
     },
     source_metadata: {
-      source: data.source ?? "SCB lönestatistik",
+      source: "salary_benchmarks (published layer)",
       tables_used: ALLOWED_TABLES.salary_benchmark,
       sample_size: sampleSize > 0 ? sampleSize : null,
+      period_key: data.period_key,
     },
     fallback_used: fallbackUsed,
   };
@@ -626,10 +708,10 @@ async function capSalaryPosition(
 
   const p75 = benchResult.data.percentile_75 as number;
   const gap = p75 - currentSalary;
-  const gapPct = Math.round((gap / currentSalary) * 100);
+  const gapPct = currentSalary > 0 ? Math.round((gap / currentSalary) * 100) : 0;
 
   let category: "small" | "medium" | "large";
-  const gapRatio = gap / currentSalary;
+  const gapRatio = currentSalary > 0 ? gap / currentSalary : 0;
   if (gapRatio <= 0.05) category = "small";
   else if (gapRatio <= 0.15) category = "medium";
   else category = "large";
@@ -750,12 +832,11 @@ serve(async (req) => {
       );
     }
 
-    // ── 3. Entity resolution ──
+    // ── 3. Entity resolution (normalized tables) ──
     const resolved: ResolvedEntities = {};
     let resolutionMethod = "none";
     let confidenceScore = 1.0;
 
-    // Resolve role
     const rawRole = (params.role ?? params.role_a) as string | undefined;
     if (rawRole) {
       const roleResult = await resolveRole(supabase, rawRole);
@@ -765,7 +846,6 @@ serve(async (req) => {
       confidenceScore = Math.min(confidenceScore, roleResult.confidence);
     }
 
-    // Resolve geography
     const rawGeo = params.geography as string | undefined;
     if (rawGeo) {
       const geoResult = await resolveGeography(supabase, rawGeo);
@@ -834,7 +914,6 @@ serve(async (req) => {
     const errMsg = error.message || "Unknown error";
     const mapped = ERROR_MAP[errMsg];
 
-    // Log error
     await logQuery(supabase, {
       client_type: "unknown",
       client_ip: clientIp,

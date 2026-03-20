@@ -17,11 +17,12 @@ serve(async (req) => {
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
   );
 
-  // Return distinct canonical role names (no prices, no rates)
-  const { data, error } = await supabase
-    .from("role_aliases")
-    .select("canonical_name")
-    .order("canonical_name");
+  // Return distinct canonical roles from normalized roles table
+  const { data: roles, error } = await supabase
+    .from("roles")
+    .select("id, code, name, parent_role_id, active")
+    .eq("active", true)
+    .order("name");
 
   if (error) {
     return new Response(JSON.stringify({ error: error.message }), {
@@ -30,28 +31,30 @@ serve(async (req) => {
     });
   }
 
-  // Deduplicate
-  const uniqueRoles = [...new Set((data || []).map((r) => r.canonical_name))];
-
-  // Also return aliases grouped by canonical name
+  // Also return aliases grouped by role
   const { data: aliasData } = await supabase
     .from("role_aliases")
-    .select("alias, canonical_name")
+    .select("alias, role_id")
     .order("alias");
 
+  const roleIds = new Set((roles || []).map((r) => r.id));
   const aliasMap: Record<string, string[]> = {};
   for (const row of aliasData || []) {
-    if (row.alias !== row.canonical_name) {
-      if (!aliasMap[row.canonical_name]) aliasMap[row.canonical_name] = [];
-      aliasMap[row.canonical_name].push(row.alias);
+    if (!aliasMap[row.role_id]) aliasMap[row.role_id] = [];
+    // Don't include alias if it equals the role name
+    const role = (roles || []).find((r) => r.id === row.role_id);
+    if (role && row.alias !== role.name) {
+      aliasMap[row.role_id].push(row.alias);
     }
   }
 
   return new Response(
     JSON.stringify({
-      roles: uniqueRoles.map((name) => ({
-        canonical_name: name,
-        aliases: aliasMap[name] || [],
+      roles: (roles || []).map((r) => ({
+        id: r.id,
+        code: r.code,
+        name: r.name,
+        aliases: aliasMap[r.id] || [],
       })),
     }),
     { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }

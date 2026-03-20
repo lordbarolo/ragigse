@@ -17,11 +17,11 @@ serve(async (req) => {
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
   );
 
-  // Return geographies from locations table (names only, no rates)
+  // Return geographies from normalized geographies table with hierarchy
   const { data, error } = await supabase
-    .from("locations")
-    .select("kommun, zon, region")
-    .order("kommun");
+    .from("geographies")
+    .select("id, type, name, code, parent_id")
+    .order("name");
 
   if (error) {
     return new Response(JSON.stringify({ error: error.message }), {
@@ -30,29 +30,37 @@ serve(async (req) => {
     });
   }
 
-  // Group by region
-  const byRegion: Record<string, { kommuner: string[]; zoner: string[] }> = {};
-  for (const loc of data || []) {
-    if (!byRegion[loc.region]) byRegion[loc.region] = { kommuner: [], zoner: [] };
-    if (!byRegion[loc.region].kommuner.includes(loc.kommun)) {
-      byRegion[loc.region].kommuner.push(loc.kommun);
-    }
-    if (!byRegion[loc.region].zoner.includes(loc.zon)) {
-      byRegion[loc.region].zoner.push(loc.zon);
+  const all = data || [];
+
+  const nations = all.filter((g) => g.type === "nation");
+  const regions = all.filter((g) => g.type === "region");
+  const zones = all.filter((g) => g.type === "zone");
+  const municipalities = all.filter((g) => g.type === "municipality");
+
+  // Group municipalities by region (parent_id)
+  const byRegion: Record<string, { id: string; region: string; municipalities: string[]; zones: string[] }> = {};
+  for (const r of regions) {
+    byRegion[r.id] = { id: r.id, region: r.name, municipalities: [], zones: [] };
+  }
+
+  for (const m of municipalities) {
+    if (m.parent_id && byRegion[m.parent_id]) {
+      byRegion[m.parent_id].municipalities.push(m.name);
     }
   }
 
-  const zones = [...new Set((data || []).map((l) => l.zon))].sort();
-
+  // Find zone for each municipality via locations table (zones are at nation level, not region)
+  // Just list zones separately
   return new Response(
     JSON.stringify({
-      total_kommuner: (data || []).length,
-      zones,
-      regions: Object.entries(byRegion).map(([region, info]) => ({
-        region,
-        kommuner: info.kommuner.sort(),
-        zoner: info.zoner.sort(),
-      })).sort((a, b) => a.region.localeCompare(b.region, "sv")),
+      total_municipalities: municipalities.length,
+      zones: zones.map((z) => z.name).sort(),
+      regions: Object.values(byRegion)
+        .map((r) => ({
+          region: r.region,
+          municipalities: r.municipalities.sort(),
+        }))
+        .sort((a, b) => a.region.localeCompare(b.region, "sv")),
     }),
     { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
   );
