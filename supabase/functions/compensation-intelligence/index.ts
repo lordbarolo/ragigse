@@ -13,7 +13,36 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-// ── Types ────────────────────────────────────────────────────────────────────
+// ── Standardized Types ──────────────────────────────────────────────────────
+
+interface CIError {
+  code: string;
+  message: string;
+}
+
+interface CISource {
+  name: string;
+  version: string;
+  confidence: string;
+}
+
+interface CIPolicy {
+  status: "allowed" | "fallback" | "blocked";
+  client_type: string;
+  fallback_applied: boolean;
+  fallback_level: string | null;
+}
+
+interface CIResponseEnvelope {
+  query_id: string | null;
+  capability: string;
+  status: "success" | "error";
+  data: Record<string, unknown> | null;
+  source: CISource | null;
+  policy: CIPolicy;
+  errors: CIError[];
+}
+
 interface PolicyRuleResult {
   pass: boolean;
   rule: string;
@@ -56,14 +85,60 @@ interface CIRequest {
   client_type?: string;
 }
 
-interface CIResponse {
-  query_id?: string;
-  capability: string;
-  version: number;
-  data: Record<string, unknown> | null;
-  source_metadata?: Record<string, unknown>;
-  policy_status: PolicyResult;
-  error?: string;
+interface ClientProfile {
+  rate_limit_per_minute: number;
+  rate_limit_per_day: number;
+  max_entities_per_query: number;
+  allowed_capabilities: string[];
+  policy_rules: {
+    sample_size_min: number;
+    anti_enum_window_minutes: number;
+    anti_enum_max_sequential: number;
+  };
+}
+
+// ── Error Codes ──────────────────────────────────────────────────────────────
+
+const ERROR_CODES: Record<string, { status: number; message: string }> = {
+  ENTITY_NOT_RESOLVED: { status: 404, message: "Kunde inte matcha en eller flera entiteter (roll eller geografi)." },
+  INSUFFICIENT_SAMPLE: { status: 422, message: "För få datapunkter för att visa benchmark på denna nivå." },
+  QUERY_TOO_BROAD: { status: 400, message: "Frågan är för bred — ange roll och/eller geografi." },
+  ENUMERATION_RISK: { status: 429, message: "För många sekventiella uppslag — vänta och försök igen." },
+  RATE_LIMITED: { status: 429, message: "Rate limit nådd — vänta och försök igen." },
+  CAPABILITY_NOT_ALLOWED: { status: 403, message: "Denna capability är inte tillåten för din klientprofil." },
+  NO_DATA_FOUND: { status: 404, message: "Inga data hittades för angiven kombination." },
+  INVALID_INPUT: { status: 400, message: "Ogiltig indata — kontrollera parametrarna." },
+  INTERNAL_ERROR: { status: 500, message: "Internt serverfel." },
+};
+
+function makeError(code: string, overrideMessage?: string): CIError {
+  const def = ERROR_CODES[code] ?? ERROR_CODES.INTERNAL_ERROR;
+  return { code, message: overrideMessage ?? def.message };
+}
+
+function errorHttpStatus(code: string): number {
+  return ERROR_CODES[code]?.status ?? 500;
+}
+
+// ── Helper: build envelope ───────────────────────────────────────────────────
+
+function buildResponse(
+  queryId: string | null,
+  capability: string,
+  data: Record<string, unknown> | null,
+  source: CISource | null,
+  policy: CIPolicy,
+  errors: CIError[]
+): CIResponseEnvelope {
+  return {
+    query_id: queryId,
+    capability,
+    status: errors.length > 0 ? "error" : "success",
+    data: errors.length > 0 ? null : data,
+    source: errors.length > 0 ? null : source,
+    policy,
+    errors,
+  };
 }
 
 // ── Entity Resolver (normalized tables) ──────────────────────────────────────
@@ -72,7 +147,6 @@ async function resolveRole(
   supabase: ReturnType<typeof createClient>,
   rawRole: string
 ): Promise<ResolvedRole | null> {
-  // Helper to fetch role by id
   async function fetchRole(roleId: string): Promise<ResolvedRole | null> {
     const { data: role } = await supabase
       .from("roles")
@@ -90,7 +164,6 @@ async function resolveRole(
     .ilike("alias", rawRole)
     .limit(1)
     .maybeSingle();
-
   if (exact) {
     const role = await fetchRole(exact.role_id);
     if (role) return { ...role, method: "alias_exact", confidence: 1.0 };
@@ -103,13 +176,12 @@ async function resolveRole(
     .ilike("alias", `%${rawRole}%`)
     .limit(1)
     .maybeSingle();
-
   if (fuzzy) {
     const role = await fetchRole(fuzzy.role_id);
     if (role) return { ...role, method: "alias_fuzzy", confidence: 0.8 };
   }
 
-  // 3. Stem match on roles.name directly
+  // 3. Stem match on roles.name
   const stem = rawRole.trim().toLowerCase().replace(/(orna|arna|erna|or|ar|er|a|e|n)$/u, "");
   if (stem.length >= 4) {
     const { data: stemMatch } = await supabase
@@ -131,7 +203,6 @@ async function resolveGeography(
   supabase: ReturnType<typeof createClient>,
   rawGeo: string
 ): Promise<ResolvedGeography | null> {
-  // Helper to fetch geo and build hierarchy
   async function fetchGeo(geoId: string, method: string, confidence: number): Promise<ResolvedGeography | null> {
     const { data: g } = await supabase
       .from("geographies")
@@ -143,40 +214,37 @@ async function resolveGeography(
     return { geo_id: g.id, name: g.name, type: g.type, ...hierarchy, method, confidence };
   }
 
-  // 1. Exact alias match
+  // 1. Exact alias
   const { data: exact } = await supabase
     .from("geography_aliases")
     .select("geo_id")
     .ilike("alias", rawGeo)
     .limit(1)
     .maybeSingle();
-
   if (exact) {
     const geo = await fetchGeo(exact.geo_id, "alias_exact", 1.0);
     if (geo) return geo;
   }
 
-  // 2. Fuzzy alias match
+  // 2. Fuzzy alias
   const { data: fuzzy } = await supabase
     .from("geography_aliases")
     .select("geo_id")
     .ilike("alias", `%${rawGeo}%`)
     .limit(1)
     .maybeSingle();
-
   if (fuzzy) {
     const geo = await fetchGeo(fuzzy.geo_id, "alias_fuzzy", 0.8);
     if (geo) return geo;
   }
 
-  // 3. Direct geographies lookup by name
+  // 3. Direct geographies lookup
   const { data: direct } = await supabase
     .from("geographies")
     .select("id, name, type, code, parent_id")
     .ilike("name", rawGeo)
     .limit(1)
     .maybeSingle();
-
   if (direct) {
     const hierarchy = await resolveGeoHierarchy(supabase, direct);
     return { geo_id: direct.id, name: direct.name, type: direct.type, ...hierarchy, method: "geo_direct", confidence: 0.7 };
@@ -185,9 +253,6 @@ async function resolveGeography(
   return null;
 }
 
-/**
- * Walk up the geographies parent chain to find zone and region names.
- */
 async function resolveGeoHierarchy(
   supabase: ReturnType<typeof createClient>,
   geo: { id: string; name: string; type: string; parent_id: string | null }
@@ -195,11 +260,9 @@ async function resolveGeoHierarchy(
   let zone_name: string | null = null;
   let region_name: string | null = null;
 
-  // If this IS a zone or region, set directly
   if (geo.type === "zone") zone_name = geo.name;
   if (geo.type === "region") region_name = geo.name;
 
-  // Walk up parent chain
   let parentId = geo.parent_id;
   let depth = 0;
   while (parentId && depth < 5) {
@@ -215,7 +278,6 @@ async function resolveGeoHierarchy(
     depth++;
   }
 
-  // For municipalities: also find zone via locations table (since zones aren't in the parent chain)
   if (geo.type === "municipality" && !zone_name) {
     const { data: loc } = await supabase
       .from("locations")
@@ -231,18 +293,6 @@ async function resolveGeoHierarchy(
 
 // ── Policy Layer ─────────────────────────────────────────────────────────────
 
-interface ClientProfile {
-  rate_limit_per_minute: number;
-  rate_limit_per_day: number;
-  max_entities_per_query: number;
-  allowed_capabilities: string[];
-  policy_rules: {
-    sample_size_min: number;
-    anti_enum_window_minutes: number;
-    anti_enum_max_sequential: number;
-  };
-}
-
 async function checkRateLimit(
   supabase: ReturnType<typeof createClient>,
   clientIp: string,
@@ -256,14 +306,14 @@ async function checkRateLimit(
     .gte("created_at", windowStart);
 
   if ((count ?? 0) >= profile.rate_limit_per_minute) {
-    return { pass: false, rule: "rate_limit", reason: `Rate limit exceeded: ${profile.rate_limit_per_minute}/min` };
+    return { pass: false, rule: "rate_limit", reason: "RATE_LIMITED" };
   }
   return { pass: true, rule: "rate_limit" };
 }
 
 function checkCapabilityAccess(capability: string, profile: ClientProfile): PolicyRuleResult {
   if (!profile.allowed_capabilities.includes(capability)) {
-    return { pass: false, rule: "capability_access", reason: `Capability '${capability}' not allowed for this client type` };
+    return { pass: false, rule: "capability_access", reason: "CAPABILITY_NOT_ALLOWED" };
   }
   return { pass: true, rule: "capability_access" };
 }
@@ -271,15 +321,15 @@ function checkCapabilityAccess(capability: string, profile: ClientProfile): Poli
 function checkQueryBreadth(params: Record<string, unknown>, capability: string): PolicyRuleResult {
   if (capability === "lookup_rate" || capability === "compare_roles") {
     if (!params.role && !params.role_a) {
-      return { pass: false, rule: "query_breadth", reason: "Role parameter is required" };
+      return { pass: false, rule: "query_breadth", reason: "QUERY_TOO_BROAD" };
     }
     if (!params.geography) {
-      return { pass: false, rule: "query_breadth", reason: "Geography parameter is required" };
+      return { pass: false, rule: "query_breadth", reason: "QUERY_TOO_BROAD" };
     }
   }
   if (capability === "salary_benchmark" || capability === "salary_position") {
     if (!params.role) {
-      return { pass: false, rule: "query_breadth", reason: "Role parameter is required" };
+      return { pass: false, rule: "query_breadth", reason: "QUERY_TOO_BROAD" };
     }
   }
   return { pass: true, rule: "query_breadth" };
@@ -317,7 +367,7 @@ async function checkAntiEnumeration(
   }
 
   if (geos.size <= 1 && roles.size >= profile.policy_rules.anti_enum_max_sequential) {
-    return { pass: false, rule: "anti_enumeration", reason: "Too many sequential lookups for different roles in same geography" };
+    return { pass: false, rule: "anti_enumeration", reason: "ENUMERATION_RISK" };
   }
 
   return { pass: true, rule: "anti_enumeration" };
@@ -377,23 +427,28 @@ async function evaluatePolicy(
 
 // ── Capability Layer ─────────────────────────────────────────────────────────
 
-const ALLOWED_TABLES = {
-  lookup_rate: ["rates", "margin_models", "geographies", "roles"],
-  compare_roles: ["rates", "margin_models", "geographies", "roles"],
-  salary_benchmark: ["salary_benchmarks", "roles", "geographies"],
-  salary_position: ["salary_benchmarks", "roles", "geographies"],
-} as const;
+const SOURCE_RATES: CISource = {
+  name: "SKR ramavtal",
+  version: "SKR 2026 v1.0",
+  confidence: "high",
+};
+
+const SOURCE_BENCHMARKS: CISource = {
+  name: "SCB/Medlingsinstitutet lönestatistik",
+  version: "2025",
+  confidence: "high",
+};
 
 async function capLookupRate(
   supabase: ReturnType<typeof createClient>,
   resolved: ResolvedEntities,
   params: Record<string, unknown>
-): Promise<{ data: Record<string, unknown>; source_metadata: Record<string, unknown>; fallback_used?: string }> {
+): Promise<{ data: Record<string, unknown>; source: CISource; fallback_level: string | null }> {
   const geo = resolved.geography!;
   const role = resolved.role!;
   const empType = (params.employment_type as EmploymentType) || "anstalld";
 
-  // 1. Fetch margin model
+  // Margin model
   const { data: modelData } = await supabase
     .from("margin_models")
     .select("share_min, share_max, employer_factor, hours_per_month")
@@ -402,126 +457,88 @@ async function capLookupRate(
     .limit(1)
     .single();
 
-  const baseModel: MarginModel | undefined = modelData
-    ? {
-        share_min: Number(modelData.share_min),
-        share_max: Number(modelData.share_max),
-        employer_factor: Number(modelData.employer_factor),
-        hours_per_month: Number(modelData.hours_per_month),
-      }
-    : undefined;
-
   const FORETAGARE_SHARE_MIN = 0.85;
   const FORETAGARE_SHARE_MAX = 0.92;
-  const effectiveModel: MarginModel | undefined = baseModel
-    ? empType === "foretagare"
-      ? { ...baseModel, share_min: FORETAGARE_SHARE_MIN, share_max: FORETAGARE_SHARE_MAX }
-      : baseModel
+
+  const baseModel: MarginModel | undefined = modelData
+    ? { share_min: Number(modelData.share_min), share_max: Number(modelData.share_max), employer_factor: Number(modelData.employer_factor), hours_per_month: Number(modelData.hours_per_month) }
+    : undefined;
+
+  const effectiveModel: MarginModel = baseModel
+    ? empType === "foretagare" ? { ...baseModel, share_min: FORETAGARE_SHARE_MIN, share_max: FORETAGARE_SHARE_MAX } : baseModel
     : empType === "foretagare"
       ? { share_min: FORETAGARE_SHARE_MIN, share_max: FORETAGARE_SHARE_MAX, employer_factor: 1.42, hours_per_month: 167 }
-      : undefined;
+      : { share_min: 0.85, share_max: 0.90, employer_factor: 1.42, hours_per_month: 167 };
 
-  // 2. Look up rate — try raw input first (rates uses singular forms), then canonical
+  // Rate lookup
   let timprisKund = 0;
   let matchedOccupation = role.name;
-  let fallbackUsed: string | undefined;
+  let fallbackLevel: string | null = null;
   const zoneName = geo.zone_name;
   const rawRole = (params.role ?? params.role_a) as string | undefined;
 
-  // Collect all names to try: raw input, canonical code, role name, and all aliases
   const namesToTry: string[] = [];
   if (rawRole) namesToTry.push(rawRole);
   if (role.code !== rawRole) namesToTry.push(role.code);
   if (role.name !== role.code && role.name !== rawRole) namesToTry.push(role.name);
 
   if (zoneName) {
-    // Try each name candidate for exact match
     for (const candidate of namesToTry) {
       if (timprisKund > 0) break;
       const { data: rateData } = await supabase
-        .from("rates")
-        .select("timpris_kund, yrkeskategori")
-        .eq("yrkeskategori", candidate)
-        .eq("zon", zoneName)
-        .limit(1);
-      if (rateData && rateData.length > 0) {
-        timprisKund = rateData[0].timpris_kund;
-        matchedOccupation = rateData[0].yrkeskategori;
-        if (candidate !== namesToTry[0]) fallbackUsed = "canonical_match";
-      }
+        .from("rates").select("timpris_kund, yrkeskategori").eq("yrkeskategori", candidate).eq("zon", zoneName).limit(1);
+      if (rateData?.length) { timprisKund = rateData[0].timpris_kund; matchedOccupation = rateData[0].yrkeskategori; }
     }
 
-    // ILIKE fallback on all candidates
     if (timprisKund === 0) {
       for (const candidate of namesToTry) {
         if (timprisKund > 0) break;
         const { data: ilikeRate } = await supabase
-          .from("rates")
-          .select("timpris_kund, yrkeskategori")
-          .ilike("yrkeskategori", `%${candidate}%`)
-          .eq("zon", zoneName)
-          .limit(1);
-        if (ilikeRate && ilikeRate.length > 0) {
-          timprisKund = ilikeRate[0].timpris_kund;
-          matchedOccupation = ilikeRate[0].yrkeskategori;
-          fallbackUsed = "ilike";
-        }
+          .from("rates").select("timpris_kund, yrkeskategori").ilike("yrkeskategori", `%${candidate}%`).eq("zon", zoneName).limit(1);
+        if (ilikeRate?.length) { timprisKund = ilikeRate[0].timpris_kund; matchedOccupation = ilikeRate[0].yrkeskategori; fallbackLevel = "ilike_match"; }
       }
     }
 
-    // Fallback: typ → zon
     if (timprisKund === 0) {
       for (const candidate of namesToTry) {
         if (timprisKund > 0) break;
-        const { data: anyRate } = await supabase
-          .from("rates").select("typ").eq("yrkeskategori", candidate).limit(1);
-        if (anyRate && anyRate.length > 0) {
-          const { data: zoneRate } = await supabase
-            .from("rates").select("timpris_kund").eq("typ", anyRate[0].typ).eq("zon", zoneName).limit(1);
-          if (zoneRate && zoneRate.length > 0) {
-            timprisKund = zoneRate[0].timpris_kund;
-            fallbackUsed = "typ_zon";
-          }
+        const { data: anyRate } = await supabase.from("rates").select("typ").eq("yrkeskategori", candidate).limit(1);
+        if (anyRate?.length) {
+          const { data: zoneRate } = await supabase.from("rates").select("timpris_kund").eq("typ", anyRate[0].typ).eq("zon", zoneName).limit(1);
+          if (zoneRate?.length) { timprisKund = zoneRate[0].timpris_kund; fallbackLevel = "typ_zon"; }
         }
       }
     }
   }
 
-  if (timprisKund === 0) {
-    throw new Error("NO_RATE_FOUND");
-  }
+  if (timprisKund === 0) throw new Error("NO_DATA_FOUND");
 
   const range = calculateSalaryRange(timprisKund, empType, effectiveModel);
-  const m = effectiveModel ?? { share_min: 0.85, share_max: 0.90, employer_factor: 1.42, hours_per_month: 167 };
-  const factor = empType === "anstalld" ? m.employer_factor : 1;
+  const factor = empType === "anstalld" ? effectiveModel.employer_factor : 1;
 
   return {
     data: {
-      occupation: matchedOccupation,
-      role_id: role.role_id,
-      geo_id: geo.geo_id,
-      kommun: geo.name,
-      zon: geo.zone_name,
-      region: geo.region_name,
+      role: { id: role.role_id, code: role.code, name: matchedOccupation },
+      geography: { id: geo.geo_id, name: geo.name, zone: geo.zone_name, region: geo.region_name },
+      amount: timprisKund,
+      currency: "SEK",
+      unit: "per_hour",
+      agreement_name: "SKR ramavtal",
+      agreement_version: "SKR 2026 v1.0",
+      effective_from: "2026-01-01",
+      effective_to: null,
       employment_type: empType,
-      rate_customer_sek_per_hour: timprisKund,
-      consultant_share_min: m.share_min,
-      consultant_share_max: m.share_max,
+      consultant_share_min: effectiveModel.share_min,
+      consultant_share_max: effectiveModel.share_max,
       employee_factor: factor,
-      hours_per_month: m.hours_per_month,
+      hours_per_month: effectiveModel.hours_per_month,
       recommended_hourly_min: range.hourly_min,
       recommended_hourly_max: range.hourly_max,
       recommended_monthly_min: range.monthly_min,
       recommended_monthly_max: range.monthly_max,
     },
-    source_metadata: {
-      source: "SKR ramavtal 2026",
-      data_freshness: "2026-01-01",
-      contract_version: "SKR 2026 v1.0",
-      coverage: "290+ kommuner, 4 priszoner",
-      tables_used: ALLOWED_TABLES.lookup_rate,
-    },
-    fallback_used: fallbackUsed,
+    source: SOURCE_RATES,
+    fallback_level: fallbackLevel,
   };
 }
 
@@ -530,7 +547,7 @@ async function capCompareRoles(
   params: Record<string, unknown>,
   resolveRoleFn: typeof resolveRole,
   resolveGeoFn: typeof resolveGeography
-): Promise<{ data: Record<string, unknown>; source_metadata: Record<string, unknown> }> {
+): Promise<{ data: Record<string, unknown>; source: CISource; fallback_level: string | null }> {
   const roleA = await resolveRoleFn(supabase, params.role_a as string);
   const roleB = await resolveRoleFn(supabase, params.role_b as string);
   const geoA = await resolveGeoFn(supabase, params.geography as string);
@@ -538,161 +555,119 @@ async function capCompareRoles(
     ? await resolveGeoFn(supabase, params.geography_b as string)
     : geoA;
 
-  if (!roleA || !roleB || !geoA || !geoB) {
-    throw new Error("ENTITY_NOT_RESOLVED");
-  }
+  if (!roleA || !roleB || !geoA || !geoB) throw new Error("ENTITY_NOT_RESOLVED");
 
   const empType = (params.employment_type as EmploymentType) || "anstalld";
+  const resultA = await capLookupRate(supabase, { role: roleA, geography: geoA }, { employment_type: empType, role_a: params.role_a });
+  const resultB = await capLookupRate(supabase, { role: roleB, geography: geoB }, { employment_type: empType, role_a: params.role_b });
 
-  const resultA = await capLookupRate(supabase, { role: roleA, geography: geoA }, { employment_type: empType });
-  const resultB = await capLookupRate(supabase, { role: roleB, geography: geoB }, { employment_type: empType });
-
-  const midA = ((resultA.data.recommended_monthly_min as number) + (resultA.data.recommended_monthly_max as number)) / 2;
-  const midB = ((resultB.data.recommended_monthly_min as number) + (resultB.data.recommended_monthly_max as number)) / 2;
+  const rateA = resultA.data.amount as number;
+  const rateB = resultB.data.amount as number;
 
   return {
     data: {
-      role_a: resultA.data,
-      role_b: resultB.data,
-      diff_monthly: Math.round(midA - midB),
-      diff_hourly: (resultA.data.recommended_hourly_min as number) - (resultB.data.recommended_hourly_min as number),
-      diff_pct: midB > 0 ? Math.round(((midA - midB) / midB) * 100) : 0,
+      role_a: resultA.data.role,
+      role_b: resultB.data.role,
+      geography: resultA.data.geography,
+      role_a_rate: { amount: rateA, currency: "SEK", unit: "per_hour" },
+      role_b_rate: { amount: rateB, currency: "SEK", unit: "per_hour" },
+      difference_amount: rateA - rateB,
+      difference_percent: rateB > 0 ? Math.round(((rateA - rateB) / rateB) * 100) : 0,
+      role_a_monthly: { min: resultA.data.recommended_monthly_min, max: resultA.data.recommended_monthly_max },
+      role_b_monthly: { min: resultB.data.recommended_monthly_min, max: resultB.data.recommended_monthly_max },
     },
-    source_metadata: {
-      source: "SKR ramavtal 2026",
-      tables_used: ALLOWED_TABLES.compare_roles,
-    },
+    source: SOURCE_RATES,
+    fallback_level: resultA.fallback_level ?? resultB.fallback_level,
   };
 }
 
 async function capSalaryBenchmark(
   supabase: ReturnType<typeof createClient>,
   resolved: ResolvedEntities,
-  params: Record<string, unknown>,
+  _params: Record<string, unknown>,
   sampleSizeMin: number
-): Promise<{ data: Record<string, unknown>; source_metadata: Record<string, unknown>; fallback_used?: string }> {
-  // HARD RULE: ONLY salary_benchmarks table, threshold_passed = true
+): Promise<{ data: Record<string, unknown>; source: CISource; fallback_level: string | null }> {
   const roleId = resolved.role!.role_id;
   const roleName = resolved.role!.name;
   const geoId = resolved.geography?.geo_id ?? null;
-  const regionId = resolved.geography?.geo_id ?? null;
 
   const selectCols = "id, period_key, role_id, region_id, municipality_id, sample_size, mean_salary, median_salary, p25_salary, p75_salary";
-
   let data: Record<string, unknown> | null = null;
-  let fallbackUsed: string | undefined;
+  let fallbackLevel: string | null = null;
 
-  // 1. Exact match: role_id + municipality_id (if geo resolved to municipality)
+  // 1. Municipality match
   if (geoId && resolved.geography?.type === "municipality") {
     const { data: exact } = await supabase
-      .from("salary_benchmarks")
-      .select(selectCols)
-      .eq("role_id", roleId)
-      .eq("municipality_id", geoId)
+      .from("salary_benchmarks").select(selectCols)
+      .eq("role_id", roleId).eq("municipality_id", geoId)
       .eq("threshold_passed", true)
-      .order("period_key", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+      .order("period_key", { ascending: false }).limit(1).maybeSingle();
     if (exact) data = exact;
   }
 
-  // 2. Fallback: role_id + region_id
+  // 2. Region fallback
   if (!data && resolved.geography) {
-    // Find the region geo_id from hierarchy
     let regionGeoId: string | null = null;
     if (resolved.geography.type === "region") {
       regionGeoId = resolved.geography.geo_id;
     } else if (resolved.geography.region_name) {
       const { data: regionGeo } = await supabase
-        .from("geographies")
-        .select("id")
-        .eq("type", "region")
-        .eq("name", resolved.geography.region_name)
-        .limit(1)
-        .maybeSingle();
+        .from("geographies").select("id").eq("type", "region").eq("name", resolved.geography.region_name).limit(1).maybeSingle();
       if (regionGeo) regionGeoId = regionGeo.id;
     }
-
     if (regionGeoId) {
       const { data: regionMatch } = await supabase
-        .from("salary_benchmarks")
-        .select(selectCols)
-        .eq("role_id", roleId)
-        .eq("region_id", regionGeoId)
+        .from("salary_benchmarks").select(selectCols)
+        .eq("role_id", roleId).eq("region_id", regionGeoId)
         .eq("threshold_passed", true)
-        .order("period_key", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      if (regionMatch) { data = regionMatch; fallbackUsed = "region"; }
+        .order("period_key", { ascending: false }).limit(1).maybeSingle();
+      if (regionMatch) { data = regionMatch; fallbackLevel = "region"; }
     }
   }
 
-  // 3. Fallback: role_id only (national level — no geo filter)
+  // 3. National fallback
   if (!data) {
     const { data: national } = await supabase
-      .from("salary_benchmarks")
-      .select(selectCols)
-      .eq("role_id", roleId)
-      .eq("threshold_passed", true)
-      .is("municipality_id", null)
-      .is("region_id", null)
-      .order("period_key", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-    if (national) { data = national; fallbackUsed = fallbackUsed ? `${fallbackUsed}→national` : "national"; }
+      .from("salary_benchmarks").select(selectCols)
+      .eq("role_id", roleId).eq("threshold_passed", true)
+      .is("municipality_id", null).is("region_id", null)
+      .order("period_key", { ascending: false }).limit(1).maybeSingle();
+    if (national) { data = national; fallbackLevel = fallbackLevel ? `${fallbackLevel}→national` : "national"; }
   }
 
-  // 4. Last resort: role_id only, any geo
+  // 4. Any geo
   if (!data) {
     const { data: anyGeo } = await supabase
-      .from("salary_benchmarks")
-      .select(selectCols)
-      .eq("role_id", roleId)
-      .eq("threshold_passed", true)
-      .order("period_key", { ascending: false })
-      .limit(1)
-      .maybeSingle();
-    if (anyGeo) { data = anyGeo; fallbackUsed = "any_geo"; }
+      .from("salary_benchmarks").select(selectCols)
+      .eq("role_id", roleId).eq("threshold_passed", true)
+      .order("period_key", { ascending: false }).limit(1).maybeSingle();
+    if (anyGeo) { data = anyGeo; fallbackLevel = "any_geo"; }
   }
 
-  if (!data) {
-    throw new Error("NO_BENCHMARK_DATA");
-  }
+  if (!data) throw new Error("NO_DATA_FOUND");
 
-  // POLICY: Sample size check
   const sampleSize = (data.sample_size as number) ?? 0;
-  if (sampleSize > 0 && sampleSize < sampleSizeMin) {
-    throw new Error("INSUFFICIENT_SAMPLE");
-  }
+  if (sampleSize > 0 && sampleSize < sampleSizeMin) throw new Error("INSUFFICIENT_SAMPLE");
 
   const p25 = data.p25_salary as number | null;
   const median = data.median_salary as number | null;
   const p75 = data.p75_salary as number | null;
   const mean = data.mean_salary as number | null;
-
-  // Use mean as fallback for missing percentiles
   const effectiveMedian = median ?? mean ?? 0;
-  const effectiveP25 = p25 ?? Math.round(effectiveMedian * 0.92);
-  const effectiveP75 = p75 ?? Math.round(effectiveMedian * 1.08);
 
   return {
     data: {
-      occupation: roleName,
-      role_id: roleId,
-      region_id: data.region_id,
-      municipality_id: data.municipality_id,
-      period_key: data.period_key,
-      percentile_25: effectiveP25,
-      percentile_50: effectiveMedian,
-      percentile_75: effectiveP75,
-    },
-    source_metadata: {
-      source: "salary_benchmarks (published layer)",
-      tables_used: ALLOWED_TABLES.salary_benchmark,
+      role: { id: roleId, name: roleName },
+      geography: resolved.geography ? { id: resolved.geography.geo_id, name: resolved.geography.name } : null,
+      period: data.period_key,
       sample_size: sampleSize > 0 ? sampleSize : null,
-      period_key: data.period_key,
+      mean_salary: mean,
+      median_salary: effectiveMedian,
+      p25_salary: p25 ?? Math.round(effectiveMedian * 0.92),
+      p75_salary: p75 ?? Math.round(effectiveMedian * 1.08),
     },
-    fallback_used: fallbackUsed,
+    source: SOURCE_BENCHMARKS,
+    fallback_level: fallbackLevel,
   };
 }
 
@@ -701,33 +676,30 @@ async function capSalaryPosition(
   resolved: ResolvedEntities,
   params: Record<string, unknown>,
   sampleSizeMin: number
-): Promise<{ data: Record<string, unknown>; source_metadata: Record<string, unknown> }> {
-  // HARD RULE: delegates to salary_benchmark which ONLY reads salary_benchmarks
+): Promise<{ data: Record<string, unknown>; source: CISource; fallback_level: string | null }> {
   const benchResult = await capSalaryBenchmark(supabase, resolved, params, sampleSizeMin);
   const currentSalary = params.current_salary as number;
-
-  const p75 = benchResult.data.percentile_75 as number;
+  const p75 = benchResult.data.p75_salary as number;
   const gap = p75 - currentSalary;
   const gapPct = currentSalary > 0 ? Math.round((gap / currentSalary) * 100) : 0;
 
-  let category: "small" | "medium" | "large";
-  const gapRatio = currentSalary > 0 ? gap / currentSalary : 0;
-  if (gapRatio <= 0.05) category = "small";
-  else if (gapRatio <= 0.15) category = "medium";
-  else category = "large";
-
   return {
     data: {
-      ...benchResult.data,
-      current_salary: currentSalary,
-      gap_vs_p75: gap,
-      gap_pct: gapPct,
-      category,
+      role: benchResult.data.role,
+      geography: benchResult.data.geography,
+      period: benchResult.data.period,
+      input_salary: currentSalary,
+      benchmark_metric: "p75_salary",
+      benchmark_value: p75,
+      difference_amount: gap,
+      difference_percent: gapPct,
+      sample_size: benchResult.data.sample_size,
+      p25_salary: benchResult.data.p25_salary,
+      median_salary: benchResult.data.median_salary,
+      p75_salary: benchResult.data.p75_salary,
     },
-    source_metadata: {
-      ...benchResult.source_metadata,
-      tables_used: ALLOWED_TABLES.salary_position,
-    },
+    source: benchResult.source,
+    fallback_level: benchResult.fallback_level,
   };
 }
 
@@ -758,16 +730,6 @@ async function logQuery(
   return data?.id ?? null;
 }
 
-// ── Error mapping ────────────────────────────────────────────────────────────
-
-const ERROR_MAP: Record<string, { status: number; code: string; message: string }> = {
-  NO_RATE_FOUND: { status: 404, code: "NO_RATE_FOUND", message: "No rate found for this occupation and zone" },
-  NO_BENCHMARK_DATA: { status: 404, code: "NO_BENCHMARK_DATA", message: "No benchmark data available for this occupation" },
-  INSUFFICIENT_SAMPLE: { status: 422, code: "INSUFFICIENT_SAMPLE", message: "Sample size below minimum threshold (n≥10 required)" },
-  ENTITY_NOT_RESOLVED: { status: 404, code: "ENTITY_NOT_RESOLVED", message: "Could not resolve one or more entities (role or geography)" },
-  CAPABILITY_NOT_FOUND: { status: 404, code: "CAPABILITY_NOT_FOUND", message: "Unknown capability" },
-};
-
 // ── Main Handler ─────────────────────────────────────────────────────────────
 
 serve(async (req) => {
@@ -787,52 +749,42 @@ serve(async (req) => {
     const { capability, version = 1, params, client_type = "anonymous_human" } = body;
 
     if (!capability || !params) {
-      return new Response(
-        JSON.stringify({ error: "Missing required fields: capability, params" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      const policy: CIPolicy = { status: "blocked", client_type: client_type ?? "unknown", fallback_applied: false, fallback_level: null };
+      const envelope = buildResponse(null, capability ?? "unknown", null, null, policy, [makeError("INVALID_INPUT", "Saknar obligatoriska fält: capability, params")]);
+      return new Response(JSON.stringify(envelope), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    // ── 1. Validate capability exists ──
+    // 1. Validate capability
     const { data: capDef } = await supabase
       .from("capability_definitions")
       .select("capability_key, version, is_active")
-      .eq("capability_key", capability)
-      .eq("is_active", true)
-      .limit(1)
-      .maybeSingle();
+      .eq("capability_key", capability).eq("is_active", true)
+      .limit(1).maybeSingle();
 
     if (!capDef) {
-      return new Response(
-        JSON.stringify({ error: "CAPABILITY_NOT_FOUND", message: `Unknown or inactive capability: ${capability}` }),
-        { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      const policy: CIPolicy = { status: "blocked", client_type, fallback_applied: false, fallback_level: null };
+      const envelope = buildResponse(null, capability, null, null, policy, [makeError("INVALID_INPUT", `Okänd eller inaktiv capability: ${capability}`)]);
+      return new Response(JSON.stringify(envelope), { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    // ── 2. Policy evaluation ──
-    const { result: policyResult, profile } = await evaluatePolicy(
-      supabase, capability, params, clientIp, client_type
-    );
+    // 2. Policy evaluation
+    const { result: policyResult, profile } = await evaluatePolicy(supabase, capability, params, clientIp, client_type);
 
     if (policyResult.status === "blocked") {
-      await logQuery(supabase, {
+      const errorCode = policyResult.reason ?? "RATE_LIMITED";
+      const queryId = await logQuery(supabase, {
         client_type, client_ip: clientIp,
         capability_key: capability, capability_version: version,
         raw_input_text: JSON.stringify(params),
         policy_result_json: policyResult,
       });
 
-      return new Response(
-        JSON.stringify({
-          capability, version, data: null,
-          policy_status: policyResult,
-          error: policyResult.reason,
-        } satisfies CIResponse),
-        { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      const policy: CIPolicy = { status: "blocked", client_type, fallback_applied: false, fallback_level: null };
+      const envelope = buildResponse(queryId, capability, null, null, policy, [makeError(errorCode)]);
+      return new Response(JSON.stringify(envelope), { status: errorHttpStatus(errorCode), headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
-    // ── 3. Entity resolution (normalized tables) ──
+    // 3. Entity resolution
     const resolved: ResolvedEntities = {};
     let resolutionMethod = "none";
     let confidenceScore = 1.0;
@@ -855,8 +807,8 @@ serve(async (req) => {
       confidenceScore = Math.min(confidenceScore, geoResult.confidence);
     }
 
-    // ── 4. Execute capability ──
-    let capResult: { data: Record<string, unknown>; source_metadata: Record<string, unknown>; fallback_used?: string };
+    // 4. Execute capability
+    let capResult: { data: Record<string, unknown>; source: CISource; fallback_level: string | null };
     const sampleSizeMin = profile.policy_rules.sample_size_min;
 
     switch (capability) {
@@ -873,15 +825,23 @@ serve(async (req) => {
         capResult = await capSalaryPosition(supabase, resolved, params, sampleSizeMin);
         break;
       default:
-        throw new Error("CAPABILITY_NOT_FOUND");
+        throw new Error("INVALID_INPUT");
     }
 
-    // Update policy status if fallback was used
-    const finalPolicyResult: PolicyResult = capResult.fallback_used
-      ? { ...policyResult, status: "fallback", reason: `Fallback used: ${capResult.fallback_used}` }
+    // Build policy object
+    const fallbackApplied = !!capResult.fallback_level;
+    const finalPolicyResult: PolicyResult = fallbackApplied
+      ? { ...policyResult, status: "fallback", reason: `Fallback: ${capResult.fallback_level}` }
       : policyResult;
 
-    // ── 5. Audit log ──
+    const policy: CIPolicy = {
+      status: finalPolicyResult.status,
+      client_type,
+      fallback_applied: fallbackApplied,
+      fallback_level: capResult.fallback_level,
+    };
+
+    // 5. Audit log
     const queryId = await logQuery(supabase, {
       client_type,
       client_ip: clientIp,
@@ -896,44 +856,28 @@ serve(async (req) => {
       response_payload_json: capResult.data,
     });
 
-    // ── 6. Response ──
-    const response: CIResponse = {
-      query_id: queryId ?? undefined,
-      capability,
-      version: capDef.version,
-      data: capResult.data,
-      source_metadata: capResult.source_metadata,
-      policy_status: finalPolicyResult,
-    };
+    // 6. Response
+    const envelope = buildResponse(queryId, capability, capResult.data, capResult.source, policy, []);
+    return new Response(JSON.stringify(envelope), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 
-    return new Response(JSON.stringify(response), {
-      status: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
   } catch (error) {
     const errMsg = error.message || "Unknown error";
-    const mapped = ERROR_MAP[errMsg];
+    const errorCode = ERROR_CODES[errMsg] ? errMsg : "INTERNAL_ERROR";
 
-    await logQuery(supabase, {
+    const queryId = await logQuery(supabase, {
       client_type: "unknown",
       client_ip: clientIp,
       capability_key: "unknown",
       capability_version: 1,
       raw_input_text: errMsg,
-      policy_result_json: { status: "blocked", reason: errMsg, applied_rules: [] },
-    }).catch(() => {});
+      policy_result_json: { status: "blocked", reason: errorCode, applied_rules: [] },
+    }).catch(() => null);
 
-    if (mapped) {
-      return new Response(
-        JSON.stringify({ error: mapped.code, message: mapped.message }),
-        { status: mapped.status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
+    const policy: CIPolicy = { status: "blocked", client_type: "unknown", fallback_applied: false, fallback_level: null };
+    const envelope = buildResponse(queryId, "unknown", null, null, policy, [makeError(errorCode)]);
 
-    console.error("compensation-intelligence error:", error);
-    return new Response(
-      JSON.stringify({ error: "INTERNAL_ERROR", message: errMsg }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    if (errorCode === "INTERNAL_ERROR") console.error("compensation-intelligence error:", error);
+
+    return new Response(JSON.stringify(envelope), { status: errorHttpStatus(errorCode), headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 });
