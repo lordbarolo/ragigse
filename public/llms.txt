@@ -45,6 +45,42 @@ CompCare exponerar ett REST-API för programmatisk åtkomst. Fullständig OpenAP
 | `POST /get-report` | Hämta en tidigare skapad rapport (inkl. prishistorik) |
 | `POST /generate-pdf` | Generera en brandad PDF-rapport från en befintlig rapport |
 | `POST /run-price-diff` | Jämför priser mellan ramavtalsversioner |
+| `POST /compensation-intelligence` | **Unified API** — Central entry point för alla ersättningsfrågor med entity resolution, policy enforcement och audit logging |
+| `GET /ci-capabilities` | Lista tillgängliga capabilities med input/output-scheman |
+| `GET /ci-roles` | Lista tillgängliga yrkesroller med alias-mappningar |
+| `GET /ci-geographies` | Lista tillgängliga kommuner, regioner och zoner |
+| `GET /ci-metrics` | Lista tillgängliga mätvärden och jämförelsetyper |
+
+### Compensation Intelligence API
+
+Det nya `/compensation-intelligence`-endpointet är den rekommenderade vägen för AI-agenter och programmatisk åtkomst. Det stödjer fyra capabilities:
+
+| Capability | Beskrivning |
+|-----------|-------------|
+| `lookup_rate` | Prisuppslag för konsultarvode baserat på ramavtalspriser |
+| `compare_roles` | Jämför ersättning mellan två yrkesroller |
+| `salary_benchmark` | Lönepercentiler (p25/p50/p75) för fast anställda |
+| `salary_position` | Gap-analys: jämför angiven lön mot benchmarkdata |
+
+#### Exempel: lookup_rate
+
+```json
+POST /compensation-intelligence
+{
+  "capability": "lookup_rate",
+  "params": {
+    "role": "Specialistsjuksköterska intensivvård",
+    "geography": "Lund",
+    "employment_type": "anstalld"
+  }
+}
+```
+
+Svaret inkluderar:
+- `query_id` — unikt ID för audit trail
+- `data` — strukturerad ersättningsdata
+- `source_metadata` — datakälla, aktualitet, täckning
+- `policy_status` — status (allowed/fallback/blocked), tillämpade regler
 
 ### Autentisering
 
