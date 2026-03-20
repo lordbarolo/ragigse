@@ -37,12 +37,38 @@ CompCare exponerar ett REST-API för programmatisk åtkomst. Fullständig OpenAP
 
 ### Rekommenderad ingång: Compensation Intelligence API
 
-Det nya `/compensation-intelligence`-endpointet är den **rekommenderade vägen** för AI-agenter och programmatisk åtkomst. Det erbjuder:
+Det nya `/compensation-intelligence`-endpointet är den **rekommenderade vägen** för AI-agenter och programmatisk åtkomst.
 
-- **Entity resolution**: Fuzzy-matchning av yrkesroller och kommuner via alias-tabeller
-- **Policy enforcement**: Rate limiting, anti-enumerering och sample size-kontroll
-- **Audit logging**: Varje fråga loggas med entity resolution, policy-resultat och svar
-- **Strukturerade svar**: Standardiserat JSON med `query_id`, `data`, `source_metadata` och `policy_status`
+#### Standardiserat svarformat
+
+Alla svar från CI-endpointet följer ett enhetligt envelope-format:
+
+```json
+{
+  "query_id": "uuid",
+  "capability": "lookup_rate",
+  "status": "success",
+  "data": { ... },
+  "source": {
+    "name": "SKR ramavtal",
+    "version": "SKR 2026 v1.0",
+    "confidence": "high"
+  },
+  "policy": {
+    "status": "allowed",
+    "client_type": "anonymous_human",
+    "fallback_applied": false,
+    "fallback_level": null
+  },
+  "errors": []
+}
+```
+
+- `status` — alltid "success" eller "error"
+- `data` — capability-specifikt resultat (null vid fel)
+- `source` — datakälla, version och konfidensnivå (null vid fel)
+- `policy` — policyresultat inklusive fallback-information
+- `errors` — tom array vid success, strukturerade felobjekt vid error
 
 #### Capabilities
 
@@ -50,8 +76,51 @@ Det nya `/compensation-intelligence`-endpointet är den **rekommenderade vägen*
 |-----------|-------------|
 | `lookup_rate` | Prisuppslag för konsultarvode baserat på ramavtalspriser |
 | `compare_roles` | Jämför ersättning mellan två yrkesroller |
-| `salary_benchmark` | Lönepercentiler (p25/p50/p75) för fast anställda |
+| `salary_benchmark` | Lönepercentiler (p25/p50/p75) och medelvärden för fast anställda |
 | `salary_position` | Gap-analys: jämför angiven lön mot benchmarkdata |
+
+#### Capability: lookup_rate
+
+**Input**: `role`, `geography`, `employment_type`
+
+**Output** (i `data`):
+- `role` — `{ id, code, name }`
+- `geography` — `{ id, name, zone, region }`
+- `amount` — timpris i SEK
+- `currency` — "SEK"
+- `unit` — "per_hour"
+- `agreement_name`, `agreement_version`, `effective_from`, `effective_to`
+- `recommended_hourly_min`, `recommended_hourly_max`
+- `recommended_monthly_min`, `recommended_monthly_max`
+
+#### Capability: compare_roles
+
+**Input**: `role_a`, `role_b`, `geography`, `employment_type`
+
+**Output** (i `data`):
+- `role_a`, `role_b` — `{ id, code, name }`
+- `geography` — `{ id, name, zone, region }`
+- `role_a_rate`, `role_b_rate` — `{ amount, currency, unit }`
+- `difference_amount`, `difference_percent`
+
+#### Capability: salary_benchmark
+
+**Input**: `role`, `sector` (valfritt: `geography`)
+
+**Output** (i `data`):
+- `role` — `{ id, name }`
+- `geography` — `{ id, name }` eller null
+- `period`, `sample_size`
+- `mean_salary`, `median_salary`, `p25_salary`, `p75_salary`
+
+#### Capability: salary_position
+
+**Input**: `role`, `sector`, `current_salary` (valfritt: `geography`)
+
+**Output** (i `data`):
+- Alla fält från salary_benchmark, plus:
+- `input_salary`, `benchmark_metric`, `benchmark_value`
+- `difference_amount`, `difference_percent`
 
 #### Exempel: lookup_rate
 
@@ -62,27 +131,6 @@ POST /compensation-intelligence
   "params": {
     "role": "Specialistsjuksköterska intensivvård",
     "geography": "Lund",
-    "employment_type": "anstalld"
-  }
-}
-```
-
-Svaret inkluderar:
-- `query_id` — unikt ID för audit trail
-- `data` — strukturerad ersättningsdata
-- `source_metadata` — datakälla, aktualitet, täckning
-- `policy_status` — status (allowed/fallback/blocked), tillämpade regler
-
-#### Exempel: compare_roles
-
-```json
-POST /compensation-intelligence
-{
-  "capability": "compare_roles",
-  "params": {
-    "role_a": "Sjuksköterska",
-    "role_b": "Specialistsjuksköterska",
-    "geography": "Stockholm",
     "employment_type": "anstalld"
   }
 }
@@ -102,16 +150,61 @@ POST /compensation-intelligence
 }
 ```
 
+### Felkoder
+
+Alla fel returneras strukturerat i `errors`-arrayen:
+
+| Kod | HTTP | Beskrivning |
+|-----|------|-------------|
+| `ENTITY_NOT_RESOLVED` | 404 | Kunde inte matcha roll eller geografi |
+| `INSUFFICIENT_SAMPLE` | 422 | För få datapunkter (n<10) |
+| `QUERY_TOO_BROAD` | 400 | Saknar nödvändig roll eller geografi |
+| `ENUMERATION_RISK` | 429 | Anti-enumerering aktiverad |
+| `RATE_LIMITED` | 429 | Rate limit nådd |
+| `CAPABILITY_NOT_ALLOWED` | 403 | Capability ej tillåten |
+| `NO_DATA_FOUND` | 404 | Inga data hittades |
+| `INVALID_INPUT` | 400 | Ogiltig indata |
+
+Exempelsvar vid fel:
+
+```json
+{
+  "query_id": "uuid",
+  "capability": "salary_benchmark",
+  "status": "error",
+  "data": null,
+  "source": null,
+  "policy": {
+    "status": "blocked",
+    "client_type": "anonymous_human",
+    "fallback_applied": false,
+    "fallback_level": null
+  },
+  "errors": [
+    {
+      "code": "INSUFFICIENT_SAMPLE",
+      "message": "För få datapunkter för att visa benchmark på denna nivå."
+    }
+  ]
+}
+```
+
+### Begränsningar
+
+- **Bulk/export stöds inte** — API:et är designat för enstaka uppslag, inte massuthämtning
+- **Anti-enumerering** — sekventiella uppslag med varierande parametrar blockeras automatiskt
+- **Rate limits** — maximalt 15 förfrågningar per minut per klient
+
 ### Discovery-endpoints
 
 Använd dessa GET-endpoints för att utforska tillgängliga data utan att exponera råpriser:
 
 | Endpoint | Beskrivning |
 |----------|-------------|
-| `GET /ci-capabilities` | Lista capabilities med input/output-scheman och versioner |
-| `GET /ci-roles` | Lista yrkesroller med alias-mappningar |
+| `GET /ci-capabilities` | Lista capabilities med input/output-scheman, versioner och felkoder |
+| `GET /ci-roles` | Lista yrkesroller med stabila ID:n och alias-mappningar |
 | `GET /ci-geographies` | Lista kommuner, regioner och zoner |
-| `GET /ci-metrics` | Lista mätvärden (timpris, månadslön, p25/p50/p75) och jämförelsetyper |
+| `GET /ci-metrics` | Lista mätvärden och jämförelsetyper |
 
 ### Legacy-endpoints (bakåtkompatibla)
 
@@ -134,28 +227,6 @@ Dessa delegerar internt till Compensation Intelligence:
 ### Autentisering
 
 Publika endpoints kräver en `apikey`-header med Supabase anon key.
-
-### Datakvalitet i API-svar
-
-API-svaren inkluderar ett `source_metadata`-objekt (CI-endpoints) eller `data_quality`-objekt (legacy) med metadata:
-
-| Fält | Beskrivning |
-|------|-------------|
-| `source` | Datakälla, t.ex. "SKR ramavtal 2026" eller "SCB lönestatistik 2025" |
-| `data_freshness` | Datum då underliggande data senast uppdaterades (ISO 8601) |
-| `contract_version` | Aktiv ramavtalsversion, t.ex. "SKR 2026 v1.0" |
-| `sample_size` | Antal datapunkter (för lönestatistik). Null för prisuppslag. |
-| `coverage` | Geografisk täckning, t.ex. "290+ kommuner, 4 priszoner" |
-
-### Policy-status i CI-svar
-
-Varje CI-svar inkluderar `policy_status`:
-
-| Fält | Beskrivning |
-|------|-------------|
-| `status` | `allowed` = normalt svar, `fallback` = data från bredare geografi, `blocked` = förfrågan nekad |
-| `reason` | Anledning vid fallback/blocked |
-| `applied_rules` | Lista av regler som utvärderats |
 
 ## Vanliga frågor
 
