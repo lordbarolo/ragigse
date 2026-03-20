@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -7,72 +6,18 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-type GapCategory = "small" | "medium" | "large";
-
-function categorizeGap(currentSalary: number, p75: number): GapCategory {
-  const gap = p75 - currentSalary;
-  const gapPct = gap / currentSalary;
-  if (gapPct <= 0.05) return "small";
-  if (gapPct <= 0.15) return "medium";
-  return "large";
-}
-
-// Map survey occupation names to DB occupation names
-const OCCUPATION_MAP: Record<string, string> = {
-  // Base nurse types
-  "Sjuksköterska": "Grundutbildade sjuksköterskor",
-  "Allmänsjuksköterska": "Grundutbildade sjuksköterskor",
-  "Barnmorska": "Barnmorskor",
-  "Specialistsjuksköterska": "Övriga specialistsjuksköterskor",
-
-  // Specialist nurse compound names from survey
-  "Specialistsjuksköterska akutsjukvård": "Övriga specialistsjuksköterskor",
-  "Specialistsjuksköterska ambulanssjukvård": "Ambulanssjuksköterskor m.fl.",
-  "Specialistsjuksköterska anestesi": "Anestesisjuksköterskor",
-  "Specialistsjuksköterska barn och ungdom": "Barnsjuksköterskor",
-  "Specialistsjuksköterska diabetesvård": "Övriga specialistsjuksköterskor",
-  "Distriktssjuksköterska": "Distriktssköterskor",
-  "Specialistsjuksköterska hjärtsjukvård": "Övriga specialistsjuksköterskor",
-  "Specialistsjuksköterska infektionssjukvård": "Övriga specialistsjuksköterskor",
-  "Specialistsjuksköterska intensivvård": "Intensivvårdssjuksköterskor",
-  "Specialistsjuksköterska kirurgisk vård": "Operationssjuksköterskor",
-  "Specialistsjuksköterska medicinsk vård": "Övriga specialistsjuksköterskor",
-  "Specialistsjuksköterska onkologisk vård": "Övriga specialistsjuksköterskor",
-  "Specialistsjuksköterska operationssjukvård": "Operationssjuksköterskor",
-  "Specialistsjuksköterska palliativ vård": "Övriga specialistsjuksköterskor",
-  "Specialistsjuksköterska psykiatrisk vård": "Psykiatrisjuksköterskor",
-  "Specialistsjuksköterska vård av äldre": "Geriatriksjuksköterskor",
-  "Specialistsjuksköterska ögonsjukvård": "Övriga specialistsjuksköterskor",
-
-  // Doctors
-  "Legitimerad läkare": "Övriga läkare",
-  "Specialistläkare": "Specialistläkare",
-  "ST-läkare": "ST-läkare",
-  "AT-läkare": "AT-läkare",
-
-  // Short forms
-  "Anestesisjuksköterska": "Anestesisjuksköterskor",
-  "Intensivvårdssjuksköterska": "Intensivvårdssjuksköterskor",
-  "Operationssjuksköterska": "Operationssjuksköterskor",
-  "Barnsjuksköterska": "Barnsjuksköterskor",
-  "Ambulanssjuksköterska": "Ambulanssjuksköterskor m.fl.",
-  "Distriktssköterska": "Distriktssköterskor",
-  "Psykiatrisjuksköterska": "Psykiatrisjuksköterskor",
-  "Röntgensjuksköterska": "Röntgensjuksköterskor",
-  "Skolsköterska": "Skolsköterskor",
-  "Geriatriksjuksköterska": "Geriatriksjuksköterskor",
-  "Företagssköterska": "Företagssköterskor",
-  "Psykolog": "Psykologer",
-};
-
+/**
+ * Backward-compatible wrapper for salary-benchmark-engine.
+ * Delegates to compensation-intelligence → salary_benchmark or salary_position capability.
+ * Same request/response shape as before.
+ */
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { occupation: rawOccupation, sector, current_salary } = await req.json();
-    const occupation = OCCUPATION_MAP[rawOccupation] || rawOccupation;
+    const { occupation, sector, current_salary } = await req.json();
 
     if (!occupation || !sector) {
       return new Response(
@@ -81,150 +26,66 @@ serve(async (req) => {
       );
     }
 
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-    );
+    // Choose capability based on whether current_salary is provided
+    const hasSalary = current_salary && current_salary > 0;
+    const capability = hasSalary ? "salary_position" : "salary_benchmark";
 
-    const selectCols = "occupation, sector, average_monthly, percentile_25, percentile_50, percentile_75, region, year, source";
+    const ciUrl = `${Deno.env.get("SUPABASE_URL")}/functions/v1/compensation-intelligence`;
+    const ciResponse = await fetch(ciUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+      },
+      body: JSON.stringify({
+        capability,
+        params: {
+          role: occupation,
+          sector,
+          ...(hasSalary ? { current_salary } : {}),
+        },
+        client_type: "anonymous_human",
+      }),
+    });
 
-    // 1. Exact match
-    let { data, error } = await supabase
-      .from("salary_benchmarks")
-      .select(selectCols)
-      .eq("occupation", occupation)
-      .eq("sector", sector)
-      .order("year", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+    const ciData = await ciResponse.json();
 
-    // 2. Fuzzy ILIKE — e.g. "Barnmorska" matches "Barnmorskor"
-    if (!data && !error) {
-      const res = await supabase
-        .from("salary_benchmarks")
-        .select(selectCols)
-        .eq("sector", sector)
-        .ilike("occupation", `%${occupation}%`)
-        .order("year", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      if (res.data) data = res.data;
-    }
+    // Map errors back to legacy format
+    if (!ciResponse.ok || ciData.error) {
+      const errorMsg = ciData.message || ciData.error || "Benchmark calculation failed";
 
-    // 3. Prefix/ILIKE fallback — e.g. "Specialistläkare akutsjukvård" → "%akutsjukvård%"
-    if (!data && !error) {
-      const parts = occupation.split(" ");
-      if (parts.length > 1) {
-        const suffix = parts.slice(1).join(" ");
-        const res = await supabase
-          .from("salary_benchmarks")
-          .select(selectCols)
-          .eq("sector", sector)
-          .ilike("occupation", `%${suffix}%`)
-          .order("year", { ascending: false })
-          .limit(1)
-          .maybeSingle();
-        if (res.data) data = res.data;
+      // "No benchmark data" → return 500 like the old function did
+      if (ciData.error === "NO_BENCHMARK_DATA" || ciData.error === "ENTITY_NOT_RESOLVED") {
+        return new Response(
+          JSON.stringify({ error: "No benchmark data available" }),
+          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
       }
-    }
 
-    // 4. Broad category fallback — e.g. "Specialistläkare" or "Sjuksköterska"
-    if (!data && !error) {
-      const mainCategory = occupation.split(" ")[0];
-      if (mainCategory) {
-        const res = await supabase
-          .from("salary_benchmarks")
-          .select(selectCols)
-          .eq("sector", sector)
-          .ilike("occupation", `${mainCategory}%`)
-          .order("year", { ascending: false })
-          .limit(1)
-          .maybeSingle();
-        if (res.data) data = res.data;
-      }
-    }
-
-    // 5. Stem fallback — e.g. "Barnmorska" -> "%barnmorsk%"
-    if (!data && !error) {
-      const stem = occupation
-        .trim()
-        .toLowerCase()
-        .replace(/(orna|arna|erna|or|ar|er|a|e|n)$/u, "");
-
-      if (stem.length >= 4) {
-        const res = await supabase
-          .from("salary_benchmarks")
-          .select(selectCols)
-          .eq("sector", sector)
-          .ilike("occupation", `%${stem}%`)
-          .order("year", { ascending: false })
-          .limit(1)
-          .maybeSingle();
-        if (res.data) data = res.data;
-      }
-    }
-
-    // 6. Cross-sector fallback — try any sector
-    if (!data && !error) {
-      const res = await supabase
-        .from("salary_benchmarks")
-        .select(selectCols)
-        .ilike("occupation", `%${occupation}%`)
-        .order("year", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      if (res.data) data = res.data;
-    }
-
-    if (!data) {
-      const stem = occupation
-        .trim()
-        .toLowerCase()
-        .replace(/(orna|arna|erna|or|ar|er|a|e|n)$/u, "");
-
-      if (stem.length >= 4) {
-        const stemAnySector = await supabase
-          .from("salary_benchmarks")
-          .select(selectCols)
-          .ilike("occupation", `%${stem}%`)
-          .order("year", { ascending: false })
-          .limit(1)
-          .maybeSingle();
-
-        if (stemAnySector.data) {
-          data = stemAnySector.data;
-        }
-      }
-    }
-
-    if (!data) {
       return new Response(
-        JSON.stringify({ error: "No benchmark data available" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({ error: errorMsg }),
+        { status: ciResponse.status >= 400 ? ciResponse.status : 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    const p25 = data.percentile_25 ?? Math.round(data.average_monthly * 0.92);
-    const p50 = data.percentile_50 ?? data.average_monthly;
-    const p75 = data.percentile_75 ?? Math.round(data.average_monthly * 1.08);
-
+    // Map CI response to legacy format
+    const d = ciData.data;
     const result: Record<string, unknown> = {
-      occupation: data.occupation,
-      sector: data.sector,
-      region: data.region,
-      year: data.year,
-      source: data.source,
-      percentile_25: p25,
-      percentile_50: p50,
-      percentile_75: p75,
+      occupation: d.occupation,
+      sector: d.sector,
+      region: d.region,
+      year: d.year,
+      source: d.source,
+      percentile_25: d.percentile_25,
+      percentile_50: d.percentile_50,
+      percentile_75: d.percentile_75,
     };
 
-    if (current_salary && current_salary > 0) {
-      const gap = p75 - current_salary;
-      result.current_salary = current_salary;
-      result.gap_vs_p75 = gap;
-      result.gap_pct = Math.round((gap / current_salary) * 100);
-      result.category = categorizeGap(current_salary, p75);
+    if (hasSalary) {
+      result.current_salary = d.current_salary;
+      result.gap_vs_p75 = d.gap_vs_p75;
+      result.gap_pct = d.gap_pct;
+      result.category = d.category;
     }
 
     return new Response(JSON.stringify(result), {
@@ -232,7 +93,7 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("salary-benchmark-engine error:", error);
+    console.error("salary-benchmark-engine wrapper error:", error);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
