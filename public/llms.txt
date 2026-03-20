@@ -35,25 +35,16 @@ CompCare.se är en **gratis löneanalystjänst för vårdpersonal i Sverige**. P
 CompCare exponerar ett REST-API för programmatisk åtkomst. Fullständig OpenAPI 3.1-specifikation finns på:
 - OpenAPI JSON: https://compcare.se/openapi.json
 
-### Tillgängliga endpoints
+### Rekommenderad ingång: Compensation Intelligence API
 
-| Endpoint | Beskrivning |
-|----------|-------------|
-| `POST /pricing-engine` | Beräkna konsultersättning baserat på yrke, kommun och anställningstyp |
-| `POST /salary-benchmark-engine` | Hämta lönepercentiler (p25/p50/p75) för fast anställda |
-| `POST /create-report` | Generera en fullständig ersättningsanalys |
-| `POST /get-report` | Hämta en tidigare skapad rapport (inkl. prishistorik) |
-| `POST /generate-pdf` | Generera en brandad PDF-rapport från en befintlig rapport |
-| `POST /run-price-diff` | Jämför priser mellan ramavtalsversioner |
-| `POST /compensation-intelligence` | **Unified API** — Central entry point för alla ersättningsfrågor med entity resolution, policy enforcement och audit logging |
-| `GET /ci-capabilities` | Lista tillgängliga capabilities med input/output-scheman |
-| `GET /ci-roles` | Lista tillgängliga yrkesroller med alias-mappningar |
-| `GET /ci-geographies` | Lista tillgängliga kommuner, regioner och zoner |
-| `GET /ci-metrics` | Lista tillgängliga mätvärden och jämförelsetyper |
+Det nya `/compensation-intelligence`-endpointet är den **rekommenderade vägen** för AI-agenter och programmatisk åtkomst. Det erbjuder:
 
-### Compensation Intelligence API
+- **Entity resolution**: Fuzzy-matchning av yrkesroller och kommuner via alias-tabeller
+- **Policy enforcement**: Rate limiting, anti-enumerering och sample size-kontroll
+- **Audit logging**: Varje fråga loggas med entity resolution, policy-resultat och svar
+- **Strukturerade svar**: Standardiserat JSON med `query_id`, `data`, `source_metadata` och `policy_status`
 
-Det nya `/compensation-intelligence`-endpointet är den rekommenderade vägen för AI-agenter och programmatisk åtkomst. Det stödjer fyra capabilities:
+#### Capabilities
 
 | Capability | Beskrivning |
 |-----------|-------------|
@@ -82,13 +73,71 @@ Svaret inkluderar:
 - `source_metadata` — datakälla, aktualitet, täckning
 - `policy_status` — status (allowed/fallback/blocked), tillämpade regler
 
+#### Exempel: compare_roles
+
+```json
+POST /compensation-intelligence
+{
+  "capability": "compare_roles",
+  "params": {
+    "role_a": "Sjuksköterska",
+    "role_b": "Specialistsjuksköterska",
+    "geography": "Stockholm",
+    "employment_type": "anstalld"
+  }
+}
+```
+
+#### Exempel: salary_position
+
+```json
+POST /compensation-intelligence
+{
+  "capability": "salary_position",
+  "params": {
+    "role": "Sjuksköterska",
+    "sector": "offentlig",
+    "current_salary": 35000
+  }
+}
+```
+
+### Discovery-endpoints
+
+Använd dessa GET-endpoints för att utforska tillgängliga data utan att exponera råpriser:
+
+| Endpoint | Beskrivning |
+|----------|-------------|
+| `GET /ci-capabilities` | Lista capabilities med input/output-scheman och versioner |
+| `GET /ci-roles` | Lista yrkesroller med alias-mappningar |
+| `GET /ci-geographies` | Lista kommuner, regioner och zoner |
+| `GET /ci-metrics` | Lista mätvärden (timpris, månadslön, p25/p50/p75) och jämförelsetyper |
+
+### Legacy-endpoints (bakåtkompatibla)
+
+Dessa delegerar internt till Compensation Intelligence:
+
+| Endpoint | Beskrivning |
+|----------|-------------|
+| `POST /pricing-engine` | Beräkna konsultersättning baserat på yrke, kommun och anställningstyp |
+| `POST /salary-benchmark-engine` | Hämta lönepercentiler (p25/p50/p75) för fast anställda |
+
+### Övriga endpoints
+
+| Endpoint | Beskrivning |
+|----------|-------------|
+| `POST /create-report` | Generera en fullständig ersättningsanalys |
+| `POST /get-report` | Hämta en tidigare skapad rapport (inkl. prishistorik) |
+| `POST /generate-pdf` | Generera en brandad PDF-rapport från en befintlig rapport |
+| `POST /run-price-diff` | Jämför priser mellan ramavtalsversioner |
+
 ### Autentisering
 
 Publika endpoints kräver en `apikey`-header med Supabase anon key.
 
 ### Datakvalitet i API-svar
 
-API-svaren kan inkludera ett `data_quality`-objekt med metadata om dataursprung och aktualitet:
+API-svaren inkluderar ett `source_metadata`-objekt (CI-endpoints) eller `data_quality`-objekt (legacy) med metadata:
 
 | Fält | Beskrivning |
 |------|-------------|
@@ -97,6 +146,16 @@ API-svaren kan inkludera ett `data_quality`-objekt med metadata om dataursprung 
 | `contract_version` | Aktiv ramavtalsversion, t.ex. "SKR 2026 v1.0" |
 | `sample_size` | Antal datapunkter (för lönestatistik). Null för prisuppslag. |
 | `coverage` | Geografisk täckning, t.ex. "290+ kommuner, 4 priszoner" |
+
+### Policy-status i CI-svar
+
+Varje CI-svar inkluderar `policy_status`:
+
+| Fält | Beskrivning |
+|------|-------------|
+| `status` | `allowed` = normalt svar, `fallback` = data från bredare geografi, `blocked` = förfrågan nekad |
+| `reason` | Anledning vid fallback/blocked |
+| `applied_rules` | Lista av regler som utvärderats |
 
 ## Vanliga frågor
 

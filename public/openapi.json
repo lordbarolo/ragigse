@@ -2,8 +2,8 @@
   "openapi": "3.1.0",
   "info": {
     "title": "CompCare API",
-    "version": "1.1.0",
-    "description": "Salary intelligence API for healthcare professionals in Sweden. Provides market rate lookups, salary benchmarks, compensation analysis, and PDF report generation based on official framework agreement prices (ramavtalspriser) from 290+ Swedish healthcare providers.\n\nData sources: SKR framework agreements (2026), SCB/Medlingsinstitutet salary statistics. Updated continuously as new contract versions are published.",
+    "version": "2.0.0",
+    "description": "Salary intelligence API for healthcare professionals in Sweden. Provides market rate lookups, salary benchmarks, compensation analysis, and PDF report generation based on official framework agreement prices (ramavtalspriser) from 290+ Swedish healthcare providers.\n\nThe recommended entry point for AI agents is the unified `/compensation-intelligence` endpoint, which supports entity resolution, policy enforcement, and audit logging.\n\nData sources: SKR framework agreements (2026), SCB/Medlingsinstitutet salary statistics. Updated continuously as new contract versions are published.",
     "contact": {
       "name": "CompCare",
       "url": "https://compcare.se",
@@ -20,11 +20,260 @@
     }
   ],
   "paths": {
+    "/compensation-intelligence": {
+      "post": {
+        "operationId": "compensationIntelligence",
+        "summary": "Unified compensation intelligence endpoint (recommended)",
+        "description": "Central entry point for all compensation queries. Supports four capabilities: lookup_rate, compare_roles, salary_benchmark, salary_position. Includes entity resolution (fuzzy matching of roles and geographies), policy enforcement (rate limiting, anti-enumeration), and full audit logging.",
+        "tags": ["Compensation Intelligence"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CIRequest"
+              },
+              "examples": {
+                "lookup_rate": {
+                  "summary": "Look up consultant rate",
+                  "value": {
+                    "capability": "lookup_rate",
+                    "params": {
+                      "role": "Specialistsjuksköterska intensivvård",
+                      "geography": "Lund",
+                      "employment_type": "anstalld"
+                    }
+                  }
+                },
+                "compare_roles": {
+                  "summary": "Compare two roles",
+                  "value": {
+                    "capability": "compare_roles",
+                    "params": {
+                      "role_a": "Sjuksköterska",
+                      "role_b": "Specialistsjuksköterska",
+                      "geography": "Stockholm",
+                      "employment_type": "anstalld"
+                    }
+                  }
+                },
+                "salary_benchmark": {
+                  "summary": "Get salary percentiles",
+                  "value": {
+                    "capability": "salary_benchmark",
+                    "params": {
+                      "role": "Sjuksköterska",
+                      "sector": "offentlig"
+                    }
+                  }
+                },
+                "salary_position": {
+                  "summary": "Compare salary against benchmarks",
+                  "value": {
+                    "capability": "salary_position",
+                    "params": {
+                      "role": "Sjuksköterska",
+                      "sector": "offentlig",
+                      "current_salary": 35000
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CIResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request (missing capability or params)",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CIErrorResponse" }
+              }
+            }
+          },
+          "404": {
+            "description": "Entity not resolved or no data found",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CIErrorResponse" }
+              }
+            }
+          },
+          "422": {
+            "description": "Insufficient sample size (n<10) — policy blocked",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CIErrorResponse" }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited or anti-enumeration policy triggered",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CIErrorResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ci-capabilities": {
+      "get": {
+        "operationId": "listCapabilities",
+        "summary": "List available capabilities with input/output schemas",
+        "description": "Returns all active capability definitions including their input/output JSON schemas, human-readable labels, and agent-optimized labels.",
+        "tags": ["Discovery"],
+        "responses": {
+          "200": {
+            "description": "List of capabilities",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "capabilities": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/CapabilityDefinition"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ci-roles": {
+      "get": {
+        "operationId": "listRoles",
+        "summary": "List available roles with alias mappings",
+        "description": "Returns all canonical role names and their known aliases. Use these values in the 'role' parameter of compensation-intelligence requests.",
+        "tags": ["Discovery"],
+        "responses": {
+          "200": {
+            "description": "List of roles",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "roles": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "canonical_name": { "type": "string" },
+                          "aliases": {
+                            "type": "array",
+                            "items": { "type": "string" }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ci-geographies": {
+      "get": {
+        "operationId": "listGeographies",
+        "summary": "List available geographies grouped by region",
+        "description": "Returns all municipalities (kommuner) grouped by region, with zone information. Use these values in the 'geography' parameter.",
+        "tags": ["Discovery"],
+        "responses": {
+          "200": {
+            "description": "Geographies grouped by region",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "total_kommuner": { "type": "integer" },
+                    "zones": {
+                      "type": "array",
+                      "items": { "type": "string" }
+                    },
+                    "regions": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "region": { "type": "string" },
+                          "kommuner": {
+                            "type": "array",
+                            "items": { "type": "string" }
+                          },
+                          "zoner": {
+                            "type": "array",
+                            "items": { "type": "string" }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ci-metrics": {
+      "get": {
+        "operationId": "listMetrics",
+        "summary": "List available metrics and comparison types",
+        "description": "Returns all available measurement values (e.g. hourly_rate, percentile_50) and allowed comparison types (role_vs_role, geography_vs_geography, salary_vs_benchmark) with their required parameters.",
+        "tags": ["Discovery"],
+        "responses": {
+          "200": {
+            "description": "Metrics and comparisons",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "metrics": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/MetricDefinition"
+                      }
+                    },
+                    "comparisons": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ComparisonDefinition"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/pricing-engine": {
       "post": {
         "operationId": "getConsultantPricing",
-        "summary": "Calculate consultant compensation range",
-        "description": "Returns recommended hourly and monthly compensation for a healthcare consultant based on occupation, municipality (kommun), and employment type. Uses official framework agreement prices and margin models.",
+        "summary": "Calculate consultant compensation range (legacy wrapper)",
+        "description": "Legacy endpoint — delegates to compensation-intelligence internally. Returns recommended hourly and monthly compensation for a healthcare consultant based on occupation, municipality (kommun), and employment type.",
         "tags": ["Pricing"],
         "requestBody": {
           "required": true,
@@ -74,8 +323,8 @@
     "/salary-benchmark-engine": {
       "post": {
         "operationId": "getSalaryBenchmark",
-        "summary": "Get salary benchmark for permanent employees",
-        "description": "Returns salary percentiles (p25, p50, p75) for a given occupation and sector (privat/offentlig). Optionally compares against a current salary to calculate gap analysis.",
+        "summary": "Get salary benchmark for permanent employees (legacy wrapper)",
+        "description": "Legacy endpoint — delegates to compensation-intelligence internally. Returns salary percentiles (p25, p50, p75) for a given occupation and sector.",
         "tags": ["Benchmarks"],
         "requestBody": {
           "required": true,
@@ -189,7 +438,7 @@
       "post": {
         "operationId": "generatePdf",
         "summary": "Generate a branded PDF report",
-        "description": "Generates a professionally branded A4 PDF of a compensation report. Returns the PDF as a base64-encoded string. The PDF includes market rates, recommended compensation, share analysis, and calculation assumptions.",
+        "description": "Generates a professionally branded A4 PDF of a compensation report. Returns the PDF as a base64-encoded string.",
         "tags": ["Reports"],
         "requestBody": {
           "required": true,
@@ -238,7 +487,7 @@
       "post": {
         "operationId": "runPriceDiff",
         "summary": "Compare prices between contract versions",
-        "description": "Calculates price differences between two contract catalog versions. Detects increases, decreases, new entries, and removed rates. Results are stored in price_changes table.",
+        "description": "Calculates price differences between two contract catalog versions. Detects increases, decreases, new entries, and removed rates.",
         "tags": ["Market Intelligence"],
         "requestBody": {
           "required": true,
@@ -267,56 +516,129 @@
   },
   "components": {
     "schemas": {
+      "CIRequest": {
+        "type": "object",
+        "required": ["capability", "params"],
+        "properties": {
+          "capability": {
+            "type": "string",
+            "enum": ["lookup_rate", "compare_roles", "salary_benchmark", "salary_position"],
+            "description": "Which capability to invoke"
+          },
+          "version": {
+            "type": "integer",
+            "default": 1,
+            "description": "Capability version (default 1)"
+          },
+          "params": {
+            "type": "object",
+            "description": "Capability-specific parameters. Use /ci-capabilities to discover input schemas.",
+            "properties": {
+              "role": { "type": "string", "description": "Healthcare role (resolved via alias matching)" },
+              "role_a": { "type": "string", "description": "First role for compare_roles" },
+              "role_b": { "type": "string", "description": "Second role for compare_roles" },
+              "geography": { "type": "string", "description": "Municipality name (resolved via alias matching)" },
+              "employment_type": { "type": "string", "enum": ["anstalld", "foretagare"] },
+              "sector": { "type": "string", "enum": ["privat", "offentlig", "landsting", "kommun"] },
+              "current_salary": { "type": "integer", "description": "Current monthly salary for gap analysis" }
+            }
+          },
+          "client_type": {
+            "type": "string",
+            "enum": ["anonymous_human", "authenticated_human", "internal_agent"],
+            "default": "anonymous_human"
+          }
+        }
+      },
+      "CIResponse": {
+        "type": "object",
+        "properties": {
+          "query_id": { "type": "string", "format": "uuid", "description": "Unique audit trail ID" },
+          "capability": { "type": "string" },
+          "version": { "type": "integer" },
+          "data": { "type": "object", "description": "Capability-specific structured result data" },
+          "source_metadata": {
+            "type": "object",
+            "properties": {
+              "source": { "type": "string" },
+              "data_freshness": { "type": "string", "format": "date" },
+              "contract_version": { "type": "string" },
+              "coverage": { "type": "string" }
+            }
+          },
+          "policy_status": {
+            "type": "object",
+            "properties": {
+              "status": { "type": "string", "enum": ["allowed", "fallback", "blocked"] },
+              "reason": { "type": "string" },
+              "applied_rules": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "CIErrorResponse": {
+        "type": "object",
+        "properties": {
+          "error": { "type": "string", "description": "Error code (e.g. ENTITY_NOT_RESOLVED, NO_RATE_FOUND, RATE_LIMITED)" },
+          "message": { "type": "string", "description": "Human-readable error message" },
+          "query_id": { "type": "string", "format": "uuid" }
+        }
+      },
+      "CapabilityDefinition": {
+        "type": "object",
+        "properties": {
+          "capability_key": { "type": "string" },
+          "version": { "type": "integer" },
+          "name": { "type": "string" },
+          "description": { "type": "string" },
+          "human_label": { "type": "string" },
+          "agent_label": { "type": "string" },
+          "input_schema_json": { "type": "object" },
+          "output_schema_json": { "type": "object" }
+        }
+      },
+      "MetricDefinition": {
+        "type": "object",
+        "properties": {
+          "key": { "type": "string" },
+          "label": { "type": "string" },
+          "description": { "type": "string" },
+          "capabilities": { "type": "array", "items": { "type": "string" } },
+          "unit": { "type": "string" }
+        }
+      },
+      "ComparisonDefinition": {
+        "type": "object",
+        "properties": {
+          "key": { "type": "string" },
+          "label": { "type": "string" },
+          "description": { "type": "string" },
+          "capability": { "type": "string" },
+          "required_params": { "type": "array", "items": { "type": "string" } },
+          "note": { "type": "string" }
+        }
+      },
       "DataQuality": {
         "type": "object",
         "description": "Metadata about data provenance and freshness — useful for agents evaluating trustworthiness.",
         "properties": {
-          "source": {
-            "type": "string",
-            "description": "Data source identifier, e.g. 'SKR ramavtal 2026', 'SCB/Medlingsinstitutet'",
-            "examples": ["SKR ramavtal 2026", "SCB lönestatistik 2025"]
-          },
-          "data_freshness": {
-            "type": "string",
-            "format": "date",
-            "description": "Date when the underlying data was last updated (ISO 8601)"
-          },
-          "contract_version": {
-            "type": "string",
-            "description": "Active framework agreement version label",
-            "examples": ["SKR 2026 v1.0"]
-          },
-          "sample_size": {
-            "type": "integer",
-            "nullable": true,
-            "description": "Number of data points used (for salary benchmarks). Null for rate lookups."
-          },
-          "coverage": {
-            "type": "string",
-            "description": "Geographic or provider coverage description",
-            "examples": ["290+ kommuner, 4 priszoner", "Hela riket"]
-          }
+          "source": { "type": "string", "examples": ["SKR ramavtal 2026", "SCB lönestatistik 2025"] },
+          "data_freshness": { "type": "string", "format": "date" },
+          "contract_version": { "type": "string", "examples": ["SKR 2026 v1.0"] },
+          "sample_size": { "type": "integer", "nullable": true },
+          "coverage": { "type": "string", "examples": ["290+ kommuner, 4 priszoner"] }
         }
       },
       "PricingRequest": {
         "type": "object",
         "required": ["occupation", "kommun", "employment_type"],
         "properties": {
-          "occupation": {
-            "type": "string",
-            "description": "Healthcare occupation, e.g. 'Sjuksköterska', 'Specialistsjuksköterska', 'Barnmorska', 'Specialistläkare'",
-            "examples": ["Sjuksköterska", "Anestesisjuksköterska", "Barnmorska"]
-          },
-          "kommun": {
-            "type": "string",
-            "description": "Swedish municipality name",
-            "examples": ["Stockholm", "Göteborg", "Kiruna"]
-          },
-          "employment_type": {
-            "type": "string",
-            "enum": ["anstalld", "foretagare"],
-            "description": "'anstalld' = employed via staffing agency, 'foretagare' = self-employed/contractor"
-          }
+          "occupation": { "type": "string", "examples": ["Sjuksköterska", "Anestesisjuksköterska", "Barnmorska"] },
+          "kommun": { "type": "string", "examples": ["Stockholm", "Göteborg", "Kiruna"] },
+          "employment_type": { "type": "string", "enum": ["anstalld", "foretagare"] }
         }
       },
       "PricingResponse": {
@@ -324,18 +646,18 @@
         "properties": {
           "occupation": { "type": "string" },
           "kommun": { "type": "string" },
-          "zon": { "type": "string", "description": "Price zone (Zon 1-4)" },
+          "zon": { "type": "string" },
           "region": { "type": "string" },
           "employment_type": { "type": "string" },
-          "rate_customer_sek_per_hour": { "type": "integer", "description": "What the healthcare provider pays per hour (framework agreement price)" },
-          "consultant_share_min": { "type": "number", "description": "Minimum consultant share ratio (e.g. 0.85)" },
-          "consultant_share_max": { "type": "number", "description": "Maximum consultant share ratio (e.g. 0.90)" },
-          "employee_factor": { "type": "number", "description": "Employer cost factor for employed consultants (typically 1.42)" },
-          "hours_per_month": { "type": "integer", "description": "Standard hours per month (typically 167)" },
-          "recommended_hourly_min": { "type": "integer", "description": "Recommended minimum hourly rate in SEK" },
-          "recommended_hourly_max": { "type": "integer", "description": "Recommended maximum hourly rate in SEK" },
-          "recommended_monthly_min": { "type": "integer", "description": "Recommended minimum monthly salary in SEK" },
-          "recommended_monthly_max": { "type": "integer", "description": "Recommended maximum monthly salary in SEK" },
+          "rate_customer_sek_per_hour": { "type": "integer" },
+          "consultant_share_min": { "type": "number" },
+          "consultant_share_max": { "type": "number" },
+          "employee_factor": { "type": "number" },
+          "hours_per_month": { "type": "integer" },
+          "recommended_hourly_min": { "type": "integer" },
+          "recommended_hourly_max": { "type": "integer" },
+          "recommended_monthly_min": { "type": "integer" },
+          "recommended_monthly_max": { "type": "integer" },
           "data_quality": { "$ref": "#/components/schemas/DataQuality" }
         }
       },
@@ -343,19 +665,9 @@
         "type": "object",
         "required": ["occupation", "sector"],
         "properties": {
-          "occupation": {
-            "type": "string",
-            "description": "Healthcare occupation name"
-          },
-          "sector": {
-            "type": "string",
-            "enum": ["privat", "offentlig", "landsting", "kommun"],
-            "description": "Employment sector"
-          },
-          "current_salary": {
-            "type": "integer",
-            "description": "Optional current monthly salary in SEK for gap analysis"
-          }
+          "occupation": { "type": "string" },
+          "sector": { "type": "string", "enum": ["privat", "offentlig", "landsting", "kommun"] },
+          "current_salary": { "type": "integer" }
         }
       },
       "BenchmarkResponse": {
@@ -364,15 +676,15 @@
           "occupation": { "type": "string" },
           "sector": { "type": "string" },
           "region": { "type": "string", "nullable": true },
-          "year": { "type": "integer", "description": "Data year" },
-          "source": { "type": "string", "description": "Data source (e.g. SCB)" },
-          "percentile_25": { "type": "integer", "description": "25th percentile monthly salary" },
-          "percentile_50": { "type": "integer", "description": "Median monthly salary" },
-          "percentile_75": { "type": "integer", "description": "75th percentile monthly salary" },
-          "current_salary": { "type": "integer", "description": "Provided current salary (if given)" },
-          "gap_vs_p75": { "type": "integer", "description": "Gap between current and p75 in SEK" },
-          "gap_pct": { "type": "integer", "description": "Gap as percentage" },
-          "category": { "type": "string", "enum": ["small", "medium", "large"], "description": "Gap category" },
+          "year": { "type": "integer" },
+          "source": { "type": "string" },
+          "percentile_25": { "type": "integer" },
+          "percentile_50": { "type": "integer" },
+          "percentile_75": { "type": "integer" },
+          "current_salary": { "type": "integer" },
+          "gap_vs_p75": { "type": "integer" },
+          "gap_pct": { "type": "integer" },
+          "category": { "type": "string", "enum": ["small", "medium", "large"] },
           "data_quality": { "$ref": "#/components/schemas/DataQuality" }
         }
       },
@@ -388,9 +700,9 @@
           "experience": { "type": "integer" },
           "current_salary": { "type": "integer" },
           "salary_type": { "type": "string", "enum": ["monthly", "hourly"] },
-          "ob_share": { "type": "string", "description": "Self-reported OB/on-call share of compensation, e.g. '10-20%', '0%'" },
-          "track": { "type": "string", "enum": ["consultant", "permanent"], "description": "Report track. Default: consultant" },
-          "sector": { "type": "string", "description": "Required for permanent track" }
+          "ob_share": { "type": "string" },
+          "track": { "type": "string", "enum": ["consultant", "permanent"] },
+          "sector": { "type": "string" }
         }
       },
       "CreateReportResponse": {
@@ -417,7 +729,7 @@
           "occupation": { "type": "string" },
           "employment_type": { "type": "string" },
           "kommun": { "type": "string" },
-          "result_json": { "type": "object", "description": "Full calculation results (only in full access)" },
+          "result_json": { "type": "object" },
           "zone_comparisons": {
             "type": "array",
             "items": {
@@ -432,7 +744,6 @@
           "user_zone": { "type": "string" },
           "price_history": {
             "type": "array",
-            "description": "Historical price changes for the occupation (when available)",
             "items": {
               "type": "object",
               "properties": {
@@ -452,24 +763,14 @@
         "type": "object",
         "required": ["report_id"],
         "properties": {
-          "report_id": {
-            "type": "string",
-            "format": "uuid",
-            "description": "ID of a previously created compensation report"
-          }
+          "report_id": { "type": "string", "format": "uuid" }
         }
       },
       "GeneratePdfResponse": {
         "type": "object",
         "properties": {
-          "pdf_base64": {
-            "type": "string",
-            "description": "Base64-encoded PDF file content"
-          },
-          "filename": {
-            "type": "string",
-            "description": "Suggested filename, e.g. 'CompCare_Sjuksköterska_Stockholm.pdf'"
-          }
+          "pdf_base64": { "type": "string" },
+          "filename": { "type": "string" }
         }
       },
       "PriceDiffRequest": {
@@ -533,12 +834,20 @@
   ],
   "tags": [
     {
+      "name": "Compensation Intelligence",
+      "description": "Unified compensation intelligence API with entity resolution, policy enforcement, and structured responses. Recommended entry point for AI agents."
+    },
+    {
+      "name": "Discovery",
+      "description": "Discover available capabilities, roles, geographies, and metrics without exposing raw data"
+    },
+    {
       "name": "Pricing",
-      "description": "Consultant compensation calculations based on framework agreement prices"
+      "description": "Legacy consultant compensation calculations (delegates to Compensation Intelligence)"
     },
     {
       "name": "Benchmarks",
-      "description": "Salary benchmarks for permanent employees from official statistics"
+      "description": "Legacy salary benchmarks (delegates to Compensation Intelligence)"
     },
     {
       "name": "Reports",
@@ -547,98 +856,6 @@
     {
       "name": "Market Intelligence",
       "description": "Price monitoring and contract version comparisons"
-    },
-    {
-      "name": "Compensation Intelligence",
-      "description": "Unified compensation intelligence API with entity resolution, policy enforcement, and structured responses"
-    },
-    {
-      "name": "Discovery",
-      "description": "Discover available capabilities, roles, geographies, and metrics"
     }
-  ],
-  "paths_ci": {
-    "/compensation-intelligence": {
-      "post": {
-        "operationId": "compensationIntelligence",
-        "summary": "Unified compensation intelligence endpoint",
-        "description": "Central entry point for all compensation queries. Supports capabilities: lookup_rate, compare_roles, salary_benchmark, salary_position. Includes entity resolution, policy enforcement, and audit logging.",
-        "tags": ["Compensation Intelligence"],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["capability", "params"],
-                "properties": {
-                  "capability": {
-                    "type": "string",
-                    "enum": ["lookup_rate", "compare_roles", "salary_benchmark", "salary_position"],
-                    "description": "Which capability to invoke"
-                  },
-                  "version": {
-                    "type": "integer",
-                    "default": 1,
-                    "description": "Capability version"
-                  },
-                  "params": {
-                    "type": "object",
-                    "description": "Capability-specific parameters"
-                  },
-                  "client_type": {
-                    "type": "string",
-                    "enum": ["anonymous_human", "authenticated_human", "internal_agent"],
-                    "default": "anonymous_human"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Successful response with structured data, source metadata, and policy status"
-          },
-          "404": {
-            "description": "Entity not resolved or no data found"
-          },
-          "422": {
-            "description": "Insufficient sample size (n<10)"
-          },
-          "429": {
-            "description": "Rate limited or policy blocked"
-          }
-        }
-      }
-    },
-    "/ci-capabilities": {
-      "get": {
-        "operationId": "listCapabilities",
-        "summary": "List available capabilities",
-        "tags": ["Discovery"]
-      }
-    },
-    "/ci-roles": {
-      "get": {
-        "operationId": "listRoles",
-        "summary": "List available roles with aliases",
-        "tags": ["Discovery"]
-      }
-    },
-    "/ci-geographies": {
-      "get": {
-        "operationId": "listGeographies",
-        "summary": "List available geographies grouped by region",
-        "tags": ["Discovery"]
-      }
-    },
-    "/ci-metrics": {
-      "get": {
-        "operationId": "listMetrics",
-        "summary": "List available metrics and comparison types",
-        "tags": ["Discovery"]
-      }
-    }
-  }
+  ]
 }
