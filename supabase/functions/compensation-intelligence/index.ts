@@ -367,8 +367,9 @@ async function capLookupRate(
   let timprisKund = 0;
   let matchedOccupation = role.canonical;
   let fallbackUsed: string | undefined;
+  const rawRole = (params.role ?? params.role_a) as string | undefined;
 
-  // Try exact match
+  // Try exact match on canonical name
   const { data: rateData } = await supabase
     .from("rates")
     .select("timpris_kund, yrkeskategori")
@@ -379,8 +380,40 @@ async function capLookupRate(
   if (rateData && rateData.length > 0) {
     timprisKund = rateData[0].timpris_kund;
     matchedOccupation = rateData[0].yrkeskategori;
-  } else {
-    // Fallback: occupation → typ → zon
+  }
+
+  // Try ILIKE on canonical name
+  if (timprisKund === 0) {
+    const { data: ilikeRate } = await supabase
+      .from("rates")
+      .select("timpris_kund, yrkeskategori")
+      .ilike("yrkeskategori", `%${role.canonical}%`)
+      .eq("zon", geo.zon)
+      .limit(1);
+    if (ilikeRate && ilikeRate.length > 0) {
+      timprisKund = ilikeRate[0].timpris_kund;
+      matchedOccupation = ilikeRate[0].yrkeskategori;
+      fallbackUsed = "ilike_canonical";
+    }
+  }
+
+  // Try raw input directly against rates
+  if (timprisKund === 0 && rawRole && rawRole !== role.canonical) {
+    const { data: rawRate } = await supabase
+      .from("rates")
+      .select("timpris_kund, yrkeskategori")
+      .ilike("yrkeskategori", `%${rawRole}%`)
+      .eq("zon", geo.zon)
+      .limit(1);
+    if (rawRate && rawRate.length > 0) {
+      timprisKund = rawRate[0].timpris_kund;
+      matchedOccupation = rawRate[0].yrkeskategori;
+      fallbackUsed = "raw_input";
+    }
+  }
+
+  // Fallback: occupation → typ → zon
+  if (timprisKund === 0) {
     const { data: anyRate } = await supabase
       .from("rates")
       .select("typ")
