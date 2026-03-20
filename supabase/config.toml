@@ -83,3 +83,18 @@ verify_jwt = false
 
 [functions.radar-notify]
 verify_jwt = false
+
+[functions.compensation-intelligence]
+verify_jwt = false
+
+[functions.ci-capabilities]
+verify_jwt = false
+
+[functions.ci-roles]
+verify_jwt = false
+
+[functions.ci-geographies]
+verify_jwt = false
+
+[functions.ci-metrics]
+verify_jwt = false
