@@ -919,35 +919,37 @@ export type Database = {
       geography_aliases: {
         Row: {
           alias: string
-          canonical_kommun: string
-          canonical_region: string
-          canonical_zon: string
           created_at: string
+          geo_id: string
           id: string
           language: string
           source: string | null
         }
         Insert: {
           alias: string
-          canonical_kommun: string
-          canonical_region: string
-          canonical_zon: string
           created_at?: string
+          geo_id: string
           id?: string
           language?: string
           source?: string | null
         }
         Update: {
           alias?: string
-          canonical_kommun?: string
-          canonical_region?: string
-          canonical_zon?: string
           created_at?: string
+          geo_id?: string
           id?: string
           language?: string
           source?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "geography_aliases_geo_id_fkey"
+            columns: ["geo_id"]
+            isOneToOne: false
+            referencedRelation: "geographies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       invoice_lines: {
         Row: {
@@ -2195,29 +2197,37 @@ export type Database = {
       role_aliases: {
         Row: {
           alias: string
-          canonical_name: string
           created_at: string
           id: string
           language: string
+          role_id: string
           source: string | null
         }
         Insert: {
           alias: string
-          canonical_name: string
           created_at?: string
           id?: string
           language?: string
+          role_id: string
           source?: string | null
         }
         Update: {
           alias?: string
-          canonical_name?: string
           created_at?: string
           id?: string
           language?: string
+          role_id?: string
           source?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "role_aliases_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "roles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       roles: {
         Row: {
