@@ -131,32 +131,42 @@ async function resolveGeography(
   supabase: ReturnType<typeof createClient>,
   rawGeo: string
 ): Promise<ResolvedGeography | null> {
-  // 1. Exact alias match → join geographies
+  // Helper to fetch geo and build hierarchy
+  async function fetchGeo(geoId: string, method: string, confidence: number): Promise<ResolvedGeography | null> {
+    const { data: g } = await supabase
+      .from("geographies")
+      .select("id, name, type, code, parent_id")
+      .eq("id", geoId)
+      .single();
+    if (!g) return null;
+    const hierarchy = await resolveGeoHierarchy(supabase, g);
+    return { geo_id: g.id, name: g.name, type: g.type, ...hierarchy, method, confidence };
+  }
+
+  // 1. Exact alias match
   const { data: exact } = await supabase
     .from("geography_aliases")
-    .select("geo_id, geographies!inner(id, name, type, code, parent_id)")
+    .select("geo_id")
     .ilike("alias", rawGeo)
     .limit(1)
     .maybeSingle();
 
-  if (exact?.geographies) {
-    const g = exact.geographies as unknown as { id: string; name: string; type: string; code: string; parent_id: string | null };
-    const hierarchy = await resolveGeoHierarchy(supabase, g);
-    return { geo_id: g.id, name: g.name, type: g.type, ...hierarchy, method: "alias_exact", confidence: 1.0 };
+  if (exact) {
+    const geo = await fetchGeo(exact.geo_id, "alias_exact", 1.0);
+    if (geo) return geo;
   }
 
   // 2. Fuzzy alias match
   const { data: fuzzy } = await supabase
     .from("geography_aliases")
-    .select("geo_id, geographies!inner(id, name, type, code, parent_id)")
+    .select("geo_id")
     .ilike("alias", `%${rawGeo}%`)
     .limit(1)
     .maybeSingle();
 
-  if (fuzzy?.geographies) {
-    const g = fuzzy.geographies as unknown as { id: string; name: string; type: string; code: string; parent_id: string | null };
-    const hierarchy = await resolveGeoHierarchy(supabase, g);
-    return { geo_id: g.id, name: g.name, type: g.type, ...hierarchy, method: "alias_fuzzy", confidence: 0.8 };
+  if (fuzzy) {
+    const geo = await fetchGeo(fuzzy.geo_id, "alias_fuzzy", 0.8);
+    if (geo) return geo;
   }
 
   // 3. Direct geographies lookup by name
