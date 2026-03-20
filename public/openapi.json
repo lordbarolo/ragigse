@@ -547,6 +547,98 @@
     {
       "name": "Market Intelligence",
       "description": "Price monitoring and contract version comparisons"
+    },
+    {
+      "name": "Compensation Intelligence",
+      "description": "Unified compensation intelligence API with entity resolution, policy enforcement, and structured responses"
+    },
+    {
+      "name": "Discovery",
+      "description": "Discover available capabilities, roles, geographies, and metrics"
     }
-  ]
+  ],
+  "paths_ci": {
+    "/compensation-intelligence": {
+      "post": {
+        "operationId": "compensationIntelligence",
+        "summary": "Unified compensation intelligence endpoint",
+        "description": "Central entry point for all compensation queries. Supports capabilities: lookup_rate, compare_roles, salary_benchmark, salary_position. Includes entity resolution, policy enforcement, and audit logging.",
+        "tags": ["Compensation Intelligence"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["capability", "params"],
+                "properties": {
+                  "capability": {
+                    "type": "string",
+                    "enum": ["lookup_rate", "compare_roles", "salary_benchmark", "salary_position"],
+                    "description": "Which capability to invoke"
+                  },
+                  "version": {
+                    "type": "integer",
+                    "default": 1,
+                    "description": "Capability version"
+                  },
+                  "params": {
+                    "type": "object",
+                    "description": "Capability-specific parameters"
+                  },
+                  "client_type": {
+                    "type": "string",
+                    "enum": ["anonymous_human", "authenticated_human", "internal_agent"],
+                    "default": "anonymous_human"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response with structured data, source metadata, and policy status"
+          },
+          "404": {
+            "description": "Entity not resolved or no data found"
+          },
+          "422": {
+            "description": "Insufficient sample size (n<10)"
+          },
+          "429": {
+            "description": "Rate limited or policy blocked"
+          }
+        }
+      }
+    },
+    "/ci-capabilities": {
+      "get": {
+        "operationId": "listCapabilities",
+        "summary": "List available capabilities",
+        "tags": ["Discovery"]
+      }
+    },
+    "/ci-roles": {
+      "get": {
+        "operationId": "listRoles",
+        "summary": "List available roles with aliases",
+        "tags": ["Discovery"]
+      }
+    },
+    "/ci-geographies": {
+      "get": {
+        "operationId": "listGeographies",
+        "summary": "List available geographies grouped by region",
+        "tags": ["Discovery"]
+      }
+    },
+    "/ci-metrics": {
+      "get": {
+        "operationId": "listMetrics",
+        "summary": "List available metrics and comparison types",
+        "tags": ["Discovery"]
+      }
+    }
+  }
 }

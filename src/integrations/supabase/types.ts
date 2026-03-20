@@ -341,6 +341,135 @@ export type Database = {
         }
         Relationships: []
       }
+      capability_definitions: {
+        Row: {
+          agent_label: string | null
+          capability_key: string
+          created_at: string
+          description: string | null
+          human_label: string | null
+          id: string
+          input_schema_json: Json | null
+          is_active: boolean
+          name: string
+          output_schema_json: Json | null
+          version: number
+        }
+        Insert: {
+          agent_label?: string | null
+          capability_key: string
+          created_at?: string
+          description?: string | null
+          human_label?: string | null
+          id?: string
+          input_schema_json?: Json | null
+          is_active?: boolean
+          name: string
+          output_schema_json?: Json | null
+          version?: number
+        }
+        Update: {
+          agent_label?: string | null
+          capability_key?: string
+          created_at?: string
+          description?: string | null
+          human_label?: string | null
+          id?: string
+          input_schema_json?: Json | null
+          is_active?: boolean
+          name?: string
+          output_schema_json?: Json | null
+          version?: number
+        }
+        Relationships: []
+      }
+      client_profiles: {
+        Row: {
+          allowed_capabilities: Json
+          client_type: string
+          created_at: string
+          id: string
+          max_entities_per_query: number
+          policy_rules: Json
+          profile_key: string
+          rate_limit_per_day: number
+          rate_limit_per_minute: number
+        }
+        Insert: {
+          allowed_capabilities?: Json
+          client_type: string
+          created_at?: string
+          id?: string
+          max_entities_per_query?: number
+          policy_rules?: Json
+          profile_key: string
+          rate_limit_per_day?: number
+          rate_limit_per_minute?: number
+        }
+        Update: {
+          allowed_capabilities?: Json
+          client_type?: string
+          created_at?: string
+          id?: string
+          max_entities_per_query?: number
+          policy_rules?: Json
+          profile_key?: string
+          rate_limit_per_day?: number
+          rate_limit_per_minute?: number
+        }
+        Relationships: []
+      }
+      compensation_queries: {
+        Row: {
+          capability_key: string
+          capability_version: number
+          channel: string | null
+          client_ip: string | null
+          client_type: string | null
+          confidence_score: number | null
+          created_at: string
+          id: string
+          normalized_input_json: Json | null
+          policy_result_json: Json | null
+          raw_input_text: string | null
+          resolution_method: string | null
+          resolved_entities_json: Json | null
+          response_payload_json: Json | null
+        }
+        Insert: {
+          capability_key: string
+          capability_version?: number
+          channel?: string | null
+          client_ip?: string | null
+          client_type?: string | null
+          confidence_score?: number | null
+          created_at?: string
+          id?: string
+          normalized_input_json?: Json | null
+          policy_result_json?: Json | null
+          raw_input_text?: string | null
+          resolution_method?: string | null
+          resolved_entities_json?: Json | null
+          response_payload_json?: Json | null
+        }
+        Update: {
+          capability_key?: string
+          capability_version?: number
+          channel?: string | null
+          client_ip?: string | null
+          client_type?: string | null
+          confidence_score?: number | null
+          created_at?: string
+          id?: string
+          normalized_input_json?: Json | null
+          policy_result_json?: Json | null
+          raw_input_text?: string | null
+          resolution_method?: string | null
+          resolved_entities_json?: Json | null
+          response_payload_json?: Json | null
+        }
+        Relationships: []
+      }
       compensation_reports: {
         Row: {
           calc_version: string
@@ -749,6 +878,39 @@ export type Database = {
           sent_at?: string | null
           sequence_step?: number
           status?: string
+        }
+        Relationships: []
+      }
+      geography_aliases: {
+        Row: {
+          alias: string
+          canonical_kommun: string
+          canonical_region: string
+          canonical_zon: string
+          created_at: string
+          id: string
+          language: string
+          source: string | null
+        }
+        Insert: {
+          alias: string
+          canonical_kommun: string
+          canonical_region: string
+          canonical_zon: string
+          created_at?: string
+          id?: string
+          language?: string
+          source?: string | null
+        }
+        Update: {
+          alias?: string
+          canonical_kommun?: string
+          canonical_region?: string
+          canonical_zon?: string
+          created_at?: string
+          id?: string
+          language?: string
+          source?: string | null
         }
         Relationships: []
       }
@@ -1992,6 +2154,33 @@ export type Database = {
           specialization?: string | null
           unit?: string | null
           winning_supplier?: string | null
+        }
+        Relationships: []
+      }
+      role_aliases: {
+        Row: {
+          alias: string
+          canonical_name: string
+          created_at: string
+          id: string
+          language: string
+          source: string | null
+        }
+        Insert: {
+          alias: string
+          canonical_name: string
+          created_at?: string
+          id?: string
+          language?: string
+          source?: string | null
+        }
+        Update: {
+          alias?: string
+          canonical_name?: string
+          created_at?: string
+          id?: string
+          language?: string
+          source?: string | null
         }
         Relationships: []
       }
