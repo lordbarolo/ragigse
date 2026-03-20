@@ -881,6 +881,41 @@ export type Database = {
         }
         Relationships: []
       }
+      geographies: {
+        Row: {
+          code: string | null
+          created_at: string
+          id: string
+          name: string
+          parent_id: string | null
+          type: Database["public"]["Enums"]["geography_type"]
+        }
+        Insert: {
+          code?: string | null
+          created_at?: string
+          id?: string
+          name: string
+          parent_id?: string | null
+          type: Database["public"]["Enums"]["geography_type"]
+        }
+        Update: {
+          code?: string | null
+          created_at?: string
+          id?: string
+          name?: string
+          parent_id?: string | null
+          type?: Database["public"]["Enums"]["geography_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "geographies_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "geographies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       geography_aliases: {
         Row: {
           alias: string
@@ -2184,7 +2219,115 @@ export type Database = {
         }
         Relationships: []
       }
+      roles: {
+        Row: {
+          active: boolean
+          code: string
+          created_at: string
+          id: string
+          name: string
+          parent_role_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          code: string
+          created_at?: string
+          id?: string
+          name: string
+          parent_role_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          code?: string
+          created_at?: string
+          id?: string
+          name?: string
+          parent_role_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roles_parent_role_id_fkey"
+            columns: ["parent_role_id"]
+            isOneToOne: false
+            referencedRelation: "roles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       salary_benchmarks: {
+        Row: {
+          created_at: string
+          id: string
+          mean_salary: number | null
+          median_salary: number | null
+          municipality_id: string | null
+          p25_salary: number | null
+          p75_salary: number | null
+          period_key: string
+          region_id: string | null
+          role_id: string
+          sample_size: number
+          threshold_passed: boolean
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          mean_salary?: number | null
+          median_salary?: number | null
+          municipality_id?: string | null
+          p25_salary?: number | null
+          p75_salary?: number | null
+          period_key: string
+          region_id?: string | null
+          role_id: string
+          sample_size?: number
+          threshold_passed?: boolean
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          mean_salary?: number | null
+          median_salary?: number | null
+          municipality_id?: string | null
+          p25_salary?: number | null
+          p75_salary?: number | null
+          period_key?: string
+          region_id?: string | null
+          role_id?: string
+          sample_size?: number
+          threshold_passed?: boolean
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "salary_benchmarks_municipality_id_fkey"
+            columns: ["municipality_id"]
+            isOneToOne: false
+            referencedRelation: "geographies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salary_benchmarks_region_id_fkey"
+            columns: ["region_id"]
+            isOneToOne: false
+            referencedRelation: "geographies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "salary_benchmarks_role_id_fkey"
+            columns: ["role_id"]
+            isOneToOne: false
+            referencedRelation: "roles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      salary_benchmarks_legacy: {
         Row: {
           average_monthly: number
           created_at: string
@@ -2457,6 +2600,7 @@ export type Database = {
       }
     }
     Enums: {
+      geography_type: "nation" | "region" | "zone" | "municipality"
       ref_app_role: "individual" | "reference_giver" | "client"
       ref_ping_status: "sent" | "confirmed" | "denied" | "expired" | "dismissed"
       ref_reference_status: "pending" | "active" | "revoked" | "expired"
@@ -2587,6 +2731,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      geography_type: ["nation", "region", "zone", "municipality"],
       ref_app_role: ["individual", "reference_giver", "client"],
       ref_ping_status: ["sent", "confirmed", "denied", "expired", "dismissed"],
       ref_reference_status: ["pending", "active", "revoked", "expired"],
