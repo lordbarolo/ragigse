@@ -72,30 +72,41 @@ async function resolveRole(
   supabase: ReturnType<typeof createClient>,
   rawRole: string
 ): Promise<ResolvedRole | null> {
-  // 1. Exact alias match → join roles
+  // Helper to fetch role by id
+  async function fetchRole(roleId: string): Promise<ResolvedRole | null> {
+    const { data: role } = await supabase
+      .from("roles")
+      .select("id, code, name")
+      .eq("id", roleId)
+      .single();
+    if (!role) return null;
+    return { role_id: role.id, code: role.code, name: role.name, method: "", confidence: 0 };
+  }
+
+  // 1. Exact alias match
   const { data: exact } = await supabase
     .from("role_aliases")
-    .select("role_id, roles!inner(id, code, name)")
+    .select("role_id")
     .ilike("alias", rawRole)
     .limit(1)
     .maybeSingle();
 
-  if (exact?.roles) {
-    const r = exact.roles as unknown as { id: string; code: string; name: string };
-    return { role_id: r.id, code: r.code, name: r.name, method: "alias_exact", confidence: 1.0 };
+  if (exact) {
+    const role = await fetchRole(exact.role_id);
+    if (role) return { ...role, method: "alias_exact", confidence: 1.0 };
   }
 
   // 2. Fuzzy alias match
   const { data: fuzzy } = await supabase
     .from("role_aliases")
-    .select("role_id, roles!inner(id, code, name)")
+    .select("role_id")
     .ilike("alias", `%${rawRole}%`)
     .limit(1)
     .maybeSingle();
 
-  if (fuzzy?.roles) {
-    const r = fuzzy.roles as unknown as { id: string; code: string; name: string };
-    return { role_id: r.id, code: r.code, name: r.name, method: "alias_fuzzy", confidence: 0.8 };
+  if (fuzzy) {
+    const role = await fetchRole(fuzzy.role_id);
+    if (role) return { ...role, method: "alias_fuzzy", confidence: 0.8 };
   }
 
   // 3. Stem match on roles.name directly
