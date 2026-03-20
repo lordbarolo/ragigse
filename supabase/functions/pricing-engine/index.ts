@@ -1,10 +1,4 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import {
-  calculateSalaryRange,
-  type EmploymentType,
-  type MarginModel,
-} from "../_shared/calc.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -12,6 +6,11 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+/**
+ * Backward-compatible wrapper for pricing-engine.
+ * Delegates to compensation-intelligence → lookup_rate capability.
+ * Same request/response shape as before.
+ */
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -27,117 +26,57 @@ serve(async (req) => {
       );
     }
 
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-    );
+    // Delegate to compensation-intelligence
+    const ciUrl = `${Deno.env.get("SUPABASE_URL")}/functions/v1/compensation-intelligence`;
+    const ciResponse = await fetch(ciUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+      },
+      body: JSON.stringify({
+        capability: "lookup_rate",
+        params: {
+          role: occupation,
+          geography: kommun,
+          employment_type,
+        },
+        client_type: "anonymous_human",
+      }),
+    });
 
-    // Fetch margin model from DB
-    const { data: modelData } = await supabase
-      .from("margin_models")
-      .select("share_min, share_max, employer_factor, hours_per_month")
-      .eq("name", "default")
-      .eq("is_active", true)
-      .limit(1)
-      .single();
+    const ciData = await ciResponse.json();
 
-    const model: MarginModel | undefined = modelData
-      ? {
-          share_min: Number(modelData.share_min),
-          share_max: Number(modelData.share_max),
-          employer_factor: Number(modelData.employer_factor),
-          hours_per_month: Number(modelData.hours_per_month),
-        }
-      : undefined;
+    // If CI returned an error, map it back to legacy format
+    if (!ciResponse.ok || ciData.error) {
+      const errorMsg = ciData.message || ciData.error || "Calculation failed";
+      const status = ciData.error === "NO_RATE_FOUND" ? 404
+        : ciData.error === "ENTITY_NOT_RESOLVED" ? 404
+        : ciResponse.status >= 400 ? ciResponse.status : 500;
 
-    // Look up zone
-    const { data: locData } = await supabase
-      .from("locations")
-      .select("zon, region")
-      .eq("kommun", kommun)
-      .limit(1);
-
-    if (!locData || locData.length === 0) {
       return new Response(
-        JSON.stringify({ error: "Unknown kommun" }),
-        { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        JSON.stringify({ error: errorMsg }),
+        { status, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
-    const { zon, region } = locData[0];
-
-    // Look up rate
-    const { data: rateData } = await supabase
-      .from("rates")
-      .select("timpris_kund, yrkeskategori, typ, detaljer")
-      .eq("yrkeskategori", occupation)
-      .eq("zon", zon)
-      .limit(1);
-
-    let timprisKund = 0;
-    let matchedOccupation = occupation;
-
-    if (rateData && rateData.length > 0) {
-      timprisKund = rateData[0].timpris_kund;
-      matchedOccupation = rateData[0].yrkeskategori;
-    } else {
-      const { data: anyRate } = await supabase
-        .from("rates")
-        .select("typ")
-        .eq("yrkeskategori", occupation)
-        .limit(1);
-
-      if (anyRate && anyRate.length > 0) {
-        const { data: zoneRate } = await supabase
-          .from("rates")
-          .select("timpris_kund")
-          .eq("typ", anyRate[0].typ)
-          .eq("zon", zon)
-          .limit(1);
-
-        if (zoneRate && zoneRate.length > 0) {
-          timprisKund = zoneRate[0].timpris_kund;
-        }
-      }
-    }
-
-    if (timprisKund === 0) {
-      return new Response(
-        JSON.stringify({ error: "No rate found for this occupation and zone" }),
-        { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
-    }
-
-    const empType = employment_type as EmploymentType;
-    // For foretagare: 8-15% margin (85-92% to consultant)
-    const FORETAGARE_SHARE_MIN = 0.85;
-    const FORETAGARE_SHARE_MAX = 0.92;
-    const effectiveModel: MarginModel | undefined = model
-      ? (empType === "foretagare"
-        ? { ...model, share_min: FORETAGARE_SHARE_MIN, share_max: FORETAGARE_SHARE_MAX }
-        : model)
-      : (empType === "foretagare"
-        ? { share_min: FORETAGARE_SHARE_MIN, share_max: FORETAGARE_SHARE_MAX, employer_factor: 1.42, hours_per_month: 167 }
-        : undefined);
-    const range = calculateSalaryRange(timprisKund, empType, effectiveModel);
-    const m = effectiveModel ?? { share_min: 0.85, share_max: 0.90, employer_factor: 1.42, hours_per_month: 167 };
-    const factor = empType === "anstalld" ? m.employer_factor : 1;
-
+    // Map CI response back to legacy pricing-engine format
+    const d = ciData.data;
     const result = {
-      occupation: matchedOccupation,
-      kommun,
-      zon,
-      region,
-      employment_type: empType,
-      rate_customer_sek_per_hour: timprisKund,
-      consultant_share_min: m.share_min,
-      consultant_share_max: m.share_max,
-      employee_factor: factor,
-      hours_per_month: m.hours_per_month,
-      recommended_hourly_min: range.hourly_min,
-      recommended_hourly_max: range.hourly_max,
-      recommended_monthly_min: range.monthly_min,
-      recommended_monthly_max: range.monthly_max,
+      occupation: d.occupation,
+      kommun: d.kommun,
+      zon: d.zon,
+      region: d.region,
+      employment_type: d.employment_type,
+      rate_customer_sek_per_hour: d.rate_customer_sek_per_hour,
+      consultant_share_min: d.consultant_share_min,
+      consultant_share_max: d.consultant_share_max,
+      employee_factor: d.employee_factor,
+      hours_per_month: d.hours_per_month,
+      recommended_hourly_min: d.recommended_hourly_min,
+      recommended_hourly_max: d.recommended_hourly_max,
+      recommended_monthly_min: d.recommended_monthly_min,
+      recommended_monthly_max: d.recommended_monthly_max,
     };
 
     return new Response(JSON.stringify(result), {
@@ -145,7 +84,7 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("pricing-engine error:", error);
+    console.error("pricing-engine wrapper error:", error);
     return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
