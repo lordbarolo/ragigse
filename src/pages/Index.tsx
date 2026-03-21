@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import { ShieldCheck, Search, Check } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
+import ThemeToggle from "@/components/ThemeToggle";
+import { trackEvent } from "@/lib/trackEvent";
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 import Survey from "@/components/Survey";
