@@ -6,7 +6,11 @@ const examples = [
   "Vilka köpare avropar mest?",
 ];
 
-export default function ReijdarPromo() {
+interface ReijdarPromoProps {
+  onAsk?: (question: string) => void;
+}
+
+export default function ReijdarPromo({ onAsk }: ReijdarPromoProps) {
   return (
     <div className="relative overflow-hidden rounded-2xl border border-primary/20 bg-primary/[0.04] p-4 space-y-3">
       <div className="flex items-center gap-2">
@@ -23,13 +27,14 @@ export default function ReijdarPromo() {
       </p>
       <div className="flex flex-wrap gap-1.5">
         {examples.map((ex) => (
-          <span
+          <button
             key={ex}
-            className="inline-flex items-center gap-1 rounded-lg bg-background border border-border px-2.5 py-1.5 text-[11px] text-muted-foreground"
+            onClick={() => onAsk?.(ex)}
+            className="inline-flex items-center gap-1 rounded-lg bg-background border border-border px-2.5 py-1.5 text-[11px] text-muted-foreground hover:border-primary/40 hover:text-foreground transition-colors cursor-pointer"
           >
             <Sparkles className="w-3 h-3 text-primary/60 shrink-0" />
             {ex}
-          </span>
+          </button>
         ))}
       </div>
     </div>

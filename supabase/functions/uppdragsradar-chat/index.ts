@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { checkRateLimit, rateLimitResponse } from "../_shared/rateLimit.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -16,6 +17,9 @@ function normalizeRole(role: string): string {
   if (ROLE_NORMALIZE.hasOwnProperty(role)) return ROLE_NORMALIZE[role];
   return role;
 }
+
+const MAX_MESSAGE_LENGTH = 500;
+const MAX_HISTORY_MESSAGES = 10;
 
 /** Paginated fetch — all rows from a table */
 async function fetchAll(supabase: any, table: string, select: string, filters: (q: any) => any, orderCol: string) {
@@ -43,6 +47,20 @@ Deno.serve(async (req) => {
   try {
     const { messages, roll } = await req.json();
 
+    // Input validation
+    if (!Array.isArray(messages) || messages.length === 0) {
+      return new Response(JSON.stringify({ error: "Meddelanden saknas" }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const lastMsg = messages[messages.length - 1];
+    if (typeof lastMsg?.content !== "string" || lastMsg.content.length > MAX_MESSAGE_LENGTH) {
+      return new Response(JSON.stringify({ error: `Meddelandet får vara max ${MAX_MESSAGE_LENGTH} tecken.` }), {
+        status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY is not configured");
 
@@ -51,7 +69,15 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
+    // Rate limiting: 20 requests per IP per hour
+    const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    const rl = await checkRateLimit(supabase, "uppdragsradar-chat", clientIp, 20, 60);
+    if (!rl.allowed) return rateLimitResponse(rl, corsHeaders);
+
     const normalizedRoll = normalizeRole(roll) || roll;
+
+    // Trim conversation history to last N messages
+    const trimmedMessages = messages.slice(-MAX_HISTORY_MESSAGES);
 
     // Fetch from all sources with paginated fetch
     const [requests, imports] = await Promise.all([
@@ -184,7 +210,7 @@ INSTRUKTIONER:
         model: "google/gemini-3-flash-preview",
         messages: [
           { role: "system", content: systemPrompt },
-          ...messages,
+          ...trimmedMessages,
         ],
         stream: true,
       }),

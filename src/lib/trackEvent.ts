@@ -39,7 +39,10 @@ type EventName =
   | "pdf_downloaded"
   | "negotiation_started"
   | "negotiation_message_sent"
-  | "negotiation_advice_received";
+  | "negotiation_advice_received"
+  | "reijdar_chat_started"
+  | "reijdar_message_sent"
+  | "reijdar_advice_received";
 
 export function trackEvent(
   eventName: EventName,
