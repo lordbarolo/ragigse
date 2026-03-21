@@ -7,10 +7,25 @@ import ChatInput from "@/components/chat/ChatInput";
 import ContextBar from "@/components/chat/ContextBar";
 import SuggestedPrompts from "@/components/chat/SuggestedPrompts";
 
+const PAGE_TITLE = "Förhandla din ersättning — CompCare";
+const PAGE_DESC = "AI-driven förhandlingsassistent som ger dig konkreta råd baserade på aktuell marknadsdata för din roll och region.";
 export default function Negotiate() {
   const { messages, isLoading, context, send, updateContext, clearChat } = useNegotiationChat();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [searchParams] = useSearchParams();
+
+  // SEO metadata
+  useEffect(() => {
+    document.title = PAGE_TITLE;
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta) meta.setAttribute("content", PAGE_DESC);
+    else {
+      const m = document.createElement("meta");
+      m.name = "description";
+      m.content = PAGE_DESC;
+      document.head.appendChild(m);
+    }
+  }, []);
 
   // Pre-fill context from URL params (e.g. from survey flow)
   useEffect(() => {

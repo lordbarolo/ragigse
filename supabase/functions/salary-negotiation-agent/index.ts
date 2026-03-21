@@ -1,4 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { checkRateLimit, rateLimitResponse } from "../_shared/rateLimit.ts";
 
 /**
  * salary-negotiation-agent
@@ -293,6 +295,18 @@ serve(async (req) => {
   }
 
   try {
+    const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+
+    // Rate limiting — 20 requests per IP per hour
+    const sbAdmin = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
+    const rl = await checkRateLimit(sbAdmin, "salary-negotiation-agent", clientIp, 20, 60);
+    if (!rl.allowed) {
+      return rateLimitResponse(rl, corsHeaders);
+    }
+
     const { message, context } = (await req.json()) as AgentRequest;
 
     if (!message || typeof message !== "string" || message.trim().length === 0) {
@@ -308,8 +322,6 @@ serve(async (req) => {
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
-
-    const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
 
     // Step 1: Extract intent
     const intent = await extractIntent(message, context);

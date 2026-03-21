@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import CompcareLogo from "@/components/CompcareLogo";
 import { Button } from "@/components/ui/button";
-import { User, LogIn } from "lucide-react";
+import { User, LogIn, MessageSquare } from "lucide-react";
 
 export default function Navbar() {
   const { user, loading } = useAuth();
@@ -18,23 +18,31 @@ export default function Navbar() {
         </div>
       </Link>
       <div className="flex-1" />
-      {!loading && (
-        user ? (
-          <Link to="/profil">
-            <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground">
-              <User className="w-4 h-4" />
-              <span className="hidden sm:inline">Min profil</span>
-            </Button>
-          </Link>
-        ) : (
-          <Link to="/logga-in">
-            <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground">
-              <LogIn className="w-4 h-4" />
-              <span className="hidden sm:inline">Logga in</span>
-            </Button>
-          </Link>
-        )
-      )}
+      <div className="flex items-center gap-1">
+        <Link to="/forhandla">
+          <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground">
+            <MessageSquare className="w-4 h-4" />
+            <span className="hidden sm:inline">Förhandla</span>
+          </Button>
+        </Link>
+        {!loading && (
+          user ? (
+            <Link to="/profil">
+              <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground">
+                <User className="w-4 h-4" />
+                <span className="hidden sm:inline">Min profil</span>
+              </Button>
+            </Link>
+          ) : (
+            <Link to="/logga-in">
+              <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground">
+                <LogIn className="w-4 h-4" />
+                <span className="hidden sm:inline">Logga in</span>
+              </Button>
+            </Link>
+          )
+        )}
+      </div>
     </nav>
   );
 }

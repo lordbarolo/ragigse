@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { trackEvent } from "@/lib/trackEvent";
 
 export interface ChatMessage {
   id: string;
@@ -26,12 +27,21 @@ export function useNegotiationChat() {
   const [isLoading, setIsLoading] = useState(false);
   const [context, setContext] = useState<NegotiationContext>({});
   const idCounter = useRef(0);
+  const hasStarted = useRef(false);
 
   const makeId = () => `msg-${++idCounter.current}-${Date.now()}`;
 
   const send = useCallback(async (input: string) => {
     const trimmed = input.trim();
     if (!trimmed || isLoading) return;
+
+    // Track first message as session start
+    if (!hasStarted.current) {
+      hasStarted.current = true;
+      trackEvent("negotiation_started", { has_context: Object.keys(context).length > 0 });
+    }
+
+    trackEvent("negotiation_message_sent");
 
     const userMsg: ChatMessage = {
       id: makeId(),
@@ -60,12 +70,19 @@ export function useNegotiationChat() {
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, assistantMsg]);
+
+      trackEvent("negotiation_advice_received", {
+        capabilities_used: (data.capabilities_used || []).join(","),
+      });
     } catch (err: unknown) {
       console.error("[Chat] Error:", err);
+      const is429 = err && typeof err === "object" && "status" in err && (err as { status: number }).status === 429;
       const errorMsg: ChatMessage = {
         id: makeId(),
         role: "assistant",
-        content: "Något gick fel — försök igen om en stund.",
+        content: is429
+          ? "För många försök — testa igen om en stund."
+          : "Något gick fel — försök igen om en stund.",
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, errorMsg]);
