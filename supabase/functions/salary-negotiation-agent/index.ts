@@ -367,6 +367,22 @@ serve(async (req) => {
       }
     }
 
+    // Ensure lookup_rate is always included when we have role + geography
+    // (it's the most reliable capability — backed by the full rates table)
+    if (context?.role && context?.geography) {
+      const hasLookup = intent.capabilities.some((c) => c.capability === "lookup_rate");
+      if (!hasLookup) {
+        intent.capabilities.unshift({
+          capability: "lookup_rate",
+          params: {
+            role: context.role,
+            geography: context.geography,
+            ...(context.employment_type ? { employment_type: context.employment_type } : {}),
+          },
+        });
+      }
+    }
+
     // Step 2: Call CI capabilities in parallel
     const ciResults = await Promise.all(
       intent.capabilities.map(async (cap) => {
