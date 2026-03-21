@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { checkRateLimit, rateLimitResponse } from "../_shared/rateLimit.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -13,11 +14,23 @@ serve(async (req) => {
   }
 
   try {
+    const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+
+    // Rate limit: 10 save-email requests per IP per hour
+    const rlSupabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
+    const rl = await checkRateLimit(rlSupabase, "save-email", clientIp, 10, 60);
+    if (!rl.allowed) {
+      console.log(`[RATE_LIMIT] save-email blocked | ip=${clientIp} | count=${rl.count}`);
+      return rateLimitResponse(rl, corsHeaders);
+    }
+
     const body = await req.json();
     const { lead_id, report_id, email } = body;
 
     // Audit logging
-    const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
     console.log(`[AUDIT] save-email | ip=${clientIp} | email=${email} | lead_id=${lead_id || "none"} | report_id=${report_id || "none"}`);
 
     if (!lead_id || !email) {
