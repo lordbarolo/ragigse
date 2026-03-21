@@ -185,6 +185,7 @@ async function callCI(
   params: Record<string, unknown>,
   clientIp: string
 ): Promise<{ ok: boolean; data: Record<string, unknown> }> {
+  console.log(`[AGENT] Calling CI: ${capability}`, JSON.stringify(params));
   const ciUrl = `${Deno.env.get("SUPABASE_URL")}/functions/v1/compensation-intelligence`;
 
   const res = await fetch(ciUrl, {
@@ -202,7 +203,9 @@ async function callCI(
   });
 
   const body = await res.json();
-  return { ok: res.ok && body.status === "success", data: body };
+  const ok = res.ok && body.status === "success";
+  if (!ok) console.log(`[AGENT] CI ${capability} failed:`, JSON.stringify(body.errors ?? body.error));
+  return { ok, data: body };
 }
 
 // ── Step 3: Synthesise advice ────────────────────────────────────────────────
