@@ -14,6 +14,19 @@ export default function Negotiate() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [searchParams] = useSearchParams();
 
+  // SEO metadata
+  useEffect(() => {
+    document.title = PAGE_TITLE;
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta) meta.setAttribute("content", PAGE_DESC);
+    else {
+      const m = document.createElement("meta");
+      m.name = "description";
+      m.content = PAGE_DESC;
+      document.head.appendChild(m);
+    }
+  }, []);
+
   // Pre-fill context from URL params (e.g. from survey flow)
   useEffect(() => {
     const role = searchParams.get("role");
