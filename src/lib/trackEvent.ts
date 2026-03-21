@@ -2,6 +2,16 @@ import { supabase } from "@/integrations/supabase/client";
 import { posthog, isPostHogReady } from "@/lib/posthog";
 import { getUtmParams, getCouponCode } from "@/lib/captureParams";
 
+function isInternalTraffic(): boolean {
+  try {
+    const h = window.location.hostname;
+    if (h === "localhost" || h === "127.0.0.1") return true;
+    if (h.endsWith(".lovableproject.com")) return true;
+    if (h.endsWith(".lovable.app") && h.includes("-preview--")) return true;
+  } catch { /* SSR safety */ }
+  return false;
+}
+
 type EventName =
   | "landing_viewed"
   | "survey_started"
@@ -48,7 +58,10 @@ export function trackEvent(
   eventName: EventName,
   metadata?: Record<string, string | number | boolean | null>
 ) {
+  if (isInternalTraffic()) return;
+
   const leadId = sessionStorage.getItem("leadId") || undefined;
+
   const reportId = sessionStorage.getItem("reportId") || undefined;
   const abVariant = sessionStorage.getItem("abVariant") || undefined;
   const utm = getUtmParams();
