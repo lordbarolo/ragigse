@@ -1528,6 +1528,27 @@ export type Database = {
         }
         Relationships: []
       }
+      rate_limit_log: {
+        Row: {
+          client_ip: string
+          created_at: string
+          endpoint: string
+          id: string
+        }
+        Insert: {
+          client_ip: string
+          created_at?: string
+          endpoint: string
+          id?: string
+        }
+        Update: {
+          client_ip?: string
+          created_at?: string
+          endpoint?: string
+          id?: string
+        }
+        Relationships: []
+      }
       rates: {
         Row: {
           detaljer: string | null
