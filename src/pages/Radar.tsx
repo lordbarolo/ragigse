@@ -253,7 +253,7 @@ export default function Radar() {
                     onWatch={handleWatch}
                   />
                 </div>
-                {(i === 2 || i === predictions.length - 1) && <div className="mt-3"><ReijdarPromo /></div>}
+                {(i === 2 || i === predictions.length - 1) && <div className="mt-3"><ReijdarPromo onAsk={(q) => setPendingQuestion(q)} /></div>}
               </div>
             ))}
             {isFetchingNextPage && (
