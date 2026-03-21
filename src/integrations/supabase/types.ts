@@ -2641,6 +2641,13 @@ export type Database = {
         }
         Returns: undefined
       }
+      top_kommuner: {
+        Args: { lim?: number }
+        Returns: {
+          cnt: number
+          kommun: string
+        }[]
+      }
     }
     Enums: {
       geography_type: "nation" | "region" | "zone" | "municipality"
