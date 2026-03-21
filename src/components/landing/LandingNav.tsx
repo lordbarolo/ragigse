@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default function LandingNav() {
   return (
@@ -7,6 +8,7 @@ export default function LandingNav() {
         comp<em className="text-primary not-italic">care</em>
       </Link>
       <div className="flex items-center gap-2">
+        <ThemeToggle />
         <a href="#steps" className="hidden md:block text-foreground/65 text-sm no-underline px-3 py-1.5 rounded-lg hover:text-foreground transition-colors">
           Hur det fungerar
         </a>

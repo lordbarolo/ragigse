@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { ShieldCheck, Search, Check } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
+import ThemeToggle from "@/components/ThemeToggle";
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 import Survey from "@/components/Survey";
@@ -70,6 +71,7 @@ export default function Index() {
       <nav className="sticky top-0 z-50 bg-card/80 backdrop-blur-md border-b border-border">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
           <CompcareLogo variant="full" />
+          <ThemeToggle />
         </div>
       </nav>
 
@@ -88,7 +90,7 @@ export default function Index() {
             <span className="text-primary">marknadsvärde.</span>
           </h1>
 
-          <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed" style={{ color: "hsl(215 20% 65%)" }}>
+          <p className="text-hero-foreground/60 text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed">
             Vi hjälper sjukvårdspersonal till bättre beslutsunderlag, genom ramavtalspriser och lönestatistik.
           </p>
 
@@ -102,7 +104,7 @@ export default function Index() {
             </button>
             <button
               onClick={() => handleRoleSelect("ssk")}
-              className="flex-1 bg-card/10 hover:bg-card/20 border border-border/30 text-white px-6 py-4 rounded-2xl font-semibold transition-all text-base"
+              className="flex-1 bg-card/10 hover:bg-card/20 border border-border/30 text-hero-foreground px-6 py-4 rounded-2xl font-semibold transition-all text-base"
             >
               💉 Sjuksköterska / Barnmorska
             </button>
