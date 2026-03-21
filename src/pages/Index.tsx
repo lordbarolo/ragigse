@@ -1,9 +1,8 @@
 import { useEffect, useState, useRef } from "react";
-
+import { ShieldCheck, Search, Check } from "lucide-react";
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 import Survey from "@/components/Survey";
-
 
 const faqJsonLd = {
   "@context": "https://schema.org",
@@ -36,9 +35,9 @@ export default function Index() {
   useTimeOnPage("landing");
   useEffect(() => { trackEvent("landing_viewed"); }, []);
 
-  const handleRoleSelect = (category: "lakare" | "ssk", prefill?: string) => {
+  const handleRoleSelect = (category: "lakare" | "ssk") => {
     setPrefillCategory(category);
-    setPrefillRole(prefill || "");
+    setPrefillRole("");
     setShowSurvey(true);
     setTimeout(() => {
       surveyRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -50,7 +49,7 @@ export default function Index() {
       <div className="min-h-screen bg-background">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppJsonLd) }} />
-        <div ref={surveyRef} className="px-4 pt-8 pb-16 bg-background min-h-screen flex flex-col">
+        <div ref={surveyRef} className="px-4 pt-8 pb-16 min-h-screen flex flex-col">
           <Survey
             initialCategory={prefillCategory as "lakare" | "ssk" | ""}
             initialRole={prefillRole}
@@ -62,86 +61,144 @@ export default function Index() {
   }
 
   return (
-    <div className="h-[100dvh] bg-background flex flex-col overflow-hidden">
+    <div className="min-h-screen bg-background">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppJsonLd) }} />
 
-      {/* Nav */}
-      <nav className="flex items-center justify-between px-5 h-[52px] flex-shrink-0">
-        <span className="font-display font-extrabold tracking-tight text-foreground" style={{ fontSize: '18px' }}>
-          comp<em className="text-primary not-italic">care</em>
-        </span>
+      {/* ── Nav ────────────────────────────────────────── */}
+      <nav className="sticky top-0 z-50 bg-card/80 backdrop-blur-md border-b border-border">
+        <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
+          <div className="flex items-center gap-2 font-bold text-xl tracking-tight">
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground italic text-sm font-extrabold">C</div>
+            <span className="text-foreground">compcare</span>
+          </div>
+        </div>
       </nav>
 
-      {/* All content as one block, pushed to lower half */}
-      <main className="flex-1 flex flex-col items-center justify-end px-5" style={{ paddingBottom: '10dvh' }}>
-        {/* Badge */}
-        <div className="inline-flex items-center gap-2 bg-primary/[0.08] border border-primary/20 rounded-full font-display text-primary tracking-wider mb-[20px]" style={{ fontSize: '13px', fontWeight: 500, padding: '8px 18px' }}>
-          <span className="w-5 h-5 rounded-full bg-primary/15 flex items-center justify-center text-[10px]">🛡</span>
-          Officiella avtalspriser · 290 kommuner · 21 regioner
-        </div>
+      {/* ── Dark Hero ──────────────────────────────────── */}
+      <section className="hero-dark relative pt-24 pb-40 px-6">
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 px-3 py-1 rounded-full text-primary text-xs font-semibold mb-6 uppercase tracking-wider">
+            <ShieldCheck className="w-3 h-3" />
+            100% Verifierad Marknadsdata
+          </div>
 
-        {/* Headline */}
-        <div className="text-center max-w-[480px] mb-8">
-          <h1
-            className="font-display text-foreground"
-            style={{ fontSize: '48px', fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1.06 }}
-          >
-            Vad betalar{" "}
-            <span className="text-primary">regionen</span> för{" "}
-            <span className="bg-gradient-to-r from-[#a78bfa] to-[#60a5fa] bg-clip-text text-transparent">
-              din kompetens?
-            </span>
+          <h1 className="text-5xl md:text-7xl font-bold mb-8 tracking-tight">
+            Ta kontroll över ditt{" "}
+            <br className="hidden sm:block" />
+            <span className="text-primary">marknadsvärde.</span>
           </h1>
-          <p className="mt-[20px] max-w-[380px] mx-auto" style={{ fontSize: '17px', fontWeight: 300, color: 'rgba(255,255,255,0.65)', lineHeight: 1.6 }}>
-            Jämför din ersättning mot offentliga ramavtalspriser på 60 sekunder.
+
+          <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed" style={{ color: "hsl(215 20% 65%)" }}>
+            Vi hjälper sjukvårdspersonal att förstå ramavtalspriser och lönestatistik genom objektiv Compensation Intelligence.
           </p>
+
+          {/* Role selection CTA */}
+          <div className="max-w-md mx-auto flex flex-col sm:flex-row gap-3">
+            <button
+              onClick={() => handleRoleSelect("lakare")}
+              className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-4 rounded-2xl font-semibold transition-all shadow-lg shadow-primary/20 text-base"
+            >
+              🩺 Jag är Läkare
+            </button>
+            <button
+              onClick={() => handleRoleSelect("ssk")}
+              className="flex-1 bg-card/10 hover:bg-card/20 border border-border/30 text-white px-6 py-4 rounded-2xl font-semibold transition-all text-base"
+            >
+              💉 Sjuksköterska / Barnmorska
+            </button>
+          </div>
         </div>
 
-        {/* Role label */}
-        <p className="font-display uppercase mb-4" style={{ fontSize: '11px', fontWeight: 600, letterSpacing: '0.10em', color: 'rgba(255,255,255,0.35)' }}>
-          Vad jobbar du som?
-        </p>
+        {/* Gradient fade to light */}
+        <div className="absolute bottom-0 left-0 right-0 h-[300px] bg-gradient-to-t from-background to-transparent" />
+      </section>
 
-        {/* Role cards */}
-        <div className="w-full max-w-[420px] flex flex-col gap-2.5">
+      {/* ── Stats bar (overlapping) ────────────────────── */}
+      <section className="max-w-5xl mx-auto px-6 -mt-16 relative z-20">
+        <div className="bg-card border border-border rounded-3xl p-8 shadow-xl grid md:grid-cols-3 gap-8 divide-y md:divide-y-0 md:divide-x divide-border">
+          <div className="text-center md:pt-0 pt-4">
+            <p className="text-3xl font-bold text-foreground">290+</p>
+            <p className="text-sm text-muted-foreground">Svenska kommuner</p>
+          </div>
+          <div className="text-center pt-8 md:pt-0">
+            <p className="text-3xl font-bold text-foreground">SKR 2026</p>
+            <p className="text-sm text-muted-foreground">Senaste ramavtalsdatan</p>
+          </div>
+          <div className="text-center pt-8 md:pt-0">
+            <p className="text-3xl font-bold text-foreground">100%</p>
+            <p className="text-sm text-muted-foreground">Oberoende analys</p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Features section ───────────────────────────── */}
+      <section className="max-w-6xl mx-auto px-6 py-32">
+        <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div>
+            <h2 className="text-3xl font-bold mb-6 tracking-tight text-foreground">
+              Data som faktiskt gör skillnad vid lönesamtalet.
+            </h2>
+            <p className="text-muted-foreground mb-8 leading-relaxed text-lg">
+              Vi hämtar data direkt från officiella källor och bryter ner dem så att du kan se exakt vad bemanningsbolaget får betalt och vad som borde landa i din plånbok.
+            </p>
+            <ul className="space-y-4">
+              {["Transparens i alla led", "Inga dolda avgifter eller gissningar"].map((item) => (
+                <li key={item} className="flex items-center gap-3 text-foreground font-medium">
+                  <div className="w-6 h-6 bg-success/10 text-success rounded-full flex items-center justify-center">
+                    <Check className="w-3 h-3" />
+                  </div>
+                  {item}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Preview card */}
+          <div className="bg-card p-4 rounded-3xl shadow-2xl border border-border rotate-2">
+            <div className="bg-secondary rounded-2xl p-8 border border-border">
+              <div className="flex justify-between items-end mb-6">
+                <div>
+                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">Marknadspris</p>
+                  <p className="text-4xl font-bold text-primary">616 kr/h</p>
+                </div>
+                <div className="text-right">
+                  <p className="text-xs font-medium text-success bg-success/10 px-2 py-1 rounded-md">+12% vs 2025</p>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <div className="h-2 w-full bg-border rounded-full overflow-hidden">
+                  <div className="h-full bg-primary w-3/4 rounded-full" />
+                </div>
+                <p className="text-xs text-muted-foreground italic">Källa: SKR Ramavtal 2026, Zon 1</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── Bottom CTA ─────────────────────────────────── */}
+      <section className="max-w-4xl mx-auto px-6 pb-24 text-center">
+        <h2 className="text-3xl font-bold tracking-tight text-foreground mb-4">
+          Redo att se ditt marknadsvärde?
+        </h2>
+        <p className="text-muted-foreground mb-8 text-lg">Tar 60 sekunder · Ingen registrering krävs</p>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <button
             onClick={() => handleRoleSelect("lakare")}
-            className="group relative overflow-hidden flex items-center gap-4 bg-[hsl(var(--dark-2))] border border-foreground/[0.12] !border-l-[3px] !border-l-primary rounded-[16px] p-4 text-left cursor-pointer transition-all hover:border-primary/40 hover:bg-[hsl(var(--dark-3))] hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(0,0,0,0.3),0_0_0_1px_hsl(196_100%_50%/0.1)]"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-2xl font-semibold transition-all shadow-lg shadow-primary/20 text-base"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.04] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-            <div className="relative z-10 w-10 h-10 rounded-[10px] bg-primary/10 border border-primary/15 flex items-center justify-center text-[20px] flex-shrink-0">🩺</div>
-            <div className="relative z-10 flex-1">
-               <div className="font-display tracking-[-0.02em] mb-0.5" style={{ fontSize: '17px', fontWeight: 700 }}>Läkare</div>
-               <div className="leading-snug" style={{ fontSize: '13px', fontWeight: 400, color: 'rgba(255,255,255,0.55)' }}>ST, specialist eller legitimerad läkare</div>
-            </div>
-            <span className="relative z-10 text-primary text-xl flex-shrink-0 group-hover:translate-x-1 transition-transform">→</span>
+            Starta analys — Läkare
           </button>
-
           <button
             onClick={() => handleRoleSelect("ssk")}
-            className="group relative overflow-hidden flex items-center gap-4 bg-[hsl(var(--dark-2))] border border-foreground/[0.12] !border-l-[3px] !border-l-primary rounded-[16px] p-4 text-left cursor-pointer transition-all hover:border-primary/40 hover:bg-[hsl(var(--dark-3))] hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(0,0,0,0.3),0_0_0_1px_hsl(196_100%_50%/0.1)]"
+            className="bg-card hover:bg-secondary border border-border text-foreground px-8 py-4 rounded-2xl font-semibold transition-all text-base"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.04] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
-            <div className="relative z-10 w-10 h-10 rounded-[10px] bg-primary/10 border border-primary/15 flex items-center justify-center text-[20px] flex-shrink-0">💉</div>
-            <div className="relative z-10 flex-1">
-               <div className="font-display tracking-[-0.02em] mb-0.5" style={{ fontSize: '17px', fontWeight: 700 }}>Sjuksköterska / Barnmorska</div>
-               <div className="leading-snug" style={{ fontSize: '13px', fontWeight: 400, color: 'rgba(255,255,255,0.55)' }}>Allmän, specialist eller barnmorska</div>
-            </div>
-            <span className="relative z-10 text-primary text-xl flex-shrink-0 group-hover:translate-x-1 transition-transform">→</span>
+            Starta analys — Sjuksköterska
           </button>
         </div>
-
-        {/* Trust bar — 16px below cards */}
-        <div className="flex items-center justify-center gap-4 sm:gap-6 mt-4">
-          {["Anonymt", "Kostnadsfritt", "60 sekunder", "Ingen registrering"].map((label) => (
-             <span key={label} className="font-display flex items-center gap-1.5" style={{ fontSize: '11px', fontWeight: 500, color: 'rgba(255,255,255,0.30)' }}>
-               <span className="w-1 h-1 rounded-full bg-foreground/20" />
-              {label}
-            </span>
-          ))}
-        </div>
-      </main>
+      </section>
     </div>
   );
 }
