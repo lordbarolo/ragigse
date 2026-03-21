@@ -1,10 +1,48 @@
+import { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 
 interface Props {
   kommun: string;
 }
 
+const JSON_LD = {
+  "@context": "https://schema.org",
+  "@type": "DataFeed",
+  "name": "CompCare Marknadsanalys för Sjukvårdspersonal",
+  "description": "Verifierad analys av ersättningsnivåer baserat på SKR:s ramavtal 2026 och officiell lönestatistik.",
+  "provider": {
+    "@type": "Organization",
+    "name": "CompCare",
+    "url": "https://compcare.se"
+  },
+  "spatialCoverage": "Sweden",
+  "variableMeasured": [
+    "Timpris enligt ramavtal",
+    "Marknadsmässig löneposition",
+    "Bemanningsmarginaler"
+  ],
+  "isAccessibleForFree": "false",
+  "hasPart": {
+    "@type": "WebPageElement",
+    "isAccessibleForFree": "true",
+    "cssSelector": ".teaser-preview",
+    "description": "Publik förhandsgranskning av lönestatistik och avtalspriser."
+  }
+};
+
 export default function TeaserHeader({ kommun }: Props) {
+  useEffect(() => {
+    const id = "compcare-teaser-jsonld";
+    if (!document.getElementById(id)) {
+      const script = document.createElement("script");
+      script.id = id;
+      script.type = "application/ld+json";
+      script.textContent = JSON.stringify(JSON_LD);
+      document.head.appendChild(script);
+    }
+    return () => { document.getElementById(id)?.remove(); };
+  }, []);
+
   return (
     <>
       <Navbar />
