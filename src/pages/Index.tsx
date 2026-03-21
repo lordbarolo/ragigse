@@ -85,13 +85,13 @@ export default function Index() {
           </div>
 
           <h1 className="text-5xl md:text-7xl font-bold mb-8 tracking-tight">
-            Ta kontroll över ditt{" "}
+            Får du rätt ersättning{" "}
             <br className="hidden sm:block" />
-            <span className="text-primary">marknadsvärde.</span>
+            som <span className="text-primary">vårdkonsult?</span>
           </h1>
 
           <p className="text-hero-foreground/60 text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed">
-            Vi hjälper sjukvårdspersonal till bättre beslutsunderlag, genom ramavtalspriser och lönestatistik.
+            Jämför dina villkor mot verkliga marknadspriser.
           </p>
 
           {/* Role selection CTA */}
