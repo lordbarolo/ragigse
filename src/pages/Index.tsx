@@ -91,7 +91,7 @@ export default function Index() {
           </h1>
 
           <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed" style={{ color: "hsl(215 20% 65%)" }}>
-            Vi hjälper sjukvårdspersonal att förstå ramavtalspriser och lönestatistik genom objektiv Compensation Intelligence.
+            Vi hjälper sjukvårdspersonal till bättre beslutsunderlag, genom ramavtalspriser och lönestatistik.
           </p>
 
           {/* Role selection CTA */}
