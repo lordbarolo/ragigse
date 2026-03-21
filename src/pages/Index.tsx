@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { ShieldCheck, Search, Check } from "lucide-react";
+import CompcareLogo from "@/components/CompcareLogo";
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 import Survey from "@/components/Survey";
@@ -68,10 +69,7 @@ export default function Index() {
       {/* ── Nav ────────────────────────────────────────── */}
       <nav className="sticky top-0 z-50 bg-card/80 backdrop-blur-md border-b border-border">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-          <div className="flex items-center gap-2 font-bold text-xl tracking-tight">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground italic text-sm font-extrabold">C</div>
-            <span className="text-foreground">compcare</span>
-          </div>
+          <CompcareLogo variant="full" />
         </div>
       </nav>
 
