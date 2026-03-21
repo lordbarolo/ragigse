@@ -18,6 +18,8 @@ export default function ReferralStats() {
 
   useEffect(() => {
     (async () => {
+      // Admin stats — referrals table is locked down via RLS.
+      // This query requires an authenticated admin session; will return empty for non-admins.
       const { data: rows, error } = await supabase
         .from("referrals")
         .select("id, referrer_email, referee_email, clicked, created_at")

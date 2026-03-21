@@ -2520,6 +2520,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      get_referral_by_token: {
+        Args: { _token: string }
+        Returns: {
+          clicked: boolean
+          created_at: string
+          id: string
+          lead_id: string
+          referee_email: string
+          referrer_email: string
+          token: string
+        }[]
+      }
       ref_calculate_profile_status: {
         Args: { p_profile_id: string }
         Returns: Json
