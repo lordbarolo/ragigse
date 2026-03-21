@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,83 +6,56 @@
 
 @layer base {
   :root {
-    --background: 220 60% 5%;
-    --foreground: 0 0% 100%;
+    /* ── Light / Stripe-Kivra palette ────────────────── */
+    --background: 210 40% 98%;        /* #F8FAFC slate-50 */
+    --foreground: 222 47% 11%;        /* #0F172A slate-900 */
 
-    --card: 220 42% 9%;
-    --card-foreground: 0 0% 100%;
+    --card: 0 0% 100%;                /* white */
+    --card-foreground: 222 47% 11%;
 
-    --popover: 220 42% 9%;
-    --popover-foreground: 0 0% 100%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
 
-    --primary: 196 100% 50%;
-    --primary-foreground: 220 60% 5%;
+    --primary: 221 83% 53%;           /* #3B82F6 blue-500 */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 220 35% 14%;
-    --secondary-foreground: 0 0% 100%;
+    --secondary: 210 40% 96%;         /* slate-100 */
+    --secondary-foreground: 222 47% 11%;
 
-    --muted: 220 30% 11%;
-    --muted-foreground: 220 15% 55%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;  /* slate-500 */
 
-    --accent: 160 65% 50%;
-    --accent-foreground: 220 60% 5%;
+    --accent: 210 40% 96%;
+    --accent-foreground: 222 47% 11%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0% 100% / 0.07;
-    --input: 0 0% 100% / 0.07;
-    --ring: 196 100% 50%;
+    --border: 214 32% 91%;            /* slate-200 */
+    --input: 214 32% 91%;
+    --ring: 221 83% 53%;
 
     --radius: 0.75rem;
 
-    --dark-2: 220 42% 9%;
-    --dark-3: 220 30% 14%;
-    --cyan: 196 100% 50%;
-    --amber: 38 92% 50%;
-    --green: 160 60% 45%;
+    /* ── Semantic extras ─────────────────────────────── */
+    --hero-bg: 222 47% 11%;           /* #0F172A for dark hero */
+    --hero-fg: 0 0% 100%;
+    --success: 160 84% 39%;           /* green-500 */
+    --success-foreground: 0 0% 100%;
 
-    --hero-gradient: linear-gradient(135deg, hsl(220 60% 5%), hsl(220 42% 9%));
-    --success-gradient: linear-gradient(135deg, hsl(160 65% 50%), hsl(160 55% 40%));
-    --card-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    --card-shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.4);
-    --input-glow: 0 0 0 1px hsl(196 100% 50% / 0.25), 0 0 8px hsl(196 100% 50% / 0.1);
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 222 47% 11%;
+    --sidebar-primary: 221 83% 53%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 40% 96%;
+    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-border: 214 32% 91%;
+    --sidebar-ring: 221 83% 53%;
 
-    --sidebar-background: 220 60% 5%;
-    --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 196 100% 50%;
-    --sidebar-primary-foreground: 220 60% 5%;
-    --sidebar-accent: 220 30% 11%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 0 0% 100% / 0.07;
-    --sidebar-ring: 196 100% 50%;
-
-    --font-display: 'Sora', sans-serif;
-    --font-body: 'Inter', 'Sora', sans-serif;
-    --font-mono: monospace;
-
-    --gap-bg: 220 60% 5%;
-    --gap-card: 220 42% 9%;
-    --gap-border: 0 0% 100% / 0.08;
-    --gap-accent: 160 65% 50%;
-    --gap-accent-dim: 160 65% 50% / 0.10;
-    --gap-danger: 0 84% 60%;
-    --gap-text: 0 0% 98%;
-    --gap-muted: 0 0% 98% / 0.50;
-
-    /* Typography opacity tokens */
-    --text-strong: 1;
-    --text-default: 0.75;
-    --text-secondary: 0.65;
-    --text-muted: 0.45;
-    --text-subtle: 0.30;
+    --font-display: 'Inter', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: ui-monospace, monospace;
   }
-
-  .light-tool {
-    /* Bold Nordic — no override, inherits :root */
-  }
-
-  /* dark mode same as root for this design */
 }
 
 @layer base {
@@ -104,64 +77,13 @@
 }
 
 @layer utilities {
-  .hero-gradient {
-    background: var(--hero-gradient);
-  }
-
-  .success-gradient {
-    background: var(--success-gradient);
-  }
-
-  .card-shadow {
-    box-shadow: var(--card-shadow);
-  }
-
-  .card-shadow-hover {
-    box-shadow: var(--card-shadow-hover);
+  /* Dark hero section utility */
+  .hero-dark {
+    background-color: hsl(var(--hero-bg));
+    color: hsl(var(--hero-fg));
   }
 
   .safe-area-bottom {
     padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
-  }
-
-  /* ── Global typography utilities ──────────────────── */
-
-  /* Body text — default readable paragraph style */
-  .text-body {
-    font-size: 15px;
-    line-height: 1.6;
-    color: hsl(var(--foreground) / 0.75);
-  }
-
-  /* Body small — secondary descriptions */
-  .text-body-sm {
-    font-size: 13px;
-    line-height: 1.5;
-    color: hsl(var(--foreground) / 0.65);
-  }
-
-  /* Caption — eyebrow labels, step counters */
-  .text-caption {
-    font-size: 11px;
-    line-height: 1.4;
-    color: hsl(var(--foreground) / 0.45);
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    font-family: var(--font-display);
-  }
-
-  /* Hint — subtle helper text, footnotes */
-  .text-hint {
-    font-size: 12px;
-    line-height: 1.5;
-    color: hsl(var(--foreground) / 0.40);
-  }
-
-  /* Micro — source refs, legal, smallest allowed */
-  .text-micro {
-    font-size: 10px;
-    line-height: 1.4;
-    color: hsl(var(--foreground) / 0.30);
   }
 }
