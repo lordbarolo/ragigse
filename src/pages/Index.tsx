@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { Link } from "react-router-dom";
 import { ShieldCheck, Search, Check } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -70,7 +71,7 @@ export default function Index() {
       {/* ── Nav ────────────────────────────────────────── */}
       <nav className="sticky top-0 z-50 bg-card/80 backdrop-blur-md border-b border-border">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-          <CompcareLogo variant="full" />
+          <Link to="/"><CompcareLogo variant="full" /></Link>
           <ThemeToggle />
         </div>
       </nav>
