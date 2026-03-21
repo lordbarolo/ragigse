@@ -732,6 +732,159 @@ async function logQuery(
 
 // ── Main Handler ─────────────────────────────────────────────────────────────
 
+// ── Publishing Pipeline ───────────────────────────────────────────────────────
+
+async function publishBenchmarks(supabase: ReturnType<typeof createClient>): Promise<Response> {
+  // 1. Read raw salary data from leads
+  const { data: leads, error: leadsErr } = await supabase
+    .from("leads")
+    .select("id, yrke, kommun, current_salary, salary_type, employment_type, created_at")
+    .not("current_salary", "is", null)
+    .not("yrke", "is", null);
+
+  if (leadsErr) throw new Error(`Failed to read leads: ${leadsErr.message}`);
+  if (!leads?.length) {
+    return new Response(JSON.stringify({ status: "empty", message: "No leads with salary data found", published: 0 }), {
+      status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
+  // 2. Build role alias lookup (all aliases → role_id)
+  const { data: roleAliases } = await supabase.from("role_aliases").select("alias, role_id");
+  const roleAliasMap = new Map<string, string>();
+  for (const ra of roleAliases ?? []) {
+    roleAliasMap.set(ra.alias.toLowerCase(), ra.role_id);
+  }
+
+  // 3. Build geography lookup (kommun → region_id via geographies hierarchy)
+  const { data: geoAliases } = await supabase.from("geography_aliases").select("alias, geo_id");
+  const geoAliasMap = new Map<string, string>();
+  for (const ga of geoAliases ?? []) {
+    geoAliasMap.set(ga.alias.toLowerCase(), ga.geo_id);
+  }
+
+  // Load all geographies for parent resolution
+  const { data: allGeos } = await supabase.from("geographies").select("id, name, type, parent_id");
+  const geoById = new Map<string, { id: string; name: string; type: string; parent_id: string | null }>();
+  for (const g of allGeos ?? []) {
+    geoById.set(g.id, g);
+  }
+
+  function findRegionId(geoId: string): string | null {
+    let current = geoById.get(geoId);
+    let depth = 0;
+    while (current && depth < 5) {
+      if (current.type === "region") return current.id;
+      if (!current.parent_id) break;
+      current = geoById.get(current.parent_id);
+      depth++;
+    }
+    return null;
+  }
+
+  // 4. Aggregate: group by role_id + region_id + period_key
+  const currentYear = new Date().getFullYear();
+  const periodKey = `${currentYear}`;
+
+  type Bucket = { salaries: number[]; role_id: string; region_id: string | null };
+  const buckets = new Map<string, Bucket>();
+  let skipped = 0;
+
+  for (const lead of leads) {
+    // Resolve role
+    const roleId = roleAliasMap.get((lead.yrke as string).toLowerCase());
+    if (!roleId) { skipped++; continue; }
+
+    // Resolve region (optional)
+    let regionId: string | null = null;
+    if (lead.kommun) {
+      const geoId = geoAliasMap.get((lead.kommun as string).toLowerCase());
+      if (geoId) {
+        regionId = findRegionId(geoId);
+      }
+    }
+
+    // Normalize salary to monthly
+    let monthlySalary = lead.current_salary as number;
+    if (lead.salary_type === "hourly") {
+      monthlySalary = monthlySalary * 167; // hours_per_month
+    }
+
+    const key = `${roleId}||${regionId ?? "national"}||${periodKey}`;
+    if (!buckets.has(key)) {
+      buckets.set(key, { salaries: [], role_id: roleId, region_id: regionId });
+    }
+    buckets.get(key)!.salaries.push(monthlySalary);
+  }
+
+  // 5. Calculate statistics and upsert
+  function percentile(sorted: number[], p: number): number {
+    const idx = (p / 100) * (sorted.length - 1);
+    const lo = Math.floor(idx);
+    const hi = Math.ceil(idx);
+    if (lo === hi) return sorted[lo];
+    return Math.round(sorted[lo] + (sorted[hi] - sorted[lo]) * (idx - lo));
+  }
+
+  const rows: Array<Record<string, unknown>> = [];
+
+  for (const [, bucket] of buckets) {
+    const sorted = [...bucket.salaries].sort((a, b) => a - b);
+    const n = sorted.length;
+    const sum = sorted.reduce((a, b) => a + b, 0);
+
+    rows.push({
+      role_id: bucket.role_id,
+      region_id: bucket.region_id,
+      municipality_id: null,
+      period_key: periodKey,
+      sample_size: n,
+      mean_salary: Math.round(sum / n),
+      median_salary: percentile(sorted, 50),
+      p25_salary: percentile(sorted, 25),
+      p75_salary: percentile(sorted, 75),
+      threshold_passed: n >= 10,
+      updated_at: new Date().toISOString(),
+    });
+  }
+
+  // Upsert in batches (delete existing for same period, then insert)
+  // Simple idempotent approach: delete all for this period_key, then insert
+  const { error: delErr } = await supabase
+    .from("salary_benchmarks")
+    .delete()
+    .eq("period_key", periodKey);
+
+  if (delErr) throw new Error(`Failed to clear old benchmarks: ${delErr.message}`);
+
+  // Insert in batches of 50
+  let inserted = 0;
+  for (let i = 0; i < rows.length; i += 50) {
+    const batch = rows.slice(i, i + 50);
+    const { error: insErr } = await supabase.from("salary_benchmarks").insert(batch);
+    if (insErr) throw new Error(`Failed to insert benchmarks: ${insErr.message}`);
+    inserted += batch.length;
+  }
+
+  const passedCount = rows.filter(r => r.threshold_passed).length;
+
+  return new Response(JSON.stringify({
+    status: "success",
+    period_key: periodKey,
+    total_leads: leads.length,
+    skipped_unresolved: skipped,
+    buckets_created: rows.length,
+    threshold_passed: passedCount,
+    threshold_failed: rows.length - passedCount,
+    published: inserted,
+  }), {
+    status: 200,
+    headers: { ...corsHeaders, "Content-Type": "application/json" },
+  });
+}
+
+// ── Main Handler ─────────────────────────────────────────────────────────────
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -741,6 +894,31 @@ serve(async (req) => {
     Deno.env.get("SUPABASE_URL")!,
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
   );
+
+  // Route: publish-benchmarks via body action or query param
+  const url = new URL(req.url);
+  const actionParam = url.searchParams.get("action");
+
+  if (req.method === "POST") {
+    // Try to peek at body for action routing
+    const cloned = req.clone();
+    let bodyAction: string | undefined;
+    try {
+      const peek = await cloned.json();
+      bodyAction = peek?.action;
+    } catch { /* not json or no action */ }
+
+    if (actionParam === "publish-benchmarks" || bodyAction === "publish-benchmarks") {
+      try {
+        return await publishBenchmarks(supabase);
+      } catch (error) {
+        console.error("publish-benchmarks error:", error);
+        return new Response(JSON.stringify({ status: "error", message: error.message }), {
+          status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+    }
+  }
 
   const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
 
