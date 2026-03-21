@@ -72,6 +72,7 @@ export default function Index() {
       <nav className="sticky top-0 z-50 bg-card/80 backdrop-blur-md border-b border-border">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
           <CompcareLogo variant="full" />
+          <ThemeToggle />
         </div>
       </nav>
 
