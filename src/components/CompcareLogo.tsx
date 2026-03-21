@@ -8,9 +8,9 @@ interface CompcareLogoProps {
 }
 
 const CompcareLogo = ({ variant = "wordmark", className = "", inverted = false }: CompcareLogoProps) => {
-  const textFill = inverted ? "white" : "hsl(222,47%,11%)";
-  const accentFill = "hsl(221,83%,53%)";
-  const barMuted = inverted ? "#94A3B8" : "#94A3B8";
+  const textFill = inverted ? "white" : "hsl(var(--foreground))";
+  const accentFill = "hsl(var(--primary))";
+  const barMuted = "#94A3B8";
 
   if (variant === "wordmark") {
     return (
