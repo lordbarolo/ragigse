@@ -63,7 +63,7 @@ const App = () => (
             <Route path="/rapport/:reportId" element={<Report />} />
             <Route path="/jamfor" element={<Compare />} />
             <Route path="/radar" element={<Radar />} />
-            {/* /uppdragsradar merged into /radar */}
+            <Route path="/forhandla" element={<Negotiate />} />
             <Route path="/vanliga-fragor" element={<FAQ />} />
             <Route path="/integritetspolicy" element={<PrivacyPolicy />} />
             <Route path="/logga-in" element={<Login />} />
