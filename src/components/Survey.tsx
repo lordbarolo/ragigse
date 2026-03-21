@@ -209,6 +209,14 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
       .sort((a, b) => a.localeCompare(b, "sv"));
   }, [locations]);
 
+  // Fetch top kommuner based on survey responses
+  const [topKommuner, setTopKommuner] = useState<string[]>([]);
+  useEffect(() => {
+    supabase.rpc("top_kommuner", { lim: 7 }).then(({ data }) => {
+      if (data) setTopKommuner(data.map((r: { kommun: string }) => r.kommun));
+    });
+  }, []);
+
   // All kommuner for search-first flow
   const allKommuner = useMemo(() => {
     if (!locations) return [];
@@ -218,10 +226,18 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
   }, [locations]);
 
   const filteredKommunerSearch = useMemo(() => {
-    if (!kommunSearch.trim()) return allKommuner.slice(0, 10); // show top 10 initially
+    if (!kommunSearch.trim()) {
+      // Show top 7 popular first, then fill remaining alphabetically
+      const topSet = new Set(topKommuner);
+      const topItems = topKommuner
+        .map((k) => allKommuner.find((ak) => ak.kommun === k))
+        .filter(Boolean) as typeof allKommuner;
+      const rest = allKommuner.filter((k) => !topSet.has(k.kommun));
+      return [...topItems, ...rest].slice(0, 10);
+    }
     const q = kommunSearch.toLowerCase();
     return allKommuner.filter((k) => k.kommun.toLowerCase().includes(q));
-  }, [allKommuner, kommunSearch]);
+  }, [allKommuner, kommunSearch, topKommuner]);
 
   const filteredKommuner = useMemo(() => {
     if (!locations || !selectedRegion) return [];
