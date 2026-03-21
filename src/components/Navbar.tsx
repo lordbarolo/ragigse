@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import CompcareLogo from "@/components/CompcareLogo";
+import ThemeToggle from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { User, LogIn, MessageSquare } from "lucide-react";
 
