@@ -1,6 +1,8 @@
 User-agent: *
 Allow: /
+Allow: /teaser
 Disallow: /dev/
+Disallow: /rest/v1/
 
 Sitemap: https://compcare.se/sitemap.xml
 
@@ -8,11 +10,13 @@ Sitemap: https://compcare.se/sitemap.xml
 # Se https://llmstxt.org för specifikation
 LLMs-Txt: https://compcare.se/llms.txt
 
-# AI crawlers
+# AI crawlers – välkomna till publika sidor
 User-agent: GPTBot
 Allow: /
 Allow: /llms.txt
 Allow: /openapi.json
+Allow: /teaser
+Disallow: /rest/v1/
 
 User-agent: Google-Extended
 Allow: /
