@@ -60,6 +60,8 @@ export function trackEvent(
 ) {
   if (isInternalTraffic()) return;
 
+  const leadId = sessionStorage.getItem("leadId") || undefined;
+
   const reportId = sessionStorage.getItem("reportId") || undefined;
   const abVariant = sessionStorage.getItem("abVariant") || undefined;
   const utm = getUtmParams();
