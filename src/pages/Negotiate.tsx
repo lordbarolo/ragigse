@@ -7,6 +7,8 @@ import ChatInput from "@/components/chat/ChatInput";
 import ContextBar from "@/components/chat/ContextBar";
 import SuggestedPrompts from "@/components/chat/SuggestedPrompts";
 
+const PAGE_TITLE = "Förhandla din ersättning — CompCare";
+const PAGE_DESC = "AI-driven förhandlingsassistent som ger dig konkreta råd baserade på aktuell marknadsdata för din roll och region.";
 export default function Negotiate() {
   const { messages, isLoading, context, send, updateContext, clearChat } = useNegotiationChat();
   const scrollRef = useRef<HTMLDivElement>(null);
