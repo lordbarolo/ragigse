@@ -173,7 +173,9 @@ async function extractIntent(message: string, context?: AgentRequest["context"])
     return { capabilities: [], user_situation: message, missing_info: ["Kunde inte tolka frågan"] };
   }
 
-  return JSON.parse(toolCall.function.arguments) as ExtractedIntent;
+  const parsed = JSON.parse(toolCall.function.arguments) as ExtractedIntent;
+  console.log("[AGENT] Parsed capabilities:", JSON.stringify(parsed.capabilities));
+  return parsed;
 }
 
 // ── Step 2: Call CI capabilities ─────────────────────────────────────────────
@@ -183,6 +185,7 @@ async function callCI(
   params: Record<string, unknown>,
   clientIp: string
 ): Promise<{ ok: boolean; data: Record<string, unknown> }> {
+  console.log(`[AGENT] Calling CI: ${capability}`, JSON.stringify(params));
   const ciUrl = `${Deno.env.get("SUPABASE_URL")}/functions/v1/compensation-intelligence`;
 
   const res = await fetch(ciUrl, {
@@ -200,7 +203,9 @@ async function callCI(
   });
 
   const body = await res.json();
-  return { ok: res.ok && body.status === "success", data: body };
+  const ok = res.ok && body.status === "success";
+  if (!ok) console.log(`[AGENT] CI ${capability} failed:`, JSON.stringify(body.errors ?? body.error));
+  return { ok, data: body };
 }
 
 // ── Step 3: Synthesise advice ────────────────────────────────────────────────
@@ -308,6 +313,7 @@ serve(async (req) => {
 
     // Step 1: Extract intent
     const intent = await extractIntent(message, context);
+    console.log("[AGENT] Intent extracted:", JSON.stringify({ caps: intent.capabilities.length, situation: intent.user_situation }));
 
     // Merge context into capability params where missing
     if (context) {
@@ -324,6 +330,56 @@ serve(async (req) => {
         if (context.current_salary && cap.capability === "salary_position" && !cap.params.current_salary) {
           cap.params.current_salary = context.current_salary;
         }
+      }
+    }
+
+    // Fallback: if AI returned no capabilities but we have context, auto-generate calls
+    if (intent.capabilities.length === 0 && context?.role) {
+      console.log("[AGENT] No capabilities from AI — applying context-based fallback");
+      // Always try lookup_rate if we have role + geography
+      if (context.geography) {
+        intent.capabilities.push({
+          capability: "lookup_rate",
+          params: {
+            role: context.role,
+            geography: context.geography,
+            ...(context.employment_type ? { employment_type: context.employment_type } : {}),
+          },
+        });
+      }
+      // Try salary_position if we have current_salary
+      if (context.current_salary) {
+        intent.capabilities.push({
+          capability: "salary_position",
+          params: {
+            role: context.role,
+            current_salary: context.current_salary,
+            ...(context.geography ? { geography: context.geography } : {}),
+          },
+        });
+      }
+      // Fallback to salary_benchmark if nothing else
+      if (intent.capabilities.length === 0) {
+        intent.capabilities.push({
+          capability: "salary_benchmark",
+          params: { role: context.role },
+        });
+      }
+    }
+
+    // Ensure lookup_rate is always included when we have role + geography
+    // (it's the most reliable capability — backed by the full rates table)
+    if (context?.role && context?.geography) {
+      const hasLookup = intent.capabilities.some((c) => c.capability === "lookup_rate");
+      if (!hasLookup) {
+        intent.capabilities.unshift({
+          capability: "lookup_rate",
+          params: {
+            role: context.role,
+            geography: context.geography,
+            ...(context.employment_type ? { employment_type: context.employment_type } : {}),
+          },
+        });
       }
     }
 
