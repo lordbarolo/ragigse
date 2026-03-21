@@ -53,6 +53,7 @@ serve(async (req) => {
   }
 
   try {
+    const body = await req.json();
     const {
       lead_id,
       email,
@@ -65,7 +66,11 @@ serve(async (req) => {
       track,
       sector,
       ob_share,
-    } = await req.json();
+    } = body;
+
+    // Audit logging
+    const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    console.log(`[AUDIT] create-report | ip=${clientIp} | occupation=${occupation} | kommun=${kommun} | lead_id=${lead_id || "none"}`);
 
     if (!occupation || !employment_type || !kommun) {
       return new Response(
