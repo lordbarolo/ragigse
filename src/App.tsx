@@ -28,7 +28,7 @@ const Signup = lazy(() => import("./pages/Signup"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Radar = lazy(() => import("./pages/Radar"));
-// Uppdragsradar merged into Radar page
+const Negotiate = lazy(() => import("./pages/Negotiate"));
 const ReferenceForm = lazy(() => import("./pages/ReferenceForm"));
 const PingResponse = lazy(() => import("./pages/PingResponse"));
 const PublicProfile = lazy(() => import("./pages/PublicProfile"));
