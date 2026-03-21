@@ -91,7 +91,7 @@ export default function Index() {
             <span className="text-primary">marknadsvärde.</span>
           </h1>
 
-          <p className="text-muted-foreground text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed" style={{ color: "hsl(215 20% 65%)" }}>
+          <p className="text-hero-foreground/60 text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed">
             Vi hjälper sjukvårdspersonal till bättre beslutsunderlag, genom ramavtalspriser och lönestatistik.
           </p>
 
