@@ -104,7 +104,7 @@ export default function Index() {
             </button>
             <button
               onClick={() => handleRoleSelect("ssk")}
-              className="flex-1 bg-card/10 hover:bg-card/20 border border-border/30 text-hero-foreground px-6 py-4 rounded-2xl font-semibold transition-all text-base"
+              className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-4 rounded-2xl font-semibold transition-all shadow-lg shadow-primary/20 text-base"
             >
               💉 Sjuksköterska / Barnmorska
             </button>
