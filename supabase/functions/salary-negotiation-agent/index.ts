@@ -100,11 +100,19 @@ async function callAI(
 const INTENT_SYSTEM = `Du är en löneförhandlingsassistent. Analysera användarens meddelande och befintlig kontext.
 Bestäm vilka CI-capabilities som behövs för att ge råd.
 
-Tillgängliga capabilities:
+VIKTIGT — Du får BARA använda dessa capabilities:
 - lookup_rate: Slå upp timpris för en yrkesroll i en zon. Kräver: role, geography. Valfritt: employment_type.
 - salary_benchmark: Hämta lönebenchmark (p25/p50/p75). Kräver: role. Valfritt: geography.
 - salary_position: Som salary_benchmark men jämför mot användarens nuvarande lön. Kräver: role, current_salary.
 - compare_roles: Jämför timpris mellan två roller. Kräver: role_a, role_b, geography.
+
+Du ska ENBART svara på frågor inom dessa områden:
+1. "Hur ligger min lön jämfört med benchmark?"
+2. "Hur skiljer sig min roll från liknande roller?"
+3. "Vilket förhandlingsutrymme kan jag argumentera för?"
+4. "Vad säger benchmark och avtalsnivåer?"
+
+Om användaren frågar om något utanför dessa områden (t.ex. arbetsrätt, anställningsvillkor, karriärråd), returnera en tom capabilities-array och skriv en tydlig missing_info-text om att frågan ligger utanför tjänstens fokus.
 
 Returnera de capabilities som krävs baserat på vad användaren frågar. Om information saknas, lista det i missing_info.`;
 
@@ -200,12 +208,14 @@ async function callCI(
 const ADVICE_SYSTEM = `Du är en expert på löneförhandling i Sverige, specialiserad på vården.
 Du ger konkret, handlingsbart råd baserat på marknadsdata.
 
-Regler:
-- Basera ALLA siffror på den data du får — hitta aldrig på siffror.
+STRIKTA REGLER:
+- Basera ALLA siffror på den data du får — hitta ALDRIG på siffror.
 - Referera alltid till datakällan (t.ex. "Enligt SKR ramavtal" eller "Enligt SCB lönestatistik").
 - Var specifik med kronor/timme eller kronor/månad.
 - Ge 2-3 konkreta förhandlingstips baserat på situationen.
-- Om data saknas, var tydlig med det.
+- Om data saknas, var tydlig med det — gissa aldrig.
+- Svara BARA på frågor om lönebenchmark, rollsjämförelser, förhandlingsutrymme och avtalsnivåer.
+- Om frågan hamnar utanför detta, svara artigt att du bara kan hjälpa med löne- och ersättningsfrågor.
 - Svara på svenska.`;
 
 const ADVICE_TOOL = {

@@ -28,7 +28,7 @@ const Signup = lazy(() => import("./pages/Signup"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Radar = lazy(() => import("./pages/Radar"));
-// Uppdragsradar merged into Radar page
+const Negotiate = lazy(() => import("./pages/Negotiate"));
 const ReferenceForm = lazy(() => import("./pages/ReferenceForm"));
 const PingResponse = lazy(() => import("./pages/PingResponse"));
 const PublicProfile = lazy(() => import("./pages/PublicProfile"));
@@ -63,7 +63,7 @@ const App = () => (
             <Route path="/rapport/:reportId" element={<Report />} />
             <Route path="/jamfor" element={<Compare />} />
             <Route path="/radar" element={<Radar />} />
-            {/* /uppdragsradar merged into /radar */}
+            <Route path="/forhandla" element={<Negotiate />} />
             <Route path="/vanliga-fragor" element={<FAQ />} />
             <Route path="/integritetspolicy" element={<PrivacyPolicy />} />
             <Route path="/logga-in" element={<Login />} />
