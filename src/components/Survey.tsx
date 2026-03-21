@@ -637,10 +637,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                       <Check className="w-3 h-3 text-primary-foreground" />
                     </div>
                   )}
-                  <div>
-                    <span className="text-base font-medium text-foreground">{opt.label}</span>
-                    <p className="text-body-sm mt-1">{opt.desc}</p>
-                  </div>
+                  <span className="text-base font-medium text-foreground">{opt.label}</span>
                 </button>
               ))}
             </div>
