@@ -52,9 +52,19 @@ export default function Radar() {
   const [selectedPrediction, setSelectedPrediction] = useState<Prediction | null>(null);
   const [detailOpen, setDetailOpen] = useState(false);
   const [profileLoaded, setProfileLoaded] = useState(false);
+  const [pendingQuestion, setPendingQuestion] = useState<string | undefined>();
   const { user } = useAuth();
   const { toast } = useToast();
   const observerRef = useRef<HTMLDivElement | null>(null);
+
+  // SEO metadata
+  useEffect(() => {
+    document.title = "Uppdragsradar – Se kommande uppdrag | CompCare";
+    const meta = document.querySelector('meta[name="description"]');
+    const desc = "Prognos för kommande vårduppdrag baserat på historiska mönster. Se vilka regioner och köpare som sannolikt behöver bemanning snart.";
+    if (meta) { meta.setAttribute("content", desc); }
+    else { const m = document.createElement("meta"); m.name = "description"; m.content = desc; document.head.appendChild(m); }
+  }, []);
 
   // Load user's default competence from profile or latest report
   useEffect(() => {
@@ -243,7 +253,7 @@ export default function Radar() {
                     onWatch={handleWatch}
                   />
                 </div>
-                {(i === 2 || i === predictions.length - 1) && <div className="mt-3"><ReijdarPromo /></div>}
+                {(i === 2 || i === predictions.length - 1) && <div className="mt-3"><ReijdarPromo onAsk={(q) => setPendingQuestion(q)} /></div>}
               </div>
             ))}
             {isFetchingNextPage && (
@@ -263,7 +273,7 @@ export default function Radar() {
       />
 
       {/* Reijdar AI chat */}
-      <ReijdarChat selectedRole={filters.competence} />
+      <ReijdarChat selectedRole={filters.competence} initialMessage={pendingQuestion} />
 
       {/* Bottom nav */}
       <BottomNav />

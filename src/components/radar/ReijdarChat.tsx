@@ -1,19 +1,22 @@
 import { useState, useRef, useEffect } from "react";
-import { MessageSquare, X, Send, Loader2, Bot } from "lucide-react";
+import { X, Send, Loader2, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import ReactMarkdown from "react-markdown";
+import { trackEvent } from "@/lib/trackEvent";
 
 type ChatMsg = { role: "user" | "assistant"; content: string };
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/uppdragsradar-chat`;
+const MAX_INPUT_LENGTH = 500;
 
-export default function ReijdarChat({ selectedRole }: { selectedRole?: string }) {
+export default function ReijdarChat({ selectedRole, initialMessage }: { selectedRole?: string; initialMessage?: string }) {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
+  const [hasTrackedStart, setHasTrackedStart] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -21,9 +24,24 @@ export default function ReijdarChat({ selectedRole }: { selectedRole?: string })
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  const sendChat = async () => {
-    if (!input.trim() || isStreaming) return;
-    const userMsg: ChatMsg = { role: "user", content: input.trim() };
+  // Handle initial message from example questions
+  useEffect(() => {
+    if (initialMessage && open) {
+      setInput(initialMessage);
+    }
+  }, [initialMessage, open]);
+
+  const sendMessage = async (text: string) => {
+    const trimmed = text.trim();
+    if (!trimmed || isStreaming) return;
+
+    if (!hasTrackedStart) {
+      trackEvent("reijdar_chat_started" as any, { role: selectedRole || "" });
+      setHasTrackedStart(true);
+    }
+    trackEvent("reijdar_message_sent" as any, { role: selectedRole || "" });
+
+    const userMsg: ChatMsg = { role: "user", content: trimmed };
     const newMessages = [...messages, userMsg];
     setMessages(newMessages);
     setInput("");
@@ -46,6 +64,10 @@ export default function ReijdarChat({ selectedRole }: { selectedRole?: string })
 
       if (!resp.ok || !resp.body) {
         const errData = await resp.json().catch(() => ({}));
+        if (resp.status === 429) {
+          toast({ title: "För många försök", description: "Försök igen om en stund.", variant: "destructive" });
+          return;
+        }
         throw new Error(errData.error || "Chatfel");
       }
 
@@ -88,12 +110,16 @@ export default function ReijdarChat({ selectedRole }: { selectedRole?: string })
           }
         }
       }
+
+      trackEvent("reijdar_advice_received" as any, { role: selectedRole || "" });
     } catch (e: any) {
       toast({ title: "Chatfel", description: e.message, variant: "destructive" });
     } finally {
       setIsStreaming(false);
     }
   };
+
+  const handleSend = () => sendMessage(input);
 
   return (
     <>
@@ -166,15 +192,16 @@ export default function ReijdarChat({ selectedRole }: { selectedRole?: string })
           <div className="flex gap-2 px-4 py-3 border-t border-border shrink-0">
             <Input
               value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && sendChat()}
+              onChange={(e) => setInput(e.target.value.slice(0, MAX_INPUT_LENGTH))}
+              onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
               placeholder="Ställ en fråga om uppdrag..."
               disabled={isStreaming}
               className="text-[13px]"
+              maxLength={MAX_INPUT_LENGTH}
             />
             <Button
               size="icon"
-              onClick={sendChat}
+              onClick={handleSend}
               disabled={isStreaming || !input.trim()}
             >
               {isStreaming ? (
