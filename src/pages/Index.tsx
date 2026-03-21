@@ -193,7 +193,7 @@ export default function Index() {
           </button>
           <button
             onClick={() => handleRoleSelect("ssk")}
-            className="bg-card hover:bg-secondary border border-border text-foreground px-8 py-4 rounded-2xl font-semibold transition-all text-base"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-2xl font-semibold transition-all shadow-lg shadow-primary/20 text-base"
           >
             Starta analys — Sjuksköterska
           </button>
