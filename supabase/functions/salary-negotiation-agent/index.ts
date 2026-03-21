@@ -173,7 +173,9 @@ async function extractIntent(message: string, context?: AgentRequest["context"])
     return { capabilities: [], user_situation: message, missing_info: ["Kunde inte tolka frågan"] };
   }
 
-  return JSON.parse(toolCall.function.arguments) as ExtractedIntent;
+  const parsed = JSON.parse(toolCall.function.arguments) as ExtractedIntent;
+  console.log("[AGENT] Parsed capabilities:", JSON.stringify(parsed.capabilities));
+  return parsed;
 }
 
 // ── Step 2: Call CI capabilities ─────────────────────────────────────────────
