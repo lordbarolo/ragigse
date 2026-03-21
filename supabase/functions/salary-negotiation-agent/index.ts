@@ -308,6 +308,7 @@ serve(async (req) => {
 
     // Step 1: Extract intent
     const intent = await extractIntent(message, context);
+    console.log("[AGENT] Intent extracted:", JSON.stringify({ caps: intent.capabilities.length, situation: intent.user_situation }));
 
     // Merge context into capability params where missing
     if (context) {
@@ -324,6 +325,40 @@ serve(async (req) => {
         if (context.current_salary && cap.capability === "salary_position" && !cap.params.current_salary) {
           cap.params.current_salary = context.current_salary;
         }
+      }
+    }
+
+    // Fallback: if AI returned no capabilities but we have context, auto-generate calls
+    if (intent.capabilities.length === 0 && context?.role) {
+      console.log("[AGENT] No capabilities from AI — applying context-based fallback");
+      // Always try lookup_rate if we have role + geography
+      if (context.geography) {
+        intent.capabilities.push({
+          capability: "lookup_rate",
+          params: {
+            role: context.role,
+            geography: context.geography,
+            ...(context.employment_type ? { employment_type: context.employment_type } : {}),
+          },
+        });
+      }
+      // Try salary_position if we have current_salary
+      if (context.current_salary) {
+        intent.capabilities.push({
+          capability: "salary_position",
+          params: {
+            role: context.role,
+            current_salary: context.current_salary,
+            ...(context.geography ? { geography: context.geography } : {}),
+          },
+        });
+      }
+      // Fallback to salary_benchmark if nothing else
+      if (intent.capabilities.length === 0) {
+        intent.capabilities.push({
+          capability: "salary_benchmark",
+          params: { role: context.role },
+        });
       }
     }
 
