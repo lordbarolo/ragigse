@@ -138,21 +138,17 @@ export default function Index() {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
             <h2 className="text-3xl font-bold mb-6 tracking-tight text-foreground">
-              Data som faktiskt gör skillnad vid lönesamtalet.
+              Öppen data — för alla vårdkonsulter.
             </h2>
-            <p className="text-muted-foreground mb-8 leading-relaxed text-lg">
-              Vi hämtar data direkt från officiella källor och bryter ner dem så att du kan se exakt vad bemanningsbolaget får betalt och vad som borde landa i din plånbok.
+            <p className="text-muted-foreground mb-4 leading-relaxed text-lg">
+              Vi hämtar uppgifter från SKR:s officiella avtal och gör informationen tillgänglig för alla. Omfattande data från 21 regioner och 290 kommuner som visar exakt ersättning för sjuksköterskor, läkare och barnmorskor.
             </p>
-            <ul className="space-y-4">
-              {["Transparens i alla led", "Inga dolda avgifter eller gissningar"].map((item) => (
-                <li key={item} className="flex items-center gap-3 text-foreground font-medium">
-                  <div className="w-6 h-6 bg-success/10 text-success rounded-full flex items-center justify-center">
-                    <Check className="w-3 h-3" />
-                  </div>
-                  {item}
-                </li>
-              ))}
-            </ul>
+            <p className="text-muted-foreground mb-4 leading-relaxed text-base italic">
+              Vad är en vanlig ersättning för en Allmänspecialist i Värmland? Hur mycket betalar man för en barnmorska i Bollnäs jämfört med Täby? Hur mycket har ersättningen för en allmänsjuksköterska ökat sedan 2024?
+            </p>
+            <p className="text-foreground font-medium text-base">
+              Agenten Reidar sitter på vår samlade kunskap — fråga honom vad du vill.
+            </p>
           </div>
 
           {/* Preview card */}
