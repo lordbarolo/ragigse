@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { checkRateLimit, rateLimitResponse } from "../_shared/rateLimit.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -13,6 +14,20 @@ serve(async (req) => {
   }
 
   try {
+    const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
+
+    // Rate limit: 5 coupon attempts per IP per hour
+    const rl = await checkRateLimit(supabase, "validate-coupon", clientIp, 5, 60);
+    if (!rl.allowed) {
+      console.log(`[RATE_LIMIT] validate-coupon blocked | ip=${clientIp} | count=${rl.count}`);
+      return rateLimitResponse(rl, corsHeaders);
+    }
+
     const { code } = await req.json();
 
     if (!code) {
@@ -21,11 +36,6 @@ serve(async (req) => {
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
-
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-    );
 
     const { data: coupon, error } = await supabase
       .from("coupons")

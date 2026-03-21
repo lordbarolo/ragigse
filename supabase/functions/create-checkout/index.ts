@@ -26,6 +26,19 @@ serve(async (req) => {
   }
 
   try {
+    const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+
+    // Rate limit: 10 checkout attempts per IP per hour
+    const rlSupabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+    );
+    const rl = await checkRateLimit(rlSupabase, "create-checkout", clientIp, 10, 60);
+    if (!rl.allowed) {
+      console.log(`[RATE_LIMIT] create-checkout blocked | ip=${clientIp} | count=${rl.count}`);
+      return rateLimitResponse(rl, corsHeaders);
+    }
+
     const { plan, email, lead_id, report_id, coupon_discount_type, coupon_discount_value, ab_variant } = await req.json();
 
     // Use 29kr price if ab_variant is price_29
