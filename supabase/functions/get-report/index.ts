@@ -119,13 +119,23 @@ serve(async (req) => {
         }
       }
     } else {
-      // Preview: only expose inputs and partial market data for teaser
+      // Preview: only expose inputs and safe teaser fields — never raw rates or margins
       const resultJson = report.result_json as Record<string, unknown> | null;
       if (resultJson) {
+        const market = resultJson.market as Record<string, unknown> | null;
+        const safeMarket: Record<string, unknown> = {};
+        // Only expose non-sensitive aggregate fields for teaser display
+        if (market) {
+          if (market.source) safeMarket.source = market.source;
+          if (market.year) safeMarket.year = market.year;
+          if (market.region) safeMarket.region = market.region;
+          // Explicitly exclude: rate_customer_sek_per_hour, percentiles, average_monthly
+        }
         response.result_json = {
           calc_version: resultJson.calc_version,
+          track: resultJson.track,
           inputs: resultJson.inputs,
-          market: resultJson.market,
+          market: safeMarket,
         };
       }
       response.access = "preview";

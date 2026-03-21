@@ -26,6 +26,9 @@ serve(async (req) => {
       );
     }
 
+    // Forward client IP for rate limiting
+    const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+
     // Delegate to compensation-intelligence
     const ciUrl = `${Deno.env.get("SUPABASE_URL")}/functions/v1/compensation-intelligence`;
     const ciResponse = await fetch(ciUrl, {
@@ -33,6 +36,7 @@ serve(async (req) => {
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+        "x-forwarded-for": clientIp,
       },
       body: JSON.stringify({
         capability: "lookup_rate",

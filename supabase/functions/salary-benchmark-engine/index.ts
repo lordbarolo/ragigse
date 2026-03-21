@@ -30,12 +30,16 @@ serve(async (req) => {
     const hasSalary = current_salary && current_salary > 0;
     const capability = hasSalary ? "salary_position" : "salary_benchmark";
 
+    // Forward client IP for rate limiting
+    const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+
     const ciUrl = `${Deno.env.get("SUPABASE_URL")}/functions/v1/compensation-intelligence`;
     const ciResponse = await fetch(ciUrl, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: `Bearer ${Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")}`,
+        "x-forwarded-for": clientIp,
       },
       body: JSON.stringify({
         capability,

@@ -211,8 +211,9 @@ export default function Teaser() {
   useEffect(() => {
     if (!leadId) return;
     const checkReferral = async () => {
+      // Check unlock status via the report itself (referrals table is now locked down)
       const { data } = await supabase
-        .from("referrals").select("clicked").eq("lead_id", leadId).eq("clicked", true).limit(1);
+        .from("reports").select("unlocked_by_referral").eq("lead_id", leadId).eq("unlocked_by_referral", true).limit(1);
       if (data && data.length > 0) setUnlocked(true);
     };
     checkReferral();

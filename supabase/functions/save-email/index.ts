@@ -13,7 +13,12 @@ serve(async (req) => {
   }
 
   try {
-    const { lead_id, report_id, email } = await req.json();
+    const body = await req.json();
+    const { lead_id, report_id, email } = body;
+
+    // Audit logging
+    const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    console.log(`[AUDIT] save-email | ip=${clientIp} | email=${email} | lead_id=${lead_id || "none"} | report_id=${report_id || "none"}`);
 
     if (!lead_id || !email) {
       return new Response(
