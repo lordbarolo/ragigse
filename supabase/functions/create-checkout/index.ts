@@ -39,7 +39,7 @@ serve(async (req) => {
       return rateLimitResponse(rl, corsHeaders);
     }
 
-    const { plan, email, lead_id, report_id, coupon_discount_type, coupon_discount_value, ab_variant } = await req.json();
+    const { plan, email, lead_id, report_id, coupon_code, ab_variant } = await req.json();
 
     // Use 29kr price if ab_variant is price_29
     const effectivePlan = (ab_variant === "price_29" && plan === "single") ? "single_29" : plan;
