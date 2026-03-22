@@ -21,6 +21,7 @@ interface AttachedReference {
   last_confirmed_at: string | null;
   competencies: string[] | null;
   recommendation_score: number | null;
+  artifact_token: string | null;
 }
 
 const VERIFICATION_LABELS: Record<string, { label: string; icon: React.ReactNode; className: string }> = {
