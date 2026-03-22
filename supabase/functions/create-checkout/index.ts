@@ -94,22 +94,49 @@ serve(async (req) => {
       },
     };
 
-    // Apply coupon discount if provided (only percent or fixed — "free" is handled client-side)
-    if (coupon_discount_value > 0 && (coupon_discount_type === "percent" || coupon_discount_type === "fixed")) {
-      const couponParams: Record<string, unknown> = {
-        duration: "once",
-        max_redemptions: 1,
-      };
+    // Validate coupon server-side if a coupon_code was provided
+    if (coupon_code && typeof coupon_code === "string") {
+      const couponSupabase = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+      );
+      const { data: coupon } = await couponSupabase
+        .from("coupons")
+        .select("id, discount_type, discount_value, max_uses, use_count, expires_at")
+        .eq("code", coupon_code.trim().toUpperCase())
+        .maybeSingle();
 
-      if (coupon_discount_type === "percent") {
-        couponParams.percent_off = Math.min(coupon_discount_value, 100);
-      } else {
-        couponParams.amount_off = coupon_discount_value * 100; // Stripe uses öre
-        couponParams.currency = "sek";
+      if (!coupon) {
+        return new Response(JSON.stringify({ error: "Invalid coupon code" }), {
+          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
       }
 
-      const stripeCoupon = await stripe.coupons.create(couponParams);
-      sessionParams.discounts = [{ coupon: stripeCoupon.id }];
+      if (coupon.expires_at && new Date(coupon.expires_at) < new Date()) {
+        return new Response(JSON.stringify({ error: "Coupon expired" }), {
+          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      if (coupon.use_count >= coupon.max_uses) {
+        return new Response(JSON.stringify({ error: "Coupon fully redeemed" }), {
+          status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      if (coupon.discount_type === "free") {
+        // Free coupon — don't create checkout, handled client-side
+      } else if (coupon.discount_value > 0 && (coupon.discount_type === "percent" || coupon.discount_type === "fixed")) {
+        const couponParams: Record<string, unknown> = { duration: "once", max_redemptions: 1 };
+        if (coupon.discount_type === "percent") {
+          couponParams.percent_off = Math.min(coupon.discount_value, 100);
+        } else {
+          couponParams.amount_off = coupon.discount_value * 100;
+          couponParams.currency = "sek";
+        }
+        const stripeCoupon = await stripe.coupons.create(couponParams);
+        sessionParams.discounts = [{ coupon: stripeCoupon.id }];
+      }
     }
 
     const session = await stripe.checkout.sessions.create(sessionParams as Parameters<typeof stripe.checkout.sessions.create>[0]);

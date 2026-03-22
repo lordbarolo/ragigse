@@ -54,10 +54,9 @@ export default function Report() {
     const fetchReport = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession();
-        const authUserId = session?.user?.id || null;
 
         const { data, error } = await supabase.functions.invoke("get-report", {
-          body: { report_id: reportId, auth_user_id: authUserId },
+          body: { report_id: reportId },
         });
         if (error || !data || data.error) { setReport(null); }
         else { setReport(data as ReportData); }
