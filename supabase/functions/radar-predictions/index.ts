@@ -168,6 +168,7 @@ Deno.serve(async (req) => {
       unified.push({
         buyer: r.buyer, competence: r.yrkeskategori, location: r.location,
         zon: r.zon, duration_weeks: r.duration_weeks, calloff_date: r.calloff_date,
+        unit: "",
       });
     }
 
