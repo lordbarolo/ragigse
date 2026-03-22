@@ -3,6 +3,7 @@ import InvoiceReviewCTA from "./InvoiceReviewCTA";
 import PersonalInsights from "./PersonalInsights";
 import ColleagueComparison from "./ColleagueComparison";
 import PriceHistory from "./PriceHistory";
+import PriceNuggets from "./PriceNuggets";
 import type { PriceChange } from "@/shared/types";
 import { Separator } from "@/components/ui/separator";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
