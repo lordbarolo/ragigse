@@ -177,7 +177,7 @@ export default function VerifyProof() {
                 return (
                   <Link
                     key={ref.id}
-                    to={`/verify/reference/${ref.id}`}
+                    to={`/verify/artifact/${ref.artifact_token}`}
                     className="block"
                   >
                     <Card className="border-primary/15 hover:border-primary/30 transition-colors cursor-pointer">
