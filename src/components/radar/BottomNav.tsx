@@ -1,10 +1,10 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { BarChart3, Radio, Bell, User } from "lucide-react";
+import { MessageSquare, Radio, Shield, User } from "lucide-react";
 
 const TABS = [
-  { label: "Insikter", path: "/", icon: BarChart3 },
-  { label: "Radar", path: "/radar", icon: Radio },
-  { label: "Bevakningar", path: "/bevakningar", icon: Bell },
+  { label: "Marknadsvillkor", path: "/forhandla", icon: MessageSquare },
+  { label: "Uppdrag", path: "/radar", icon: Radio },
+  { label: "Referenser", path: "/referenser", icon: Shield },
   { label: "Profil", path: "/profil", icon: User },
 ] as const;
 
