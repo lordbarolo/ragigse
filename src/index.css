@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Work+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,55 +6,57 @@
 
 @layer base {
   :root {
-    /* ── Light / Stripe-Kivra palette ────────────────── */
-    --background: 210 40% 98%;        /* #F8FAFC slate-50 */
-    --foreground: 222 47% 11%;        /* #0F172A slate-900 */
+    /* ── Institutional Proof / Light ─────────────────── */
+    --background: 210 15% 96%;         /* #F4F6F8 paper-white */
+    --foreground: 222 47% 11%;         /* #111827 */
 
-    --card: 0 0% 100%;                /* white */
+    --card: 0 0% 100%;                 /* #FFFFFF */
     --card-foreground: 222 47% 11%;
 
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
 
-    --primary: 221 83% 53%;           /* #3B82F6 blue-500 */
+    --primary: 243 76% 59%;            /* #4F46E5 indigo */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 40% 96%;         /* slate-100 */
+    --secondary: 210 15% 96%;          /* paper */
     --secondary-foreground: 222 47% 11%;
 
-    --muted: 210 40% 96%;
-    --muted-foreground: 215 16% 47%;  /* slate-500 */
+    --muted: 210 15% 96%;
+    --muted-foreground: 215 20% 35%;   /* #475569 */
 
-    --accent: 210 40% 96%;
+    --accent: 210 15% 96%;
     --accent-foreground: 222 47% 11%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 214 32% 91%;            /* slate-200 */
-    --input: 214 32% 91%;
-    --ring: 221 83% 53%;
+    --border: 210 11% 90%;             /* #E2E6EA */
+    --input: 210 11% 90%;
+    --ring: 243 76% 59%;
 
     --radius: 0.75rem;
 
     /* ── Semantic extras ─────────────────────────────── */
-    --hero-bg: 222 47% 11%;           /* #0F172A for dark hero */
+    --hero-bg: 222 47% 11%;            /* #0F172A slate-900 */
     --hero-fg: 0 0% 100%;
-    --success: 160 84% 39%;           /* green-500 */
+    --success: 168 80% 31%;            /* #0D9488 teal */
     --success-foreground: 0 0% 100%;
+    --warning: 36 93% 44%;             /* #D97706 amber */
+    --warning-foreground: 0 0% 100%;
 
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 222 47% 11%;
-    --sidebar-primary: 221 83% 53%;
+    --sidebar-primary: 243 76% 59%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 40% 96%;
+    --sidebar-accent: 210 15% 96%;
     --sidebar-accent-foreground: 222 47% 11%;
-    --sidebar-border: 214 32% 91%;
-    --sidebar-ring: 221 83% 53%;
+    --sidebar-border: 210 11% 90%;
+    --sidebar-ring: 243 76% 59%;
 
-    --font-display: 'Inter', sans-serif;
+    --font-display: 'Work Sans', sans-serif;
     --font-body: 'Inter', sans-serif;
-    --font-mono: ui-monospace, monospace;
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
   }
 
   .dark {
