@@ -50,7 +50,7 @@ const MERGE_GAP_DAYS = 14; // periods within 14 days are considered adjacent
  * Returns merged periods sorted by start date descending.
  */
 function deduplicatePeriods(rows: UnifiedRow[]): MergedPeriod[] {
-  // Group by unit first — different units represent different actual needs
+  // Group by unit — different units represent genuinely different needs
   const unitGroups = new Map<string, UnifiedRow[]>();
   for (const r of rows) {
     const u = r.unit || "__no_unit__";
@@ -60,6 +60,7 @@ function deduplicatePeriods(rows: UnifiedRow[]): MergedPeriod[] {
 
   const allMerged: MergedPeriod[] = [];
 
+  // Within each unit, merge overlapping/adjacent periods
   for (const [, unitRows] of unitGroups) {
     const periods: { start: number; end: number }[] = unitRows.map(r => {
       const start = new Date(r.calloff_date).getTime();
@@ -69,28 +70,21 @@ function deduplicatePeriods(rows: UnifiedRow[]): MergedPeriod[] {
 
     periods.sort((a, b) => a.start - b.start);
 
+    const unitMerged: MergedPeriod[] = [];
     for (const p of periods) {
-      // Try to merge with existing periods in allMerged for this unit
-      if (allMerged.length === 0) {
-        allMerged.push({ start: p.start, end: p.end, count: 1 });
+      if (unitMerged.length === 0) {
+        unitMerged.push({ start: p.start, end: p.end, count: 1 });
       } else {
-        // Check against the last added period from this unit group
-        let merged = false;
-        for (let i = allMerged.length - 1; i >= 0; i--) {
-          // Only merge within same temporal proximity
-          if (p.start <= allMerged[i].end + MERGE_GAP_DAYS * DAY_MS && p.start >= allMerged[i].start - MERGE_GAP_DAYS * DAY_MS) {
-            allMerged[i].end = Math.max(allMerged[i].end, p.end);
-            allMerged[i].start = Math.min(allMerged[i].start, p.start);
-            allMerged[i].count += 1;
-            merged = true;
-            break;
-          }
-        }
-        if (!merged) {
-          allMerged.push({ start: p.start, end: p.end, count: 1 });
+        const last = unitMerged[unitMerged.length - 1];
+        if (p.start <= last.end + MERGE_GAP_DAYS * DAY_MS) {
+          last.end = Math.max(last.end, p.end);
+          last.count += 1;
+        } else {
+          unitMerged.push({ start: p.start, end: p.end, count: 1 });
         }
       }
     }
+    allMerged.push(...unitMerged);
   }
 
   allMerged.sort((a, b) => b.start - a.start);
