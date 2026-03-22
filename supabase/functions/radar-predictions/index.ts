@@ -41,7 +41,8 @@ interface MergedPeriod {
 }
 
 const DAY_MS = 86400000;
-const MERGE_GAP_DAYS = 14; // periods within 14 days are considered adjacent
+const MERGE_GAP_DAYS = 14;
+const MAX_DEDUP_WEEKS = 12; // cap duration for dedup — longer entries are framework agreements
 
 /**
  * Merge overlapping or adjacent time periods for the same group.
