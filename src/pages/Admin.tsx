@@ -65,108 +65,13 @@ interface AuditOptin {
   created_at: string;
 }
 
-const ADMIN_PASS = "compcare2026";
-
 export default function Admin() {
-  const [authenticated, setAuthenticated] = useState(false);
-  const [passInput, setPassInput] = useState("");
-  const [versions, setVersions] = useState<ContractVersion[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [auditOptins, setAuditOptins] = useState<AuditOptin[]>([]);
-  const [auditLoading, setAuditLoading] = useState(true);
-
-  // Shared analytics period
-  const [analyticsPeriod, setAnalyticsPeriod] = useState<7 | 30 | 90>(30);
-  const { data: analyticsData, loading: analyticsLoading, refetch: refetchAnalytics } = useAdminAnalytics(analyticsPeriod);
-
-  // Import form state
-  const [catalogName, setCatalogName] = useState("");
-  const [versionLabel, setVersionLabel] = useState("");
-  const [effectiveFrom, setEffectiveFrom] = useState("");
-  const [notes, setNotes] = useState("");
-  const [ratesCsv, setRatesCsv] = useState("");
-  const [importing, setImporting] = useState(false);
-
-  // Diff state
-  const [oldVersionId, setOldVersionId] = useState("");
-  const [newVersionId, setNewVersionId] = useState("");
-  const [diffRunning, setDiffRunning] = useState(false);
-  const [diffResults, setDiffResults] = useState<PriceChange[] | null>(null);
-  const [diffSummary, setDiffSummary] = useState<Record<string, number> | null>(null);
-
-  const fetchVersions = async () => {
-    setLoading(true);
-    const { data, error } = await supabase
-      .from("contract_versions")
-      .select("*")
-      .order("effective_from", { ascending: false });
-
-    if (error) {
-      toast({ title: "Fel", description: error.message, variant: "destructive" });
-    } else {
-      setVersions(data || []);
-    }
-    setLoading(false);
-  };
-
-  const fetchAuditOptins = async () => {
-    setAuditLoading(true);
-    const { data, error } = await supabase
-      .from("audit_optins")
-      .select("*")
-      .order("created_at", { ascending: false });
-    if (!error) setAuditOptins((data as AuditOptin[]) || []);
-    setAuditLoading(false);
-  };
+  const { user, isAdmin, loading: adminLoading } = useAdminAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (sessionStorage.getItem("admin_auth") === "true") {
-      setAuthenticated(true);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (authenticated) {
-      fetchVersions();
-      fetchAuditOptins();
-    }
-  }, [authenticated]);
-
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (passInput === ADMIN_PASS) {
-      setAuthenticated(true);
-      sessionStorage.setItem("admin_auth", "true");
-    } else {
-      toast({ title: "Fel lösenord", variant: "destructive" });
-    }
-  };
-
-  if (!authenticated) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <Card className="w-full max-w-sm">
-          <CardHeader className="text-center">
-            <Lock className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
-            <CardTitle>Admin</CardTitle>
-            <CardDescription>Ange lösenord för att fortsätta</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleLogin} className="space-y-4">
-              <Input
-                type="password"
-                placeholder="Lösenord"
-                value={passInput}
-                onChange={(e) => setPassInput(e.target.value)}
-                autoFocus
-              />
-              <Button type="submit" className="w-full">Logga in</Button>
-            </form>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+    if (!adminLoading && !user) navigate("/logga-in");
+  }, [adminLoading, user, navigate]);
 
   const handleImport = async () => {
     if (!catalogName || !versionLabel || !effectiveFrom || !ratesCsv.trim()) {
