@@ -22,15 +22,24 @@ serve(async (req) => {
       );
     }
 
+    // Validate lead_id is a valid UUID to prevent enumeration
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (typeof lead_id !== "string" || !uuidRegex.test(lead_id)) {
+      return new Response(
+        JSON.stringify({ error: "Invalid lead_id" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Fetch lead
+    // Fetch lead — only return non-sensitive fields needed for teaser display
     const { data: lead, error: leadError } = await supabase
       .from("leads")
-      .select("id, email, employment_type, yrke, kommun, experience, salary_type, current_salary")
+      .select("id, employment_type, yrke, kommun, experience, salary_type")
       .eq("id", lead_id)
       .maybeSingle();
 
