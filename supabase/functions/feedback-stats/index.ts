@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { requireAdmin } from "../_shared/adminAuth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -12,13 +13,16 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Admin auth check
+  const authResult = await requireAdmin(req);
+  if (authResult instanceof Response) return authResult;
+
   try {
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Get all feedback
     const { data: feedback, error } = await supabase
       .from("report_feedback")
       .select("*")
@@ -29,13 +33,11 @@ serve(async (req) => {
     const rows = feedback || [];
     const total = rows.length;
 
-    // Count by rating
     const byCounts: Record<string, number> = {};
     for (const r of rows) {
       byCounts[r.rating] = (byCounts[r.rating] || 0) + 1;
     }
 
-    // By role
     const byRole: Record<string, Record<string, number>> = {};
     for (const r of rows) {
       const role = r.role || "Okänd";
@@ -43,7 +45,6 @@ serve(async (req) => {
       byRole[role][r.rating] = (byRole[role][r.rating] || 0) + 1;
     }
 
-    // Recent entries (last 20)
     const recent = rows.slice(0, 20).map((r) => ({
       rating: r.rating,
       comment: r.comment,

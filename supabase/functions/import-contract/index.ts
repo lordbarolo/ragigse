@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { requireAdmin } from "../_shared/adminAuth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -11,6 +12,10 @@ serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+
+  // Admin auth check
+  const authResult = await requireAdmin(req);
+  if (authResult instanceof Response) return authResult;
 
   try {
     const { catalog_name, version_label, effective_from, notes, rates } = await req.json();
@@ -27,7 +32,6 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Create version
     const { data: version, error: vErr } = await supabase
       .from("contract_versions")
       .insert({
@@ -41,7 +45,6 @@ serve(async (req) => {
 
     if (vErr) throw vErr;
 
-    // Insert rates
     const rateRows = rates.map((r: any) => ({
       version_id: version.id,
       yrkeskategori: r.yrkeskategori,
