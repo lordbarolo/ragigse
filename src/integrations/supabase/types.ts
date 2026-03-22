@@ -1618,6 +1618,38 @@ export type Database = {
         }
         Relationships: []
       }
+      ref_application_references: {
+        Row: {
+          application_id: string
+          attached_by_user_id: string
+          created_at: string
+          id: string
+          reference_id: string
+        }
+        Insert: {
+          application_id: string
+          attached_by_user_id: string
+          created_at?: string
+          id?: string
+          reference_id: string
+        }
+        Update: {
+          application_id?: string
+          attached_by_user_id?: string
+          created_at?: string
+          id?: string
+          reference_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ref_application_references_reference_id_fkey"
+            columns: ["reference_id"]
+            isOneToOne: false
+            referencedRelation: "ref_references"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ref_pings: {
         Row: {
           confirmed_until: string | null
@@ -1794,18 +1826,100 @@ export type Database = {
           },
         ]
       }
+      ref_reference_artifacts: {
+        Row: {
+          artifact_type: string
+          created_at: string
+          document_sha256: string | null
+          expires_at: string | null
+          id: string
+          reference_id: string
+          status: string
+          token_hash: string | null
+        }
+        Insert: {
+          artifact_type?: string
+          created_at?: string
+          document_sha256?: string | null
+          expires_at?: string | null
+          id?: string
+          reference_id: string
+          status?: string
+          token_hash?: string | null
+        }
+        Update: {
+          artifact_type?: string
+          created_at?: string
+          document_sha256?: string | null
+          expires_at?: string | null
+          id?: string
+          reference_id?: string
+          status?: string
+          token_hash?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ref_reference_artifacts_reference_id_fkey"
+            columns: ["reference_id"]
+            isOneToOne: false
+            referencedRelation: "ref_references"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ref_reference_verifications: {
+        Row: {
+          created_at: string
+          id: string
+          payload: Json | null
+          reference_id: string
+          status: string
+          verification_type: string
+          verified_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          payload?: Json | null
+          reference_id: string
+          status?: string
+          verification_type: string
+          verified_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          payload?: Json | null
+          reference_id?: string
+          status?: string
+          verification_type?: string
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ref_reference_verifications_reference_id_fkey"
+            columns: ["reference_id"]
+            isOneToOne: false
+            referencedRelation: "ref_references"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ref_references: {
         Row: {
+          attachable: boolean
           bankid_signature_id: string | null
           competencies: Json | null
           confirmed_at: string | null
           created_at: string
+          expires_at: string | null
           giver_email: string
           giver_id: string | null
           giver_name: string | null
           id: string
           individual_id: string
           invite_token: string
+          last_confirmed_at: string | null
           period_end: string | null
           period_start: string
           recommendation_score: number | null
@@ -1813,19 +1927,24 @@ export type Database = {
           relationship: string
           revoked_at: string | null
           status: Database["public"]["Enums"]["ref_reference_status"]
+          verification_level: string
+          verified_at: string | null
           workplace: string
         }
         Insert: {
+          attachable?: boolean
           bankid_signature_id?: string | null
           competencies?: Json | null
           confirmed_at?: string | null
           created_at?: string
+          expires_at?: string | null
           giver_email: string
           giver_id?: string | null
           giver_name?: string | null
           id?: string
           individual_id: string
           invite_token: string
+          last_confirmed_at?: string | null
           period_end?: string | null
           period_start: string
           recommendation_score?: number | null
@@ -1833,19 +1952,24 @@ export type Database = {
           relationship: string
           revoked_at?: string | null
           status?: Database["public"]["Enums"]["ref_reference_status"]
+          verification_level?: string
+          verified_at?: string | null
           workplace: string
         }
         Update: {
+          attachable?: boolean
           bankid_signature_id?: string | null
           competencies?: Json | null
           confirmed_at?: string | null
           created_at?: string
+          expires_at?: string | null
           giver_email?: string
           giver_id?: string | null
           giver_name?: string | null
           id?: string
           individual_id?: string
           invite_token?: string
+          last_confirmed_at?: string | null
           period_end?: string | null
           period_start?: string
           recommendation_score?: number | null
@@ -1853,6 +1977,8 @@ export type Database = {
           relationship?: string
           revoked_at?: string | null
           status?: Database["public"]["Enums"]["ref_reference_status"]
+          verification_level?: string
+          verified_at?: string | null
           workplace?: string
         }
         Relationships: [
@@ -2660,6 +2786,10 @@ export type Database = {
       }
       ref_log_profile_view: {
         Args: { _fingerprint?: string; _profile_id: string; _referrer?: string }
+        Returns: undefined
+      }
+      ref_refresh_attachability: {
+        Args: { p_reference_id: string }
         Returns: undefined
       }
       ref_respond_to_ping: {
