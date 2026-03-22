@@ -188,6 +188,7 @@ Deno.serve(async (req) => {
         buyer: r.customer_type === "Privat" ? "Privat" : r.customer,
         competence: normalized, location: r.region || "Okänd",
         zon: "", duration_weeks: null, calloff_date: r.created_at,
+        unit: r.unit || "",
       });
     }
 
