@@ -50,31 +50,51 @@ const MERGE_GAP_DAYS = 14; // periods within 14 days are considered adjacent
  * Returns merged periods sorted by start date descending.
  */
 function deduplicatePeriods(rows: UnifiedRow[]): MergedPeriod[] {
-  const periods: { start: number; end: number }[] = rows.map(r => {
-    const start = new Date(r.calloff_date).getTime();
-    const durationMs = (r.duration_weeks || 4) * 7 * DAY_MS; // default 4 weeks if unknown
-    return { start, end: start + durationMs };
-  });
+  // Group by unit first — different units represent different actual needs
+  const unitGroups = new Map<string, UnifiedRow[]>();
+  for (const r of rows) {
+    const u = r.unit || "__no_unit__";
+    if (!unitGroups.has(u)) unitGroups.set(u, []);
+    unitGroups.get(u)!.push(r);
+  }
 
-  periods.sort((a, b) => a.start - b.start);
+  const allMerged: MergedPeriod[] = [];
 
-  const merged: MergedPeriod[] = [];
-  for (const p of periods) {
-    if (merged.length === 0) {
-      merged.push({ start: p.start, end: p.end, count: 1 });
-    } else {
-      const last = merged[merged.length - 1];
-      if (p.start <= last.end + MERGE_GAP_DAYS * DAY_MS) {
-        last.end = Math.max(last.end, p.end);
-        last.count += 1;
+  for (const [, unitRows] of unitGroups) {
+    const periods: { start: number; end: number }[] = unitRows.map(r => {
+      const start = new Date(r.calloff_date).getTime();
+      const durationMs = (r.duration_weeks || 4) * 7 * DAY_MS;
+      return { start, end: start + durationMs };
+    });
+
+    periods.sort((a, b) => a.start - b.start);
+
+    for (const p of periods) {
+      // Try to merge with existing periods in allMerged for this unit
+      if (allMerged.length === 0) {
+        allMerged.push({ start: p.start, end: p.end, count: 1 });
       } else {
-        merged.push({ start: p.start, end: p.end, count: 1 });
+        // Check against the last added period from this unit group
+        let merged = false;
+        for (let i = allMerged.length - 1; i >= 0; i--) {
+          // Only merge within same temporal proximity
+          if (p.start <= allMerged[i].end + MERGE_GAP_DAYS * DAY_MS && p.start >= allMerged[i].start - MERGE_GAP_DAYS * DAY_MS) {
+            allMerged[i].end = Math.max(allMerged[i].end, p.end);
+            allMerged[i].start = Math.min(allMerged[i].start, p.start);
+            allMerged[i].count += 1;
+            merged = true;
+            break;
+          }
+        }
+        if (!merged) {
+          allMerged.push({ start: p.start, end: p.end, count: 1 });
+        }
       }
     }
   }
 
-  merged.sort((a, b) => b.start - a.start);
-  return merged;
+  allMerged.sort((a, b) => b.start - a.start);
+  return allMerged;
 }
 
 /** Paginated fetch — fetches all rows from a Supabase query in 1000-row batches */
