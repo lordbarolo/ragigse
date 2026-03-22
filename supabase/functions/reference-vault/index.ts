@@ -219,7 +219,27 @@ Deno.serve(async (req) => {
       const now = new Date();
       const sixMonthsMs = 6 * 30.44 * 24 * 60 * 60 * 1000;
 
-      // Filter out stale references — they must never appear in proof output
+      // Collect reference IDs to batch-fetch artifact tokens
+      const refIds = (attached || []).map((row: any) => row.reference_id);
+
+      // Fetch active artifact tokens for these references
+      const { data: artifacts } = refIds.length
+        ? await supabase
+            .from("ref_reference_artifacts")
+            .select("reference_id, token_hash")
+            .in("reference_id", refIds)
+            .eq("status", "active")
+            .eq("artifact_type", "compcare_attach")
+        : { data: [] };
+
+      const tokenMap = new Map<string, string>();
+      for (const a of artifacts || []) {
+        if (!tokenMap.has(a.reference_id)) {
+          tokenMap.set(a.reference_id, a.token_hash);
+        }
+      }
+
+      // Filter: must be fresh, must have verified status (not 'submitted'), must have artifact token
       const references = (attached || [])
         .map((row: any) => {
           const lastConfirmed = row.ref_references.last_confirmed_at
@@ -241,9 +261,14 @@ Deno.serve(async (req) => {
             competencies: row.ref_references.competencies,
             recommendation_score: row.ref_references.recommendation_score,
             is_fresh: isFresh,
+            artifact_token: tokenMap.get(row.reference_id) || null,
           };
         })
-        .filter((r: any) => r.is_fresh);
+        .filter((r: any) =>
+          r.is_fresh &&
+          r.verification_level !== "submitted" &&
+          r.artifact_token !== null
+        );
 
       return new Response(JSON.stringify({ references }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },

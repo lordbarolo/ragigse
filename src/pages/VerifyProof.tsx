@@ -21,6 +21,7 @@ interface AttachedReference {
   last_confirmed_at: string | null;
   competencies: string[] | null;
   recommendation_score: number | null;
+  artifact_token: string | null;
 }
 
 const VERIFICATION_LABELS: Record<string, { label: string; icon: React.ReactNode; className: string }> = {
@@ -45,9 +46,9 @@ const VERIFICATION_LABELS: Record<string, { label: string; icon: React.ReactNode
     className: "bg-blue-500/10 text-blue-600 border-blue-500/20",
   },
   submitted: {
-    label: "Inskickad",
-    icon: <Clock className="h-3 w-3" />,
-    className: "bg-muted text-muted-foreground border-border",
+    label: "Ej verifierad",
+    icon: <ShieldAlert className="h-3 w-3" />,
+    className: "bg-destructive/10 text-destructive border-destructive/20",
   },
 };
 
@@ -176,7 +177,7 @@ export default function VerifyProof() {
                 return (
                   <Link
                     key={ref.id}
-                    to={`/verify/reference/${ref.id}`}
+                    to={`/verify/artifact/${ref.artifact_token}`}
                     className="block"
                   >
                     <Card className="border-primary/15 hover:border-primary/30 transition-colors cursor-pointer">
