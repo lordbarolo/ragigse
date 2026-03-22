@@ -68,10 +68,87 @@ interface AuditOptin {
 export default function Admin() {
   const { user, isAdmin, loading: adminLoading } = useAdminAuth();
   const navigate = useNavigate();
+  const [versions, setVersions] = useState<ContractVersion[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [auditOptins, setAuditOptins] = useState<AuditOptin[]>([]);
+  const [auditLoading, setAuditLoading] = useState(true);
+
+  // Shared analytics period
+  const [analyticsPeriod, setAnalyticsPeriod] = useState<7 | 30 | 90>(30);
+  const { data: analyticsData, loading: analyticsLoading, refetch: refetchAnalytics } = useAdminAnalytics(analyticsPeriod);
+
+  // Import form state
+  const [catalogName, setCatalogName] = useState("");
+  const [versionLabel, setVersionLabel] = useState("");
+  const [effectiveFrom, setEffectiveFrom] = useState("");
+  const [notes, setNotes] = useState("");
+  const [ratesCsv, setRatesCsv] = useState("");
+  const [importing, setImporting] = useState(false);
+
+  // Diff state
+  const [oldVersionId, setOldVersionId] = useState("");
+  const [newVersionId, setNewVersionId] = useState("");
+  const [diffRunning, setDiffRunning] = useState(false);
+  const [diffResults, setDiffResults] = useState<PriceChange[] | null>(null);
+  const [diffSummary, setDiffSummary] = useState<Record<string, number> | null>(null);
+
+  const fetchVersions = async () => {
+    setLoading(true);
+    const { data, error } = await supabase
+      .from("contract_versions")
+      .select("*")
+      .order("effective_from", { ascending: false });
+
+    if (error) {
+      toast({ title: "Fel", description: error.message, variant: "destructive" });
+    } else {
+      setVersions(data || []);
+    }
+    setLoading(false);
+  };
+
+  const fetchAuditOptins = async () => {
+    setAuditLoading(true);
+    const { data, error } = await supabase
+      .from("audit_optins")
+      .select("*")
+      .order("created_at", { ascending: false });
+    if (!error) setAuditOptins((data as AuditOptin[]) || []);
+    setAuditLoading(false);
+  };
 
   useEffect(() => {
     if (!adminLoading && !user) navigate("/logga-in");
   }, [adminLoading, user, navigate]);
+
+  useEffect(() => {
+    if (isAdmin) {
+      fetchVersions();
+      fetchAuditOptins();
+    }
+  }, [isAdmin]);
+
+  if (adminLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-sm">
+          <CardHeader className="text-center">
+            <Lock className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
+            <CardTitle>Åtkomst nekad</CardTitle>
+            <CardDescription>Du har inte behörighet att visa denna sida.</CardDescription>
+          </CardHeader>
+        </Card>
+      </div>
+    );
+  }
 
   const handleImport = async () => {
     if (!catalogName || !versionLabel || !effectiveFrom || !ratesCsv.trim()) {
