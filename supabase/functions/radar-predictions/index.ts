@@ -31,6 +31,7 @@ interface UnifiedRow {
   zon: string;
   duration_weeks: number | null;
   calloff_date: string;
+  unit: string; // deduplication sub-key (e.g. hospital ward)
 }
 
 interface MergedPeriod {
@@ -40,7 +41,8 @@ interface MergedPeriod {
 }
 
 const DAY_MS = 86400000;
-const MERGE_GAP_DAYS = 14; // periods within 14 days are considered adjacent
+const MERGE_GAP_DAYS = 14;
+const MAX_DEDUP_WEEKS = 12; // cap duration for dedup — longer entries are framework agreements
 
 /**
  * Merge overlapping or adjacent time periods for the same group.
@@ -49,31 +51,46 @@ const MERGE_GAP_DAYS = 14; // periods within 14 days are considered adjacent
  * Returns merged periods sorted by start date descending.
  */
 function deduplicatePeriods(rows: UnifiedRow[]): MergedPeriod[] {
-  const periods: { start: number; end: number }[] = rows.map(r => {
-    const start = new Date(r.calloff_date).getTime();
-    const durationMs = (r.duration_weeks || 4) * 7 * DAY_MS; // default 4 weeks if unknown
-    return { start, end: start + durationMs };
-  });
-
-  periods.sort((a, b) => a.start - b.start);
-
-  const merged: MergedPeriod[] = [];
-  for (const p of periods) {
-    if (merged.length === 0) {
-      merged.push({ start: p.start, end: p.end, count: 1 });
-    } else {
-      const last = merged[merged.length - 1];
-      if (p.start <= last.end + MERGE_GAP_DAYS * DAY_MS) {
-        last.end = Math.max(last.end, p.end);
-        last.count += 1;
-      } else {
-        merged.push({ start: p.start, end: p.end, count: 1 });
-      }
-    }
+  // Group by unit — different units represent genuinely different needs
+  const unitGroups = new Map<string, UnifiedRow[]>();
+  for (const r of rows) {
+    const u = r.unit || "__no_unit__";
+    if (!unitGroups.has(u)) unitGroups.set(u, []);
+    unitGroups.get(u)!.push(r);
   }
 
-  merged.sort((a, b) => b.start - a.start);
-  return merged;
+  const allMerged: MergedPeriod[] = [];
+
+  // Within each unit, merge overlapping/adjacent periods
+  for (const [, unitRows] of unitGroups) {
+    const periods: { start: number; end: number }[] = unitRows.map(r => {
+      const start = new Date(r.calloff_date).getTime();
+      const cappedWeeks = Math.min(r.duration_weeks || 4, MAX_DEDUP_WEEKS);
+      const durationMs = cappedWeeks * 7 * DAY_MS;
+      return { start, end: start + durationMs };
+    });
+
+    periods.sort((a, b) => a.start - b.start);
+
+    const unitMerged: MergedPeriod[] = [];
+    for (const p of periods) {
+      if (unitMerged.length === 0) {
+        unitMerged.push({ start: p.start, end: p.end, count: 1 });
+      } else {
+        const last = unitMerged[unitMerged.length - 1];
+        if (p.start <= last.end + MERGE_GAP_DAYS * DAY_MS) {
+          last.end = Math.max(last.end, p.end);
+          last.count += 1;
+        } else {
+          unitMerged.push({ start: p.start, end: p.end, count: 1 });
+        }
+      }
+    }
+    allMerged.push(...unitMerged);
+  }
+
+  allMerged.sort((a, b) => b.start - a.start);
+  return allMerged;
 }
 
 /** Paginated fetch — fetches all rows from a Supabase query in 1000-row batches */
@@ -131,14 +148,14 @@ Deno.serve(async (req) => {
         applyFilters("yrkeskategori", "location", "buyer", false),
         "calloff_date"),
       fetchAll(supabase, "calloff_imports",
-        "customer, role, region, calloff_date, duration_weeks, customer_type",
+        "customer, role, region, calloff_date, duration_weeks, customer_type, unit",
         (q: any) => {
           q = q.not("calloff_date", "is", null).not("customer", "is", null).not("role", "is", null);
           return applyFilters("role", "region", "customer", true)(q);
         },
         "calloff_date"),
       fetchAll(supabase, "requests",
-        "customer, role, region, created_at, customer_type",
+        "customer, role, region, created_at, customer_type, unit",
         (q: any) => {
           q = q.not("created_at", "is", null).not("customer", "is", null).not("role", "is", null);
           return applyFilters("role", "region", "customer", true)(q);
@@ -153,6 +170,7 @@ Deno.serve(async (req) => {
       unified.push({
         buyer: r.buyer, competence: r.yrkeskategori, location: r.location,
         zon: r.zon, duration_weeks: r.duration_weeks, calloff_date: r.calloff_date,
+        unit: "",
       });
     }
 
@@ -161,6 +179,7 @@ Deno.serve(async (req) => {
         buyer: r.customer_type === "Privat" ? "Privat" : r.customer,
         competence: r.role, location: r.region || "Okänd",
         zon: "", duration_weeks: r.duration_weeks, calloff_date: r.calloff_date,
+        unit: r.unit || "",
       });
     }
 
@@ -171,6 +190,7 @@ Deno.serve(async (req) => {
         buyer: r.customer_type === "Privat" ? "Privat" : r.customer,
         competence: normalized, location: r.region || "Okänd",
         zon: "", duration_weeks: null, calloff_date: r.created_at,
+        unit: r.unit || "",
       });
     }
 
