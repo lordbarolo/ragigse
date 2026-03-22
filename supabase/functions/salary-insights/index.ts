@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { requireAdmin } from "../_shared/adminAuth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -12,13 +13,16 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Admin auth check
+  const authResult = await requireAdmin(req);
+  if (authResult instanceof Response) return authResult;
+
   try {
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Fetch all leads with salary data
     const { data: leads, error } = await supabase
       .from("leads")
       .select("yrke, kommun, current_salary, salary_type, employment_type, email, created_at")
@@ -29,7 +33,6 @@ serve(async (req) => {
 
     if (error) throw error;
 
-    // --- Salary aggregation ---
     type Bucket = { salaries: number[]; count: number };
     type RoleKommunBucket = Bucket & { role: string; kommun: string };
 
@@ -37,13 +40,11 @@ serve(async (req) => {
     const byKommunType: Record<string, Bucket> = {};
     const byRoleKommunType: Record<string, RoleKommunBucket> = {};
 
-    // Realistic bounds by salary_type
     const HOURLY_BOUNDS = { min: 200, max: 2000 };
     const MONTHLY_BOUNDS = { min: 25000, max: 120000 };
 
     let filtered_out = 0;
 
-    // --- Pass 1: collect salaries per role+salary_type for IQR calculation ---
     type LeadEntry = { salary: number; yrke: string; kommun?: string; et: string; st: string };
     const validLeads: LeadEntry[] = [];
     const salariesByRole: Record<string, number[]> = {};
@@ -72,7 +73,6 @@ serve(async (req) => {
       });
     }
 
-    // Compute IQR fences per role+salary_type
     const iqrFences: Record<string, { lo: number; hi: number }> = {};
     for (const [key, arr] of Object.entries(salariesByRole)) {
       const sorted = [...arr].sort((a, b) => a - b);
@@ -82,7 +82,6 @@ serve(async (req) => {
       iqrFences[key] = { lo: q1 - 1.5 * iqr, hi: q3 + 1.5 * iqr };
     }
 
-    // --- Pass 2: aggregate, skipping IQR outliers ---
     let iqr_filtered = 0;
 
     for (const entry of validLeads) {
@@ -149,8 +148,6 @@ serve(async (req) => {
       .sort((a, b) => b.count - a.count)
       .slice(0, 100);
 
-    // --- Repeat survey users ---
-    // Group leads by email to find users who submitted more than once
     const byEmail: Record<string, string[]> = {};
     for (const lead of leads || []) {
       if (!lead.email) continue;

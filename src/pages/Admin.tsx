@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import SalaryInsights from "@/components/admin/SalaryInsights";
 import ConversionFunnel from "@/components/admin/ConversionFunnel";
 import DailyVisitors from "@/components/admin/DailyVisitors";
@@ -63,11 +65,9 @@ interface AuditOptin {
   created_at: string;
 }
 
-const ADMIN_PASS = "compcare2026";
-
 export default function Admin() {
-  const [authenticated, setAuthenticated] = useState(false);
-  const [passInput, setPassInput] = useState("");
+  const { user, isAdmin, loading: adminLoading } = useAdminAuth();
+  const navigate = useNavigate();
   const [versions, setVersions] = useState<ContractVersion[]>([]);
   const [loading, setLoading] = useState(true);
   const [auditOptins, setAuditOptins] = useState<AuditOptin[]>([]);
@@ -118,49 +118,33 @@ export default function Admin() {
   };
 
   useEffect(() => {
-    if (sessionStorage.getItem("admin_auth") === "true") {
-      setAuthenticated(true);
-    }
-  }, []);
+    if (!adminLoading && !user) navigate("/logga-in");
+  }, [adminLoading, user, navigate]);
 
   useEffect(() => {
-    if (authenticated) {
+    if (isAdmin) {
       fetchVersions();
       fetchAuditOptins();
     }
-  }, [authenticated]);
+  }, [isAdmin]);
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (passInput === ADMIN_PASS) {
-      setAuthenticated(true);
-      sessionStorage.setItem("admin_auth", "true");
-    } else {
-      toast({ title: "Fel lösenord", variant: "destructive" });
-    }
-  };
+  if (adminLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-primary" />
+      </div>
+    );
+  }
 
-  if (!authenticated) {
+  if (!isAdmin) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="w-full max-w-sm">
           <CardHeader className="text-center">
             <Lock className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
-            <CardTitle>Admin</CardTitle>
-            <CardDescription>Ange lösenord för att fortsätta</CardDescription>
+            <CardTitle>Åtkomst nekad</CardTitle>
+            <CardDescription>Du har inte behörighet att visa denna sida.</CardDescription>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={handleLogin} className="space-y-4">
-              <Input
-                type="password"
-                placeholder="Lösenord"
-                value={passInput}
-                onChange={(e) => setPassInput(e.target.value)}
-                autoFocus
-              />
-              <Button type="submit" className="w-full">Logga in</Button>
-            </form>
-          </CardContent>
         </Card>
       </div>
     );

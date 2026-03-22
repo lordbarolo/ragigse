@@ -1,5 +1,7 @@
 import { useEffect, useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -32,12 +34,9 @@ const STEP_LABELS: Record<string, string> = {
   payment_verified: "Betalning verifierad",
 };
 
-const DASHBOARD_PASSWORD = "Compcare2026";
-
 export default function AnalyticsDashboard() {
-  const [authenticated, setAuthenticated] = useState(false);
-  const [passwordInput, setPasswordInput] = useState("");
-  const [passwordError, setPasswordError] = useState(false);
+  const { user, isAdmin, loading: adminLoading } = useAdminAuth();
+  const navigate = useNavigate();
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -45,18 +44,12 @@ export default function AnalyticsDashboard() {
   const [dateFrom, setDateFrom] = useState<Date>(subDays(new Date(), 30));
   const [dateTo, setDateTo] = useState<Date>(new Date());
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (passwordInput === DASHBOARD_PASSWORD) {
-      setAuthenticated(true);
-      setPasswordError(false);
-    } else {
-      setPasswordError(true);
-    }
-  };
+  useEffect(() => {
+    if (!adminLoading && !user) navigate("/logga-in");
+  }, [adminLoading, user, navigate]);
 
   const fetchData = useCallback(async () => {
-    if (!authenticated) return;
+    if (!isAdmin) return;
     setLoading(true);
     setError(null);
     try {
@@ -73,36 +66,33 @@ export default function AnalyticsDashboard() {
     } finally {
       setLoading(false);
     }
-  }, [dateFrom, dateTo, authenticated]);
+  }, [dateFrom, dateTo, isAdmin]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
   useEffect(() => {
-    if (!autoRefresh || !authenticated) return;
+    if (!autoRefresh || !isAdmin) return;
     const id = setInterval(fetchData, 30000);
     return () => clearInterval(id);
-  }, [autoRefresh, fetchData, authenticated]);
+  }, [autoRefresh, fetchData, isAdmin]);
 
-  if (!authenticated) {
+  if (adminLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!isAdmin) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="w-full max-w-sm">
           <CardHeader>
-            <CardTitle className="text-lg">🔒 Analytics Dashboard</CardTitle>
+            <CardTitle className="text-lg">🔒 Åtkomst nekad</CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleLogin} className="space-y-4">
-              <input
-                type="password"
-                placeholder="Lösenord"
-                value={passwordInput}
-                onChange={(e) => setPasswordInput(e.target.value)}
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                autoFocus
-              />
-              {passwordError && <p className="text-destructive text-sm">Fel lösenord</p>}
-              <Button type="submit" className="w-full">Logga in</Button>
-            </form>
+            <p className="text-sm text-muted-foreground">Du har inte behörighet att visa denna sida.</p>
           </CardContent>
         </Card>
       </div>

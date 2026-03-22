@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { requireAdmin } from "../_shared/adminAuth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -11,6 +12,10 @@ serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+
+  // Admin auth check
+  const authResult = await requireAdmin(req);
+  if (authResult instanceof Response) return authResult;
 
   try {
     const { old_version_id, new_version_id } = await req.json();
@@ -27,7 +32,6 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Fetch new version rates
     const { data: newRates, error: newErr } = await supabase
       .from("contract_version_rates")
       .select("yrkeskategori, zon, typ, timpris_kund")
@@ -35,7 +39,6 @@ serve(async (req) => {
 
     if (newErr) throw newErr;
 
-    // Fetch old version rates (if provided)
     let oldRatesMap = new Map<string, number>();
     if (old_version_id) {
       const { data: oldRates, error: oldErr } = await supabase
@@ -50,7 +53,6 @@ serve(async (req) => {
       }
     }
 
-    // Calculate diffs
     const changes = (newRates || []).map((nr) => {
       const key = `${nr.yrkeskategori}|${nr.zon}`;
       const oldPrice = oldRatesMap.get(key);
@@ -65,7 +67,6 @@ serve(async (req) => {
       else if (diffAbs > 0) changeType = "increase";
       else if (diffAbs < 0) changeType = "decrease";
 
-      // Remove from map to detect removed rates later
       oldRatesMap.delete(key);
 
       return {
@@ -81,7 +82,6 @@ serve(async (req) => {
       };
     });
 
-    // Add removed rates (existed in old but not in new)
     for (const [key, oldPrice] of oldRatesMap.entries()) {
       const [yrkeskategori, zon] = key.split("|");
       changes.push({
@@ -97,7 +97,6 @@ serve(async (req) => {
       });
     }
 
-    // Clear previous diffs for this version pair and insert new ones
     if (old_version_id) {
       await supabase
         .from("price_changes")
