@@ -1,0 +1,1 @@
+DROP POLICY "Public profiles are readable" ON public.ref_profiles;
