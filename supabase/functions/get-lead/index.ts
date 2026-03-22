@@ -22,15 +22,24 @@ serve(async (req) => {
       );
     }
 
+    // Validate lead_id is a valid UUID to prevent enumeration
+    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (typeof lead_id !== "string" || !uuidRegex.test(lead_id)) {
+      return new Response(
+        JSON.stringify({ error: "Invalid lead_id" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Fetch lead
+    // Fetch lead — only return non-sensitive fields needed for teaser display
     const { data: lead, error: leadError } = await supabase
       .from("leads")
-      .select("id, email, employment_type, yrke, kommun, experience, salary_type, current_salary")
+      .select("id, employment_type, yrke, kommun, experience, salary_type")
       .eq("id", lead_id)
       .maybeSingle();
 
@@ -49,10 +58,10 @@ serve(async (req) => {
       );
     }
 
-    // Fetch the most recent report for this lead
+    // Fetch the most recent report for this lead — never return full result_json here
     const { data: report } = await supabase
       .from("reports")
-      .select("id, ab_variant, result_json, status, unlocked_by_referral")
+      .select("id, ab_variant, status, unlocked_by_referral")
       .eq("lead_id", lead_id)
       .order("created_at", { ascending: false })
       .limit(1)
@@ -63,7 +72,6 @@ serve(async (req) => {
         lead,
         report_id: report?.id || null,
         ab_variant: report?.ab_variant || "A",
-        result_json: report?.result_json || null,
         report_status: report?.status || null,
         unlocked_by_referral: report?.unlocked_by_referral || false,
       }),

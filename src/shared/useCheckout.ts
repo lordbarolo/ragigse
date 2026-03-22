@@ -13,7 +13,7 @@ export function useCheckout() {
 
   const handleCheckout = async (
     plan: "single" | "yearly",
-    opts: { email: string; leadId?: string; reportId?: string; coupon?: CouponDiscount | null; abVariant?: string }
+    opts: { email: string; leadId?: string; reportId?: string; coupon?: CouponDiscount | null; couponCode?: string; abVariant?: string }
   ) => {
     if (!opts.email) return;
     setCheckoutLoading(plan);
@@ -26,9 +26,8 @@ export function useCheckout() {
         report_id: opts.reportId || "",
       };
 
-      if (opts.coupon) {
-        body.coupon_discount_type = opts.coupon.discount_type;
-        body.coupon_discount_value = opts.coupon.discount_value;
+      if (opts.couponCode) {
+        body.coupon_code = opts.couponCode;
       }
 
       if (opts.abVariant) {

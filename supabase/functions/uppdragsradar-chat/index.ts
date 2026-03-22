@@ -83,7 +83,7 @@ Deno.serve(async (req) => {
     const [requests, imports] = await Promise.all([
       fetchAll(supabase, "requests",
         "customer, role, specialization, created_at, region, filled, price_median, price_min, price_max",
-        (q: any) => q.eq("role", normalizedRoll).not("created_at", "is", null).not("customer", "is", null),
+        (q: any) => q.eq("role", normalizedRoll).eq("is_public", true).not("created_at", "is", null).not("customer", "is", null),
         "created_at"),
       fetchAll(supabase, "calloff_imports",
         "customer, role, specialization, calloff_date, region, filled, price_median, price_min, price_max",
