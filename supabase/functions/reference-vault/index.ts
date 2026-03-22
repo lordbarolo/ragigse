@@ -216,18 +216,34 @@ Deno.serve(async (req) => {
 
       if (error) throw error;
 
-      const references = (attached || []).map((row: any) => ({
-        id: row.reference_id,
-        attached_at: row.created_at,
-        giver_name: row.ref_references.giver_name,
-        workplace: row.ref_references.workplace,
-        relationship: row.ref_references.relationship,
-        period: `${row.ref_references.period_start}–${row.ref_references.period_end || "pågående"}`,
-        verification_level: row.ref_references.verification_level,
-        last_confirmed_at: row.ref_references.last_confirmed_at,
-        competencies: row.ref_references.competencies,
-        recommendation_score: row.ref_references.recommendation_score,
-      }));
+      const now = new Date();
+      const sixMonthsMs = 6 * 30.44 * 24 * 60 * 60 * 1000;
+
+      // Filter out stale references — they must never appear in proof output
+      const references = (attached || [])
+        .map((row: any) => {
+          const lastConfirmed = row.ref_references.last_confirmed_at
+            ? new Date(row.ref_references.last_confirmed_at)
+            : null;
+          const isFresh = lastConfirmed
+            ? (now.getTime() - lastConfirmed.getTime() < sixMonthsMs)
+            : false;
+
+          return {
+            id: row.reference_id,
+            attached_at: row.created_at,
+            giver_name: row.ref_references.giver_name,
+            workplace: row.ref_references.workplace,
+            relationship: row.ref_references.relationship,
+            period: `${row.ref_references.period_start}–${row.ref_references.period_end || "pågående"}`,
+            verification_level: row.ref_references.verification_level,
+            last_confirmed_at: row.ref_references.last_confirmed_at,
+            competencies: row.ref_references.competencies,
+            recommendation_score: row.ref_references.recommendation_score,
+            is_fresh: isFresh,
+          };
+        })
+        .filter((r: any) => r.is_fresh);
 
       return new Response(JSON.stringify({ references }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },

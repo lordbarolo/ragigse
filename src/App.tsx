@@ -75,6 +75,7 @@ const App = () => (
             <Route path="/referens/:token" element={<ReferenceForm />} />
             <Route path="/ping/:token" element={<PingResponse />} />
             <Route path="/profil/:id" element={<PublicProfile />} />
+            <Route path="/verify/:applicationId" element={<VerifyProof />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/dela" element={<SharePreview />} />
             <Route path="/dev/theme-preview" element={<ThemePreview />} />
