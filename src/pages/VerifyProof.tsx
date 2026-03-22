@@ -46,9 +46,9 @@ const VERIFICATION_LABELS: Record<string, { label: string; icon: React.ReactNode
     className: "bg-blue-500/10 text-blue-600 border-blue-500/20",
   },
   submitted: {
-    label: "Inskickad",
-    icon: <Clock className="h-3 w-3" />,
-    className: "bg-muted text-muted-foreground border-border",
+    label: "Ej verifierad",
+    icon: <ShieldAlert className="h-3 w-3" />,
+    className: "bg-destructive/10 text-destructive border-destructive/20",
   },
 };
 
