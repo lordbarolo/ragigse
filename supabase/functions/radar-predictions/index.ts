@@ -33,6 +33,49 @@ interface UnifiedRow {
   calloff_date: string;
 }
 
+interface MergedPeriod {
+  start: number; // ms
+  end: number;   // ms
+  count: number; // how many raw rows merged into this period
+}
+
+const DAY_MS = 86400000;
+const MERGE_GAP_DAYS = 14; // periods within 14 days are considered adjacent
+
+/**
+ * Merge overlapping or adjacent time periods for the same group.
+ * Each raw row becomes a period: [calloff_date, calloff_date + duration].
+ * Periods within MERGE_GAP_DAYS of each other are merged into one.
+ * Returns merged periods sorted by start date descending.
+ */
+function deduplicatePeriods(rows: UnifiedRow[]): MergedPeriod[] {
+  const periods: { start: number; end: number }[] = rows.map(r => {
+    const start = new Date(r.calloff_date).getTime();
+    const durationMs = (r.duration_weeks || 4) * 7 * DAY_MS; // default 4 weeks if unknown
+    return { start, end: start + durationMs };
+  });
+
+  periods.sort((a, b) => a.start - b.start);
+
+  const merged: MergedPeriod[] = [];
+  for (const p of periods) {
+    if (merged.length === 0) {
+      merged.push({ start: p.start, end: p.end, count: 1 });
+    } else {
+      const last = merged[merged.length - 1];
+      if (p.start <= last.end + MERGE_GAP_DAYS * DAY_MS) {
+        last.end = Math.max(last.end, p.end);
+        last.count += 1;
+      } else {
+        merged.push({ start: p.start, end: p.end, count: 1 });
+      }
+    }
+  }
+
+  merged.sort((a, b) => b.start - a.start);
+  return merged;
+}
+
 /** Paginated fetch — fetches all rows from a Supabase query in 1000-row batches */
 async function fetchAll(supabase: any, table: string, select: string, filters: (q: any) => any, orderCol: string) {
   const PAGE_SIZE = 1000;
