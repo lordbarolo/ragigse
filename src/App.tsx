@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
-import ReijdarChat from "@/components/radar/ReijdarChat";
+// import ReijdarChat from "@/components/radar/ReijdarChat";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -85,7 +85,7 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
-        <ReijdarChat />
+        {/* <ReijdarChat /> */}
         <CookieBanner />
       </BrowserRouter>
     </TooltipProvider>
