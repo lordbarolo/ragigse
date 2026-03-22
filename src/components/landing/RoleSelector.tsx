@@ -3,9 +3,9 @@ interface Props {
 }
 
 const ROLES = [
-  { icon: "🩺", title: "Läkare", sub: "ST-läkare, specialist eller legitimerad läkare", category: "lakare" as const },
-  { icon: "💉", title: "Sjuksköterska", sub: "Allmänsjuksköterska eller specialistsjuksköterska", category: "ssk" as const },
-  { icon: "👶", title: "Barnmorska", sub: "Legitimerad med specialistutbildning", category: "ssk" as const, prefill: "__barnmorska" },
+  { title: "Läkare", sub: "ST-läkare, specialist eller legitimerad läkare", category: "lakare" as const },
+  { title: "Sjuksköterska", sub: "Allmänsjuksköterska eller specialistsjuksköterska", category: "ssk" as const },
+  { title: "Barnmorska", sub: "Legitimerad med specialistutbildning", category: "ssk" as const, prefill: "__barnmorska" },
 ];
 
 export default function RoleSelector({ onRoleSelect }: Props) {
