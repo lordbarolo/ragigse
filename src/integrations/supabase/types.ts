@@ -1442,6 +1442,45 @@ export type Database = {
           },
         ]
       }
+      price_nuggets: {
+        Row: {
+          category: string
+          change_type: string
+          created_at: string
+          description: string
+          effective_from: string | null
+          id: string
+          is_active: boolean
+          metadata: Json | null
+          priority: number
+          title: string
+        }
+        Insert: {
+          category: string
+          change_type?: string
+          created_at?: string
+          description: string
+          effective_from?: string | null
+          id?: string
+          is_active?: boolean
+          metadata?: Json | null
+          priority?: number
+          title: string
+        }
+        Update: {
+          category?: string
+          change_type?: string
+          created_at?: string
+          description?: string
+          effective_from?: string | null
+          id?: string
+          is_active?: boolean
+          metadata?: Json | null
+          priority?: number
+          title?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
