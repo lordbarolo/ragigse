@@ -30,6 +30,7 @@ const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Profile = lazy(() => import("./pages/Profile"));
 const Radar = lazy(() => import("./pages/Radar"));
 const Negotiate = lazy(() => import("./pages/Negotiate"));
+const Referenser = lazy(() => import("./pages/Referenser"));
 const ReferenceForm = lazy(() => import("./pages/ReferenceForm"));
 const PingResponse = lazy(() => import("./pages/PingResponse"));
 const PublicProfile = lazy(() => import("./pages/PublicProfile"));
@@ -66,6 +67,7 @@ const App = () => (
             <Route path="/jamfor" element={<Compare />} />
             <Route path="/radar" element={<Radar />} />
             <Route path="/forhandla" element={<Negotiate />} />
+            <Route path="/referenser" element={<Referenser />} />
             <Route path="/vanliga-fragor" element={<FAQ />} />
             <Route path="/integritetspolicy" element={<PrivacyPolicy />} />
             <Route path="/logga-in" element={<Login />} />

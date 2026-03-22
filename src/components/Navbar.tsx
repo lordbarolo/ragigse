@@ -24,7 +24,7 @@ export default function Navbar() {
         <Link to="/forhandla">
           <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground">
             <MessageSquare className="w-4 h-4" />
-            <span className="hidden sm:inline">Förhandla</span>
+            <span className="hidden sm:inline">Marknadsvillkor</span>
           </Button>
         </Link>
         {!loading && (
