@@ -58,3 +58,37 @@ export interface ProfileStatusResult {
   gold_months: number;
   warn_months: number;
 }
+
+// Vault types
+export interface VaultReference {
+  id: string;
+  giver_name: string | null;
+  giver_email: string;
+  workplace: string;
+  relationship: string;
+  period_start: string;
+  period_end: string | null;
+  competencies: string[] | null;
+  recommendation_score: number | null;
+  status: RefReferenceStatus;
+  verification_level: string;
+  last_confirmed_at: string | null;
+  verified_at: string | null;
+  expires_at: string | null;
+  attachable: boolean;
+  is_stale: boolean;
+  group: "attachable" | "stale" | "pending";
+  days_until_expiry: number | null;
+}
+
+export interface VaultCounts {
+  total: number;
+  attachable: number;
+  stale: number;
+  pending: number;
+}
+
+export interface VaultData {
+  vault: VaultReference[];
+  counts: VaultCounts;
+}

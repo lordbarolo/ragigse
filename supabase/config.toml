@@ -98,3 +98,6 @@ verify_jwt = false
 
 [functions.ci-metrics]
 verify_jwt = false
+
+[functions.reference-vault]
+verify_jwt = false
