@@ -31,6 +31,7 @@ interface UnifiedRow {
   zon: string;
   duration_weeks: number | null;
   calloff_date: string;
+  unit: string; // deduplication sub-key (e.g. hospital ward)
 }
 
 interface MergedPeriod {
