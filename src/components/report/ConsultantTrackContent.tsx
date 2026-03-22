@@ -433,7 +433,16 @@ export default function ConsultantTrackContent({
         </div>
       )}
 
-      {/* ═══ 5. DIN ANDEL AV KUNDPRISET ═══ */}
+      {/* ═══ 4c. AVTALSÄNDRINGAR (NUGGETS) ═══ */}
+      {isConsultantFullAccess && (
+        <div ref={registerSectionRef?.("price_nuggets")}>
+          <PriceNuggets
+            category={occupation?.toLowerCase().includes("läkare") ? "läkare" : "sjuksköterska"}
+            maxItems={3}
+          />
+        </div>
+      )}
+
       {isConsultantFullAccess && marketRate > 0 && currentHourly > 0 && (
         <div>
           <SectionLabel>{isEmployee ? "Din lönekostnad vs kundpriset" : "Din andel av kundpriset"}</SectionLabel>
