@@ -1,27 +1,23 @@
 
 
-## Plan: Filter out internal/preview traffic from analytics
+## Rendera och skapa product shot av Solution Center-mockupen
 
-### Problem
-All analytics events — including your own visits from the Lovable preview environment and HMR reloads — are recorded in `analytics_events`. This inflates numbers and makes funnel data unreliable.
+Användaren har delat en HTML-mockup av "Solution Center by Compcare" -- en verifieringsmodul inbyggd i Avropsplatsens Partner Portal. Målet är att skapa en polerad produktbild (product shot) av denna design.
 
-### Solution
-Add a hostname check at the top of `trackEvent()`. If the current page is running on a known internal domain (Lovable preview, localhost), skip both the DB insert and the PostHog capture entirely.
+### Steg
 
-### Changes
+1. **Spara HTML-mockupen** till `/tmp/solution-center.html`
+2. **Rendera sidan i webbläsaren** genom att navigera till filen
+3. **Ta screenshot** av den renderade mockupen (både idle-state och verified-state)
+4. **Generera product shot** med `generate.py`-scriptet, med `midnight`- eller `ocean`-preset som matchar Avropsplatsens mörka header
+5. **Leverera** som PNG till `/mnt/documents/`
 
-**File: `src/lib/trackEvent.ts`**
-- Add a helper function `isInternalTraffic()` that checks `window.location.hostname` against:
-  - `localhost`
-  - `*.lovableproject.com` (old preview)
-  - `*.lovable.app` subdomains containing `preview` (e.g. `id-preview--*.lovable.app`)
-  - `127.0.0.1`
-- Early-return from `trackEvent()` if `isInternalTraffic()` returns `true`
-- This means zero noise from dev/preview sessions going forward
+### Output
 
-**No database changes needed** — existing polluted data stays but new data will be clean.
+- `solution-center-mockup.png` -- Product shot med window frame och gradient-bakgrund
 
-### What this does NOT affect
-- Production traffic on `compcare.se` or `compcare.lovable.app` (published URL without "preview") will continue tracking normally
-- PostHog is also silenced for internal traffic, keeping both systems consistent
+### Tekniska detaljer
+
+- Använder product shot generator-scriptet med `--preset ocean` för att matcha den mörka, professionella tonen
+- Viewport sätts till desktop-bredd (1280px) för att visa hela layouten korrekt
 
