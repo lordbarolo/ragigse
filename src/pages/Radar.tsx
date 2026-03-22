@@ -273,7 +273,7 @@ export default function Radar() {
       />
 
       {/* Reijdar AI chat */}
-      <ReijdarChat selectedRole={filters.competence} initialMessage={pendingQuestion} />
+      {/* <ReijdarChat selectedRole={filters.competence} initialMessage={pendingQuestion} /> */}
 
       {/* Bottom nav */}
       <BottomNav />
