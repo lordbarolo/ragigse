@@ -33,6 +33,7 @@ const Negotiate = lazy(() => import("./pages/Negotiate"));
 const ReferenceForm = lazy(() => import("./pages/ReferenceForm"));
 const PingResponse = lazy(() => import("./pages/PingResponse"));
 const PublicProfile = lazy(() => import("./pages/PublicProfile"));
+const VerifyProof = lazy(() => import("./pages/VerifyProof"));
 
 const queryClient = new QueryClient();
 
