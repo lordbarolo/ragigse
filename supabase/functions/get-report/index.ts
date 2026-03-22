@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    const { report_id, auth_user_id } = await req.json();
+    const { report_id } = await req.json();
 
     if (!report_id) {
       return new Response(JSON.stringify({ error: "Missing report_id" }), {
@@ -26,6 +26,22 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
+
+    // Extract auth_user_id from JWT server-side instead of trusting request body
+    let authUserId: string | null = null;
+    const authHeader = req.headers.get("Authorization");
+    if (authHeader?.startsWith("Bearer ")) {
+      const anonClient = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_ANON_KEY")!,
+        { global: { headers: { Authorization: authHeader } } }
+      );
+      const token = authHeader.replace("Bearer ", "");
+      const { data: claimsData } = await anonClient.auth.getClaims(token);
+      if (claimsData?.claims?.sub) {
+        authUserId = claimsData.claims.sub as string;
+      }
+    }
 
     const { data: report, error } = await supabase
       .from("reports")
