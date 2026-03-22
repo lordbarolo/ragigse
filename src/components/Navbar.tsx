@@ -20,7 +20,7 @@ export default function Navbar() {
       </Link>
       <div className="flex-1" />
       <div className="flex items-center gap-1">
-        <ThemeToggle />
+        {/* <ThemeToggle /> */}
         <Link to="/forhandla">
           <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground">
             <MessageSquare className="w-4 h-4" />
