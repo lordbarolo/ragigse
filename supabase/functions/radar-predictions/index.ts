@@ -153,7 +153,7 @@ Deno.serve(async (req) => {
         },
         "calloff_date"),
       fetchAll(supabase, "requests",
-        "customer, role, region, created_at, customer_type",
+        "customer, role, region, created_at, customer_type, unit",
         (q: any) => {
           q = q.not("created_at", "is", null).not("customer", "is", null).not("role", "is", null);
           return applyFilters("role", "region", "customer", true)(q);
