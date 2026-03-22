@@ -65,7 +65,8 @@ function deduplicatePeriods(rows: UnifiedRow[]): MergedPeriod[] {
   for (const [, unitRows] of unitGroups) {
     const periods: { start: number; end: number }[] = unitRows.map(r => {
       const start = new Date(r.calloff_date).getTime();
-      const durationMs = (r.duration_weeks || 4) * 7 * DAY_MS;
+      const cappedWeeks = Math.min(r.duration_weeks || 4, MAX_DEDUP_WEEKS);
+      const durationMs = cappedWeeks * 7 * DAY_MS;
       return { start, end: start + durationMs };
     });
 
