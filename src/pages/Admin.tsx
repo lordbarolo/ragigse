@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 import SalaryInsights from "@/components/admin/SalaryInsights";
 import ConversionFunnel from "@/components/admin/ConversionFunnel";
 import DailyVisitors from "@/components/admin/DailyVisitors";
