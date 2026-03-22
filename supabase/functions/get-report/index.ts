@@ -60,7 +60,7 @@ serve(async (req) => {
     const hasEmail = !!report.email;
     const isPaid = report.status === "paid";
     const isReferralUnlocked = report.unlocked_by_referral === true;
-    const isOwner = auth_user_id && report.user_id === auth_user_id;
+    const isOwner = authUserId && report.user_id === authUserId;
 
     // Build response based on access level
     const response: Record<string, unknown> = {

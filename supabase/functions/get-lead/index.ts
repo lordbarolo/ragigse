@@ -58,10 +58,10 @@ serve(async (req) => {
       );
     }
 
-    // Fetch the most recent report for this lead
+    // Fetch the most recent report for this lead — never return full result_json here
     const { data: report } = await supabase
       .from("reports")
-      .select("id, ab_variant, result_json, status, unlocked_by_referral")
+      .select("id, ab_variant, status, unlocked_by_referral")
       .eq("lead_id", lead_id)
       .order("created_at", { ascending: false })
       .limit(1)
@@ -72,7 +72,6 @@ serve(async (req) => {
         lead,
         report_id: report?.id || null,
         ab_variant: report?.ab_variant || "A",
-        result_json: report?.result_json || null,
         report_status: report?.status || null,
         unlocked_by_referral: report?.unlocked_by_referral || false,
       }),
