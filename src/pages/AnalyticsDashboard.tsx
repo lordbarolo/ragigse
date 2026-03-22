@@ -50,6 +50,54 @@ export default function AnalyticsDashboard() {
 
   const fetchData = useCallback(async () => {
     if (!isAdmin) return;
+    setLoading(true);
+    setError(null);
+    try {
+      const { data: result, error: fnError } = await supabase.functions.invoke("analytics-dashboard", {
+        body: {
+          from: format(dateFrom, "yyyy-MM-dd"),
+          to: format(dateTo, "yyyy-MM-dd"),
+        },
+      });
+      if (fnError) throw fnError;
+      setData(result as AnalyticsData);
+    } catch (e: any) {
+      setError(e.message || "Unknown error");
+    } finally {
+      setLoading(false);
+    }
+  }, [dateFrom, dateTo, isAdmin]);
+
+  useEffect(() => { fetchData(); }, [fetchData]);
+
+  useEffect(() => {
+    if (!autoRefresh || !isAdmin) return;
+    const id = setInterval(fetchData, 30000);
+    return () => clearInterval(id);
+  }, [autoRefresh, fetchData, isAdmin]);
+
+  if (adminLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-6 h-6 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!isAdmin) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-sm">
+          <CardHeader>
+            <CardTitle className="text-lg">🔒 Åtkomst nekad</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-muted-foreground">Du har inte behörighet att visa denna sida.</p>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   const exportCSV = () => {
     if (!data) return;
