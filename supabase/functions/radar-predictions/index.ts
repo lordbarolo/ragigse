@@ -193,44 +193,45 @@ Deno.serve(async (req) => {
 
     for (const [key, calloffs] of groups) {
       const [buyer, competence, location] = key.split("|");
-      calloffs.sort((a, b) => new Date(b.calloff_date).getTime() - new Date(a.calloff_date).getTime());
 
-      const count = calloffs.length;
+      // --- Period-based deduplication ---
+      const mergedPeriods = deduplicatePeriods(calloffs);
+      const count = mergedPeriods.length; // deduplicated count
       if (count < 2) continue;
 
+      // Compute intervals between deduplicated periods (using start dates)
       const intervals: number[] = [];
-      for (let i = 0; i < calloffs.length - 1; i++) {
-        const d1 = new Date(calloffs[i].calloff_date).getTime();
-        const d2 = new Date(calloffs[i + 1].calloff_date).getTime();
-        intervals.push(Math.round((d1 - d2) / (1000 * 60 * 60 * 24)));
+      for (let i = 0; i < mergedPeriods.length - 1; i++) {
+        const diff = Math.round((mergedPeriods[i].start - mergedPeriods[i + 1].start) / DAY_MS);
+        intervals.push(diff);
       }
       const avgInterval = Math.round(intervals.reduce((a, b) => a + b, 0) / intervals.length);
 
-      const lastDate = new Date(calloffs[0].calloff_date);
-      const oldestDate = new Date(calloffs[calloffs.length - 1].calloff_date);
-      const daysSinceLast = Math.round((todayMs - lastDate.getTime()) / (1000 * 60 * 60 * 24));
+      const lastDate = new Date(mergedPeriods[0].start);
+      const oldestDate = new Date(mergedPeriods[mergedPeriods.length - 1].start);
+      const daysSinceLast = Math.round((todayMs - lastDate.getTime()) / DAY_MS);
       const monthsSinceLast = daysSinceLast / 30.44;
-      const spanMonths = Math.max(1, Math.round((todayMs - oldestDate.getTime()) / (1000 * 60 * 60 * 24 * 30.44)));
+      const spanMonths = Math.max(1, Math.round((todayMs - oldestDate.getTime()) / (DAY_MS * 30.44)));
 
       // --- Predicted next date ---
-      const predictedNextMs = lastDate.getTime() + avgInterval * 86400000;
+      const predictedNextMs = lastDate.getTime() + avgInterval * DAY_MS;
       const predictedDate = new Date(predictedNextMs).toISOString().split("T")[0];
 
       // --- Spåkulor (1-3) probability system ---
       const hasOneYearHistory = spanMonths >= 12;
       
-      // Check for recurring pattern: same month across ≥2 years
+      // Check for recurring pattern: same month across ≥2 years (using deduplicated periods)
       const monthYearMap = new Map<number, Set<number>>();
-      for (const c of calloffs) {
-        const d = new Date(c.calloff_date);
+      for (const p of mergedPeriods) {
+        const d = new Date(p.start);
         const m = d.getMonth();
         if (!monthYearMap.has(m)) monthYearMap.set(m, new Set());
         monthYearMap.get(m)!.add(d.getFullYear());
       }
       const hasRecurringPattern = [...monthYearMap.values()].some(years => years.size >= 2);
 
-      // Recent activity (last 3 months)
-      const recentCount = calloffs.filter(c => new Date(c.calloff_date) >= threeMonthsAgo).length;
+      // Recent activity (last 3 months) — using deduplicated periods
+      const recentCount = mergedPeriods.filter(p => p.start >= threeMonthsAgo.getTime()).length;
       const hasRecentActivity = recentCount > 0;
 
       let probabilityLevel: 1 | 2 | 3;
@@ -241,22 +242,22 @@ Deno.serve(async (req) => {
       } else if (hasOneYearHistory) {
         probabilityLevel = 1;
       } else {
-        probabilityLevel = 1; // minimum if we have ≥2 data points
+        probabilityLevel = 1;
       }
 
-      // --- Seasonal signal ---
-      const seasonalMatches = calloffs.filter(c => {
-        const m = new Date(c.calloff_date).getMonth();
+      // --- Seasonal signal (using deduplicated periods) ---
+      const seasonalMatches = mergedPeriods.filter(p => {
+        const m = new Date(p.start).getMonth();
         return m === currentMonth || m === nextMonth;
       });
-      const seasonalYears = new Set(seasonalMatches.map(c => new Date(c.calloff_date).getFullYear())).size;
+      const seasonalYears = new Set(seasonalMatches.map(p => new Date(p.start).getFullYear())).size;
       let seasonalSignal: string | null = null;
       if (seasonalMatches.length >= 2 && seasonalYears >= 2) {
         const monthName = SWEDISH_MONTHS[currentMonth];
         seasonalSignal = `Avrop i ${monthName} ${seasonalYears} av senaste åren — sannolikt återkommande`;
       }
 
-      // --- Status from ratio (for sorting/display) ---
+      // --- Status from ratio ---
       let maxStatus: "high" | "medium" | "watch";
       if (monthsSinceLast > 24) maxStatus = "watch";
       else if (monthsSinceLast > 12) maxStatus = "medium";
@@ -274,7 +275,6 @@ Deno.serve(async (req) => {
         else if (status === "medium") status = "high";
       }
 
-      // Apply recency gate
       const statusOrder = { watch: 0, medium: 1, high: 2 };
       if (statusOrder[status] > statusOrder[maxStatus]) status = maxStatus;
 
@@ -294,8 +294,11 @@ Deno.serve(async (req) => {
         forecastWindow = `Bevaka kommande ${Math.max(4, weeksUntil)}–${Math.max(6, weeksUntil + 2)} veckor`;
       }
 
+      // Count raw rows for context
+      const rawCount = calloffs.length;
+
       const reasons: string[] = [
-        `${count} uppdrag ${timespanLabel} hos ${buyer}`,
+        `${count} unika uppdragsperioder ${timespanLabel} hos ${buyer}${rawCount > count ? ` (${rawCount} rader sammanslagna)` : ""}`,
         `Genomsnittligt intervall: ${avgInterval} dagar`,
         `Senaste uppdraget var ${daysSinceLast} dagar sedan`,
       ];
@@ -303,20 +306,26 @@ Deno.serve(async (req) => {
       if (monthsSinceLast > 24) reasons.push("Inget uppdrag senaste 24 månaderna – lägre sannolikhet");
       else if (monthsSinceLast > 12) reasons.push("Inget uppdrag senaste 12 månaderna – avvaktande");
 
-      const history = calloffs.slice(0, 10).map(c => ({
-        date: c.calloff_date,
-        description: `Uppdrag ${competence.toLowerCase()}, ${c.duration_weeks || "?"} veckor`,
-      }));
+      // History from deduplicated periods
+      const history = mergedPeriods.slice(0, 10).map(p => {
+        const startDate = new Date(p.start).toISOString().split("T")[0];
+        const durationWeeks = Math.round((p.end - p.start) / (7 * DAY_MS));
+        return {
+          date: startDate,
+          description: `Uppdrag ${competence.toLowerCase()}, ${durationWeeks || "?"} veckor${p.count > 1 ? ` (${p.count} sammanslagna)` : ""}`,
+        };
+      });
 
       predictions.push({
         id: `pred-${buyer.replace(/\s/g, "")}-${competence.replace(/\s/g, "")}-${location.replace(/\s/g, "")}`,
         buyer, competence, location, status,
         probabilityLevel, seasonalSignal, predictedDate,
         forecastWindow,
-        historicalSignal: `${count} liknande uppdrag ${timespanLabel}`,
+        historicalSignal: `${count} unika uppdragsperioder ${timespanLabel}`,
         lastActivity: `Senaste uppdrag: ${daysSinceLast} dagar sedan`,
         calloffCount: count, avgIntervalDays: avgInterval,
-        summary: `${competence} hos ${buyer} har haft ${count} uppdrag med ett genomsnittligt intervall på ${avgInterval} dagar (${timespanLabel}).`,
+        rawCalloffCount: rawCount,
+        summary: `${competence} hos ${buyer} har haft ${count} unika uppdragsperioder med ett genomsnittligt intervall på ${avgInterval} dagar (${timespanLabel}).`,
         reasons, history,
       });
     }
