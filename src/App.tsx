@@ -67,6 +67,7 @@ const App = () => (
             <Route path="/jamfor" element={<Compare />} />
             <Route path="/radar" element={<Radar />} />
             <Route path="/forhandla" element={<Negotiate />} />
+            <Route path="/referenser" element={<Referenser />} />
             <Route path="/vanliga-fragor" element={<FAQ />} />
             <Route path="/integritetspolicy" element={<PrivacyPolicy />} />
             <Route path="/logga-in" element={<Login />} />
