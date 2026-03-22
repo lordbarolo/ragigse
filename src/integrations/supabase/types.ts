@@ -2820,7 +2820,7 @@ export type Database = {
     }
     Enums: {
       geography_type: "nation" | "region" | "zone" | "municipality"
-      ref_app_role: "individual" | "reference_giver" | "client"
+      ref_app_role: "individual" | "reference_giver" | "client" | "admin"
       ref_ping_status: "sent" | "confirmed" | "denied" | "expired" | "dismissed"
       ref_reference_status: "pending" | "active" | "revoked" | "expired"
     }
@@ -2951,7 +2951,7 @@ export const Constants = {
   public: {
     Enums: {
       geography_type: ["nation", "region", "zone", "municipality"],
-      ref_app_role: ["individual", "reference_giver", "client"],
+      ref_app_role: ["individual", "reference_giver", "client", "admin"],
       ref_ping_status: ["sent", "confirmed", "denied", "expired", "dismissed"],
       ref_reference_status: ["pending", "active", "revoked", "expired"],
     },
