@@ -86,7 +86,7 @@ export default function Teaser() {
   useEffect(() => {
     if (survey && !paywallViewedRef.current) {
       paywallViewedRef.current = true;
-      trackEvent("paywall_viewed", { role: survey.yrke, zone: survey.kommun });
+      trackEvent("paywall_viewed", { role: survey.yrke, zone: survey.kommun, ab_insights: showInsightsVariant ? "variant" : "control" });
       // Store paywall entry time for payment_completed
       sessionStorage.setItem("paywallEnteredAt", String(Date.now()));
     }
