@@ -101,7 +101,7 @@ export default function Index() {
               onClick={() => handleRoleSelect("lakare")}
               className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-4 rounded-2xl font-semibold transition-all shadow-lg shadow-primary/20 text-base"
             >
-              🩺 Jag är Läkare
+              Jag är Läkare
             </button>
             <button
               onClick={() => handleRoleSelect("ssk")}
