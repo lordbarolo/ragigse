@@ -99,6 +99,7 @@ export default function Profile() {
           <div>
             <h1 className="text-2xl font-bold text-foreground">Min profil</h1>
             <p className="text-sm text-muted-foreground">{user?.email}</p>
+            <p className="text-xs text-muted-foreground/60 font-mono select-all">ID: {user?.id}</p>
           </div>
           <Button variant="outline" size="sm" onClick={handleSignOut} className="gap-2">
             <LogOut className="w-4 h-4" />
