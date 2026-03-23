@@ -48,6 +48,16 @@ export default function Teaser() {
   const couponRedeemed = useRef(false);
   const [authChecked, setAuthChecked] = useState(false);
 
+  // A/B test: show PersonalInsights to 50% of visitors before email gate
+  const showInsightsVariant = useMemo(() => {
+    const key = "ab_teaser_insights";
+    const stored = sessionStorage.getItem(key);
+    if (stored !== null) return stored === "1";
+    const variant = Math.random() < 0.5;
+    sessionStorage.setItem(key, variant ? "1" : "0");
+    return variant;
+  }, []);
+
   // Check if user is already authenticated — skip EmailGate and redirect to full report
   useEffect(() => {
     const checkAuth = async () => {
