@@ -21,7 +21,7 @@ import {
   Info,
   CheckCircle,
   Clock,
-  Car,
+  
   Copy,
   ShieldCheck,
 } from "lucide-react";
@@ -443,73 +443,7 @@ export default function ConsultantTrackContent({
         </div>
       )}
 
-      {isConsultantFullAccess && marketRate > 0 && currentHourly > 0 && (
-        <div>
-          <SectionLabel>{isEmployee ? "Din lönekostnad vs kundpriset" : "Din andel av kundpriset"}</SectionLabel>
-          <div className="rounded-[18px] bg-foreground/[0.035] border border-foreground/[0.07] p-4.5 px-4">
-            <div className="flex justify-between items-start mb-3.5">
-              <div>
-                <span className={`${monoClass} text-[42px] font-medium text-accent tracking-tight leading-none block`}>
-                  {sharePercent}%
-                </span>
-                <span className="text-caption mt-1 block">
-                  {isEmployee ? (
-                    <>lönekostnad {fmt(costToCompare)} kr/h av {fmt(marketRate)} kr/h</>
-                  ) : (
-                    <>av {fmt(marketRate)} kr/h som regionen betalar</>
-                  )}
-                </span>
-                {isEmployee && (
-                  <span className="text-micro mt-0.5 block">
-                    Brutto {fmt(currentHourly)} kr/h × {employerFactor} (arbetsgivaravg. + pension)
-                  </span>
-                )}
-              </div>
-              <div className="text-right">
-                <span className="text-micro tracking-[0.6px] uppercase block mb-1">Marknadsmedian</span>
-                <span className={`${monoClass} text-caption block`}>{isEmployee ? "85%" : "90%"}</span>
-                <span className="text-micro tracking-[0.6px] uppercase block mt-1.5 mb-0.5">Vanligt spann</span>
-                <span className={`${monoClass} text-caption block`}>85–92%</span>
-              </div>
-            </div>
-
-            {/* Gradient bar */}
-            <div className="relative h-1.5 bg-foreground/[0.06] rounded overflow-visible mb-2.5">
-              <div
-                className="absolute left-0 top-0 h-full rounded bg-gradient-to-r from-primary/50 to-accent"
-                style={{ width: `${Math.min(sharePercent, 100)}%` }}
-              />
-              <div
-                className="absolute top-[-2px] w-px h-[10px] bg-foreground/[0.3]"
-                style={{ left: `${Math.min(sharePercent, 100)}%` }}
-              />
-            </div>
-
-            <p className="text-caption leading-relaxed">
-              {sharePercent > 100 ? (
-                <>
-                  {isEmployee
-                    ? <>Din lönekostnad överstiger kundpriset — kontrollera att arbetsgivaren inte subventionerar din tjänst.</>
-                    : <>Över 100% är möjligt som egenföretagare — du fakturerar direkt utan mellanhand och bär då risker som annars ligger på bemanningsföretaget, t.ex. viten och administration.</>
-                  }
-                </>
-              ) : sharePercent >= 85 ? (
-                <>
-                  {isEmployee ? "Lönekostnaden" : "Andelen"} ligger nära marknadens övre gräns. <strong className="text-foreground/50 font-medium">Vanligt spann: 85–92%</strong>.
-                </>
-              ) : (
-                <>
-                  {isEmployee
-                    ? <>Lönekostnaden utgör en lägre andel av kundpriset än marknadens genomsnitt.</>
-                    : <>Andelen av kundpriset ligger under marknadens genomsnitt.</>
-                  }{" "}
-                  <strong className="text-foreground/50 font-medium">Vanligt spann: 85–92%</strong>.
-                </>
-              )}
-            </p>
-          </div>
-        </div>
-      )}
+      {/* "Din andel av kundpriset" section removed */}
 
       {/* ═══ Toppskiktet — för konsulter nära kundpris ═══ */}
       {isConsultantFullAccess && isAboveThreshold && (
@@ -529,7 +463,6 @@ export default function ConsultantTrackContent({
             {[
               { icon: MapPin, title: "Zonpriser", desc: "Ramavtalspriserna varierar per zon — se den regionala jämförelsen för samtliga zoner." },
               { icon: Clock, title: "Jourersättning", desc: "Jour- och beredskapstillägg regleras separat och ligger utanför grundtimpriset." },
-              { icon: Car, title: "Reseersättning", desc: "Vid uppdrag som kräver resa kan reseersättning, boende och traktamente tillkomma enligt avtal." },
             ].map(({ icon: Icon, title, desc }) => (
               <div key={title} className="flex items-start gap-3 p-3.5 rounded-xl bg-foreground/[0.03] border border-border/30">
                 <Icon className="w-4 h-4 text-primary mt-0.5 shrink-0" />

@@ -23,6 +23,7 @@ import MarketDiagnosisCard from "@/components/teaser/MarketDiagnosisCard";
 import EmailGate from "@/components/teaser/EmailGate";
 import EmailHookMessage from "@/components/teaser/EmailHookMessage";
 import ReportPreviewList from "@/components/teaser/ReportPreviewList";
+import TeaserInsights from "@/components/teaser/TeaserInsights";
 
 /** Teaser page — orchestrator for the results preview */
 export default function Teaser() {
@@ -46,6 +47,16 @@ export default function Teaser() {
   const [couponDiscount, setCouponDiscount] = useState<{ discount_type: "percent" | "fixed" | "free"; discount_value: number } | null>(null);
   const couponRedeemed = useRef(false);
   const [authChecked, setAuthChecked] = useState(false);
+
+  // A/B test: show PersonalInsights to 50% of visitors before email gate
+  const showInsightsVariant = useMemo(() => {
+    const key = "ab_teaser_insights";
+    const stored = sessionStorage.getItem(key);
+    if (stored !== null) return stored === "1";
+    const variant = Math.random() < 0.5;
+    sessionStorage.setItem(key, variant ? "1" : "0");
+    return variant;
+  }, []);
 
   // Check if user is already authenticated — skip EmailGate and redirect to full report
   useEffect(() => {
@@ -75,7 +86,7 @@ export default function Teaser() {
   useEffect(() => {
     if (survey && !paywallViewedRef.current) {
       paywallViewedRef.current = true;
-      trackEvent("paywall_viewed", { role: survey.yrke, zone: survey.kommun });
+      trackEvent("paywall_viewed", { role: survey.yrke, zone: survey.kommun, ab_insights: showInsightsVariant ? "variant" : "control" });
       // Store paywall entry time for payment_completed
       sessionStorage.setItem("paywallEnteredAt", String(Date.now()));
     }
@@ -547,6 +558,23 @@ export default function Teaser() {
           isAboveThreshold={isAboveThreshold}
           emailProvided={false}
         />
+
+        {/* A/B test: show insights to 50% of visitors before email gate */}
+        {!email && showInsightsVariant && !isPermanent && pricingResult && userHourly > 0 && (() => {
+          const marketRate = pricingResult.rate_customer_sek_per_hour;
+          const isEmp = survey.employmentType === "anstalld";
+          const employerFactor = 1.42;
+          const costToCompare = isEmp ? Math.round(userHourly * employerFactor) : userHourly;
+          const sharePercent = marketRate > 0 ? Math.round((costToCompare / marketRate) * 100) : 0;
+          const percentilePosition = sharePercent >= 90 ? 85 : sharePercent >= 85 ? 70 : sharePercent >= 75 ? 45 : sharePercent >= 65 ? 25 : 10;
+          return (
+            <TeaserInsights
+              sharePercent={sharePercent}
+              isEmployee={isEmp}
+              percentilePosition={percentilePosition}
+            />
+          );
+        })()}
 
         {/* Email Gate — primary CTA at top */}
         {!email && (

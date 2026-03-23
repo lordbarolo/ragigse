@@ -1,4 +1,4 @@
-import { CheckCircle, MapPin, Clock, Car } from "lucide-react";
+import { CheckCircle, MapPin, Clock } from "lucide-react";
 
 interface Props {
   kommun: string;
@@ -47,15 +47,6 @@ export default function HighEarnerCard({ kommun, nearestHigherKommun }: Props) {
               </div>
             </div>
 
-            <div className="flex items-start gap-3 p-3 rounded-lg border border-border bg-muted/30">
-              <Car className="w-4 h-4 text-primary mt-0.5 shrink-0" />
-              <div>
-                <p className="text-sm font-medium text-foreground">Reseersättning</p>
-                <p className="text-hint mt-0.5">
-                  Om uppdraget kräver resa finns ofta reseersättning, boende och traktamente utöver grundtimpriset.
-                </p>
-              </div>
-            </div>
           </div>
         </div>
       </div>
