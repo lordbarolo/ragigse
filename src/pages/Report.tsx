@@ -106,7 +106,7 @@ export default function Report() {
           <p className="text-[10px] uppercase tracking-[0.2em] text-primary-foreground/70 font-medium">
             Ersättningsanalys
           </p>
-          <h1 className="text-2xl sm:text-3xl font-bold text-primary-foreground leading-tight tracking-tight">
+          <h1 className="text-2xl sm:text-3xl font-bold text-primary-foreground leading-tight tracking-tight drop-shadow-sm">
             {report.occupation}
           </h1>
           <div className="flex items-center gap-2 text-sm text-primary-foreground/60">
