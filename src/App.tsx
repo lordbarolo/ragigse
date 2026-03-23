@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect } from "react";
+import ErrorBoundary from "@/components/ErrorBoundary";
 import { Toaster } from "@/components/ui/toaster";
 // import ReijdarChat from "@/components/radar/ReijdarChat";
 import { Toaster as Sonner } from "@/components/ui/sonner";
