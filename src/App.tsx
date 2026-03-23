@@ -52,49 +52,51 @@ function ScrollToTop() {
 }
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <ScrollToTop />
-        <Suspense fallback={<Loading />}>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/resultat/:leadId" element={<AnalysisScreen />} />
-            <Route path="/referral/:token" element={<ReferralLanding />} />
-            <Route path="/betalning-klar" element={<PaymentSuccess />} />
-            <Route path="/rapport/:reportId" element={<Report />} />
-            <Route path="/jamfor" element={<Compare />} />
-            <Route path="/radar" element={<Radar />} />
-            <Route path="/forhandla" element={<Negotiate />} />
-            <Route path="/referenser" element={<Referenser />} />
-            <Route path="/vanliga-fragor" element={<FAQ />} />
-            <Route path="/integritetspolicy" element={<PrivacyPolicy />} />
-            <Route path="/logga-in" element={<Login />} />
-            <Route path="/registrera" element={<Signup />} />
-            <Route path="/aterstall-losenord" element={<ResetPassword />} />
-            <Route path="/profil" element={<Profile />} />
-            <Route path="/referens/:token" element={<ReferenceForm />} />
-            <Route path="/ping/:token" element={<PingResponse />} />
-            <Route path="/profil/:id" element={<PublicProfile />} />
-            <Route path="/verify/:applicationId" element={<VerifyProof />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/dela" element={<SharePreview />} />
-            <Route path="/dev/theme-preview" element={<ThemePreview />} />
-            <Route path="/dev/analytics" element={<AnalyticsDashboard />} />
-            {import.meta.env.DEV && (
-              <Route path="/dev/e2e-test" element={<E2ETest />} />
-            )}
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Suspense>
-        {/* <ReijdarChat /> */}
-        <CookieBanner />
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+  <ErrorBoundary>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <ScrollToTop />
+          <Suspense fallback={<Loading />}>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/resultat/:leadId" element={<AnalysisScreen />} />
+              <Route path="/referral/:token" element={<ReferralLanding />} />
+              <Route path="/betalning-klar" element={<PaymentSuccess />} />
+              <Route path="/rapport/:reportId" element={<Report />} />
+              <Route path="/jamfor" element={<Compare />} />
+              <Route path="/radar" element={<Radar />} />
+              <Route path="/forhandla" element={<Negotiate />} />
+              <Route path="/referenser" element={<Referenser />} />
+              <Route path="/vanliga-fragor" element={<FAQ />} />
+              <Route path="/integritetspolicy" element={<PrivacyPolicy />} />
+              <Route path="/logga-in" element={<Login />} />
+              <Route path="/registrera" element={<Signup />} />
+              <Route path="/aterstall-losenord" element={<ResetPassword />} />
+              <Route path="/profil" element={<Profile />} />
+              <Route path="/referens/:token" element={<ReferenceForm />} />
+              <Route path="/ping/:token" element={<PingResponse />} />
+              <Route path="/profil/:id" element={<PublicProfile />} />
+              <Route path="/verify/:applicationId" element={<VerifyProof />} />
+              <Route path="/admin" element={<Admin />} />
+              <Route path="/dela" element={<SharePreview />} />
+              <Route path="/dev/theme-preview" element={<ThemePreview />} />
+              <Route path="/dev/analytics" element={<AnalyticsDashboard />} />
+              {import.meta.env.DEV && (
+                <Route path="/dev/e2e-test" element={<E2ETest />} />
+              )}
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
+          {/* <ReijdarChat /> */}
+          <CookieBanner />
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </ErrorBoundary>
 );
 
 export default App;

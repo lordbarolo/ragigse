@@ -7,16 +7,7 @@ export function useAdminAuth() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [checking, setChecking] = useState(true);
 
-  // Dev bypass for preview/dev environments
-  const isDevEnv = import.meta.env.DEV || window.location.hostname.includes("lovableproject.com") || window.location.hostname.includes("id-preview--");
-
   useEffect(() => {
-    if (isDevEnv) {
-      setIsAdmin(true);
-      setChecking(false);
-      return;
-    }
-
     if (authLoading) return;
     if (!user) {
       setIsAdmin(false);
@@ -37,7 +28,7 @@ export function useAdminAuth() {
     };
 
     checkAdmin();
-  }, [user, authLoading, isDevEnv]);
+  }, [user, authLoading]);
 
-  return { user, isAdmin, loading: isDevEnv ? false : (authLoading || checking) };
+  return { user, isAdmin, loading: authLoading || checking };
 }

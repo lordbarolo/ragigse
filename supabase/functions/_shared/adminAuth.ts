@@ -11,12 +11,6 @@ const corsHeaders = {
  * Returns the user_id on success, or a Response to return on failure.
  */
 export async function requireAdmin(req: Request): Promise<{ userId: string } | Response> {
-  // Dev bypass: only active when server-side env var is explicitly set
-  const devBypass = Deno.env.get("ADMIN_DEV_BYPASS") === "true";
-  if (devBypass) {
-    return { userId: "dev-bypass" };
-  }
-
   const authHeader = req.headers.get("Authorization");
   if (!authHeader?.startsWith("Bearer ")) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
@@ -31,16 +25,13 @@ export async function requireAdmin(req: Request): Promise<{ userId: string } | R
     { global: { headers: { Authorization: authHeader } } }
   );
 
-  const token = authHeader.replace("Bearer ", "");
-  const { data, error } = await supabase.auth.getClaims(token);
-  if (error || !data?.claims) {
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error || !user) {
     return new Response(JSON.stringify({ error: "Unauthorized" }), {
       status: 401,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }
-
-  const userId = data.claims.sub as string;
 
   // Check admin role using service role client to bypass RLS
   const serviceClient = createClient(
@@ -51,7 +42,7 @@ export async function requireAdmin(req: Request): Promise<{ userId: string } | R
   const { data: role } = await serviceClient
     .from("ref_user_roles")
     .select("role")
-    .eq("user_id", userId)
+    .eq("user_id", user.id)
     .eq("role", "admin")
     .maybeSingle();
 
@@ -62,5 +53,5 @@ export async function requireAdmin(req: Request): Promise<{ userId: string } | R
     });
   }
 
-  return { userId };
+  return { userId: user.id };
 }
