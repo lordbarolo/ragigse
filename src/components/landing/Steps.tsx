@@ -1,18 +1,15 @@
 const STEPS = [
   {
-    icon: "🏥",
     title: "Välj roll och zon",
     desc: "Ange din yrkeskategori och vilken zon du arbetar i. Zon bestäms av var regionen är belägen — inte var du bor.",
     detail: { label: "Zon 1", text: "Stockholm · Västra Götaland · Skåne · m.fl." },
   },
   {
-    icon: "💰",
     title: "Ange din ersättning",
     desc: "Ange din timersättning eller månadslön. Vi räknar automatiskt om och jämför mot vad regionen betalar till bemanningsföretaget.",
     detail: { label: "", text: "Din ersättning jämförs mot regionens kundpris, inte mot andra konsulters uppgifter." },
   },
   {
-    icon: "📊",
     title: "Få din rapport",
     desc: "Se din position i marknadsspannet, vad ramavtalspriset är för din roll, och konkreta förhandlingstips anpassade till din situation.",
     detail: { label: "", text: "Rapporten skickas till din mail. Ingen annan ser den." },
