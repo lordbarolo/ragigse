@@ -463,7 +463,6 @@ export default function ConsultantTrackContent({
             {[
               { icon: MapPin, title: "Zonpriser", desc: "Ramavtalspriserna varierar per zon — se den regionala jämförelsen för samtliga zoner." },
               { icon: Clock, title: "Jourersättning", desc: "Jour- och beredskapstillägg regleras separat och ligger utanför grundtimpriset." },
-              { icon: Car, title: "Reseersättning", desc: "Vid uppdrag som kräver resa kan reseersättning, boende och traktamente tillkomma enligt avtal." },
             ].map(({ icon: Icon, title, desc }) => (
               <div key={title} className="flex items-start gap-3 p-3.5 rounded-xl bg-foreground/[0.03] border border-border/30">
                 <Icon className="w-4 h-4 text-primary mt-0.5 shrink-0" />

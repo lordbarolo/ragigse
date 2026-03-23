@@ -109,7 +109,7 @@ export default function Report() {
           <h1 className="text-2xl sm:text-3xl font-bold text-primary-foreground leading-tight tracking-tight drop-shadow-sm">
             {report.occupation}
           </h1>
-          <div className="flex items-center gap-2 text-sm text-primary-foreground/60">
+          <div className="flex items-center gap-2 text-sm text-primary-foreground/80">
             <span>{report.kommun}</span>
             <span className="w-1 h-1 rounded-full bg-primary-foreground/30" />
             <span>{isPermanentTrack ? "Fast tjänst" : "Konsultuppdrag"}</span>
