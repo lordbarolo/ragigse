@@ -17,7 +17,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/hooks/use-toast";
-import { Loader2, Upload, PlayCircle, ArrowUpDown, TrendingUp, TrendingDown, Minus, Plus, Trash2, ShieldCheck, Lock } from "lucide-react";
+import { Loader2, Upload, PlayCircle, ArrowUpDown, TrendingUp, TrendingDown, Minus, Plus, Trash2, ShieldCheck, Lock, Wrench, Eye, Database } from "lucide-react";
 
 interface ContractVersion {
   id: string;
@@ -259,6 +259,40 @@ export default function Admin() {
         </div>
         <PeriodSelector />
       </div>
+
+      {/* Dev Tools - only in dev/preview */}
+      {(import.meta.env.DEV || window.location.hostname.includes("lovable")) && (
+        <Card className="border-dashed border-yellow-500/50 bg-yellow-500/5">
+          <CardHeader className="pb-3">
+            <CardTitle className="flex items-center gap-2 text-sm">
+              <Wrench className="w-4 h-4" /> Dev Tools
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-wrap gap-2">
+            <Button size="sm" variant="outline" className="gap-1.5 text-xs" onClick={() => navigate("/profil")}>
+              <Eye className="w-3.5 h-3.5" /> Profilsida
+            </Button>
+            <Button size="sm" variant="outline" className="gap-1.5 text-xs" onClick={() => navigate("/referenser")}>
+              <Database className="w-3.5 h-3.5" /> Referenser
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="gap-1.5 text-xs"
+              onClick={async () => {
+                const leadsRes = await supabase.from("leads").select("id", { count: "exact", head: true });
+                const reportsRes = await supabase.from("reports").select("id", { count: "exact", head: true });
+                toast({
+                  title: "Dataöversikt",
+                  description: `Leads: ${leadsRes.count ?? '–'} | Rapporter: ${reportsRes.count ?? '–'}`,
+                });
+              }}
+            >
+              <Database className="w-3.5 h-3.5" /> Visa datapunkter
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Daily Visitors - shared analytics data */}
       <DailyVisitors
