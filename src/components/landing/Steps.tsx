@@ -1,18 +1,15 @@
 const STEPS = [
   {
-    icon: "🏥",
     title: "Välj roll och zon",
     desc: "Ange din yrkeskategori och vilken zon du arbetar i. Zon bestäms av var regionen är belägen — inte var du bor.",
     detail: { label: "Zon 1", text: "Stockholm · Västra Götaland · Skåne · m.fl." },
   },
   {
-    icon: "💰",
     title: "Ange din ersättning",
     desc: "Ange din timersättning eller månadslön. Vi räknar automatiskt om och jämför mot vad regionen betalar till bemanningsföretaget.",
     detail: { label: "", text: "Din ersättning jämförs mot regionens kundpris, inte mot andra konsulters uppgifter." },
   },
   {
-    icon: "📊",
     title: "Få din rapport",
     desc: "Se din position i marknadsspannet, vad ramavtalspriset är för din roll, och konkreta förhandlingstips anpassade till din situation.",
     detail: { label: "", text: "Rapporten skickas till din mail. Ingen annan ser den." },
@@ -47,8 +44,8 @@ export default function Steps() {
               <span className="absolute top-3 right-5 font-display text-[96px] font-extrabold text-foreground/[0.025] leading-none tracking-[-0.05em] pointer-events-none select-none">
                 {i + 1}
               </span>
-              <div className="w-11 h-11 rounded-[11px] bg-primary/[0.12] border border-primary/[0.18] flex items-center justify-center text-[22px] mb-6">
-                {s.icon}
+              <div className="w-11 h-11 rounded-[11px] bg-primary/[0.12] border border-primary/[0.18] flex items-center justify-center font-display text-sm font-bold text-primary mb-6">
+                {i + 1}
               </div>
               <h3 className="font-display text-[17px] font-bold tracking-[-0.02em] mb-2.5">{s.title}</h3>
               <p className="text-sm text-foreground/65 leading-relaxed">{s.desc}</p>
