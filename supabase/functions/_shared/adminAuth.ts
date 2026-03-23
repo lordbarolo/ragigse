@@ -11,10 +11,9 @@ const corsHeaders = {
  * Returns the user_id on success, or a Response to return on failure.
  */
 export async function requireAdmin(req: Request): Promise<{ userId: string } | Response> {
-  // Dev bypass: skip auth in preview/dev environments
-  const referer = req.headers.get("referer") || req.headers.get("origin") || "";
-  const isDevEnv = referer.includes("lovableproject.com") || referer.includes("id-preview--") || referer.includes("localhost");
-  if (isDevEnv) {
+  // Dev bypass: only active when server-side env var is explicitly set
+  const devBypass = Deno.env.get("ADMIN_DEV_BYPASS") === "true";
+  if (devBypass) {
     return { userId: "dev-bypass" };
   }
 
