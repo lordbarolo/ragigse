@@ -23,6 +23,7 @@ import MarketDiagnosisCard from "@/components/teaser/MarketDiagnosisCard";
 import EmailGate from "@/components/teaser/EmailGate";
 import EmailHookMessage from "@/components/teaser/EmailHookMessage";
 import ReportPreviewList from "@/components/teaser/ReportPreviewList";
+import TeaserInsights from "@/components/teaser/TeaserInsights";
 
 /** Teaser page — orchestrator for the results preview */
 export default function Teaser() {
