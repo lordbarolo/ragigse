@@ -103,7 +103,7 @@ export default function Report() {
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
         <div className="max-w-lg mx-auto space-y-4 relative z-10">
           <CompcareLogo variant="full" className="mb-6" />
-          <p className="text-[10px] uppercase tracking-[0.2em] text-primary-foreground/40 font-medium">
+          <p className="text-[10px] uppercase tracking-[0.2em] text-primary-foreground/70 font-medium">
             Ersättningsanalys
           </p>
           <h1 className="text-2xl sm:text-3xl font-bold text-primary-foreground leading-tight tracking-tight">
