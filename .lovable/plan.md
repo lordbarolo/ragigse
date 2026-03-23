@@ -1,19 +1,8 @@
 
 
-## Fix: Remove public PII exposure on ref_profiles
+## Remove emojis from landing page buttons
 
-### Problem
-The `ref_profiles` table has a policy `"Public profiles are readable"` that grants anonymous users unrestricted SELECT access to all rows. This exposes full names, emails, phone numbers, license numbers, and BankID status.
+Two locations in `src/pages/Index.tsx` have emoji symbols on buttons:
 
-### Why this is safe to fix
-The public profile page (`/profil/:id`) uses the `ref_get_public_profile` RPC function, which is `SECURITY DEFINER` and bypasses RLS. No client-side code queries `ref_profiles` directly for anonymous users — only authenticated users access it via `useRefProfile.ts`.
-
-### Change
-**One database migration** that drops the overly permissive anon policy:
-
-```sql
-DROP POLICY "Public profiles are readable" ON public.ref_profiles;
-```
-
-No code changes needed. No replacement policy needed since all public-facing access goes through the SECURITY DEFINER RPC function.
-
+1. **Hero CTA buttons** (lines 104, 110): `🩺 Jag är Läkare` and `💉 Sjuksköterska / Barnmorska`
+2. **Bottom CTA buttons** (lines 189, 195): These are already clean text ("
