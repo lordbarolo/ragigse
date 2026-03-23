@@ -1,4 +1,4 @@
-import { CheckCircle, MapPin, Clock, Car } from "lucide-react";
+import { CheckCircle, MapPin, Clock } from "lucide-react";
 
 interface Props {
   kommun: string;
