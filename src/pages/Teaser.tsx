@@ -559,6 +559,23 @@ export default function Teaser() {
           emailProvided={false}
         />
 
+        {/* A/B test: show insights to 50% of visitors before email gate */}
+        {!email && showInsightsVariant && !isPermanent && pricingResult && userHourly > 0 && (() => {
+          const marketRate = pricingResult.rate_customer_sek_per_hour;
+          const isEmp = survey.employmentType === "anstalld";
+          const employerFactor = 1.42;
+          const costToCompare = isEmp ? Math.round(userHourly * employerFactor) : userHourly;
+          const sharePercent = marketRate > 0 ? Math.round((costToCompare / marketRate) * 100) : 0;
+          const percentilePosition = sharePercent >= 90 ? 85 : sharePercent >= 85 ? 70 : sharePercent >= 75 ? 45 : sharePercent >= 65 ? 25 : 10;
+          return (
+            <TeaserInsights
+              sharePercent={sharePercent}
+              isEmployee={isEmp}
+              percentilePosition={percentilePosition}
+            />
+          );
+        })()}
+
         {/* Email Gate — primary CTA at top */}
         {!email && (
           <div className="rounded-xl bg-foreground/[0.02] p-5">
