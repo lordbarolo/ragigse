@@ -21,7 +21,7 @@ import {
   Info,
   CheckCircle,
   Clock,
-  Car,
+  
   Copy,
   ShieldCheck,
 } from "lucide-react";
