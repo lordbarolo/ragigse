@@ -162,20 +162,25 @@ export default function AnalysisScreen() {
     if (!EMAIL_REGEX.test(emailValue)) return;
     setEmailSaving(true);
     try {
-      const { error } = await supabase.functions.invoke("save-email", { body: { lead_id: leadId, report_id: reportId, email: emailValue } });
-      if (error) throw error;
-      if (survey) {sessionStorage.setItem("surveyData", JSON.stringify({ ...survey, email: emailValue }));}
+      await saveEmail({ leadId, reportId, email: emailValue });
+      if (survey) { sessionStorage.setItem("surveyData", JSON.stringify({ ...survey, email: emailValue })); }
       trackEvent("email_collected", { source: "analysis_screen" });
-    } catch {toast.error("Kunde inte spara e-post, försök igen.");setEmailSaving(false);return;}
+    } catch {
+      toast.error("Kunde inte spara e-post, försök igen.");
+      setEmailSaving(false);
+      return;
+    }
 
     let activeReportId = reportId;
     if (!activeReportId && leadId && survey) {
       try {
-        const { data, error } = await supabase.functions.invoke("create-report", { body: { lead_id: leadId, email: emailValue, occupation: survey.yrke, employment_type: survey.employmentType, kommun: survey.kommun, current_salary: survey.currentSalary, salary_type: survey.salaryType, track: "consultant" } });
-        if (!error && data?.report_id) {activeReportId = data.report_id;setReportId(activeReportId);sessionStorage.setItem("reportId", activeReportId);}
+        const result = await createReport({ leadId, email: emailValue, survey, track: "consultant" });
+        activeReportId = result.reportId;
+        setReportId(activeReportId);
+        sessionStorage.setItem("reportId", activeReportId);
       } catch {}
     }
-    if (!activeReportId) {toast.error("Kunde inte skapa rapport, försök igen.");setEmailSaving(false);return;}
+    if (!activeReportId) { toast.error("Kunde inte skapa rapport, försök igen."); setEmailSaving(false); return; }
     setEmailSaving(false);
     finalize(activeReportId);
   };
