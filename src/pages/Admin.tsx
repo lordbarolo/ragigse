@@ -94,27 +94,32 @@ export default function Admin() {
 
   const fetchVersions = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("contract_versions")
-      .select("*")
-      .order("effective_from", { ascending: false });
-
-    if (error) {
-      toast({ title: "Fel", description: error.message, variant: "destructive" });
-    } else {
-      setVersions(data || []);
+    try {
+      const { data: res, error } = await supabase.functions.invoke("admin-data", {
+        body: { action: "versions" },
+      });
+      if (error) throw error;
+      setVersions(res?.versions || []);
+    } catch (err: any) {
+      toast({ title: "Fel", description: err.message, variant: "destructive" });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const fetchAuditOptins = async () => {
     setAuditLoading(true);
-    const { data, error } = await supabase
-      .from("audit_optins")
-      .select("*")
-      .order("created_at", { ascending: false });
-    if (!error) setAuditOptins((data as AuditOptin[]) || []);
-    setAuditLoading(false);
+    try {
+      const { data: res, error } = await supabase.functions.invoke("admin-data", {
+        body: { action: "audit-optins" },
+      });
+      if (error) throw error;
+      setAuditOptins((res?.optins as AuditOptin[]) || []);
+    } catch (err: any) {
+      console.error("Audit optins error:", err);
+    } finally {
+      setAuditLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -279,12 +284,18 @@ export default function Admin() {
               variant="outline"
               className="gap-1.5 text-xs"
               onClick={async () => {
-                const leadsRes = await supabase.from("leads").select("id", { count: "exact", head: true });
-                const reportsRes = await supabase.from("reports").select("id", { count: "exact", head: true });
-                toast({
-                  title: "Dataöversikt",
-                  description: `Leads: ${leadsRes.count ?? '–'} | Rapporter: ${reportsRes.count ?? '–'}`,
-                });
+                try {
+                  const { data: res, error } = await supabase.functions.invoke("admin-data", {
+                    body: { action: "data-counts" },
+                  });
+                  if (error) throw error;
+                  toast({
+                    title: "Dataöversikt",
+                    description: `Leads: ${res?.leads ?? '–'} | Rapporter: ${res?.reports ?? '–'}`,
+                  });
+                } catch (err: any) {
+                  toast({ title: "Fel", description: err.message, variant: "destructive" });
+                }
               }}
             >
               <Database className="w-3.5 h-3.5" /> Visa datapunkter

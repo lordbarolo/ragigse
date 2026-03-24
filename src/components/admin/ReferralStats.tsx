@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Users, MousePointerClick, CheckCircle2, Send } from "lucide-react";
+import { Loader2, Users, MousePointerClick, Send } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 interface ReferralRow {
@@ -18,14 +18,17 @@ export default function ReferralStats() {
 
   useEffect(() => {
     (async () => {
-      // Admin stats — referrals table is locked down via RLS.
-      // This query requires an authenticated admin session; will return empty for non-admins.
-      const { data: rows, error } = await supabase
-        .from("referrals")
-        .select("id, referrer_email, referee_email, clicked, created_at")
-        .order("created_at", { ascending: false });
-      if (!error) setData(rows || []);
-      setLoading(false);
+      try {
+        const { data: res, error } = await supabase.functions.invoke("admin-data", {
+          body: { action: "referrals" },
+        });
+        if (error) throw error;
+        setData(res?.referrals || []);
+      } catch (err) {
+        console.error("Referral stats error:", err);
+      } finally {
+        setLoading(false);
+      }
     })();
   }, []);
 
