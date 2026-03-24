@@ -94,17 +94,17 @@ export default function Admin() {
 
   const fetchVersions = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("contract_versions")
-      .select("*")
-      .order("effective_from", { ascending: false });
-
-    if (error) {
-      toast({ title: "Fel", description: error.message, variant: "destructive" });
-    } else {
-      setVersions(data || []);
+    try {
+      const { data: res, error } = await supabase.functions.invoke("admin-data", {
+        body: { action: "versions" },
+      });
+      if (error) throw error;
+      setVersions(res?.versions || []);
+    } catch (err: any) {
+      toast({ title: "Fel", description: err.message, variant: "destructive" });
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const fetchAuditOptins = async () => {
