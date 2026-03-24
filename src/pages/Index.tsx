@@ -6,6 +6,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 import Survey from "@/components/Survey";
+import reportPreview from "@/assets/report-preview.jpeg";
 
 const faqJsonLd = {
   "@context": "https://schema.org",
@@ -116,22 +117,33 @@ export default function Index() {
         <div className="absolute bottom-0 left-0 right-0 h-[300px] bg-gradient-to-t from-background to-transparent" />
       </section>
 
-      {/* ── Stats bar (overlapping) ────────────────────── */}
-      <section className="max-w-5xl mx-auto px-6 -mt-16 relative z-20">
-        <div className="bg-card border border-border rounded-3xl p-8 shadow-xl grid md:grid-cols-3 gap-8 divide-y md:divide-y-0 md:divide-x divide-border">
-          <div className="text-center md:pt-0 pt-4">
-            <p className="text-3xl font-bold text-foreground">290+</p>
-            <p className="text-sm text-muted-foreground">Svenska kommuner</p>
-          </div>
-          <div className="text-center pt-8 md:pt-0">
-            <p className="text-3xl font-bold text-foreground">SKR 2026</p>
-            <p className="text-sm text-muted-foreground">Senaste ramavtalsdatan</p>
-          </div>
-          <div className="text-center pt-8 md:pt-0">
-            <p className="text-3xl font-bold text-foreground">100%</p>
-            <p className="text-sm text-muted-foreground">Oberoende analys</p>
+      {/* ── iPhone Preview ────────────────────────────── */}
+      <section className="max-w-5xl mx-auto px-6 -mt-16 relative z-20 flex flex-col items-center">
+        {/* iPhone frame */}
+        <div className="relative mx-auto" style={{ maxWidth: 320 }}>
+          {/* Outer shell */}
+          <div className="bg-foreground/10 rounded-[3rem] p-[10px] shadow-2xl">
+            {/* Inner bezel */}
+            <div className="bg-card rounded-[2.4rem] overflow-hidden relative">
+              {/* Notch */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[120px] h-[28px] bg-foreground/10 rounded-b-2xl z-10" />
+              {/* Screen */}
+              <img
+                src={reportPreview}
+                alt="Förhandsgranskning av din ersättningsanalys"
+                className="w-full h-auto"
+              />
+            </div>
           </div>
         </div>
+
+        {/* CTA */}
+        <button
+          onClick={() => handleRoleSelect("ssk")}
+          className="mt-8 bg-primary hover:bg-primary/90 text-primary-foreground px-10 py-4 rounded-2xl font-semibold text-base transition-all shadow-lg shadow-primary/20"
+        >
+          Se din analys
+        </button>
       </section>
 
       {/* ── Features section ───────────────────────────── */}
