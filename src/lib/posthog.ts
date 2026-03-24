@@ -1,27 +1,8 @@
 import posthog from "posthog-js";
 
-const POSTHOG_KEY = "phc_GiBn5CBOm72IrzgsdQRuUcK2mujk5Q0ZeI6hs8ixvwv";
-const POSTHOG_HOST = "https://eu.i.posthog.com";
+posthog.init("phc_GiBn5CBOm72IrzgsdQRuUcK2mujk5Q0ZeI6hs8ixvwv", {
+  api_host: "https://eu.i.posthog.com",
+  defaults: "2026-01-30",
+});
 
-let posthogReady = false;
-
-export function initPostHog() {
-  if (posthogReady) return;
-  if (typeof window === "undefined" || !POSTHOG_KEY) return;
-
-  try {
-    posthog.init(POSTHOG_KEY, {
-      api_host: POSTHOG_HOST,
-      capture_pageview: true,
-    });
-    posthogReady = true;
-  } catch {
-    // Silent fail — analytics should never break the app
-  }
-}
-
-export function isPostHogReady() {
-  return posthogReady;
-}
-
-export { posthog };
+export default posthog;
