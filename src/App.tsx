@@ -48,12 +48,12 @@ const Loading = () => (
 
 function ScrollToTop() {
   const { pathname } = useLocation();
-  const prevPathRef = useRef(pathname);
+  const sentRef = useRef<string | null>(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    if (pathname !== prevPathRef.current) {
-      prevPathRef.current = pathname;
+    if (pathname !== sentRef.current) {
+      sentRef.current = pathname;
       if (isPostHogReady()) {
         posthog.capture("$pageview");
       }
