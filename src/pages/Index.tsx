@@ -78,7 +78,7 @@ export default function Index() {
       </nav>
 
       {/* ── Dark Hero ──────────────────────────────────── */}
-      <section className="hero-dark relative pt-24 pb-40 px-6">
+      <section className="hero-dark relative pt-24 pb-24 px-6">
         <div className="max-w-4xl mx-auto text-center relative z-10">
           {/* Badge */}
           <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 px-3 py-1 rounded-full text-primary text-xs font-semibold mb-6 uppercase tracking-wider">
