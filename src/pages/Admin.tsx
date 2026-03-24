@@ -260,9 +260,8 @@ export default function Admin() {
         <PeriodSelector />
       </div>
 
-      {/* Dev Tools - only in dev/preview */}
-      {(import.meta.env.DEV || window.location.hostname.includes("lovable")) && (
-        <Card className="border-dashed border-yellow-500/50 bg-yellow-500/5">
+      {/* Dev Tools - admin only (no hostname bypass) */}
+      <Card className="border-dashed border-yellow-500/50 bg-yellow-500/5">
           <CardHeader className="pb-3">
             <CardTitle className="flex items-center gap-2 text-sm">
               <Wrench className="w-4 h-4" /> Dev Tools
@@ -292,7 +291,6 @@ export default function Admin() {
             </Button>
           </CardContent>
         </Card>
-      )}
 
       {/* Daily Visitors - shared analytics data */}
       <DailyVisitors
