@@ -274,7 +274,7 @@ export default function ConsultantTrackContent({
                 <p className={`${monoClass} text-[22px] font-bold tracking-tight text-foreground`}>{fmt(currentHourly)} kr/h</p>
                 <p className={`${monoClass} text-micro mt-0.5`}>{fmt(currentMonthly)} kr/mån</p>
               </div>
-              <span className="text-micro font-semibold tracking-[0.5px] bg-accent/[0.12] text-accent border border-accent/[0.2] rounded-full px-2.5 py-1 whitespace-nowrap">
+              <span className="text-micro font-bold tracking-[0.5px] bg-accent/[0.18] text-accent border border-accent/[0.3] rounded-full px-2.5 py-1 whitespace-nowrap">
                 Din nivå
               </span>
             </div>

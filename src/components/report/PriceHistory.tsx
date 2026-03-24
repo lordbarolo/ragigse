@@ -69,8 +69,8 @@ export default function PriceHistory({ changes, userZone, occupation }: Props) {
               Senaste avtalsändring
             </span>
           </div>
-          <span className={`${monoClass} text-xs font-medium ${
-            isIncrease ? "text-accent" : isDecrease ? "text-destructive" : "text-foreground/40"
+          <span className={`${monoClass} text-xs font-medium px-2 py-0.5 rounded-full ${
+            isIncrease ? "text-accent bg-accent/[0.12]" : isDecrease ? "text-destructive bg-destructive/[0.12]" : "text-foreground/40 bg-foreground/[0.06]"
           }`}>
             {isIncrease ? "+" : ""}{latest.diff_pct.toFixed(1)}%
           </span>
