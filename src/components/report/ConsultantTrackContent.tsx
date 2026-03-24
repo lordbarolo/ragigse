@@ -330,7 +330,7 @@ export default function ConsultantTrackContent({
             <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
               <BarChart3 className="w-5 h-5 text-primary" />
             </div>
-            <h2 className="text-lg sm:text-xl font-bold text-foreground">Sammanfattning</h2>
+            <h2 className="text-lg sm:text-xl font-bold text-foreground">Vad det här betyder för dig</h2>
           </div>
           <ul className="space-y-3">
             <li className="flex items-start gap-3">
