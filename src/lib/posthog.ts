@@ -13,9 +13,6 @@ export function initPostHog() {
     posthog.init(POSTHOG_KEY, {
       api_host: POSTHOG_HOST,
       capture_pageview: true,
-      capture_pageleave: true,
-      autocapture: true,
-      persistence: "localStorage",
     });
     posthogReady = true;
   } catch {
