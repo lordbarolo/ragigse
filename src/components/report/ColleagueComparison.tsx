@@ -34,17 +34,6 @@ export default function ColleagueComparison({ occupation, percentilePosition }: 
           </p>
         </div>
 
-        {/* Percentile badge */}
-        {percentilePosition > 0 && (
-          <div className="mx-4 mb-4 flex items-center gap-3 p-3 rounded-xl bg-accent/[0.06] border border-accent/20">
-            <span className="text-2xl font-bold text-accent tabular-nums font-mono tracking-tight">
-              {percentilePosition}%
-            </span>
-            <p className="text-caption leading-relaxed">
-              Du ligger över {percentilePosition} % av användarna som gjort analysen.
-            </p>
-          </div>
-        )}
 
         {/* CTA */}
         <div className="p-4 pt-0">
@@ -53,7 +42,7 @@ export default function ColleagueComparison({ occupation, percentilePosition }: 
             text={`Hur stor är egentligen skillnaden mellan konsult och fast tjänst? Se din ersättning mot marknaden.`}
             url={`${window.location.origin}/dela?yrke=${encodeURIComponent(occupation)}`}
             className="w-full"
-            label="Dela analys"
+            label="Skicka till en kollega — se vem som tjänar mer"
           />
         </div>
       </div>

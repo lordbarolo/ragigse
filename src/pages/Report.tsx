@@ -155,16 +155,13 @@ export default function Report() {
         {/* CTA: Negotiate */}
         <div className="rounded-xl border border-primary/20 bg-primary/5 p-5 space-y-3">
           <p className="font-display font-semibold text-foreground text-sm">
-            Vill du förhandla din ersättning?
-          </p>
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            Använd din marknadsdata som underlag i vår AI-drivna förhandlingsassistent — få konkreta formuleringar och strategier.
+            Du vet nu vad marknaden betalar. Nästa steg: förhandla upp din ersättning.
           </p>
           <Link
             to={`/forhandla?role=${encodeURIComponent(report.occupation || "")}&geo=${encodeURIComponent(report.kommun || "")}&emp=${encodeURIComponent(report.employment_type || "")}`}
-            className="inline-flex items-center gap-2 rounded-lg bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
+            className="w-full flex items-center justify-center gap-2 rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
           >
-            Förhandla med AI-stöd →
+            Starta förhandling →
           </Link>
         </div>
 

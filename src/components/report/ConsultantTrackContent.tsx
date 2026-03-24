@@ -271,7 +271,7 @@ export default function ConsultantTrackContent({
             <div className="flex items-center justify-between p-3.5 bg-accent/[0.04]">
               <div>
                 <p className="text-micro font-semibold tracking-[0.8px] uppercase mb-1">{isEmployee ? "Din lön" : "Din ersättning"}</p>
-                <p className={`${monoClass} text-[22px] font-medium tracking-tight text-accent`}>{fmt(currentHourly)} kr/h</p>
+                <p className={`${monoClass} text-[22px] font-bold tracking-tight text-foreground`}>{fmt(currentHourly)} kr/h</p>
                 <p className={`${monoClass} text-micro mt-0.5`}>{fmt(currentMonthly)} kr/mån</p>
               </div>
               <span className="text-micro font-semibold tracking-[0.5px] bg-accent/[0.12] text-accent border border-accent/[0.2] rounded-full px-2.5 py-1 whitespace-nowrap">
@@ -330,7 +330,7 @@ export default function ConsultantTrackContent({
             <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
               <BarChart3 className="w-5 h-5 text-primary" />
             </div>
-            <h2 className="text-lg sm:text-xl font-bold text-foreground">Sammanfattning</h2>
+            <h2 className="text-lg sm:text-xl font-bold text-foreground">Vad det här betyder för dig</h2>
           </div>
           <ul className="space-y-3">
             <li className="flex items-start gap-3">
@@ -348,7 +348,7 @@ export default function ConsultantTrackContent({
             <li className="flex items-start gap-3">
               <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
               <span className="text-body-sm leading-relaxed">
-                Kostnader som kan påverka ersättningen: resa, boende, Siths-kort, HLR-utb, intro.
+                Notera att resa, boende och kompetensintyg (t.ex. HLR, SITHS) ofta dras från ersättningen — fråga vad som ingår.
               </span>
             </li>
           </ul>
