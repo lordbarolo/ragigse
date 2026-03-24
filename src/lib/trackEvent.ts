@@ -3,12 +3,7 @@ import posthog from "@/lib/posthog";
 import { getUtmParams, getCouponCode } from "@/lib/captureParams";
 
 function isInternalTraffic(): boolean {
-  try {
-    const h = window.location.hostname;
-    if (h === "localhost" || h === "127.0.0.1") return true;
-    if (h.endsWith(".lovableproject.com")) return true;
-    if (h.endsWith(".lovable.app") && h.includes("-preview--")) return true;
-  } catch { /* SSR safety */ }
+  // Temporarily disabled for debugging – all environments send events
   return false;
 }
 
