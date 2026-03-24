@@ -470,14 +470,34 @@ export default function AnalysisScreen() {
               </div>
 
               {/* Average salary comparison */}
-              {teaserData &&
+            {teaserData &&
             <div className="px-5 pb-4 pt-1">
                   <p className="text-[13px] text-foreground/55 leading-relaxed">
-                    Snittlönen för {survey?.yrke || "din roll"} är{" "}
-                    <strong className={`${teaserData.userHourly < teaserData.low ? "text-[hsl(var(--amber))]" : teaserData.userHourly > teaserData.high ? "text-[hsl(var(--green))]" : "text-foreground/75"}`}>
-                      {teaserData.userHourly < teaserData.low ? "högre" : teaserData.userHourly > teaserData.high ? "lägre" : "i nivå"}
-                    </strong>{" "}
-                    jämfört med dig
+                    {teaserData.isAboveCustomerRate ? (
+                      <>
+                        Din ersättning på {fmt(teaserData.userHourly)} kr/h ligger{" "}
+                        <strong className="text-[hsl(var(--amber))]">över regionens kundpris</strong>{" "}
+                        på {fmt(teaserData.customerRate)} kr/h. Se rapporten för fullständig analys.
+                      </>
+                    ) : teaserData.userHourly > teaserData.high ? (
+                      <>
+                        Din ersättning ligger{" "}
+                        <strong className="text-[hsl(var(--green))]">över marknadsspannet</strong>{" "}
+                        för {survey?.yrke || "din roll"}.
+                      </>
+                    ) : teaserData.userHourly < teaserData.low ? (
+                      <>
+                        Marknadsspannet för {survey?.yrke || "din roll"} är{" "}
+                        <strong className="text-[hsl(var(--amber))]">högre</strong>{" "}
+                        än din nuvarande ersättning.
+                      </>
+                    ) : (
+                      <>
+                        Din ersättning ligger{" "}
+                        <strong className="text-foreground/75">inom marknadsspannet</strong>{" "}
+                        för {survey?.yrke || "din roll"}.
+                      </>
+                    )}
                   </p>
                 </div>
             }
