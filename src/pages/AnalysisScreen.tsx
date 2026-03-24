@@ -387,7 +387,7 @@ export default function AnalysisScreen() {
             {/* Report contents list */}
             <div>
               <h2 className="font-display text-[20px] font-extrabold tracking-tight text-foreground mb-3">
-                Din rapport innehåller
+                Rapporten är klar — vart skickar vi den?
               </h2>
               <div className="space-y-2.5">
                 {(teaserData?.isPermanent ? PERMANENT_ITEMS : CONSULTANT_ITEMS).map(({ icon: Icon, title, desc }, i) =>

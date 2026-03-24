@@ -602,11 +602,6 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                 </div>
               </div>
 
-              {!kommunSearch && (
-               <p className="text-hint text-center">
-                   Börja skriva för att hitta din uppdragsort
-                 </p>
-              )}
             </div>
           </StepWrapper>
         )}
@@ -675,6 +670,11 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                   <span className="text-base font-medium text-foreground">{opt.label}</span>
                 </button>
               ))}
+              {data.obShare === "privat_vardgivare" && (
+                <p className="text-hint text-center mt-1 px-2">
+                  Analysen baseras på SKR:s ramavtal och kan avvika från privata avtal. Resultatet ger en marknadsjämförelse.
+                </p>
+              )}
             </div>
           </StepWrapper>
         )}
