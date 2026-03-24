@@ -96,6 +96,8 @@
     --success-foreground: 0 0% 100%;
     --warning: 36 93% 44%;
     --warning-foreground: 0 0% 100%;
+    --green: 168 80% 31%;
+    --amber: 36 93% 44%;
 
     --sidebar-background: 222 47% 10%;
     --sidebar-foreground: 210 40% 96%;

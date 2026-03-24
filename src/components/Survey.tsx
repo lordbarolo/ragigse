@@ -511,7 +511,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
 
         {/* Step 2: Single dropdown for role selection */}
         {step === 2 && (
-          <StepWrapper title="Välj din roll" subtitle="Vi behöver veta din specialisering för att matcha rätt avtalspriser.">
+          <StepWrapper title="Vad är din specialisering?" subtitle="Vi behöver veta din specialisering för att matcha rätt avtalspriser.">
             <div className="flex flex-col flex-1">
               {/* Upper decorative area */}
               <div className="flex-1 flex flex-col items-center justify-center gap-4 py-6">
