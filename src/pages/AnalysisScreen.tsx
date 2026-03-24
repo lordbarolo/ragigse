@@ -185,6 +185,15 @@ export default function AnalysisScreen() {
     finalize(activeReportId);
   };
 
+  /* ── Auto-submit for logged-in users ── */
+  const autoSubmitted = useRef(false);
+  useEffect(() => {
+    if (phase === "paused_for_email" && EMAIL_REGEX.test(email.trim()) && !autoSubmitted.current && !emailSaving) {
+      autoSubmitted.current = true;
+      handleEmailSubmit();
+    }
+  }, [phase, email]);
+
   const getStepState = (i: number): "hidden" | "active" | "done" => {
     if (elapsedSec < STEP_APPEAR_AT_SEC[i]) return "hidden";
     if (elapsedSec >= STEP_DONE_AT_SEC[i]) return "done";
