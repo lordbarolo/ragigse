@@ -6,6 +6,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 import Survey from "@/components/Survey";
+import reportPreview from "@/assets/report-preview.jpeg";
 
 const faqJsonLd = {
   "@context": "https://schema.org",
