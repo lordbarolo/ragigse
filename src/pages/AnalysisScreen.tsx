@@ -86,10 +86,10 @@ export default function AnalysisScreen() {
       });
     }
 
+    // If logged in, pre-fill email for auto-submit (don't redirect — let flow complete)
     supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        const r = sessionStorage.getItem("reportId");
-        if (r) navigate(`/rapport/${r}`, { replace: true });
+      if (session?.user?.email) {
+        setEmail(session.user.email);
       }
     });
     trackEvent("analysis_started");

@@ -59,24 +59,17 @@ export default function Teaser() {
     return variant;
   }, []);
 
-  // Check if user is already authenticated — skip EmailGate and redirect to full report
+  // Check if user is already authenticated — pre-fill email so EmailGate auto-skips
   useEffect(() => {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        // User is authenticated — find their report and redirect
-        const rid = sessionStorage.getItem("reportId");
-        if (rid) {
-          navigate(`/rapport/${rid}`, { replace: true });
-          return;
-        }
-        // If no reportId in session, set email so EmailGate is skipped
-        setEmail(session.user.email || "");
+      if (session?.user?.email) {
+        setEmail(session.user.email);
       }
       setAuthChecked(true);
     };
     checkAuth();
-  }, [navigate]);
+  }, []);
 
   const exitIntentVisible = useExitIntent(28_000);
   useTimeOnPage("teaser", !!survey);
