@@ -198,14 +198,17 @@ export default function AnalysisScreen() {
     const customerRate = pricing.rate_customer_sek_per_hour || 616;
     const low = pricing.recommended_hourly_min || 470;
     const high = pricing.recommended_hourly_max || 560;
+    // User is underpaid only if below the recommended max AND below customer rate
     const isUnderpaid = userHourly < high;
+    // User is above threshold if earning more than the customer rate (what region pays)
+    const isAboveCustomerRate = userHourly > customerRate;
     const roleName = survey.yrke || "Sjuksköterska";
     const zone = pricing.zon || "Zon 1";
     const diffPercent = isUnderpaid ?
     Math.round((high - userHourly) / high * 100) :
     Math.round((userHourly - low) / low * 100);
     const isPermanent = (survey as SurveyData & {track?: string;}).track === "permanent";
-    return { userHourly, customerRate, low, high, isUnderpaid, roleName, zone, diffPercent, isPermanent };
+    return { userHourly, customerRate, low, high, isUnderpaid, isAboveCustomerRate, roleName, zone, diffPercent, isPermanent };
   }, [survey, pricing]);
 
   const validEmail = EMAIL_REGEX.test(email.trim());
