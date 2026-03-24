@@ -39,7 +39,7 @@ serve(async (req) => {
     // Fetch lead — only return non-sensitive fields needed for teaser display
     const { data: lead, error: leadError } = await supabase
       .from("leads")
-      .select("id, employment_type, yrke, kommun, experience, salary_type")
+      .select("id, employment_type, yrke, kommun, experience, salary_type, current_salary")
       .eq("id", lead_id)
       .maybeSingle();
 

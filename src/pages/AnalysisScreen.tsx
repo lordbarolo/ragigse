@@ -7,6 +7,7 @@ import type { SurveyData } from "@/components/Survey";
 import type { PricingResult } from "@/hooks/usePricingEngine";
 import { Check, Mail, ArrowRight, Info } from "lucide-react";
 import { CONSULTANT_ITEMS, PERMANENT_ITEMS } from "@/components/teaser/ReportPreviewList";
+import { fetchLead, leadToSurvey, createReport, saveEmail } from "@/services/leadService";
 
 /* ── Steps with icons & subtitles ── */
 const STEPS = [
@@ -56,16 +57,34 @@ export default function AnalysisScreen() {
   const startRef = useRef(Date.now());
   const emailPauseTime = useRef(0);
 
-  /* ── Init ── */
+  /* ── Init: try sessionStorage, fallback to backend ── */
   useEffect(() => {
     const rid = urlLeadId || sessionStorage.getItem("leadId") || "";
-    if (!rid) {navigate("/");return;}
+    if (!rid) { navigate("/"); return; }
     setLeadId(rid);
-    setReportId(sessionStorage.getItem("reportId") || "");
+
+    // Try sessionStorage first (populated during survey flow)
     const raw = sessionStorage.getItem("surveyData");
-    if (raw) setSurvey(JSON.parse(raw) as SurveyData);
-    const pricingRaw = sessionStorage.getItem("pricingResult");
-    if (pricingRaw) setPricing(JSON.parse(pricingRaw) as PricingResult);
+    if (raw) {
+      setSurvey(JSON.parse(raw) as SurveyData);
+      setReportId(sessionStorage.getItem("reportId") || "");
+      const pricingRaw = sessionStorage.getItem("pricingResult");
+      if (pricingRaw) setPricing(JSON.parse(pricingRaw) as PricingResult);
+    } else {
+      // Backend-first: fetch lead data from server
+      fetchLead(rid).then((res) => {
+        const surveyData = leadToSurvey(res.lead);
+        setSurvey(surveyData);
+        if (res.report_id) {
+          setReportId(res.report_id);
+          sessionStorage.setItem("reportId", res.report_id);
+        }
+        sessionStorage.setItem("leadId", rid);
+        sessionStorage.setItem("surveyData", JSON.stringify(surveyData));
+      }).catch(() => {
+        navigate("/");
+      });
+    }
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
@@ -81,14 +100,12 @@ export default function AnalysisScreen() {
   useEffect(() => {
     if (!leadId || !survey || reportId || retryAttempted.current) return;
     retryAttempted.current = true;
-    (async () => {
-      try {
-        const { data, error } = await supabase.functions.invoke("create-report", {
-          body: { lead_id: leadId, occupation: survey.yrke, employment_type: survey.employmentType, kommun: survey.kommun, current_salary: survey.currentSalary, salary_type: survey.salaryType, track: (survey as SurveyData & {track?: string;}).track || "consultant" }
-        });
-        if (!error && data?.report_id) {setReportId(data.report_id);sessionStorage.setItem("reportId", data.report_id);}
-      } catch {}
-    })();
+    createReport({ leadId, survey, track: (survey as SurveyData & { track?: string }).track })
+      .then(({ reportId: rid }) => {
+        setReportId(rid);
+        sessionStorage.setItem("reportId", rid);
+      })
+      .catch(() => {});
   }, [leadId, survey, reportId]);
 
   /* ── Fact rotation ── */
@@ -145,20 +162,25 @@ export default function AnalysisScreen() {
     if (!EMAIL_REGEX.test(emailValue)) return;
     setEmailSaving(true);
     try {
-      const { error } = await supabase.functions.invoke("save-email", { body: { lead_id: leadId, report_id: reportId, email: emailValue } });
-      if (error) throw error;
-      if (survey) {sessionStorage.setItem("surveyData", JSON.stringify({ ...survey, email: emailValue }));}
+      await saveEmail({ leadId, reportId, email: emailValue });
+      if (survey) { sessionStorage.setItem("surveyData", JSON.stringify({ ...survey, email: emailValue })); }
       trackEvent("email_collected", { source: "analysis_screen" });
-    } catch {toast.error("Kunde inte spara e-post, försök igen.");setEmailSaving(false);return;}
+    } catch {
+      toast.error("Kunde inte spara e-post, försök igen.");
+      setEmailSaving(false);
+      return;
+    }
 
     let activeReportId = reportId;
     if (!activeReportId && leadId && survey) {
       try {
-        const { data, error } = await supabase.functions.invoke("create-report", { body: { lead_id: leadId, email: emailValue, occupation: survey.yrke, employment_type: survey.employmentType, kommun: survey.kommun, current_salary: survey.currentSalary, salary_type: survey.salaryType, track: "consultant" } });
-        if (!error && data?.report_id) {activeReportId = data.report_id;setReportId(activeReportId);sessionStorage.setItem("reportId", activeReportId);}
+        const result = await createReport({ leadId, email: emailValue, survey, track: "consultant" });
+        activeReportId = result.reportId;
+        setReportId(activeReportId);
+        sessionStorage.setItem("reportId", activeReportId);
       } catch {}
     }
-    if (!activeReportId) {toast.error("Kunde inte skapa rapport, försök igen.");setEmailSaving(false);return;}
+    if (!activeReportId) { toast.error("Kunde inte skapa rapport, försök igen."); setEmailSaving(false); return; }
     setEmailSaving(false);
     finalize(activeReportId);
   };

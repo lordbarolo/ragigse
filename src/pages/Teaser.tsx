@@ -15,6 +15,7 @@ import { useTeaserData } from "@/hooks/useTeaserData";
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 import { useCheckout } from "@/shared/useCheckout";
+import { fetchLead, leadToSurvey, createReport, saveEmail } from "@/services/leadService";
 
 import TeaserHeader from "@/components/teaser/TeaserHeader";
 import OccupationInfo from "@/components/teaser/OccupationInfo";
@@ -137,39 +138,20 @@ export default function Teaser() {
       return;
     }
 
-    // No sessionStorage — fetch from Supabase
-    const fetchLead = async () => {
+    // No sessionStorage — fetch from backend
+    const loadFromBackend = async () => {
       try {
-        const { data, error } = await supabase.functions.invoke("get-lead", {
-          body: { lead_id: resolvedLeadId },
-        });
-
-        if (error || !data?.lead) {
-          setLoadError(true);
-          return;
-        }
-
-        const lead = data.lead;
-        const surveyData: SurveyData & { track?: string } = {
-          email: lead.email,
-          employmentType: lead.employment_type as "anstalld" | "foretagare",
-          yrke: lead.yrke || "",
-          kommun: lead.kommun || "",
-          experience: lead.experience || 0,
-          salaryType: (lead.salary_type as "hourly" | "monthly") || "hourly",
-          currentSalary: lead.current_salary || 0,
-          obShare: "",
-          track: "consultant",
-        };
+        const res = await fetchLead(resolvedLeadId);
+        const surveyData = leadToSurvey(res.lead);
 
         setSurvey(surveyData);
-        setReportId(data.report_id || "");
-        if (data.unlocked_by_referral) setUnlocked(true);
+        setReportId(res.report_id || "");
+        if (res.unlocked_by_referral) setUnlocked(true);
 
-        // Store in sessionStorage for subsequent navigations within this session
+        // Cache in sessionStorage for subsequent navigations
         sessionStorage.setItem("leadId", resolvedLeadId);
         sessionStorage.setItem("surveyData", JSON.stringify(surveyData));
-        if (data.report_id) sessionStorage.setItem("reportId", data.report_id);
+        if (res.report_id) sessionStorage.setItem("reportId", res.report_id);
 
         trackEvent("teaser_viewed");
 
@@ -181,7 +163,7 @@ export default function Teaser() {
       }
     };
 
-    fetchLead();
+    loadFromBackend();
   }, [urlLeadId, navigate]);
 
   // ── Background retry: create report if missing (timeout fallback) ──
@@ -190,32 +172,17 @@ export default function Teaser() {
     if (!leadId || !survey || reportId || retryAttempted.current) return;
     retryAttempted.current = true;
 
-    const retryCreateReport = async () => {
-      console.log("[Teaser] reportId missing — retrying create-report in background");
-      try {
-        const { data, error } = await supabase.functions.invoke("create-report", {
-          body: {
-            lead_id: leadId,
-            occupation: survey.yrke,
-            employment_type: survey.employmentType,
-            kommun: survey.kommun,
-            current_salary: survey.currentSalary,
-            salary_type: survey.salaryType,
-            track: (survey as SurveyData & { track?: string }).track || "consultant",
-          },
-        });
-        if (!error && data?.report_id) {
-          console.log("[Teaser] Background retry succeeded, reportId:", data.report_id);
-          setReportId(data.report_id);
-          sessionStorage.setItem("reportId", data.report_id);
-        } else {
-          console.warn("[Teaser] Background retry failed:", error || data);
-        }
-      } catch (err) {
-        console.warn("[Teaser] Background retry error:", err);
-      }
-    };
-    retryCreateReport();
+    createReport({
+      leadId,
+      survey,
+      track: (survey as SurveyData & { track?: string }).track,
+    }).then(({ reportId: rid }) => {
+      console.log("[Teaser] Background retry succeeded, reportId:", rid);
+      setReportId(rid);
+      sessionStorage.setItem("reportId", rid);
+    }).catch((err) => {
+      console.warn("[Teaser] Background retry failed:", err);
+    });
   }, [leadId, survey, reportId]);
 
   // Check referral unlock status
@@ -356,11 +323,7 @@ export default function Teaser() {
   const handleEmailSubmit = async (emailValue: string) => {
     setEmailSaving(true);
     try {
-      // Save email to lead + report (also creates auth user + consultant profile)
-      const { error: saveErr } = await supabase.functions.invoke("save-email", {
-        body: { lead_id: leadId, report_id: reportId, email: emailValue },
-      });
-      if (saveErr) throw saveErr;
+      await saveEmail({ leadId, reportId, email: emailValue });
 
       setEmail(emailValue);
       if (survey) {
@@ -378,23 +341,10 @@ export default function Teaser() {
     let activeReportId = reportId;
     if (!activeReportId && leadId && survey) {
       try {
-        const { data: rData, error: rErr } = await supabase.functions.invoke("create-report", {
-          body: {
-            lead_id: leadId,
-            email: emailValue,
-            occupation: survey.yrke,
-            employment_type: survey.employmentType,
-            kommun: survey.kommun,
-            current_salary: survey.currentSalary,
-            salary_type: survey.salaryType,
-            track: "consultant",
-          },
-        });
-        if (!rErr && rData?.report_id) {
-          activeReportId = rData.report_id;
-          setReportId(activeReportId);
-          sessionStorage.setItem("reportId", activeReportId);
-        }
+        const result = await createReport({ leadId, email: emailValue, survey, track: "consultant" });
+        activeReportId = result.reportId;
+        setReportId(activeReportId);
+        sessionStorage.setItem("reportId", activeReportId);
       } catch {
         // Fall through
       }
