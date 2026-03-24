@@ -11,7 +11,7 @@ export function useVault(userId: string | undefined) {
     setLoading(true);
     try {
       const { data: result, error } = await supabase.functions.invoke("reference-vault", {
-        body: { action: "get-vault", consultant_id: userId },
+        body: { action: "get-vault" },
       });
       if (error) throw error;
       setData(result as VaultData);
