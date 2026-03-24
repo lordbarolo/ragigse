@@ -291,7 +291,6 @@ export default function Admin() {
             </Button>
           </CardContent>
         </Card>
-      )}
 
       {/* Daily Visitors - shared analytics data */}
       <DailyVisitors
