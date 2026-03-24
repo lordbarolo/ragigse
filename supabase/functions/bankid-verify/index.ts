@@ -94,25 +94,13 @@ Deno.serve(async (req) => {
         );
       }
 
-      // TODO: Replace with actual BankID collect call
-      // For now, simulate a successful verification
-      const { error: updateError } = await supabase
-        .from("ref_profiles")
-        .update({ bankid_verified: true })
-        .eq("id", userId);
-
-      if (updateError) {
-        throw new Error(`Profile update failed: ${updateError.message}`);
-      }
-
+      // BankID integration not yet implemented — reject all collect attempts
       return new Response(
         JSON.stringify({
-          status: "complete",
-          message:
-            "Placeholder: BankID-verifiering simulerad. Profilen har markerats som verifierad.",
+          error: "BankID-verifiering är inte tillgänglig ännu. Funktionen är under utveckling.",
         }),
         {
-          status: 200,
+          status: 501,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         }
       );

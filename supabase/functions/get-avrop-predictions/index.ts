@@ -33,6 +33,7 @@ async function fetchRequests(supabase: any, roll: string): Promise<UnifiedRow[]>
     .from("requests")
     .select("customer, role, specialization, created_at, region, filled, price_median")
     .eq("role", roll)
+    .eq("is_public", true)
     .order("created_at", { ascending: false });
   return (data || []).map((r: any) => ({
     customer: r.customer,
