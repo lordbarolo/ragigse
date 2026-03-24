@@ -8,7 +8,6 @@ import type { PricingResult } from "@/hooks/usePricingEngine";
 import { Check, Mail, ArrowRight, Info } from "lucide-react";
 import { CONSULTANT_ITEMS, PERMANENT_ITEMS } from "@/components/teaser/ReportPreviewList";
 import { fetchLead, leadToSurvey, createReport, saveEmail } from "@/services/leadService";
-import { CONSULTANT_ITEMS, PERMANENT_ITEMS } from "@/components/teaser/ReportPreviewList";
 
 /* ── Steps with icons & subtitles ── */
 const STEPS = [
