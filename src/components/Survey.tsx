@@ -602,11 +602,6 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                 </div>
               </div>
 
-              {!kommunSearch && (
-               <p className="text-hint text-center">
-                   Börja skriva för att hitta din uppdragsort
-                 </p>
-              )}
             </div>
           </StepWrapper>
         )}
