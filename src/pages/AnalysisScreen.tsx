@@ -57,16 +57,34 @@ export default function AnalysisScreen() {
   const startRef = useRef(Date.now());
   const emailPauseTime = useRef(0);
 
-  /* ── Init ── */
+  /* ── Init: try sessionStorage, fallback to backend ── */
   useEffect(() => {
     const rid = urlLeadId || sessionStorage.getItem("leadId") || "";
-    if (!rid) {navigate("/");return;}
+    if (!rid) { navigate("/"); return; }
     setLeadId(rid);
-    setReportId(sessionStorage.getItem("reportId") || "");
+
+    // Try sessionStorage first (populated during survey flow)
     const raw = sessionStorage.getItem("surveyData");
-    if (raw) setSurvey(JSON.parse(raw) as SurveyData);
-    const pricingRaw = sessionStorage.getItem("pricingResult");
-    if (pricingRaw) setPricing(JSON.parse(pricingRaw) as PricingResult);
+    if (raw) {
+      setSurvey(JSON.parse(raw) as SurveyData);
+      setReportId(sessionStorage.getItem("reportId") || "");
+      const pricingRaw = sessionStorage.getItem("pricingResult");
+      if (pricingRaw) setPricing(JSON.parse(pricingRaw) as PricingResult);
+    } else {
+      // Backend-first: fetch lead data from server
+      fetchLead(rid).then((res) => {
+        const surveyData = leadToSurvey(res.lead);
+        setSurvey(surveyData);
+        if (res.report_id) {
+          setReportId(res.report_id);
+          sessionStorage.setItem("reportId", res.report_id);
+        }
+        sessionStorage.setItem("leadId", rid);
+        sessionStorage.setItem("surveyData", JSON.stringify(surveyData));
+      }).catch(() => {
+        navigate("/");
+      });
+    }
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user) {
