@@ -19,7 +19,7 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.e2e-test]
-verify_jwt = false
+verify_jwt = true
 
 [functions.analytics-dashboard]
 verify_jwt = false

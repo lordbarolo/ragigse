@@ -157,7 +157,7 @@ Deno.serve(async (req) => {
       fetchAll(supabase, "requests",
         "customer, role, region, created_at, customer_type, unit",
         (q: any) => {
-          q = q.not("created_at", "is", null).not("customer", "is", null).not("role", "is", null);
+          q = q.eq("is_public", true).not("created_at", "is", null).not("customer", "is", null).not("role", "is", null);
           return applyFilters("role", "region", "customer", true)(q);
         },
         "created_at"),

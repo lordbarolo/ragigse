@@ -70,11 +70,13 @@ serve(async (req) => {
     // 3. Silent signup — create auth user (or find existing)
     let userId: string | null = null;
 
-    // Check if user already exists
-    const { data: existingUsers } = await supabase.auth.admin.listUsers();
-    const existingUser = existingUsers?.users?.find(
-      (u) => u.email?.toLowerCase() === email.toLowerCase()
-    );
+    // Check if user already exists (use filter instead of listing all users)
+    const { data: existingUsers } = await supabase.auth.admin.listUsers({
+      filter: `email.eq.${email.toLowerCase()}`,
+      page: 1,
+      perPage: 1,
+    });
+    const existingUser = existingUsers?.users?.[0] || null;
 
     if (existingUser) {
       userId = existingUser.id;
