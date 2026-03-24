@@ -123,6 +123,15 @@ export default function AnalysisScreen() {
     return 60 + (t - 0.4) / 0.6 * 25;
   };
 
+  /* ── Fire teaser_viewed when results are shown ── */
+  const teaserViewedRef = useRef(false);
+  useEffect(() => {
+    if (phase === "paused_for_email" && !teaserViewedRef.current) {
+      teaserViewedRef.current = true;
+      trackEvent("teaser_viewed", { role: survey?.yrke || null, zone: survey?.kommun || null });
+    }
+  }, [phase, survey]);
+
   /* ── Phase 1: animate to 85% ── */
   useEffect(() => {
     if (phase !== "animating") return;
