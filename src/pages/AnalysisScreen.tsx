@@ -198,14 +198,17 @@ export default function AnalysisScreen() {
     const customerRate = pricing.rate_customer_sek_per_hour || 616;
     const low = pricing.recommended_hourly_min || 470;
     const high = pricing.recommended_hourly_max || 560;
+    // User is underpaid only if below the recommended max AND below customer rate
     const isUnderpaid = userHourly < high;
+    // User is above threshold if earning more than the customer rate (what region pays)
+    const isAboveCustomerRate = userHourly > customerRate;
     const roleName = survey.yrke || "Sjuksköterska";
     const zone = pricing.zon || "Zon 1";
     const diffPercent = isUnderpaid ?
     Math.round((high - userHourly) / high * 100) :
     Math.round((userHourly - low) / low * 100);
     const isPermanent = (survey as SurveyData & {track?: string;}).track === "permanent";
-    return { userHourly, customerRate, low, high, isUnderpaid, roleName, zone, diffPercent, isPermanent };
+    return { userHourly, customerRate, low, high, isUnderpaid, isAboveCustomerRate, roleName, zone, diffPercent, isPermanent };
   }, [survey, pricing]);
 
   const validEmail = EMAIL_REGEX.test(email.trim());
@@ -441,7 +444,10 @@ export default function AnalysisScreen() {
               <span className="bg-[hsl(var(--amber))]/[0.12] text-[hsl(var(--amber))] border border-[hsl(var(--amber))]/25 rounded-full px-2.5 py-0.5 text-[11px] font-display font-bold">
                     Under marknad
                   </span> :
-
+              teaserData?.isAboveCustomerRate ?
+              <span className="bg-[hsl(var(--amber))]/[0.12] text-[hsl(var(--amber))] border border-[hsl(var(--amber))]/25 rounded-full px-2.5 py-0.5 text-[11px] font-display font-bold">
+                    Över kundpris
+                  </span> :
               <span className="bg-[hsl(var(--green))]/[0.12] text-[hsl(var(--green))] border border-[hsl(var(--green))]/25 rounded-full px-2.5 py-0.5 text-[11px] font-display font-bold">
                     Över marknad
                   </span>
@@ -464,14 +470,34 @@ export default function AnalysisScreen() {
               </div>
 
               {/* Average salary comparison */}
-              {teaserData &&
+            {teaserData &&
             <div className="px-5 pb-4 pt-1">
                   <p className="text-[13px] text-foreground/55 leading-relaxed">
-                    Snittlönen för {survey?.yrke || "din roll"} är{" "}
-                    <strong className={`${teaserData.userHourly < teaserData.low ? "text-[hsl(var(--amber))]" : teaserData.userHourly > teaserData.high ? "text-[hsl(var(--green))]" : "text-foreground/75"}`}>
-                      {teaserData.userHourly < teaserData.low ? "högre" : teaserData.userHourly > teaserData.high ? "lägre" : "i nivå"}
-                    </strong>{" "}
-                    jämfört med dig
+                    {teaserData.isAboveCustomerRate ? (
+                      <>
+                        Din ersättning på {fmt(teaserData.userHourly)} kr/h ligger{" "}
+                        <strong className="text-[hsl(var(--amber))]">över regionens kundpris</strong>{" "}
+                        på {fmt(teaserData.customerRate)} kr/h. Se rapporten för fullständig analys.
+                      </>
+                    ) : teaserData.userHourly > teaserData.high ? (
+                      <>
+                        Din ersättning ligger{" "}
+                        <strong className="text-[hsl(var(--green))]">över marknadsspannet</strong>{" "}
+                        för {survey?.yrke || "din roll"}.
+                      </>
+                    ) : teaserData.userHourly < teaserData.low ? (
+                      <>
+                        Marknadsspannet för {survey?.yrke || "din roll"} är{" "}
+                        <strong className="text-[hsl(var(--amber))]">högre</strong>{" "}
+                        än din nuvarande ersättning.
+                      </>
+                    ) : (
+                      <>
+                        Din ersättning ligger{" "}
+                        <strong className="text-foreground/75">inom marknadsspannet</strong>{" "}
+                        för {survey?.yrke || "din roll"}.
+                      </>
+                    )}
                   </p>
                 </div>
             }
