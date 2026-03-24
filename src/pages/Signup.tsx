@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,29 +14,64 @@ export default function Signup() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const navigate = useNavigate();
   const { toast } = useToast();
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+
     if (password.length < 6) {
       toast({ title: "Lösenordet måste vara minst 6 tecken", variant: "destructive" });
       return;
     }
+
+    const normalizedEmail = email.trim().toLowerCase();
     setLoading(true);
 
     const { error } = await supabase.auth.signUp({
-      email,
+      email: normalizedEmail,
       password,
       options: { emailRedirectTo: window.location.origin },
     });
 
-    setLoading(false);
     if (error) {
+      const errorMessage = error.message.toLowerCase();
+      const accountExists =
+        errorMessage.includes("already registered") ||
+        errorMessage.includes("already been registered") ||
+        errorMessage.includes("user already registered");
+
+      setLoading(false);
+
+      if (accountExists) {
+        toast({
+          title: "Kontot finns redan",
+          description: "Logga in med din e-post och ditt lösenord istället.",
+          variant: "destructive",
+        });
+        navigate("/logga-in");
+        return;
+      }
+
       toast({ title: "Registrering misslyckades", description: error.message, variant: "destructive" });
       return;
     }
 
-    setSuccess(true);
+    const { error: loginError } = await supabase.auth.signInWithPassword({
+      email: normalizedEmail,
+      password,
+    });
+
+    setLoading(false);
+
+    if (loginError) {
+      setEmail(normalizedEmail);
+      setSuccess(true);
+      return;
+    }
+
+    toast({ title: "Konto skapat", description: "Du är nu inloggad." });
+    navigate("/profil");
   };
 
   if (success) {
@@ -45,13 +80,13 @@ export default function Signup() {
         <Card className="w-full max-w-md border-border/50 bg-card/80 backdrop-blur">
           <CardContent className="pt-8 pb-8 text-center space-y-4">
             <CheckCircle2 className="w-12 h-12 text-accent mx-auto" />
-            <h2 className="text-xl font-semibold text-foreground">Kolla din inbox!</h2>
+            <h2 className="text-xl font-semibold text-foreground">Konto skapat</h2>
             <p className="text-muted-foreground text-sm">
-              Vi har skickat en verifieringslänk till <strong className="text-foreground">{email}</strong>.
-              Klicka på länken för att aktivera ditt konto.
+              Ditt konto för <strong className="text-foreground">{email}</strong> är aktivt.
+              Ingen verifieringsmejl krävs längre.
             </p>
             <Link to="/logga-in" className="text-primary hover:underline text-sm font-medium">
-              Tillbaka till inloggning
+              Gå till inloggning
             </Link>
           </CardContent>
         </Card>
@@ -71,7 +106,7 @@ export default function Signup() {
         <Card className="border-border/50 bg-card/80 backdrop-blur">
           <CardHeader className="text-center">
             <CardTitle className="text-xl font-semibold text-foreground">Skapa konto</CardTitle>
-            <CardDescription>Få tillgång till dina rapporter och personlig profil</CardDescription>
+            <CardDescription>Få tillgång till dina rapporter och personlig profil direkt</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSignup} className="space-y-4">
@@ -103,6 +138,10 @@ export default function Signup() {
                 Skapa konto
               </Button>
             </form>
+
+            <p className="mt-4 text-center text-xs text-muted-foreground">
+              Ingen verifieringsmejl krävs vid registrering.
+            </p>
 
             <div className="mt-6 text-center text-sm text-muted-foreground">
               Har du redan ett konto?{" "}
