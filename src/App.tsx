@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense, useEffect, useRef } from "react";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { Toaster } from "@/components/ui/toaster";
 // import ReijdarChat from "@/components/radar/ReijdarChat";
@@ -8,6 +8,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import CookieBanner from "@/components/CookieBanner";
+import { posthog, isPostHogReady } from "@/lib/posthog";
 import Index from "./pages/Index";
 
 // Lazy-loaded routes for code splitting
@@ -47,7 +48,18 @@ const Loading = () => (
 
 function ScrollToTop() {
   const { pathname } = useLocation();
-  useEffect(() => { window.scrollTo(0, 0); }, [pathname]);
+  const prevPathRef = useRef(pathname);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    if (pathname !== prevPathRef.current) {
+      prevPathRef.current = pathname;
+      if (isPostHogReady()) {
+        posthog.capture("$pageview");
+      }
+    }
+  }, [pathname]);
+
   return null;
 }
 
