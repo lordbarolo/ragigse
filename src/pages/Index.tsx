@@ -119,6 +119,7 @@ export default function Index() {
 
       {/* ── iPhone Preview ────────────────────────────── */}
       <section className="max-w-5xl mx-auto px-6 -mt-16 relative z-20 flex flex-col items-center">
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-4">Rapportexempel för infektionssjuksköterska</p>
         {/* iPhone frame */}
         <div className="relative mx-auto" style={{ maxWidth: 320 }}>
           {/* Outer shell */}
