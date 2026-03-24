@@ -1,43 +1,71 @@
 
 
-# Fix: Admin Dev Bypass — Säkerhetsåtgärd
+# Plan: Ta bort isDev-bypass + End-to-end-verifiering
 
-## Problem
+## 1. Ta bort isDev-bypass i Uppdragsradar.tsx
 
-Nuvarande bypass i `adminAuth.ts` (edge function) kontrollerar `referer`/`origin`-headern för att avgöra om miljön är dev/preview. **Referer-headers kan spoofas** — vem som helst kan skicka en request med `Referer: https://id-preview--x.lovableproject.com` och få full admin-åtkomst utan inloggning.
+**Fil:** `src/pages/Uppdragsradar.tsx`
 
-På klientsidan (`useAdminAuth.ts`) kontrolleras hostname, vilket är säkrare men ändå ger öppet admin-läge i alla preview-miljöer.
+- Rad 67: Ta bort `const isDev = ...`
+- Rad 70-74: Ändra auth-redirect till att alltid gälla (ta bort `!isDev`-villkoret)
 
-## Lösning
+Resultat: Alla miljöer kräver inloggning för att nå Uppdragsradar.
 
-Byt från referer-baserad bypass till en **server-side environment variable** (`ADMIN_DEV_BYPASS`). Bypasset aktiveras bara om servern explicit har satt variabeln — inte baserat på vad klienten skickar.
+---
 
-### Steg
+## 2. Verifiering av skyddade tabeller — klientskrivningar
 
-**1. Edge function (`adminAuth.ts`)**
-- Ta bort referer-baserad check
-- Läs `Deno.env.get("ADMIN_DEV_BYPASS")` istället
-- Bypass aktiveras bara om env-variabeln === `"true"`
+Genomgång av alla `supabase.from(...).insert()` i klienten:
 
-```typescript
-const devBypass = Deno.env.get("ADMIN_DEV_BYPASS") === "true";
-if (devBypass) {
-  return { userId: "dev-bypass" };
-}
-```
+| Anrop | Tabell | RLS-skydd | Status |
+|-------|--------|-----------|--------|
+| Survey.tsx | `leads` | Publik INSERT (med check: true) | OK — avsiktligt öppet |
+| ReportFeedback.tsx | `report_feedback` | Publik INSERT | OK — avsiktligt öppet |
+| InvoiceReviewCTA.tsx | `invoice_review_leads` | Behöver kontrolleras |
+| InvoiceReviewCTA.tsx | `audit_optins` | INSERT för anon+auth | OK — låst SELECT till service_role |
+| Radar.tsx, PredictionDetail.tsx | `radar_watchlist` | INSERT med user_id = auth.uid() | OK |
+| VerificationUpload.tsx | `ref_verifications` | INSERT med profile_id = auth.uid() | OK |
+| InviteModal.tsx | `ref_references` | INSERT med individual_id = auth.uid() | OK |
+| useRefProfile.ts | `ref_profiles` | Behöver kontrolleras |
 
-**2. Sätt secret `ADMIN_DEV_BYPASS`**
-- Använda secrets-verktyget för att sätta `ADMIN_DEV_BYPASS=true` i test-miljön
-- I produktion sätts den aldrig → bypass är inaktivt
+`analytics_events` — redan låst till service_role INSERT (migration genomförd).
 
-**3. Klient-hook (`useAdminAuth.ts`)**
-- Behåll dev-bypass på klientsidan (hostname-check) — detta styr bara UI-visning, inte dataskydd
-- Alternativt: gör klienten konsekvent och alltid fråga servern
+**Åtgärd:** Verifiera RLS för `invoice_review_leads` och `ref_profiles` INSERT-policies i databasen.
 
-**4. Deploy edge functions** som använder `adminAuth.ts`
+---
 
-### Påverkan
-- **Ingen funktionell ändring** i dev/preview (bypass funkar fortfarande via env var)
-- **Produktionssäkerhet**: omöjligt att spoofa sig förbi admin-check
-- Berörda filer: `supabase/functions/_shared/adminAuth.ts`, eventuellt `src/hooks/useAdminAuth.ts`
+## 3. End-to-end-verifiering av track-event Edge Function
+
+Testa via `supabase--curl_edge_functions`:
+
+1. **Giltigt event** — skicka `landing_viewed` → förvänta 200 + `{ ok: true }`
+2. **Ogiltigt event** — skicka `fake_event_name` → förvänta 400 + `{ error: "Invalid event_name" }`
+3. **Rate limit** — verifiera att `rate_limit_log` loggar anrop korrekt
+
+---
+
+## 4. Verifiering av admin Edge Functions
+
+Bekräfta att dessa alla använder `requireAdmin`:
+- `import-contract` — redan verifierat
+- `run-price-diff` — redan verifierat
+- `salary-insights` — redan verifierat
+- `feedback-stats` — redan verifierat
+
+---
+
+## 5. Övriga isDev-användningar (ingen åtgärd)
+
+- `ErrorBoundary.tsx` — visar feldetaljer bara i dev, ingen säkerhetsrisk
+- `App.tsx` — `/dev/e2e-test`-route bara i dev, acceptabelt för testning
+
+---
+
+## Sammanfattning av filändringar
+
+| Fil | Ändring |
+|-----|---------|
+| `src/pages/Uppdragsradar.tsx` | Ta bort isDev-bypass, auth-redirect alltid aktiv |
+
+Resten är verifiering utan kodändring (edge function-test + RLS-kontroll).
 
