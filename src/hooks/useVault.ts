@@ -11,7 +11,7 @@ export function useVault(userId: string | undefined) {
     setLoading(true);
     try {
       const { data: result, error } = await supabase.functions.invoke("reference-vault", {
-        body: { action: "get-vault", consultant_id: userId },
+        body: { action: "get-vault" },
       });
       if (error) throw error;
       setData(result as VaultData);
@@ -25,7 +25,7 @@ export function useVault(userId: string | undefined) {
   const attach = useCallback(async (applicationId: string, referenceIds: string[]) => {
     if (!userId) throw new Error("Not authenticated");
     const { data: result, error } = await supabase.functions.invoke("reference-vault", {
-      body: { action: "attach", application_id: applicationId, reference_ids: referenceIds, user_id: userId },
+      body: { action: "attach", application_id: applicationId, reference_ids: referenceIds },
     });
     if (error) throw error;
     return result;

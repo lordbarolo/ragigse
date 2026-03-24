@@ -6,12 +6,37 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+/** Extract authenticated user ID from JWT */
+async function getAuthUserId(req: Request): Promise<string | null> {
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) return null;
+
+  const supabase = createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_ANON_KEY")!,
+    { global: { headers: { Authorization: authHeader } } }
+  );
+
+  const { data: { user }, error } = await supabase.auth.getUser();
+  if (error || !user) return null;
+  return user.id;
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    // Authenticate user from JWT
+    const authUserId = await getAuthUserId(req);
+    if (!authUserId) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
@@ -21,13 +46,8 @@ Deno.serve(async (req) => {
 
     // --- GET VAULT ---
     if (action === "get-vault") {
-      const { consultant_id } = params;
-      if (!consultant_id) {
-        return new Response(JSON.stringify({ error: "Missing consultant_id" }), {
-          status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        });
-      }
+      // Use authenticated user ID, ignore any client-supplied consultant_id
+      const consultant_id = authUserId;
 
       // Fetch references with freshness computation
       const { data: refs, error } = await supabase
@@ -46,11 +66,8 @@ Deno.serve(async (req) => {
         const lastConfirmed = ref.last_confirmed_at ? new Date(ref.last_confirmed_at) : null;
         const isStale = lastConfirmed ? (now.getTime() - lastConfirmed.getTime() > sixMonthsMs) : true;
         const isActive = ref.status === "active";
-
-        // Compute effective attachable status (runtime check, not just DB)
         const effectiveAttachable = isActive && !isStale && ref.attachable;
 
-        // Determine group
         let group: "attachable" | "stale" | "pending";
         if (ref.status === "pending") {
           group = "pending";
@@ -59,7 +76,7 @@ Deno.serve(async (req) => {
         } else if (effectiveAttachable) {
           group = "attachable";
         } else {
-          group = "stale"; // active but not attachable = effectively stale
+          group = "stale";
         }
 
         return {
@@ -86,7 +103,6 @@ Deno.serve(async (req) => {
         };
       });
 
-      // Sort: attachable first, then stale, then pending
       const groupOrder = { attachable: 0, stale: 1, pending: 2 };
       vault.sort((a: any, b: any) => groupOrder[a.group as keyof typeof groupOrder] - groupOrder[b.group as keyof typeof groupOrder]);
 
@@ -104,15 +120,18 @@ Deno.serve(async (req) => {
 
     // --- ATTACH REFERENCES ---
     if (action === "attach") {
-      const { application_id, reference_ids, user_id } = params;
-      if (!application_id || !reference_ids?.length || !user_id) {
+      const { application_id, reference_ids } = params;
+      // Use JWT-derived user_id, not client-supplied
+      const user_id = authUserId;
+
+      if (!application_id || !reference_ids?.length) {
         return new Response(JSON.stringify({ error: "Missing required fields" }), {
           status: 400,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       }
 
-      // Verify all references are attachable and owned by the user
+      // Verify all references are attachable and owned by the authenticated user
       const { data: refs, error: refError } = await supabase
         .from("ref_references")
         .select("id, attachable, individual_id, verification_level, last_confirmed_at, expires_at")
@@ -147,7 +166,6 @@ Deno.serve(async (req) => {
         });
       }
 
-      // Create application_references and artifacts
       const attachRows = reference_ids.map((ref_id: string) => ({
         application_id,
         reference_id: ref_id,
@@ -160,7 +178,6 @@ Deno.serve(async (req) => {
 
       if (attachError) throw attachError;
 
-      // Create artifacts for each reference
       for (const ref_id of reference_ids) {
         const tokenBytes = new Uint8Array(32);
         crypto.getRandomValues(tokenBytes);
@@ -184,7 +201,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    // --- GET ATTACHED REFERENCES FOR APPLICATION (for Verify proof) ---
+    // --- GET ATTACHED REFERENCES FOR APPLICATION ---
     if (action === "get-attached") {
       const { application_id } = params;
       if (!application_id) {
@@ -194,12 +211,14 @@ Deno.serve(async (req) => {
         });
       }
 
+      // Verify the authenticated user owns this application's attached references
       const { data: attached, error } = await supabase
         .from("ref_application_references")
         .select(`
           id,
           created_at,
           reference_id,
+          attached_by_user_id,
           ref_references!inner (
             giver_name,
             workplace,
@@ -212,17 +231,16 @@ Deno.serve(async (req) => {
             recommendation_score
           )
         `)
-        .eq("application_id", application_id);
+        .eq("application_id", application_id)
+        .eq("attached_by_user_id", authUserId);
 
       if (error) throw error;
 
       const now = new Date();
       const sixMonthsMs = 6 * 30.44 * 24 * 60 * 60 * 1000;
 
-      // Collect reference IDs to batch-fetch artifact tokens
       const refIds = (attached || []).map((row: any) => row.reference_id);
 
-      // Fetch active artifact tokens for these references
       const { data: artifacts } = refIds.length
         ? await supabase
             .from("ref_reference_artifacts")
@@ -239,7 +257,6 @@ Deno.serve(async (req) => {
         }
       }
 
-      // Filter: must be fresh, must have verified status (not 'submitted'), must have artifact token
       const references = (attached || [])
         .map((row: any) => {
           const lastConfirmed = row.ref_references.last_confirmed_at
