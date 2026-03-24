@@ -271,7 +271,7 @@ export default function ConsultantTrackContent({
             <div className="flex items-center justify-between p-3.5 bg-accent/[0.04]">
               <div>
                 <p className="text-micro font-semibold tracking-[0.8px] uppercase mb-1">{isEmployee ? "Din lön" : "Din ersättning"}</p>
-                <p className={`${monoClass} text-[22px] font-medium tracking-tight text-accent`}>{fmt(currentHourly)} kr/h</p>
+                <p className={`${monoClass} text-[22px] font-bold tracking-tight text-foreground`}>{fmt(currentHourly)} kr/h</p>
                 <p className={`${monoClass} text-micro mt-0.5`}>{fmt(currentMonthly)} kr/mån</p>
               </div>
               <span className="text-micro font-semibold tracking-[0.5px] bg-accent/[0.12] text-accent border border-accent/[0.2] rounded-full px-2.5 py-1 whitespace-nowrap">
