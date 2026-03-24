@@ -284,12 +284,18 @@ export default function Admin() {
               variant="outline"
               className="gap-1.5 text-xs"
               onClick={async () => {
-                const leadsRes = await supabase.from("leads").select("id", { count: "exact", head: true });
-                const reportsRes = await supabase.from("reports").select("id", { count: "exact", head: true });
-                toast({
-                  title: "Dataöversikt",
-                  description: `Leads: ${leadsRes.count ?? '–'} | Rapporter: ${reportsRes.count ?? '–'}`,
-                });
+                try {
+                  const { data: res, error } = await supabase.functions.invoke("admin-data", {
+                    body: { action: "data-counts" },
+                  });
+                  if (error) throw error;
+                  toast({
+                    title: "Dataöversikt",
+                    description: `Leads: ${res?.leads ?? '–'} | Rapporter: ${res?.reports ?? '–'}`,
+                  });
+                } catch (err: any) {
+                  toast({ title: "Fel", description: err.message, variant: "destructive" });
+                }
               }}
             >
               <Database className="w-3.5 h-3.5" /> Visa datapunkter
