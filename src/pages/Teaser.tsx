@@ -172,32 +172,17 @@ export default function Teaser() {
     if (!leadId || !survey || reportId || retryAttempted.current) return;
     retryAttempted.current = true;
 
-    const retryCreateReport = async () => {
-      console.log("[Teaser] reportId missing — retrying create-report in background");
-      try {
-        const { data, error } = await supabase.functions.invoke("create-report", {
-          body: {
-            lead_id: leadId,
-            occupation: survey.yrke,
-            employment_type: survey.employmentType,
-            kommun: survey.kommun,
-            current_salary: survey.currentSalary,
-            salary_type: survey.salaryType,
-            track: (survey as SurveyData & { track?: string }).track || "consultant",
-          },
-        });
-        if (!error && data?.report_id) {
-          console.log("[Teaser] Background retry succeeded, reportId:", data.report_id);
-          setReportId(data.report_id);
-          sessionStorage.setItem("reportId", data.report_id);
-        } else {
-          console.warn("[Teaser] Background retry failed:", error || data);
-        }
-      } catch (err) {
-        console.warn("[Teaser] Background retry error:", err);
-      }
-    };
-    retryCreateReport();
+    createReport({
+      leadId,
+      survey,
+      track: (survey as SurveyData & { track?: string }).track,
+    }).then(({ reportId: rid }) => {
+      console.log("[Teaser] Background retry succeeded, reportId:", rid);
+      setReportId(rid);
+      sessionStorage.setItem("reportId", rid);
+    }).catch((err) => {
+      console.warn("[Teaser] Background retry failed:", err);
+    });
   }, [leadId, survey, reportId]);
 
   // Check referral unlock status
