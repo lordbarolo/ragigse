@@ -323,11 +323,7 @@ export default function Teaser() {
   const handleEmailSubmit = async (emailValue: string) => {
     setEmailSaving(true);
     try {
-      // Save email to lead + report (also creates auth user + consultant profile)
-      const { error: saveErr } = await supabase.functions.invoke("save-email", {
-        body: { lead_id: leadId, report_id: reportId, email: emailValue },
-      });
-      if (saveErr) throw saveErr;
+      await saveEmail({ leadId, reportId, email: emailValue });
 
       setEmail(emailValue);
       if (survey) {
@@ -345,23 +341,10 @@ export default function Teaser() {
     let activeReportId = reportId;
     if (!activeReportId && leadId && survey) {
       try {
-        const { data: rData, error: rErr } = await supabase.functions.invoke("create-report", {
-          body: {
-            lead_id: leadId,
-            email: emailValue,
-            occupation: survey.yrke,
-            employment_type: survey.employmentType,
-            kommun: survey.kommun,
-            current_salary: survey.currentSalary,
-            salary_type: survey.salaryType,
-            track: "consultant",
-          },
-        });
-        if (!rErr && rData?.report_id) {
-          activeReportId = rData.report_id;
-          setReportId(activeReportId);
-          sessionStorage.setItem("reportId", activeReportId);
-        }
+        const result = await createReport({ leadId, email: emailValue, survey, track: "consultant" });
+        activeReportId = result.reportId;
+        setReportId(activeReportId);
+        sessionStorage.setItem("reportId", activeReportId);
       } catch {
         // Fall through
       }
