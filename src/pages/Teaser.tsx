@@ -138,39 +138,20 @@ export default function Teaser() {
       return;
     }
 
-    // No sessionStorage — fetch from Supabase
-    const fetchLead = async () => {
+    // No sessionStorage — fetch from backend
+    const loadFromBackend = async () => {
       try {
-        const { data, error } = await supabase.functions.invoke("get-lead", {
-          body: { lead_id: resolvedLeadId },
-        });
-
-        if (error || !data?.lead) {
-          setLoadError(true);
-          return;
-        }
-
-        const lead = data.lead;
-        const surveyData: SurveyData & { track?: string } = {
-          email: lead.email,
-          employmentType: lead.employment_type as "anstalld" | "foretagare",
-          yrke: lead.yrke || "",
-          kommun: lead.kommun || "",
-          experience: lead.experience || 0,
-          salaryType: (lead.salary_type as "hourly" | "monthly") || "hourly",
-          currentSalary: lead.current_salary || 0,
-          obShare: "",
-          track: "consultant",
-        };
+        const res = await fetchLead(resolvedLeadId);
+        const surveyData = leadToSurvey(res.lead);
 
         setSurvey(surveyData);
-        setReportId(data.report_id || "");
-        if (data.unlocked_by_referral) setUnlocked(true);
+        setReportId(res.report_id || "");
+        if (res.unlocked_by_referral) setUnlocked(true);
 
-        // Store in sessionStorage for subsequent navigations within this session
+        // Cache in sessionStorage for subsequent navigations
         sessionStorage.setItem("leadId", resolvedLeadId);
         sessionStorage.setItem("surveyData", JSON.stringify(surveyData));
-        if (data.report_id) sessionStorage.setItem("reportId", data.report_id);
+        if (res.report_id) sessionStorage.setItem("reportId", res.report_id);
 
         trackEvent("teaser_viewed");
 
@@ -182,7 +163,7 @@ export default function Teaser() {
       }
     };
 
-    fetchLead();
+    loadFromBackend();
   }, [urlLeadId, navigate]);
 
   // ── Background retry: create report if missing (timeout fallback) ──
