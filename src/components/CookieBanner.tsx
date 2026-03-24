@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { getConsent, setConsent } from "@/lib/cookieConsent";
-import { initPostHog } from "@/lib/posthog";
 import { Link } from "react-router-dom";
 
 export default function CookieBanner() {
@@ -8,7 +7,7 @@ export default function CookieBanner() {
 
   useEffect(() => {
     const consent = getConsent();
-    if (consent === "accepted") { initPostHog(); return; }
+    if (consent === "accepted") return;
     if (consent === "rejected") return;
 
     // No consent yet — delay banner until scroll/time/interaction
@@ -42,7 +41,6 @@ export default function CookieBanner() {
 
   const handleAccept = () => {
     setConsent("accepted");
-    initPostHog();
     setVisible(false);
   };
 

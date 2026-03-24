@@ -1,5 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
-import { posthog } from "@/lib/posthog";
+import posthog from "@/lib/posthog";
 import { getUtmParams, getCouponCode } from "@/lib/captureParams";
 
 function isInternalTraffic(): boolean {
