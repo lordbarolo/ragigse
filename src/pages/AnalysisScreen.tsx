@@ -100,14 +100,12 @@ export default function AnalysisScreen() {
   useEffect(() => {
     if (!leadId || !survey || reportId || retryAttempted.current) return;
     retryAttempted.current = true;
-    (async () => {
-      try {
-        const { data, error } = await supabase.functions.invoke("create-report", {
-          body: { lead_id: leadId, occupation: survey.yrke, employment_type: survey.employmentType, kommun: survey.kommun, current_salary: survey.currentSalary, salary_type: survey.salaryType, track: (survey as SurveyData & {track?: string;}).track || "consultant" }
-        });
-        if (!error && data?.report_id) {setReportId(data.report_id);sessionStorage.setItem("reportId", data.report_id);}
-      } catch {}
-    })();
+    createReport({ leadId, survey, track: (survey as SurveyData & { track?: string }).track })
+      .then(({ reportId: rid }) => {
+        setReportId(rid);
+        sessionStorage.setItem("reportId", rid);
+      })
+      .catch(() => {});
   }, [leadId, survey, reportId]);
 
   /* ── Fact rotation ── */
