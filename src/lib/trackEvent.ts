@@ -80,14 +80,15 @@ export function trackEvent(
     try { posthog.capture(eventName, enrichedMetadata); } catch { /* silent */ }
   }
 
-  // Fire-and-forget to DB — don't block UI
-  supabase
-    .from("analytics_events")
-    .insert([{
-      event_name: eventName,
-      lead_id: leadId || null,
-      metadata: enrichedMetadata as Record<string, string | number | boolean | null>,
-    }])
+  // Fire-and-forget via edge function — don't block UI
+  supabase.functions
+    .invoke("track-event", {
+      body: {
+        event_name: eventName,
+        lead_id: leadId || null,
+        metadata: enrichedMetadata,
+      },
+    })
     .then(({ error }) => {
       if (error) console.warn("[trackEvent]", error.message);
     });
