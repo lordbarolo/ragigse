@@ -109,12 +109,17 @@ export default function Admin() {
 
   const fetchAuditOptins = async () => {
     setAuditLoading(true);
-    const { data, error } = await supabase
-      .from("audit_optins")
-      .select("*")
-      .order("created_at", { ascending: false });
-    if (!error) setAuditOptins((data as AuditOptin[]) || []);
-    setAuditLoading(false);
+    try {
+      const { data: res, error } = await supabase.functions.invoke("admin-data", {
+        body: { action: "audit-optins" },
+      });
+      if (error) throw error;
+      setAuditOptins((res?.optins as AuditOptin[]) || []);
+    } catch (err: any) {
+      console.error("Audit optins error:", err);
+    } finally {
+      setAuditLoading(false);
+    }
   };
 
   useEffect(() => {
