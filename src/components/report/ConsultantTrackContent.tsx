@@ -348,7 +348,7 @@ export default function ConsultantTrackContent({
             <li className="flex items-start gap-3">
               <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
               <span className="text-body-sm leading-relaxed">
-                Kostnader som kan påverka ersättningen: resa, boende, Siths-kort, HLR-utb, intro.
+                Notera att resa, boende och kompetensintyg (t.ex. HLR, SITHS) ofta dras från ersättningen — fråga vad som ingår.
               </span>
             </li>
           </ul>

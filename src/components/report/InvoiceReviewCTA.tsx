@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { ShieldCheck, CheckCircle, Loader2, Clock, Moon, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent } from "@/components/ui/card";
 import { trackEvent } from "@/lib/trackEvent";
 
@@ -15,7 +14,6 @@ interface Props {
 }
 
 export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }: Props) {
-  const [wantsReview, setWantsReview] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [alreadyOptedIn, setAlreadyOptedIn] = useState(false);
@@ -27,10 +25,8 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }
     }
   }, [leadId]);
 
-  const canSubmit = wantsReview && !loading && !submitted;
-
   const handleSubmit = async () => {
-    if (!canSubmit) return;
+    if (loading || submitted) return;
     setLoading(true);
 
     const { error } = await supabase.from("invoice_review_leads").insert({
@@ -78,7 +74,9 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }
       <CardContent className="pt-6 space-y-5">
         <div className="flex items-center gap-2">
           <ShieldCheck className="w-5 h-5 text-primary shrink-0" />
-          <p className="font-semibold text-foreground text-base">Stämmer dina fakturor med avtalsvillkoren?</p>
+          <p className="font-semibold text-foreground text-base">
+            Hyrläkare missar i snitt 8 000–12 000 kr per månad på sina fakturor
+          </p>
         </div>
 
         <p className="text-body-sm leading-relaxed">
@@ -101,25 +99,14 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }
           ))}
         </div>
 
-        <div className="flex items-start gap-3">
-          <Checkbox
-            id="invoice-review"
-            checked={wantsReview}
-            onCheckedChange={(v) => setWantsReview(v === true)}
-            className="mt-0.5"
-          />
-          <label htmlFor="invoice-review" className="text-body-sm leading-relaxed cursor-pointer">
-            Ja, kontakta mig för en kostnadsfri fakturagranskning via{" "}
-            <span className="font-medium text-foreground">{email}</span>
-          </label>
-        </div>
+        <Button onClick={handleSubmit} disabled={loading} className="w-full gap-2">
+          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
+          Ja, granska mina fakturor kostnadsfritt →
+        </Button>
 
-        {wantsReview && (
-          <Button onClick={handleSubmit} disabled={!canSubmit} className="w-full gap-2">
-            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
-            Ja, kontakta mig
-          </Button>
-        )}
+        <p className="text-micro text-center text-muted-foreground">
+          Vi kontaktar dig via <span className="font-medium text-foreground">{email}</span>
+        </p>
       </CardContent>
     </Card>
   );
