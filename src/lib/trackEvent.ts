@@ -1,5 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
-import { posthog, isPostHogReady } from "@/lib/posthog";
+import { posthog } from "@/lib/posthog";
 import { getUtmParams, getCouponCode } from "@/lib/captureParams";
 
 function isInternalTraffic(): boolean {
@@ -75,10 +75,8 @@ export function trackEvent(
     ...(utm ? { utm } : {}),
   };
 
-  // Send to PostHog (silent if not initialized)
-  if (isPostHogReady()) {
-    try { posthog.capture(eventName, enrichedMetadata); } catch { /* silent */ }
-  }
+  // Send to PostHog (silent fail)
+  try { posthog.capture(eventName, enrichedMetadata); } catch { /* silent */ }
 
   // Fire-and-forget via edge function — don't block UI
   supabase.functions
