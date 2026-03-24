@@ -165,58 +165,50 @@ export default function Report() {
           </Link>
         </div>
 
-        {/* Share actions */}
-        <div className="space-y-3 pt-2">
-          <ShareButton
-            title="CompCare.se – Ersättningsanalys"
-            text={`Hur stor är egentligen skillnaden mellan konsult och fast tjänst? Se din ersättning mot marknaden.`}
-            url={`${window.location.origin}/dela?yrke=${encodeURIComponent(report.occupation || "")}`}
-            className="w-full"
-          />
-          <div className="flex gap-3">
-            {!isFriendCoupon && (
-              <Button variant="outline" className="flex-1 gap-2 h-12 rounded-xl border-border/50 hover:border-border" onClick={async () => {
-                try {
-                  const { data, error } = await supabase.functions.invoke("generate-pdf", {
-                    body: { report_id: report.id },
-                  });
-                  if (error || !data?.pdf_base64) {
-                    window.print();
-                    return;
-                  }
-                  const byteChars = atob(data.pdf_base64);
-                  const byteArray = new Uint8Array(byteChars.length);
-                  for (let i = 0; i < byteChars.length; i++) byteArray[i] = byteChars.charCodeAt(i);
-                  const blob = new Blob([byteArray], { type: "application/pdf" });
-                  const url = URL.createObjectURL(blob);
-                  const a = document.createElement("a");
-                  a.href = url;
-                  a.download = data.filename || "CompCare_Rapport.pdf";
-                  a.click();
-                  URL.revokeObjectURL(url);
-                  trackEvent("pdf_downloaded", { report_id: report.id });
-                } catch {
+        {/* Utility actions */}
+        <div className="flex gap-3 pt-2">
+          {!isFriendCoupon && (
+            <Button variant="outline" className="flex-1 gap-2 h-12 rounded-xl border-border/50 hover:border-border" onClick={async () => {
+              try {
+                const { data, error } = await supabase.functions.invoke("generate-pdf", {
+                  body: { report_id: report.id },
+                });
+                if (error || !data?.pdf_base64) {
                   window.print();
+                  return;
                 }
-              }}>
-                <Download className="w-4 h-4" /> PDF
-              </Button>
-            )}
-            <Button
-              variant="outline"
-              className="flex-1 gap-2 h-12 rounded-xl border-border/50 hover:border-border"
-              onClick={() => {
-                const shareUrl = `${window.location.origin}/dela?yrke=${encodeURIComponent(report.occupation || "")}`;
-                const text = `Hur stor är egentligen skillnaden mellan konsult och fast tjänst? Se din ersättning mot marknaden.`;
-                window.open(
-                  `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}&summary=${encodeURIComponent(text)}`,
-                  "_blank", "width=600,height=500"
-                );
-              }}
-            >
-              <Linkedin className="w-4 h-4" /> LinkedIn
+                const byteChars = atob(data.pdf_base64);
+                const byteArray = new Uint8Array(byteChars.length);
+                for (let i = 0; i < byteChars.length; i++) byteArray[i] = byteChars.charCodeAt(i);
+                const blob = new Blob([byteArray], { type: "application/pdf" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = data.filename || "CompCare_Rapport.pdf";
+                a.click();
+                URL.revokeObjectURL(url);
+                trackEvent("pdf_downloaded", { report_id: report.id });
+              } catch {
+                window.print();
+              }
+            }}>
+              <Download className="w-4 h-4" /> PDF
             </Button>
-          </div>
+          )}
+          <Button
+            variant="outline"
+            className="flex-1 gap-2 h-12 rounded-xl border-border/50 hover:border-border"
+            onClick={() => {
+              const shareUrl = `${window.location.origin}/dela?yrke=${encodeURIComponent(report.occupation || "")}`;
+              const text = `Hur stor är egentligen skillnaden mellan konsult och fast tjänst? Se din ersättning mot marknaden.`;
+              window.open(
+                `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}&summary=${encodeURIComponent(text)}`,
+                "_blank", "width=600,height=500"
+              );
+            }}
+          >
+            <Linkedin className="w-4 h-4" /> LinkedIn
+          </Button>
         </div>
 
         {/* Footer */}

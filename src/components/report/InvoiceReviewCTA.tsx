@@ -75,7 +75,7 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }
         <div className="flex items-center gap-2">
           <ShieldCheck className="w-5 h-5 text-primary shrink-0" />
           <p className="font-semibold text-foreground text-base">
-            Hyrläkare missar i snitt 8 000–12 000 kr per månad på sina fakturor
+            Fakturor avviker ofta från avtalet. Vi hittar det — eller tar inget betalt.
           </p>
         </div>
 
