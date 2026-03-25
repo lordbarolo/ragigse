@@ -155,21 +155,18 @@ export default function Report() {
             </span>
           </div>
           <div className="rounded-[18px] bg-foreground/[0.035] border border-foreground/[0.07] overflow-hidden">
-            <div className="p-4 space-y-2">
-              <p className="text-[10px] font-semibold tracking-[0.8px] uppercase text-foreground/80">
+            <div className="p-5 space-y-3">
+              <p className="font-display text-[15px] font-semibold text-foreground leading-snug">
                 Förhandla upp din ersättning
               </p>
-              <p className="font-display text-[15px] font-semibold text-foreground leading-snug">
-                Nu vet du vad marknaden betalar.
-              </p>
-              <p className="text-[12px] text-muted-foreground leading-relaxed">
-                Vill du ha stöd i förhandlingen? Köp tillgång till vår smarta agent som har hjälpt över 300 konsulter att öka sin ersättning.
+              <p className="text-[13px] text-muted-foreground leading-relaxed">
+                Nu vet du vad marknaden betalar. Vill du ha stöd i förhandlingen? Köp tillgång till vår smarta agent som har hjälpt över 300 konsulter att öka sin ersättning.
               </p>
             </div>
-            <div className="px-4 pb-4">
+            <div className="px-5 pb-5">
               <Link
                 to={`/forhandla?role=${encodeURIComponent(report.occupation || "")}&geo=${encodeURIComponent(report.kommun || "")}&emp=${encodeURIComponent(report.employment_type || "")}`}
-                className="w-full flex items-center justify-center gap-2 rounded-[10px] bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
+                className="w-full flex items-center justify-center gap-2 rounded-[10px] bg-primary px-4 py-3.5 text-[14px] font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
               >
                 Starta förhandling →
               </Link>
