@@ -35,7 +35,7 @@ export default function Hero() {
           className="font-display font-extrabold leading-[1.04] tracking-[-0.04em] text-foreground mb-2"
           style={{ fontSize: "clamp(26px, 6.5vw, 56px)" }}
         >
-          Stödsystem för konsulter inom sjukvård
+          Samlad kunskap för konsulter inom sjukvård
         </h1>
 
         <p
