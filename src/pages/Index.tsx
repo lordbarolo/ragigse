@@ -95,7 +95,7 @@ export default function Index() {
             Data och insikter som tidigare stannat hos region och bemanningsföretag
           </p>
           <p className="text-hero-foreground/60 text-sm md:text-base max-w-2xl mx-auto mb-12">
-            {"\n"}
+            Gör löneanalysen och se om du borde förhandla
           </p>
 
           {/* Role selection CTA */}
