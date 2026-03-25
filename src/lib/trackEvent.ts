@@ -43,7 +43,8 @@ type EventName =
   | "negotiation_advice_received"
   | "reijdar_chat_started"
   | "reijdar_message_sent"
-  | "reijdar_advice_received";
+  | "reijdar_advice_received"
+  | "fakturakontroll_page_viewed";
 
 export function trackEvent(
   eventName: EventName,

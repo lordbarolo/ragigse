@@ -35,6 +35,7 @@ const ReferenceForm = lazy(() => import("./pages/ReferenceForm"));
 const PingResponse = lazy(() => import("./pages/PingResponse"));
 const PublicProfile = lazy(() => import("./pages/PublicProfile"));
 const VerifyProof = lazy(() => import("./pages/VerifyProof"));
+const Fakturakontroll = lazy(() => import("./pages/Fakturakontroll"));
 
 const queryClient = new QueryClient();
 
@@ -83,6 +84,7 @@ const App = () => (
               <Route path="/ping/:token" element={<PingResponse />} />
               <Route path="/profil/:id" element={<PublicProfile />} />
               <Route path="/verify/:applicationId" element={<VerifyProof />} />
+              <Route path="/fakturakontroll" element={<Fakturakontroll />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/dela" element={<SharePreview />} />
               <Route path="/dev/theme-preview" element={<ThemePreview />} />
