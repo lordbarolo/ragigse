@@ -18,7 +18,7 @@ const SERVICES = [
   {
     image: serviceDokument,
     title: "Referenser & Verify",
-    desc: "Ta kontroll över dina referenser och intyg. Istället för mejl fyllda med intyg, legitimationer och personuppgifter så kan du nu ladda upp dina handlingar i Compcare och ge tidsbegränsad tillgång till utvalda personer.",
+    desc: "Ta kontroll över dina referenser och intyg. Tiden då 5 bemanningsföretag hade dina personuppgifter är förbi, ladda upp dina handlingar i Compcare och ge tidsbegränsad tillgång till utvalda personer.",
     cta: "Läs mer",
   },
 ];
