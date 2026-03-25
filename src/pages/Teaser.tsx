@@ -9,22 +9,18 @@ import { Loader2 } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import { useExitIntent } from "@/hooks/useExitIntent";
 import { useTeaserData } from "@/hooks/useTeaserData";
 
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
-import { useCheckout } from "@/shared/useCheckout";
 import { fetchLead, leadToSurvey, createReport, saveEmail } from "@/services/leadService";
 
 import TeaserHeader from "@/components/teaser/TeaserHeader";
 import OccupationInfo from "@/components/teaser/OccupationInfo";
-import WowHero from "@/components/teaser/WowHero";
 import MarketDiagnosisCard from "@/components/teaser/MarketDiagnosisCard";
 import EmailGate from "@/components/teaser/EmailGate";
 import EmailHookMessage from "@/components/teaser/EmailHookMessage";
 import ReportPreviewList from "@/components/teaser/ReportPreviewList";
-import TeaserInsights from "@/components/teaser/TeaserInsights";
 
 /** Teaser page — orchestrator for the results preview */
 export default function Teaser() {
@@ -36,28 +32,12 @@ export default function Teaser() {
   const { data: locations } = useLocations();
   const [survey, setSurvey] = useState<SurveyData | null>(null);
   const [benchmarkResult, setBenchmarkResult] = useState<BenchmarkResult | null>(null);
-  const { checkoutLoading, handleCheckout: checkout } = useCheckout();
-  const [unlocked, setUnlocked] = useState(false);
-  const [partialUnlocked, setPartialUnlocked] = useState(true);
   const [loadError, setLoadError] = useState(false);
   const [leadId, setLeadId] = useState("");
   const [reportId, setReportId] = useState("");
   const [email, setEmail] = useState("");
   const [emailSaving, setEmailSaving] = useState(false);
-  const checkoutRef = useRef<HTMLDivElement>(null);
-  const [couponDiscount, setCouponDiscount] = useState<{ discount_type: "percent" | "fixed" | "free"; discount_value: number } | null>(null);
-  const couponRedeemed = useRef(false);
   const [authChecked, setAuthChecked] = useState(false);
-
-  // A/B test: show PersonalInsights to 50% of visitors before email gate
-  const showInsightsVariant = useMemo(() => {
-    const key = "ab_teaser_insights";
-    const stored = sessionStorage.getItem(key);
-    if (stored !== null) return stored === "1";
-    const variant = Math.random() < 0.5;
-    sessionStorage.setItem(key, variant ? "1" : "0");
-    return variant;
-  }, []);
 
   // Check if user is already authenticated — pre-fill email so EmailGate auto-skips
   useEffect(() => {
@@ -71,22 +51,19 @@ export default function Teaser() {
     checkAuth();
   }, []);
 
-  const exitIntentVisible = useExitIntent(28_000);
   useTimeOnPage("teaser", !!survey);
   const scrollTracked = useRef<Set<number>>(new Set());
   const paywallViewedRef = useRef(false);
 
-  // Track paywall_viewed on mount
+  // Track teaser viewed on mount
   useEffect(() => {
     if (survey && !paywallViewedRef.current) {
       paywallViewedRef.current = true;
-      trackEvent("paywall_viewed", { role: survey.yrke, zone: survey.kommun, ab_insights: showInsightsVariant ? "variant" : "control" });
-      // Store paywall entry time for payment_completed
-      sessionStorage.setItem("paywallEnteredAt", String(Date.now()));
+      trackEvent("paywall_viewed", { role: survey.yrke, zone: survey.kommun });
     }
   }, [survey]);
 
-  // Track paywall scroll depth (50% and 75%)
+  // Track scroll depth (50% and 75%)
   useEffect(() => {
     const handleScroll = () => {
       const scrollTop = window.scrollY;
@@ -139,7 +116,6 @@ export default function Teaser() {
 
         setSurvey(surveyData);
         setReportId(res.report_id || "");
-        if (res.unlocked_by_referral) setUnlocked(true);
 
         // Cache in sessionStorage for subsequent navigations
         sessionStorage.setItem("leadId", resolvedLeadId);
@@ -178,140 +154,8 @@ export default function Teaser() {
     });
   }, [leadId, survey, reportId]);
 
-  // Check referral unlock status
-  useEffect(() => {
-    if (!leadId) return;
-    const checkReferral = async () => {
-      // Check unlock status via the report itself (referrals table is now locked down)
-      const { data } = await supabase
-        .from("reports").select("unlocked_by_referral").eq("lead_id", leadId).eq("unlocked_by_referral", true).limit(1);
-      if (data && data.length > 0) setUnlocked(true);
-    };
-    checkReferral();
-  }, [leadId]);
-
-  // Validate coupon (without redeeming) to show correct UI
-  useEffect(() => {
-    const couponCode = searchParams.get("coupon") || sessionStorage.getItem("couponCode");
-    if (!couponCode || couponRedeemed.current) return;
-    couponRedeemed.current = true;
-
-    const validateCoupon = async () => {
-      try {
-        const { data, error } = await supabase.functions.invoke("validate-coupon", {
-          body: { code: couponCode },
-        });
-
-        if (error || !data?.valid) {
-          const errorMsg = data?.error || "Ogiltig kupongkod";
-          toast({ title: errorMsg, variant: "destructive" });
-          return;
-        }
-
-        setCouponDiscount({ discount_type: data.discount_type, discount_value: data.discount_value });
-        toast({ title: "Kupong tillämpad!" });
-      } catch {
-        toast({ title: "Kunde inte verifiera kupongkoden", variant: "destructive" });
-      }
-    };
-
-    validateCoupon();
-  }, [searchParams]);
-
-  const { isPermanent, result, noisedResult, benchmarkMonthly, userMonthly, userHourly, isUnderpaid, diffPercent, isAboveThreshold } =
+  const { isPermanent, result, benchmarkMonthly, userMonthly, userHourly, isUnderpaid, diffPercent, isAboveThreshold } =
     useTeaserData(survey, pricingResult, benchmarkResult);
-
-  // Price A/B test: read variant from sessionStorage (set by create-report)
-  const abVariant = sessionStorage.getItem("abVariant") || "price_49";
-  const priceKr = abVariant === "price_29" ? 29 : 49;
-
-  // Find geographically nearest kommun in a higher-paying zone (haversine distance)
-  const nearestHigherKommun = useMemo(() => {
-    if (isPermanent || !pricingResult || !rates || !locations) return null;
-
-    const currentRate = pricingResult.rate_customer_sek_per_hour;
-    const currentZon = pricingResult.zon;
-    const currentKommun = survey?.kommun || "";
-
-    const matchedRate = rates.find(
-      (r) => r.zon === currentZon && r.timpris_kund === currentRate,
-    );
-    if (!matchedRate) return null;
-
-    const higherRates = rates.filter(
-      (r) =>
-        r.yrkeskategori === matchedRate.yrkeskategori &&
-        r.typ === matchedRate.typ &&
-        r.timpris_kund > currentRate &&
-        r.zon !== currentZon,
-    );
-    if (!higherRates.length) return null;
-
-    const higherZones = new Set(higherRates.map((r) => r.zon));
-    const userLocation = locations.find((l) => l.kommun === currentKommun);
-    if (!userLocation?.lat || !userLocation?.lng) return null;
-
-    const candidates = locations.filter(
-      (l) => higherZones.has(l.zon) && l.kommun !== currentKommun && l.lat && l.lng,
-    );
-    if (!candidates.length) return null;
-
-    // Haversine distance in km
-    const toRad = (deg: number) => (deg * Math.PI) / 180;
-    const haversine = (lat1: number, lng1: number, lat2: number, lng2: number) => {
-      const dLat = toRad(lat2 - lat1);
-      const dLng = toRad(lng2 - lng1);
-      const a =
-        Math.sin(dLat / 2) ** 2 +
-        Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
-      return 6371 * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    };
-
-    let nearest = candidates[0];
-    let minDist = haversine(userLocation.lat, userLocation.lng, nearest.lat!, nearest.lng!);
-
-    for (let i = 1; i < candidates.length; i++) {
-      const d = haversine(userLocation.lat, userLocation.lng, candidates[i].lat!, candidates[i].lng!);
-      if (d < minDist) {
-        minDist = d;
-        nearest = candidates[i];
-      }
-    }
-
-    return nearest.kommun;
-  }, [isPermanent, pricingResult, rates, locations, survey?.kommun]);
-
-  const isFree = couponDiscount?.discount_type === "free" ||
-    (couponDiscount?.discount_type === "percent" && couponDiscount.discount_value >= 100);
-
-  const unlockFreeReport = useCallback(async (activeReportId: string) => {
-    try {
-      const couponCode = searchParams.get("coupon") || sessionStorage.getItem("couponCode");
-      if (couponCode) {
-        const { data, error } = await supabase.functions.invoke("redeem-coupon", {
-          body: { code: couponCode, report_id: activeReportId },
-        });
-        // 409 = already redeemed for this email — report is already unlocked, just navigate
-        if (error && !data) {
-          // Try to parse error context for known "already used" case
-          try {
-            const errBody = await (error as any)?.context?.json?.();
-            if (errBody?.error?.includes("redan använt")) {
-              trackEvent("free_report_unlocked", { coupon_code: couponCode, already_redeemed: true });
-              navigate(`/rapport/${activeReportId}`);
-              return;
-            }
-          } catch { /* fall through to generic error */ }
-          throw error;
-        }
-        if (data?.error) throw new Error(data.error);
-      }
-      trackEvent("free_report_unlocked", { coupon_code: couponCode });
-      navigate(`/rapport/${activeReportId}`);
-    } catch (err: any) {
-      toast({ title: err?.message || "Kunde inte öppna rapporten", variant: "destructive" });
-    }
-  }, [navigate, searchParams]);
 
   const handleEmailSubmit = async (emailValue: string) => {
     setEmailSaving(true);
@@ -351,29 +195,15 @@ export default function Teaser() {
 
     setEmailSaving(false);
 
-    // Report is free — navigate directly to full report
+    // Navigate directly to full report
     trackEvent("free_report_unlocked", { source: "email_gate" });
     navigate(`/rapport/${activeReportId}`);
-  };
-
-  const onCheckout = async (plan: "single" | "yearly") => {
-    if (!email) {
-      checkoutRef.current?.scrollIntoView({ behavior: "smooth" });
-      return;
-    }
-    if (!reportId) {
-      toast({ title: "Rapport saknas — ladda om sidan och försök igen", variant: "destructive" });
-      return;
-    }
-    // Free flow — go directly to report
-    navigate(`/rapport/${reportId}`);
   };
 
   // ── Compute email hook tier & props ──
   const emailHookProps = useMemo(() => {
     const kommun = survey?.kommun || "";
     const zon = pricingResult?.zon || "";
-
     const occupation = survey?.yrke || "";
 
     if (isPermanent) {
@@ -453,8 +283,6 @@ export default function Teaser() {
       </div>
     );
   }
-
-  const regionName = pricingResult?.region || survey.kommun || "";
 
   return (
     <div className="min-h-screen bg-background">
