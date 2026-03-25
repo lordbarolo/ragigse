@@ -1,51 +1,98 @@
+# CompCare — Funktionsstatus
 
-
-# Plan: Rapportförbättringar — 6 prioriterade åtgärder
-
-## 1. Höj kontrasten på "Din ersättning" (Skärm 1)
-
-**Fil:** `src/components/report/ConsultantTrackContent.tsx` (rad 271-276)
-
-Ändra "Din ersättning"-raden: byt `text-accent` till `text-foreground` med större font-weight så siffran sticker ut tydligt. Ge den visuell tyngd som matchar förhandlingsspannets kort.
-
-## 2. Byt röd badge till grön på prisökning (Skärm 3)
-
-**Fil:** `src/components/report/PriceHistory.tsx` (rad 72-76)
-
-Procentbadgen (`+1.5%`) använder `text-accent` (grön) för ökningar — detta ser korrekt i koden. Problemet är sannolikt att `diff_abs > 0` men `change_type` eller badge-bakgrunden (`bg-destructive`) triggas fel. Kontrollerar och säkerställer att prisökningar konsekvent visas med grön/accent färg, aldrig röd/destructive.
-
-## 3. Ersätt checkbox med explicit CTA-knapp för fakturagranskning (Skärm 5)
-
-**Fil:** `src/components/report/InvoiceReviewCTA.tsx`
-
-- Ta bort Checkbox + label-mönstret (rad 104-115)
-- Ersätt med en full-bredd primary Button: **"Ja, granska mina fakturor kostnadsfritt →"**
-- Uppdatera rubrik till: **"Hyrläkare missar i snitt 8 000–12 000 kr per månad på sina fakturor"**
-- Klick → direkt submit (inget tvåstegs checkbox→knapp)
-
-## 4. Gör "Förhandla med AI-stöd" till full-bredd primary button (Skärm 5)
-
-**Fil:** `src/pages/Report.tsx` (rad 126-139)
-
-- Byt `inline-flex` till `w-full flex justify-center`
-- Korta copy till: **"Du vet nu vad marknaden betalar. Nästa steg: förhandla upp din ersättning."**
-- Knapptext: **"Starta förhandling →"**
-
-## 5. Skriv om sammanfattningens tredje punkt (Skärm 2)
-
-**Fil:** `src/components/report/ConsultantTrackContent.tsx` (rad 325-356)
-
-- Byt rubrik "Sammanfattning" → **"Vad det här betyder för dig"**
-- Tredje punkten: byt förkortningslistan till **"Notera att resa, boende och kompetensintyg (t.ex. HLR, SITHS) ofta dras från ersättningen — fråga vad som ingår."**
-
-## 6. Ta bort procentpåstående i kollegajämförelsen (Skärm 6)
-
-**Fil:** `src/components/report/ColleagueComparison.tsx`
-
-- Ta bort percentile-badgen helt (rad 38-46) — datan är inte tillräcklig för att vara trovärdig
-- Byt CTA-text från "Dela analys" till **"Skicka till en kollega — se vem som tjänar mer"**
+_Uppdaterad: 2026-03-25_
 
 ---
 
-**Filer som ändras:** 5 filer, inga nya filer, ingen backend-ändring.
+## ✅ Byggt och live
 
+### Kärntjänst (Ersättningskoll)
+- **Landing page** — Hero, steg-guide, roller, statistik-ticker, CTA
+- **Survey (enkät)** — Flerstegs datainsamling (yrke, kommun, erfarenhet, anställningsform)
+- **Analysis screen** — Animerad beräkningsvy med e-postinsamling
+- **Teaser** — Förhandsvisning med paywall, referral-dialog, kupongfält
+- **Rapport (full)** — Konsult- och fastanställd-spår, löneindikator, kollegajämförelse, prishistorik, förhandlingstips, fakturagranskning-CTA, PDF-export
+- **Checkout (Stripe)** — Betalflöde med kuponger, A/B-prisvarianter, webhook-verifiering
+- **Referral-system** — Skicka till kollega → lås upp rapport gratis, bekräftelse-flöde
+
+### Beräkningsmotor
+- **Pricing Engine** (edge function) — Beräknar konsulttimpriser baserat på ramavtalsdata
+- **Salary Benchmark Engine** (edge function) — Beräknar lönespann för fastanställda
+- **Calc-bibliotek** (client-side) — Marginalmodeller, OB-beräkningar
+
+### Användare & Profiler
+- **Auth** (signup/login/reset password) — Supabase Auth
+- **Profilsida** — Kopplad till consultant_profiles
+- **Admin-panel** — Skyddad med rollbaserad auth, konverteringstratt, besöksstatistik, feedback, referral-stats, löneinsikter
+
+### Uppdragsradar
+- **Radar-sida** — Prediktioner för kommande avrop baserat på historisk data
+- **Reijdar AI-chat** — AI-assistent för frågor om uppdragsmarknaden
+- **Watchlist + notiser** — Bevaka specifika avrop, schemalagda e-postnotiser
+
+### Referenser (Referly)
+- **Referensprofil** — Publikt delbar profil med trust score
+- **Reference Vault** — Förvaring och hantering av referenser
+- **Ping-system** — Begär bekräftelse från referensperson
+- **Verifieringsuppladdning** — Ladda upp intyg/dokument
+- **BankID-verifiering** — Stubb (mock stängd av säkerhetsskäl)
+
+### Compensation Intelligence API
+- **CI Capabilities/Roles/Geographies/Metrics** — Strukturerat API-lager
+- **Query-loggning** — compensation_queries-tabell
+- **Client profiles & policy engine** — Rate limiting per klienttyp
+
+### Infrastruktur & Säkerhet
+- **Rate limiting** — På alla publika edge functions
+- **RLS** — På alla känsliga tabeller (rates, payments, reports, referrals)
+- **Error Boundary** — Global felhantering i React
+- **Versionshantering av priser** — contract_versions + price_changes
+- **Analytics/tracking** — PostHog + edge function (track-event)
+- **Cookie banner** — Samtycke för spårning
+- **SEO** — Meta, sitemap, robots.txt, OG-tags, llms.txt
+
+### Övrigt
+- **FAQ-sida**
+- **Integritetspolicy**
+- **Share Preview** — OG-delningssida
+- **Negotiate-sida** — AI-förhandlingscoach
+- **Theme toggle** (dark/light mode)
+- **Followup-emails** — Automatiska uppföljningsmejl
+
+---
+
+## 🔲 Kvarstår / Planerat
+
+### Högt prioriterat
+- [ ] **isInternalTraffic-bypass** — Ta bort eller ersätt med PostHog-filter (`internal: true` redan taggat)
+- [ ] **Leaked Password Protection** — Aktivera manuellt i auth-inställningar
+- [ ] **ob_share → client_type** — Namnbyte i databas och kod (planerad datamigration)
+
+### Funktioner att bygga/slutföra
+- [ ] **BankID-integration (riktig)** — Mock stängd; behöver riktig BankID-koppling
+- [ ] **Fakturagranskningstjänst** — CTA finns, backend-flöde saknas
+- [ ] **Avancerad funnelanalys** — Dashboard med komplett tratt (pausad tills tracking stabiliserat)
+- [ ] **Compensation Intelligence — agent-integration** — Koppla CI-API:et till AI-agenter (arkitekturdokument finns)
+- [ ] **Multi-tenant CI** — Stöd för flera organisationer/klienter via client_profiles
+- [ ] **Automatisk prisimport** — Schemalägga import av nya ramavtalsversioner
+
+### Förbättringar
+- [ ] **Radar — ML-prediktion** — Nuvarande logik är regelbaserad; planerat att lägga till maskininlärning
+- [ ] **Referly — social proof-widget** — Bäddbar widget för trust score
+- [ ] **PDF-rapport — design** — Förbättra layout och visuell kvalitet
+- [ ] **E-postmallar** — Anpassade domänmallar (email_domain-infrastruktur tillgänglig)
+- [ ] **A/B-testramverk** — Strukturerat stöd bortom manuella varianter
+- [ ] **Rate alerts** — E-post vid prisförändringar i ramavtal
+
+---
+
+## 📊 Teknisk status
+
+| Område | Status |
+|---|---|
+| Säkerhet (kritisk) | ✅ Åtgärdad |
+| Tracking (PostHog) | ✅ Stabiliserad |
+| Admin-skydd | ✅ Verifierat |
+| RLS-policies | ✅ Granskade |
+| Error handling | ✅ Global boundary |
+| Beräkningslogik | ✅ Validerad |
