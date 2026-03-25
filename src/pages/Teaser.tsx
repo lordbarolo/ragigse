@@ -482,17 +482,7 @@ export default function Teaser() {
           }}
         />
 
-        {/* WOW hero — immediate value proposition */}
-        {isUnderpaid && !isAboveThreshold && (
-          <WowHero
-            diffHourly={result ? result.high - userHourly : 0}
-            isPermanent={isPermanent}
-            monthlyGap={benchmarkMonthly ? benchmarkMonthly.p75 - userMonthly : 0}
-            kommun={survey.kommun}
-          />
-        )}
-
-        {/* Market position — no blur, honest indicator */}
+        {/* Market position — top of page */}
         <MarketDiagnosisCard
           diffPercent={diffPercent}
           isPermanent={isPermanent}
@@ -502,27 +492,12 @@ export default function Teaser() {
           emailProvided={false}
         />
 
-        {/* A/B test: show insights to 50% of visitors before email gate */}
-        {!email && showInsightsVariant && !isPermanent && pricingResult && userHourly > 0 && (() => {
-          const marketRate = pricingResult.rate_customer_sek_per_hour;
-          const isEmp = survey.employmentType === "anstalld";
-          const employerFactor = 1.42;
-          const costToCompare = isEmp ? Math.round(userHourly * employerFactor) : userHourly;
-          const sharePercent = marketRate > 0 ? Math.round((costToCompare / marketRate) * 100) : 0;
-          const percentilePosition = sharePercent >= 90 ? 85 : sharePercent >= 85 ? 70 : sharePercent >= 75 ? 45 : sharePercent >= 65 ? 25 : 10;
-          return (
-            <TeaserInsights
-              sharePercent={sharePercent}
-              isEmployee={isEmp}
-              percentilePosition={percentilePosition}
-            />
-          );
-        })()}
-
-        {/* Email Gate — primary CTA at top */}
+        {/* Email Gate — "Resten av din rapport" */}
         {!email && (
-          <div className="rounded-xl bg-foreground/[0.02] p-5">
-            {emailHookProps && <EmailHookMessage {...emailHookProps} />}
+          <div className="space-y-5">
+            <h2 className="text-xl font-bold text-foreground leading-snug">
+              Resten av din rapport är klar — vart skickar vi den?
+            </h2>
             <EmailGate
               onEmailSubmit={handleEmailSubmit}
               loading={emailSaving}
@@ -530,7 +505,7 @@ export default function Teaser() {
           </div>
         )}
 
-        {/* What's in the report — honest preview */}
+        {/* What's in the report */}
         <div className="rounded-xl bg-foreground/[0.02] p-5">
           <ReportPreviewList
             isPermanent={isPermanent}
