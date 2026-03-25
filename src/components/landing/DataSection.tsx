@@ -6,6 +6,12 @@ const CARDS = [
     source: "Giltig 2026-01-01–2026-12-31",
   },
   {
+    icon: "📊",
+    title: "SCB & Medlingsinstitutet",
+    desc: "Lönestatistik (p25/p50/p75) per yrkeskategori och sektor. Samma data som arbetsgivare och fackförbund använder i löneförhandlingar.",
+    source: "Källa: Medlingsinstitutet 2024",
+  },
+  {
     icon: "🗺",
     title: "Geografisk zonindelning",
     desc: "Tre prisnivåer baserade på regionens geografiska läge. Zon 1 inkluderar storstadsregioner, zon 3 avlägsna regioner med svårare rekrytering.",
