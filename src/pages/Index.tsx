@@ -90,8 +90,11 @@ export default function Index() {
             Skulle du vara nöjd med lönen om du såg vad kunden faktiskt betalar?
           </h1>
 
-          <p className="text-hero-foreground/60 text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed">
+          <p className="text-hero-foreground/60 text-lg md:text-xl max-w-2xl mx-auto mb-2 leading-relaxed">
             Jämför dina villkor mot verkliga marknadspriser.
+          </p>
+          <p className="text-hero-foreground/60 text-sm md:text-base max-w-2xl mx-auto mb-12">
+            Kostnadsfritt och klart på 30 sekunder
           </p>
 
           {/* Role selection CTA */}
