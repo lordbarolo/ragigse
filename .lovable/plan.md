@@ -1,98 +1,110 @@
-# CompCare — Funktionsstatus
 
-_Uppdaterad: 2026-03-25_
 
----
+# Consultant Dashboard MVP – Korrigerad plan
 
-## ✅ Byggt och live
+## Korrigeringar från feedback
 
-### Kärntjänst (Ersättningskoll)
-- **Landing page** — Hero, steg-guide, roller, statistik-ticker, CTA
-- **Survey (enkät)** — Flerstegs datainsamling (yrke, kommun, erfarenhet, anställningsform)
-- **Analysis screen** — Animerad beräkningsvy med e-postinsamling
-- **Teaser** — Förhandsvisning med paywall, referral-dialog, kupongfält
-- **Rapport (full)** — Konsult- och fastanställd-spår, löneindikator, kollegajämförelse, prishistorik, förhandlingstips, fakturagranskning-CTA, PDF-export
-- **Checkout (Stripe)** — Betalflöde med kuponger, A/B-prisvarianter, webhook-verifiering
-- **Referral-system** — Skicka till kollega → lås upp rapport gratis, bekräftelse-flöde
-
-### Beräkningsmotor
-- **Pricing Engine** (edge function) — Beräknar konsulttimpriser baserat på ramavtalsdata
-- **Salary Benchmark Engine** (edge function) — Beräknar lönespann för fastanställda
-- **Calc-bibliotek** (client-side) — Marginalmodeller, OB-beräkningar
-
-### Användare & Profiler
-- **Auth** (signup/login/reset password) — Supabase Auth
-- **Profilsida** — Kopplad till consultant_profiles
-- **Admin-panel** — Skyddad med rollbaserad auth, konverteringstratt, besöksstatistik, feedback, referral-stats, löneinsikter
-
-### Uppdragsradar
-- **Radar-sida** — Prediktioner för kommande avrop baserat på historisk data
-- **Reijdar AI-chat** — AI-assistent för frågor om uppdragsmarknaden
-- **Watchlist + notiser** — Bevaka specifika avrop, schemalagda e-postnotiser
-
-### Referenser (Referly)
-- **Referensprofil** — Publikt delbar profil med trust score
-- **Reference Vault** — Förvaring och hantering av referenser
-- **Ping-system** — Begär bekräftelse från referensperson
-- **Verifieringsuppladdning** — Ladda upp intyg/dokument
-- **BankID-verifiering** — Stubb (mock stängd av säkerhetsskäl)
-
-### Compensation Intelligence API
-- **CI Capabilities/Roles/Geographies/Metrics** — Strukturerat API-lager
-- **Query-loggning** — compensation_queries-tabell
-- **Client profiles & policy engine** — Rate limiting per klienttyp
-
-### Infrastruktur & Säkerhet
-- **Rate limiting** — På alla publika edge functions
-- **RLS** — På alla känsliga tabeller (rates, payments, reports, referrals)
-- **Error Boundary** — Global felhantering i React
-- **Versionshantering av priser** — contract_versions + price_changes
-- **Analytics/tracking** — PostHog + edge function (track-event)
-- **Cookie banner** — Samtycke för spårning
-- **SEO** — Meta, sitemap, robots.txt, OG-tags, llms.txt
-
-### Övrigt
-- **FAQ-sida**
-- **Integritetspolicy**
-- **Share Preview** — OG-delningssida
-- **Negotiate-sida** — AI-förhandlingscoach
-- **Theme toggle** (dark/light mode)
-- **Followup-emails** — Automatiska uppföljningsmejl
+1. **FK på action_items** → `REFERENCES profiles(id)` inte `profiles(user_id)`
+2. **UNIQUE constraint** → `UNIQUE(profile_id, type)` — upsert mellan pending/done, ingen historik
+3. **Sidoeffekt före RETURN** — all UPDATE/INSERT-logik placeras före RETURN i funktionen
+4. **Ingen extra RLS för user insert/update nu** — service_role hanterar, kan läggas till senare
 
 ---
 
-## 🔲 Kvarstår / Planerat
+## Del 1: Migration 1 — Cache-kolumner på profiles
 
-### Högt prioriterat
-- [ ] **isInternalTraffic-bypass** — Ta bort eller ersätt med PostHog-filter (`internal: true` redan taggat)
-- [ ] **Leaked Password Protection** — Aktivera manuellt i auth-inställningar
-- [ ] **ob_share → client_type** — Namnbyte i databas och kod (planerad datamigration)
+```sql
+ALTER TABLE profiles ADD COLUMN has_required_references BOOLEAN DEFAULT FALSE;
+ALTER TABLE profiles ADD COLUMN has_valid_ivo BOOLEAN DEFAULT FALSE;
+ALTER TABLE profiles ADD COLUMN has_valid_hosp BOOLEAN DEFAULT FALSE;
+ALTER TABLE profiles ADD COLUMN has_bankid BOOLEAN DEFAULT FALSE;
+ALTER TABLE profiles ADD COLUMN profile_status TEXT DEFAULT 'incomplete';
+ALTER TABLE profiles ADD COLUMN status_updated_at TIMESTAMPTZ;
+```
 
-### Funktioner att bygga/slutföra
-- [ ] **BankID-integration (riktig)** — Mock stängd; behöver riktig BankID-koppling
-- [ ] **Fakturagranskningstjänst** — CTA finns, backend-flöde saknas
-- [ ] **Avancerad funnelanalys** — Dashboard med komplett tratt (pausad tills tracking stabiliserat)
-- [ ] **Compensation Intelligence — agent-integration** — Koppla CI-API:et till AI-agenter (arkitekturdokument finns)
-- [ ] **Multi-tenant CI** — Stöd för flera organisationer/klienter via client_profiles
-- [ ] **Automatisk prisimport** — Schemalägga import av nya ramavtalsversioner
+## Del 2: Migration 2 — action_items
 
-### Förbättringar
-- [ ] **Radar — ML-prediktion** — Nuvarande logik är regelbaserad; planerat att lägga till maskininlärning
-- [ ] **Referly — social proof-widget** — Bäddbar widget för trust score
-- [ ] **PDF-rapport — design** — Förbättra layout och visuell kvalitet
-- [ ] **E-postmallar** — Anpassade domänmallar (email_domain-infrastruktur tillgänglig)
-- [ ] **A/B-testramverk** — Strukturerat stöd bortom manuella varianter
-- [ ] **Rate alerts** — E-post vid prisförändringar i ramavtal
+```sql
+CREATE TABLE action_items (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  profile_id UUID REFERENCES profiles(id) ON DELETE CASCADE NOT NULL,
+  type TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'pending',
+  priority INTEGER DEFAULT 1,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(profile_id, type)
+);
+ALTER TABLE action_items ENABLE ROW LEVEL SECURITY;
 
----
+CREATE POLICY "Users read own actions" ON action_items
+  FOR SELECT TO authenticated USING (profile_id = auth.uid());
 
-## 📊 Teknisk status
+CREATE POLICY "Service role manages actions" ON action_items
+  FOR ALL TO service_role USING (true) WITH CHECK (true);
+```
 
-| Område | Status |
-|---|---|
-| Säkerhet (kritisk) | ✅ Åtgärdad |
-| Tracking (PostHog) | ✅ Stabiliserad |
-| Admin-skydd | ✅ Verifierat |
-| RLS-policies | ✅ Granskade |
-| Error handling | ✅ Global boundary |
-| Beräkningslogik | ✅ Validerad |
+## Del 3: Uppdatera `ref_calculate_profile_status`
+
+Ändra funktionen från `STABLE` till `VOLATILE` (den skriver nu). Innan `RETURN`-satsen, lägg till:
+
+```sql
+-- Sync cache columns
+UPDATE profiles SET
+  has_required_references = (_ref_count >= _required),
+  has_valid_ivo = _has_ivo,
+  has_valid_hosp = _has_hosp,
+  has_bankid = _has_bankid,
+  profile_status = _status,
+  status_updated_at = NOW()
+WHERE id = p_profile_id;
+
+-- Upsert action items (pending if not met, done if met)
+INSERT INTO action_items (profile_id, type, status, priority)
+VALUES
+  (p_profile_id, 'missing_reference', CASE WHEN _ref_count >= _required THEN 'done' ELSE 'pending' END, 1),
+  (p_profile_id, 'add_ivo', CASE WHEN _has_ivo THEN 'done' ELSE 'pending' END, 2),
+  (p_profile_id, 'add_hosp', CASE WHEN _has_hosp THEN 'done' ELSE 'pending' END, 3)
+ON CONFLICT (profile_id, type) DO UPDATE SET
+  status = EXCLUDED.status;
+```
+
+Sedan `RETURN ...` som idag.
+
+## Del 4: Nya komponenter
+
+### `src/components/dashboard/StatusBadge.tsx`
+Kompakt badge (grön/gul/röd) baserad på `profile_status`.
+
+### `src/components/dashboard/ActionItems.tsx`
+- Hämtar `action_items` WHERE `profile_id = user.id AND status = 'pending'`
+- Visar "X saker kräver din åtgärd"
+- Varje rad: typ-ikon + CTA som triggar rätt modal (bjud in referens / ladda upp IVO / ladda upp HOSP)
+
+### `src/hooks/useActionItems.ts`
+Hook: hämtar pending actions, exponerar `actions`, `loading`, `refresh`.
+
+## Del 5: Omarbeta `src/pages/Profile.tsx`
+
+Bort med tab-layout. Vertikal dashboard:
+
+```text
+┌─────────────────────────┐
+│ Header + StatusBadge    │
+├─────────────────────────┤
+│ 🔥 ActionItems          │
+├─────────────────────────┤
+│ Checklista (kompakt)    │
+├─────────────────────────┤
+│ Referenser (max 3)      │
+├─────────────────────────┤
+│ Mina rapporter          │
+└─────────────────────────┘
+```
+
+## Ordning
+1. Migration 1 (profiles-kolumner)
+2. Migration 2 (action_items)
+3. Uppdatera ref_calculate_profile_status (ny migration med CREATE OR REPLACE)
+4. Nya UI-komponenter + hook
+5. Omarbeta Profile.tsx
+
