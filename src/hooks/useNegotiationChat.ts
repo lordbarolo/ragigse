@@ -1,6 +1,7 @@
 import { useState, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/trackEvent";
+import { sanitizeReijdarSourceName, sanitizeReijdarText } from "@/lib/reijdarText";
 
 export interface ChatMessage {
   id: string;
@@ -62,11 +63,14 @@ export function useNegotiationChat() {
       const assistantMsg: ChatMessage = {
         id: makeId(),
         role: "assistant",
-        content: data.advice || "Kunde inte generera råd just nu.",
-        sources: data.sources,
+        content: sanitizeReijdarText(data.advice || "Kunde inte generera råd just nu."),
+        sources: data.sources?.map((source: { name: string; version: string; confidence: string }) => ({
+          ...source,
+          name: sanitizeReijdarSourceName(source.name),
+        })),
         capabilities_used: data.capabilities_used,
         data_points: data.data_points,
-        missing_info: data.missing_info,
+        missing_info: data.missing_info?.map((item: string) => sanitizeReijdarText(item)),
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, assistantMsg]);
