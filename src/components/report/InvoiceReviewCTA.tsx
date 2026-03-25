@@ -79,9 +79,7 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }
           </p>
         </div>
 
-        <p className="text-body-sm leading-relaxed">
-          Vår smarta AI-assistent hjälper dig att kontrollera dina 10 senaste fakturor. Har du fått med alla storhelger, jourersättningar och OB-tillägg? Hittar vi inga fel är tjänsten kostnadsfri. Hittar vi avvikelser utgår provision till CompCare när du får betalt.
-        </p>
+
 
         <p className="font-semibold text-foreground text-sm">
           Vill du ha hjälp att säkerställa dina fakturor?
