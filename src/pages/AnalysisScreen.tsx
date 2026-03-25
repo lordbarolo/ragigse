@@ -226,6 +226,7 @@ export default function AnalysisScreen() {
   /* ── Derived teaser data ── */
   const teaserData = useMemo(() => {
     if (!survey || !pricing) return null;
+    if (!survey.currentSalary || survey.currentSalary <= 0) return null;
     const userHourly = survey.salaryType === "hourly" ? survey.currentSalary : Math.round(survey.currentSalary / 167);
     const customerRate = pricing.rate_customer_sek_per_hour || 616;
     const low = pricing.recommended_hourly_min || 470;
