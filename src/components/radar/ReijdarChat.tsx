@@ -237,6 +237,8 @@ export default function ReijdarChat({ selectedRole, initialMessage }: { selected
               )}
             </Button>
           </div>
+          </>
+          )}
         </div>
       )}
     </>
