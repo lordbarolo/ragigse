@@ -88,11 +88,11 @@ export default function Index() {
           </div>
 
           <h1 className="text-5xl md:text-7xl font-bold mb-8 tracking-tight">
-            Skulle du vara nöjd med lönen om du såg vad kunden faktiskt betalar?
+            Regionen har system. Bemanningsbolaget har system. Du har — ingenting.
           </h1>
 
           <p className="text-hero-foreground/60 text-lg md:text-xl max-w-2xl mx-auto mb-2 leading-relaxed">
-            Jämför dina villkor mot verkliga marknadspriser.
+            CompCare ger dig marknadsdata, prognos och förhandlingsstöd — direkt, utan att vara beroende av någon annan.
           </p>
           <p className="text-hero-foreground/60 text-sm md:text-base max-w-2xl mx-auto mb-12">
             Kostnadsfritt och klart på 30 sekunder
@@ -157,16 +157,16 @@ export default function Index() {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
             <h2 className="text-3xl font-bold mb-6 tracking-tight text-foreground">
-              Öppen data — för alla vårdkonsulter.
+              Data, tolkning och beslutsstöd — i tre lager.
             </h2>
             <p className="text-muted-foreground mb-4 leading-relaxed text-lg">
-              Vi hämtar uppgifter från SKR:s officiella avtal och gör informationen tillgänglig för alla. Omfattande data från 21 regioner och 290 kommuner som visar exakt ersättning för sjuksköterskor, läkare och barnmorskor.
+              Lager 1: Vi aggregerar marknadsdata från 21 regioners ramavtal och 290 kommuner. Lager 2: Vi tolkar datan och visar var du ligger i spannet. Lager 3: Du får konkreta argument som ökar din win-rate i nästa förhandling.
             </p>
             <p className="text-muted-foreground mb-4 leading-relaxed text-base italic">
-              Vad är en vanlig ersättning för en Allmänspecialist i Värmland? Hur mycket betalar man för en barnmorska i Bollnäs jämfört med Täby? Hur mycket har ersättningen för en allmänsjuksköterska ökat sedan 2024?
+              Vad betalar Region Skåne för en infektionssjuksköterska? Hur skiljer sig Zon 1 mot Zon 3 för AT-läkare? Hur mycket har priserna ändrats sedan förra avtalsperioden?
             </p>
             <p className="text-foreground font-medium text-base">
-              Agenten Reidar sitter på vår samlade kunskap — fråga honom vad du vill.
+              AI-agenten Reidar har tillgång till all data — ställ frågan direkt.
             </p>
           </div>
 
@@ -217,9 +217,9 @@ export default function Index() {
       {/* ── Bottom CTA ─────────────────────────────────── */}
       <section className="max-w-4xl mx-auto px-6 pb-24 text-center">
         <h2 className="text-3xl font-bold tracking-tight text-foreground mb-4">
-          Redo att se ditt marknadsvärde?
+          Ta kontroll över din marknadsposition
         </h2>
-        <p className="text-muted-foreground mb-8 text-lg">Tar 60 sekunder · Ingen registrering krävs</p>
+        <p className="text-muted-foreground mb-8 text-lg">Se din ersättning i förhållande till marknadspris · 60 sekunder · Ingen registrering</p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <button
             onClick={() => handleRoleSelect("lakare")}

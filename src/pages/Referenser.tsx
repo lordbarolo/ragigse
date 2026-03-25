@@ -28,7 +28,7 @@ export default function Referenser() {
       <div className="pt-20 px-4 max-w-2xl mx-auto">
         <h1 className="text-2xl font-bold text-foreground mb-1">Referenser</h1>
         <p className="text-sm text-muted-foreground mb-6">
-          Hantera dina verifierade referenser och dela dem med uppdragsgivare.
+          Bevisa din kvalitet en gång — återanvänd alltid. Verifierade referenser som följer med dig oavsett bemanningsföretag.
         </p>
         <ReferenceDashboard />
       </div>

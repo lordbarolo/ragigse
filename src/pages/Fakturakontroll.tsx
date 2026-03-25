@@ -7,16 +7,16 @@ import LandingFooter from "@/components/landing/LandingFooter";
 import { trackEvent } from "@/lib/trackEvent";
 
 const MISSED_ITEMS = [
-  { icon: Moon, label: "OB-tillägg", desc: "Kväll, natt och helg — många saknar rätt OB i sina fakturor." },
-  { icon: Clock, label: "Jour & beredskap", desc: "Beredskapsersättning och jourpass som inte fakturerats korrekt." },
-  { icon: Calendar, label: "Helg & storhelg", desc: "Storhelgstillägg som jul, nyår och midsommar missas ofta." },
-  { icon: ShieldCheck, label: "Avtalsenliga tillägg", desc: "Tillägg som regleras i ramavtalet men glöms bort vid fakturering." },
+  { icon: Moon, label: "OB-tillägg", desc: "Kväll, natt och helg — tarifferna regleras i ramavtalet och ska faktureras separat utöver grundpriset." },
+  { icon: Clock, label: "Jour & beredskap", desc: "Beredskapsersättning och jourpass som bemanningsföretaget ska fakturera regionen — men som ofta uteblir." },
+  { icon: Calendar, label: "Helg & storhelg", desc: "Jul, nyår, midsommar och övriga storhelger har egna tariffer som missas i upp till 30% av fakturorna." },
+  { icon: ShieldCheck, label: "Avtalsenliga tillägg", desc: "Tillägg som regleras i ramavtalet för alla 21 regioner men glöms bort vid fakturering." },
 ];
 
 const STEPS = [
-  { num: "1", title: "Skicka in dina fakturor", desc: "Ladda upp eller maila dina senaste fakturor till oss. Vi behöver inga personuppgifter om dina patienter." },
-  { num: "2", title: "Vi granskar mot ramavtalet", desc: "Vårt team jämför varje rad mot gällande ramavtalspriser, OB-regler och tilläggsstrukturer." },
-  { num: "3", title: "Du får en rapport", desc: "Inom 48 timmar får du en sammanställning med eventuella avvikelser och hur mycket du kan ha missat." },
+  { num: "1", title: "Skicka in dina fakturor", desc: "Ladda upp eller maila dina senaste fakturor. Vi behöver inga personuppgifter om patienter — bara fakturaraderna." },
+  { num: "2", title: "Automatiserad granskning mot ramavtalet", desc: "Vi jämför varje rad mot gällande ramavtalspriser, OB-tariffer och tilläggsstrukturer i alla 21 regioner." },
+  { num: "3", title: "Du får en avvikelserapport", desc: "Inom 48 timmar får du en sammanställning med exakta avvikelser och hur mycket ersättning du har rätt till." },
 ];
 
 export default function Fakturakontroll() {
@@ -51,8 +51,8 @@ export default function Fakturakontroll() {
             <span className="text-primary">30 000 kr</span> per år
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            OB-tillägg, jour, beredskap, helg och storhelg — det är lätt att missa.
-            Vi granskar dina fakturor kostnadsfritt och ser till att du inte går miste om ersättning du har rätt till.
+            OB-tillägg, jour, beredskap, helg och storhelg — komplexa tilläggsstrukturer som varierar mellan 21 regioner.
+            Vi granskar dina fakturor automatiskt mot officiella ramavtal och säkerställer att ingen ersättning går förlorad.
           </p>
           <Button
             size="lg"

@@ -4,21 +4,21 @@ import serviceDokument from "@/assets/service-dokument.jpg";
 
 const SERVICES = [
   {
-    image: serviceFaktura,
-    title: "Fakturakontroll",
-    desc: "Vi granskar dina fakturor och hittar OB-tillägg, jour och beredskap som du missat. Kostnadsfritt om inga fel hittas.",
-    cta: "Läs mer",
-  },
-  {
     image: serviceLoneanalys,
     title: "Löneanalys",
-    desc: "Jämför din ersättning mot verkliga ramavtalspriser i din zon. Se exakt var du ligger i marknadsspannet.",
+    desc: "Se din marknadsposition mot faktiska ramavtalspriser. Data, tolkning och argument — allt du behöver inför nästa förhandling.",
+    cta: "Starta analys",
+  },
+  {
+    image: serviceFaktura,
+    title: "Fakturakontroll",
+    desc: "Automatiserad granskning av dina fakturor mot officiella avtal i 21 regioner. OB, jour och storhelg — vi hittar det du missat.",
     cta: "Läs mer",
   },
   {
     image: serviceDokument,
-    title: "Dokument & Referenser",
-    desc: "Samla verifierade referenser, CV och legitimation i ett digitalt valv. Du bestämmer vem som får se vad.",
+    title: "Referenser & Verify",
+    desc: "Bevisa din kvalitet en gång — återanvänd alltid. Verifierade referenser och BankID-signerad representation i ett digitalt valv.",
     cta: "Läs mer",
   },
 ];
