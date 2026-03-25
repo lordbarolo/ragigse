@@ -228,9 +228,12 @@ export default function AnalysisScreen() {
     if (!survey || !pricing) return null;
     if (!survey.currentSalary || survey.currentSalary <= 0) return null;
     const userHourly = survey.salaryType === "hourly" ? survey.currentSalary : Math.round(survey.currentSalary / 167);
-    const customerRate = pricing.rate_customer_sek_per_hour || 616;
-    const low = pricing.recommended_hourly_min || 470;
-    const high = pricing.recommended_hourly_max || 560;
+    if (!pricing.rate_customer_sek_per_hour ||
+        !pricing.recommended_hourly_min ||
+        !pricing.recommended_hourly_max) return null;
+    const customerRate = pricing.rate_customer_sek_per_hour;
+    const low = pricing.recommended_hourly_min;
+    const high = pricing.recommended_hourly_max;
     // User is underpaid only if below the recommended max AND below customer rate
     const isUnderpaid = userHourly < low;
     const isInRange = userHourly >= low && userHourly < high;
