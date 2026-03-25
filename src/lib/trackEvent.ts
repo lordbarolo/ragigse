@@ -2,10 +2,6 @@ import { supabase } from "@/integrations/supabase/client";
 import posthog from "@/lib/posthog";
 import { getUtmParams, getCouponCode } from "@/lib/captureParams";
 
-function isInternalTraffic(): boolean {
-  // Temporarily disabled for debugging – all environments send events
-  return false;
-}
 
 type EventName =
   | "landing_viewed"
@@ -53,7 +49,7 @@ export function trackEvent(
   eventName: EventName,
   metadata?: Record<string, string | number | boolean | null>
 ) {
-  if (isInternalTraffic()) return;
+  
 
   const leadId = sessionStorage.getItem("leadId") || undefined;
 
