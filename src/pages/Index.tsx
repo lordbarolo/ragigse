@@ -189,6 +189,27 @@ export default function Index() {
         </div>
       </section>
 
+      {/* ── Invoice Review ────────────────────────────── */}
+      <section className="max-w-4xl mx-auto px-6 pb-20">
+        <div className="bg-card border border-border rounded-3xl p-8 md:p-10 shadow-xl">
+          <div className="flex items-start gap-3 mb-5">
+            <ShieldCheck className="w-6 h-6 text-primary shrink-0 mt-0.5" />
+            <p className="font-bold text-foreground text-lg md:text-xl leading-snug">
+              Konsulter missar att fakturera i snitt 30 000 kr per år. 3 av 10 fakturerar dessutom fel varje månad.
+            </p>
+          </div>
+          <p className="text-muted-foreground mb-6 text-base">
+            OB-tillägg, jour, beredskap, helg och storhelg — det är lätt att missa. Vi granskar dina fakturor kostnadsfritt och ser till att du inte går miste om ersättning du har rätt till.
+          </p>
+          <button
+            onClick={() => handleRoleSelect("ssk")}
+            className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-2xl font-semibold transition-all shadow-lg shadow-primary/20 text-base"
+          >
+            Granska min ersättning →
+          </button>
+        </div>
+      </section>
+
       {/* ── Bottom CTA ─────────────────────────────────── */}
       <section className="max-w-4xl mx-auto px-6 pb-24 text-center">
         <h2 className="text-3xl font-bold tracking-tight text-foreground mb-4">
