@@ -6,6 +6,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 import Survey from "@/components/Survey";
+import ServiceCards from "@/components/landing/ServiceCards";
 import reportPreview from "@/assets/report-preview.jpeg";
 
 const faqJsonLd = {
