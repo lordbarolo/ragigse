@@ -2,6 +2,13 @@ import ReactMarkdown from "react-markdown";
 import { Badge } from "@/components/ui/badge";
 import type { ChatMessage as ChatMessageType } from "@/hooks/useNegotiationChat";
 
+const capabilityLabels: Record<string, string> = {
+  lookup_rate: "ersättningsnivå",
+  salary_benchmark: "marknadens snitt",
+  salary_position: "din position mot marknaden",
+  compare_roles: "rolljämförelse",
+};
+
 interface Props {
   message: ChatMessageType;
 }
@@ -44,7 +51,7 @@ export default function ChatMessage({ message }: Props) {
                     variant="outline"
                     className="text-[10px] font-medium text-muted-foreground border-border/50"
                   >
-                    ⚡ {c}
+                    ⚡ {capabilityLabels[c] ?? c}
                   </Badge>
                 ))}
               </div>

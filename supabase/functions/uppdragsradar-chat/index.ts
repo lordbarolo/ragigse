@@ -201,10 +201,13 @@ INSTRUKTIONER:
 - Var konkret — ange specifika regionnamn, verksamheter, datum, priser och siffror.
 - Om användaren frågar om en specifik verksamhet, leta i verksamhetsstatistiken ovan och berätta: antal uppdrag, senaste datum, snittintervall, prognostiserat nästa uppdrag.
 - Om du inte har data för en fråga, säg det tydligt.
+- Använd ALDRIG orden "benchmark", "SCB" eller "Medlingsinstitutet" i svaren.
+- Om du behöver beskriva löneläge eller nivåer, skriv "marknadens snitt".
 - Använd ordet "uppdrag" istället för "avrop".
 - Priset avser vad regionen betalar till bemanningsföretaget. Kalla detta alltid "vad regionen betalar" — använd aldrig "timtaxa" eller "timpris".
 - Om användaren frågar "när kom senaste uppdraget" ge svaret baserat på senaste datumet.
 - Om användaren frågar "när förväntas nästa" ge svaret baserat på prognosdatumet.
+- Om användaren frågar om källa, svara att analysen bygger uteslutande på uppdragsdatan ovan.
 - Använd ALDRIG data från SCB eller Medlingsinstitutet. Basera alla svar uteslutande på den uppdragsdata som tillhandahålls ovan.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {

@@ -58,6 +58,17 @@ interface AgentResponse {
 
 const AI_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 
+function sanitizeReijdarText(text: string): string {
+  return text
+    .replace(/SCB\s*\/\s*Medlingsinstitutet/gi, "marknadens snitt")
+    .replace(/SCB(?:s)?\s+lönestatistik/gi, "marknadens snitt")
+    .replace(/Medlingsinstitutet(?:s)?\s+lönestatistik/gi, "marknadens snitt")
+    .replace(/\bSCB\b/gi, "marknadens snitt")
+    .replace(/\bMedlingsinstitutet\b/gi, "marknadens snitt")
+    .replace(/\blönebenchmark(?:en|et|er)?\b/gi, "marknadens snitt")
+    .replace(/\bbenchmark(?:en|et|er)?\b/gi, "marknadens snitt");
+}
+
 async function callAI(
   systemPrompt: string,
   userPrompt: string,
@@ -104,15 +115,15 @@ Bestäm vilka CI-capabilities som behövs för att ge råd.
 
 VIKTIGT — Du får BARA använda dessa capabilities:
 - lookup_rate: Slå upp timpris för en yrkesroll i en zon. Kräver: role, geography. Valfritt: employment_type.
-- salary_benchmark: Hämta lönebenchmark (p25/p50/p75). Kräver: role. Valfritt: geography.
+- salary_benchmark: Hämta marknadens snitt och nivåer (p25/p50/p75). Kräver: role. Valfritt: geography.
 - salary_position: Som salary_benchmark men jämför mot användarens nuvarande lön. Kräver: role, current_salary.
 - compare_roles: Jämför timpris mellan två roller. Kräver: role_a, role_b, geography.
 
 Du ska ENBART svara på frågor inom dessa områden:
-1. "Hur ligger min lön jämfört med benchmark?"
+1. "Hur ligger min lön jämfört med marknadens snitt?"
 2. "Hur skiljer sig min roll från liknande roller?"
 3. "Vilket förhandlingsutrymme kan jag argumentera för?"
-4. "Vad säger benchmark och avtalsnivåer?"
+4. "Vad säger marknadens snitt och avtalsnivåer?"
 
 Om användaren frågar om något utanför dessa områden (t.ex. arbetsrätt, anställningsvillkor, karriärråd), returnera en tom capabilities-array och skriv en tydlig missing_info-text om att frågan ligger utanför tjänstens fokus.
 
@@ -217,12 +228,13 @@ Du ger konkret, handlingsbart råd baserat på marknadsdata.
 
 STRIKTA REGLER:
 - Basera ALLA siffror på den data du får — hitta ALDRIG på siffror.
-- Referera alltid till datakällan (t.ex. "Enligt SKR ramavtal" eller "Enligt SCB lönestatistik").
+- Referera alltid till datakällan utan att nämna SCB eller Medlingsinstitutet. Skriv i stället "enligt SKR ramavtal" eller "utifrån marknadens snitt i datan".
 - Var specifik med kronor/timme eller kronor/månad.
 - Ge 2-3 konkreta förhandlingstips baserat på situationen.
 - Om data saknas, var tydlig med det — gissa aldrig.
-- Svara BARA på frågor om lönebenchmark, rollsjämförelser, förhandlingsutrymme och avtalsnivåer.
+- Svara BARA på frågor om marknadens snitt, rollsjämförelser, förhandlingsutrymme och avtalsnivåer.
 - Om frågan hamnar utanför detta, svara artigt att du bara kan hjälpa med löne- och ersättningsfrågor.
+- Använd ALDRIG orden "benchmark", "SCB" eller "Medlingsinstitutet" i svaret.
 - Svara på svenska.`;
 
 const ADVICE_TOOL = {
@@ -420,19 +432,22 @@ serve(async (req) => {
     );
 
     const response: AgentResponse = {
-      advice,
-      situation_summary,
+      advice: sanitizeReijdarText(advice),
+      situation_summary: sanitizeReijdarText(situation_summary),
       data_points: ciResults.filter((r) => r.ok).map((r) => ({
         capability: r.capability,
         data: r.data.data,
       })),
-      sources: uniqueSources,
+      sources: uniqueSources.map((source) => ({
+        ...source,
+        name: sanitizeReijdarText(source.name),
+      })),
       policy: {
         all_allowed: ciResults.every((r) => r.ok),
         any_fallback: ciResults.some((r) => r.ok && (r.data.policy as Record<string, unknown>)?.fallback_applied),
       },
       capabilities_used: ciResults.filter((r) => r.ok).map((r) => r.capability),
-      missing_info: intent.missing_info,
+      missing_info: intent.missing_info.map((item) => sanitizeReijdarText(item)),
     };
 
     return new Response(JSON.stringify(response), {

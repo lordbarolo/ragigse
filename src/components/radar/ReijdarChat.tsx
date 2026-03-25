@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import { trackEvent } from "@/lib/trackEvent";
+import { sanitizeReijdarText } from "@/lib/reijdarText";
 
 type ChatMsg = { role: "user" | "assistant"; content: string };
 
@@ -97,14 +98,15 @@ export default function ReijdarChat({ selectedRole, initialMessage }: { selected
             const content = parsed.choices?.[0]?.delta?.content;
             if (content) {
               assistantSoFar += content;
+              const sanitizedAssistant = sanitizeReijdarText(assistantSoFar);
               setMessages((prev) => {
                 const last = prev[prev.length - 1];
                 if (last?.role === "assistant") {
                   return prev.map((m, i) =>
-                    i === prev.length - 1 ? { ...m, content: assistantSoFar } : m
+                    i === prev.length - 1 ? { ...m, content: sanitizedAssistant } : m
                   );
                 }
-                return [...prev, { role: "assistant", content: assistantSoFar }];
+                return [...prev, { role: "assistant", content: sanitizedAssistant }];
               });
             }
           } catch {
@@ -130,10 +132,15 @@ export default function ReijdarChat({ selectedRole, initialMessage }: { selected
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed bottom-6 left-4 z-40 flex items-center gap-2 rounded-full bg-primary text-primary-foreground pl-3.5 pr-4 py-2.5 shadow-lg hover:bg-primary/90 transition-all active:scale-95"
+          aria-label="Öppna Fråga Reijdar"
+          className="group fixed right-3 top-1/2 z-40 flex h-11 w-11 -translate-y-1/2 items-center overflow-hidden rounded-full bg-primary text-primary-foreground shadow-lg transition-all duration-200 hover:w-36 hover:bg-primary/90 focus-visible:w-36 active:scale-95"
         >
-          <Bot className="w-4.5 h-4.5" />
-          <span className="text-[12px] font-semibold">Fråga Reijdar</span>
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center">
+            <Bot className="h-4 w-4" />
+          </span>
+          <span className="whitespace-nowrap pr-4 text-[12px] font-semibold opacity-0 transition-all duration-200 group-hover:opacity-100 group-focus-visible:opacity-100">
+            Fråga Reijdar
+          </span>
         </button>
       )}
 
@@ -204,7 +211,7 @@ export default function ReijdarChat({ selectedRole, initialMessage }: { selected
               >
                 {msg.role === "assistant" ? (
                   <div className="prose prose-sm prose-invert max-w-none">
-                    <ReactMarkdown>{msg.content}</ReactMarkdown>
+                    <ReactMarkdown>{sanitizeReijdarText(msg.content)}</ReactMarkdown>
                   </div>
                 ) : (
                   msg.content
