@@ -275,6 +275,39 @@ export type Database = {
           },
         ]
       }
+      bug_reports: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          email: string | null
+          id: string
+          page_url: string
+          status: string
+          user_id: string | null
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description: string
+          email?: string | null
+          id?: string
+          page_url: string
+          status?: string
+          user_id?: string | null
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          email?: string | null
+          id?: string
+          page_url?: string
+          status?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       calloff_history: {
         Row: {
           buyer: string
