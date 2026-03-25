@@ -150,7 +150,10 @@ export default function Report() {
         {/* CTA: Negotiate */}
         <div className="rounded-xl border border-primary/20 bg-primary/5 p-5 space-y-3">
           <p className="font-display font-semibold text-foreground text-sm">
-            Du vet nu vad marknaden betalar. Nästa steg: förhandla upp din ersättning.
+            Nu vet du vad marknaden betalar. Nästa steg: Förhandla upp din ersättning.
+          </p>
+          <p className="text-xs text-muted-foreground">
+            Vill du ha stöd i förhandlingen? Köp tillgång till vår smarta agent som har hjälpt över 300 konsulter att öka sin ersättning.
           </p>
           <Link
             to={`/forhandla?role=${encodeURIComponent(report.occupation || "")}&geo=${encodeURIComponent(report.kommun || "")}&emp=${encodeURIComponent(report.employment_type || "")}`}
