@@ -196,7 +196,7 @@ INSTRUKTIONER:
 - Om användaren frågar om en specifik verksamhet, leta i verksamhetsstatistiken ovan och berätta: antal uppdrag, senaste datum, snittintervall, prognostiserat nästa uppdrag.
 - Om du inte har data för en fråga, säg det tydligt.
 - Använd ordet "uppdrag" istället för "avrop".
-- Priset avser timpris till kund (regionens pris till bemanningsföretag).
+- Priset avser vad regionen betalar till bemanningsföretaget. Kalla detta alltid "vad regionen betalar" — använd aldrig "timtaxa" eller "timpris".
 - Om användaren frågar "när kom senaste uppdraget" ge svaret baserat på senaste datumet.
 - Om användaren frågar "när förväntas nästa" ge svaret baserat på prognosdatumet.
 - Använd ALDRIG data från SCB eller Medlingsinstitutet. Basera alla svar uteslutande på den uppdragsdata som tillhandahålls ovan.`;
