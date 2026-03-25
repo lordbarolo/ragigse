@@ -652,8 +652,7 @@ async function capSalaryBenchmark(
   const p25 = data.p25_salary as number | null;
   const median = data.median_salary as number | null;
   const p75 = data.p75_salary as number | null;
-  const mean = data.mean_salary as number | null;
-  const effectiveMedian = median ?? mean ?? 0;
+  const effectiveMedian = median ?? (data.mean_salary as number | null) ?? 0;
 
   return {
     data: {
@@ -661,7 +660,7 @@ async function capSalaryBenchmark(
       geography: resolved.geography ? { id: resolved.geography.geo_id, name: resolved.geography.name } : null,
       period: data.period_key,
       sample_size: sampleSize > 0 ? sampleSize : null,
-      mean_salary: mean,
+      median_salary: effectiveMedian,
       median_salary: effectiveMedian,
       p25_salary: p25 ?? Math.round(effectiveMedian * 0.92),
       p75_salary: p75 ?? Math.round(effectiveMedian * 1.08),
