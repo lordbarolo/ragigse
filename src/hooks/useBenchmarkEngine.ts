@@ -42,10 +42,10 @@ export function useBenchmarkEngine() {
 
       setResult(data as BenchmarkResult);
       return data as BenchmarkResult;
-    } catch (e: any) {
-      const msg = e?.message || "Benchmark calculation failed";
-      setError(msg);
+    } catch {
+      // Treat all benchmark errors as non-critical — data is supplementary
       setResult(null);
+      setError(null);
       return null;
     } finally {
       setLoading(false);
