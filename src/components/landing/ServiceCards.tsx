@@ -59,7 +59,7 @@ export default function ServiceCards({ onStartAnalysis }: ServiceCardsProps) {
     <section className="py-16 md:py-24">
       <div className="max-w-6xl mx-auto px-6">
         <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-10">
-          Allt du behöver som vårdkonsult
+          Alla verktyg du behöver
         </h2>
       </div>
 
