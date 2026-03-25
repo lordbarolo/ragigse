@@ -367,6 +367,17 @@ export default function ConsultantTrackContent({
         </div>
       )}
 
+      {/* Invoice Review CTA */}
+      {isConsultantFullAccess && leadId && email && (
+        <InvoiceReviewCTA
+          leadId={leadId}
+          email={email}
+          role={occupation}
+          zone={userZone}
+          reportId={reportId}
+        />
+      )}
+
       {/* ═══ Feedback ═══ */}
       {leadId && (
         <ReportFeedback
@@ -635,16 +646,6 @@ export default function ConsultantTrackContent({
         </ul>
       </div>
 
-      {/* Invoice Review CTA */}
-      {isConsultantFullAccess && leadId && email && (
-        <InvoiceReviewCTA
-          leadId={leadId}
-          email={email}
-          role={occupation}
-          zone={userZone}
-          reportId={reportId}
-        />
-      )}
     </div>
   );
 }
