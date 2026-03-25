@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import InvoiceReviewCTA from "./InvoiceReviewCTA";
 import PersonalInsights from "./PersonalInsights";
@@ -21,7 +22,10 @@ import {
   Info,
   CheckCircle,
   Clock,
-  
+  Car,
+  Home,
+  FileWarning,
+  Handshake,
   Copy,
   ShieldCheck,
 } from "lucide-react";
