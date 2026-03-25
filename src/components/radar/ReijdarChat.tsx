@@ -130,7 +130,7 @@ export default function ReijdarChat({ selectedRole, initialMessage }: { selected
       {!open && (
         <button
           onClick={() => setOpen(true)}
-          className="fixed bottom-20 right-4 z-40 flex items-center gap-2 rounded-full bg-primary text-primary-foreground pl-3.5 pr-4 py-2.5 shadow-lg hover:bg-primary/90 transition-all active:scale-95"
+          className="fixed bottom-6 left-4 z-40 flex items-center gap-2 rounded-full bg-primary text-primary-foreground pl-3.5 pr-4 py-2.5 shadow-lg hover:bg-primary/90 transition-all active:scale-95"
         >
           <Bot className="w-4.5 h-4.5" />
           <span className="text-[12px] font-semibold">Fråga Reijdar</span>
