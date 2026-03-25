@@ -18,7 +18,7 @@ const SERVICES = [
   {
     image: serviceDokument,
     title: "Referenser & Verify",
-    desc: "Verifierade meriter i ett digitalt valv. BankID-signerad representation som följer dig — inte bemanningsföretaget.",
+    desc: "Ta kontroll över dina referenser och intyg. Istället för mejl fyllda med intyg, legitimationer och personuppgifter så kan du nu ladda upp dina handlingar i Compcare och ge tidsbegränsad tillgång till utvalda personer.",
     cta: "Läs mer",
   },
 ];
