@@ -49,7 +49,7 @@ export function trackEvent(
   eventName: EventName,
   metadata?: Record<string, string | number | boolean | null>
 ) {
-  if (isInternalTraffic()) return;
+  
 
   const leadId = sessionStorage.getItem("leadId") || undefined;
 
