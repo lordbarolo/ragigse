@@ -92,10 +92,10 @@ export default function Index() {
           </h1>
 
           <p className="text-hero-foreground/60 text-lg md:text-xl max-w-2xl mx-auto mb-2 leading-relaxed">
-            Vi ger dig marknadsvillkor, prognos och förhandlingsstöd
+            Data och insikter som tidigare stannat hos region och bemanningsföretag
           </p>
           <p className="text-hero-foreground/60 text-sm md:text-base max-w-2xl mx-auto mb-12">
-            — regionens offentliga data paketerad för konsulten · Kostnadsfritt och klart på 30 sekunder
+            — Paketerad för läkare och sjuksköterskor · Kostnadsfritt och klart på 30 sekunder
           </p>
 
           {/* Role selection CTA */}
