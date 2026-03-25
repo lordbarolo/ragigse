@@ -2,12 +2,19 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useRefProfile } from "@/hooks/useRefProfile";
+import { useActionItems } from "@/hooks/useActionItems";
 import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, FileText, MapPin, Briefcase, Clock, LogOut, Shield } from "lucide-react";
-import { ReferenceDashboard } from "@/components/referly/ReferenceDashboard";
+import { Loader2, FileText, MapPin, Briefcase, Clock, LogOut, UserPlus } from "lucide-react";
+import { StatusBadge } from "@/components/dashboard/StatusBadge";
+import { ActionItems } from "@/components/dashboard/ActionItems";
+import { ProfileStatusCard } from "@/components/referly/ProfileStatusCard";
+import { ReferenceVault } from "@/components/referly/ReferenceVault";
+import { InviteModal } from "@/components/referly/InviteModal";
+import { VerificationUpload } from "@/components/referly/VerificationUpload";
+import { toast } from "sonner";
 
 interface ReportRow {
   id: string;
@@ -34,6 +41,12 @@ export default function Profile() {
   const [reports, setReports] = useState<ReportRow[]>([]);
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const [ivoUploadOpen, setIvoUploadOpen] = useState(false);
+  const [hospUploadOpen, setHospUploadOpen] = useState(false);
+
+  const { profileStatus, loading: refLoading, refresh: refreshRef } = useRefProfile(user?.id);
+  const { actions, loading: actionsLoading, refresh: refreshActions } = useActionItems(user?.id);
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/logga-in");
@@ -90,16 +103,33 @@ export default function Profile() {
   const employmentLabel = (t: string | null) => t === "consultant" ? "Konsult" : t === "permanent" ? "Tillsvidareanställd" : t || "–";
   const formatSalary = (val: number | null) => val ? val.toLocaleString("sv-SE") : "–";
 
+  const handleAction = (type: string) => {
+    if (type === "missing_reference") setInviteOpen(true);
+    else if (type === "add_ivo") setIvoUploadOpen(true);
+    else if (type === "add_hosp") setHospUploadOpen(true);
+  };
+
+  const handleRefreshAll = () => {
+    refreshRef();
+    refreshActions();
+  };
+
+  const handleVerifyBankId = () => {
+    toast.info("BankID-verifiering kommer snart");
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      <div className="pt-20 pb-12 px-4 max-w-2xl mx-auto space-y-6">
-        {/* Header */}
+      <div className="pt-20 pb-12 px-4 max-w-2xl mx-auto space-y-5">
+        {/* Header + StatusBadge */}
         <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">Min profil</h1>
-            <p className="text-sm text-muted-foreground">{user?.email}</p>
-            <p className="text-xs text-muted-foreground/60 font-mono select-all">ID: {user?.id}</p>
+          <div className="flex items-center gap-3">
+            <div>
+              <h1 className="text-2xl font-bold text-foreground">Min dashboard</h1>
+              <p className="text-sm text-muted-foreground">{user?.email}</p>
+            </div>
+            {profileStatus && <StatusBadge status={profileStatus.status} />}
           </div>
           <Button variant="outline" size="sm" onClick={handleSignOut} className="gap-2">
             <LogOut className="w-4 h-4" />
@@ -107,31 +137,72 @@ export default function Profile() {
           </Button>
         </div>
 
-        {/* Tabs */}
-        <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="overview" className="gap-1.5">
-              <FileText className="w-3.5 h-3.5" />
-              Översikt
-            </TabsTrigger>
-            <TabsTrigger value="references" className="gap-1.5">
-              <Shield className="w-3.5 h-3.5" />
-              Referenser
-            </TabsTrigger>
-          </TabsList>
+        {/* 🔥 Actions */}
+        <ActionItems actions={actions} loading={actionsLoading} onAction={handleAction} />
 
-          <TabsContent value="overview" className="space-y-6 mt-4">
-            <ProfileDetailsCard profile={profile} employmentLabel={employmentLabel} formatSalary={formatSalary} />
-            <ReportsCard reports={reports} />
-            <div className="text-center">
-              <Link to="/"><Button variant="outline" className="gap-2">Gör en ny analys</Button></Link>
-            </div>
-          </TabsContent>
+        {/* Checklista */}
+        {profileStatus && (
+          <ProfileStatusCard
+            data={profileStatus}
+            onRefresh={handleRefreshAll}
+            onInvite={() => setInviteOpen(true)}
+            onVerifyBankId={handleVerifyBankId}
+          />
+        )}
 
-          <TabsContent value="references" className="mt-4">
-            <ReferenceDashboard />
-          </TabsContent>
-        </Tabs>
+        {/* Referenser (vault light) */}
+        <div>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-base font-semibold text-foreground">Referenser</h2>
+            <Button size="sm" variant="outline" onClick={() => setInviteOpen(true)} className="gap-1.5 text-xs h-8">
+              <UserPlus className="h-3.5 w-3.5" />
+              Bjud in
+            </Button>
+          </div>
+          <ReferenceVault />
+        </div>
+
+        {/* Profiluppgifter */}
+        <ProfileDetailsCard profile={profile} employmentLabel={employmentLabel} formatSalary={formatSalary} />
+
+        {/* Rapporter */}
+        <ReportsCard reports={reports} />
+
+        <div className="text-center">
+          <Link to="/"><Button variant="outline" className="gap-2">Gör en ny analys</Button></Link>
+        </div>
+
+        {/* Invite Modal */}
+        {user && (
+          <InviteModal
+            open={inviteOpen}
+            onOpenChange={setInviteOpen}
+            userId={user.id}
+            onSuccess={handleRefreshAll}
+          />
+        )}
+
+        {/* Hidden file inputs for IVO/HOSP uploads triggered by actions */}
+        {ivoUploadOpen && (
+          <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center" onClick={() => setIvoUploadOpen(false)}>
+            <Card className="w-80" onClick={e => e.stopPropagation()}>
+              <CardHeader><CardTitle className="text-base">Ladda upp IVO-utdrag</CardTitle></CardHeader>
+              <CardContent className="flex justify-center">
+                <VerificationUpload type="ivo" label="IVO" onSuccess={() => { setIvoUploadOpen(false); handleRefreshAll(); }} />
+              </CardContent>
+            </Card>
+          </div>
+        )}
+        {hospUploadOpen && (
+          <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center" onClick={() => setHospUploadOpen(false)}>
+            <Card className="w-80" onClick={e => e.stopPropagation()}>
+              <CardHeader><CardTitle className="text-base">Ladda upp HOSP-utdrag</CardTitle></CardHeader>
+              <CardContent className="flex justify-center">
+                <VerificationUpload type="hosp" label="HOSP" onSuccess={() => { setHospUploadOpen(false); handleRefreshAll(); }} />
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
     </div>
   );
