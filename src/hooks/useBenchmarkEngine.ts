@@ -33,26 +33,11 @@ export function useBenchmarkEngine() {
         body: { occupation, sector, current_salary },
       });
 
-      const isNoDataError = (msg: string) => msg.toLowerCase().includes("no benchmark data");
-
-      if (fnError) {
-        const msg = fnError?.message || "";
-        if (isNoDataError(msg)) {
-          setResult(null);
-          setError(null);
-          return null;
-        }
-        throw fnError;
-      }
-
-      if (data?.error) {
-        const msg = String(data.error);
-        if (isNoDataError(msg)) {
-          setResult(null);
-          setError(null);
-          return null;
-        }
-        throw new Error(msg);
+      // Treat all benchmark errors as non-critical — data is supplementary
+      if (fnError || data?.error) {
+        setResult(null);
+        setError(null);
+        return null;
       }
 
       setResult(data as BenchmarkResult);
