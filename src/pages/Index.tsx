@@ -87,9 +87,7 @@ export default function Index() {
           </div>
 
           <h1 className="text-5xl md:text-7xl font-bold mb-8 tracking-tight">
-            Får du rätt ersättning{" "}
-            <br className="hidden sm:block" />
-            som <span className="text-primary">vårdkonsult?</span>
+            Skulle du vara nöjd med din ersättning om du visste vad regionen egentligen betalar?
           </h1>
 
           <p className="text-hero-foreground/60 text-lg md:text-xl max-w-2xl mx-auto mb-12 leading-relaxed">
