@@ -94,6 +94,9 @@ export default function Index() {
           <p className="text-hero-foreground/60 text-lg md:text-xl max-w-2xl mx-auto mb-2 leading-relaxed">
             Vi har svaret, snart du också
           </p>
+          <p className="text-hero-foreground/60 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
+            Löneanalysen tar 30 sekunder och är kostnadsfri. Rapporten ger dig insikter som tidigare stannat hos uppdragsgivaren.
+          </p>
           <div className="h-8 md:h-12" />
 
           {/* Role selection CTA */}
