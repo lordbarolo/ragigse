@@ -147,7 +147,7 @@ export default function ReportFeedback({ leadId, role, zone }: Props) {
         <div className="flex items-center justify-center gap-2">
           <MessageSquare className="w-4 h-4 text-muted-foreground" />
           <p className="text-sm font-medium text-muted-foreground">
-            Hjälpte denna analys dig förstå ditt marknadsvärde?
+            Motsvarar rapporten dina förväntningar?
           </p>
         </div>
         <div className="flex justify-center gap-3">
