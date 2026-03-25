@@ -22,7 +22,8 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    const { action } = await req.json();
+    const body = await req.json();
+    const { action } = body;
 
     // --- CONTRACT VERSIONS ---
     if (action === "versions") {
@@ -94,7 +95,6 @@ Deno.serve(async (req) => {
 
     // --- UPDATE BUG REPORT STATUS ---
     if (action === "update-bug-status") {
-      const body = await req.clone().json();
       const { id, status } = body;
       if (!id || !status) throw new Error("Missing id or status");
 
