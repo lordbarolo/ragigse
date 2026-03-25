@@ -157,6 +157,29 @@ export default function ReijdarChat({ selectedRole, initialMessage }: { selected
             </button>
           </div>
 
+          {/* Auth gate */}
+          {!authLoading && !user ? (
+            <div className="flex-1 flex flex-col items-center justify-center px-6 py-10 text-center gap-4">
+              <Bot className="w-10 h-10 text-primary/30" />
+              <div>
+                <p className="text-sm font-semibold text-foreground mb-1">Skapa ett konto för att använda assistenten</p>
+                <p className="text-xs text-muted-foreground">Registrera dig gratis för att få personliga råd om din ersättning och förhandling.</p>
+              </div>
+              <div className="flex gap-2">
+                <Link to="/registrera" onClick={() => setOpen(false)}>
+                  <Button size="sm" className="gap-1.5">
+                    <LogIn className="w-3.5 h-3.5" />
+                    Registrera dig
+                  </Button>
+                </Link>
+                <Link to="/logga-in" onClick={() => setOpen(false)}>
+                  <Button size="sm" variant="outline">Logga in</Button>
+                </Link>
+              </div>
+            </div>
+          ) : (
+          <>
+
           {/* Messages */}
           <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 min-h-0">
             {messages.length === 0 && (
