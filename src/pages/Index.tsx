@@ -92,7 +92,7 @@ export default function Index() {
           </h1>
 
           <p className="text-hero-foreground/60 text-lg md:text-xl max-w-2xl mx-auto mb-2 leading-relaxed">
-            CompCare ger dig marknadsvillkor, prognos och förhandlingsstöd — regionens offentliga data äntligen tillgänglig för konsulten
+            Vi ger dig marknadsvillkor, prognos och förhandlingsstöd — regionens offentliga data paketerad för konsulten
           </p>
           <p className="text-hero-foreground/60 text-sm md:text-base max-w-2xl mx-auto mb-12">
             Kostnadsfritt och klart på 30 sekunder
