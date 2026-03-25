@@ -1,0 +1,7 @@
+
+ALTER TABLE profiles ADD COLUMN has_required_references BOOLEAN DEFAULT FALSE;
+ALTER TABLE profiles ADD COLUMN has_valid_ivo BOOLEAN DEFAULT FALSE;
+ALTER TABLE profiles ADD COLUMN has_valid_hosp BOOLEAN DEFAULT FALSE;
+ALTER TABLE profiles ADD COLUMN has_bankid BOOLEAN DEFAULT FALSE;
+ALTER TABLE profiles ADD COLUMN profile_status TEXT DEFAULT 'incomplete';
+ALTER TABLE profiles ADD COLUMN status_updated_at TIMESTAMPTZ;

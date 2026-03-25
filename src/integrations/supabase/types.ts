@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      action_items: {
+        Row: {
+          created_at: string | null
+          id: string
+          priority: number | null
+          profile_id: string
+          status: string
+          type: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          priority?: number | null
+          profile_id: string
+          status?: string
+          type: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          priority?: number | null
+          profile_id?: string
+          status?: string
+          type?: string
+        }
+        Relationships: []
+      }
       analyses: {
         Row: {
           created_at: string
@@ -1484,17 +1511,35 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string
+          has_bankid: boolean | null
+          has_required_references: boolean | null
+          has_valid_hosp: boolean | null
+          has_valid_ivo: boolean | null
           id: string
+          profile_status: string | null
+          status_updated_at: string | null
           user_id: string
         }
         Insert: {
           created_at?: string
+          has_bankid?: boolean | null
+          has_required_references?: boolean | null
+          has_valid_hosp?: boolean | null
+          has_valid_ivo?: boolean | null
           id?: string
+          profile_status?: string | null
+          status_updated_at?: string | null
           user_id: string
         }
         Update: {
           created_at?: string
+          has_bankid?: boolean | null
+          has_required_references?: boolean | null
+          has_valid_hosp?: boolean | null
+          has_valid_ivo?: boolean | null
           id?: string
+          profile_status?: string | null
+          status_updated_at?: string | null
           user_id?: string
         }
         Relationships: []
