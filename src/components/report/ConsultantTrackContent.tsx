@@ -360,7 +360,7 @@ export default function ConsultantTrackContent({
             <li className="flex items-start gap-3">
               <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
               <span className="text-body-sm leading-relaxed">
-                Notera att resa, boende och kompetensintyg (t.ex. HLR, SITHS) ofta dras från ersättningen — fråga vad som ingår.
+                Kostnader som kan påverka ersättningen: resa, boende, HLR-intyg, SITHS-kort, introduktion m.m. Fråga din uppdragsgivare vilka kostnader uppdraget medför.
               </span>
             </li>
           </ul>
