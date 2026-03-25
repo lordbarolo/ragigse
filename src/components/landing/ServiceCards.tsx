@@ -6,7 +6,7 @@ const SERVICES = [
   {
     image: serviceLoneanalys,
     title: "Ersättningsanalys",
-    desc: "Vill du veta om du har rätt ersättning? Vi har svaret. Baserat på omfattande dataanalys och branschens marginaler kan vi ge dig beslutsunderlag för löneförhandling redan idag.",
+    desc: "Vill du veta om du har rätt ersättning? Vi har svaret.\nBaserat på omfattande dataanalys och branschens marginaler kan vi ge dig beslutsunderlag för löneförhandling redan idag.",
     cta: "Starta analys",
   },
   {
