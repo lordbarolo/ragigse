@@ -36,6 +36,7 @@ const PingResponse = lazy(() => import("./pages/PingResponse"));
 const PublicProfile = lazy(() => import("./pages/PublicProfile"));
 const VerifyProof = lazy(() => import("./pages/VerifyProof"));
 const Fakturakontroll = lazy(() => import("./pages/Fakturakontroll"));
+const ReijdarChat = lazy(() => import("./components/radar/ReijdarChat"));
 
 const queryClient = new QueryClient();
 
