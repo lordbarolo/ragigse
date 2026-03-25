@@ -35,7 +35,7 @@ export default function Hero() {
           className="font-display font-extrabold leading-[1.04] tracking-[-0.04em] text-foreground mb-2"
           style={{ fontSize: "clamp(26px, 6.5vw, 56px)" }}
         >
-          Skulle du vara nöjd med lönen om du såg vad kunden faktiskt betalar?
+          Vad betalar kunden för din kompetens egentligen?
         </h1>
 
         <p

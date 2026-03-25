@@ -88,7 +88,7 @@ export default function Index() {
           </div>
 
           <h1 className="text-5xl md:text-7xl font-bold mb-8 tracking-tight">
-            Skulle du vara nöjd med lönen om du såg vad kunden faktiskt betalar?
+            Vad betalar kunden för din kompetens egentligen?
           </h1>
 
           <p className="text-hero-foreground/60 text-lg md:text-xl max-w-2xl mx-auto mb-2 leading-relaxed">
