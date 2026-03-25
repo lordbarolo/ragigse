@@ -42,7 +42,6 @@ function PhoneFrame({ src, alt }: { src: string; alt: string }) {
             className="w-full h-auto"
           />
         </div>
-        </div>
       </div>
     </div>
   );
