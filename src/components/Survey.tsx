@@ -558,14 +558,13 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                   value={kommunSearch}
                   onChange={(e) => setKommunSearch(e.target.value)}
                   placeholder="Sök kommun"
-                  className="h-28 pl-12 text-2xl"
-                  autoFocus
+                   className="h-12 pl-12 text-base"
                 />
               </div>
 
               {/* Results */}
               <div className="rounded-xl border border-border overflow-hidden">
-                <div className="flex flex-col max-h-[320px] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-primary/25">
+                <div className="flex flex-col max-h-[180px] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-primary/25">
                   {filteredKommunerSearch.length === 0 ? (
                     <p className="py-8 text-center text-body-sm">Inga kommuner hittades</p>
                   ) : (
