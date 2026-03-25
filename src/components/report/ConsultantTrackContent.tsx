@@ -364,7 +364,7 @@ export default function ConsultantTrackContent({
             <li className="flex items-start gap-3">
               <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
               <span className="text-body-sm leading-relaxed">
-                Använd vår smarta assistent för mer info om hur du kan påverka din ersättning vid behov.
+                Använd vår smarta assistent för mer information om hur du kan påverka din ersättning vid behov.
               </span>
             </li>
           </ul>
