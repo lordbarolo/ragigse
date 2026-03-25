@@ -423,7 +423,7 @@ export default function ConsultantTrackContent({
                           {zc.zon}
                           <span className="text-micro font-normal text-muted-foreground ml-1">
                             {zc.zon === "Zon 1" && "– Närhet till större städer"}
-                            {zc.zon === "Zon 2" && "– Mellanstora städer och bra pendlingsavstånd"}
+                            {zc.zon === "Zon 2" && "– Mellanstora städer"}
                             {zc.zon === "Zon 3" && "– Glesbygd"}
                           </span>
                         </span>
