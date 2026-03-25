@@ -3,15 +3,15 @@ import { TrendingUp, TrendingDown, Info, Sparkles } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 const icons: Record<string, React.ReactNode> = {
-  increase: <TrendingUp className="w-4 h-4 text-red-500 shrink-0" />,
-  decrease: <TrendingDown className="w-4 h-4 text-green-500 shrink-0" />,
+  increase: <TrendingUp className="w-4 h-4 text-green-500 shrink-0" />,
+  decrease: <TrendingDown className="w-4 h-4 text-red-500 shrink-0" />,
   info: <Info className="w-4 h-4 text-blue-500 shrink-0" />,
   new: <Sparkles className="w-4 h-4 text-amber-500 shrink-0" />,
 };
 
 const badgeVariant: Record<string, string> = {
-  increase: "bg-red-50 text-red-700 border-red-200 dark:bg-red-950 dark:text-red-300 dark:border-red-800",
-  decrease: "bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800",
+  increase: "bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800",
+  decrease: "bg-red-50 text-red-700 border-red-200 dark:bg-red-950 dark:text-red-300 dark:border-red-800",
   info: "bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800",
   new: "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950 dark:text-amber-300 dark:border-amber-800",
 };
