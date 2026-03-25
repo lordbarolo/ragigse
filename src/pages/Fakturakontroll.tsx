@@ -71,8 +71,8 @@ export default function Fakturakontroll() {
       <section className="px-6 py-16 md:py-24 bg-card border-y border-border">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-2.5 mb-2">
-            <AlertTriangle className="w-5 h-5 text-amber-500" />
-            <span className="text-sm font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider">Vanliga missar</span>
+            <AlertTriangle className="w-5 h-5 text-accent-foreground" />
+            <span className="text-sm font-bold text-accent-foreground uppercase tracking-wider">Vanliga missar</span>
           </div>
           <h2 className="font-display text-3xl md:text-4xl font-bold tracking-tight mb-10">
             Det här hittar vi oftast
