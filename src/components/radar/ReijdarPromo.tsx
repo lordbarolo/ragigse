@@ -23,7 +23,7 @@ export default function ReijdarPromo({ onAsk }: ReijdarPromoProps) {
         </div>
       </div>
       <p className="text-[13px] text-muted-foreground leading-relaxed">
-        Reijdar kan hjälpa dig analysera marknaden — ställ frågor om historiska mönster, priser och kommande behov.
+        Din egen kontraktsagent. Reidar har tillgång till ramavtalspriser, avropsmönster och marknadsdata i alla 21 regioner — fråga vad som helst.
       </p>
       <div className="flex flex-wrap gap-1.5">
         {examples.map((ex) => (

@@ -194,11 +194,11 @@ export default function Radar() {
           className="font-display text-foreground mb-2"
           style={{ fontSize: "28px", fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.1 }}
         >
-          Se vilka uppdrag som sannolikt{" "}
-          <span className="text-primary">kommer snart</span>
+          Var redo innan{" "}
+          <span className="text-primary">uppdraget publiceras</span>
         </h1>
         <p className="text-[14px] text-muted-foreground leading-relaxed max-w-[380px] mb-1">
-          Radar analyserar historiska uppdrag och visar återkommande mönster i efterfrågan.
+          Radar visar kommande behov baserat på historiska avropsmönster — så att du kan positionera dig innan konkurrenterna.
         </p>
         <p className="text-[12px] text-muted-foreground/70 leading-relaxed max-w-[380px] mb-5">
           🔮 = Viss chans  · 🔮🔮 = Tydlig chans · 🔮🔮🔮 = Stor chans
