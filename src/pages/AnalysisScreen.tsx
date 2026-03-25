@@ -66,10 +66,24 @@ export default function AnalysisScreen() {
     // Try sessionStorage first (populated during survey flow)
     const raw = sessionStorage.getItem("surveyData");
     if (raw) {
-      setSurvey(JSON.parse(raw) as SurveyData);
+      try {
+        setSurvey(JSON.parse(raw) as SurveyData);
+      } catch {
+        sessionStorage.clear();
+        navigate("/");
+        return;
+      }
       setReportId(sessionStorage.getItem("reportId") || "");
       const pricingRaw = sessionStorage.getItem("pricingResult");
-      if (pricingRaw) setPricing(JSON.parse(pricingRaw) as PricingResult);
+      if (pricingRaw) {
+        try {
+          setPricing(JSON.parse(pricingRaw) as PricingResult);
+        } catch {
+          sessionStorage.clear();
+          navigate("/");
+          return;
+        }
+      }
     } else {
       // Backend-first: fetch lead data from server
       fetchLead(rid).then((res) => {
