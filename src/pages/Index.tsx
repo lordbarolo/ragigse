@@ -88,11 +88,11 @@ export default function Index() {
           </div>
 
           <h1 className="text-5xl md:text-7xl font-bold mb-8 tracking-tight">
-            Samlad kunskap för konsulter inom sjukvård
+            Har du rätt lön?
           </h1>
 
           <p className="text-hero-foreground/60 text-lg md:text-xl max-w-2xl mx-auto mb-2 leading-relaxed">
-            Data och insikter som tidigare stannat hos region och bemanningsföretag
+            {"\n"}
           </p>
           <div className="h-8 md:h-12" />
 
