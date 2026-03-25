@@ -74,14 +74,9 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }
       <CardContent className="pt-6 space-y-5">
         <div className="flex items-start gap-2">
           <ShieldCheck className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-          <div>
-            <p className="font-semibold text-foreground text-base">
-              Konsulter missar att fakturera i snitt 30 000 kr per år.
-            </p>
-            <p className="text-body-sm text-muted-foreground">
-              3/10 fakturerar dessutom fel varje månad. Är du säker på att du fakturerat rätt?
-            </p>
-          </div>
+          <p className="font-semibold text-foreground text-base">
+            Konsulter missar att fakturera i snitt 30 000 kr per år. 3/10 fakturerar dessutom fel varje månad. Är du säker på att du fakturerat rätt?
+          </p>
         </div>
 
         <p className="text-body-sm leading-relaxed">
