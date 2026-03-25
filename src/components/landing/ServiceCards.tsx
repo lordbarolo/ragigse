@@ -12,7 +12,7 @@ const SERVICES = [
   {
     image: serviceFaktura,
     title: "Fakturakontroll",
-    desc: "Varje fakturarrad kontrollerad mot gällande avtalspriser i din region. OB, jour, beredskap och storhelg — rad för rad.",
+    desc: "Pengarna du inte visste att du saknade. Konsulter missar att fakturera för i snitt 30 000kr per år. Komplicerade avtal och lokala tillägg ökar risken för misstag. Vi har byggt en automatiserad assistent som granskar dina tidrapporter och fakturor. Se om du har pengar att hämta för jobb du redan utfört.",
     cta: "Läs mer",
   },
   {
