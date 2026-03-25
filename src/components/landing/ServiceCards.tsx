@@ -58,7 +58,7 @@ export default function ServiceCards({ onStartAnalysis }: ServiceCardsProps) {
 
             {/* Text */}
             <h3 className="text-lg font-bold text-foreground mb-1">{s.title}</h3>
-            <p className="text-sm text-muted-foreground leading-relaxed mb-3">{s.desc}</p>
+            <p className="text-sm text-muted-foreground leading-relaxed mb-3 whitespace-pre-line">{s.desc}</p>
             <span className="inline-flex items-center gap-2 text-sm font-semibold text-foreground">
               {s.cta} <span aria-hidden>→</span>
             </span>
