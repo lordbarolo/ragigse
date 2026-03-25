@@ -13,8 +13,8 @@ const faqJsonLd = {
   "@context": "https://schema.org",
   "@type": "FAQPage",
   mainEntity: [
-    { "@type": "Question", name: "Hur fungerar CompCare.se?", acceptedAnswer: { "@type": "Answer", text: "Du fyller i din yrkesroll, arbetsort och erfarenhet. Vi jämför din nuvarande eller erbjudna konsultersättning med faktiska ramavtalspriser som offentliga vårdgivare betalar till bemanningsföretag för inhyrd personal." } },
-    { "@type": "Question", name: "Vilka data baseras analysen på?", acceptedAnswer: { "@type": "Answer", text: "Analysen baseras på Regionernas officiella ramavtalspriser för 2026 och bemanningsbranschens standardmarginaler." } },
+    { "@type": "Question", name: "Hur fungerar CompCare.se?", acceptedAnswer: { "@type": "Answer", text: "Du fyller i din yrkesroll, arbetsort och erfarenhet. Vi jämför din ersättning med ramavtalspriser från SKR och lönestatistik från SCB/Medlingsinstitutet — samma data som regioner och bemanningsföretag använder." } },
+    { "@type": "Question", name: "Vilka data baseras analysen på?", acceptedAnswer: { "@type": "Answer", text: "Analysen baseras på SKR:s officiella ramavtalspriser för 2026, lönestatistik från Medlingsinstitutet 2024, och bemanningsbranschens standardmarginaler." } },
     { "@type": "Question", name: "Kostar det något att använda CompCare?", acceptedAnswer: { "@type": "Answer", text: "Den grundläggande jämförelsen av din konsultersättning är helt gratis. För en detaljerad rapport med förhandlingstips kan du välja att uppgradera." } },
     { "@type": "Question", name: "Vilka yrkesgrupper stöds?", acceptedAnswer: { "@type": "Answer", text: "Just nu fokuserar vi på konsulterande sjuksköterskor, barnmorskor och läkare. Samtliga specialiseringar har unik data." } },
   ],
@@ -88,11 +88,11 @@ export default function Index() {
           </div>
 
           <h1 className="text-5xl md:text-7xl font-bold mb-8 tracking-tight">
-            Regionen har system. Bemanningsbolaget har system. Du har — ingenting.
+            Skulle du vara nöjd med lönen om du såg vad kunden faktiskt betalar?
           </h1>
 
           <p className="text-hero-foreground/60 text-lg md:text-xl max-w-2xl mx-auto mb-2 leading-relaxed">
-            CompCare ger dig marknadsdata, prognos och förhandlingsstöd — direkt, utan att vara beroende av någon annan.
+            Ramavtalspriser, lönestatistik och marginalberäkningar — samlat från 21 regioner och SCB. Du bestämmer vad du gör med informationen.
           </p>
           <p className="text-hero-foreground/60 text-sm md:text-base max-w-2xl mx-auto mb-12">
             Kostnadsfritt och klart på 30 sekunder
@@ -157,16 +157,16 @@ export default function Index() {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
             <h2 className="text-3xl font-bold mb-6 tracking-tight text-foreground">
-              Data, tolkning och beslutsstöd — i tre lager.
+              Samma data som regionen har. Nu även din.
             </h2>
             <p className="text-muted-foreground mb-4 leading-relaxed text-lg">
-              Lager 1: Vi aggregerar marknadsdata från 21 regioners ramavtal och 290 kommuner. Lager 2: Vi tolkar datan och visar var du ligger i spannet. Lager 3: Du får konkreta argument som ökar din win-rate i nästa förhandling.
+              21 regioners ramavtalspriser. SCB:s lönestatistik. Bemanningsbranschens marginaler. Vi sammanställer — du ser exakt var du ligger i spannet.
             </p>
             <p className="text-muted-foreground mb-4 leading-relaxed text-base italic">
-              Vad betalar Region Skåne för en infektionssjuksköterska? Hur skiljer sig Zon 1 mot Zon 3 för AT-läkare? Hur mycket har priserna ändrats sedan förra avtalsperioden?
+              "Vad betalar Region Skåne för en infektionssjuksköterska? Hur skiljer sig Zon 1 mot Zon 3? Hur mycket har priserna ändrats sedan förra avtalsperioden?"
             </p>
             <p className="text-foreground font-medium text-base">
-              AI-agenten Reidar har tillgång till all data — ställ frågan direkt.
+              Ställ frågan till Reidar — din AI-agent med tillgång till all avtalsdatan.
             </p>
           </div>
 

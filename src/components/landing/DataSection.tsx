@@ -6,6 +6,12 @@ const CARDS = [
     source: "Giltig 2026-01-01–2026-12-31",
   },
   {
+    icon: "📊",
+    title: "SCB & Medlingsinstitutet",
+    desc: "Lönestatistik (p25/p50/p75) per yrkeskategori och sektor. Samma data som arbetsgivare och fackförbund använder i löneförhandlingar.",
+    source: "Källa: Medlingsinstitutet 2024",
+  },
+  {
     icon: "🗺",
     title: "Geografisk zonindelning",
     desc: "Tre prisnivåer baserade på regionens geografiska läge. Zon 1 inkluderar storstadsregioner, zon 3 avlägsna regioner med svårare rekrytering.",
@@ -32,7 +38,7 @@ export default function DataSection() {
         All data är offentlig och verifierbar. Vi sammanställer — du bestämmer vad du gör med informationen.
       </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-12">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-12">
         {CARDS.map((c, i) => (
           <div key={i} className="bg-[hsl(var(--dark-2))] border border-foreground/[0.07] rounded-[20px] p-7 hover:border-foreground/[0.12] transition-colors">
             <div className="text-[28px] mb-4">{c.icon}</div>

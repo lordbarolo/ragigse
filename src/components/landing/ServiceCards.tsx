@@ -5,20 +5,20 @@ import serviceDokument from "@/assets/service-dokument.jpg";
 const SERVICES = [
   {
     image: serviceLoneanalys,
-    title: "Löneanalys",
-    desc: "Se din marknadsposition mot faktiska ramavtalspriser. Data, tolkning och argument — allt du behöver inför nästa förhandling.",
+    title: "Ersättningsanalys",
+    desc: "Ditt timpris jämfört med SKR:s ramavtalspriser och SCB:s lönestatistik. Exakt position i spannet — inte uppskattningar.",
     cta: "Starta analys",
   },
   {
     image: serviceFaktura,
     title: "Fakturakontroll",
-    desc: "Automatiserad granskning av dina fakturor mot officiella avtal i 21 regioner. OB, jour och storhelg — vi hittar det du missat.",
+    desc: "Varje fakturarrad kontrollerad mot gällande avtalspriser i din region. OB, jour, beredskap och storhelg — rad för rad.",
     cta: "Läs mer",
   },
   {
     image: serviceDokument,
     title: "Referenser & Verify",
-    desc: "Bevisa din kvalitet en gång — återanvänd alltid. Verifierade referenser och BankID-signerad representation i ett digitalt valv.",
+    desc: "Verifierade meriter i ett digitalt valv. BankID-signerad representation som följer dig — inte bemanningsföretaget.",
     cta: "Läs mer",
   },
 ];

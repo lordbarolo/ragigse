@@ -35,14 +35,14 @@ export default function Hero() {
           className="font-display font-extrabold leading-[1.04] tracking-[-0.04em] text-foreground mb-2"
           style={{ fontSize: "clamp(26px, 6.5vw, 56px)" }}
         >
-          Alla har systemstöd utom du. Tills nu.
+          Skulle du vara nöjd med lönen om du såg vad kunden faktiskt betalar?
         </h1>
 
         <p
           className="text-foreground/55 font-light leading-relaxed max-w-[420px] mx-auto"
           style={{ fontSize: "clamp(14px, 2.2vw, 16px)" }}
         >
-          Marknadsdata, prognos och förhandlingsargument — utan att vara beroende av ditt bemanningsföretag.
+          Ramavtalspriser, lönestatistik och marginalberäkningar — samlat från 21 regioner och SCB.
         </p>
       </div>
     </section>
