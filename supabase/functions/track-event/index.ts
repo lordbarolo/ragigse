@@ -49,6 +49,7 @@ const ALLOWED_EVENTS = new Set([
   "reijdar_chat_started",
   "reijdar_message_sent",
   "reijdar_advice_received",
+  "fakturakontroll_page_viewed",
 ]);
 
 serve(async (req) => {
