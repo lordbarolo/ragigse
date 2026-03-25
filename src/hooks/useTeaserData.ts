@@ -62,7 +62,7 @@ export function useTeaserData(
   }, [survey]);
 
   const userHourly = useMemo(() => {
-    if (!survey) return 0;
+    if (!survey || !survey.currentSalary || survey.currentSalary <= 0) return 0;
     return survey.salaryType === "hourly" ? survey.currentSalary : Math.round(survey.currentSalary / 167);
   }, [survey]);
 
