@@ -396,7 +396,14 @@ export default function ConsultantTrackContent({
                   >
                     <div className="flex justify-between items-center mb-2">
                       <div className="flex items-center gap-2">
-                        <span className="text-body-sm font-semibold">{zc.zon}</span>
+                        <span className="text-body-sm font-semibold">
+                          {zc.zon}
+                          <span className="text-micro font-normal text-muted-foreground ml-1">
+                            {zc.zon === "Zon 1" && "– Närhet till större städer"}
+                            {zc.zon === "Zon 2" && "– Mellanstora städer och bra pendlingsavstånd"}
+                            {zc.zon === "Zon 3" && "– Glesbygd"}
+                          </span>
+                        </span>
                         {isUserZone && (
                           <span className="text-micro font-bold tracking-[0.6px] uppercase bg-primary/[0.15] text-primary rounded-[10px] px-2 py-0.5">
                             Din zon
