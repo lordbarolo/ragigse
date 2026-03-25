@@ -480,8 +480,6 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                     trackSurveyStarted();
                     setOccupationCategory(opt.value);
                     setRoleDropdownValue("");
-                    trackStepCompleted(1, opt.value);
-                    setStep(2);
                   }}
                   className={`group w-full py-5 px-5 rounded-xl border !border-l-[3px] bg-card text-left transition-all active:scale-[0.98] flex items-center justify-between gap-3 ${
                     occupationCategory === opt.value
@@ -529,10 +527,6 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                   value={roleDropdownValue}
                   onValueChange={(v) => {
                     setRoleDropdownValue(v);
-                    setTimeout(() => {
-                      trackStepCompleted(2, v);
-                      setStep(3);
-                    }, 300);
                   }}
                   placeholder={occupationCategory === "lakare" ? "Välj läkarroll eller specialisering..." : "Välj roll eller vidareutbildning..."}
                   options={occupationCategory === "lakare" ? doctorRoleOptions : nurseRoleOptions}
@@ -615,8 +609,6 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                   key={opt.value}
                   onClick={() => {
                     setData({ ...data, employmentType: opt.value });
-                    trackStepCompleted(4, opt.value);
-                    setTimeout(() => setStep(5), 300);
                   }}
                   className={`group w-full py-5 px-5 rounded-xl border !border-l-[3px] bg-card text-left transition-all active:scale-[0.98] flex items-center gap-3 ${
                     data.employmentType === opt.value
@@ -650,8 +642,6 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                   key={opt.value}
                   onClick={() => {
                     setData({ ...data, obShare: opt.value });
-                    trackStepCompleted(5, opt.value);
-                    setTimeout(() => setStep(6), 300);
                   }}
                   className={`group w-full py-5 px-5 rounded-xl border !border-l-[3px] bg-card text-left transition-all active:scale-[0.98] flex items-center gap-3 ${
                     data.obShare === opt.value
@@ -725,8 +715,8 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
       </div>
 
       {/* Navigation */}
-      {step > 1 && (
-        <div className="flex gap-3 mt-8">
+      <div className="flex gap-3 mt-8">
+        {step > 1 && (
           <button
             onClick={handleBack}
             className="flex items-center gap-1.5 py-3.5 px-5 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground transition-all active:scale-[0.97]"
@@ -734,30 +724,47 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
             <ChevronLeft className="w-4 h-4" />
             Tillbaka
           </button>
-          {step === 6 && (
-            <button
-              onClick={() => {
-                if (data.currentSalary <= 0) {
-                  toast.error("Ange ersättning innan du fortsätter");
-                  return;
-                }
-                if (!canProceed) return;
-                trackStepCompleted(6, data.currentSalary);
-                handleNext();
-              }}
-              disabled={saving}
-              className={`flex-1 flex items-center justify-center gap-2 py-4 px-6 rounded-xl text-base font-semibold transition-all duration-200 active:scale-[0.97] ${
-                canProceed && !saving
-                  ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
-                  : "bg-muted text-muted-foreground cursor-not-allowed"
-              }`}
-            >
-              {saving ? "Analyserar..." : "Visa min analys"}
-              {!saving && <ArrowRight className="w-5 h-5" />}
-            </button>
-          )}
-        </div>
-      )}
+        )}
+        {step !== 3 && step !== 6 && (
+          <button
+            onClick={() => {
+              if (!canProceed) return;
+              handleNext();
+            }}
+            disabled={!canProceed}
+            className={`flex-1 flex items-center justify-center gap-2 py-4 px-6 rounded-xl text-base font-semibold transition-all duration-200 active:scale-[0.97] ${
+              canProceed
+                ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                : "bg-muted text-muted-foreground cursor-not-allowed"
+            }`}
+          >
+            Nästa
+            <ArrowRight className="w-5 h-5" />
+          </button>
+        )}
+        {step === 6 && (
+          <button
+            onClick={() => {
+              if (data.currentSalary <= 0) {
+                toast.error("Ange ersättning innan du fortsätter");
+                return;
+              }
+              if (!canProceed) return;
+              trackStepCompleted(6, data.currentSalary);
+              handleNext();
+            }}
+            disabled={saving}
+            className={`flex-1 flex items-center justify-center gap-2 py-4 px-6 rounded-xl text-base font-semibold transition-all duration-200 active:scale-[0.97] ${
+              canProceed && !saving
+                ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                : "bg-muted text-muted-foreground cursor-not-allowed"
+            }`}
+          >
+            {saving ? "Analyserar..." : "Visa min analys"}
+            {!saving && <ArrowRight className="w-5 h-5" />}
+          </button>
+        )}
+      </div>
 
       <p className="text-center text-micro mt-8">
         Dina uppgifter hanteras enligt vår{" "}
