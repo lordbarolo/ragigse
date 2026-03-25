@@ -6,6 +6,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 import Survey from "@/components/Survey";
+import ServiceCards from "@/components/landing/ServiceCards";
 import reportPreview from "@/assets/report-preview.jpeg";
 
 const faqJsonLd = {
@@ -147,6 +148,9 @@ export default function Index() {
           Se ersättning för din roll
         </button>
       </section>
+
+      {/* ── Service Cards (horizontal scroll) ──────── */}
+      <ServiceCards onStartAnalysis={() => handleRoleSelect("ssk")} />
 
       {/* ── Features section ───────────────────────────── */}
       <section className="max-w-6xl mx-auto px-6 pt-16 pb-32">

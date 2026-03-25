@@ -1,0 +1,70 @@
+import serviceFaktura from "@/assets/service-faktura.jpg";
+import serviceLoneanalys from "@/assets/service-loneanalys.jpg";
+import serviceDokument from "@/assets/service-dokument.jpg";
+
+const SERVICES = [
+  {
+    image: serviceFaktura,
+    title: "Fakturakontroll",
+    desc: "Vi granskar dina fakturor och hittar OB-tillägg, jour och beredskap som du missat. Kostnadsfritt om inga fel hittas.",
+    cta: "Läs mer",
+  },
+  {
+    image: serviceLoneanalys,
+    title: "Löneanalys",
+    desc: "Jämför din ersättning mot verkliga ramavtalspriser i din zon. Se exakt var du ligger i marknadsspannet.",
+    cta: "Läs mer",
+  },
+  {
+    image: serviceDokument,
+    title: "Dokument & Referenser",
+    desc: "Samla verifierade referenser, CV och legitimation i ett digitalt valv. Du bestämmer vem som får se vad.",
+    cta: "Läs mer",
+  },
+];
+
+interface ServiceCardsProps {
+  onStartAnalysis: () => void;
+}
+
+export default function ServiceCards({ onStartAnalysis }: ServiceCardsProps) {
+  return (
+    <section className="py-16 md:py-24">
+      <div className="max-w-6xl mx-auto px-6">
+        <h2 className="text-3xl md:text-4xl font-bold tracking-tight text-foreground mb-10">
+          Allt du behöver som vårdkonsult
+        </h2>
+      </div>
+
+      {/* Horizontal scroll container */}
+      <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide px-6 pb-4 max-w-6xl mx-auto">
+        {SERVICES.map((s, i) => (
+          <button
+            key={i}
+            onClick={onStartAnalysis}
+            className="snap-start shrink-0 w-[80vw] max-w-[420px] text-left group"
+          >
+            {/* Image */}
+            <div className="rounded-2xl overflow-hidden mb-4">
+              <img
+                src={s.image}
+                alt={s.title}
+                loading="lazy"
+                width={640}
+                height={800}
+                className="w-full h-auto object-cover aspect-[4/5] group-hover:scale-[1.02] transition-transform duration-300"
+              />
+            </div>
+
+            {/* Text */}
+            <h3 className="text-lg font-bold text-foreground mb-1">{s.title}</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed mb-3">{s.desc}</p>
+            <span className="inline-flex items-center gap-2 text-sm font-semibold text-foreground">
+              {s.cta} <span aria-hidden>→</span>
+            </span>
+          </button>
+        ))}
+      </div>
+    </section>
+  );
+}
