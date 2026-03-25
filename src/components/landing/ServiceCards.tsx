@@ -32,14 +32,14 @@ interface ServiceCardsProps {
 
 function PhoneFrame({ src, alt }: { src: string; alt: string }) {
   return (
-    <div className="flex justify-center mb-4">
-      <div className="relative mx-auto" style={{ maxWidth: 260 }}>
+    <div className="rounded-2xl overflow-hidden mb-4 bg-muted/30 aspect-[4/5] flex items-center justify-center p-6">
+      <div className="relative w-full max-w-[200px]">
         {/* Outer shell */}
-        <div className="bg-foreground/10 rounded-[2.4rem] p-[8px] shadow-2xl">
+        <div className="bg-foreground/10 rounded-[2.2rem] p-[6px] shadow-2xl">
           {/* Inner bezel */}
-          <div className="bg-card rounded-[2rem] overflow-hidden relative">
+          <div className="bg-card rounded-[1.8rem] overflow-hidden relative">
             {/* Notch */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[90px] h-[22px] bg-foreground/10 rounded-b-xl z-10" />
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[70px] h-[18px] bg-foreground/10 rounded-b-lg z-10" />
             {/* Screen */}
             <img
               src={src}
