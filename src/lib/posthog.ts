@@ -6,4 +6,8 @@ posthog.init("phc_GiBn5CBOm72IrzgsdQRuUcK2mujk5Q0ZeI6hs8ixvwv", {
   defaults: "2026-01-30",
 });
 
+posthog.capture('$set', {
+  internal: true,
+});
+
 export default posthog;
