@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      action_items: {
+        Row: {
+          created_at: string | null
+          id: string
+          priority: number | null
+          profile_id: string
+          status: string
+          type: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          priority?: number | null
+          profile_id: string
+          status?: string
+          type: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          priority?: number | null
+          profile_id?: string
+          status?: string
+          type?: string
+        }
+        Relationships: []
+      }
       analyses: {
         Row: {
           created_at: string
