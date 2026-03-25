@@ -248,7 +248,7 @@ async function sendReportEmail(
   } else if (resultJson?.track === "permanent" && resultJson?.market) {
     const mkt = resultJson.market;
     summaryHtml = `
-      <p style="margin:0 0 8px"><strong>Marknadens median:</strong> ${(mkt.percentile_50 || mkt.average_monthly || 0).toLocaleString("sv-SE")} kr/mån</p>
+      <p style="margin:0 0 8px"><strong>Marknadens median:</strong> ${(mkt.percentile_50 || 0).toLocaleString("sv-SE")} kr/mån</p>
       <p style="margin:0 0 8px"><strong>Topp 25%:</strong> ${(mkt.percentile_75 || 0).toLocaleString("sv-SE")} kr/mån</p>
     `;
   }

@@ -108,9 +108,10 @@ serve(async (req) => {
         );
       }
 
-      const p25 = benchData.percentile_25 ?? Math.round(benchData.average_monthly * 0.92);
-      const p50 = benchData.percentile_50 ?? benchData.average_monthly;
-      const p75 = benchData.percentile_75 ?? Math.round(benchData.average_monthly * 1.08);
+      const medianBase = benchData.percentile_50 ?? benchData.average_monthly;
+      const p25 = benchData.percentile_25 ?? Math.round(medianBase * 0.92);
+      const p50 = medianBase;
+      const p75 = benchData.percentile_75 ?? Math.round(medianBase * 1.08);
 
       const currentMonthly = current_salary || 0;
       const gap = p75 - currentMonthly;
