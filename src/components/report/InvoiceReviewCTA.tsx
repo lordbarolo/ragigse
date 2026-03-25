@@ -72,16 +72,17 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }
   return (
     <Card className="card-shadow border-primary/20">
       <CardContent className="pt-6 space-y-5">
-        <div className="flex items-center gap-2">
-          <ShieldCheck className="w-5 h-5 text-primary shrink-0" />
-          <p className="font-semibold text-foreground text-base">
-            Konsulter missar att fakturera i snitt 30 000 kr per år.
-          </p>
+        <div className="flex items-start gap-2">
+          <ShieldCheck className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+          <div>
+            <p className="font-semibold text-foreground text-base">
+              Konsulter missar att fakturera i snitt 30 000 kr per år.
+            </p>
+            <p className="text-body-sm text-muted-foreground">
+              3/10 fakturerar dessutom fel varje månad. Är du säker på att du fakturerat rätt?
+            </p>
+          </div>
         </div>
-
-        <p className="text-body-sm leading-relaxed">
-          3/10 fakturerar dessutom fel varje månad. Är du säker på att du fakturerat rätt?
-        </p>
 
         <p className="text-body-sm leading-relaxed">
           Vår smarta AI-assistent hjälper dig att kontrollera dina 10 senaste fakturor. Har du fått med alla storhelger, jourersättningar och OB-tillägg? Hittar vi inga fel är tjänsten kostnadsfri. Hittar vi avvikelser utgår provision till CompCare motsvarande 20% av beloppet som du kan tilläggsfakturera din uppdragsgivare.
