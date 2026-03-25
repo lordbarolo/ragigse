@@ -75,13 +75,20 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }
         <div className="flex items-center gap-2">
           <ShieldCheck className="w-5 h-5 text-primary shrink-0" />
           <p className="font-semibold text-foreground text-base">
-            Fakturor avviker ofta från avtalet. Vi hittar det — eller tar inget betalt.
+            Konsulter missar att fakturera i snitt 30 000 kr per år.
           </p>
         </div>
 
         <p className="text-body-sm leading-relaxed">
-          Fakturor kan ibland avvika från avtalade tillägg. CompCare granskar dina fakturor och tidrapporter utan kostnad
-          — vi tar bara betalt om vi hittar en avvikelse.
+          3/10 fakturerar dessutom fel varje månad. Är du säker på att du fakturerat rätt?
+        </p>
+
+        <p className="text-body-sm leading-relaxed">
+          Vår smarta AI-assistent hjälper dig att kontrollera dina 10 senaste fakturor. Har du fått med alla storhelger, jourersättningar och OB-tillägg? Hittar vi inga fel är tjänsten kostnadsfri. Hittar vi avvikelser utgår provision till CompCare motsvarande 20% av beloppet som du kan tilläggsfakturera din uppdragsgivare.
+        </p>
+
+        <p className="font-semibold text-foreground text-sm">
+          Vill du ha hjälp att säkerställa dina fakturor?
         </p>
 
         {/* Concrete examples of missed compensation */}
