@@ -1,14 +1,14 @@
-import serviceLoneanalys from "@/assets/service-loneanalys.jpg";
+import reportScreen from "@/assets/report-screen.png";
 import fakturaScreen from "@/assets/faktura-screen.png";
 import referenserScreen from "@/assets/referenser-screen.png";
 
 const SERVICES = [
   {
-    image: serviceLoneanalys,
+    image: reportScreen,
     title: "Ersättningsanalys",
     desc: "Vill du veta om du har rätt ersättning? Vi har svaret.\nBaserat på omfattande dataanalys och branschens marginaler kan vi ge dig beslutsunderlag för löneförhandling redan idag.",
     cta: "Starta analys",
-    isPhone: false,
+    isPhone: true,
   },
   {
     image: fakturaScreen,
