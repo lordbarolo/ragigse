@@ -34,20 +34,13 @@ function PhoneFrame({ src, alt }: { src: string; alt: string }) {
   return (
     <div className="rounded-2xl overflow-hidden mb-4 bg-muted/30 aspect-[4/5] flex items-center justify-center p-6">
       <div className="relative w-full max-w-[200px]">
-        {/* Outer shell */}
-        <div className="bg-foreground/10 rounded-[2.2rem] p-[6px] shadow-2xl">
-          {/* Inner bezel */}
-          <div className="bg-card rounded-[1.8rem] overflow-hidden relative">
-            {/* Notch */}
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[70px] h-[18px] bg-foreground/10 rounded-b-lg z-10" />
-            {/* Screen */}
-            <img
-              src={src}
-              alt={alt}
-              loading="lazy"
-              className="w-full h-auto"
-            />
-          </div>
+        <div className="rounded-[1.8rem] overflow-hidden shadow-2xl">
+          <img
+            src={src}
+            alt={alt}
+            loading="lazy"
+            className="w-full h-auto"
+          />
         </div>
       </div>
     </div>
