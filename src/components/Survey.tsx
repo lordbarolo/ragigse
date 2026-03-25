@@ -669,7 +669,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
         {/* Step 6: Ersättning (final step) */}
         {step === 6 && (
           <StepWrapper title="Vad får du i ersättning idag?">
-            <div className="rounded-2xl border border-border bg-card p-5 space-y-5">
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-5 pb-[120px]">
               <div className="flex gap-3">
                 {([
                   { value: "hourly" as const, label: "Per timme" },
@@ -696,7 +696,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                   value={data.currentSalary || ""}
                   onChange={(e) => setData({ ...data, currentSalary: Number(e.target.value) })}
                   className="h-16 text-2xl font-semibold pr-20 text-center"
-                  autoFocus
+                  
                 />
                 <span className="absolute right-5 top-1/2 -translate-y-1/2 text-base text-muted-foreground font-medium">
                   {data.salaryType === "hourly" ? "kr/h" : "kr/mån"}
@@ -788,7 +788,7 @@ function StepWrapper({
   return (
     <div className="animate-in fade-in slide-in-from-right-4 duration-300 flex-1 flex flex-col justify-center">
       <div className="mb-6 text-center">
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-foreground tracking-tight leading-tight">{title}</h2>
+        <h2 className="text-2xl font-bold text-foreground tracking-tight leading-tight">{title}</h2>
         {subtitle && <p className="text-body-sm mt-1">{subtitle}</p>}
       </div>
       <div className="flex-1 flex flex-col">{children}</div>
