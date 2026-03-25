@@ -35,7 +35,7 @@ export default function Hero() {
           className="font-display font-extrabold leading-[1.04] tracking-[-0.04em] text-foreground mb-2"
           style={{ fontSize: "clamp(26px, 6.5vw, 56px)" }}
         >
-          Vad betalar <span className="text-primary">regionen</span><br className="sm:hidden" /> för din <span className="bg-gradient-to-r from-[#a78bfa] to-[#60a5fa] bg-clip-text text-transparent">kompetens?</span>
+          Skulle du vara nöjd med din <span className="text-primary">ersättning</span> om du visste vad <span className="bg-gradient-to-r from-[#a78bfa] to-[#60a5fa] bg-clip-text text-transparent">regionen egentligen betalar?</span>
         </h1>
 
         <p
