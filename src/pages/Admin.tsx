@@ -7,6 +7,7 @@ import ConversionFunnel from "@/components/admin/ConversionFunnel";
 import DailyVisitors from "@/components/admin/DailyVisitors";
 import ReferralStats from "@/components/admin/ReferralStats";
 import FeedbackStats from "@/components/admin/FeedbackStats";
+import BugReports from "@/components/admin/BugReports";
 import { useAdminAnalytics } from "@/hooks/useAdminAnalytics";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -324,6 +325,9 @@ export default function Admin() {
 
       {/* Feedback Stats */}
       <FeedbackStats />
+
+      {/* Bug Reports */}
+      <BugReports />
 
       {/* Salary Insights */}
       <SalaryInsights />
