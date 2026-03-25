@@ -92,7 +92,7 @@ export default function Index() {
           </h1>
 
           <p className="text-hero-foreground/60 text-lg md:text-xl max-w-2xl mx-auto mb-2 leading-relaxed">
-            {"\n"}
+            Vi har svaret — och snart du också.
           </p>
           <div className="h-8 md:h-12" />
 
