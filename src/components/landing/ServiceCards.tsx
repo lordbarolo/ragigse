@@ -12,7 +12,7 @@ const SERVICES = [
   {
     image: serviceFaktura,
     title: "Fakturakontroll",
-    desc: "Pengarna du inte visste att du saknade. Konsulter missar att fakturera för i snitt 30 000kr per år. Vi har byggt en automatiserad assistent som granskar dina tidrapporter och fakturor.\nSe om du har pengar att hämta.",
+    desc: "Pengarna du inte visste att du saknade. Konsulter missar att fakturera för i snitt 30 000kr per år.\nSe om du har pengar att hämta.",
     cta: "Läs mer",
   },
   {
