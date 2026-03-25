@@ -154,20 +154,39 @@ export default function Report() {
               Nästa steg
             </span>
           </div>
-          <div className="rounded-[18px] bg-foreground/[0.035] border border-foreground/[0.07] overflow-hidden">
-            <div className="p-5 space-y-3">
-              <p className="font-semibold text-foreground text-base leading-snug">
-                Förhandla upp din ersättning
+          <div className="rounded-[18px] bg-card border border-foreground/[0.07] overflow-hidden card-shadow">
+            <div className="pt-6 px-5 space-y-4">
+              <div className="flex items-start gap-2">
+                <Handshake className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                <p className="font-semibold text-foreground text-base leading-snug">
+                  Nu vet du vad marknaden betalar. Vill du ha stöd i förhandlingen?
+                </p>
+              </div>
+
+              <p className="font-semibold text-foreground text-sm">
+                Vi hjälper dig förhandla kring:
               </p>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Nu vet du vad marknaden betalar. Vill du ha stöd i förhandlingen? Köp tillgång till vår smarta agent som har hjälpt över 300 konsulter att öka sin ersättning.
-              </p>
+
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { icon: Car, label: "Reseersättning" },
+                  { icon: Clock, label: "Jourfaktor" },
+                  { icon: Home, label: "Betalt boende" },
+                  { icon: FileWarning, label: "Vitesklausul" },
+                ].map(({ icon: Icon, label }) => (
+                  <div key={label} className="flex items-center gap-2 p-2.5 rounded-lg bg-foreground/[0.03]">
+                    <Icon className="w-3.5 h-3.5 text-primary shrink-0" />
+                    <span className="text-[12px] font-medium">{label}</span>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="px-5 pb-5">
+            <div className="px-5 py-5">
               <Link
                 to={`/forhandla?role=${encodeURIComponent(report.occupation || "")}&geo=${encodeURIComponent(report.kommun || "")}&emp=${encodeURIComponent(report.employment_type || "")}`}
                 className="w-full flex items-center justify-center gap-2 rounded-[10px] bg-primary px-4 py-3.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
               >
+                <Handshake className="w-4 h-4" />
                 Starta förhandling →
               </Link>
             </div>
