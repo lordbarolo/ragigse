@@ -18,11 +18,11 @@ const SERVICES = [
     isPhone: true,
   },
   {
-    image: serviceDokument,
+    image: referenserScreen,
     title: "Referenser & Verify",
     desc: "Ta kontroll över dina referenser och intyg. Ladda upp handlingarna och ge tidsbegränsad tillgång till utvalda personer. Spårbart, säkert och på dina villkor.",
     cta: "Läs mer",
-    isPhone: false,
+    isPhone: true,
   },
 ];
 
