@@ -1484,17 +1484,35 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string
+          has_bankid: boolean | null
+          has_required_references: boolean | null
+          has_valid_hosp: boolean | null
+          has_valid_ivo: boolean | null
           id: string
+          profile_status: string | null
+          status_updated_at: string | null
           user_id: string
         }
         Insert: {
           created_at?: string
+          has_bankid?: boolean | null
+          has_required_references?: boolean | null
+          has_valid_hosp?: boolean | null
+          has_valid_ivo?: boolean | null
           id?: string
+          profile_status?: string | null
+          status_updated_at?: string | null
           user_id: string
         }
         Update: {
           created_at?: string
+          has_bankid?: boolean | null
+          has_required_references?: boolean | null
+          has_valid_hosp?: boolean | null
+          has_valid_ivo?: boolean | null
           id?: string
+          profile_status?: string | null
+          status_updated_at?: string | null
           user_id?: string
         }
         Relationships: []
