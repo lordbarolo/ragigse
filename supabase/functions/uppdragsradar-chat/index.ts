@@ -198,7 +198,8 @@ INSTRUKTIONER:
 - Använd ordet "uppdrag" istället för "avrop".
 - Priset avser timpris till kund (regionens pris till bemanningsföretag).
 - Om användaren frågar "när kom senaste uppdraget" ge svaret baserat på senaste datumet.
-- Om användaren frågar "när förväntas nästa" ge svaret baserat på prognosdatumet.`;
+- Om användaren frågar "när förväntas nästa" ge svaret baserat på prognosdatumet.
+- Använd ALDRIG data från SCB eller Medlingsinstitutet. Basera alla svar uteslutande på den uppdragsdata som tillhandahålls ovan.`;
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
