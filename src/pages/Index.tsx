@@ -94,9 +94,7 @@ export default function Index() {
           <p className="text-hero-foreground/60 text-lg md:text-xl max-w-2xl mx-auto mb-2 leading-relaxed">
             Data och insikter som tidigare stannat hos region och bemanningsföretag
           </p>
-          <p className="text-hero-foreground/60 text-sm md:text-base max-w-2xl mx-auto mb-12">
-            {"\n"}
-          </p>
+          <div className="h-8 md:h-12" />
 
           {/* Role selection CTA */}
           <div className="max-w-md mx-auto flex flex-col sm:flex-row gap-3">
