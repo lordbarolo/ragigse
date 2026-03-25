@@ -78,6 +78,37 @@ Deno.serve(async (req) => {
       });
     }
 
+    // --- BUG REPORTS ---
+    if (action === "bug-reports") {
+      const { data, error } = await supabase
+        .from("bug_reports")
+        .select("id, created_at, page_url, category, description, email, status")
+        .order("created_at", { ascending: false })
+        .limit(100);
+
+      if (error) throw error;
+      return new Response(JSON.stringify({ reports: data }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // --- UPDATE BUG REPORT STATUS ---
+    if (action === "update-bug-status") {
+      const body = await req.clone().json();
+      const { id, status } = body;
+      if (!id || !status) throw new Error("Missing id or status");
+
+      const { error } = await supabase
+        .from("bug_reports")
+        .update({ status })
+        .eq("id", id);
+
+      if (error) throw error;
+      return new Response(JSON.stringify({ ok: true }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     return new Response(JSON.stringify({ error: "Unknown action" }), {
       status: 400,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

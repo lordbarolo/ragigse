@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import BugReportButton from "@/components/BugReportButton";
 
 export default function LandingFooter() {
   return (
@@ -10,6 +11,7 @@ export default function LandingFooter() {
         <Link to="/vanliga-fragor" className="text-[13px] text-foreground/35 no-underline hover:text-foreground transition-colors">Om CompCare</Link>
         <a href="#data" className="text-[13px] text-foreground/35 no-underline hover:text-foreground transition-colors">Datakällor</a>
         <Link to="/integritetspolicy" className="text-[13px] text-foreground/35 no-underline hover:text-foreground transition-colors">Integritetspolicy</Link>
+        <BugReportButton />
       </div>
       <span className="text-[11px] text-foreground/15">© 2026 CompCare · Piemonte Invest AB</span>
     </footer>
