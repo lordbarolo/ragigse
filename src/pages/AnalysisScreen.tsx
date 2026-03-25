@@ -494,7 +494,7 @@ export default function AnalysisScreen() {
               <div className="px-5 py-1">
                 {[
               { dot: "hsl(var(--primary))", label: "Regionens kundpris", val: teaserData ? `${fmt(teaserData.customerRate)} kr/h` : "616 kr/h" },
-              { dot: teaserData?.isUnderpaid ? "hsl(var(--amber))" : "hsl(var(--green))", label: "Din ersättning", val: teaserData ? `${fmt(teaserData.userHourly)} kr/h` : "558 kr/h" }].
+              { dot: teaserData?.isUnderpaid ? "hsl(var(--amber))" : teaserData?.isInRange ? "hsl(var(--foreground) / 0.4)" : "hsl(var(--green))", label: "Din ersättning", val: teaserData ? `${fmt(teaserData.userHourly)} kr/h` : "558 kr/h" }].
               map((m, i) =>
               <div key={i} className="flex items-center justify-between py-2.5 border-b border-foreground/[0.04] last:border-b-0">
                     <div className="flex items-center gap-2.5">
