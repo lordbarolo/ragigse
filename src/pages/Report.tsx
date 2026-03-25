@@ -110,7 +110,7 @@ export default function Report() {
             {report.occupation}
           </h1>
           <div className="flex items-center gap-2 text-sm text-primary-foreground/80">
-            <span>{report.kommun}</span>
+            <span>{report.kommun}{report.user_zone ? ` (${report.user_zone})` : ""}</span>
             <span className="w-1 h-1 rounded-full bg-primary-foreground/30" />
             <span>{isPermanentTrack ? "Fast tjänst" : "Konsultuppdrag"}</span>
             <span className="w-1 h-1 rounded-full bg-primary-foreground/30" />
