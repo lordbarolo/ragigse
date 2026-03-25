@@ -231,7 +231,8 @@ export default function AnalysisScreen() {
     const low = pricing.recommended_hourly_min || 470;
     const high = pricing.recommended_hourly_max || 560;
     // User is underpaid only if below the recommended max AND below customer rate
-    const isUnderpaid = userHourly < high;
+    const isUnderpaid = userHourly < low;
+    const isInRange = userHourly >= low && userHourly < high;
     // User is above threshold if earning more than the customer rate (what region pays)
     const isAboveCustomerRate = userHourly > customerRate;
     const roleName = survey.yrke || "Sjuksköterska";
@@ -240,7 +241,7 @@ export default function AnalysisScreen() {
     Math.round((high - userHourly) / high * 100) :
     Math.round((userHourly - low) / low * 100);
     const isPermanent = (survey as SurveyData & {track?: string;}).track === "permanent";
-    return { userHourly, customerRate, low, high, isUnderpaid, isAboveCustomerRate, roleName, zone, diffPercent, isPermanent };
+    return { userHourly, customerRate, low, high, isUnderpaid, isInRange, isAboveCustomerRate, roleName, zone, diffPercent, isPermanent };
   }, [survey, pricing]);
 
   const validEmail = EMAIL_REGEX.test(email.trim());
@@ -476,6 +477,10 @@ export default function AnalysisScreen() {
               <span className="bg-[hsl(var(--amber))]/[0.12] text-[hsl(var(--amber))] border border-[hsl(var(--amber))]/25 rounded-full px-2.5 py-0.5 text-[11px] font-display font-bold">
                     Under marknad
                   </span> :
+              teaserData?.isInRange ?
+              <span className="bg-foreground/[0.08] text-foreground/60 border border-foreground/15 rounded-full px-2.5 py-0.5 text-[11px] font-display font-bold">
+                    Inom marknadsspann
+                  </span> :
               teaserData?.isAboveCustomerRate ?
               <span className="bg-[hsl(var(--amber))]/[0.12] text-[hsl(var(--amber))] border border-[hsl(var(--amber))]/25 rounded-full px-2.5 py-0.5 text-[11px] font-display font-bold">
                     Över kundpris
@@ -489,7 +494,7 @@ export default function AnalysisScreen() {
               <div className="px-5 py-1">
                 {[
               { dot: "hsl(var(--primary))", label: "Regionens kundpris", val: teaserData ? `${fmt(teaserData.customerRate)} kr/h` : "616 kr/h" },
-              { dot: teaserData?.isUnderpaid ? "hsl(var(--amber))" : "hsl(var(--green))", label: "Din ersättning", val: teaserData ? `${fmt(teaserData.userHourly)} kr/h` : "558 kr/h" }].
+              { dot: teaserData?.isUnderpaid ? "hsl(var(--amber))" : teaserData?.isInRange ? "hsl(var(--foreground) / 0.4)" : "hsl(var(--green))", label: "Din ersättning", val: teaserData ? `${fmt(teaserData.userHourly)} kr/h` : "558 kr/h" }].
               map((m, i) =>
               <div key={i} className="flex items-center justify-between py-2.5 border-b border-foreground/[0.04] last:border-b-0">
                     <div className="flex items-center gap-2.5">
