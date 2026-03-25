@@ -92,7 +92,7 @@ export default function Index() {
           </h1>
 
           <p className="text-hero-foreground/60 text-lg md:text-xl max-w-2xl mx-auto mb-2 leading-relaxed">
-            Ramavtalspriser, lönestatistik och marginalberäkningar — samlat från 21 regioner och SCB. Du bestämmer vad du gör med informationen.
+            CompCare ger dig marknadsdata, prognos och förhandlingsstöd — direkt, utan att vara beroende av någon annan.
           </p>
           <p className="text-hero-foreground/60 text-sm md:text-base max-w-2xl mx-auto mb-12">
             Kostnadsfritt och klart på 30 sekunder
