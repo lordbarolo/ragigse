@@ -36,7 +36,7 @@ export function leadToSurvey(lead: LeadData): SurveyData & { track?: string } {
     yrke: lead.yrke || "",
     kommun: lead.kommun || "",
     experience: lead.experience || 0,
-    salaryType: (lead.salary_type as "hourly" | "monthly") || "hourly",
+    salaryType: lead.salary_type === "hourly" || lead.salary_type === "monthly" ? lead.salary_type : "hourly",
     currentSalary: lead.current_salary || 0,
     obShare: "",
     track: "consultant",
