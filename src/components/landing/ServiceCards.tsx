@@ -1,6 +1,6 @@
 import serviceLoneanalys from "@/assets/service-loneanalys.jpg";
 import fakturaScreen from "@/assets/faktura-screen.png";
-import serviceDokument from "@/assets/service-dokument.jpg";
+import referenserScreen from "@/assets/referenser-screen.png";
 
 const SERVICES = [
   {
