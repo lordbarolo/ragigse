@@ -6,7 +6,7 @@ const SERVICES = [
   {
     image: serviceLoneanalys,
     title: "Ersättningsanalys",
-    desc: "Ditt timpris jämfört med SKR:s ramavtalspriser och SCB:s lönestatistik. Exakt position i spannet — inte uppskattningar.",
+    desc: "Vill du veta om du har rätt ersättning? Vi har svaret. Baserat på omfattande dataanalys och branschens marginaler kan vi ge dig beslutsunderlag för löneförhandling redan idag.",
     cta: "Starta analys",
   },
   {
