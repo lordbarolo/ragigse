@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect } from "react";
-import { X, Send, Loader2, Bot } from "lucide-react";
+import { X, Send, Loader2, Bot, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import { trackEvent } from "@/lib/trackEvent";
 
@@ -12,6 +14,7 @@ const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/uppdragsrada
 const MAX_INPUT_LENGTH = 500;
 
 export default function ReijdarChat({ selectedRole, initialMessage }: { selectedRole?: string; initialMessage?: string }) {
+  const { user, loading: authLoading } = useAuth();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [input, setInput] = useState("");
