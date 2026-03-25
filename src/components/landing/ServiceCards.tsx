@@ -1,6 +1,6 @@
 import serviceLoneanalys from "@/assets/service-loneanalys.jpg";
 import fakturaScreen from "@/assets/faktura-screen.png";
-import serviceDokument from "@/assets/service-dokument.jpg";
+import referenserScreen from "@/assets/referenser-screen.png";
 
 const SERVICES = [
   {
@@ -18,11 +18,11 @@ const SERVICES = [
     isPhone: true,
   },
   {
-    image: serviceDokument,
+    image: referenserScreen,
     title: "Referenser & Verify",
     desc: "Ta kontroll över dina referenser och intyg. Ladda upp handlingarna och ge tidsbegränsad tillgång till utvalda personer. Spårbart, säkert och på dina villkor.",
     cta: "Läs mer",
-    isPhone: false,
+    isPhone: true,
   },
 ];
 
