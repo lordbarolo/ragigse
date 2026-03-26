@@ -298,9 +298,10 @@ export default function ReferenceForm() {
               <p className="mt-1 text-sm text-muted-foreground">
                 BankID-signering integreras i nästa version. Referensen sparas som overifierad tills dess.
               </p>
-              <Button type="button" variant="secondary" className="mt-3 cursor-not-allowed opacity-70" onClick={() => toast.info("BankID-integration kommer snart.")}>
+              <Button type="button" variant="ghost" className="mt-3 pointer-events-none opacity-50" disabled tabIndex={-1}>
                 <Lock className="h-4 w-4" />
-                Verifiera med BankID (kommer snart)
+                Verifiera med BankID
+                <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Kommer snart</span>
               </Button>
               <div
                 role="button"
