@@ -8,7 +8,7 @@ import { trackEvent } from "@/lib/trackEvent";
 
 const MISSED_ITEMS = [
   { icon: Moon, label: "OB-tillägg", desc: "Kväll, natt och helg — tarifferna regleras i ramavtalet och ska faktureras separat utöver grundpriset." },
-  { icon: Clock, label: "Jour & beredskap", desc: "Beredskapsersättning och jourpass som bemanningsföretaget ska fakturera regionen — men som ofta uteblir." },
+  { icon: Clock, label: "Jour & beredskap", desc: "Jourpass ger störst upphov till att timmar missas i konsultfakturor. En läkare som fakturerar beredskap istället för jour, går snabbt miste om betydande belopp." },
   { icon: Calendar, label: "Helg & storhelg", desc: "Jul, nyår, midsommar och övriga storhelger har egna tariffer som missas i upp till 30% av fakturorna." },
   { icon: ShieldCheck, label: "Avtalsenliga tillägg", desc: "Tillägg som regleras i ramavtalet för alla 21 regioner men glöms bort vid fakturering." },
 ];
