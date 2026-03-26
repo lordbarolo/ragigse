@@ -44,7 +44,9 @@ type EventName =
   | "reijdar_chat_started"
   | "reijdar_message_sent"
   | "reijdar_advice_received"
-  | "fakturakontroll_page_viewed";
+  | "fakturakontroll_page_viewed"
+  | "referenser_info_viewed"
+  | "verify_info_viewed";
 
 export function trackEvent(
   eventName: EventName,
