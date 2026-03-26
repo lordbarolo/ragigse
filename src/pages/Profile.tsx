@@ -7,7 +7,8 @@ import { useActionItems } from "@/hooks/useActionItems";
 import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, FileText, MapPin, Briefcase, Clock, LogOut, UserPlus } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Loader2, FileText, MapPin, Briefcase, Clock, LogOut, UserPlus, ShieldCheck } from "lucide-react";
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
 import { ActionItems } from "@/components/dashboard/ActionItems";
 import { ProfileStatusCard } from "@/components/referly/ProfileStatusCard";
@@ -272,5 +273,23 @@ function ReportsCard({ reports }: { reports: ReportRow[] }) {
         )}
       </CardContent>
     </Card>
+
+    {/* BankID verification modal — coming soon */}
+    <Dialog open={verifyOpen} onOpenChange={setVerifyOpen}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <ShieldCheck className="h-5 w-5 text-primary" />
+            BankID-verifiering
+          </DialogTitle>
+          <DialogDescription>
+            BankID-signering är under utveckling och kommer snart. Din profil fungerar utan verifiering, men Trust Score blir högre när BankID är aktiverat.
+          </DialogDescription>
+        </DialogHeader>
+        <Button variant="secondary" className="w-full mt-2" onClick={() => setVerifyOpen(false)}>
+          Stäng
+        </Button>
+      </DialogContent>
+    </Dialog>
   );
 }
