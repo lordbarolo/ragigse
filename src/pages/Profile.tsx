@@ -163,6 +163,9 @@ export default function Profile() {
           <ReferenceVault />
         </div>
 
+        {/* Dokument */}
+        <DocumentUpload />
+
         {/* Profiluppgifter */}
         <ProfileDetailsCard profile={profile} employmentLabel={employmentLabel} formatSalary={formatSalary} />
 
