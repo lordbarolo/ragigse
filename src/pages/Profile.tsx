@@ -122,8 +122,156 @@ export default function Profile() {
   };
 
   return (
-    <>
-      <div className="min-h-screen bg-background">
-        <Navbar />
-        <div className="pt-20 pb-12 px-4 max-w-2xl mx-auto space-y-5">
+    <div className="min-h-screen bg-background">
+      <Navbar />
+      <div className="pt-20 pb-12 px-4 max-w-2xl mx-auto space-y-5">
+        {/* Header + StatusBadge */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div>
+              <h1 className="text-2xl font-bold text-foreground">Min dashboard</h1>
+              <p className="text-sm text-muted-foreground">{user?.email}</p>
+            </div>
+            {profileStatus && <StatusBadge status={profileStatus.status} />}
+          </div>
+          <Button variant="outline" size="sm" onClick={handleSignOut} className="gap-2">
+            <LogOut className="w-4 h-4" />
+            Logga ut
+          </Button>
+        </div>
 
+        {/* 🔥 Actions */}
+        <ActionItems actions={actions} loading={actionsLoading} onAction={handleAction} />
+
+        {/* Profile Status */}
+        {profileStatus && (
+          <ProfileStatusCard
+            checklist={profileStatus.checklist}
+            onRefresh={handleRefreshAll}
+            onInvite={() => setInviteOpen(true)}
+            onVerifyBankId={handleVerifyBankId}
+          />
+        )}
+
+        {/* Document upload */}
+        {user && <DocumentUpload userId={user.id} />}
+
+        {/* Verification uploads */}
+        <VerificationUpload
+          type="ivo"
+          open={ivoUploadOpen}
+          onOpenChange={setIvoUploadOpen}
+          userId={user?.id || ""}
+          onSuccess={handleRefreshAll}
+        />
+        <VerificationUpload
+          type="hosp"
+          open={hospUploadOpen}
+          onOpenChange={setHospUploadOpen}
+          userId={user?.id || ""}
+          onSuccess={handleRefreshAll}
+        />
+
+        {/* Reference Vault */}
+        {user && <ReferenceVault userId={user.id} />}
+
+        {/* Invite modal */}
+        {user && (
+          <InviteModal
+            open={inviteOpen}
+            onOpenChange={setInviteOpen}
+            userId={user.id}
+            onSuccess={handleRefreshAll}
+          />
+        )}
+
+        {/* Profile details */}
+        {profile && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Profil</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2 text-sm">
+              {profile.specialty_name && (
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Briefcase className="w-4 h-4" /> {profile.specialty_name}
+                </div>
+              )}
+              {profile.region_name && (
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <MapPin className="w-4 h-4" /> {profile.region_name}
+                </div>
+              )}
+              {profile.experience_years != null && (
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Clock className="w-4 h-4" /> {profile.experience_years} års erfarenhet
+                </div>
+              )}
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <FileText className="w-4 h-4" /> {employmentLabel(profile.employment_type)}
+                {profile.salary_type === "hourly" && profile.current_hourly_rate
+                  ? ` · ${formatSalary(profile.current_hourly_rate)} kr/h`
+                  : profile.current_monthly_salary
+                    ? ` · ${formatSalary(profile.current_monthly_salary)} kr/mån`
+                    : ""}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Reports */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <FileText className="w-5 h-5 text-primary" />
+              Mina rapporter
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {reports.length === 0 ? (
+              <div className="text-center py-6">
+                <p className="text-muted-foreground text-sm mb-3">Inga rapporter ännu</p>
+                <Link to="/">
+                  <Button size="sm">
+                    <UserPlus className="w-4 h-4 mr-1" />
+                    Skapa din första analys
+                  </Button>
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {reports.map((r) => (
+                  <Link key={r.id} to={`/rapport/${r.id}`} className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors group">
+                    <div>
+                      <p className="font-medium text-foreground group-hover:text-primary transition-colors">{r.occupation || "Analys"}</p>
+                      <p className="text-xs text-muted-foreground">{r.kommun && `${r.kommun} · `}{new Date(r.created_at).toLocaleDateString("sv-SE")}</p>
+                    </div>
+                    <span className="text-xs text-muted-foreground">→</span>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* BankID verification modal — coming soon */}
+      <Dialog open={verifyOpen} onOpenChange={setVerifyOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <ShieldCheck className="h-5 w-5 text-primary" />
+              BankID-verifiering
+            </DialogTitle>
+            <DialogDescription>
+              BankID-signering är under utveckling och kommer snart. Din profil fungerar utan verifiering, men Trust Score blir högre när BankID är aktiverat.
+            </DialogDescription>
+          </DialogHeader>
+          <Button variant="secondary" className="w-full mt-2" onClick={() => setVerifyOpen(false)}>
+            Stäng
+          </Button>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
