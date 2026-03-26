@@ -6,36 +6,6 @@ interface ServiceCardsProps {
 
 const SERVICES = [
   {
-    title: "Ersättningsanalys",
-    desc: "Vill du veta om du har rätt ersättning? Vi har svaret. Baserat på omfattande analyser av avtal och branschens marginaler kan vi ge konsulter beslutsunderlag som tidigare saknats.",
-    cta: "Starta analys",
-    iconBg: "bg-blue-500/10",
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-        <rect x="3" y="3" width="14" height="11" rx="2" stroke="currentColor" strokeWidth="1.5" fill="none" />
-        <path d="M7 9h6M7 12h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M7 17l3-3 3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    ),
-    iconColor: "text-blue-500",
-    link: null,
-  },
-  {
-    title: "Fakturakontroll",
-    desc: "Pengarna du inte visste att du saknade. Konsulter missar att fakturera för i snitt 30 000 kr per år. Se om du har pengar att hämta.",
-    cta: "Läs mer",
-    iconBg: "bg-emerald-500/10",
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-        <rect x="3" y="4" width="14" height="13" rx="2" stroke="currentColor" strokeWidth="1.5" fill="none" />
-        <path d="M7 4V3M13 4V3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M7 10l2 2 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    ),
-    iconColor: "text-emerald-500",
-    link: "/fakturakontroll",
-  },
-  {
     title: "Förhandlingsagent",
     desc: "AI-driven rådgivning som hjälper dig förbereda och genomföra löneförhandlingar med konkreta argument baserade på marknadsdata.",
     cta: "Testa agenten",
@@ -64,6 +34,36 @@ const SERVICES = [
     ),
     iconColor: "text-amber-500",
     link: "/referenser",
+  },
+  {
+    title: "Ersättningsanalys",
+    desc: "Vill du veta om du har rätt ersättning? Vi har svaret. Baserat på omfattande analyser av avtal och branschens marginaler kan vi ge konsulter beslutsunderlag som tidigare saknats.",
+    cta: "Starta analys",
+    iconBg: "bg-blue-500/10",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <rect x="3" y="3" width="14" height="11" rx="2" stroke="currentColor" strokeWidth="1.5" fill="none" />
+        <path d="M7 9h6M7 12h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M7 17l3-3 3 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    ),
+    iconColor: "text-blue-500",
+    link: null,
+  },
+  {
+    title: "Fakturakontroll",
+    desc: "Pengarna du inte visste att du saknade. Konsulter missar att fakturera för i snitt 30 000 kr per år. Se om du har pengar att hämta.",
+    cta: "Läs mer",
+    iconBg: "bg-emerald-500/10",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <rect x="3" y="4" width="14" height="13" rx="2" stroke="currentColor" strokeWidth="1.5" fill="none" />
+        <path d="M7 4V3M13 4V3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M7 10l2 2 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    ),
+    iconColor: "text-emerald-500",
+    link: "/fakturakontroll",
   },
 ];
 
