@@ -206,12 +206,12 @@ export default function Index() {
           <p className="text-muted-foreground mb-6 text-base">
             OB-tillägg, jour, beredskap, helg och storhelg — det är lätt att missa. Vi granskar dina fakturor kostnadsfritt och ser till att du inte går miste om ersättning du har rätt till.
           </p>
-          <button
-            onClick={() => handleRoleSelect("ssk")}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-2xl font-semibold transition-all shadow-lg shadow-primary/20 text-base"
+          <Link
+            to="/fakturakontroll"
+            className="inline-block bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-2xl font-semibold transition-all shadow-lg shadow-primary/20 text-base no-underline"
           >
             Granska min ersättning →
-          </button>
+          </Link>
         </div>
       </section>
 

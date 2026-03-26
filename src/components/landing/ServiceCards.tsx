@@ -36,8 +36,23 @@ const SERVICES = [
     link: "/fakturakontroll",
   },
   {
-    title: "Referenser & Verify",
-    desc: "Ta kontroll över dina referenser och intyg. Dela med handlingarna och ge tidsbegränsad tillgång till relevanta personer. Spårbart, säkert och på dina villkor.",
+    title: "Förhandlingsagent",
+    desc: "AI-driven rådgivning som hjälper dig förbereda och genomföra löneförhandlingar med konkreta argument baserade på marknadsdata.",
+    cta: "Testa agenten",
+    iconBg: "bg-violet-500/10",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M10 3v4M6 5l2 3M14 5l-2 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <rect x="4" y="10" width="12" height="7" rx="2" stroke="currentColor" strokeWidth="1.5" fill="none" />
+        <path d="M8 13h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+    ),
+    iconColor: "text-violet-500",
+    link: "/forhandla",
+  },
+  {
+    title: "Referenser & Verifikationer",
+    desc: "Ta kontroll över dina referenser och intyg. Dela handlingarna och ge tidsbegränsad tillgång till relevanta personer. Spårbart, säkert och på dina villkor.",
     cta: "Läs mer",
     iconBg: "bg-amber-500/10",
     icon: (
@@ -48,7 +63,7 @@ const SERVICES = [
       </svg>
     ),
     iconColor: "text-amber-500",
-    link: null,
+    link: "/referenser",
   },
 ];
 
@@ -66,7 +81,7 @@ export default function ServiceCards({ onStartAnalysis }: ServiceCardsProps) {
         </h2>
 
         {/* Grid with 1px gap lines */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-border rounded-xl overflow-hidden">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-border rounded-xl overflow-hidden">
           {SERVICES.map((s, i) => (
             <div key={i} className="bg-background p-8 flex flex-col">
               {/* Icon */}
