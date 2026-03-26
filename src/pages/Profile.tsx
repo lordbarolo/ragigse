@@ -45,6 +45,7 @@ export default function Profile() {
   const [inviteOpen, setInviteOpen] = useState(false);
   const [ivoUploadOpen, setIvoUploadOpen] = useState(false);
   const [hospUploadOpen, setHospUploadOpen] = useState(false);
+  const [verifyOpen, setVerifyOpen] = useState(false);
 
   const { profileStatus, loading: refLoading, refresh: refreshRef } = useRefProfile(user?.id);
   const { actions, loading: actionsLoading, refresh: refreshActions } = useActionItems(user?.id);
@@ -116,7 +117,7 @@ export default function Profile() {
   };
 
   const handleVerifyBankId = () => {
-    toast.info("BankID-verifiering kommer snart");
+    setVerifyOpen(true);
   };
 
   return (
