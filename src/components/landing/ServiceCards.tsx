@@ -55,7 +55,7 @@ export default function ServiceCards({ onStartAnalysis }: ServiceCardsProps) {
           Plattformen
         </p>
         <h2 className="text-[22px] font-medium text-foreground mb-8">
-          Allt du behöver som vårdkonsult
+          Upptäck Compcare
         </h2>
 
         {/* Grid with 1px gap lines */}
