@@ -5,8 +5,6 @@ import LandingNav from "@/components/landing/LandingNav";
 import LandingFooter from "@/components/landing/LandingFooter";
 import { trackEvent } from "@/lib/trackEvent";
 import ComingSoonOverlay from "@/components/ComingSoonOverlay";
-import LandingFooter from "@/components/landing/LandingFooter";
-import { trackEvent } from "@/lib/trackEvent";
 
 const FEATURES = [
   {
