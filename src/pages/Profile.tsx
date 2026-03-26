@@ -146,7 +146,7 @@ export default function Profile() {
         {/* Profile Status */}
         {profileStatus && (
           <ProfileStatusCard
-            checklist={profileStatus.checklist}
+            data={profileStatus}
             onRefresh={handleRefreshAll}
             onInvite={() => setInviteOpen(true)}
             onVerifyBankId={handleVerifyBankId}
@@ -154,26 +154,22 @@ export default function Profile() {
         )}
 
         {/* Document upload */}
-        {user && <DocumentUpload userId={user.id} />}
+        <DocumentUpload />
 
         {/* Verification uploads */}
         <VerificationUpload
           type="ivo"
-          open={ivoUploadOpen}
-          onOpenChange={setIvoUploadOpen}
-          userId={user?.id || ""}
+          label="IVO-register"
           onSuccess={handleRefreshAll}
         />
         <VerificationUpload
           type="hosp"
-          open={hospUploadOpen}
-          onOpenChange={setHospUploadOpen}
-          userId={user?.id || ""}
+          label="HOSP-register"
           onSuccess={handleRefreshAll}
         />
 
         {/* Reference Vault */}
-        {user && <ReferenceVault userId={user.id} />}
+        <ReferenceVault />
 
         {/* Invite modal */}
         {user && (
