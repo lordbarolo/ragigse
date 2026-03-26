@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { ShieldCheck, Moon, Clock, Calendar, CheckCircle, AlertTriangle, TrendingUp } from "lucide-react";
+import { ShieldCheck, Moon, Clock, Calendar, CheckCircle, AlertTriangle, TrendingUp, Upload } from "lucide-react";
+import InvoiceUploadForm from "@/components/invoice/InvoiceUploadForm";
 import { Button } from "@/components/ui/button";
 import LandingNav from "@/components/landing/LandingNav";
 import LandingFooter from "@/components/landing/LandingFooter";
