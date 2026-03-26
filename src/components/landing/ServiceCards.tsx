@@ -1,3 +1,5 @@
+import { useNavigate } from "react-router-dom";
+
 interface ServiceCardsProps {
   onStartAnalysis: () => void;
 }
@@ -16,6 +18,7 @@ const SERVICES = [
       </svg>
     ),
     iconColor: "text-blue-500",
+    link: null,
   },
   {
     title: "Fakturakontroll",
@@ -30,6 +33,7 @@ const SERVICES = [
       </svg>
     ),
     iconColor: "text-emerald-500",
+    link: "/fakturakontroll",
   },
   {
     title: "Referenser & Verify",
@@ -44,10 +48,13 @@ const SERVICES = [
       </svg>
     ),
     iconColor: "text-amber-500",
+    link: null,
   },
 ];
 
 export default function ServiceCards({ onStartAnalysis }: ServiceCardsProps) {
+  const navigate = useNavigate();
+
   return (
     <section className="py-12 md:py-16 px-6">
       <div className="max-w-6xl mx-auto">
@@ -77,7 +84,7 @@ export default function ServiceCards({ onStartAnalysis }: ServiceCardsProps) {
               </p>
 
               <button
-                onClick={onStartAnalysis}
+                onClick={() => s.link ? navigate(s.link) : onStartAnalysis()}
                 className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground border-b border-border pb-px w-fit hover:border-foreground transition-colors cursor-pointer bg-transparent"
               >
                 {s.cta} <span aria-hidden>→</span>
