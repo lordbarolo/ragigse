@@ -81,7 +81,7 @@ export default function ServiceCards({ onStartAnalysis }: ServiceCardsProps) {
         </h2>
 
         {/* Grid with 1px gap lines */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-border rounded-xl overflow-hidden">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-border rounded-xl overflow-hidden">
           {SERVICES.map((s, i) => (
             <div key={i} className="bg-background p-8 flex flex-col">
               {/* Icon */}
