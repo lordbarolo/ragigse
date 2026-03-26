@@ -5,7 +5,7 @@ interface ServiceCardsProps {
 const SERVICES = [
   {
     title: "Ersättningsanalys",
-    desc: "Vill du veta om du har rätt ersättning? Vi har svaret. Baserat på omfattande dataanalys och branschens marginaler kan vi ge dig beslutsunderlag för löneförhandling redan idag.",
+    desc: "Vill du veta om du har rätt ersättning? Vi har svaret. Baserat på omfattande analyser av avtal och branschens marginaler kan vi ge konsulter beslutsunderlag som tidigare saknats.",
     cta: "Starta analys",
     iconBg: "bg-blue-500/10",
     icon: (
