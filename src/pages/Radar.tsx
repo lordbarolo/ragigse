@@ -204,7 +204,13 @@ export default function Radar() {
           🔮 = Viss chans  · 🔮🔮 = Tydlig chans · 🔮🔮🔮 = Stor chans
         </p>
         <div className="flex gap-2.5">
-          <button className="flex items-center gap-2 rounded-xl bg-primary text-primary-foreground px-4 py-2.5 text-[13px] font-semibold transition-colors hover:bg-primary/90">
+          <button
+            onClick={() => {
+              scrollToList();
+              toast({ title: "Välj ett uppdrag", description: "Scrolla och tryck \"Bevaka\" på den prognos du vill följa." });
+            }}
+            className="flex items-center gap-2 rounded-xl bg-primary text-primary-foreground px-4 py-2.5 text-[13px] font-semibold transition-colors hover:bg-primary/90"
+          >
             <Radio className="w-4 h-4" />
             Bevaka uppdrag
           </button>
