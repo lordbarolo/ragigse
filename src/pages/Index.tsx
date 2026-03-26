@@ -220,7 +220,7 @@ export default function Index() {
         <h2 className="text-3xl font-bold tracking-tight text-foreground mb-4">
           Ta kontroll över din marknadsposition
         </h2>
-        <p className="text-muted-foreground mb-8 text-lg">Se din ersättning i förhållande till marknadspris · 60 sekunder · Ingen registrering</p>
+        <p className="text-muted-foreground mb-8 text-lg">Se din ersättning i förhållande till marknadspris · 60 sekunder</p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <button
             onClick={() => handleRoleSelect("lakare")}
