@@ -21,21 +21,6 @@ const SERVICES = [
     link: "/forhandla",
   },
   {
-    title: "Referenser & Verifikationer",
-    desc: "Ta kontroll över dina referenser och intyg. Dela handlingarna och ge tidsbegränsad tillgång till relevanta personer. Spårbart, säkert och på dina villkor.",
-    cta: "Kommer snart",
-    iconBg: "bg-amber-500/10",
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-        <circle cx="10" cy="8" r="3.5" stroke="currentColor" strokeWidth="1.5" fill="none" />
-        <path d="M4 17c0-3.314 2.686-5 6-5s6 1.686 6 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M15 5l1.5-1.5M16.5 7H18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
-    ),
-    iconColor: "text-amber-500",
-    comingSoon: true,
-  },
-  {
     title: "Ersättningsanalys",
     desc: "Vill du veta om du har rätt ersättning? Vi har svaret. Baserat på omfattande analyser av avtal och branschens marginaler kan vi ge konsulter beslutsunderlag som tidigare saknats.",
     cta: "Starta analys",
@@ -64,6 +49,21 @@ const SERVICES = [
     ),
     iconColor: "text-emerald-500",
     link: "/fakturakontroll",
+  },
+  {
+    title: "Referenser & Verifikationer",
+    desc: "Ta kontroll över dina referenser och intyg. Dela handlingarna och ge tidsbegränsad tillgång till relevanta personer. Spårbart, säkert och på dina villkor.",
+    cta: "Kommer snart",
+    iconBg: "bg-amber-500/10",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <circle cx="10" cy="8" r="3.5" stroke="currentColor" strokeWidth="1.5" fill="none" />
+        <path d="M4 17c0-3.314 2.686-5 6-5s6 1.686 6 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M15 5l1.5-1.5M16.5 7H18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      </svg>
+    ),
+    iconColor: "text-amber-500",
+    comingSoon: true,
   },
 ];
 
