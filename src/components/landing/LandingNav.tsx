@@ -15,12 +15,12 @@ export default function LandingNav() {
         <a href="#data" className="hidden md:block text-foreground/65 text-sm no-underline px-3 py-1.5 rounded-lg hover:text-foreground transition-colors">
           Om datan
         </a>
-        <a
-          href="#roles"
+        <Link
+          to="/#roles"
           className="bg-primary text-primary-foreground font-display font-bold text-sm px-[18px] py-2 rounded-lg no-underline hover:opacity-90 hover:-translate-y-px transition-all whitespace-nowrap"
         >
           Se din rapport →
-        </a>
+        </Link>
       </div>
     </nav>
   );
