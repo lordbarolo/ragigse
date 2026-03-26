@@ -158,7 +158,7 @@ export default function Index() {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
             <h2 className="text-3xl font-bold mb-6 tracking-tight text-foreground">
-              Samma data som regionen har. Nu även din.
+              AI-assistent som optimerar din förhandling
             </h2>
             <p className="text-muted-foreground mb-4 leading-relaxed text-lg">
               21 regioners ramavtalspriser. SCB:s lönestatistik. Bemanningsbranschens marginaler. Vi sammanställer — du ser exakt var du ligger i spannet.
