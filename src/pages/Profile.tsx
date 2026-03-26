@@ -14,6 +14,7 @@ import { ProfileStatusCard } from "@/components/referly/ProfileStatusCard";
 import { ReferenceVault } from "@/components/referly/ReferenceVault";
 import { InviteModal } from "@/components/referly/InviteModal";
 import { VerificationUpload } from "@/components/referly/VerificationUpload";
+import { DocumentUpload } from "@/components/referly/DocumentUpload";
 import { toast } from "sonner";
 
 interface ReportRow {
@@ -161,6 +162,9 @@ export default function Profile() {
           </div>
           <ReferenceVault />
         </div>
+
+        {/* Dokument */}
+        <DocumentUpload />
 
         {/* Profiluppgifter */}
         <ProfileDetailsCard profile={profile} employmentLabel={employmentLabel} formatSalary={formatSalary} />
