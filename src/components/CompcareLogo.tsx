@@ -53,6 +53,8 @@ const CompcareLogo = forwardRef<HTMLElement, CompcareLogoProps>(({ variant = "wo
       <rect x="0" y="12" width="33" height="7" rx="2" fill={accentFill} />
     </svg>
   );
-};
+});
+
+CompcareLogo.displayName = "CompcareLogo";
 
 export default CompcareLogo;
