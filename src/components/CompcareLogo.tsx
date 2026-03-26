@@ -7,7 +7,18 @@ interface CompcareLogoProps {
   inverted?: boolean;
 }
 
-const CompcareLogo = ({ variant = "wordmark", className = "", inverted = false }: CompcareLogoProps) => {
+import { forwardRef } from "react";
+
+type LogoVariant = "wordmark" | "full" | "icon";
+
+interface CompcareLogoProps {
+  variant?: LogoVariant;
+  className?: string;
+  /** Use light colors (for dark backgrounds) */
+  inverted?: boolean;
+}
+
+const CompcareLogo = forwardRef<HTMLElement, CompcareLogoProps>(({ variant = "wordmark", className = "", inverted = false }, _ref) => {
   const textFill = inverted ? "white" : "hsl(var(--foreground))";
   const accentFill = "hsl(var(--primary))";
   const barMuted = "#94A3B8";
