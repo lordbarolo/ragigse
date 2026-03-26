@@ -7,7 +7,8 @@ import { useActionItems } from "@/hooks/useActionItems";
 import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, FileText, MapPin, Briefcase, Clock, LogOut, UserPlus } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Loader2, FileText, MapPin, Briefcase, Clock, LogOut, UserPlus, ShieldCheck } from "lucide-react";
 import { StatusBadge } from "@/components/dashboard/StatusBadge";
 import { ActionItems } from "@/components/dashboard/ActionItems";
 import { ProfileStatusCard } from "@/components/referly/ProfileStatusCard";
@@ -45,6 +46,7 @@ export default function Profile() {
   const [inviteOpen, setInviteOpen] = useState(false);
   const [ivoUploadOpen, setIvoUploadOpen] = useState(false);
   const [hospUploadOpen, setHospUploadOpen] = useState(false);
+  const [verifyOpen, setVerifyOpen] = useState(false);
 
   const { profileStatus, loading: refLoading, refresh: refreshRef } = useRefProfile(user?.id);
   const { actions, loading: actionsLoading, refresh: refreshActions } = useActionItems(user?.id);
@@ -116,7 +118,7 @@ export default function Profile() {
   };
 
   const handleVerifyBankId = () => {
-    toast.info("BankID-verifiering kommer snart");
+    setVerifyOpen(true);
   };
 
   return (
@@ -141,7 +143,7 @@ export default function Profile() {
         {/* 🔥 Actions */}
         <ActionItems actions={actions} loading={actionsLoading} onAction={handleAction} />
 
-        {/* Checklista */}
+        {/* Profile Status */}
         {profileStatus && (
           <ProfileStatusCard
             data={profileStatus}
@@ -151,32 +153,25 @@ export default function Profile() {
           />
         )}
 
-        {/* Referenser (vault light) */}
-        <div>
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-base font-semibold text-foreground">Referenser</h2>
-            <Button size="sm" variant="outline" onClick={() => setInviteOpen(true)} className="gap-1.5 text-xs h-8">
-              <UserPlus className="h-3.5 w-3.5" />
-              Bjud in
-            </Button>
-          </div>
-          <ReferenceVault />
-        </div>
-
-        {/* Dokument */}
+        {/* Document upload */}
         <DocumentUpload />
 
-        {/* Profiluppgifter */}
-        <ProfileDetailsCard profile={profile} employmentLabel={employmentLabel} formatSalary={formatSalary} />
+        {/* Verification uploads */}
+        <VerificationUpload
+          type="ivo"
+          label="IVO-register"
+          onSuccess={handleRefreshAll}
+        />
+        <VerificationUpload
+          type="hosp"
+          label="HOSP-register"
+          onSuccess={handleRefreshAll}
+        />
 
-        {/* Rapporter */}
-        <ReportsCard reports={reports} />
+        {/* Reference Vault */}
+        <ReferenceVault />
 
-        <div className="text-center">
-          <Link to="/"><Button variant="outline" className="gap-2">Gör en ny analys</Button></Link>
-        </div>
-
-        {/* Invite Modal */}
+        {/* Invite modal */}
         {user && (
           <InviteModal
             open={inviteOpen}
@@ -186,90 +181,93 @@ export default function Profile() {
           />
         )}
 
-        {/* Hidden file inputs for IVO/HOSP uploads triggered by actions */}
-        {ivoUploadOpen && (
-          <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center" onClick={() => setIvoUploadOpen(false)}>
-            <Card className="w-80" onClick={e => e.stopPropagation()}>
-              <CardHeader><CardTitle className="text-base">Ladda upp IVO-utdrag</CardTitle></CardHeader>
-              <CardContent className="flex justify-center">
-                <VerificationUpload type="ivo" label="IVO" onSuccess={() => { setIvoUploadOpen(false); handleRefreshAll(); }} />
-              </CardContent>
-            </Card>
-          </div>
-        )}
-        {hospUploadOpen && (
-          <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center" onClick={() => setHospUploadOpen(false)}>
-            <Card className="w-80" onClick={e => e.stopPropagation()}>
-              <CardHeader><CardTitle className="text-base">Ladda upp HOSP-utdrag</CardTitle></CardHeader>
-              <CardContent className="flex justify-center">
-                <VerificationUpload type="hosp" label="HOSP" onSuccess={() => { setHospUploadOpen(false); handleRefreshAll(); }} />
-              </CardContent>
-            </Card>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function ProfileDetailsCard({ profile, employmentLabel, formatSalary }: { profile: ProfileData | null; employmentLabel: (t: string | null) => string; formatSalary: (v: number | null) => string }) {
-  if (!profile) return null;
-  return (
-    <Card className="border-border/50 bg-card/80">
-      <CardHeader><CardTitle className="text-lg">Profiluppgifter</CardTitle></CardHeader>
-      <CardContent className="grid grid-cols-2 gap-4 text-sm">
-        <div className="flex items-center gap-2 text-muted-foreground">
-          <Briefcase className="w-4 h-4 text-primary" />
-          <div><p className="text-xs text-muted-foreground">Yrke</p><p className="text-foreground font-medium">{profile.specialty_name || "–"}</p></div>
-        </div>
-        <div className="flex items-center gap-2 text-muted-foreground">
-          <MapPin className="w-4 h-4 text-primary" />
-          <div><p className="text-xs text-muted-foreground">Kommun</p><p className="text-foreground font-medium">{profile.region_name || "–"}</p></div>
-        </div>
-        <div className="flex items-center gap-2 text-muted-foreground">
-          <Clock className="w-4 h-4 text-primary" />
-          <div><p className="text-xs text-muted-foreground">Erfarenhet</p><p className="text-foreground font-medium">{profile.experience_years != null ? `${profile.experience_years} år` : "–"}</p></div>
-        </div>
-        <div className="flex items-center gap-2 text-muted-foreground">
-          <FileText className="w-4 h-4 text-primary" />
-          <div><p className="text-xs text-muted-foreground">Anställning</p><p className="text-foreground font-medium">{employmentLabel(profile.employment_type)}</p></div>
-        </div>
-        {profile.current_hourly_rate && (
-          <div className="col-span-2"><p className="text-xs text-muted-foreground">{profile.employment_type === "foretagare" ? "Nuvarande timersättning" : "Nuvarande timlön"}</p><p className="text-foreground font-semibold text-lg">{formatSalary(profile.current_hourly_rate)} kr/h</p></div>
-        )}
-        {profile.current_monthly_salary && (
-          <div className="col-span-2"><p className="text-xs text-muted-foreground">{profile.employment_type === "foretagare" ? "Nuvarande månadsersättning" : "Nuvarande månadslön"}</p><p className="text-foreground font-semibold text-lg">{formatSalary(profile.current_monthly_salary)} kr/mån</p></div>
-        )}
-      </CardContent>
-    </Card>
-  );
-}
-
-function ReportsCard({ reports }: { reports: ReportRow[] }) {
-  return (
-    <Card className="border-border/50 bg-card/80">
-      <CardHeader><CardTitle className="text-lg">Mina rapporter</CardTitle></CardHeader>
-      <CardContent>
-        {reports.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground text-sm">
-            <FileText className="w-8 h-8 mx-auto mb-2 opacity-50" />
-            <p>Inga rapporter ännu</p>
-            <Link to="/" className="text-primary hover:underline text-sm mt-2 inline-block">Gör din första analys →</Link>
-          </div>
-        ) : (
-          <div className="space-y-3">
-            {reports.map((r) => (
-              <Link key={r.id} to={`/rapport/${r.id}`} className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors group">
-                <div>
-                  <p className="font-medium text-foreground group-hover:text-primary transition-colors">{r.occupation || "Analys"}</p>
-                  <p className="text-xs text-muted-foreground">{r.kommun && `${r.kommun} · `}{new Date(r.created_at).toLocaleDateString("sv-SE")}</p>
+        {/* Profile details */}
+        {profile && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg">Profil</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2 text-sm">
+              {profile.specialty_name && (
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Briefcase className="w-4 h-4" /> {profile.specialty_name}
                 </div>
-                <span className="text-xs text-muted-foreground">→</span>
-              </Link>
-            ))}
-          </div>
+              )}
+              {profile.region_name && (
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <MapPin className="w-4 h-4" /> {profile.region_name}
+                </div>
+              )}
+              {profile.experience_years != null && (
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <Clock className="w-4 h-4" /> {profile.experience_years} års erfarenhet
+                </div>
+              )}
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <FileText className="w-4 h-4" /> {employmentLabel(profile.employment_type)}
+                {profile.salary_type === "hourly" && profile.current_hourly_rate
+                  ? ` · ${formatSalary(profile.current_hourly_rate)} kr/h`
+                  : profile.current_monthly_salary
+                    ? ` · ${formatSalary(profile.current_monthly_salary)} kr/mån`
+                    : ""}
+              </div>
+            </CardContent>
+          </Card>
         )}
-      </CardContent>
-    </Card>
+
+        {/* Reports */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <FileText className="w-5 h-5 text-primary" />
+              Mina rapporter
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            {reports.length === 0 ? (
+              <div className="text-center py-6">
+                <p className="text-muted-foreground text-sm mb-3">Inga rapporter ännu</p>
+                <Link to="/">
+                  <Button size="sm">
+                    <UserPlus className="w-4 h-4 mr-1" />
+                    Skapa din första analys
+                  </Button>
+                </Link>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {reports.map((r) => (
+                  <Link key={r.id} to={`/rapport/${r.id}`} className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors group">
+                    <div>
+                      <p className="font-medium text-foreground group-hover:text-primary transition-colors">{r.occupation || "Analys"}</p>
+                      <p className="text-xs text-muted-foreground">{r.kommun && `${r.kommun} · `}{new Date(r.created_at).toLocaleDateString("sv-SE")}</p>
+                    </div>
+                    <span className="text-xs text-muted-foreground">→</span>
+                  </Link>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* BankID verification modal — coming soon */}
+      <Dialog open={verifyOpen} onOpenChange={setVerifyOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <ShieldCheck className="h-5 w-5 text-primary" />
+              BankID-verifiering
+            </DialogTitle>
+            <DialogDescription>
+              BankID-signering är under utveckling och kommer snart. Din profil fungerar utan verifiering, men Trust Score blir högre när BankID är aktiverat.
+            </DialogDescription>
+          </DialogHeader>
+          <Button variant="secondary" className="w-full mt-2" onClick={() => setVerifyOpen(false)}>
+            Stäng
+          </Button>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }
