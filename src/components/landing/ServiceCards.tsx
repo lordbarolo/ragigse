@@ -23,7 +23,7 @@ const SERVICES = [
   {
     title: "Referenser & Verifikationer",
     desc: "Ta kontroll över dina referenser och intyg. Dela handlingarna och ge tidsbegränsad tillgång till relevanta personer. Spårbart, säkert och på dina villkor.",
-    cta: "Läs mer",
+    cta: "Kommer snart",
     iconBg: "bg-amber-500/10",
     icon: (
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -33,7 +33,7 @@ const SERVICES = [
       </svg>
     ),
     iconColor: "text-amber-500",
-    link: "/referenser-info",
+    comingSoon: true,
   },
   {
     title: "Ersättningsanalys",
