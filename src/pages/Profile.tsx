@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import ComingSoonOverlay from "@/components/ComingSoonOverlay";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -144,32 +145,34 @@ export default function Profile() {
         <ActionItems actions={actions} loading={actionsLoading} onAction={handleAction} />
 
         {/* Profile Status */}
-        {profileStatus && (
-          <ProfileStatusCard
-            data={profileStatus}
-            onRefresh={handleRefreshAll}
-            onInvite={() => setInviteOpen(true)}
-            onVerifyBankId={handleVerifyBankId}
+        <ComingSoonOverlay label="Referenser & verifikationer — kommer snart">
+          {profileStatus && (
+            <ProfileStatusCard
+              data={profileStatus}
+              onRefresh={handleRefreshAll}
+              onInvite={() => setInviteOpen(true)}
+              onVerifyBankId={handleVerifyBankId}
+            />
+          )}
+
+          {/* Document upload */}
+          <DocumentUpload />
+
+          {/* Verification uploads */}
+          <VerificationUpload
+            type="ivo"
+            label="IVO-register"
+            onSuccess={handleRefreshAll}
           />
-        )}
+          <VerificationUpload
+            type="hosp"
+            label="HOSP-register"
+            onSuccess={handleRefreshAll}
+          />
 
-        {/* Document upload */}
-        <DocumentUpload />
-
-        {/* Verification uploads */}
-        <VerificationUpload
-          type="ivo"
-          label="IVO-register"
-          onSuccess={handleRefreshAll}
-        />
-        <VerificationUpload
-          type="hosp"
-          label="HOSP-register"
-          onSuccess={handleRefreshAll}
-        />
-
-        {/* Reference Vault */}
-        <ReferenceVault />
+          {/* Reference Vault */}
+          <ReferenceVault />
+        </ComingSoonOverlay>
 
         {/* Invite modal */}
         {user && (

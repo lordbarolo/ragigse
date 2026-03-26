@@ -4,6 +4,7 @@ import { ShieldCheck, Users, FileCheck, Clock, Lock, ArrowRight } from "lucide-r
 import LandingNav from "@/components/landing/LandingNav";
 import LandingFooter from "@/components/landing/LandingFooter";
 import { trackEvent } from "@/lib/trackEvent";
+import ComingSoonOverlay from "@/components/ComingSoonOverlay";
 
 const FEATURES = [
   {
@@ -44,6 +45,7 @@ export default function ReferenserInfo() {
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <LandingNav />
 
+      <ComingSoonOverlay label="Referenser & verifikationer — kommer snart">
       {/* Hero */}
       <section className="pt-28 pb-16 px-6">
         <div className="max-w-3xl mx-auto text-center">
@@ -171,6 +173,8 @@ export default function ReferenserInfo() {
           </div>
         </div>
       </section>
+
+      </ComingSoonOverlay>
 
       <LandingFooter />
     </div>

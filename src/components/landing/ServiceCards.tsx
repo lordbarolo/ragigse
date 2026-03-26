@@ -23,7 +23,7 @@ const SERVICES = [
   {
     title: "Referenser & Verifikationer",
     desc: "Ta kontroll över dina referenser och intyg. Dela handlingarna och ge tidsbegränsad tillgång till relevanta personer. Spårbart, säkert och på dina villkor.",
-    cta: "Läs mer",
+    cta: "Kommer snart",
     iconBg: "bg-amber-500/10",
     icon: (
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -33,7 +33,7 @@ const SERVICES = [
       </svg>
     ),
     iconColor: "text-amber-500",
-    link: "/referenser-info",
+    comingSoon: true,
   },
   {
     title: "Ersättningsanalys",
@@ -83,7 +83,7 @@ export default function ServiceCards({ onStartAnalysis }: ServiceCardsProps) {
         {/* Grid with 1px gap lines */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-border rounded-xl overflow-hidden">
           {SERVICES.map((s, i) => (
-            <div key={i} className="bg-background p-8 flex flex-col">
+            <div key={i} className={`bg-background p-8 flex flex-col ${(s as any).comingSoon ? 'opacity-50' : ''}`}>
               {/* Icon */}
               <div
                 className={`w-10 h-10 rounded-lg flex items-center justify-center mb-5 ${s.iconBg} ${s.iconColor}`}
@@ -98,12 +98,18 @@ export default function ServiceCards({ onStartAnalysis }: ServiceCardsProps) {
                 {s.desc}
               </p>
 
-              <button
-                onClick={() => s.link ? navigate(s.link) : onStartAnalysis()}
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground border-b border-border pb-px w-fit hover:border-foreground transition-colors cursor-pointer bg-transparent"
-              >
-                {s.cta} <span aria-hidden>→</span>
-              </button>
+              {(s as any).comingSoon ? (
+                <span className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground w-fit">
+                  {s.cta}
+                </span>
+              ) : (
+                <button
+                  onClick={() => (s as any).link ? navigate((s as any).link) : onStartAnalysis()}
+                  className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground border-b border-border pb-px w-fit hover:border-foreground transition-colors cursor-pointer bg-transparent"
+                >
+                  {s.cta} <span aria-hidden>→</span>
+                </button>
+              )}
             </div>
           ))}
         </div>
