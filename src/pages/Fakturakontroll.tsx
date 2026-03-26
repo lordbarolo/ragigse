@@ -137,12 +137,11 @@ export default function Fakturakontroll() {
       <section className="px-6 py-16 md:py-24">
         <div className="max-w-3xl mx-auto text-center space-y-6">
           <TrendingUp className="w-8 h-8 text-primary mx-auto" />
-          <h2 className="font-display text-3xl md:text-4xl font-bold tracking-tight">
-            Kostnadsfritt om vi inte hittar fel
+           <h2 className="font-display text-3xl md:text-4xl font-bold tracking-tight">
+            Du betalar endast vid resultat
           </h2>
           <p className="text-muted-foreground text-lg leading-relaxed max-w-xl mx-auto">
-            Du betalar ingenting om vi inte hittar avvikelser i dina fakturor.
-            Hittar vi fel som leder till att du får mer betalt delar vi på mellanskillnaden — du tjänar alltid på det.
+            Du betalar endast om vi hittar avvikelser som leder till att du kan tilläggsfakturera kunden. I dessa fall utgår en provision till CompCare med 25% av beloppet som du erhåller.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
             {["Ingen startkostnad", "Ingen bindningstid", "Du tjänar alltid på resultatet"].map((item) => (
