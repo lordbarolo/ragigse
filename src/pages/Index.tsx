@@ -91,11 +91,8 @@ export default function Index() {
             Har du rätt lön?
           </h1>
 
-          <p className="text-hero-foreground/60 text-lg md:text-xl max-w-2xl mx-auto mb-2 leading-relaxed">
-            Vi har svaret, snart du också
-          </p>
           <p className="text-hero-foreground/60 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
-            Löneanalysen tar 30 sekunder och är kostnadsfri. Rapporten ger dig insikter som tidigare stannat hos uppdragsgivaren.
+            Vi har analyserat branschens marginaler samt hundratals avtal i 21 regioner och 290 kommuner. Den samlade datan ger oss en tydlig bild över marknadens ersättningar till läkare och sjuksköterskor. Gör vår kostnadsfria analys för att se om du borde förhandla.
           </p>
           <div className="h-8 md:h-12" />
 
