@@ -33,7 +33,7 @@ const SERVICES = [
       </svg>
     ),
     iconColor: "text-amber-500",
-    link: "/referenser",
+    link: "/referenser-info",
   },
   {
     title: "Ersättningsanalys",
