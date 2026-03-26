@@ -76,7 +76,7 @@ export default function ServiceCards({ onStartAnalysis }: ServiceCardsProps) {
         <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-2">
           Plattformen
         </p>
-        <h2 className="text-[22px] font-medium text-foreground mb-8">
+        <h2 className="text-[22px] font-medium text-foreground mb-4">
           Upptäck Compcare
         </h2>
 
