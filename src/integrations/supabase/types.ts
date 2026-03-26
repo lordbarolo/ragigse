@@ -1106,6 +1106,33 @@ export type Database = {
           },
         ]
       }
+      invoice_submissions: {
+        Row: {
+          created_at: string
+          email: string
+          file_paths: string[]
+          id: string
+          message: string | null
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          file_paths?: string[]
+          id?: string
+          message?: string | null
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          file_paths?: string[]
+          id?: string
+          message?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           created_at: string
