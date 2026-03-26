@@ -32,10 +32,19 @@ export default function DataSection() {
         Om datan
       </p>
       <h2 className="font-display font-extrabold tracking-[-0.03em] leading-[1.1] mb-3.5" style={{ fontSize: "clamp(26px, 4vw, 40px)" }}>
-        Varifrån kommer siffrorna?
+        Vi gör informationen tillgänglig för alla
       </h2>
-      <p className="text-base text-foreground/65 font-light leading-relaxed max-w-[480px]">
-        All data är offentlig och verifierbar. Vi sammanställer — du bestämmer vad du gör med informationen.
+      <p className="text-base text-foreground/65 font-light leading-relaxed max-w-[540px]">
+        Prisuppgifter och avtalsdata har länge varit information som begränsats till en liten krets. Vi ändrar på det.
+      </p>
+      <p className="text-base text-foreground/65 font-light leading-relaxed max-w-[540px] mt-3">
+        Med hjälp av modern teknik har vi analyserat hundratals avtal och avrop. För första gången är informationen paketerad för att nå läkare och sjuksköterskor.
+      </p>
+      <p className="text-sm text-foreground/50 italic leading-relaxed max-w-[540px] mt-4">
+        "Vad betalar Region Skåne för en infektionssjuksköterska? Hur skiljer sig Zon 1 mot Zon 3? Hur mycket har priserna ändrats sedan förra avtalsperioden?"
+      </p>
+      <p className="text-base text-foreground/65 font-light leading-relaxed max-w-[540px] mt-3">
+        Ställ frågan till <span className="font-semibold text-foreground">Reijdar</span> — din AI-agent med tillgång till all avtalsdata.
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-12">
