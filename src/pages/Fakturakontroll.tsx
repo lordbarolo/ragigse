@@ -155,6 +155,23 @@ export default function Fakturakontroll() {
         </div>
       </section>
 
+      {/* Upload section */}
+      <section id="upload" className="px-6 py-16 md:py-24 bg-card border-y border-border">
+        <div className="max-w-2xl mx-auto">
+          <div className="flex items-center gap-2.5 mb-2">
+            <Upload className="w-5 h-5 text-primary" />
+            <span className="text-sm font-bold text-primary uppercase tracking-wider">Skicka in</span>
+          </div>
+          <h2 className="font-display text-3xl md:text-4xl font-bold tracking-tight mb-3">
+            Ladda upp dina fakturor
+          </h2>
+          <p className="text-muted-foreground mb-8 max-w-lg">
+            Skicka in dina fakturor så granskar vi dem mot ramavtalet. Du får svar inom 48 timmar.
+          </p>
+          <InvoiceUploadForm />
+        </div>
+      </section>
+
       {/* Bottom CTA */}
       <section className="px-6 py-16 md:py-20">
         <div className="max-w-2xl mx-auto rounded-3xl border border-primary/20 bg-primary/[0.04] p-8 md:p-12 text-center space-y-5">
@@ -168,7 +185,9 @@ export default function Fakturakontroll() {
           <Button
             size="lg"
             className="text-base px-8 py-6 font-bold"
-            onClick={() => navigate("/")}
+            onClick={() => {
+              document.getElementById("upload")?.scrollIntoView({ behavior: "smooth" });
+            }}
           >
             Granska min ersättning →
           </Button>
