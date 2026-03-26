@@ -88,6 +88,8 @@ const App = () => (
               <Route path="/profil/:id" element={<PublicProfile />} />
               <Route path="/verify/:applicationId" element={<VerifyProof />} />
               <Route path="/fakturakontroll" element={<Fakturakontroll />} />
+              <Route path="/referenser-info" element={<ReferenserInfo />} />
+              <Route path="/verify-info" element={<VerifyInfo />} />
               <Route path="/admin" element={<Admin />} />
               <Route path="/dela" element={<SharePreview />} />
               <Route path="/dev/theme-preview" element={<ThemePreview />} />
