@@ -30,6 +30,15 @@ export function VerificationUpload({ type, label, onSuccess }: VerificationUploa
 
     setUploading(true);
     try {
+      // Upload file to storage
+      const filePath = `${user.id}/${type}_${Date.now()}_${file.name}`;
+      const { error: uploadError } = await supabase.storage
+        .from("verifications")
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      // Record in database
       const { error: dbError } = await supabase.from("ref_verifications").insert({
         profile_id: user.id,
         type,
