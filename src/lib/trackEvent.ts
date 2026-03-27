@@ -48,11 +48,21 @@ type EventName =
   | "referenser_info_viewed"
   | "verify_info_viewed";
 
+function isInternalTraffic(): boolean {
+  const host = window.location.hostname;
+  return (
+    host === "localhost" ||
+    host === "127.0.0.1" ||
+    host.endsWith(".lovableproject.com") ||
+    host.endsWith(".lovable.app")
+  );
+}
+
 export function trackEvent(
   eventName: EventName,
   metadata?: Record<string, string | number | boolean | null>
 ) {
-  
+  if (isInternalTraffic()) return;
 
   const leadId = sessionStorage.getItem("leadId") || undefined;
 
