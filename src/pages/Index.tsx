@@ -86,7 +86,7 @@ export default function Index() {
           </h1>
 
           <p className="text-hero-foreground/60 text-lg md:text-xl max-w-2xl mx-auto mb-2 leading-relaxed">
-            Verktyg för optimerad ersättning och full kontroll.
+            Marknadsinsikter och smarta tjänster för läkare och sjuksköterskor.
           </p>
           <p className="text-hero-foreground/60 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
             Vi har analyserat ramavtal från 21 regioner och 290 kommuner. Med hjälp av smart teknik kan vi visa vad regionen betalar och vad marknaden erbjuder.
