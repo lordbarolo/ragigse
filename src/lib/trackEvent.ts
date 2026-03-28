@@ -47,7 +47,8 @@ type EventName =
   | "fakturakontroll_page_viewed"
   | "referenser_info_viewed"
   | "verify_info_viewed"
-  | "login_clicked";
+  | "login_clicked"
+  | "signup_completed";
 
 function isInternalTraffic(): boolean {
   const host = window.location.hostname;
