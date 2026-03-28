@@ -131,7 +131,7 @@ export default function ReijdarChat({ selectedRole, initialMessage }: { selected
       {/* Floating trigger button */}
       {!open && (
         <button
-          onClick={() => setOpen(true)}
+          onClick={() => { trackEvent("reidar_clicked", { location: "floating_button" }); setOpen(true); }}
           aria-label="Öppna Fråga Reijdar"
           className="group fixed right-3 top-1/2 z-40 flex h-11 w-11 -translate-y-1/2 items-center overflow-hidden rounded-full bg-primary text-primary-foreground shadow-lg transition-all duration-200 hover:w-36 hover:bg-primary/90 focus-visible:w-36 active:scale-95"
         >
