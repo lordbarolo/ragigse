@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, ArrowLeft, CheckCircle2 } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
+import { trackEvent } from "@/lib/trackEvent";
 
 export default function Signup() {
   const [email, setEmail] = useState("");
@@ -70,6 +71,7 @@ export default function Signup() {
       return;
     }
 
+    trackEvent("signup_completed", { method: "email" });
     toast({ title: "Konto skapat", description: "Du är nu inloggad." });
     navigate("/profil");
   };
