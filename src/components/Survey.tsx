@@ -392,16 +392,15 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
   };
 
   const handleBack = () => {
-    if (step === 3 && initialRole) {
+    if (step === 1) {
+      onBack?.();
+    } else if (step === 3 && initialRole) {
       onBack?.();
     } else if (step === 3) {
       setKommunSearch("");
       setSelectedRegion("");
       setData({ ...data, kommun: "" });
       setStep(2);
-    } else if (step === 2 && initialCategory) {
-      // Came from landing with category pre-set — go back to landing
-      onBack?.();
     } else if (step === 2) {
       setOccupationCategory("");
       setRoleDropdownValue("");
