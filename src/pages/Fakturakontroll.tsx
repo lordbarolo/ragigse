@@ -25,6 +25,7 @@ export default function Fakturakontroll() {
 
   useEffect(() => {
     trackEvent("fakturakontroll_page_viewed");
+    trackEvent("product_page_viewed", { product: "fakturakontroll" });
   }, []);
 
   return (
@@ -186,6 +187,7 @@ export default function Fakturakontroll() {
             size="lg"
             className="text-base px-8 py-6 font-bold"
             onClick={() => {
+              trackEvent("product_cta_clicked", { product: "fakturakontroll" });
               document.getElementById("upload")?.scrollIntoView({ behavior: "smooth" });
             }}
           >
