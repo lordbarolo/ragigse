@@ -193,7 +193,7 @@ export default function Index() {
             </p>
           </div>
           <p className="text-muted-foreground mb-6 text-base">
-            OB-tillägg, jour, beredskap, helg och storhelg — det är lätt att missa. Vi granskar dina fakturor kostnadsfritt och ser till att du inte går miste om ersättning du har rätt till.
+            OB-tillägg, jour, beredskap, helg och storhelg — det är lätt att räkna fel. Låt Ai-assistenten granska dina fakturor kostnadsfritt. Provision utgår endast om vi hittar timmar som du kan ta betalt för.
           </p>
           <Link
             to="/fakturakontroll"
