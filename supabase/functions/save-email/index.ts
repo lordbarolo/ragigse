@@ -196,13 +196,30 @@ serve(async (req) => {
 
       const magicLink = magicLinkData?.properties?.action_link || null;
 
-      // 7. Send report email with magic link
-      if (report_id && magicLink) {
+      // 7. Send report email via transactional email system
+      if (report_id) {
         try {
-          await sendReportEmail(supabase, email, report_id, magicLink);
+          const { data: report } = await supabase
+            .from("reports")
+            .select("occupation, kommun")
+            .eq("id", report_id)
+            .single();
+
+          await supabase.functions.invoke("send-transactional-email", {
+            body: {
+              templateName: "report-delivery",
+              recipientEmail: email,
+              idempotencyKey: `report-delivery-${report_id}`,
+              templateData: {
+                occupation: report?.occupation || "din roll",
+                kommun: report?.kommun || "",
+                reportUrl: magicLink || `https://compcare.lovable.app/rapport/${report_id}`,
+              },
+            },
+          });
+          console.log(`Report email enqueued for ${email}`);
         } catch (emailErr) {
-          console.error("Failed to send report email:", emailErr);
-          // Non-fatal: user still sees report in-app
+          console.error("Failed to enqueue report email:", emailErr);
         }
       }
     }
@@ -219,105 +236,3 @@ serve(async (req) => {
     );
   }
 });
-
-async function sendReportEmail(
-  supabase: any,
-  email: string,
-  reportId: string,
-  magicLink: string
-) {
-  // Fetch report data for email content
-  const { data: report } = await supabase
-    .from("reports")
-    .select("occupation, kommun, result_json")
-    .eq("id", reportId)
-    .single();
-
-  const occupation = report?.occupation || "din roll";
-  const kommun = report?.kommun || "";
-  const resultJson = report?.result_json;
-
-  // Build summary for email
-  let summaryHtml = "";
-  if (resultJson?.track === "consultant" && resultJson?.recommendation) {
-    const rec = resultJson.recommendation;
-    summaryHtml = `
-      <p style="margin:0 0 8px"><strong>Rekommenderad timlön:</strong> ${Math.round(rec.recommended_hourly_min)}–${Math.round(rec.recommended_hourly_max)} kr/h</p>
-      <p style="margin:0 0 8px"><strong>Rekommenderad månadslön:</strong> ${Math.round(rec.recommended_monthly_min).toLocaleString("sv-SE")}–${Math.round(rec.recommended_monthly_max).toLocaleString("sv-SE")} kr</p>
-    `;
-  } else if (resultJson?.track === "permanent" && resultJson?.market) {
-    const mkt = resultJson.market;
-    summaryHtml = `
-      <p style="margin:0 0 8px"><strong>Marknadens median:</strong> ${(mkt.percentile_50 || 0).toLocaleString("sv-SE")} kr/mån</p>
-      <p style="margin:0 0 8px"><strong>Topp 25%:</strong> ${(mkt.percentile_75 || 0).toLocaleString("sv-SE")} kr/mån</p>
-    `;
-  }
-
-  const resendKey = Deno.env.get("RESEND_API_KEY");
-  if (!resendKey) {
-    console.error("RESEND_API_KEY not configured");
-    return;
-  }
-
-  const html = `
-<!DOCTYPE html>
-<html lang="sv">
-<head><meta charset="utf-8"></head>
-<body style="font-family:Arial,sans-serif;background:#ffffff;margin:0;padding:0">
-  <div style="max-width:560px;margin:0 auto;padding:32px 24px">
-    <h1 style="font-size:22px;color:#0f172a;margin:0 0 16px">Din ersättningsanalys är klar</h1>
-    
-    <p style="color:#475569;font-size:15px;line-height:1.6;margin:0 0 16px">
-      Hej! Här är din personliga ersättningsanalys för <strong>${occupation}</strong>${kommun ? ` i ${kommun}` : ""}.
-    </p>
-
-    ${summaryHtml ? `
-    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:16px;margin:0 0 24px">
-      ${summaryHtml}
-    </div>
-    ` : ""}
-
-    <p style="color:#475569;font-size:15px;line-height:1.6;margin:0 0 24px">
-      Klicka nedan för att se din fullständiga rapport med förhandlingsscript och strategiska råd.
-    </p>
-
-    <a href="${magicLink}" style="display:inline-block;background:#0891b2;color:#ffffff;text-decoration:none;padding:14px 32px;border-radius:8px;font-size:16px;font-weight:600">
-      Öppna min rapport →
-    </a>
-
-    <p style="color:#94a3b8;font-size:13px;margin:24px 0 0;line-height:1.5">
-      Länken loggar in dig automatiskt och är giltig i 24 timmar.<br>
-      Du kan alltid begära en ny länk via compcare.se.
-    </p>
-
-    <hr style="border:none;border-top:1px solid #e2e8f0;margin:32px 0 16px">
-    <p style="color:#94a3b8;font-size:12px;margin:0">
-      CompCare — Ersättningsanalys för vårdkonsulter
-    </p>
-  </div>
-</body>
-</html>`;
-
-  const res = await fetch("https://api.resend.com/emails", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${resendKey}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      from: "CompCare <noreply@mail.compcare.se>",
-      to: [email],
-      subject: `Din ersättningsanalys — ${occupation}${kommun ? `, ${kommun}` : ""}`,
-      html,
-    }),
-  });
-
-  if (!res.ok) {
-    const errText = await res.text();
-    console.error("Resend error:", errText);
-    throw new Error(`Resend failed: ${res.status}`);
-  }
-
-  const resData = await res.json();
-  console.log(`Report email sent to ${email}, Resend ID: ${resData.id}`);
-}
