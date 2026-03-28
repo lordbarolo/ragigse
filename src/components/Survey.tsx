@@ -81,10 +81,9 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
   const { data: rates, isLoading: ratesLoading } = useRates();
   const [saving, setSaving] = useState(false);
 
-  // Determine initial step based on prefill
   const getInitialStep = () => {
-    if (initialRole) return 3; // Role fully determined (e.g. barnmorska) → skip to region
-    if (initialCategory) return 2; // Category set → show role dropdown
+    if (initialRole) return 3;
+    if (initialCategory) return 2;
     return 1;
   };
 
@@ -393,16 +392,15 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
   };
 
   const handleBack = () => {
-    if (step === 3 && initialRole) {
+    if (step === 1) {
+      onBack?.();
+    } else if (step === 3 && initialRole) {
       onBack?.();
     } else if (step === 3) {
       setKommunSearch("");
       setSelectedRegion("");
       setData({ ...data, kommun: "" });
       setStep(2);
-    } else if (step === 2 && initialCategory) {
-      // Came from landing with category pre-set — go back to landing
-      onBack?.();
     } else if (step === 2) {
       setOccupationCategory("");
       setRoleDropdownValue("");
@@ -480,6 +478,8 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                     trackSurveyStarted();
                     setOccupationCategory(opt.value);
                     setRoleDropdownValue("");
+                    trackStepCompleted(1, opt.value);
+                    setTimeout(() => setStep(2), 200);
                   }}
                   className={`group w-full py-5 px-5 rounded-xl border !border-l-[3px] bg-card text-left transition-all active:scale-[0.98] flex items-center justify-between gap-3 ${
                     occupationCategory === opt.value
@@ -716,7 +716,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
 
       {/* Navigation */}
       <div className="flex gap-3 mt-8">
-        {step > 1 && (
+        {(step > 1 || onBack) && (
           <button
             onClick={handleBack}
             className="flex items-center gap-1.5 py-3.5 px-5 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground transition-all active:scale-[0.97]"
