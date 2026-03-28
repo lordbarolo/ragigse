@@ -46,7 +46,8 @@ type EventName =
   | "reijdar_advice_received"
   | "fakturakontroll_page_viewed"
   | "referenser_info_viewed"
-  | "verify_info_viewed";
+  | "verify_info_viewed"
+  | "login_clicked";
 
 function isInternalTraffic(): boolean {
   const host = window.location.hostname;
