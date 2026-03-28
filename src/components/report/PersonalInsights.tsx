@@ -57,7 +57,7 @@ export default function PersonalInsights({
 
   insights.push({
     icon: TrendingUp,
-    text: `Du ligger över ${percentilePosition} % av konsulter i din specialitet.`,
+    text: `Du ligger över snittet av konsulter i din specialitet.`,
   });
 
   if (zoneDiffInsight) {
