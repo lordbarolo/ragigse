@@ -50,6 +50,15 @@ const ALLOWED_EVENTS = new Set([
   "reijdar_message_sent",
   "reijdar_advice_received",
   "fakturakontroll_page_viewed",
+  "referenser_info_viewed",
+  "verify_info_viewed",
+  "login_clicked",
+  "signup_completed",
+  "reidar_clicked",
+  "product_page_viewed",
+  "product_cta_clicked",
+  "survey_question_selected",
+  "survey_custom_question_submitted",
 ]);
 
 serve(async (req) => {
