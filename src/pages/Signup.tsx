@@ -72,6 +72,16 @@ export default function Signup() {
     }
 
     trackEvent("signup_completed", { method: "email" });
+
+    // Send welcome email (fire-and-forget)
+    supabase.functions.invoke("send-transactional-email", {
+      body: {
+        templateName: "welcome",
+        recipientEmail: normalizedEmail,
+        idempotencyKey: `welcome-${normalizedEmail}`,
+      },
+    }).catch(() => {});
+
     toast({ title: "Konto skapat", description: "Du är nu inloggad." });
     navigate("/profil");
   };
