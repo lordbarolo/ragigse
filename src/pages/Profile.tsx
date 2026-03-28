@@ -141,48 +141,7 @@ export default function Profile() {
           </Button>
         </div>
 
-        {/* 🔥 Actions */}
-        <ActionItems actions={actions} loading={actionsLoading} onAction={handleAction} />
-
-        {/* Profile Status */}
-        <ComingSoonOverlay label="Referenser & verifikationer — kommer snart">
-          {profileStatus && (
-            <ProfileStatusCard
-              data={profileStatus}
-              onRefresh={handleRefreshAll}
-              onInvite={() => setInviteOpen(true)}
-              onVerifyBankId={handleVerifyBankId}
-            />
-          )}
-
-          {/* Document upload */}
-          <DocumentUpload />
-
-          {/* Verification uploads */}
-          <VerificationUpload
-            type="ivo"
-            label="IVO-register"
-            onSuccess={handleRefreshAll}
-          />
-          <VerificationUpload
-            type="hosp"
-            label="HOSP-register"
-            onSuccess={handleRefreshAll}
-          />
-
-          {/* Reference Vault */}
-          <ReferenceVault />
-        </ComingSoonOverlay>
-
-        {/* Invite modal */}
-        {user && (
-          <InviteModal
-            open={inviteOpen}
-            onOpenChange={setInviteOpen}
-            userId={user.id}
-            onSuccess={handleRefreshAll}
-          />
-        )}
+        {/* Referenser & verifikationer — dold tillsvidare */}
 
         {/* Profile details */}
         {profile && (

@@ -33,7 +33,7 @@ const SERVICES = [
       </svg>
     ),
     iconColor: "text-blue-500",
-    link: null,
+    link: null, // uses onStartAnalysis callback
   },
   {
     title: "Fakturakontroll",

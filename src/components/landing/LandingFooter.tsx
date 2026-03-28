@@ -9,7 +9,7 @@ export default function LandingFooter() {
       </span>
       <div className="flex gap-5 flex-wrap">
         <Link to="/vanliga-fragor" className="text-[13px] text-foreground/35 no-underline hover:text-foreground transition-colors">Om CompCare</Link>
-        <a href="#data" className="text-[13px] text-foreground/35 no-underline hover:text-foreground transition-colors">Datakällor</a>
+        <Link to="/vanliga-fragor" className="text-[13px] text-foreground/35 no-underline hover:text-foreground transition-colors">Datakällor</Link>
         <Link to="/integritetspolicy" className="text-[13px] text-foreground/35 no-underline hover:text-foreground transition-colors">Integritetspolicy</Link>
         <BugReportButton />
       </div>
