@@ -12,7 +12,7 @@ export interface PriceNugget {
   metadata: Record<string, any> | null;
 }
 
-export function usePriceNuggets(category?: string) {
+export function usePriceNuggets(category?: string, zon?: string) {
   const [nuggets, setNuggets] = useState<PriceNugget[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -29,11 +29,24 @@ export function usePriceNuggets(category?: string) {
       }
 
       const { data } = await q;
-      setNuggets((data as unknown as PriceNugget[]) || []);
+      let items = (data as unknown as PriceNugget[]) || [];
+
+      // If zon is provided, prefer nuggets matching that zone but keep
+      // nuggets without a zone set (null) as general fallback.
+      if (zon && items.length > 0) {
+        const zonLower = zon.toLowerCase();
+        const matched = items.filter((n) => {
+          const nuggetZon = (n.metadata as Record<string, any> | null)?.zon;
+          return !nuggetZon || nuggetZon.toLowerCase() === zonLower;
+        });
+        if (matched.length > 0) items = matched;
+      }
+
+      setNuggets(items);
       setLoading(false);
     };
     fetch();
-  }, [category]);
+  }, [category, zon]);
 
   return { nuggets, loading };
 }
