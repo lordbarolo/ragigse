@@ -199,7 +199,7 @@ export default function Index() {
             to="/fakturakontroll"
             className="inline-block bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-2xl font-semibold transition-all shadow-lg shadow-primary/20 text-base no-underline"
           >
-            Granska min ersättning →
+            Säkerställ mina fakturor
           </Link>
         </div>
       </section>
