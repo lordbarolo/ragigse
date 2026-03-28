@@ -39,6 +39,7 @@ const TRUST_LEVELS = [
 export default function ReferenserInfo() {
   useEffect(() => {
     trackEvent("referenser_info_viewed");
+    trackEvent("product_page_viewed", { product: "referenser" });
   }, []);
 
   return (

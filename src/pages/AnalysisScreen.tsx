@@ -107,6 +107,7 @@ export default function AnalysisScreen() {
       }
     });
     trackEvent("analysis_started");
+    trackEvent("product_page_viewed", { product: "loneanalys" });
   }, [urlLeadId, navigate]);
 
   /* ── Retry create report ── */

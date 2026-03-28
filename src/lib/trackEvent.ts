@@ -49,7 +49,11 @@ type EventName =
   | "verify_info_viewed"
   | "login_clicked"
   | "signup_completed"
-  | "reidar_clicked";
+  | "reidar_clicked"
+  | "product_page_viewed"
+  | "product_cta_clicked"
+  | "survey_question_selected"
+  | "survey_custom_question_submitted";
 
 function isInternalTraffic(): boolean {
   const host = window.location.hostname;
