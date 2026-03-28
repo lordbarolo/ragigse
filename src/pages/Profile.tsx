@@ -1,23 +1,11 @@
 import { useEffect, useState } from "react";
-import ComingSoonOverlay from "@/components/ComingSoonOverlay";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { useRefProfile } from "@/hooks/useRefProfile";
-import { useActionItems } from "@/hooks/useActionItems";
 import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Loader2, FileText, MapPin, Briefcase, Clock, LogOut, UserPlus, ShieldCheck } from "lucide-react";
-import { StatusBadge } from "@/components/dashboard/StatusBadge";
-import { ActionItems } from "@/components/dashboard/ActionItems";
-import { ProfileStatusCard } from "@/components/referly/ProfileStatusCard";
-import { ReferenceVault } from "@/components/referly/ReferenceVault";
-import { InviteModal } from "@/components/referly/InviteModal";
-import { VerificationUpload } from "@/components/referly/VerificationUpload";
-import { DocumentUpload } from "@/components/referly/DocumentUpload";
-import { toast } from "sonner";
+import { Loader2, FileText, MapPin, Briefcase, Clock, LogOut, UserPlus } from "lucide-react";
 
 interface ReportRow {
   id: string;
@@ -44,13 +32,6 @@ export default function Profile() {
   const [reports, setReports] = useState<ReportRow[]>([]);
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [inviteOpen, setInviteOpen] = useState(false);
-  const [ivoUploadOpen, setIvoUploadOpen] = useState(false);
-  const [hospUploadOpen, setHospUploadOpen] = useState(false);
-  const [verifyOpen, setVerifyOpen] = useState(false);
-
-  const { profileStatus, loading: refLoading, refresh: refreshRef } = useRefProfile(user?.id);
-  const { actions, loading: actionsLoading, refresh: refreshActions } = useActionItems(user?.id);
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/logga-in");
@@ -107,20 +88,6 @@ export default function Profile() {
   const employmentLabel = (t: string | null) => t === "consultant" ? "Konsult" : t === "permanent" ? "Tillsvidareanställd" : t || "–";
   const formatSalary = (val: number | null) => val ? val.toLocaleString("sv-SE") : "–";
 
-  const handleAction = (type: string) => {
-    if (type === "missing_reference") setInviteOpen(true);
-    else if (type === "add_ivo") setIvoUploadOpen(true);
-    else if (type === "add_hosp") setHospUploadOpen(true);
-  };
-
-  const handleRefreshAll = () => {
-    refreshRef();
-    refreshActions();
-  };
-
-  const handleVerifyBankId = () => {
-    setVerifyOpen(true);
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -133,7 +100,7 @@ export default function Profile() {
               <h1 className="text-2xl font-bold text-foreground">Min dashboard</h1>
               <p className="text-sm text-muted-foreground">{user?.email}</p>
             </div>
-            {profileStatus && <StatusBadge status={profileStatus.status} />}
+            
           </div>
           <Button variant="outline" size="sm" onClick={handleSignOut} className="gap-2">
             <LogOut className="w-4 h-4" />
@@ -141,48 +108,7 @@ export default function Profile() {
           </Button>
         </div>
 
-        {/* 🔥 Actions */}
-        <ActionItems actions={actions} loading={actionsLoading} onAction={handleAction} />
-
-        {/* Profile Status */}
-        <ComingSoonOverlay label="Referenser & verifikationer — kommer snart">
-          {profileStatus && (
-            <ProfileStatusCard
-              data={profileStatus}
-              onRefresh={handleRefreshAll}
-              onInvite={() => setInviteOpen(true)}
-              onVerifyBankId={handleVerifyBankId}
-            />
-          )}
-
-          {/* Document upload */}
-          <DocumentUpload />
-
-          {/* Verification uploads */}
-          <VerificationUpload
-            type="ivo"
-            label="IVO-register"
-            onSuccess={handleRefreshAll}
-          />
-          <VerificationUpload
-            type="hosp"
-            label="HOSP-register"
-            onSuccess={handleRefreshAll}
-          />
-
-          {/* Reference Vault */}
-          <ReferenceVault />
-        </ComingSoonOverlay>
-
-        {/* Invite modal */}
-        {user && (
-          <InviteModal
-            open={inviteOpen}
-            onOpenChange={setInviteOpen}
-            userId={user.id}
-            onSuccess={handleRefreshAll}
-          />
-        )}
+        {/* Referenser & verifikationer — dold tillsvidare */}
 
         {/* Profile details */}
         {profile && (
@@ -254,23 +180,6 @@ export default function Profile() {
         </Card>
       </div>
 
-      {/* BankID verification modal — coming soon */}
-      <Dialog open={verifyOpen} onOpenChange={setVerifyOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <ShieldCheck className="h-5 w-5 text-primary" />
-              BankID-verifiering
-            </DialogTitle>
-            <DialogDescription>
-              BankID-signering är under utveckling och kommer snart. Din profil fungerar utan verifiering, men Trust Score blir högre när BankID är aktiverat.
-            </DialogDescription>
-          </DialogHeader>
-          <Button variant="secondary" className="w-full mt-2" onClick={() => setVerifyOpen(false)}>
-            Stäng
-          </Button>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
