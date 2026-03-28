@@ -95,7 +95,7 @@ export default function Index() {
             Vi har svaret, snart du också
           </p>
           <p className="text-hero-foreground/60 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
-            Vi har analyserat hundratals ramavtal för läkare och sjuksköterskor. Gör vår kostnadsfria analys för att se om du har rätt ersättning och vad kunden egentligen betalar.
+            Vi har analyserat ramavtal för 21 regioner och 290 kommuner. Gör vår kostnadsfria löneanalys för att se om du har rätt ersättning och vad kunden egentligen betalar.
           </p>
           <div className="h-8 md:h-12" />
 
