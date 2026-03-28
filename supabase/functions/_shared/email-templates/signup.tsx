@@ -1,0 +1,62 @@
+/// <reference types="npm:@types/react@18.3.1" />
+
+import * as React from 'npm:react@18.3.1'
+
+import {
+  Body,
+  Button,
+  Container,
+  Head,
+  Heading,
+  Html,
+  Link,
+  Preview,
+  Text,
+} from 'npm:@react-email/components@0.0.22'
+
+interface SignupEmailProps {
+  siteName: string
+  siteUrl: string
+  recipient: string
+  confirmationUrl: string
+}
+
+export const SignupEmail = ({
+  siteName,
+  siteUrl,
+  recipient,
+  confirmationUrl,
+}: SignupEmailProps) => (
+  <Html lang="sv" dir="ltr">
+    <Head />
+    <Preview>Bekräfta din e-post för CompCare</Preview>
+    <Body style={main}>
+      <Container style={container}>
+        <Text style={logo}>CompCare</Text>
+        <Heading style={h1}>Välkommen till CompCare!</Heading>
+        <Text style={text}>
+          Tack för att du registrerade dig. Bekräfta din e-postadress (
+          <Link href={`mailto:${recipient}`} style={link}>{recipient}</Link>
+          ) genom att klicka på knappen nedan:
+        </Text>
+        <Button style={button} href={confirmationUrl}>
+          Bekräfta e-post →
+        </Button>
+        <Text style={footer}>
+          Om du inte skapat något konto kan du ignorera detta mejl.
+        </Text>
+      </Container>
+    </Body>
+  </Html>
+)
+
+export default SignupEmail
+
+const main = { backgroundColor: '#ffffff', fontFamily: "'Inter', Arial, sans-serif" }
+const container = { padding: '32px 28px' }
+const logo = { fontSize: '20px', fontWeight: 'bold' as const, color: '#4F46E5', margin: '0 0 24px', fontFamily: "'Work Sans', 'Inter', Arial, sans-serif" }
+const h1 = { fontSize: '22px', fontWeight: '600' as const, color: '#111827', margin: '0 0 16px', fontFamily: "'Work Sans', 'Inter', Arial, sans-serif" }
+const text = { fontSize: '15px', color: '#475569', lineHeight: '1.6', margin: '0 0 24px' }
+const link = { color: '#4F46E5', textDecoration: 'underline' }
+const button = { backgroundColor: '#4F46E5', color: '#ffffff', fontSize: '15px', fontWeight: '600' as const, borderRadius: '12px', padding: '14px 28px', textDecoration: 'none' }
+const footer = { fontSize: '13px', color: '#94a3b8', margin: '32px 0 0', lineHeight: '1.5' }
