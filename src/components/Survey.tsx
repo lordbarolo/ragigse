@@ -81,10 +81,9 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
   const { data: rates, isLoading: ratesLoading } = useRates();
   const [saving, setSaving] = useState(false);
 
-  // Determine initial step based on prefill
   const getInitialStep = () => {
-    if (initialRole) return 3; // Role fully determined (e.g. barnmorska) → skip to region
-    if (initialCategory) return 2; // Category set → show role dropdown
+    if (initialRole) return 3;
+    if (initialCategory) return 2;
     return 1;
   };
 
