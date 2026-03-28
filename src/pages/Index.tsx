@@ -33,16 +33,12 @@ const webAppJsonLd = {
 
 export default function Index() {
   const [showSurvey, setShowSurvey] = useState(false);
-  const [prefillCategory, setPrefillCategory] = useState<string>("");
-  const [prefillRole, setPrefillRole] = useState<string>("");
   const surveyRef = useRef<HTMLDivElement>(null);
 
   useTimeOnPage("landing");
   useEffect(() => { trackEvent("landing_viewed"); }, []);
 
-  const handleRoleSelect = (category: "lakare" | "ssk") => {
-    setPrefillCategory(category);
-    setPrefillRole("");
+  const handleStartSurvey = () => {
     setShowSurvey(true);
     setTimeout(() => {
       surveyRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
