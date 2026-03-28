@@ -716,7 +716,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
 
       {/* Navigation */}
       <div className="flex gap-3 mt-8">
-        {step > 1 && (
+        {(step > 1 || onBack) && (
           <button
             onClick={handleBack}
             className="flex items-center gap-1.5 py-3.5 px-5 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground transition-all active:scale-[0.97]"
