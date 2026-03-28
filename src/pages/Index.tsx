@@ -151,7 +151,7 @@ export default function Index() {
       </section>
 
       {/* ── Service Cards (horizontal scroll) ──────── */}
-      <ServiceCards onStartAnalysis={() => document.getElementById("roles")?.scrollIntoView({ behavior: "smooth" })} />
+      <ServiceCards onStartAnalysis={() => window.scrollTo({ top: 0, behavior: "smooth" })} />
 
       {/* ── Features section ───────────────────────────── */}
       <section className="max-w-6xl mx-auto px-6 pt-16 pb-32">
