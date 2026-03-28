@@ -89,7 +89,7 @@ export default function Index() {
             Verktyg för optimerad ersättning och full kontroll.
           </p>
           <p className="text-hero-foreground/60 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
-            Vi har analyserat ramavtal från 21 regioner och 290 kommuner. Med hjälp av smart teknik kan vi visa ersättningen du kan få och vad regionen egentligen betalar.
+            Vi har analyserat ramavtal från 21 regioner och 290 kommuner. Med hjälp av smart teknik kan vi visa marknadens ersättning för din roll och vad regionen egentligen betalar.
           </p>
           <div className="h-4 md:h-6" />
 
