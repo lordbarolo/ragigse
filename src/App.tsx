@@ -39,6 +39,7 @@ const Fakturakontroll = lazy(() => import("./pages/Fakturakontroll"));
 const ReferenserInfo = lazy(() => import("./pages/ReferenserInfo"));
 const VerifyInfo = lazy(() => import("./pages/VerifyInfo"));
 const ReijdarChat = lazy(() => import("./components/radar/ReijdarChat"));
+const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 
 const queryClient = new QueryClient();
 

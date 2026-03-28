@@ -46,12 +46,24 @@ export default function InvoiceUploadForm() {
         filePaths.push(path);
       }
 
+      const submissionId = crypto.randomUUID();
       const { error: dbError } = await supabase.from("invoice_submissions").insert({
+        id: submissionId,
         email,
         file_paths: filePaths,
         message: message || null,
       });
       if (dbError) throw dbError;
+
+      // Send confirmation email (fire-and-forget)
+      supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "invoice-confirmation",
+          recipientEmail: email,
+          idempotencyKey: `invoice-confirm-${submissionId}`,
+          templateData: { fileCount: files.length },
+        },
+      }).catch(() => {});
 
       setSubmitted(true);
     } catch (err: any) {
