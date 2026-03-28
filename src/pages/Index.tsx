@@ -52,8 +52,6 @@ export default function Index() {
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppJsonLd) }} />
         <div ref={surveyRef} className="px-4 pt-8 pb-16 min-h-screen flex flex-col">
           <Survey
-            initialCategory={prefillCategory as "lakare" | "ssk" | ""}
-            initialRole={prefillRole}
             onBack={() => setShowSurvey(false)}
           />
         </div>
@@ -96,18 +94,12 @@ export default function Index() {
           <div className="h-8 md:h-12" />
 
           {/* Role selection CTA */}
-          <div className="max-w-md mx-auto flex flex-col sm:flex-row gap-3">
+          <div className="max-w-md mx-auto">
             <button
-              onClick={() => handleRoleSelect("lakare")}
-              className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-4 rounded-2xl font-semibold transition-all shadow-lg shadow-primary/20 text-base"
+              onClick={handleStartSurvey}
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-4 rounded-2xl font-semibold transition-all shadow-lg shadow-primary/20 text-base"
             >
-              Optimera ersättning som läkare
-            </button>
-            <button
-              onClick={() => handleRoleSelect("ssk")}
-              className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-4 rounded-2xl font-semibold transition-all shadow-lg shadow-primary/20 text-base"
-            >
-              Optimera ersättning som sjuksköterska/barnmorska
+              Se din optimala ersättning
             </button>
           </div>
         </div>
@@ -217,18 +209,12 @@ export default function Index() {
           Ta kontroll över din marknadsposition
         </h2>
         <p className="text-muted-foreground mb-8 text-lg">Se din ersättning i förhållande till marknadspris · 60 sekunder</p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+        <div className="flex justify-center">
           <button
-            onClick={() => handleRoleSelect("lakare")}
+            onClick={handleStartSurvey}
             className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-2xl font-semibold transition-all shadow-lg shadow-primary/20 text-base"
           >
-            Starta analys — Läkare
-          </button>
-          <button
-            onClick={() => handleRoleSelect("ssk")}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-2xl font-semibold transition-all shadow-lg shadow-primary/20 text-base"
-          >
-            Starta analys — Sjuksköterska
+            Se din optimala ersättning
           </button>
         </div>
       </section>
