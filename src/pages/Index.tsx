@@ -135,7 +135,7 @@ export default function Index() {
           onClick={handleStartSurvey}
           className="mt-8 bg-primary hover:bg-primary/90 text-primary-foreground px-10 py-4 rounded-2xl font-semibold text-base transition-all shadow-lg shadow-primary/20 inline-flex items-center gap-2"
         >
-          Få samma <span className="inline-block rotate-[-90deg] text-lg">→</span> rapport för din kompetens
+          Få samma rapport för din kompetens ☝️
         </button>
       </section>
 
