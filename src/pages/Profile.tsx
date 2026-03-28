@@ -1,23 +1,11 @@
 import { useEffect, useState } from "react";
-import ComingSoonOverlay from "@/components/ComingSoonOverlay";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { useRefProfile } from "@/hooks/useRefProfile";
-import { useActionItems } from "@/hooks/useActionItems";
 import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Loader2, FileText, MapPin, Briefcase, Clock, LogOut, UserPlus, ShieldCheck } from "lucide-react";
-import { StatusBadge } from "@/components/dashboard/StatusBadge";
-import { ActionItems } from "@/components/dashboard/ActionItems";
-import { ProfileStatusCard } from "@/components/referly/ProfileStatusCard";
-import { ReferenceVault } from "@/components/referly/ReferenceVault";
-import { InviteModal } from "@/components/referly/InviteModal";
-import { VerificationUpload } from "@/components/referly/VerificationUpload";
-import { DocumentUpload } from "@/components/referly/DocumentUpload";
-import { toast } from "sonner";
+import { Loader2, FileText, MapPin, Briefcase, Clock, LogOut, UserPlus } from "lucide-react";
 
 interface ReportRow {
   id: string;
@@ -44,13 +32,6 @@ export default function Profile() {
   const [reports, setReports] = useState<ReportRow[]>([]);
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [inviteOpen, setInviteOpen] = useState(false);
-  const [ivoUploadOpen, setIvoUploadOpen] = useState(false);
-  const [hospUploadOpen, setHospUploadOpen] = useState(false);
-  const [verifyOpen, setVerifyOpen] = useState(false);
-
-  const { profileStatus, loading: refLoading, refresh: refreshRef } = useRefProfile(user?.id);
-  const { actions, loading: actionsLoading, refresh: refreshActions } = useActionItems(user?.id);
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/logga-in");
