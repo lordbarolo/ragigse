@@ -517,6 +517,7 @@ export default function ConsultantTrackContent({
         <div ref={registerSectionRef?.("price_nuggets")}>
           <PriceNuggets
             category={occupation?.toLowerCase().includes("läkare") ? "läkare" : "sjuksköterska"}
+            zon={userZone}
             maxItems={3}
           />
         </div>

@@ -40,12 +40,13 @@ function NuggetCard({ nugget }: { nugget: PriceNugget }) {
 
 interface Props {
   category?: string;
+  zon?: string;
   maxItems?: number;
   className?: string;
 }
 
-export default function PriceNuggets({ category, maxItems = 3, className = "" }: Props) {
-  const { nuggets, loading } = usePriceNuggets(category);
+export default function PriceNuggets({ category, zon, maxItems = 3, className = "" }: Props) {
+  const { nuggets, loading } = usePriceNuggets(category, zon);
 
   if (loading || nuggets.length === 0) return null;
 
