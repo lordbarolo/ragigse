@@ -132,10 +132,10 @@ export default function Index() {
 
         {/* CTA */}
         <button
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          className="mt-8 bg-primary hover:bg-primary/90 text-primary-foreground px-10 py-4 rounded-2xl font-semibold text-base transition-all shadow-lg shadow-primary/20"
+          onClick={handleStartSurvey}
+          className="mt-8 bg-primary hover:bg-primary/90 text-primary-foreground px-10 py-4 rounded-2xl font-semibold text-base transition-all shadow-lg shadow-primary/20 inline-flex items-center gap-2"
         >
-          Vad betalar regionen för dig egentligen?
+          Få samma <span className="inline-block rotate-[-90deg] text-lg">→</span> rapport för din kompetens
         </button>
       </section>
 
