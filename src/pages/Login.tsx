@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, ArrowLeft } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
+import { trackEvent } from "@/lib/trackEvent";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -19,6 +20,7 @@ export default function Login() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    trackEvent("login_clicked", { source: "login_page" });
 
     const { error } = await supabase.auth.signInWithPassword({ email, password });
 
