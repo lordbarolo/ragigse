@@ -135,7 +135,7 @@ export default function Index() {
           onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           className="mt-8 bg-primary hover:bg-primary/90 text-primary-foreground px-10 py-4 rounded-2xl font-semibold text-base transition-all shadow-lg shadow-primary/20"
         >
-          Se ersättning för din roll
+          Vad betalar regionen för dig egentligen?
         </button>
       </section>
 
