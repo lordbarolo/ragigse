@@ -94,6 +94,7 @@ export default function Index() {
           <div className="h-8 md:h-12" />
 
           {/* Role selection CTA */}
+          <p className="text-hero-foreground/50 text-xs mb-3 tracking-wide">Kostnadsfritt och klart på 30 sekunder</p>
           <div className="max-w-md mx-auto">
             <button
               onClick={handleStartSurvey}
