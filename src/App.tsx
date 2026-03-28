@@ -40,6 +40,7 @@ const ReferenserInfo = lazy(() => import("./pages/ReferenserInfo"));
 const VerifyInfo = lazy(() => import("./pages/VerifyInfo"));
 const ReijdarChat = lazy(() => import("./components/radar/ReijdarChat"));
 const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
+const Academy = lazy(() => import("./pages/Academy"));
 
 const queryClient = new QueryClient();
 
@@ -99,6 +100,7 @@ const App = () => (
                 <Route path="/dev/e2e-test" element={<E2ETest />} />
               )}
               <Route path="/unsubscribe" element={<Unsubscribe />} />
+              <Route path="/academy" element={<Academy />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
