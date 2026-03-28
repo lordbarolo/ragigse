@@ -143,7 +143,7 @@ export default function Index() {
       <ServiceCards onStartAnalysis={handleStartSurvey} />
 
       {/* ── Features section ───────────────────────────── */}
-      <section className="max-w-6xl mx-auto px-6 pt-16 pb-32">
+      <section className="max-w-6xl mx-auto px-6 pt-16 pb-12">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div>
             <h2 className="text-3xl font-bold mb-6 tracking-tight text-foreground">
