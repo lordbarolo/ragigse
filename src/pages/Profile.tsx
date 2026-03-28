@@ -88,20 +88,6 @@ export default function Profile() {
   const employmentLabel = (t: string | null) => t === "consultant" ? "Konsult" : t === "permanent" ? "Tillsvidareanställd" : t || "–";
   const formatSalary = (val: number | null) => val ? val.toLocaleString("sv-SE") : "–";
 
-  const handleAction = (type: string) => {
-    if (type === "missing_reference") setInviteOpen(true);
-    else if (type === "add_ivo") setIvoUploadOpen(true);
-    else if (type === "add_hosp") setHospUploadOpen(true);
-  };
-
-  const handleRefreshAll = () => {
-    refreshRef();
-    refreshActions();
-  };
-
-  const handleVerifyBankId = () => {
-    setVerifyOpen(true);
-  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -114,7 +100,7 @@ export default function Profile() {
               <h1 className="text-2xl font-bold text-foreground">Min dashboard</h1>
               <p className="text-sm text-muted-foreground">{user?.email}</p>
             </div>
-            {profileStatus && <StatusBadge status={profileStatus.status} />}
+            
           </div>
           <Button variant="outline" size="sm" onClick={handleSignOut} className="gap-2">
             <LogOut className="w-4 h-4" />
@@ -194,23 +180,6 @@ export default function Profile() {
         </Card>
       </div>
 
-      {/* BankID verification modal — coming soon */}
-      <Dialog open={verifyOpen} onOpenChange={setVerifyOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <ShieldCheck className="h-5 w-5 text-primary" />
-              BankID-verifiering
-            </DialogTitle>
-            <DialogDescription>
-              BankID-signering är under utveckling och kommer snart. Din profil fungerar utan verifiering, men Trust Score blir högre när BankID är aktiverat.
-            </DialogDescription>
-          </DialogHeader>
-          <Button variant="secondary" className="w-full mt-2" onClick={() => setVerifyOpen(false)}>
-            Stäng
-          </Button>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
