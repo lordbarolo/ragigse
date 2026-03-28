@@ -89,7 +89,7 @@ export default function Index() {
             Marknadsinsikter och smarta tjänster för läkare och sjuksköterskor.
           </p>
           <p className="text-hero-foreground/60 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
-            Vi har analyserat ramavtal från 21 regioner och 290 kommuner. Med hjälp av smart teknik kan vi visa vad regionen betalar och vad marknaden erbjuder.
+            {"\n"}
           </p>
           <div className="h-4 md:h-6" />
 
