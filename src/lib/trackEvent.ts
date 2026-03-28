@@ -61,7 +61,7 @@ function isInternalTraffic(): boolean {
     host === "localhost" ||
     host === "127.0.0.1" ||
     host.endsWith(".lovableproject.com") ||
-    host.endsWith(".lovable.app")
+    host.includes("id-preview--")
   );
 }
 
