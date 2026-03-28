@@ -92,10 +92,10 @@ export default function Index() {
           </h1>
 
           <p className="text-hero-foreground/60 text-lg md:text-xl max-w-2xl mx-auto mb-2 leading-relaxed">
-            Vi visar vilken ersättning du kan förvänta dig. Information som tidigare varit dold för konsulterna. Har du rätt lön?
+            Verktyg för optimerad ersättning och full kontroll.
           </p>
           <p className="text-hero-foreground/60 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
-            Vi har analyserat ramavtal för 21 regioner och 290 kommuner. Gör vår kostnadsfria löneanalys för att se om du har rätt ersättning och vad kunden egentligen betalar.
+            Vi har analyserat ramavtal från 21 regioner och 290 kommuner. Med hjälp av smart teknik kan vi visa ersättningen du kan få och vad regionen egentligen betalar.
           </p>
           <div className="h-8 md:h-12" />
 
