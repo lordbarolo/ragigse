@@ -57,8 +57,10 @@ export default function PublicProfile() {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
-  // Identity gate state
-  const [gateOpen, setGateOpen] = useState(true);
+  // Identity gate state — persist in sessionStorage
+  const sessionKey = `pp_gate_${id}`;
+  const alreadyIdentified = typeof window !== "undefined" && sessionStorage.getItem(sessionKey) === "1";
+  const [gateOpen, setGateOpen] = useState(!alreadyIdentified);
   const [viewerName, setViewerName] = useState("");
   const [viewerOrg, setViewerOrg] = useState("");
 
@@ -75,6 +77,7 @@ export default function PublicProfile() {
       });
     }
 
+    sessionStorage.setItem(sessionKey, "1");
     setGateOpen(false);
   };
 

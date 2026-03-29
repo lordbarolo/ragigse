@@ -35,14 +35,14 @@ export default function Hero() {
           className="font-display font-extrabold leading-[1.04] tracking-[-0.04em] text-foreground mb-2"
           style={{ fontSize: "clamp(26px, 6.5vw, 56px)" }}
         >
-          Samlad kunskap för konsulter inom sjukvård
+          Tjänar du rätt? Fakturerar du rätt? Förhandlar du rätt?
         </h1>
 
         <p
-          className="text-foreground/55 font-light leading-relaxed max-w-[420px] mx-auto"
+          className="text-foreground/55 font-light leading-relaxed max-w-[460px] mx-auto"
           style={{ fontSize: "clamp(14px, 2.2vw, 16px)" }}
         >
-          Ramavtalspriser, lönestatistik och marginalberäkningar — samlat från 21 regioner och SCB.
+          Verifieringsinfrastruktur för vården — ramavtalspriser, lönestatistik och marginalberäkningar samlat från 21 regioner och SCB.
         </p>
       </div>
     </section>

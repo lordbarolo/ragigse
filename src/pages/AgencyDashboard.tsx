@@ -79,9 +79,16 @@ function formatDate(d: string | null): string {
 
 // ── Agency Onboarding ─────────────────────────────────
 function AgencyOnboarding({ userId, onComplete }: { userId: string; onComplete: () => void }) {
+  const [tab, setTab] = useState<"create" | "join">("create");
   const [orgName, setOrgName] = useState("");
   const [orgNumber, setOrgNumber] = useState("");
   const [creating, setCreating] = useState(false);
+
+  // Join existing org
+  const [searchQuery, setSearchQuery] = useState("");
+  const [searchResults, setSearchResults] = useState<{ id: string; name: string }[]>([]);
+  const [searching, setSearching] = useState(false);
+  const [requestSent, setRequestSent] = useState(false);
 
   const handleCreate = async () => {
     if (!orgName.trim()) {
@@ -90,7 +97,6 @@ function AgencyOnboarding({ userId, onComplete }: { userId: string; onComplete: 
     }
     setCreating(true);
     try {
-      // 1. Create organization
       const { data: org, error: orgErr } = await supabase
         .from("organizations")
         .insert({
@@ -103,7 +109,6 @@ function AgencyOnboarding({ userId, onComplete }: { userId: string; onComplete: 
 
       if (orgErr) throw orgErr;
 
-      // 2. Create membership
       const { error: memErr } = await supabase
         .from("org_members" as any)
         .insert({
@@ -124,6 +129,44 @@ function AgencyOnboarding({ userId, onComplete }: { userId: string; onComplete: 
     }
   };
 
+  const handleSearch = async () => {
+    if (!searchQuery.trim() || searchQuery.trim().length < 2) return;
+    setSearching(true);
+    try {
+      const { data, error } = await supabase
+        .from("organizations")
+        .select("id, name")
+        .eq("type", "staffing_agency")
+        .ilike("name", `%${searchQuery.trim()}%`)
+        .limit(10);
+
+      if (error) throw error;
+      setSearchResults(data || []);
+    } catch {
+      toast.error("Kunde inte söka");
+    } finally {
+      setSearching(false);
+    }
+  };
+
+  const handleRequestMembership = async (orgId: string, name: string) => {
+    try {
+      const { error } = await supabase
+        .from("org_membership_requests" as any)
+        .insert({ user_id: userId, organization_id: orgId });
+
+      if (error) throw error;
+      setRequestSent(true);
+      toast.success(`Förfrågan skickad till ${name}`);
+    } catch (err: any) {
+      if (err.code === "23505") {
+        toast.info("Du har redan en aktiv förfrågan till denna organisation");
+      } else {
+        toast.error("Kunde inte skicka förfrågan");
+      }
+    }
+  };
+
   return (
     <div className="flex flex-1 items-center justify-center px-4 py-16">
       <Card className="max-w-md w-full">
@@ -131,35 +174,95 @@ function AgencyOnboarding({ userId, onComplete }: { userId: string; onComplete: 
           <Building2 className="mx-auto h-10 w-10 text-primary mb-3" />
           <CardTitle className="text-xl">Välkommen till CompCare</CardTitle>
           <p className="text-sm text-muted-foreground mt-2">
-            Registrera ditt bemanningsföretag för att börja skapa representationsbevis.
+            Registrera eller anslut till ditt bemanningsföretag för att komma igång.
           </p>
         </CardHeader>
-        <CardContent className="space-y-4 pt-4">
-          <div>
-            <Label htmlFor="org-name">Företagsnamn *</Label>
-            <Input
-              id="org-name"
-              placeholder="t.ex. Medhelp AB"
-              value={orgName}
-              onChange={(e) => setOrgName(e.target.value)}
-              maxLength={200}
-            />
+        <CardContent className="pt-4">
+          {/* Tab switcher */}
+          <div className="flex gap-1 bg-muted rounded-lg p-1 mb-5">
+            <button
+              onClick={() => setTab("create")}
+              className={`flex-1 text-xs font-medium py-2 px-3 rounded-md transition-colors ${tab === "create" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              Skapa nytt företag
+            </button>
+            <button
+              onClick={() => setTab("join")}
+              className={`flex-1 text-xs font-medium py-2 px-3 rounded-md transition-colors ${tab === "join" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              Anslut till befintligt
+            </button>
           </div>
-          <div>
-            <Label htmlFor="org-number">Organisationsnummer</Label>
-            <Input
-              id="org-number"
-              placeholder="t.ex. 556123-4567"
-              value={orgNumber}
-              onChange={(e) => setOrgNumber(e.target.value)}
-              maxLength={20}
-            />
-            <p className="text-xs text-muted-foreground mt-1">Valfritt, men rekommenderas för verifiering.</p>
-          </div>
-          <Button onClick={handleCreate} disabled={creating} className="w-full">
-            {creating && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-            Skapa organisation
-          </Button>
+
+          {tab === "create" ? (
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="org-name">Företagsnamn *</Label>
+                <Input
+                  id="org-name"
+                  placeholder="t.ex. Medhelp AB"
+                  value={orgName}
+                  onChange={(e) => setOrgName(e.target.value)}
+                  maxLength={200}
+                />
+              </div>
+              <div>
+                <Label htmlFor="org-number">Organisationsnummer</Label>
+                <Input
+                  id="org-number"
+                  placeholder="t.ex. 556123-4567"
+                  value={orgNumber}
+                  onChange={(e) => setOrgNumber(e.target.value)}
+                  maxLength={20}
+                />
+                <p className="text-xs text-muted-foreground mt-1">Valfritt, men rekommenderas för verifiering.</p>
+              </div>
+              <Button onClick={handleCreate} disabled={creating} className="w-full">
+                {creating && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+                Skapa organisation
+              </Button>
+            </div>
+          ) : requestSent ? (
+            <div className="text-center py-8">
+              <Clock className="mx-auto h-8 w-8 text-primary mb-3" />
+              <p className="text-sm font-medium text-foreground">Förfrågan skickad</p>
+              <p className="text-xs text-muted-foreground mt-1">En administratör i organisationen behöver godkänna din förfrågan.</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="org-search">Sök efter företagsnamn</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="org-search"
+                    placeholder="t.ex. Medhelp"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                    maxLength={100}
+                  />
+                  <Button variant="outline" size="sm" onClick={handleSearch} disabled={searching || searchQuery.trim().length < 2}>
+                    {searching ? <Loader2 className="h-4 w-4 animate-spin" /> : "Sök"}
+                  </Button>
+                </div>
+              </div>
+              {searchResults.length > 0 && (
+                <div className="border rounded-lg divide-y">
+                  {searchResults.map((org) => (
+                    <div key={org.id} className="flex items-center justify-between px-3 py-2.5">
+                      <span className="text-sm font-medium text-foreground">{org.name}</span>
+                      <Button size="sm" variant="ghost" className="text-xs h-7" onClick={() => handleRequestMembership(org.id, org.name)}>
+                        Ansök
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {searchResults.length === 0 && searchQuery.trim().length >= 2 && !searching && (
+                <p className="text-xs text-muted-foreground text-center py-4">Inga resultat. Prova ett annat sökord eller skapa ett nytt företag.</p>
+              )}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
