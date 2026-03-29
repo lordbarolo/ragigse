@@ -2190,6 +2190,57 @@ export type Database = {
           },
         ]
       }
+      ref_representation_requests: {
+        Row: {
+          agency_id: string
+          agency_name: string
+          assignment_id: string
+          bankid_ref: string | null
+          consultant_email: string
+          consultant_user_id: string | null
+          created_at: string
+          id: string
+          payload: Json | null
+          region: string
+          secret_token: string
+          signed_at: string | null
+          status: Database["public"]["Enums"]["ref_representation_status"]
+          verification_id: string | null
+        }
+        Insert: {
+          agency_id: string
+          agency_name?: string
+          assignment_id: string
+          bankid_ref?: string | null
+          consultant_email: string
+          consultant_user_id?: string | null
+          created_at?: string
+          id?: string
+          payload?: Json | null
+          region: string
+          secret_token?: string
+          signed_at?: string | null
+          status?: Database["public"]["Enums"]["ref_representation_status"]
+          verification_id?: string | null
+        }
+        Update: {
+          agency_id?: string
+          agency_name?: string
+          assignment_id?: string
+          bankid_ref?: string | null
+          consultant_email?: string
+          consultant_user_id?: string | null
+          created_at?: string
+          id?: string
+          payload?: Json | null
+          region?: string
+          secret_token?: string
+          signed_at?: string | null
+          status?: Database["public"]["Enums"]["ref_representation_status"]
+          verification_id?: string | null
+        }
+        Relationships: []
+      }
       ref_role_profiles: {
         Row: {
           decay_end_months: number
@@ -3064,6 +3115,7 @@ export type Database = {
       ref_app_role: "individual" | "reference_giver" | "client" | "admin"
       ref_ping_status: "sent" | "confirmed" | "denied" | "expired" | "dismissed"
       ref_reference_status: "pending" | "active" | "revoked" | "expired"
+      ref_representation_status: "pending" | "signed" | "declined" | "expired"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -3195,6 +3247,7 @@ export const Constants = {
       ref_app_role: ["individual", "reference_giver", "client", "admin"],
       ref_ping_status: ["sent", "confirmed", "denied", "expired", "dismissed"],
       ref_reference_status: ["pending", "active", "revoked", "expired"],
+      ref_representation_status: ["pending", "signed", "declined", "expired"],
     },
   },
 } as const

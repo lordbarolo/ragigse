@@ -41,6 +41,8 @@ const VerifyInfo = lazy(() => import("./pages/VerifyInfo"));
 const ReijdarChat = lazy(() => import("./components/radar/ReijdarChat"));
 const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 const Academy = lazy(() => import("./pages/Academy"));
+const AgencyDashboard = lazy(() => import("./pages/AgencyDashboard"));
+const SignRepresentation = lazy(() => import("./pages/SignRepresentation"));
 
 const queryClient = new QueryClient();
 
@@ -101,6 +103,8 @@ const App = () => (
               )}
               <Route path="/unsubscribe" element={<Unsubscribe />} />
               <Route path="/academy" element={<Academy />} />
+              <Route path="/agency/dashboard" element={<AgencyDashboard />} />
+              <Route path="/sign/:token" element={<SignRepresentation />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>

@@ -24,6 +24,16 @@ interface AttachedReference {
   artifact_token: string | null;
 }
 
+interface RepresentationData {
+  agency_name: string;
+  assignment_id: string;
+  region: string;
+  consultant_email: string;
+  signed_at: string | null;
+  bankid_ref: string | null;
+  payload: Record<string, any> | null;
+}
+
 const VERIFICATION_LABELS: Record<string, { label: string; icon: React.ReactNode; className: string }> = {
   ping_confirmed: {
     label: "Bekräftad",
@@ -64,26 +74,43 @@ function formatDate(dateStr: string | null): string {
 export default function VerifyProof() {
   const { applicationId } = useParams<{ applicationId: string }>();
   const [references, setReferences] = useState<AttachedReference[]>([]);
+  const [representation, setRepresentation] = useState<RepresentationData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchAttached() {
+    async function fetchData() {
       if (!applicationId) return;
       try {
+        // Try fetching attached references (existing flow)
         const { data, error: fnError } = await supabase.functions.invoke("reference-vault", {
           body: { action: "get-attached", application_id: applicationId },
         });
         if (fnError) throw fnError;
         setReferences((data as { references: AttachedReference[] }).references || []);
-      } catch (err: any) {
-        console.error("[VerifyProof] Error:", err);
-        setError(err.message || "Kunde inte hämta bevis");
-      } finally {
-        setLoading(false);
+      } catch {
+        // If no references found, try representation request by verification_id
       }
+      
+      try {
+        // Also try fetching representation data
+        const { data: reprData } = await supabase
+          .from("ref_representation_requests" as any)
+          .select("agency_name, assignment_id, region, consultant_email, signed_at, bankid_ref, payload")
+          .eq("verification_id", applicationId)
+          .eq("status", "signed")
+          .maybeSingle();
+        
+        if (reprData) {
+          setRepresentation(reprData as unknown as RepresentationData);
+        }
+      } catch {
+        // Representation data is optional
+      }
+      
+      setLoading(false);
     }
-    fetchAttached();
+    fetchData();
   }, [applicationId]);
 
   if (loading) {
@@ -138,15 +165,62 @@ export default function VerifyProof() {
             </h1>
           </div>
           <p className="text-sm text-muted-foreground">
-            Verifierade referenser bifogade till ansökan
+            {representation
+              ? `Signerat representationsbevis för ${representation.region}`
+              : "Verifierade referenser bifogade till ansökan"}
           </p>
           <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground">
             <span className="font-mono bg-muted px-2 py-1 rounded text-[11px]">
               {applicationId?.slice(0, 8)}…
             </span>
-            <span>{references.length} verifierad{references.length !== 1 ? "e" : ""} referens{references.length !== 1 ? "er" : ""}</span>
+            {representation ? (
+              <span className="flex items-center gap-1 text-primary">
+                <ShieldCheck className="h-3 w-3" />
+                BankID-signerat
+              </span>
+            ) : (
+              <span>{references.length} verifierad{references.length !== 1 ? "e" : ""} referens{references.length !== 1 ? "er" : ""}</span>
+            )}
           </div>
         </div>
+
+        {/* Representation details (if signed) */}
+        {representation && (
+          <Card className="mb-6 border-primary/20 bg-primary/[0.02]">
+            <CardContent className="p-5 space-y-3">
+              <div className="flex items-center gap-2 mb-1">
+                <ShieldCheck className="h-4 w-4 text-primary" />
+                <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider">
+                  Signerat intyg
+                </h2>
+              </div>
+              <div className="grid gap-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Bemanningsföretag</span>
+                  <span className="font-medium text-foreground">{representation.agency_name}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Uppdrags-ID</span>
+                  <span className="font-mono text-xs font-medium text-foreground">{representation.assignment_id}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Region</span>
+                  <span className="font-medium text-foreground">{representation.region}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Signerat</span>
+                  <span className="font-medium text-foreground">{formatDate(representation.signed_at)}</span>
+                </div>
+                {representation.bankid_ref && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">BankID-ref</span>
+                    <span className="font-mono text-[11px] text-muted-foreground">{representation.bankid_ref}</span>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Verified References section */}
         <div className="mb-6">
