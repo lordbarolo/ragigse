@@ -24,6 +24,16 @@ interface AttachedReference {
   artifact_token: string | null;
 }
 
+interface RepresentationData {
+  agency_name: string;
+  assignment_id: string;
+  region: string;
+  consultant_email: string;
+  signed_at: string | null;
+  bankid_ref: string | null;
+  payload: Record<string, any> | null;
+}
+
 const VERIFICATION_LABELS: Record<string, { label: string; icon: React.ReactNode; className: string }> = {
   ping_confirmed: {
     label: "Bekräftad",
@@ -64,26 +74,43 @@ function formatDate(dateStr: string | null): string {
 export default function VerifyProof() {
   const { applicationId } = useParams<{ applicationId: string }>();
   const [references, setReferences] = useState<AttachedReference[]>([]);
+  const [representation, setRepresentation] = useState<RepresentationData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchAttached() {
+    async function fetchData() {
       if (!applicationId) return;
       try {
+        // Try fetching attached references (existing flow)
         const { data, error: fnError } = await supabase.functions.invoke("reference-vault", {
           body: { action: "get-attached", application_id: applicationId },
         });
         if (fnError) throw fnError;
         setReferences((data as { references: AttachedReference[] }).references || []);
-      } catch (err: any) {
-        console.error("[VerifyProof] Error:", err);
-        setError(err.message || "Kunde inte hämta bevis");
-      } finally {
-        setLoading(false);
+      } catch {
+        // If no references found, try representation request by verification_id
       }
+      
+      try {
+        // Also try fetching representation data
+        const { data: reprData } = await supabase
+          .from("ref_representation_requests" as any)
+          .select("agency_name, assignment_id, region, consultant_email, signed_at, bankid_ref, payload")
+          .eq("verification_id", applicationId)
+          .eq("status", "signed")
+          .maybeSingle();
+        
+        if (reprData) {
+          setRepresentation(reprData as unknown as RepresentationData);
+        }
+      } catch {
+        // Representation data is optional
+      }
+      
+      setLoading(false);
     }
-    fetchAttached();
+    fetchData();
   }, [applicationId]);
 
   if (loading) {
