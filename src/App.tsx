@@ -8,6 +8,7 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import CookieBanner from "@/components/CookieBanner";
 import Index from "./pages/Index";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 // Lazy-loaded routes for code splitting
 const AnalysisScreen = lazy(() => import("./pages/AnalysisScreen"));
