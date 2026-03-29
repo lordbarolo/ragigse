@@ -6,7 +6,7 @@ import { ReferenceVault } from "./ReferenceVault";
 import { InviteModal } from "./InviteModal";
 import { Button } from "@/components/ui/button";
 import { Loader2, UserPlus } from "lucide-react";
-import { toast } from "sonner";
+import { Loader2, UserPlus } from "lucide-react";
 
 export function ReferenceDashboard() {
   const { user } = useAuth();
