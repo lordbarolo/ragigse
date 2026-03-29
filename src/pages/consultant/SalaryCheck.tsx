@@ -1,8 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import { ShieldCheck, Search, Check } from "lucide-react";
-import CompcareLogo from "@/components/CompcareLogo";
-import ThemeToggle from "@/components/ThemeToggle";
+import { ShieldCheck } from "lucide-react";
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 import Survey from "@/components/Survey";
@@ -47,10 +45,10 @@ export default function SalaryCheck() {
 
   if (showSurvey) {
     return (
-      <div className="min-h-screen bg-background">
+      <div className="bg-background">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppJsonLd) }} />
-        <div ref={surveyRef} className="px-4 pt-8 pb-16 min-h-screen flex flex-col">
+        <div ref={surveyRef} className="px-4 pt-8 pb-16 min-h-[calc(100vh-3.5rem)] flex flex-col">
           <Survey
             onBack={() => setShowSurvey(false)}
           />
@@ -60,17 +58,9 @@ export default function SalaryCheck() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppJsonLd) }} />
-
-      {/* ── Nav ────────────────────────────────────────── */}
-      <nav className="sticky top-0 z-50 bg-card/80 backdrop-blur-md border-b border-border">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-          <Link to="/"><CompcareLogo variant="full" /></Link>
-          <ThemeToggle />
-        </div>
-      </nav>
 
       {/* ── Dark Hero ──────────────────────────────────── */}
       <section className="hero-dark relative pt-12 pb-24 px-6">
@@ -196,7 +186,7 @@ export default function SalaryCheck() {
             OB-tillägg, jour, beredskap, helg och storhelg — det är lätt att räkna fel. Låt Ai-assistenten granska dina fakturor kostnadsfritt. Provision utgår endast om vi hittar timmar som du kan ta betalt för.
           </p>
           <Link
-            to="/fakturakontroll"
+            to="/consultant/fakturakontroll"
             className="inline-block bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-2xl font-semibold transition-all shadow-lg shadow-primary/20 text-base no-underline"
           >
             Säkerställ mina fakturor

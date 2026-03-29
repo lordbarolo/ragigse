@@ -136,7 +136,7 @@ const App = () => (
               <Route path="/profil" element={<Navigate to="/consultant/profil" replace />} />
               <Route path="/radar" element={<Navigate to="/consultant/radar" replace />} />
               <Route path="/forhandla" element={<Navigate to="/consultant/forhandla" replace />} />
-              <Route path="/referenser" element={<Navigate to="/consultant/referencer" replace />} />
+              <Route path="/referenser" element={<Navigate to="/consultant/referenser" replace />} />
               <Route path="/fakturakontroll" element={<Navigate to="/consultant/fakturakontroll" replace />} />
               <Route path="/academy" element={<Navigate to="/consultant/academy" replace />} />
 
@@ -144,7 +144,6 @@ const App = () => (
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
-          <ReijdarChat />
           <CookieBanner />
         </BrowserRouter>
       </TooltipProvider>
