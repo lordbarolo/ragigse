@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useRefProfile } from "@/hooks/useRefProfile";
 import { TrustScoreCard } from "./TrustScoreCard";
-import { ProfileStatusCard } from "./ProfileStatusCard";
 import { ReferenceVault } from "./ReferenceVault";
 import { InviteModal } from "./InviteModal";
 import { Button } from "@/components/ui/button";
