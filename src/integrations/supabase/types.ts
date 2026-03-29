@@ -1810,6 +1810,36 @@ export type Database = {
         }
         Relationships: []
       }
+      ref_access_logs: {
+        Row: {
+          created_at: string
+          id: string
+          ip_address: string | null
+          resource_id: string
+          resource_type: string
+          viewer_name: string | null
+          viewer_org: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          resource_id: string
+          resource_type: string
+          viewer_name?: string | null
+          viewer_org?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ip_address?: string | null
+          resource_id?: string
+          resource_type?: string
+          viewer_name?: string | null
+          viewer_org?: string | null
+        }
+        Relationships: []
+      }
       ref_application_references: {
         Row: {
           application_id: string
@@ -2200,6 +2230,7 @@ export type Database = {
           consultant_user_id: string | null
           created_at: string
           id: string
+          organization_id: string | null
           payload: Json | null
           region: string
           secret_token: string
@@ -2216,6 +2247,7 @@ export type Database = {
           consultant_user_id?: string | null
           created_at?: string
           id?: string
+          organization_id?: string | null
           payload?: Json | null
           region: string
           secret_token?: string
@@ -2232,6 +2264,7 @@ export type Database = {
           consultant_user_id?: string | null
           created_at?: string
           id?: string
+          organization_id?: string | null
           payload?: Json | null
           region?: string
           secret_token?: string
@@ -2239,7 +2272,15 @@ export type Database = {
           status?: Database["public"]["Enums"]["ref_representation_status"]
           verification_id?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "ref_representation_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ref_role_profiles: {
         Row: {
@@ -3069,6 +3110,7 @@ export type Database = {
           workplace: string
         }[]
       }
+      ref_get_user_org_id: { Args: { _user_id: string }; Returns: string }
       ref_has_role: {
         Args: {
           _role: Database["public"]["Enums"]["ref_app_role"]
