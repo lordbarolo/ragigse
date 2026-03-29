@@ -77,7 +77,7 @@ export default function ServiceCards({ onStartAnalysis }: ServiceCardsProps) {
           Plattformen
         </p>
         <h2 className="text-[22px] font-medium text-foreground mb-4">
-          Upptäck Compcare
+          Tre frågor. Ett svar.
         </h2>
 
         {/* Grid with 1px gap lines */}
