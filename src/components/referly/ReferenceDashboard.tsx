@@ -22,26 +22,11 @@ export function ReferenceDashboard() {
   }
 
   if (!user) return null;
-
-  const handleVerifyBankId = () => {
-    toast.info("BankID-verifiering kommer snart");
-  };
-
   return (
     <div className="space-y-5">
       {/* Trust Score */}
       {trustScore && (
         <TrustScoreCard total={trustScore.total} tier={trustScore.tier} breakdown={trustScore.breakdown} />
-      )}
-
-      {/* Profile Status */}
-      {profileStatus && (
-        <ProfileStatusCard
-          data={profileStatus}
-          onRefresh={refresh}
-          onInvite={() => setInviteOpen(true)}
-          onVerifyBankId={handleVerifyBankId}
-        />
       )}
 
       {/* Reference Vault — replaces flat reference list */}
