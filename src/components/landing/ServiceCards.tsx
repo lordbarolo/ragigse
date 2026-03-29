@@ -6,7 +6,7 @@ interface ServiceCardsProps {
 
 const SERVICES = [
   {
-    title: "Förhandlingsagent",
+    title: "Förhandlar du rätt?",
     desc: "AI-driven rådgivning som hjälper dig förbereda och genomföra löneförhandlingar med konkreta argument baserade på marknadsdata.",
     cta: "Testa agenten",
     iconBg: "bg-violet-500/10",
@@ -21,8 +21,8 @@ const SERVICES = [
     link: "/forhandla",
   },
   {
-    title: "Ersättningsanalys",
-    desc: "Vill du veta om du har rätt ersättning? Vi har svaret. Baserat på omfattande analyser av avtal och branschens marginaler kan vi ge konsulter beslutsunderlag som tidigare saknats.",
+    title: "Tjänar du rätt?",
+    desc: "Vill du veta om du har rätt ersättning? Baserat på analyser av ramavtal och branschens marginaler ger vi konsulter beslutsunderlag som tidigare saknats.",
     cta: "Starta analys",
     iconBg: "bg-blue-500/10",
     icon: (
@@ -36,7 +36,7 @@ const SERVICES = [
     link: null, // uses onStartAnalysis callback
   },
   {
-    title: "Fakturakontroll",
+    title: "Fakturerar du rätt?",
     desc: "Pengarna du inte visste att du saknade. Konsulter missar att fakturera för i snitt 30 000 kr per år. Se om du har pengar att hämta.",
     cta: "Läs mer",
     iconBg: "bg-emerald-500/10",
