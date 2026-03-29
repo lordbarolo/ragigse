@@ -8,6 +8,7 @@ import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import CookieBanner from "@/components/CookieBanner";
 import Index from "./pages/Index";
+import ProtectedRoute from "@/components/ProtectedRoute";
 
 // Lazy-loaded routes for code splitting
 const AnalysisScreen = lazy(() => import("./pages/AnalysisScreen"));
@@ -103,7 +104,7 @@ const App = () => (
               )}
               <Route path="/unsubscribe" element={<Unsubscribe />} />
               <Route path="/academy" element={<Academy />} />
-              <Route path="/agency/dashboard" element={<AgencyDashboard />} />
+              <Route path="/agency/dashboard" element={<ProtectedRoute allowedRoles={["agency", "admin"]}><AgencyDashboard /></ProtectedRoute>} />
               <Route path="/sign/:token" element={<SignRepresentation />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

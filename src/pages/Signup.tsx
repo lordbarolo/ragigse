@@ -6,13 +6,17 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, ArrowLeft, CheckCircle2 } from "lucide-react";
+import { Loader2, ArrowLeft, CheckCircle2, User, Building2 } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 import { trackEvent } from "@/lib/trackEvent";
 
+type SignupRole = "individual" | "agency";
+
 export default function Signup() {
+  const [selectedRole, setSelectedRole] = useState<SignupRole | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [fullName, setFullName] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
@@ -20,6 +24,7 @@ export default function Signup() {
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!selectedRole) return;
 
     if (password.length < 6) {
       toast({ title: "Lösenordet måste vara minst 6 tecken", variant: "destructive" });
@@ -32,7 +37,13 @@ export default function Signup() {
     const { error } = await supabase.auth.signUp({
       email: normalizedEmail,
       password,
-      options: { emailRedirectTo: window.location.origin },
+      options: {
+        emailRedirectTo: window.location.origin,
+        data: {
+          role: selectedRole,
+          full_name: fullName.trim(),
+        },
+      },
     });
 
     if (error) {
@@ -71,7 +82,7 @@ export default function Signup() {
       return;
     }
 
-    trackEvent("signup_completed", { method: "email" });
+    trackEvent("signup_completed", { method: "email", role: selectedRole });
 
     // Send welcome email (fire-and-forget)
     supabase.functions.invoke("send-transactional-email", {
@@ -83,7 +94,7 @@ export default function Signup() {
     }).catch(() => {});
 
     toast({ title: "Konto skapat", description: "Du är nu inloggad." });
-    navigate("/profil");
+    navigate(selectedRole === "agency" ? "/agency/dashboard" : "/profil");
   };
 
   if (success) {
@@ -106,6 +117,77 @@ export default function Signup() {
     );
   }
 
+  // Step 1: Role selection
+  if (!selectedRole) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <div className="w-full max-w-lg space-y-6">
+          <div className="flex justify-center">
+            <Link to="/">
+              <CompcareLogo variant="full" />
+            </Link>
+          </div>
+
+          <Card className="border-border/50 bg-card/80 backdrop-blur">
+            <CardHeader className="text-center">
+              <CardTitle className="text-xl font-semibold text-foreground">Skapa konto</CardTitle>
+              <CardDescription>Välj din roll för att komma igång</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <button
+                onClick={() => setSelectedRole("individual")}
+                className="w-full p-5 rounded-xl border-2 border-border hover:border-primary/60 bg-card hover:bg-primary/5 transition-all text-left group"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                    <User className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground">Jag är konsult</h3>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Hantera dina referenser, se marknadsdata och förhandla ditt arvode.
+                    </p>
+                  </div>
+                </div>
+              </button>
+
+              <button
+                onClick={() => setSelectedRole("agency")}
+                className="w-full p-5 rounded-xl border-2 border-border hover:border-primary/60 bg-card hover:bg-primary/5 transition-all text-left group"
+              >
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/20 transition-colors">
+                    <Building2 className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <h3 className="font-semibold text-foreground">Jag representerar ett bemanningsföretag</h3>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Skicka representationsförfrågningar, hantera konsulter och verifiera kompetenser.
+                    </p>
+                  </div>
+                </div>
+              </button>
+
+              <div className="mt-6 text-center text-sm text-muted-foreground">
+                Har du redan ett konto?{" "}
+                <Link to="/logga-in" className="text-primary hover:underline font-medium">
+                  Logga in
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="text-center">
+            <Link to="/" className="text-sm text-muted-foreground hover:text-primary inline-flex items-center gap-1">
+              <ArrowLeft className="w-3 h-3" /> Tillbaka till startsidan
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Step 2: Email/password form
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-6">
@@ -117,17 +199,36 @@ export default function Signup() {
 
         <Card className="border-border/50 bg-card/80 backdrop-blur">
           <CardHeader className="text-center">
-            <CardTitle className="text-xl font-semibold text-foreground">Skapa konto</CardTitle>
-            <CardDescription>Få tillgång till dina rapporter och personlig profil direkt</CardDescription>
+            <CardTitle className="text-xl font-semibold text-foreground">
+              {selectedRole === "agency" ? "Registrera bemanningsföretag" : "Skapa konsultkonto"}
+            </CardTitle>
+            <CardDescription>
+              {selectedRole === "agency"
+                ? "Få tillgång till CompCare:s verifieringsinfrastruktur"
+                : "Få tillgång till dina rapporter och personlig profil direkt"}
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSignup} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="fullName">
+                  {selectedRole === "agency" ? "Kontaktperson" : "Ditt namn"}
+                </Label>
+                <Input
+                  id="fullName"
+                  type="text"
+                  placeholder={selectedRole === "agency" ? "Anna Svensson" : "Förnamn Efternamn"}
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  required
+                />
+              </div>
               <div className="space-y-2">
                 <Label htmlFor="email">E-post</Label>
                 <Input
                   id="email"
                   type="email"
-                  placeholder="din@email.se"
+                  placeholder={selectedRole === "agency" ? "kontakt@foretag.se" : "din@email.se"}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -151,11 +252,15 @@ export default function Signup() {
               </Button>
             </form>
 
-            <p className="mt-4 text-center text-xs text-muted-foreground">
-              Ingen verifieringsmejl krävs vid registrering.
-            </p>
+            <button
+              type="button"
+              onClick={() => setSelectedRole(null)}
+              className="mt-4 w-full text-center text-xs text-muted-foreground hover:text-primary transition-colors"
+            >
+              ← Byt roll
+            </button>
 
-            <div className="mt-6 text-center text-sm text-muted-foreground">
+            <div className="mt-4 text-center text-sm text-muted-foreground">
               Har du redan ett konto?{" "}
               <Link to="/logga-in" className="text-primary hover:underline font-medium">
                 Logga in

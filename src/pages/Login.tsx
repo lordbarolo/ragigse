@@ -22,7 +22,7 @@ export default function Login() {
     setLoading(true);
     trackEvent("login_clicked", { source: "login_page" });
 
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { error, data } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
       toast({
@@ -37,6 +37,22 @@ export default function Login() {
     }
 
     toast({ title: "Inloggad!" });
+
+    // Redirect based on role
+    const userId = data.user?.id;
+    if (userId) {
+      const { data: roleData } = await supabase
+        .from("ref_user_roles")
+        .select("role")
+        .eq("user_id", userId)
+        .limit(1)
+        .maybeSingle();
+
+      if ((roleData?.role as string) === "agency") {
+        navigate("/agency/dashboard");
+        return;
+      }
+    }
     navigate("/profil");
   };
 
