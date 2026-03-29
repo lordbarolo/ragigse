@@ -360,11 +360,20 @@ export default function VerifyProof() {
       </section>
 
       {/* Footer */}
-      <div className="mt-12 border-t border-border pt-6 text-center text-xs text-muted-foreground space-y-1">
+      <div className="mt-12 border-t border-border pt-6 text-center text-xs text-muted-foreground space-y-2">
         <p>Verifierat via CompCare · Referly Vault</p>
         <p className="font-mono text-[10px] text-muted-foreground/60" data-field="proof-full-id">
           Bevis-ID: {applicationId}
         </p>
+        <a
+          href={`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-verify-data?id=${applicationId}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-1 text-[10px] text-primary hover:underline"
+          data-api="json-ld"
+        >
+          📄 Maskinläsbar data (JSON-LD)
+        </a>
       </div>
     </div>
   );
