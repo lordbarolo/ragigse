@@ -376,13 +376,13 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
       console.log("[Survey] Inserting lead:", leadId);
       const { error } = await supabase.from("leads").insert({
         id: leadId,
-        employment_type: data.employmentType,
-        yrke: data.yrke,
-        kommun: data.kommun,
-        experience: data.experience,
-        salary_type: data.salaryType,
-        current_salary: data.currentSalary,
-        ob_share: data.obShare || null,
+        employment_type: snapshotEmploymentType,
+        yrke: snapshotRole,
+        kommun: snapshotZone,
+        experience: snapshotExperience,
+        salary_type: snapshotSalaryType,
+        current_salary: snapshotCurrentSalary,
+        ob_share: snapshotObShare || null,
       });
       if (error) {
         console.error("[Survey] Lead insert failed:", error);
@@ -394,15 +394,15 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
       const reportPromise = supabase.functions.invoke("create-report", {
         body: {
           lead_id: leadId,
-          occupation: data.yrke,
-          employment_type: data.employmentType,
-          kommun: data.kommun,
-          experience: data.experience,
-          current_salary: data.currentSalary,
-          salary_type: data.salaryType,
+          occupation: snapshotRole,
+          employment_type: snapshotEmploymentType,
+          kommun: snapshotZone,
+          experience: snapshotExperience,
+          current_salary: snapshotCurrentSalary,
+          salary_type: snapshotSalaryType,
           track,
           commute,
-          ob_share: data.obShare || null,
+          ob_share: snapshotObShare || null,
         },
       });
 
