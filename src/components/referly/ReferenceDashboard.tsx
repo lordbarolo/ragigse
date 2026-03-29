@@ -2,12 +2,10 @@ import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useRefProfile } from "@/hooks/useRefProfile";
 import { TrustScoreCard } from "./TrustScoreCard";
-import { ProfileStatusCard } from "./ProfileStatusCard";
 import { ReferenceVault } from "./ReferenceVault";
 import { InviteModal } from "./InviteModal";
 import { Button } from "@/components/ui/button";
 import { Loader2, UserPlus } from "lucide-react";
-import { toast } from "sonner";
 
 export function ReferenceDashboard() {
   const { user } = useAuth();
@@ -23,26 +21,11 @@ export function ReferenceDashboard() {
   }
 
   if (!user) return null;
-
-  const handleVerifyBankId = () => {
-    toast.info("BankID-verifiering kommer snart");
-  };
-
   return (
     <div className="space-y-5">
       {/* Trust Score */}
       {trustScore && (
         <TrustScoreCard total={trustScore.total} tier={trustScore.tier} breakdown={trustScore.breakdown} />
-      )}
-
-      {/* Profile Status */}
-      {profileStatus && (
-        <ProfileStatusCard
-          data={profileStatus}
-          onRefresh={refresh}
-          onInvite={() => setInviteOpen(true)}
-          onVerifyBankId={handleVerifyBankId}
-        />
       )}
 
       {/* Reference Vault — replaces flat reference list */}
