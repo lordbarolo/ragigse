@@ -48,7 +48,7 @@ export default function Login() {
         .limit(1)
         .maybeSingle();
 
-      if (roleData?.role === "agency") {
+      if ((roleData?.role as string) === "agency") {
         navigate("/agency/dashboard");
         return;
       }
