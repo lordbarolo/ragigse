@@ -90,30 +90,27 @@ export default function Index() {
       {/* ── Hero ───────────────────────────────────────── */}
       <section className="hero-dark relative pt-16 pb-28 px-6" aria-labelledby="hero-heading">
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 px-3 py-1 rounded-full text-primary text-xs font-semibold mb-6 uppercase tracking-wider">
-            <ShieldCheck className="w-3 h-3" />
-            Verifieringsinfrastruktur för vården
-          </div>
-
           <h1 id="hero-heading" className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">
-            Tre frågor.<br />En plattform.
+            För vårdens konsulter
           </h1>
 
-          <p className="text-hero-foreground/60 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
-            Komplett marknadsdata och AI-verktyg för vårdkonsulter, bemanningsföretag och regioner.
+          <p className="text-hero-foreground/60 text-lg md:text-xl max-w-2xl mx-auto mb-4 leading-relaxed">
+            Marknadsinsikter och smarta tjänster för läkare och sjuksköterskor.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link to="/consultant/salary-check">
+          <p className="text-hero-foreground/60 text-base md:text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
+            AI-assistenten Reidar har läst 20&nbsp;000 avtal och upphandlingar så att du slipper. Fråga honom om trygga konsultavtal och branschens villkor för din roll och region.
+          </p>
+
+          <div className="flex flex-col items-center gap-4">
+            <Link to="/consultant/forhandla">
               <Button size="lg" className="gap-2 shadow-lg shadow-primary/20">
-                Jag är konsult <ArrowRight className="w-4 h-4" />
+                <MessageSquare className="w-4 h-4" /> Fråga Reidar
               </Button>
             </Link>
-            <Link to="/registrera">
-              <Button variant="outline" size="lg" className="gap-2 border-border bg-card/10 text-foreground hover:bg-card/20">
-                Jag representerar ett BF <ArrowRight className="w-4 h-4" />
-              </Button>
-            </Link>
+            <p className="text-muted-foreground text-xs max-w-md">
+              Reidar grundar sina svar på SKR:s ramavtalspriser 2026, SCB:s lönestatistik, avrop från 21 regioner och Medlingsinstitutets data.
+            </p>
           </div>
         </div>
         <div className="absolute bottom-0 left-0 right-0 h-[200px] bg-gradient-to-t from-background to-transparent" />
