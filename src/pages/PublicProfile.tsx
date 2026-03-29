@@ -4,11 +4,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
 import {
   ShieldCheck, ShieldX, Star, Briefcase, Clock,
   CheckCircle, XCircle, Award, Users, ArrowLeft,
+  Eye, Building2,
 } from "lucide-react";
 
 interface PublicProfileData {
@@ -54,8 +57,29 @@ export default function PublicProfile() {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
+  // Identity gate state
+  const [gateOpen, setGateOpen] = useState(true);
+  const [viewerName, setViewerName] = useState("");
+  const [viewerOrg, setViewerOrg] = useState("");
+
+  const handleIdentify = async () => {
+    if (!viewerName.trim() || !viewerOrg.trim()) return;
+
+    // Log access with identity
+    if (id) {
+      await supabase.from("ref_access_logs").insert({
+        resource_type: "public_profile",
+        resource_id: id,
+        viewer_name: viewerName.trim(),
+        viewer_org: viewerOrg.trim(),
+      });
+    }
+
+    setGateOpen(false);
+  };
+
   useEffect(() => {
-    async function fetch() {
+    async function fetchProfile() {
       if (!id) return;
       const { data: result, error } = await supabase.rpc("ref_get_public_profile", { _profile_id: id });
       if (error || !result) {
@@ -65,207 +89,258 @@ export default function PublicProfile() {
       }
       setLoading(false);
     }
-    fetch();
+    fetchProfile();
   }, [id]);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background">
-        <div className="h-1 w-full bg-primary" />
-        <div className="mx-auto max-w-2xl px-4 py-8 space-y-6">
-          <Skeleton className="h-10 w-64" />
-          <Skeleton className="h-48 w-full" />
-          <Skeleton className="h-32 w-full" />
-          <Skeleton className="h-64 w-full" />
-        </div>
+      <div className="mx-auto max-w-2xl px-4 py-8 space-y-6">
+        <Skeleton className="h-10 w-64" />
+        <Skeleton className="h-48 w-full" />
+        <Skeleton className="h-32 w-full" />
+        <Skeleton className="h-64 w-full" />
       </div>
     );
   }
 
   if (notFound || !data) {
     return (
-      <div className="flex min-h-screen flex-col bg-background">
-        <div className="h-1 w-full bg-primary" />
-        <div className="flex flex-1 items-center justify-center px-4">
-          <Card className="max-w-md text-center">
-            <CardContent className="py-12">
-              <ShieldX className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
-              <h2 className="text-lg font-semibold text-foreground">Profil hittades inte</h2>
-              <p className="mt-2 text-sm text-muted-foreground">Denna profil finns inte eller har inte aktiverats ännu.</p>
-              <Button variant="outline" className="mt-6" asChild>
-                <Link to="/">Till startsidan</Link>
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
+      <div className="flex flex-1 items-center justify-center px-4">
+        <Card className="max-w-md text-center">
+          <CardContent className="py-12">
+            <ShieldX className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
+            <h2 className="text-lg font-semibold text-foreground">Profil hittades inte</h2>
+            <p className="mt-2 text-sm text-muted-foreground">Denna profil finns inte eller har inte aktiverats ännu.</p>
+            <Button variant="outline" className="mt-6" asChild>
+              <Link to="/">Till startsidan</Link>
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
+  // ── Identity Gate ───────────────────────────────────
+  if (gateOpen) {
+    return (
+      <div className="flex flex-1 items-center justify-center px-4 py-16">
+        <Card className="max-w-md w-full">
+          <CardContent className="py-8 px-6">
+            <div className="text-center mb-6">
+              <Eye className="mx-auto h-10 w-10 text-primary mb-3" />
+              <h2 className="text-lg font-bold text-foreground">Identifiera dig</h2>
+              <p className="text-sm text-muted-foreground mt-2">
+                För att skydda konsultens integritet behöver vi veta vem som granskar profilen. Uppgifterna loggas och kan ses av konsulten.
+              </p>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="viewer-name">Ditt namn *</Label>
+                <Input
+                  id="viewer-name"
+                  placeholder="Anna Andersson"
+                  value={viewerName}
+                  onChange={(e) => setViewerName(e.target.value)}
+                  maxLength={100}
+                  autoFocus
+                />
+              </div>
+              <div>
+                <Label htmlFor="viewer-org">Organisation *</Label>
+                <Input
+                  id="viewer-org"
+                  placeholder="t.ex. Region Stockholm"
+                  value={viewerOrg}
+                  onChange={(e) => setViewerOrg(e.target.value)}
+                  maxLength={200}
+                />
+              </div>
+              <Button
+                onClick={handleIdentify}
+                disabled={!viewerName.trim() || !viewerOrg.trim()}
+                className="w-full gap-2"
+              >
+                <Building2 className="h-4 w-4" />
+                Visa profil
+              </Button>
+              <p className="text-[10px] text-muted-foreground text-center">
+                Genom att fortsätta godkänner du att ditt besök loggas i enlighet med vår integritetspolicy.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // ── Full Profile View ──────────────────────────────
   const tier = TIER_CONFIG[data.trust_tier] ?? TIER_CONFIG.incomplete;
   const competencyEntries = Object.entries(data.competencies).sort(([, a], [, b]) => b - a);
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="h-1 w-full bg-primary" />
-      <div className="mx-auto max-w-2xl px-4 py-8">
-        {/* Back */}
-        <Button variant="ghost" size="sm" className="mb-6 gap-1.5 text-muted-foreground" asChild>
-          <Link to="/"><ArrowLeft className="h-4 w-4" /> Tillbaka</Link>
-        </Button>
+    <div className="mx-auto max-w-2xl px-4 py-8">
+      {/* Back */}
+      <Button variant="ghost" size="sm" className="mb-6 gap-1.5 text-muted-foreground" asChild>
+        <Link to="/"><ArrowLeft className="h-4 w-4" /> Tillbaka</Link>
+      </Button>
 
-        {/* Header */}
-        <div className="mb-8">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">{data.full_name}</h1>
-              {data.specialty && (
-                <p className="mt-1 text-sm text-muted-foreground">{data.specialty}</p>
-              )}
-              {data.years_licensed != null && (
-                <p className="mt-0.5 text-xs text-muted-foreground">{data.years_licensed} års erfarenhet</p>
-              )}
-            </div>
-            <Badge className={`${tier.bg} ${tier.color} ${tier.border} border rounded-lg px-3 py-1.5 text-sm font-semibold`}>
-              {tier.label}
-            </Badge>
-          </div>
-          {data.bio && (
-            <p className="mt-4 text-sm text-muted-foreground leading-relaxed">{data.bio}</p>
-          )}
-        </div>
-
-        {/* Trust Score */}
-        <Card className={`mb-6 border ${tier.border}`}>
-          <CardContent className="p-5">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <ShieldCheck className={`h-5 w-5 ${tier.color}`} />
-                <h2 className="font-semibold text-foreground">Trust Score</h2>
-              </div>
-              <span className={`text-3xl font-bold ${tier.color}`}>{data.trust_score}</span>
-            </div>
-            <Progress value={data.trust_score} className="h-2 mb-4" />
-
-            {data.score_breakdown && (
-              <div className="grid grid-cols-2 gap-3 text-xs">
-                <ScorePill label="Referensroller" earned={data.score_breakdown.role.earned} max={data.score_breakdown.role.max} />
-                <ScorePill label="Verifierade domäner" earned={data.score_breakdown.domain.earned} max={data.score_breakdown.domain.max} />
-                <ScorePill label="Aktualitet" earned={data.score_breakdown.recency.earned} max={data.score_breakdown.recency.max} />
-                <ScorePill label="Ping-bekräftelse" earned={data.score_breakdown.ping.earned} max={data.score_breakdown.ping.max} />
-                <ScorePill label="Myndighetskontroll" earned={data.score_breakdown.compliance.earned} max={data.score_breakdown.compliance.max} />
-              </div>
+      {/* Header */}
+      <div className="mb-8">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold text-foreground">{data.full_name}</h1>
+            {data.specialty && (
+              <p className="mt-1 text-sm text-muted-foreground">{data.specialty}</p>
             )}
+            {data.years_licensed != null && (
+              <p className="mt-0.5 text-xs text-muted-foreground">{data.years_licensed} års erfarenhet</p>
+            )}
+          </div>
+          <Badge className={`${tier.bg} ${tier.color} ${tier.border} border rounded-lg px-3 py-1.5 text-sm font-semibold`}>
+            {tier.label}
+          </Badge>
+        </div>
+        {data.bio && (
+          <p className="mt-4 text-sm text-muted-foreground leading-relaxed">{data.bio}</p>
+        )}
+      </div>
+
+      {/* Trust Score */}
+      <Card className={`mb-6 border ${tier.border}`}>
+        <CardContent className="p-5">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className={`h-5 w-5 ${tier.color}`} />
+              <h2 className="font-semibold text-foreground">Trust Score</h2>
+            </div>
+            <span className={`text-3xl font-bold ${tier.color}`}>{data.trust_score}</span>
+          </div>
+          <Progress value={data.trust_score} className="h-2 mb-4" />
+
+          {data.score_breakdown && (
+            <div className="grid grid-cols-2 gap-3 text-xs">
+              <ScorePill label="Referensroller" earned={data.score_breakdown.role.earned} max={data.score_breakdown.role.max} />
+              <ScorePill label="Verifierade domäner" earned={data.score_breakdown.domain.earned} max={data.score_breakdown.domain.max} />
+              <ScorePill label="Aktualitet" earned={data.score_breakdown.recency.earned} max={data.score_breakdown.recency.max} />
+              <ScorePill label="Ping-bekräftelse" earned={data.score_breakdown.ping.earned} max={data.score_breakdown.ping.max} />
+              <ScorePill label="Myndighetskontroll" earned={data.score_breakdown.compliance.earned} max={data.score_breakdown.compliance.max} />
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Stats row */}
+      <div className="grid grid-cols-3 gap-3 mb-6">
+        <Card className="border-border/50">
+          <CardContent className="p-4 text-center">
+            <Users className="mx-auto mb-1 h-5 w-5 text-primary" />
+            <p className="text-2xl font-bold text-foreground">{data.reference_count}</p>
+            <p className="text-xs text-muted-foreground">Referenser</p>
           </CardContent>
         </Card>
+        <Card className="border-border/50">
+          <CardContent className="p-4 text-center">
+            <Star className="mx-auto mb-1 h-5 w-5 text-primary" />
+            <p className="text-2xl font-bold text-foreground">{data.avg_recommendation}</p>
+            <p className="text-xs text-muted-foreground">Snittbetyg</p>
+          </CardContent>
+        </Card>
+        <Card className="border-border/50">
+          <CardContent className="p-4 text-center">
+            <Award className="mx-auto mb-1 h-5 w-5 text-primary" />
+            <p className="text-2xl font-bold text-foreground">{competencyEntries.length}</p>
+            <p className="text-xs text-muted-foreground">Kompetenser</p>
+          </CardContent>
+        </Card>
+      </div>
 
-        {/* Stats row */}
-        <div className="grid grid-cols-3 gap-3 mb-6">
-          <Card className="border-border/50">
-            <CardContent className="p-4 text-center">
-              <Users className="mx-auto mb-1 h-5 w-5 text-primary" />
-              <p className="text-2xl font-bold text-foreground">{data.reference_count}</p>
-              <p className="text-xs text-muted-foreground">Referenser</p>
-            </CardContent>
-          </Card>
-          <Card className="border-border/50">
-            <CardContent className="p-4 text-center">
-              <Star className="mx-auto mb-1 h-5 w-5 text-primary" />
-              <p className="text-2xl font-bold text-foreground">{data.avg_recommendation}</p>
-              <p className="text-xs text-muted-foreground">Snittbetyg</p>
-            </CardContent>
-          </Card>
-          <Card className="border-border/50">
-            <CardContent className="p-4 text-center">
-              <Award className="mx-auto mb-1 h-5 w-5 text-primary" />
-              <p className="text-2xl font-bold text-foreground">{competencyEntries.length}</p>
-              <p className="text-xs text-muted-foreground">Kompetenser</p>
-            </CardContent>
-          </Card>
-        </div>
+      {/* Verifications */}
+      <Card className="mb-6 border-border/50">
+        <CardContent className="p-5">
+          <h3 className="text-sm font-semibold text-foreground mb-3">Verifieringar</h3>
+          <div className="space-y-2">
+            <VerificationRow label="BankID" verified={data.verifications.bankid} />
+            <VerificationRow label="IVO Tillsyn" verified={data.verifications.ivo} />
+            <VerificationRow label="HOSP" verified={data.verifications.hosp} />
+          </div>
+        </CardContent>
+      </Card>
 
-        {/* Verifications */}
+      {/* Competencies */}
+      {competencyEntries.length > 0 && (
         <Card className="mb-6 border-border/50">
           <CardContent className="p-5">
-            <h3 className="text-sm font-semibold text-foreground mb-3">Verifieringar</h3>
+            <h3 className="text-sm font-semibold text-foreground mb-3">Bekräftade kompetenser</h3>
             <div className="space-y-2">
-              <VerificationRow label="BankID" verified={data.verifications.bankid} />
-              <VerificationRow label="IVO Tillsyn" verified={data.verifications.ivo} />
-              <VerificationRow label="HOSP" verified={data.verifications.hosp} />
+              {competencyEntries.map(([name, count]) => (
+                <div key={name} className="flex items-center justify-between">
+                  <span className="text-sm text-foreground">{name}</span>
+                  <div className="flex items-center gap-2">
+                    <div className="h-1.5 rounded-full bg-muted w-24 overflow-hidden">
+                      <div
+                        className="h-full rounded-full bg-primary transition-all"
+                        style={{ width: `${Math.min(100, (count / data.reference_count) * 100)}%` }}
+                      />
+                    </div>
+                    <span className="text-xs text-muted-foreground w-8 text-right">{count}/{data.reference_count}</span>
+                  </div>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
+      )}
 
-        {/* Competencies */}
-        {competencyEntries.length > 0 && (
-          <Card className="mb-6 border-border/50">
-            <CardContent className="p-5">
-              <h3 className="text-sm font-semibold text-foreground mb-3">Bekräftade kompetenser</h3>
-              <div className="space-y-2">
-                {competencyEntries.map(([name, count]) => (
-                  <div key={name} className="flex items-center justify-between">
-                    <span className="text-sm text-foreground">{name}</span>
-                    <div className="flex items-center gap-2">
-                      <div className="h-1.5 rounded-full bg-muted w-24 overflow-hidden">
-                        <div
-                          className="h-full rounded-full bg-primary transition-all"
-                          style={{ width: `${Math.min(100, (count / data.reference_count) * 100)}%` }}
-                        />
+      {/* References */}
+      {data.references.length > 0 && (
+        <div>
+          <h3 className="text-sm font-semibold text-foreground mb-3">Referenshistorik</h3>
+          <div className="space-y-2">
+            {data.references.map((ref, i) => (
+              <Card key={i} className="border-border/50">
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline" className="text-xs rounded-md">{ref.relationship}</Badge>
+                        <span className="text-sm font-medium text-foreground">{ref.workplace}</span>
                       </div>
-                      <span className="text-xs text-muted-foreground w-8 text-right">{count}/{data.reference_count}</span>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {ref.period_start}{ref.period_end ? ` → ${ref.period_end}` : " → pågående"}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-0.5">
+                      {[1, 2, 3, 4, 5].map((n) => (
+                        <span key={n} className={`text-sm ${n <= ref.recommendation_score ? "text-primary" : "text-muted-foreground/20"}`}>●</span>
+                      ))}
                     </div>
                   </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* References */}
-        {data.references.length > 0 && (
-          <div>
-            <h3 className="text-sm font-semibold text-foreground mb-3">Referenshistorik</h3>
-            <div className="space-y-2">
-              {data.references.map((ref, i) => (
-                <Card key={i} className="border-border/50">
-                  <CardContent className="p-4">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <Badge variant="outline" className="text-xs rounded-md">{ref.relationship}</Badge>
-                          <span className="text-sm font-medium text-foreground">{ref.workplace}</span>
-                        </div>
-                        <p className="mt-1 text-xs text-muted-foreground">
-                          {ref.period_start}{ref.period_end ? ` → ${ref.period_end}` : " → pågående"}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-0.5">
-                        {[1, 2, 3, 4, 5].map((n) => (
-                          <span key={n} className={`text-sm ${n <= ref.recommendation_score ? "text-primary" : "text-muted-foreground/20"}`}>●</span>
-                        ))}
-                      </div>
+                  {ref.competencies && ref.competencies.length > 0 && (
+                    <div className="mt-2 flex flex-wrap gap-1">
+                      {(Array.isArray(ref.competencies) ? ref.competencies : []).map((c: string) => (
+                        <Badge key={c} variant="secondary" className="text-[10px] rounded-md">{c}</Badge>
+                      ))}
                     </div>
-                    {ref.competencies && ref.competencies.length > 0 && (
-                      <div className="mt-2 flex flex-wrap gap-1">
-                        {(Array.isArray(ref.competencies) ? ref.competencies : []).map((c: string) => (
-                          <Badge key={c} variant="secondary" className="text-[10px] rounded-md">{c}</Badge>
-                        ))}
-                      </div>
-                    )}
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
           </div>
-        )}
-
-        {/* Footer */}
-        <div className="mt-12 text-center text-xs text-muted-foreground space-y-1">
-          {data.score_updated_at && (
-            <p>Senast verifierad: {new Date(data.score_updated_at).toLocaleDateString("sv-SE")}</p>
-          )}
-          <p>Verifierad profil via CompCare</p>
         </div>
+      )}
+
+      {/* Viewer badge */}
+      <div className="mt-8 p-3 rounded-lg bg-muted/50 border border-border flex items-center gap-2 text-xs text-muted-foreground">
+        <Eye className="h-3 w-3 shrink-0" />
+        <span>Granskad av <strong className="text-foreground">{viewerName}</strong> ({viewerOrg})</span>
+      </div>
+
+      {/* Footer */}
+      <div className="mt-8 text-center text-xs text-muted-foreground space-y-1">
+        {data.score_updated_at && (
+          <p>Senast verifierad: {new Date(data.score_updated_at).toLocaleDateString("sv-SE")}</p>
+        )}
+        <p>Verifierad profil via CompCare</p>
       </div>
     </div>
   );
