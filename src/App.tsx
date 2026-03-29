@@ -4,13 +4,19 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import CookieBanner from "@/components/CookieBanner";
 import Index from "./pages/Index";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
-// Lazy-loaded routes for code splitting
+// Layouts
+import ConsultantLayout from "@/layouts/ConsultantLayout";
+import AgencyLayout from "@/layouts/AgencyLayout";
+import PublicVerifyLayout from "@/layouts/PublicVerifyLayout";
+
+// Lazy-loaded routes
+const SalaryCheck = lazy(() => import("./pages/consultant/SalaryCheck"));
 const AnalysisScreen = lazy(() => import("./pages/AnalysisScreen"));
 const Teaser = lazy(() => import("./pages/Teaser"));
 const ReferralLanding = lazy(() => import("./pages/ReferralLanding"));
@@ -73,40 +79,68 @@ const App = () => (
           <ScrollToTop />
           <Suspense fallback={<Loading />}>
             <Routes>
+              {/* ── B2B Landing ────────────────────── */}
               <Route path="/" element={<Index />} />
+
+              {/* ── Auth (no layout) ──────────────── */}
+              <Route path="/logga-in" element={<Login />} />
+              <Route path="/registrera" element={<Signup />} />
+              <Route path="/aterstall-losenord" element={<ResetPassword />} />
+
+              {/* ── Consultant Layout ─────────────── */}
+              <Route element={<ConsultantLayout />}>
+                <Route path="/consultant/salary-check" element={<SalaryCheck />} />
+                <Route path="/consultant/profil" element={<Profile />} />
+                <Route path="/consultant/radar" element={<Radar />} />
+                <Route path="/consultant/forhandla" element={<Negotiate />} />
+                <Route path="/consultant/referenser" element={<Referenser />} />
+                <Route path="/consultant/fakturakontroll" element={<Fakturakontroll />} />
+                <Route path="/consultant/academy" element={<Academy />} />
+              </Route>
+
+              {/* ── Agency Layout ─────────────────── */}
+              <Route element={<ProtectedRoute allowedRoles={["agency", "admin"]}><AgencyLayout /></ProtectedRoute>}>
+                <Route path="/agency/dashboard" element={<AgencyDashboard />} />
+                {/* Future: /agency/requests, /agency/settings */}
+              </Route>
+
+              {/* ── Public Verify Layout ──────────── */}
+              <Route element={<PublicVerifyLayout />}>
+                <Route path="/verify/:applicationId" element={<VerifyProof />} />
+                <Route path="/profil/:id" element={<PublicProfile />} />
+                <Route path="/verify-info" element={<VerifyInfo />} />
+              </Route>
+
+              {/* ── Public routes (no layout) ────── */}
               <Route path="/resultat/:leadId" element={<AnalysisScreen />} />
               <Route path="/referral/:token" element={<ReferralLanding />} />
               <Route path="/betalning-klar" element={<PaymentSuccess />} />
               <Route path="/rapport/:reportId" element={<Report />} />
               <Route path="/jamfor" element={<Compare />} />
-              <Route path="/radar" element={<Radar />} />
-              <Route path="/forhandla" element={<Negotiate />} />
-              <Route path="/referenser" element={<Referenser />} />
               <Route path="/vanliga-fragor" element={<FAQ />} />
               <Route path="/integritetspolicy" element={<PrivacyPolicy />} />
-              <Route path="/logga-in" element={<Login />} />
-              <Route path="/registrera" element={<Signup />} />
-              <Route path="/aterstall-losenord" element={<ResetPassword />} />
-              <Route path="/profil" element={<Profile />} />
               <Route path="/referens/:token" element={<ReferenceForm />} />
               <Route path="/ping/:token" element={<PingResponse />} />
-              <Route path="/profil/:id" element={<PublicProfile />} />
-              <Route path="/verify/:applicationId" element={<VerifyProof />} />
-              <Route path="/fakturakontroll" element={<Fakturakontroll />} />
-              <Route path="/referenser-info" element={<ReferenserInfo />} />
-              <Route path="/verify-info" element={<VerifyInfo />} />
-              <Route path="/admin" element={<Admin />} />
+              <Route path="/sign/:token" element={<SignRepresentation />} />
               <Route path="/dela" element={<SharePreview />} />
+              <Route path="/unsubscribe" element={<Unsubscribe />} />
+              <Route path="/referenser-info" element={<ReferenserInfo />} />
+              <Route path="/admin" element={<Admin />} />
               <Route path="/dev/theme-preview" element={<ThemePreview />} />
               <Route path="/dev/analytics" element={<AnalyticsDashboard />} />
               {import.meta.env.DEV && (
                 <Route path="/dev/e2e-test" element={<E2ETest />} />
               )}
-              <Route path="/unsubscribe" element={<Unsubscribe />} />
-              <Route path="/academy" element={<Academy />} />
-              <Route path="/agency/dashboard" element={<ProtectedRoute allowedRoles={["agency", "admin"]}><AgencyDashboard /></ProtectedRoute>} />
-              <Route path="/sign/:token" element={<SignRepresentation />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+
+              {/* ── Backwards-compat redirects ───── */}
+              <Route path="/profil" element={<Navigate to="/consultant/profil" replace />} />
+              <Route path="/radar" element={<Navigate to="/consultant/radar" replace />} />
+              <Route path="/forhandla" element={<Navigate to="/consultant/forhandla" replace />} />
+              <Route path="/referenser" element={<Navigate to="/consultant/referencer" replace />} />
+              <Route path="/fakturakontroll" element={<Navigate to="/consultant/fakturakontroll" replace />} />
+              <Route path="/academy" element={<Navigate to="/consultant/academy" replace />} />
+
+              {/* ── Catch-all ─────────────────────── */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>

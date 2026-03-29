@@ -2,10 +2,10 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { MessageSquare, Radio, Shield, User } from "lucide-react";
 
 const TABS = [
-  { label: "Marknadsvillkor", path: "/forhandla", icon: MessageSquare },
-  { label: "Uppdrag", path: "/radar", icon: Radio },
-  { label: "Referenser", path: "/referenser", icon: Shield },
-  { label: "Profil", path: "/profil", icon: User },
+  { label: "Marknadsvillkor", path: "/consultant/forhandla", icon: MessageSquare },
+  { label: "Uppdrag", path: "/consultant/radar", icon: Radio },
+  { label: "Referenser", path: "/consultant/referenser", icon: Shield },
+  { label: "Profil", path: "/consultant/profil", icon: User },
 ] as const;
 
 export default function BottomNav() {
@@ -13,7 +13,7 @@ export default function BottomNav() {
   const navigate = useNavigate();
 
   return (
-    <nav className="fixed bottom-0 inset-x-0 z-50 border-t border-border bg-background/95 backdrop-blur-md safe-area-bottom">
+    <nav className="fixed bottom-0 inset-x-0 z-50 border-t border-border bg-background/95 backdrop-blur-md safe-area-bottom md:hidden" role="navigation" aria-label="Konsultnavigation">
       <div className="flex items-center justify-around h-14 max-w-lg mx-auto">
         {TABS.map((tab) => {
           const active = pathname === tab.path;
@@ -24,6 +24,7 @@ export default function BottomNav() {
               className={`flex flex-col items-center gap-0.5 px-3 py-1.5 transition-colors ${
                 active ? "text-primary" : "text-muted-foreground"
               }`}
+              aria-current={active ? "page" : undefined}
             >
               <tab.icon className="w-5 h-5" />
               <span className="text-[10px] font-medium">{tab.label}</span>
