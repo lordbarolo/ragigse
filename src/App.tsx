@@ -45,7 +45,7 @@ const VerifyProof = lazy(() => import("./pages/VerifyProof"));
 const Fakturakontroll = lazy(() => import("./pages/Fakturakontroll"));
 const ReferenserInfo = lazy(() => import("./pages/ReferenserInfo"));
 const VerifyInfo = lazy(() => import("./pages/VerifyInfo"));
-const ReijdarChat = lazy(() => import("./components/radar/ReijdarChat"));
+
 const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 const Academy = lazy(() => import("./pages/Academy"));
 const AgencyDashboard = lazy(() => import("./pages/AgencyDashboard"));
