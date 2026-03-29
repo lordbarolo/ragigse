@@ -45,7 +45,7 @@ const VerifyProof = lazy(() => import("./pages/VerifyProof"));
 const Fakturakontroll = lazy(() => import("./pages/Fakturakontroll"));
 const ReferenserInfo = lazy(() => import("./pages/ReferenserInfo"));
 const VerifyInfo = lazy(() => import("./pages/VerifyInfo"));
-const ReijdarChat = lazy(() => import("./components/radar/ReijdarChat"));
+
 const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 const Academy = lazy(() => import("./pages/Academy"));
 const AgencyDashboard = lazy(() => import("./pages/AgencyDashboard"));
@@ -136,7 +136,7 @@ const App = () => (
               <Route path="/profil" element={<Navigate to="/consultant/profil" replace />} />
               <Route path="/radar" element={<Navigate to="/consultant/radar" replace />} />
               <Route path="/forhandla" element={<Navigate to="/consultant/forhandla" replace />} />
-              <Route path="/referenser" element={<Navigate to="/consultant/referencer" replace />} />
+              <Route path="/referenser" element={<Navigate to="/consultant/referenser" replace />} />
               <Route path="/fakturakontroll" element={<Navigate to="/consultant/fakturakontroll" replace />} />
               <Route path="/academy" element={<Navigate to="/consultant/academy" replace />} />
 
@@ -144,7 +144,6 @@ const App = () => (
               <Route path="*" element={<NotFound />} />
             </Routes>
           </Suspense>
-          <ReijdarChat />
           <CookieBanner />
         </BrowserRouter>
       </TooltipProvider>
