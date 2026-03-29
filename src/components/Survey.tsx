@@ -294,6 +294,34 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
       return;
     }
 
+    // Snapshot all survey answers into local consts BEFORE any async work
+    // to avoid React state timing issues with closures
+    const snapshotRole = data.yrke;
+    const snapshotZone = data.kommun;
+    const snapshotEmploymentType = data.employmentType;
+    const snapshotExperience = data.experience;
+    const snapshotSalaryType = data.salaryType;
+    const snapshotCurrentSalary = data.currentSalary;
+    const snapshotObShare = data.obShare;
+
+    // Guard: all 6 steps must have non-empty answers
+    const requiredFields = {
+      occupationCategory,
+      role: snapshotRole,
+      zone: snapshotZone,
+      employmentType: snapshotEmploymentType,
+      obShare: snapshotObShare,
+      currentSalary: snapshotCurrentSalary,
+    };
+    const missingFields = Object.entries(requiredFields).filter(
+      ([, v]) => v === undefined || v === null || v === "" || v === 0
+    );
+    if (missingFields.length > 0) {
+      console.error("[Survey] Cannot submit — missing fields:", missingFields.map(([k]) => k));
+      setSaving(false);
+      return;
+    }
+
     setSaving(true);
     const leadId = crypto.randomUUID();
     const track = "consultant";
@@ -309,22 +337,38 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
       sessionStorage.setItem("surveyData", JSON.stringify({ ...data, track }));
       if (benchmarkResult) sessionStorage.setItem("benchmarkResult", JSON.stringify(benchmarkResult));
       if (pricingResult) sessionStorage.setItem("pricingResult", JSON.stringify(pricingResult));
-      trackStepCompleted(6, data.obShare);
+      trackStepCompleted(6, snapshotObShare);
       const totalTime = surveyStartTime.current ? Math.round((Date.now() - surveyStartTime.current) / 1000) : 0;
-      const hourlyRate = data.salaryType === "monthly"
-        ? Math.round(data.currentSalary / 167)
-        : data.currentSalary;
-      trackEvent("survey_completed", {
+      const hourlyRate = snapshotSalaryType === "monthly"
+        ? Math.round(snapshotCurrentSalary / 167)
+        : snapshotCurrentSalary;
+
+      // Build event payload from snapshot (never from React state)
+      const eventPayload = {
         total_steps: TOTAL_STEPS,
         total_time_seconds: totalTime,
-        role: data.yrke,
-        zone: data.kommun,
+        role: snapshotRole,
+        zone: snapshotZone,
         current_hourly_rate: hourlyRate,
-        experience_years: data.experience,
-        employment_type: data.employmentType === "foretagare" ? "Eget bolag" : "Fast",
+        experience_years: snapshotExperience,
+        employment_type: snapshotEmploymentType === "foretagare" ? "Eget bolag" : "Fast",
         agency_name: null,
         report_id: sessionStorage.getItem("reportId") || null,
+      };
+
+      // Validate: log every property and block if any critical field is empty
+      console.log("[Survey] survey_completed payload:", eventPayload);
+      const criticalKeys = ["role", "zone", "current_hourly_rate", "employment_type"] as const;
+      const emptyKeys = criticalKeys.filter((k) => {
+        const v = eventPayload[k];
+        return v === undefined || v === null || v === "" || v === 0;
       });
+      if (emptyKeys.length > 0) {
+        console.error("[Survey] survey_completed blocked — empty critical properties:", emptyKeys);
+      } else {
+        trackEvent("survey_completed", eventPayload);
+      }
+
       navigate(`/resultat/${leadId}${couponParam}`);
     };
 
