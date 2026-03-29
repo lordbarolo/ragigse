@@ -165,15 +165,62 @@ export default function VerifyProof() {
             </h1>
           </div>
           <p className="text-sm text-muted-foreground">
-            Verifierade referenser bifogade till ansökan
+            {representation
+              ? `Signerat representationsbevis för ${representation.region}`
+              : "Verifierade referenser bifogade till ansökan"}
           </p>
           <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground">
             <span className="font-mono bg-muted px-2 py-1 rounded text-[11px]">
               {applicationId?.slice(0, 8)}…
             </span>
-            <span>{references.length} verifierad{references.length !== 1 ? "e" : ""} referens{references.length !== 1 ? "er" : ""}</span>
+            {representation ? (
+              <span className="flex items-center gap-1 text-primary">
+                <ShieldCheck className="h-3 w-3" />
+                BankID-signerat
+              </span>
+            ) : (
+              <span>{references.length} verifierad{references.length !== 1 ? "e" : ""} referens{references.length !== 1 ? "er" : ""}</span>
+            )}
           </div>
         </div>
+
+        {/* Representation details (if signed) */}
+        {representation && (
+          <Card className="mb-6 border-primary/20 bg-primary/[0.02]">
+            <CardContent className="p-5 space-y-3">
+              <div className="flex items-center gap-2 mb-1">
+                <ShieldCheck className="h-4 w-4 text-primary" />
+                <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider">
+                  Signerat intyg
+                </h2>
+              </div>
+              <div className="grid gap-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Bemanningsföretag</span>
+                  <span className="font-medium text-foreground">{representation.agency_name}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Uppdrags-ID</span>
+                  <span className="font-mono text-xs font-medium text-foreground">{representation.assignment_id}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Region</span>
+                  <span className="font-medium text-foreground">{representation.region}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Signerat</span>
+                  <span className="font-medium text-foreground">{formatDate(representation.signed_at)}</span>
+                </div>
+                {representation.bankid_ref && (
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">BankID-ref</span>
+                    <span className="font-mono text-[11px] text-muted-foreground">{representation.bankid_ref}</span>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Verified References section */}
         <div className="mb-6">
