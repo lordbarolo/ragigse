@@ -1,9 +1,9 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { useAuth, type AppRole } from "@/hooks/useAuth";
 import { Loader2 } from "lucide-react";
 
 interface ProtectedRouteProps {
-  children: React.ReactNode;
+  children?: React.ReactNode;
   allowedRoles?: AppRole[];
 }
 
@@ -23,10 +23,10 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
   }
 
   if (allowedRoles && role && !allowedRoles.includes(role)) {
-    // Redirect to the correct dashboard based on role
-    const target = role === "agency" ? "/agency/dashboard" : "/profil";
+    const target = role === "agency" ? "/agency/dashboard" : "/consultant/profil";
     return <Navigate to={target} replace />;
   }
 
-  return <>{children}</>;
+  // If children are provided, render them; otherwise render Outlet for layout usage
+  return <>{children || <Outlet />}</>;
 }
