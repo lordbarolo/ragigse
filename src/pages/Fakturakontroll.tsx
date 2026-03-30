@@ -1,6 +1,5 @@
 import { useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { ShieldCheck, Moon, Clock, Calendar, CheckCircle, AlertTriangle, TrendingUp, Upload } from "lucide-react";
+import { ShieldCheck, Moon, Clock, Calendar, CheckCircle, AlertTriangle, TrendingUp } from "lucide-react";
 import InvoiceUploadForm from "@/components/invoice/InvoiceUploadForm";
 import { Button } from "@/components/ui/button";
 import LandingNav from "@/components/landing/LandingNav";
@@ -17,12 +16,10 @@ const MISSED_ITEMS = [
 const STEPS = [
   { num: "1", title: "Skicka in dina fakturor", desc: "Ladda upp eller maila dina senaste fakturor. Vi behöver inga personuppgifter om patienter — bara fakturaraderna." },
   { num: "2", title: "Automatiserad granskning mot ramavtalet", desc: "Vi jämför varje rad mot gällande ramavtalspriser, OB-tariffer och tilläggsstrukturer i alla 21 regioner." },
-  { num: "3", title: "Du får en avvikelserapport", desc: "Inom 48 timmar får du en sammanställning med exakta avvikelser och hur mycket ersättning du har rätt till." },
+  { num: "3", title: "Du får en avvikelserapport", desc: "Inom 24 timmar får du en sammanställning med exakta avvikelser och hur mycket ersättning du har rätt till." },
 ];
 
 export default function Fakturakontroll() {
-  const navigate = useNavigate();
-
   useEffect(() => {
     trackEvent("fakturakontroll_page_viewed");
     trackEvent("product_page_viewed", { product: "fakturakontroll" });
@@ -49,12 +46,11 @@ export default function Fakturakontroll() {
             Kostnadsfritt om inga fel hittas
           </div>
           <h1 className="font-display text-4xl md:text-5xl font-extrabold tracking-tight leading-[1.1]">
-            Konsulter missar att fakturera i snitt{" "}
-            <span className="text-primary">30 000 kr</span> per år
+            Fakturerar jag rätt?
           </h1>
           <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            OB-tillägg, jour, beredskap, helg och storhelg — komplexa tilläggsstrukturer som varierar mellan 21 regioner.
-            Vi granskar dina fakturor automatiskt mot officiella ramavtal och säkerställer att ingen ersättning går förlorad.
+            Statistiskt sett innehåller var tredje faktura i vårdbemanning avvikelser i OB, jour eller helgersättning.
+            Vår algoritm korskör dina tidrapporter mot gällande avtal för att hitta differensen.
           </p>
           <Button
             size="lg"
@@ -63,9 +59,6 @@ export default function Fakturakontroll() {
           >
             Granska min ersättning →
           </Button>
-          <p className="text-xs text-muted-foreground">
-            3 av 10 konsulter fakturerar fel varje månad
-          </p>
         </div>
       </section>
 
@@ -124,7 +117,7 @@ export default function Fakturakontroll() {
             {[
               { value: "30 000 kr", label: "Genomsnittligt missad ersättning per år" },
               { value: "3/10", label: "Konsulter fakturerar fel varje månad" },
-              { value: "48 h", label: "Tid till färdig granskning" },
+              { value: "24 h", label: "Tid till färdig granskning" },
             ].map((stat) => (
               <div key={stat.label} className="space-y-2">
                 <div className="font-display text-3xl md:text-4xl font-extrabold text-primary">{stat.value}</div>
@@ -159,15 +152,11 @@ export default function Fakturakontroll() {
       {/* Upload section */}
       <section id="upload" className="px-6 py-16 md:py-24 bg-card border-y border-border">
         <div className="max-w-2xl mx-auto">
-          <div className="flex items-center gap-2.5 mb-2">
-            <Upload className="w-5 h-5 text-primary" />
-            <span className="text-sm font-bold text-primary uppercase tracking-wider">Skicka in</span>
-          </div>
           <h2 className="font-display text-3xl md:text-4xl font-bold tracking-tight mb-3">
-            Ladda upp dina fakturor
+            Släpp dina fakturor och tidrapporter här
           </h2>
           <p className="text-muted-foreground mb-8 max-w-lg">
-            Skicka in dina fakturor så granskar vi dem mot ramavtalet. Du får svar inom 48 timmar.
+            All data krypteras och raderas efter analys. Vi behöver inga personuppgifter om patienter — bara fakturaraderna.
           </p>
           <InvoiceUploadForm />
         </div>
@@ -181,7 +170,7 @@ export default function Fakturakontroll() {
             Redo att se om du fakturerar rätt?
           </h2>
           <p className="text-muted-foreground text-sm leading-relaxed max-w-md mx-auto">
-            Starta din kostnadsfria granskning idag. Vi kontaktar dig inom 48 timmar med resultatet.
+            Starta din kostnadsfria granskning idag. Vi kontaktar dig inom 24 timmar med resultatet.
           </p>
           <Button
             size="lg"
