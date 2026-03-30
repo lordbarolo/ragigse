@@ -98,9 +98,17 @@ export default function Index() {
             Marknadsinsikter och smarta tjänster för läkare och sjuksköterskor.
           </p>
 
-          <p className="text-hero-foreground/60 text-base md:text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
-            AI-agenten Reidar har läst över 20&nbsp;000 avtal och avrop så att du ska slippa. *Personlig rådgivare *Tillgänglig dygnet runt *Fråga vad du vill om branschen
+          <p className="text-hero-foreground/60 text-base md:text-lg max-w-2xl mx-auto mb-4 leading-relaxed">
+            AI-agenten Reidar har läst över 20&nbsp;000 avtal och avrop så att du ska slippa.
           </p>
+          <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-10">
+            {["Personlig rådgivare", "Tillgänglig dygnet runt", "Fråga vad du vill om branschen"].map((point) => (
+              <span key={point} className="flex items-center gap-2 text-hero-foreground/60 text-sm md:text-base">
+                <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+                {point}
+              </span>
+            ))}
+          </div>
 
           <div className="flex flex-col items-center gap-4">
             <Link to="/consultant/forhandla">
