@@ -139,7 +139,7 @@ export default function ReijdarChat({ selectedRole, initialMessage }: { selected
             <Bot className="h-4 w-4" />
           </span>
           <span className="whitespace-nowrap pr-4 text-[12px] font-semibold opacity-0 transition-all duration-200 group-hover:opacity-100 group-focus-visible:opacity-100">
-            Fråga Reijdar
+            Uppdragsassistenten
           </span>
         </button>
       )}
