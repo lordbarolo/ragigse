@@ -7,6 +7,7 @@ import { Loader2, Download, Linkedin } from "lucide-react";
 import { trackEvent } from "@/lib/trackEvent";
 import { getCouponCode } from "@/lib/captureParams";
 import CompcareLogo from "@/components/CompcareLogo";
+import Navbar from "@/components/Navbar";
 
 import ShareButton from "@/components/ShareButton";
 import type { ReportData } from "@/shared/types";
@@ -97,6 +98,7 @@ export default function Report() {
 
   return (
     <div className="min-h-screen bg-background">
+      <Navbar />
       {/* Header — premium, mobile-first */}
       <header className="relative overflow-hidden hero-gradient px-5 pt-8 pb-10 sm:pt-10 sm:pb-12">
         {/* Subtle decorative element */}
