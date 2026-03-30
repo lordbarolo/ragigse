@@ -117,7 +117,7 @@ export default function Fakturakontroll() {
             {[
               { value: "30 000 kr", label: "Genomsnittligt missad ersättning per år" },
               { value: "3/10", label: "Konsulter fakturerar fel varje månad" },
-              { value: "24 h", label: "Tid till färdig granskning" },
+              { value: "48 h", label: "Tid till färdig granskning" },
             ].map((stat) => (
               <div key={stat.label} className="space-y-2">
                 <div className="font-display text-3xl md:text-4xl font-extrabold text-primary">{stat.value}</div>
