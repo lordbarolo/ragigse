@@ -293,7 +293,6 @@ export default function Uppdragsradar() {
           ) : (
             <div className="space-y-2.5">
               {predictions.map((p) => {
-                const notified = isNotified(p.region_namn);
                 const colorClass = getDaysColor(p.dagar_kvar);
                 return (
                   <Card key={p.region_namn} className="overflow-hidden">
@@ -327,26 +326,10 @@ export default function Uppdragsradar() {
                             {p.senaste_kund && <span className="ml-2">· {p.senaste_kund}</span>}
                           </div>
                         </div>
-                        <div className="flex flex-col items-end gap-2 shrink-0">
+                        <div className="flex flex-col items-end shrink-0">
                           <span className={`inline-flex items-center px-2.5 py-1 rounded-full border text-[12px] font-semibold ${colorClass}`}>
                             {getDaysBadgeLabel(p.dagar_kvar)}
                           </span>
-                          <button
-                            onClick={() =>
-                              toggleNotification.mutate({
-                                region: p.region_namn,
-                                active: notified,
-                              })
-                            }
-                            className={`p-1.5 rounded-lg transition-colors ${
-                              notified
-                                ? "text-primary bg-primary/10"
-                                : "text-muted-foreground hover:text-foreground hover:bg-secondary"
-                            }`}
-                            title={notified ? "Ta bort bevakning" : "Bevaka"}
-                          >
-                            {notified ? <Bell className="w-4 h-4" /> : <BellOff className="w-4 h-4" />}
-                          </button>
                         </div>
                       </div>
                     </CardContent>
