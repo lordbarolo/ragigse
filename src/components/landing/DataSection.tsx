@@ -44,7 +44,7 @@ export default function DataSection() {
         "Vad betalar Region Skåne för en infektionssjuksköterska? Hur skiljer sig Zon 1 mot Zon 3? Hur mycket har priserna ändrats sedan förra avtalsperioden?"
       </p>
       <p className="text-base text-foreground/65 font-light leading-relaxed max-w-[540px] mt-3">
-        Ställ frågan till <span className="font-semibold text-foreground">Reijdar</span> — din AI-agent med tillgång till all avtalsdata.
+        Ställ frågan till <span className="font-semibold text-foreground">Löneassistenten</span> — din AI-assistent med tillgång till all avtalsdata.
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-12">
