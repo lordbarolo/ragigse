@@ -571,7 +571,13 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                   value={roleDropdownValue}
                   onValueChange={(v) => {
                     setRoleDropdownValue(v);
-                  }}
+                    if (v) {
+                      setTimeout(() => {
+                        trackStepCompleted(2, v);
+                        setStep(3);
+                      }, 300);
+                    }
+                  }
                   placeholder={occupationCategory === "lakare" ? "Välj läkarroll eller specialisering..." : "Välj roll eller vidareutbildning..."}
                   options={occupationCategory === "lakare" ? doctorRoleOptions : nurseRoleOptions}
                 />
