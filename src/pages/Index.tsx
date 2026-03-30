@@ -98,7 +98,7 @@ export default function Index() {
             Marknadsinsikter och smarta tjänster för läkare och sjuksköterskor.
           </p>
 
-          <p className="text-hero-foreground/60 text-base md:text-lg max-w-2xl mx-auto mb-4 leading-relaxed">
+          <p className="text-hero-foreground/60 text-base md:text-lg max-w-2xl mx-auto mb-2 leading-relaxed">
             AI-agenten Reidar har läst över 20&nbsp;000 avtal och avrop så att du ska slippa.
           </p>
           <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-10">
