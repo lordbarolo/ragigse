@@ -98,6 +98,7 @@ export default function Report() {
 
   return (
     <div className="min-h-screen bg-background">
+      <Navbar />
       {/* Header — premium, mobile-first */}
       <header className="relative overflow-hidden hero-gradient px-5 pt-8 pb-10 sm:pt-10 sm:pb-12">
         {/* Subtle decorative element */}
