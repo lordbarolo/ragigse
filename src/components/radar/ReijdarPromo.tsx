@@ -18,7 +18,7 @@ export default function ReijdarPromo({ onAsk }: ReijdarPromoProps) {
           <Bot className="w-4.5 h-4.5 text-primary" />
         </div>
         <div>
-          <span className="text-[14px] font-bold text-foreground">Fråga Reijdar</span>
+          <span className="text-[14px] font-bold text-foreground">Uppdragsassistenten</span>
           <span className="text-[11px] text-muted-foreground ml-1.5">AI-assistent</span>
         </div>
       </div>
