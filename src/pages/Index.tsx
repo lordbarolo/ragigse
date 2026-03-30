@@ -99,7 +99,7 @@ export default function Index() {
           </p>
 
           <p className="text-hero-foreground/60 text-base md:text-lg max-w-2xl mx-auto mb-2 leading-relaxed">
-            AI-agenten Reidar har läst över 20&nbsp;000 avtal och avrop så att du ska slippa.
+            AI-assistenten Reidar har läst över 20&nbsp;000 avtal och avrop så att du ska slippa.
           </p>
           <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-10">
             {["Personlig rådgivare", "Tillgänglig dygnet runt", "Fråga vad du vill om branschen"].map((point) => (
