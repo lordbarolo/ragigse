@@ -30,7 +30,7 @@ export default function SuggestedPrompts({ onSelect }: Props) {
     <div className="flex flex-col items-center gap-4 py-8">
       <div className="text-center mb-2">
         <h2 className="font-display text-lg font-bold text-foreground tracking-tight">
-          Förhandlingsassistent
+          Löneassistenten
         </h2>
         <p className="text-sm text-muted-foreground mt-1">
           Ställ frågor om din ersättning — alla svar baseras på officiella datakällor.

@@ -146,7 +146,7 @@ export default function SalaryCheck() {
               "Vad betalar Region Skåne för en infektionssjuksköterska? Hur skiljer sig Zon 1 mot Zon 3? Hur mycket har priserna ändrats sedan förra avtalsperioden?"
             </p>
             <p className="text-foreground font-medium text-base">
-              Ställ frågan till Reidar — din AI-agent med tillgång till all avtalsdatan.
+              Ställ frågan till Löneassistenten — din AI-agent med tillgång till all avtalsdatan.
             </p>
           </div>
 

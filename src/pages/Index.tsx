@@ -49,7 +49,7 @@ const PILLARS = [
   {
     question: "Förhandlar jag rätt?",
     title: "Förhandlingsassistent",
-    description: "Ställ frågor om marknadspriser, avtalsvillkor och förhandlingsstrategier. Reidar ger dig bra underlag inför ditt nästa konsultuppdrag.",
+    description: "Ställ frågor om marknadspriser, avtalsvillkor och förhandlingsstrategier. Löneassistenten ger dig bra underlag inför ditt nästa konsultuppdrag.",
     icon: MessageSquare,
     cta: "Starta förhandling",
     href: "/consultant/forhandla",

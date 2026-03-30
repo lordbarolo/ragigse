@@ -152,7 +152,7 @@ export default function ReijdarChat({ selectedRole, initialMessage }: { selected
             <div className="flex items-center gap-2">
               <Bot className="w-5 h-5 text-primary" />
               <div>
-                <span className="text-[14px] font-bold text-foreground">Reijdar</span>
+                <span className="text-[14px] font-bold text-foreground">Uppdragsassistenten</span>
                 <span className="text-[11px] text-muted-foreground ml-1.5">AI-assistent</span>
               </div>
             </div>
