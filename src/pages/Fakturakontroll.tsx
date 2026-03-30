@@ -170,7 +170,7 @@ export default function Fakturakontroll() {
             Redo att se om du fakturerar rätt?
           </h2>
           <p className="text-muted-foreground text-sm leading-relaxed max-w-md mx-auto">
-            Starta din kostnadsfria granskning idag. Vi kontaktar dig inom 24 timmar med resultatet.
+            Starta din kostnadsfria granskning idag. Vi kontaktar dig inom 48 timmar med resultatet.
           </p>
           <Button
             size="lg"
