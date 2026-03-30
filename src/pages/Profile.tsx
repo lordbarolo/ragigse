@@ -94,18 +94,9 @@ export default function Profile() {
       <Navbar />
       <div className="pt-20 pb-12 px-4 max-w-2xl mx-auto space-y-5">
         {/* Header + StatusBadge */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div>
-              <h1 className="text-2xl font-bold text-foreground">Min dashboard</h1>
-              <p className="text-sm text-muted-foreground">{user?.email}</p>
-            </div>
-            
-          </div>
-          <Button variant="outline" size="sm" onClick={handleSignOut} className="gap-2">
-            <LogOut className="w-4 h-4" />
-            Logga ut
-          </Button>
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Min dashboard</h1>
+          <p className="text-sm text-muted-foreground">{user?.email}</p>
         </div>
 
         {/* Referenser & verifikationer — dold tillsvidare */}
