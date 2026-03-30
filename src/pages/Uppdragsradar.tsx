@@ -1,9 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
-import { Radio, Bell, BellOff, Loader2, Send, MapPin, Calendar, Clock, MessageSquare } from "lucide-react";
+import { Radio, Loader2, Send, MapPin, Calendar, Clock, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -55,8 +54,8 @@ function getDaysBadgeLabel(dagar: number) {
 export default function Uppdragsradar() {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+
   const { toast } = useToast();
-  const queryClient = useQueryClient();
 
   const [selectedRoll, setSelectedRoll] = useState("");
   const [chatMessages, setChatMessages] = useState<ChatMsg[]>([]);
@@ -96,49 +95,6 @@ export default function Uppdragsradar() {
     staleTime: 300_000,
   });
 
-  // Fetch user's notifications
-  const { data: notifications } = useQuery({
-    queryKey: ["uppdrag-notifications", user?.id],
-    queryFn: async () => {
-      if (!user) return [];
-      const { data } = await supabase
-        .from("uppdrag_notifications")
-        .select("*")
-        .eq("user_id", user.id);
-      return data || [];
-    },
-    enabled: !!user,
-  });
-
-  const isNotified = (region: string) =>
-    notifications?.some((n: any) => n.region === region && n.roll === selectedRoll) || false;
-
-  const toggleNotification = useMutation({
-    mutationFn: async ({ region, active }: { region: string; active: boolean }) => {
-      if (!user) return;
-      if (active) {
-        await supabase
-          .from("uppdrag_notifications")
-          .delete()
-          .eq("user_id", user.id)
-          .eq("region", region)
-          .eq("roll", selectedRoll);
-      } else {
-        await supabase
-          .from("uppdrag_notifications")
-          .insert({ user_id: user.id, region, roll: selectedRoll });
-      }
-    },
-    onSuccess: (_, { active, region }) => {
-      queryClient.invalidateQueries({ queryKey: ["uppdrag-notifications"] });
-      toast({
-        title: active ? "Bevakning borttagen" : "Bevakning skapad",
-        description: active
-          ? `Du bevakar inte längre ${selectedRoll} i ${region}.`
-          : `Du bevakar nu ${selectedRoll} i ${region}.`,
-      });
-    },
-  });
 
   // Chat streaming
   const sendChat = async () => {
@@ -294,7 +250,6 @@ export default function Uppdragsradar() {
           ) : (
             <div className="space-y-2.5">
               {predictions.map((p) => {
-                const notified = isNotified(p.region_namn);
                 const colorClass = getDaysColor(p.dagar_kvar);
                 return (
                   <Card key={p.region_namn} className="overflow-hidden">
@@ -328,26 +283,10 @@ export default function Uppdragsradar() {
                             {p.senaste_kund && <span className="ml-2">· {p.senaste_kund}</span>}
                           </div>
                         </div>
-                        <div className="flex flex-col items-end gap-2 shrink-0">
+                        <div className="flex flex-col items-end shrink-0">
                           <span className={`inline-flex items-center px-2.5 py-1 rounded-full border text-[12px] font-semibold ${colorClass}`}>
                             {getDaysBadgeLabel(p.dagar_kvar)}
                           </span>
-                          <button
-                            onClick={() =>
-                              toggleNotification.mutate({
-                                region: p.region_namn,
-                                active: notified,
-                              })
-                            }
-                            className={`p-1.5 rounded-lg transition-colors ${
-                              notified
-                                ? "text-primary bg-primary/10"
-                                : "text-muted-foreground hover:text-foreground hover:bg-secondary"
-                            }`}
-                            title={notified ? "Ta bort bevakning" : "Bevaka"}
-                          >
-                            {notified ? <Bell className="w-4 h-4" /> : <BellOff className="w-4 h-4" />}
-                          </button>
                         </div>
                       </div>
                     </CardContent>
