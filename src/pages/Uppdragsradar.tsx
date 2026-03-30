@@ -54,8 +54,8 @@ function getDaysBadgeLabel(dagar: number) {
 export default function Uppdragsradar() {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
+
   const { toast } = useToast();
-  const queryClient = useQueryClient();
 
   const [selectedRoll, setSelectedRoll] = useState("");
   const [chatMessages, setChatMessages] = useState<ChatMsg[]>([]);
