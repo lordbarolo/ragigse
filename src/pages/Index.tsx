@@ -99,7 +99,7 @@ export default function Index() {
           </p>
 
           <p className="text-hero-foreground/60 text-base md:text-lg max-w-2xl mx-auto mb-2 leading-relaxed">
-            AI-assistenten Reidar har läst över 20&nbsp;000 avtal och avrop så att du ska slippa.
+            Våra AI-assistenter har läst över 20&nbsp;000 avtal och avrop så att du ska slippa.
           </p>
           <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-10">
             {["Personlig rådgivare", "Tillgänglig dygnet runt", "Fråga vad du vill om branschen"].map((point) => (
@@ -113,11 +113,11 @@ export default function Index() {
           <div className="flex flex-col items-center gap-4">
             <Link to="/consultant/forhandla">
               <Button size="lg" className="gap-2 shadow-lg shadow-primary/20">
-                <MessageSquare className="w-4 h-4" /> Fråga Reidar
+                <MessageSquare className="w-4 h-4" /> Fråga Löneassistenten
               </Button>
             </Link>
             <p className="max-w-md text-xs text-hero-foreground">
-              Reidar grundar sina svar på SKR:s ramavtalspriser 2026, SCB:s lönestatistik, avrop från 21 regioner och Medlingsinstitutets data.
+              Svaren grundas på SKR:s ramavtalspriser 2026, lönestatistik, avrop från 21 regioner och avtalsdata.
             </p>
           </div>
         </div>
