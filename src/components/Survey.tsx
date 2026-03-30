@@ -577,7 +577,7 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                         setStep(3);
                       }, 300);
                     }
-                  }
+                  }}
                   placeholder={occupationCategory === "lakare" ? "Välj läkarroll eller specialisering..." : "Välj roll eller vidareutbildning..."}
                   options={occupationCategory === "lakare" ? doctorRoleOptions : nurseRoleOptions}
                 />
