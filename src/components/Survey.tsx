@@ -658,8 +658,12 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                <button
                   key={opt.value}
                   onClick={() => {
-                    setData({ ...data, employmentType: opt.value });
-                  }}
+                     setData({ ...data, employmentType: opt.value });
+                     setTimeout(() => {
+                       trackStepCompleted(4, opt.value);
+                       setStep(5);
+                     }, 300);
+                   }
                   className={`group w-full py-5 px-5 rounded-xl border !border-l-[3px] bg-card text-left transition-all active:scale-[0.98] flex items-center gap-3 ${
                     data.employmentType === opt.value
                       ? "border-primary !border-l-primary bg-primary/[0.06] ring-1 ring-primary/20"
