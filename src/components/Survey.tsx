@@ -695,7 +695,11 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
                 <button
                   key={opt.value}
                   onClick={() => {
-                    setData({ ...data, obShare: opt.value });
+                     setData({ ...data, obShare: opt.value });
+                     setTimeout(() => {
+                       trackStepCompleted(5, opt.value);
+                       setStep(6);
+                     }, 300);
                   }}
                   className={`group w-full py-5 px-5 rounded-xl border !border-l-[3px] bg-card text-left transition-all active:scale-[0.98] flex items-center gap-3 ${
                     data.obShare === opt.value
