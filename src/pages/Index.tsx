@@ -99,7 +99,7 @@ export default function Index() {
           </p>
 
           <p className="text-hero-foreground/60 text-base md:text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
-            AI-assistenten Reidar har läst 20&nbsp;000 avtal och upphandlingar så att du slipper. Fråga honom om trygga konsultavtal och branschens villkor för din roll och region.
+            AI-agenten Reidar har läst över 20&nbsp;000 avtal och avrop så att du ska slippa. *Personlig rådgivare *Tillgänglig dygnet runt *Fråga vad du vill om branschen
           </p>
 
           <div className="flex flex-col items-center gap-4">
