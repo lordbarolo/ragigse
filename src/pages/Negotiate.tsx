@@ -66,7 +66,7 @@ export default function Negotiate() {
           </Link>
           <div>
             <span className="font-display font-bold text-foreground text-sm tracking-tight">
-              Förhandla
+              Löneassistenten
             </span>
             <span className="text-[10px] text-muted-foreground ml-2 font-medium">
               powered by CI

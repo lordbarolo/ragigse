@@ -40,7 +40,7 @@ const PILLARS = [
   {
     question: "Fakturerar jag rätt?",
     title: "Fakturakontroll",
-    description: "AI-assistenten granskar dina fakturor retroaktivt för att se om du missat att fakturera för redan arbetad tid. Finns det avvikelser hittar Reidar det.",
+    description: "AI-assistenten granskar dina fakturor retroaktivt för att se om du missat att fakturera för redan arbetad tid. Finns det avvikelser hittar vi det.",
     icon: FileSearch,
     cta: "Granska fakturor",
     href: "/fakturakontroll",
@@ -49,7 +49,7 @@ const PILLARS = [
   {
     question: "Förhandlar jag rätt?",
     title: "Förhandlingsassistent",
-    description: "Ställ frågor om marknadspriser, avtalsvillkor och förhandlingsstrategier. Reidar ger dig bra underlag inför ditt nästa konsultuppdrag.",
+    description: "Ställ frågor om marknadspriser, avtalsvillkor och förhandlingsstrategier. Löneassistenten ger dig bra underlag inför ditt nästa konsultuppdrag.",
     icon: MessageSquare,
     cta: "Starta förhandling",
     href: "/consultant/forhandla",

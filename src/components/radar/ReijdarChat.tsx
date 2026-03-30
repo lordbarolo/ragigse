@@ -132,14 +132,14 @@ export default function ReijdarChat({ selectedRole, initialMessage }: { selected
       {!open && (
         <button
           onClick={() => { trackEvent("reidar_clicked", { location: "floating_button" }); setOpen(true); }}
-          aria-label="Öppna Fråga Reijdar"
+          aria-label="Öppna Uppdragsassistenten"
           className="group fixed right-3 top-1/2 z-40 flex h-11 w-11 -translate-y-1/2 items-center overflow-hidden rounded-full bg-primary text-primary-foreground shadow-lg transition-all duration-200 hover:w-36 hover:bg-primary/90 focus-visible:w-36 active:scale-95"
         >
           <span className="flex h-11 w-11 shrink-0 items-center justify-center">
             <Bot className="h-4 w-4" />
           </span>
           <span className="whitespace-nowrap pr-4 text-[12px] font-semibold opacity-0 transition-all duration-200 group-hover:opacity-100 group-focus-visible:opacity-100">
-            Fråga Reijdar
+            Uppdragsassistenten
           </span>
         </button>
       )}
@@ -152,7 +152,7 @@ export default function ReijdarChat({ selectedRole, initialMessage }: { selected
             <div className="flex items-center gap-2">
               <Bot className="w-5 h-5 text-primary" />
               <div>
-                <span className="text-[14px] font-bold text-foreground">Reijdar</span>
+                <span className="text-[14px] font-bold text-foreground">Uppdragsassistenten</span>
                 <span className="text-[11px] text-muted-foreground ml-1.5">AI-assistent</span>
               </div>
             </div>
