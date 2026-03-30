@@ -116,7 +116,7 @@ export default function Index() {
                 <MessageSquare className="w-4 h-4" /> Fråga Reidar
               </Button>
             </Link>
-            <p className="text-muted-foreground text-xs max-w-md">
+            <p className="max-w-md text-xs text-hero-foreground">
               Reidar grundar sina svar på SKR:s ramavtalspriser 2026, SCB:s lönestatistik, avrop från 21 regioner och Medlingsinstitutets data.
             </p>
           </div>
