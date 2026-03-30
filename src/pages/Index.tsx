@@ -40,7 +40,7 @@ const PILLARS = [
   {
     question: "Fakturerar jag rätt?",
     title: "Fakturakontroll",
-    description: "AI-assistenten granskar dina fakturor mot avtalsvillkor. OB, jour, beredskap — vi hittar det du missar.",
+    description: "AI-assistenten granskar dina fakturor retroaktivt för att se om du missat att fakturera för redan arbetad tid. Finns det avvikelser hittar Reidar det.",
     icon: FileSearch,
     cta: "Granska fakturor",
     href: "/fakturakontroll",
@@ -49,7 +49,7 @@ const PILLARS = [
   {
     question: "Förhandlar jag rätt?",
     title: "Förhandlingsassistent",
-    description: "Ställ frågor om marknadspriser, avtalsvillkor och förhandlingsstrategier till Reidar — din AI-agent.",
+    description: "Ställ frågor om marknadspriser, avtalsvillkor och förhandlingsstrategier. Reidar ger dig bra underlag inför ditt nästa konsultuppdrag.",
     icon: MessageSquare,
     cta: "Starta förhandling",
     href: "/consultant/forhandla",
@@ -99,7 +99,7 @@ export default function Index() {
           </p>
 
           <p className="text-hero-foreground/60 text-base md:text-lg max-w-2xl mx-auto mb-2 leading-relaxed">
-            AI-agenten Reidar har läst över 20&nbsp;000 avtal och avrop så att du ska slippa.
+            AI-assistenten Reidar har läst över 20&nbsp;000 avtal och avrop så att du ska slippa.
           </p>
           <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-10">
             {["Personlig rådgivare", "Tillgänglig dygnet runt", "Fråga vad du vill om branschen"].map((point) => (
