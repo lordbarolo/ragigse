@@ -7,6 +7,7 @@ import { Loader2, Download, Linkedin } from "lucide-react";
 import { trackEvent } from "@/lib/trackEvent";
 import { getCouponCode } from "@/lib/captureParams";
 import CompcareLogo from "@/components/CompcareLogo";
+import Navbar from "@/components/Navbar";
 
 import ShareButton from "@/components/ShareButton";
 import type { ReportData } from "@/shared/types";
