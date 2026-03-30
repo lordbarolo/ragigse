@@ -79,7 +79,7 @@ export default function InvoiceUploadForm() {
         <CheckCircle className="w-12 h-12 text-primary mx-auto" />
         <h3 className="font-display text-2xl font-bold">Tack!</h3>
         <p className="text-muted-foreground max-w-md mx-auto">
-          Vi har tagit emot dina fakturor. CompCare återkommer till <span className="font-medium text-foreground">{email}</span> när analysen är slutförd, vilket kan dröja upp till 24 timmar.
+          Vi har tagit emot dina fakturor. CompCare återkommer till <span className="font-medium text-foreground">{email}</span> när analysen är slutförd, vilket kan dröja upp till 48 timmar.
         </p>
       </div>
     );

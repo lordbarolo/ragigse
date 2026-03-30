@@ -16,7 +16,7 @@ const MISSED_ITEMS = [
 const STEPS = [
   { num: "1", title: "Skicka in dina fakturor", desc: "Ladda upp eller maila dina senaste fakturor. Vi behöver inga personuppgifter om patienter — bara fakturaraderna." },
   { num: "2", title: "Automatiserad granskning mot ramavtalet", desc: "Vi jämför varje rad mot gällande ramavtalspriser, OB-tariffer och tilläggsstrukturer i alla 21 regioner." },
-  { num: "3", title: "Du får en avvikelserapport", desc: "Inom 24 timmar får du en sammanställning med exakta avvikelser och hur mycket ersättning du har rätt till." },
+  { num: "3", title: "Du får en avvikelserapport", desc: "Inom 48 timmar får du en sammanställning med exakta avvikelser och hur mycket ersättning du har rätt till." },
 ];
 
 export default function Fakturakontroll() {
@@ -117,7 +117,7 @@ export default function Fakturakontroll() {
             {[
               { value: "30 000 kr", label: "Genomsnittligt missad ersättning per år" },
               { value: "3/10", label: "Konsulter fakturerar fel varje månad" },
-              { value: "24 h", label: "Tid till färdig granskning" },
+              { value: "48 h", label: "Tid till färdig granskning" },
             ].map((stat) => (
               <div key={stat.label} className="space-y-2">
                 <div className="font-display text-3xl md:text-4xl font-extrabold text-primary">{stat.value}</div>
@@ -170,7 +170,7 @@ export default function Fakturakontroll() {
             Redo att se om du fakturerar rätt?
           </h2>
           <p className="text-muted-foreground text-sm leading-relaxed max-w-md mx-auto">
-            Starta din kostnadsfria granskning idag. Vi kontaktar dig inom 24 timmar med resultatet.
+            Starta din kostnadsfria granskning idag. Vi kontaktar dig inom 48 timmar med resultatet.
           </p>
           <Button
             size="lg"
