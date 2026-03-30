@@ -95,49 +95,6 @@ export default function Uppdragsradar() {
     staleTime: 300_000,
   });
 
-  // Fetch user's notifications
-  const { data: notifications } = useQuery({
-    queryKey: ["uppdrag-notifications", user?.id],
-    queryFn: async () => {
-      if (!user) return [];
-      const { data } = await supabase
-        .from("uppdrag_notifications")
-        .select("*")
-        .eq("user_id", user.id);
-      return data || [];
-    },
-    enabled: !!user,
-  });
-
-  const isNotified = (region: string) =>
-    notifications?.some((n: any) => n.region === region && n.roll === selectedRoll) || false;
-
-  const toggleNotification = useMutation({
-    mutationFn: async ({ region, active }: { region: string; active: boolean }) => {
-      if (!user) return;
-      if (active) {
-        await supabase
-          .from("uppdrag_notifications")
-          .delete()
-          .eq("user_id", user.id)
-          .eq("region", region)
-          .eq("roll", selectedRoll);
-      } else {
-        await supabase
-          .from("uppdrag_notifications")
-          .insert({ user_id: user.id, region, roll: selectedRoll });
-      }
-    },
-    onSuccess: (_, { active, region }) => {
-      queryClient.invalidateQueries({ queryKey: ["uppdrag-notifications"] });
-      toast({
-        title: active ? "Bevakning borttagen" : "Bevakning skapad",
-        description: active
-          ? `Du bevakar inte längre ${selectedRoll} i ${region}.`
-          : `Du bevakar nu ${selectedRoll} i ${region}.`,
-      });
-    },
-  });
 
   // Chat streaming
   const sendChat = async () => {
