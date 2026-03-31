@@ -142,10 +142,10 @@ export default function Fakturakontroll() {
       <section id="upload" className="px-6 py-16 md:py-24 bg-card border-y border-border">
         <div className="max-w-2xl mx-auto">
           <h2 className="font-display text-3xl md:text-4xl font-bold tracking-tight mb-3">
-            Släpp dina fakturor och tidrapporter här
+            Intresserad av en fakturagranskning?
           </h2>
           <p className="text-muted-foreground mb-8 max-w-lg">
-            All data krypteras och raderas efter analys. Vi behöver inga personuppgifter om patienter — bara fakturaraderna.
+            Fyll i formuläret så kontaktar vi dig inom 48 timmar för att diskutera hur vi kan hjälpa dig.
           </p>
           <InvoiceUploadForm />
         </div>
