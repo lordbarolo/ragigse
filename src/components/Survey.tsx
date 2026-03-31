@@ -68,10 +68,20 @@ const nurseValueMap: Record<string, string> = {
   "Ögonsjukvård": "Specialistsjuksköterska ögonsjukvård",
 };
 
+export interface SurveyResult {
+  yrke: string;
+  kommun: string;
+  employmentType: string;
+  currentSalary: number;
+  salaryType: "hourly" | "monthly";
+  obShare: string;
+}
+
 interface SurveyProps {
   initialCategory?: OccupationCategory;
   initialRole?: string;
   onBack?: () => void;
+  onComplete?: (result: SurveyResult) => void;
 }
 
 export default function Survey({ initialCategory, initialRole, onBack }: SurveyProps = {}) {
