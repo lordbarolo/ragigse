@@ -84,7 +84,7 @@ interface SurveyProps {
   onComplete?: (result: SurveyResult) => void;
 }
 
-export default function Survey({ initialCategory, initialRole, onBack }: SurveyProps = {}) {
+export default function Survey({ initialCategory, initialRole, onBack, onComplete }: SurveyProps = {}) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { data: locations, isLoading: locLoading } = useLocations();
