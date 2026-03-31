@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import { ChevronDown, X, Search } from "lucide-react";
 
 interface RadarFiltersProps {
