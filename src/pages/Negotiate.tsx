@@ -108,46 +108,46 @@ export default function Negotiate() {
           )}
         </nav>
 
-        {showSurvey ? (
-          <div className="flex-1 overflow-y-auto px-4 py-6">
-            <Survey onComplete={handleSurveyComplete} />
+        {/* Context bar — only after survey */}
+        {!showSurvey && (
+          <div className="flex-shrink-0 px-4 py-2">
+            <ContextBar context={context} onUpdate={updateContext} />
           </div>
-        ) : (
-          <>
-            {/* Context bar */}
-            <div className="flex-shrink-0 px-4 py-2">
-              <ContextBar context={context} onUpdate={updateContext} />
-            </div>
+        )}
 
-            {/* Messages area */}
-            <div ref={scrollRef} className="flex-1 overflow-y-auto px-4">
-              {!hasMessages ? (
-                <SuggestedPrompts onSelect={send} />
-              ) : (
-                <div className="flex flex-col gap-3 py-4">
-                  {messages.map((msg) => (
-                    <ChatMessage key={msg.id} message={msg} />
-                  ))}
-                  {isLoading && (
-                    <div className="flex justify-start">
-                      <div className="bg-card border border-border rounded-2xl rounded-bl-md px-4 py-3">
-                        <div className="flex items-center gap-1.5">
-                          <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                          <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse [animation-delay:150ms]" />
-                          <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse [animation-delay:300ms]" />
-                        </div>
-                      </div>
+        {/* Messages / survey area */}
+        <div ref={scrollRef} className="flex-1 overflow-y-auto px-4">
+          {showSurvey ? (
+            <div className="py-4">
+              <Survey onComplete={handleSurveyComplete} />
+            </div>
+          ) : !hasMessages ? (
+            <SuggestedPrompts onSelect={send} />
+          ) : (
+            <div className="flex flex-col gap-3 py-4">
+              {messages.map((msg) => (
+                <ChatMessage key={msg.id} message={msg} />
+              ))}
+              {isLoading && (
+                <div className="flex justify-start">
+                  <div className="bg-card border border-border rounded-2xl rounded-bl-md px-4 py-3">
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse [animation-delay:150ms]" />
+                      <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse [animation-delay:300ms]" />
                     </div>
-                  )}
+                  </div>
                 </div>
               )}
             </div>
+          )}
+        </div>
 
-            {/* Input area */}
-            <div className="flex-shrink-0 px-4 pb-4 pt-2">
-              <ChatInput onSend={send} isLoading={isLoading} />
-            </div>
-          </>
+        {/* Input — only after survey */}
+        {!showSurvey && (
+          <div className="flex-shrink-0 px-4 pb-4 pt-2">
+            <ChatInput onSend={send} isLoading={isLoading} />
+          </div>
         )}
       </div>
     </div>
