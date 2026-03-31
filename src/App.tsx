@@ -120,7 +120,7 @@ const App = () => (
               <Route path="/referral/:token" element={<ReferralLanding />} />
               <Route path="/betalning-klar" element={<PaymentSuccess />} />
               <Route path="/rapport/:reportId" element={<Report />} />
-              <Route path="/jamfor" element={<Compare />} />
+              
               <Route path="/vanliga-fragor" element={<FAQ />} />
               <Route path="/integritetspolicy" element={<PrivacyPolicy />} />
               <Route path="/referens/:token" element={<ReferenceForm />} />
