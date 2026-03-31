@@ -130,11 +130,9 @@ const App = () => (
               <Route path="/unsubscribe" element={<Unsubscribe />} />
               <Route path="/referenser-info" element={<ReferenserInfo />} />
               <Route path="/admin" element={<Admin />} />
-              <Route path="/dev/theme-preview" element={<ThemePreview />} />
+              <Route path="/dev/theme-preview" element={<ProtectedRoute><ThemePreview /></ProtectedRoute>} />
               <Route path="/dev/analytics" element={<AnalyticsDashboard />} />
-              {import.meta.env.DEV && (
-                <Route path="/dev/e2e-test" element={<E2ETest />} />
-              )}
+              <Route path="/dev/e2e-test" element={import.meta.env.PROD ? <NotFound /> : <E2ETest />} />
 
               {/* ── Backwards-compat redirects ───── */}
               <Route path="/profil" element={<Navigate to="/consultant/profil" replace />} />
