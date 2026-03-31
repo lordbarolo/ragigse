@@ -95,6 +95,8 @@ function BuyerSearch({
 }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const [openUp, setOpenUp] = useState(false);
   const active = value !== "";
 
   const filtered = useMemo(() => {
@@ -103,10 +105,19 @@ function BuyerSearch({
     return options.filter((o) => o.toLowerCase().includes(q)).slice(0, 30);
   }, [query, options]);
 
+  const handleOpen = () => {
+    if (!open && btnRef.current) {
+      const rect = btnRef.current.getBoundingClientRect();
+      setOpenUp(window.innerHeight - rect.bottom < 320);
+    }
+    setOpen(!open);
+  };
+
   return (
     <div className="relative">
       <button
-        onClick={() => setOpen(!open)}
+        ref={btnRef}
+        onClick={handleOpen}
         className={`flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-[13px] font-medium transition-colors ${
           active
             ? "border-primary/40 bg-primary/10 text-primary"
@@ -126,7 +137,9 @@ function BuyerSearch({
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => { setOpen(false); setQuery(""); }} />
-          <div className="absolute top-full left-0 mt-1.5 z-50 w-72 rounded-lg border border-border bg-popover shadow-xl">
+          <div className={`absolute left-0 z-50 w-72 rounded-lg border border-border bg-popover shadow-xl ${
+            openUp ? "bottom-full mb-1.5" : "top-full mt-1.5"
+          }`}>
             <div className="p-2 border-b border-border">
               <input
                 autoFocus
