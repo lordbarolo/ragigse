@@ -57,7 +57,7 @@ export default function Fakturakontroll() {
             className="text-base px-8 py-6 font-bold"
             onClick={() => document.getElementById("upload")?.scrollIntoView({ behavior: "smooth" })}
           >
-            Granska min ersättning →
+            Jag vill veta mer →
           </Button>
         </div>
       </section>
