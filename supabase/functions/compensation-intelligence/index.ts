@@ -591,17 +591,34 @@ async function capSalaryBenchmark(
   const roleName = resolved.role!.name;
   const geoId = resolved.geography?.geo_id ?? null;
 
-  const selectCols = "id, period_key, role_id, region_id, municipality_id, sample_size, mean_salary, median_salary, p25_salary, p75_salary";
+  const selectCols = "id, period_key, role_id, region_id, municipality_id, sample_size, mean_salary, median_salary, p25_salary, p75_salary, threshold_passed";
   let data: Record<string, unknown> | null = null;
   let fallbackLevel: string | null = null;
+  let belowThreshold = false;
+
+  // Helper: try query with threshold_passed = true first, then false
+  async function queryWithFallback(
+    buildQuery: (passed: boolean) => ReturnType<ReturnType<typeof createClient>["from"]>
+  ): Promise<Record<string, unknown> | null> {
+    // Try threshold-passing data first
+    const { data: passing } = await (buildQuery(true) as any)
+      .eq("threshold_passed", true)
+      .order("period_key", { ascending: false }).limit(1).maybeSingle();
+    if (passing) return passing;
+
+    // Fall back to any data (below threshold)
+    const { data: any } = await (buildQuery(false) as any)
+      .order("sample_size", { ascending: false })
+      .order("period_key", { ascending: false }).limit(1).maybeSingle();
+    return any;
+  }
 
   // 1. Municipality match
   if (geoId && resolved.geography?.type === "municipality") {
-    const { data: exact } = await supabase
-      .from("salary_benchmarks").select(selectCols)
-      .eq("role_id", roleId).eq("municipality_id", geoId)
-      .eq("threshold_passed", true)
-      .order("period_key", { ascending: false }).limit(1).maybeSingle();
+    const exact = await queryWithFallback((passed) =>
+      supabase.from("salary_benchmarks").select(selectCols)
+        .eq("role_id", roleId).eq("municipality_id", geoId) as any
+    );
     if (exact) data = exact;
   }
 
@@ -616,38 +633,40 @@ async function capSalaryBenchmark(
       if (regionGeo) regionGeoId = regionGeo.id;
     }
     if (regionGeoId) {
-      const { data: regionMatch } = await supabase
-        .from("salary_benchmarks").select(selectCols)
-        .eq("role_id", roleId).eq("region_id", regionGeoId)
-        .eq("threshold_passed", true)
-        .order("period_key", { ascending: false }).limit(1).maybeSingle();
+      const regionMatch = await queryWithFallback((passed) =>
+        supabase.from("salary_benchmarks").select(selectCols)
+          .eq("role_id", roleId).eq("region_id", regionGeoId) as any
+      );
       if (regionMatch) { data = regionMatch; fallbackLevel = "region"; }
     }
   }
 
   // 3. National fallback
   if (!data) {
-    const { data: national } = await supabase
-      .from("salary_benchmarks").select(selectCols)
-      .eq("role_id", roleId).eq("threshold_passed", true)
-      .is("municipality_id", null).is("region_id", null)
-      .order("period_key", { ascending: false }).limit(1).maybeSingle();
+    const national = await queryWithFallback((passed) =>
+      supabase.from("salary_benchmarks").select(selectCols)
+        .eq("role_id", roleId)
+        .is("municipality_id", null).is("region_id", null) as any
+    );
     if (national) { data = national; fallbackLevel = fallbackLevel ? `${fallbackLevel}→national` : "national"; }
   }
 
   // 4. Any geo
   if (!data) {
-    const { data: anyGeo } = await supabase
-      .from("salary_benchmarks").select(selectCols)
-      .eq("role_id", roleId).eq("threshold_passed", true)
-      .order("period_key", { ascending: false }).limit(1).maybeSingle();
+    const anyGeo = await queryWithFallback((passed) =>
+      supabase.from("salary_benchmarks").select(selectCols)
+        .eq("role_id", roleId) as any
+    );
     if (anyGeo) { data = anyGeo; fallbackLevel = "any_geo"; }
   }
 
   if (!data) throw new Error("NO_DATA_FOUND");
 
   const sampleSize = (data.sample_size as number) ?? 0;
-  if (sampleSize > 0 && sampleSize < sampleSizeMin) throw new Error("INSUFFICIENT_SAMPLE");
+  belowThreshold = !(data.threshold_passed as boolean);
+  if (belowThreshold) {
+    fallbackLevel = fallbackLevel ? `${fallbackLevel}+low_sample` : "low_sample";
+  }
 
   const p25 = data.p25_salary as number | null;
   const median = data.median_salary as number | null;
@@ -660,7 +679,7 @@ async function capSalaryBenchmark(
       geography: resolved.geography ? { id: resolved.geography.geo_id, name: resolved.geography.name } : null,
       period: data.period_key,
       sample_size: sampleSize > 0 ? sampleSize : null,
-      median_salary: effectiveMedian,
+      below_threshold: belowThreshold,
       median_salary: effectiveMedian,
       p25_salary: p25 ?? Math.round(effectiveMedian * 0.92),
       p75_salary: p75 ?? Math.round(effectiveMedian * 1.08),
