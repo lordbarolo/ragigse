@@ -50,6 +50,8 @@ const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 const Academy = lazy(() => import("./pages/Academy"));
 const AgencyDashboard = lazy(() => import("./pages/AgencyDashboard"));
 const SignRepresentation = lazy(() => import("./pages/SignRepresentation"));
+const AgencyLanding = lazy(() => import("./pages/AgencyLanding"));
+const AgencySignup = lazy(() => import("./pages/AgencySignup"));
 
 const queryClient = new QueryClient();
 
