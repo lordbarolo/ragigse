@@ -15,7 +15,7 @@ const MISSED_ITEMS = [
 
 const STEPS = [
   { num: "1", title: "Skicka in dina fakturor", desc: "Ladda upp eller maila dina senaste fakturor. Vi behöver inga personuppgifter om patienter — bara fakturaraderna." },
-  { num: "2", title: "Automatiserad granskning mot ramavtalet", desc: "Vi jämför varje rad mot gällande ramavtalspriser, OB-tariffer och tilläggsstrukturer i alla 21 regioner." },
+  { num: "2", title: "Manuell granskning mot ramavtalet", desc: "Vi går igenom varje rad mot gällande ramavtalspriser, OB-tariffer och tilläggsstrukturer i alla 21 regioner." },
   { num: "3", title: "Du får en avvikelserapport", desc: "Inom 48 timmar får du en sammanställning med exakta avvikelser och hur mycket ersättning du har rätt till." },
 ];
 
@@ -111,20 +111,9 @@ export default function Fakturakontroll() {
       </section>
 
       {/* Stats / social proof */}
-      <section className="px-6 py-16 md:py-20 bg-card border-y border-border">
-        <div className="max-w-4xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 text-center">
-            {[
-              { value: "30 000 kr", label: "Genomsnittligt missad ersättning per år" },
-              { value: "3/10", label: "Konsulter fakturerar fel varje månad" },
-              { value: "48 h", label: "Tid till färdig granskning" },
-            ].map((stat) => (
-              <div key={stat.label} className="space-y-2">
-                <div className="font-display text-3xl md:text-4xl font-extrabold text-primary">{stat.value}</div>
-                <p className="text-xs md:text-sm text-muted-foreground">{stat.label}</p>
-              </div>
-            ))}
-          </div>
+      <section className="px-6 py-12 md:py-16 bg-card border-y border-border">
+        <div className="max-w-4xl mx-auto text-center">
+          <p className="text-lg font-semibold text-foreground">Kostnadsfritt om inga avvikelser hittas.</p>
         </div>
       </section>
 
