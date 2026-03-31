@@ -15,7 +15,7 @@ const MISSED_ITEMS = [
 
 const STEPS = [
   { num: "1", title: "Skicka in dina fakturor", desc: "Ladda upp eller maila dina senaste fakturor. Vi behöver inga personuppgifter om patienter — bara fakturaraderna." },
-  { num: "2", title: "Automatiserad granskning mot ramavtalet", desc: "Vi jämför varje rad mot gällande ramavtalspriser, OB-tariffer och tilläggsstrukturer i alla 21 regioner." },
+  { num: "2", title: "Manuell granskning mot ramavtalet", desc: "Vi går igenom varje rad mot gällande ramavtalspriser, OB-tariffer och tilläggsstrukturer i alla 21 regioner." },
   { num: "3", title: "Du får en avvikelserapport", desc: "Inom 48 timmar får du en sammanställning med exakta avvikelser och hur mycket ersättning du har rätt till." },
 ];
 

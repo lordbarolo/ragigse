@@ -101,7 +101,7 @@ export default function InvoiceUploadForm() {
             Laddar upp...
           </>
         ) : (
-          "Skicka in fakturor för granskning"
+          "Skicka förfrågan"
         )}
       </Button>
 
