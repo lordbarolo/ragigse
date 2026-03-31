@@ -50,6 +50,8 @@ const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 const Academy = lazy(() => import("./pages/Academy"));
 const AgencyDashboard = lazy(() => import("./pages/AgencyDashboard"));
 const SignRepresentation = lazy(() => import("./pages/SignRepresentation"));
+const AgencyLanding = lazy(() => import("./pages/AgencyLanding"));
+const AgencySignup = lazy(() => import("./pages/AgencySignup"));
 
 const queryClient = new QueryClient();
 
@@ -86,6 +88,8 @@ const App = () => (
               <Route path="/logga-in" element={<Login />} />
               <Route path="/registrera" element={<Signup />} />
               <Route path="/aterstall-losenord" element={<ResetPassword />} />
+              <Route path="/for-bemanningsforetag" element={<AgencyLanding />} />
+              <Route path="/registrera/bemanning" element={<AgencySignup />} />
 
               {/* ── Consultant Layout ─────────────── */}
               <Route element={<ConsultantLayout />}>
