@@ -88,6 +88,8 @@ const App = () => (
               <Route path="/logga-in" element={<Login />} />
               <Route path="/registrera" element={<Signup />} />
               <Route path="/aterstall-losenord" element={<ResetPassword />} />
+              <Route path="/for-bemanningsforetag" element={<AgencyLanding />} />
+              <Route path="/registrera/bemanning" element={<AgencySignup />} />
 
               {/* ── Consultant Layout ─────────────── */}
               <Route element={<ConsultantLayout />}>
