@@ -68,13 +68,23 @@ const nurseValueMap: Record<string, string> = {
   "Ögonsjukvård": "Specialistsjuksköterska ögonsjukvård",
 };
 
+export interface SurveyResult {
+  yrke: string;
+  kommun: string;
+  employmentType: string;
+  currentSalary: number;
+  salaryType: "hourly" | "monthly";
+  obShare: string;
+}
+
 interface SurveyProps {
   initialCategory?: OccupationCategory;
   initialRole?: string;
   onBack?: () => void;
+  onComplete?: (result: SurveyResult) => void;
 }
 
-export default function Survey({ initialCategory, initialRole, onBack }: SurveyProps = {}) {
+export default function Survey({ initialCategory, initialRole, onBack, onComplete }: SurveyProps = {}) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { data: locations, isLoading: locLoading } = useLocations();
@@ -367,6 +377,19 @@ export default function Survey({ initialCategory, initialRole, onBack }: SurveyP
         console.error("[Survey] survey_completed blocked — empty critical properties:", emptyKeys);
       } else {
         trackEvent("survey_completed", eventPayload);
+      }
+
+      if (onComplete) {
+        onComplete({
+          yrke: snapshotRole,
+          kommun: snapshotZone,
+          employmentType: snapshotEmploymentType,
+          currentSalary: snapshotCurrentSalary,
+          salaryType: snapshotSalaryType,
+          obShare: snapshotObShare,
+        });
+        setSaving(false);
+        return;
       }
 
       navigate(`/resultat/${leadId}${couponParam}`);

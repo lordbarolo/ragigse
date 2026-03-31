@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
 import { ArrowLeft, RotateCcw } from "lucide-react";
 import { useNegotiationChat } from "@/hooks/useNegotiationChat";
@@ -6,6 +6,7 @@ import ChatMessage from "@/components/chat/ChatMessage";
 import ChatInput from "@/components/chat/ChatInput";
 import ContextBar from "@/components/chat/ContextBar";
 import SuggestedPrompts from "@/components/chat/SuggestedPrompts";
+import Survey, { type SurveyResult } from "@/components/Survey";
 import { trackEvent } from "@/lib/trackEvent";
 
 const PAGE_TITLE = "Förhandla din ersättning — CompCare";
@@ -14,6 +15,7 @@ export default function Negotiate() {
   const { messages, isLoading, context, send, updateContext, clearChat } = useNegotiationChat();
   const scrollRef = useRef<HTMLDivElement>(null);
   const [searchParams] = useSearchParams();
+  const [surveyDone, setSurveyDone] = useState(false);
 
   // SEO metadata
   useEffect(() => {
@@ -43,7 +45,10 @@ export default function Negotiate() {
     if (emp) updates.employment_type = emp;
     if (salary) updates.current_salary = Number(salary);
     if (rate) updates.current_rate = Number(rate);
-    if (Object.keys(updates).length > 0) updateContext(updates);
+    if (Object.keys(updates).length > 0) {
+      updateContext(updates);
+      setSurveyDone(true);
+    }
   }, [searchParams, updateContext]);
 
   // Auto-scroll on new messages
@@ -52,6 +57,24 @@ export default function Negotiate() {
   }, [messages, isLoading]);
 
   const hasMessages = messages.length > 0;
+  const hasContext = Object.keys(context).filter((k) => (context as Record<string, unknown>)[k] !== undefined).length > 0;
+
+  const handleSurveyComplete = (result: SurveyResult) => {
+    const hourlyRate = result.salaryType === "monthly"
+      ? Math.round(result.currentSalary / 167)
+      : result.currentSalary;
+
+    updateContext({
+      role: result.yrke,
+      geography: result.kommun,
+      employment_type: result.employmentType,
+      current_rate: hourlyRate,
+    });
+    setSurveyDone(true);
+  };
+
+  // Show survey if no context and survey not completed
+  const showSurvey = !hasContext && !surveyDone && !hasMessages;
 
   return (
     <div className="h-[100dvh] bg-background flex flex-col overflow-hidden">
@@ -84,39 +107,48 @@ export default function Negotiate() {
         )}
       </nav>
 
-      {/* Context bar */}
-      <div className="flex-shrink-0 px-4 py-2">
-        <ContextBar context={context} onUpdate={updateContext} />
-      </div>
+      {showSurvey ? (
+        /* Survey gate */
+        <div className="flex-1 overflow-y-auto px-4 py-6">
+          <Survey onComplete={handleSurveyComplete} />
+        </div>
+      ) : (
+        <>
+          {/* Context bar */}
+          <div className="flex-shrink-0 px-4 py-2">
+            <ContextBar context={context} onUpdate={updateContext} />
+          </div>
 
-      {/* Messages area */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4">
-        {!hasMessages ? (
-          <SuggestedPrompts onSelect={send} />
-        ) : (
-          <div className="flex flex-col gap-3 py-4">
-            {messages.map((msg) => (
-              <ChatMessage key={msg.id} message={msg} />
-            ))}
-            {isLoading && (
-              <div className="flex justify-start">
-                <div className="bg-card border border-border rounded-2xl rounded-bl-md px-4 py-3">
-                  <div className="flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse [animation-delay:150ms]" />
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse [animation-delay:300ms]" />
+          {/* Messages area */}
+          <div ref={scrollRef} className="flex-1 overflow-y-auto px-4">
+            {!hasMessages ? (
+              <SuggestedPrompts onSelect={send} />
+            ) : (
+              <div className="flex flex-col gap-3 py-4">
+                {messages.map((msg) => (
+                  <ChatMessage key={msg.id} message={msg} />
+                ))}
+                {isLoading && (
+                  <div className="flex justify-start">
+                    <div className="bg-card border border-border rounded-2xl rounded-bl-md px-4 py-3">
+                      <div className="flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse [animation-delay:150ms]" />
+                        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse [animation-delay:300ms]" />
+                      </div>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             )}
           </div>
-        )}
-      </div>
 
-      {/* Input area */}
-      <div className="flex-shrink-0 px-4 pb-4 pt-2">
-        <ChatInput onSend={send} isLoading={isLoading} />
-      </div>
+          {/* Input area */}
+          <div className="flex-shrink-0 px-4 pb-4 pt-2">
+            <ChatInput onSend={send} isLoading={isLoading} />
+          </div>
+        </>
+      )}
     </div>
   );
 }
