@@ -379,6 +379,19 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
         trackEvent("survey_completed", eventPayload);
       }
 
+      if (onComplete) {
+        onComplete({
+          yrke: snapshotRole,
+          kommun: snapshotZone,
+          employmentType: snapshotEmploymentType,
+          currentSalary: snapshotCurrentSalary,
+          salaryType: snapshotSalaryType,
+          obShare: snapshotObShare,
+        });
+        setSaving(false);
+        return;
+      }
+
       navigate(`/resultat/${leadId}${couponParam}`);
     };
 
