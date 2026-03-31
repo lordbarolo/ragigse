@@ -94,13 +94,17 @@ const App = () => (
 
               {/* ── Consultant Layout ─────────────── */}
               <Route element={<ConsultantLayout />}>
-                <Route path="/consultant/salary-check" element={<SalaryCheck />} />
-                <Route path="/consultant/profil" element={<Profile />} />
-                <Route path="/consultant/radar" element={<Radar />} />
                 <Route path="/consultant/forhandla" element={<Negotiate />} />
-                <Route path="/consultant/referenser" element={<Referenser />} />
                 <Route path="/consultant/fakturakontroll" element={<Fakturakontroll />} />
-                <Route path="/consultant/academy" element={<Academy />} />
+
+                {/* Protected — require login */}
+                <Route path="/consultant/profil" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+                <Route path="/consultant/referenser" element={<ProtectedRoute><Referenser /></ProtectedRoute>} />
+
+                {/* Hidden until polished — require login */}
+                <Route path="/consultant/salary-check" element={<ProtectedRoute><SalaryCheck /></ProtectedRoute>} />
+                <Route path="/consultant/radar" element={<ProtectedRoute><Radar /></ProtectedRoute>} />
+                <Route path="/consultant/academy" element={<ProtectedRoute><Academy /></ProtectedRoute>} />
               </Route>
 
               {/* ── Agency Layout ─────────────────── */}
