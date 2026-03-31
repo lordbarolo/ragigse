@@ -54,7 +54,8 @@ type EventName =
   | "product_cta_clicked"
   | "survey_question_selected"
   | "survey_custom_question_submitted"
-  | "b2b_landing_viewed";
+  | "b2b_landing_viewed"
+  | "fakturakontroll_interest_submitted";
 
 function isInternalTraffic(): boolean {
   const host = window.location.hostname;
