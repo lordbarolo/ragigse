@@ -54,15 +54,15 @@ serve(async (req) => {
 
     const ciData = await ciResponse.json();
 
-    // Map errors back to legacy format
-    if (!ciResponse.ok || ciData.error) {
-      const errorMsg = ciData.message || ciData.error || "Benchmark calculation failed";
+    // CI uses envelope format: { status, data, errors }
+    if (!ciResponse.ok || ciData.status === "error" || ciData.errors?.length > 0) {
+      const errorMsg = ciData.errors?.[0]?.message || ciData.message || ciData.error || "Benchmark calculation failed";
+      const errorCode = ciData.errors?.[0]?.code || "";
 
-      // "No benchmark data" → return 500 like the old function did
-      if (ciData.error === "NO_BENCHMARK_DATA" || ciData.error === "ENTITY_NOT_RESOLVED") {
+      if (errorCode === "NO_DATA_FOUND" || errorCode === "ENTITY_NOT_RESOLVED") {
         return new Response(
           JSON.stringify({ error: "No benchmark data available" }),
-          { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
 
@@ -72,24 +72,30 @@ serve(async (req) => {
       );
     }
 
-    // Map CI response to legacy format
+    // Map CI envelope response to legacy format
     const d = ciData.data;
+    const roleName = d.role?.name || occupation;
+    const geoName = d.geography?.name || null;
+
     const result: Record<string, unknown> = {
-      occupation: d.occupation,
-      sector: d.sector,
-      region: d.region,
-      year: d.year,
-      source: d.source,
-      percentile_25: d.percentile_25,
-      percentile_50: d.percentile_50,
-      percentile_75: d.percentile_75,
+      occupation: roleName,
+      sector,
+      region: geoName,
+      year: d.period ? parseInt(d.period, 10) : new Date().getFullYear(),
+      source: ciData.source?.name || "SCB/Medlingsinstitutet",
+      percentile_25: d.p25_salary,
+      percentile_50: d.median_salary,
+      percentile_75: d.p75_salary,
+      below_threshold: d.below_threshold || false,
+      sample_size: d.sample_size,
     };
 
     if (hasSalary) {
-      result.current_salary = d.current_salary;
-      result.gap_vs_p75 = d.gap_vs_p75;
-      result.gap_pct = d.gap_pct;
-      result.category = d.category;
+      result.current_salary = d.input_salary || current_salary;
+      result.gap_vs_p75 = d.difference_amount;
+      result.gap_pct = d.difference_percent;
+      const absPct = Math.abs(d.difference_percent || 0);
+      result.category = absPct <= 5 ? "small" : absPct <= 15 ? "medium" : "large";
     }
 
     return new Response(JSON.stringify(result), {
