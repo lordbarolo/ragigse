@@ -22,7 +22,7 @@ const Teaser = lazy(() => import("./pages/Teaser"));
 const ReferralLanding = lazy(() => import("./pages/ReferralLanding"));
 const Report = lazy(() => import("./pages/Report"));
 const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
-const Compare = lazy(() => import("./pages/Compare"));
+
 const E2ETest = lazy(() => import("./pages/E2ETest"));
 const AnalyticsDashboard = lazy(() => import("./pages/AnalyticsDashboard"));
 const Admin = lazy(() => import("./pages/Admin"));
@@ -120,7 +120,7 @@ const App = () => (
               <Route path="/referral/:token" element={<ReferralLanding />} />
               <Route path="/betalning-klar" element={<PaymentSuccess />} />
               <Route path="/rapport/:reportId" element={<Report />} />
-              <Route path="/jamfor" element={<Compare />} />
+              
               <Route path="/vanliga-fragor" element={<FAQ />} />
               <Route path="/integritetspolicy" element={<PrivacyPolicy />} />
               <Route path="/referens/:token" element={<ReferenceForm />} />
@@ -130,11 +130,9 @@ const App = () => (
               <Route path="/unsubscribe" element={<Unsubscribe />} />
               <Route path="/referenser-info" element={<ReferenserInfo />} />
               <Route path="/admin" element={<Admin />} />
-              <Route path="/dev/theme-preview" element={<ThemePreview />} />
+              <Route path="/dev/theme-preview" element={<ProtectedRoute><ThemePreview /></ProtectedRoute>} />
               <Route path="/dev/analytics" element={<AnalyticsDashboard />} />
-              {import.meta.env.DEV && (
-                <Route path="/dev/e2e-test" element={<E2ETest />} />
-              )}
+              <Route path="/dev/e2e-test" element={import.meta.env.PROD ? <NotFound /> : <E2ETest />} />
 
               {/* ── Backwards-compat redirects ───── */}
               <Route path="/profil" element={<Navigate to="/consultant/profil" replace />} />
