@@ -8,27 +8,24 @@ import type { TemplateEntry } from './registry.ts'
 const SITE_NAME = 'CompCare'
 
 interface InvoiceConfirmationProps {
-  fileCount?: number
+  name?: string
 }
 
-const InvoiceConfirmationEmail = ({ fileCount }: InvoiceConfirmationProps) => (
+const InvoiceConfirmationEmail = ({ name }: InvoiceConfirmationProps) => (
   <Html lang="sv" dir="ltr">
     <Head />
-    <Preview>Vi har tagit emot dina fakturor — CompCare</Preview>
+    <Preview>Tack för ditt intresse — CompCare</Preview>
     <Body style={main}>
       <Container style={container}>
         <Text style={logo}>{SITE_NAME}</Text>
-        <Heading style={h1}>Fakturor mottagna</Heading>
+        <Heading style={h1}>{name ? `Tack, ${name}!` : 'Tack för ditt intresse!'}</Heading>
         <Text style={text}>
-          Vi har tagit emot {fileCount ? `${fileCount} faktura${fileCount > 1 ? 'r' : ''}` : 'dina fakturor'} för
-          granskning. Vi analyserar om du har debiterats korrekt för jour, beredskap
-          och OB-tillägg.
+          Vi har tagit emot din intresseanmälan för fakturagranskning.
         </Text>
         <Text style={text}>
           <strong>Vad händer nu?</strong>{'\n'}
-          Vi återkommer inom 48 timmar med resultatet. Om vi hittar avvikelser
-          som ger rätt till tilläggsfakturering kontaktar vi dig med en detaljerad
-          sammanställning.
+          Vi kontaktar dig inom 48 timmar för att diskutera hur vi kan granska
+          dina fakturor mot gällande ramavtal och hitta eventuella avvikelser.
         </Text>
         <Text style={text}>
           Du behöver inte göra något mer just nu.
@@ -43,9 +40,9 @@ const InvoiceConfirmationEmail = ({ fileCount }: InvoiceConfirmationProps) => (
 
 export const template = {
   component: InvoiceConfirmationEmail,
-  subject: 'Vi har tagit emot dina fakturor',
+  subject: 'Tack för ditt intresse — fakturagranskning',
   displayName: 'Fakturakontroll-bekräftelse',
-  previewData: { fileCount: 3 },
+  previewData: { name: 'Anna' },
 } satisfies TemplateEntry
 
 const main = { backgroundColor: '#ffffff', fontFamily: "'Inter', Arial, sans-serif" }

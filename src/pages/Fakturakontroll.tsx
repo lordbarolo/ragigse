@@ -169,7 +169,7 @@ export default function Fakturakontroll() {
               document.getElementById("upload")?.scrollIntoView({ behavior: "smooth" });
             }}
           >
-            Granska min ersättning →
+            Jag vill veta mer →
           </Button>
         </div>
       </section>
