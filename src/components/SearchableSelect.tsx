@@ -25,6 +25,7 @@ export default function SearchableSelect({
 }: SearchableSelectProps) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [flipUp, setFlipUp] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -42,7 +43,6 @@ export default function SearchableSelect({
       if (!groups.has(g)) groups.set(g, []);
       groups.get(g)!.push(opt);
     }
-    // Sort items within each group alphabetically
     for (const [, items] of groups) {
       items.sort((a, b) => a.label.localeCompare(b.label, "sv"));
     }
@@ -53,6 +53,12 @@ export default function SearchableSelect({
 
   useEffect(() => {
     if (open) {
+      // Determine if we should flip upward
+      if (containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        const spaceBelow = window.innerHeight - rect.bottom;
+        setFlipUp(spaceBelow < 200);
+      }
       setTimeout(() => inputRef.current?.focus(), 50);
     } else {
       setSearch("");
@@ -105,7 +111,12 @@ export default function SearchableSelect({
       </button>
 
       {open && (
-        <div className="absolute z-50 mt-1 w-full rounded-md border bg-popover text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95">
+        <div
+          className={cn(
+            "absolute z-50 w-full rounded-md border bg-popover text-popover-foreground shadow-md animate-in fade-in-0 zoom-in-95",
+            flipUp ? "bottom-full mb-1" : "top-full mt-1"
+          )}
+        >
           <div className="flex items-center border-b px-3 py-2">
             <Search className="h-4 w-4 text-muted-foreground mr-2 shrink-0" />
             <input
@@ -116,7 +127,7 @@ export default function SearchableSelect({
               className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
             />
           </div>
-          <div className="max-h-60 overflow-y-auto p-1">
+          <div className="max-h-[40vh] overflow-y-auto p-1">
             {filtered.length === 0 ? (
               <p className="py-4 text-center text-sm text-muted-foreground">Inga resultat</p>
             ) : (
