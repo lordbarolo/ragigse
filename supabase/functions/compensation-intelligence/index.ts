@@ -147,6 +147,7 @@ async function resolveRole(
   supabase: ReturnType<typeof createClient>,
   rawRole: string
 ): Promise<ResolvedRole | null> {
+  if (!rawRole || typeof rawRole !== "string") return null;
   async function fetchRole(roleId: string): Promise<ResolvedRole | null> {
     const { data: role } = await supabase
       .from("roles")
