@@ -25,13 +25,24 @@ function FilterPill({
   onChange: (v: string) => void;
 }) {
   const [open, setOpen] = useState(false);
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const [openUp, setOpenUp] = useState(false);
 
   const active = value !== "";
+
+  const handleOpen = () => {
+    if (!open && btnRef.current) {
+      const rect = btnRef.current.getBoundingClientRect();
+      setOpenUp(window.innerHeight - rect.bottom < 280);
+    }
+    setOpen(!open);
+  };
 
   return (
     <div className="relative">
       <button
-        onClick={() => setOpen(!open)}
+        ref={btnRef}
+        onClick={handleOpen}
         className={`flex items-center gap-1.5 rounded-full border px-3.5 py-2 text-[13px] font-medium transition-colors ${
           active
             ? "border-primary/40 bg-primary/10 text-primary"
@@ -52,7 +63,9 @@ function FilterPill({
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute top-full left-0 mt-1.5 z-50 w-56 max-h-64 overflow-y-auto rounded-lg border border-border bg-popover shadow-xl">
+          <div className={`absolute left-0 z-50 w-56 max-h-64 overflow-y-auto rounded-lg border border-border bg-popover shadow-xl ${
+            openUp ? "bottom-full mb-1.5" : "top-full mt-1.5"
+          }`}>
             {options.map((opt) => (
               <button
                 key={opt}
