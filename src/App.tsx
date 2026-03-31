@@ -88,18 +88,23 @@ const App = () => (
               <Route path="/logga-in" element={<Login />} />
               <Route path="/registrera" element={<Signup />} />
               <Route path="/aterstall-losenord" element={<ResetPassword />} />
-              <Route path="/for-bemanningsforetag" element={<AgencyLanding />} />
-              <Route path="/registrera/bemanning" element={<AgencySignup />} />
+              {/* Agency landing — hidden until actively marketed */}
+              {/* <Route path="/for-bemanningsforetag" element={<AgencyLanding />} /> */}
+              {/* <Route path="/registrera/bemanning" element={<AgencySignup />} /> */}
 
               {/* ── Consultant Layout ─────────────── */}
               <Route element={<ConsultantLayout />}>
-                <Route path="/consultant/salary-check" element={<SalaryCheck />} />
-                <Route path="/consultant/profil" element={<Profile />} />
-                <Route path="/consultant/radar" element={<Radar />} />
                 <Route path="/consultant/forhandla" element={<Negotiate />} />
-                <Route path="/consultant/referenser" element={<Referenser />} />
                 <Route path="/consultant/fakturakontroll" element={<Fakturakontroll />} />
-                <Route path="/consultant/academy" element={<Academy />} />
+
+                {/* Protected — require login */}
+                <Route path="/consultant/profil" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+                <Route path="/consultant/referenser" element={<ProtectedRoute><Referenser /></ProtectedRoute>} />
+
+                {/* Hidden until polished — require login */}
+                <Route path="/consultant/salary-check" element={<ProtectedRoute><SalaryCheck /></ProtectedRoute>} />
+                <Route path="/consultant/radar" element={<ProtectedRoute><Radar /></ProtectedRoute>} />
+                <Route path="/consultant/academy" element={<ProtectedRoute><Academy /></ProtectedRoute>} />
               </Route>
 
               {/* ── Agency Layout ─────────────────── */}
@@ -117,7 +122,6 @@ const App = () => (
 
               {/* ── Public routes (no layout) ────── */}
               <Route path="/resultat/:leadId" element={<AnalysisScreen />} />
-              <Route path="/referral/:token" element={<ReferralLanding />} />
               <Route path="/betalning-klar" element={<PaymentSuccess />} />
               <Route path="/rapport/:reportId" element={<Report />} />
               
@@ -126,12 +130,14 @@ const App = () => (
               <Route path="/referens/:token" element={<ReferenceForm />} />
               <Route path="/ping/:token" element={<PingResponse />} />
               <Route path="/sign/:token" element={<SignRepresentation />} />
-              <Route path="/dela" element={<SharePreview />} />
               <Route path="/unsubscribe" element={<Unsubscribe />} />
-              <Route path="/referenser-info" element={<ReferenserInfo />} />
-              <Route path="/admin" element={<Admin />} />
-              <Route path="/dev/theme-preview" element={<ProtectedRoute><ThemePreview /></ProtectedRoute>} />
-              <Route path="/dev/analytics" element={<AnalyticsDashboard />} />
+
+              {/* Hidden / protected routes */}
+              <Route path="/dela" element={<ProtectedRoute><SharePreview /></ProtectedRoute>} />
+              <Route path="/referenser-info" element={<ProtectedRoute><ReferenserInfo /></ProtectedRoute>} />
+              <Route path="/admin" element={<ProtectedRoute allowedRoles={["admin"]}><Admin /></ProtectedRoute>} />
+              <Route path="/dev/theme-preview" element={<ProtectedRoute allowedRoles={["admin"]}><ThemePreview /></ProtectedRoute>} />
+              <Route path="/dev/analytics" element={<ProtectedRoute allowedRoles={["admin"]}><AnalyticsDashboard /></ProtectedRoute>} />
               <Route path="/dev/e2e-test" element={import.meta.env.PROD ? <NotFound /> : <E2ETest />} />
 
               {/* ── Backwards-compat redirects ───── */}
