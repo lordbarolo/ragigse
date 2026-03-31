@@ -10,10 +10,8 @@ import { Loader2, ArrowLeft, CheckCircle2, User, Building2 } from "lucide-react"
 import CompcareLogo from "@/components/CompcareLogo";
 import { trackEvent } from "@/lib/trackEvent";
 
-type SignupRole = "individual" | "agency";
-
 export default function Signup() {
-  const [selectedRole, setSelectedRole] = useState<SignupRole | null>(null);
+  const selectedRole = "individual";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [fullName, setFullName] = useState("");
