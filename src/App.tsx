@@ -97,6 +97,7 @@ const App = () => (
               <Route element={<ConsultantLayout />}>
                 <Route path="/consultant/forhandla" element={<Negotiate />} />
                 <Route path="/consultant/fakturakontroll" element={<Fakturakontroll />} />
+                <Route path="/consultant/ersattning" element={<CompensationPreview />} />
 
                 {/* Protected — require login */}
                 <Route path="/consultant/profil" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
