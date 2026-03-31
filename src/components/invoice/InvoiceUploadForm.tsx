@@ -79,48 +79,6 @@ export default function InvoiceUploadForm() {
         />
       </div>
 
-      {/* File upload */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-foreground">
-          Fakturor (max {MAX_FILES} filer, {MAX_SIZE_MB} MB per fil)
-        </label>
-        <div
-          onClick={() => fileRef.current?.click()}
-          className="border-2 border-dashed border-border rounded-2xl p-8 text-center cursor-pointer hover:border-primary/40 transition-colors"
-        >
-          <Upload className="w-8 h-8 text-muted-foreground mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground">
-            Klicka för att välja filer eller dra och släpp
-          </p>
-          <p className="text-xs text-muted-foreground/60 mt-1">
-            PDF, bilder eller Excel
-          </p>
-        </div>
-        <input
-          ref={fileRef}
-          type="file"
-          multiple
-          accept=".pdf,.png,.jpg,.jpeg,.xlsx,.xls,.csv"
-          onChange={handleFiles}
-          className="hidden"
-        />
-
-        {files.length > 0 && (
-          <div className="space-y-2 mt-3">
-            {files.map((f, i) => (
-              <div key={i} className="flex items-center gap-3 bg-card border border-border rounded-xl px-4 py-3">
-                <FileText className="w-4 h-4 text-primary shrink-0" />
-                <span className="text-sm text-foreground truncate flex-1">{f.name}</span>
-                <span className="text-xs text-muted-foreground">{(f.size / 1024 / 1024).toFixed(1)} MB</span>
-                <button type="button" onClick={() => removeFile(i)} className="text-muted-foreground hover:text-destructive">
-                  <X className="w-4 h-4" />
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
       {/* Message */}
       <div className="space-y-2">
         <label htmlFor="invoice-message" className="text-sm font-medium text-foreground">
