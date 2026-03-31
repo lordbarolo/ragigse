@@ -48,6 +48,7 @@ const VerifyInfo = lazy(() => import("./pages/VerifyInfo"));
 
 const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 const Academy = lazy(() => import("./pages/Academy"));
+const CompensationPreview = lazy(() => import("./pages/CompensationPreview"));
 const AgencyDashboard = lazy(() => import("./pages/AgencyDashboard"));
 const SignRepresentation = lazy(() => import("./pages/SignRepresentation"));
 const AgencyLanding = lazy(() => import("./pages/AgencyLanding"));
