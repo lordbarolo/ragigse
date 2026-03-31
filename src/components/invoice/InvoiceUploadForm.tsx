@@ -13,44 +13,20 @@ export default function InvoiceUploadForm() {
   
   const [uploading, setUploading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const fileRef = useRef<HTMLInputElement>(null);
-
-  const handleFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selected = Array.from(e.target.files || []);
-    const valid = selected.filter((f) => f.size <= MAX_SIZE_MB * 1024 * 1024);
-    if (valid.length < selected.length) {
-      toast({ title: "Filer större än 10 MB filtrerades bort", variant: "destructive" });
-    }
-    setFiles((prev) => [...prev, ...valid].slice(0, MAX_FILES));
-    if (fileRef.current) fileRef.current.value = "";
-  };
-
-  const removeFile = (idx: number) => setFiles((prev) => prev.filter((_, i) => i !== idx));
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || files.length === 0) {
-      toast({ title: "Ange e-post och ladda upp minst en faktura", variant: "destructive" });
+    if (!email) {
+      toast({ title: "Ange din e-postadress", variant: "destructive" });
       return;
     }
 
     setUploading(true);
     try {
-      const filePaths: string[] = [];
-      const ts = Date.now();
-
-      for (const file of files) {
-        const path = `invoices/${ts}_${file.name}`;
-        const { error } = await supabase.storage.from("imports").upload(path, file);
-        if (error) throw error;
-        filePaths.push(path);
-      }
-
       const submissionId = crypto.randomUUID();
       const { error: dbError } = await supabase.from("invoice_submissions").insert({
         id: submissionId,
         email,
-        file_paths: filePaths,
+        file_paths: [],
         message: message || null,
       });
       if (dbError) throw dbError;
@@ -61,7 +37,7 @@ export default function InvoiceUploadForm() {
           templateName: "invoice-confirmation",
           recipientEmail: email,
           idempotencyKey: `invoice-confirm-${submissionId}`,
-          templateData: { fileCount: files.length },
+          templateData: { fileCount: 0 },
         },
       }).catch(() => {});
 
