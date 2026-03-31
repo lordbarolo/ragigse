@@ -147,6 +147,7 @@ async function resolveRole(
   supabase: ReturnType<typeof createClient>,
   rawRole: string
 ): Promise<ResolvedRole | null> {
+  if (!rawRole || typeof rawRole !== "string") return null;
   async function fetchRole(roleId: string): Promise<ResolvedRole | null> {
     const { data: role } = await supabase
       .from("roles")
@@ -203,6 +204,7 @@ async function resolveGeography(
   supabase: ReturnType<typeof createClient>,
   rawGeo: string
 ): Promise<ResolvedGeography | null> {
+  if (!rawGeo || typeof rawGeo !== "string") return null;
   async function fetchGeo(geoId: string, method: string, confidence: number): Promise<ResolvedGeography | null> {
     const { data: g } = await supabase
       .from("geographies")
