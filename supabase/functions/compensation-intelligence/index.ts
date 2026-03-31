@@ -204,6 +204,7 @@ async function resolveGeography(
   supabase: ReturnType<typeof createClient>,
   rawGeo: string
 ): Promise<ResolvedGeography | null> {
+  if (!rawGeo || typeof rawGeo !== "string") return null;
   async function fetchGeo(geoId: string, method: string, confidence: number): Promise<ResolvedGeography | null> {
     const { data: g } = await supabase
       .from("geographies")
