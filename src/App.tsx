@@ -122,7 +122,6 @@ const App = () => (
 
               {/* ── Public routes (no layout) ────── */}
               <Route path="/resultat/:leadId" element={<AnalysisScreen />} />
-              <Route path="/referral/:token" element={<ReferralLanding />} />
               <Route path="/betalning-klar" element={<PaymentSuccess />} />
               <Route path="/rapport/:reportId" element={<Report />} />
               
@@ -131,12 +130,14 @@ const App = () => (
               <Route path="/referens/:token" element={<ReferenceForm />} />
               <Route path="/ping/:token" element={<PingResponse />} />
               <Route path="/sign/:token" element={<SignRepresentation />} />
-              <Route path="/dela" element={<SharePreview />} />
               <Route path="/unsubscribe" element={<Unsubscribe />} />
-              <Route path="/referenser-info" element={<ReferenserInfo />} />
-              <Route path="/admin" element={<Admin />} />
-              <Route path="/dev/theme-preview" element={<ProtectedRoute><ThemePreview /></ProtectedRoute>} />
-              <Route path="/dev/analytics" element={<AnalyticsDashboard />} />
+
+              {/* Hidden / protected routes */}
+              <Route path="/dela" element={<ProtectedRoute><SharePreview /></ProtectedRoute>} />
+              <Route path="/referenser-info" element={<ProtectedRoute><ReferenserInfo /></ProtectedRoute>} />
+              <Route path="/admin" element={<ProtectedRoute allowedRoles={["admin"]}><Admin /></ProtectedRoute>} />
+              <Route path="/dev/theme-preview" element={<ProtectedRoute allowedRoles={["admin"]}><ThemePreview /></ProtectedRoute>} />
+              <Route path="/dev/analytics" element={<ProtectedRoute allowedRoles={["admin"]}><AnalyticsDashboard /></ProtectedRoute>} />
               <Route path="/dev/e2e-test" element={import.meta.env.PROD ? <NotFound /> : <E2ETest />} />
 
               {/* ── Backwards-compat redirects ───── */}
