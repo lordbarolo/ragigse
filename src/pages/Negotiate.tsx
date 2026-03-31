@@ -77,78 +77,79 @@ export default function Negotiate() {
   const showSurvey = !hasContext && !surveyDone && !hasMessages;
 
   return (
-    <div className="h-[100dvh] bg-background flex flex-col overflow-hidden">
-      {/* Header */}
-      <nav className="flex items-center justify-between px-4 h-[52px] flex-shrink-0 border-b border-border/50">
-        <div className="flex items-center gap-3">
-          <Link
-            to="/"
-            className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-secondary transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4 text-muted-foreground" />
-          </Link>
-          <div>
-            <span className="font-display font-bold text-foreground text-sm tracking-tight">
-              Löneassistenten
-            </span>
-            <span className="text-[10px] text-muted-foreground ml-2 font-medium">
-              powered by CI
-            </span>
+    <div className="min-h-[100dvh] bg-secondary/30 flex flex-col items-center justify-center p-4">
+      <div className="w-full max-w-2xl bg-background border border-border rounded-2xl shadow-xl flex flex-col overflow-hidden" style={{ maxHeight: "min(80vh, 700px)" }}>
+        {/* Header */}
+        <nav className="flex items-center justify-between px-4 h-[52px] flex-shrink-0 border-b border-border/50 rounded-t-2xl">
+          <div className="flex items-center gap-3">
+            <Link
+              to="/"
+              className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-secondary transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4 text-muted-foreground" />
+            </Link>
+            <div>
+              <span className="font-display font-bold text-foreground text-sm tracking-tight">
+                Löneassistenten
+              </span>
+              <span className="text-[10px] text-muted-foreground ml-2 font-medium">
+                powered by CI
+              </span>
+            </div>
           </div>
-        </div>
-        {hasMessages && (
-          <button
-            onClick={clearChat}
-            className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-secondary transition-colors"
-            title="Ny konversation"
-          >
-            <RotateCcw className="w-3.5 h-3.5 text-muted-foreground" />
-          </button>
-        )}
-      </nav>
+          {hasMessages && (
+            <button
+              onClick={clearChat}
+              className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-secondary transition-colors"
+              title="Ny konversation"
+            >
+              <RotateCcw className="w-3.5 h-3.5 text-muted-foreground" />
+            </button>
+          )}
+        </nav>
 
-      {showSurvey ? (
-        /* Survey gate */
-        <div className="flex-1 overflow-y-auto px-4 py-6">
-          <Survey onComplete={handleSurveyComplete} />
-        </div>
-      ) : (
-        <>
-          {/* Context bar */}
-          <div className="flex-shrink-0 px-4 py-2">
-            <ContextBar context={context} onUpdate={updateContext} />
+        {showSurvey ? (
+          <div className="flex-1 overflow-y-auto px-4 py-6">
+            <Survey onComplete={handleSurveyComplete} />
           </div>
+        ) : (
+          <>
+            {/* Context bar */}
+            <div className="flex-shrink-0 px-4 py-2">
+              <ContextBar context={context} onUpdate={updateContext} />
+            </div>
 
-          {/* Messages area */}
-          <div ref={scrollRef} className="flex-1 overflow-y-auto px-4">
-            {!hasMessages ? (
-              <SuggestedPrompts onSelect={send} />
-            ) : (
-              <div className="flex flex-col gap-3 py-4">
-                {messages.map((msg) => (
-                  <ChatMessage key={msg.id} message={msg} />
-                ))}
-                {isLoading && (
-                  <div className="flex justify-start">
-                    <div className="bg-card border border-border rounded-2xl rounded-bl-md px-4 py-3">
-                      <div className="flex items-center gap-1.5">
-                        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse [animation-delay:150ms]" />
-                        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse [animation-delay:300ms]" />
+            {/* Messages area */}
+            <div ref={scrollRef} className="flex-1 overflow-y-auto px-4">
+              {!hasMessages ? (
+                <SuggestedPrompts onSelect={send} />
+              ) : (
+                <div className="flex flex-col gap-3 py-4">
+                  {messages.map((msg) => (
+                    <ChatMessage key={msg.id} message={msg} />
+                  ))}
+                  {isLoading && (
+                    <div className="flex justify-start">
+                      <div className="bg-card border border-border rounded-2xl rounded-bl-md px-4 py-3">
+                        <div className="flex items-center gap-1.5">
+                          <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse [animation-delay:150ms]" />
+                          <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse [animation-delay:300ms]" />
+                        </div>
                       </div>
                     </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
+                  )}
+                </div>
+              )}
+            </div>
 
-          {/* Input area */}
-          <div className="flex-shrink-0 px-4 pb-4 pt-2">
-            <ChatInput onSend={send} isLoading={isLoading} />
-          </div>
-        </>
-      )}
+            {/* Input area */}
+            <div className="flex-shrink-0 px-4 pb-4 pt-2">
+              <ChatInput onSend={send} isLoading={isLoading} />
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }
