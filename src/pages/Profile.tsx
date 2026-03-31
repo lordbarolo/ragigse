@@ -64,6 +64,22 @@ export default function Profile() {
           const { data: reg } = await supabase.from("regions").select("kommun").eq("id", cpData.region_id).single();
           regionName = reg?.kommun || null;
         }
+
+        // Fallback: use latest report data if consultant_profiles lacks role/region
+        if (!specialtyName || !regionName) {
+          const { data: latestReport } = await supabase
+            .from("reports")
+            .select("occupation, kommun")
+            .eq("user_id", user.id)
+            .order("created_at", { ascending: false })
+            .limit(1)
+            .maybeSingle();
+          if (latestReport) {
+            if (!specialtyName && latestReport.occupation) specialtyName = latestReport.occupation;
+            if (!regionName && latestReport.kommun) regionName = latestReport.kommun;
+          }
+        }
+
         setProfile({
           specialty_name: specialtyName, region_name: regionName,
           experience_years: cpData.experience_years, employment_type: cpData.employment_type,
