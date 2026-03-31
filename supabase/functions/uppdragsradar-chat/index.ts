@@ -18,6 +18,15 @@ function normalizeRole(role: string): string {
   return role;
 }
 
+/** Determine a broad category for a role to find siblings */
+function roleCategory(role: string): string {
+  const lower = role.toLowerCase();
+  if (lower.includes("läkare")) return "läkare";
+  if (lower.includes("sjuksköterska") || lower.includes("barnmorska")) return "sjuksköterska";
+  if (lower.includes("fysioterapeut") || lower === "sjukgymnast") return "fysioterapeut";
+  return "övrigt";
+}
+
 const MAX_MESSAGE_LENGTH = 500;
 const MAX_HISTORY_MESSAGES = 10;
 
@@ -37,6 +46,28 @@ async function fetchAll(supabase: any, table: string, select: string, filters: (
     offset += PAGE_SIZE;
   }
   return allRows;
+}
+
+/** Helper: send a single SSE data frame and [DONE], then close */
+function sseMessage(text: string): Response {
+  const payload = JSON.stringify({
+    choices: [{ delta: { content: text } }],
+  });
+  const body = `data: ${payload}\n\ndata: [DONE]\n\n`;
+  return new Response(body, {
+    headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
+  });
+}
+
+/** Helper: send a JSON SSE frame with role suggestions */
+function sseRoleSuggestions(message: string, roles: string[]): Response {
+  const payload = JSON.stringify({ type: "role_suggestions", message, roles });
+  const body = `data: ${JSON.stringify({ choices: [{ delta: { content: "" } }], role_suggestions: { message, roles } })}\n\ndata: [DONE]\n\n`;
+  // Use a dedicated JSON structure so the client can detect it
+  const jsonBody = `data: ${JSON.stringify({ type: "role_suggestions", message, roles })}\n\ndata: [DONE]\n\n`;
+  return new Response(jsonBody, {
+    headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
+  });
 }
 
 Deno.serve(async (req) => {
@@ -74,7 +105,14 @@ Deno.serve(async (req) => {
     const rl = await checkRateLimit(supabase, "uppdragsradar-chat", clientIp, 20, 60);
     if (!rl.allowed) return rateLimitResponse(rl, corsHeaders);
 
-    const normalizedRoll = normalizeRole(roll) || roll;
+    // --- FALLBACK 1: selectedRole is missing ---
+    const selectedRole: string | null = (roll && typeof roll === "string" && roll.trim()) ? roll.trim() : null;
+
+    if (!selectedRole) {
+      return sseMessage("Ange din yrkesroll så kan jag hjälpa dig bättre.");
+    }
+
+    const normalizedRoll = normalizeRole(selectedRole) || selectedRole;
 
     // Trim conversation history to last N messages
     const trimmedMessages = messages.slice(-MAX_HISTORY_MESSAGES);
@@ -84,7 +122,7 @@ Deno.serve(async (req) => {
       fetchAll(supabase, "requests",
         "customer, role, specialization, created_at, region, filled, price_median, price_min, price_max",
         (q: any) => q.eq("role", normalizedRoll).eq("is_public", true).not("created_at", "is", null).not("customer", "is", null),
-        "created_at"),
+        "created_at").catch(() => []),
       fetchAll(supabase, "calloff_imports",
         "customer, role, specialization, calloff_date, region, filled, price_median, price_min, price_max",
         (q: any) => q.eq("role", normalizedRoll).not("calloff_date", "is", null).not("customer", "is", null),
@@ -106,6 +144,29 @@ Deno.serve(async (req) => {
     const allData = [...(requests || []), ...normalizedImports].filter(
       (r: any) => r.region && r.created_at
     );
+
+    // --- FALLBACK 2: selectedRole exists but no data ---
+    if (allData.length === 0) {
+      const category = roleCategory(normalizedRoll);
+      const { data: siblingRoles } = await supabase
+        .from("calloff_imports")
+        .select("role")
+        .not("role", "is", null);
+
+      const uniqueRoles = [...new Set((siblingRoles || []).map((r: any) => r.role as string))]
+        .filter((r) => r && roleCategory(r) === category && r !== normalizedRoll)
+        .sort((a, b) => a.localeCompare(b, "sv"));
+
+      if (uniqueRoles.length > 0) {
+        return sseRoleSuggestions(
+          "Jag hittar ingen data för den rollen. Välj en av dessa för att fortsätta:",
+          uniqueRoles.slice(0, 15)
+        );
+      }
+
+      // No siblings either — plain message
+      return sseMessage("Jag hittar tyvärr ingen uppdragsdata för den rollen just nu.");
+    }
 
     const today = new Date();
 

@@ -10,23 +10,33 @@ import { trackEvent } from "@/lib/trackEvent";
 import { sanitizeReijdarText } from "@/lib/reijdarText";
 
 type ChatMsg = { role: "user" | "assistant"; content: string };
+type RoleSuggestion = { message: string; roles: string[] };
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/uppdragsradar-chat`;
 const MAX_INPUT_LENGTH = 500;
 
-export default function ReijdarChat({ selectedRole, initialMessage }: { selectedRole?: string; initialMessage?: string }) {
+export default function ReijdarChat({
+  selectedRole,
+  initialMessage,
+  onRoleChange,
+}: {
+  selectedRole?: string;
+  initialMessage?: string;
+  onRoleChange?: (role: string) => void;
+}) {
   const { user, loading: authLoading } = useAuth();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
   const [hasTrackedStart, setHasTrackedStart] = useState(false);
+  const [roleSuggestions, setRoleSuggestions] = useState<RoleSuggestion | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  }, [messages, roleSuggestions]);
 
   // Handle initial message from example questions
   useEffect(() => {
@@ -38,6 +48,9 @@ export default function ReijdarChat({ selectedRole, initialMessage }: { selected
   const sendMessage = async (text: string) => {
     const trimmed = text.trim();
     if (!trimmed || isStreaming) return;
+
+    // Clear any previous role suggestions
+    setRoleSuggestions(null);
 
     if (!hasTrackedStart) {
       trackEvent("reijdar_chat_started" as any, { role: selectedRole || "" });
@@ -62,7 +75,7 @@ export default function ReijdarChat({ selectedRole, initialMessage }: { selected
         },
         body: JSON.stringify({
           messages: newMessages,
-          roll: selectedRole || "Sjuksköterska",
+          roll: selectedRole || null,
         }),
       });
 
@@ -95,6 +108,13 @@ export default function ReijdarChat({ selectedRole, initialMessage }: { selected
           if (jsonStr === "[DONE]") break;
           try {
             const parsed = JSON.parse(jsonStr);
+
+            // Check for role_suggestions payload
+            if (parsed.type === "role_suggestions") {
+              setRoleSuggestions({ message: parsed.message, roles: parsed.roles });
+              continue;
+            }
+
             const content = parsed.choices?.[0]?.delta?.content;
             if (content) {
               assistantSoFar += content;
@@ -125,6 +145,12 @@ export default function ReijdarChat({ selectedRole, initialMessage }: { selected
   };
 
   const handleSend = () => sendMessage(input);
+
+  const handleRoleSelect = (role: string) => {
+    setRoleSuggestions(null);
+    setMessages([]);
+    onRoleChange?.(role);
+  };
 
   return (
     <>
@@ -189,7 +215,7 @@ export default function ReijdarChat({ selectedRole, initialMessage }: { selected
 
           {/* Messages */}
           <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3 min-h-0">
-            {messages.length === 0 && (
+            {messages.length === 0 && !roleSuggestions && (
               <div className="text-center py-6">
                 <Bot className="w-8 h-8 text-primary/40 mx-auto mb-2" />
                 <p className="text-[13px] text-muted-foreground">
@@ -218,6 +244,26 @@ export default function ReijdarChat({ selectedRole, initialMessage }: { selected
                 )}
               </div>
             ))}
+
+            {/* Role suggestions chips */}
+            {roleSuggestions && (
+              <div className="text-foreground mr-4 space-y-2">
+                <p className="text-[13px]">{roleSuggestions.message}</p>
+                <div className="flex flex-wrap gap-1.5">
+                  {roleSuggestions.roles.map((role) => (
+                    <button
+                      key={role}
+                      type="button"
+                      onClick={() => handleRoleSelect(role)}
+                      className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-medium text-primary hover:bg-primary/20 transition-colors"
+                    >
+                      {role}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             <div ref={chatEndRef} />
           </div>
 
