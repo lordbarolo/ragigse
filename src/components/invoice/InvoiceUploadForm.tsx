@@ -87,7 +87,7 @@ export default function InvoiceUploadForm() {
         <textarea
           id="invoice-message"
           rows={3}
-          placeholder="T.ex. vilken region du arbetar i, bemanningsföretag, eller andra detaljer"
+          placeholder="Berätta kort om din situation — roll, region och ungefär hur länge du fakturerat."
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           className="w-full rounded-xl border border-border bg-background px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none"
