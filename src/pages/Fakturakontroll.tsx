@@ -14,9 +14,9 @@ const MISSED_ITEMS = [
 ];
 
 const STEPS = [
-  { num: "1", title: "Skicka in dina fakturor", desc: "Ladda upp eller maila dina senaste fakturor. Vi behöver inga personuppgifter om patienter — bara fakturaraderna." },
-  { num: "2", title: "Manuell granskning mot ramavtalet", desc: "Vi går igenom varje rad mot gällande ramavtalspriser, OB-tariffer och tilläggsstrukturer i alla 21 regioner." },
-  { num: "3", title: "Du får en avvikelserapport", desc: "Inom 48 timmar får du en sammanställning med exakta avvikelser och hur mycket ersättning du har rätt till." },
+  { num: "1", title: "Anmäl ditt intresse", desc: "Fyll i formuläret nedan. Vi behöver bara din e-post och lite information om din roll." },
+  { num: "2", title: "Vi kontaktar dig", desc: "Inom 48 timmar hör vi av oss för att diskutera hur vi kan granska dina fakturor mot gällande ramavtal." },
+  { num: "3", title: "Du får en avvikelserapport", desc: "Vi går igenom dina fakturor mot ramavtalspriser, OB-tariffer och tilläggsstrukturer och levererar en sammanställning." },
 ];
 
 export default function Fakturakontroll() {
