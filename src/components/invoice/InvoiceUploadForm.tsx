@@ -10,7 +10,7 @@ const MAX_SIZE_MB = 10;
 export default function InvoiceUploadForm() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
-  const [files, setFiles] = useState<File[]>([]);
+  
   const [uploading, setUploading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
