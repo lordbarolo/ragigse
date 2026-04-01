@@ -236,13 +236,19 @@ export default function ReferenceForm() {
       <div className="h-1 w-full bg-primary" />
       <div className="mx-auto max-w-2xl px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-xl font-bold text-foreground">Lämna referens</h1>
+          <h1 className="text-xl font-bold text-foreground">
+            {isVerificationOnly ? "Verifiera referenshandling" : "Lämna referens"}
+          </h1>
           <p className="text-sm text-muted-foreground mt-1">CompCare — Verifierade referenser</p>
         </div>
 
         {/* Context */}
         <div className="mb-8 rounded-xl border border-border bg-muted/50 p-5">
-          <p className="text-sm text-muted-foreground">Du har blivit ombedd att lämna en referens för:</p>
+          <p className="text-sm text-muted-foreground">
+            {isVerificationOnly
+              ? "Du har blivit ombedd att verifiera en referenshandling för:"
+              : "Du har blivit ombedd att lämna en referens för:"}
+          </p>
           <p className="mt-1 text-xl font-semibold text-foreground">{data.individual_name}</p>
           <div className="mt-2 flex flex-wrap items-center gap-2">
             {data.individual_specialty && (
@@ -250,6 +256,30 @@ export default function ReferenceForm() {
             )}
           </div>
           <p className="mt-2 text-sm text-muted-foreground">{data.relationship} · {data.workplace}</p>
+        </div>
+
+        {/* Document preview for verification-only */}
+        {isVerificationOnly && data.document_url && (
+          <div className="mb-8 rounded-xl border border-border bg-card p-5">
+            <h3 className="mb-3 text-base font-semibold text-foreground flex items-center gap-2">
+              <FileText className="h-4 w-4 text-primary" />
+              Importerad referenshandling
+            </h3>
+            <p className="text-sm text-muted-foreground mb-3">
+              Granska dokumentet nedan och bekräfta att du fortfarande står bakom den lämnade referensen.
+            </p>
+            <a
+              href={data.document_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-lg border border-border bg-muted/50 px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors"
+            >
+              <FileText className="h-4 w-4 text-primary" />
+              <span className="truncate max-w-[200px]">{data.document_name || "Referenshandling"}</span>
+              <ExternalLink className="h-3 w-3 text-muted-foreground" />
+            </a>
+          </div>
+        )}
         </div>
 
         {/* Reference text */}
