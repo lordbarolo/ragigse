@@ -3207,6 +3207,8 @@ export type Database = {
           competencies: Json
           confirmed_at: string
           created_at: string
+          document_name: string
+          document_url: string
           giver_email: string
           giver_id: string
           giver_name: string
@@ -3215,6 +3217,7 @@ export type Database = {
           individual_name: string
           individual_specialty: string
           invite_token: string
+          is_verification_only: boolean
           period_end: string
           period_start: string
           recommendation_score: number
