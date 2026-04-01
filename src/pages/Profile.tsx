@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2, FileText, MapPin, Briefcase, Clock, LogOut, UserPlus } from "lucide-react";
+import ProfileInsights from "@/components/profile/ProfileInsights";
 
 interface ReportRow {
   id: string;
@@ -150,6 +151,13 @@ export default function Profile() {
             </CardContent>
           </Card>
         )}
+
+        {/* Zone pricing, salary ranges & upcoming assignments */}
+        <ProfileInsights
+          specialtyName={profile?.specialty_name || null}
+          regionName={profile?.region_name || null}
+          employmentType={profile?.employment_type || null}
+        />
 
         {/* Reports */}
         <Card>
