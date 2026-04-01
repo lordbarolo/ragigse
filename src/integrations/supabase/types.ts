@@ -2204,6 +2204,8 @@ export type Database = {
           competencies: Json | null
           confirmed_at: string | null
           created_at: string
+          document_name: string | null
+          document_url: string | null
           expires_at: string | null
           giver_email: string
           giver_id: string | null
@@ -2211,6 +2213,7 @@ export type Database = {
           id: string
           individual_id: string
           invite_token: string
+          is_verification_only: boolean
           last_confirmed_at: string | null
           period_end: string | null
           period_start: string
@@ -2229,6 +2232,8 @@ export type Database = {
           competencies?: Json | null
           confirmed_at?: string | null
           created_at?: string
+          document_name?: string | null
+          document_url?: string | null
           expires_at?: string | null
           giver_email: string
           giver_id?: string | null
@@ -2236,6 +2241,7 @@ export type Database = {
           id?: string
           individual_id: string
           invite_token: string
+          is_verification_only?: boolean
           last_confirmed_at?: string | null
           period_end?: string | null
           period_start: string
@@ -2254,6 +2260,8 @@ export type Database = {
           competencies?: Json | null
           confirmed_at?: string | null
           created_at?: string
+          document_name?: string | null
+          document_url?: string | null
           expires_at?: string | null
           giver_email?: string
           giver_id?: string | null
@@ -2261,6 +2269,7 @@ export type Database = {
           id?: string
           individual_id?: string
           invite_token?: string
+          is_verification_only?: boolean
           last_confirmed_at?: string | null
           period_end?: string | null
           period_start?: string
@@ -2402,6 +2411,41 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      ref_verification_comments: {
+        Row: {
+          author_id: string
+          author_name: string
+          comment: string
+          created_at: string
+          id: string
+          reference_id: string
+        }
+        Insert: {
+          author_id: string
+          author_name?: string
+          comment: string
+          created_at?: string
+          id?: string
+          reference_id: string
+        }
+        Update: {
+          author_id?: string
+          author_name?: string
+          comment?: string
+          created_at?: string
+          id?: string
+          reference_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ref_verification_comments_reference_id_fkey"
+            columns: ["reference_id"]
+            isOneToOne: false
+            referencedRelation: "ref_references"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ref_verifications: {
         Row: {
