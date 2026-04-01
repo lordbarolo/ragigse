@@ -32,14 +32,14 @@ export default function Hero() {
         </div>
 
         <h1
-          className="font-display font-extrabold leading-[1.04] tracking-[-0.04em] text-foreground mb-2"
-          style={{ fontSize: "clamp(28px, 6.5vw, 56px)" }}
+          className="font-display font-extrabold leading-[1.08] tracking-[-0.03em] text-foreground mb-3"
+          style={{ fontSize: "clamp(36px, 7vw, 56px)" }}
         >
           Tjänar du rätt? Fakturerar du rätt? Förhandlar du rätt?
         </h1>
 
         <p
-          className="text-foreground/55 font-light leading-relaxed max-w-[460px] mx-auto text-base md:text-[15px]"
+          className="text-foreground/55 font-light leading-relaxed max-w-[460px] mx-auto text-lg md:text-[18px]"
         >
           Verifieringsinfrastruktur för vården — ramavtalspriser, lönestatistik och marginalberäkningar samlat från 21 regioner och SCB.
         </p>
