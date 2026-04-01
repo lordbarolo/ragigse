@@ -76,7 +76,7 @@ export default function ServiceCards({ onStartAnalysis }: ServiceCardsProps) {
         <p className="text-sm md:text-xs font-medium uppercase tracking-widest text-muted-foreground mb-2">
           Plattformen
         </p>
-        <h2 className="text-[22px] font-medium text-foreground mb-4">
+        <h2 className="text-2xl md:text-[22px] font-medium text-foreground mb-4">
           Tre frågor. Ett svar.
         </h2>
 
