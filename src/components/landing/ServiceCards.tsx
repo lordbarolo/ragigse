@@ -91,7 +91,7 @@ export default function ServiceCards({ onStartAnalysis }: ServiceCardsProps) {
                 {s.icon}
               </div>
 
-              <h3 className="text-base font-medium text-foreground mb-3">
+              <h3 className="text-lg md:text-base font-medium text-foreground mb-3">
                 {s.title}
               </h3>
               <p className="text-sm text-muted-foreground leading-relaxed flex-1 mb-6">
