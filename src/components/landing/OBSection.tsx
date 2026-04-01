@@ -67,7 +67,7 @@ export default function OBSection() {
               <div className="font-display text-[28px] font-extrabold tracking-[-0.03em] text-foreground mb-1 whitespace-pre-line">
                 {item.amount}
               </div>
-              <div className="text-[11px] text-foreground/35 leading-snug">{item.desc}</div>
+              <div className="text-xs md:text-[11px] text-foreground/35 leading-snug">{item.desc}</div>
             </div>
           ))}
         </div>
