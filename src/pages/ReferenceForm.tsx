@@ -280,7 +280,6 @@ export default function ReferenceForm() {
             </a>
           </div>
         )}
-        </div>
 
         {/* Reference text */}
         <div className="mb-8">
