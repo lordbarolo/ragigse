@@ -86,10 +86,13 @@ export default function Signup() {
         <Card className="w-full max-w-md border-border/50 bg-card/80 backdrop-blur">
           <CardContent className="pt-8 pb-8 text-center space-y-4">
             <CheckCircle2 className="w-12 h-12 text-accent mx-auto" />
-            <h2 className="text-xl font-semibold text-foreground">Konto skapat</h2>
+            <h2 className="text-xl font-semibold text-foreground">Bekräfta din e-post</h2>
             <p className="text-muted-foreground text-sm">
-              Ditt konto för <strong className="text-foreground">{email}</strong> är aktivt.
-              Ingen verifieringsmejl krävs längre.
+              Vi har skickat ett verifieringsmejl till <strong className="text-foreground">{email}</strong>.
+              Klicka på länken i mejlet för att aktivera ditt konto.
+            </p>
+            <p className="text-muted-foreground text-xs">
+              Hittar du inte mejlet? Kolla skräpposten.
             </p>
             <Link to="/logga-in" className="text-primary hover:underline text-sm font-medium">
               Gå till inloggning
