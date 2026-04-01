@@ -67,16 +67,42 @@ export function InviteModal({ open, onOpenChange, userId, onSuccess }: InviteMod
       invite_token: token,
     });
 
-    setLoading(false);
     if (error) {
+      setLoading(false);
       toast.error("Kunde inte skapa inbjudan", { description: error.message });
       return;
     }
 
     const link = `${window.location.origin}/referens/${token}`;
     setInviteLink(link);
+
+    // Fetch individual name for email
+    const { data: profile } = await supabase
+      .from("ref_profiles")
+      .select("full_name")
+      .eq("id", userId)
+      .maybeSingle();
+
+    // Send invite email
+    await supabase.functions.invoke("send-transactional-email", {
+      body: {
+        templateName: "reference-invite",
+        recipientEmail: email,
+        idempotencyKey: `ref-invite-${token}`,
+        templateData: {
+          individualName: profile?.full_name || "",
+          workplace,
+          relationship,
+          isVerification: false,
+          personalMessage: personalMessage || undefined,
+          inviteUrl: link,
+        },
+      },
+    });
+
+    setLoading(false);
     onSuccess();
-    toast.success("Inbjudan skapad!");
+    toast.success("Inbjudan skickad!");
   };
 
   const handleCopy = async () => {
