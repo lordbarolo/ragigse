@@ -123,14 +123,7 @@ export default function PredictionDetail({ prediction, open, onClose }: Predicti
           </ul>
         </section>
 
-        {/* Watch CTA */}
-        <button
-          onClick={handleWatch}
-          className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary text-primary-foreground py-3 text-[14px] font-semibold transition-colors hover:bg-primary/90"
-        >
-          <Radio className="w-4 h-4" />
-          Bevaka denna kombination
-        </button>
+        {/* Bevaknings-CTA gömd tillsvidare */}
       </SheetContent>
     </Sheet>
   );
