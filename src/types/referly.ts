@@ -79,6 +79,9 @@ export interface VaultReference {
   is_stale: boolean;
   group: "attachable" | "stale" | "pending";
   days_until_expiry: number | null;
+  is_verification_only: boolean;
+  document_url: string | null;
+  document_name: string | null;
 }
 
 export interface VaultCounts {

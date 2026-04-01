@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { ShieldCheck, Lock, CheckCircle, ShieldX } from "lucide-react";
+import { ShieldCheck, Lock, CheckCircle, ShieldX, FileText, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { COMPETENCIES } from "@/types/referly";
 
@@ -23,6 +23,9 @@ type InviteData = {
   period_end: string | null;
   status: string;
   giver_email: string;
+  is_verification_only?: boolean;
+  document_url?: string | null;
+  document_name?: string | null;
 };
 
 export default function ReferenceForm() {
@@ -39,6 +42,7 @@ export default function ReferenceForm() {
   const [bankidAcknowledged, setBankidAcknowledged] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [verifyComment, setVerifyComment] = useState("");
 
   const [regEmail, setRegEmail] = useState("");
   const [regPassword, setRegPassword] = useState("");
@@ -75,11 +79,14 @@ export default function ReferenceForm() {
     );
   };
 
-  const isValid =
-    referenceText.trim().length > 0 &&
-    selectedCompetencies.length >= 1 &&
-    score !== null &&
-    bankidAcknowledged;
+  const isVerificationOnly = inviteData?.is_verification_only ?? false;
+
+  const isValid = isVerificationOnly
+    ? bankidAcknowledged
+    : referenceText.trim().length > 0 &&
+      selectedCompetencies.length >= 1 &&
+      score !== null &&
+      bankidAcknowledged;
 
   const handleLogin = async () => {
     if (!loginEmail || !loginPassword) {
@@ -135,18 +142,33 @@ export default function ReferenceForm() {
       }
     }
 
-    const { error } = await supabase.rpc("ref_submit_reference", {
-      _token: token,
-      _giver_id: giverId!,
-      _giver_name: giverName,
-      _reference_text: referenceText,
-      _competencies: selectedCompetencies as unknown as any,
-      _recommendation_score: score!,
-    });
+    let error: any;
+
+    if (isVerificationOnly) {
+      // Verification-only flow: use the dedicated RPC
+      const { error: verifyErr } = await supabase.rpc("ref_verify_imported_reference", {
+        _token: token,
+        _giver_id: giverId!,
+        _giver_name: giverName,
+        _comment: verifyComment.trim() || null,
+      });
+      error = verifyErr;
+    } else {
+      // Standard reference flow
+      const { error: refErr } = await supabase.rpc("ref_submit_reference", {
+        _token: token,
+        _giver_id: giverId!,
+        _giver_name: giverName,
+        _reference_text: referenceText,
+        _competencies: selectedCompetencies as unknown as any,
+        _recommendation_score: score!,
+      });
+      error = refErr;
+    }
 
     setSubmitting(false);
     if (error) {
-      toast.error("Kunde inte skicka referensen", { description: error.message });
+      toast.error(isVerificationOnly ? "Kunde inte verifiera referensen" : "Kunde inte skicka referensen", { description: error.message });
       return;
     }
     setSubmitted(true);
@@ -194,7 +216,7 @@ export default function ReferenceForm() {
           <div className="text-center">
             <CheckCircle className="mx-auto mb-4 h-16 w-16 text-primary" />
             <h2 className="text-2xl font-semibold text-foreground">Tack!</h2>
-            <p className="mt-2 text-muted-foreground">Din referens har registrerats.</p>
+            <p className="mt-2 text-muted-foreground">{isVerificationOnly ? "Din verifiering har registrerats." : "Din referens har registrerats."}</p>
             {!user && (
               <p className="mt-2 text-sm text-muted-foreground">
                 Ditt konto har skapats! <Link to="/logga-in" className="text-primary hover:underline">Logga in</Link> för att se dina lämnade referenser.
@@ -214,13 +236,19 @@ export default function ReferenceForm() {
       <div className="h-1 w-full bg-primary" />
       <div className="mx-auto max-w-2xl px-4 py-8">
         <div className="mb-8">
-          <h1 className="text-xl font-bold text-foreground">Lämna referens</h1>
+          <h1 className="text-xl font-bold text-foreground">
+            {isVerificationOnly ? "Verifiera referenshandling" : "Lämna referens"}
+          </h1>
           <p className="text-sm text-muted-foreground mt-1">CompCare — Verifierade referenser</p>
         </div>
 
         {/* Context */}
         <div className="mb-8 rounded-xl border border-border bg-muted/50 p-5">
-          <p className="text-sm text-muted-foreground">Du har blivit ombedd att lämna en referens för:</p>
+          <p className="text-sm text-muted-foreground">
+            {isVerificationOnly
+              ? "Du har blivit ombedd att verifiera en referenshandling för:"
+              : "Du har blivit ombedd att lämna en referens för:"}
+          </p>
           <p className="mt-1 text-xl font-semibold text-foreground">{data.individual_name}</p>
           <div className="mt-2 flex flex-wrap items-center gap-2">
             {data.individual_specialty && (
@@ -230,64 +258,104 @@ export default function ReferenceForm() {
           <p className="mt-2 text-sm text-muted-foreground">{data.relationship} · {data.workplace}</p>
         </div>
 
-        {/* Reference text */}
-        <div className="mb-8">
-          <h3 className="mb-3 text-base font-semibold text-foreground">Om personen</h3>
-          <Textarea
-            value={referenceText}
-            onChange={(e) => setReferenceText(e.target.value)}
-            placeholder="Beskriv din erfarenhet av att arbeta med denna person. Fokusera på klinisk kompetens, samarbetsförmåga och professionalism."
-            className="min-h-[160px]"
-          />
-          <p className="mt-1 text-right text-xs text-muted-foreground">{referenceText.length} tecken</p>
-        </div>
+        {/* Document preview for verification-only */}
+        {isVerificationOnly && data.document_url && (
+          <div className="mb-8 rounded-xl border border-border bg-card p-5">
+            <h3 className="mb-3 text-base font-semibold text-foreground flex items-center gap-2">
+              <FileText className="h-4 w-4 text-primary" />
+              Importerad referenshandling
+            </h3>
+            <p className="text-sm text-muted-foreground mb-3">
+              Granska dokumentet nedan och bekräfta att du fortfarande står bakom den lämnade referensen.
+            </p>
+            <a
+              href={data.document_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 rounded-lg border border-border bg-muted/50 px-4 py-2.5 text-sm text-foreground hover:bg-muted transition-colors"
+            >
+              <FileText className="h-4 w-4 text-primary" />
+              <span className="truncate max-w-[200px]">{data.document_name || "Referenshandling"}</span>
+              <ExternalLink className="h-3 w-3 text-muted-foreground" />
+            </a>
+          </div>
+        )}
 
-        {/* Competencies */}
-        <div className="mb-8">
-          <h3 className="mb-1 text-base font-semibold text-foreground">Kompetensbekräftelse</h3>
-          <p className="mb-3 text-sm text-muted-foreground">Markera de kompetensområden du kan intyga:</p>
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-            {COMPETENCIES.map((c) => (
-              <div
-                key={c}
-                role="button"
-                tabIndex={0}
-                onClick={() => toggleCompetency(c)}
-                onKeyDown={(e) => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); toggleCompetency(c); } }}
-                className="flex items-center gap-2 rounded-lg border border-border p-3 cursor-pointer hover:bg-muted/50 transition-colors"
-              >
-                <Checkbox checked={selectedCompetencies.includes(c)} onCheckedChange={() => {}} />
-                <span className="text-sm text-foreground">{c}</span>
+        {/* Verification-only: comment field */}
+        {isVerificationOnly && (
+          <div className="mb-8">
+            <h3 className="mb-3 text-base font-semibold text-foreground">Kommentar (valfritt)</h3>
+            <Textarea
+              value={verifyComment}
+              onChange={(e) => setVerifyComment(e.target.value)}
+              placeholder="Lämna gärna en kommentar, t.ex. bekräfta att du fortfarande står bakom referensen eller ange eventuella uppdateringar."
+              className="min-h-[120px]"
+              maxLength={1000}
+            />
+            <p className="mt-1 text-right text-xs text-muted-foreground">{verifyComment.length}/1000</p>
+          </div>
+        )}
+
+        {/* Standard reference: text, competencies, score */}
+        {!isVerificationOnly && (
+          <>
+            <div className="mb-8">
+              <h3 className="mb-3 text-base font-semibold text-foreground">Om personen</h3>
+              <Textarea
+                value={referenceText}
+                onChange={(e) => setReferenceText(e.target.value)}
+                placeholder="Beskriv din erfarenhet av att arbeta med denna person. Fokusera på klinisk kompetens, samarbetsförmåga och professionalism."
+                className="min-h-[160px]"
+              />
+              <p className="mt-1 text-right text-xs text-muted-foreground">{referenceText.length} tecken</p>
+            </div>
+
+            <div className="mb-8">
+              <h3 className="mb-1 text-base font-semibold text-foreground">Kompetensbekräftelse</h3>
+              <p className="mb-3 text-sm text-muted-foreground">Markera de kompetensområden du kan intyga:</p>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {COMPETENCIES.map((c) => (
+                  <div
+                    key={c}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => toggleCompetency(c)}
+                    onKeyDown={(e) => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); toggleCompetency(c); } }}
+                    className="flex items-center gap-2 rounded-lg border border-border p-3 cursor-pointer hover:bg-muted/50 transition-colors"
+                  >
+                    <Checkbox checked={selectedCompetencies.includes(c)} onCheckedChange={() => {}} />
+                    <span className="text-sm text-foreground">{c}</span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
 
-        {/* Recommendation score */}
-        <div className="mb-8">
-          <h3 className="mb-3 text-sm font-medium text-foreground">Hur starkt rekommenderar du denna person?</h3>
-          <div className="flex gap-2">
-            {[1, 2, 3, 4, 5].map((n) => (
-              <button
-                key={n}
-                type="button"
-                onClick={() => setScore(n)}
-                className={`flex h-12 w-12 items-center justify-center rounded-lg border text-sm font-medium transition-colors ${
-                  score === n
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "border-border bg-card text-muted-foreground hover:border-primary/50 hover:bg-primary/5"
-                }`}
-              >
-                {n}
-              </button>
-            ))}
-          </div>
-          <div className="mt-1 flex justify-between text-xs text-muted-foreground">
-            <span>Svag</span>
-            <span>Godkänd</span>
-            <span>Utmärkt</span>
-          </div>
-        </div>
+            <div className="mb-8">
+              <h3 className="mb-3 text-sm font-medium text-foreground">Hur starkt rekommenderar du denna person?</h3>
+              <div className="flex gap-2">
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <button
+                    key={n}
+                    type="button"
+                    onClick={() => setScore(n)}
+                    className={`flex h-12 w-12 items-center justify-center rounded-lg border text-sm font-medium transition-colors ${
+                      score === n
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border bg-card text-muted-foreground hover:border-primary/50 hover:bg-primary/5"
+                    }`}
+                  >
+                    {n}
+                  </button>
+                ))}
+              </div>
+              <div className="mt-1 flex justify-between text-xs text-muted-foreground">
+                <span>Svag</span>
+                <span>Godkänd</span>
+                <span>Utmärkt</span>
+              </div>
+            </div>
+          </>
+        )}
 
         {/* BankID placeholder */}
         <div className="mb-8 rounded-xl border-2 border-dashed border-border bg-muted/30 p-5">
@@ -359,7 +427,9 @@ export default function ReferenceForm() {
         )}
 
         <Button className="w-full" size="lg" disabled={!isValid || submitting} onClick={handleSubmit}>
-          {submitting ? "Skickar referens…" : "Skicka referens"}
+          {submitting
+            ? (isVerificationOnly ? "Verifierar…" : "Skickar referens…")
+            : (isVerificationOnly ? "Bekräfta verifiering" : "Skicka referens")}
         </Button>
       </div>
     </div>

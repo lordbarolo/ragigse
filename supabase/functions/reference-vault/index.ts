@@ -52,7 +52,7 @@ Deno.serve(async (req) => {
       // Fetch references with freshness computation
       const { data: refs, error } = await supabase
         .from("ref_references")
-        .select("id, giver_name, giver_email, workplace, relationship, period_start, period_end, status, competencies, recommendation_score, confirmed_at, created_at, verification_level, last_confirmed_at, verified_at, expires_at, attachable")
+        .select("id, giver_name, giver_email, workplace, relationship, period_start, period_end, status, competencies, recommendation_score, confirmed_at, created_at, verification_level, last_confirmed_at, verified_at, expires_at, attachable, is_verification_only, document_url, document_name")
         .eq("individual_id", consultant_id)
         .in("status", ["active", "pending"])
         .order("created_at", { ascending: false });
@@ -100,6 +100,9 @@ Deno.serve(async (req) => {
           days_until_expiry: ref.expires_at
             ? Math.max(0, Math.round((new Date(ref.expires_at).getTime() - now.getTime()) / (24 * 60 * 60 * 1000)))
             : null,
+          is_verification_only: ref.is_verification_only || false,
+          document_url: ref.document_url || null,
+          document_name: ref.document_name || null,
         };
       });
 

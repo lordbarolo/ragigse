@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Shield, ShieldCheck, ShieldAlert, RefreshCw, Paperclip, Clock } from "lucide-react";
+import { Shield, ShieldCheck, ShieldAlert, RefreshCw, Paperclip, Clock, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import type { VaultReference } from "@/types/referly";
@@ -152,9 +152,24 @@ export function VaultReferenceCard({ reference, onRefresh }: VaultReferenceCardP
       )}
 
       {isAttachable && (
-        <div className="flex items-center gap-1.5 text-[11px] text-primary/70">
-          <Paperclip className="h-3 w-3" />
-          <span>Redo att bifogas</span>
+        <div className="flex items-center gap-3 text-[11px]">
+          <span className="flex items-center gap-1 text-primary/70">
+            <Paperclip className="h-3 w-3" />
+            Redo att bifogas
+          </span>
+          {reference.is_verification_only && reference.document_name && (
+            <span className="flex items-center gap-1 text-muted-foreground">
+              <FileText className="h-3 w-3" />
+              Importerad
+            </span>
+          )}
+        </div>
+      )}
+
+      {isPending && reference.is_verification_only && reference.document_name && (
+        <div className="flex items-center gap-1.5 mt-2 text-[11px] text-muted-foreground">
+          <FileText className="h-3 w-3" />
+          <span>Importerad referenshandling: {reference.document_name}</span>
         </div>
       )}
     </div>
