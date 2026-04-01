@@ -23,6 +23,9 @@ type InviteData = {
   period_end: string | null;
   status: string;
   giver_email: string;
+  is_verification_only?: boolean;
+  document_url?: string | null;
+  document_name?: string | null;
 };
 
 export default function ReferenceForm() {
