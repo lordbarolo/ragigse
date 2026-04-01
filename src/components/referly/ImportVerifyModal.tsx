@@ -107,16 +107,42 @@ export function ImportVerifyModal({ open, onOpenChange, userId, onSuccess }: Imp
       document_name: file.name,
     });
 
-    setLoading(false);
     if (error) {
+      setLoading(false);
       toast.error("Kunde inte skapa verifieringsinbjudan", { description: error.message });
       return;
     }
 
     const link = `${window.location.origin}/referens/${token}`;
     setInviteLink(link);
+
+    // Fetch individual name for email
+    const { data: profile } = await supabase
+      .from("ref_profiles")
+      .select("full_name")
+      .eq("id", userId)
+      .maybeSingle();
+
+    // Send verification invite email
+    await supabase.functions.invoke("send-transactional-email", {
+      body: {
+        templateName: "reference-invite",
+        recipientEmail: email,
+        idempotencyKey: `ref-verify-${token}`,
+        templateData: {
+          individualName: profile?.full_name || "",
+          workplace,
+          relationship,
+          isVerification: true,
+          personalMessage: personalMessage || undefined,
+          inviteUrl: link,
+        },
+      },
+    });
+
+    setLoading(false);
     onSuccess();
-    toast.success("Verifieringsinbjudan skapad!");
+    toast.success("Verifieringsinbjudan skickad!");
   };
 
   const handleCopy = async () => {
