@@ -1728,6 +1728,7 @@ export type Database = {
       profiles: {
         Row: {
           created_at: string
+          email: string | null
           has_bankid: boolean | null
           has_required_references: boolean | null
           has_valid_hosp: boolean | null
@@ -1739,6 +1740,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          email?: string | null
           has_bankid?: boolean | null
           has_required_references?: boolean | null
           has_valid_hosp?: boolean | null
@@ -1750,6 +1752,7 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          email?: string | null
           has_bankid?: boolean | null
           has_required_references?: boolean | null
           has_valid_hosp?: boolean | null
