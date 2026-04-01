@@ -7,48 +7,41 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Progress } from "@/components/ui/progress";
 import {
-  ShieldCheck, ShieldX, Star, Briefcase, Clock,
-  CheckCircle, XCircle, Award, Users, ArrowLeft,
-  Eye, Building2,
+  ShieldCheck, ShieldX, ArrowLeft, Eye, Building2,
+  Vault, Shield, FileText, Briefcase, Clock,
+  CheckCircle, ExternalLink,
 } from "lucide-react";
+
+interface PublicReference {
+  relationship: string;
+  workplace: string;
+  period_start: string;
+  period_end: string | null;
+  recommendation_score: number;
+  competencies: string[] | null;
+  confirmed_at: string;
+  verification_level?: string;
+  last_confirmed_at?: string;
+  attachable?: boolean;
+}
 
 interface PublicProfileData {
   full_name: string;
   specialty: string | null;
-  bio: string | null;
-  years_licensed: number | null;
   trust_score: number;
   trust_tier: string;
   score_updated_at: string | null;
-  score_breakdown: {
-    role: { earned: number; max: number; chiefs: number; colleagues: number };
-    domain: { earned: number; max: number; verified_count: number };
-    recency: { earned: number; max: number; freshest_months: number };
-    ping: { earned: number; max: number; has_active_ping: boolean };
-    compliance: { earned: number; max: number };
-  } | null;
   reference_count: number;
-  avg_recommendation: number;
-  competencies: Record<string, number>;
   verifications: { bankid: boolean; ivo: boolean; hosp: boolean };
-  references: Array<{
-    relationship: string;
-    workplace: string;
-    period_start: string;
-    period_end: string | null;
-    recommendation_score: number;
-    competencies: string[] | null;
-    confirmed_at: string;
-  }>;
+  references: PublicReference[];
 }
 
-const TIER_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
-  elite: { label: "Elite", color: "text-primary", bg: "bg-primary/10", border: "border-primary/30" },
-  verified_pro: { label: "Verifierad Pro", color: "text-primary", bg: "bg-primary/5", border: "border-primary/20" },
-  basic: { label: "Grundnivå", color: "text-foreground", bg: "bg-muted", border: "border-border" },
-  incomplete: { label: "Ofullständig", color: "text-muted-foreground", bg: "bg-muted/50", border: "border-border/50" },
+const TIER_LABEL: Record<string, string> = {
+  elite: "Elite",
+  verified_pro: "Verifierad Pro",
+  basic: "Grundnivå",
+  incomplete: "Ofullständig",
 };
 
 export default function PublicProfile() {
@@ -57,7 +50,6 @@ export default function PublicProfile() {
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
 
-  // Identity gate state — persist in sessionStorage
   const sessionKey = `pp_gate_${id}`;
   const alreadyIdentified = typeof window !== "undefined" && sessionStorage.getItem(sessionKey) === "1";
   const [gateOpen, setGateOpen] = useState(!alreadyIdentified);
@@ -66,8 +58,6 @@ export default function PublicProfile() {
 
   const handleIdentify = async () => {
     if (!viewerName.trim() || !viewerOrg.trim()) return;
-
-    // Log access with identity
     if (id) {
       await supabase.from("ref_access_logs").insert({
         resource_type: "public_profile",
@@ -76,7 +66,6 @@ export default function PublicProfile() {
         viewer_org: viewerOrg.trim(),
       });
     }
-
     sessionStorage.setItem(sessionKey, "1");
     setGateOpen(false);
   };
@@ -97,11 +86,11 @@ export default function PublicProfile() {
 
   if (loading) {
     return (
-      <div className="mx-auto max-w-2xl px-4 py-8 space-y-6">
-        <Skeleton className="h-10 w-64" />
-        <Skeleton className="h-48 w-full" />
+      <div className="mx-auto max-w-2xl px-4 py-8 space-y-4">
+        <Skeleton className="h-10 w-48" />
         <Skeleton className="h-32 w-full" />
-        <Skeleton className="h-64 w-full" />
+        <Skeleton className="h-24 w-full" />
+        <Skeleton className="h-24 w-full" />
       </div>
     );
   }
@@ -123,7 +112,6 @@ export default function PublicProfile() {
     );
   }
 
-  // ── Identity Gate ───────────────────────────────────
   if (gateOpen) {
     return (
       <div className="flex flex-1 items-center justify-center px-4 py-16">
@@ -139,32 +127,14 @@ export default function PublicProfile() {
             <div className="space-y-4">
               <div>
                 <Label htmlFor="viewer-name">Ditt namn *</Label>
-                <Input
-                  id="viewer-name"
-                  placeholder="Anna Andersson"
-                  value={viewerName}
-                  onChange={(e) => setViewerName(e.target.value)}
-                  maxLength={100}
-                  autoFocus
-                />
+                <Input id="viewer-name" placeholder="Anna Andersson" value={viewerName} onChange={(e) => setViewerName(e.target.value)} maxLength={100} autoFocus />
               </div>
               <div>
                 <Label htmlFor="viewer-org">Organisation *</Label>
-                <Input
-                  id="viewer-org"
-                  placeholder="t.ex. Region Stockholm"
-                  value={viewerOrg}
-                  onChange={(e) => setViewerOrg(e.target.value)}
-                  maxLength={200}
-                />
+                <Input id="viewer-org" placeholder="t.ex. Region Stockholm" value={viewerOrg} onChange={(e) => setViewerOrg(e.target.value)} maxLength={200} />
               </div>
-              <Button
-                onClick={handleIdentify}
-                disabled={!viewerName.trim() || !viewerOrg.trim()}
-                className="w-full gap-2"
-              >
-                <Building2 className="h-4 w-4" />
-                Visa profil
+              <Button onClick={handleIdentify} disabled={!viewerName.trim() || !viewerOrg.trim()} className="w-full gap-2">
+                <Building2 className="h-4 w-4" /> Visa referenser
               </Button>
               <p className="text-[10px] text-muted-foreground text-center">
                 Genom att fortsätta godkänner du att ditt besök loggas i enlighet med vår integritetspolicy.
@@ -176,159 +146,53 @@ export default function PublicProfile() {
     );
   }
 
-  // ── Full Profile View ──────────────────────────────
-  const tier = TIER_CONFIG[data.trust_tier] ?? TIER_CONFIG.incomplete;
-  const competencyEntries = Object.entries(data.competencies).sort(([, a], [, b]) => b - a);
+  // ── Vault-only view ────────────────────────────────
+  const activeRefs = data.references.filter((r) => r.attachable !== false);
+  const tierLabel = TIER_LABEL[data.trust_tier] ?? TIER_LABEL.incomplete;
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8">
-      {/* Back */}
       <Button variant="ghost" size="sm" className="mb-6 gap-1.5 text-muted-foreground" asChild>
         <Link to="/"><ArrowLeft className="h-4 w-4" /> Tillbaka</Link>
       </Button>
 
-      {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-foreground">{data.full_name}</h1>
-            {data.specialty && (
-              <p className="mt-1 text-sm text-muted-foreground">{data.specialty}</p>
-            )}
-            {data.years_licensed != null && (
-              <p className="mt-0.5 text-xs text-muted-foreground">{data.years_licensed} års erfarenhet</p>
-            )}
-          </div>
-          <Badge className={`${tier.bg} ${tier.color} ${tier.border} border rounded-lg px-3 py-1.5 text-sm font-semibold`}>
-            {tier.label}
+      {/* Compact header */}
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-xl font-bold text-foreground">{data.full_name}</h1>
+          {data.specialty && <p className="text-sm text-muted-foreground">{data.specialty}</p>}
+        </div>
+        <div className="flex items-center gap-2">
+          <Badge variant="outline" className="gap-1 text-xs">
+            <ShieldCheck className="h-3 w-3 text-primary" />
+            {tierLabel}
           </Badge>
         </div>
-        {data.bio && (
-          <p className="mt-4 text-sm text-muted-foreground leading-relaxed">{data.bio}</p>
-        )}
       </div>
 
-      {/* Trust Score */}
-      <Card className={`mb-6 border ${tier.border}`}>
-        <CardContent className="p-5">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <ShieldCheck className={`h-5 w-5 ${tier.color}`} />
-              <h2 className="font-semibold text-foreground">Trust Score</h2>
-            </div>
-            <span className={`text-3xl font-bold ${tier.color}`}>{data.trust_score}</span>
+      {/* Vault */}
+      <Card className="border-border mb-4">
+        <CardContent className="p-4">
+          <div className="flex items-center gap-2 mb-1">
+            <Vault className="h-4 w-4 text-primary" />
+            <h2 className="text-sm font-semibold text-foreground tracking-tight">Reference Vault</h2>
           </div>
-          <Progress value={data.trust_score} className="h-2 mb-4" />
-
-          {data.score_breakdown && (
-            <div className="grid grid-cols-2 gap-3 text-xs">
-              <ScorePill label="Referensroller" earned={data.score_breakdown.role.earned} max={data.score_breakdown.role.max} />
-              <ScorePill label="Verifierade domäner" earned={data.score_breakdown.domain.earned} max={data.score_breakdown.domain.max} />
-              <ScorePill label="Aktualitet" earned={data.score_breakdown.recency.earned} max={data.score_breakdown.recency.max} />
-              <ScorePill label="Ping-bekräftelse" earned={data.score_breakdown.ping.earned} max={data.score_breakdown.ping.max} />
-              <ScorePill label="Myndighetskontroll" earned={data.score_breakdown.compliance.earned} max={data.score_breakdown.compliance.max} />
-            </div>
-          )}
+          <p className="text-xs text-muted-foreground">
+            {activeRefs.length} verifierad{activeRefs.length !== 1 ? "e" : ""} referens{activeRefs.length !== 1 ? "er" : ""} &middot; {data.reference_count} totalt
+          </p>
         </CardContent>
       </Card>
 
-      {/* Stats row */}
-      <div className="grid grid-cols-3 gap-3 mb-6">
-        <Card className="border-border/50">
-          <CardContent className="p-4 text-center">
-            <Users className="mx-auto mb-1 h-5 w-5 text-primary" />
-            <p className="text-2xl font-bold text-foreground">{data.reference_count}</p>
-            <p className="text-xs text-muted-foreground">Referenser</p>
-          </CardContent>
-        </Card>
-        <Card className="border-border/50">
-          <CardContent className="p-4 text-center">
-            <Star className="mx-auto mb-1 h-5 w-5 text-primary" />
-            <p className="text-2xl font-bold text-foreground">{data.avg_recommendation}</p>
-            <p className="text-xs text-muted-foreground">Snittbetyg</p>
-          </CardContent>
-        </Card>
-        <Card className="border-border/50">
-          <CardContent className="p-4 text-center">
-            <Award className="mx-auto mb-1 h-5 w-5 text-primary" />
-            <p className="text-2xl font-bold text-foreground">{competencyEntries.length}</p>
-            <p className="text-xs text-muted-foreground">Kompetenser</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Verifications */}
-      <Card className="mb-6 border-border/50">
-        <CardContent className="p-5">
-          <h3 className="text-sm font-semibold text-foreground mb-3">Verifieringar</h3>
-          <div className="space-y-2">
-            <VerificationRow label="BankID" verified={data.verifications.bankid} />
-            <VerificationRow label="IVO Tillsyn" verified={data.verifications.ivo} />
-            <VerificationRow label="HOSP" verified={data.verifications.hosp} />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Competencies */}
-      {competencyEntries.length > 0 && (
-        <Card className="mb-6 border-border/50">
-          <CardContent className="p-5">
-            <h3 className="text-sm font-semibold text-foreground mb-3">Bekräftade kompetenser</h3>
-            <div className="space-y-2">
-              {competencyEntries.map(([name, count]) => (
-                <div key={name} className="flex items-center justify-between">
-                  <span className="text-sm text-foreground">{name}</span>
-                  <div className="flex items-center gap-2">
-                    <div className="h-1.5 rounded-full bg-muted w-24 overflow-hidden">
-                      <div
-                        className="h-full rounded-full bg-primary transition-all"
-                        style={{ width: `${Math.min(100, (count / data.reference_count) * 100)}%` }}
-                      />
-                    </div>
-                    <span className="text-xs text-muted-foreground w-8 text-right">{count}/{data.reference_count}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* References */}
-      {data.references.length > 0 && (
-        <div>
-          <h3 className="text-sm font-semibold text-foreground mb-3">Referenshistorik</h3>
-          <div className="space-y-2">
-            {data.references.map((ref, i) => (
-              <Card key={i} className="border-border/50">
-                <CardContent className="p-4">
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="text-xs rounded-md">{ref.relationship}</Badge>
-                        <span className="text-sm font-medium text-foreground">{ref.workplace}</span>
-                      </div>
-                      <p className="mt-1 text-xs text-muted-foreground">
-                        {ref.period_start}{ref.period_end ? ` → ${ref.period_end}` : " → pågående"}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-0.5">
-                      {[1, 2, 3, 4, 5].map((n) => (
-                        <span key={n} className={`text-sm ${n <= ref.recommendation_score ? "text-primary" : "text-muted-foreground/20"}`}>●</span>
-                      ))}
-                    </div>
-                  </div>
-                  {ref.competencies && ref.competencies.length > 0 && (
-                    <div className="mt-2 flex flex-wrap gap-1">
-                      {(Array.isArray(ref.competencies) ? ref.competencies : []).map((c: string) => (
-                        <Badge key={c} variant="secondary" className="text-[10px] rounded-md">{c}</Badge>
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+      {/* Reference list */}
+      {data.references.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-sm text-muted-foreground">Inga referenser i valvet</p>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {data.references.map((ref, i) => (
+            <PublicVaultCard key={i} reference={ref} />
+          ))}
         </div>
       )}
 
@@ -338,47 +202,76 @@ export default function PublicProfile() {
         <span>Granskad av <strong className="text-foreground">{viewerName}</strong> ({viewerOrg})</span>
       </div>
 
-      {/* Footer */}
-      <div className="mt-8 text-center text-xs text-muted-foreground space-y-1">
+      <div className="mt-6 text-center text-xs text-muted-foreground">
         {data.score_updated_at && (
-          <p>Senast verifierad: {new Date(data.score_updated_at).toLocaleDateString("sv-SE")}</p>
+          <p>Senast uppdaterad: {new Date(data.score_updated_at).toLocaleDateString("sv-SE")}</p>
         )}
-        <p>Verifierad profil via CompCare</p>
+        <p className="mt-1">Verifierad profil via CompCare</p>
       </div>
     </div>
   );
 }
 
-function ScorePill({ label, earned, max }: { label: string; earned: number; max: number }) {
-  const pct = max > 0 ? (earned / max) * 100 : 0;
-  return (
-    <div className="rounded-lg bg-muted/50 p-2.5">
-      <div className="flex items-center justify-between mb-1">
-        <span className="text-muted-foreground">{label}</span>
-        <span className="font-medium text-foreground">{earned}/{max}</span>
-      </div>
-      <div className="h-1 rounded-full bg-muted overflow-hidden">
-        <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${pct}%` }} />
-      </div>
-    </div>
-  );
-}
+/* ── Vault card for public view ─────────────────────── */
+function PublicVaultCard({ reference }: { reference: PublicReference }) {
+  const isAttachable = reference.attachable !== false;
+  const isFresh = reference.last_confirmed_at
+    ? (Date.now() - new Date(reference.last_confirmed_at).getTime()) < 6 * 30.44 * 86400 * 1000
+    : false;
 
-function VerificationRow({ label, verified }: { label: string; verified: boolean }) {
   return (
-    <div className="flex items-center justify-between py-1.5">
-      <span className="text-sm text-foreground">{label}</span>
-      {verified ? (
-        <div className="flex items-center gap-1 text-primary">
-          <CheckCircle className="h-4 w-4" />
-          <span className="text-xs font-medium">Verifierad</span>
+    <Card className={`border transition-colors ${isAttachable ? "border-primary/20 bg-primary/[0.02]" : "border-border"}`}>
+      <CardContent className="p-4">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <Badge variant="outline" className="text-[10px] rounded-md shrink-0">{reference.relationship}</Badge>
+              <span className="text-sm font-medium text-foreground truncate">{reference.workplace}</span>
+            </div>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {reference.period_start}{reference.period_end ? ` → ${reference.period_end}` : " → pågående"}
+            </p>
+          </div>
+
+          <div className="flex items-center gap-1.5 shrink-0">
+            {isAttachable ? (
+              <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] gap-1">
+                <Shield className="h-3 w-3" /> Verifierad
+              </Badge>
+            ) : (
+              <Badge variant="outline" className="text-[10px] text-muted-foreground gap-1">
+                <Clock className="h-3 w-3" /> Väntande
+              </Badge>
+            )}
+          </div>
         </div>
-      ) : (
-        <div className="flex items-center gap-1 text-muted-foreground/50">
-          <XCircle className="h-4 w-4" />
-          <span className="text-xs">Ej verifierad</span>
-        </div>
-      )}
-    </div>
+
+        {/* Competencies */}
+        {reference.competencies && reference.competencies.length > 0 && (
+          <div className="mt-2.5 flex flex-wrap gap-1">
+            {(Array.isArray(reference.competencies) ? reference.competencies : []).map((c: string) => (
+              <Badge key={c} variant="secondary" className="text-[10px] rounded-md">{c}</Badge>
+            ))}
+          </div>
+        )}
+
+        {/* Score dots */}
+        {reference.recommendation_score > 0 && (
+          <div className="mt-2 flex items-center gap-0.5">
+            {[1, 2, 3, 4, 5].map((n) => (
+              <span key={n} className={`text-xs ${n <= reference.recommendation_score ? "text-primary" : "text-muted-foreground/20"}`}>●</span>
+            ))}
+          </div>
+        )}
+
+        {/* Freshness */}
+        {isAttachable && reference.last_confirmed_at && (
+          <p className="mt-2 text-[10px] text-muted-foreground">
+            <CheckCircle className="inline h-3 w-3 mr-0.5 text-primary" />
+            Bekräftad {new Date(reference.last_confirmed_at).toLocaleDateString("sv-SE")}
+          </p>
+        )}
+      </CardContent>
+    </Card>
   );
 }
