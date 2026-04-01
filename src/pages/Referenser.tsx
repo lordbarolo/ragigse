@@ -31,9 +31,7 @@ export default function Referenser() {
         <p className="text-sm text-muted-foreground mb-6">
           Ta kontroll över dina referenser och intyg. Bjud in personer att se handlingarna i en miljö du kontrollerar, istället för att de ska ligga hos flera olika bemanningsföretag för alltid. Dela dina dokument på dina villkor.
         </p>
-        <ComingSoonOverlay label="Referenser & verifikationer — kommer snart">
-          <ReferenceDashboard />
-        </ComingSoonOverlay>
+        <ReferenceDashboard />
       </div>
       <BottomNav />
     </div>
