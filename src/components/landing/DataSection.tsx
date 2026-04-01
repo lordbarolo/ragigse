@@ -28,7 +28,7 @@ const CARDS = [
 export default function DataSection() {
   return (
     <section id="data" className="py-20 md:py-[100px] px-6 md:px-10 max-w-[1080px] mx-auto">
-      <p className="font-display text-[11px] font-semibold tracking-[0.14em] uppercase text-primary mb-3.5">
+      <p className="font-display text-sm md:text-[11px] font-semibold tracking-[0.14em] uppercase text-primary mb-3.5">
         Om datan
       </p>
       <h2 className="font-display font-extrabold tracking-[-0.03em] leading-[1.1] mb-3.5" style={{ fontSize: "clamp(26px, 4vw, 40px)" }}>
