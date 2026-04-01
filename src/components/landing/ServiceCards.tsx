@@ -73,7 +73,7 @@ export default function ServiceCards({ onStartAnalysis }: ServiceCardsProps) {
   return (
     <section className="py-12 md:py-16 px-6">
       <div className="max-w-6xl mx-auto">
-        <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-2">
+        <p className="text-sm md:text-xs font-medium uppercase tracking-widest text-muted-foreground mb-2">
           Plattformen
         </p>
         <h2 className="text-[22px] font-medium text-foreground mb-4">
