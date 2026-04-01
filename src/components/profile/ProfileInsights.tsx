@@ -66,13 +66,19 @@ export default function ProfileInsights({ specialtyName, regionName, employmentT
       });
       setSalaryZones(salaries);
 
-      // 3. Fetch upcoming assignments from radar
+      // 3. Fetch upcoming assignments from radar — strictly filtered to user's role
       try {
-        const { data: radarData } = await supabase.functions.invoke("radar-predictions", {
-          body: { competence: specialtyName, location: regionName || "" },
-        });
+        const roleName = specialtyName || "Sjuksköterska";
+        const params = new URLSearchParams({ competence: roleName, pageSize: "5" });
+        if (regionName) params.set("location", regionName);
+        const { data: radarData } = await supabase.functions.invoke(
+          `radar-predictions?${params.toString()}`,
+          { method: "GET" },
+        );
         if (radarData?.predictions) {
-          const preds = radarData.predictions
+          // Extra client-side guard: only keep predictions matching the user's exact role
+          const preds = (radarData.predictions as any[])
+            .filter((p: any) => p.competence === roleName)
             .slice(0, 3)
             .map((p: any) => ({
               buyer: p.buyer,
