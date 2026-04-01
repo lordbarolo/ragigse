@@ -65,18 +65,9 @@ export default function AgencySignup() {
       return;
     }
 
-    const { error: loginError } = await supabase.auth.signInWithPassword({
-      email: normalizedEmail,
-      password,
-    });
-
     setLoading(false);
-
-    if (loginError) {
-      setEmail(normalizedEmail);
-      setSuccess(true);
-      return;
-    }
+    setEmail(normalizedEmail);
+    setSuccess(true);
 
     trackEvent("signup_completed", { method: "email", role: "agency" });
 
@@ -87,9 +78,6 @@ export default function AgencySignup() {
         idempotencyKey: `welcome-${normalizedEmail}`,
       },
     }).catch(() => {});
-
-    toast({ title: "Konto skapat", description: "Du är nu inloggad." });
-    navigate("/agency/dashboard");
   };
 
   if (success) {
@@ -98,9 +86,13 @@ export default function AgencySignup() {
         <Card className="w-full max-w-md border-border/50 bg-card/80 backdrop-blur">
           <CardContent className="pt-8 pb-8 text-center space-y-4">
             <CheckCircle2 className="w-12 h-12 text-accent mx-auto" />
-            <h2 className="text-xl font-semibold text-foreground">Konto skapat</h2>
+            <h2 className="text-xl font-semibold text-foreground">Bekräfta din e-post</h2>
             <p className="text-muted-foreground text-sm">
-              Ditt konto för <strong className="text-foreground">{email}</strong> är aktivt.
+              Vi har skickat ett verifieringsmejl till <strong className="text-foreground">{email}</strong>.
+              Klicka på länken i mejlet för att aktivera ditt konto.
+            </p>
+            <p className="text-muted-foreground text-xs">
+              Hittar du inte mejlet? Kolla skräpposten.
             </p>
             <Link to="/logga-in" className="text-primary hover:underline text-sm font-medium">
               Gå till inloggning
