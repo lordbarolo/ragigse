@@ -42,6 +42,7 @@ export default function ReferenceForm() {
   const [bankidAcknowledged, setBankidAcknowledged] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [verifyComment, setVerifyComment] = useState("");
 
   const [regEmail, setRegEmail] = useState("");
   const [regPassword, setRegPassword] = useState("");
