@@ -23,8 +23,8 @@ export default function RoleSelector({ onRoleSelect }: Props) {
               <span className="font-display text-[15px] font-bold text-primary">{r.title.charAt(0)}</span>
             </div>
             <div className="relative z-10 flex-1">
-              <div className="font-display text-[15px] font-bold tracking-[-0.02em] mb-0.5">{r.title}</div>
-              <div className="text-[12px] text-foreground/65 leading-snug">{r.sub}</div>
+              <div className="font-display text-base md:text-[15px] font-bold tracking-[-0.02em] mb-0.5">{r.title}</div>
+              <div className="text-sm md:text-[12px] text-foreground/65 leading-snug">{r.sub}</div>
             </div>
             <span className="relative z-10 text-primary text-xl flex-shrink-0 group-hover:translate-x-1 transition-transform">→</span>
           </button>
