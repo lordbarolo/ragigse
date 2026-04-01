@@ -427,7 +427,9 @@ export default function ReferenceForm() {
         )}
 
         <Button className="w-full" size="lg" disabled={!isValid || submitting} onClick={handleSubmit}>
-          {submitting ? "Skickar referens…" : "Skicka referens"}
+          {submitting
+            ? (isVerificationOnly ? "Verifierar…" : "Skickar referens…")
+            : (isVerificationOnly ? "Bekräfta verifiering" : "Skicka referens")}
         </Button>
       </div>
     </div>
