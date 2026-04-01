@@ -65,18 +65,9 @@ export default function Signup() {
       return;
     }
 
-    const { error: loginError } = await supabase.auth.signInWithPassword({
-      email: normalizedEmail,
-      password,
-    });
-
     setLoading(false);
-
-    if (loginError) {
-      setEmail(normalizedEmail);
-      setSuccess(true);
-      return;
-    }
+    setEmail(normalizedEmail);
+    setSuccess(true);
 
     trackEvent("signup_completed", { method: "email", role: "individual" });
 
@@ -87,9 +78,6 @@ export default function Signup() {
         idempotencyKey: `welcome-${normalizedEmail}`,
       },
     }).catch(() => {});
-
-    toast({ title: "Konto skapat", description: "Du är nu inloggad." });
-    navigate("/profil");
   };
 
   if (success) {
