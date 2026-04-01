@@ -61,7 +61,7 @@ export default function OBSection() {
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-px mt-12 rounded-[20px] overflow-hidden bg-foreground/[0.07]">
           {items.map((item, i) => (
             <div key={i} className="bg-background p-5 text-center">
-              <div className="text-[11px] text-foreground/35 font-display font-medium uppercase tracking-wider mb-2">
+              <div className="text-xs md:text-[11px] text-foreground/35 font-display font-medium uppercase tracking-wider mb-2">
                 {item.time}
               </div>
               <div className="font-display text-[28px] font-extrabold tracking-[-0.03em] text-foreground mb-1 whitespace-pre-line">
