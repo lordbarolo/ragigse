@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Shield, ShieldCheck, ShieldAlert, RefreshCw, Paperclip, Clock } from "lucide-react";
+import { Shield, ShieldCheck, ShieldAlert, RefreshCw, Paperclip, Clock, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import type { VaultReference } from "@/types/referly";
