@@ -281,64 +281,81 @@ export default function ReferenceForm() {
           </div>
         )}
 
-        {/* Reference text */}
-        <div className="mb-8">
-          <h3 className="mb-3 text-base font-semibold text-foreground">Om personen</h3>
-          <Textarea
-            value={referenceText}
-            onChange={(e) => setReferenceText(e.target.value)}
-            placeholder="Beskriv din erfarenhet av att arbeta med denna person. Fokusera på klinisk kompetens, samarbetsförmåga och professionalism."
-            className="min-h-[160px]"
-          />
-          <p className="mt-1 text-right text-xs text-muted-foreground">{referenceText.length} tecken</p>
-        </div>
+        {/* Verification-only: comment field */}
+        {isVerificationOnly && (
+          <div className="mb-8">
+            <h3 className="mb-3 text-base font-semibold text-foreground">Kommentar (valfritt)</h3>
+            <Textarea
+              value={verifyComment}
+              onChange={(e) => setVerifyComment(e.target.value)}
+              placeholder="Lämna gärna en kommentar, t.ex. bekräfta att du fortfarande står bakom referensen eller ange eventuella uppdateringar."
+              className="min-h-[120px]"
+              maxLength={1000}
+            />
+            <p className="mt-1 text-right text-xs text-muted-foreground">{verifyComment.length}/1000</p>
+          </div>
+        )}
 
-        {/* Competencies */}
-        <div className="mb-8">
-          <h3 className="mb-1 text-base font-semibold text-foreground">Kompetensbekräftelse</h3>
-          <p className="mb-3 text-sm text-muted-foreground">Markera de kompetensområden du kan intyga:</p>
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-            {COMPETENCIES.map((c) => (
-              <div
-                key={c}
-                role="button"
-                tabIndex={0}
-                onClick={() => toggleCompetency(c)}
-                onKeyDown={(e) => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); toggleCompetency(c); } }}
-                className="flex items-center gap-2 rounded-lg border border-border p-3 cursor-pointer hover:bg-muted/50 transition-colors"
-              >
-                <Checkbox checked={selectedCompetencies.includes(c)} onCheckedChange={() => {}} />
-                <span className="text-sm text-foreground">{c}</span>
+        {/* Standard reference: text, competencies, score */}
+        {!isVerificationOnly && (
+          <>
+            <div className="mb-8">
+              <h3 className="mb-3 text-base font-semibold text-foreground">Om personen</h3>
+              <Textarea
+                value={referenceText}
+                onChange={(e) => setReferenceText(e.target.value)}
+                placeholder="Beskriv din erfarenhet av att arbeta med denna person. Fokusera på klinisk kompetens, samarbetsförmåga och professionalism."
+                className="min-h-[160px]"
+              />
+              <p className="mt-1 text-right text-xs text-muted-foreground">{referenceText.length} tecken</p>
+            </div>
+
+            <div className="mb-8">
+              <h3 className="mb-1 text-base font-semibold text-foreground">Kompetensbekräftelse</h3>
+              <p className="mb-3 text-sm text-muted-foreground">Markera de kompetensområden du kan intyga:</p>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {COMPETENCIES.map((c) => (
+                  <div
+                    key={c}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => toggleCompetency(c)}
+                    onKeyDown={(e) => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); toggleCompetency(c); } }}
+                    className="flex items-center gap-2 rounded-lg border border-border p-3 cursor-pointer hover:bg-muted/50 transition-colors"
+                  >
+                    <Checkbox checked={selectedCompetencies.includes(c)} onCheckedChange={() => {}} />
+                    <span className="text-sm text-foreground">{c}</span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
 
-        {/* Recommendation score */}
-        <div className="mb-8">
-          <h3 className="mb-3 text-sm font-medium text-foreground">Hur starkt rekommenderar du denna person?</h3>
-          <div className="flex gap-2">
-            {[1, 2, 3, 4, 5].map((n) => (
-              <button
-                key={n}
-                type="button"
-                onClick={() => setScore(n)}
-                className={`flex h-12 w-12 items-center justify-center rounded-lg border text-sm font-medium transition-colors ${
-                  score === n
-                    ? "border-primary bg-primary text-primary-foreground"
-                    : "border-border bg-card text-muted-foreground hover:border-primary/50 hover:bg-primary/5"
-                }`}
-              >
-                {n}
-              </button>
-            ))}
-          </div>
-          <div className="mt-1 flex justify-between text-xs text-muted-foreground">
-            <span>Svag</span>
-            <span>Godkänd</span>
-            <span>Utmärkt</span>
-          </div>
-        </div>
+            <div className="mb-8">
+              <h3 className="mb-3 text-sm font-medium text-foreground">Hur starkt rekommenderar du denna person?</h3>
+              <div className="flex gap-2">
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <button
+                    key={n}
+                    type="button"
+                    onClick={() => setScore(n)}
+                    className={`flex h-12 w-12 items-center justify-center rounded-lg border text-sm font-medium transition-colors ${
+                      score === n
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-border bg-card text-muted-foreground hover:border-primary/50 hover:bg-primary/5"
+                    }`}
+                  >
+                    {n}
+                  </button>
+                ))}
+              </div>
+              <div className="mt-1 flex justify-between text-xs text-muted-foreground">
+                <span>Svag</span>
+                <span>Godkänd</span>
+                <span>Utmärkt</span>
+              </div>
+            </div>
+          </>
+        )}
 
         {/* BankID placeholder */}
         <div className="mb-8 rounded-xl border-2 border-dashed border-border bg-muted/30 p-5">
