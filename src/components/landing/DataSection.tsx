@@ -40,7 +40,7 @@ export default function DataSection() {
       <p className="text-base text-foreground/65 font-light leading-relaxed max-w-[540px] mt-3">
         Med hjälp av modern teknik har vi analyserat hundratals avtal och avrop. För första gången är informationen paketerad för att nå läkare och sjuksköterskor.
       </p>
-      <p className="text-sm text-foreground/50 italic leading-relaxed max-w-[540px] mt-4">
+      <p className="text-base md:text-sm text-foreground/50 italic leading-relaxed max-w-[540px] mt-4">
         "Vad betalar Region Skåne för en infektionssjuksköterska? Hur skiljer sig Zon 1 mot Zon 3? Hur mycket har priserna ändrats sedan förra avtalsperioden?"
       </p>
       <p className="text-base text-foreground/65 font-light leading-relaxed max-w-[540px] mt-3">
