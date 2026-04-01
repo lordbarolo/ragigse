@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Loader2, FileText, MapPin, Briefcase, Clock, LogOut, UserPlus } from "lucide-react";
+import ProfileInsights from "@/components/profile/ProfileInsights";
 
 interface ReportRow {
   id: string;
