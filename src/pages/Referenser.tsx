@@ -48,10 +48,27 @@ export default function Referenser() {
               </div>
             ))}
           </div>
-          <h2 className="text-lg font-bold text-foreground mb-1.5">Så här funkar det</h2>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            Samla alla dina referenser och intyg på ett ställe — verifierade och under din kontroll. Istället för att handlingar ligger utspridda hos olika bemanningsföretag delar du dem direkt med arbetsgivare via en säker länk.
-          </p>
+          <h2 className="text-lg font-bold text-foreground mb-2">Så här funkar det</h2>
+
+          <div className="space-y-3 text-sm text-muted-foreground leading-relaxed">
+            <p>
+              Samla alla dina referenser och intyg på ett ställe — verifierade och under din kontroll. Istället för att handlingar ligger utspridda hos olika bemanningsföretag delar du dem direkt med arbetsgivare via en säker länk.
+            </p>
+
+            <div>
+              <h3 className="font-semibold text-foreground mb-0.5">📄 Importera & verifiera</h3>
+              <p>
+                Har du redan referenshandlingar från tidigare uppdrag? Ladda upp dem (PDF, bild) i valvet och skicka sedan en inbjudan till den ursprungliga referensgivaren. Denne bekräftar digitalt att hen fortfarande står bakom referensen och kan lägga till en kommentar. På så vis blir en gammal handling aktuell och verifierad igen — utan att någon behöver skriva en ny.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-foreground mb-0.5">✉️ Bjud in referensgivare</h3>
+              <p>
+                Saknar du en referens? Bjud in en chef, handledare eller kollega att fylla i CompCares referensenkät direkt. Referensgivaren får ett mejl med en länk till ett kort formulär där hen anger kompetenser, omdöme och en personlig rekommendation. Referensen hamnar automatiskt i ditt valv, verifierad och redo att delas.
+              </p>
+            </div>
+          </div>
         </div>
         <ReferenceDashboard />
       </div>
