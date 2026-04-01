@@ -79,11 +79,14 @@ export default function ReferenceForm() {
     );
   };
 
-  const isValid =
-    referenceText.trim().length > 0 &&
-    selectedCompetencies.length >= 1 &&
-    score !== null &&
-    bankidAcknowledged;
+  const isVerificationOnly = inviteData?.is_verification_only ?? false;
+
+  const isValid = isVerificationOnly
+    ? bankidAcknowledged
+    : referenceText.trim().length > 0 &&
+      selectedCompetencies.length >= 1 &&
+      score !== null &&
+      bankidAcknowledged;
 
   const handleLogin = async () => {
     if (!loginEmail || !loginPassword) {
