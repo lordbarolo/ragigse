@@ -20,7 +20,7 @@ export default function Steps() {
   return (
     <section id="steps" className="bg-[hsl(var(--dark-2))] border-t border-b border-foreground/[0.07]">
       <div className="max-w-[1080px] mx-auto py-20 md:py-[100px] px-6 md:px-10">
-        <p className="font-display text-[11px] font-semibold tracking-[0.14em] uppercase text-primary mb-3.5">
+        <p className="font-display text-sm md:text-[11px] font-semibold tracking-[0.14em] uppercase text-primary mb-3.5">
           Så fungerar det
         </p>
         <h2 className="font-display font-extrabold tracking-[-0.03em] leading-[1.1] mb-3.5" style={{ fontSize: "clamp(26px, 4vw, 40px)" }}>
@@ -47,10 +47,10 @@ export default function Steps() {
               <div className="w-11 h-11 rounded-[11px] bg-primary/[0.12] border border-primary/[0.18] flex items-center justify-center font-display text-sm font-bold text-primary mb-6">
                 {i + 1}
               </div>
-              <h3 className="font-display text-[17px] font-bold tracking-[-0.02em] mb-2.5">{s.title}</h3>
-              <p className="text-sm text-foreground/65 leading-relaxed">{s.desc}</p>
+              <h3 className="font-display text-lg md:text-[17px] font-bold tracking-[-0.02em] mb-2.5">{s.title}</h3>
+              <p className="text-base md:text-sm text-foreground/65 leading-relaxed">{s.desc}</p>
               {s.detail && (
-                <div className="mt-4 p-3 bg-foreground/[0.03] border border-foreground/[0.07] rounded-lg text-xs text-foreground/35 font-display font-medium">
+                <div className="mt-4 p-3 bg-foreground/[0.03] border border-foreground/[0.07] rounded-lg text-sm md:text-xs text-foreground/35 font-display font-medium">
                   {s.detail.label && <strong className="text-primary font-semibold">{s.detail.label} </strong>}
                   {s.detail.text}
                 </div>

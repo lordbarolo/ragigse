@@ -14,7 +14,7 @@ export default function ReportPreview() {
 
   return (
     <section className="py-20 md:py-[100px] px-6 md:px-10 max-w-[1080px] mx-auto">
-      <p className="font-display text-[11px] font-semibold tracking-[0.14em] uppercase text-primary mb-3.5">
+      <p className="font-display text-sm md:text-[11px] font-semibold tracking-[0.14em] uppercase text-primary mb-3.5">
         Rapporten
       </p>
       <h2 className="font-display font-extrabold tracking-[-0.03em] leading-[1.1] mb-3.5" style={{ fontSize: "clamp(26px, 4vw, 40px)" }}>
@@ -33,7 +33,7 @@ export default function ReportPreview() {
                 <div className="w-[22px] h-[22px] flex-shrink-0 rounded-full bg-primary/10 border border-primary/25 flex items-center justify-center mt-0.5">
                   <span className="text-[11px] text-primary font-bold">✓</span>
                 </div>
-                <span className="text-[15px] text-foreground/65 leading-snug">
+                <span className="text-base md:text-[15px] text-foreground/65 leading-snug">
                   <strong className="text-foreground font-semibold">{f.bold}</strong>{f.text}
                 </span>
               </div>

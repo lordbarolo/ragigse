@@ -16,7 +16,7 @@ export default function Ticker() {
         {[...ITEMS, ...ITEMS].map((item, i) => (
           <span
             key={i}
-            className="font-display text-[11px] font-medium text-primary tracking-wider flex items-center gap-2"
+            className="font-display text-xs md:text-[11px] font-medium text-primary tracking-wider flex items-center gap-2"
           >
             <span className="w-[5px] h-[5px] rounded-full bg-primary opacity-60 flex-shrink-0" />
             {item}

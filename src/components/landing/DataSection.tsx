@@ -28,7 +28,7 @@ const CARDS = [
 export default function DataSection() {
   return (
     <section id="data" className="py-20 md:py-[100px] px-6 md:px-10 max-w-[1080px] mx-auto">
-      <p className="font-display text-[11px] font-semibold tracking-[0.14em] uppercase text-primary mb-3.5">
+      <p className="font-display text-sm md:text-[11px] font-semibold tracking-[0.14em] uppercase text-primary mb-3.5">
         Om datan
       </p>
       <h2 className="font-display font-extrabold tracking-[-0.03em] leading-[1.1] mb-3.5" style={{ fontSize: "clamp(26px, 4vw, 40px)" }}>
@@ -40,7 +40,7 @@ export default function DataSection() {
       <p className="text-base text-foreground/65 font-light leading-relaxed max-w-[540px] mt-3">
         Med hjälp av modern teknik har vi analyserat hundratals avtal och avrop. För första gången är informationen paketerad för att nå läkare och sjuksköterskor.
       </p>
-      <p className="text-sm text-foreground/50 italic leading-relaxed max-w-[540px] mt-4">
+      <p className="text-base md:text-sm text-foreground/50 italic leading-relaxed max-w-[540px] mt-4">
         "Vad betalar Region Skåne för en infektionssjuksköterska? Hur skiljer sig Zon 1 mot Zon 3? Hur mycket har priserna ändrats sedan förra avtalsperioden?"
       </p>
       <p className="text-base text-foreground/65 font-light leading-relaxed max-w-[540px] mt-3">
@@ -51,9 +51,9 @@ export default function DataSection() {
         {CARDS.map((c, i) => (
           <div key={i} className="bg-[hsl(var(--dark-2))] border border-foreground/[0.07] rounded-[20px] p-7 hover:border-foreground/[0.12] transition-colors">
             <div className="text-[28px] mb-4">{c.icon}</div>
-            <h3 className="font-display text-base font-bold tracking-[-0.02em] mb-2">{c.title}</h3>
-            <p className="text-sm text-foreground/65 leading-relaxed">{c.desc}</p>
-            <span className="inline-block mt-3.5 text-[11px] font-display font-semibold text-primary tracking-wider uppercase">
+            <h3 className="font-display text-lg md:text-base font-bold tracking-[-0.02em] mb-2">{c.title}</h3>
+            <p className="text-base md:text-sm text-foreground/65 leading-relaxed">{c.desc}</p>
+            <span className="inline-block mt-3.5 text-xs md:text-[11px] font-display font-semibold text-primary tracking-wider uppercase">
               {c.source}
             </span>
           </div>

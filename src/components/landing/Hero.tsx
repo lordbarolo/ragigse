@@ -26,21 +26,20 @@ export default function Hero() {
 
       <div className="relative z-10 max-w-[720px] w-full">
         {/* Source badge */}
-        <div className="inline-flex items-center gap-2 bg-primary/[0.08] border border-primary/20 rounded-full px-3.5 pr-3 py-1 font-display text-xs font-medium text-primary tracking-wide mb-3">
+        <div className="inline-flex items-center gap-2 bg-primary/[0.08] border border-primary/20 rounded-full px-3.5 pr-3 py-1 font-display text-sm md:text-xs font-medium text-primary tracking-wide mb-3">
           <span className="w-1.5 h-1.5 rounded-full bg-primary" />
           Officiella avtalspriser · SKR Ramavtal 2026
         </div>
 
         <h1
           className="font-display font-extrabold leading-[1.04] tracking-[-0.04em] text-foreground mb-2"
-          style={{ fontSize: "clamp(26px, 6.5vw, 56px)" }}
+          style={{ fontSize: "clamp(28px, 6.5vw, 56px)" }}
         >
           Tjänar du rätt? Fakturerar du rätt? Förhandlar du rätt?
         </h1>
 
         <p
-          className="text-foreground/55 font-light leading-relaxed max-w-[460px] mx-auto"
-          style={{ fontSize: "clamp(14px, 2.2vw, 16px)" }}
+          className="text-foreground/55 font-light leading-relaxed max-w-[460px] mx-auto text-base md:text-[15px]"
         >
           Verifieringsinfrastruktur för vården — ramavtalspriser, lönestatistik och marginalberäkningar samlat från 21 regioner och SCB.
         </p>

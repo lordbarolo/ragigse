@@ -73,10 +73,10 @@ export default function ServiceCards({ onStartAnalysis }: ServiceCardsProps) {
   return (
     <section className="py-12 md:py-16 px-6">
       <div className="max-w-6xl mx-auto">
-        <p className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-2">
+        <p className="text-sm md:text-xs font-medium uppercase tracking-widest text-muted-foreground mb-2">
           Plattformen
         </p>
-        <h2 className="text-[22px] font-medium text-foreground mb-4">
+        <h2 className="text-2xl md:text-[22px] font-medium text-foreground mb-4">
           Tre frågor. Ett svar.
         </h2>
 
@@ -91,10 +91,10 @@ export default function ServiceCards({ onStartAnalysis }: ServiceCardsProps) {
                 {s.icon}
               </div>
 
-              <h3 className="text-base font-medium text-foreground mb-3">
+              <h3 className="text-lg md:text-base font-medium text-foreground mb-3">
                 {s.title}
               </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed flex-1 mb-6">
+              <p className="text-base md:text-sm text-muted-foreground leading-relaxed flex-1 mb-6">
                 {s.desc}
               </p>
 

@@ -48,7 +48,7 @@ export default function OBSection() {
   return (
     <section className="bg-[hsl(var(--dark-2))] border-t border-b border-foreground/[0.07] py-20 md:py-[100px] px-6 md:px-10">
       <div className="max-w-[1080px] mx-auto">
-        <p className="font-display text-[11px] font-semibold tracking-[0.14em] uppercase text-primary mb-3.5">
+        <p className="font-display text-sm md:text-[11px] font-semibold tracking-[0.14em] uppercase text-primary mb-3.5">
           OB och tillägg
         </p>
         <h2 className="font-display font-extrabold tracking-[-0.03em] leading-[1.1] mb-3.5" style={{ fontSize: "clamp(26px, 4vw, 40px)" }}>
@@ -61,18 +61,18 @@ export default function OBSection() {
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-px mt-12 rounded-[20px] overflow-hidden bg-foreground/[0.07]">
           {items.map((item, i) => (
             <div key={i} className="bg-background p-5 text-center">
-              <div className="text-[11px] text-foreground/35 font-display font-medium uppercase tracking-wider mb-2">
+              <div className="text-xs md:text-[11px] text-foreground/35 font-display font-medium uppercase tracking-wider mb-2">
                 {item.time}
               </div>
               <div className="font-display text-[28px] font-extrabold tracking-[-0.03em] text-foreground mb-1 whitespace-pre-line">
                 {item.amount}
               </div>
-              <div className="text-[11px] text-foreground/35 leading-snug">{item.desc}</div>
+              <div className="text-xs md:text-[11px] text-foreground/35 leading-snug">{item.desc}</div>
             </div>
           ))}
         </div>
 
-        <div className="mt-6 p-3.5 px-[18px] bg-primary/5 border border-primary/[0.12] rounded-xl text-[13px] text-foreground/65 leading-snug">
+        <div className="mt-6 p-3.5 px-[18px] bg-primary/5 border border-primary/[0.12] rounded-xl text-sm md:text-[13px] text-foreground/65 leading-snug">
           <strong className="text-primary">Viktigt:</strong> OB-tariffer är offentliga och regleras i ramavtalet. De ska inte vara en del av din grundersättningsförhandling — de är en separat post som bemanningsföretaget fakturerar regionen utöver grundpriset och som du ska få i sin helhet.
         </div>
       </div>
