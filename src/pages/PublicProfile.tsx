@@ -175,7 +175,7 @@ export default function PublicProfile() {
         <CardContent className="p-4">
           <div className="flex items-center gap-2 mb-1">
             <Vault className="h-4 w-4 text-primary" />
-            <h2 className="text-sm font-semibold text-foreground tracking-tight">Reference Vault</h2>
+            <h2 className="text-sm font-semibold text-foreground tracking-tight">Valvet</h2>
           </div>
           <p className="text-xs text-muted-foreground">
             {activeRefs.length} verifierad{activeRefs.length !== 1 ? "e" : ""} referens{activeRefs.length !== 1 ? "er" : ""} &middot; {data.reference_count} totalt

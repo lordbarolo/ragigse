@@ -35,7 +35,7 @@ export function ReferenceVault() {
       <div className="bg-card border border-border rounded-xl p-4">
         <div className="flex items-center gap-2 mb-3">
           <Vault className="h-4 w-4 text-primary" />
-          <h3 className="text-sm font-semibold text-foreground tracking-tight">Reference Vault</h3>
+          <h3 className="text-sm font-semibold text-foreground tracking-tight">Valvet</h3>
         </div>
 
         {/* Counts row */}
