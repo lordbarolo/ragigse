@@ -142,18 +142,33 @@ export default function ReferenceForm() {
       }
     }
 
-    const { error } = await supabase.rpc("ref_submit_reference", {
-      _token: token,
-      _giver_id: giverId!,
-      _giver_name: giverName,
-      _reference_text: referenceText,
-      _competencies: selectedCompetencies as unknown as any,
-      _recommendation_score: score!,
-    });
+    let error: any;
+
+    if (isVerificationOnly) {
+      // Verification-only flow: use the dedicated RPC
+      const { error: verifyErr } = await supabase.rpc("ref_verify_imported_reference", {
+        _token: token,
+        _giver_id: giverId!,
+        _giver_name: giverName,
+        _comment: verifyComment.trim() || null,
+      });
+      error = verifyErr;
+    } else {
+      // Standard reference flow
+      const { error: refErr } = await supabase.rpc("ref_submit_reference", {
+        _token: token,
+        _giver_id: giverId!,
+        _giver_name: giverName,
+        _reference_text: referenceText,
+        _competencies: selectedCompetencies as unknown as any,
+        _recommendation_score: score!,
+      });
+      error = refErr;
+    }
 
     setSubmitting(false);
     if (error) {
-      toast.error("Kunde inte skicka referensen", { description: error.message });
+      toast.error(isVerificationOnly ? "Kunde inte verifiera referensen" : "Kunde inte skicka referensen", { description: error.message });
       return;
     }
     setSubmitted(true);
