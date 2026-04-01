@@ -33,7 +33,7 @@ export default function ReportPreview() {
                 <div className="w-[22px] h-[22px] flex-shrink-0 rounded-full bg-primary/10 border border-primary/25 flex items-center justify-center mt-0.5">
                   <span className="text-[11px] text-primary font-bold">✓</span>
                 </div>
-                <span className="text-[15px] text-foreground/65 leading-snug">
+                <span className="text-base md:text-[15px] text-foreground/65 leading-snug">
                   <strong className="text-foreground font-semibold">{f.bold}</strong>{f.text}
                 </span>
               </div>

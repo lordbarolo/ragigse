@@ -16,7 +16,7 @@ export default function StatBar() {
           <div className="font-display font-extrabold tracking-[-0.04em] leading-none text-primary mb-1.5" style={{ fontSize: "clamp(28px, 5vw, 44px)" }}>
             {s.num}<span className="text-foreground/65 text-[0.55em] font-normal">{s.unit}</span>
           </div>
-          <div className="text-xs text-foreground/35 font-medium leading-snug">{s.label}</div>
+          <div className="text-sm md:text-xs text-foreground/35 font-medium leading-snug">{s.label}</div>
         </div>
       ))}
     </div>

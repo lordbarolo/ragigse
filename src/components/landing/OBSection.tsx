@@ -72,7 +72,7 @@ export default function OBSection() {
           ))}
         </div>
 
-        <div className="mt-6 p-3.5 px-[18px] bg-primary/5 border border-primary/[0.12] rounded-xl text-[13px] text-foreground/65 leading-snug">
+        <div className="mt-6 p-3.5 px-[18px] bg-primary/5 border border-primary/[0.12] rounded-xl text-sm md:text-[13px] text-foreground/65 leading-snug">
           <strong className="text-primary">Viktigt:</strong> OB-tariffer är offentliga och regleras i ramavtalet. De ska inte vara en del av din grundersättningsförhandling — de är en separat post som bemanningsföretaget fakturerar regionen utöver grundpriset och som du ska få i sin helhet.
         </div>
       </div>

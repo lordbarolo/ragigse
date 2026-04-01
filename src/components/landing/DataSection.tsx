@@ -51,9 +51,9 @@ export default function DataSection() {
         {CARDS.map((c, i) => (
           <div key={i} className="bg-[hsl(var(--dark-2))] border border-foreground/[0.07] rounded-[20px] p-7 hover:border-foreground/[0.12] transition-colors">
             <div className="text-[28px] mb-4">{c.icon}</div>
-            <h3 className="font-display text-base font-bold tracking-[-0.02em] mb-2">{c.title}</h3>
-            <p className="text-sm text-foreground/65 leading-relaxed">{c.desc}</p>
-            <span className="inline-block mt-3.5 text-[11px] font-display font-semibold text-primary tracking-wider uppercase">
+            <h3 className="font-display text-lg md:text-base font-bold tracking-[-0.02em] mb-2">{c.title}</h3>
+            <p className="text-base md:text-sm text-foreground/65 leading-relaxed">{c.desc}</p>
+            <span className="inline-block mt-3.5 text-xs md:text-[11px] font-display font-semibold text-primary tracking-wider uppercase">
               {c.source}
             </span>
           </div>

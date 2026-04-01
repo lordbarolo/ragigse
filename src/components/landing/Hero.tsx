@@ -39,8 +39,7 @@ export default function Hero() {
         </h1>
 
         <p
-          className="text-foreground/55 font-light leading-relaxed max-w-[460px] mx-auto"
-          style={{ fontSize: "clamp(14px, 2.2vw, 16px)" }}
+          className="text-foreground/55 font-light leading-relaxed max-w-[460px] mx-auto text-base md:text-[15px]"
         >
           Verifieringsinfrastruktur för vården — ramavtalspriser, lönestatistik och marginalberäkningar samlat från 21 regioner och SCB.
         </p>
