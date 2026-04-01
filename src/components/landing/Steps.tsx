@@ -20,7 +20,7 @@ export default function Steps() {
   return (
     <section id="steps" className="bg-[hsl(var(--dark-2))] border-t border-b border-foreground/[0.07]">
       <div className="max-w-[1080px] mx-auto py-20 md:py-[100px] px-6 md:px-10">
-        <p className="font-display text-[11px] font-semibold tracking-[0.14em] uppercase text-primary mb-3.5">
+        <p className="font-display text-sm md:text-[11px] font-semibold tracking-[0.14em] uppercase text-primary mb-3.5">
           Så fungerar det
         </p>
         <h2 className="font-display font-extrabold tracking-[-0.03em] leading-[1.1] mb-3.5" style={{ fontSize: "clamp(26px, 4vw, 40px)" }}>
