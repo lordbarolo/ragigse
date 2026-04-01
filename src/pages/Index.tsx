@@ -162,22 +162,6 @@ export default function Index() {
         </div>
       </section>
 
-      {/* ── For agencies ───────────────────────────────── */}
-      <section className="max-w-4xl mx-auto px-6 pb-20" aria-label="För bemanningsföretag">
-        <div className="bg-card border border-primary/20 rounded-2xl p-8 md:p-10 text-center">
-          <h2 className="text-2xl font-bold text-foreground mb-3">
-            Bemanningsföretag?
-          </h2>
-          <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
-            Skapa representationsbevis med BankID, hantera referenser och verifiera konsulter — direkt i plattformen.
-          </p>
-          <Link to="/registrera">
-            <Button size="lg" className="gap-2">
-              Kom igång <ArrowRight className="w-4 h-4" />
-            </Button>
-          </Link>
-        </div>
-      </section>
 
       {/* ── Footer ─────────────────────────────────────── */}
       <footer className="border-t border-border py-10 px-6" role="contentinfo">
