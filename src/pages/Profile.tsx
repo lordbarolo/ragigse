@@ -152,6 +152,13 @@ export default function Profile() {
           </Card>
         )}
 
+        {/* Zone pricing, salary ranges & upcoming assignments */}
+        <ProfileInsights
+          specialtyName={profile?.specialty_name || null}
+          regionName={profile?.region_name || null}
+          employmentType={profile?.employment_type || null}
+        />
+
         {/* Reports */}
         <Card>
           <CardHeader>
