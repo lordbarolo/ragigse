@@ -65,18 +65,9 @@ export default function AgencySignup() {
       return;
     }
 
-    const { error: loginError } = await supabase.auth.signInWithPassword({
-      email: normalizedEmail,
-      password,
-    });
-
     setLoading(false);
-
-    if (loginError) {
-      setEmail(normalizedEmail);
-      setSuccess(true);
-      return;
-    }
+    setEmail(normalizedEmail);
+    setSuccess(true);
 
     trackEvent("signup_completed", { method: "email", role: "agency" });
 
@@ -87,9 +78,6 @@ export default function AgencySignup() {
         idempotencyKey: `welcome-${normalizedEmail}`,
       },
     }).catch(() => {});
-
-    toast({ title: "Konto skapat", description: "Du är nu inloggad." });
-    navigate("/agency/dashboard");
   };
 
   if (success) {
