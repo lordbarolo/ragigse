@@ -66,39 +66,10 @@ export default function Radar() {
     else { const m = document.createElement("meta"); m.name = "description"; m.content = desc; document.head.appendChild(m); }
   }, []);
 
-  // Load user's default competence from profile or latest report
+  // Mark profile as loaded immediately — no auto-filter so users see all predictions
   useEffect(() => {
-    if (profileLoaded) return;
-    const loadDefault = async () => {
-      if (user) {
-        // Try consultant_profiles first (via specialty)
-        const { data: profile } = await supabase
-          .from("consultant_profiles")
-          .select("specialty_id")
-          .eq("user_id", user.id)
-          .maybeSingle();
-
-        if (profile?.specialty_id) {
-          // We don't have specialty name directly; try reports instead
-        }
-
-        // Fall back to latest report occupation
-        const { data: report } = await supabase
-          .from("reports")
-          .select("occupation")
-          .eq("user_id", user.id)
-          .order("created_at", { ascending: false })
-          .limit(1)
-          .maybeSingle();
-
-        if (report?.occupation) {
-          setFilters(f => ({ ...f, competence: report.occupation }));
-        }
-      }
-      setProfileLoaded(true);
-    };
-    loadDefault();
-  }, [user, profileLoaded]);
+    if (!profileLoaded) setProfileLoaded(true);
+  }, [profileLoaded]);
 
   const {
     data,
