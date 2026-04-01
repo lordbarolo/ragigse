@@ -101,7 +101,7 @@ const App = () => (
 
                 {/* Protected — require login */}
                 <Route path="/consultant/profil" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-                <Route path="/consultant/referenser" element={<ProtectedRoute><Referenser /></ProtectedRoute>} />
+                <Route path="/consultant/referenser" element={<ProtectedRoute allowedRoles={["admin"]}><Referenser /></ProtectedRoute>} />
 
                 {/* Hidden until polished — require login */}
                 <Route path="/consultant/salary-check" element={<SalaryCheck />} />
