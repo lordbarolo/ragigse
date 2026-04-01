@@ -29,8 +29,30 @@ export default function Referenser() {
       <div className="pt-20 px-4 max-w-2xl mx-auto">
         <h1 className="text-2xl font-bold text-foreground mb-1">Referenser & Verifikationer</h1>
         <p className="text-sm text-muted-foreground mb-6">
-          Ta kontroll över dina referenser och intyg. Bjud in personer att se handlingarna i en miljö du kontrollerar, istället för att de ska ligga hos flera olika bemanningsföretag för alltid. Dela dina dokument på dina villkor.
+          Ta kontroll över dina referenser och intyg. Dela dina dokument på dina villkor.
         </p>
+
+        {/* How it works */}
+        <div className="rounded-2xl bg-primary/5 border border-primary/10 p-5 mb-6">
+          <div className="grid grid-cols-3 gap-4 mb-5">
+            {[
+              { step: "1", text: "Samla dina referenser och intyg i valvet" },
+              { step: "2", text: "Bjud in referens\u00ADgivare att verifiera dem" },
+              { step: "3", text: "Dela en länk med arbets\u00ADgivare" },
+            ].map((item) => (
+              <div key={item.step} className="flex flex-col items-center text-center gap-2">
+                <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center">
+                  <span className="text-2xl font-bold text-primary-foreground">{item.step}</span>
+                </div>
+                <p className="text-xs text-foreground leading-snug">{item.text}</p>
+              </div>
+            ))}
+          </div>
+          <h2 className="text-lg font-bold text-foreground mb-1.5">Så här funkar det</h2>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Samla alla dina referenser och intyg på ett ställe — verifierade och under din kontroll. Istället för att handlingar ligger utspridda hos olika bemanningsföretag delar du dem direkt med arbetsgivare via en säker länk.
+          </p>
+        </div>
         <ReferenceDashboard />
       </div>
       <BottomNav />
