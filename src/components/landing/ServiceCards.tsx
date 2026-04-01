@@ -80,10 +80,10 @@ export default function ServiceCards({ onStartAnalysis }: ServiceCardsProps) {
           Tre frågor. Ett svar.
         </h2>
 
-        {/* Grid with 1px gap lines */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-px bg-border rounded-xl overflow-hidden">
+        {/* Horizontal scroll on mobile, grid on larger screens */}
+        <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4 -mx-6 px-6 scrollbar-hide sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-px sm:bg-border sm:rounded-xl sm:overflow-hidden sm:mx-0 sm:px-0 sm:pb-0">
           {SERVICES.map((s, i) => (
-            <div key={i} className={`bg-background p-8 flex flex-col ${(s as any).comingSoon ? 'opacity-50' : ''}`}>
+            <div key={i} className={`min-w-[75vw] snap-start rounded-xl bg-secondary/50 p-6 flex flex-col shrink-0 sm:min-w-0 sm:shrink sm:rounded-none sm:bg-background sm:p-8 ${(s as any).comingSoon ? 'opacity-50' : ''}`}>
               {/* Icon */}
               <div
                 className={`w-10 h-10 rounded-lg flex items-center justify-center mb-5 ${s.iconBg} ${s.iconColor}`}
