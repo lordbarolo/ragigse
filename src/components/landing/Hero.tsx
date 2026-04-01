@@ -33,7 +33,7 @@ export default function Hero() {
 
         <h1
           className="font-display font-extrabold leading-[1.04] tracking-[-0.04em] text-foreground mb-2"
-          style={{ fontSize: "clamp(26px, 6.5vw, 56px)" }}
+          style={{ fontSize: "clamp(28px, 6.5vw, 56px)" }}
         >
           Tjänar du rätt? Fakturerar du rätt? Förhandlar du rätt?
         </h1>
