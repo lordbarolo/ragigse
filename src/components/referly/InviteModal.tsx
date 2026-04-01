@@ -30,8 +30,10 @@ export function InviteModal({ open, onOpenChange, userId, onSuccess }: InviteMod
   const [name, setName] = useState("");
   const [relationship, setRelationship] = useState("");
   const [workplace, setWorkplace] = useState("");
-  const [periodStart, setPeriodStart] = useState<Date | undefined>(undefined);
-  const [periodEnd, setPeriodEnd] = useState<Date | undefined>(undefined);
+  const [startMonth, setStartMonth] = useState("");
+  const [startYear, setStartYear] = useState("");
+  const [endMonth, setEndMonth] = useState("");
+  const [endYear, setEndYear] = useState("");
   const [ongoing, setOngoing] = useState(false);
   const [personalMessage, setPersonalMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -39,11 +41,15 @@ export function InviteModal({ open, onOpenChange, userId, onSuccess }: InviteMod
 
   const resetForm = () => {
     setEmail(""); setName(""); setRelationship(""); setWorkplace("");
-    setPeriodStart(undefined); setPeriodEnd(undefined); setOngoing(false);
-    setPersonalMessage(""); setInviteLink(null);
+    setStartMonth(""); setStartYear(""); setEndMonth(""); setEndYear("");
+    setOngoing(false); setPersonalMessage(""); setInviteLink(null);
   };
 
-  const fmtDate = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  const toDateStr = (month: string, year: string) =>
+    `${year}-${String(Number(month) + 1).padStart(2, "0")}-01`;
+
+  const hasStart = startMonth !== "" && startYear !== "";
+  const hasEnd = endMonth !== "" && endYear !== "";
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,8 +62,8 @@ export function InviteModal({ open, onOpenChange, userId, onSuccess }: InviteMod
       giver_name: name,
       workplace,
       relationship,
-      period_start: periodStart ? fmtDate(periodStart) : "",
-      period_end: ongoing ? null : periodEnd ? fmtDate(periodEnd) : null,
+      period_start: hasStart ? toDateStr(startMonth, startYear) : "",
+      period_end: ongoing ? null : hasEnd ? toDateStr(endMonth, endYear) : null,
       invite_token: token,
     });
 
@@ -122,34 +128,38 @@ export function InviteModal({ open, onOpenChange, userId, onSuccess }: InviteMod
               <Label htmlFor="invite-workplace">Arbetsplats</Label>
               <Input id="invite-workplace" value={workplace} onChange={(e) => setWorkplace(e.target.value)} required />
             </div>
-            <div className="grid grid-cols-2 gap-3">
-              <div className="space-y-2">
-                <Label>Period start</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" className={cn("w-full justify-start text-left font-normal", !periodStart && "text-muted-foreground")}>
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {periodStart ? format(periodStart, "yyyy-MM-dd") : "Välj datum"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar mode="single" selected={periodStart} onSelect={setPeriodStart} initialFocus className="p-3 pointer-events-auto" />
-                  </PopoverContent>
-                </Popover>
+            <div className="space-y-2">
+              <Label>Period start</Label>
+              <div className="grid grid-cols-2 gap-2">
+                <Select value={startMonth} onValueChange={setStartMonth}>
+                  <SelectTrigger><SelectValue placeholder="Månad" /></SelectTrigger>
+                  <SelectContent>
+                    {MONTHS.map((m, i) => (<SelectItem key={m} value={String(i)}>{m}</SelectItem>))}
+                  </SelectContent>
+                </Select>
+                <Select value={startYear} onValueChange={setStartYear}>
+                  <SelectTrigger><SelectValue placeholder="År" /></SelectTrigger>
+                  <SelectContent>
+                    {YEARS.map((y) => (<SelectItem key={y} value={y}>{y}</SelectItem>))}
+                  </SelectContent>
+                </Select>
               </div>
-              <div className="space-y-2">
-                <Label>Period slut</Label>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button variant="outline" disabled={ongoing} className={cn("w-full justify-start text-left font-normal", !periodEnd && "text-muted-foreground")}>
-                      <CalendarIcon className="mr-2 h-4 w-4" />
-                      {periodEnd ? format(periodEnd, "yyyy-MM-dd") : "Välj datum"}
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar mode="single" selected={periodEnd} onSelect={setPeriodEnd} initialFocus className="p-3 pointer-events-auto" />
-                  </PopoverContent>
-                </Popover>
+            </div>
+            <div className="space-y-2">
+              <Label>Period slut</Label>
+              <div className="grid grid-cols-2 gap-2">
+                <Select value={endMonth} onValueChange={setEndMonth} disabled={ongoing}>
+                  <SelectTrigger><SelectValue placeholder="Månad" /></SelectTrigger>
+                  <SelectContent>
+                    {MONTHS.map((m, i) => (<SelectItem key={m} value={String(i)}>{m}</SelectItem>))}
+                  </SelectContent>
+                </Select>
+                <Select value={endYear} onValueChange={setEndYear} disabled={ongoing}>
+                  <SelectTrigger><SelectValue placeholder="År" /></SelectTrigger>
+                  <SelectContent>
+                    {YEARS.map((y) => (<SelectItem key={y} value={y}>{y}</SelectItem>))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -161,7 +171,7 @@ export function InviteModal({ open, onOpenChange, userId, onSuccess }: InviteMod
               <Textarea id="invite-message" value={personalMessage} onChange={(e) => setPersonalMessage(e.target.value)} placeholder="T.ex. 'Hej Anna, det vore jättesnällt om du kunde lämna en referens...'" rows={3} maxLength={500} className="resize-none" />
               <p className="text-xs text-muted-foreground">{personalMessage.length}/500</p>
             </div>
-            <Button type="submit" className="w-full" disabled={loading || !relationship || !periodStart}>
+            <Button type="submit" className="w-full" disabled={loading || !relationship || !hasStart}>
               {loading ? "Skapar inbjudan…" : "Skicka inbjudan"}
             </Button>
           </form>
