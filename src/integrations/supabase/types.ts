@@ -3258,6 +3258,15 @@ export type Database = {
         }
         Returns: undefined
       }
+      ref_verify_imported_reference: {
+        Args: {
+          _comment?: string
+          _giver_id: string
+          _giver_name: string
+          _token: string
+        }
+        Returns: undefined
+      }
       top_kommuner: {
         Args: { lim?: number }
         Returns: {
