@@ -18,7 +18,7 @@ export default function BottomCTA() {
         <h2 className="font-display font-extrabold tracking-[-0.04em] leading-[1.08] mb-[18px]" style={{ fontSize: "clamp(30px, 5vw, 52px)" }}>
           Se marknadsdata<br />för <em className="not-italic text-primary">din roll.</em>
         </h2>
-        <p className="text-[17px] text-foreground/65 mb-9 font-light">
+        <p className="text-lg md:text-[17px] text-foreground/65 mb-9 font-light">
           Anonymt. Kostnadsfritt. Klart på 60 sekunder.
         </p>
         <div className="flex gap-2.5 justify-center flex-wrap">
