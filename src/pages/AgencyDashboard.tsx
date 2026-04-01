@@ -447,6 +447,40 @@ export default function AgencyDashboard() {
         </Dialog>
       </div>
 
+      {/* How Verify works */}
+      <div className="rounded-2xl bg-primary/5 border border-primary/10 p-5 mb-6">
+        <div className="grid grid-cols-3 gap-4 mb-5">
+          {[
+            { step: "1", text: "Skapa en representations\u00ADförfrågan" },
+            { step: "2", text: "Konsulten signerar med BankID" },
+            { step: "3", text: "Digitalt bevis skapas automatiskt" },
+          ].map((item) => (
+            <div key={item.step} className="flex flex-col items-center text-center gap-2">
+              <div className="w-14 h-14 rounded-full bg-primary flex items-center justify-center">
+                <span className="text-2xl font-bold text-primary-foreground">{item.step}</span>
+              </div>
+              <p className="text-xs text-foreground leading-snug">{item.text}</p>
+            </div>
+          ))}
+        </div>
+        <h2 className="text-lg font-bold text-foreground mb-2">Så här funkar Verify</h2>
+        <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
+          <p>
+            Verify eliminerar risken för dubbelpresentationer hos uppdragsgivare. Istället för att regioner och kommuner ska behöva hantera
+            oklarheter kring vilken byrå som representerar en konsult, skapar ni ett digitalt representationsbevis som konsulten signerar med BankID.
+          </p>
+          <p>
+            <strong className="text-foreground">Skapa en förfrågan</strong> — Ange konsultens e-post, uppdrags-ID och region. Konsulten
+            får ett SMS med en signeringslänk. Ingen inloggning krävs av konsulten — bara BankID.
+          </p>
+          <p>
+            <strong className="text-foreground">Beviset genereras automatiskt</strong> — När signeringen är klar skapas ett verifieringsbevis
+            med unik URL som ni kan skicka direkt till uppdragsgivaren. Beviset innehåller konsultens verifierade meriter, BankID-signatur
+            och en komplett händelselogg.
+          </p>
+        </div>
+      </div>
+
       {/* Stats cards */}
       <div className="grid grid-cols-3 gap-4 mb-8">
         <Card>
