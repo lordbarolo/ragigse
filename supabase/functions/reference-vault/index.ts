@@ -100,6 +100,9 @@ Deno.serve(async (req) => {
           days_until_expiry: ref.expires_at
             ? Math.max(0, Math.round((new Date(ref.expires_at).getTime() - now.getTime()) / (24 * 60 * 60 * 1000)))
             : null,
+          is_verification_only: ref.is_verification_only || false,
+          document_url: ref.document_url || null,
+          document_name: ref.document_name || null,
         };
       });
 
