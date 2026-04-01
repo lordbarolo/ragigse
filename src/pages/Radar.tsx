@@ -147,28 +147,8 @@ export default function Radar() {
     setDetailOpen(true);
   };
 
-  const handleWatch = async (p: Prediction) => {
-    if (!user) {
-      toast({ title: "Logga in", description: "Du behöver ett konto för att bevaka uppdrag." });
-      return;
-    }
-
-    const { error } = await supabase.from("radar_watchlist").insert({
-      user_id: user.id,
-      competence: p.competence,
-      location: p.location,
-      buyer: p.buyer,
-      predicted_date: p.predictedDate,
-    });
-
-    if (error) {
-      toast({ title: "Kunde inte spara", description: error.message, variant: "destructive" });
-    } else {
-      toast({
-        title: "Bevakning skapad ✓",
-        description: `Du bevakar nu ${p.competence} hos ${p.buyer}.`,
-      });
-    }
+  const handleWatch = async (_p: Prediction) => {
+    // Bevakningsfunktionen är gömd tillsvidare
   };
 
   const scrollToList = () => {
