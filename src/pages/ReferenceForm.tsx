@@ -216,7 +216,7 @@ export default function ReferenceForm() {
           <div className="text-center">
             <CheckCircle className="mx-auto mb-4 h-16 w-16 text-primary" />
             <h2 className="text-2xl font-semibold text-foreground">Tack!</h2>
-            <p className="mt-2 text-muted-foreground">Din referens har registrerats.</p>
+            <p className="mt-2 text-muted-foreground">{isVerificationOnly ? "Din verifiering har registrerats." : "Din referens har registrerats."}</p>
             {!user && (
               <p className="mt-2 text-sm text-muted-foreground">
                 Ditt konto har skapats! <Link to="/logga-in" className="text-primary hover:underline">Logga in</Link> för att se dina lämnade referenser.
