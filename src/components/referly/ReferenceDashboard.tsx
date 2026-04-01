@@ -30,7 +30,7 @@ export function ReferenceDashboard() {
         <TrustScoreCard total={trustScore.total} tier={trustScore.tier} breakdown={trustScore.breakdown} />
       )}
 
-      {/* Reference Vault — replaces flat reference list */}
+      {/* Valvet — replaces flat reference list */}
       <div>
         <div className="flex items-center justify-between mb-3">
           <div />
