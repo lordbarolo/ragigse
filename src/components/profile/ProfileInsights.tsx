@@ -95,7 +95,7 @@ export default function ProfileInsights({ specialtyName, regionName, employmentT
   if (loading || !specialtyName) return null;
 
   const probLabel = (level: number) =>
-    level === 3 ? "Hög" : level === 2 ? "Medel" : "Bevaka";
+    level === 3 ? "Hög" : level === 2 ? "Medel" : "Låg";
   const probColor = (level: number) =>
     level === 3
       ? "bg-emerald-500/10 text-emerald-700 dark:text-emerald-400"

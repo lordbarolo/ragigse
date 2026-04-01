@@ -75,13 +75,6 @@ export default function PredictionCard({ prediction, onOpen, onWatch }: Predicti
           <Eye className="w-3.5 h-3.5" />
           Visa mönster
         </button>
-        <button
-          onClick={() => onWatch(prediction)}
-          className="flex-1 flex items-center justify-center gap-1.5 rounded-lg bg-primary text-primary-foreground py-2 text-[13px] font-semibold transition-colors hover:bg-primary/90"
-        >
-          <Radio className="w-3.5 h-3.5" />
-          Bevaka
-        </button>
       </div>
     </div>
   );
