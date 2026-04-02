@@ -6,7 +6,6 @@ import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 import Survey from "@/components/Survey";
 import ServiceCards from "@/components/landing/ServiceCards";
 import reportPreview from "@/assets/report-preview.jpeg";
-import handPhoneImg from "@/assets/hand-phone.png";
 import CompcareLogo from "@/components/CompcareLogo";
 import ThemeToggle from "@/components/ThemeToggle";
 
@@ -120,55 +119,34 @@ export default function SalaryCheck() {
         <div className="absolute bottom-0 left-0 right-0 h-[300px] bg-gradient-to-t from-background to-transparent" />
       </section>
 
-      {/* ── Negotiation Hero ────────────────────────────── */}
-      <section className="bg-[#0B0E14] text-white py-16 px-6 md:px-12 lg:px-24 -mt-16 relative z-20">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="flex flex-col space-y-8">
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight tracking-tight">
-              Din nästa löneförhandling <br className="hidden md:block" /> börjar här.
-            </h2>
-            <p className="text-[#A0AEC0] text-lg md:text-xl leading-relaxed max-w-xl">
-              Gå inte in i nästa samtal med en magkänsla – gå in med data. Vi har kartlagt de faktiska ramavtalspriserna för alla Sveriges regioner och zoner. Genom att matcha din nuvarande lön mot marknadens realitet ser du direkt om du ligger rätt eller om du lämnar pengar på bordet.
-            </p>
-            <ul className="space-y-5">
-              <li className="flex items-start gap-4">
-                <div className="mt-1 bg-indigo-500/20 p-2 rounded-lg">
-                  <svg className="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-                </div>
-                <p className="text-base md:text-lg"><span className="font-bold">Regional jämförelse:</span> Se hur ersättningen skiljer sig mellan Zon 1, 2 och 3.</p>
-              </li>
-              <li className="flex items-start gap-4">
-                <div className="mt-1 bg-indigo-500/20 p-2 rounded-lg">
-                  <svg className="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                </div>
-                <p className="text-base md:text-lg"><span className="font-bold">Avslöja marginalerna:</span> Se vad regionen faktiskt betalar bemanningsbolaget.</p>
-              </li>
-              <li className="flex items-start gap-4">
-                <div className="mt-1 bg-indigo-500/20 p-2 rounded-lg">
-                  <svg className="w-5 h-5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                </div>
-                <p className="text-base md:text-lg"><span className="font-bold">Smart assistent:</span> Få konkreta råd baserat på 100% verifierad marknadsdata.</p>
-              </li>
-            </ul>
-            <div className="pt-4">
-              <p className="text-sm text-[#A0AEC0] mb-4">Helt anonymt. Klart på 30 sekunder.</p>
-              <button
-                onClick={handleStartSurvey}
-                className="bg-[#4F46E5] hover:bg-[#4338CA] text-white px-8 py-4 rounded-xl text-lg font-bold transition-all transform hover:scale-105 shadow-[0_0_20px_rgba(79,70,229,0.4)]"
-              >
-                Se din optimala ersättning
-              </button>
+      {/* ── iPhone Preview ────────────────────────────── */}
+      <section className="max-w-5xl mx-auto px-6 -mt-16 relative z-20 flex flex-col items-center">
+        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-4">Rapportexempel för infektionssjuksköterska</p>
+        {/* iPhone frame */}
+        <div className="relative mx-auto" style={{ maxWidth: 320 }}>
+          {/* Outer shell */}
+          <div className="bg-foreground/10 rounded-[3rem] p-[10px] shadow-2xl">
+            {/* Inner bezel */}
+            <div className="bg-card rounded-[2.4rem] overflow-hidden relative">
+              {/* Notch */}
+              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[120px] h-[28px] bg-foreground/10 rounded-b-2xl z-10" />
+              {/* Screen */}
+              <img
+                src={reportPreview}
+                alt="Förhandsgranskning av din ersättningsanalys"
+                className="w-full h-auto"
+              />
             </div>
           </div>
-          <div className="relative flex justify-center items-center">
-            <div className="absolute w-[80%] h-[80%] bg-indigo-600/20 blur-[100px] rounded-full" />
-            <img
-              src={handPhoneImg}
-              alt="Rapport i mobilen"
-              className="relative z-10 w-full max-w-[500px] h-auto drop-shadow-2xl"
-            />
-          </div>
         </div>
+
+        {/* CTA */}
+        <button
+          onClick={handleStartSurvey}
+          className="mt-8 bg-primary hover:bg-primary/90 text-primary-foreground px-10 py-4 rounded-2xl font-semibold text-base transition-all shadow-lg shadow-primary/20 inline-flex items-center gap-2"
+        >
+          Få samma rapport för din kompetens ☝️
+        </button>
       </section>
 
       {/* ── Service Cards (horizontal scroll) ──────── */}
