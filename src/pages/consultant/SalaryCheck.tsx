@@ -122,63 +122,94 @@ export default function SalaryCheck() {
       {/* ── Section 2: Löneförhandling (dark premium) ── */}
       <section className="relative overflow-hidden bg-[#050816] text-white">
         {/* Ambient gradient orbs */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_22%,rgba(116,137,255,0.22),transparent_28%),radial-gradient(circle_at_72%_42%,rgba(177,129,255,0.20),transparent_24%),radial-gradient(circle_at_84%_68%,rgba(92,112,255,0.14),transparent_22%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(116,137,255,0.18),transparent_32%),radial-gradient(circle_at_65%_50%,rgba(177,129,255,0.14),transparent_28%),radial-gradient(circle_at_80%_75%,rgba(92,112,255,0.10),transparent_24%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(135deg,#030712_0%,#081124_45%,#050816_100%)] opacity-95" />
         {/* Subtle grid */}
-        <div className="absolute inset-0 opacity-[0.06] [background-image:linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:72px_72px]" />
+        <div className="absolute inset-0 opacity-[0.04] [background-image:linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:72px_72px]" />
 
-        <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-6 py-20 md:gap-12 md:grid-cols-2 md:px-10 lg:px-16 lg:py-24">
-          {/* Text column */}
-          <div>
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white/80 backdrop-blur-xl">
-              <span className="h-2 w-2 rounded-full bg-[#8DA2FF] shadow-[0_0_18px_rgba(141,162,255,0.9)]" />
-              För sjuksköterskor och vårdpersonal i bemanning
-            </div>
+        <div className="relative mx-auto max-w-6xl px-6 py-16 md:px-10 lg:px-12 lg:py-20">
+          <div className="grid items-center gap-10 md:grid-cols-[1fr_0.85fr] lg:gap-16">
 
-            <h2 className="max-w-[14ch] text-4xl font-semibold leading-[0.96] tracking-[-0.04em] text-white sm:text-5xl lg:text-6xl">
-              Din nästa löneförhandling börjar här.
-            </h2>
+            {/* ── Text column ── */}
+            <div className="flex flex-col">
+              {/* Badge */}
+              <div className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3.5 py-1.5 text-[13px] font-medium text-white/70 backdrop-blur-xl">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#8DA2FF] shadow-[0_0_14px_rgba(141,162,255,0.8)]" />
+                För sjuksköterskor och vårdpersonal i bemanning
+              </div>
 
-            <p className="mt-6 max-w-2xl text-base leading-8 text-white/70 sm:text-lg">
-              Gå inte in i nästa samtal med en magkänsla – gå in med data. Vi har kartlagt de faktiska ramavtalspriserna för alla Sveriges regioner och zoner. Genom att matcha din nuvarande lön mot marknadens realitet ser du direkt om du ligger rätt eller om du lämnar pengar på bordet.
-            </p>
+              {/* Heading */}
+              <h2 className="text-[2.25rem] font-semibold leading-[1.05] tracking-[-0.035em] text-white sm:text-5xl lg:text-[3.5rem]">
+                Din nästa löneförhandling börjar här.
+              </h2>
 
-            <div className="mt-8 space-y-4">
-              {[
-                { title: "Regional jämförelse:", text: "Se hur ersättningen skiljer sig mellan Zon 1, 2 och 3." },
-                { title: "Avslöja marginalerna:", text: "Se vad regionen faktiskt betalar bemanningsbolaget för din kompetens." },
-                { title: "Smart assistent:", text: "Få konkreta råd baserat på 100% verifierad marknadsdata." },
-              ].map((item) => (
-                <div key={item.title} className="flex items-start gap-4 rounded-2xl border border-white/[0.08] bg-white/[0.03] px-4 py-4 backdrop-blur-sm">
-                  <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#93A5FF]/20 bg-[#93A5FF]/10 text-sm text-[#C5D0FF]">
-                    ✦
+              {/* Body */}
+              <p className="mt-5 max-w-xl text-[15px] leading-[1.75] text-white/60 sm:text-base lg:text-[17px]">
+                Gå inte in i nästa samtal med en magkänsla – gå in med data. Vi har kartlagt de faktiska ramavtalspriserna för alla Sveriges regioner och zoner. Genom att matcha din nuvarande lön mot marknadens realitet ser du direkt om du ligger rätt eller om du lämnar pengar på bordet.
+              </p>
+
+              {/* Bullet cards */}
+              <div className="mt-7 space-y-2.5">
+                {[
+                  { title: "Regional jämförelse:", text: "Se hur ersättningen skiljer sig mellan Zon 1, 2 och 3." },
+                  { title: "Avslöja marginalerna:", text: "Se vad regionen faktiskt betalar bemanningsbolaget för din kompetens." },
+                  { title: "Smart assistent:", text: "Få konkreta råd baserat på 100% verifierad marknadsdata." },
+                ].map((item) => (
+                  <div key={item.title} className="flex items-start gap-3 rounded-xl border border-white/[0.06] bg-white/[0.025] px-4 py-3 backdrop-blur-sm">
+                    <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#93A5FF]/15 bg-[#93A5FF]/[0.08] text-xs text-[#B8C5FF]">
+                      ✦
+                    </div>
+                    <p className="text-[13px] leading-[1.65] text-white/55 sm:text-sm">
+                      <span className="font-medium text-white/90">{item.title}</span> {item.text}
+                    </p>
                   </div>
-                  <p className="text-sm leading-7 text-white/70 sm:text-base">
-                    <span className="font-semibold text-white">{item.title}</span> {item.text}
-                  </p>
+                ))}
+              </div>
+
+              {/* Trust line + CTA */}
+              <div className="mt-6">
+                <p className="text-sm text-white/50 lg:text-[15px]">Helt anonymt. Klart på 30 sekunder.</p>
+                <div className="mt-4">
+                  <button
+                    onClick={handleStartSurvey}
+                    className="inline-flex min-h-[52px] items-center justify-center rounded-xl bg-[linear-gradient(135deg,#5C7CFF_0%,#7FA4FF_100%)] px-7 text-[15px] font-semibold text-white shadow-[0_14px_40px_rgba(92,124,255,0.30)] transition duration-200 hover:-translate-y-0.5"
+                  >
+                    Se din optimala ersättning
+                  </button>
                 </div>
-              ))}
+              </div>
             </div>
 
-            <p className="mt-8 text-base text-white/80 sm:text-lg">Helt anonymt. Klart på 30 sekunder.</p>
-
-            <div className="mt-8 flex flex-col gap-4 sm:flex-row">
-              <button
-                onClick={handleStartSurvey}
-                className="inline-flex min-h-14 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#5C7CFF_0%,#7FA4FF_100%)] px-7 text-base font-semibold text-white shadow-[0_18px_48px_rgba(92,124,255,0.35)] transition duration-200 hover:-translate-y-0.5"
-              >
-                Se din optimala ersättning
-              </button>
+            {/* ── Image column ── */}
+            <div className="relative hidden md:flex items-center justify-center self-stretch">
+              {/* Glow behind image */}
+              <div className="absolute inset-[-10%] rounded-full bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,rgba(141,162,255,0.15),rgba(120,100,255,0.06)_50%,transparent_80%)] blur-xl" />
+              {/* Subtle inner glow */}
+              <div className="absolute inset-[5%] rounded-3xl bg-[radial-gradient(circle_at_50%_45%,rgba(177,140,255,0.12),transparent_65%)] blur-2xl" />
+              <img
+                src={handPhoneImage}
+                alt="Person som håller mobil med CompCare-gränssnitt"
+                className="relative z-10 w-full max-w-[480px] h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.45)]"
+                style={{
+                  maskImage: "radial-gradient(ellipse 88% 90% at 50% 48%, black 58%, transparent 100%)",
+                  WebkitMaskImage: "radial-gradient(ellipse 88% 90% at 50% 48%, black 58%, transparent 100%)",
+                }}
+              />
             </div>
+
           </div>
 
-          {/* Image column */}
-          <div className="relative hidden md:flex items-center justify-center">
-            <div className="absolute inset-0 rounded-3xl bg-[radial-gradient(circle_at_center,rgba(171,148,255,0.20),transparent_70%)] blur-2xl" />
+          {/* Mobile image */}
+          <div className="relative mt-10 flex justify-center md:hidden">
+            <div className="absolute inset-[-15%] rounded-full bg-[radial-gradient(circle,rgba(141,162,255,0.12),transparent_70%)] blur-xl" />
             <img
               src={handPhoneImage}
               alt="Person som håller mobil med CompCare-gränssnitt"
-              className="relative z-10 w-full h-full object-cover rounded-2xl drop-shadow-[0_24px_64px_rgba(0,0,0,0.5)]"
+              className="relative z-10 w-3/4 max-w-[320px] h-auto object-contain drop-shadow-[0_16px_40px_rgba(0,0,0,0.4)]"
+              style={{
+                maskImage: "radial-gradient(ellipse 85% 88% at 50% 48%, black 55%, transparent 100%)",
+                WebkitMaskImage: "radial-gradient(ellipse 85% 88% at 50% 48%, black 55%, transparent 100%)",
+              }}
             />
           </div>
         </div>
