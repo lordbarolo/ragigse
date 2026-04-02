@@ -127,9 +127,9 @@ export default function SalaryCheck() {
         {/* Subtle grid */}
         <div className="absolute inset-0 opacity-[0.06] [background-image:linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:72px_72px]" />
 
-        <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-6 py-20 md:px-10 lg:grid-cols-[1.05fr_0.95fr] lg:px-16 lg:py-24">
+        <div className="relative mx-auto grid max-w-7xl items-center gap-8 px-6 py-20 md:gap-12 md:grid-cols-2 md:px-10 lg:px-16 lg:py-24">
           {/* Text column */}
-          <div className="max-w-3xl">
+          <div>
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white/80 backdrop-blur-xl">
               <span className="h-2 w-2 rounded-full bg-[#8DA2FF] shadow-[0_0_18px_rgba(141,162,255,0.9)]" />
               För sjuksköterskor och vårdpersonal i bemanning
@@ -173,20 +173,13 @@ export default function SalaryCheck() {
           </div>
 
           {/* Image column */}
-          <div className="relative hidden lg:flex items-center justify-center">
-            <div className="absolute right-[5%] top-1/2 h-[520px] w-[520px] -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(171,148,255,0.28),rgba(122,143,255,0.10)_44%,transparent_70%)] blur-2xl" />
-            <div className="relative w-full max-w-[520px]">
-              <div className="pointer-events-none absolute inset-y-[5%] left-[4%] right-[4%] rounded-[36px] bg-[radial-gradient(circle_at_center,rgba(177,140,255,0.20),transparent_62%)] blur-3xl" />
-              <img
-                src={handPhoneImage}
-                alt="Person som håller mobil med CompCare-gränssnitt"
-                className="relative z-10 w-full h-auto object-contain drop-shadow-[0_24px_64px_rgba(0,0,0,0.5)]"
-                style={{
-                  maskImage: "radial-gradient(ellipse 90% 92% at 50% 48%, black 60%, transparent 100%)",
-                  WebkitMaskImage: "radial-gradient(ellipse 90% 92% at 50% 48%, black 60%, transparent 100%)",
-                }}
-              />
-            </div>
+          <div className="relative hidden md:flex items-center justify-center">
+            <div className="absolute inset-0 rounded-3xl bg-[radial-gradient(circle_at_center,rgba(171,148,255,0.20),transparent_70%)] blur-2xl" />
+            <img
+              src={handPhoneImage}
+              alt="Person som håller mobil med CompCare-gränssnitt"
+              className="relative z-10 w-full h-full object-cover rounded-2xl drop-shadow-[0_24px_64px_rgba(0,0,0,0.5)]"
+            />
           </div>
         </div>
       </section>
