@@ -105,17 +105,17 @@ export default function Report() {
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
         <div className="max-w-lg mx-auto space-y-4 relative z-10">
           <CompcareLogo variant="full" inverted className="mb-6" />
-          <p className="text-[10px] uppercase tracking-[0.2em] text-primary-foreground/70 font-medium">
+          <p className="text-[10px] uppercase tracking-[0.2em] font-medium opacity-70">
             Ersättningsanalys
           </p>
-          <h1 className="text-2xl sm:text-3xl font-bold text-primary-foreground leading-tight tracking-tight drop-shadow-sm">
+          <h1 className="text-2xl sm:text-3xl font-bold leading-tight tracking-tight drop-shadow-sm">
             {report.occupation}
           </h1>
-          <div className="flex items-center gap-2 text-sm text-primary-foreground/80">
+          <div className="flex items-center gap-2 text-sm opacity-80">
             <span>{report.kommun}{report.user_zone ? ` (${report.user_zone})` : ""}</span>
-            <span className="w-1 h-1 rounded-full bg-primary-foreground/30" />
+            <span className="w-1 h-1 rounded-full bg-current opacity-40" />
             <span>{isPermanentTrack ? "Fast tjänst" : "Konsultuppdrag"}</span>
-            <span className="w-1 h-1 rounded-full bg-primary-foreground/30" />
+            <span className="w-1 h-1 rounded-full bg-current opacity-40" />
             <span>{isEmployee ? "Anställd" : "Eget bolag"}</span>
           </div>
         </div>
