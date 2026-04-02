@@ -6,6 +6,8 @@ import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 import Survey from "@/components/Survey";
 import ServiceCards from "@/components/landing/ServiceCards";
 import reportPreview from "@/assets/report-preview.jpeg";
+import CompcareLogo from "@/components/CompcareLogo";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const faqJsonLd = {
   "@context": "https://schema.org",
@@ -48,6 +50,14 @@ export default function SalaryCheck() {
       <div className="bg-background">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppJsonLd) }} />
+        <header className="border-b border-border bg-card/80 backdrop-blur sticky top-0 z-50">
+          <div className="max-w-5xl mx-auto flex items-center justify-between px-6 h-14">
+            <Link to="/">
+              <CompcareLogo variant="full" />
+            </Link>
+            <ThemeToggle />
+          </div>
+        </header>
         <div ref={surveyRef} className="px-4 pt-8 pb-16 min-h-[calc(100vh-3.5rem)] flex flex-col">
           <Survey
             onBack={() => setShowSurvey(false)}
@@ -61,6 +71,16 @@ export default function SalaryCheck() {
     <div className="bg-background">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppJsonLd) }} />
+
+      {/* ── Header ─────────────────────────────────── */}
+      <header className="border-b border-border bg-card/80 backdrop-blur sticky top-0 z-50">
+        <div className="max-w-5xl mx-auto flex items-center justify-between px-6 h-14">
+          <Link to="/">
+            <CompcareLogo variant="full" />
+          </Link>
+          <ThemeToggle />
+        </div>
+      </header>
 
       {/* ── Dark Hero ──────────────────────────────────── */}
       <section className="hero-dark relative pt-12 pb-24 px-6">
