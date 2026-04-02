@@ -6,6 +6,7 @@ import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 import Survey from "@/components/Survey";
 import ServiceCards from "@/components/landing/ServiceCards";
 import reportPreview from "@/assets/report-preview.jpeg";
+import handPhone from "@/assets/hand-phone-2.png";
 import CompcareLogo from "@/components/CompcareLogo";
 import ThemeToggle from "@/components/ThemeToggle";
 
