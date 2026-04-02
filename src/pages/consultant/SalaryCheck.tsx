@@ -120,36 +120,6 @@ export default function SalaryCheck() {
         <div className="absolute bottom-0 left-0 right-0 h-[300px] bg-gradient-to-t from-background to-transparent" />
       </section>
 
-      {/* ── iPhone Preview ────────────────────────────── */}
-      <section className="max-w-5xl mx-auto px-6 -mt-16 relative z-20 flex flex-col items-center">
-        <p className="text-xs font-semibold uppercase tracking-widest text-muted-foreground mb-4">Rapportexempel för infektionssjuksköterska</p>
-        {/* iPhone frame */}
-        <div className="relative mx-auto" style={{ maxWidth: 320 }}>
-          {/* Outer shell */}
-          <div className="bg-foreground/10 rounded-[3rem] p-[10px] shadow-2xl">
-            {/* Inner bezel */}
-            <div className="bg-card rounded-[2.4rem] overflow-hidden relative">
-              {/* Notch */}
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[120px] h-[28px] bg-foreground/10 rounded-b-2xl z-10" />
-              {/* Screen */}
-              <img
-                src={reportPreview}
-                alt="Förhandsgranskning av din ersättningsanalys"
-                className="w-full h-auto"
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* CTA */}
-        <button
-          onClick={handleStartSurvey}
-          className="mt-8 bg-primary hover:bg-primary/90 text-primary-foreground px-10 py-4 rounded-2xl font-semibold text-base transition-all shadow-lg shadow-primary/20 inline-flex items-center gap-2"
-        >
-          Få samma rapport för din kompetens ☝️
-        </button>
-      </section>
-
       {/* ── Negotiation Hero ─────────────────────────── */}
       <section className="bg-[hsl(220,25%,8%)] text-white overflow-hidden">
         <div className="max-w-6xl mx-auto px-6 py-16 md:py-24 flex flex-col md:flex-row items-center gap-10 md:gap-16">
