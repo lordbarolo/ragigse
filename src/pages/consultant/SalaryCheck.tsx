@@ -120,7 +120,7 @@ export default function SalaryCheck() {
       </section>
 
       {/* ── Section 2: Löneförhandling ──────────────── */}
-      <section className="py-20 overflow-hidden relative" style={{ background: "linear-gradient(135deg, #d0c0da 0%, #c4b2cf 50%, #b1a2bc 100%)" }}>
+      <section className="py-20 overflow-hidden relative" style={{ background: "rgb(205, 191, 213)" }}>
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid md:grid-cols-[1fr_1.2fr] gap-8 items-center">
             <div>
