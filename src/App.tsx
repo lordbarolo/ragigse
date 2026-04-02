@@ -105,7 +105,7 @@ const App = () => (
                 <Route path="/consultant/referenser" element={<ProtectedRoute allowedRoles={["admin"]}><Referenser /></ProtectedRoute>} />
 
                 {/* Hidden until polished — require login */}
-                <Route path="/consultant/salary-check" element={<SalaryCheck />} />
+                <Route path="/consultant/salary-check" element={<Navigate to="/" replace />} />
                 <Route path="/consultant/radar" element={<ProtectedRoute><Radar /></ProtectedRoute>} />
                 <Route path="/consultant/academy" element={<ProtectedRoute><Academy /></ProtectedRoute>} />
               </Route>
