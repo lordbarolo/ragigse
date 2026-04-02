@@ -536,8 +536,8 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
           <StepWrapper title="Vad jobbar du som?">
             <div className="flex flex-col gap-3">
               {([
-                { value: "lakare" as OccupationCategory, label: "Läkare", desc: "ST, specialist eller legitimerad läkare" },
-                { value: "ssk" as OccupationCategory, label: "Sjuksköterska / Barnmorska", desc: "Allmänsjuksköterska, specialistsjuksköterska eller barnmorska" },
+                { value: "lakare" as OccupationCategory, label: "Läkare" },
+                { value: "ssk" as OccupationCategory, label: "Sjuksköterska / Barnmorska" },
               ]).map((opt) => (
                 <button
                   key={opt.value}
@@ -560,10 +560,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                         <Check className="w-3 h-3 text-primary-foreground" />
                       </div>
                     )}
-                    <div>
-                      <span className="text-base font-semibold text-foreground">{opt.label}</span>
-                       
-                    </div>
+                    <span className="text-base font-semibold text-foreground">{opt.label}</span>
                   </div>
                   <ArrowRight className="w-5 h-5 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
                 </button>
