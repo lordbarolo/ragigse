@@ -52,7 +52,7 @@ serve(async (req) => {
     const resendApiKey = Deno.env.get("RESEND_API_KEY_1");
     const GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
 
-    if (send_email && resendApiKey) {
+    if (send_email && resendApiKey && lovableApiKey) {
       const regionDisplay = region || "din region";
 
       // Fetch lead data to build inline preview
