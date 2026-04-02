@@ -145,7 +145,7 @@ export default function SalaryCheck() {
 
               {/* Body */}
               <p className="mt-5 max-w-xl text-[15px] leading-[1.75] text-white/60 sm:text-base lg:text-[17px]">
-                Gå inte in i nästa samtal med en magkänsla – gå in med data. Vi har kartlagt de faktiska ramavtalspriserna för alla Sveriges regioner och zoner. Genom att matcha din nuvarande lön mot marknadens realitet ser du direkt om du ligger rätt eller om du lämnar pengar på bordet.
+                Gå inte in i nästa samtal med en magkänsla – gå in med data. Vi har kartlagt de faktiska avtalspriserna för 21 regioner och 290 kommuner. Genom att jämföra din nuvarande ersättning mot marknadens realitet ser du direkt om du ligger rätt eller om du lämnar pengar på bordet.
               </p>
 
               {/* Bullet cards */}
