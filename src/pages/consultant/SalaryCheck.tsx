@@ -120,9 +120,9 @@ export default function SalaryCheck() {
       </section>
 
       {/* ── Section 2: Löneförhandling ──────────────── */}
-      <section className="py-20" style={{ background: "linear-gradient(135deg, hsl(270 40% 92%), hsl(260 30% 88%))" }}>
+      <section className="py-20 overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(270 40% 92%), hsl(260 30% 88%))" }}>
         <div className="max-w-6xl mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div className="grid md:grid-cols-[1fr_1.2fr] gap-8 items-center">
             <div>
               <h2 className="text-3xl md:text-4xl font-bold mb-6 tracking-tight" style={{ color: "hsl(270 30% 20%)" }}>
                 Din nästa löneförhandling börjar här.
@@ -152,11 +152,11 @@ export default function SalaryCheck() {
                 Se din optimala ersättning
               </button>
             </div>
-            <div className="flex justify-center">
+            <div className="flex justify-center md:justify-end md:-mr-12">
               <img
                 src={dashboardPhone}
                 alt="CompCare dashboard på mobil"
-                className="max-h-[520px] w-auto object-contain rounded-2xl"
+                className="max-h-[650px] w-auto object-contain rounded-2xl"
               />
             </div>
           </div>
