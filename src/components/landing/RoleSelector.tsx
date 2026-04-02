@@ -3,9 +3,8 @@ interface Props {
 }
 
 const ROLES = [
-  { title: "Läkare", sub: "ST-läkare, specialist eller legitimerad läkare", category: "lakare" as const },
-  { title: "Sjuksköterska", sub: "Allmänsjuksköterska eller specialistsjuksköterska", category: "ssk" as const },
-  { title: "Barnmorska", sub: "Legitimerad med specialistutbildning", category: "ssk" as const, prefill: "__barnmorska" },
+  { title: "Läkare", category: "lakare" as const },
+  { title: "Sjuksköterska / Barnmorska", category: "ssk" as const },
 ];
 
 export default function RoleSelector({ onRoleSelect }: Props) {
@@ -15,7 +14,7 @@ export default function RoleSelector({ onRoleSelect }: Props) {
         {ROLES.map((r) => (
           <button
             key={r.title}
-            onClick={() => onRoleSelect(r.category, r.prefill)}
+            onClick={() => onRoleSelect(r.category)}
             className="group relative overflow-hidden flex items-center gap-4 bg-[hsl(var(--dark-2))] border border-foreground/[0.12] !border-l-[3px] !border-l-primary rounded-[16px] p-4 pl-4 text-left cursor-pointer transition-all hover:border-primary/40 hover:bg-[hsl(var(--dark-3))] hover:-translate-y-0.5 hover:shadow-[0_12px_40px_rgba(0,0,0,0.3),0_0_0_1px_hsl(196_100%_50%/0.1)]"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.04] to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -23,8 +22,7 @@ export default function RoleSelector({ onRoleSelect }: Props) {
               <span className="font-display text-[15px] font-bold text-primary">{r.title.charAt(0)}</span>
             </div>
             <div className="relative z-10 flex-1">
-              <div className="font-display text-base md:text-[15px] font-bold tracking-[-0.02em] mb-0.5">{r.title}</div>
-              <div className="text-sm md:text-[12px] text-foreground/65 leading-snug">{r.sub}</div>
+              <div className="font-display text-base md:text-[15px] font-bold tracking-[-0.02em]">{r.title}</div>
             </div>
             <span className="relative z-10 text-primary text-xl flex-shrink-0 group-hover:translate-x-1 transition-transform">→</span>
           </button>
