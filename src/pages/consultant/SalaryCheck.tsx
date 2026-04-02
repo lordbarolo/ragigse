@@ -120,7 +120,7 @@ export default function SalaryCheck() {
       </section>
 
       {/* ── Section 2: Löneförhandling ──────────────── */}
-      <section className="py-20 overflow-hidden" style={{ background: "linear-gradient(135deg, hsl(270 40% 92%), hsl(260 30% 88%))" }}>
+      <section className="py-20 overflow-hidden relative" style={{ background: "hsl(270 40% 90%)" }}>
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid md:grid-cols-[1fr_1.2fr] gap-8 items-center">
             <div>
@@ -152,12 +152,23 @@ export default function SalaryCheck() {
                 Se din optimala ersättning
               </button>
             </div>
-            <div className="flex justify-center md:justify-end md:-mr-12">
+            <div className="relative flex justify-center md:justify-end md:-mr-6">
               <img
                 src={dashboardPhone}
                 alt="CompCare dashboard på mobil"
-                className="max-h-[650px] w-auto object-contain rounded-2xl"
+                className="max-h-[650px] w-auto object-contain relative z-10"
+                style={{ filter: "drop-shadow(0 20px 40px rgba(15, 10, 30, 0.15))" }}
               />
+              {/* Sparkle icons */}
+              <svg className="absolute bottom-8 right-4 w-6 h-6 z-20 opacity-60" viewBox="0 0 24 24" fill="none">
+                <path d="M12 2L14.09 8.26L20 9.27L15.55 13.97L16.91 20L12 16.9L7.09 20L8.45 13.97L4 9.27L9.91 8.26L12 2Z" fill="hsl(270 30% 80%)" />
+              </svg>
+              <svg className="absolute bottom-14 right-12 w-4 h-4 z-20 opacity-40" viewBox="0 0 24 24" fill="none">
+                <path d="M12 2L14.09 8.26L20 9.27L15.55 13.97L16.91 20L12 16.9L7.09 20L8.45 13.97L4 9.27L9.91 8.26L12 2Z" fill="hsl(270 25% 75%)" />
+              </svg>
+              <svg className="absolute bottom-4 right-16 w-3 h-3 z-20 opacity-50" viewBox="0 0 24 24" fill="none">
+                <path d="M12 2L14.09 8.26L20 9.27L15.55 13.97L16.91 20L12 16.9L7.09 20L8.45 13.97L4 9.27L9.91 8.26L12 2Z" fill="hsl(270 20% 85%)" />
+              </svg>
             </div>
           </div>
         </div>
