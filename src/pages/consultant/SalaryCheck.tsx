@@ -119,56 +119,73 @@ export default function SalaryCheck() {
         <div className="absolute bottom-0 left-0 right-0 h-[300px] bg-gradient-to-t from-background to-transparent" />
       </section>
 
-      {/* ── Section 2: Löneförhandling ──────────────── */}
-      <section className="py-20 overflow-hidden relative" style={{ background: "rgb(205, 191, 213)" }}>
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="grid md:grid-cols-[1fr_1.2fr] gap-8 items-center">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-6 tracking-tight" style={{ color: "hsl(270 30% 20%)" }}>
-                Din nästa löneförhandling börjar här.
-              </h2>
-              <p className="mb-6 leading-relaxed text-lg" style={{ color: "hsl(270 15% 35%)" }}>
-                Gå inte in i nästa samtal med en magkänsla – gå in med data. Vi har kartlagt de faktiska ramavtalspriserna för alla Sveriges regioner och zoner. Genom att matcha din nuvarande lön mot marknadens realitet ser du direkt om du ligger rätt eller om du lämnar pengar på bordet.
-              </p>
-              <ul className="space-y-3 mb-8" style={{ color: "hsl(270 15% 35%)" }}>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary font-bold mt-0.5">•</span>
-                  <span><strong style={{ color: "hsl(270 30% 20%)" }}>Regional jämförelse:</strong> Se hur ersättningen skiljer sig mellan Zon 1, 2 och 3.</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary font-bold mt-0.5">•</span>
-                  <span><strong style={{ color: "hsl(270 30% 20%)" }}>Avslöja marginalerna:</strong> Se vad regionen faktiskt betalar bemanningsbolaget för din kompetens.</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary font-bold mt-0.5">•</span>
-                  <span><strong style={{ color: "hsl(270 30% 20%)" }}>Smart assistent:</strong> Få konkreta råd baserat på 100% verifierad marknadsdata.</span>
-                </li>
-              </ul>
-              <p className="text-sm mb-4" style={{ color: "hsl(270 15% 45%)" }}>Helt anonymt. Klart på 30 sekunder.</p>
+      {/* ── Section 2: Löneförhandling (dark premium) ── */}
+      <section className="relative overflow-hidden bg-[#050816] text-white">
+        {/* Ambient gradient orbs */}
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_22%,rgba(116,137,255,0.22),transparent_28%),radial-gradient(circle_at_72%_42%,rgba(177,129,255,0.20),transparent_24%),radial-gradient(circle_at_84%_68%,rgba(92,112,255,0.14),transparent_22%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(135deg,#030712_0%,#081124_45%,#050816_100%)] opacity-95" />
+        {/* Subtle grid */}
+        <div className="absolute inset-0 opacity-[0.06] [background-image:linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:72px_72px]" />
+
+        <div className="relative mx-auto grid max-w-7xl items-center gap-10 px-6 py-20 md:px-10 lg:grid-cols-[1.05fr_0.95fr] lg:px-16 lg:py-24">
+          {/* Text column */}
+          <div className="max-w-3xl">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-medium text-white/80 backdrop-blur-xl">
+              <span className="h-2 w-2 rounded-full bg-[#8DA2FF] shadow-[0_0_18px_rgba(141,162,255,0.9)]" />
+              För sjuksköterskor och vårdpersonal i bemanning
+            </div>
+
+            <h2 className="max-w-[14ch] text-4xl font-semibold leading-[0.96] tracking-[-0.04em] text-white sm:text-5xl lg:text-6xl">
+              Din nästa löneförhandling börjar här.
+            </h2>
+
+            <p className="mt-6 max-w-2xl text-base leading-8 text-white/70 sm:text-lg">
+              Gå inte in i nästa samtal med en magkänsla – gå in med data. Vi har kartlagt de faktiska ramavtalspriserna för alla Sveriges regioner och zoner. Genom att matcha din nuvarande lön mot marknadens realitet ser du direkt om du ligger rätt eller om du lämnar pengar på bordet.
+            </p>
+
+            <div className="mt-8 space-y-4">
+              {[
+                { title: "Regional jämförelse:", text: "Se hur ersättningen skiljer sig mellan Zon 1, 2 och 3." },
+                { title: "Avslöja marginalerna:", text: "Se vad regionen faktiskt betalar bemanningsbolaget för din kompetens." },
+                { title: "Smart assistent:", text: "Få konkreta råd baserat på 100% verifierad marknadsdata." },
+              ].map((item) => (
+                <div key={item.title} className="flex items-start gap-4 rounded-2xl border border-white/[0.08] bg-white/[0.03] px-4 py-4 backdrop-blur-sm">
+                  <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#93A5FF]/20 bg-[#93A5FF]/10 text-sm text-[#C5D0FF]">
+                    ✦
+                  </div>
+                  <p className="text-sm leading-7 text-white/70 sm:text-base">
+                    <span className="font-semibold text-white">{item.title}</span> {item.text}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <p className="mt-8 text-base text-white/80 sm:text-lg">Helt anonymt. Klart på 30 sekunder.</p>
+
+            <div className="mt-8 flex flex-col gap-4 sm:flex-row">
               <button
                 onClick={handleStartSurvey}
-                className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-2xl font-semibold transition-all shadow-lg shadow-primary/20 text-base"
+                className="inline-flex min-h-14 items-center justify-center rounded-2xl bg-[linear-gradient(135deg,#5C7CFF_0%,#7FA4FF_100%)] px-7 text-base font-semibold text-white shadow-[0_18px_48px_rgba(92,124,255,0.35)] transition duration-200 hover:-translate-y-0.5"
               >
                 Se din optimala ersättning
               </button>
             </div>
-            <div className="relative flex items-center justify-center md:justify-end">
-              <div className="relative w-full max-w-[740px]">
-                {/* Subtle radial glow behind image */}
-                <div
-                  className="absolute inset-y-[10%] left-[10%] right-[10%] rounded-full blur-[80px]"
-                  style={{ background: "radial-gradient(circle, rgba(180, 160, 210, 0.5), transparent 70%)" }}
-                />
-                <img
-                  src={handPhoneImage}
-                  alt="Person som håller mobil med CompCare-gränssnitt"
-                  className="relative z-10 w-full h-auto max-h-[600px] md:max-h-[600px] max-h-[400px] object-contain"
-                  style={{
-                    maskImage: "radial-gradient(ellipse 80% 85% at center, black 55%, transparent 100%)",
-                    WebkitMaskImage: "radial-gradient(ellipse 80% 85% at center, black 55%, transparent 100%)",
-                  }}
-                />
-              </div>
+          </div>
+
+          {/* Image column */}
+          <div className="relative flex items-center justify-center lg:justify-end">
+            <div className="absolute right-[8%] top-1/2 h-[420px] w-[420px] -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(171,148,255,0.30),rgba(122,143,255,0.10)_44%,transparent_70%)] blur-2xl" />
+            <div className="relative w-full max-w-[600px]">
+              <div className="pointer-events-none absolute inset-y-[8%] left-[6%] right-[8%] rounded-[36px] bg-[radial-gradient(circle_at_center,rgba(177,140,255,0.22),transparent_62%)] blur-3xl" />
+              <img
+                src={handPhoneImage}
+                alt="Person som håller mobil med CompCare-gränssnitt"
+                className="relative z-10 w-full h-auto max-h-[520px] object-contain drop-shadow-[0_30px_80px_rgba(0,0,0,0.42)]"
+                style={{
+                  maskImage: "radial-gradient(ellipse 82% 88% at center, black 55%, transparent 100%)",
+                  WebkitMaskImage: "radial-gradient(ellipse 82% 88% at center, black 55%, transparent 100%)",
+                }}
+              />
             </div>
           </div>
         </div>
