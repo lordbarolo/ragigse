@@ -562,7 +562,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                     )}
                     <div>
                       <span className="text-base font-semibold text-foreground">{opt.label}</span>
-                       <p className="text-body-sm mt-1">{opt.desc}</p>
+                       
                     </div>
                   </div>
                   <ArrowRight className="w-5 h-5 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
