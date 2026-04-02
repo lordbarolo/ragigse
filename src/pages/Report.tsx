@@ -100,7 +100,7 @@ export default function Report() {
     <div className="min-h-screen bg-background">
       <Navbar />
       {/* Header — premium, mobile-first */}
-      <header className="relative overflow-hidden hero-gradient px-5 pt-8 pb-10 sm:pt-10 sm:pb-12">
+      <header className="relative overflow-hidden hero-gradient px-5 pt-20 pb-10 sm:pt-24 sm:pb-12">
         {/* Subtle decorative element */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
         <div className="max-w-lg mx-auto space-y-4 relative z-10">
