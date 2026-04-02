@@ -87,7 +87,7 @@ export default function Index() {
       {/* ── Hero ───────────────────────────────────────── */}
       <section className="hero-dark relative pt-16 pb-28 px-6" aria-labelledby="hero-heading">
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <h1 id="hero-heading" className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">
+          <h1 id="hero-heading" className="font-bold mb-6 tracking-tight" style={{ fontSize: "clamp(2.5rem, 7vw, 5.5rem)" }}>
             För vårdens konsulter
           </h1>
 
