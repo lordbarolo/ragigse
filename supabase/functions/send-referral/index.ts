@@ -48,7 +48,9 @@ serve(async (req) => {
 
     // Send email via Resend if API key is configured and email sending requested
     let emailSent = false;
-    const resendApiKey = Deno.env.get("RESEND_API_KEY");
+    const lovableApiKey = Deno.env.get("LOVABLE_API_KEY");
+    const resendApiKey = Deno.env.get("RESEND_API_KEY_1");
+    const GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
 
     if (send_email && resendApiKey) {
       const regionDisplay = region || "din region";
