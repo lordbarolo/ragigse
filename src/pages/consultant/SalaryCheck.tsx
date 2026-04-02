@@ -120,43 +120,45 @@ export default function SalaryCheck() {
       </section>
 
       {/* ── Section 2: Löneförhandling ──────────────── */}
-      <section className="max-w-6xl mx-auto px-6 py-20">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div>
-            <h2 className="text-3xl md:text-4xl font-bold mb-6 tracking-tight text-foreground">
-              Din nästa löneförhandling börjar här.
-            </h2>
-            <p className="text-muted-foreground mb-6 leading-relaxed text-lg">
-              Gå inte in i nästa samtal med en magkänsla – gå in med data. Vi har kartlagt de faktiska ramavtalspriserna för alla Sveriges regioner och zoner. Genom att matcha din nuvarande lön mot marknadens realitet ser du direkt om du ligger rätt eller om du lämnar pengar på bordet.
-            </p>
-            <ul className="space-y-3 mb-8 text-muted-foreground">
-              <li className="flex items-start gap-2">
-                <span className="text-primary font-bold mt-0.5">•</span>
-                <span><strong className="text-foreground">Regional jämförelse:</strong> Se hur ersättningen skiljer sig mellan Zon 1, 2 och 3.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-primary font-bold mt-0.5">•</span>
-                <span><strong className="text-foreground">Avslöja marginalerna:</strong> Se vad regionen faktiskt betalar bemanningsbolaget för din kompetens.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-primary font-bold mt-0.5">•</span>
-                <span><strong className="text-foreground">Smart assistent:</strong> Få konkreta råd baserat på 100% verifierad marknadsdata.</span>
-              </li>
-            </ul>
-            <p className="text-muted-foreground text-sm mb-4">Helt anonymt. Klart på 30 sekunder.</p>
-            <button
-              onClick={handleStartSurvey}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-2xl font-semibold transition-all shadow-lg shadow-primary/20 text-base"
-            >
-              Se din optimala ersättning
-            </button>
-          </div>
-          <div className="flex justify-center">
-            <img
-              src={dashboardPhone}
-              alt="CompCare dashboard på mobil"
-              className="max-h-[520px] w-auto object-contain rounded-2xl"
-            />
+      <section className="py-20" style={{ background: "linear-gradient(135deg, hsl(270 40% 92%), hsl(260 30% 88%))" }}>
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-bold mb-6 tracking-tight" style={{ color: "hsl(270 30% 20%)" }}>
+                Din nästa löneförhandling börjar här.
+              </h2>
+              <p className="mb-6 leading-relaxed text-lg" style={{ color: "hsl(270 15% 35%)" }}>
+                Gå inte in i nästa samtal med en magkänsla – gå in med data. Vi har kartlagt de faktiska ramavtalspriserna för alla Sveriges regioner och zoner. Genom att matcha din nuvarande lön mot marknadens realitet ser du direkt om du ligger rätt eller om du lämnar pengar på bordet.
+              </p>
+              <ul className="space-y-3 mb-8" style={{ color: "hsl(270 15% 35%)" }}>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary font-bold mt-0.5">•</span>
+                  <span><strong style={{ color: "hsl(270 30% 20%)" }}>Regional jämförelse:</strong> Se hur ersättningen skiljer sig mellan Zon 1, 2 och 3.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary font-bold mt-0.5">•</span>
+                  <span><strong style={{ color: "hsl(270 30% 20%)" }}>Avslöja marginalerna:</strong> Se vad regionen faktiskt betalar bemanningsbolaget för din kompetens.</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary font-bold mt-0.5">•</span>
+                  <span><strong style={{ color: "hsl(270 30% 20%)" }}>Smart assistent:</strong> Få konkreta råd baserat på 100% verifierad marknadsdata.</span>
+                </li>
+              </ul>
+              <p className="text-sm mb-4" style={{ color: "hsl(270 15% 45%)" }}>Helt anonymt. Klart på 30 sekunder.</p>
+              <button
+                onClick={handleStartSurvey}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-2xl font-semibold transition-all shadow-lg shadow-primary/20 text-base"
+              >
+                Se din optimala ersättning
+              </button>
+            </div>
+            <div className="flex justify-center">
+              <img
+                src={dashboardPhone}
+                alt="CompCare dashboard på mobil"
+                className="max-h-[520px] w-auto object-contain rounded-2xl"
+              />
+            </div>
           </div>
         </div>
       </section>
