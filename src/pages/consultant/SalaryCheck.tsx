@@ -135,7 +135,7 @@ export default function SalaryCheck() {
               {/* Badge */}
               <div className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3.5 py-1.5 text-[13px] font-medium text-white/70 backdrop-blur-xl">
                 <span className="h-1.5 w-1.5 rounded-full bg-[#8DA2FF] shadow-[0_0_14px_rgba(141,162,255,0.8)]" />
-                För sjuksköterskor och vårdpersonal i bemanning
+                För sjuksköterskor och läkare i bemanning
               </div>
 
               {/* Heading */}
