@@ -173,17 +173,17 @@ export default function SalaryCheck() {
           </div>
 
           {/* Image column */}
-          <div className="relative flex items-center justify-center lg:justify-end">
-            <div className="absolute right-[8%] top-1/2 h-[420px] w-[420px] -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(171,148,255,0.30),rgba(122,143,255,0.10)_44%,transparent_70%)] blur-2xl" />
-            <div className="relative w-full max-w-[600px]">
-              <div className="pointer-events-none absolute inset-y-[8%] left-[6%] right-[8%] rounded-[36px] bg-[radial-gradient(circle_at_center,rgba(177,140,255,0.22),transparent_62%)] blur-3xl" />
+          <div className="relative hidden lg:flex items-center justify-center">
+            <div className="absolute right-[5%] top-1/2 h-[520px] w-[520px] -translate-y-1/2 rounded-full bg-[radial-gradient(circle,rgba(171,148,255,0.28),rgba(122,143,255,0.10)_44%,transparent_70%)] blur-2xl" />
+            <div className="relative w-full max-w-[520px]">
+              <div className="pointer-events-none absolute inset-y-[5%] left-[4%] right-[4%] rounded-[36px] bg-[radial-gradient(circle_at_center,rgba(177,140,255,0.20),transparent_62%)] blur-3xl" />
               <img
                 src={handPhoneImage}
                 alt="Person som håller mobil med CompCare-gränssnitt"
-                className="relative z-10 w-full h-auto max-h-[520px] object-contain drop-shadow-[0_30px_80px_rgba(0,0,0,0.42)]"
+                className="relative z-10 w-full h-auto object-contain drop-shadow-[0_24px_64px_rgba(0,0,0,0.5)]"
                 style={{
-                  maskImage: "radial-gradient(ellipse 82% 88% at center, black 55%, transparent 100%)",
-                  WebkitMaskImage: "radial-gradient(ellipse 82% 88% at center, black 55%, transparent 100%)",
+                  maskImage: "radial-gradient(ellipse 90% 92% at 50% 48%, black 60%, transparent 100%)",
+                  WebkitMaskImage: "radial-gradient(ellipse 90% 92% at 50% 48%, black 60%, transparent 100%)",
                 }}
               />
             </div>
