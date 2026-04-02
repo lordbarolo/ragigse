@@ -66,14 +66,14 @@ export default function Negotiate() {
           if (spec?.name) updates.role = spec.name;
         }
 
-        // Resolve region name
+        // Resolve region/kommun
         if (data.region_id) {
           const { data: region } = await supabase
             .from("regions")
-            .select("name")
+            .select("kommun")
             .eq("id", data.region_id)
             .maybeSingle();
-          if (region?.name) updates.geography = region.name;
+          if (region?.kommun) updates.geography = region.kommun;
         }
 
         if (data.employment_type) updates.employment_type = data.employment_type;
