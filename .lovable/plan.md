@@ -1,18 +1,27 @@
 
 
-## Plan: Hint i Löneassistenten som guidar till Uppdragsassistenten
+## Problem
+The "Verifikationer — kommer snart" badge is centered vertically within the ComingSoonOverlay, but on mobile the content is tall, pushing the badge off-screen (user has to scroll to see it).
 
-### Vad som byggs
+There's also a build error that needs fixing — the previous edit to remove "Skapa konto" from Index.tsx nav was planned but not applied; the build error likely stems from something else.
 
-En diskret informationsrad under den befintliga SuggestedPrompts-komponenten (eller under chattfältet) som informerar användaren om att uppdragsfrågor hanteras av Uppdragsassistenten, med en länk till uppdragssidan.
+## Changes
 
-### Ändringar
+### 1. Fix ComingSoonOverlay positioning
+**File: `src/components/ComingSoonOverlay.tsx`**
 
-**`src/components/chat/SuggestedPrompts.tsx`**
-- Lägg till en rad under "Alla svar grundas i CI-motorn"-texten med en `Link` till `/consultant/uppdragsradar`:
-  - Text: "Har du frågor om kommande uppdrag? Prova Uppdragsassistenten"
-  - Stilsatt som en subtil hint (liten text, muted färg, länkdelen i primary-färg)
-  - Visas bara på startskärmen (innan konversation påbörjats), alltså i samma vy som de föreslagna promptarna
+Change the overlay from vertically centered (`items-center`) to top-aligned with padding, so the badge appears near the top of the section where the user lands.
 
-Ingen annan fil behöver ändras. Systemprompten hanterar redan cross-referral under pågående konversation.
+```tsx
+// Line 14: change items-center to items-start with pt-32
+<div className="absolute inset-0 flex items-start justify-center pt-32">
+```
+
+### 2. Remove "Skapa konto" button from Index.tsx nav (previous approved change)
+**File: `src/pages/Index.tsx` (lines 83-85)**
+
+Remove the `<Link to="/registrera"><Button>Skapa konto</Button></Link>` block.
+
+### 3. Investigate build error
+The build error may be from an incomplete prior edit. Will check and fix during implementation.
 
