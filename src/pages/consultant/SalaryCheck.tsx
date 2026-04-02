@@ -5,7 +5,7 @@ import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 import Survey from "@/components/Survey";
 import ServiceCards from "@/components/landing/ServiceCards";
-import dashboardPhone from "@/assets/dashboard-phone.png";
+import handPhoneImage from "@/assets/hand-phone.png";
 import CompcareLogo from "@/components/CompcareLogo";
 import ThemeToggle from "@/components/ThemeToggle";
 
@@ -152,22 +152,23 @@ export default function SalaryCheck() {
                 Se din optimala ersättning
               </button>
             </div>
-            <div className="relative flex justify-center md:justify-end md:-mr-6">
-              <img
-                src={dashboardPhone}
-                alt="CompCare dashboard på mobil"
-                className="max-h-[650px] w-auto object-contain relative z-10"
-              />
-              {/* Sparkle icons */}
-              <svg className="absolute bottom-8 right-4 w-6 h-6 z-20 opacity-60" viewBox="0 0 24 24" fill="none">
-                <path d="M12 2L14.09 8.26L20 9.27L15.55 13.97L16.91 20L12 16.9L7.09 20L8.45 13.97L4 9.27L9.91 8.26L12 2Z" fill="hsl(270 30% 80%)" />
-              </svg>
-              <svg className="absolute bottom-14 right-12 w-4 h-4 z-20 opacity-40" viewBox="0 0 24 24" fill="none">
-                <path d="M12 2L14.09 8.26L20 9.27L15.55 13.97L16.91 20L12 16.9L7.09 20L8.45 13.97L4 9.27L9.91 8.26L12 2Z" fill="hsl(270 25% 75%)" />
-              </svg>
-              <svg className="absolute bottom-4 right-16 w-3 h-3 z-20 opacity-50" viewBox="0 0 24 24" fill="none">
-                <path d="M12 2L14.09 8.26L20 9.27L15.55 13.97L16.91 20L12 16.9L7.09 20L8.45 13.97L4 9.27L9.91 8.26L12 2Z" fill="hsl(270 20% 85%)" />
-              </svg>
+            <div className="relative flex items-center justify-center md:justify-end">
+              <div className="relative w-full max-w-[740px]">
+                {/* Subtle radial glow behind image */}
+                <div
+                  className="absolute inset-y-[10%] left-[10%] right-[10%] rounded-full blur-[80px]"
+                  style={{ background: "radial-gradient(circle, rgba(180, 160, 210, 0.5), transparent 70%)" }}
+                />
+                <img
+                  src={handPhoneImage}
+                  alt="Person som håller mobil med CompCare-gränssnitt"
+                  className="relative z-10 w-full h-auto max-h-[600px] md:max-h-[600px] max-h-[400px] object-contain"
+                  style={{
+                    maskImage: "radial-gradient(ellipse 80% 85% at center, black 55%, transparent 100%)",
+                    WebkitMaskImage: "radial-gradient(ellipse 80% 85% at center, black 55%, transparent 100%)",
+                  }}
+                />
+              </div>
             </div>
           </div>
         </div>
