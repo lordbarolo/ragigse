@@ -48,9 +48,11 @@ serve(async (req) => {
 
     // Send email via Resend if API key is configured and email sending requested
     let emailSent = false;
-    const resendApiKey = Deno.env.get("RESEND_API_KEY");
+    const lovableApiKey = Deno.env.get("LOVABLE_API_KEY");
+    const resendApiKey = Deno.env.get("RESEND_API_KEY_1");
+    const GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
 
-    if (send_email && resendApiKey) {
+    if (send_email && resendApiKey && lovableApiKey) {
       const regionDisplay = region || "din region";
 
       // Fetch lead data to build inline preview
@@ -126,10 +128,11 @@ serve(async (req) => {
       `;
 
       try {
-        const resendRes = await fetch("https://api.resend.com/emails", {
+        const resendRes = await fetch(`${GATEWAY_URL}/emails`, {
           method: "POST",
           headers: {
-            "Authorization": `Bearer ${resendApiKey}`,
+            "Authorization": `Bearer ${lovableApiKey}`,
+            "X-Connection-Api-Key": resendApiKey,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({

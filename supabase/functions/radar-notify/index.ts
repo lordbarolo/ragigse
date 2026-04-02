@@ -17,8 +17,11 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
-    if (!RESEND_API_KEY) throw new Error("RESEND_API_KEY not configured");
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
+    const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY_1");
+    if (!RESEND_API_KEY) throw new Error("RESEND_API_KEY_1 not configured");
+    const GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
 
     const today = new Date().toISOString().split("T")[0];
 
@@ -54,10 +57,11 @@ Deno.serve(async (req) => {
       const monthsText = notif.months_before === 1 ? "1 månad" : `${notif.months_before} månader`;
 
       // Send email via Resend
-      const emailRes = await fetch("https://api.resend.com/emails", {
+      const emailRes = await fetch(`${GATEWAY_URL}/emails`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${RESEND_API_KEY}`,
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "X-Connection-Api-Key": RESEND_API_KEY,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
