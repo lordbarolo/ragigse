@@ -119,13 +119,46 @@ export default function SalaryCheck() {
         <div className="absolute bottom-0 left-0 right-0 h-[300px] bg-gradient-to-t from-background to-transparent" />
       </section>
 
-      {/* ── Phone image ──────────────────────────────── */}
-      <section className="flex justify-center -mt-16 relative z-20 px-6">
-        <img
-          src={handPhone}
-          alt="Mobilvy av CompCare marknadsanalys"
-          className="max-h-[500px] w-auto object-contain"
-        />
+      {/* ── Section 2: Löneförhandling ──────────────── */}
+      <section className="max-w-6xl mx-auto px-6 py-20">
+        <div className="grid md:grid-cols-2 gap-12 items-center">
+          <div>
+            <h2 className="text-3xl md:text-4xl font-bold mb-6 tracking-tight text-foreground">
+              Din nästa löneförhandling börjar här.
+            </h2>
+            <p className="text-muted-foreground mb-6 leading-relaxed text-lg">
+              Gå inte in i nästa samtal med en magkänsla – gå in med data. Vi har kartlagt de faktiska ramavtalspriserna för alla Sveriges regioner och zoner. Genom att matcha din nuvarande lön mot marknadens realitet ser du direkt om du ligger rätt eller om du lämnar pengar på bordet.
+            </p>
+            <ul className="space-y-3 mb-8 text-muted-foreground">
+              <li className="flex items-start gap-2">
+                <span className="text-primary font-bold mt-0.5">•</span>
+                <span><strong className="text-foreground">Regional jämförelse:</strong> Se hur ersättningen skiljer sig mellan Zon 1, 2 och 3.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-primary font-bold mt-0.5">•</span>
+                <span><strong className="text-foreground">Avslöja marginalerna:</strong> Se vad regionen faktiskt betalar bemanningsbolaget för din kompetens.</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-primary font-bold mt-0.5">•</span>
+                <span><strong className="text-foreground">Smart assistent:</strong> Få konkreta råd baserat på 100% verifierad marknadsdata.</span>
+              </li>
+            </ul>
+            <p className="text-muted-foreground text-sm mb-4">Helt anonymt. Klart på 30 sekunder.</p>
+            <button
+              onClick={handleStartSurvey}
+              className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-2xl font-semibold transition-all shadow-lg shadow-primary/20 text-base"
+            >
+              Se din optimala ersättning
+            </button>
+          </div>
+          <div className="flex justify-center">
+            <img
+              src={dashboardPhone}
+              alt="CompCare dashboard på mobil"
+              className="max-h-[520px] w-auto object-contain rounded-2xl"
+            />
+          </div>
+        </div>
       </section>
 
       {/* ── Service Cards (horizontal scroll) ──────── */}
