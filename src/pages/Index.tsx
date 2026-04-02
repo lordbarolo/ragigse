@@ -91,7 +91,7 @@ export default function Index() {
             För vårdens konsulter
           </h1>
 
-          <p className="text-hero-foreground/60 text-lg md:text-xl max-w-2xl mx-auto mb-4 leading-relaxed">
+          <p className="text-hero-foreground/60 text-xl md:text-2xl max-w-2xl mx-auto mb-4 leading-relaxed">
             Marknadsinsikter och smarta tjänster för läkare och sjuksköterskor.
           </p>
 
