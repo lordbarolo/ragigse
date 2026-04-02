@@ -157,7 +157,6 @@ export default function SalaryCheck() {
                 src={dashboardPhone}
                 alt="CompCare dashboard på mobil"
                 className="max-h-[650px] w-auto object-contain relative z-10"
-                style={{ filter: "drop-shadow(0 20px 40px rgba(15, 10, 30, 0.15))" }}
               />
               {/* Sparkle icons */}
               <svg className="absolute bottom-8 right-4 w-6 h-6 z-20 opacity-60" viewBox="0 0 24 24" fill="none">
