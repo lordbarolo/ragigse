@@ -6,6 +6,7 @@ import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 import Survey from "@/components/Survey";
 import ServiceCards from "@/components/landing/ServiceCards";
 import reportPreview from "@/assets/report-preview.jpeg";
+import handPhone from "@/assets/hand-phone-2.png";
 import CompcareLogo from "@/components/CompcareLogo";
 import ThemeToggle from "@/components/ThemeToggle";
 
@@ -147,6 +148,39 @@ export default function SalaryCheck() {
         >
           Få samma rapport för din kompetens ☝️
         </button>
+      </section>
+
+      {/* ── Negotiation Hero ─────────────────────────── */}
+      <section className="bg-[hsl(220,25%,8%)] text-white overflow-hidden">
+        <div className="max-w-6xl mx-auto px-6 py-16 md:py-24 flex flex-col md:flex-row items-center gap-10 md:gap-16">
+          <div className="flex-1 min-w-0">
+            <h2 className="text-3xl md:text-5xl font-bold tracking-tight mb-6 leading-tight">
+              Din nästa löneförhandling börjar här.
+            </h2>
+            <p className="text-white/70 text-base md:text-lg leading-relaxed mb-6">
+              Gå inte in i nästa samtal med en magkänsla – gå in med data. Vi har kartlagt de faktiska ramavtalspriserna för alla Sveriges regioner och zoner. Genom att matcha din nuvarande lön mot marknadens realitet ser du direkt om du ligger rätt eller om du lämnar pengar på bordet.
+            </p>
+            <ul className="space-y-2 mb-8 text-sm md:text-base text-white/80">
+              <li className="flex gap-2"><span className="text-primary font-bold">📊</span><span><strong>Regional jämförelse:</strong> Se hur ersättningen skiljer sig mellan Zon 1, 2 och 3.</span></li>
+              <li className="flex gap-2"><span className="text-primary font-bold">🔍</span><span><strong>Avslöja marginalerna:</strong> Se vad regionen faktiskt betalar bemanningsbolaget för din kompetens.</span></li>
+              <li className="flex gap-2"><span className="text-primary font-bold">🤖</span><span><strong>Smart assistent:</strong> Få konkreta råd baserat på 100% verifierad marknadsdata.</span></li>
+            </ul>
+            <p className="text-white/50 text-sm mb-5">Helt anonymt. Klart på 30 sekunder.</p>
+            <button
+              onClick={handleStartSurvey}
+              className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-2xl font-semibold text-base transition-all shadow-lg shadow-primary/20"
+            >
+              Se din optimala ersättning
+            </button>
+          </div>
+          <div className="flex-shrink-0 w-full md:w-auto flex justify-center">
+            <img
+              src={handPhone}
+              alt="Mobilvy av CompCare marknadsanalys"
+              className="max-h-[500px] w-auto object-contain"
+            />
+          </div>
+        </div>
       </section>
 
       {/* ── Service Cards (horizontal scroll) ──────── */}
