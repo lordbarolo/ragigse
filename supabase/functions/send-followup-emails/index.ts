@@ -152,10 +152,11 @@ serve(async (req) => {
 
         const template = getEmailTemplate(email.sequence_step, occupation, reportUrl);
 
-        const resendRes = await fetch("https://api.resend.com/emails", {
+        const resendRes = await fetch(`${GATEWAY_URL}/emails`, {
           method: "POST",
           headers: {
-            "Authorization": `Bearer ${resendApiKey}`,
+            "Authorization": `Bearer ${lovableApiKey}`,
+            "X-Connection-Api-Key": resendApiKey,
             "Content-Type": "application/json",
           },
           body: JSON.stringify({

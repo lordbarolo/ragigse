@@ -57,10 +57,11 @@ Deno.serve(async (req) => {
       const monthsText = notif.months_before === 1 ? "1 månad" : `${notif.months_before} månader`;
 
       // Send email via Resend
-      const emailRes = await fetch("https://api.resend.com/emails", {
+      const emailRes = await fetch(`${GATEWAY_URL}/emails`, {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${RESEND_API_KEY}`,
+          Authorization: `Bearer ${LOVABLE_API_KEY}`,
+          "X-Connection-Api-Key": RESEND_API_KEY,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
