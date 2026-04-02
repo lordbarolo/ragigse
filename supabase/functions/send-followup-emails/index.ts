@@ -87,13 +87,21 @@ serve(async (req) => {
   }
 
   try {
-    const resendApiKey = Deno.env.get("RESEND_API_KEY");
-    if (!resendApiKey) {
-      return new Response(JSON.stringify({ error: "RESEND_API_KEY not configured" }), {
+    const lovableApiKey = Deno.env.get("LOVABLE_API_KEY");
+    if (!lovableApiKey) {
+      return new Response(JSON.stringify({ error: "LOVABLE_API_KEY not configured" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+    const resendApiKey = Deno.env.get("RESEND_API_KEY_1");
+    if (!resendApiKey) {
+      return new Response(JSON.stringify({ error: "RESEND_API_KEY_1 not configured" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const GATEWAY_URL = "https://connector-gateway.lovable.dev/resend";
 
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
