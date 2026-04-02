@@ -32,14 +32,14 @@ export default function Hero() {
         </div>
 
         <h1
-          className="font-display font-extrabold leading-[1.08] tracking-[-0.03em] text-foreground mb-3"
-          style={{ fontSize: "clamp(36px, 7vw, 56px)" }}
+          className="font-display font-extrabold leading-[1.08] tracking-[-0.03em] text-foreground mb-4"
+          style={{ fontSize: "clamp(42px, 8vw, 72px)" }}
         >
           Tjänar du rätt? Fakturerar du rätt? Förhandlar du rätt?
         </h1>
 
         <p
-          className="text-foreground/55 font-light leading-relaxed max-w-[460px] mx-auto text-lg md:text-[18px]"
+          className="text-foreground/55 font-light leading-relaxed max-w-[520px] mx-auto text-xl md:text-[22px]"
         >
           Gör löneanalysen och ta del av marknadens faktiska villkor. Baserat på över 20 000 offentliga avtal från 290 kommuner och 21 regioner.
         </p>
