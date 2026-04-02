@@ -82,8 +82,9 @@ const App = () => (
           <ScrollToTop />
           <Suspense fallback={<Loading />}>
             <Routes>
-              {/* ── B2B Landing ────────────────────── */}
-              <Route path="/" element={<Index />} />
+              {/* ── Landing — salary analysis funnel ── */}
+              <Route path="/" element={<SalaryCheck />} />
+              <Route path="/b2b" element={<Index />} />
 
               {/* ── Auth (no layout) ──────────────── */}
               <Route path="/logga-in" element={<Login />} />
