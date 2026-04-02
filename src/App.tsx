@@ -72,6 +72,11 @@ function ScrollToTop() {
   return null;
 }
 
+function RedirectWithParams({ to }: { to: string }) {
+  const location = useLocation();
+  return <Navigate to={`${to}${location.search}`} replace />;
+}
+
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
@@ -146,7 +151,7 @@ const App = () => (
               {/* ── Backwards-compat redirects ───── */}
               <Route path="/profil" element={<Navigate to="/consultant/profil" replace />} />
               <Route path="/radar" element={<Navigate to="/consultant/radar" replace />} />
-              <Route path="/forhandla" element={<Navigate to="/consultant/forhandla" replace />} />
+              <Route path="/forhandla" element={<RedirectWithParams to="/consultant/forhandla" />} />
               <Route path="/referenser" element={<Navigate to="/consultant/referenser" replace />} />
               <Route path="/fakturakontroll" element={<Navigate to="/consultant/fakturakontroll" replace />} />
               <Route path="/academy" element={<Navigate to="/consultant/academy" replace />} />
