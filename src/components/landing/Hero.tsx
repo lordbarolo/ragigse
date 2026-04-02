@@ -41,7 +41,7 @@ export default function Hero() {
         <p
           className="text-foreground/55 font-light leading-relaxed max-w-[460px] mx-auto text-lg md:text-[18px]"
         >
-          Verifieringsinfrastruktur för vården — ramavtalspriser, lönestatistik och marginalberäkningar samlat från 21 regioner och SCB.
+          Gör löneanalysen och ta del av marknadens faktiska villkor. Baserat på över 20 000 offentliga avtal från 290 kommuner och 21 regioner.
         </p>
       </div>
     </section>
