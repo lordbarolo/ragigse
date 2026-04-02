@@ -80,9 +80,6 @@ export default function Index() {
             <Link to="/logga-in">
               <Button variant="ghost" size="sm" className="text-muted-foreground">Logga in</Button>
             </Link>
-            <Link to="/registrera">
-              <Button size="sm">Skapa konto</Button>
-            </Link>
           </div>
         </div>
       </nav>
