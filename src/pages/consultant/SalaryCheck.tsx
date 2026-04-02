@@ -174,7 +174,7 @@ export default function SalaryCheck() {
                     onClick={handleStartSurvey}
                     className="inline-flex min-h-[52px] items-center justify-center rounded-xl bg-[linear-gradient(135deg,#5C7CFF_0%,#7FA4FF_100%)] px-7 text-[15px] font-semibold text-white shadow-[0_14px_40px_rgba(92,124,255,0.30)] transition duration-200 hover:-translate-y-0.5"
                   >
-                    Se din optimala ersättning
+                    Jämför din ersättning
                   </button>
                 </div>
               </div>
