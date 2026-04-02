@@ -65,7 +65,7 @@ const TRUST_POINTS = [
 ];
 
 export default function Index() {
-  useEffect(() => { trackEvent("landing_viewed"); trackEvent("b2b_landing_viewed"); }, []);
+  useEffect(() => { trackEvent("b2b_landing_viewed"); }, []);
 
   return (
     <div className="min-h-screen bg-background">
