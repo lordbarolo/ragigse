@@ -91,11 +91,11 @@ export default function SalaryCheck() {
             100% Verifierad Marknadsdata
           </div>
 
-          <h1 className="text-5xl md:text-7xl font-bold mb-8 tracking-tight">
+          <h1 className="font-bold mb-8 tracking-tight" style={{ fontSize: "clamp(2.75rem, 7.5vw, 5.5rem)" }}>
             För vårdens konsulter
           </h1>
 
-          <p className="text-hero-foreground/60 text-lg md:text-xl max-w-2xl mx-auto mb-2 leading-relaxed">
+          <p className="text-hero-foreground/60 text-xl md:text-2xl max-w-2xl mx-auto mb-2 leading-relaxed">
             Marknadsinsikter och smarta tjänster för läkare och sjuksköterskor
           </p>
           <p className="text-hero-foreground/60 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
