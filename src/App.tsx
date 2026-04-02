@@ -72,6 +72,11 @@ function ScrollToTop() {
   return null;
 }
 
+function RedirectWithParams({ to }: { to: string }) {
+  const location = useLocation();
+  return <Navigate to={`${to}${location.search}`} replace />;
+}
+
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
