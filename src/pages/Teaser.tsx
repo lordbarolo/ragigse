@@ -320,11 +320,11 @@ export default function Teaser() {
           emailProvided={false}
         />
 
-        {/* Email Gate — "Resten av din rapport" */}
+        {/* Email Gate */}
         {!email && (
           <div className="space-y-5">
             <h2 className="text-xl font-bold text-foreground leading-snug">
-              Resten av din rapport är klar — vart skickar vi den?
+              Rapporten är klar — vart skickar vi den?
             </h2>
             <EmailGate
               onEmailSubmit={handleEmailSubmit}
@@ -340,17 +340,6 @@ export default function Teaser() {
             yrke={survey.yrke}
           />
         </div>
-
-        {/* Second CTA at the bottom for those who scrolled */}
-        {!email && (
-          <div className="rounded-xl border border-primary/20 bg-card p-5 card-shadow">
-            {emailHookProps && <EmailHookMessage {...emailHookProps} />}
-            <EmailGate
-              onEmailSubmit={handleEmailSubmit}
-              loading={emailSaving}
-            />
-          </div>
-        )}
       </main>
     </div>
   );
