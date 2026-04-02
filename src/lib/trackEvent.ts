@@ -55,7 +55,8 @@ type EventName =
   | "survey_question_selected"
   | "survey_custom_question_submitted"
   | "b2b_landing_viewed"
-  | "fakturakontroll_interest_submitted";
+  | "fakturakontroll_interest_submitted"
+  | "negotiation_email_gate_completed";
 
 function isInternalTraffic(): boolean {
   const host = window.location.hostname;
