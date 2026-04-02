@@ -152,7 +152,7 @@ export default function SalaryCheck() {
               <div className="mt-7 space-y-2.5">
                 {[
                   { title: "Regional jämförelse:", text: "Se hur ersättningen skiljer sig mellan Zon 1, 2 och 3." },
-                  { title: "Avslöja marginalerna:", text: "Se vad regionen faktiskt betalar bemanningsbolaget för din kompetens." },
+                  { title: "Se marginalerna:", text: "Se vad regionen faktiskt betalar för din kompetens." },
                   { title: "Smart assistent:", text: "Få konkreta råd baserat på 100% verifierad marknadsdata." },
                 ].map((item) => (
                   <div key={item.title} className="flex items-start gap-3 rounded-xl border border-white/[0.06] bg-white/[0.025] px-4 py-3 backdrop-blur-sm">
