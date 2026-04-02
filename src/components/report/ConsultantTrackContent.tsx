@@ -406,7 +406,7 @@ export default function ConsultantTrackContent({
             </div>
             <div className="px-5 py-5">
               <Link
-                to={`/forhandla?role=${encodeURIComponent(occupation || "")}&geo=${encodeURIComponent(kommun || "")}&emp=${encodeURIComponent(isEmployee ? "anstalld" : "consultant")}`}
+                to={`/forhandla?role=${encodeURIComponent(occupation || "")}&geo=${encodeURIComponent(kommun || "")}&emp=${encodeURIComponent(isEmployee ? "anstalld" : "consultant")}${r?.recommendation?.recommended_hourly_min ? `&rate=${r.recommendation.recommended_hourly_min}` : ""}&from=report`}
                 className="w-full flex items-center justify-center gap-2 rounded-[10px] bg-primary px-4 py-3.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
               >
                 <Handshake className="w-4 h-4" />
