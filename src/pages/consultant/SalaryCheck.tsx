@@ -122,13 +122,13 @@ export default function SalaryCheck() {
       {/* ── Section 2: Löneförhandling (dark premium) ── */}
       <section className="relative overflow-hidden bg-[#050816] text-white">
         {/* Ambient gradient orbs */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(116,137,255,0.18),transparent_32%),radial-gradient(circle_at_65%_50%,rgba(177,129,255,0.14),transparent_28%),radial-gradient(circle_at_80%_75%,rgba(92,112,255,0.10),transparent_24%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_35%,rgba(116,137,255,0.14),transparent_28%),radial-gradient(circle_at_60%_50%,rgba(177,129,255,0.10),transparent_24%),radial-gradient(circle_at_75%_70%,rgba(92,112,255,0.08),transparent_20%)]" />
         <div className="absolute inset-0 bg-[linear-gradient(135deg,#030712_0%,#081124_45%,#050816_100%)] opacity-95" />
         {/* Subtle grid */}
-        <div className="absolute inset-0 opacity-[0.04] [background-image:linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px)] [background-size:72px_72px]" />
+        <div className="absolute inset-0 opacity-[0.03] [background-image:linear-gradient(rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:64px_64px]" />
 
-        <div className="relative mx-auto max-w-6xl px-6 py-16 md:px-10 lg:px-12 lg:py-20">
-          <div className="grid items-center gap-10 md:grid-cols-[1fr_0.85fr] lg:gap-16">
+        <div className="relative mx-auto max-w-6xl px-6 py-14 md:px-10 lg:px-12 lg:py-20">
+          <div className="grid items-center gap-8 md:grid-cols-[1fr_0.9fr] lg:gap-10">
 
             {/* ── Text column ── */}
             <div className="flex flex-col">
@@ -144,22 +144,22 @@ export default function SalaryCheck() {
               </h2>
 
               {/* Body */}
-              <p className="mt-5 max-w-xl text-[15px] leading-[1.75] text-white/60 sm:text-base lg:text-[17px]">
+              <p className="mt-4 max-w-lg text-[15px] leading-[1.7] text-white/60 sm:text-base lg:text-[17px]">
                 Gå inte in i nästa samtal med en magkänsla – gå in med data. Vi har kartlagt de faktiska avtalspriserna för 21 regioner och 290 kommuner. Genom att jämföra din nuvarande ersättning mot marknadens realitet ser du direkt om du ligger rätt eller om du lämnar pengar på bordet.
               </p>
 
               {/* Bullet cards */}
-              <div className="mt-7 space-y-2.5">
+              <div className="mt-6 space-y-2">
                 {[
                   { title: "Regional jämförelse:", text: "Se hur ersättningen skiljer sig mellan Zon 1, 2 och 3." },
                   { title: "Se marginalerna:", text: "Se vad regionen faktiskt betalar för din kompetens." },
                   { title: "Smart assistent:", text: "Få konkreta råd baserat på 100% verifierad marknadsdata." },
                 ].map((item) => (
-                  <div key={item.title} className="flex items-start gap-3 rounded-xl border border-white/[0.06] bg-white/[0.025] px-4 py-3 backdrop-blur-sm">
-                    <div className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#93A5FF]/15 bg-[#93A5FF]/[0.08] text-xs text-[#B8C5FF]">
+                  <div key={item.title} className="flex items-start gap-3 rounded-lg border border-white/[0.05] bg-white/[0.02] px-3.5 py-2.5 backdrop-blur-sm">
+                    <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-[#93A5FF]/12 bg-[#93A5FF]/[0.06] text-[10px] text-[#B8C5FF]">
                       ✦
                     </div>
-                    <p className="text-[13px] leading-[1.65] text-white/55 sm:text-sm">
+                    <p className="text-[13px] leading-[1.6] text-white/55 sm:text-sm">
                       <span className="font-medium text-white/90">{item.title}</span> {item.text}
                     </p>
                   </div>
@@ -167,12 +167,12 @@ export default function SalaryCheck() {
               </div>
 
               {/* Trust line + CTA */}
-              <div className="mt-6">
+              <div className="mt-5">
                 <p className="text-sm text-white/50 lg:text-[15px]">Helt anonymt. Klart på 30 sekunder.</p>
-                <div className="mt-4">
+                <div className="mt-3">
                   <button
                     onClick={handleStartSurvey}
-                    className="inline-flex min-h-[52px] items-center justify-center rounded-xl bg-[linear-gradient(135deg,#5C7CFF_0%,#7FA4FF_100%)] px-7 text-[15px] font-semibold text-white shadow-[0_14px_40px_rgba(92,124,255,0.30)] transition duration-200 hover:-translate-y-0.5"
+                    className="inline-flex min-h-[50px] items-center justify-center rounded-xl bg-[linear-gradient(135deg,#5C7CFF_0%,#7FA4FF_100%)] px-7 text-[15px] font-semibold text-white shadow-[0_12px_36px_rgba(92,124,255,0.28)] transition duration-200 hover:-translate-y-0.5"
                   >
                     Jämför din ersättning
                   </button>
@@ -181,18 +181,18 @@ export default function SalaryCheck() {
             </div>
 
             {/* ── Image column ── */}
-            <div className="relative hidden md:flex items-center justify-center self-stretch">
-              {/* Glow behind image */}
-              <div className="absolute inset-[-10%] rounded-full bg-[radial-gradient(ellipse_70%_60%_at_50%_50%,rgba(141,162,255,0.15),rgba(120,100,255,0.06)_50%,transparent_80%)] blur-xl" />
-              {/* Subtle inner glow */}
-              <div className="absolute inset-[5%] rounded-3xl bg-[radial-gradient(circle_at_50%_45%,rgba(177,140,255,0.12),transparent_65%)] blur-2xl" />
+            <div className="relative hidden md:flex items-center justify-center self-stretch -ml-4 lg:-ml-8">
+              {/* Focused glow behind image */}
+              <div className="absolute inset-[-5%] rounded-full bg-[radial-gradient(ellipse_60%_55%_at_48%_50%,rgba(130,155,255,0.18),rgba(100,80,255,0.05)_55%,transparent_80%)] blur-lg" />
+              {/* Tight inner glow */}
+              <div className="absolute inset-[8%] rounded-2xl bg-[radial-gradient(circle_at_48%_45%,rgba(160,130,255,0.10),transparent_60%)] blur-xl" />
               <img
                 src={handPhoneImage}
                 alt="Person som håller mobil med CompCare-gränssnitt"
-                className="relative z-10 w-full max-w-[480px] h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.45)]"
+                className="relative z-10 w-full max-w-[560px] h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
                 style={{
-                  maskImage: "radial-gradient(ellipse 88% 90% at 50% 48%, black 58%, transparent 100%)",
-                  WebkitMaskImage: "radial-gradient(ellipse 88% 90% at 50% 48%, black 58%, transparent 100%)",
+                  maskImage: "radial-gradient(ellipse 90% 92% at 50% 48%, black 60%, transparent 100%)",
+                  WebkitMaskImage: "radial-gradient(ellipse 90% 92% at 50% 48%, black 60%, transparent 100%)",
                 }}
               />
             </div>
@@ -201,7 +201,7 @@ export default function SalaryCheck() {
 
           {/* Mobile image */}
           <div className="relative mt-10 flex justify-center md:hidden">
-            <div className="absolute inset-[-15%] rounded-full bg-[radial-gradient(circle,rgba(141,162,255,0.12),transparent_70%)] blur-xl" />
+            <div className="absolute inset-[-12%] rounded-full bg-[radial-gradient(circle,rgba(141,162,255,0.10),transparent_65%)] blur-lg" />
             <img
               src={handPhoneImage}
               alt="Person som håller mobil med CompCare-gränssnitt"
