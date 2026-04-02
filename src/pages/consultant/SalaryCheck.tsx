@@ -191,6 +191,7 @@ export default function SalaryCheck() {
                 alt="Person som håller mobil med CompCare-gränssnitt"
                 className="relative z-10 w-full max-w-[560px] h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
                 style={{
+                  transform: "translateX(-15%)",
                   maskImage: "radial-gradient(ellipse 90% 92% at 50% 48%, black 60%, transparent 100%)",
                   WebkitMaskImage: "radial-gradient(ellipse 90% 92% at 50% 48%, black 60%, transparent 100%)",
                 }}
