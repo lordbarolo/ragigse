@@ -3,9 +3,8 @@ interface Props {
 }
 
 const ROLES = [
-  { title: "Läkare", sub: "ST-läkare, specialist eller legitimerad läkare", category: "lakare" as const },
-  { title: "Sjuksköterska", sub: "Allmänsjuksköterska eller specialistsjuksköterska", category: "ssk" as const },
-  { title: "Barnmorska", sub: "Legitimerad med specialistutbildning", category: "ssk" as const, prefill: "__barnmorska" },
+  { title: "Läkare", category: "lakare" as const },
+  { title: "Sjuksköterska / Barnmorska", category: "ssk" as const },
 ];
 
 export default function RoleSelector({ onRoleSelect }: Props) {
