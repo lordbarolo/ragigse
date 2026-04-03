@@ -120,6 +120,7 @@ const App = () => (
               {/* ── Agency Layout ─────────────────── */}
               <Route element={<ProtectedRoute allowedRoles={["agency", "admin"]}><AgencyLayout /></ProtectedRoute>}>
                 <Route path="/agency/dashboard" element={<AgencyDashboard />} />
+                <Route path="/agency/market-edge" element={<MarketEdge />} />
                 {/* Future: /agency/requests, /agency/settings */}
               </Route>
 
