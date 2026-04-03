@@ -13,7 +13,7 @@ import { fetchLead, leadToSurvey, createReport, saveEmail } from "@/services/lea
 const STEPS = [
 { icon: "📋", label: "Hämtar ramavtalsdata", sub: "SKR RS 202203983 · 2026" },
 { icon: "🗺", label: "Matchar din zon", sub: "Identifierar geografisk prissättning" },
-{ icon: "👩‍⚕️", label: "Jämför med din specialitet", sub: "Filtrerar på yrkeskategori" },
+{ icon: "👩‍⚕️", label: "Matchar din yrkeskategori", sub: "Filtrerar på yrkeskategori" },
 { icon: "📊", label: "Beräknar förhandlingsspann", sub: "Realistiskt · Rekommenderat · Ambitiöst" },
 { icon: "💡", label: "Genererar förhandlingstips", sub: "Anpassade till din situation" }];
 
