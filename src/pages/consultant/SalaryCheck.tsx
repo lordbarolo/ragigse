@@ -151,10 +151,10 @@ export default function SalaryCheck() {
               {/* Bullet cards */}
               <div className="mt-6 space-y-2">
                 {[
+                  { title: "Transparens:", text: "Se villkoren som är möjliga att få för din roll" },
                   { title: "Regional jämförelse:", text: "Se hur ersättningen skiljer sig mellan orter" },
                   { title: "Se marginalerna:", text: "Se vad regionen faktiskt betalar för din kompetens." },
                   { title: "Smart assistent:", text: "Få konkreta råd baserat på 100% verifierad marknadsdata." },
-                  { title: "Transparens:", text: "Se villkoren som är möjliga att få för din roll" },
                 ].map((item) => (
                   <div key={item.title} className="flex items-start gap-3 rounded-lg border border-white/[0.05] bg-white/[0.02] px-3.5 py-2.5 backdrop-blur-sm">
                     <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-[#93A5FF]/12 bg-[#93A5FF]/[0.06] text-[10px] text-[#B8C5FF]">
