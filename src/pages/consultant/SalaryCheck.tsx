@@ -151,7 +151,7 @@ export default function SalaryCheck() {
               {/* Bullet cards */}
               <div className="mt-6 space-y-2">
                 {[
-                  { title: "Regional jämförelse:", text: "Se hur ersättningen skiljer sig mellan Zon 1, 2 och 3." },
+                  { title: "Regional jämförelse:", text: "Se hur ersättningen skiljer sig mellan orter" },
                   { title: "Se marginalerna:", text: "Se vad regionen faktiskt betalar för din kompetens." },
                   { title: "Smart assistent:", text: "Få konkreta råd baserat på 100% verifierad marknadsdata." },
                   { title: "Transparens:", text: "Offentlig data — paketerad för konsulten." },
