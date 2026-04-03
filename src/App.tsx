@@ -17,6 +17,7 @@ import PublicVerifyLayout from "@/layouts/PublicVerifyLayout";
 
 // Lazy-loaded routes
 const SalaryCheck = lazy(() => import("./pages/consultant/SalaryCheck"));
+const MarketEdge = lazy(() => import("./pages/MarketEdge"));
 const AnalysisScreen = lazy(() => import("./pages/AnalysisScreen"));
 const Teaser = lazy(() => import("./pages/Teaser"));
 const ReferralLanding = lazy(() => import("./pages/ReferralLanding"));
