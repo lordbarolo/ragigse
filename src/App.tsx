@@ -152,6 +152,7 @@ const App = () => (
               <Route path="/dev/demo" element={import.meta.env.PROD ? <NotFound /> : <Navigate to="/demo" replace />} />
 
               {/* ── Backwards-compat redirects ───── */}
+              <Route path="/index" element={<Navigate to="/" replace />} />
               <Route path="/profil" element={<Navigate to="/consultant/profil" replace />} />
               <Route path="/radar" element={<Navigate to="/consultant/radar" replace />} />
               <Route path="/forhandla" element={<RedirectWithParams to="/consultant/forhandla" />} />
