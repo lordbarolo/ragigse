@@ -83,7 +83,7 @@ export default function ServiceCards({ onStartAnalysis }: ServiceCardsProps) {
         {/* Horizontal scroll on mobile, grid on larger screens */}
         <div className="flex flex-col gap-4 pb-4 sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-px sm:bg-border sm:rounded-xl sm:overflow-hidden sm:pb-0">
           {SERVICES.map((s, i) => (
-            <div key={i} className={`w-full rounded-xl bg-secondary/50 p-6 flex flex-col sm:rounded-none sm:bg-background sm:p-8 ${(s as any).comingSoon ? 'opacity-50' : ''}`}>
+            <div key={i} className="w-full rounded-xl bg-secondary/50 p-6 flex flex-col sm:rounded-none sm:bg-background sm:p-8">
               {/* Icon */}
               <div
                 className={`w-10 h-10 rounded-lg flex items-center justify-center mb-5 ${s.iconBg} ${s.iconColor}`}
