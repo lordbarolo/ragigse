@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Building2, Loader2, MapPin, TrendingUp } from "lucide-react";
+import { Building2, ChevronLeft, Loader2, MapPin, TrendingUp } from "lucide-react";
 import { useLocations } from "@/hooks/useCalculator";
 import { supabase } from "@/integrations/supabase/client";
 import SearchableSelect from "@/components/SearchableSelect";
@@ -13,7 +13,6 @@ interface RoleOption {
   value: string;
   label: string;
   group: RoleGroup;
-  section: string;
 }
 
 interface MarketResult {
@@ -29,25 +28,31 @@ interface MarketResult {
   marginText: string;
 }
 
-const ROLE_OPTIONS: RoleOption[] = [
-  { value: "AT-läkare", label: "AT-läkare", group: "doctor", section: "Läkare" },
-  { value: "ST-läkare", label: "ST-läkare", group: "doctor", section: "Läkare" },
-  { value: "Specialistläkare", label: "Specialistläkare", group: "doctor", section: "Läkare" },
-  { value: "Övriga läkare", label: "Övriga läkare", group: "doctor", section: "Läkare" },
-  { value: "Barnmorskor", label: "Barnmorskor", group: "nurse", section: "Sjuksköterskor & barnmorskor" },
-  { value: "Grundutbildade sjuksköterskor", label: "Grundutbildade sjuksköterskor", group: "nurse", section: "Sjuksköterskor & barnmorskor" },
-  { value: "Distriktssköterskor", label: "Distriktssköterskor", group: "nurse", section: "Sjuksköterskor & barnmorskor" },
-  { value: "Ambulanssjuksköterskor m.fl.", label: "Ambulanssjuksköterskor", group: "nurse", section: "Sjuksköterskor & barnmorskor" },
-  { value: "Anestesisjuksköterskor", label: "Anestesisjuksköterskor", group: "nurse", section: "Sjuksköterskor & barnmorskor" },
-  { value: "Barnsjuksköterskor", label: "Barnsjuksköterskor", group: "nurse", section: "Sjuksköterskor & barnmorskor" },
-  { value: "Företagssköterskor", label: "Företagssköterskor", group: "nurse", section: "Sjuksköterskor & barnmorskor" },
-  { value: "Geriatriksjuksköterskor", label: "Geriatriksjuksköterskor", group: "nurse", section: "Sjuksköterskor & barnmorskor" },
-  { value: "Intensivvårdssjuksköterskor", label: "Intensivvårdssjuksköterskor", group: "nurse", section: "Sjuksköterskor & barnmorskor" },
-  { value: "Operationssjuksköterskor", label: "Operationssjuksköterskor", group: "nurse", section: "Sjuksköterskor & barnmorskor" },
-  { value: "Psykiatrisjuksköterskor", label: "Psykiatrisjuksköterskor", group: "nurse", section: "Sjuksköterskor & barnmorskor" },
-  { value: "Röntgensjuksköterskor", label: "Röntgensjuksköterskor", group: "nurse", section: "Sjuksköterskor & barnmorskor" },
-  { value: "Skolsköterskor", label: "Skolsköterskor", group: "nurse", section: "Sjuksköterskor & barnmorskor" },
-  { value: "Övriga specialistsjuksköterskor", label: "Övriga specialistsjuksköterskor", group: "nurse", section: "Sjuksköterskor & barnmorskor" },
+const CATEGORIES: { value: RoleGroup; label: string }[] = [
+  { value: "doctor", label: "Läkare" },
+  { value: "nurse", label: "Sjuksköterska / Barnmorska" },
+];
+
+const SPECIALIZATIONS: RoleOption[] = [
+  // Doctors (AT-läkare excluded)
+  { value: "ST-läkare", label: "ST-läkare", group: "doctor" },
+  { value: "Specialistläkare", label: "Specialistläkare", group: "doctor" },
+  { value: "Övriga läkare", label: "Övriga läkare", group: "doctor" },
+  // Nurses & midwives
+  { value: "Barnmorskor", label: "Barnmorskor", group: "nurse" },
+  { value: "Grundutbildade sjuksköterskor", label: "Grundutbildade sjuksköterskor", group: "nurse" },
+  { value: "Distriktssköterskor", label: "Distriktssköterskor", group: "nurse" },
+  { value: "Ambulanssjuksköterskor m.fl.", label: "Ambulanssjuksköterskor", group: "nurse" },
+  { value: "Anestesisjuksköterskor", label: "Anestesisjuksköterskor", group: "nurse" },
+  { value: "Barnsjuksköterskor", label: "Barnsjuksköterskor", group: "nurse" },
+  { value: "Företagssköterskor", label: "Företagssköterskor", group: "nurse" },
+  { value: "Geriatriksjuksköterskor", label: "Geriatriksjuksköterskor", group: "nurse" },
+  { value: "Intensivvårdssjuksköterskor", label: "Intensivvårdssjuksköterskor", group: "nurse" },
+  { value: "Operationssjuksköterskor", label: "Operationssjuksköterskor", group: "nurse" },
+  { value: "Psykiatrisjuksköterskor", label: "Psykiatrisjuksköterskor", group: "nurse" },
+  { value: "Röntgensjuksköterskor", label: "Röntgensjuksköterskor", group: "nurse" },
+  { value: "Skolsköterskor", label: "Skolsköterskor", group: "nurse" },
+  { value: "Övriga specialistsjuksköterskor", label: "Övriga specialistsjuksköterskor", group: "nurse" },
 ];
 
 function getMargins(group: RoleGroup) {
@@ -58,29 +63,47 @@ function getMargins(group: RoleGroup) {
 
 export default function MarketSearchBox() {
   const { data: locations } = useLocations();
+  const [selectedCategory, setSelectedCategory] = useState<RoleGroup | null>(null);
   const [selectedRole, setSelectedRole] = useState("");
   const [selectedKommun, setSelectedKommun] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<MarketResult | null>(null);
 
+  const filteredSpecializations = useMemo(
+    () => (selectedCategory ? SPECIALIZATIONS.filter((s) => s.group === selectedCategory) : []),
+    [selectedCategory]
+  );
+
   const selectedRoleOption = useMemo(
-    () => ROLE_OPTIONS.find((role) => role.value === selectedRole) ?? null,
+    () => SPECIALIZATIONS.find((r) => r.value === selectedRole) ?? null,
     [selectedRole]
   );
 
   const selectedLocation = useMemo(
-    () => locations?.find((location) => location.kommun === selectedKommun) ?? null,
+    () => locations?.find((l) => l.kommun === selectedKommun) ?? null,
     [locations, selectedKommun]
   );
 
   const kommunOptions = useMemo(() => {
     if (!locations) return [];
-    return locations.map((location) => ({
-      value: location.kommun,
-      label: `${location.kommun} (${location.region})`,
-    }));
+    return locations.map((l) => ({ value: l.kommun, label: `${l.kommun} (${l.region})` }));
   }, [locations]);
+
+  // Reset specialization when category changes
+  const handleCategorySelect = (cat: RoleGroup) => {
+    setSelectedCategory(cat);
+    setSelectedRole("");
+    setResult(null);
+    setError(null);
+  };
+
+  const handleBack = () => {
+    setSelectedCategory(null);
+    setSelectedRole("");
+    setResult(null);
+    setError(null);
+  };
 
   useEffect(() => {
     if (!selectedRoleOption || !selectedLocation) {
@@ -148,7 +171,7 @@ export default function MarketSearchBox() {
     };
   }, [selectedLocation, selectedRoleOption]);
 
-  const fmt = (value: number) => value.toLocaleString("sv-SE", { maximumFractionDigits: 0 });
+  const fmt = (v: number) => v.toLocaleString("sv-SE", { maximumFractionDigits: 0 });
 
   return (
     <div className="w-full max-w-lg mx-auto">
@@ -163,44 +186,85 @@ export default function MarketSearchBox() {
         </div>
 
         <div className="px-5 py-5 space-y-4">
-          <div>
-            <label className="text-sm font-medium text-foreground mb-1.5 block">Roll</label>
-            <SearchableSelect
-              options={ROLE_OPTIONS.map((role) => ({
-                value: role.value,
-                label: role.label,
-                group: role.section,
-              }))}
-              value={selectedRole}
-              onValueChange={setSelectedRole}
-              placeholder="Välj yrkesroll"
-            />
-          </div>
-
-          <div>
-            <label className="text-sm font-medium text-foreground mb-1.5 block">Kommun</label>
-            <SearchableSelect
-              options={kommunOptions}
-              value={selectedKommun}
-              onValueChange={setSelectedKommun}
-              placeholder="Välj kommun"
-            />
-          </div>
-
-          {!selectedRoleOption || !selectedLocation ? (
-            <div className="rounded-xl border border-dashed border-border bg-secondary/20 px-4 py-3 text-sm text-muted-foreground">
-              Välj roll och kommun för att se marknadsmässig månadslön direkt.
+          {/* Step 1: Category */}
+          {!selectedCategory ? (
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-foreground block">Steg 1 — Yrkeskategori</label>
+              <div className="grid grid-cols-2 gap-2">
+                {CATEGORIES.map((cat) => (
+                  <button
+                    key={cat.value}
+                    onClick={() => handleCategorySelect(cat.value)}
+                    className="group relative overflow-hidden flex items-center gap-3 bg-secondary/30 border border-border rounded-xl p-3.5 text-left cursor-pointer transition-all hover:border-primary/40 hover:bg-secondary/50 hover:-translate-y-0.5 hover:shadow-lg"
+                  >
+                    <div className="w-9 h-9 rounded-lg bg-primary/10 border border-primary/15 flex items-center justify-center flex-shrink-0">
+                      <span className="font-display text-sm font-bold text-primary">{cat.label.charAt(0)}</span>
+                    </div>
+                    <span className="font-display text-sm font-semibold text-foreground leading-tight">{cat.label}</span>
+                  </button>
+                ))}
+              </div>
             </div>
-          ) : loading ? (
+          ) : (
+            <>
+              {/* Back + category label */}
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={handleBack}
+                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <ChevronLeft className="w-3.5 h-3.5" />
+                  Tillbaka
+                </button>
+                <span className="text-xs text-muted-foreground">·</span>
+                <span className="text-xs font-medium text-primary">
+                  {CATEGORIES.find((c) => c.value === selectedCategory)?.label}
+                </span>
+              </div>
+
+              {/* Step 2: Specialization */}
+              <div>
+                <label className="text-sm font-medium text-foreground mb-1.5 block">Steg 2 — Specialisering</label>
+                <SearchableSelect
+                  options={filteredSpecializations.map((r) => ({ value: r.value, label: r.label }))}
+                  value={selectedRole}
+                  onValueChange={setSelectedRole}
+                  placeholder="Välj specialisering"
+                />
+              </div>
+
+              {/* Step 3: Kommun */}
+              <div>
+                <label className="text-sm font-medium text-foreground mb-1.5 block">Steg 3 — Kommun</label>
+                <SearchableSelect
+                  options={kommunOptions}
+                  value={selectedKommun}
+                  onValueChange={setSelectedKommun}
+                  placeholder="Välj kommun"
+                />
+              </div>
+            </>
+          )}
+
+          {/* Status messages */}
+          {selectedCategory && (!selectedRoleOption || !selectedLocation) && (
+            <div className="rounded-xl border border-dashed border-border bg-secondary/20 px-4 py-3 text-sm text-muted-foreground">
+              Välj specialisering och kommun för att se marknadsmässig månadslön direkt.
+            </div>
+          )}
+
+          {loading && (
             <div className="rounded-xl border border-border bg-secondary/20 px-4 py-4 flex items-center justify-center gap-2 text-sm text-muted-foreground">
               <Loader2 className="w-4 h-4 animate-spin text-primary" />
               Hämtar marknadspris...
             </div>
-          ) : error ? (
+          )}
+
+          {error && !loading && (
             <div className="rounded-xl border border-border bg-secondary/20 px-4 py-3 text-sm text-muted-foreground">
               {error}
             </div>
-          ) : null}
+          )}
         </div>
 
         {result && !loading && (
