@@ -68,7 +68,7 @@ export default function SalaryCheck() {
   }
 
   return (
-    <div className="bg-background">
+    <div className="bg-background overflow-x-hidden">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppJsonLd) }} />
 
