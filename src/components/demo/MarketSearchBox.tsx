@@ -7,12 +7,71 @@ import SearchableSelect from "@/components/SearchableSelect";
 const DEFAULT_EMPLOYER_FACTOR = 1.42;
 const DEFAULT_HOURS_PER_MONTH = 167;
 
-type RoleGroup = "doctor" | "nurse";
+type RoleGroup = "lakare" | "ssk";
 
-interface RoleOption {
-  value: string;
-  label: string;
-  group: RoleGroup;
+const CATEGORIES: { value: RoleGroup; label: string }[] = [
+  { value: "lakare", label: "Läkare" },
+  { value: "ssk", label: "Sjuksköterska / Barnmorska" },
+];
+
+// Same specialties as Survey
+const TOP_DOCTOR_SPECIALTIES = [
+  "Allmänmedicin", "Anestesi och intensivvård", "Internmedicin",
+  "Barn- och ungdomsmedicin", "Psykiatri", "Radiologi",
+  "Geriatrik", "Kardiologi", "Kirurgi",
+  "Obstetrik och gynekologi", "Onkologi", "Ortopedi",
+  "Infektionssjukdomar", "Lungsjukdomar", "Neurologi",
+];
+
+const TOP_NURSE_SPECIALIZATIONS = [
+  "Intensivvård", "Psykiatrisk vård", "Ambulanssjukvård",
+  "Barn och ungdom", "Operationssjukvård", "Anestesisjukvård",
+  "Akutsjukvård", "Hjärtsjukvård", "Distriktssköterska",
+  "Kirurgisk vård", "Palliativ vård", "Vård av äldre",
+  "Medicinsk vård", "Onkologi", "Infektionssjukvård",
+];
+
+const nurseValueMap: Record<string, string> = {
+  "Akutsjukvård": "Specialistsjuksköterska akutsjukvård",
+  "Ambulanssjukvård": "Specialistsjuksköterska ambulanssjukvård",
+  "Anestesisjukvård": "Specialistsjuksköterska anestesi",
+  "Barn och ungdom": "Specialistsjuksköterska barn och ungdom",
+  "Diabetesvård": "Specialistsjuksköterska diabetesvård",
+  "Distriktssköterska": "Distriktssjuksköterska",
+  "Hjärtsjukvård": "Specialistsjuksköterska hjärtsjukvård",
+  "Infektionssjukvård": "Specialistsjuksköterska infektionssjukvård",
+  "Intensivvård": "Specialistsjuksköterska intensivvård",
+  "Kirurgisk vård": "Specialistsjuksköterska kirurgisk vård",
+  "Medicinsk vård": "Specialistsjuksköterska medicinsk vård",
+  "Onkologi": "Specialistsjuksköterska onkologisk vård",
+  "Operationssjukvård": "Specialistsjuksköterska operationssjukvård",
+  "Palliativ vård": "Specialistsjuksköterska palliativ vård",
+  "Psykiatrisk vård": "Specialistsjuksköterska psykiatrisk vård",
+  "Vård av äldre": "Specialistsjuksköterska vård av äldre",
+  "Ögonsjukvård": "Specialistsjuksköterska ögonsjukvård",
+};
+
+function resolveYrke(category: RoleGroup, dropdownValue: string): string {
+  if (category === "lakare") {
+    if (dropdownValue === "__leg") return "Legitimerad läkare";
+    if (dropdownValue === "__st") return "ST-läkare";
+    if (dropdownValue === "__ovrig") return "Specialistläkare";
+    return `Specialistläkare ${dropdownValue.toLowerCase()}`;
+  }
+  if (category === "ssk") {
+    if (dropdownValue === "__allman") return "Sjuksköterska";
+    if (dropdownValue === "__barnmorska") return "Barnmorska";
+    if (dropdownValue === "__rontgen") return "Röntgensjuksköterska";
+    if (dropdownValue === "__ovrig") return "Specialistsjuksköterska";
+    return nurseValueMap[dropdownValue] || dropdownValue;
+  }
+  return "";
+}
+
+function getMargins(group: RoleGroup) {
+  return group === "lakare"
+    ? { keepMin: 0.85, keepMax: 0.92, marginText: "8–15 %" }
+    : { keepMin: 0.8, keepMax: 0.88, marginText: "12–20 %" };
 }
 
 interface MarketResult {
@@ -28,57 +87,37 @@ interface MarketResult {
   marginText: string;
 }
 
-const CATEGORIES: { value: RoleGroup; label: string }[] = [
-  { value: "doctor", label: "Läkare" },
-  { value: "nurse", label: "Sjuksköterska / Barnmorska" },
-];
-
-const SPECIALIZATIONS: RoleOption[] = [
-  // Doctors (AT-läkare excluded)
-  { value: "ST-läkare", label: "ST-läkare", group: "doctor" },
-  { value: "Specialistläkare", label: "Specialistläkare", group: "doctor" },
-  { value: "Övriga läkare", label: "Övriga läkare", group: "doctor" },
-  // Nurses & midwives
-  { value: "Barnmorskor", label: "Barnmorskor", group: "nurse" },
-  { value: "Grundutbildade sjuksköterskor", label: "Grundutbildade sjuksköterskor", group: "nurse" },
-  { value: "Distriktssköterskor", label: "Distriktssköterskor", group: "nurse" },
-  { value: "Ambulanssjuksköterskor m.fl.", label: "Ambulanssjuksköterskor", group: "nurse" },
-  { value: "Anestesisjuksköterskor", label: "Anestesisjuksköterskor", group: "nurse" },
-  { value: "Barnsjuksköterskor", label: "Barnsjuksköterskor", group: "nurse" },
-  { value: "Företagssköterskor", label: "Företagssköterskor", group: "nurse" },
-  { value: "Geriatriksjuksköterskor", label: "Geriatriksjuksköterskor", group: "nurse" },
-  { value: "Intensivvårdssjuksköterskor", label: "Intensivvårdssjuksköterskor", group: "nurse" },
-  { value: "Operationssjuksköterskor", label: "Operationssjuksköterskor", group: "nurse" },
-  { value: "Psykiatrisjuksköterskor", label: "Psykiatrisjuksköterskor", group: "nurse" },
-  { value: "Röntgensjuksköterskor", label: "Röntgensjuksköterskor", group: "nurse" },
-  { value: "Skolsköterskor", label: "Skolsköterskor", group: "nurse" },
-  { value: "Övriga specialistsjuksköterskor", label: "Övriga specialistsjuksköterskor", group: "nurse" },
-];
-
-function getMargins(group: RoleGroup) {
-  return group === "doctor"
-    ? { keepMin: 0.85, keepMax: 0.92, marginText: "8–15 %" }
-    : { keepMin: 0.8, keepMax: 0.88, marginText: "12–20 %" };
-}
-
 export default function MarketSearchBox() {
   const { data: locations } = useLocations();
   const [selectedCategory, setSelectedCategory] = useState<RoleGroup | null>(null);
-  const [selectedRole, setSelectedRole] = useState("");
+  const [roleDropdownValue, setRoleDropdownValue] = useState("");
   const [selectedKommun, setSelectedKommun] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<MarketResult | null>(null);
 
-  const filteredSpecializations = useMemo(
-    () => (selectedCategory ? SPECIALIZATIONS.filter((s) => s.group === selectedCategory) : []),
-    [selectedCategory]
-  );
+  // Build dropdown options — same as Survey
+  const doctorRoleOptions = useMemo(() => [
+    { value: "__leg", label: "Leg. läkare" },
+    { value: "__st", label: "ST-läkare" },
+    ...TOP_DOCTOR_SPECIALTIES.map((s) => ({ value: s, label: s })),
+    { value: "__ovrig", label: "Övrig specialisering" },
+  ], []);
 
-  const selectedRoleOption = useMemo(
-    () => SPECIALIZATIONS.find((r) => r.value === selectedRole) ?? null,
-    [selectedRole]
-  );
+  const nurseRoleOptions = useMemo(() => [
+    { value: "__allman", label: "Allmänsjuksköterska" },
+    { value: "__barnmorska", label: "Barnmorska" },
+    { value: "__rontgen", label: "Röntgensjuksköterska" },
+    ...TOP_NURSE_SPECIALIZATIONS.map((s) => ({ value: s, label: s })),
+    { value: "__ovrig", label: "Övrig VUB" },
+  ], []);
+
+  const roleOptions = selectedCategory === "lakare" ? doctorRoleOptions : nurseRoleOptions;
+
+  const resolvedYrke = useMemo(() => {
+    if (!selectedCategory || !roleDropdownValue) return "";
+    return resolveYrke(selectedCategory, roleDropdownValue);
+  }, [selectedCategory, roleDropdownValue]);
 
   const selectedLocation = useMemo(
     () => locations?.find((l) => l.kommun === selectedKommun) ?? null,
@@ -90,23 +129,22 @@ export default function MarketSearchBox() {
     return locations.map((l) => ({ value: l.kommun, label: `${l.kommun} (${l.region})` }));
   }, [locations]);
 
-  // Reset specialization when category changes
   const handleCategorySelect = (cat: RoleGroup) => {
     setSelectedCategory(cat);
-    setSelectedRole("");
+    setRoleDropdownValue("");
     setResult(null);
     setError(null);
   };
 
   const handleBack = () => {
     setSelectedCategory(null);
-    setSelectedRole("");
+    setRoleDropdownValue("");
     setResult(null);
     setError(null);
   };
 
   useEffect(() => {
-    if (!selectedRoleOption || !selectedLocation) {
+    if (!resolvedYrke || !selectedLocation) {
       setResult(null);
       setError(null);
       setLoading(false);
@@ -123,7 +161,7 @@ export default function MarketSearchBox() {
       try {
         const { data, error: functionError } = await supabase.functions.invoke("pricing-engine", {
           body: {
-            occupation: selectedRoleOption.value,
+            occupation: resolvedYrke,
             kommun: selectedLocation.kommun,
             employment_type: "anstalld",
           },
@@ -132,7 +170,7 @@ export default function MarketSearchBox() {
         if (functionError) throw functionError;
         if (!data?.rate_customer_sek_per_hour) throw new Error("NO_RATE_FOUND");
 
-        const { keepMin, keepMax, marginText } = getMargins(selectedRoleOption.group);
+        const { keepMin, keepMax, marginText } = getMargins(selectedCategory!);
         const timpris = Number(data.rate_customer_sek_per_hour);
         const employerFactor = Number(data.employee_factor ?? DEFAULT_EMPLOYER_FACTOR);
         const hoursPerMonth = Number(data.hours_per_month ?? DEFAULT_HOURS_PER_MONTH);
@@ -148,7 +186,7 @@ export default function MarketSearchBox() {
           kommun: selectedLocation.kommun,
           region: selectedLocation.region,
           zon: selectedLocation.zon,
-          roleName: selectedRoleOption.label,
+          roleName: resolvedYrke,
           timpris,
           hourlyMin,
           hourlyMax,
@@ -169,7 +207,7 @@ export default function MarketSearchBox() {
     return () => {
       cancelled = true;
     };
-  }, [selectedLocation, selectedRoleOption]);
+  }, [resolvedYrke, selectedLocation, selectedCategory]);
 
   const fmt = (v: number) => v.toLocaleString("sv-SE", { maximumFractionDigits: 0 });
 
@@ -226,9 +264,9 @@ export default function MarketSearchBox() {
               <div>
                 <label className="text-sm font-medium text-foreground mb-1.5 block">Steg 2 — Specialisering</label>
                 <SearchableSelect
-                  options={filteredSpecializations.map((r) => ({ value: r.value, label: r.label }))}
-                  value={selectedRole}
-                  onValueChange={setSelectedRole}
+                  options={roleOptions}
+                  value={roleDropdownValue}
+                  onValueChange={setRoleDropdownValue}
                   placeholder="Välj specialisering"
                 />
               </div>
@@ -247,7 +285,7 @@ export default function MarketSearchBox() {
           )}
 
           {/* Status messages */}
-          {selectedCategory && (!selectedRoleOption || !selectedLocation) && (
+          {selectedCategory && (!resolvedYrke || !selectedLocation) && (
             <div className="rounded-xl border border-dashed border-border bg-secondary/20 px-4 py-3 text-sm text-muted-foreground">
               Välj specialisering och kommun för att se marknadsmässig månadslön direkt.
             </div>
