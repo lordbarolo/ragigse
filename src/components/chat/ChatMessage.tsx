@@ -5,8 +5,8 @@ import type { ChatMessage as ChatMessageType } from "@/hooks/useNegotiationChat"
 const capabilityLabels: Record<string, string> = {
   lookup_rate: "ersättningsnivå",
   salary_benchmark: "marknadens snitt",
-  salary_position: "din position mot marknaden",
-  compare_roles: "rolljämförelse",
+  salary_position: "möjlig ersättningsnivå",
+  compare_roles: "jämförelse mellan roller",
 };
 
 interface Props {

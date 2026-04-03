@@ -258,7 +258,7 @@ export default function AnalysisScreen() {
   const LOADING_MESSAGES = [
   "Hämtar prisdata för din region…",
   "Matchar mot ramavtalsdata…",
-  "Jämför din ersättning med kollegor…",
+  "Beräknar marknadsspann…",
   "Beräknar förhandlingsutrymme…",
   "Genererar personliga rekommendationer…"];
 

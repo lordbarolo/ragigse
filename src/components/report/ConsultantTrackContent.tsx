@@ -658,22 +658,6 @@ export default function ConsultantTrackContent({
         </div>
       )}
 
-      {/* ═══ Kollegajämförelse ═══ */}
-      {isConsultantFullAccess && (
-        <div ref={registerSectionRef?.("colleague_comparison")}>
-          <ColleagueComparison
-            occupation={occupation}
-            percentilePosition={
-              marketRate > 0 && currentHourly > 0
-                ? (Math.round((currentHourly / marketRate) * 100) >= 90 ? 85
-                  : Math.round((currentHourly / marketRate) * 100) >= 85 ? 70
-                  : Math.round((currentHourly / marketRate) * 100) >= 75 ? 45
-                  : Math.round((currentHourly / marketRate) * 100) >= 65 ? 25 : 10)
-                : 0
-            }
-          />
-        </div>
-      )}
 
       {/* ═══ Förklarande text ═══ */}
       <div className="rounded-xl bg-foreground/[0.02] border border-border/30 p-5 space-y-3">
