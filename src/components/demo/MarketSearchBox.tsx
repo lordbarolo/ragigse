@@ -127,7 +127,6 @@ export default function MarketSearchBox() {
               value={selectedRole}
               onValueChange={setSelectedRole}
               placeholder="Välj yrkesroll"
-              searchPlaceholder="Sök roll…"
             />
           </div>
 
@@ -139,7 +138,6 @@ export default function MarketSearchBox() {
               value={selectedKommun}
               onValueChange={setSelectedKommun}
               placeholder="Välj kommun"
-              searchPlaceholder="Sök kommun…"
             />
           </div>
 
