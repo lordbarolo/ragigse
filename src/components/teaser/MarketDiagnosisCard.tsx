@@ -5,13 +5,11 @@ import { trackEvent } from "@/lib/trackEvent";
 type Position = "under" | "near" | "above";
 
 interface Props {
-  /** Percent difference vs market median. Positive = user is below median. */
   diffPercent: number;
   isPermanent: boolean;
   yrke: string;
   kommun: string;
   isAboveThreshold?: boolean;
-  /** Whether the user has provided their email (unblurs values) */
   emailProvided?: boolean;
 }
 
@@ -23,19 +21,19 @@ function getPosition(diffPercent: number, isAboveThreshold: boolean): Position {
 
 const positionConfig: Record<Position, { label: string; color: string; bgColor: string; icon: typeof TrendingDown }> = {
   under: {
-    label: "Under median",
+    label: "Under marknadsspannet",
     color: "text-primary",
     bgColor: "bg-primary/10",
     icon: TrendingDown,
   },
   near: {
-    label: "Nära median",
+    label: "Inom marknadsspannet",
     color: "text-primary",
     bgColor: "bg-primary/10",
     icon: Minus,
   },
   above: {
-    label: "Över median",
+    label: "Över marknadsspannet",
     color: "text-primary",
     bgColor: "bg-primary/10",
     icon: TrendingUp,
@@ -57,20 +55,20 @@ export default function MarketDiagnosisCard({ diffPercent, isPermanent, yrke, ko
 
   const diagnosisText = !emailProvided
     ? position === "above"
-      ? `Din ersättning ligger över medianen för ${yrke} i din region.`
+      ? `Din ersättning ligger över marknadsspannet för ${yrke} i din region.`
       : position === "near"
-        ? `Din ersättning ligger nära medianen för ${yrke} i din region.`
-        : `Din ersättning ligger under medianen för ${yrke} i din region.`
+        ? `Din ersättning ligger inom marknadsspannet för ${yrke} i din region.`
+        : `Din ersättning ligger under marknadsspannet för ${yrke} i din region.`
     : position === "above"
-      ? `Din ersättning ligger över medianen för ${yrke} i din region.`
+      ? `Din ersättning ligger över marknadsspannet för ${yrke} i din region.`
       : position === "near"
-        ? `Din ersättning ligger nära medianen för ${yrke} i din region — se rapporten för fullständig jämförelse.`
-        : `Din ersättning ligger ${diffPercent}% under medianen för ${yrke} i din region.`;
+        ? `Din ersättning ligger inom marknadsspannet för ${yrke} i din region — se rapporten för fullständig jämförelse.`
+        : `Din ersättning ligger ${diffPercent}% under marknadsspannet för ${yrke} i din region.`;
 
   return (
     <div className="rounded-xl border border-border bg-card p-6 card-shadow">
       <p className="text-caption mb-4">
-        Din position i marknaden
+        Din ersättning mot marknadsspannet
       </p>
 
       <div className="flex items-center gap-3 mb-4">
@@ -88,7 +86,7 @@ export default function MarketDiagnosisCard({ diffPercent, isPermanent, yrke, ko
       <div className="relative mt-4">
         <div className="flex justify-between text-micro mb-1.5">
           <span>Under</span>
-          <span>Median</span>
+          <span>Marknadsspann</span>
           <span>Över</span>
         </div>
         <div className="h-2 rounded-full bg-muted overflow-hidden">
@@ -99,7 +97,6 @@ export default function MarketDiagnosisCard({ diffPercent, isPermanent, yrke, ko
             }}
           />
         </div>
-        {/* Median marker */}
         <div className="absolute top-[calc(100%-8px)] left-1/2 -translate-x-1/2 w-0.5 h-2 bg-muted-foreground/40 rounded-full" />
       </div>
 

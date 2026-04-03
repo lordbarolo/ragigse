@@ -23,7 +23,7 @@ const SERVICES = [
   },
   {
     title: "Tjänar du rätt?",
-    desc: "Jämför din ersättning mot över 10 000 andra konsulter i realtid.",
+    desc: "Se vad du kan tjäna baserat på regionernas ramavtalspriser.",
     cta: "Starta analys",
     iconBg: "bg-blue-500/10",
     icon: (

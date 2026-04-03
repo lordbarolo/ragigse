@@ -13,7 +13,7 @@ export const CONSULTANT_ITEMS = [
   },
   {
     icon: Target,
-    title: "Skillnad mellan din nivå och snitt",
+    title: "Skillnad mot marknadsspannet",
     desc: "",
   },
   {
@@ -42,7 +42,7 @@ export const PERMANENT_ITEMS = [
   {
     icon: Target,
     title: "Din löneposition",
-    desc: "Se exakt var du ligger jämfört med kollegor i samma sektor",
+    desc: "Se var din lön ligger i förhållande till officiell statistik",
   },
   {
     icon: TrendingUp,

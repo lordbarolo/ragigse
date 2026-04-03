@@ -1,4 +1,4 @@
-import { Sparkles, TrendingUp, MapPin, BarChart3 } from "lucide-react";
+import { Sparkles, MapPin, BarChart3 } from "lucide-react";
 import { fmt } from "@/shared/formatters";
 import type { ResultJson, ZoneComparison } from "@/shared/types";
 
@@ -23,11 +23,9 @@ export default function PersonalInsights({
   const rec = r.recommendation;
   if (!rec || marketRate <= 0 || currentHourly <= 0) return null;
 
-  // For employees, compare total employment cost (salary × 1.42) to customer rate
   const employerFactor = 1.42;
   const costToCompare = isEmployee ? Math.round(currentHourly * employerFactor) : currentHourly;
   const shareOfCustomerPrice = Math.round((costToCompare / marketRate) * 100);
-  const medianShare = isEmployee ? 85 : 90;
 
   // Zone price difference insight
   let zoneDiffInsight: { bestZone: string; diffPerHour: number } | null = null;
@@ -42,23 +40,7 @@ export default function PersonalInsights({
     }
   }
 
-  // Percentile position (approximate based on share range)
-  const percentilePosition = shareOfCustomerPrice >= 90
-    ? 85
-    : shareOfCustomerPrice >= 85
-      ? 70
-      : shareOfCustomerPrice >= 75
-        ? 45
-        : shareOfCustomerPrice >= 65
-          ? 25
-          : 10;
-
   const insights: { icon: typeof Sparkles; text: string }[] = [];
-
-  insights.push({
-    icon: TrendingUp,
-    text: `Du ligger över snittet av konsulter i din specialitet.`,
-  });
 
   if (zoneDiffInsight) {
     insights.push({
@@ -70,16 +52,18 @@ export default function PersonalInsights({
   insights.push({
     icon: BarChart3,
     text: isEmployee
-      ? `Din lönekostnad (brutto × 1,42) motsvarar ${shareOfCustomerPrice} % av kundpriset. Medianen är ${medianShare} %.`
-      : `Din ersättning motsvarar ${shareOfCustomerPrice} % av kundpriset. Medianen är ${medianShare} %.`,
+      ? `Din lönekostnad (brutto × 1,42) motsvarar ${shareOfCustomerPrice} % av kundpriset.`
+      : `Din ersättning motsvarar ${shareOfCustomerPrice} % av kundpriset.`,
   });
+
+  if (insights.length === 0) return null;
 
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
         <Sparkles className="w-4 h-4 text-primary" />
         <p className="text-caption">
-          Din marknadsposition
+          Insikter
         </p>
       </div>
       <div className="space-y-2">
