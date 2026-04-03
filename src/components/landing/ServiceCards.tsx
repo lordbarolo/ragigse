@@ -99,7 +99,7 @@ export default function ServiceCards({ onStartAnalysis }: ServiceCardsProps) {
               </p>
 
               {(s as any).comingSoon ? (
-                <span className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground w-fit">
+                <span className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground border-b border-border pb-px w-fit">
                   {s.cta}
                 </span>
               ) : (
