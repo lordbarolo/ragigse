@@ -17,6 +17,7 @@ import PublicVerifyLayout from "@/layouts/PublicVerifyLayout";
 
 // Lazy-loaded routes
 const SalaryCheck = lazy(() => import("./pages/consultant/SalaryCheck"));
+const MarketEdge = lazy(() => import("./pages/MarketEdge"));
 const AnalysisScreen = lazy(() => import("./pages/AnalysisScreen"));
 const Teaser = lazy(() => import("./pages/Teaser"));
 const ReferralLanding = lazy(() => import("./pages/ReferralLanding"));
@@ -119,6 +120,7 @@ const App = () => (
               {/* ── Agency Layout ─────────────────── */}
               <Route element={<ProtectedRoute allowedRoles={["agency", "admin"]}><AgencyLayout /></ProtectedRoute>}>
                 <Route path="/agency/dashboard" element={<AgencyDashboard />} />
+                <Route path="/agency/market-edge" element={<MarketEdge />} />
                 {/* Future: /agency/requests, /agency/settings */}
               </Route>
 
