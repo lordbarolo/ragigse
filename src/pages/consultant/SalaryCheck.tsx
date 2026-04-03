@@ -110,7 +110,7 @@ export default function SalaryCheck() {
               onClick={handleStartSurvey}
               className="w-full bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-4 rounded-2xl font-semibold transition-all shadow-lg shadow-primary/20 text-base"
             >
-              Få samma data som bemanningsföretagen
+              Få ovärderligt förhandlingsunderlag
             </button>
           </div>
         </div>
@@ -292,7 +292,7 @@ export default function SalaryCheck() {
             onClick={handleStartSurvey}
             className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-2xl font-semibold transition-all shadow-lg shadow-primary/20 text-base"
           >
-            Få samma data som bemanningsföretagen
+            Få ovärderligt förhandlingsunderlag
           </button>
         </div>
       </section>
