@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import CompcareLogo from "@/components/CompcareLogo";
 import ThemeToggle from "@/components/ThemeToggle";
 import MarketSearchBox from "@/components/demo/MarketSearchBox";
+import ServiceCarousel from "@/components/demo/ServiceCarousel";
 
 export default function DemoLanding() {
   useEffect(() => { document.title = "CompCare — Marknadsmässig ersättning"; }, []);
@@ -16,6 +17,9 @@ export default function DemoLanding() {
           <ThemeToggle />
         </div>
       </nav>
+
+      {/* Service Carousel */}
+      <ServiceCarousel onStartAnalysis={() => {}} />
 
       {/* Hero */}
       <section className="px-4 pt-10 pb-16">
