@@ -150,8 +150,8 @@ const App = () => (
               <Route path="/dev/theme-preview" element={<ProtectedRoute allowedRoles={["admin"]}><ThemePreview /></ProtectedRoute>} />
               <Route path="/dev/analytics" element={<ProtectedRoute allowedRoles={["admin"]}><AnalyticsDashboard /></ProtectedRoute>} />
               <Route path="/dev/e2e-test" element={import.meta.env.PROD ? <NotFound /> : <E2ETest />} />
-              <Route path="/demo" element={import.meta.env.PROD ? <NotFound /> : <DemoLanding />} />
-              <Route path="/dev/demo" element={import.meta.env.PROD ? <NotFound /> : <Navigate to="/demo" replace />} />
+              <Route path="/demo" element={<DemoLanding />} />
+              <Route path="/dev/demo" element={<Navigate to="/demo" replace />} />
 
               {/* ── Backwards-compat redirects ───── */}
               <Route path="/index" element={<Navigate to="/" replace />} />
