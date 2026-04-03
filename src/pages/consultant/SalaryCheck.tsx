@@ -168,7 +168,7 @@ export default function SalaryCheck() {
 
               {/* Trust line + CTA */}
               <div className="mt-5">
-                <p className="text-sm text-white/50 lg:text-[15px]">Helt anonymt. Klart på 30 sekunder.</p>
+                <p className="text-sm text-white/50 lg:text-[15px]">Besvara 6 snabba frågor för att få alla svar</p>
                 <div className="mt-3">
                   <button
                     onClick={handleStartSurvey}
