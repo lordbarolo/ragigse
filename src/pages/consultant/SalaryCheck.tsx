@@ -296,6 +296,13 @@ export default function SalaryCheck() {
           </button>
         </div>
       </section>
+      {!import.meta.env.PROD && (
+        <div className="fixed bottom-4 right-4 z-50">
+          <Link to="/demo" className="bg-muted text-muted-foreground text-xs px-3 py-1.5 rounded-full hover:bg-accent transition-colors">
+            Demo ↗
+          </Link>
+        </div>
+      )}
     </div>
   );
 }
