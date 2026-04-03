@@ -153,7 +153,6 @@ export default function SalaryCheck() {
                 {[
                   { title: "Transparens:", text: "Se villkoren som är möjliga att få för din roll" },
                   { title: "Regional jämförelse:", text: "Se hur ersättningen skiljer sig mellan orter" },
-                  { title: "Se marginalerna:", text: "Se vad regionen faktiskt betalar för din kompetens." },
                   { title: "Smart assistent:", text: "Få konkreta råd baserat på 100% verifierad marknadsdata." },
                 ].map((item) => (
                   <div key={item.title} className="flex items-start gap-3 rounded-lg border border-white/[0.05] bg-white/[0.02] px-3.5 py-2.5 backdrop-blur-sm">
