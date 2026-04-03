@@ -148,6 +148,7 @@ const App = () => (
               <Route path="/dev/theme-preview" element={<ProtectedRoute allowedRoles={["admin"]}><ThemePreview /></ProtectedRoute>} />
               <Route path="/dev/analytics" element={<ProtectedRoute allowedRoles={["admin"]}><AnalyticsDashboard /></ProtectedRoute>} />
               <Route path="/dev/e2e-test" element={import.meta.env.PROD ? <NotFound /> : <E2ETest />} />
+              <Route path="/dev/demo" element={<DemoLanding />} />
 
               {/* ── Backwards-compat redirects ───── */}
               <Route path="/profil" element={<Navigate to="/consultant/profil" replace />} />
