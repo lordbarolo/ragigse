@@ -13,7 +13,7 @@ export const CONSULTANT_ITEMS = [
   },
   {
     icon: Target,
-    title: "Skillnad mellan din nivå och snitt",
+    title: "Skillnad mot marknadsspannet",
     desc: "",
   },
   {
