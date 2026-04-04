@@ -28,7 +28,7 @@ const BENEFITS = [
 const STEPS = [
   { step: "1", text: "Skapa ett företagskonto och bjud in kollegor" },
   { step: "2", text: "Skicka representationsförfrågan till konsulten" },
-  { step: "3", text: "Konsulten signerar med BankID via SMS-länk" },
+  { step: "3", text: "Konsulten bekräftar digitalt via SMS-länk" },
   { step: "4", text: "Ladda ner digitalt bevis — klart att presentera" },
 ];
 
