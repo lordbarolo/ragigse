@@ -33,7 +33,7 @@ const TRUST_LEVELS = [
   { level: "Submitted", label: "Inskickad", color: "bg-muted-foreground/20" },
   { level: "Email", label: "E-postverifierad", color: "bg-amber-500/20 text-amber-700 dark:text-amber-400" },
   { level: "Domain", label: "Domänverifierad", color: "bg-blue-500/20 text-blue-700 dark:text-blue-400" },
-  { level: "BankID", label: "BankID-verifierad", color: "bg-primary/20 text-primary" },
+  { level: "Confirmed", label: "Ping-bekräftad", color: "bg-primary/20 text-primary" },
 ];
 
 export default function ReferenserInfo() {
