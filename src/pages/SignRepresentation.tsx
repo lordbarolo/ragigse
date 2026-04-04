@@ -123,7 +123,7 @@ export default function SignRepresentation() {
               </p>
               <div className="flex items-center justify-center gap-2 text-xs text-primary">
                 <ShieldCheck className="h-4 w-4" />
-                <span>BankID-verifierat representationsbevis</span>
+                <span>Digitalt verifierat representationsbevis</span>
               </div>
               {verificationId && (
                 <Button variant="outline" className="mt-4" asChild>
