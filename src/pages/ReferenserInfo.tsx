@@ -20,7 +20,7 @@ const FEATURES = [
   {
     icon: FileCheck,
     title: "Verifieringsstege",
-    desc: "Varje referens genomgår en verifieringsstege: inskickad → e-post → domän → BankID. Ju högre nivå, desto starkare tillit.",
+    desc: "Varje referens genomgår en verifieringsstege: inskickad → e-post → domän → ping-bekräftad. Ju högre nivå, desto starkare tillit.",
   },
   {
     icon: Clock,
