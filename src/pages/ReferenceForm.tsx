@@ -82,11 +82,10 @@ export default function ReferenceForm() {
   const isVerificationOnly = inviteData?.is_verification_only ?? false;
 
   const isValid = isVerificationOnly
-    ? bankidAcknowledged
+    ? true
     : referenceText.trim().length > 0 &&
       selectedCompetencies.length >= 1 &&
-      score !== null &&
-      bankidAcknowledged;
+      score !== null;
 
   const handleLogin = async () => {
     if (!loginEmail || !loginPassword) {
