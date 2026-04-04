@@ -21,7 +21,7 @@ const BENEFITS = [
     icon: Lock,
     title: "Säker & revisionsspårbar",
     description:
-      "Varje steg loggas i en audit trail. BankID-signering säkerställer juridisk giltighet. Data isoleras per organisation.",
+      "Varje steg loggas i en audit trail. Digital signering säkerställer juridisk giltighet. Data isoleras per organisation.",
   },
 ];
 
