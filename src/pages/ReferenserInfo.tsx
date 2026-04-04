@@ -20,7 +20,7 @@ const FEATURES = [
   {
     icon: FileCheck,
     title: "Verifieringsstege",
-    desc: "Varje referens genomgår en verifieringsstege: inskickad → e-post → domän → BankID. Ju högre nivå, desto starkare tillit.",
+    desc: "Varje referens genomgår en verifieringsstege: inskickad → e-post → domän → ping-bekräftad. Ju högre nivå, desto starkare tillit.",
   },
   {
     icon: Clock,
@@ -33,7 +33,7 @@ const TRUST_LEVELS = [
   { level: "Submitted", label: "Inskickad", color: "bg-muted-foreground/20" },
   { level: "Email", label: "E-postverifierad", color: "bg-amber-500/20 text-amber-700 dark:text-amber-400" },
   { level: "Domain", label: "Domänverifierad", color: "bg-blue-500/20 text-blue-700 dark:text-blue-400" },
-  { level: "BankID", label: "BankID-verifierad", color: "bg-primary/20 text-primary" },
+  { level: "Confirmed", label: "Ping-bekräftad", color: "bg-primary/20 text-primary" },
 ];
 
 export default function ReferenserInfo() {
@@ -142,7 +142,7 @@ export default function ReferenserInfo() {
             Eliminera dubbelpresentationer
           </h2>
           <p className="text-muted-foreground mb-6 max-w-lg leading-relaxed">
-            Med Verify kan bemanningsföretag verifiera att du auktoriserat deras presentation — digitalt, med BankID. Regioner och uppdragsgivare ser ett kryptografiskt bevis istället för att behöva fråga konsulten direkt.
+            Med Verify kan bemanningsföretag verifiera att du auktoriserat deras presentation — digitalt och säkert. Regioner och uppdragsgivare ser ett kryptografiskt bevis istället för att behöva fråga konsulten direkt.
           </p>
 
           <div className="bg-card border border-border rounded-2xl p-8 mb-8">
@@ -154,7 +154,7 @@ export default function ReferenserInfo() {
               </li>
               <li className="flex gap-3">
                 <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center shrink-0">2</span>
-                Du får en länk via SMS och signerar med BankID
+                Du får en länk via SMS och bekräftar digitalt
               </li>
               <li className="flex gap-3">
                 <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center shrink-0">3</span>

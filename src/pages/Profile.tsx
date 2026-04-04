@@ -5,7 +5,19 @@ import { useAuth } from "@/hooks/useAuth";
 import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, FileText, MapPin, Briefcase, Clock, LogOut, UserPlus } from "lucide-react";
+import { Loader2, FileText, MapPin, Briefcase, Clock, LogOut, UserPlus, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 import ProfileInsights from "@/components/profile/ProfileInsights";
 
 interface ReportRow {
@@ -33,6 +45,7 @@ export default function Profile() {
   const [reports, setReports] = useState<ReportRow[]>([]);
   const [profile, setProfile] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/logga-in");
@@ -102,6 +115,26 @@ export default function Profile() {
   }
 
   const handleSignOut = async () => { await signOut(); navigate("/"); };
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error("Ingen session");
+      const { data, error } = await supabase.functions.invoke("delete-account", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+      if (error) throw error;
+      if (data?.deleted) {
+        await signOut();
+        navigate("/");
+        toast.success("Ditt konto har raderats");
+      }
+    } catch (err: any) {
+      toast.error("Kunde inte radera kontot", { description: err.message });
+    } finally {
+      setDeleting(false);
+    }
+  };
   const employmentLabel = (t: string | null) => t === "consultant" ? "Konsult" : t === "permanent" ? "Tillsvidareanställd" : t || "–";
   const formatSalary = (val: number | null) => val ? val.toLocaleString("sv-SE") : "–";
 
@@ -193,6 +226,37 @@ export default function Profile() {
             )}
           </CardContent>
         </Card>
+
+        {/* Delete account */}
+        <div className="pt-4 border-t border-border">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10 gap-2">
+                <Trash2 className="w-4 h-4" />
+                Radera mitt konto
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Radera konto permanent?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  All din data raderas permanent — rapporter, profil, referenser och dokument. Detta kan inte ångras.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Avbryt</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDeleteAccount}
+                  disabled={deleting}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  {deleting ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : null}
+                  Ja, radera mitt konto
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </div>
 
     </div>

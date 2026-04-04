@@ -123,7 +123,7 @@ export default function SignRepresentation() {
               </p>
               <div className="flex items-center justify-center gap-2 text-xs text-primary">
                 <ShieldCheck className="h-4 w-4" />
-                <span>BankID-verifierat representationsbevis</span>
+                <span>Digitalt verifierat representationsbevis</span>
               </div>
               {verificationId && (
                 <Button variant="outline" className="mt-4" asChild>
@@ -198,18 +198,18 @@ export default function SignRepresentation() {
           {signing ? (
             <>
               <Loader2 className="h-5 w-5 animate-spin" />
-              Signerar med BankID…
+              Bekräftar…
             </>
           ) : (
             <>
               <Fingerprint className="h-5 w-5" />
-              Signera med BankID
+              Bekräfta representation
             </>
           )}
         </Button>
 
         <p className="text-[11px] text-muted-foreground text-center mt-4">
-          Signeringen sker via BankID. Ditt representationsbevis blir tillgängligt
+          Ditt representationsbevis blir tillgängligt
           för bemanningsföretaget och den aktuella regionen.
         </p>
       </div>

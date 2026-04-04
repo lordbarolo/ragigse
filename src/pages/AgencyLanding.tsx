@@ -9,7 +9,7 @@ const BENEFITS = [
     icon: FileCheck,
     title: "Eliminera dubbelpresentationer",
     description:
-      "Digitalt representationsbevis signerat med BankID. Uppdragsgivaren verifierar direkt — ingen tvekan om vem som företräder konsulten.",
+      "Digitalt representationsbevis med säker signering. Uppdragsgivaren verifierar direkt — ingen tvekan om vem som företräder konsulten.",
   },
   {
     icon: Users,
@@ -21,14 +21,14 @@ const BENEFITS = [
     icon: Lock,
     title: "Säker & revisionsspårbar",
     description:
-      "Varje steg loggas i en audit trail. BankID-signering säkerställer juridisk giltighet. Data isoleras per organisation.",
+      "Varje steg loggas i en audit trail. Digital signering säkerställer juridisk giltighet. Data isoleras per organisation.",
   },
 ];
 
 const STEPS = [
   { step: "1", text: "Skapa ett företagskonto och bjud in kollegor" },
   { step: "2", text: "Skicka representationsförfrågan till konsulten" },
-  { step: "3", text: "Konsulten signerar med BankID via SMS-länk" },
+  { step: "3", text: "Konsulten bekräftar digitalt via SMS-länk" },
   { step: "4", text: "Ladda ner digitalt bevis — klart att presentera" },
 ];
 
@@ -66,7 +66,7 @@ export default function AgencyLanding() {
             <span className="text-primary-foreground/80">Få digitalt representationsbevis.</span>
           </h1>
           <p className="text-lg md:text-xl text-white/70 max-w-2xl mx-auto">
-            CompCare ger ert bemanningsföretag ett BankID-signerat bevis som eliminerar tveksamheter
+            CompCare ger ert bemanningsföretag ett digitalt signerat bevis som eliminerar tveksamheter
             hos uppdragsgivare. Hela flödet tar under två minuter.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
