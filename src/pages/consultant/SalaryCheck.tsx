@@ -91,7 +91,7 @@ export default function SalaryCheck() {
             100% Verifierad Marknadsdata
           </div>
 
-          <h1 className="font-bold mb-8 tracking-tight" style={{ fontSize: "clamp(2.75rem, 7.5vw, 5.5rem)" }}>
+          <h1 className="font-bold mb-8 tracking-tight leading-[1.05] md:leading-tight" style={{ fontSize: "clamp(2.75rem, 7.5vw, 5.5rem)" }}>
             För vårdens konsulter
           </h1>
 
