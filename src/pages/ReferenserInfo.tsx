@@ -142,7 +142,7 @@ export default function ReferenserInfo() {
             Eliminera dubbelpresentationer
           </h2>
           <p className="text-muted-foreground mb-6 max-w-lg leading-relaxed">
-            Med Verify kan bemanningsföretag verifiera att du auktoriserat deras presentation — digitalt, med BankID. Regioner och uppdragsgivare ser ett kryptografiskt bevis istället för att behöva fråga konsulten direkt.
+            Med Verify kan bemanningsföretag verifiera att du auktoriserat deras presentation — digitalt och säkert. Regioner och uppdragsgivare ser ett kryptografiskt bevis istället för att behöva fråga konsulten direkt.
           </p>
 
           <div className="bg-card border border-border rounded-2xl p-8 mb-8">
