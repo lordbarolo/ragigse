@@ -9,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { ShieldCheck, Lock, CheckCircle, ShieldX, FileText, ExternalLink } from "lucide-react";
+import { CheckCircle, ShieldX, FileText, ExternalLink } from "lucide-react";
 import { toast } from "sonner";
 import { COMPETENCIES } from "@/types/referly";
 
