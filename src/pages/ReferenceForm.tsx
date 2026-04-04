@@ -39,7 +39,7 @@ export default function ReferenceForm() {
   const [referenceText, setReferenceText] = useState("");
   const [selectedCompetencies, setSelectedCompetencies] = useState<string[]>([]);
   const [score, setScore] = useState<number | null>(null);
-  const [bankidAcknowledged, setBankidAcknowledged] = useState(false);
+  
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [verifyComment, setVerifyComment] = useState("");
