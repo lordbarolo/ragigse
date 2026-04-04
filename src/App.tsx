@@ -22,7 +22,7 @@ const AnalysisScreen = lazy(() => import("./pages/AnalysisScreen"));
 const Teaser = lazy(() => import("./pages/Teaser"));
 const ReferralLanding = lazy(() => import("./pages/ReferralLanding"));
 const Report = lazy(() => import("./pages/Report"));
-const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
+
 
 const E2ETest = lazy(() => import("./pages/E2ETest"));
 const AnalyticsDashboard = lazy(() => import("./pages/AnalyticsDashboard"));
@@ -136,7 +136,7 @@ const App = () => (
 
               {/* ── Public routes (no layout) ────── */}
               <Route path="/resultat/:leadId" element={<AnalysisScreen />} />
-              <Route path="/betalning-klar" element={<PaymentSuccess />} />
+              
               <Route path="/rapport/:reportId" element={<Report />} />
               
               <Route path="/vanliga-fragor" element={<FAQ />} />

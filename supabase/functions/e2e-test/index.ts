@@ -132,72 +132,7 @@ serve(async (req) => {
     }
 
     // ──────────────────────────────────────────────
-    // STEP 4: Simulate payment (mock — direct DB update)
-    // ──────────────────────────────────────────────
-    if (reportId && leadId) {
-      try {
-        const before = await supabase.from("reports").select("status, paid_at").eq("id", reportId).single();
-
-        // Simulate what verify-payment does
-        await supabase.from("leads").update({ paid: true }).eq("id", leadId);
-        await supabase
-          .from("reports")
-          .update({ status: "paid", paid_at: new Date().toISOString() })
-          .eq("id", reportId);
-
-        const fakeSessionId = `cs_test_e2e_${Date.now()}`;
-        await supabase.from("payments").insert({
-          lead_id: leadId,
-          report_id: reportId,
-          stripe_session_id: fakeSessionId,
-          amount_ore: 14900,
-          currency: "sek",
-          status: "paid",
-          plan: "single",
-        });
-
-        const afterReport = await supabase.from("reports").select("status, paid_at").eq("id", reportId).single();
-        const afterPayment = await supabase
-          .from("payments")
-          .select("status, amount_ore")
-          .eq("stripe_session_id", fakeSessionId)
-          .single();
-
-        steps.push({
-          name: "4. Simulate payment (mock Stripe)",
-          status: afterReport.data?.status === "paid" && afterPayment.data?.status === "paid" ? "PASS" : "FAIL",
-          details: "Direct DB update simulating verify-payment",
-          before: { report_status: before.data?.status },
-          after: {
-            report_status: afterReport.data?.status,
-            payment_status: afterPayment.data?.status,
-            payment_amount_ore: afterPayment.data?.amount_ore,
-          },
-        });
-      } catch (e) {
-        steps.push({ name: "4. Simulate payment (mock Stripe)", status: "FAIL", details: String(e) });
-      }
-    }
-
-    // ──────────────────────────────────────────────
-    // STEP 5: Verify get-report returns full data after payment
-    // ──────────────────────────────────────────────
-    if (reportId) {
-      try {
-        const { data } = await callFn("get-report", { report_id: reportId });
-        const hasRecommendation = !!(data.result_json as any)?.recommendation;
-        steps.push({
-          name: "5. Get report (paid mode)",
-          status: data.access === "full" && hasRecommendation ? "PASS" : "FAIL",
-          details: `access: ${data.access}, has_recommendation: ${hasRecommendation}`,
-        });
-      } catch (e) {
-        steps.push({ name: "5. Get report (paid mode)", status: "FAIL", details: String(e) });
-      }
-    }
-
-    // ──────────────────────────────────────────────
-    // STEP 6: Reset report to preview for referral test
+    // STEP 4: Reset report for referral test
     // ──────────────────────────────────────────────
     if (reportId) {
       await supabase
@@ -207,7 +142,7 @@ serve(async (req) => {
     }
 
     // ──────────────────────────────────────────────
-    // STEP 7: Send referral
+    // STEP 5: Send referral
     // ──────────────────────────────────────────────
     if (leadId) {
       try {
@@ -217,13 +152,12 @@ serve(async (req) => {
           referrer_email: testEmail,
           referee_email: refereeEmail,
           region: "Stockholm",
-          send_email: false, // Don't send real email in test
+          send_email: false,
         });
 
         if (status !== 200 || !data.token) throw new Error(JSON.stringify(data));
         referralToken = data.token;
 
-        // Verify referral in DB
         const { data: ref } = await supabase
           .from("referrals")
           .select("clicked, token")
@@ -231,18 +165,18 @@ serve(async (req) => {
           .single();
 
         steps.push({
-          name: "6. Send referral (send-referral)",
+          name: "4. Send referral (send-referral)",
           status: ref && ref.clicked === false ? "PASS" : "FAIL",
           details: `token: ${referralToken?.substring(0, 8)}...`,
           after: { clicked: ref?.clicked },
         });
       } catch (e) {
-        steps.push({ name: "6. Send referral (send-referral)", status: "FAIL", details: String(e) });
+        steps.push({ name: "4. Send referral (send-referral)", status: "FAIL", details: String(e) });
       }
     }
 
     // ──────────────────────────────────────────────
-    // STEP 8: Confirm referral
+    // STEP 6: Confirm referral
     // ──────────────────────────────────────────────
     if (referralToken) {
       try {
@@ -263,21 +197,19 @@ serve(async (req) => {
           .single();
 
         steps.push({
-          name: "7. Confirm referral (confirm-referral)",
+          name: "5. Confirm referral (confirm-referral)",
           status: afterRef.data?.clicked === true ? "PASS" : "FAIL",
           details: "Referral link confirmed",
           before: { clicked: beforeRef.data?.clicked },
           after: { clicked: afterRef.data?.clicked },
         });
       } catch (e) {
-        steps.push({ name: "7. Confirm referral (confirm-referral)", status: "FAIL", details: String(e) });
+        steps.push({ name: "5. Confirm referral (confirm-referral)", status: "FAIL", details: String(e) });
       }
     }
 
     // ──────────────────────────────────────────────
-    // STEP 9: Verify referral unlock on report
-    // Note: confirm-referral doesn't auto-unlock the report,
-    // so we simulate the unlock here to test the flow
+    // STEP 7: Verify referral unlock on report
     // ──────────────────────────────────────────────
     if (reportId) {
       try {
@@ -288,12 +220,12 @@ serve(async (req) => {
 
         const { data } = await callFn("get-report", { report_id: reportId });
         steps.push({
-          name: "8. Referral unlock → full report access",
+          name: "6. Referral unlock → full report access",
           status: data.access === "full" ? "PASS" : "FAIL",
           details: `access: ${data.access}`,
         });
       } catch (e) {
-        steps.push({ name: "8. Referral unlock → full report access", status: "FAIL", details: String(e) });
+        steps.push({ name: "6. Referral unlock → full report access", status: "FAIL", details: String(e) });
       }
     }
 
@@ -302,16 +234,15 @@ serve(async (req) => {
     // ──────────────────────────────────────────────
     try {
       if (reportId) {
-        await supabase.from("payments").delete().eq("report_id", reportId);
         await supabase.from("reports").delete().eq("id", reportId);
       }
       if (leadId) {
         await supabase.from("referrals").delete().eq("lead_id", leadId);
         await supabase.from("leads").delete().eq("id", leadId);
       }
-      steps.push({ name: "9. Cleanup test data", status: "PASS", details: "All test records removed" });
+      steps.push({ name: "7. Cleanup test data", status: "PASS", details: "All test records removed" });
     } catch (e) {
-      steps.push({ name: "9. Cleanup test data", status: "FAIL", details: String(e) });
+      steps.push({ name: "7. Cleanup test data", status: "FAIL", details: String(e) });
     }
 
     // Summary
