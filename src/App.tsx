@@ -136,7 +136,7 @@ const App = () => (
 
               {/* ── Public routes (no layout) ────── */}
               <Route path="/resultat/:leadId" element={<AnalysisScreen />} />
-              <Route path="/betalning-klar" element={<PaymentSuccess />} />
+              
               <Route path="/rapport/:reportId" element={<Report />} />
               
               <Route path="/vanliga-fragor" element={<FAQ />} />

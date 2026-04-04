@@ -53,13 +53,11 @@ export default function Teaser() {
 
   useTimeOnPage("teaser", !!survey);
   const scrollTracked = useRef<Set<number>>(new Set());
-  const paywallViewedRef = useRef(false);
 
   // Track teaser viewed on mount
   useEffect(() => {
-    if (survey && !paywallViewedRef.current) {
-      paywallViewedRef.current = true;
-      trackEvent("paywall_viewed", { role: survey.yrke, zone: survey.kommun });
+    if (survey) {
+      trackEvent("teaser_page_viewed", { role: survey.yrke, zone: survey.kommun });
     }
   }, [survey]);
 
@@ -73,7 +71,7 @@ export default function Teaser() {
       for (const threshold of [50, 75] as const) {
         if (pct >= threshold && !scrollTracked.current.has(threshold)) {
           scrollTracked.current.add(threshold);
-          trackEvent("paywall_scrolled", { scroll_depth_percent: threshold });
+          trackEvent("teaser_scrolled", { scroll_depth_percent: threshold });
         }
       }
     };

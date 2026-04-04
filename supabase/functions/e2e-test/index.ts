@@ -132,72 +132,7 @@ serve(async (req) => {
     }
 
     // ──────────────────────────────────────────────
-    // STEP 4: Simulate payment (mock — direct DB update)
-    // ──────────────────────────────────────────────
-    if (reportId && leadId) {
-      try {
-        const before = await supabase.from("reports").select("status, paid_at").eq("id", reportId).single();
-
-        // Simulate what verify-payment does
-        await supabase.from("leads").update({ paid: true }).eq("id", leadId);
-        await supabase
-          .from("reports")
-          .update({ status: "paid", paid_at: new Date().toISOString() })
-          .eq("id", reportId);
-
-        const fakeSessionId = `cs_test_e2e_${Date.now()}`;
-        await supabase.from("payments").insert({
-          lead_id: leadId,
-          report_id: reportId,
-          stripe_session_id: fakeSessionId,
-          amount_ore: 14900,
-          currency: "sek",
-          status: "paid",
-          plan: "single",
-        });
-
-        const afterReport = await supabase.from("reports").select("status, paid_at").eq("id", reportId).single();
-        const afterPayment = await supabase
-          .from("payments")
-          .select("status, amount_ore")
-          .eq("stripe_session_id", fakeSessionId)
-          .single();
-
-        steps.push({
-          name: "4. Simulate payment (mock Stripe)",
-          status: afterReport.data?.status === "paid" && afterPayment.data?.status === "paid" ? "PASS" : "FAIL",
-          details: "Direct DB update simulating verify-payment",
-          before: { report_status: before.data?.status },
-          after: {
-            report_status: afterReport.data?.status,
-            payment_status: afterPayment.data?.status,
-            payment_amount_ore: afterPayment.data?.amount_ore,
-          },
-        });
-      } catch (e) {
-        steps.push({ name: "4. Simulate payment (mock Stripe)", status: "FAIL", details: String(e) });
-      }
-    }
-
-    // ──────────────────────────────────────────────
-    // STEP 5: Verify get-report returns full data after payment
-    // ──────────────────────────────────────────────
-    if (reportId) {
-      try {
-        const { data } = await callFn("get-report", { report_id: reportId });
-        const hasRecommendation = !!(data.result_json as any)?.recommendation;
-        steps.push({
-          name: "5. Get report (paid mode)",
-          status: data.access === "full" && hasRecommendation ? "PASS" : "FAIL",
-          details: `access: ${data.access}, has_recommendation: ${hasRecommendation}`,
-        });
-      } catch (e) {
-        steps.push({ name: "5. Get report (paid mode)", status: "FAIL", details: String(e) });
-      }
-    }
-
-    // ──────────────────────────────────────────────
-    // STEP 6: Reset report to preview for referral test
+    // STEP 4: Reset report for referral test
     // ──────────────────────────────────────────────
     if (reportId) {
       await supabase
