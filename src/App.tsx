@@ -22,7 +22,7 @@ const AnalysisScreen = lazy(() => import("./pages/AnalysisScreen"));
 const Teaser = lazy(() => import("./pages/Teaser"));
 const ReferralLanding = lazy(() => import("./pages/ReferralLanding"));
 const Report = lazy(() => import("./pages/Report"));
-const PaymentSuccess = lazy(() => import("./pages/PaymentSuccess"));
+
 
 const E2ETest = lazy(() => import("./pages/E2ETest"));
 const AnalyticsDashboard = lazy(() => import("./pages/AnalyticsDashboard"));
