@@ -198,18 +198,18 @@ export default function SignRepresentation() {
           {signing ? (
             <>
               <Loader2 className="h-5 w-5 animate-spin" />
-              Signerar med BankID…
+              Bekräftar…
             </>
           ) : (
             <>
               <Fingerprint className="h-5 w-5" />
-              Signera med BankID
+              Bekräfta representation
             </>
           )}
         </Button>
 
         <p className="text-[11px] text-muted-foreground text-center mt-4">
-          Signeringen sker via BankID. Ditt representationsbevis blir tillgängligt
+          Ditt representationsbevis blir tillgängligt
           för bemanningsföretaget och den aktuella regionen.
         </p>
       </div>

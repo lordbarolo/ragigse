@@ -57,6 +57,18 @@ serve(async (req) => {
           break;
         }
 
+        // Idempotency guard: check if this session was already processed
+        const { data: existing } = await supabase
+          .from("payments")
+          .select("id")
+          .eq("stripe_session_id", session.id)
+          .maybeSingle();
+
+        if (existing) {
+          console.log(`Session ${session.id} already processed, skipping duplicate`);
+          break;
+        }
+
         const leadId = session.metadata?.lead_id;
         const reportId = session.metadata?.report_id;
 
@@ -74,27 +86,18 @@ serve(async (req) => {
         }
 
         if (leadId) {
-          // Avoid duplicate payment records
-          const { data: existing } = await supabase
-            .from("payments")
-            .select("id")
-            .eq("stripe_session_id", session.id)
-            .maybeSingle();
-
-          if (!existing) {
-            await supabase.from("payments").insert({
-              lead_id: leadId,
-              report_id: reportId || null,
-              stripe_session_id: session.id,
-              stripe_payment_intent_id: typeof session.payment_intent === "string"
-                ? session.payment_intent
-                : null,
-              amount_ore: session.amount_total || 0,
-              currency: session.currency || "sek",
-              status: "paid",
-              plan: "single",
-            });
-          }
+          await supabase.from("payments").insert({
+            lead_id: leadId,
+            report_id: reportId || null,
+            stripe_session_id: session.id,
+            stripe_payment_intent_id: typeof session.payment_intent === "string"
+              ? session.payment_intent
+              : null,
+            amount_ore: session.amount_total || 0,
+            currency: session.currency || "sek",
+            status: "paid",
+            plan: "single",
+          });
         }
 
         break;

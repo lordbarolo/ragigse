@@ -154,7 +154,7 @@ export default function ReferenserInfo() {
               </li>
               <li className="flex gap-3">
                 <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center shrink-0">2</span>
-                Du får en länk via SMS och signerar med BankID
+                Du får en länk via SMS och bekräftar digitalt
               </li>
               <li className="flex gap-3">
                 <span className="w-6 h-6 rounded-full bg-primary/10 text-primary text-xs font-bold flex items-center justify-center shrink-0">3</span>

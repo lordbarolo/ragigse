@@ -26,11 +26,6 @@ const VERIFICATION_CONFIG: Record<string, { label: string; icon: React.ReactNode
     icon: <ShieldCheck className="h-3 w-3" />,
     badgeClass: "bg-primary/10 text-primary border-0 text-[10px]",
   },
-  bankid: {
-    label: "BankID",
-    icon: <ShieldCheck className="h-3 w-3" />,
-    badgeClass: "bg-emerald-500/10 text-emerald-600 border-0 text-[10px]",
-  },
   ping_confirmed: {
     label: "Bekräftad",
     icon: <ShieldCheck className="h-3 w-3" />,

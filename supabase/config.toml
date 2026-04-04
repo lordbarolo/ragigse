@@ -78,7 +78,7 @@ verify_jwt = false
 [functions.uppdragsradar-chat]
 verify_jwt = false
 
-[functions.bankid-verify]
+[functions.delete-account]
 verify_jwt = false
 
 [functions.radar-notify]

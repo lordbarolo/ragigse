@@ -356,33 +356,6 @@ export default function ReferenceForm() {
           </>
         )}
 
-        {/* BankID placeholder */}
-        <div className="mb-8 rounded-xl border-2 border-dashed border-border bg-muted/30 p-5">
-          <div className="flex items-start gap-3">
-            <ShieldCheck className="h-7 w-7 shrink-0 text-muted-foreground" />
-            <div>
-              <h4 className="font-semibold text-foreground">Verifiering med BankID</h4>
-              <p className="mt-1 text-sm text-muted-foreground">
-                BankID-signering integreras i nästa version. Referensen sparas som overifierad tills dess.
-              </p>
-              <Button type="button" variant="ghost" className="mt-3 pointer-events-none opacity-50" disabled tabIndex={-1}>
-                <Lock className="h-4 w-4" />
-                Verifiera med BankID
-                <span className="ml-2 rounded-full bg-muted px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">Kommer snart</span>
-              </Button>
-              <div
-                role="button"
-                tabIndex={0}
-                className="mt-4 flex items-start gap-2 cursor-pointer"
-                onClick={() => setBankidAcknowledged(!bankidAcknowledged)}
-                onKeyDown={(e) => { if (e.key === " " || e.key === "Enter") { e.preventDefault(); setBankidAcknowledged(!bankidAcknowledged); } }}
-              >
-                <Checkbox checked={bankidAcknowledged} onCheckedChange={() => {}} className="mt-0.5" />
-                <span className="text-sm text-muted-foreground">Jag förstår att min referens sparas som overifierad tills BankID-verifiering är på plats</span>
-              </div>
-            </div>
-          </div>
-        </div>
 
         {/* Account section */}
         {!user && (
