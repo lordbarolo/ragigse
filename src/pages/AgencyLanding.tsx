@@ -9,7 +9,7 @@ const BENEFITS = [
     icon: FileCheck,
     title: "Eliminera dubbelpresentationer",
     description:
-      "Digitalt representationsbevis signerat med BankID. Uppdragsgivaren verifierar direkt — ingen tvekan om vem som företräder konsulten.",
+      "Digitalt representationsbevis med säker signering. Uppdragsgivaren verifierar direkt — ingen tvekan om vem som företräder konsulten.",
   },
   {
     icon: Users,
