@@ -115,7 +115,6 @@ export default function Profile() {
   }
 
   const handleSignOut = async () => { await signOut(); navigate("/"); };
-  const [deleting, setDeleting] = useState(false);
   const handleDeleteAccount = async () => {
     setDeleting(true);
     try {
