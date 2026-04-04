@@ -226,6 +226,37 @@ export default function Profile() {
             )}
           </CardContent>
         </Card>
+
+        {/* Delete account */}
+        <div className="pt-4 border-t border-border">
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10 gap-2">
+                <Trash2 className="w-4 h-4" />
+                Radera mitt konto
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Radera konto permanent?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  All din data raderas permanent — rapporter, profil, referenser och dokument. Detta kan inte ångras.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Avbryt</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDeleteAccount}
+                  disabled={deleting}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  {deleting ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : null}
+                  Ja, radera mitt konto
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
       </div>
 
     </div>
