@@ -121,13 +121,8 @@ export default function SalaryCheck() {
         <div className="absolute bottom-0 left-0 right-0 h-[300px] bg-gradient-to-t from-background to-transparent" />
       </section>
 
-      {/* ── Section 2: Löneförhandling (dark premium) ── */}
-      <section className="relative overflow-hidden bg-[#050816] text-white">
-        {/* Ambient gradient orbs */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_35%,rgba(116,137,255,0.14),transparent_28%),radial-gradient(circle_at_60%_50%,rgba(177,129,255,0.10),transparent_24%),radial-gradient(circle_at_75%_70%,rgba(92,112,255,0.08),transparent_20%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(135deg,#030712_0%,#081124_45%,#050816_100%)] opacity-95" />
-        {/* Subtle grid */}
-        <div className="absolute inset-0 opacity-[0.03] [background-image:linear-gradient(rgba(255,255,255,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.06)_1px,transparent_1px)] [background-size:64px_64px]" />
+      {/* ── Section 2: Löneförhandling ── */}
+      <section className="relative overflow-hidden bg-secondary/50">
 
         <div className="relative mx-auto max-w-6xl px-6 py-14 md:px-10 lg:px-12 lg:py-20">
           <div className="grid items-center gap-8 md:grid-cols-[1fr_0.9fr] lg:gap-10">
