@@ -313,7 +313,7 @@ export default function Campaign() {
             <div className="space-y-3 pt-2">
               <button
                 onClick={() => navigate("/registrera")}
-                className="w-full py-3.5 rounded-xl bg-foreground text-white font-semibold text-sm hover:opacity-90 transition-opacity"
+                className="w-full py-3.5 rounded-xl bg-foreground text-background font-semibold text-sm hover:opacity-90 transition-opacity"
               >
                 Skapa konto
               </button>
