@@ -13,20 +13,30 @@ serve(async (req) => {
   }
 
   try {
-    const { lead_id } = await req.json();
+    const { lead_id, external_id } = await req.json();
 
-    if (!lead_id) {
+    if (!lead_id && !external_id) {
       return new Response(
-        JSON.stringify({ error: "Missing lead_id" }),
+        JSON.stringify({ error: "Missing lead_id or external_id" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
     // Validate lead_id is a valid UUID to prevent enumeration
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-    if (typeof lead_id !== "string" || !uuidRegex.test(lead_id)) {
+    if (lead_id) {
+      const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      if (typeof lead_id !== "string" || !uuidRegex.test(lead_id)) {
+        return new Response(
+          JSON.stringify({ error: "Invalid lead_id" }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
+
+    // Validate external_id length
+    if (external_id && (typeof external_id !== "string" || external_id.length > 100)) {
       return new Response(
-        JSON.stringify({ error: "Invalid lead_id" }),
+        JSON.stringify({ error: "Invalid external_id" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -36,12 +46,18 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Fetch lead — only return non-sensitive fields needed for teaser display
-    const { data: lead, error: leadError } = await supabase
+    // Fetch lead by id or external_id
+    let query = supabase
       .from("leads")
-      .select("id, employment_type, yrke, kommun, experience, salary_type, current_salary")
-      .eq("id", lead_id)
-      .maybeSingle();
+      .select("id, employment_type, yrke, kommun, experience, salary_type, current_salary, email");
+
+    if (lead_id) {
+      query = query.eq("id", lead_id);
+    } else {
+      query = query.eq("external_id", external_id);
+    }
+
+    const { data: lead, error: leadError } = await query.maybeSingle();
 
     if (leadError) {
       console.error("Failed to fetch lead:", leadError);
