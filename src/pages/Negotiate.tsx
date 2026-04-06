@@ -313,6 +313,33 @@ export default function Negotiate() {
           </>
         )}
       </div>
+
+      {/* Report Dialog */}
+      <Dialog open={reportOpen} onOpenChange={setReportOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Rapportera felaktigt svar</DialogTitle>
+            <DialogDescription>
+              Beskriv kort vad som var fel med svaret du fick.
+            </DialogDescription>
+          </DialogHeader>
+          <Textarea
+            placeholder="T.ex. timersättningen stämmer inte för min zon..."
+            value={reportText}
+            onChange={(e) => setReportText(e.target.value)}
+            rows={3}
+          />
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" size="sm" onClick={() => setReportOpen(false)}>
+              Avbryt
+            </Button>
+            <Button size="sm" onClick={handleReportSubmit} disabled={reportSubmitting}>
+              {reportSubmitting && <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" />}
+              Skicka
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
