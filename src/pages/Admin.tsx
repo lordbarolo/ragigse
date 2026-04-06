@@ -330,6 +330,9 @@ export default function Admin() {
       {/* Bug Reports */}
       <BugReports />
 
+      {/* Chat Answer Reports */}
+      <ChatAnswerReports />
+
       {/* Salary Insights */}
       <SalaryInsights />
 
