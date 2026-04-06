@@ -120,11 +120,6 @@ export default function Campaign() {
       <main className="max-w-3xl mx-auto px-6 pb-20">
         {/* ── Hero ─────────────────────────────── */}
         <section className="pt-12 pb-10 text-center">
-          {leadName && (
-            <p className="text-sm text-muted-foreground mb-2">
-              Välkommen, {leadName}
-            </p>
-          )}
           <h1
             className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground leading-tight"
             style={{ fontFamily: "var(--font-display)" }}
