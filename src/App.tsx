@@ -146,6 +146,7 @@ const App = () => (
               <Route path="/ping/:token" element={<PingResponse />} />
               <Route path="/sign/:token" element={<SignRepresentation />} />
               <Route path="/unsubscribe" element={<Unsubscribe />} />
+              <Route path="/kampanj/:role" element={<Campaign />} />
 
               {/* Hidden / protected routes */}
               <Route path="/dela" element={<ProtectedRoute><SharePreview /></ProtectedRoute>} />
