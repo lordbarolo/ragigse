@@ -76,13 +76,13 @@ export default function Campaign() {
         if (data) setRates(data);
       }
 
-      // Lookup lead
+      // Lookup lead by external_id
       if (uniqueId) {
         const { data: lead } = await supabase.functions.invoke("get-lead", {
-          body: { leadId: uniqueId },
+          body: { external_id: uniqueId },
         });
-        if (lead?.email) {
-          setLeadName(lead.email.split("@")[0]);
+        if (lead?.lead?.email) {
+          setLeadName(lead.lead.email.split("@")[0]);
         }
       }
 

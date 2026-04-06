@@ -1257,11 +1257,13 @@ export type Database = {
           email: string | null
           employment_type: string
           experience: number | null
+          external_id: string | null
           id: string
           kommun: string | null
           ob_share: string | null
           paid: boolean
           salary_type: string | null
+          source: string | null
           updated_at: string
           yrke: string | null
         }
@@ -1271,11 +1273,13 @@ export type Database = {
           email?: string | null
           employment_type: string
           experience?: number | null
+          external_id?: string | null
           id?: string
           kommun?: string | null
           ob_share?: string | null
           paid?: boolean
           salary_type?: string | null
+          source?: string | null
           updated_at?: string
           yrke?: string | null
         }
@@ -1285,11 +1289,13 @@ export type Database = {
           email?: string | null
           employment_type?: string
           experience?: number | null
+          external_id?: string | null
           id?: string
           kommun?: string | null
           ob_share?: string | null
           paid?: boolean
           salary_type?: string | null
+          source?: string | null
           updated_at?: string
           yrke?: string | null
         }
