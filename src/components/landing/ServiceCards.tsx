@@ -50,21 +50,6 @@ const SERVICES = [
     iconColor: "text-emerald-500",
     link: "/fakturakontroll",
   },
-  {
-    title: "Referenser & Verifikationer",
-    desc: "Ta kontroll över dina referenser och intyg. Dela handlingarna och ge tidsbegränsad tillgång till relevanta personer. Spårbart, säkert och på dina villkor.",
-    cta: "Kommer snart",
-    iconBg: "bg-amber-500/10",
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-        <circle cx="10" cy="8" r="3.5" stroke="currentColor" strokeWidth="1.5" fill="none" />
-        <path d="M4 17c0-3.314 2.686-5 6-5s6 1.686 6 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M15 5l1.5-1.5M16.5 7H18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-      </svg>
-    ),
-    iconColor: "text-amber-500",
-    comingSoon: true,
-  },
 ];
 
 export default function ServiceCards({ onStartAnalysis }: ServiceCardsProps) {
@@ -81,7 +66,7 @@ export default function ServiceCards({ onStartAnalysis }: ServiceCardsProps) {
         </h2>
 
         {/* Horizontal scroll on mobile, grid on larger screens */}
-        <div className="flex flex-col gap-4 pb-4 sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-px sm:bg-border sm:rounded-xl sm:overflow-hidden sm:pb-0">
+        <div className="flex flex-col gap-4 pb-4 sm:grid sm:grid-cols-3 sm:gap-px sm:bg-border sm:rounded-xl sm:overflow-hidden sm:pb-0">
           {SERVICES.map((s, i) => (
             <div key={i} className="w-full rounded-xl bg-secondary/50 p-6 flex flex-col sm:rounded-none sm:bg-background sm:p-8">
               {/* Icon */}
