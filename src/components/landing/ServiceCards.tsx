@@ -47,7 +47,8 @@ export default function ServiceCards({ onStartAnalysis }: ServiceCardsProps) {
           Plattformen
         </p>
         <h2 className="text-2xl md:text-[22px] font-medium text-foreground mb-4">
-          Tre frågor. Ett svar.
+          Två frågor. Ett svar.
+        </h2>
         </h2>
 
         {/* Horizontal scroll on mobile, grid on larger screens */}
