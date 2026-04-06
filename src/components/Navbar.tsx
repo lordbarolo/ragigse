@@ -2,11 +2,10 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import CompcareLogo from "@/components/CompcareLogo";
 import { Button } from "@/components/ui/button";
-import { User, LogIn, LogOut, MessageSquare, Radio, Shield, FileSearch, ArrowLeft } from "lucide-react";
+import { User, LogIn, LogOut, MessageSquare, Shield, FileSearch, ArrowLeft } from "lucide-react";
 
 const CONSULTANT_LINKS = [
   { to: "/consultant/forhandla", label: "Marknadsvillkor", icon: MessageSquare },
-  { to: "/consultant/radar", label: "Uppdrag", icon: Radio },
   { to: "/consultant/referenser", label: "Referenser", icon: Shield },
 ] as const;
 
