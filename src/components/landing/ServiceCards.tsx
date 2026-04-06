@@ -49,7 +49,6 @@ export default function ServiceCards({ onStartAnalysis }: ServiceCardsProps) {
         <h2 className="text-2xl md:text-[22px] font-medium text-foreground mb-4">
           Två frågor. Ett svar.
         </h2>
-        </h2>
 
         {/* Horizontal scroll on mobile, grid on larger screens */}
         <div className="flex flex-col gap-4 pb-4 sm:grid sm:grid-cols-2 sm:gap-px sm:bg-border sm:rounded-xl sm:overflow-hidden sm:pb-0">
