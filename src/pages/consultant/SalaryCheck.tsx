@@ -221,6 +221,9 @@ export default function SalaryCheck() {
       {/* ── Referenser & Verifikationer ──────── */}
       <RefSection />
 
+      {/* ── Fakturakontroll ──────── */}
+      <InvoiceSection />
+
       {/* ── Service Cards ──────── */}
       <ServiceCards onStartAnalysis={handleStartSurvey} />
 
