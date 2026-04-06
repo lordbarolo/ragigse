@@ -55,7 +55,6 @@ export default function Campaign() {
   const displayLabel = yrkeskategori ? shortLabel(yrkeskategori) : role ?? "";
 
   const [rates, setRates] = useState<ZoneRate[]>([]);
-  const [leadName, setLeadName] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [showAuthModal, setShowAuthModal] = useState(false);
 
@@ -63,7 +62,7 @@ export default function Campaign() {
     async function load() {
       setLoading(true);
 
-      // Fetch rates
+      // Fetch rates for this role
       if (yrkeskategori) {
         const { data } = await supabase
           .from("contract_version_rates")
@@ -76,20 +75,17 @@ export default function Campaign() {
         if (data) setRates(data);
       }
 
-      // Lookup lead by external_id
+      // Track campaign visit (fire-and-forget, no personal data used on page)
       if (uniqueId) {
-        const { data: lead } = await supabase.functions.invoke("get-lead", {
-          body: { external_id: uniqueId },
-        });
-        if (lead?.lead?.email) {
-          setLeadName(lead.lead.email.split("@")[0]);
-        }
+        supabase.functions.invoke("track-event", {
+          body: { event_name: "campaign_visit", metadata: { external_id: uniqueId, role: role } },
+        }).catch(() => {});
       }
 
       setLoading(false);
     }
     load();
-  }, [yrkeskategori, uniqueId]);
+  }, [yrkeskategori, uniqueId, role]);
 
   if (!yrkeskategori) {
     return (
