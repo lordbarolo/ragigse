@@ -1,9 +1,8 @@
 import { useLocation, useNavigate } from "react-router-dom";
-import { MessageSquare, Radio, Shield, User } from "lucide-react";
+import { MessageSquare, Shield, User } from "lucide-react";
 
 const TABS = [
   { label: "Marknadsvillkor", path: "/consultant/forhandla", icon: MessageSquare },
-  { label: "Uppdrag", path: "/consultant/radar", icon: Radio },
   { label: "Referenser", path: "/consultant/referenser", icon: Shield },
   { label: "Profil", path: "/consultant/profil", icon: User },
 ] as const;
