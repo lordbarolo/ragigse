@@ -217,7 +217,10 @@ export default function SalaryCheck() {
         </div>
       </section>
 
-      {/* ── Service Cards (horizontal scroll) ──────── */}
+      {/* ── Referenser & Verifikationer ──────── */}
+      <RefSection />
+
+      {/* ── Service Cards ──────── */}
       <ServiceCards onStartAnalysis={handleStartSurvey} />
 
       {/* ── Features section ───────────────────────────── */}

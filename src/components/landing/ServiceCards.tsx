@@ -66,7 +66,7 @@ export default function ServiceCards({ onStartAnalysis }: ServiceCardsProps) {
         </h2>
 
         {/* Horizontal scroll on mobile, grid on larger screens */}
-        <div className="flex flex-col gap-4 pb-4 sm:grid sm:grid-cols-2 lg:grid-cols-4 sm:gap-px sm:bg-border sm:rounded-xl sm:overflow-hidden sm:pb-0">
+        <div className="flex flex-col gap-4 pb-4 sm:grid sm:grid-cols-3 sm:gap-px sm:bg-border sm:rounded-xl sm:overflow-hidden sm:pb-0">
           {SERVICES.map((s, i) => (
             <div key={i} className="w-full rounded-xl bg-secondary/50 p-6 flex flex-col sm:rounded-none sm:bg-background sm:p-8">
               {/* Icon */}
