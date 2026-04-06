@@ -174,7 +174,7 @@ export default function SalaryCheck() {
                     onClick={handleStartSurvey}
                     className="inline-flex min-h-[50px] items-center justify-center rounded-xl bg-[linear-gradient(135deg,#5C7CFF_0%,#7FA4FF_100%)] px-7 text-[15px] font-semibold text-white shadow-[0_12px_36px_rgba(92,124,255,0.28)] transition duration-200 hover:-translate-y-0.5"
                   >
-                    Jämför din ersättning
+                    Se uppdaterade villkor för hundratals orter och roller
                   </button>
                 </div>
               </div>
