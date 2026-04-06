@@ -5,6 +5,7 @@ import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 import Survey from "@/components/Survey";
 import ServiceCards from "@/components/landing/ServiceCards";
+import RefSection from "@/components/landing/RefSection";
 import handPhoneImage from "@/assets/hand-phone.png";
 import CompcareLogo from "@/components/CompcareLogo";
 import ThemeToggle from "@/components/ThemeToggle";
