@@ -205,13 +205,22 @@ export default function Negotiate() {
             </div>
           </div>
           {hasMessages && hasAccess && (
-            <button
-              onClick={clearChat}
-              className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-secondary transition-colors"
-              title="Ny konversation"
-            >
-              <RotateCcw className="w-3.5 h-3.5 text-muted-foreground" />
-            </button>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setReportOpen(true)}
+                className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-destructive/10 transition-colors"
+                title="Rapportera felaktigt svar"
+              >
+                <Flag className="w-3.5 h-3.5 text-muted-foreground hover:text-destructive" />
+              </button>
+              <button
+                onClick={clearChat}
+                className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-secondary transition-colors"
+                title="Ny konversation"
+              >
+                <RotateCcw className="w-3.5 h-3.5 text-muted-foreground" />
+              </button>
+            </div>
           )}
         </nav>
 
