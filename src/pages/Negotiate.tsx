@@ -156,7 +156,7 @@ export default function Negotiate() {
       const lastAssistantMsg = [...messages].reverse().find((m) => m.role === "assistant");
       const { error } = await supabase.from("chat_answer_reports").insert([{
         message_content: lastAssistantMsg?.content || "(inget meddelande)",
-        context_json: context as Record<string, unknown>,
+        context_json: JSON.parse(JSON.stringify(context)),
         user_email: user?.email || gateEmail || null,
         page_url: window.location.href,
       }]);
