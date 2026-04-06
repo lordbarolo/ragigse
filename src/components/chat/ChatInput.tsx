@@ -5,19 +5,24 @@ interface Props {
   onSend: (message: string) => void;
   isLoading: boolean;
   placeholder?: string;
+  expanded?: boolean;
 }
 
-export default function ChatInput({ onSend, isLoading, placeholder }: Props) {
+export default function ChatInput({ onSend, isLoading, placeholder, expanded }: Props) {
   const [value, setValue] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const minHeight = expanded ? 120 : undefined;
+  const maxHeight = expanded ? 240 : 120;
 
   // Auto-resize textarea
   useEffect(() => {
     const el = textareaRef.current;
     if (!el) return;
     el.style.height = "auto";
-    el.style.height = `${Math.min(el.scrollHeight, 120)}px`;
-  }, [value]);
+    const target = Math.min(el.scrollHeight, maxHeight);
+    el.style.height = `${minHeight ? Math.max(target, minHeight) : target}px`;
+  }, [value, minHeight, maxHeight]);
 
   const handleSubmit = () => {
     if (!value.trim() || isLoading) return;
@@ -33,16 +38,16 @@ export default function ChatInput({ onSend, isLoading, placeholder }: Props) {
   };
 
   return (
-    <div className="flex items-end gap-2 bg-card border border-border rounded-2xl p-2 shadow-lg">
+    <div className={`flex items-end gap-2 bg-card border border-border rounded-2xl p-2 shadow-lg ${expanded ? "flex-1" : ""}`}>
       <textarea
         ref={textareaRef}
         value={value}
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder={placeholder ?? "Ställ en fråga om din ersättning…"}
+        placeholder={placeholder ?? "Skriv din fråga här — t.ex. 'Vad är marknadspriset för en sjuksköterska i Zon 2?'"}
         rows={1}
         disabled={isLoading}
-        className="flex-1 bg-transparent text-foreground text-sm resize-none outline-none placeholder:text-muted-foreground/60 px-2 py-1.5 max-h-[120px]"
+        className={`flex-1 bg-transparent text-foreground text-sm resize-none outline-none placeholder:text-muted-foreground/60 px-2 py-1.5 ${expanded ? "" : "max-h-[120px]"}`}
       />
       <button
         onClick={handleSubmit}
