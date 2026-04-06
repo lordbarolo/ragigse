@@ -104,7 +104,7 @@ export default function SalaryCheck() {
           <div className="h-4 md:h-6" />
 
           {/* Role selection CTA */}
-          <p className="text-hero-foreground/50 text-sm md:text-base mb-3 tracking-wide">Svara på 6 frågor och få full insyn i branschens lönenivåer</p>
+          
           <div className="max-w-md mx-auto">
             <button
               onClick={handleStartSurvey}
