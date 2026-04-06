@@ -109,6 +109,36 @@ Deno.serve(async (req) => {
       });
     }
 
+    // --- CHAT ANSWER REPORTS ---
+    if (action === "chat-answer-reports") {
+      const { data, error } = await supabase
+        .from("chat_answer_reports")
+        .select("id, message_content, context_json, user_email, page_url, status, created_at")
+        .order("created_at", { ascending: false })
+        .limit(100);
+
+      if (error) throw error;
+      return new Response(JSON.stringify({ reports: data }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // --- UPDATE CHAT ANSWER REPORT STATUS ---
+    if (action === "update-chat-report-status") {
+      const { id, status } = body;
+      if (!id || !status) throw new Error("Missing id or status");
+
+      const { error } = await supabase
+        .from("chat_answer_reports")
+        .update({ status })
+        .eq("id", id);
+
+      if (error) throw error;
+      return new Response(JSON.stringify({ ok: true }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     return new Response(JSON.stringify({ error: "Unknown action" }), {
       status: 400,
       headers: { ...corsHeaders, "Content-Type": "application/json" },

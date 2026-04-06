@@ -443,6 +443,36 @@ export type Database = {
         }
         Relationships: []
       }
+      chat_answer_reports: {
+        Row: {
+          context_json: Json | null
+          created_at: string
+          id: string
+          message_content: string
+          page_url: string | null
+          status: string
+          user_email: string | null
+        }
+        Insert: {
+          context_json?: Json | null
+          created_at?: string
+          id?: string
+          message_content: string
+          page_url?: string | null
+          status?: string
+          user_email?: string | null
+        }
+        Update: {
+          context_json?: Json | null
+          created_at?: string
+          id?: string
+          message_content?: string
+          page_url?: string | null
+          status?: string
+          user_email?: string | null
+        }
+        Relationships: []
+      }
       client_profiles: {
         Row: {
           allowed_capabilities: Json

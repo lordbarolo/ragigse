@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
-import { ArrowLeft, RotateCcw, Lock, Mail, Loader2 } from "lucide-react";
+import { ArrowLeft, RotateCcw, Lock, Mail, Loader2, Flag } from "lucide-react";
 import { useNegotiationChat } from "@/hooks/useNegotiationChat";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,6 +11,8 @@ import SuggestedPrompts from "@/components/chat/SuggestedPrompts";
 import { trackEvent } from "@/lib/trackEvent";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { toast } from "sonner";
 
 const PAGE_TITLE = "Förhandla din ersättning — CompCare";
@@ -27,6 +29,11 @@ export default function Negotiate() {
   const [emailGateUnlocked, setEmailGateUnlocked] = useState(false);
   const [gateEmail, setGateEmail] = useState("");
   const [gateLoading, setGateLoading] = useState(false);
+
+  // Report dialog state
+  const [reportOpen, setReportOpen] = useState(false);
+  const [reportText, setReportText] = useState("");
+  const [reportSubmitting, setReportSubmitting] = useState(false);
 
   // SEO metadata
   useEffect(() => {
@@ -139,6 +146,32 @@ export default function Negotiate() {
   const hasMessages = messages.length > 0;
   const hasContext = Object.keys(context).filter((k) => (context as Record<string, unknown>)[k] !== undefined).length > 0;
 
+  const handleReportSubmit = async () => {
+    if (!reportText.trim()) {
+      toast.error("Beskriv vad som var fel.");
+      return;
+    }
+    setReportSubmitting(true);
+    try {
+      const lastAssistantMsg = [...messages].reverse().find((m) => m.role === "assistant");
+      const { error } = await supabase.from("chat_answer_reports").insert([{
+        message_content: lastAssistantMsg?.content || "(inget meddelande)",
+        context_json: JSON.parse(JSON.stringify(context)),
+        user_email: user?.email || gateEmail || null,
+        page_url: window.location.href,
+      }]);
+      if (error) throw error;
+      trackEvent("chat_answer_reported", { reason: reportText.slice(0, 100) });
+      toast.success("Tack! Vi har tagit emot din rapportering.");
+      setReportText("");
+      setReportOpen(false);
+    } catch {
+      toast.error("Något gick fel. Försök igen.");
+    } finally {
+      setReportSubmitting(false);
+    }
+  };
+
   // Determine access: logged in OR email gate unlocked
   const hasAccess = !!user || emailGateUnlocked;
 
@@ -172,13 +205,22 @@ export default function Negotiate() {
             </div>
           </div>
           {hasMessages && hasAccess && (
-            <button
-              onClick={clearChat}
-              className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-secondary transition-colors"
-              title="Ny konversation"
-            >
-              <RotateCcw className="w-3.5 h-3.5 text-muted-foreground" />
-            </button>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setReportOpen(true)}
+                className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-destructive/10 transition-colors"
+                title="Rapportera felaktigt svar"
+              >
+                <Flag className="w-3.5 h-3.5 text-muted-foreground hover:text-destructive" />
+              </button>
+              <button
+                onClick={clearChat}
+                className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-secondary transition-colors"
+                title="Ny konversation"
+              >
+                <RotateCcw className="w-3.5 h-3.5 text-muted-foreground" />
+              </button>
+            </div>
           )}
         </nav>
 
@@ -271,6 +313,33 @@ export default function Negotiate() {
           </>
         )}
       </div>
+
+      {/* Report Dialog */}
+      <Dialog open={reportOpen} onOpenChange={setReportOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Rapportera felaktigt svar</DialogTitle>
+            <DialogDescription>
+              Beskriv kort vad som var fel med svaret du fick.
+            </DialogDescription>
+          </DialogHeader>
+          <Textarea
+            placeholder="T.ex. timersättningen stämmer inte för min zon..."
+            value={reportText}
+            onChange={(e) => setReportText(e.target.value)}
+            rows={3}
+          />
+          <div className="flex justify-end gap-2">
+            <Button variant="outline" size="sm" onClick={() => setReportOpen(false)}>
+              Avbryt
+            </Button>
+            <Button size="sm" onClick={handleReportSubmit} disabled={reportSubmitting}>
+              {reportSubmitting && <Loader2 className="w-3.5 h-3.5 animate-spin mr-1.5" />}
+              Skicka
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
