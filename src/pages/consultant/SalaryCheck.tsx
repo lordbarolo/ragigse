@@ -179,14 +179,11 @@ export default function SalaryCheck() {
 
             {/* ── Image column ── */}
             <div className="relative hidden md:flex items-center justify-center self-stretch -ml-4 lg:-ml-8">
-              {/* Focused glow behind image */}
-              <div className="absolute inset-[-5%] rounded-full bg-[radial-gradient(ellipse_60%_55%_at_48%_50%,rgba(130,155,255,0.18),rgba(100,80,255,0.05)_55%,transparent_80%)] blur-lg" />
-              {/* Tight inner glow */}
-              <div className="absolute inset-[8%] rounded-2xl bg-[radial-gradient(circle_at_48%_45%,rgba(160,130,255,0.10),transparent_60%)] blur-xl" />
+              <div className="absolute inset-[-5%] rounded-full bg-[radial-gradient(ellipse_60%_55%_at_48%_50%,hsl(var(--primary)/0.08),transparent_80%)] blur-lg" />
               <img
                 src={handPhoneImage}
                 alt="Person som håller mobil med CompCare-gränssnitt"
-                className="relative z-10 w-full max-w-[560px] h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.5)]"
+                className="relative z-10 w-full max-w-[560px] h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.15)]"
                 style={{
                   transform: "translateX(-15%)",
                   maskImage: "radial-gradient(ellipse 90% 92% at 50% 48%, black 60%, transparent 100%)",
@@ -199,11 +196,11 @@ export default function SalaryCheck() {
 
           {/* Mobile image */}
           <div className="relative mt-10 flex justify-center md:hidden">
-            <div className="absolute inset-[-12%] rounded-full bg-[radial-gradient(circle,rgba(141,162,255,0.10),transparent_65%)] blur-lg" />
+            <div className="absolute inset-[-12%] rounded-full bg-[radial-gradient(circle,hsl(var(--primary)/0.06),transparent_65%)] blur-lg" />
             <img
               src={handPhoneImage}
               alt="Person som håller mobil med CompCare-gränssnitt"
-              className="relative z-10 w-3/4 max-w-[320px] h-auto object-contain drop-shadow-[0_16px_40px_rgba(0,0,0,0.4)]"
+              className="relative z-10 w-3/4 max-w-[320px] h-auto object-contain drop-shadow-[0_16px_40px_rgba(0,0,0,0.12)]"
               style={{
                 maskImage: "radial-gradient(ellipse 85% 88% at 50% 48%, black 55%, transparent 100%)",
                 WebkitMaskImage: "radial-gradient(ellipse 85% 88% at 50% 48%, black 55%, transparent 100%)",
