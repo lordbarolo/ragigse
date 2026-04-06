@@ -6,11 +6,6 @@ interface Props {
 
 const PROMPTS = [
   {
-    emoji: "📊",
-    label: "Benchmark-koll",
-    prompt: "Hur ligger min lön jämfört med benchmark?",
-  },
-  {
     emoji: "🔄",
     label: "Jämför roller",
     prompt: "Hur skiljer sig ersättningen mellan olika roller i min zon?",
@@ -35,16 +30,17 @@ export default function SuggestedPrompts({ onSelect }: Props) {
           Löneassistenten
         </h2>
         <p className="text-sm text-muted-foreground mt-1">
-          Ställ frågor om din ersättning — alla svar baseras på officiella datakällor.
+          Ställ valfri fråga om din ersättning — alla svar baseras på officiella datakällor.
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-2 w-full max-w-sm">
+      <p className="text-xs text-muted-foreground/70 mb-1">Föreslagna ämnen</p>
+      <div className="grid grid-cols-3 gap-2 w-full max-w-md">
         {PROMPTS.map((p) => (
           <button
             key={p.label}
             onClick={() => onSelect(p.prompt)}
-            className="flex flex-col items-start gap-1 p-3 rounded-xl bg-card border border-border text-left transition-all hover:border-primary/30 hover:bg-card/80 hover:-translate-y-0.5"
+            className="flex flex-col items-start gap-1 p-3 rounded-xl bg-card border border-dashed border-border text-left transition-all hover:border-primary/30 hover:bg-card/80 hover:-translate-y-0.5"
           >
             <span className="text-base">{p.emoji}</span>
             <span className="text-xs font-medium text-foreground/80">{p.label}</span>
