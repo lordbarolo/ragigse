@@ -168,7 +168,7 @@ export default function SalaryCheck() {
 
               {/* Trust line + CTA */}
               <div className="mt-5">
-                <p className="text-sm text-white/50 lg:text-[15px]">Besvara 6 snabba frågor för att få alla svar</p>
+                <p className="text-sm text-white/50 lg:text-[15px]">Informationen hämtas från offentliga avtal och branschens genomsnittsmarginaler.</p>
                 <div className="mt-3">
                   <button
                     onClick={handleStartSurvey}
