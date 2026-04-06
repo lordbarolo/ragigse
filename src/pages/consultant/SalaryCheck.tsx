@@ -96,7 +96,7 @@ export default function SalaryCheck() {
           </h1>
 
           <p className="text-hero-foreground/60 text-xl md:text-2xl max-w-2xl mx-auto mb-2 leading-relaxed">
-            Marknadsinsikter och smarta tjänster för läkare och sjuksköterskor
+            Vi sammanställer marknadens data så att du får full insyn i ersättningar och avtal. Svara på sex korta frågor för att se hur din ersättning matchar gällande ramavtal.
           </p>
           <p className="text-hero-foreground/60 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
             {"\n"}
