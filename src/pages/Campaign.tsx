@@ -275,7 +275,7 @@ export default function Campaign() {
         <section className="text-center pb-8">
           <button
             onClick={() => navigate("/")}
-            className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-foreground text-white font-semibold text-base hover:opacity-90 transition-opacity active:scale-[0.98]"
+            className="inline-flex items-center gap-2 px-8 py-4 rounded-2xl bg-foreground text-background font-semibold text-base hover:opacity-90 transition-opacity active:scale-[0.98]"
           >
             Se rapporten för din roll
             <ArrowRight className="w-5 h-5" />
