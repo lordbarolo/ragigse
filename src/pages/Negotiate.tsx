@@ -154,12 +154,12 @@ export default function Negotiate() {
     setReportSubmitting(true);
     try {
       const lastAssistantMsg = [...messages].reverse().find((m) => m.role === "assistant");
-      const { error } = await supabase.from("chat_answer_reports").insert({
+      const { error } = await supabase.from("chat_answer_reports").insert([{
         message_content: lastAssistantMsg?.content || "(inget meddelande)",
         context_json: context as Record<string, unknown>,
         user_email: user?.email || gateEmail || null,
         page_url: window.location.href,
-      });
+      }]);
       if (error) throw error;
       trackEvent("chat_answer_reported", { reason: reportText.slice(0, 100) });
       toast.success("Tack! Vi har tagit emot din rapportering.");
