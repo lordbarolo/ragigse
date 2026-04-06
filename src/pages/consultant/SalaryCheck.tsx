@@ -151,7 +151,7 @@ export default function SalaryCheck() {
               {/* Bullet cards */}
               <div className="mt-6 space-y-2">
                 {[
-                  { title: "Transparens:", text: "Se villkoren som är möjliga att få för din roll" },
+                  { title: "Transparens:", text: "Se rätt avtalsinnehåll och lönenivå fön din roll" },
                   { title: "Regional jämförelse:", text: "Se hur ersättningen skiljer sig mellan orter" },
                   { title: "Smart assistent:", text: "Få konkreta råd baserat på 100% verifierad marknadsdata." },
                 ].map((item) => (
