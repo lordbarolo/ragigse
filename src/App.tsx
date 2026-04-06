@@ -116,7 +116,7 @@ const App = () => (
 
                 {/* Hidden until polished — require login */}
                 <Route path="/consultant/salary-check" element={<Navigate to="/" replace />} />
-                <Route path="/consultant/radar" element={<ProtectedRoute><Radar /></ProtectedRoute>} />
+                {/* <Route path="/consultant/radar" element={<ProtectedRoute><Radar /></ProtectedRoute>} /> */}
                 <Route path="/consultant/academy" element={<ProtectedRoute><Academy /></ProtectedRoute>} />
               </Route>
 
