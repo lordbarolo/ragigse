@@ -38,7 +38,7 @@ export default function ChatInput({ onSend, isLoading, placeholder, expanded }: 
   };
 
   return (
-    <div className={`flex items-end gap-2 bg-card border border-border rounded-2xl p-2 shadow-lg ${expanded ? "flex-1" : ""}`}>
+    <div className={`flex ${expanded ? "flex-1 flex-col" : "items-end"} gap-2 bg-card border border-border rounded-2xl ${expanded ? "p-4" : "p-2"} shadow-lg`}>
       <textarea
         ref={textareaRef}
         value={value}
@@ -47,19 +47,21 @@ export default function ChatInput({ onSend, isLoading, placeholder, expanded }: 
         placeholder={placeholder ?? "Skriv din fråga här — t.ex. 'Vad är marknadspriset för en sjuksköterska i Zon 2?'"}
         rows={1}
         disabled={isLoading}
-        className={`flex-1 bg-transparent text-foreground text-sm resize-none outline-none placeholder:text-muted-foreground/60 px-2 py-1.5 ${expanded ? "" : "max-h-[120px]"}`}
+        className={`flex-1 bg-transparent text-foreground resize-none outline-none placeholder:text-muted-foreground/50 px-1 py-1 ${expanded ? "text-base leading-relaxed" : "text-sm max-h-[120px]"}`}
       />
-      <button
-        onClick={handleSubmit}
-        disabled={!value.trim() || isLoading}
-        className="flex-shrink-0 w-9 h-9 rounded-xl bg-primary text-primary-foreground flex items-center justify-center transition-all hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed"
-      >
-        {isLoading ? (
-          <Loader2 className="w-4 h-4 animate-spin" />
-        ) : (
-          <Send className="w-4 h-4" />
-        )}
-      </button>
+      <div className={`flex ${expanded ? "justify-end" : ""}`}>
+        <button
+          onClick={handleSubmit}
+          disabled={!value.trim() || isLoading}
+          className="flex-shrink-0 w-9 h-9 rounded-xl bg-primary text-primary-foreground flex items-center justify-center transition-all hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed"
+        >
+          {isLoading ? (
+            <Loader2 className="w-4 h-4 animate-spin" />
+          ) : (
+            <Send className="w-4 h-4" />
+          )}
+        </button>
+      </div>
     </div>
   );
 }
