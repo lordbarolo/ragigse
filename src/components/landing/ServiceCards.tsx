@@ -35,21 +35,6 @@ const SERVICES = [
     iconColor: "text-blue-500",
     link: null, // uses onStartAnalysis callback
   },
-  {
-    title: "Fakturerar du rätt?",
-    desc: "Pengarna du inte visste att du saknade. Konsulter missar att fakturera för i snitt 30 000 kr per år. Se om du har pengar att hämta.",
-    cta: "Läs mer",
-    iconBg: "bg-emerald-500/10",
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-        <rect x="3" y="4" width="14" height="13" rx="2" stroke="currentColor" strokeWidth="1.5" fill="none" />
-        <path d="M7 4V3M13 4V3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M7 10l2 2 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    ),
-    iconColor: "text-emerald-500",
-    link: "/fakturakontroll",
-  },
 ];
 
 export default function ServiceCards({ onStartAnalysis }: ServiceCardsProps) {
@@ -62,11 +47,11 @@ export default function ServiceCards({ onStartAnalysis }: ServiceCardsProps) {
           Plattformen
         </p>
         <h2 className="text-2xl md:text-[22px] font-medium text-foreground mb-4">
-          Tre frågor. Ett svar.
+          Två frågor. Ett svar.
         </h2>
 
         {/* Horizontal scroll on mobile, grid on larger screens */}
-        <div className="flex flex-col gap-4 pb-4 sm:grid sm:grid-cols-3 sm:gap-px sm:bg-border sm:rounded-xl sm:overflow-hidden sm:pb-0">
+        <div className="flex flex-col gap-4 pb-4 sm:grid sm:grid-cols-2 sm:gap-px sm:bg-border sm:rounded-xl sm:overflow-hidden sm:pb-0">
           {SERVICES.map((s, i) => (
             <div key={i} className="w-full rounded-xl bg-secondary/50 p-6 flex flex-col sm:rounded-none sm:bg-background sm:p-8">
               {/* Icon */}
