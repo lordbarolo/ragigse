@@ -219,81 +219,36 @@ export default function SalaryCheck() {
       {/* ── Service Cards ──────── */}
       <ServiceCards onStartAnalysis={handleStartSurvey} />
 
-      {/* ── Features section ───────────────────────────── */}
-      <section className="max-w-6xl mx-auto px-6 pt-16 pb-12">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
-          <div>
-            <h2 className="text-3xl font-bold mb-6 tracking-tight text-foreground">
-              AI-assistent som optimerar din förhandling
-            </h2>
-            <p className="text-muted-foreground mb-4 leading-relaxed text-lg">
-              21 regioners ramavtalspriser. SCB:s lönestatistik. Bemanningsbranschens marginaler. Vi sammanställer — du ser exakt var du ligger i spannet.
-            </p>
-            <p className="text-muted-foreground mb-4 leading-relaxed text-base italic">
-              "Vad betalar Region Skåne för en infektionssjuksköterska? Hur skiljer sig Zon 1 mot Zon 3? Hur mycket har priserna ändrats sedan förra avtalsperioden?"
-            </p>
-            <p className="text-foreground font-medium text-base">
-              Ställ frågan till Löneassistenten — din AI-agent med tillgång till all avtalsdatan.
-            </p>
-          </div>
+      {/* ── Allt för din yrkesekonomi ──────────────────── */}
+      <section className="max-w-4xl mx-auto px-6 pt-16 pb-24">
+        <h2 className="text-3xl font-bold tracking-tight text-foreground mb-4 text-center">
+          Allt för din yrkesekonomi på ett ställe
+        </h2>
+        <p className="text-muted-foreground text-base md:text-lg leading-relaxed text-center max-w-2xl mx-auto mb-10">
+          Vi sammanställer marknadens data för att ge dig full insyn i dina ersättningar och avtal. Genom att kombinera officiella handlingar med smarta verktyg hjälper vi dig att ha koll på vardagen som konsult.
+        </p>
 
-          {/* Preview card */}
-          <div className="bg-card p-4 rounded-3xl shadow-2xl border border-border rotate-2">
-            <div className="bg-secondary rounded-2xl p-8 border border-border">
-              <div className="flex justify-between items-end mb-6">
-                <div>
-                  <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-1">Marknadspris</p>
-                  <p className="text-4xl font-bold text-primary">616 kr/h</p>
-                </div>
-                <div className="text-right">
-                  <p className="text-xs font-medium text-success bg-success/10 px-2 py-1 rounded-md">+12% vs 2025</p>
-                </div>
-              </div>
-              <div className="space-y-3">
-                <div className="h-2 w-full bg-border rounded-full overflow-hidden">
-                  <div className="h-full bg-primary w-3/4 rounded-full" />
-                </div>
-                <p className="text-xs text-muted-foreground italic">Källa: SKR Ramavtal 2026, Zon 1</p>
-              </div>
+        <div className="space-y-4">
+          {[
+            { title: "Löneanalys", text: "Jämför din ersättning mot regionernas faktiska ramavtalspriser i realtid. Tjänsten omfattar 21 regioner och 290 kommuner för alla specialiseringar." },
+            { title: "Förhandlingsstöd", text: "Få ett sakligt beslutsunderlag inför ditt nästa lönesamtal. Vår digitala rådgivare hjälper dig att förbereda argument baserade på verifierad marknadsdata." },
+            { title: "Fakturakontroll", text: "Säkerställ att du har fått rätt ersättning för OB, jour och arbetad tid. Våra system granskar dina fakturor mot gällande avtal för att identifiera eventuella avvikelser." },
+          ].map((item) => (
+            <div key={item.title} className="rounded-xl border border-border bg-card/60 px-5 py-4">
+              <h3 className="text-base font-semibold text-foreground mb-1">{item.title}</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">{item.text}</p>
+            </div>
+          ))}
+
+          <div className="rounded-xl border border-primary/20 bg-primary/5 px-5 py-4 flex items-start gap-3">
+            <ShieldCheck className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+            <div>
+              <h3 className="text-base font-semibold text-foreground mb-1">Tryggt och säkert</h3>
+              <p className="text-sm text-muted-foreground leading-relaxed">
+                All identifiering sker säkert med BankID. Din information grundas på offentliga handlingar och regionernas ramavtal för 2026.
+              </p>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* ── Invoice Review ────────────────────────────── */}
-      <section className="max-w-4xl mx-auto px-6 pb-20">
-        <div className="bg-card border border-border rounded-3xl p-8 md:p-10 shadow-xl">
-          <div className="flex items-start gap-3 mb-5">
-            <ShieldCheck className="w-6 h-6 text-primary shrink-0 mt-0.5" />
-            <p className="font-bold text-foreground text-lg md:text-xl leading-snug">
-              Konsulter missar att fakturera i snitt 30 000 kr per år. 3 av 10 fakturerar dessutom fel varje månad.
-            </p>
-          </div>
-          <p className="text-muted-foreground mb-6 text-base">
-            OB-tillägg, jour, beredskap, helg och storhelg — det är lätt att räkna fel. Låt Ai-assistenten granska dina fakturor kostnadsfritt. Provision utgår endast om vi hittar timmar som du kan ta betalt för.
-          </p>
-          <Link
-            to="/consultant/fakturakontroll"
-            className="inline-block bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-2xl font-semibold transition-all shadow-lg shadow-primary/20 text-base no-underline"
-          >
-            Säkerställ mina fakturor
-          </Link>
-        </div>
-      </section>
-
-      {/* ── Bottom CTA ─────────────────────────────────── */}
-      <section className="max-w-4xl mx-auto px-6 pb-24 text-center">
-        <h2 className="text-3xl font-bold tracking-tight text-foreground mb-4">
-          Ta kontroll över din marknadsposition
-        </h2>
-        <p className="text-muted-foreground mb-8 text-lg">Se din ersättning i förhållande till marknadspris · 30 sekunder</p>
-        <div className="flex justify-center">
-          <button
-            onClick={handleStartSurvey}
-            className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded-2xl font-semibold transition-all shadow-lg shadow-primary/20 text-base"
-          >
-            Se rapporten för din roll
-          </button>
         </div>
       </section>
       {!import.meta.env.PROD && (
