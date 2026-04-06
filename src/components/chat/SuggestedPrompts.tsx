@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+
 
 interface Props {
   onSelect: (prompt: string) => void;
@@ -52,12 +52,6 @@ export default function SuggestedPrompts({ onSelect }: Props) {
         Alla svar grundas i CI-motorn · Inga påhittade siffror
       </p>
 
-      <p className="text-[11px] text-muted-foreground/60 mt-1">
-        Har du frågor om kommande uppdrag?{" "}
-        <Link to="/consultant/uppdragsradar" className="text-primary hover:underline font-medium">
-          Prova Uppdragsassistenten →
-        </Link>
-      </p>
     </div>
   );
 }

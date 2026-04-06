@@ -1,9 +1,6 @@
-import { lazy, Suspense } from "react";
 import { Outlet } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import BottomNav from "@/components/radar/BottomNav";
-
-const ReijdarChat = lazy(() => import("@/components/radar/ReijdarChat"));
 
 export default function ConsultantLayout() {
   return (
@@ -13,9 +10,6 @@ export default function ConsultantLayout() {
         <Outlet />
       </main>
       <BottomNav />
-      <Suspense fallback={null}>
-        <ReijdarChat />
-      </Suspense>
     </div>
   );
 }

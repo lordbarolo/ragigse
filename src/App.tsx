@@ -36,7 +36,7 @@ const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Profile = lazy(() => import("./pages/Profile"));
-const Radar = lazy(() => import("./pages/Radar"));
+// const Radar = lazy(() => import("./pages/Radar"));
 const Negotiate = lazy(() => import("./pages/Negotiate"));
 const Referenser = lazy(() => import("./pages/Referenser"));
 const ReferenceForm = lazy(() => import("./pages/ReferenceForm"));
@@ -116,7 +116,7 @@ const App = () => (
 
                 {/* Hidden until polished — require login */}
                 <Route path="/consultant/salary-check" element={<Navigate to="/" replace />} />
-                <Route path="/consultant/radar" element={<ProtectedRoute><Radar /></ProtectedRoute>} />
+                {/* <Route path="/consultant/radar" element={<ProtectedRoute><Radar /></ProtectedRoute>} /> */}
                 <Route path="/consultant/academy" element={<ProtectedRoute><Academy /></ProtectedRoute>} />
               </Route>
 
@@ -159,7 +159,7 @@ const App = () => (
               {/* ── Backwards-compat redirects ───── */}
               <Route path="/index" element={<Navigate to="/" replace />} />
               <Route path="/profil" element={<Navigate to="/consultant/profil" replace />} />
-              <Route path="/radar" element={<Navigate to="/consultant/radar" replace />} />
+              {/* <Route path="/radar" element={<Navigate to="/consultant/radar" replace />} /> */}
               <Route path="/forhandla" element={<RedirectWithParams to="/consultant/forhandla" />} />
               <Route path="/referenser" element={<Navigate to="/consultant/referenser" replace />} />
               <Route path="/fakturakontroll" element={<Navigate to="/consultant/fakturakontroll" replace />} />
