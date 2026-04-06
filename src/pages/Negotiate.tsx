@@ -241,7 +241,7 @@ export default function Negotiate() {
             )}
 
             {/* Messages area */}
-            <div ref={scrollRef} className="flex-1 overflow-y-auto px-4">
+            <div ref={scrollRef} className={`overflow-y-auto px-4 ${hasMessages ? "flex-1" : "flex-shrink-0"}`}>
               {!hasMessages ? (
                 <SuggestedPrompts onSelect={send} />
               ) : (
