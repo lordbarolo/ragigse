@@ -30,6 +30,11 @@ export default function Negotiate() {
   const [gateEmail, setGateEmail] = useState("");
   const [gateLoading, setGateLoading] = useState(false);
 
+  // Report dialog state
+  const [reportOpen, setReportOpen] = useState(false);
+  const [reportText, setReportText] = useState("");
+  const [reportSubmitting, setReportSubmitting] = useState(false);
+
   // SEO metadata
   useEffect(() => {
     document.title = PAGE_TITLE;
