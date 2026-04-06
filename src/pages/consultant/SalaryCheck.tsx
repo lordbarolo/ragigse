@@ -130,18 +130,18 @@ export default function SalaryCheck() {
             {/* ── Text column ── */}
             <div className="flex flex-col">
               {/* Badge */}
-              <div className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3.5 py-1.5 text-[13px] font-medium text-white/70 backdrop-blur-xl">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#8DA2FF] shadow-[0_0_14px_rgba(141,162,255,0.8)]" />
+              <div className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3.5 py-1.5 text-[13px] font-medium text-primary backdrop-blur-xl">
+                <span className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_14px_hsl(var(--primary)/0.5)]" />
                 För sjuksköterskor och läkare i bemanning
               </div>
 
               {/* Heading */}
-              <h2 className="text-[2.25rem] font-semibold leading-[1.05] tracking-[-0.035em] text-white sm:text-5xl lg:text-[3.5rem]">
+              <h2 className="text-[2.25rem] font-semibold leading-[1.05] tracking-[-0.035em] text-foreground sm:text-5xl lg:text-[3.5rem]">
                 Din nästa löneförhandling börjar här.
               </h2>
 
               {/* Body */}
-              <p className="mt-4 max-w-lg text-[15px] leading-[1.7] text-white/60 sm:text-base lg:text-[17px]">
+              <p className="mt-4 max-w-lg text-[15px] leading-[1.7] text-muted-foreground sm:text-base lg:text-[17px]">
                 Gå inte in i nästa samtal med en magkänsla – gå in med data. Vi har kartlagt de faktiska avtalspriserna för 21 regioner och 290 kommuner. Genom att jämföra din nuvarande ersättning mot marknadens realitet ser du direkt om du ligger rätt eller om du har förhandlingsutrymme.
               </p>
 
@@ -152,12 +152,12 @@ export default function SalaryCheck() {
                   { title: "Regional jämförelse:", text: "Se hur ersättningen skiljer sig mellan orter" },
                   { title: "Smart assistent:", text: "Få konkreta råd baserat på 100% verifierad marknadsdata." },
                 ].map((item) => (
-                  <div key={item.title} className="flex items-start gap-3 rounded-lg border border-white/[0.05] bg-white/[0.02] px-3.5 py-2.5 backdrop-blur-sm">
-                    <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-[#93A5FF]/12 bg-[#93A5FF]/[0.06] text-[10px] text-[#B8C5FF]">
+                  <div key={item.title} className="flex items-start gap-3 rounded-lg border border-border bg-card/60 px-3.5 py-2.5">
+                    <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-primary/20 bg-primary/5 text-[10px] text-primary">
                       ✦
                     </div>
-                    <p className="text-[13px] leading-[1.6] text-white/55 sm:text-sm">
-                      <span className="font-medium text-white/90">{item.title}</span> {item.text}
+                    <p className="text-[13px] leading-[1.6] text-muted-foreground sm:text-sm">
+                      <span className="font-medium text-foreground">{item.title}</span> {item.text}
                     </p>
                   </div>
                 ))}
@@ -165,11 +165,11 @@ export default function SalaryCheck() {
 
               {/* Trust line + CTA */}
               <div className="mt-5">
-                <p className="text-sm text-white/50 lg:text-[15px]">Informationen hämtas från offentliga avtal och branschens genomsnittsmarginaler.</p>
+                <p className="text-sm text-muted-foreground lg:text-[15px]">Informationen hämtas från offentliga avtal och branschens genomsnittsmarginaler.</p>
                 <div className="mt-3">
                   <button
                     onClick={handleStartSurvey}
-                    className="inline-flex min-h-[50px] items-center justify-center rounded-xl bg-[linear-gradient(135deg,#5C7CFF_0%,#7FA4FF_100%)] px-7 text-[15px] font-semibold text-white shadow-[0_12px_36px_rgba(92,124,255,0.28)] transition duration-200 hover:-translate-y-0.5"
+                    className="inline-flex min-h-[50px] items-center justify-center rounded-xl bg-primary hover:bg-primary/90 px-7 text-[15px] font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition duration-200 hover:-translate-y-0.5"
                   >
                     Se uppdaterade villkor för hundratals orter och roller
                   </button>
