@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
-import { ArrowLeft, RotateCcw, Lock, Mail, Loader2 } from "lucide-react";
+import { ArrowLeft, RotateCcw, Lock, Mail, Loader2, Flag } from "lucide-react";
 import { useNegotiationChat } from "@/hooks/useNegotiationChat";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
@@ -11,6 +11,8 @@ import SuggestedPrompts from "@/components/chat/SuggestedPrompts";
 import { trackEvent } from "@/lib/trackEvent";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { toast } from "sonner";
 
 const PAGE_TITLE = "Förhandla din ersättning — CompCare";
