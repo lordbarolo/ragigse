@@ -1,4 +1,5 @@
-import { FileText, Zap, MessageSquare, Shield } from "lucide-react";
+import { useEffect, useState } from "react";
+import { FileText, Zap, MessageSquare, Shield, Loader2 } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import {
   Accordion,
@@ -6,79 +7,129 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { supabase } from "@/integrations/supabase/client";
+import { calculateSalaryRange } from "@/lib/calc";
+import type { EmploymentType } from "@/lib/calc";
 
-interface CompensationData {
-  role: string;
-  zone: string;
-  location: string;
-  invoiceRate: number;
-  contractLabel: string;
-  salaryRange: { hourlyMin: number; hourlyMax: number };
-  hoursPerMonth?: number;
+interface CompensationViewProps {
+  role: string | null;
+  location: string | null;
+  employmentType?: string | null;
 }
 
-const defaultData: CompensationData = {
-  role: "Specialistsjuksköterska – Ambulans",
-  zone: "Zon 2",
-  location: "Borlänge",
-  invoiceRate: 770,
-  contractLabel: "SKR ramavtal 2026 v1.0",
-  salaryRange: { hourlyMin: 445, hourlyMax: 471 },
-  hoursPerMonth: 167,
-};
+const fmt = (n: number) =>
+  n.toLocaleString("sv-SE", { maximumFractionDigits: 0 });
 
-const tips = [
-  {
-    icon: Zap,
-    title: "Hänvisa till Zon 2-priset (770 kr)",
-    detail:
-      "Regionens ramavtalspris är offentlig information. Genom att referera till det visar du att du har koll på marknadsvärdet och att din begäran är förankrad i avtalets prisbild.",
-  },
-  {
-    icon: MessageSquare,
-    title: "Kräv lön inom rekommenderat intervall",
-    detail:
-      "Intervallet baseras på ramavtalets kundpris minus normala marginaler. En lön under detta intervall innebär att bemanningsföretaget tar en oproportionerligt stor marginal.",
-  },
-  {
-    icon: Shield,
-    title: "Lyft fram din specialistkod för ambulans",
-    detail:
-      "Ambulansspecialister har en egen yrkeskategori i ramavtalet med högre prissättning. Säkerställ att du faktiskt prissätts i rätt kategori – det höjer ditt förhandlingsgolv.",
-  },
-];
+export default function CompensationView({ role, location, employmentType }: CompensationViewProps) {
+  const [loading, setLoading] = useState(true);
+  const [zone, setZone] = useState<string | null>(null);
+  const [invoiceRate, setInvoiceRate] = useState<number | null>(null);
+  const [salaryRange, setSalaryRange] = useState<{ hourlyMin: number; hourlyMax: number } | null>(null);
+  const [contractLabel, setContractLabel] = useState("SKR ramavtal 2026");
 
-export default function CompensationView({
-  data = defaultData,
-}: {
-  data?: CompensationData;
-}) {
-  const monthlyMin = data.salaryRange.hourlyMin * (data.hoursPerMonth ?? 167);
-  const monthlyMax = data.salaryRange.hourlyMax * (data.hoursPerMonth ?? 167);
+  useEffect(() => {
+    if (!role || !location) { setLoading(false); return; }
 
-  const fmt = (n: number) =>
-    n.toLocaleString("sv-SE", { maximumFractionDigits: 0 });
+    const fetchData = async () => {
+      // 1. Look up zone from location
+      const { data: loc } = await supabase
+        .from("locations")
+        .select("zon")
+        .eq("kommun", location)
+        .limit(1)
+        .maybeSingle();
+
+      const zon = loc?.zon || "Zon 1";
+      setZone(zon);
+
+      // 2. Look up invoice rate for role + zone
+      const { data: rate } = await supabase
+        .from("rates")
+        .select("timpris_kund")
+        .eq("yrkeskategori", role)
+        .eq("zon", zon)
+        .limit(1)
+        .maybeSingle();
+
+      if (rate) {
+        setInvoiceRate(rate.timpris_kund);
+
+        // 3. Calculate salary range
+        const empType: EmploymentType = employmentType === "consultant" ? "foretagare" : "anstalld";
+        const range = calculateSalaryRange(rate.timpris_kund, empType);
+        setSalaryRange({ hourlyMin: range.hourly_min, hourlyMax: range.hourly_max });
+      }
+
+      // 4. Try to get contract label
+      const { data: cv } = await supabase
+        .from("contract_versions")
+        .select("version_label")
+        .eq("is_active", true)
+        .limit(1)
+        .maybeSingle();
+      if (cv?.version_label) setContractLabel(cv.version_label);
+
+      setLoading(false);
+    };
+
+    fetchData();
+  }, [role, location, employmentType]);
+
+  if (!role || !location) return null;
+  if (loading) {
+    return (
+      <Card className="p-8 flex items-center justify-center">
+        <Loader2 className="w-5 h-5 animate-spin text-muted-foreground" />
+      </Card>
+    );
+  }
+  if (!invoiceRate || !salaryRange) return null;
+
+  const hoursPerMonth = 167;
+  const monthlyMin = salaryRange.hourlyMin * hoursPerMonth;
+  const monthlyMax = salaryRange.hourlyMax * hoursPerMonth;
+
+  const tips = [
+    {
+      icon: Zap,
+      title: `Hänvisa till ${zone}-priset (${fmt(invoiceRate)} kr)`,
+      detail:
+        "Regionens ramavtalspris är offentlig information. Genom att referera till det visar du att du har koll på marknadsvärdet och att din begäran är förankrad i avtalets prisbild.",
+    },
+    {
+      icon: MessageSquare,
+      title: "Kräv lön inom rekommenderat intervall",
+      detail:
+        "Intervallet baseras på ramavtalets kundpris minus normala marginaler. En lön under detta intervall innebär att bemanningsföretaget tar en oproportionerligt stor marginal.",
+    },
+    {
+      icon: Shield,
+      title: "Lyft fram din yrkeskompetens vid förhandling",
+      detail:
+        "Säkerställ att du prissätts i rätt yrkeskategori i ramavtalet. Fel kategori kan innebära ett lägre förhandlingsgolv.",
+    },
+  ];
 
   return (
-    <div className="w-full max-w-lg mx-auto flex flex-col gap-4 py-2">
+    <div className="w-full flex flex-col gap-4">
       {/* ── Hero card ──────────────────────────────────── */}
       <Card className="relative overflow-hidden bg-[hsl(var(--hero-bg))] text-[hsl(var(--hero-fg))] border-0 p-5">
         <div className="absolute top-0 right-0 w-28 h-28 rounded-full bg-primary/10 -translate-y-1/2 translate-x-1/2" />
         <p className="text-xs font-medium tracking-wide uppercase opacity-70 mb-1">
-          {data.zone} · {data.location}
+          {zone} · {location}
         </p>
         <h2 className="font-display text-lg font-bold leading-snug mb-4">
-          {data.role}
+          {role}
         </h2>
         <div className="flex items-baseline gap-1.5 mb-1">
           <span className="font-display text-3xl font-extrabold tracking-tight">
-            {fmt(data.invoiceRate)} kr
+            {fmt(invoiceRate)} kr
           </span>
           <span className="text-sm opacity-60">/tim</span>
         </div>
         <p className="text-[11px] opacity-50 flex items-center gap-1">
           <FileText className="w-3 h-3" />
-          {data.contractLabel}
+          {contractLabel}
         </p>
       </Card>
 
@@ -92,7 +143,7 @@ export default function CompensationView({
           <div className="flex items-baseline justify-between">
             <span className="text-sm text-muted-foreground">Timlön</span>
             <span className="font-display text-lg font-bold text-foreground">
-              {fmt(data.salaryRange.hourlyMin)} – {fmt(data.salaryRange.hourlyMax)}{" "}
+              {fmt(salaryRange.hourlyMin)} – {fmt(salaryRange.hourlyMax)}{" "}
               <span className="text-sm font-normal text-muted-foreground">
                 kr/tim
               </span>
@@ -113,7 +164,7 @@ export default function CompensationView({
         </div>
 
         <p className="text-[11px] text-muted-foreground mt-3 opacity-60">
-          Baserat på {data.hoursPerMonth ?? 167} arbetstimmar
+          Baserat på {hoursPerMonth} arbetstimmar
         </p>
       </Card>
 

@@ -186,6 +186,13 @@ export default function Profile() {
           </Card>
         )}
 
+        {/* Compensation view — invoice rate, salary range & tips */}
+        <CompensationView
+          role={profile?.specialty_name || null}
+          location={profile?.region_name || null}
+          employmentType={profile?.employment_type || null}
+        />
+
         {/* Zone pricing, salary ranges & upcoming assignments */}
         <ProfileInsights
           specialtyName={profile?.specialty_name || null}
