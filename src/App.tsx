@@ -140,6 +140,7 @@ const App = () => (
               {/* ── Public routes (no layout) ────── */}
               <Route path="/resultat/:leadId" element={<AnalysisScreen />} />
               
+              <Route path="/rapport/anestesisjukskoterska" element={<AnestesiReport />} />
               <Route path="/rapport/:reportId" element={<Report />} />
               
               <Route path="/vanliga-fragor" element={<FAQ />} />
