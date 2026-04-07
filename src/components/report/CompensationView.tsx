@@ -63,7 +63,7 @@ export default function CompensationView({ role, location, employmentType }: Com
       // 4. Try to get contract label
       const { data: cv } = await supabase
         .from("contract_versions")
-        .select("version_label")
+        .select("version_label, catalog_name")
         .eq("is_active", true)
         .limit(1)
         .maybeSingle();
