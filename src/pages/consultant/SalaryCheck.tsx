@@ -98,7 +98,7 @@ export default function SalaryCheck() {
           </h1>
 
           <p className="text-hero-foreground/60 text-xl md:text-2xl max-w-2xl mx-auto mb-2 leading-relaxed">
-            Vi sammanställer marknadens data så att du får full insyn i ersättningar och avtal. Svara på sex korta frågor för att se hur din ersättning matchar gällande ramavtal.
+            Ny rapport för 2026 finns tillgänglig nu. Vår tredje rapport visar faktiska marknadsvillkor för alla kompetenser i 290 kommuner och 21 regioner.
           </p>
           <p className="text-hero-foreground/60 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
             {"\n"}
@@ -112,7 +112,7 @@ export default function SalaryCheck() {
               onClick={handleStartSurvey}
               className="w-full bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-4 rounded-2xl font-semibold transition-all shadow-lg shadow-primary/20 text-base"
             >
-              Se rapporten för din roll
+              Läs rapporten nu
             </button>
           </div>
         </div>
