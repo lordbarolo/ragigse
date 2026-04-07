@@ -426,23 +426,97 @@ const ADVICE_TOOL = {
   type: "function",
   function: {
     name: "negotiation_advice",
-    description: "Strukturerat förhandlingsråd",
+    description: "Strukturerat förhandlingsråd med validerbara fält",
     parameters: {
       type: "object",
       properties: {
         advice: {
           type: "string",
-          description: "Kort svar i vanlig text, max 3 meningar",
+          description: "Huvudsvar i vanlig text, max 2 meningar. Inga punktlistor, ingen markdown.",
+        },
+        followup: {
+          type: "string",
+          description: "Kort motfråga, max 7 ord, som avslutar svaret.",
+        },
+        includes_amount: {
+          type: "boolean",
+          description: "Satt till true om advice innehåller ett konkret belopp eller spann i kr.",
         },
         situation_summary: {
           type: "string",
-          description: "Kort sammanfattning av användarens situation",
+          description: "Kort sammanfattning av användarens situation, max 1 mening.",
         },
       },
-      required: ["advice", "situation_summary"],
+      required: ["advice", "followup", "includes_amount", "situation_summary"],
+      additionalProperties: false,
     },
   },
 };
+
+// ── Post-processing validation ──────────────────────────────────────────────
+
+const FORBIDDEN_WORDS = [
+  /\bbenchmark(?:en|et|er|s)?\b/gi,
+  /\bSCB\b/gi,
+  /\bMedlingsinstitutet\b/gi,
+  /\bjämfört med kollegor\b/gi,
+  /\böver snittet\b/gi,
+  /\btopp \d+ ?%/gi,
+  /\benligt lönestatistik\b/gi,
+  /\bhögre lön\b/gi,
+  /\bbättre ersättning\b/gi,
+  /\bförhandla upp\b/gi,
+];
+
+const DISCLAIMER = "Med reservation för tillkommande kostnader.";
+
+function validateAdvice(
+  raw: { advice: string; followup: string; includes_amount: boolean; situation_summary: string },
+  history: ConversationTurn[]
+): { advice: string; situation_summary: string } {
+  let advice = raw.advice.trim();
+  const followup = raw.followup.trim();
+
+  // 1. Strip forbidden words
+  for (const pattern of FORBIDDEN_WORDS) {
+    advice = advice.replace(pattern, "marknadens snitt");
+  }
+
+  // 2. Enforce max sentence count (2 for advice body)
+  const sentences = dedupeSentences(splitSentences(advice));
+  if (sentences.length > 2) {
+    advice = sentences.slice(0, 2).join(" ");
+  }
+
+  // 3. Add disclaimer if amounts are mentioned
+  if (raw.includes_amount && !/med reservation/i.test(advice)) {
+    advice = advice.replace(/\.?\s*$/, ". ") + DISCLAIMER;
+  }
+
+  // 4. Append followup question
+  if (followup && !advice.includes(followup)) {
+    advice = advice.replace(/\.?\s*$/, ". ") + followup;
+  }
+
+  // 5. Dedupe against last assistant message
+  const lastAssistant = [...history].reverse().find((h) => h.role === "assistant");
+  if (lastAssistant) {
+    const prevSentences = new Set(
+      splitSentences(lastAssistant.content).map((s) => s.toLowerCase().replace(/\s+/g, " ").trim())
+    );
+    const finalSentences = splitSentences(advice).filter(
+      (s) => !prevSentences.has(s.toLowerCase().replace(/\s+/g, " ").trim())
+    );
+    if (finalSentences.length > 0) {
+      advice = finalSentences.join(" ");
+    }
+  }
+
+  // 6. Remove exclamation marks
+  advice = advice.replace(/!/g, ".");
+
+  return { advice: advice.trim(), situation_summary: raw.situation_summary };
+}
 
 async function synthesiseAdvice(
   message: string,
