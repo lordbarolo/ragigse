@@ -28,7 +28,7 @@ export default function ReferenceSlidePanel({ open, onClose }: Props) {
       <div
         className={`
           fixed inset-0 z-50 md:relative md:inset-auto
-          md:w-[480px] md:min-w-[480px] md:z-auto
+          md:w-[560px] md:min-w-[560px] md:z-auto
           bg-background border-l border-border
           flex flex-col
           animate-slide-in-right
