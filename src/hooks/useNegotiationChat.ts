@@ -44,6 +44,8 @@ export function useNegotiationChat() {
 
     trackEvent("negotiation_message_sent");
 
+    const history = messages.slice(-6).map(({ role, content }) => ({ role, content }));
+
     const userMsg: ChatMessage = {
       id: makeId(),
       role: "user",
@@ -55,7 +57,11 @@ export function useNegotiationChat() {
 
     try {
       const { data, error } = await supabase.functions.invoke("salary-negotiation-agent", {
-        body: { message: trimmed, context: Object.keys(context).length > 0 ? context : undefined },
+        body: {
+          message: trimmed,
+          context: Object.keys(context).length > 0 ? context : undefined,
+          history,
+        },
       });
 
       if (error) throw error;
@@ -93,7 +99,7 @@ export function useNegotiationChat() {
     } finally {
       setIsLoading(false);
     }
-  }, [isLoading, context]);
+  }, [isLoading, context, messages]);
 
   const updateContext = useCallback((updates: Partial<NegotiationContext>) => {
     setContext((prev) => ({ ...prev, ...updates }));
