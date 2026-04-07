@@ -23,7 +23,7 @@ export default function DashboardReferences() {
       const { data } = await supabase
         .from("ref_references")
         .select("id, status")
-        .eq("owner_id", user.id);
+        .eq("owner_id", user.id) as { data: { id: string; status: string }[] | null; error: any };
 
       const refs = data || [];
       setSummary({
