@@ -467,7 +467,8 @@ serve(async (req) => {
     const { advice, situation_summary } = await synthesiseAdvice(
       message,
       intent.user_situation,
-      ciResults
+      ciResults,
+      context
     );
 
     // Collect sources and policy info
