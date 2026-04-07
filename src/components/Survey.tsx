@@ -747,7 +747,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
         {/* Step 6: Ersättning (final step) */}
         {step === 6 && (
           <StepWrapper title="Vad får du i ersättning idag?">
-            <div className="rounded-2xl border border-border bg-card p-5 space-y-5 pb-[120px]">
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-5">
               <div className="flex gap-3">
                 {([
                   { value: "hourly" as const, label: "Per timme" },
