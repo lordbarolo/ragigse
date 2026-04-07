@@ -1,0 +1,1 @@
+CREATE POLICY "Anyone can read rates" ON public.rates FOR SELECT TO anon USING (true);
