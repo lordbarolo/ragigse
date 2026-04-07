@@ -82,7 +82,7 @@ export const template = {
     relationship: 'Chef',
     isVerification: false,
     personalMessage: 'Hej! Det vore jättesnällt om du kunde lämna en referens.',
-    inviteUrl: 'https://compcare.lovable.app/referens/abc123',
+    inviteUrl: 'https://compcare.se/referens/abc123',
   },
 } satisfies TemplateEntry
 
