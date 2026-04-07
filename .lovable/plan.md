@@ -1,23 +1,52 @@
 
 
-## Plan: Byt alla URL:er från compcare.lovable.app till compcare.se
+## Plan: Redesign landningssidan — från mörkt till ljust, sakligt tema
 
-### Bakgrund
-Domänen **www.compcare.se** är redan kopplad till projektet. Men det finns 41 hårdkodade referenser till `compcare.lovable.app` i 6 filer (mest edge functions och e-postmallar) som behöver uppdateras.
+### Vad som ändras
 
-### Ändringar
+Hela hjältesektionen byter från mörk bakgrund (`hero-dark`) till en ljus, ren yta. Språket justeras för att vara mer sakligt och professionellt. En "progressive disclosure"-ruta med live-data-smakprov läggs till. Förtroendesignaler förtydligas.
 
-Byt `compcare.lovable.app` → `compcare.se` i följande filer:
+### Ändringar i `src/pages/consultant/SalaryCheck.tsx`
 
-1. **`supabase/functions/save-email/index.ts`** — rapport-URL:er som skickas i e-post (rad 184–185, 216)
-2. **`supabase/functions/_shared/transactional-email-templates/report-delivery.tsx`** — fallback-URL och preview-data (rad 34, 50)
-3. **`supabase/functions/_shared/transactional-email-templates/reference-invite.tsx`** — preview-data (rad 85)
-4. **`supabase/functions/_shared/transactional-email-templates/welcome.tsx`** — profilknapp-URL (rad 35)
-5. **`supabase/functions/auth-email-hook/index.ts`** — SAMPLE_PROJECT_URL (rad 49)
-6. **`supabase/functions/radar-notify/index.ts`** — radar-länk i e-post (rad 77)
+**1. Hjältesektion — visuell omvandling**
+- Ta bort `hero-dark`-klassen och gradient-overlayen
+- Byt till `bg-background` (ljusgrå) med mörkgrå/mörkblå text
+- Ta bort badge-raden "100% Verifierad Marknadsdata" (för reklamig)
 
-Alla ersättningar är rena sök-och-ersätt: `compcare.lovable.app` → `compcare.se`. Ingen logikändring krävs.
+**2. Ny text**
+- **Rubrik**: "Äg ditt marknadsvärde som vårdkonsult"
+- **Underrubrik**: "Få tillgång till verifierade siffror från 20 000 offentliga upphandlingar. Vi gör dold lönestatistik tillgänglig för dig."
+- **Knapptext**: "Se aktuell lönestatistik"
+- **Källtext under knappen**: "Baserat på offentlig data från Sveriges regioner. Ingen registrering krävs."
 
-### Teknisk detalj
-Edge functions deployas automatiskt efter ändringarna, så de nya URL:erna börjar gälla direkt.
+**3. Progressive disclosure — smakprov på data**
+- Lägg till en kompakt kort/ruta under CTA-knappen som visar ett exempelarvode:
+  - "Genomsnittligt timarvode, hyrsjuksköterska, Region Skåne: 770 kr/h"
+  - Statisk text initialt (kan kopplas till live-data senare)
+- Syfte: bevisa att datan finns innan användaren gör något
+
+**4. Förtroendesektion under hero**
+- En diskret rad med tre ikoner + texter:
+  - "Ingen registrering krävs för prisförslag"
+  - "Offentlig data från 21 regioner"
+  - "20 000+ analyserade avtal"
+
+**5. Sektion 2 (Löneförhandling) — mindre justeringar**
+- Behåll strukturen men uppdatera badge-texten och rätta stavfel ("fön" → "för")
+- Uppdatera CTA-knapptext till något kortare: "Se villkor för din roll och ort"
+
+### Ändringar i `src/index.css`
+
+- Ändra `--hero-bg` till samma som `--background` (ljusgrå) och `--hero-fg` till `--foreground` (mörk) — så att `hero-dark`-klassen ger ljus bakgrund istället för mörk
+- Alternativt ta bort beroendet av `hero-dark` helt i denna komponent
+
+### Filer som påverkas
+- `src/pages/consultant/SalaryCheck.tsx` — huvudsakliga ändringar
+- `src/index.css` — justering av hero-variabler (valfritt)
+
+### Vad som INTE ändras
+- Navigeringen/headern (redan ljus och bra)
+- Survey-flödet
+- Övriga sidor och komponenter
+- Regionlogotyper (kräver bildtillgångar som inte finns i projektet idag)
 
