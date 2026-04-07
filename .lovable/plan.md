@@ -1,23 +1,23 @@
 
 
-## Plan: Integrera Ersättningsvyn i dashboarden
+## Plan: Byt alla URL:er från compcare.lovable.app till compcare.se
 
-### Vad som ändras
-CompensationView-komponenten (hero-kort med kundpris, lönespann och förhandlingstips) placeras direkt i Profile-dashboarden — mellan "Profil"-kortet och "Mina rapporter"-kortet.
+### Bakgrund
+Domänen **www.compcare.se** är redan kopplad till projektet. Men det finns 41 hårdkodade referenser till `compcare.lovable.app` i 6 filer (mest edge functions och e-postmallar) som behöver uppdateras.
 
-### Hur
-1. **Profile.tsx** — Importera `CompensationView` och rendera den mellan Profil-kortet (rad 186) och ProfileInsights (rad 189). Skicka in profildata (roll, ort) som props så den visar rätt data för inloggad användare istället för hårdkodade defaultvärden.
+### Ändringar
 
-2. **CompensationView.tsx** — Gör komponenten dynamisk:
-   - Ta bort hårdkodade default-data
-   - Acceptera `role` och `location` som props
-   - Hämta korrekt kundpris, zon och lönespann baserat på användarens roll och ort (antingen via props eller genom att slå upp mot befintlig prisdata/API)
-   - Visa komponenten kompakt (utan extra padding/bakgrund) så den passar in i dashboardens layout
+Byt `compcare.lovable.app` → `compcare.se` i följande filer:
 
-3. **Rutthantering** — Överväg att ta bort den fristående rutten `/consultant/ersattning` och sidan `CompensationPreview.tsx` eftersom vyn nu lever i dashboarden.
+1. **`supabase/functions/save-email/index.ts`** — rapport-URL:er som skickas i e-post (rad 184–185, 216)
+2. **`supabase/functions/_shared/transactional-email-templates/report-delivery.tsx`** — fallback-URL och preview-data (rad 34, 50)
+3. **`supabase/functions/_shared/transactional-email-templates/reference-invite.tsx`** — preview-data (rad 85)
+4. **`supabase/functions/_shared/transactional-email-templates/welcome.tsx`** — profilknapp-URL (rad 35)
+5. **`supabase/functions/auth-email-hook/index.ts`** — SAMPLE_PROJECT_URL (rad 49)
+6. **`supabase/functions/radar-notify/index.ts`** — radar-länk i e-post (rad 77)
 
-### Tekniska detaljer
-- `CompensationView` behöver bli dynamisk med props: `role`, `location`, ev. `invoiceRate` och `salaryRange` från profildata eller ProfileInsights-logiken
-- Befintlig prislogik i ProfileInsights kan återanvändas för att slå upp zon och kundpris
-- Placering i JSX: efter rad 186 (slutet av Profil-kortet), före rad 189 (ProfileInsights)
+Alla ersättningar är rena sök-och-ersätt: `compcare.lovable.app` → `compcare.se`. Ingen logikändring krävs.
+
+### Teknisk detalj
+Edge functions deployas automatiskt efter ändringarna, så de nya URL:erna börjar gälla direkt.
 
