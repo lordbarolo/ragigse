@@ -22,6 +22,7 @@ const AnalysisScreen = lazy(() => import("./pages/AnalysisScreen"));
 const Teaser = lazy(() => import("./pages/Teaser"));
 const ReferralLanding = lazy(() => import("./pages/ReferralLanding"));
 const Report = lazy(() => import("./pages/Report"));
+const AnestesiReport = lazy(() => import("./pages/AnestesiReport"));
 
 
 const E2ETest = lazy(() => import("./pages/E2ETest"));
@@ -139,6 +140,7 @@ const App = () => (
               {/* ── Public routes (no layout) ────── */}
               <Route path="/resultat/:leadId" element={<AnalysisScreen />} />
               
+              <Route path="/rapport/anestesisjukskoterska" element={<AnestesiReport />} />
               <Route path="/rapport/:reportId" element={<Report />} />
               
               <Route path="/vanliga-fragor" element={<FAQ />} />
