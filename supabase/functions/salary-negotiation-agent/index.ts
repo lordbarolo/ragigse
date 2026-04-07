@@ -584,15 +584,16 @@ Ge råd baserat på ovanstående data. Fråga INTE efter information som redan f
     return { advice: "Kunde inte generera råd just nu.", situation_summary: situation };
   }
 
-  const parsed = JSON.parse(toolCall.function.arguments) as {
-    advice: string;
-    followup: string;
-    includes_amount: boolean;
-    situation_summary: string;
-  };
+  // Parse + Zod-validate LLM output, then apply deterministic post-processing
+  let validated: AdviceOutput;
+  try {
+    validated = parseAndValidateToolOutput(toolCall.function.arguments);
+  } catch (zodErr) {
+    console.error("[AGENT] Zod validation failed:", zodErr);
+    return { advice: "Kunde inte generera råd just nu.", situation_summary: situation };
+  }
 
-  // Apply deterministic post-processing validation
-  return validateAdvice(parsed, history);
+  return validateAdvice(validated, history);
 }
 
 // ── Main handler ─────────────────────────────────────────────────────────────
