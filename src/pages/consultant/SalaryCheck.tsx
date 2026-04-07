@@ -136,7 +136,7 @@ export default function SalaryCheck() {
               Svara på 6 frågor. Få alla svar
             </button>
             <p className="mt-3 text-xs text-muted-foreground">
-              Baserat på offentlig data från Sveriges regioner. Ingen registrering krävs.
+              Baserat på avtal RS 2022–03983 från SKR
             </p>
           </div>
 
