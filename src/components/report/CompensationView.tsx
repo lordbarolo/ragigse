@@ -163,8 +163,8 @@ export default function CompensationView({ role, location, employmentType }: Com
           </div>
         </div>
 
-        <p className="text-[11px] text-muted-foreground mt-3">
-          Baserat på {hoursPerMonth} arbetstimmar
+        <p className="text-[11px] text-muted-foreground mt-3 whitespace-pre-line">
+          Baserat på {hoursPerMonth} arbetstimmar. Ersättningsnivå kan variera utifrån kostnader så som resor, logi, utbildningar m.m{"\n\n"}
         </p>
       </Card>
 
