@@ -108,8 +108,8 @@ export default function SalaryCheck() {
           </h1>
 
           <p className="text-hero-foreground/60 text-xl md:text-2xl max-w-3xl mx-auto mb-10 leading-relaxed whitespace-pre-line">
-            Vi har analyserat över 20 000 upphandlingar, avrop och ramavtal. Uppgifter som alltid varit offentliga men aldrig nått konsulten. {"\n\n"}
-            Ny rapport för 2026 är här nu. Vår tredje rapport visar vad regionen betalar per timme för din kompetens och vad som finns kvar för dig att förhandla om vid nästa uppdrag.
+            Vi har analyserat över 20 000 upphandlingar och avtal. Uppgifter som alltid varit offentliga men sällan nått konsulten. {"\n\n"}
+            Vår senaste rapport visar vad regionen faktiskt betalar per timme för din kompetens.
           </p>
 
           {/* Role selection CTA */}
