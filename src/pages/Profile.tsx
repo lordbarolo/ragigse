@@ -203,6 +203,9 @@ export default function Profile() {
           employmentType={profile?.employment_type || null}
         />
 
+        {/* Invoice check */}
+        <DashboardInvoiceCheck />
+
         {/* Reports */}
         <Card>
           <CardHeader>
@@ -243,9 +246,6 @@ export default function Profile() {
 
         {/* Verified documents */}
         <DashboardDocuments />
-
-        {/* Invoice check */}
-        <DashboardInvoiceCheck />
 
         {/* Delete account */}
         <div className="pt-4 border-t border-border">
