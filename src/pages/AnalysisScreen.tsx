@@ -259,6 +259,11 @@ export default function AnalysisScreen() {
           </div>
         </div>
 
+        {/* ── Email explanation ── */}
+        <p className="text-[13px] text-foreground/50 leading-relaxed">
+          Vi skickar hela rapporten till din mail så att du kan spara och jämföra senare. Dela den gärna till kollegor.
+        </p>
+
         {/* ── Email input + button ── */}
         <div className="flex flex-col gap-2.5">
           <div className="relative flex items-center">
@@ -295,6 +300,33 @@ export default function AnalysisScreen() {
             ))}
           </div>
         </div>
+
+        {/* ── Bottom preview card ── */}
+        {teaserData && (
+          <div className="bg-card border border-foreground/[0.08] rounded-[14px] relative overflow-hidden">
+            <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-primary to-primary/30" />
+            <div className="px-5 py-1">
+              {[
+                { dot: "hsl(var(--primary))", label: "Regionens kundpris", val: `${fmt(teaserData.customerRate)} kr/h` },
+                { dot: teaserData.isUnderpaid ? "hsl(var(--amber))" : "hsl(var(--green))", label: "Din ersättning", val: `${fmt(teaserData.userHourly)} kr/h` },
+                { dot: "hsl(var(--foreground) / 0.3)", label: "Skillnad", val: `${fmt(Math.abs(teaserData.customerRate - teaserData.userHourly))} kr/h` },
+              ].map((m, i) => (
+                <div key={i} className="flex items-center justify-between py-2.5 border-b border-foreground/[0.04] last:border-b-0">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-[7px] h-[7px] rounded-full shrink-0" style={{ background: m.dot }} />
+                    <span className="text-[14px] text-foreground/75">{m.label}</span>
+                  </div>
+                  <span className="font-display text-[17px] font-extrabold text-foreground">{m.val}</span>
+                </div>
+              ))}
+            </div>
+            <div className="px-5 pb-4 pt-1">
+              <p className="text-[13px] text-foreground/45 leading-relaxed">
+                Beloppen säger inte allt. Se rapporten för utförlig analys.
+              </p>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );
