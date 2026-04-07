@@ -1,17 +1,24 @@
 
 
-## Plan: Carousel for ServiceCards on mobile
+## Plan: Förifyld exempelvy på /demo
 
-### What changes
-Convert the mobile layout of the "Plattformen / Två frågor. Ett svar." section from a vertical stack to a horizontal snap-scroll carousel with dot indicators — matching the pattern already used in `ServiceCarousel.tsx`.
+### Vad ändras
+Sidan `/demo` ska visa ett **färdigt resultat direkt** utan att kräva input. Inga dropdown-steg, utan en statisk exempelvy med hårdkodad data.
 
-### Single file change: `src/components/landing/ServiceCards.tsx`
+### Exempeldata
+- **Roll**: Specialistläkare allmänmedicin
+- **Ort**: Örebro (Region Örebro, Zon 1)
+- **Priser**: Zon 1: 1 238 kr/tim, Zon 2: 1 513 kr/tim, Zon 3: 1 787 kr/tim
 
-1. Add `useState`, `useRef`, `useCallback`, `useEffect` imports from React
-2. Add carousel state management (activeIndex, scrollRef, scroll handler, scrollToIndex) — same logic as `ServiceCarousel.tsx`
-3. Replace the mobile layout (`flex flex-col`) with a horizontal snap-scroll container (`flex snap-x snap-mandatory overflow-x-auto`) where each card is `snap-center shrink-0 w-full`
-4. Add dot indicators below the carousel on mobile (pill-style, animated width)
-5. Keep the desktop `sm:grid sm:grid-cols-2` layout unchanged, hidden on mobile via `hidden sm:grid`
+### Upplägg
 
-No other files need changes.
+1. **Överst**: Rubrik "Regionernas priser per zon" + roll (Specialistläkare allmänmedicin)
+2. **Användarens zon** (highlightad): Örebro — Zon 1 — 1 238 kr/tim
+3. **Övriga zoner**: Zon 2 och Zon 3 med sina priser
+4. **Gated sektion** (blur + lås): Kommuner per zon + beräknad ersättning, med CTA "Skapa konto"
+
+### Tekniskt
+- Ersätt hela `DemoLanding.tsx` med en ren statisk komponent — ingen Supabase-fetch, inga dropdown-steg
+- Behåll samma visuella stil (kort, zonfärger, gated overlay)
+- Inga nya beroenden
 
