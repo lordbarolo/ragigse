@@ -200,7 +200,7 @@ export default function AnestesiReport() {
           <p className="text-sm text-muted-foreground leading-relaxed">
             Svara på 6 snabba frågor och få en personlig rapport baserad på din roll, zon och anställningsform.
           </p>
-          <Link to="/">
+          <Link to="/?yrke=anestesi">
             <Button className="gap-2 h-12 rounded-xl px-6 mt-2">
               Skapa din rapport <ArrowRight className="w-4 h-4" />
             </Button>
