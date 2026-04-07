@@ -141,7 +141,7 @@ export default function AnestesiReport() {
         <section>
           <div className="mb-3">
             <span className="text-[10px] font-semibold tracking-[1.4px] uppercase text-muted-foreground">
-              OB-tillägg · Sjuksköterska
+              OB-tillägg · vad regionen betalar
             </span>
           </div>
           <div className="rounded-[18px] bg-foreground/[0.035] border border-foreground/[0.07] overflow-hidden">
