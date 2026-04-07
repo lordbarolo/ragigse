@@ -61,7 +61,7 @@ const TRUST_POINTS = [
   "Baserat på SKR:s officiella ramavtal 2026",
   "Lönestatistik från Medlingsinstitutet",
   "290 kommuner, alla specialiseringar",
-  "BankID-säkrad verifiering",
+  
 ];
 
 export default function Index() {
