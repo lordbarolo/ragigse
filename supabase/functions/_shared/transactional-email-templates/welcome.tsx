@@ -32,7 +32,7 @@ const WelcomeEmail = ({ name }: WelcomeProps) => (
           • Jämför din lön med marknaden{'\n'}
           • Få stöd i din nästa löneförhandling
         </Text>
-        <Button style={button} href="https://compcare.lovable.app/profil">
+        <Button style={button} href="https://compcare.se/profil">
           Gå till min profil →
         </Button>
         <Text style={footer}>

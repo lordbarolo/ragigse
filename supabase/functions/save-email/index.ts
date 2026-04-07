@@ -213,7 +213,7 @@ serve(async (req) => {
               templateData: {
                 occupation: report?.occupation || "din roll",
                 kommun: report?.kommun || "",
-                reportUrl: magicLink || `https://compcare.lovable.app/rapport/${report_id}`,
+                reportUrl: magicLink || `https://compcare.se/rapport/${report_id}`,
               },
             },
           });

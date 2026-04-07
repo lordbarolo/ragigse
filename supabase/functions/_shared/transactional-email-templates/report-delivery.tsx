@@ -47,7 +47,7 @@ export const template = {
   subject: (data: Record<string, any>) =>
     `Din ersättningsanalys — ${data.occupation || 'din roll'}${data.kommun ? `, ${data.kommun}` : ''}`,
   displayName: 'Rapportleverans',
-  previewData: { occupation: 'Specialistsjuksköterska', kommun: 'Stockholm', reportUrl: 'https://compcare.lovable.app/rapport/demo' },
+  previewData: { occupation: 'Specialistsjuksköterska', kommun: 'Stockholm', reportUrl: 'https://compcare.se/rapport/demo' },
 } satisfies TemplateEntry
 
 const main = { backgroundColor: '#ffffff', fontFamily: "'Inter', Arial, sans-serif" }

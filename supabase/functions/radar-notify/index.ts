@@ -74,7 +74,7 @@ Deno.serve(async (req) => {
               <p>Du bevakar <strong>${w.competence}</strong> hos <strong>${w.buyer}</strong> i <strong>${w.location}</strong>.</p>
               <p>Baserat på historiska mönster förväntas ett uppdrag omkring <strong>${w.predicted_date}</strong> — det är ${monthsText} kvar.</p>
               <p style="margin-top: 24px;">
-                <a href="https://compcare.lovable.app/radar" style="background: #6366f1; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600;">
+                <a href="https://compcare.se/radar" style="background: #6366f1; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600;">
                   Visa i Radar
                 </a>
               </p>
