@@ -20,6 +20,9 @@ import {
 import { toast } from "sonner";
 import ProfileInsights from "@/components/profile/ProfileInsights";
 import CompensationView from "@/components/report/CompensationView";
+import DashboardReferences from "@/components/profile/DashboardReferences";
+import DashboardDocuments from "@/components/profile/DashboardDocuments";
+import DashboardInvoiceCheck from "@/components/profile/DashboardInvoiceCheck";
 
 interface ReportRow {
   id: string;
@@ -234,6 +237,15 @@ export default function Profile() {
             )}
           </CardContent>
         </Card>
+
+        {/* References */}
+        <DashboardReferences />
+
+        {/* Verified documents */}
+        <DashboardDocuments />
+
+        {/* Invoice check */}
+        <DashboardInvoiceCheck />
 
         {/* Delete account */}
         <div className="pt-4 border-t border-border">
