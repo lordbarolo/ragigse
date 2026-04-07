@@ -39,8 +39,10 @@ const SHARE_MAX_ANSTALLD = 0.86;
 
 export default function AnestesiReport() {
   const zone1Rate = 770;
-  const recMin = Math.round(zone1Rate * SHARE_MIN);
-  const recMax = Math.round(zone1Rate * SHARE_MAX);
+  const recMinF = Math.round(zone1Rate * SHARE_MIN_FORETAGARE);
+  const recMaxF = Math.round(zone1Rate * SHARE_MAX_FORETAGARE);
+  const recMinA = Math.round(zone1Rate * SHARE_MIN_ANSTALLD);
+  const recMaxA = Math.round(zone1Rate * SHARE_MAX_ANSTALLD);
 
   return (
     <div className="min-h-screen bg-background">
