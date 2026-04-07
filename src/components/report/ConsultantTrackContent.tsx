@@ -142,56 +142,7 @@ export default function ConsultantTrackContent({
   return (
     <div className="space-y-2.5">
 
-      {/* ═══ 1. STATUS BADGE — Din position ═══ */}
-      {isConsultantFullAccess && (
-        <div className="px-0">
-          {isAboveThreshold ? (
-            <div className="flex items-start gap-3 rounded-[14px] p-3.5 bg-accent/[0.07] border border-accent/[0.18]">
-              <div className="w-8 h-8 rounded-full bg-accent/[0.15] flex items-center justify-center flex-shrink-0 mt-0.5">
-                <CheckCircle className="w-4 h-4 text-accent" />
-              </div>
-              <div>
-               <p className="text-sm font-semibold text-accent leading-snug mb-1">
-                   Din ersättning ligger i marknadens övre skikt
-                 </p>
-                 <p className="text-hint leading-relaxed">
-                   Ersättningen överstiger det beräknade marknadsspannet för din roll och zon.
-                 </p>
-              </div>
-            </div>
-          ) : delta && delta.monthly_vs_current_max > 0 ? (
-            <div className="flex items-start gap-3 rounded-[14px] p-3.5 bg-accent/[0.07] border border-accent/[0.18]">
-              <div className="w-8 h-8 rounded-full bg-accent/[0.15] flex items-center justify-center flex-shrink-0 mt-0.5">
-                <TrendingUp className="w-4 h-4 text-accent" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-foreground leading-snug mb-1">
-                  Skillnad mot marknadsspannet: {fmt(delta.monthly_vs_current_max)} kr/mån
-                </p>
-                <p className="text-hint leading-relaxed">
-                  Baserat på ramavtalspriset i din region.
-                </p>
-              </div>
-            </div>
-          ) : (
-            <div className="flex items-start gap-3 rounded-[14px] p-3.5 bg-accent/[0.07] border border-accent/[0.18]">
-              <div className="w-8 h-8 rounded-full bg-accent/[0.15] flex items-center justify-center flex-shrink-0 mt-0.5">
-                <CheckCircle className="w-4 h-4 text-accent" />
-              </div>
-              <div>
-                 <p className="text-sm font-semibold text-accent leading-snug mb-1">
-                   Din ersättning ligger i linje med marknaden
-                 </p>
-                 <p className="text-hint leading-relaxed">
-                   Ersättningen ligger inom det beräknade marknadsspannet. Se nedan för detaljer.
-                 </p>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* ═══ 2. ERSÄTTNINGSJÄMFÖRELSE ═══ */}
+      {/* ═══ ERSÄTTNINGSJÄMFÖRELSE ═══ */}
       {isConsultantFullAccess && rec && (
         <div>
           <SectionLabel>Ersättningsjämförelse</SectionLabel>
