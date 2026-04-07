@@ -55,6 +55,7 @@ const SignRepresentation = lazy(() => import("./pages/SignRepresentation"));
 const AgencyLanding = lazy(() => import("./pages/AgencyLanding"));
 const AgencySignup = lazy(() => import("./pages/AgencySignup"));
 const DemoLanding = lazy(() => import("./pages/DemoLanding"));
+const ReferenceDemo = lazy(() => import("./pages/demo/ReferenceDemo"));
 const Campaign = lazy(() => import("./pages/Campaign"));
 
 const queryClient = new QueryClient();
