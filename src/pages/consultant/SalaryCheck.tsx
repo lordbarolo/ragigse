@@ -109,7 +109,7 @@ export default function SalaryCheck() {
 
           <p className="text-hero-foreground/60 text-xl md:text-2xl max-w-3xl mx-auto mb-10 leading-relaxed whitespace-pre-line">
             Vi har analyserat över 20 000 upphandlingar, avrop och ramavtal. Uppgifter som alltid varit offentliga men aldrig nått konsulten. {"\n\n"}
-            Ny rapport för 2026 är här nu. Vår tredje rapport visar vad regionen betalar per timme för din kompetens. Baserat på offentliga avtal från 290 kommuner och 21 regioner. Paketerat för dig.
+            Ny rapport för 2026 är här nu. Vår tredje rapport visar vad regionen betalar per timme för din kompetens.  Baserat på offentliga avtal från 290 kommuner och 21 regioner. Paketerat för dig.
           </p>
 
           {/* Role selection CTA */}
