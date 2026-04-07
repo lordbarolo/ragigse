@@ -290,7 +290,7 @@ export default function AnalysisScreen() {
         <div className="space-y-4 pt-2">
           <div>
             <h2 className="font-display text-[18px] font-extrabold tracking-tight text-foreground mb-1">
-              Se vad du borde tjäna
+              Finns det utrymme att förhandla?
             </h2>
             <p className="text-[13px] text-foreground/50 leading-relaxed">
               I rapporten beräknar vi ditt förhandlingsspann baserat på kundpriset ovan. Vi skickar den till din e-post.
