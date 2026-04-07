@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import { X, Send, ShieldCheck, Clock, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import ReferenceDashboard from "@/components/referly/ReferenceDashboard";
+import { ReferenceDashboard } from "@/components/referly/ReferenceDashboard";
 
 interface Props {
   open: boolean;
