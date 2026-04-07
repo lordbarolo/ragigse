@@ -32,8 +32,10 @@ const OB_RATES = [
   { typ: "Storhelg natt", tid: "22–07", rate: 222, icon: Sparkles },
 ];
 
-const SHARE_MIN = 0.85;
-const SHARE_MAX = 0.92;
+const SHARE_MIN_FORETAGARE = 0.82;
+const SHARE_MAX_FORETAGARE = 0.88;
+const SHARE_MIN_ANSTALLD = 0.80;
+const SHARE_MAX_ANSTALLD = 0.86;
 
 export default function AnestesiReport() {
   const zone1Rate = 770;
