@@ -113,6 +113,9 @@ async function callAI(
 const INTENT_SYSTEM = `Du är Löneassistenten, en AI-assistent på CompCare specialiserad på löneförhandling. Analysera användarens meddelande och befintlig kontext.
 Bestäm vilka CI-capabilities som behövs för att ge råd.
 
+KRITISKT — KONTEXT ÄR REDAN KÄND
+Om kontextobjektet innehåller role, geography, employment_type eller current_salary/current_rate så ÄR den informationen redan känd. Du ska INTE lista dessa fält i missing_info och INTE be användaren ange dem. Använd dem direkt i capability-anropen. Missing_info ska ENBART innehålla fält som verkligen saknas i kontexten.
+
 KRITISKT — KONTEXTUPPDATERING VID UPPFÖLJNING
 Om användaren nämner en ny zon, ort, roll eller annan parameter i sitt meddelande, MÅSTE du använda den nya parametern i capability-anropen — INTE den initiala kontexten. Exempel: om kontexten säger geography="Borlänge" men användaren skriver "visa zon 3", ska geography sättas till den zon/ort användaren efterfrågar. Användarens senaste meddelande har ALLTID företräde framför befintlig kontext.
 
@@ -136,7 +139,7 @@ Om användaren frågar om kommande uppdrag, tillgänglighet i regioner, eller pr
 
 Om användaren frågar om något annat utanför dessa områden (t.ex. arbetsrätt, anställningsvillkor, karriärråd), returnera en tom capabilities-array och skriv en tydlig missing_info-text om att frågan ligger utanför tjänstens fokus.
 
-Returnera de capabilities som krävs baserat på vad användaren frågar. Om information saknas, lista det i missing_info.`;
+Returnera de capabilities som krävs baserat på vad användaren frågar. Om information saknas (och INTE redan finns i kontexten), lista det i missing_info.`;
 
 const INTENT_TOOL = {
   type: "function",
