@@ -75,6 +75,8 @@ export default function SalaryCheck() {
         </header>
         <div ref={surveyRef} className="px-4 pt-8 pb-16 min-h-[calc(100vh-3.5rem)] flex flex-col">
           <Survey
+            initialCategory={prefill?.category}
+            initialRole={prefill?.role}
             onBack={() => setShowSurvey(false)}
           />
         </div>
