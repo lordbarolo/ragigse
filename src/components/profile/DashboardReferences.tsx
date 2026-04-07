@@ -20,12 +20,12 @@ export default function DashboardReferences() {
   useEffect(() => {
     if (!user) return;
     const load = async () => {
-      const { data } = await supabase
+      const res: any = await supabase
         .from("ref_references")
         .select("id, status")
-        .eq("owner_id", user.id) as { data: { id: string; status: string }[] | null; error: any };
+        .eq("owner_id", user.id);
 
-      const refs = data || [];
+      const refs: { id: string; status: string }[] = res.data || [];
       setSummary({
         total: refs.length,
         verified: refs.filter((r: any) => r.status === "verified" || r.status === "attachable").length,
