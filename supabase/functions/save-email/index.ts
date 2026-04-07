@@ -181,8 +181,8 @@ serve(async (req) => {
       // 6. Generate magic link for report email
       const siteUrl = Deno.env.get("SUPABASE_URL")!.replace(".supabase.co", "").replace("https://", "");
       const reportUrl = report_id
-        ? `https://compcare.lovable.app/rapport/${report_id}`
-        : `https://compcare.lovable.app/resultat/${lead_id}`;
+        ? `https://compcare.se/rapport/${report_id}`
+        : `https://compcare.se/resultat/${lead_id}`;
 
       const { data: magicLinkData, error: magicErr } = await supabase.auth.admin.generateLink({
         type: "magiclink",
