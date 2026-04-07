@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import ProfileInsights from "@/components/profile/ProfileInsights";
+import CompensationView from "@/components/report/CompensationView";
 
 interface ReportRow {
   id: string;
@@ -184,6 +185,13 @@ export default function Profile() {
             </CardContent>
           </Card>
         )}
+
+        {/* Compensation view — invoice rate, salary range & tips */}
+        <CompensationView
+          role={profile?.specialty_name || null}
+          location={profile?.region_name || null}
+          employmentType={profile?.employment_type || null}
+        />
 
         {/* Zone pricing, salary ranges & upcoming assignments */}
         <ProfileInsights
