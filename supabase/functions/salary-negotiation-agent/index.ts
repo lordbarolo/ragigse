@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { z } from "https://esm.sh/zod@3.23.8";
 import { checkRateLimit, rateLimitResponse } from "../_shared/rateLimit.ts";
 
 /**
@@ -470,8 +471,22 @@ const FORBIDDEN_WORDS = [
 
 const DISCLAIMER = "Med reservation för tillkommande kostnader.";
 
+// Zod schema — final validation gate for LLM output
+const AdviceOutputSchema = z.object({
+  advice: z.string().min(1).max(600),
+  followup: z.string().max(100).default(""),
+  includes_amount: z.boolean().default(false),
+  situation_summary: z.string().max(300).default(""),
+});
+type AdviceOutput = z.infer<typeof AdviceOutputSchema>;
+
+function parseAndValidateToolOutput(raw: string): AdviceOutput {
+  const parsed = JSON.parse(raw);
+  return AdviceOutputSchema.parse(parsed);
+}
+
 function validateAdvice(
-  raw: { advice: string; followup: string; includes_amount: boolean; situation_summary: string },
+  raw: AdviceOutput,
   history: ConversationTurn[]
 ): { advice: string; situation_summary: string } {
   let advice = raw.advice.trim();
@@ -569,15 +584,16 @@ Ge råd baserat på ovanstående data. Fråga INTE efter information som redan f
     return { advice: "Kunde inte generera råd just nu.", situation_summary: situation };
   }
 
-  const parsed = JSON.parse(toolCall.function.arguments) as {
-    advice: string;
-    followup: string;
-    includes_amount: boolean;
-    situation_summary: string;
-  };
+  // Parse + Zod-validate LLM output, then apply deterministic post-processing
+  let validated: AdviceOutput;
+  try {
+    validated = parseAndValidateToolOutput(toolCall.function.arguments);
+  } catch (zodErr) {
+    console.error("[AGENT] Zod validation failed:", zodErr);
+    return { advice: "Kunde inte generera råd just nu.", situation_summary: situation };
+  }
 
-  // Apply deterministic post-processing validation
-  return validateAdvice(parsed, history);
+  return validateAdvice(validated, history);
 }
 
 // ── Main handler ─────────────────────────────────────────────────────────────
