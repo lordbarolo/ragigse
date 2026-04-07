@@ -165,7 +165,7 @@ export default function ConsultantTrackContent({
                 <TrendingUp className="w-4 h-4 text-accent" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-accent leading-snug mb-1">
+                <p className="text-sm font-semibold text-foreground leading-snug mb-1">
                   Skillnad mot marknadsspannet: {fmt(delta.monthly_vs_current_max)} kr/mån
                 </p>
                 <p className="text-hint leading-relaxed">
