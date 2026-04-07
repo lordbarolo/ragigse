@@ -31,7 +31,7 @@ const ReportDeliveryEmail = ({ occupation, kommun, reportUrl }: ReportDeliveryPr
             förhandlingsstrategier anpassade för dig.
           </Text>
         </Section>
-        <Button style={button} href={reportUrl || 'https://compcare.lovable.app'}>
+        <Button style={button} href={reportUrl || 'https://compcare.se'}>
           Öppna min rapport →
         </Button>
         <Text style={footer}>
