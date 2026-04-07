@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { FileText, Globe, Lock } from "lucide-react";
+import { FileText, Globe, Lock, ShieldCheck } from "lucide-react";
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 import Survey from "@/components/Survey";
@@ -110,12 +110,21 @@ export default function SalaryCheck() {
       {/* ── Light Hero ──────────────────────────────────── */}
       <section className="relative pt-16 pb-20 px-6 bg-background">
         <div className="max-w-3xl mx-auto text-center">
+          {/* Badge */}
+          <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary mb-6">
+            <ShieldCheck className="w-4 h-4" />
+            100% Verifierad Marknadsdata
+          </div>
+
           <h1 className="font-bold mb-6 tracking-tight leading-[1.08] text-foreground text-4xl md:text-5xl">
-            Äg ditt marknadsvärde som vårdkonsult
+            För sjukvårdens konsulter
           </h1>
 
-          <p className="text-muted-foreground md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed text-lg">
-            Få tillgång till verifierade siffror från 20 000 offentliga upphandlingar. Vi gör dold lönestatistik tillgänglig för dig.
+          <p className="text-muted-foreground md:text-lg max-w-2xl mx-auto mb-4 leading-relaxed">
+            Vi har analyserat över 20 000 upphandlingar och avtal. Uppgifter som alltid varit offentliga men sällan nått konsulten.
+          </p>
+          <p className="text-muted-foreground md:text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
+            Vår senaste rapport visar vad regionen faktiskt betalar per timme för din kompetens.
           </p>
 
           {/* CTA */}
@@ -124,7 +133,7 @@ export default function SalaryCheck() {
               onClick={handleStartSurvey}
               className="w-full bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-4 rounded-2xl font-semibold transition-all shadow-lg shadow-primary/20 text-base"
             >
-              Se aktuell lönestatistik
+              Svara på 6 frågor. Få alla svar
             </button>
             <p className="mt-3 text-xs text-muted-foreground">
               Baserat på offentlig data från Sveriges regioner. Ingen registrering krävs.
