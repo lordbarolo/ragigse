@@ -305,7 +305,8 @@ const ADVICE_TOOL = {
 async function synthesiseAdvice(
   message: string,
   situation: string,
-  ciResults: { capability: string; ok: boolean; data: Record<string, unknown> }[]
+  ciResults: { capability: string; ok: boolean; data: Record<string, unknown> }[],
+  context?: AgentRequest["context"]
 ): Promise<{ advice: string; situation_summary: string }> {
   const dataContext = ciResults
     .filter((r) => r.ok)
@@ -317,15 +318,19 @@ async function synthesiseAdvice(
     .map((r) => `${r.capability}: ${JSON.stringify(r.data.errors ?? r.data.error)}`)
     .join("; ");
 
+  const contextStr = context
+    ? `\nAnvändarens profil: roll=${context.role || "okänd"}, ort=${context.geography || "okänd"}, anställningsform=${context.employment_type || "okänd"}${context.current_rate ? `, nuvarande timpris=${context.current_rate} kr` : ""}${context.current_salary ? `, nuvarande månadslön=${context.current_salary} kr` : ""}`
+    : "";
+
   const userPrompt = `Användarens fråga: "${message}"
 
-Situation: ${situation}
+Situation: ${situation}${contextStr}
 
 Marknadsdata:
 ${dataContext || "Ingen data tillgänglig."}
 ${failedCaps ? `\nMisslyckade datahämtningar: ${failedCaps}` : ""}
 
-Ge råd baserat på ovanstående data.`;
+Ge råd baserat på ovanstående data. Fråga INTE efter information som redan finns i profilen ovan.`;
 
   const result = await callAI(
     ADVICE_SYSTEM,
