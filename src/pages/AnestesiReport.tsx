@@ -32,13 +32,17 @@ const OB_RATES = [
   { typ: "Storhelg natt", tid: "22–07", rate: 222, icon: Sparkles },
 ];
 
-const SHARE_MIN = 0.85;
-const SHARE_MAX = 0.92;
+const SHARE_MIN_FORETAGARE = 0.82;
+const SHARE_MAX_FORETAGARE = 0.88;
+const SHARE_MIN_ANSTALLD = 0.80;
+const SHARE_MAX_ANSTALLD = 0.86;
 
 export default function AnestesiReport() {
   const zone1Rate = 770;
-  const recMin = Math.round(zone1Rate * SHARE_MIN);
-  const recMax = Math.round(zone1Rate * SHARE_MAX);
+  const recMinF = Math.round(zone1Rate * SHARE_MIN_FORETAGARE);
+  const recMaxF = Math.round(zone1Rate * SHARE_MAX_FORETAGARE);
+  const recMinA = Math.round(zone1Rate * SHARE_MIN_ANSTALLD);
+  const recMaxA = Math.round(zone1Rate * SHARE_MAX_ANSTALLD);
 
   return (
     <div className="min-h-screen bg-background">
@@ -110,16 +114,16 @@ export default function AnestesiReport() {
               </div>
               <div>
                 <p className="text-lg font-bold text-foreground">
-                  {fmt(recMin)}–{fmt(recMax)} kr/h
+                  {fmt(recMinF)}–{fmt(recMaxF)} kr/h
                 </p>
-                <p className="text-[11px] text-muted-foreground">Realistiskt förhandlingsspann</p>
+                <p className="text-[11px] text-muted-foreground">Realistiskt förhandlingsspann (egenföretagare)</p>
               </div>
             </div>
 
             <div className="space-y-3">
               {[
-                { label: "Egenföretagare", share: "85–92%", range: `${fmt(recMin)}–${fmt(recMax)} kr/h` },
-                { label: "Anställd via bemanning", share: "60–65%", range: `${fmt(Math.round(zone1Rate * 0.60))}–${fmt(Math.round(zone1Rate * 0.65))} kr/h` },
+                { label: "Egenföretagare", share: "82–88%", range: `${fmt(recMinF)}–${fmt(recMaxF)} kr/h` },
+                { label: "Anställd via bemanning", share: "80–86%", range: `${fmt(recMinA)}–${fmt(recMaxA)} kr/h` },
               ].map((row) => (
                 <div key={row.label} className="flex items-center justify-between rounded-lg bg-foreground/[0.03] border border-foreground/[0.06] px-3.5 py-2.5">
                   <div>
