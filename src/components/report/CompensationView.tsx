@@ -136,7 +136,7 @@ export default function CompensationView({ role, location, employmentType }: Com
       {/* ── Salary range card ──────────────────────────── */}
       <Card className="p-5 border border-border bg-card">
         <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-3">
-          Ditt rekommenderade lönespann
+          VANLIG ERSÄTTNINGSNIVÅ FÖR DENNA ROLL OCH ORT
         </h3>
 
         <div className="flex flex-col gap-2">
