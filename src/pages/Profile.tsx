@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import ProfileInsights from "@/components/profile/ProfileInsights";
+import CompensationView from "@/components/report/CompensationView";
 
 interface ReportRow {
   id: string;
