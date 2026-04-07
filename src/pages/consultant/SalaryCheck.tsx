@@ -103,7 +103,7 @@ export default function SalaryCheck() {
             100% Verifierad Marknadsdata
           </div>
 
-          <h1 className="font-bold mb-8 tracking-tight leading-[1.05] md:leading-tight text-4xl">
+          <h1 className="font-bold mb-8 tracking-tight leading-[1.05] md:leading-tight text-5xl">
             För sjukvårdens konsulter
           </h1>
 
@@ -117,9 +117,9 @@ export default function SalaryCheck() {
           <div className="max-w-md mx-auto">
             <button
               onClick={handleStartSurvey}
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-4 rounded-2xl font-semibold transition-all shadow-lg shadow-primary/20 text-base"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-4 rounded-2xl font-semibold transition-all shadow-lg shadow-primary/20 text-base text-center"
             >
-              Svara på 6 snabba frågor. Få alla svar
+              Svara på 6 frågor. Få alla svar
             </button>
           </div>
         </div>
