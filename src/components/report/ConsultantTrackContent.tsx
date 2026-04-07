@@ -191,82 +191,7 @@ export default function ConsultantTrackContent({
         </div>
       )}
 
-      {/* ═══ 2. FÖRHANDLINGSSPANN ═══ */}
-      {isConsultantFullAccess && rec ? (
-        (() => {
-          const realisticH = rec.recommended_hourly_min;
-          const recommendedH = Math.round((rec.recommended_hourly_min + rec.recommended_hourly_max) / 2);
-          const ambitiousH = Math.round(rec.recommended_hourly_max * 1.05);
-          const hpm = rec.hours_per_month || 167;
-          const realisticM = realisticH * hpm;
-          const recommendedM = recommendedH * hpm;
-          const ambitiousM = ambitiousH * hpm;
-
-          // Calculate marker position on track
-          const minH = realisticH;
-          const maxH = ambitiousH;
-          const range = maxH - minH;
-          const fillPct = range > 0 ? Math.min(Math.round(((recommendedH - minH) / range) * 100), 100) : 50;
-          const yourPct = range > 0 ? Math.min(Math.max(Math.round(((currentHourly - minH) / range) * 100), 0), 105) : 50;
-
-          return (
-            <div>
-              <SectionLabel>Förhandlingsspann · {userZone || "Din zon"}</SectionLabel>
-              <div className="grid grid-cols-3 gap-1.5">
-                {/* Undre spann */}
-                <div className="rounded-[14px] bg-foreground/[0.035] border border-foreground/[0.07] p-3 text-center">
-                  <span className="text-micro font-bold tracking-[0.8px] uppercase block mb-1.5">Undre spann</span>
-                  <span className={`${monoClass} text-[19px] font-medium text-foreground/[0.8] tracking-tight leading-none block mb-0.5`}>{fmt(realisticH)}</span>
-                  <span className="text-micro block mb-1">kr/h</span>
-                  <span className={`${monoClass} text-micro block`}>{fmt(realisticM)} kr/mån</span>
-                </div>
-                {/* Medianspann */}
-                <div className="rounded-[14px] bg-primary/[0.08] border border-primary/[0.3] p-3 text-center">
-                  <span className="text-micro font-bold tracking-[0.8px] uppercase text-primary block mb-1.5">Median</span>
-                  <span className={`${monoClass} text-[19px] font-medium text-primary tracking-tight leading-none block mb-0.5`}>{fmt(recommendedH)}</span>
-                  <span className="text-micro block mb-1">kr/h</span>
-                  <span className={`${monoClass} text-micro text-primary/[0.5] block`}>{fmt(recommendedM)} kr/mån</span>
-                </div>
-                {/* Övre spann */}
-                <div className="rounded-[14px] bg-foreground/[0.035] border border-foreground/[0.07] p-3 text-center">
-                  <span className="text-micro font-bold tracking-[0.8px] uppercase block mb-1.5">Övre spann</span>
-                  <span className={`${monoClass} text-[19px] font-medium text-foreground/[0.8] tracking-tight leading-none block mb-0.5`}>{fmt(ambitiousH)}</span>
-                  <span className="text-micro block mb-1">kr/h</span>
-                  <span className={`${monoClass} text-micro block`}>{fmt(ambitiousM)} kr/mån</span>
-                </div>
-              </div>
-
-
-              <p className="text-micro text-center leading-relaxed pt-1.5">
-                Baserat på ramavtalspris och branschens marginaler i {userZone || "din zon"}.
-              </p>
-            </div>
-          );
-        })()
-      ) : !isConsultantFullAccess ? (
-        <div className="rounded-2xl border border-border/50 overflow-hidden">
-          <div className="bg-muted/50 p-4 flex items-center gap-3">
-            <Lock className="w-5 h-5 text-muted-foreground" />
-            <p className="font-semibold text-foreground">Marknadsspann — fullständig version</p>
-          </div>
-          <div className="p-5 space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <StatBlock label="Din timersättning" value={`${fmt(currentHourly)} kr`} muted />
-              <div className="p-3 rounded-lg bg-accent/10 relative overflow-hidden">
-                <p className="text-hint mb-1">Marknadsspann</p>
-                <p className="text-base font-semibold text-accent blur-sm select-none">
-                  {formatPartialValue(Math.round(marketRate * 0.6))} kr
-                </p>
-              </div>
-            </div>
-            <p className="text-body-sm text-center">
-              Den fullständiga analysen med exakta siffror och regionala jämförelser finns i den utökade rapporten.
-            </p>
-          </div>
-        </div>
-      ) : null}
-
-      {/* ═══ 3. ERSÄTTNINGSJÄMFÖRELSE ═══ */}
+      {/* ═══ 2. ERSÄTTNINGSJÄMFÖRELSE ═══ */}
       {isConsultantFullAccess && rec && (
         <div>
           <SectionLabel>Ersättningsjämförelse</SectionLabel>
@@ -337,6 +262,79 @@ export default function ConsultantTrackContent({
           </div>
         </div>
       )}
+
+      {/* ═══ 3. FÖRHANDLINGSSPANN ═══ */}
+      {isConsultantFullAccess && rec ? (
+        (() => {
+          const realisticH = rec.recommended_hourly_min;
+          const recommendedH = Math.round((rec.recommended_hourly_min + rec.recommended_hourly_max) / 2);
+          const ambitiousH = Math.round(rec.recommended_hourly_max * 1.05);
+          const hpm = rec.hours_per_month || 167;
+          const realisticM = realisticH * hpm;
+          const recommendedM = recommendedH * hpm;
+          const ambitiousM = ambitiousH * hpm;
+
+          const minH = realisticH;
+          const maxH = ambitiousH;
+          const range = maxH - minH;
+          const fillPct = range > 0 ? Math.min(Math.round(((recommendedH - minH) / range) * 100), 100) : 50;
+          const yourPct = range > 0 ? Math.min(Math.max(Math.round(((currentHourly - minH) / range) * 100), 0), 105) : 50;
+
+          return (
+            <div>
+              <SectionLabel>Förhandlingsspann · {userZone || "Din zon"}</SectionLabel>
+              <div className="grid grid-cols-3 gap-1.5">
+                {/* Undre spann */}
+                <div className="rounded-[14px] bg-foreground/[0.035] border border-foreground/[0.07] p-3 text-center">
+                  <span className="text-micro font-bold tracking-[0.8px] uppercase block mb-1.5">Undre spann</span>
+                  <span className={`${monoClass} text-[19px] font-medium text-foreground/[0.8] tracking-tight leading-none block mb-0.5`}>{fmt(realisticH)}</span>
+                  <span className="text-micro block mb-1">kr/h</span>
+                  <span className={`${monoClass} text-micro block`}>{fmt(realisticM)} kr/mån</span>
+                </div>
+                {/* Medianspann */}
+                <div className="rounded-[14px] bg-primary/[0.08] border border-primary/[0.3] p-3 text-center">
+                  <span className="text-micro font-bold tracking-[0.8px] uppercase text-primary block mb-1.5">Median</span>
+                  <span className={`${monoClass} text-[19px] font-medium text-primary tracking-tight leading-none block mb-0.5`}>{fmt(recommendedH)}</span>
+                  <span className="text-micro block mb-1">kr/h</span>
+                  <span className={`${monoClass} text-micro text-primary/[0.5] block`}>{fmt(recommendedM)} kr/mån</span>
+                </div>
+                {/* Övre spann */}
+                <div className="rounded-[14px] bg-foreground/[0.035] border border-foreground/[0.07] p-3 text-center">
+                  <span className="text-micro font-bold tracking-[0.8px] uppercase block mb-1.5">Övre spann</span>
+                  <span className={`${monoClass} text-[19px] font-medium text-foreground/[0.8] tracking-tight leading-none block mb-0.5`}>{fmt(ambitiousH)}</span>
+                  <span className="text-micro block mb-1">kr/h</span>
+                  <span className={`${monoClass} text-micro block`}>{fmt(ambitiousM)} kr/mån</span>
+                </div>
+              </div>
+
+              <p className="text-micro text-center leading-relaxed pt-1.5">
+                Baserat på ramavtalspris och branschens marginaler i {userZone || "din zon"}.
+              </p>
+            </div>
+          );
+        })()
+      ) : !isConsultantFullAccess ? (
+        <div className="rounded-2xl border border-border/50 overflow-hidden">
+          <div className="bg-muted/50 p-4 flex items-center gap-3">
+            <Lock className="w-5 h-5 text-muted-foreground" />
+            <p className="font-semibold text-foreground">Marknadsspann — fullständig version</p>
+          </div>
+          <div className="p-5 space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <StatBlock label="Din timersättning" value={`${fmt(currentHourly)} kr`} muted />
+              <div className="p-3 rounded-lg bg-accent/10 relative overflow-hidden">
+                <p className="text-hint mb-1">Marknadsspann</p>
+                <p className="text-base font-semibold text-accent blur-sm select-none">
+                  {formatPartialValue(Math.round(marketRate * 0.6))} kr
+                </p>
+              </div>
+            </div>
+            <p className="text-body-sm text-center">
+              Den fullständiga analysen med exakta siffror och regionala jämförelser finns i den utökade rapporten.
+            </p>
+          </div>
+        </div>
+      ) : null}
 
       {/* ═══ Sammanfattning av marknadsdata ═══ */}
       {isConsultantFullAccess && rec && !isAboveThreshold && (
