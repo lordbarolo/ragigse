@@ -114,16 +114,16 @@ export default function AnestesiReport() {
               </div>
               <div>
                 <p className="text-lg font-bold text-foreground">
-                  {fmt(recMin)}–{fmt(recMax)} kr/h
+                  {fmt(recMinF)}–{fmt(recMaxF)} kr/h
                 </p>
-                <p className="text-[11px] text-muted-foreground">Realistiskt förhandlingsspann</p>
+                <p className="text-[11px] text-muted-foreground">Realistiskt förhandlingsspann (egenföretagare)</p>
               </div>
             </div>
 
             <div className="space-y-3">
               {[
-                { label: "Egenföretagare", share: "85–92%", range: `${fmt(recMin)}–${fmt(recMax)} kr/h` },
-                { label: "Anställd via bemanning", share: "60–65%", range: `${fmt(Math.round(zone1Rate * 0.60))}–${fmt(Math.round(zone1Rate * 0.65))} kr/h` },
+                { label: "Egenföretagare", share: "82–88%", range: `${fmt(recMinF)}–${fmt(recMaxF)} kr/h` },
+                { label: "Anställd via bemanning", share: "80–86%", range: `${fmt(recMinA)}–${fmt(recMaxA)} kr/h` },
               ].map((row) => (
                 <div key={row.label} className="flex items-center justify-between rounded-lg bg-foreground/[0.03] border border-foreground/[0.06] px-3.5 py-2.5">
                   <div>
