@@ -107,7 +107,7 @@ export default function SalaryCheck() {
             För sjukvårdens konsulter
           </h1>
 
-          <p className="text-hero-foreground/60 text-xl md:text-2xl max-w-3xl mx-auto mb-10 leading-relaxed whitespace-pre-line">
+          <p className="text-hero-foreground/60 md:text-2xl max-w-3xl mx-auto mb-10 leading-relaxed whitespace-pre-line text-lg">
             Vi har analyserat över 20 000 upphandlingar och avtal. Uppgifter som alltid varit offentliga men sällan nått konsulten. {"\n\n"}
             Vår senaste rapport visar vad regionen faktiskt betalar per timme för din kompetens.
           </p>
