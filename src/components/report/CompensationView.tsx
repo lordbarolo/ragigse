@@ -67,7 +67,7 @@ export default function CompensationView({ role, location, employmentType }: Com
         .eq("is_active", true)
         .limit(1)
         .maybeSingle();
-      if (cv?.version_label) setContractLabel(cv.version_label);
+      if (cv?.version_label) setContractLabel(`${cv.catalog_name || "SKR ramavtal"} ${cv.version_label}`);
 
       setLoading(false);
     };
