@@ -256,8 +256,33 @@ export default function DemoLanding() {
             )}
 
             {zoneRates && zoneRates.length === 0 && !loading && (
-              <div className="border-t border-border px-5 py-5">
-                <p className="text-sm text-muted-foreground text-center">Inga priser hittades för denna roll.</p>
+              <div className="border-t border-border bg-secondary/30 px-5 py-5 space-y-4">
+                <p className="text-sm text-muted-foreground text-center">
+                  Inga priser hittades för <span className="font-semibold text-foreground">{survey.yrke}</span>. Här är ett exempel med Barnmorska:
+                </p>
+
+                <div className="text-center space-y-1 mb-2">
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">Exempelpris — Barnmorska</p>
+                </div>
+
+                {[
+                  { zon: "Zon 1", timpris: 770 },
+                  { zon: "Zon 2", timpris: 824 },
+                  { zon: "Zon 3", timpris: 880 },
+                ].map((r) => (
+                  <div key={r.zon} className="bg-card border border-border rounded-xl p-4 text-center">
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
+                      {r.zon} — {ZONE_LABELS[r.zon] || ""}
+                    </p>
+                    <p className="text-2xl font-display font-bold text-foreground tracking-tight">
+                      {fmt(r.timpris)} <span className="text-base font-medium text-muted-foreground">kr/tim</span>
+                    </p>
+                  </div>
+                ))}
+
+                <p className="text-[10px] text-muted-foreground/70 text-center">
+                  Barnmorska · Kundpris enligt SKR ramavtal 2026
+                </p>
               </div>
             )}
           </div>
