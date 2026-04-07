@@ -1,12 +1,9 @@
 import { useEffect, useState, useRef } from "react";
 import { Link, useSearchParams } from "react-router-dom";
-import { ShieldCheck } from "lucide-react";
+import { FileText, Globe, Lock } from "lucide-react";
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 import Survey from "@/components/Survey";
-import ServiceCards from "@/components/landing/ServiceCards";
-import RefSection from "@/components/landing/RefSection";
-import InvoiceSection from "@/components/landing/InvoiceSection";
 import handPhoneImage from "@/assets/hand-phone.png";
 import CompcareLogo from "@/components/CompcareLogo";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -36,6 +33,12 @@ const webAppJsonLd = {
 const PREFILL_MAP: Record<string, { category: "ssk" | "lakare"; role: string }> = {
   anestesi: { category: "ssk", role: "Anestesisjukvård" },
 };
+
+const TRUST_SIGNALS = [
+  { icon: Lock, text: "Ingen registrering krävs för prisförslag" },
+  { icon: Globe, text: "Offentlig data från 21 regioner" },
+  { icon: FileText, text: "20 000+ analyserade avtal" },
+];
 
 export default function SalaryCheck() {
   const [searchParams] = useSearchParams();
@@ -104,43 +107,58 @@ export default function SalaryCheck() {
         </div>
       </header>
 
-      {/* ── Dark Hero ──────────────────────────────────── */}
-      <section className="hero-dark relative pt-12 pb-24 px-6">
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 px-3 py-1 rounded-full text-primary text-xs font-semibold mb-6 uppercase tracking-wider">
-            <ShieldCheck className="w-3 h-3" />
-            100% Verifierad Marknadsdata
-          </div>
-
-          <h1 className="font-bold mb-8 tracking-tight leading-[1.05] md:leading-tight text-5xl">
-            För sjukvårdens konsulter
+      {/* ── Light Hero ──────────────────────────────────── */}
+      <section className="relative pt-16 pb-20 px-6 bg-background">
+        <div className="max-w-3xl mx-auto text-center">
+          <h1 className="font-bold mb-6 tracking-tight leading-[1.08] text-foreground text-4xl md:text-5xl">
+            Äg ditt marknadsvärde som vårdkonsult
           </h1>
 
-          <p className="text-hero-foreground/60 md:text-2xl max-w-3xl mx-auto mb-10 leading-relaxed whitespace-pre-line text-lg">
-            Vi har analyserat över 20 000 upphandlingar och avtal. Uppgifter som alltid varit offentliga men sällan nått konsulten. {"\n\n"}
-            Vår senaste rapport visar vad regionen faktiskt betalar per timme för din kompetens.
+          <p className="text-muted-foreground md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed text-lg">
+            Få tillgång till verifierade siffror från 20 000 offentliga upphandlingar. Vi gör dold lönestatistik tillgänglig för dig.
           </p>
 
-          {/* Role selection CTA */}
-          
-          <div className="max-w-md mx-auto">
+          {/* CTA */}
+          <div className="max-w-sm mx-auto">
             <button
               onClick={handleStartSurvey}
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-4 rounded-2xl font-semibold transition-all shadow-lg shadow-primary/20 text-base text-center"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-4 rounded-2xl font-semibold transition-all shadow-lg shadow-primary/20 text-base"
             >
-              Svara på 6 frågor. Få alla svar
+              Se aktuell lönestatistik
             </button>
+            <p className="mt-3 text-xs text-muted-foreground">
+              Baserat på offentlig data från Sveriges regioner. Ingen registrering krävs.
+            </p>
+          </div>
+
+          {/* Progressive disclosure — data preview */}
+          <div className="mt-10 mx-auto max-w-md rounded-xl border border-border bg-card p-5 text-left shadow-sm">
+            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">Exempel ur vår data</p>
+            <div className="flex items-baseline justify-between gap-4">
+              <div>
+                <p className="text-sm font-medium text-foreground">Hyrsjuksköterska, Region Skåne</p>
+                <p className="text-xs text-muted-foreground">Genomsnittligt timarvode · 2026</p>
+              </div>
+              <p className="text-2xl font-bold text-foreground whitespace-nowrap">770 <span className="text-base font-medium text-muted-foreground">kr/h</span></p>
+            </div>
           </div>
         </div>
+      </section>
 
-        {/* Gradient fade to light */}
-        <div className="absolute bottom-0 left-0 right-0 h-[300px] bg-gradient-to-t from-background to-transparent" />
+      {/* ── Trust signals ─────────────────────────────── */}
+      <section className="border-y border-border bg-card/60">
+        <div className="max-w-4xl mx-auto px-6 py-6 flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10">
+          {TRUST_SIGNALS.map((s) => (
+            <div key={s.text} className="flex items-center gap-2.5 text-muted-foreground">
+              <s.icon className="w-4 h-4 shrink-0 text-primary" />
+              <span className="text-sm">{s.text}</span>
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* ── Section 2: Löneförhandling ── */}
       <section className="relative overflow-hidden bg-secondary/50">
-
         <div className="relative mx-auto max-w-6xl px-6 py-14 md:px-10 lg:px-12 lg:py-20">
           <div className="grid items-center gap-8 md:grid-cols-[1fr_0.9fr] lg:gap-10">
 
@@ -165,9 +183,9 @@ export default function SalaryCheck() {
               {/* Bullet cards */}
               <div className="mt-6 space-y-2">
                 {[
-                  { title: "Transparens:", text: "Se rätt avtalsinnehåll och lönenivå fön din roll" },
+                  { title: "Transparens:", text: "Se rätt avtalsinnehåll och lönenivå för din roll" },
                   { title: "Regional jämförelse:", text: "Se hur ersättningen skiljer sig mellan orter" },
-                  { title: "Smart assistent:", text: "Få konkreta råd baserat på 100% verifierad marknadsdata." },
+                  { title: "Smart assistent:", text: "Få konkreta råd baserat på verifierad marknadsdata" },
                 ].map((item) => (
                   <div key={item.title} className="flex items-start gap-3 rounded-lg border border-border bg-card/60 px-3.5 py-2.5">
                     <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-primary/20 bg-primary/5 text-[10px] text-primary">
@@ -188,7 +206,7 @@ export default function SalaryCheck() {
                     onClick={handleStartSurvey}
                     className="inline-flex min-h-[50px] items-center justify-center rounded-xl bg-primary hover:bg-primary/90 px-7 text-[15px] font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition duration-200 hover:-translate-y-0.5"
                   >
-                    Se uppdaterade villkor för hundratals orter och roller
+                    Se villkor för din roll och ort
                   </button>
                 </div>
               </div>
