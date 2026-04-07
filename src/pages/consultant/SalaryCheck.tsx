@@ -98,7 +98,7 @@ export default function SalaryCheck() {
           </h1>
 
           <p className="text-hero-foreground/60 text-xl md:text-2xl max-w-2xl mx-auto mb-2 leading-relaxed">
-            Ny rapport för 2026 finns tillgänglig nu. Vår tredje rapport visar faktiska marknadsvillkor för alla kompetenser i 290 kommuner och 21 regioner.
+            Ny rapport för 2026 finns tillgänglig nu. Vår tredje rapport visar faktiska marknadsvillkor för din specifika kompetens i 290 kommuner och 21 regioner.
           </p>
           <p className="text-hero-foreground/60 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
             {"\n"}
