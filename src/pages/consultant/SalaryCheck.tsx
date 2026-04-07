@@ -212,45 +212,7 @@ export default function SalaryCheck() {
         </div>
       </section>
 
-      {/* ── Referenser & Verifikationer ──────── */}
-      <RefSection />
-
-      {/* ── Fakturakontroll ──────── */}
-      <InvoiceSection />
-
-      {/* ── Service Cards ──────── */}
-      <ServiceCards onStartAnalysis={handleStartSurvey} />
-
-      {/* ── Allt för din yrkesekonomi ──────────────────── */}
-      <section className="max-w-4xl mx-auto px-6 pt-16 pb-24">
-        <h2 className="text-3xl font-bold tracking-tight text-foreground mb-4 text-center">
-          Allt för din yrkesekonomi på ett ställe
-        </h2>
-        <p className="text-muted-foreground text-base md:text-lg leading-relaxed text-center max-w-2xl mx-auto mb-10">
-          Vi sammanställer marknadens data för att ge dig full insyn i dina ersättningar och avtal. Genom att kombinera officiella handlingar med smarta verktyg hjälper vi dig att ha koll på vardagen som konsult.
-        </p>
-
-        <div className="space-y-4">
-          {[
-            { title: "Löneanalys", text: "Jämför din ersättning mot regionernas faktiska ramavtalspriser i realtid. Tjänsten omfattar 21 regioner och 290 kommuner för alla specialiseringar." },
-            { title: "Förhandlingsstöd", text: "Få ett sakligt beslutsunderlag inför ditt nästa lönesamtal. Vår digitala rådgivare hjälper dig att förbereda argument baserade på verifierad marknadsdata." },
-            { title: "Fakturakontroll", text: "Säkerställ att du har fått rätt ersättning för OB, jour och arbetad tid. Våra system granskar dina fakturor mot gällande avtal för att identifiera eventuella avvikelser." },
-          ].map((item) => (
-            <div key={item.title} className="rounded-xl border border-border bg-card/60 px-5 py-4">
-              <h3 className="text-base font-semibold text-foreground mb-1">{item.title}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">{item.text}</p>
-            </div>
-          ))}
-
-        </div>
-      </section>
-      {!import.meta.env.PROD && (
-        <div className="fixed bottom-4 right-4 z-50">
-          <Link to="/demo" className="bg-muted text-muted-foreground text-xs px-3 py-1.5 rounded-full hover:bg-accent transition-colors">
-            Demo ↗
-          </Link>
-        </div>
-      )}
+      {/* Sections below temporarily hidden */}
     </div>
   );
 }
