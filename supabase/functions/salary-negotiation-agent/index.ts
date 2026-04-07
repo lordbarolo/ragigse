@@ -569,11 +569,15 @@ Ge råd baserat på ovanstående data. Fråga INTE efter information som redan f
     return { advice: "Kunde inte generera råd just nu.", situation_summary: situation };
   }
 
-  const parsed = JSON.parse(toolCall.function.arguments) as { advice: string; situation_summary: string };
-  return {
-    advice: shortenAdvice(parsed.advice),
-    situation_summary: parsed.situation_summary,
+  const parsed = JSON.parse(toolCall.function.arguments) as {
+    advice: string;
+    followup: string;
+    includes_amount: boolean;
+    situation_summary: string;
   };
+
+  // Apply deterministic post-processing validation
+  return validateAdvice(parsed, history);
 }
 
 // ── Main handler ─────────────────────────────────────────────────────────────
