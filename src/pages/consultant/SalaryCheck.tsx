@@ -57,7 +57,12 @@ export default function SalaryCheck() {
             <Link to="/">
               <CompcareLogo variant="full" />
             </Link>
-            <ThemeToggle />
+            <div className="flex items-center gap-3">
+              <Link to="/logga-in" className="text-sm text-muted-foreground hover:text-primary transition-colors font-medium">
+                Logga in
+              </Link>
+              <ThemeToggle />
+            </div>
           </div>
         </header>
         <div ref={surveyRef} className="px-4 pt-8 pb-16 min-h-[calc(100vh-3.5rem)] flex flex-col">
