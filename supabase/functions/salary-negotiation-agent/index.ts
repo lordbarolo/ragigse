@@ -23,6 +23,7 @@ const corsHeaders = {
 
 interface AgentRequest {
   message: string;
+  history?: ConversationTurn[];
   context?: {
     role?: string;
     geography?: string;
@@ -38,10 +39,21 @@ interface CICall {
   params: Record<string, unknown>;
 }
 
+interface ConversationTurn {
+  role: "user" | "assistant";
+  content: string;
+}
+
 interface ExtractedIntent {
   capabilities: CICall[];
   user_situation: string;
   missing_info: string[];
+}
+
+interface CIResult {
+  capability: string;
+  ok: boolean;
+  data: Record<string, unknown>;
 }
 
 interface AgentResponse {
@@ -108,6 +120,112 @@ async function callAI(
   return await res.json();
 }
 
+function formatSek(value: unknown): string {
+  const numberValue = typeof value === "number" ? value : Number(value);
+  return Number.isFinite(numberValue) ? Math.round(numberValue).toLocaleString("sv-SE") : "";
+}
+
+function normalizeHistory(history?: ConversationTurn[]): ConversationTurn[] {
+  return (history ?? [])
+    .filter((item): item is ConversationTurn => {
+      return !!item && (item.role === "user" || item.role === "assistant") && typeof item.content === "string";
+    })
+    .map((item) => ({
+      role: item.role,
+      content: item.content.replace(/\s+/g, " ").trim().slice(0, 600),
+    }))
+    .filter((item) => item.content.length > 0)
+    .slice(-6);
+}
+
+function formatHistoryForPrompt(history: ConversationTurn[]): string {
+  if (!history.length) return "";
+
+  return history
+    .map((item, index) => `${index + 1}. ${item.role === "user" ? "Användare" : "Assistent"}: ${item.content}`)
+    .join("\n");
+}
+
+function splitSentences(text: string): string[] {
+  return text
+    .replace(/\s+/g, " ")
+    .trim()
+    .split(/(?<=[.!?])\s+/)
+    .map((sentence) => sentence.trim())
+    .filter(Boolean);
+}
+
+function dedupeSentences(sentences: string[]): string[] {
+  const seen = new Set<string>();
+
+  return sentences.filter((sentence) => {
+    const key = sentence.toLowerCase().replace(/\s+/g, " ").trim();
+    if (!key || seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+function shortenAdvice(text: string): string {
+  const sentences = dedupeSentences(splitSentences(text));
+  if (sentences.length <= 3) return sentences.join(" ").trim();
+
+  const question = [...sentences].reverse().find((sentence) => sentence.endsWith("?"));
+  const reservation = sentences.find((sentence) => /med reservation för tillkommande kostnader/i.test(sentence));
+  const primary = sentences.find((sentence) => sentence !== reservation && sentence !== question) ?? sentences[0];
+  const selected: string[] = [];
+
+  for (const sentence of [primary, reservation, question]) {
+    if (sentence && !selected.includes(sentence)) selected.push(sentence);
+  }
+
+  if (!question) {
+    for (const sentence of sentences) {
+      if (selected.length >= 3) break;
+      if (!selected.includes(sentence)) selected.push(sentence);
+    }
+  }
+
+  return selected.slice(0, 3).join(" ").trim();
+}
+
+function containsFormattedNumber(text: string, value: unknown): boolean {
+  const numberValue = typeof value === "number" ? value : Number(value);
+  if (!Number.isFinite(numberValue)) return false;
+
+  return text.replace(/\D/g, "").includes(String(Math.round(numberValue)));
+}
+
+function isRepeatComplaint(message: string): boolean {
+  return /(samma sak|upprepar|upprepning|kortare|för långt)/i.test(message);
+}
+
+function buildRepeatAwareReply(message: string, history: ConversationTurn[], ciResults: CIResult[]): string | null {
+  const lastAssistant = [...history].reverse().find((item) => item.role === "assistant");
+  const lookupPayload = ciResults.find((result) => result.ok && result.capability === "lookup_rate")?.data?.data as Record<string, unknown> | undefined;
+
+  if (!lastAssistant || !lookupPayload) return null;
+
+  const geography = (lookupPayload.geography as Record<string, unknown> | undefined) ?? {};
+  const geographyName = typeof geography.name === "string" ? geography.name : "Den orten";
+  const zone = typeof geography.zone === "string" ? geography.zone : "samma zon";
+  const min = formatSek(lookupPayload.recommended_hourly_min);
+  const max = formatSek(lookupPayload.recommended_hourly_max);
+
+  if (!min || !max) return null;
+
+  const messageLower = message.toLowerCase();
+  const asksAboutCurrentPlace = messageLower.includes(geographyName.toLowerCase()) || messageLower.includes(zone.toLowerCase()) || isRepeatComplaint(message);
+  const sameSpan = containsFormattedNumber(lastAssistant.content, lookupPayload.recommended_hourly_min)
+    && containsFormattedNumber(lastAssistant.content, lookupPayload.recommended_hourly_max);
+  const sameZoneOrCustomerPrice = lastAssistant.content.toLowerCase().includes(zone.toLowerCase())
+    || containsFormattedNumber(lastAssistant.content, lookupPayload.amount);
+
+  if (!asksAboutCurrentPlace || !sameSpan || !sameZoneOrCustomerPrice) return null;
+
+  return `${geographyName} ligger också i ${zone}, så nivån är densamma: ${min}–${max} kr/h. Med reservation för tillkommande kostnader. Vill du jämföra en annan zon?`;
+}
+
 // ── Step 1: Extract intent via tool calling ──────────────────────────────────
 
 const INTENT_SYSTEM = `Du är Löneassistenten, en AI-assistent på CompCare specialiserad på löneförhandling. Analysera användarens meddelande och befintlig kontext.
@@ -118,6 +236,9 @@ Om kontextobjektet innehåller role, geography, employment_type eller current_sa
 
 KRITISKT — KONTEXTUPPDATERING VID UPPFÖLJNING
 Om användaren nämner en ny zon, ort, roll eller annan parameter i sitt meddelande, MÅSTE du använda den nya parametern i capability-anropen — INTE den initiala kontexten. Exempel: om kontexten säger geography="Borlänge" men användaren skriver "visa zon 3", ska geography sättas till den zon/ort användaren efterfrågar. Användarens senaste meddelande har ALLTID företräde framför befintlig kontext.
+
+KRITISKT — KORTA FÖLJDFRÅGOR
+Om användaren skriver en kort följdfråga som "där", "samma sak", "den orten" eller liknande ska du läsa konversationshistoriken och använda den senaste explicita orten eller rollen därifrån. Vid sådana följdfrågor har historiken högre prioritet än profilkontexten.
 
 VIKTIGT — Du får BARA använda dessa capabilities:
 - lookup_rate: Slå upp timpris för en yrkesroll i en zon. Kräver: role, geography. Valfritt: employment_type.
@@ -186,14 +307,21 @@ const INTENT_TOOL = {
   },
 };
 
-async function extractIntent(message: string, context?: AgentRequest["context"]): Promise<ExtractedIntent> {
+async function extractIntent(
+  message: string,
+  context?: AgentRequest["context"],
+  history: ConversationTurn[] = []
+): Promise<ExtractedIntent> {
   const contextStr = context
     ? `\n\nBefintlig kontext: ${JSON.stringify(context)}`
+    : "";
+  const historyStr = history.length
+    ? `\n\nSenaste konversation:\n${formatHistoryForPrompt(history)}`
     : "";
 
   const result = await callAI(
     INTENT_SYSTEM,
-    `${message}${contextStr}`,
+    `${message}${contextStr}${historyStr}`,
     [INTENT_TOOL],
     { type: "function", function: { name: "extract_intent" } }
   ) as { choices: { message: { tool_calls?: { function: { arguments: string } }[] } }[] };
@@ -242,11 +370,17 @@ async function callCI(
 
 const ADVICE_SYSTEM = `Du är Löneassistenten, en expert på ersättningsnivåer i vården i Sverige.
 
-ABSOLUT LÄNGDREGEL — GÄLLER ALLA SVAR
-Inget svar får någonsin vara längre än 4 meningar. Inga undantag. Inga punktlistor. Inga tips. Bara ren marknadsdata och kontext. Bryt ALDRIG denna regel.
+ABSOLUT FORMATREGEL
+Svara alltid med exakt 2 eller 3 meningar i vanlig text. Inga punktlistor, ingen markdown och ingen upprepning.
+
+KORTA UPPFÖLJNINGAR
+Om frågan bara gäller en ny ort, zon eller en kort följdfråga ska svaret vara mycket kort och direkt. Upprepa inte samma bakgrund eller samma kalkyl i onödan.
 
 FÖRSTA SVAR — NÄR PROFILDATA FINNS
-Om användarens profil redan innehåller roll och ort, börja ALLTID med att direkt presentera ersättningsdata. Använd orten från profilen och namnge den explicit. Exempelformat: "För [ort] som du angav i din profil är en vanlig ersättning för [roll] mellan X–X kr/h, med reservation för tillkommande kostnader. Vill du veta ersättningen för en annan ort eller kompetens?" Fråga ALDRIG efter information som redan finns i profilen.
+Om användarens profil redan innehåller roll och ort, börja direkt med ersättningsdata för den orten. Fråga ALDRIG efter information som redan finns i profilen.
+
+SAMMA ZON / SAMMA NIVÅ
+Om den nya orten ligger i samma zon eller ger samma ersättningsspann som i föregående svar ska du säga det direkt i första meningen, till exempel: "[ort] ligger också i Zon 2, så nivån är densamma: X–Y kr/h." Upprepa inte hela resonemanget en gång till.
 
 DATAKÄLLOR — STRIKT BEGRÄNSNING
 Du får ENBART basera svar på:
@@ -262,17 +396,17 @@ KONVERSATIONELLT INFORMATIONSSAMLANDE
 Om du saknar viktig information (roll, ort, anställningsform, ersättning) OCH den inte finns i profilen, ställ EN fråga per svar. Var naturlig och inte påträngande.
 Fråga ALDRIG efter information som redan finns i kontexten, profilen eller datan.
 
-EXPLICIT DIFFERENS (OBLIGATORISK)
-När användaren har angett sin nuvarande ersättning och du presenterar marknadsdata, MÅSTE du uttrycka skillnaden konkret, t.ex.: "Din nuvarande ersättning på 1 286 kr ligger 76 kr under medianen i spannet." Använd aldrig vaga formuleringar som "den lägre delen av kalkylen".
+DIFFERENS MOT NUVARANDE ERSÄTTNING
+Nämn skillnaden mot användarens nuvarande ersättning bara när användaren uttryckligen frågar hur hen ligger till eller vilket förhandlingsutrymme hen har. För rena orts- eller zonfrågor ska du hoppa över differensmeningen.
 
 REFERERA TILL TIDIGARE DATA VID JÄMFÖRELSER
 Om användaren ber om data för en ny zon eller roll, och du tidigare presenterat data för en annan zon/roll, referera kort till den tidigare datapunkten för att ge kontext: t.ex. "Jämfört med zon 2 där kundpriset var 1 513 kr ligger zon 3 på 1 543 kr."
 
 AVSLUTANDE MOTFRÅGA (OBLIGATORISK)
-Avsluta ALLTID ditt svar med en kort motfråga som bjuder in till vidare dialog. Motfrågan ska vara relevant för den data du precis presenterat. Exempelvis: "Vill du jämföra ersättning mellan andra roller eller orter?"
+Avsluta ALLTID ditt svar med en kort motfråga på högst 7 ord. Motfrågan ska vara relevant för den data du precis presenterat.
 
 KOSTNADSRESERVATION (OBLIGATORISK)
-Varje gång du anger en konkret ersättningsnivå (kr/timme eller kr/månad) MÅSTE du inkludera: "Med reservation för tillkommande kostnader."
+Om du anger ett konkret ersättningsspann ska en egen kort mening vara exakt: "Med reservation för tillkommande kostnader."
 
 SPRÅKREGLER
 - Använd ALDRIG: "högre lön", "bättre ersättning", "förhandla upp".
@@ -280,7 +414,7 @@ SPRÅKREGLER
 
 STRIKTA REGLER:
 - Basera ALLA siffror på den data du får — hitta ALDRIG på siffror.
-- Skriv "enligt SKR ramavtal" eller "utifrån avtalets prislista".
+- Nämn SKR ramavtal bara när det tillför ny information.
 - Om data saknas, var tydlig med det — gissa aldrig.
 - Svara BARA på frågor om avtalsnivåer, marginaler, rollskillnader och förhandlingsutrymme.
 - Om frågan handlar om kommande uppdrag eller prognoser, hänvisa till Uppdragsassistenten.
@@ -298,7 +432,7 @@ const ADVICE_TOOL = {
       properties: {
         advice: {
           type: "string",
-          description: "Utförligt förhandlingsråd i markdown-format",
+          description: "Kort svar i vanlig text, max 3 meningar",
         },
         situation_summary: {
           type: "string",
@@ -313,9 +447,15 @@ const ADVICE_TOOL = {
 async function synthesiseAdvice(
   message: string,
   situation: string,
-  ciResults: { capability: string; ok: boolean; data: Record<string, unknown> }[],
-  context?: AgentRequest["context"]
+  ciResults: CIResult[],
+  context?: AgentRequest["context"],
+  history: ConversationTurn[] = []
 ): Promise<{ advice: string; situation_summary: string }> {
+  const repeatAwareReply = buildRepeatAwareReply(message, history, ciResults);
+  if (repeatAwareReply) {
+    return { advice: repeatAwareReply, situation_summary: situation };
+  }
+
   const dataContext = ciResults
     .filter((r) => r.ok)
     .map((r) => `### ${r.capability}\n\`\`\`json\n${JSON.stringify(r.data.data, null, 2)}\n\`\`\`\nKälla: ${JSON.stringify(r.data.source)}`)
@@ -329,10 +469,13 @@ async function synthesiseAdvice(
   const contextStr = context
     ? `\nAnvändarens profil: roll=${context.role || "okänd"}, ort=${context.geography || "okänd"}, anställningsform=${context.employment_type || "okänd"}${context.current_rate ? `, nuvarande timpris=${context.current_rate} kr` : ""}${context.current_salary ? `, nuvarande månadslön=${context.current_salary} kr` : ""}`
     : "";
+  const historyStr = history.length
+    ? `\nSenaste konversation:\n${formatHistoryForPrompt(history)}`
+    : "";
 
   const userPrompt = `Användarens fråga: "${message}"
 
-Situation: ${situation}${contextStr}
+Situation: ${situation}${contextStr}${historyStr}
 
 Marknadsdata:
 ${dataContext || "Ingen data tillgänglig."}
@@ -352,7 +495,11 @@ Ge råd baserat på ovanstående data. Fråga INTE efter information som redan f
     return { advice: "Kunde inte generera råd just nu.", situation_summary: situation };
   }
 
-  return JSON.parse(toolCall.function.arguments);
+  const parsed = JSON.parse(toolCall.function.arguments) as { advice: string; situation_summary: string };
+  return {
+    advice: shortenAdvice(parsed.advice),
+    situation_summary: parsed.situation_summary,
+  };
 }
 
 // ── Main handler ─────────────────────────────────────────────────────────────
@@ -375,7 +522,8 @@ serve(async (req) => {
       return rateLimitResponse(rl, corsHeaders);
     }
 
-    const { message, context } = (await req.json()) as AgentRequest;
+    const { message, context, history: rawHistory } = (await req.json()) as AgentRequest;
+    const history = normalizeHistory(rawHistory);
 
     if (!message || typeof message !== "string" || message.trim().length === 0) {
       return new Response(
@@ -392,7 +540,7 @@ serve(async (req) => {
     }
 
     // Step 1: Extract intent
-    const intent = await extractIntent(message, context);
+    const intent = await extractIntent(message, context, history);
     console.log("[AGENT] Intent extracted:", JSON.stringify({ caps: intent.capabilities.length, situation: intent.user_situation }));
 
     // Merge context into capability params where missing
@@ -476,7 +624,8 @@ serve(async (req) => {
       message,
       intent.user_situation,
       ciResults,
-      context
+      context,
+      history
     );
 
     // Collect sources and policy info
