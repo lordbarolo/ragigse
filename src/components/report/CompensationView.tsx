@@ -60,14 +60,22 @@ export default function CompensationView({ role, location, employmentType }: Com
         setSalaryRange({ hourlyMin: range.hourly_min, hourlyMax: range.hourly_max });
       }
 
-      // 4. Try to get contract label
-      const { data: cv } = await supabase
-        .from("contract_versions")
-        .select("version_label, catalog_name")
-        .eq("is_active", true)
+      // 4. Try to get contract label matching the user's role
+      const { data: cvr } = await supabase
+        .from("contract_version_rates")
+        .select("version_id")
+        .eq("yrkeskategori", role)
         .limit(1)
         .maybeSingle();
-      if (cv?.version_label) setContractLabel(`${cv.catalog_name || "SKR ramavtal"} ${cv.version_label}`);
+
+      if (cvr?.version_id) {
+        const { data: cv } = await supabase
+          .from("contract_versions")
+          .select("version_label, catalog_name")
+          .eq("id", cvr.version_id)
+          .maybeSingle();
+        if (cv?.version_label) setContractLabel(`${cv.catalog_name || "SKR ramavtal"} ${cv.version_label}`);
+      }
 
       setLoading(false);
     };
