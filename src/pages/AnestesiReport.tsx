@@ -198,7 +198,7 @@ export default function AnestesiReport() {
         <section className="rounded-2xl bg-gradient-to-b from-primary/[0.08] to-primary/[0.02] border border-primary/20 p-5 text-center space-y-3">
           <h2 className="text-lg font-bold text-foreground">Vad borde du tjäna?</h2>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Svara på 6 snabba frågor och få en personlig rapport baserad på din roll, zon och anställningsform.
+            Svara på 4 snabba frågor och få en personlig rapport baserad på din zon och anställningsform.
           </p>
           <Link to="/?yrke=anestesi">
             <Button className="gap-2 h-12 rounded-xl px-6 mt-2">
