@@ -97,13 +97,10 @@ export default function SalaryCheck() {
             För vårdens konsulter
           </h1>
 
-          <p className="text-hero-foreground/60 text-xl md:text-2xl max-w-2xl mx-auto mb-2 leading-relaxed">
-            Ny rapport för 2026 finns tillgänglig nu. Vår tredje rapport visar faktiska marknadsvillkor för din specifika kompetens i 290 kommuner och 21 regioner.
+          <p className="text-hero-foreground/60 text-xl md:text-2xl max-w-3xl mx-auto mb-10 leading-relaxed whitespace-pre-line">
+            Ny rapport för 2026 är här nu. Vår tredje rapport visar faktiska marknadsvillkor för din specifika kompetens i 290 kommuner och 21 regioner.{"\n\n"}
+            Bättre beslutsunderlag och smarta verktyg som förenklar livet som konsult. Allt baserat på offentliga avtal från SKR.
           </p>
-          <p className="text-hero-foreground/60 text-sm md:text-base max-w-2xl mx-auto leading-relaxed">
-            {"\n"}
-          </p>
-          <div className="h-4 md:h-6" />
 
           {/* Role selection CTA */}
           
