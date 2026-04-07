@@ -55,7 +55,7 @@ export default function CompensationView({ role, location, employmentType }: Com
         setInvoiceRate(rate.timpris_kund);
 
         // 3. Calculate salary range
-        const empType: EmploymentType = employmentType === "consultant" ? "foretagare" : "anstalld";
+        const empType: EmploymentType = employmentType === "foretagare" ? "foretagare" : "anstalld";
         const range = calculateSalaryRange(rate.timpris_kund, empType);
         setSalaryRange({ hourlyMin: range.hourly_min, hourlyMax: range.hourly_max });
       }
