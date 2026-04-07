@@ -747,7 +747,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
         {/* Step 6: Ersättning (final step) */}
         {step === 6 && (
           <StepWrapper title="Vad får du i ersättning idag?">
-            <div className="rounded-2xl border border-border bg-card p-5 space-y-5 pb-[120px]">
+            <div className="rounded-2xl border border-border bg-card p-5 space-y-5">
               <div className="flex gap-3">
                 {([
                   { value: "hourly" as const, label: "Per timme" },
@@ -793,7 +793,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
       </div>
 
       {/* Navigation */}
-      <div className="flex gap-3 mt-8">
+      <div className={`flex gap-3 mt-8 ${step === 6 ? "sticky bottom-0 bg-background pt-3 pb-4 -mx-1 px-1 z-10" : ""}`}>
         {(step > 1 || onBack) && (
           <button
             onClick={handleBack}
