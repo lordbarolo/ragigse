@@ -33,8 +33,16 @@ const webAppJsonLd = {
   offers: { "@type": "Offer", price: "0", priceCurrency: "SEK", description: "Gratis jämförelse av konsultersättning" },
 };
 
+const PREFILL_MAP: Record<string, { category: "ssk" | "lakare"; role: string }> = {
+  anestesi: { category: "ssk", role: "Anestesisjukvård" },
+};
+
 export default function SalaryCheck() {
-  const [showSurvey, setShowSurvey] = useState(false);
+  const [searchParams] = useSearchParams();
+  const prefillKey = searchParams.get("yrke") || "";
+  const prefill = PREFILL_MAP[prefillKey];
+
+  const [showSurvey, setShowSurvey] = useState(!!prefill);
   const surveyRef = useRef<HTMLDivElement>(null);
 
   useTimeOnPage("landing");
