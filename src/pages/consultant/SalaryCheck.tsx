@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { ShieldCheck } from "lucide-react";
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
@@ -33,8 +33,16 @@ const webAppJsonLd = {
   offers: { "@type": "Offer", price: "0", priceCurrency: "SEK", description: "Gratis jämförelse av konsultersättning" },
 };
 
+const PREFILL_MAP: Record<string, { category: "ssk" | "lakare"; role: string }> = {
+  anestesi: { category: "ssk", role: "Anestesisjukvård" },
+};
+
 export default function SalaryCheck() {
-  const [showSurvey, setShowSurvey] = useState(false);
+  const [searchParams] = useSearchParams();
+  const prefillKey = searchParams.get("yrke") || "";
+  const prefill = PREFILL_MAP[prefillKey];
+
+  const [showSurvey, setShowSurvey] = useState(!!prefill);
   const surveyRef = useRef<HTMLDivElement>(null);
 
   useTimeOnPage("landing");
@@ -67,6 +75,8 @@ export default function SalaryCheck() {
         </header>
         <div ref={surveyRef} className="px-4 pt-8 pb-16 min-h-[calc(100vh-3.5rem)] flex flex-col">
           <Survey
+            initialCategory={prefill?.category}
+            initialRole={prefill?.role}
             onBack={() => setShowSurvey(false)}
           />
         </div>
