@@ -104,7 +104,7 @@ export default function Report() {
         {/* Subtle decorative element */}
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
         <div className="max-w-lg mx-auto space-y-4 relative z-10">
-          <CompcareLogo variant="full" inverted className="mb-6" />
+          {/* Logo removed — already shown in Navbar */}
           <p className="text-[10px] uppercase tracking-[0.2em] font-medium opacity-70">
             Ersättningsanalys
           </p>
