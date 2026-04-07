@@ -471,8 +471,22 @@ const FORBIDDEN_WORDS = [
 
 const DISCLAIMER = "Med reservation för tillkommande kostnader.";
 
+// Zod schema — final validation gate for LLM output
+const AdviceOutputSchema = z.object({
+  advice: z.string().min(1).max(600),
+  followup: z.string().max(100).default(""),
+  includes_amount: z.boolean().default(false),
+  situation_summary: z.string().max(300).default(""),
+});
+type AdviceOutput = z.infer<typeof AdviceOutputSchema>;
+
+function parseAndValidateToolOutput(raw: string): AdviceOutput {
+  const parsed = JSON.parse(raw);
+  return AdviceOutputSchema.parse(parsed);
+}
+
 function validateAdvice(
-  raw: { advice: string; followup: string; includes_amount: boolean; situation_summary: string },
+  raw: AdviceOutput,
   history: ConversationTurn[]
 ): { advice: string; situation_summary: string } {
   let advice = raw.advice.trim();
