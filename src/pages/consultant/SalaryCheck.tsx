@@ -240,15 +240,6 @@ export default function SalaryCheck() {
             </div>
           ))}
 
-          <div className="rounded-xl border border-primary/20 bg-primary/5 px-5 py-4 flex items-start gap-3">
-            <ShieldCheck className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-            <div>
-              <h3 className="text-base font-semibold text-foreground mb-1">Tryggt och säkert</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                All identifiering sker säkert med BankID. Din information grundas på offentliga handlingar och regionernas ramavtal för 2026.
-              </p>
-            </div>
-          </div>
         </div>
       </section>
       {!import.meta.env.PROD && (
