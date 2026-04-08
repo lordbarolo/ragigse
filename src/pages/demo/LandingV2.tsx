@@ -261,7 +261,7 @@ export default function LandingV2() {
             Fem verktyg som förenklar din karriär
           </h2>
           <p className="text-[15px] text-muted-foreground leading-[1.65]">
-            Allt du behöver som konsult inom vården — samlat på ett ställe som du äger.
+            Allt du behöver som konsult inom vården — samlat på ett ställe som du kontrollerar.
           </p>
         </div>
 
