@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const TRUST_LOGOS = ["Capio", "Region Stockholm", "Aleris", "Praktikertjänst", "Sahlgrenska"];
 
 const STATS = [
-  { num: "25 000+", label: "konsulter i nätverket" },
+  { num: "25 000+", label: "konsulter i nätverket", subtitle: "Legitimerad sjuksköterska" },
   { num: "82.6%", label: "träffsäkerhet i lönedata" },
   { num: "94", label: "anslutna bemanningsbolag" },
 ];
@@ -201,6 +201,7 @@ export default function LandingV2() {
         <div className="relative z-10 ml-auto pr-6 lg:pr-10 py-20 hidden lg:flex flex-col gap-5">
           {STATS.map((s) => (
             <div key={s.label} className="bg-white/[0.07] border border-white/[0.13] rounded-xl px-6 py-[18px] min-w-[200px]">
+              {s.subtitle && <div className="text-[11px] text-white/40 uppercase tracking-wider mb-1">{s.subtitle}</div>}
               <div className="text-[28px] font-medium text-white mb-0.5">{s.num}</div>
               <div className="text-[13px] text-white/50">{s.label}</div>
             </div>
