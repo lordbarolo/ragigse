@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 const TRUST_LOGOS = ["Capio", "Region Stockholm", "Aleris", "Praktikertjänst", "Sahlgrenska"];
 
 const STATS = [
-  { num: "25 000+", label: "konsulter i nätverket" },
+  { num: "25 000+", label: "konsulter i nätverket", subtitle: "Legitimerad sjuksköterska" },
   { num: "82.6%", label: "träffsäkerhet i lönedata" },
   { num: "94", label: "anslutna bemanningsbolag" },
 ];
