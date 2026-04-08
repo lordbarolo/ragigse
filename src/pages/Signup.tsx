@@ -114,7 +114,7 @@ export default function Signup() {
 
         <Card className="border-border/50 bg-card/80 backdrop-blur">
           <CardHeader className="text-center">
-            <CardTitle className="text-xl font-semibold text-foreground">Skapa konsultkonto</CardTitle>
+            <CardTitle className="text-xl font-semibold text-foreground">Skapa konto</CardTitle>
             <CardDescription>
               Få tillgång till dina rapporter och personlig profil direkt
             </CardDescription>
