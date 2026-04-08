@@ -58,6 +58,7 @@ const AgencyLanding = lazy(() => import("./pages/AgencyLanding"));
 const AgencySignup = lazy(() => import("./pages/AgencySignup"));
 const DemoLanding = lazy(() => import("./pages/DemoLanding"));
 const ReferenceDemo = lazy(() => import("./pages/demo/ReferenceDemo"));
+const LandingV2 = lazy(() => import("./pages/demo/LandingV2"));
 const Campaign = lazy(() => import("./pages/Campaign"));
 
 const queryClient = new QueryClient();
@@ -164,6 +165,7 @@ const App = () => (
               <Route path="/dev/e2e-test" element={import.meta.env.PROD ? <NotFound /> : <E2ETest />} />
               <Route path="/demo" element={<DemoLanding />} />
               <Route path="/demo/referenser" element={<ReferenceDemo />} />
+              <Route path="/demo/landing-v2" element={<LandingV2 />} />
               <Route path="/dev/demo" element={<Navigate to="/demo" replace />} />
 
               {/* ── Backwards-compat redirects ───── */}
