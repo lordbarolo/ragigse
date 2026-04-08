@@ -203,7 +203,7 @@ export default function LandingV2() {
         </div>
 
         {/* stat cards — desktop: vertical column, mobile: horizontal scroll */}
-        <div className="relative z-10 mx-auto py-10 lg:py-20 flex lg:flex-col gap-4 lg:gap-5 overflow-x-auto lg:overflow-visible px-6 lg:px-0 w-full lg:w-auto snap-x snap-mandatory scrollbar-hide">
+        <div className="relative z-10 mx-auto py-10 lg:py-20 flex lg:flex-col gap-4 lg:gap-5 overflow-x-auto lg:overflow-visible px-6 lg:px-0 w-full lg:w-auto snap-x snap-mandatory scrollbar-hide order-2 lg:order-none">
           {STATS.map((s) => (
             <div key={s.label} className="bg-white/[0.07] border border-white/[0.13] rounded-xl px-5 lg:px-6 py-4 lg:py-[18px] min-w-[200px] shrink-0 snap-start">
               {s.subtitle && <div className="text-[11px] text-white/40 uppercase tracking-wider mb-1">{s.subtitle}</div>}
