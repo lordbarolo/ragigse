@@ -183,7 +183,7 @@ export default function LandingV2() {
         />
 
         {/* content */}
-        <div className="relative z-10 px-6 lg:px-10 py-20 max-w-[620px]">
+        <div className="relative z-10 px-6 lg:px-10 pt-16 pb-8 lg:py-20 max-w-[620px]">
           <div className="inline-flex items-center gap-1.5 text-xs font-medium text-[#AFA9EC] bg-[rgba(83,74,183,0.2)] border border-[rgba(127,119,221,0.35)] rounded-full px-3 py-1 mb-5 uppercase tracking-wider">
             <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="#AFA9EC" /></svg>
             Byggt för läkare &amp; sjuksköterskor
@@ -191,7 +191,7 @@ export default function LandingV2() {
           <h1 className="text-[clamp(2rem,5vw,42px)] font-medium leading-[1.18] text-white mb-4 tracking-tight">
             Dina <span className="text-[#AFA9EC]">data.</span><br />Din karriär.<br />Dina villkor.
           </h1>
-          <p className="text-base text-white/[0.68] leading-relaxed mb-8 max-w-[460px]">
+          <p className="text-base text-white/[0.68] leading-relaxed mb-0 lg:mb-8 max-w-[460px]">
             CompCare samlar alla verktyg du behöver som konsult inom vården — löneanalys, verifiering, fakturagranskning och referenshantering i en plattform du äger.
           </p>
           {/* Desktop buttons */}
@@ -203,23 +203,23 @@ export default function LandingV2() {
           </div>
         </div>
 
-        {/* stat cards */}
-        <div className="relative z-10 mx-auto py-0 lg:py-20 flex lg:flex-col gap-4 lg:gap-5 overflow-x-auto lg:overflow-visible px-6 lg:px-0 w-full lg:w-auto snap-x snap-mandatory scrollbar-hide">
+        {/* stat cards — mobile: 2-col grid, desktop: vertical column */}
+        <div className="relative z-10 mx-auto py-4 lg:py-20 grid grid-cols-2 lg:flex lg:flex-col gap-3 lg:gap-5 px-6 lg:px-0 w-full lg:w-auto">
           {STATS.map((s) => (
-            <div key={s.label} className="bg-white/[0.07] border border-white/[0.13] rounded-xl px-5 lg:px-6 py-4 lg:py-[18px] min-w-[200px] shrink-0 snap-start">
-              {s.subtitle && <div className="text-[11px] text-white/40 uppercase tracking-wider mb-1">{s.subtitle}</div>}
-              <div className="text-[24px] lg:text-[28px] font-medium text-white mb-0.5">{s.num}</div>
-              <div className="text-[12px] lg:text-[13px] text-white/50">{s.label}</div>
+            <div key={s.label} className="bg-white/[0.07] border border-white/[0.13] rounded-xl px-4 lg:px-6 py-3.5 lg:py-[18px]">
+              {s.subtitle && <div className="text-[10px] lg:text-[11px] text-white/40 uppercase tracking-wider mb-1">{s.subtitle}</div>}
+              <div className="text-[20px] lg:text-[28px] font-medium text-white mb-0.5">{s.num}</div>
+              <div className="text-[11px] lg:text-[13px] text-white/50 leading-snug">{s.label}</div>
             </div>
           ))}
         </div>
 
         {/* Mobile buttons — after stat cards */}
-        <div className="relative z-10 flex lg:hidden gap-3 px-6 pb-10">
-          <Link to="/registrera">
-            <button className="px-7 py-3 bg-[#534AB7] rounded-lg text-white text-[15px] font-medium">Kom igång gratis</button>
+        <div className="relative z-10 grid grid-cols-2 lg:hidden gap-3 px-6 pb-10">
+          <Link to="/registrera" className="block">
+            <button className="w-full px-4 py-3 bg-[#534AB7] rounded-lg text-white text-[15px] font-medium">Kom igång gratis</button>
           </Link>
-          <button className="px-7 py-3 bg-transparent border border-white/30 rounded-lg text-white/80 text-[15px]">Se hur det fungerar</button>
+          <button className="w-full px-4 py-3 bg-transparent border border-white/30 rounded-lg text-white/80 text-[15px]">Se hur det fungerar</button>
         </div>
       </section>
 
