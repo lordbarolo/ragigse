@@ -213,7 +213,7 @@ export default function LandingV2() {
             </div>
           ))}
           <Link to="/registrera" className="bg-white/[0.07] border border-white/[0.13] rounded-xl px-4 lg:px-6 py-3.5 lg:py-[18px] hover:bg-white/[0.12] transition-colors group">
-            <div className="text-[10px] lg:text-[11px] text-white/40 uppercase tracking-wider mb-1">Gratis analys</div>
+            <div className="text-[10px] lg:text-[11px] text-white/40 uppercase tracking-wider mb-1">JÄMFÖR DIN EGEN LÖN</div>
             <div className="text-[20px] lg:text-[28px] font-medium text-white mb-0.5">Kom igång →</div>
             <div className="text-[11px] lg:text-[13px] text-white/50 leading-snug">Se vad du borde tjäna</div>
           </Link>
