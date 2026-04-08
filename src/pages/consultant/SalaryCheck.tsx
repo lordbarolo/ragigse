@@ -107,150 +107,56 @@ export default function SalaryCheck() {
         </div>
       </header>
 
-      {/* ── Light Hero ──────────────────────────────────── */}
-      <section className="relative pt-16 pb-20 px-6 bg-background">
-        <div className="max-w-3xl mx-auto text-center">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-1.5 text-sm font-medium text-primary mb-6">
-            <ShieldCheck className="w-4 h-4" />
-            100% Verifierad Marknadsdata
-          </div>
+      {/* ── Hero: Löneförhandling ── */}
+      <section className="relative overflow-hidden bg-background">
+        <div className="relative mx-auto max-w-3xl px-6 pt-16 pb-14 md:pt-20 md:pb-16">
+          <div className="flex flex-col">
+            {/* Badge */}
+            <div className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3.5 py-1.5 text-[13px] font-medium text-primary backdrop-blur-xl">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_14px_hsl(var(--primary)/0.5)]" />
+              För sjuksköterskor och läkare i bemanning
+            </div>
 
-          <h1 className="font-bold mb-6 tracking-tight leading-[1.08] text-foreground text-4xl md:text-5xl">
-            Se lönen du faktiskt kan få som inhyrd
-          </h1>
+            {/* Heading */}
+            <h1 className="text-[2.25rem] font-bold leading-[1.05] tracking-[-0.035em] text-foreground sm:text-5xl lg:text-[3.5rem]">
+              Din nästa löneförhandling börjar här.
+            </h1>
 
-          <p className="text-muted-foreground md:text-lg max-w-2xl mx-auto mb-4 leading-relaxed whitespace-pre-line">
-            Marknadsinsikter och smarta tjänster för läkare och sjuksköterskor inom bemanning. Se vilken ersättning som bemanningsföretagen får och vad de faktiskt kan erbjuda. Löneanalysen jämför dina nuvarande villkor med marknadens genomsnitt. {"\n\n"}
-            Vi har analyserat över 20 000 upphandlingar och avtal. Uppgifter som alltid varit offentliga men sällan nått konsulten.
-          </p>
-          <p className="text-muted-foreground md:text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
-            Vår senaste rapport visar vad regionen faktiskt betalar per timme för din kompetens.
-          </p>
-
-          {/* CTA */}
-          <div className="max-w-sm mx-auto">
-            <button
-              onClick={handleStartSurvey}
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-4 rounded-2xl font-semibold transition-all shadow-lg shadow-primary/20 text-base"
-            >
-              Svara på 6 frågor. Få alla svar
-            </button>
-            <p className="mt-3 text-xs text-muted-foreground">
-              Baserat på avtal RS 2022–03983 från SKR
+            {/* Body */}
+            <p className="mt-4 max-w-lg text-[15px] leading-[1.7] text-muted-foreground sm:text-base lg:text-[17px]">
+              Gå inte in i nästa samtal med en magkänsla – gå in med data. Vi har kartlagt de faktiska avtalspriserna för 21 regioner och 290 kommuner. Genom att jämföra din nuvarande ersättning mot marknadens realitet ser du direkt om du ligger rätt eller om du har förhandlingsutrymme.
             </p>
-          </div>
 
-          {/* Progressive disclosure — data preview */}
-          <div className="mt-10 mx-auto max-w-md rounded-xl border border-border bg-card p-5 text-left shadow-sm">
-            <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-2">Exempel ur vår data</p>
-            <div className="flex items-baseline justify-between gap-4">
-              <div>
-                <p className="text-sm font-medium text-foreground">Hyrsjuksköterska, Region Skåne</p>
-                <p className="text-xs text-muted-foreground">Genomsnittligt timarvode · 2026</p>
-              </div>
-              <p className="text-2xl font-bold text-foreground whitespace-nowrap">770 <span className="text-base font-medium text-muted-foreground">kr/h</span></p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Trust signals ─────────────────────────────── */}
-      <section className="border-y border-border bg-card/60">
-        <div className="max-w-4xl mx-auto px-6 py-6 flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-10">
-          {TRUST_SIGNALS.map((s) => (
-            <div key={s.text} className="flex items-center gap-2.5 text-muted-foreground">
-              <s.icon className="w-4 h-4 shrink-0 text-primary" />
-              <span className="text-sm">{s.text}</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── Section 2: Löneförhandling ── */}
-      <section className="relative overflow-hidden bg-secondary/50">
-        <div className="relative mx-auto max-w-6xl px-6 py-14 md:px-10 lg:px-12 lg:py-20">
-          <div className="grid items-center gap-8 md:grid-cols-[1fr_0.9fr] lg:gap-10">
-
-            {/* ── Text column ── */}
-            <div className="flex flex-col">
-              {/* Badge */}
-              <div className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3.5 py-1.5 text-[13px] font-medium text-primary backdrop-blur-xl">
-                <span className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_14px_hsl(var(--primary)/0.5)]" />
-                För sjuksköterskor och läkare i bemanning
-              </div>
-
-              {/* Heading */}
-              <h2 className="text-[2.25rem] font-semibold leading-[1.05] tracking-[-0.035em] text-foreground sm:text-5xl lg:text-[3.5rem]">
-                Din nästa löneförhandling börjar här.
-              </h2>
-
-              {/* Body */}
-              <p className="mt-4 max-w-lg text-[15px] leading-[1.7] text-muted-foreground sm:text-base lg:text-[17px]">
-                Gå inte in i nästa samtal med en magkänsla – gå in med data. Vi har kartlagt de faktiska avtalspriserna för 21 regioner och 290 kommuner. Genom att jämföra din nuvarande ersättning mot marknadens realitet ser du direkt om du ligger rätt eller om du har förhandlingsutrymme.
-              </p>
-
-              {/* Bullet cards */}
-              <div className="mt-6 space-y-2">
-                {[
-                  { title: "Transparens:", text: "Se rätt avtalsinnehåll och lönenivå för din roll" },
-                  { title: "Regional jämförelse:", text: "Se hur ersättningen skiljer sig mellan orter" },
-                  { title: "Smart assistent:", text: "Få konkreta råd baserat på verifierad marknadsdata" },
-                ].map((item) => (
-                  <div key={item.title} className="flex items-start gap-3 rounded-lg border border-border bg-card/60 px-3.5 py-2.5">
-                    <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-primary/20 bg-primary/5 text-[10px] text-primary">
-                      ✦
-                    </div>
-                    <p className="text-[13px] leading-[1.6] text-muted-foreground sm:text-sm">
-                      <span className="font-medium text-foreground">{item.title}</span> {item.text}
-                    </p>
+            {/* Bullet cards */}
+            <div className="mt-6 space-y-2">
+              {[
+                { title: "Transparens:", text: "Se rätt avtalsinnehåll och lönenivå för din roll" },
+                { title: "Regional jämförelse:", text: "Se hur ersättningen skiljer sig mellan orter" },
+                { title: "Smart assistent:", text: "Få konkreta råd baserat på verifierad marknadsdata" },
+              ].map((item) => (
+                <div key={item.title} className="flex items-start gap-3 rounded-lg border border-border bg-card/60 px-3.5 py-2.5">
+                  <div className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border border-primary/20 bg-primary/5 text-[10px] text-primary">
+                    ✦
                   </div>
-                ))}
-              </div>
-
-              {/* Trust line + CTA */}
-              <div className="mt-5">
-                <p className="text-sm text-muted-foreground lg:text-[15px]">Informationen hämtas från offentliga avtal och branschens genomsnittsmarginaler.</p>
-                <div className="mt-3">
-                  <button
-                    onClick={handleStartSurvey}
-                    className="inline-flex min-h-[50px] items-center justify-center rounded-xl bg-primary hover:bg-primary/90 px-7 text-[15px] font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition duration-200 hover:-translate-y-0.5"
-                  >
-                    Se villkor för din roll och ort
-                  </button>
+                  <p className="text-[13px] leading-[1.6] text-muted-foreground sm:text-sm">
+                    <span className="font-medium text-foreground">{item.title}</span> {item.text}
+                  </p>
                 </div>
+              ))}
+            </div>
+
+            {/* Trust line + CTA */}
+            <div className="mt-5">
+              <p className="text-sm text-muted-foreground lg:text-[15px]">Informationen hämtas från offentliga avtal och branschens genomsnittsmarginaler.</p>
+              <div className="mt-3">
+                <button
+                  onClick={handleStartSurvey}
+                  className="w-full sm:w-auto inline-flex min-h-[50px] items-center justify-center rounded-xl bg-primary hover:bg-primary/90 px-7 text-[15px] font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition duration-200 hover:-translate-y-0.5"
+                >
+                  Se villkor för din roll och ort
+                </button>
               </div>
             </div>
-
-            {/* ── Image column ── */}
-            <div className="relative hidden md:flex items-center justify-center self-stretch -ml-4 lg:-ml-8">
-              <div className="absolute inset-[-5%] rounded-full bg-[radial-gradient(ellipse_60%_55%_at_48%_50%,hsl(var(--primary)/0.08),transparent_80%)] blur-lg" />
-              <img
-                src={handPhoneImage}
-                alt="Person som håller mobil med CompCare-gränssnitt"
-                className="relative z-10 w-full max-w-[560px] h-auto object-contain drop-shadow-[0_20px_50px_rgba(0,0,0,0.15)]"
-                style={{
-                  transform: "translateX(-15%)",
-                  maskImage: "radial-gradient(ellipse 90% 92% at 50% 48%, black 60%, transparent 100%)",
-                  WebkitMaskImage: "radial-gradient(ellipse 90% 92% at 50% 48%, black 60%, transparent 100%)",
-                }}
-              />
-            </div>
-
-          </div>
-
-          {/* Mobile image */}
-          <div className="relative mt-10 flex justify-center md:hidden">
-            <div className="absolute inset-[-12%] rounded-full bg-[radial-gradient(circle,hsl(var(--primary)/0.06),transparent_65%)] blur-lg" />
-            <img
-              src={handPhoneImage}
-              alt="Person som håller mobil med CompCare-gränssnitt"
-              className="relative z-10 w-3/4 max-w-[320px] h-auto object-contain drop-shadow-[0_16px_40px_rgba(0,0,0,0.12)]"
-              style={{
-                maskImage: "radial-gradient(ellipse 85% 88% at 50% 48%, black 55%, transparent 100%)",
-                WebkitMaskImage: "radial-gradient(ellipse 85% 88% at 50% 48%, black 55%, transparent 100%)",
-              }}
-            />
           </div>
         </div>
       </section>
