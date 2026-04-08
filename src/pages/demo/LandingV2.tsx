@@ -203,7 +203,7 @@ export default function LandingV2() {
         </div>
 
         {/* stat cards */}
-        <div className="relative z-10 ml-auto pr-6 lg:pr-10 py-20 hidden lg:flex flex-col gap-5">
+        <div className="relative z-10 mx-auto py-20 hidden lg:flex flex-col gap-5">
           {STATS.map((s) => (
             <div key={s.label} className="bg-white/[0.07] border border-white/[0.13] rounded-xl px-6 py-[18px] min-w-[200px]">
               {s.subtitle && <div className="text-[11px] text-white/40 uppercase tracking-wider mb-1">{s.subtitle}</div>}
