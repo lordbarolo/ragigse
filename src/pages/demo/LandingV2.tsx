@@ -6,7 +6,7 @@ const TRUST_LOGOS = ["Capio", "Region Stockholm", "Aleris", "Praktikertjänst", 
 const STATS = [
   { num: "616kr/timme", label: "Vad regionen betalar i storstad", subtitle: "Legitimerad sjuksköterska" },
   { num: "15-20%", label: "Vanlig marginal till bemanningsföretag", subtitle: "Bemanningsföretagets andel" },
-  { num: "94", label: "anslutna bemanningsbolag", subtitle: "Legitimerad sjuksköterska" },
+  { num: "508kr/timme", label: "Se uträkningen för din roll och ort", subtitle: "KVAR TILL KONSULT MED FÖRETAG" },
 ];
 
 const MODULES = [
