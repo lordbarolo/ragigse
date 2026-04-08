@@ -170,7 +170,7 @@ export default function LandingV2() {
       </nav>
 
       {/* ── Hero ────────────────────────────── */}
-      <section className="relative min-h-[480px] flex items-center overflow-hidden">
+      <section className="relative min-h-[480px] flex flex-col lg:flex-row items-center overflow-hidden">
         {/* bg layers */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#0d0b2a] via-[#1a1545] via-[70%] to-[#0e0c30]" />
         <div className="absolute inset-0 bg-[rgba(5,4,20,0.45)]" />
