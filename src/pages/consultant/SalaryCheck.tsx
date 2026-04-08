@@ -127,8 +127,21 @@ export default function SalaryCheck() {
               Gå inte in i nästa samtal med en magkänsla – gå in med data. Vi har kartlagt de faktiska avtalspriserna för 21 regioner och 290 kommuner. Genom att jämföra din nuvarande ersättning mot marknadens realitet ser du direkt om du ligger rätt eller om du har förhandlingsutrymme.
             </p>
 
+            {/* CTA */}
+            <div className="mt-6">
+              <button
+                onClick={handleStartSurvey}
+                className="w-full sm:w-auto inline-flex min-h-[50px] items-center justify-center rounded-xl bg-primary hover:bg-primary/90 px-7 text-[15px] font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition duration-200 hover:-translate-y-0.5"
+              >
+                Se villkor för din roll och ort
+              </button>
+            </div>
+
+            {/* Trust line */}
+            <p className="mt-4 text-sm text-muted-foreground lg:text-[15px]">Informationen hämtas från offentliga avtal och branschens genomsnittsmarginaler.</p>
+
             {/* Bullet cards */}
-            <div className="mt-6 space-y-2">
+            <div className="mt-8 space-y-2">
               {[
                 { title: "Transparens:", text: "Se rätt avtalsinnehåll och lönenivå för din roll" },
                 { title: "Regional jämförelse:", text: "Se hur ersättningen skiljer sig mellan orter" },
@@ -143,19 +156,6 @@ export default function SalaryCheck() {
                   </p>
                 </div>
               ))}
-            </div>
-
-            {/* Trust line + CTA */}
-            <div className="mt-5">
-              <p className="text-sm text-muted-foreground lg:text-[15px]">Informationen hämtas från offentliga avtal och branschens genomsnittsmarginaler.</p>
-              <div className="mt-3">
-                <button
-                  onClick={handleStartSurvey}
-                  className="w-full sm:w-auto inline-flex min-h-[50px] items-center justify-center rounded-xl bg-primary hover:bg-primary/90 px-7 text-[15px] font-semibold text-primary-foreground shadow-lg shadow-primary/20 transition duration-200 hover:-translate-y-0.5"
-                >
-                  Se villkor för din roll och ort
-                </button>
-              </div>
             </div>
           </div>
         </div>
