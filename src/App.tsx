@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect } from "react";
+import posthog from "@/lib/posthog";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -74,6 +75,9 @@ function ScrollToTop() {
     window.scrollTo(0, 0);
     if (typeof window.gtag === 'function') {
       window.gtag('config', 'G-8TKTZH3KZZ', { page_path: pathname });
+    }
+    if (posthog.has_opted_in_capturing()) {
+      posthog.capture('$pageview');
     }
   }, [pathname]);
 
