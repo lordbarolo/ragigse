@@ -9,10 +9,10 @@ const STATS = [
   { num: "508kr/timme", label: "Se uträkningen för din roll och ort", subtitle: "KVAR TILL KONSULT MED FÖRETAG" },
 ];
 
-const MODULES = [
+const MODULES_ROW1 = [
   {
     title: "Verify — dokumentvalvet",
-    desc: "Spara läkarintyg, utbildningsbevis och legitimationer på ett säkert ställe. Dela med BankID-länk istället för att skicka mail till fem bolag.",
+    desc: "Spara legitimationer, intyg och utbildningsbevis på ett säkert ställe. Dela med BankID-länk — aldrig mer bifogade filer till fem bolag.",
     tag: "Ingår gratis",
     tagColor: "purple" as const,
     iconBg: "#EEEDFE",
@@ -27,7 +27,7 @@ const MODULES = [
   },
   {
     title: "Referensplattformen",
-    desc: "Hantera och kontrollera dina referenser själv. Skicka en länk — uppdragsgivaren ser exakt det du väljer att visa, när du väljer att visa det.",
+    desc: "Full kontroll över dina referenser. Du bestämmer vem som ser dem och när — aldrig automatiskt synliga för uppdragsgivare.",
     tag: "Ingår gratis",
     tagColor: "purple" as const,
     iconBg: "#EEEDFE",
@@ -40,8 +40,8 @@ const MODULES = [
   },
   {
     title: "Löneanalys & löneassistent",
-    desc: "Vet direkt om du är över- eller underbetalad. Löneassistenten ger konkreta förhandlingstips baserat på din specialitet, region och erfarenhet.",
-    tag: "Insight-modulen",
+    desc: "Vet direkt om du är rätt betald. Löneassistenten ger konkreta förhandlingstips baserat på din specialitet, region och erfarenhet.",
+    tag: "Insight — 149 kr/mån",
     tagColor: "amber" as const,
     iconBg: "#FAEEDA",
     icon: (
@@ -50,23 +50,26 @@ const MODULES = [
       </svg>
     ),
   },
+];
+
+const MODULES_ROW2 = [
   {
     title: "Fakturagranskning",
-    desc: "Skanna in gamla fakturor och tidrapporter. AI:n hittar tid du jobbat men inte fakturerat. Vi hjälper dig att få betalt — och tar 25% av det vi hittar.",
+    desc: "AI granskar fakturor och tidrapporter mot utfört arbete. Vi hittar vad du missat och hjälper dig fakturera det. Vi tar 25% av det vi hittar.",
     tag: "Prestationsbaserat",
-    tagColor: "blue" as const,
-    iconBg: "#E6F1FB",
+    tagColor: "green" as const,
+    iconBg: "#EAF3DE",
     icon: (
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-        <rect x="3" y="5" width="14" height="10" rx="2" stroke="#185FA5" strokeWidth="1.2" />
-        <line x1="7" y1="9" x2="13" y2="9" stroke="#185FA5" strokeWidth="1.2" strokeLinecap="round" />
-        <line x1="7" y1="12" x2="10" y2="12" stroke="#185FA5" strokeWidth="1.2" strokeLinecap="round" />
+        <rect x="3" y="5" width="14" height="10" rx="2" stroke="#3B6D11" strokeWidth="1.2" />
+        <line x1="7" y1="9" x2="13" y2="9" stroke="#3B6D11" strokeWidth="1.2" strokeLinecap="round" />
+        <line x1="7" y1="12" x2="10" y2="12" stroke="#3B6D11" strokeWidth="1.2" strokeLinecap="round" />
       </svg>
     ),
   },
   {
     title: "Uppdragsradar",
-    desc: "Se vilka uppdrag som är på gång i din region och specialitet, baserat på 29 000+ analyserade bemanningsuppdrag. Planera din nästa affär i god tid.",
+    desc: "Se kommande uppdrag i din region och specialitet — baserat på 29 000+ analyserade bemanningsuppdrag. Planera din nästa affär i god tid.",
     tag: "Beta",
     tagColor: "purple" as const,
     iconBg: "#EEEDFE",
