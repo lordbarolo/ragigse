@@ -117,7 +117,7 @@ export default function SalaryCheck() {
           </div>
 
           <h1 className="font-bold mb-6 tracking-tight leading-[1.08] text-foreground text-4xl md:text-5xl">
-            För sjukvårdens konsulter
+            Se lönen du faktiskt kan få som inhyrd
           </h1>
 
           <p className="text-muted-foreground md:text-lg max-w-2xl mx-auto mb-4 leading-relaxed whitespace-pre-line">
