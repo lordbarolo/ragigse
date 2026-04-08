@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { getConsent, setConsent } from "@/lib/cookieConsent";
 import { Link } from "react-router-dom";
+import posthog from "@/lib/posthog";
 
 export default function CookieBanner() {
   const [visible, setVisible] = useState(false);
