@@ -4,8 +4,8 @@ import { Link } from "react-router-dom";
 const TRUST_LOGOS = ["Capio", "Region Stockholm", "Aleris", "Praktikertjänst", "Sahlgrenska"];
 
 const STATS = [
-  { num: "616kr/timme", label: "Genomsnittlig lön", subtitle: "Legitimerad sjuksköterska" },
-  { num: "15-20%", label: "Vanlig marginal till bemanningsföretag", subtitle: "Legitimerad sjuksköterska" },
+  { num: "616kr/timme", label: "Vad regionen betalar i storstad", subtitle: "Legitimerad sjuksköterska" },
+  { num: "15-20%", label: "Vanlig marginal till bemanningsföretag", subtitle: "Bemanningsföretagets andel" },
   { num: "94", label: "anslutna bemanningsbolag", subtitle: "Legitimerad sjuksköterska" },
 ];
 
