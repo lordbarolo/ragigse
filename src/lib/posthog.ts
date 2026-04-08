@@ -8,8 +8,7 @@ posthog.init("phc_GiBn5CBOm72IrzgsdQRuUcK2mujk5Q0ZeI6hs8ixvwv", {
   capture_pageview: false,
   capture_pageleave: true,
   cross_subdomain_cookie: true,
-  cookie_domain: ".compcare.se",
-});
+} as any);
 
 // Mark internal traffic with a super property
 if (
