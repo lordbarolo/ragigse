@@ -257,7 +257,7 @@ export default function LandingV2() {
       {/* ── Steps ───────────────────────────── */}
       <section className="px-6 lg:px-10 py-[72px] bg-[#ECEAF5]">
         <p className="text-xs font-medium text-[#534AB7] uppercase tracking-widest mb-2.5">Så funkar det</p>
-        <h2 className="text-[30px] font-medium leading-tight tracking-tight mb-10">Tre steg till full kontroll</h2>
+        <h2 className="text-[30px] font-medium leading-tight tracking-tight mb-10">Fyra steg till full kontroll</h2>
         <div className="flex flex-col md:flex-row gap-0 relative">
           <div className="hidden md:block absolute top-7 left-7 right-7 h-px bg-border/40" />
           {STEPS.map((s) => (
