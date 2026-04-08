@@ -120,7 +120,8 @@ export default function SalaryCheck() {
             För sjukvårdens konsulter
           </h1>
 
-          <p className="text-muted-foreground md:text-lg max-w-2xl mx-auto mb-4 leading-relaxed">
+          <p className="text-muted-foreground md:text-lg max-w-2xl mx-auto mb-4 leading-relaxed whitespace-pre-line">
+            Marknadsinsikter och smarta tjänster för läkare och sjuksköterskor inom bemanning. Se vilken ersättning som bemanningsföretagen får och vad de faktiskt kan erbjuda. Löneanalysen jämför dina nuvarande villkor med marknadens genomsnitt. {"\n\n"}
             Vi har analyserat över 20 000 upphandlingar och avtal. Uppgifter som alltid varit offentliga men sällan nått konsulten.
           </p>
           <p className="text-muted-foreground md:text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
