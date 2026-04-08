@@ -73,14 +73,44 @@ export default function Login() {
     }
   };
 
+  const features = [
+    { icon: "📊", title: "Marknadsrapport", desc: "Se faktiska ersättningsnivåer för din roll och ort baserat på ramavtalsdata." },
+    { icon: "🧾", title: "Fakturakontroll", desc: "Ladda upp din faktura och få en automatisk granskning mot gällande avtal." },
+    { icon: "🤖", title: "Löneassistent", desc: "Ställ frågor om din ersättning och få svar baserade på avtalsdata." },
+    { icon: "🛡️", title: "Referensvalv", desc: "Samla och dela verifierade referenser med bemanningsföretag." },
+    { icon: "📡", title: "Uppdragsradar", desc: "Bevaka kommande avrop och få notiser innan de publiceras." },
+    { icon: "📁", title: "Dokument & Profil", desc: "Lagra legitimationer, intyg och bygg din verifierade konsultprofil." },
+  ];
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-6">
+      <div className="w-full max-w-lg space-y-6">
         <div className="flex justify-center">
           <Link to="/">
             <CompcareLogo variant="full" />
           </Link>
         </div>
+
+        {/* Feature showcase */}
+        <Card className="border-border/50 bg-card/80 backdrop-blur">
+          <CardHeader className="text-center pb-2">
+            <CardTitle className="text-lg font-semibold text-foreground">Ditt personliga kontrollcenter</CardTitle>
+            <CardDescription>Logga in för att få tillgång till alla verktyg</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-3">
+              {features.map((f) => (
+                <div key={f.title} className="flex items-start gap-2.5 rounded-lg border border-border/40 bg-muted/30 p-3">
+                  <span className="text-xl leading-none mt-0.5">{f.icon}</span>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-foreground leading-tight">{f.title}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5 leading-snug">{f.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
 
         <Card className="border-border/50 bg-card/80 backdrop-blur">
           <CardHeader className="text-center">
