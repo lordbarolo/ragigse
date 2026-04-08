@@ -76,6 +76,9 @@ function ScrollToTop() {
     if (typeof window.gtag === 'function') {
       window.gtag('config', 'G-8TKTZH3KZZ', { page_path: pathname });
     }
+    if (posthog.has_opted_in_capturing()) {
+      posthog.capture('$pageview');
+    }
   }, [pathname]);
 
   return null;

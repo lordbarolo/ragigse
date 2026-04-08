@@ -42,11 +42,13 @@ export default function CookieBanner() {
 
   const handleAccept = () => {
     setConsent("accepted");
+    posthog.opt_in_capturing();
     setVisible(false);
   };
 
   const handleReject = () => {
     setConsent("rejected");
+    posthog.opt_out_capturing();
     setVisible(false);
   };
 
