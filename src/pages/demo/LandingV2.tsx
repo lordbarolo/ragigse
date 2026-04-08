@@ -164,9 +164,6 @@ export default function LandingV2() {
           <Link to="/logga-in">
             <button className="text-sm px-4 py-2 border border-border rounded-lg bg-transparent text-foreground">Logga in</button>
           </Link>
-          <Link to="/registrera">
-            <button className="text-sm px-5 py-2 rounded-lg bg-[#534AB7] text-white font-medium">Skapa konto</button>
-          </Link>
         </div>
       </nav>
 
