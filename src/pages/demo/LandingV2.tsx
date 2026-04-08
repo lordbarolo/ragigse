@@ -194,7 +194,7 @@ export default function LandingV2() {
           <p className="text-base text-white/[0.68] leading-relaxed mb-8 max-w-[460px]">
             CompCare samlar alla verktyg du behöver som konsult inom vården — löneanalys, verifiering, fakturagranskning och referenshantering i en plattform du äger.
           </p>
-          <div className="flex gap-3">
+          <div className="flex gap-3 order-3 lg:order-none">
             <Link to="/registrera">
               <button className="px-7 py-3 bg-[#534AB7] rounded-lg text-white text-[15px] font-medium">Kom igång gratis</button>
             </Link>
