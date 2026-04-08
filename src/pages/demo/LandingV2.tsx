@@ -183,7 +183,7 @@ export default function LandingV2() {
         />
 
         {/* content */}
-        <div className="relative z-10 px-6 lg:px-10 py-20 max-w-[620px]">
+        <div className="relative z-10 px-6 lg:px-10 py-20 max-w-[620px] flex flex-col">
           <div className="inline-flex items-center gap-1.5 text-xs font-medium text-[#AFA9EC] bg-[rgba(83,74,183,0.2)] border border-[rgba(127,119,221,0.35)] rounded-full px-3 py-1 mb-5 uppercase tracking-wider">
             <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="#AFA9EC" /></svg>
             Byggt för läkare &amp; sjuksköterskor
