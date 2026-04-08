@@ -137,9 +137,11 @@ const TESTIMONIALS = [
 
 /* ───────────────────── helpers ─────────────────── */
 const TAG_COLORS: Record<string, string> = {
-  purple: "bg-[#EEEDFE] text-[#3C3489]",
-  amber: "bg-[#FAEEDA] text-[#854F0B]",
-  blue: "bg-[#E6F1FB] text-[#185FA5]",
+  purple: "bg-[#EEEDFE] text-[#3C3489] border-[rgba(83,74,183,0.2)]",
+  amber: "bg-[#FAEEDA] text-[#854F0B] border-[rgba(186,117,23,0.2)]",
+  blue: "bg-[#E6F1FB] text-[#185FA5] border-[rgba(24,95,165,0.2)]",
+  green: "bg-[#EAF3DE] text-[#3B6D11] border-[rgba(59,109,17,0.2)]",
+  muted: "bg-[#F2F1F8] text-muted-foreground border-border/40",
 };
 
 /* ───────────────────── component ──────────────── */
