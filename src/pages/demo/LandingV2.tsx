@@ -9,10 +9,10 @@ const STATS = [
   { num: "508kr/timme", label: "Se uträkningen för din roll och ort", subtitle: "KVAR TILL KONSULT MED FÖRETAG" },
 ];
 
-const MODULES = [
+const MODULES_ROW1 = [
   {
     title: "Verify — dokumentvalvet",
-    desc: "Spara läkarintyg, utbildningsbevis och legitimationer på ett säkert ställe. Dela med BankID-länk istället för att skicka mail till fem bolag.",
+    desc: "Spara legitimationer, intyg och utbildningsbevis på ett säkert ställe. Dela med BankID-länk — aldrig mer bifogade filer till fem bolag.",
     tag: "Ingår gratis",
     tagColor: "purple" as const,
     iconBg: "#EEEDFE",
@@ -27,7 +27,7 @@ const MODULES = [
   },
   {
     title: "Referensplattformen",
-    desc: "Hantera och kontrollera dina referenser själv. Skicka en länk — uppdragsgivaren ser exakt det du väljer att visa, när du väljer att visa det.",
+    desc: "Full kontroll över dina referenser. Du bestämmer vem som ser dem och när — aldrig automatiskt synliga för uppdragsgivare.",
     tag: "Ingår gratis",
     tagColor: "purple" as const,
     iconBg: "#EEEDFE",
@@ -40,8 +40,8 @@ const MODULES = [
   },
   {
     title: "Löneanalys & löneassistent",
-    desc: "Vet direkt om du är över- eller underbetalad. Löneassistenten ger konkreta förhandlingstips baserat på din specialitet, region och erfarenhet.",
-    tag: "Insight-modulen",
+    desc: "Vet direkt om du är rätt betald. Löneassistenten ger konkreta förhandlingstips baserat på din specialitet, region och erfarenhet.",
+    tag: "Insight — 149 kr/mån",
     tagColor: "amber" as const,
     iconBg: "#FAEEDA",
     icon: (
@@ -50,23 +50,26 @@ const MODULES = [
       </svg>
     ),
   },
+];
+
+const MODULES_ROW2 = [
   {
     title: "Fakturagranskning",
-    desc: "Skanna in gamla fakturor och tidrapporter. AI:n hittar tid du jobbat men inte fakturerat. Vi hjälper dig att få betalt — och tar 25% av det vi hittar.",
+    desc: "AI granskar fakturor och tidrapporter mot utfört arbete. Vi hittar vad du missat och hjälper dig fakturera det. Vi tar 25% av det vi hittar.",
     tag: "Prestationsbaserat",
-    tagColor: "blue" as const,
-    iconBg: "#E6F1FB",
+    tagColor: "green" as const,
+    iconBg: "#EAF3DE",
     icon: (
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-        <rect x="3" y="5" width="14" height="10" rx="2" stroke="#185FA5" strokeWidth="1.2" />
-        <line x1="7" y1="9" x2="13" y2="9" stroke="#185FA5" strokeWidth="1.2" strokeLinecap="round" />
-        <line x1="7" y1="12" x2="10" y2="12" stroke="#185FA5" strokeWidth="1.2" strokeLinecap="round" />
+        <rect x="3" y="5" width="14" height="10" rx="2" stroke="#3B6D11" strokeWidth="1.2" />
+        <line x1="7" y1="9" x2="13" y2="9" stroke="#3B6D11" strokeWidth="1.2" strokeLinecap="round" />
+        <line x1="7" y1="12" x2="10" y2="12" stroke="#3B6D11" strokeWidth="1.2" strokeLinecap="round" />
       </svg>
     ),
   },
   {
     title: "Uppdragsradar",
-    desc: "Se vilka uppdrag som är på gång i din region och specialitet, baserat på 29 000+ analyserade bemanningsuppdrag. Planera din nästa affär i god tid.",
+    desc: "Se kommande uppdrag i din region och specialitet — baserat på 29 000+ analyserade bemanningsuppdrag. Planera din nästa affär i god tid.",
     tag: "Beta",
     tagColor: "purple" as const,
     iconBg: "#EEEDFE",
@@ -134,9 +137,11 @@ const TESTIMONIALS = [
 
 /* ───────────────────── helpers ─────────────────── */
 const TAG_COLORS: Record<string, string> = {
-  purple: "bg-[#EEEDFE] text-[#3C3489]",
-  amber: "bg-[#FAEEDA] text-[#854F0B]",
-  blue: "bg-[#E6F1FB] text-[#185FA5]",
+  purple: "bg-[#EEEDFE] text-[#3C3489] border-[rgba(83,74,183,0.2)]",
+  amber: "bg-[#FAEEDA] text-[#854F0B] border-[rgba(186,117,23,0.2)]",
+  blue: "bg-[#E6F1FB] text-[#185FA5] border-[rgba(24,95,165,0.2)]",
+  green: "bg-[#EAF3DE] text-[#3B6D11] border-[rgba(59,109,17,0.2)]",
+  muted: "bg-[#F2F1F8] text-muted-foreground border-border/40",
 };
 
 /* ───────────────────── component ──────────────── */
@@ -220,36 +225,45 @@ export default function LandingV2() {
       </div>
 
       {/* ── Modules ─────────────────────────── */}
-      <section className="px-6 lg:px-10 py-[72px] bg-white">
-        <p className="text-xs font-medium text-[#534AB7] uppercase tracking-widest mb-2.5">Plattformen</p>
-        <h2 className="text-[30px] font-medium leading-tight tracking-tight mb-3">Allt du behöver. På ett ställe.</h2>
-        <p className="text-base text-muted-foreground leading-relaxed max-w-[520px] mb-10">
-          Du bygger din karriär. Vi ser till att du aldrig lämnar pengar på bordet, aldrig letar efter ett dokument och alltid vet vad du är värd.
-        </p>
-        <div className="grid md:grid-cols-3 gap-4">
-          {MODULES.map((m) => (
-            <div key={m.title} className="bg-white border border-border/40 rounded-xl p-6">
-              <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-3.5" style={{ background: m.iconBg }}>
+      <section className="px-6 lg:px-14 py-20 bg-[#F2F1F8]">
+        <div className="mb-[52px]">
+          <span className="inline-block text-[11px] font-semibold uppercase tracking-[0.1em] text-[#534AB7] bg-[#EEEDFE] border border-[rgba(83,74,183,0.2)] rounded-full px-3.5 py-1 mb-4">
+            Plattformen
+          </span>
+          <h2 className="font-serif text-[34px] font-bold leading-[1.15] tracking-tight text-foreground mb-2.5">
+            Fem verktyg som förenklar din karriär
+          </h2>
+          <p className="text-[15px] text-muted-foreground leading-[1.65]">
+            Allt du behöver som konsult inom vården — samlat på ett ställe som du äger.
+          </p>
+        </div>
+
+        {/* Row 1 — 3 cards */}
+        <div className="grid md:grid-cols-3 gap-4 mb-4">
+          {MODULES_ROW1.map((m) => (
+            <div key={m.title} className="bg-white border border-[rgba(0,0,0,0.08)] rounded-[18px] p-7 flex flex-col hover:border-[rgba(83,74,183,0.25)] hover:shadow-[0_4px_24px_rgba(83,74,183,0.08)] transition-all">
+              <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-5 shrink-0" style={{ background: m.iconBg }}>
                 {m.icon}
               </div>
-              <h3 className="text-[15px] font-medium mb-1.5">{m.title}</h3>
-              <p className="text-[13px] text-muted-foreground leading-relaxed mb-3.5">{m.desc}</p>
-              <span className={`inline-block text-[11px] font-medium px-2.5 py-0.5 rounded-full ${TAG_COLORS[m.tagColor]}`}>{m.tag}</span>
+              <h3 className="text-base font-semibold text-foreground mb-2 leading-snug">{m.title}</h3>
+              <p className="text-[13px] text-foreground leading-[1.7] flex-1 mb-[22px]">{m.desc}</p>
+              <span className={`inline-block text-[11px] font-medium px-2.5 py-1 rounded-full border w-fit ${TAG_COLORS[m.tagColor]}`}>{m.tag}</span>
             </div>
           ))}
-          {/* coming soon */}
-          <div className="border border-dashed border-border/60 rounded-xl p-6 bg-[#F2F1F8]">
-            <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-3.5 bg-white">
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                <circle cx="10" cy="10" r="6" stroke="#888780" strokeWidth="1.2" strokeDasharray="3 2" />
-                <line x1="10" y1="7" x2="10" y2="13" stroke="#888780" strokeWidth="1.2" strokeLinecap="round" />
-                <line x1="7" y1="10" x2="13" y2="10" stroke="#888780" strokeWidth="1.2" strokeLinecap="round" />
-              </svg>
+        </div>
+
+        {/* Row 2 — 2 cards, 2/3 width */}
+        <div className="grid md:grid-cols-2 gap-4 md:max-w-[calc(66.66%-8px)]">
+          {MODULES_ROW2.map((m) => (
+            <div key={m.title} className="bg-white border border-[rgba(0,0,0,0.08)] rounded-[18px] p-7 flex flex-col hover:border-[rgba(83,74,183,0.25)] hover:shadow-[0_4px_24px_rgba(83,74,183,0.08)] transition-all">
+              <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-5 shrink-0" style={{ background: m.iconBg }}>
+                {m.icon}
+              </div>
+              <h3 className="text-base font-semibold text-foreground mb-2 leading-snug">{m.title}</h3>
+              <p className="text-[13px] text-foreground leading-[1.7] flex-1 mb-[22px]">{m.desc}</p>
+              <span className={`inline-block text-[11px] font-medium px-2.5 py-1 rounded-full border w-fit ${TAG_COLORS[m.tagColor]}`}>{m.tag}</span>
             </div>
-            <h3 className="text-[15px] font-medium text-muted-foreground mb-1.5">Fler moduler på väg</h3>
-            <p className="text-[13px] text-muted-foreground leading-relaxed mb-3.5">Referly, API-integrationer mot bemanningsbolag och mer. CompCare växer med dig.</p>
-            <span className="inline-block text-[11px] font-medium px-2.5 py-0.5 rounded-full bg-white text-muted-foreground">Kommer snart</span>
-          </div>
+          ))}
         </div>
       </section>
 
