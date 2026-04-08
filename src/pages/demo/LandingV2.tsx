@@ -183,7 +183,7 @@ export default function LandingV2() {
         />
 
         {/* content */}
-        <div className="relative z-10 px-6 lg:px-10 py-20 max-w-[620px] flex flex-col">
+        <div className="relative z-10 px-6 lg:px-10 py-20 max-w-[620px] order-1 lg:order-none">
           <div className="inline-flex items-center gap-1.5 text-xs font-medium text-[#AFA9EC] bg-[rgba(83,74,183,0.2)] border border-[rgba(127,119,221,0.35)] rounded-full px-3 py-1 mb-5 uppercase tracking-wider">
             <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="#AFA9EC" /></svg>
             Byggt för läkare &amp; sjuksköterskor
@@ -194,16 +194,10 @@ export default function LandingV2() {
           <p className="text-base text-white/[0.68] leading-relaxed mb-8 max-w-[460px]">
             CompCare samlar alla verktyg du behöver som konsult inom vården — löneanalys, verifiering, fakturagranskning och referenshantering i en plattform du äger.
           </p>
-          <div className="flex gap-3 order-3 lg:order-none">
-            <Link to="/registrera">
-              <button className="px-7 py-3 bg-[#534AB7] rounded-lg text-white text-[15px] font-medium">Kom igång gratis</button>
-            </Link>
-            <button className="px-7 py-3 bg-transparent border border-white/30 rounded-lg text-white/80 text-[15px]">Se hur det fungerar</button>
-          </div>
         </div>
 
         {/* stat cards — desktop: vertical column, mobile: horizontal scroll */}
-        <div className="relative z-10 mx-auto py-10 lg:py-20 flex lg:flex-col gap-4 lg:gap-5 overflow-x-auto lg:overflow-visible px-6 lg:px-0 w-full lg:w-auto snap-x snap-mandatory scrollbar-hide order-2 lg:order-none">
+        <div className="relative z-10 mx-auto py-0 lg:py-20 flex lg:flex-col gap-4 lg:gap-5 overflow-x-auto lg:overflow-visible px-6 lg:px-0 w-full lg:w-auto snap-x snap-mandatory scrollbar-hide order-2 lg:order-none">
           {STATS.map((s) => (
             <div key={s.label} className="bg-white/[0.07] border border-white/[0.13] rounded-xl px-5 lg:px-6 py-4 lg:py-[18px] min-w-[200px] shrink-0 snap-start">
               {s.subtitle && <div className="text-[11px] text-white/40 uppercase tracking-wider mb-1">{s.subtitle}</div>}
@@ -211,6 +205,14 @@ export default function LandingV2() {
               <div className="text-[12px] lg:text-[13px] text-white/50">{s.label}</div>
             </div>
           ))}
+        </div>
+
+        {/* CTA buttons */}
+        <div className="relative z-10 flex gap-3 px-6 lg:px-10 pb-10 lg:pb-0 order-3 lg:order-none lg:absolute lg:bottom-20 lg:left-10">
+          <Link to="/registrera">
+            <button className="px-7 py-3 bg-[#534AB7] rounded-lg text-white text-[15px] font-medium">Kom igång gratis</button>
+          </Link>
+          <button className="px-7 py-3 bg-transparent border border-white/30 rounded-lg text-white/80 text-[15px]">Se hur det fungerar</button>
         </div>
       </section>
 
