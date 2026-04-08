@@ -81,7 +81,7 @@ const MODULES = [
 ];
 
 const STEPS = [
-  { num: "1", title: "Skapa ditt konto", desc: "BankID-verifiering, inga lösenord. Dina uppgifter är dina." },
+  { num: "1", title: "Skapa ditt konto", desc: "Logga in och ange din roll. Få tillgång alla verktyg och insikter." },
   { num: "2", title: "Ladda upp dina dokument", desc: "Fakturor, tidrapporter, bevis. Allt struktureras automatiskt." },
   { num: "3", title: "Få insikt och agera", desc: "Löneanalys, missade fakturor, förhandlingsstöd — direkt." },
   { num: "4", title: "Dela på dina villkor", desc: "Skicka en länk när du är redo. Aldrig mer bifogade filer." },
