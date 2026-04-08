@@ -212,6 +212,11 @@ export default function LandingV2() {
               <div className="text-[11px] lg:text-[13px] text-white/50 leading-snug">{s.label}</div>
             </div>
           ))}
+          <Link to="/registrera" className="col-span-2 lg:col-span-1 bg-[#534AB7] hover:bg-[#4a42a5] border border-[#7F77DD]/40 rounded-xl px-4 lg:px-6 py-3.5 lg:py-[18px] transition-colors group">
+            <div className="text-[10px] lg:text-[11px] text-white/50 uppercase tracking-wider mb-1">Gratis analys</div>
+            <div className="text-[20px] lg:text-[28px] font-medium text-white mb-0.5">Kom igång →</div>
+            <div className="text-[11px] lg:text-[13px] text-white/70 leading-snug group-hover:text-white/90 transition-colors">Se vad du borde tjäna</div>
+          </Link>
         </div>
 
         {/* Mobile buttons — after stat cards */}
