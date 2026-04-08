@@ -266,7 +266,7 @@ export default function LandingV2() {
                 {s.num}
               </div>
               <h4 className="text-sm font-medium mb-1.5">{s.title}</h4>
-              <p className="text-[13px] text-muted-foreground leading-snug">{s.desc}</p>
+              <p className="text-[13px] text-muted-foreground leading-snug whitespace-pre-line">{s.desc}</p>
             </div>
           ))}
         </div>
