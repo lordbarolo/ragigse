@@ -215,12 +215,24 @@ export default function LandingV2() {
       </section>
 
       {/* ── Trust bar ───────────────────────── */}
-      <div className="flex items-center gap-8 px-6 lg:px-10 py-5 bg-white border-b border-border/40">
+      {/* Desktop */}
+      <div className="hidden md:flex items-center gap-8 px-6 lg:px-10 py-5 bg-white border-b border-border/40">
         <span className="text-xs text-muted-foreground uppercase tracking-widest whitespace-nowrap">Används av konsulter från</span>
         <div className="flex gap-4 flex-wrap">
           {TRUST_LOGOS.map((t) => (
             <span key={t} className="text-[13px] font-medium text-muted-foreground px-3.5 py-1.5 border border-border/40 rounded-lg bg-white">{t}</span>
           ))}
+        </div>
+      </div>
+      {/* Mobile ticker */}
+      <div className="md:hidden bg-white border-b border-border/40 py-4 overflow-hidden">
+        <span className="block text-[10px] text-muted-foreground uppercase tracking-widest text-center mb-2.5 px-4">Används av konsulter från</span>
+        <div className="relative overflow-hidden">
+          <div className="flex gap-3 animate-marquee w-max">
+            {[...TRUST_LOGOS, ...TRUST_LOGOS].map((t, i) => (
+              <span key={`${t}-${i}`} className="text-[12px] font-medium text-muted-foreground px-3 py-1 border border-border/40 rounded-lg bg-white whitespace-nowrap">{t}</span>
+            ))}
+          </div>
         </div>
       </div>
 
