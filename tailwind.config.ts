@@ -103,7 +103,7 @@ export default {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "slide-in-right": "slide-in-right 3s cubic-bezier(0.16, 1, 0.3, 1) forwards",
-        marquee: "marquee 12s linear infinite",
+        marquee: "marquee 20s linear infinite",
       },
     },
   },

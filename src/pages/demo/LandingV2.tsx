@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 
 /* ───────────────────── data ───────────────────── */
+const NAV_LINKS = ["Verktyg", "Löneanalys", "Fakturagranskning", "Uppdragsprognos", "Priser", "Om oss"];
 const TRUST_LOGOS = ["Capio", "Region Stockholm", "Aleris", "Praktikertjänst", "Sahlgrenska"];
 
 const STATS = [
@@ -93,11 +94,11 @@ const STEPS = [
 ];
 
 const INVOICES = [
-  { label: "Faktura #2024-031", val: "42 h — OK", status: "ok" },
-  { label: "Faktura #2024-038", val: "6 h saknas", status: "miss" },
-  { label: "Faktura #2024-044", val: "38 h — OK", status: "ok" },
-  { label: "Faktura #2024-051", val: "3.5 h saknas", status: "miss" },
-  { label: "Faktura #2024-059", val: "44 h — OK", status: "ok" },
+  { label: "Faktura #3", val: "42 h — OK", status: "ok" },
+  { label: "Faktura #4", val: "6 h saknas", status: "miss" },
+  { label: "Faktura #5", val: "38 h — OK", status: "ok" },
+  { label: "Faktura #6", val: "3.5 h saknas", status: "miss" },
+  { label: "Faktura #7", val: "44 h — OK", status: "ok" },
 ];
 
 const PLANS = [
@@ -170,7 +171,7 @@ export default function LandingV2() {
           CompCare
         </div>
         <div className="hidden md:flex gap-6">
-          {["Verktyg", "Löneanalys", "Fakturagranskning", "Priser", "Om oss"].map((l) => (
+          {NAV_LINKS.map((l) => (
             <span key={l} className="text-sm text-muted-foreground cursor-default">{l}</span>
           ))}
         </div>
@@ -462,7 +463,7 @@ export default function LandingV2() {
         <div className="grid md:grid-cols-3 gap-4">
           {PLANS.map((p) => (
             <div key={p.name} className={`bg-white border rounded-xl p-7 ${p.featured ? "border-2 border-[#534AB7]" : "border-border/40"}`}>
-              {p.featured && <span className="inline-block text-[11px] font-medium bg-[#EEEDFE] text-[#3C3489] px-2.5 py-0.5 rounded-full mb-3">{"badge" in p ? p.badge : ""}</span>}
+              {p.badge && <span className="inline-block text-[11px] font-medium bg-[#EEEDFE] text-[#3C3489] px-2.5 py-0.5 rounded-full mb-3">{p.badge}</span>}
               <h3 className="text-base font-medium mb-1">{p.name}</h3>
               <div className="text-[28px] font-medium my-3">{p.price}<span className="text-sm font-normal text-muted-foreground">{p.unit}</span></div>
               <p className="text-[13px] text-muted-foreground leading-snug mb-5">{p.desc}</p>
@@ -526,7 +527,7 @@ export default function LandingV2() {
               CompCare
             </div>
             <p className="text-[13px] text-muted-foreground leading-relaxed max-w-[220px]">
-              Data och verktyg för Sveriges läkare och sjuksköterskor. Helt oberoende från bemanningsbranschen.
+              Transparent marknadsdata och smarta verktyg för Sveriges läkare och sjuksköterskor.
             </p>
           </div>
           <div>
