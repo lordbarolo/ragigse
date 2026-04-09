@@ -320,7 +320,7 @@ export default function LandingV2() {
             <p className="text-xs font-medium text-[#534AB7] uppercase tracking-widest mb-2.5">Fakturagranskning</p>
             <h2 className="text-[30px] font-medium leading-tight tracking-tight mb-3">Du har troligen pengar du inte fått</h2>
             <p className="text-[15px] text-muted-foreground leading-relaxed mb-5">
-              Konsulter missar i snitt 3–8% av fakturerbara timmar. Vi går igenom dina historiska fakturor och tidrapporter och identifierar utestående belopp — utan risk för dig.
+              Konsulter missar i snitt 3–8% av fakturerbara timmar. Det är lätt att missa storhelgs-ob, lokala påslag vid jour eller indexjustering av avtal. Vi går igenom dina historiska fakturor och tidrapporter och identifierar utestående belopp — utan risk för dig.
             </p>
             <p className="text-[13px] text-muted-foreground/70">Vi tar 25% av det vi hittar. Hittar vi ingenting kostar det dig ingenting.</p>
           </div>
