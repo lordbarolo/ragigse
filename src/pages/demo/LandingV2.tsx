@@ -402,8 +402,6 @@ export default function LandingV2() {
         </div>
       </section>
 
-      <div className="h-px bg-border/40 mx-6 lg:mx-10" />
-
       {/* ── Pricing ─────────────────────────── */}
       <section className="px-6 lg:px-10 py-[72px] bg-[#ECEAF5]">
         <p className="text-xs font-medium text-[#534AB7] uppercase tracking-widest mb-2.5">Priser</p>
