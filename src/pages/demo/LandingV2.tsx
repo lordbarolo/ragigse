@@ -69,7 +69,7 @@ const MODULES_ROW2 = [
     ),
   },
   {
-    title: "Uppdragsradar",
+    title: "Uppdragsprognos",
     desc: "Öka chanserna att få uppdragen du verkligen vill ha. Se prognoser utifrån uppdrag som publicerats historiskt i din region och specialitet. Vi har analyserat 5 års historik och över 30 000 bemanningsuppdrag. ",
     tag: "Beta",
     tagColor: "purple" as const,
@@ -113,8 +113,8 @@ const PLANS = [
     name: "Insight",
     price: "149 kr",
     unit: " /mån",
-    desc: "Full löneanalys, förhandlingsstöd och uppdragsradar.",
-    features: ["Allt i Gratis", "Detaljerad löneanalys", "Löneassistent med AI", "Uppdragsradar", "Regional och specialitetsjämförelse"],
+    desc: "Full löneanalys, förhandlingsstöd och uppdragsprognos.",
+    features: ["Allt i Gratis", "Detaljerad löneanalys", "Löneassistent med AI", "Uppdragsprognos", "Regional och specialitetsjämförelse"],
     cta: "Välj Insight",
     featured: true,
     badge: "Mest populär",
@@ -470,7 +470,7 @@ export default function LandingV2() {
           <div>
             <h4 className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-3">Verktyg</h4>
             <div className="flex flex-col gap-2 text-[13px] text-muted-foreground">
-              <span>Verify</span><span>Löneanalys</span><span>Fakturagranskning</span><span>Uppdragsradar</span>
+              <span>Verify</span><span>Löneanalys</span><span>Fakturagranskning</span><span>Uppdragsprognos</span>
             </div>
           </div>
           <div>
