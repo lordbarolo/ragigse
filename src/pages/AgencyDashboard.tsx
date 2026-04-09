@@ -452,7 +452,7 @@ export default function AgencyDashboard() {
         <div className="grid grid-cols-3 gap-4 mb-5">
           {[
             { step: "1", text: "Skapa en representations\u00ADförfrågan" },
-            { step: "2", text: "Konsulten signerar med BankID" },
+            { step: "2", text: "Konsulten signerar digitalt" },
             { step: "3", text: "Digitalt bevis skapas automatiskt" },
           ].map((item) => (
             <div key={item.step} className="flex flex-col items-center text-center gap-2">
@@ -467,16 +467,16 @@ export default function AgencyDashboard() {
         <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
           <p>
             Verify eliminerar risken för dubbelpresentationer hos uppdragsgivare. Istället för att regioner och kommuner ska behöva hantera
-            oklarheter kring vilken byrå som representerar en konsult, skapar ni ett digitalt representationsbevis som konsulten signerar med BankID.
+            oklarheter kring vilken byrå som representerar en konsult, skapar ni ett digitalt representationsbevis som konsulten signerar.
           </p>
           <p>
             <strong className="text-foreground">Skapa en förfrågan</strong> — Ange konsultens e-post, uppdrags-ID och region. Konsulten
-            får ett SMS med en signeringslänk. Ingen inloggning krävs av konsulten — bara BankID.
+            får ett SMS med en signeringslänk. Ingen inloggning krävs av konsulten.
           </p>
           <p>
             <strong className="text-foreground">Beviset genereras automatiskt</strong> — När signeringen är klar skapas ett verifieringsbevis
-            med unik URL som ni kan skicka direkt till uppdragsgivaren. Beviset innehåller konsultens verifierade meriter, BankID-signatur
-            och en komplett händelselogg.
+            med unik URL som ni kan skicka direkt till uppdragsgivaren. Beviset innehåller konsultens verifierade meriter, digital signatur
+             och en komplett händelselogg.
           </p>
         </div>
       </div>

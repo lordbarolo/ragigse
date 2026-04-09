@@ -45,7 +45,7 @@ const PrivacyPolicy = () => {
 
             <h3 className="text-base font-medium text-foreground mt-4">2.4 Referenser</h3>
             <p className="text-sm text-muted-foreground leading-relaxed mt-1">
-              Du kan registrera referensgivare med namn, e-post, telefonnummer, organisation och yrkesroll. Vi skickar inbjudningar via e-post och erbjuder BankID-verifiering. Referensgivarens personuppgifter behandlas för att möjliggöra verifieringstjänsten. Rättslig grund: berättigat intresse (artikel 6.1f GDPR). Referensgivaren kan när som helst begära radering av sina uppgifter.
+              Du kan registrera referensgivare med namn, e-post, telefonnummer, organisation och yrkesroll. Vi skickar inbjudningar via e-post och erbjuder digital verifiering. Referensgivarens personuppgifter behandlas för att möjliggöra verifieringstjänsten. Rättslig grund: berättigat intresse (artikel 6.1f GDPR). Referensgivaren kan när som helst begära radering av sina uppgifter.
             </p>
 
             <h3 className="text-base font-medium text-foreground mt-4">2.5 Löneanalys och förhandlingschat</h3>
@@ -151,7 +151,7 @@ const PrivacyPolicy = () => {
           <div>
             <h2 className="text-xl font-semibold text-foreground">9. Säkerhet</h2>
             <p className="text-sm text-muted-foreground leading-relaxed mt-2">
-              Vi vidtar lämpliga tekniska och organisatoriska åtgärder för att skydda dina personuppgifter, inklusive: kryptering av data i transit (TLS) och vid lagring, radnivåsäkerhet (RLS) i databasen som säkerställer att varje användare enbart kan se sina egna uppgifter, samt BankID-verifiering för referenstjänsten.
+              Vi vidtar lämpliga tekniska och organisatoriska åtgärder för att skydda dina personuppgifter, inklusive: kryptering av data i transit (TLS) och vid lagring, radnivåsäkerhet (RLS) i databasen som säkerställer att varje användare enbart kan se sina egna uppgifter, samt stark digital verifiering för referenstjänsten.
             </p>
           </div>
 

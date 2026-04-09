@@ -21,7 +21,7 @@ export default function VerifyInfo() {
         <div className="max-w-3xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 px-3 py-1 rounded-full text-primary text-xs font-semibold mb-6 uppercase tracking-wider">
             <Fingerprint className="w-3 h-3" />
-            BankID-säkrad auktorisering
+            Digitalt säkrad auktorisering
           </div>
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground mb-6">
             Verify — Eliminera<br />dubbelpresentationer
@@ -42,7 +42,7 @@ export default function VerifyInfo() {
           <div className="space-y-6">
             {[
               { step: "1", title: "Förfrågan skickas", desc: "Bemanningsföretaget initierar en verifieringsförfrågan för ett specifikt uppdrag." },
-              { step: "2", title: "BankID-signering", desc: "Du får en länk via SMS, öppnar den och signerar med BankID. Hela processen tar under 30 sekunder." },
+              { step: "2", title: "Digital signering", desc: "Du får en länk via SMS, öppnar den och signerar digitalt. Hela processen tar under 30 sekunder." },
               { step: "3", title: "Bevis genereras", desc: "Ett kryptografiskt bevis skapas som kan delas med uppdragsgivaren. Beviset visar exakt vilken aktör du auktoriserat." },
             ].map((s) => (
               <div key={s.step} className="flex gap-4">
@@ -68,7 +68,7 @@ export default function VerifyInfo() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {[
               { icon: ShieldCheck, title: "Skydd mot dubbelpresentationer", desc: "Regioner ser omedelbart vilka bemanningsföretag som är auktoriserade." },
-              { icon: Fingerprint, title: "BankID-nivå", desc: "Signeringen är juridiskt bindande och kan inte förfalskas." },
+              { icon: Fingerprint, title: "Stark verifiering", desc: "Signeringen är juridiskt bindande och kan inte förfalskas." },
               { icon: FileCheck, title: "Audit Trail", desc: "Varje steg loggas transparent — du har full insyn i vem som sett beviset." },
               { icon: CheckCircle, title: "Source of Truth", desc: "En enda källa till sanning istället för e-postkedjor och telefonsamtal." },
             ].map((b, i) => (

@@ -30,7 +30,7 @@ const MODULES_ROW1 = [
   },
   {
     title: "Referensplattformen",
-    desc: "Du bestämmer vem som ser dem och när. Referensgivare kan verifiera med bank-id istället för att lämna samma uppgifter till flera bolag.",
+    desc: "Du bestämmer vem som ser dem och när. Referensgivare kan verifiera digitalt istället för att lämna samma uppgifter till flera bolag.",
     tag: "Ingår gratis",
     tagColor: "purple" as const,
     iconBg: "#EEEDFE",
@@ -232,7 +232,7 @@ export default function LandingV2() {
                 </button>
               </Link>
             </div>
-            <p className="text-[11px] text-white/30">Inga kreditkort. BankID-verifiering tar 30 sekunder.</p>
+            <p className="text-[11px] text-white/30">Inga kreditkort. Kom igång på 30 sekunder.</p>
           </div>
         </div>
 
@@ -516,7 +516,7 @@ export default function LandingV2() {
       {/* ── CTA Banner ──────────────────────── */}
       <div className="mx-6 lg:mx-10 mb-[72px] rounded-xl bg-[#1a1545] px-6 lg:px-12 py-14 text-center">
         <h2 className="text-[28px] font-medium text-white mb-3">Redo att ta kontroll?</h2>
-        <p className="text-base text-white/60 mb-7">Gratis konto. Inga kreditkort. BankID-verifiering på 30 sekunder.</p>
+        <p className="text-base text-white/60 mb-7">Gratis konto. Inga kreditkort. Kom igång på 30 sekunder.</p>
         <div className="flex gap-3 justify-center">
           <Link to="/registrera">
             <button className="px-8 py-3 bg-[#534AB7] rounded-lg text-white text-[15px] font-medium">Skapa konto gratis</button>
@@ -560,7 +560,7 @@ export default function LandingV2() {
         </div>
         <div className="border-t border-border/40 pt-5 flex flex-col md:flex-row justify-between items-center gap-2 text-xs text-muted-foreground">
           <p>© 2026 CompCare — Piemonte Invest AB</p>
-          <p>BankID · GDPR-kompatibel · Datan tillhör dig</p>
+          <p>GDPR-kompatibel · Datan tillhör dig</p>
         </div>
       </footer>
     </div>

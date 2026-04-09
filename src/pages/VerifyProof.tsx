@@ -40,8 +40,8 @@ const VERIFICATION_LABELS: Record<string, { label: string; icon: React.ReactNode
     icon: <ShieldCheck className="h-3 w-3" />,
     className: "bg-primary/10 text-primary border-primary/20",
   },
-  bankid: {
-    label: "BankID",
+  verified: {
+    label: "Verifierad",
     icon: <ShieldCheck className="h-3 w-3" />,
     className: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
   },
@@ -198,9 +198,9 @@ export default function VerifyProof() {
             {applicationId?.slice(0, 8)}…
           </span>
           {representation ? (
-            <span className="flex items-center gap-1 text-primary" data-field="bankid-status">
+            <span className="flex items-center gap-1 text-primary" data-field="signing-status">
               <ShieldCheck className="h-3 w-3" />
-              BankID-signerat
+              Digitalt signerat
             </span>
           ) : (
             <span data-field="reference-count">{references.length} verifierad{references.length !== 1 ? "e" : ""} referens{references.length !== 1 ? "er" : ""}</span>
@@ -237,8 +237,8 @@ export default function VerifyProof() {
               </div>
               {representation.bankid_ref && (
                 <div className="flex justify-between">
-                  <dt className="text-muted-foreground">BankID-ref</dt>
-                  <dd className="font-mono text-[11px] text-muted-foreground" data-field="bankid-ref">{representation.bankid_ref}</dd>
+                  <dt className="text-muted-foreground">Signatur-ref</dt>
+                  <dd className="font-mono text-[11px] text-muted-foreground" data-field="signature-ref">{representation.bankid_ref}</dd>
                 </div>
               )}
             </dl>
