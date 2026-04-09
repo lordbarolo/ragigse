@@ -23,16 +23,20 @@ export const initPostHog = () => {
     api_host: "https://eu.i.posthog.com",
     ui_host: "https://eu.posthog.com",
     capture_pageview: true,
-    persistence: consent === "accepted" ? "localStorage+cookie" : "memory",
-    opt_out_capturing_by_default: consent !== "accepted",
     cross_subdomain_cookie: true,
+    person_profiles: consent === "accepted" ? "always" : "identified_only",
+    persistence: consent === "accepted" ? "localStorage+cookie" : "memory",
+    opt_out_capturing_by_default: false,
   });
 };
 
 export const acceptTracking = () => {
   setConsent("accepted");
   posthog.opt_in_capturing();
-  posthog.set_config({ persistence: "localStorage+cookie" });
+  posthog.set_config({
+    persistence: "localStorage+cookie",
+    person_profiles: "always",
+  });
 };
 
 export const declineTracking = () => {
