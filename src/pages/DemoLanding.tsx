@@ -44,8 +44,8 @@ export default function DemoLanding() {
 
   // Resolve user zone from locations
   const selectedLocation = useMemo(
-    () => (locations && survey?.kommun ? (locations.find((l) => l.kommun === survey.kommun) ?? null) : null),
-    [locations, survey?.kommun],
+    () => (locations && survey?.kommun ? locations.find((l) => l.kommun === survey.kommun) ?? null : null),
+    [locations, survey?.kommun]
   );
 
   // Fetch zone rates when survey data + location are ready
@@ -72,7 +72,7 @@ export default function DemoLanding() {
           setZoneRates(
             Array.from(byZone.entries())
               .map(([zon, timpris]) => ({ zon, timpris }))
-              .sort((a, b) => a.zon.localeCompare(b.zon)),
+              .sort((a, b) => a.zon.localeCompare(b.zon))
           );
         } else {
           setZoneRates([]);
@@ -85,9 +85,7 @@ export default function DemoLanding() {
       }
     };
     fetchRates();
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [survey?.yrke, selectedLocation]);
 
   if (!survey) return null;
@@ -97,9 +95,7 @@ export default function DemoLanding() {
       {/* Nav */}
       <nav className="sticky top-0 z-50 bg-card/80 backdrop-blur-md border-b border-border">
         <div className="max-w-6xl mx-auto px-6 py-4 flex justify-between items-center">
-          <Link to="/" aria-label="CompCare startsida">
-            <CompcareLogo variant="full" />
-          </Link>
+          <Link to="/" aria-label="CompCare startsida"><CompcareLogo variant="full" /></Link>
           <ThemeToggle />
         </div>
       </nav>
@@ -140,7 +136,9 @@ export default function DemoLanding() {
                   {survey.currentSalary != null && survey.currentSalary > 0 && (
                     <div className="flex items-center justify-between">
                       <span className="text-xs text-muted-foreground">Nuvarande ersättning</span>
-                      <span className="text-sm font-semibold text-foreground">{fmt(survey.currentSalary)} kr</span>
+                      <span className="text-sm font-semibold text-foreground">
+                        {fmt(survey.currentSalary)} kr
+                      </span>
                     </div>
                   )}
                 </div>
@@ -178,8 +176,7 @@ export default function DemoLanding() {
                         {userRate.zon} — Din zon
                       </p>
                       <p className="text-3xl font-display font-black text-foreground tracking-tight">
-                        {fmt(userRate.timpris)}{" "}
-                        <span className="text-base font-medium text-muted-foreground">kr/tim</span>
+                        {fmt(userRate.timpris)} <span className="text-base font-medium text-muted-foreground">kr/tim</span>
                       </p>
                       <p className="text-[11px] text-muted-foreground mt-1">
                         Kundpris som regionen betalar bemanningsföretaget
@@ -216,9 +213,7 @@ export default function DemoLanding() {
                       <p className="text-xs font-semibold text-muted-foreground mb-2">Kommuner i {userZone}</p>
                       <div className="flex flex-wrap gap-1">
                         {["Stockholm", "Göteborg", "Malmö", "Uppsala", "Linköping"].map((k) => (
-                          <span key={k} className="text-xs bg-secondary px-2 py-0.5 rounded">
-                            {k}
-                          </span>
+                          <span key={k} className="text-xs bg-secondary px-2 py-0.5 rounded">{k}</span>
                         ))}
                         <span className="text-xs text-muted-foreground">+82 till</span>
                       </div>
@@ -247,10 +242,7 @@ export default function DemoLanding() {
                         Skapa konto <ArrowRight className="w-4 h-4" />
                       </button>
                       <p className="text-[10px] text-muted-foreground mt-2">
-                        Redan registrerad?{" "}
-                        <Link to="/logga-in" className="text-primary hover:underline">
-                          Logga in
-                        </Link>
+                        Redan registrerad? <Link to="/logga-in" className="text-primary hover:underline">Logga in</Link>
                       </p>
                     </div>
                   </div>
@@ -266,14 +258,11 @@ export default function DemoLanding() {
             {zoneRates && zoneRates.length === 0 && !loading && (
               <div className="border-t border-border bg-secondary/30 px-5 py-5 space-y-4">
                 <p className="text-sm text-muted-foreground text-center">
-                  Inga priser hittades för <span className="font-semibold text-foreground">{survey.yrke}</span>. Här är
-                  ett exempel med Barnmorska:
+                  Inga priser hittades för <span className="font-semibold text-foreground">{survey.yrke}</span>. Här är ett exempel med Barnmorska:
                 </p>
 
                 <div className="text-center space-y-1 mb-2">
-                  <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">
-                    Exempelpris — Barnmorska
-                  </p>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">Exempelpris — Barnmorska</p>
                 </div>
 
                 {[

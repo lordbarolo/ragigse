@@ -18,7 +18,7 @@ const PROMPTS = [
   {
     emoji: "📋",
     label: "Avtalsnivåer",
-    prompt: "Vad säger ramavtalet för min yrkesroll?",
+    prompt: "Vad säger ramavtalet och benchmark för min yrkesroll?",
   },
 ];
 

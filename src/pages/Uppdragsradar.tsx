@@ -196,7 +196,7 @@ export default function Uppdragsradar() {
       <section className="px-5 pt-4 pb-6">
         <div className="inline-flex items-center gap-2 bg-primary/[0.08] border border-primary/20 rounded-full px-3 py-1 text-[11px] font-medium font-display text-primary tracking-wider mb-4">
           <Radio className="w-3.5 h-3.5" />
-          Uppdragsprognos
+          Uppdragsradar
         </div>
         <h1
           className="font-display text-foreground mb-2"
