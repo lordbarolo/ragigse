@@ -463,7 +463,7 @@ export default function LandingV2() {
         <div className="grid md:grid-cols-3 gap-4">
           {PLANS.map((p) => (
             <div key={p.name} className={`bg-white border rounded-xl p-7 ${p.featured ? "border-2 border-[#534AB7]" : "border-border/40"}`}>
-              {p.featured && <span className="inline-block text-[11px] font-medium bg-[#EEEDFE] text-[#3C3489] px-2.5 py-0.5 rounded-full mb-3">{"badge" in p ? p.badge : ""}</span>}
+              {p.badge && <span className="inline-block text-[11px] font-medium bg-[#EEEDFE] text-[#3C3489] px-2.5 py-0.5 rounded-full mb-3">{p.badge}</span>}
               <h3 className="text-base font-medium mb-1">{p.name}</h3>
               <div className="text-[28px] font-medium my-3">{p.price}<span className="text-sm font-normal text-muted-foreground">{p.unit}</span></div>
               <p className="text-[13px] text-muted-foreground leading-snug mb-5">{p.desc}</p>
