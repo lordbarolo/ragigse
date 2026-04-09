@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
-import { ShieldCheck, Fingerprint, FileCheck, ArrowRight, CheckCircle } from "lucide-react";
+import { ShieldCheck, Fingerprint, FileCheck, ArrowRight, CheckCircle, Lock } from "lucide-react";
 import LandingNav from "@/components/landing/LandingNav";
 import LandingFooter from "@/components/landing/LandingFooter";
 import { trackEvent } from "@/lib/trackEvent";
-import ComingSoonOverlay from "@/components/ComingSoonOverlay";
+import { Badge } from "@/components/ui/badge";
 
 export default function VerifyInfo() {
   useEffect(() => {
@@ -15,7 +15,6 @@ export default function VerifyInfo() {
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <LandingNav />
 
-      <ComingSoonOverlay label="Verifikationer — kommer snart">
       {/* Hero */}
       <section className="pt-28 pb-16 px-6">
         <div className="max-w-3xl mx-auto text-center">
@@ -42,8 +41,8 @@ export default function VerifyInfo() {
           <div className="space-y-6">
             {[
               { step: "1", title: "Förfrågan skickas", desc: "Bemanningsföretaget initierar en verifieringsförfrågan för ett specifikt uppdrag." },
-              { step: "2", title: "Digital signering", desc: "Du får en länk via SMS, öppnar den och signerar digitalt. Hela processen tar under 30 sekunder." },
-              { step: "3", title: "Bevis genereras", desc: "Ett kryptografiskt bevis skapas som kan delas med uppdragsgivaren. Beviset visar exakt vilken aktör du auktoriserat." },
+              { step: "2", title: "Bekräfta via länk", desc: "Du får en länk via e-post eller SMS, öppnar den och bekräftar din representation. Hela processen tar under 30 sekunder." },
+              { step: "3", title: "Bevis genereras", desc: "Ett digitalt bevis skapas som kan delas med uppdragsgivaren. Beviset visar exakt vilken aktör du auktoriserat." },
             ].map((s) => (
               <div key={s.step} className="flex gap-4">
                 <span className="w-8 h-8 rounded-full bg-primary/10 text-primary text-sm font-bold flex items-center justify-center shrink-0 mt-0.5">
@@ -55,6 +54,17 @@ export default function VerifyInfo() {
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* BankID coming soon */}
+          <div className="mt-8 p-4 rounded-xl border border-border bg-muted/30 flex items-start gap-3">
+            <Badge variant="outline" className="gap-1 text-xs shrink-0 mt-0.5 border-primary/20 text-primary">
+              <Lock className="h-3 w-3" />
+              Kommande
+            </Badge>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              <span className="font-semibold text-foreground">BankID-signering</span> — I en framtida version kommer du kunna signera med BankID för juridiskt bindande verifiering. Idag fungerar flödet med länkbaserad bekräftelse.
+            </p>
           </div>
         </div>
       </section>
@@ -68,7 +78,7 @@ export default function VerifyInfo() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {[
               { icon: ShieldCheck, title: "Skydd mot dubbelpresentationer", desc: "Regioner ser omedelbart vilka bemanningsföretag som är auktoriserade." },
-              { icon: Fingerprint, title: "Stark verifiering", desc: "Signeringen är juridiskt bindande och kan inte förfalskas." },
+              { icon: Fingerprint, title: "Digital verifiering", desc: "Bekräftelsen loggas och kan verifieras av motparten via en säker länk." },
               { icon: FileCheck, title: "Audit Trail", desc: "Varje steg loggas transparent — du har full insyn i vem som sett beviset." },
               { icon: CheckCircle, title: "Source of Truth", desc: "En enda källa till sanning istället för e-postkedjor och telefonsamtal." },
             ].map((b, i) => (
@@ -108,8 +118,6 @@ export default function VerifyInfo() {
           </div>
         </div>
       </section>
-
-      </ComingSoonOverlay>
 
       <LandingFooter />
     </div>
