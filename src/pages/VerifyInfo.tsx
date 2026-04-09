@@ -21,7 +21,7 @@ export default function VerifyInfo() {
         <div className="max-w-3xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 px-3 py-1 rounded-full text-primary text-xs font-semibold mb-6 uppercase tracking-wider">
             <Fingerprint className="w-3 h-3" />
-            BankID-säkrad auktorisering
+            Digitalt säkrad auktorisering
           </div>
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground mb-6">
             Verify — Eliminera<br />dubbelpresentationer
