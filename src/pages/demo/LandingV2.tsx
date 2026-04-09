@@ -188,17 +188,20 @@ export default function LandingV2() {
         <div className="absolute inset-0 bg-gradient-to-br from-[#0d0b2a] via-[#1a1545] via-40% to-[#2a2070]" />
         <div className="absolute inset-0 bg-[rgba(5,4,20,0.45)]" />
         <div
-          className="absolute top-0 right-0 w-[900px] h-[800px] pointer-events-none"
+          className="absolute pointer-events-none"
           style={{
-            background: 'radial-gradient(ellipse at 80% 0%, rgba(99,88,210,0.65) 0%, rgba(83,74,183,0.25) 35%, transparent 65%)',
+            top: '-100px', right: '-100px',
+            width: '1000px', height: '900px',
             zIndex: 1,
+            background: 'radial-gradient(ellipse at 75% 10%, rgba(110,95,230,0.55) 0%, rgba(90,78,210,0.25) 25%, rgba(70,60,190,0.08) 50%, transparent 70%)',
           }}
         />
         <div
-          className="absolute top-[10%] right-[2%] w-[500px] h-[600px] pointer-events-none"
+          className="absolute top-0 right-0 pointer-events-none"
           style={{
-            background: 'radial-gradient(ellipse at center, rgba(120,110,230,0.35) 0%, transparent 70%)',
+            width: '520px', height: '600px',
             zIndex: 1,
+            background: 'radial-gradient(ellipse at 90% 15%, rgba(140,125,245,0.3) 0%, rgba(110,95,220,0.12) 40%, transparent 65%)',
           }}
         />
         <div
