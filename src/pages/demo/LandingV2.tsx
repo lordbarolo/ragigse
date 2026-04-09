@@ -145,9 +145,22 @@ const TAG_COLORS: Record<string, string> = {
   green: "bg-[#EAF3DE] text-[#3B6D11] border-[rgba(59,109,17,0.2)]",
   muted: "bg-[#F2F1F8] text-muted-foreground border-border/40",
 };
+/* ───────────────────── Flow arrow divider ────── */
+function FlowArrow() {
+  return (
+    <div className="h-7 flex items-center justify-center relative">
+      <div className="absolute left-1/2 top-0 bottom-0 w-px bg-white/15" />
+      <div className="w-[22px] h-[22px] rounded-full bg-white/[0.07] border border-white/15 flex items-center justify-center text-[10px] text-white/40 z-10 relative">
+        ↓
+      </div>
+    </div>
+  );
+}
 
 /* ───────────────────── component ──────────────── */
 export default function LandingV2() {
+  const [heroEmail, setHeroEmail] = useState("");
+
   return (
     <div className="w-full bg-[#F2F1F8] text-foreground font-sans">
       {/* ── Nav ─────────────────────────────── */}
@@ -169,7 +182,101 @@ export default function LandingV2() {
       </nav>
 
       {/* ── Hero ────────────────────────────── */}
-      <HeroSection />
+      <section className="relative min-h-[480px] flex flex-col lg:flex-row items-center overflow-hidden">
+        {/* bg layers */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0d0b2a] via-[#1a1545] via-40% to-[#2a2070]" />
+        <div className="absolute inset-0 bg-[rgba(5,4,20,0.45)]" />
+        <div
+          className="absolute inset-0 opacity-5"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(0deg,transparent,transparent 39px,#fff 39px,#fff 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,#fff 39px,#fff 40px)",
+          }}
+        />
+
+        {/* content — left */}
+        <div className="relative z-10 px-6 lg:px-10 pt-16 pb-8 lg:py-20 max-w-[620px]">
+          <div className="inline-flex items-center gap-1.5 text-xs font-medium text-[#AFA9EC] bg-[rgba(83,74,183,0.2)] border border-[rgba(127,119,221,0.35)] rounded-full px-3 py-1 mb-5 uppercase tracking-wider">
+            <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="#AFA9EC" /></svg>
+            Byggt för läkare &amp; sjuksköterskor
+          </div>
+          <h1 className="text-[clamp(2rem,5vw,42px)] font-medium leading-[1.18] text-white mb-4 tracking-tight">
+            Dina <span className="text-[#AFA9EC]">data.</span><br />Din karriär.<br />Dina villkor.
+          </h1>
+          <p className="text-base text-white/[0.68] leading-relaxed mb-6 max-w-[460px]">
+            CompCare samlar alla verktyg du behöver som konsult inom vården — löneanalys, verifiering, fakturagranskning och referenshantering i en plattform du äger.
+          </p>
+
+          {/* Desktop email CTA */}
+          <div className="hidden lg:block space-y-3">
+            <p className="text-[13px] text-white/50 italic">Se vad din roll ger i din zon — gratis</p>
+            <div className="flex gap-2">
+              <input
+                type="email"
+                value={heroEmail}
+                onChange={(e) => setHeroEmail(e.target.value)}
+                placeholder="din@email.se"
+                className="flex-1 px-4 py-3 bg-white/[0.08] border border-white/20 rounded-lg text-white text-sm placeholder:text-white/35 outline-none focus:border-white/40 transition-colors"
+              />
+              <Link to="/registrera">
+                <button className="px-6 py-3 bg-[#534AB7] rounded-lg text-white text-[15px] font-medium whitespace-nowrap">
+                  Visa mig →
+                </button>
+              </Link>
+            </div>
+            <p className="text-[11px] text-white/30">Inga kreditkort. BankID-verifiering tar 30 sekunder.</p>
+          </div>
+        </div>
+
+        {/* Desktop flow cards */}
+        <div className="relative z-10 hidden lg:flex flex-col gap-0 w-[260px] flex-shrink-0 mx-auto lg:mr-10 py-20">
+          {/* Card 1 */}
+          <div className="bg-white/[0.07] border border-white/[0.13] rounded-[14px] px-5 py-4">
+            <div className="text-[10px] text-white/40 uppercase tracking-wider mb-1">RAMAVTALSPRIS · ZON 1 · SKR 2026</div>
+            <div className="text-[26px] font-medium text-white mb-0.5">616 <span className="text-[16px] text-white/50">kr/tim</span></div>
+            <div className="text-[12px] text-white/50 leading-snug">Leg. sjuksköterska i storstad</div>
+          </div>
+          <FlowArrow />
+          {/* Card 2 */}
+          <div className="bg-white/[0.07] border border-white/[0.13] rounded-[14px] px-5 py-4">
+            <div className="text-[10px] text-white/40 uppercase tracking-wider mb-1">BRANSCHENS GENOMSNITTSMARGINAL</div>
+            <div className="text-[26px] font-medium text-white mb-0.5">15–20%</div>
+            <span className="text-red-400/70 text-[11px] font-semibold">−92–123 kr/tim</span>
+            <div className="text-[12px] text-white/50 leading-snug mt-1">Enligt offentliga avtal och branschdata</div>
+          </div>
+          <FlowArrow />
+          {/* Card 3 — highlighted */}
+          <div className="bg-[rgba(83,74,183,0.25)] border-2 border-[rgba(175,169,236,0.4)] rounded-[14px] px-5 py-4">
+            <div className="text-[10px] text-[rgba(175,169,236,0.8)] uppercase tracking-wider mb-1">ESTIMERAD KONSULTLÖN</div>
+            <div className="text-[30px] font-medium text-white mb-0.5">508 <span className="text-[16px] text-white/50">kr/tim</span></div>
+            <div className="text-[12px] text-[rgba(175,169,236,0.7)] leading-snug">Se exakt vad du kan förvänta dig →</div>
+          </div>
+        </div>
+
+        {/* Mobile stat cards */}
+        <div className="relative z-10 mx-auto py-4 lg:hidden grid grid-cols-2 gap-3 px-6 w-full">
+          {STATS.map((s) => (
+            <div key={s.label} className="bg-white/[0.07] border border-white/[0.13] rounded-xl px-4 py-3.5">
+              {s.subtitle && <div className="text-[10px] text-white/40 uppercase tracking-wider mb-1">{s.subtitle}</div>}
+              <div className="text-[20px] font-medium text-white mb-0.5">{s.num}</div>
+              <div className="text-[11px] text-white/50 leading-snug">{s.label}</div>
+            </div>
+          ))}
+          <Link to="/registrera" className="bg-white/[0.07] border border-white/[0.13] rounded-xl px-4 py-3.5 hover:bg-white/[0.12] transition-colors group">
+            <div className="text-[10px] text-white/40 uppercase tracking-wider mb-1">JÄMFÖR DIN EGEN ERSÄTTNING</div>
+            <div className="text-[20px] font-medium text-white mb-0.5 text-center flex items-center justify-center gap-2">START <ArrowRight className="w-5 h-5 bg-transparent text-[#5248d5]" /></div>
+            <div className="text-[11px] text-white/50 leading-snug">Svara på 6 frågor för att få din rapport</div>
+          </Link>
+        </div>
+
+        {/* Mobile buttons */}
+        <div className="relative z-10 grid grid-cols-2 lg:hidden gap-3 px-6 pb-10">
+          <Link to="/registrera" className="block">
+            <button className="w-full px-4 py-3 bg-[#534AB7] rounded-lg text-white text-[15px] font-medium">Kom igång gratis</button>
+          </Link>
+          <button className="w-full px-4 py-3 bg-transparent border border-white/30 rounded-lg text-white/80 text-[15px]">Se hur det fungerar</button>
+        </div>
+      </section>
 
       {/* ── Trust bar ───────────────────────── */}
       {/* Desktop */}
