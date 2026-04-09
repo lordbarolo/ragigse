@@ -237,7 +237,7 @@ export default function VerifyProof() {
               </div>
               {representation.bankid_ref && (
                 <div className="flex justify-between">
-                  <dt className="text-muted-foreground">Signatur-ref</dt>
+                  <dt className="text-muted-foreground">Digital signatur</dt>
                   <dd className="font-mono text-[11px] text-muted-foreground" data-field="signature-ref">{representation.bankid_ref}</dd>
                 </div>
               )}
