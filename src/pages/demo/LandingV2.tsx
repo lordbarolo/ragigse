@@ -560,7 +560,7 @@ export default function LandingV2() {
         </div>
         <div className="border-t border-border/40 pt-5 flex flex-col md:flex-row justify-between items-center gap-2 text-xs text-muted-foreground">
           <p>© 2026 CompCare — Piemonte Invest AB</p>
-          <p>BankID · GDPR-kompatibel · Datan tillhör dig</p>
+          <p>GDPR-kompatibel · Datan tillhör dig</p>
         </div>
       </footer>
     </div>
