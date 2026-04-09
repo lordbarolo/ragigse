@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
-import { getConsent, setConsent } from "@/lib/cookieConsent";
+import { getConsent } from "@/lib/cookieConsent";
+import { acceptTracking, declineTracking } from "@/lib/posthog";
 import { Link } from "react-router-dom";
 
 export default function CookieBanner() {
