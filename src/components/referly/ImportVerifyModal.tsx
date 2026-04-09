@@ -90,7 +90,7 @@ export function ImportVerifyModal({ open, onOpenChange, userId, onSuccess }: Imp
       return;
     }
 
-    const { data: urlData } = supabase.storage.from("verifications").getPublicUrl(filePath);
+    const { data: urlData } = await supabase.storage.from("verifications").createSignedUrl(filePath, 60 * 60 * 24 * 365); // 1 year signed URL
 
     const token = crypto.randomUUID();
     const { error } = await supabase.from("ref_references").insert({
