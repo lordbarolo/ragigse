@@ -188,9 +188,9 @@ export default function LandingV2() {
         <div className="absolute inset-0 bg-gradient-to-br from-[#0d0b2a] via-[#1a1545] via-40% to-[#2a2070]" />
         <div className="absolute inset-0 bg-[rgba(5,4,20,0.45)]" />
         <div
-          className="absolute top-0 right-0 w-[600px] h-[600px] pointer-events-none"
+          className="absolute top-0 right-0 w-[900px] h-[900px] pointer-events-none"
           style={{
-            background: 'radial-gradient(ellipse at top right, rgba(83,74,183,0.35) 0%, rgba(83,74,183,0.08) 40%, transparent 70%)',
+            background: 'radial-gradient(ellipse at top right, rgba(83,74,183,0.55) 0%, rgba(83,74,183,0.18) 35%, rgba(83,74,183,0.04) 55%, transparent 75%)',
             zIndex: 1,
           }}
         />
