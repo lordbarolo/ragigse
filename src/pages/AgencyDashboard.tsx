@@ -452,7 +452,7 @@ export default function AgencyDashboard() {
         <div className="grid grid-cols-3 gap-4 mb-5">
           {[
             { step: "1", text: "Skapa en representations\u00ADförfrågan" },
-            { step: "2", text: "Konsulten signerar med BankID" },
+            { step: "2", text: "Konsulten signerar digitalt" },
             { step: "3", text: "Digitalt bevis skapas automatiskt" },
           ].map((item) => (
             <div key={item.step} className="flex flex-col items-center text-center gap-2">
