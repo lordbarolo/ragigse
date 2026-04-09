@@ -46,7 +46,7 @@ export default function ReferenserInfo() {
     <div className="min-h-screen flex flex-col bg-background text-foreground">
       <LandingNav />
 
-      <ComingSoonOverlay label="Referenser & verifikationer — kommer snart">
+      <>
       {/* Hero */}
       <section className="pt-28 pb-16 px-6">
         <div className="max-w-3xl mx-auto text-center">
