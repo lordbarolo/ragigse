@@ -398,7 +398,7 @@ export default function LandingV2() {
           <p className="text-[14px] text-[#444] leading-[1.7] mb-2">
             Konsulter missar i snitt 3–8% av fakturerbara timmar. Vi går igenom dina historiska fakturor och tidrapporter och identifierar utestående belopp — utan risk för dig.
           </p>
-          <p className="text-xs text-[#888] leading-[1.6]">Vi tar 25% av det vi hittar. Hittar vi ingenting kostar det dig ingenting.</p>
+          <p className="text-xs leading-[1.6] text-inherit">Vi tar 25% av det vi hittar. Hittar vi ingenting kostar det dig ingenting.</p>
         </div>
       </section>
 
