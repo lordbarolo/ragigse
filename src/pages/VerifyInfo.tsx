@@ -42,7 +42,7 @@ export default function VerifyInfo() {
           <div className="space-y-6">
             {[
               { step: "1", title: "Förfrågan skickas", desc: "Bemanningsföretaget initierar en verifieringsförfrågan för ett specifikt uppdrag." },
-              { step: "2", title: "BankID-signering", desc: "Du får en länk via SMS, öppnar den och signerar med BankID. Hela processen tar under 30 sekunder." },
+              { step: "2", title: "Digital signering", desc: "Du får en länk via SMS, öppnar den och signerar digitalt. Hela processen tar under 30 sekunder." },
               { step: "3", title: "Bevis genereras", desc: "Ett kryptografiskt bevis skapas som kan delas med uppdragsgivaren. Beviset visar exakt vilken aktör du auktoriserat." },
             ].map((s) => (
               <div key={s.step} className="flex gap-4">
