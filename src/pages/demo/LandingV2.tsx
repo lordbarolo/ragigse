@@ -314,7 +314,7 @@ export default function LandingV2() {
       <div className="h-px bg-border/40 mx-6 lg:mx-10" />
 
       {/* ── Invoice feature ─────────────────── */}
-      <section className="px-6 lg:px-10 py-[72px] bg-white">
+      <section className="px-6 lg:px-10 py-[72px] bg-[#F2F1F8]">
         <div className="max-w-[600px] mx-auto">
           {/* Scaled table */}
           <div className="w-full overflow-hidden mb-8" ref={(el) => {
@@ -402,8 +402,6 @@ export default function LandingV2() {
         </div>
       </section>
 
-      <div className="h-px bg-border/40 mx-6 lg:mx-10" />
-
       {/* ── Pricing ─────────────────────────── */}
       <section className="px-6 lg:px-10 py-[72px] bg-[#ECEAF5]">
         <p className="text-xs font-medium text-[#534AB7] uppercase tracking-widest mb-2.5">Priser</p>
@@ -468,7 +466,7 @@ export default function LandingV2() {
       </div>
 
       {/* ── Footer ──────────────────────────── */}
-      <footer className="px-6 lg:px-10 pt-10 pb-7 border-t border-border/40 bg-white">
+      <footer className="px-6 lg:px-10 pt-10 pb-24 border-t border-border/40 bg-white">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
           <div>
             <div className="flex items-center gap-2 text-lg font-medium tracking-tight mb-2.5">
