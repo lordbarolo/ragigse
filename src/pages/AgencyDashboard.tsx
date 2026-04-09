@@ -471,7 +471,7 @@ export default function AgencyDashboard() {
           </p>
           <p>
             <strong className="text-foreground">Skapa en förfrågan</strong> — Ange konsultens e-post, uppdrags-ID och region. Konsulten
-            får ett SMS med en signeringslänk. Ingen inloggning krävs av konsulten — bara BankID.
+            får ett SMS med en signeringslänk. Ingen inloggning krävs av konsulten.
           </p>
           <p>
             <strong className="text-foreground">Beviset genereras automatiskt</strong> — När signeringen är klar skapas ett verifieringsbevis
