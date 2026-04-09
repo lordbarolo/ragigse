@@ -198,9 +198,9 @@ export default function VerifyProof() {
             {applicationId?.slice(0, 8)}…
           </span>
           {representation ? (
-            <span className="flex items-center gap-1 text-primary" data-field="bankid-status">
+            <span className="flex items-center gap-1 text-primary" data-field="signing-status">
               <ShieldCheck className="h-3 w-3" />
-              BankID-signerat
+              Digitalt signerat
             </span>
           ) : (
             <span data-field="reference-count">{references.length} verifierad{references.length !== 1 ? "e" : ""} referens{references.length !== 1 ? "er" : ""}</span>
