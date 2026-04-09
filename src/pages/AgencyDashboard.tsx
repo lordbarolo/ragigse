@@ -467,7 +467,7 @@ export default function AgencyDashboard() {
         <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
           <p>
             Verify eliminerar risken för dubbelpresentationer hos uppdragsgivare. Istället för att regioner och kommuner ska behöva hantera
-            oklarheter kring vilken byrå som representerar en konsult, skapar ni ett digitalt representationsbevis som konsulten signerar med BankID.
+            oklarheter kring vilken byrå som representerar en konsult, skapar ni ett digitalt representationsbevis som konsulten signerar.
           </p>
           <p>
             <strong className="text-foreground">Skapa en förfrågan</strong> — Ange konsultens e-post, uppdrags-ID och region. Konsulten
