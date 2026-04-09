@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 
 /* ───────────────────── data ───────────────────── */
@@ -168,63 +169,7 @@ export default function LandingV2() {
       </nav>
 
       {/* ── Hero ────────────────────────────── */}
-      <section className="relative min-h-[480px] flex flex-col lg:flex-row items-center overflow-hidden">
-        {/* bg layers */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0d0b2a] via-[#1a1545] via-[70%] to-[#0e0c30]" />
-        <div className="absolute inset-0 bg-[rgba(5,4,20,0.45)]" />
-        <div
-          className="absolute inset-0 opacity-5"
-          style={{
-            backgroundImage:
-              "repeating-linear-gradient(0deg,transparent,transparent 39px,#fff 39px,#fff 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,#fff 39px,#fff 40px)",
-          }}
-        />
-
-        {/* content */}
-        <div className="relative z-10 px-6 lg:px-10 pt-16 pb-8 lg:py-20 max-w-[620px]">
-          <div className="inline-flex items-center gap-1.5 text-xs font-medium text-[#AFA9EC] bg-[rgba(83,74,183,0.2)] border border-[rgba(127,119,221,0.35)] rounded-full px-3 py-1 mb-5 uppercase tracking-wider">
-            <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="#AFA9EC" /></svg>
-            Byggt för läkare &amp; sjuksköterskor
-          </div>
-          <h1 className="text-[clamp(2rem,5vw,42px)] font-medium leading-[1.18] text-white mb-4 tracking-tight">
-            Dina <span className="text-[#AFA9EC]">data.</span><br />Din karriär.<br />Dina villkor.
-          </h1>
-          <p className="text-base text-white/[0.68] leading-relaxed mb-0 lg:mb-8 max-w-[460px]">
-            CompCare samlar alla verktyg du behöver som konsult inom vården — löneanalys, verifiering, fakturagranskning och referenshantering i en plattform du äger.
-          </p>
-          {/* Desktop buttons */}
-          <div className="hidden lg:flex gap-3">
-            <Link to="/registrera">
-              <button className="px-7 py-3 bg-[#534AB7] rounded-lg text-white text-[15px] font-medium">Kom igång gratis</button>
-            </Link>
-            <button className="px-7 py-3 bg-transparent border border-white/30 rounded-lg text-white/80 text-[15px]">Se hur det fungerar</button>
-          </div>
-        </div>
-
-        {/* stat cards — mobile: 2-col grid, desktop: vertical column */}
-        <div className="relative z-10 mx-auto py-4 lg:py-20 grid grid-cols-2 lg:flex lg:flex-col gap-3 lg:gap-5 px-6 lg:px-0 w-full lg:w-auto">
-          {STATS.map((s) => (
-            <div key={s.label} className="bg-white/[0.07] border border-white/[0.13] rounded-xl px-4 lg:px-6 py-3.5 lg:py-[18px]">
-              {s.subtitle && <div className="text-[10px] lg:text-[11px] text-white/40 uppercase tracking-wider mb-1">{s.subtitle}</div>}
-              <div className="text-[20px] lg:text-[28px] font-medium text-white mb-0.5">{s.num}</div>
-              <div className="text-[11px] lg:text-[13px] text-white/50 leading-snug">{s.label}</div>
-            </div>
-          ))}
-          <Link to="/registrera" className="lg:hidden bg-white/[0.07] border border-white/[0.13] rounded-xl px-4 py-3.5 hover:bg-white/[0.12] transition-colors group">
-            <div className="text-[10px] text-white/40 uppercase tracking-wider mb-1">JÄMFÖR DIN EGEN ERSÄTTNING</div>
-            <div className="text-[20px] font-medium text-white mb-0.5 text-center flex items-center justify-center gap-2">START <ArrowRight className="w-5 h-5 bg-transparent text-[#5248d5]" /></div>
-            <div className="text-[11px] text-white/50 leading-snug">Svara på 6 frågor för att få din rapport</div>
-          </Link>
-        </div>
-
-        {/* Mobile buttons — after stat cards */}
-        <div className="relative z-10 grid grid-cols-2 lg:hidden gap-3 px-6 pb-10">
-          <Link to="/registrera" className="block">
-            <button className="w-full px-4 py-3 bg-[#534AB7] rounded-lg text-white text-[15px] font-medium">Kom igång gratis</button>
-          </Link>
-          <button className="w-full px-4 py-3 bg-transparent border border-white/30 rounded-lg text-white/80 text-[15px]">Se hur det fungerar</button>
-        </div>
-      </section>
+      <HeroSection />
 
       {/* ── Trust bar ───────────────────────── */}
       {/* Desktop */}
