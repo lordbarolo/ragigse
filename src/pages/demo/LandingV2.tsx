@@ -315,11 +315,11 @@ export default function LandingV2() {
 
       {/* ── Invoice feature ─────────────────── */}
       <section className="px-6 lg:px-10 py-[72px] bg-white">
-        <div className="flex flex-col gap-10 max-w-[860px] mx-auto">
+        <div className="flex flex-col md:flex-row gap-10 max-w-[960px] mx-auto items-center">
           {/* Copy */}
-          <div>
+          <div className="md:w-[45%] shrink-0">
             <p className="text-[11px] font-semibold text-[#534AB7] uppercase tracking-[0.1em] mb-3.5">Fakturagranskning</p>
-            <h2 className="text-[32px] font-bold leading-[1.2] tracking-[-0.5px] mb-4 font-serif">Du har troligen pengar du inte fått</h2>
+            <h2 className="text-[28px] md:text-[32px] font-bold leading-[1.2] tracking-[-0.5px] mb-4 font-serif">Du har troligen pengar du inte fått</h2>
             <p className="text-[15px] text-[#444] leading-[1.7] mb-3">
               Konsulter missar i snitt 3–8% av fakturerbara timmar. Vi går igenom dina historiska fakturor och tidrapporter och identifierar utestående belopp — utan risk för dig.
             </p>
@@ -327,63 +327,72 @@ export default function LandingV2() {
             <a href="#" className="inline-block px-7 py-3 bg-[#534AB7] text-white rounded-lg text-sm font-medium">Skicka in dina fakturor</a>
           </div>
 
-          {/* Fortnox-style table */}
-          <div className="bg-white border border-[#ddd]/50 rounded-[10px] overflow-hidden shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
-            {/* Filter bar */}
-            <div className="flex items-center gap-1.5 px-3.5 py-2.5 border-b border-[#e8e8e8]/50 bg-[#fafafa] flex-wrap">
-              <button className="text-xs px-2.5 py-1 rounded-[5px] border border-[#534AB7] bg-[#534AB7] text-white whitespace-nowrap">Alla</button>
-              <button className="text-xs px-2.5 py-1 rounded-[5px] border border-[#ddd] bg-white text-[#444] whitespace-nowrap flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[#f5a623] inline-block" />Ej granskade</button>
-              <button className="text-xs px-2.5 py-1 rounded-[5px] border border-[#ddd] bg-white text-[#444] whitespace-nowrap flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[#e74c3c] inline-block" />Avvikelser</button>
-              <button className="text-xs px-2.5 py-1 rounded-[5px] border border-[#ddd] bg-white text-[#444] whitespace-nowrap flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[#27ae60] inline-block" />Godkända</button>
-              <button className="text-xs px-2.5 py-1 rounded-[5px] border border-[#ddd] bg-white text-[#444] whitespace-nowrap flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[#534AB7] inline-block" />Fakturerade</button>
-            </div>
+          {/* Phone mockup with table */}
+          <div className="md:w-[55%] flex justify-center">
+            <div className="relative mx-auto w-[280px] md:w-[320px]">
+              {/* Phone frame */}
+              <div className="rounded-[32px] border-[6px] border-[#1a1a1a] bg-[#1a1a1a] shadow-2xl overflow-hidden">
+                {/* Notch */}
+                <div className="h-6 bg-[#1a1a1a] flex items-center justify-center">
+                  <div className="w-20 h-4 bg-[#000] rounded-b-xl" />
+                </div>
+                {/* Screen content */}
+                <div className="bg-white overflow-hidden">
+                  {/* Filter bar */}
+                  <div className="flex items-center gap-1 px-2.5 py-2 border-b border-[#e8e8e8]/50 bg-[#fafafa] flex-wrap">
+                    <button className="text-[9px] px-2 py-0.5 rounded-[4px] border border-[#534AB7] bg-[#534AB7] text-white whitespace-nowrap">Alla</button>
+                    <button className="text-[9px] px-2 py-0.5 rounded-[4px] border border-[#ddd] bg-white text-[#444] whitespace-nowrap flex items-center gap-0.5"><span className="w-1.5 h-1.5 rounded-full bg-[#f5a623] inline-block" />Ej granskade</button>
+                    <button className="text-[9px] px-2 py-0.5 rounded-[4px] border border-[#ddd] bg-white text-[#444] whitespace-nowrap flex items-center gap-0.5"><span className="w-1.5 h-1.5 rounded-full bg-[#e74c3c] inline-block" />Avvikelser</button>
+                    <button className="text-[9px] px-2 py-0.5 rounded-[4px] border border-[#ddd] bg-white text-[#444] whitespace-nowrap flex items-center gap-0.5"><span className="w-1.5 h-1.5 rounded-full bg-[#27ae60] inline-block" />Godkända</button>
+                  </div>
 
-            {/* Table */}
-            <table className="w-full border-collapse text-xs">
-              <thead>
-                <tr className="bg-[#f5f5f5] border-b border-[#e0e0e0]/50">
-                  <th className="py-2.5 px-3 text-left font-semibold text-[11px] text-[#666] uppercase tracking-[0.05em] w-8"><input type="checkbox" className="accent-[#534AB7] w-[13px] h-[13px] cursor-pointer" readOnly /></th>
-                  <th className="py-2.5 px-3 text-left font-semibold text-[11px] text-[#666] uppercase tracking-[0.05em] whitespace-nowrap">Fakturanr</th>
-                  <th className="py-2.5 px-3 text-left font-semibold text-[11px] text-[#666] uppercase tracking-[0.05em] whitespace-nowrap">Fakturerat</th>
-                  <th className="py-2.5 px-3 text-left font-semibold text-[11px] text-[#666] uppercase tracking-[0.05em] whitespace-nowrap">Arbetat</th>
-                  <th className="py-2.5 px-3 text-left font-semibold text-[11px] text-[#666] uppercase tracking-[0.05em] whitespace-nowrap">Avvikelse</th>
-                  <th className="py-2.5 px-3 text-left font-semibold text-[11px] text-[#666] uppercase tracking-[0.05em] whitespace-nowrap">Belopp</th>
-                  <th className="py-2.5 px-3 text-left font-semibold text-[11px] text-[#666] uppercase tracking-[0.05em] whitespace-nowrap">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[
-                  { nr: "#2024-031", fakt: "42 h", arb: "42 h", avv: "—", belopp: "—", ok: true },
-                  { nr: "#2024-038", fakt: "36 h", arb: "42 h", avv: "−6 h", belopp: "−6 900 kr", ok: false, checked: true },
-                  { nr: "#2024-044", fakt: "38 h", arb: "38 h", avv: "—", belopp: "—", ok: true },
-                  { nr: "#2024-051", fakt: "40 h", arb: "43.5 h", avv: "−3.5 h", belopp: "−4 025 kr", ok: false, checked: true },
-                  { nr: "#2024-059", fakt: "44 h", arb: "44 h", avv: "—", belopp: "—", ok: true },
-                ].map((row) => (
-                  <tr key={row.nr} className={`border-b border-[#f0f0f0]/50 last:border-b-0 transition-colors ${row.ok ? "hover:bg-[#faf9ff]" : "bg-[#fff8f8] hover:bg-[#fff2f2]"}`}>
-                    <td className="py-2.5 px-3 whitespace-nowrap"><input type="checkbox" className="accent-[#534AB7] w-[13px] h-[13px] cursor-pointer" defaultChecked={row.checked} readOnly /></td>
-                    <td className="py-2.5 px-3 whitespace-nowrap font-semibold text-[#534AB7]">{row.nr}</td>
-                    <td className="py-2.5 px-3 whitespace-nowrap text-[#1a1a1a]">{row.fakt}</td>
-                    <td className="py-2.5 px-3 whitespace-nowrap text-[#1a1a1a]">{row.arb}</td>
-                    <td className={`py-2.5 px-3 whitespace-nowrap ${row.ok ? "text-[#999]" : "text-[#c0392b] font-semibold"}`}>{row.avv}</td>
-                    <td className={`py-2.5 px-3 whitespace-nowrap ${row.ok ? "text-[#999]" : "text-[#c0392b] font-semibold"}`}>{row.belopp}</td>
-                    <td className="py-2.5 px-3 whitespace-nowrap">
-                      <span className={`inline-flex items-center gap-1.5 text-[11px] font-medium px-2 py-0.5 rounded-full ${row.ok ? "bg-[#eaf5ea] text-[#2d7a2d]" : "bg-[#fdecea] text-[#c0392b]"}`}>
-                        {row.ok ? "✓ OK" : "! Avvikelse"}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                  {/* Table */}
+                  <table className="w-full border-collapse text-[9px]">
+                    <thead>
+                      <tr className="bg-[#f5f5f5] border-b border-[#e0e0e0]/50">
+                        <th className="py-1.5 px-2 text-left font-semibold text-[8px] text-[#666] uppercase tracking-[0.03em] whitespace-nowrap">Fakturerat</th>
+                        <th className="py-1.5 px-2 text-left font-semibold text-[8px] text-[#666] uppercase tracking-[0.03em] whitespace-nowrap">Arbetat</th>
+                        <th className="py-1.5 px-2 text-left font-semibold text-[8px] text-[#666] uppercase tracking-[0.03em] whitespace-nowrap">Avvikelse</th>
+                        <th className="py-1.5 px-2 text-left font-semibold text-[8px] text-[#666] uppercase tracking-[0.03em] whitespace-nowrap">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { fakt: "42 h", arb: "42 h", avv: "—", ok: true },
+                        { fakt: "36 h", arb: "42 h", avv: "−6 h", ok: false },
+                        { fakt: "38 h", arb: "38 h", avv: "—", ok: true },
+                        { fakt: "40 h", arb: "43.5 h", avv: "−3.5 h", ok: false },
+                        { fakt: "44 h", arb: "44 h", avv: "—", ok: true },
+                      ].map((row, i) => (
+                        <tr key={i} className={`border-b border-[#f0f0f0]/50 last:border-b-0 ${row.ok ? "" : "bg-[#fff8f8]"}`}>
+                          <td className="py-1.5 px-2 whitespace-nowrap text-[#1a1a1a]">{row.fakt}</td>
+                          <td className="py-1.5 px-2 whitespace-nowrap text-[#1a1a1a]">{row.arb}</td>
+                          <td className={`py-1.5 px-2 whitespace-nowrap ${row.ok ? "text-[#999]" : "text-[#c0392b] font-semibold"}`}>{row.avv}</td>
+                          <td className="py-1.5 px-2 whitespace-nowrap">
+                            <span className={`inline-flex items-center text-[8px] font-medium px-1.5 py-0.5 rounded-full ${row.ok ? "bg-[#eaf5ea] text-[#2d7a2d]" : "bg-[#fdecea] text-[#c0392b]"}`}>
+                              {row.ok ? "✓ OK" : "! Avvikelse"}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
 
-            {/* Summary bar */}
-            <div className="flex items-center justify-between px-4 py-3 bg-[#f7f6fe] border-t border-[#e0dff5]/50">
-              <div className="text-[13px] text-[#444]">
-                Hittade <strong className="text-[#0f0f0f]">9.5 h utestående</strong> — 6 h + 3.5 h på 2 fakturor
-              </div>
-              <div className="flex items-center gap-4">
-                <span className="text-lg font-bold text-[#2d7a2d]">+10 925 kr</span>
-                <span className="text-[11px] font-medium px-2.5 py-1 rounded-full bg-[#EEEDFE] text-[#3C3489] border border-[rgba(83,74,183,0.2)]">Klar att fakturera</span>
+                  {/* Summary bar */}
+                  <div className="px-2.5 py-2.5 bg-[#f7f6fe] border-t border-[#e0dff5]/50">
+                    <div className="text-[9px] text-[#444] mb-1">
+                      Hittade <strong className="text-[#0f0f0f]">9.5 h utestående</strong> på 2 fakturor
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-bold text-[#2d7a2d]">+10 925 kr</span>
+                      <span className="text-[8px] font-medium px-2 py-0.5 rounded-full bg-[#EEEDFE] text-[#3C3489] border border-[rgba(83,74,183,0.2)]">Klar att fakturera</span>
+                    </div>
+                  </div>
+                </div>
+                {/* Bottom bar */}
+                <div className="h-4 bg-[#1a1a1a] flex items-center justify-center">
+                  <div className="w-24 h-1 bg-[#444] rounded-full" />
+                </div>
               </div>
             </div>
           </div>
