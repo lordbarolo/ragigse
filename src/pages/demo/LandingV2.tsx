@@ -6,9 +6,9 @@ import { ArrowRight } from "lucide-react";
 const TRUST_LOGOS = ["Capio", "Region Stockholm", "Aleris", "Praktikertjänst", "Sahlgrenska"];
 
 const STATS = [
-  { num: "616kr/timme", label: "Vad regionen betalar i storstad", subtitle: "Leg sjuksköterska i zon 1" },
-  { num: "15-20%", label: "Branschens vanliga marginaler", subtitle: "Andel till bemanningsföretag" },
-  { num: "508kr/timme", label: "Se uträkningen för din roll och ort", subtitle: "KVAR TILL KONSULT MED FÖRETAG" },
+  { num: "616 kr/tim", label: "Leg. sjuksköterska i storstad", subtitle: "RAMAVTALSPRIS · ZON 1" },
+  { num: "15–20%", label: "Enligt offentliga avtal", subtitle: "BRANSCHENS MARGINAL" },
+  { num: "508 kr/tim", label: "Se din roll och zon →", subtitle: "ESTIMERAD KONSULTLÖN" },
 ];
 
 const MODULES_ROW1 = [
