@@ -466,7 +466,7 @@ export default function LandingV2() {
       </div>
 
       {/* ── Footer ──────────────────────────── */}
-      <footer className="px-6 lg:px-10 pt-10 pb-7 border-t border-border/40 bg-white">
+      <footer className="px-6 lg:px-10 pt-10 pb-24 border-t border-border/40 bg-white">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
           <div>
             <div className="flex items-center gap-2 text-lg font-medium tracking-tight mb-2.5">
