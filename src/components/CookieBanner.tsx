@@ -41,12 +41,12 @@ export default function CookieBanner() {
   }, []);
 
   const handleAccept = () => {
-    setConsent("accepted");
+    acceptTracking();
     setVisible(false);
   };
 
   const handleReject = () => {
-    setConsent("rejected");
+    declineTracking();
     setVisible(false);
   };
 
