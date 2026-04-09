@@ -314,7 +314,7 @@ export default function LandingV2() {
       <div className="h-px bg-border/40 mx-6 lg:mx-10" />
 
       {/* ── Invoice feature ─────────────────── */}
-      <section className="px-6 lg:px-10 py-[72px] bg-white">
+      <section className="px-6 lg:px-10 py-[72px] bg-[#F2F1F8]">
         <div className="max-w-[600px] mx-auto">
           {/* Scaled table */}
           <div className="w-full overflow-hidden mb-8" ref={(el) => {
