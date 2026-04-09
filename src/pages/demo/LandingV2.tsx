@@ -215,8 +215,8 @@ export default function LandingV2() {
             CompCare samlar alla verktyg du behöver som konsult inom vården — löneanalys, verifiering, fakturagranskning och referenshantering i en plattform du äger.
           </p>
 
-          {/* Desktop email CTA */}
-          <div className="hidden lg:block space-y-3">
+          {/* Email CTA */}
+          <div className="space-y-3">
             <p className="text-[13px] text-white/50 italic">Se vad din roll ger i din zon — gratis</p>
             <div className="flex gap-2">
               <input
@@ -236,8 +236,8 @@ export default function LandingV2() {
           </div>
         </div>
 
-        {/* Desktop flow cards */}
-        <div className="relative z-10 hidden lg:flex flex-col gap-0 w-[260px] flex-shrink-0 mx-auto lg:mr-10 py-20">
+        {/* Flow cards — shared layout for mobile & desktop */}
+        <div className="relative z-10 flex flex-col gap-0 w-full max-w-[260px] flex-shrink-0 mx-auto lg:mr-10 py-4 lg:py-20 px-6 lg:px-0">
           {/* Card 1 */}
           <div className="bg-white/[0.07] border border-white/[0.13] rounded-[14px] px-5 py-4">
             <div className="text-[10px] text-white/40 uppercase tracking-wider mb-1">RAMAVTALSPRIS · ZON 1 · SKR 2026</div>
@@ -259,30 +259,6 @@ export default function LandingV2() {
             <div className="text-[30px] font-medium text-white mb-0.5">508 <span className="text-[16px] text-white/50">kr/tim</span></div>
             <div className="text-[12px] text-[rgba(175,169,236,0.7)] leading-snug">Se exakt vad du kan förvänta dig →</div>
           </div>
-        </div>
-
-        {/* Mobile stat cards */}
-        <div className="relative z-10 mx-auto py-4 lg:hidden grid grid-cols-2 gap-3 px-6 w-full">
-          {STATS.map((s) => (
-            <div key={s.label} className="bg-white/[0.07] border border-white/[0.13] rounded-xl px-4 py-3.5">
-              {s.subtitle && <div className="text-[10px] text-white/40 uppercase tracking-wider mb-1">{s.subtitle}</div>}
-              <div className="text-[20px] font-medium text-white mb-0.5">{s.num}</div>
-              <div className="text-[11px] text-white/50 leading-snug">{s.label}</div>
-            </div>
-          ))}
-          <Link to="/registrera" className="bg-white/[0.07] border border-white/[0.13] rounded-xl px-4 py-3.5 hover:bg-white/[0.12] transition-colors group">
-            <div className="text-[10px] text-white/40 uppercase tracking-wider mb-1">JÄMFÖR DIN EGEN ERSÄTTNING</div>
-            <div className="text-[20px] font-medium text-white mb-0.5 text-center flex items-center justify-center gap-2">START <ArrowRight className="w-5 h-5 bg-transparent text-[#5248d5]" /></div>
-            <div className="text-[11px] text-white/50 leading-snug">Svara på 6 frågor för att få din rapport</div>
-          </Link>
-        </div>
-
-        {/* Mobile buttons */}
-        <div className="relative z-10 grid grid-cols-2 lg:hidden gap-3 px-6 pb-10">
-          <Link to="/registrera" className="block">
-            <button className="w-full px-4 py-3 bg-[#534AB7] rounded-lg text-white text-[15px] font-medium">Kom igång gratis</button>
-          </Link>
-          <button className="w-full px-4 py-3 bg-transparent border border-white/30 rounded-lg text-white/80 text-[15px]">Se hur det fungerar</button>
         </div>
       </section>
 
