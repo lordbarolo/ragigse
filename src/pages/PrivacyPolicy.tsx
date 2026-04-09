@@ -151,7 +151,7 @@ const PrivacyPolicy = () => {
           <div>
             <h2 className="text-xl font-semibold text-foreground">9. Säkerhet</h2>
             <p className="text-sm text-muted-foreground leading-relaxed mt-2">
-              Vi vidtar lämpliga tekniska och organisatoriska åtgärder för att skydda dina personuppgifter, inklusive: kryptering av data i transit (TLS) och vid lagring, radnivåsäkerhet (RLS) i databasen som säkerställer att varje användare enbart kan se sina egna uppgifter, samt BankID-verifiering för referenstjänsten.
+              Vi vidtar lämpliga tekniska och organisatoriska åtgärder för att skydda dina personuppgifter, inklusive: kryptering av data i transit (TLS) och vid lagring, radnivåsäkerhet (RLS) i databasen som säkerställer att varje användare enbart kan se sina egna uppgifter, samt stark digital verifiering för referenstjänsten.
             </p>
           </div>
 
