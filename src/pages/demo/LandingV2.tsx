@@ -69,7 +69,7 @@ const MODULES_ROW2 = [
     ),
   },
   {
-    title: "Uppdragsradar",
+    title: "Uppdragsprognos",
     desc: "Öka chanserna att få uppdragen du verkligen vill ha. Se prognoser utifrån uppdrag som publicerats historiskt i din region och specialitet. Vi har analyserat 5 års historik och över 30 000 bemanningsuppdrag. ",
     tag: "Beta",
     tagColor: "purple" as const,
