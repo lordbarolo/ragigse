@@ -470,7 +470,7 @@ export default function LandingV2() {
           <div>
             <h4 className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-3">Verktyg</h4>
             <div className="flex flex-col gap-2 text-[13px] text-muted-foreground">
-              <span>Verify</span><span>Löneanalys</span><span>Fakturagranskning</span><span>Uppdragsradar</span>
+              <span>Verify</span><span>Löneanalys</span><span>Fakturagranskning</span><span>Uppdragsprognos</span>
             </div>
           </div>
           <div>

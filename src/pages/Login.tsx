@@ -78,7 +78,7 @@ export default function Login() {
     { icon: "🧾", title: "Fakturakontroll", desc: "Ladda upp din faktura och få en automatisk granskning mot gällande avtal." },
     { icon: "🤖", title: "Löneassistent", desc: "Ställ frågor om din ersättning och få svar baserade på avtalsdata." },
     { icon: "🛡️", title: "Referensvalv", desc: "Samla och dela verifierade referenser med bemanningsföretag." },
-    { icon: "📡", title: "Uppdragsradar", desc: "Bevaka kommande avrop och få notiser innan de publiceras." },
+    { icon: "📡", title: "Uppdragsprognos", desc: "Bevaka kommande avrop och få notiser innan de publiceras." },
     { icon: "📁", title: "Dokument & Profil", desc: "Lagra legitimationer, intyg och bygg din verifierade konsultprofil." },
   ];
 
