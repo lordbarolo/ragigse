@@ -516,7 +516,7 @@ export default function LandingV2() {
       {/* ── CTA Banner ──────────────────────── */}
       <div className="mx-6 lg:mx-10 mb-[72px] rounded-xl bg-[#1a1545] px-6 lg:px-12 py-14 text-center">
         <h2 className="text-[28px] font-medium text-white mb-3">Redo att ta kontroll?</h2>
-        <p className="text-base text-white/60 mb-7">Gratis konto. Inga kreditkort. BankID-verifiering på 30 sekunder.</p>
+        <p className="text-base text-white/60 mb-7">Gratis konto. Inga kreditkort. Kom igång på 30 sekunder.</p>
         <div className="flex gap-3 justify-center">
           <Link to="/registrera">
             <button className="px-8 py-3 bg-[#534AB7] rounded-lg text-white text-[15px] font-medium">Skapa konto gratis</button>
