@@ -28,7 +28,7 @@ const MODULES_ROW1 = [
   },
   {
     title: "Referensplattformen",
-    desc: "Full kontroll över dina referenser. Du bestämmer vem som ser dem och när — aldrig automatiskt synliga för uppdragsgivare.",
+    desc: "Du bestämmer vem som ser dem och när. Referensgivare kan verifiera med bank-id istället för att lämna samma uppgifter till flera bolag.",
     tag: "Ingår gratis",
     tagColor: "purple" as const,
     iconBg: "#EEEDFE",
