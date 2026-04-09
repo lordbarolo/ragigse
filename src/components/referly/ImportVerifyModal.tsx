@@ -103,7 +103,7 @@ export function ImportVerifyModal({ open, onOpenChange, userId, onSuccess }: Imp
       period_end: hasEnd ? toDateStr(endMonth, endYear) : null,
       invite_token: token,
       is_verification_only: true,
-      document_url: urlData.publicUrl,
+      document_url: urlData?.signedUrl || "",
       document_name: file.name,
     });
 
