@@ -527,7 +527,7 @@ export default function LandingV2() {
               CompCare
             </div>
             <p className="text-[13px] text-muted-foreground leading-relaxed max-w-[220px]">
-              Data och verktyg för Sveriges läkare och sjuksköterskor. Helt oberoende från bemanningsbranschen.
+              Transparent marknadsdata och smarta verktyg för Sveriges läkare och sjuksköterskor.
             </p>
           </div>
           <div>
