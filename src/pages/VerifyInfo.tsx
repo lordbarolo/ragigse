@@ -68,7 +68,7 @@ export default function VerifyInfo() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {[
               { icon: ShieldCheck, title: "Skydd mot dubbelpresentationer", desc: "Regioner ser omedelbart vilka bemanningsföretag som är auktoriserade." },
-              { icon: Fingerprint, title: "BankID-nivå", desc: "Signeringen är juridiskt bindande och kan inte förfalskas." },
+              { icon: Fingerprint, title: "Stark verifiering", desc: "Signeringen är juridiskt bindande och kan inte förfalskas." },
               { icon: FileCheck, title: "Audit Trail", desc: "Varje steg loggas transparent — du har full insyn i vem som sett beviset." },
               { icon: CheckCircle, title: "Source of Truth", desc: "En enda källa till sanning istället för e-postkedjor och telefonsamtal." },
             ].map((b, i) => (

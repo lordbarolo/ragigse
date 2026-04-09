@@ -45,7 +45,7 @@ const PrivacyPolicy = () => {
 
             <h3 className="text-base font-medium text-foreground mt-4">2.4 Referenser</h3>
             <p className="text-sm text-muted-foreground leading-relaxed mt-1">
-              Du kan registrera referensgivare med namn, e-post, telefonnummer, organisation och yrkesroll. Vi skickar inbjudningar via e-post och erbjuder BankID-verifiering. Referensgivarens personuppgifter behandlas för att möjliggöra verifieringstjänsten. Rättslig grund: berättigat intresse (artikel 6.1f GDPR). Referensgivaren kan när som helst begära radering av sina uppgifter.
+              Du kan registrera referensgivare med namn, e-post, telefonnummer, organisation och yrkesroll. Vi skickar inbjudningar via e-post och erbjuder digital verifiering. Referensgivarens personuppgifter behandlas för att möjliggöra verifieringstjänsten. Rättslig grund: berättigat intresse (artikel 6.1f GDPR). Referensgivaren kan när som helst begära radering av sina uppgifter.
             </p>
 
             <h3 className="text-base font-medium text-foreground mt-4">2.5 Löneanalys och förhandlingschat</h3>

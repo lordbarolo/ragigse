@@ -475,8 +475,8 @@ export default function AgencyDashboard() {
           </p>
           <p>
             <strong className="text-foreground">Beviset genereras automatiskt</strong> — När signeringen är klar skapas ett verifieringsbevis
-            med unik URL som ni kan skicka direkt till uppdragsgivaren. Beviset innehåller konsultens verifierade meriter, BankID-signatur
-            och en komplett händelselogg.
+            med unik URL som ni kan skicka direkt till uppdragsgivaren. Beviset innehåller konsultens verifierade meriter, digital signatur
+             och en komplett händelselogg.
           </p>
         </div>
       </div>
