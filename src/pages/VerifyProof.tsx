@@ -40,8 +40,8 @@ const VERIFICATION_LABELS: Record<string, { label: string; icon: React.ReactNode
     icon: <ShieldCheck className="h-3 w-3" />,
     className: "bg-primary/10 text-primary border-primary/20",
   },
-  bankid: {
-    label: "BankID",
+  verified: {
+    label: "Verifierad",
     icon: <ShieldCheck className="h-3 w-3" />,
     className: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
   },
