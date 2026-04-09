@@ -105,7 +105,7 @@ const PLANS = [
     price: "0 kr",
     unit: " /mån",
     desc: "Grundverktygen utan kostnad — för alltid.",
-    features: ["Dokumentvalvet (Verify)", "Referensplattformen", "BankID-delning", "Grundläggande löneindikator"],
+    features: ["Dokumentvalvet (Verify)", "Referensplattformen", "En kostnadsfri löneanalys", "Grundläggande löneindikator"],
     cta: "Kom igång",
     featured: false,
   },
