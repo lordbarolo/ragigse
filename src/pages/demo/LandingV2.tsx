@@ -232,7 +232,7 @@ export default function LandingV2() {
                 </button>
               </Link>
             </div>
-            <p className="text-[11px] text-white/30">Inga kreditkort. BankID-verifiering tar 30 sekunder.</p>
+            <p className="text-[11px] text-white/30">Inga kreditkort. Kom igång på 30 sekunder.</p>
           </div>
         </div>
 
