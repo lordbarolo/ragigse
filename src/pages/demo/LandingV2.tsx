@@ -56,7 +56,7 @@ const MODULES_ROW1 = [
 const MODULES_ROW2 = [
   {
     title: "Fakturagranskning",
-    desc: "AI granskar fakturor och tidrapporter mot utfört arbete. Vi hittar vad du missat och hjälper dig fakturera det. Vi tar 25% av det vi hittar.",
+    desc: "AI granskar dina fakturor och tidrapporter. Vi hittar vad du missat och hjälper dig fakturera det. Vi får 25% av det vi hittar i provision. Hittar vi inget, betalar du inget.",
     tag: "Prestationsbaserat",
     tagColor: "green" as const,
     iconBg: "#EAF3DE",
