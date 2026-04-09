@@ -4,7 +4,7 @@ import { ShieldCheck, Users, FileCheck, Clock, Lock, ArrowRight } from "lucide-r
 import LandingNav from "@/components/landing/LandingNav";
 import LandingFooter from "@/components/landing/LandingFooter";
 import { trackEvent } from "@/lib/trackEvent";
-import ComingSoonOverlay from "@/components/ComingSoonOverlay";
+
 
 const FEATURES = [
   {
