@@ -94,11 +94,11 @@ const STEPS = [
 ];
 
 const INVOICES = [
-  { label: "Faktura #2024-031", val: "42 h — OK", status: "ok" },
-  { label: "Faktura #2024-038", val: "6 h saknas", status: "miss" },
-  { label: "Faktura #2024-044", val: "38 h — OK", status: "ok" },
-  { label: "Faktura #2024-051", val: "3.5 h saknas", status: "miss" },
-  { label: "Faktura #2024-059", val: "44 h — OK", status: "ok" },
+  { label: "Faktura #3", val: "42 h — OK", status: "ok" },
+  { label: "Faktura #4", val: "6 h saknas", status: "miss" },
+  { label: "Faktura #5", val: "38 h — OK", status: "ok" },
+  { label: "Faktura #6", val: "3.5 h saknas", status: "miss" },
+  { label: "Faktura #7", val: "44 h — OK", status: "ok" },
 ];
 
 const PLANS = [
