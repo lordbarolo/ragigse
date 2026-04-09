@@ -171,7 +171,7 @@ export default function LandingV2() {
           CompCare
         </div>
         <div className="hidden md:flex gap-6">
-          {["Verktyg", "Löneanalys", "Fakturagranskning", "Priser", "Om oss"].map((l) => (
+          {NAV_LINKS.map((l) => (
             <span key={l} className="text-sm text-muted-foreground cursor-default">{l}</span>
           ))}
         </div>
