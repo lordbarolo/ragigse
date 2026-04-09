@@ -175,7 +175,7 @@ export default function ReferenserInfo() {
         </div>
       </section>
 
-      </ComingSoonOverlay>
+      </>
 
       <LandingFooter />
     </div>
