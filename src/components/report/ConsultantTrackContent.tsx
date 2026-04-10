@@ -589,19 +589,6 @@ export default function ConsultantTrackContent({
         </div>
       )}
 
-      {/* ═══ Personliga Insights ═══ */}
-      {isConsultantFullAccess && rec && (
-        <div ref={registerSectionRef?.("personal_insights")}>
-          <PersonalInsights
-            r={r}
-            currentHourly={currentHourly}
-            isEmployee={isEmployee}
-            occupation={occupation}
-            userZone={userZone}
-            zoneComparisons={zoneComparisons}
-          />
-        </div>
-      )}
 
 
       {/* ═══ Förklarande text ═══ */}
