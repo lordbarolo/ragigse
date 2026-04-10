@@ -59,7 +59,7 @@ export default function Radar() {
 
   // SEO metadata
   useEffect(() => {
-    document.title = "Uppdragsradar – Se kommande uppdrag | CompCare";
+    document.title = "Uppdragsprognos – Se kommande uppdrag | CompCare";
     const meta = document.querySelector('meta[name="description"]');
     const desc = "Prognos för kommande vårduppdrag baserat på historiska mönster. Se vilka regioner och köpare som sannolikt behöver bemanning snart.";
     if (meta) { meta.setAttribute("content", desc); }

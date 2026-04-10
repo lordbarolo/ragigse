@@ -1,4 +1,5 @@
 import { lazy, Suspense, useEffect } from "react";
+import posthog from "@/lib/posthog";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -57,6 +58,7 @@ const AgencyLanding = lazy(() => import("./pages/AgencyLanding"));
 const AgencySignup = lazy(() => import("./pages/AgencySignup"));
 const DemoLanding = lazy(() => import("./pages/DemoLanding"));
 const ReferenceDemo = lazy(() => import("./pages/demo/ReferenceDemo"));
+const LandingV2 = lazy(() => import("./pages/demo/LandingV2"));
 const Campaign = lazy(() => import("./pages/Campaign"));
 
 const queryClient = new QueryClient();
@@ -74,6 +76,9 @@ function ScrollToTop() {
     window.scrollTo(0, 0);
     if (typeof window.gtag === 'function') {
       window.gtag('config', 'G-8TKTZH3KZZ', { page_path: pathname });
+    }
+    if (posthog.has_opted_in_capturing()) {
+      posthog.capture('$pageview');
     }
   }, [pathname]);
 
@@ -160,6 +165,7 @@ const App = () => (
               <Route path="/dev/e2e-test" element={import.meta.env.PROD ? <NotFound /> : <E2ETest />} />
               <Route path="/demo" element={<DemoLanding />} />
               <Route path="/demo/referenser" element={<ReferenceDemo />} />
+              <Route path="/demo/landing-v2" element={<LandingV2 />} />
               <Route path="/dev/demo" element={<Navigate to="/demo" replace />} />
 
               {/* ── Backwards-compat redirects ───── */}

@@ -1,23 +1,24 @@
 
 
-## Plan: Byt alla URL:er från compcare.lovable.app till compcare.se
+## Plan: Centrera stat-korten mot mitten av hjältesektionen
 
-### Bakgrund
-Domänen **www.compcare.se** är redan kopplad till projektet. Men det finns 41 hårdkodade referenser till `compcare.lovable.app` i 6 filer (mest edge functions och e-postmallar) som behöver uppdateras.
+**Problemet**: De tre stat-korten (616kr/timme, 15-20%, 508kr/timme) har `ml-auto` och `pr-6 lg:pr-10`, vilket pressar dem mot högerkanten.
 
-### Ändringar
+**Lösningen**: Byt ut `ml-auto pr-6 lg:pr-10` mot `mx-auto` på stat-kortens wrapper-div (rad 206) så att de centreras horisontellt i den lediga ytan.
 
-Byt `compcare.lovable.app` → `compcare.se` i följande filer:
+### Ändring
 
-1. **`supabase/functions/save-email/index.ts`** — rapport-URL:er som skickas i e-post (rad 184–185, 216)
-2. **`supabase/functions/_shared/transactional-email-templates/report-delivery.tsx`** — fallback-URL och preview-data (rad 34, 50)
-3. **`supabase/functions/_shared/transactional-email-templates/reference-invite.tsx`** — preview-data (rad 85)
-4. **`supabase/functions/_shared/transactional-email-templates/welcome.tsx`** — profilknapp-URL (rad 35)
-5. **`supabase/functions/auth-email-hook/index.ts`** — SAMPLE_PROJECT_URL (rad 49)
-6. **`supabase/functions/radar-notify/index.ts`** — radar-länk i e-post (rad 77)
+**Fil**: `src/pages/demo/LandingV2.tsx`, rad 206
 
-Alla ersättningar är rena sök-och-ersätt: `compcare.lovable.app` → `compcare.se`. Ingen logikändring krävs.
+Från:
+```
+<div className="relative z-10 ml-auto pr-6 lg:pr-10 py-20 hidden lg:flex flex-col gap-5">
+```
 
-### Teknisk detalj
-Edge functions deployas automatiskt efter ändringarna, så de nya URL:erna börjar gälla direkt.
+Till:
+```
+<div className="relative z-10 mx-auto py-20 hidden lg:flex flex-col gap-5">
+```
+
+Det är en enradig ändring som tar bort högerförskjutningen och centrerar korten i den tillgängliga bredden bredvid textblocket.
 

@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { getConsent } from "@/lib/cookieConsent";
-import { acceptTracking, declineTracking } from "@/lib/posthog";
+import { getConsent, setConsent } from "@/lib/cookieConsent";
 import { Link } from "react-router-dom";
+import posthog from "@/lib/posthog";
 
 export default function CookieBanner() {
   const [visible, setVisible] = useState(false);
@@ -41,12 +41,14 @@ export default function CookieBanner() {
   }, []);
 
   const handleAccept = () => {
-    acceptTracking();
+    setConsent("accepted");
+    posthog.opt_in_capturing();
     setVisible(false);
   };
 
   const handleReject = () => {
-    declineTracking();
+    setConsent("rejected");
+    posthog.opt_out_capturing();
     setVisible(false);
   };
 
