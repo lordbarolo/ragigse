@@ -91,27 +91,6 @@ export default function Login() {
           </Link>
         </div>
 
-        {/* Feature showcase */}
-        <Card className="border-border/50 bg-card/80 backdrop-blur">
-          <CardHeader className="text-center pb-2">
-            <CardTitle className="text-lg font-semibold text-foreground">Ditt personliga kontrollcenter</CardTitle>
-            <CardDescription>Logga in för att få tillgång till alla verktyg</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-3">
-              {features.map((f) => (
-                <div key={f.title} className="flex items-start gap-2.5 rounded-lg border border-border/40 bg-muted/30 p-3">
-                  <span className="text-xl leading-none mt-0.5">{f.icon}</span>
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-foreground leading-tight">{f.title}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5 leading-snug">{f.desc}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
         <Card className="border-border/50 bg-card/80 backdrop-blur">
           <CardHeader className="text-center">
             <CardTitle className="text-xl font-semibold text-foreground">Logga in</CardTitle>
@@ -159,6 +138,27 @@ export default function Login() {
               <Link to="/registrera" className="text-primary hover:underline font-medium">
                 Skapa konto
               </Link>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Feature showcase */}
+        <Card className="border-border/50 bg-card/80 backdrop-blur">
+          <CardHeader className="text-center pb-2">
+            <CardTitle className="text-lg font-semibold text-foreground">Ditt personliga kontrollcenter</CardTitle>
+            <CardDescription>Logga in för att få tillgång till alla verktyg</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-2 gap-3">
+              {features.map((f) => (
+                <div key={f.title} className="flex items-start gap-2.5 rounded-lg border border-border/40 bg-muted/30 p-3">
+                  <span className="text-xl leading-none mt-0.5">{f.icon}</span>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-foreground leading-tight">{f.title}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5 leading-snug">{f.desc}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </CardContent>
         </Card>
