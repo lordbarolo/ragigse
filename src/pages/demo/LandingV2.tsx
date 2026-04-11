@@ -183,7 +183,7 @@ export default function LandingV2() {
       </nav>
 
       {/* ── Hero ────────────────────────────── */}
-      <section className="relative min-h-[480px] flex flex-col lg:flex-row items-start overflow-hidden">
+      <section className="relative min-h-[480px] flex flex-col md:flex-row items-start overflow-hidden">
         {/* bg layers */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#0d0b2a] via-[#1a1545] via-40% to-[#2a2070]" />
         
@@ -213,7 +213,7 @@ export default function LandingV2() {
         />
 
         {/* content — left */}
-        <div className="relative z-10 px-6 lg:px-10 xl:px-16 pt-16 pb-8 lg:py-24 max-w-[680px] flex-1">
+        <div className="relative z-10 px-6 md:px-10 xl:px-16 pt-16 pb-8 md:py-24 max-w-[680px] flex-1">
           <div className="inline-flex items-center gap-1.5 text-xs font-medium text-[#AFA9EC] bg-[rgba(83,74,183,0.2)] border border-[rgba(127,119,221,0.35)] rounded-full px-3 py-1 mb-5 uppercase tracking-wider">
             <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="#AFA9EC" /></svg>
             För läkare &amp; sjuksköterskor
@@ -247,7 +247,7 @@ export default function LandingV2() {
         </div>
 
         {/* Flow cards — shared layout for mobile & desktop */}
-        <div className="relative z-10 flex flex-col gap-0 w-full max-w-[260px] flex-shrink-0 mx-auto lg:mx-0 lg:ml-auto lg:mr-16 py-4 lg:py-24 lg:self-center px-6 lg:px-0">
+        <div className="relative z-10 flex flex-col gap-0 w-full max-w-[260px] flex-shrink-0 mx-auto md:mx-0 md:ml-auto md:mr-16 py-4 md:py-24 md:self-center px-6 md:px-0">
           {/* Card 1 */}
           <div className="bg-white/[0.07] border border-white/[0.13] rounded-[14px] px-5 py-4">
             <div className="text-[10px] text-white/40 uppercase tracking-wider mb-1">RAMAVTALSPRIS · ZON 1 · SKR 2026</div>
