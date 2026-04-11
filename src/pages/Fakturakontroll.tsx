@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { ShieldCheck, CheckCircle, TrendingUp } from "lucide-react";
 import InvoiceUploadForm from "@/components/invoice/InvoiceUploadForm";
 import { Button } from "@/components/ui/button";
-import LandingNav from "@/components/landing/LandingNav";
 import LandingFooter from "@/components/landing/LandingFooter";
 import { trackEvent } from "@/lib/trackEvent";
 
@@ -28,8 +27,7 @@ export default function Fakturakontroll() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground">
-      <LandingNav />
+    <div className="flex flex-col text-foreground">
 
       {/* Hero — Steps */}
       <section className="px-6 pt-16 pb-12 md:pt-24 md:pb-16 bg-muted/40">
