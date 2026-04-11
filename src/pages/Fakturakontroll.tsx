@@ -42,7 +42,7 @@ export default function Fakturakontroll() {
             Hittar vi inget, betalar du inget.
           </p>
           <p className="text-sm text-muted-foreground">
-            Vi tar 25% av det vi hittar. Hittar vi ingenting kostar det dig ingenting.
+            Vid avvikelser hjälper vi dig med nya fakturor och säkerställer att du får betalt.
           </p>
         </div>
       </section>
