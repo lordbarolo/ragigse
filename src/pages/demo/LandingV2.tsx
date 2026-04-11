@@ -436,7 +436,7 @@ export default function LandingV2() {
           </div>
 
           {/* CTA */}
-          <a href="#" className="block w-full py-3.5 bg-[#534AB7] text-white rounded-[10px] text-[15px] font-medium text-center mb-8">Skicka in dina fakturor</a>
+          <a href="#" className="block w-full py-3.5 bg-[#534AB7] text-white rounded-[10px] text-[15px] font-medium text-center mb-8">Skapa konto</a>
 
           {/* Copy */}
           <p className="text-[11px] font-semibold text-[#534AB7] uppercase tracking-[0.1em] mb-3.5">Fakturagranskning</p>

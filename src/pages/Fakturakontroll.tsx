@@ -113,7 +113,7 @@ export default function Fakturakontroll() {
                 document.getElementById("upload")?.scrollIntoView({ behavior: "smooth" });
               }}
             >
-              Skicka in dina fakturor
+              Skapa konto
             </Button>
           </div>
       </section>
