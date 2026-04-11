@@ -37,7 +37,7 @@ export default function Fakturakontroll() {
           </h1>
           <p className="text-muted-foreground leading-relaxed max-w-xl">
             Är du säker på att du fakturerat för alla timmar du jobbat?
-            Fakturureringsassistenten i Compcare analyserar dina fakturor och tidrapporter från de senaste två åren.
+            Faktureringsassistenten i Compcare analyserar dina fakturor och tidrapporter från de senaste två åren.
             Säkerställ att du har fått allt du förtjänat. Hittar vi inget, betalar du inget.
           </p>
           <p className="text-sm text-muted-foreground">
