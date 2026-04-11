@@ -33,7 +33,7 @@ export default function Fakturakontroll() {
         <div className="max-w-3xl mx-auto space-y-4">
           <p className="text-xs font-bold uppercase tracking-widest text-primary">Fakturagranskning</p>
           <h1 className="font-display text-3xl md:text-4xl font-extrabold tracking-tight">
-            Du har troligen pengar du inte fått
+            Har du fakturerat för alla timmar du jobbat?
           </h1>
           <p className="text-muted-foreground leading-relaxed max-w-xl">
             Är du säker på att du fakturerat för alla timmar du jobbat?
