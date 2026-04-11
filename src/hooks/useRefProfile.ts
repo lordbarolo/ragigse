@@ -36,7 +36,7 @@ export function useRefProfile(userId: string | undefined) {
     // Fetch all data in parallel
     const [refsResult, scoreResult, statusResult] = await Promise.all([
       supabase
-        .from("ref_references")
+        .from("ref_references_safe" as any)
         .select("*")
         .eq("individual_id", userId)
         .order("created_at", { ascending: false }),
@@ -44,7 +44,7 @@ export function useRefProfile(userId: string | undefined) {
       supabase.rpc("ref_calculate_profile_status", { p_profile_id: userId }),
     ]);
 
-    setReferences(refsResult.data || []);
+    setReferences((refsResult.data as any[]) || []);
     if (scoreResult.data) setTrustScore(scoreResult.data as unknown as TrustScoreResult);
     if (statusResult.data) setProfileStatus(statusResult.data as unknown as ProfileStatusResult);
 

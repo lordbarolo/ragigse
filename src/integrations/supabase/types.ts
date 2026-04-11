@@ -1979,6 +1979,13 @@ export type Database = {
             referencedRelation: "ref_references"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "ref_application_references_reference_id_fkey"
+            columns: ["reference_id"]
+            isOneToOne: false
+            referencedRelation: "ref_references_safe"
+            referencedColumns: ["id"]
+          },
         ]
       }
       ref_pings: {
@@ -2027,6 +2034,13 @@ export type Database = {
             columns: ["reference_id"]
             isOneToOne: false
             referencedRelation: "ref_references"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ref_pings_reference_id_fkey"
+            columns: ["reference_id"]
+            isOneToOne: false
+            referencedRelation: "ref_references_safe"
             referencedColumns: ["id"]
           },
           {
@@ -2196,6 +2210,13 @@ export type Database = {
             referencedRelation: "ref_references"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "ref_reference_artifacts_reference_id_fkey"
+            columns: ["reference_id"]
+            isOneToOne: false
+            referencedRelation: "ref_references_safe"
+            referencedColumns: ["id"]
+          },
         ]
       }
       ref_reference_verifications: {
@@ -2232,6 +2253,13 @@ export type Database = {
             columns: ["reference_id"]
             isOneToOne: false
             referencedRelation: "ref_references"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ref_reference_verifications_reference_id_fkey"
+            columns: ["reference_id"]
+            isOneToOne: false
+            referencedRelation: "ref_references_safe"
             referencedColumns: ["id"]
           },
         ]
@@ -2482,6 +2510,13 @@ export type Database = {
             columns: ["reference_id"]
             isOneToOne: false
             referencedRelation: "ref_references"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ref_verification_comments_reference_id_fkey"
+            columns: ["reference_id"]
+            isOneToOne: false
+            referencedRelation: "ref_references_safe"
             referencedColumns: ["id"]
           },
         ]
@@ -3164,7 +3199,228 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      ref_pings_safe: {
+        Row: {
+          confirmed_until: string | null
+          created_at: string | null
+          expires_at: string | null
+          id: string | null
+          reference_id: string | null
+          requested_by: string | null
+          requester_name: string | null
+          responded_at: string | null
+          sent_at: string | null
+          status: Database["public"]["Enums"]["ref_ping_status"] | null
+        }
+        Insert: {
+          confirmed_until?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string | null
+          reference_id?: string | null
+          requested_by?: string | null
+          requester_name?: string | null
+          responded_at?: string | null
+          sent_at?: string | null
+          status?: Database["public"]["Enums"]["ref_ping_status"] | null
+        }
+        Update: {
+          confirmed_until?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          id?: string | null
+          reference_id?: string | null
+          requested_by?: string | null
+          requester_name?: string | null
+          responded_at?: string | null
+          sent_at?: string | null
+          status?: Database["public"]["Enums"]["ref_ping_status"] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ref_pings_reference_id_fkey"
+            columns: ["reference_id"]
+            isOneToOne: false
+            referencedRelation: "ref_references"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ref_pings_reference_id_fkey"
+            columns: ["reference_id"]
+            isOneToOne: false
+            referencedRelation: "ref_references_safe"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ref_pings_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ref_references_safe: {
+        Row: {
+          attachable: boolean | null
+          bankid_signature_id: string | null
+          competencies: Json | null
+          confirmed_at: string | null
+          created_at: string | null
+          document_name: string | null
+          document_url: string | null
+          expires_at: string | null
+          giver_id: string | null
+          giver_name: string | null
+          id: string | null
+          individual_id: string | null
+          is_verification_only: boolean | null
+          last_confirmed_at: string | null
+          period_end: string | null
+          period_start: string | null
+          recommendation_score: number | null
+          reference_text: string | null
+          relationship: string | null
+          revoked_at: string | null
+          status: Database["public"]["Enums"]["ref_reference_status"] | null
+          verification_level: string | null
+          verified_at: string | null
+          workplace: string | null
+        }
+        Insert: {
+          attachable?: boolean | null
+          bankid_signature_id?: string | null
+          competencies?: Json | null
+          confirmed_at?: string | null
+          created_at?: string | null
+          document_name?: string | null
+          document_url?: string | null
+          expires_at?: string | null
+          giver_id?: string | null
+          giver_name?: string | null
+          id?: string | null
+          individual_id?: string | null
+          is_verification_only?: boolean | null
+          last_confirmed_at?: string | null
+          period_end?: string | null
+          period_start?: string | null
+          recommendation_score?: number | null
+          reference_text?: string | null
+          relationship?: string | null
+          revoked_at?: string | null
+          status?: Database["public"]["Enums"]["ref_reference_status"] | null
+          verification_level?: string | null
+          verified_at?: string | null
+          workplace?: string | null
+        }
+        Update: {
+          attachable?: boolean | null
+          bankid_signature_id?: string | null
+          competencies?: Json | null
+          confirmed_at?: string | null
+          created_at?: string | null
+          document_name?: string | null
+          document_url?: string | null
+          expires_at?: string | null
+          giver_id?: string | null
+          giver_name?: string | null
+          id?: string | null
+          individual_id?: string | null
+          is_verification_only?: boolean | null
+          last_confirmed_at?: string | null
+          period_end?: string | null
+          period_start?: string | null
+          recommendation_score?: number | null
+          reference_text?: string | null
+          relationship?: string | null
+          revoked_at?: string | null
+          status?: Database["public"]["Enums"]["ref_reference_status"] | null
+          verification_level?: string | null
+          verified_at?: string | null
+          workplace?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ref_references_giver_id_fkey"
+            columns: ["giver_id"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ref_references_individual_id_fkey"
+            columns: ["individual_id"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ref_representation_requests_safe: {
+        Row: {
+          agency_id: string | null
+          agency_name: string | null
+          assignment_id: string | null
+          bankid_ref: string | null
+          consultant_email: string | null
+          consultant_user_id: string | null
+          created_at: string | null
+          id: string | null
+          organization_id: string | null
+          payload: Json | null
+          region: string | null
+          signed_at: string | null
+          status:
+            | Database["public"]["Enums"]["ref_representation_status"]
+            | null
+          verification_id: string | null
+        }
+        Insert: {
+          agency_id?: string | null
+          agency_name?: string | null
+          assignment_id?: string | null
+          bankid_ref?: string | null
+          consultant_email?: string | null
+          consultant_user_id?: string | null
+          created_at?: string | null
+          id?: string | null
+          organization_id?: string | null
+          payload?: Json | null
+          region?: string | null
+          signed_at?: string | null
+          status?:
+            | Database["public"]["Enums"]["ref_representation_status"]
+            | null
+          verification_id?: string | null
+        }
+        Update: {
+          agency_id?: string | null
+          agency_name?: string | null
+          assignment_id?: string | null
+          bankid_ref?: string | null
+          consultant_email?: string | null
+          consultant_user_id?: string | null
+          created_at?: string | null
+          id?: string | null
+          organization_id?: string | null
+          payload?: Json | null
+          region?: string | null
+          signed_at?: string | null
+          status?:
+            | Database["public"]["Enums"]["ref_representation_status"]
+            | null
+          verification_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ref_representation_requests_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       delete_email: {
