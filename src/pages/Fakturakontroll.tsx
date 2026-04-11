@@ -27,8 +27,7 @@ export default function Fakturakontroll() {
   }, []);
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground">
-      <LandingNav />
+    <div className="flex flex-col text-foreground">
 
       {/* Hero — Steps */}
       <section className="px-6 pt-16 pb-12 md:pt-24 md:pb-16 bg-muted/40">
