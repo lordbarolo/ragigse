@@ -227,7 +227,7 @@ export default function LandingV2() {
 
           {/* Email CTA */}
           <div className="space-y-3">
-            <p className="text-[13px] text-white/50 italic">Se vad din roll ger i din zon — gratis</p>
+            <p className="text-[13px] text-white/50 italic">Se rätt ersättningsnivåer för varje roll och region</p>
             <div className="flex gap-2">
               <input
                 type="email"
