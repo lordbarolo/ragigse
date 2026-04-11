@@ -222,7 +222,7 @@ export default function LandingV2() {
             Din <span className="text-[#AFA9EC]">data.</span><br />Din karriär.<br />Dina villkor.
           </h1>
           <p className="text-base text-white/[0.68] leading-relaxed mb-6 max-w-[460px]">
-            CompCare samlar alla verktyg du behöver som konsult inom vården — förhandlingsassistent, faktureringsassistent och referenshantering i en plattform du kontrollerar.
+            Här kan du säkerställa att du får rätt ersättning, rätt avtalsinnehåll och rätt antal timmar på dina fakturor.
           </p>
 
           {/* Email CTA */}
