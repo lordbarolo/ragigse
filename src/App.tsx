@@ -46,6 +46,7 @@ const PingResponse = lazy(() => import("./pages/PingResponse"));
 const PublicProfile = lazy(() => import("./pages/PublicProfile"));
 const VerifyProof = lazy(() => import("./pages/VerifyProof"));
 const Fakturakontroll = lazy(() => import("./pages/Fakturakontroll"));
+const FakturakontrollNy = lazy(() => import("./pages/consultant/FakturakontrollNy"));
 const ReferenserInfo = lazy(() => import("./pages/ReferenserInfo"));
 const VerifyInfo = lazy(() => import("./pages/VerifyInfo"));
 
@@ -116,6 +117,7 @@ const App = () => (
               <Route element={<ConsultantLayout />}>
                 <Route path="/consultant/forhandla" element={<Negotiate />} />
                 <Route path="/consultant/fakturakontroll" element={<Fakturakontroll />} />
+                <Route path="/consultant/fakturakontroll/ny" element={<ProtectedRoute><FakturakontrollNy /></ProtectedRoute>} />
                 <Route path="/consultant/ersattning" element={<CompensationPreview />} />
 
                 {/* Protected — require login */}

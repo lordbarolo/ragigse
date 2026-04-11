@@ -1223,6 +1223,69 @@ export type Database = {
           },
         ]
       }
+      invoice_reviews: {
+        Row: {
+          avvikelser: Json | null
+          created_at: string
+          differens: number | null
+          error_message: string | null
+          faktura_data: Json | null
+          faktura_path: string | null
+          fakturerad_summa: number | null
+          forvantad_summa: number | null
+          har_avvikelse: boolean
+          id: string
+          konsult_godkand: boolean
+          kontrakt_data: Json | null
+          kontrakt_path: string | null
+          notis_skickad: boolean
+          status: string
+          tidrapport_data: Json | null
+          tidrapport_path: string | null
+          user_id: string
+        }
+        Insert: {
+          avvikelser?: Json | null
+          created_at?: string
+          differens?: number | null
+          error_message?: string | null
+          faktura_data?: Json | null
+          faktura_path?: string | null
+          fakturerad_summa?: number | null
+          forvantad_summa?: number | null
+          har_avvikelse?: boolean
+          id?: string
+          konsult_godkand?: boolean
+          kontrakt_data?: Json | null
+          kontrakt_path?: string | null
+          notis_skickad?: boolean
+          status?: string
+          tidrapport_data?: Json | null
+          tidrapport_path?: string | null
+          user_id: string
+        }
+        Update: {
+          avvikelser?: Json | null
+          created_at?: string
+          differens?: number | null
+          error_message?: string | null
+          faktura_data?: Json | null
+          faktura_path?: string | null
+          fakturerad_summa?: number | null
+          forvantad_summa?: number | null
+          har_avvikelse?: boolean
+          id?: string
+          konsult_godkand?: boolean
+          kontrakt_data?: Json | null
+          kontrakt_path?: string | null
+          notis_skickad?: boolean
+          status?: string
+          tidrapport_data?: Json | null
+          tidrapport_path?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       invoice_submissions: {
         Row: {
           created_at: string

@@ -53,7 +53,10 @@ type EventName =
   | "b2b_landing_viewed"
   | "fakturakontroll_interest_submitted"
   | "negotiation_email_gate_completed"
-  | "chat_answer_reported";
+  | "chat_answer_reported"
+  | "fakturakontroll_ny_viewed"
+  | "fakturakontroll_uploaded"
+  | "fakturakontroll_completed";
 
 function isInternalTraffic(): boolean {
   const host = window.location.hostname;

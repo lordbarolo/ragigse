@@ -16,9 +16,9 @@ export default function DashboardInvoiceCheck() {
         <p className="text-sm text-muted-foreground mb-4">
           Se till att dina fakturor innehåller alla timmar du har jobbat. Vi granskar mot ramavtalets priser.
         </p>
-        <Link to="/consultant/fakturakontroll">
+        <Link to="/consultant/fakturakontroll/ny">
           <Button variant="outline" size="sm" className="gap-1.5">
-            Granska fakturor
+            Starta granskning
             <ArrowRight className="w-4 h-4" />
           </Button>
         </Link>
