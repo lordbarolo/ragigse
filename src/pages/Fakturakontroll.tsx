@@ -22,6 +22,8 @@ const MOCK_INVOICES = [
 ];
 
 export default function Fakturakontroll() {
+  const navigate = useNavigate();
+
   useEffect(() => {
     trackEvent("fakturakontroll_page_viewed");
     trackEvent("product_page_viewed", { product: "fakturakontroll" });
@@ -111,7 +113,7 @@ export default function Fakturakontroll() {
               className="w-full text-sm py-3 font-semibold mt-6"
               onClick={() => {
                 trackEvent("product_cta_clicked", { product: "fakturakontroll" });
-                document.getElementById("upload")?.scrollIntoView({ behavior: "smooth" });
+                navigate("/consultant/fakturakontroll/ny");
               }}
             >
               Skapa konto
@@ -192,7 +194,7 @@ export default function Fakturakontroll() {
             className="text-sm px-8 py-3 font-semibold"
             onClick={() => {
               trackEvent("product_cta_clicked", { product: "fakturakontroll" });
-              document.getElementById("upload")?.scrollIntoView({ behavior: "smooth" });
+              navigate("/consultant/fakturakontroll/ny");
             }}
           >
             Jag vill veta mer →
