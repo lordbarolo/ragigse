@@ -62,14 +62,14 @@ export default function Login() {
       return;
     }
     setLoading(true);
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/aterstall-losenord`,
+    const { error } = await supabase.functions.invoke("send-password-recovery", {
+      body: { email },
     });
     setLoading(false);
     if (error) {
       toast({ title: "Något gick fel", description: error.message, variant: "destructive" });
     } else {
-      toast({ title: "Återställningslänk skickad", description: "Kolla din inbox" });
+      toast({ title: "Om kontot finns har en återställningslänk skickats", description: "Kolla din inbox" });
     }
   };
 
