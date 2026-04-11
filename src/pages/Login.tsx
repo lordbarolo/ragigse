@@ -167,29 +167,6 @@ export default function Login() {
           </CardContent>
         </Card>
 
-        {/* Feature showcase */}
-        <div className="space-y-3">
-          <div className="text-center">
-            <p className="text-xs font-semibold uppercase tracking-widest text-[#AFA9EC] mb-1">Plattformen</p>
-            <h3 className="text-base font-bold text-white">Fem verktyg som förenklar din karriär</h3>
-          </div>
-          <div className="grid grid-cols-2 lg:grid-cols-3 gap-2.5">
-            {features.map((f) => {
-              const Icon = f.icon;
-              return (
-                <div key={f.title} className="rounded-xl border border-white/10 bg-white/[0.06] backdrop-blur p-3 flex flex-col gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
-                    <Icon className="w-4 h-4 text-[#AFA9EC]" />
-                  </div>
-                  <p className="text-sm font-semibold text-white leading-tight">{f.title}</p>
-                  <p className="text-[11px] text-white/50 leading-snug flex-1">{f.desc}</p>
-                  <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full w-fit ${f.badgeColor}`}>{f.badge}</span>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-
         <div className="text-center">
           <Link to="/" className="text-sm text-muted-foreground hover:text-primary inline-flex items-center gap-1">
             <ArrowLeft className="w-3 h-3" /> Tillbaka till startsidan
