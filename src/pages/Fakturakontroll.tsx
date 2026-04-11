@@ -107,7 +107,7 @@ export default function Fakturakontroll() {
             {/* CTA button */}
             <Button
               size="lg"
-              className="w-full text-base py-6 font-bold mt-6"
+              className="w-full text-sm py-3 font-semibold mt-6"
               onClick={() => {
                 trackEvent("product_cta_clicked", { product: "fakturakontroll" });
                 document.getElementById("upload")?.scrollIntoView({ behavior: "smooth" });
@@ -188,7 +188,7 @@ export default function Fakturakontroll() {
           </p>
           <Button
             size="lg"
-            className="text-base px-8 py-6 font-bold"
+            className="text-sm px-8 py-3 font-semibold"
             onClick={() => {
               trackEvent("product_cta_clicked", { product: "fakturakontroll" });
               document.getElementById("upload")?.scrollIntoView({ behavior: "smooth" });
