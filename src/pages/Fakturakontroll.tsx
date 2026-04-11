@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { ShieldCheck, CheckCircle, TrendingUp } from "lucide-react";
 import InvoiceUploadForm from "@/components/invoice/InvoiceUploadForm";
 import { Button } from "@/components/ui/button";
-import LandingNav from "@/components/landing/LandingNav";
 import LandingFooter from "@/components/landing/LandingFooter";
 import { trackEvent } from "@/lib/trackEvent";
 
