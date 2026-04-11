@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { ShieldCheck, CheckCircle, TrendingUp } from "lucide-react";
 import InvoiceUploadForm from "@/components/invoice/InvoiceUploadForm";
 import { Button } from "@/components/ui/button";
