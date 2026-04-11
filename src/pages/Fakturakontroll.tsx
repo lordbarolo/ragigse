@@ -46,31 +46,9 @@ export default function Fakturakontroll() {
         </div>
       </section>
 
-      {/* Steps */}
-      <section className="px-6 pt-8 pb-12 md:pt-12 md:pb-16 bg-muted/40">
-        <div className="max-w-5xl mx-auto">
-          <p className="text-xs font-bold uppercase tracking-widest text-primary mb-2">Så funkar det</p>
-          <h1 className="font-display text-3xl md:text-4xl font-extrabold tracking-tight mb-12">
-            Fyra steg till full kontroll
-          </h1>
-
-          {/* Step circles + line */}
-          <div className="relative flex items-start justify-between mb-16">
-            {/* connecting line */}
-            <div className="absolute top-6 left-[calc(12.5%)] right-[calc(12.5%)] h-px bg-border" />
-            {STEPS.map((step) => (
-              <div key={step.num} className="relative flex flex-col items-center text-center w-1/4 px-2">
-                <div className="w-12 h-12 rounded-full bg-card border-2 border-border flex items-center justify-center font-display font-bold text-lg text-foreground mb-3 z-10">
-                  {step.num}
-                </div>
-                <h3 className="font-semibold text-sm mb-1">{step.title}</h3>
-                <p className="text-xs text-muted-foreground leading-snug whitespace-pre-line">{step.desc}</p>
-              </div>
-            ))}
-          </div>
-
-          {/* Mock invoice table */}
-          <div className="max-w-2xl mx-auto">
+      {/* Mock invoice table */}
+      <section className="px-6 pt-8 pb-12 md:pt-12 md:pb-16">
+        <div className="max-w-2xl mx-auto">
             <div className="rounded-xl border border-border bg-card overflow-hidden shadow-sm">
               {/* Filter tabs */}
               <div className="flex items-center gap-1 px-4 py-2.5 border-b border-border text-[11px] font-medium">
@@ -140,6 +118,30 @@ export default function Fakturakontroll() {
             >
               Skicka in dina fakturor
             </Button>
+          </div>
+      </section>
+
+      {/* Steps */}
+      <section className="px-6 pt-8 pb-12 md:pt-12 md:pb-16 bg-muted/40">
+        <div className="max-w-5xl mx-auto">
+          <p className="text-xs font-bold uppercase tracking-widest text-primary mb-2">Så funkar det</p>
+          <h1 className="font-display text-3xl md:text-4xl font-extrabold tracking-tight mb-12">
+            Fyra steg till full kontroll
+          </h1>
+
+          {/* Step circles + line */}
+          <div className="relative flex items-start justify-between">
+            {/* connecting line */}
+            <div className="absolute top-6 left-[calc(12.5%)] right-[calc(12.5%)] h-px bg-border" />
+            {STEPS.map((step) => (
+              <div key={step.num} className="relative flex flex-col items-center text-center w-1/4 px-2">
+                <div className="w-12 h-12 rounded-full bg-card border-2 border-border flex items-center justify-center font-display font-bold text-lg text-foreground mb-3 z-10">
+                  {step.num}
+                </div>
+                <h3 className="font-semibold text-sm mb-1">{step.title}</h3>
+                <p className="text-xs text-muted-foreground leading-snug whitespace-pre-line">{step.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
