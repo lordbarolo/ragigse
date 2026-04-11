@@ -168,25 +168,27 @@ export default function Login() {
         </Card>
 
         {/* Feature showcase */}
-        <Card className="border-border/50 bg-card/80 backdrop-blur">
-          <CardHeader className="text-center pb-2">
-            <CardTitle className="text-lg font-semibold text-foreground">Ditt personliga kontrollcenter</CardTitle>
-            <CardDescription>Logga in för att få tillgång till alla verktyg</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-3">
-              {features.map((f) => (
-                <div key={f.title} className="flex items-start gap-2.5 rounded-lg border border-border/40 bg-muted/30 p-3">
-                  <span className="text-xl leading-none mt-0.5">{f.icon}</span>
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-foreground leading-tight">{f.title}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5 leading-snug">{f.desc}</p>
+        <div className="space-y-3">
+          <div className="text-center">
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#AFA9EC] mb-1">Plattformen</p>
+            <h3 className="text-base font-bold text-white">Fem verktyg som förenklar din karriär</h3>
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-2.5">
+            {features.map((f) => {
+              const Icon = f.icon;
+              return (
+                <div key={f.title} className="rounded-xl border border-white/10 bg-white/[0.06] backdrop-blur p-3 flex flex-col gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
+                    <Icon className="w-4 h-4 text-[#AFA9EC]" />
                   </div>
+                  <p className="text-sm font-semibold text-white leading-tight">{f.title}</p>
+                  <p className="text-[11px] text-white/50 leading-snug flex-1">{f.desc}</p>
+                  <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full w-fit ${f.badgeColor}`}>{f.badge}</span>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+              );
+            })}
+          </div>
+        </div>
 
         <div className="text-center">
           <Link to="/" className="text-sm text-muted-foreground hover:text-primary inline-flex items-center gap-1">
