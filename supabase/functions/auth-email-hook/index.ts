@@ -36,10 +36,10 @@ const EMAIL_TEMPLATES: Record<string, React.ComponentType<any>> = {
 }
 
 // Configuration
-const SITE_NAME = "compcare"
-const SENDER_DOMAIN = "info.compcare.se"
+const SITE_NAME = "CompCare"
+const SENDER_DOMAIN = "mail.compcare.se"
 const ROOT_DOMAIN = "compcare.se"
-const FROM_DOMAIN = "compcare.se" // Domain shown in From address (may be root or sender subdomain)
+const FROM_DOMAIN = "mail.compcare.se" // Verified Resend domain
 
 // Sample data for preview mode ONLY (not used in actual email sending).
 // URLs are baked in at scaffold time from the project's real data.
