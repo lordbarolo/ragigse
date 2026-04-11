@@ -36,7 +36,7 @@ export function useRefProfile(userId: string | undefined) {
     // Fetch all data in parallel
     const [refsResult, scoreResult, statusResult] = await Promise.all([
       supabase
-        .from("ref_references")
+        .from("ref_references_safe" as any)
         .select("*")
         .eq("individual_id", userId)
         .order("created_at", { ascending: false }),

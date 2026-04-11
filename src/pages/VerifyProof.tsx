@@ -106,7 +106,7 @@ export default function VerifyProof() {
       
       try {
         const { data: reprData } = await supabase
-          .from("ref_representation_requests" as any)
+          .from("ref_representation_requests_safe" as any)
           .select("agency_name, assignment_id, region, consultant_email, signed_at, bankid_ref, payload")
           .eq("verification_id", applicationId)
           .eq("status", "signed")

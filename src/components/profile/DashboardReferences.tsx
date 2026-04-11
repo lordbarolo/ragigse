@@ -22,9 +22,9 @@ export default function DashboardReferences() {
     const load = async () => {
       // @ts-ignore - deep type instantiation
       const { data } = await supabase
-        .from("ref_references")
+        .from("ref_references_safe" as any)
         .select("id, status")
-        .eq("owner_id", user.id);
+        .eq("individual_id", user.id);
 
       const refs = (data as any[] | null) || [];
       setSummary({
