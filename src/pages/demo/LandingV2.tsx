@@ -219,7 +219,7 @@ export default function LandingV2() {
             Byggt för läkare &amp; sjuksköterskor
           </div>
           <h1 className="text-[clamp(2rem,5vw,42px)] font-medium leading-[1.18] text-white mb-4 tracking-tight">
-            Dina <span className="text-[#AFA9EC]">data.</span><br />Din karriär.<br />Dina villkor.
+            Din <span className="text-[#AFA9EC]">data.</span><br />Din karriär.<br />Dina villkor.
           </h1>
           <p className="text-base text-white/[0.68] leading-relaxed mb-6 max-w-[460px]">
             CompCare samlar alla verktyg du behöver som konsult inom vården — löneanalys, verifiering, fakturagranskning och referenshantering i en plattform du äger.
