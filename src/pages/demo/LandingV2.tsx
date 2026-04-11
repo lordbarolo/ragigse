@@ -222,7 +222,7 @@ export default function LandingV2() {
             Din <span className="text-[#AFA9EC]">tid.</span><br />Din karriär.<br />Dina villkor.
           </h1>
           <p className="text-base text-white/[0.68] leading-relaxed mb-6 max-w-[460px]">
-            Här kan du säkerställa att du får rätt ersättning, rätt avtalsinnehåll och rätt antal timmar på dina fakturor.
+            Säkerställ att du får rätt ersättning,<br />rätt avtalsinnehåll och rätt belopp på dina fakturor. Se Compcare som din personliga sekreterare, som är tillgänglig 24/7.
           </p>
 
           {/* Email CTA */}
