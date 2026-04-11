@@ -183,7 +183,7 @@ export default function LandingV2() {
       </nav>
 
       {/* ── Hero ────────────────────────────── */}
-      <section className="relative min-h-[480px] flex flex-col lg:flex-row items-center overflow-hidden">
+      <section className="relative min-h-[480px] flex flex-col lg:flex-row items-start overflow-hidden">
         {/* bg layers */}
         <div className="absolute inset-0 bg-gradient-to-br from-[#0d0b2a] via-[#1a1545] via-40% to-[#2a2070]" />
         
@@ -213,15 +213,15 @@ export default function LandingV2() {
         />
 
         {/* content — left */}
-        <div className="relative z-10 px-6 lg:px-10 pt-16 pb-8 lg:py-20 max-w-[620px]">
+        <div className="relative z-10 px-6 lg:px-10 xl:px-16 pt-16 pb-8 lg:py-24 max-w-[680px] flex-1">
           <div className="inline-flex items-center gap-1.5 text-xs font-medium text-[#AFA9EC] bg-[rgba(83,74,183,0.2)] border border-[rgba(127,119,221,0.35)] rounded-full px-3 py-1 mb-5 uppercase tracking-wider">
             <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="#AFA9EC" /></svg>
             För läkare &amp; sjuksköterskor
           </div>
-          <h1 className="text-[clamp(2rem,5vw,42px)] font-medium leading-[1.18] text-white mb-4 tracking-tight">
+          <h1 className="text-[clamp(2.5rem,6vw,64px)] font-bold leading-[1.1] text-white mb-6 tracking-tight">
             Din <span className="text-[#AFA9EC]">tid.</span><br />Din karriär.<br />Dina villkor.
           </h1>
-          <p className="text-base text-white/[0.68] leading-relaxed mb-6 max-w-[460px]">
+          <p className="text-lg text-white/[0.68] leading-relaxed mb-8 max-w-[520px]">
             Säkerställ att du får rätt ersättning,<br />rätt avtalsinnehåll och rätt belopp på dina fakturor. Se Compcare som din personliga sekreterare, som är tillgänglig 24/7.
           </p>
 
