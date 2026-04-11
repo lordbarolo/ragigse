@@ -119,7 +119,7 @@ export default function Login() {
         <Card className="border-border/50 bg-card/80 backdrop-blur">
           <CardHeader className="text-center">
             <CardTitle className="text-xl font-semibold text-foreground">Logga in</CardTitle>
-            <CardDescription>Logga in för att ta del av marknadsinsikter och verktyg</CardDescription>
+            <CardDescription>Ta del av rapporter och smarta verktyg</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin} className="space-y-4">
