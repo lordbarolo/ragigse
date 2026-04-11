@@ -74,12 +74,11 @@ export default function Login() {
   };
 
   const features = [
-    { icon: "📊", title: "Marknadsrapport", desc: "Se faktiska ersättningsnivåer för din roll och ort baserat på ramavtalsdata." },
-    { icon: "🧾", title: "Fakturakontroll", desc: "Ladda upp din faktura och få en automatisk granskning mot gällande avtal." },
-    { icon: "🤖", title: "Löneassistent", desc: "Ställ frågor om din ersättning och få svar baserade på avtalsdata." },
-    { icon: "🛡️", title: "Referensvalv", desc: "Samla och dela verifierade referenser med bemanningsföretag." },
-    { icon: "📡", title: "Uppdragsprognos", desc: "Bevaka kommande avrop och få notiser innan de publiceras." },
-    { icon: "📁", title: "Dokument & Profil", desc: "Lagra legitimationer, intyg och bygg din verifierade konsultprofil." },
+    { icon: FileText, title: "Dokumentvalvet", desc: "Spara legitimationer, intyg och utbildningsbevis. Dela tillgång med länk.", badge: "Ingår gratis", badgeColor: "text-green-700 bg-green-100" },
+    { icon: Clock, title: "Referensplattformen", desc: "Du bestämmer vem som ser dem och när. Referensgivare verifierar digitalt.", badge: "Ingår gratis", badgeColor: "text-green-700 bg-green-100" },
+    { icon: TrendingUp, title: "Löneanalys & assistent", desc: "Förhandlingstips baserat på din specialitet, region och erfarenhet.", badge: "Insight — 149 kr/mån", badgeColor: "text-amber-700 bg-amber-100" },
+    { icon: MessageSquare, title: "Fakturagranskning", desc: "AI granskar dina fakturor och tidrapporter. Hittar vi inget, betalar du inget.", badge: "Prestationsbaserat", badgeColor: "text-purple-700 bg-purple-100" },
+    { icon: Link2, title: "Uppdragsprognos", desc: "Se prognoser baserat på 5 års historik och över 30 000 bemanningsuppdrag.", badge: "Beta", badgeColor: "text-slate-600 bg-slate-100" },
   ];
 
   return (
