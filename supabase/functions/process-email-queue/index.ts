@@ -1,4 +1,4 @@
-import { sendLovableEmail } from 'npm:@lovable.dev/email-js'
+// Resend gateway replaces Lovable Email API (DNS delegation not possible at registrar)
 import { createClient } from 'npm:@supabase/supabase-js@2'
 
 const MAX_RETRIES = 5
@@ -79,17 +79,25 @@ async function moveToDlq(
 }
 
 Deno.serve(async (req) => {
-  const apiKey = Deno.env.get('LOVABLE_API_KEY')
+  const lovableApiKey = Deno.env.get('LOVABLE_API_KEY')
+  const resendApiKey = Deno.env.get('RESEND_API_KEY_1') || Deno.env.get('RESEND_API_KEY')
   const supabaseUrl = Deno.env.get('SUPABASE_URL')
   const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
 
-  if (!apiKey || !supabaseUrl || !supabaseServiceKey) {
-    console.error('Missing required environment variables')
+  if (!lovableApiKey || !resendApiKey || !supabaseUrl || !supabaseServiceKey) {
+    console.error('Missing required environment variables', {
+      hasLovableKey: !!lovableApiKey,
+      hasResendKey: !!resendApiKey,
+      hasSupabaseUrl: !!supabaseUrl,
+      hasServiceKey: !!supabaseServiceKey,
+    })
     return new Response(
       JSON.stringify({ error: 'Server configuration error' }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     )
   }
+
+  const RESEND_GATEWAY_URL = 'https://connector-gateway.lovable.dev/resend/emails'
 
   const authHeader = req.headers.get('Authorization')
   if (!authHeader?.startsWith('Bearer ')) {
@@ -246,26 +254,30 @@ Deno.serve(async (req) => {
       }
 
       try {
-        await sendLovableEmail(
-          {
-            run_id: payload.run_id,
-            to: payload.to,
-            from: payload.from,
-            sender_domain: payload.sender_domain,
-            subject: payload.subject,
-            html: payload.html,
-            text: payload.text,
-            purpose: payload.purpose,
-            label: payload.label,
-            idempotency_key: payload.idempotency_key,
-            unsubscribe_token: payload.unsubscribe_token,
-            message_id: payload.message_id,
+        const resendPayload: Record<string, unknown> = {
+          from: payload.from || 'CompCare <noreply@mail.compcare.se>',
+          to: Array.isArray(payload.to) ? payload.to : [payload.to],
+          subject: payload.subject,
+          html: payload.html,
+        }
+        if (payload.text) resendPayload.text = payload.text
+
+        const sendResponse = await fetch(RESEND_GATEWAY_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${lovableApiKey}`,
+            'X-Connection-Api-Key': resendApiKey,
           },
-          // sendUrl is optional — when LOVABLE_SEND_URL is not set, the library
-          // falls back to the default Lovable API endpoint (https://api.lovable.dev).
-          // Set LOVABLE_SEND_URL as a Supabase secret to override (e.g. for local dev).
-          { apiKey, sendUrl: Deno.env.get('LOVABLE_SEND_URL') }
-        )
+          body: JSON.stringify(resendPayload),
+        })
+
+        if (!sendResponse.ok) {
+          const errorBody = await sendResponse.text()
+          const err = new Error(`Resend API error [${sendResponse.status}]: ${errorBody}`) as Error & { status: number }
+          err.status = sendResponse.status
+          throw err
+        }
 
         // Log success
         await supabase.from('email_send_log').insert({
