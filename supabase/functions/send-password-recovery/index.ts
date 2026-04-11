@@ -93,12 +93,12 @@ Deno.serve(async (req) => {
   }
 
   const requestOrigin = req.headers.get('origin') || 'https://www.compcare.se'
-  const redirectTo = new URL('/aterstall-losenord', requestOrigin).toString()
+  const resetUrl = new URL('/aterstall-losenord', requestOrigin)
 
   const { data: recoveryLinkData, error: recoveryError } = await supabase.auth.admin.generateLink({
     type: 'recovery',
     email,
-    options: { redirectTo },
+    options: { redirectTo: resetUrl.toString() },
   })
 
   if (recoveryError) {
@@ -109,19 +109,23 @@ Deno.serve(async (req) => {
     })
   }
 
-  const confirmationUrl = recoveryLinkData?.properties?.action_link
-  if (!confirmationUrl) {
-    console.error('Missing recovery action_link in generateLink response')
+  const hashedToken = recoveryLinkData?.properties?.hashed_token
+  if (!hashedToken) {
+    console.error('Missing recovery hashed_token in generateLink response')
     return new Response(JSON.stringify({ error: 'Failed to process password recovery' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
   }
 
+  const confirmationUrl = new URL(resetUrl)
+  confirmationUrl.searchParams.set('token_hash', hashedToken)
+  confirmationUrl.searchParams.set('type', 'recovery')
+
   const html = await renderAsync(
     React.createElement(RecoveryEmail, {
       siteName: SITE_NAME,
-      confirmationUrl,
+      confirmationUrl: confirmationUrl.toString(),
     })
   )
 

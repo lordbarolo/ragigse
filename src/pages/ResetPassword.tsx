@@ -18,40 +18,77 @@ export default function ResetPassword() {
   const { toast } = useToast();
 
   useEffect(() => {
-    // Handle PKCE flow: exchange code param for session
-    const url = new URL(window.location.href);
-    const code = url.searchParams.get("code");
+    let active = true;
 
-    if (code) {
-      supabase.auth.exchangeCodeForSession(code).then(({ error }) => {
+    const finish = (isReady: boolean) => {
+      if (!active) return;
+      setReady(isReady);
+      setChecking(false);
+    };
+
+    const clearRecoveryParams = () => {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("token_hash");
+      url.searchParams.delete("type");
+      url.searchParams.delete("code");
+      window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
+    };
+
+    const initializeRecovery = async () => {
+      const url = new URL(window.location.href);
+      const tokenHash = url.searchParams.get("token_hash");
+      const type = url.searchParams.get("type");
+
+      if (tokenHash && type === "recovery") {
+        const { error } = await supabase.auth.verifyOtp({
+          token_hash: tokenHash,
+          type: "recovery",
+        });
+
         if (!error) {
-          setReady(true);
+          clearRecoveryParams();
+          finish(true);
+          return;
         }
-        setChecking(false);
-      });
-      return;
-    }
+      }
 
-    // Handle legacy implicit flow: token in hash
-    const hash = window.location.hash;
-    if (hash.includes("type=recovery")) {
-      setReady(true);
-    }
+      const code = url.searchParams.get("code");
+      if (code) {
+        const { error } = await supabase.auth.exchangeCodeForSession(code);
+        if (!error) {
+          clearRecoveryParams();
+          finish(true);
+          return;
+        }
+      }
 
-    // Also listen for PASSWORD_RECOVERY event
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "PASSWORD_RECOVERY") {
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        finish(true);
+        return;
+      }
+
+      if (window.location.hash.includes("type=recovery")) {
+        finish(true);
+        return;
+      }
+
+      finish(false);
+    };
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!active) return;
+      if (event === "PASSWORD_RECOVERY" || (event === "SIGNED_IN" && !!session)) {
         setReady(true);
         setChecking(false);
       }
     });
 
-    // Give the auth listener a moment to fire
-    const timeout = setTimeout(() => setChecking(false), 2000);
+    void initializeRecovery();
 
     return () => {
+      active = false;
       subscription.unsubscribe();
-      clearTimeout(timeout);
     };
   }, []);
 
