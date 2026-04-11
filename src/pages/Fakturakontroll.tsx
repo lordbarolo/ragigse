@@ -29,7 +29,7 @@ export default function Fakturakontroll() {
   return (
     <div className="flex flex-col text-foreground">
       {/* Hero — Value prop */}
-      <section className="px-6 pt-12 pb-10 md:pt-20 md:pb-14">
+      <section className="px-6 pt-12 pb-4 md:pt-20 md:pb-6">
         <div className="max-w-3xl mx-auto space-y-4">
           <p className="text-xs font-bold uppercase tracking-widest text-primary">Fakturagranskning</p>
           <h1 className="font-display text-3xl md:text-4xl font-extrabold tracking-tight">
@@ -39,9 +39,6 @@ export default function Fakturakontroll() {
             Det är lätt att räkna fel på beredskapstimmar eller storhelgstillägg.{"\n"}
             Vi analyserar dina fakturor och tidrapporter från de senaste två åren. Vid avvikelser hjälper vi dig med nya fakturor och säkerställer att du får betalt.{"\n"}
             Hittar vi inget, betalar du inget.
-          </p>
-          <p className="text-sm text-muted-foreground">
-            {"\u200B"}
           </p>
         </div>
       </section>
