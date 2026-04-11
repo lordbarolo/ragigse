@@ -1,4 +1,4 @@
-import { sendLovableEmail } from 'npm:@lovable.dev/email-js'
+// Resend gateway replaces Lovable Email API (DNS delegation not possible at registrar)
 import { createClient } from 'npm:@supabase/supabase-js@2'
 
 const MAX_RETRIES = 5
