@@ -37,9 +37,7 @@ export default function Fakturakontroll() {
           </h1>
           <p className="text-muted-foreground leading-relaxed max-w-xl whitespace-pre-line">
             Det är lätt att räkna fel på beredskapstimmar eller storhelgstillägg.{"\n"}
-            Vi analyserar fakturor och tidrapporter från de senaste två åren.{"\n"}
-            Hittar vi pengar som du saknar så hjälper vi dig att få betalt.{"\n\n"}
-            Vid avvikelser hjälper vi dig med nya fakturor och säkerställer att du får betalt.{"\n"}
+            Vi analyserar dina fakturor och tidrapporter från de senaste två åren. Vid avvikelser hjälper vi dig med nya fakturor och säkerställer att du får betalt.{"\n"}
             Hittar vi inget, betalar du inget.
           </p>
           <p className="text-sm text-muted-foreground">
