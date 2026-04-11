@@ -13,15 +13,46 @@ export default function ResetPassword() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [ready, setReady] = useState(false);
+  const [checking, setChecking] = useState(true);
   const navigate = useNavigate();
   const { toast } = useToast();
 
   useEffect(() => {
-    // Check for recovery token in URL hash
+    // Handle PKCE flow: exchange code param for session
+    const url = new URL(window.location.href);
+    const code = url.searchParams.get("code");
+
+    if (code) {
+      supabase.auth.exchangeCodeForSession(code).then(({ error }) => {
+        if (!error) {
+          setReady(true);
+        }
+        setChecking(false);
+      });
+      return;
+    }
+
+    // Handle legacy implicit flow: token in hash
     const hash = window.location.hash;
     if (hash.includes("type=recovery")) {
       setReady(true);
     }
+
+    // Also listen for PASSWORD_RECOVERY event
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "PASSWORD_RECOVERY") {
+        setReady(true);
+        setChecking(false);
+      }
+    });
+
+    // Give the auth listener a moment to fire
+    const timeout = setTimeout(() => setChecking(false), 2000);
+
+    return () => {
+      subscription.unsubscribe();
+      clearTimeout(timeout);
+    };
   }, []);
 
   const handleReset = async (e: React.FormEvent) => {
@@ -53,7 +84,11 @@ export default function ResetPassword() {
             <CardTitle className="text-xl font-semibold text-foreground">Nytt lösenord</CardTitle>
           </CardHeader>
           <CardContent>
-            {ready ? (
+            {checking ? (
+              <div className="flex justify-center py-4">
+                <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+              </div>
+            ) : ready ? (
               <form onSubmit={handleReset} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="password">Nytt lösenord</Label>
