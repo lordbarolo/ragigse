@@ -110,7 +110,7 @@ export default function Login() {
             "repeating-linear-gradient(0deg,transparent,transparent 39px,#fff 39px,#fff 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,#fff 39px,#fff 40px)",
         }}
       />
-      <div className="w-full max-w-lg space-y-6">
+      <div className="relative z-10 w-full max-w-lg space-y-6">
         <div className="flex justify-center">
           <Link to="/">
             <CompcareLogo variant="full" />
