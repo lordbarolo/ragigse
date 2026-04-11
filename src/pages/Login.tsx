@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, ArrowLeft } from "lucide-react";
+import { Loader2, ArrowLeft, FileText, Clock, TrendingUp, MessageSquare, Link2 } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 import { trackEvent } from "@/lib/trackEvent";
 
@@ -74,12 +74,11 @@ export default function Login() {
   };
 
   const features = [
-    { icon: "📊", title: "Marknadsrapport", desc: "Se faktiska ersättningsnivåer för din roll och ort baserat på ramavtalsdata." },
-    { icon: "🧾", title: "Fakturakontroll", desc: "Ladda upp din faktura och få en automatisk granskning mot gällande avtal." },
-    { icon: "🤖", title: "Löneassistent", desc: "Ställ frågor om din ersättning och få svar baserade på avtalsdata." },
-    { icon: "🛡️", title: "Referensvalv", desc: "Samla och dela verifierade referenser med bemanningsföretag." },
-    { icon: "📡", title: "Uppdragsprognos", desc: "Bevaka kommande avrop och få notiser innan de publiceras." },
-    { icon: "📁", title: "Dokument & Profil", desc: "Lagra legitimationer, intyg och bygg din verifierade konsultprofil." },
+    { icon: FileText, title: "Dokumentvalvet", desc: "Spara legitimationer, intyg och utbildningsbevis. Dela tillgång med länk.", badge: "Ingår gratis", badgeColor: "text-green-700 bg-green-100" },
+    { icon: Clock, title: "Referensplattformen", desc: "Du bestämmer vem som ser dem och när. Referensgivare verifierar digitalt.", badge: "Ingår gratis", badgeColor: "text-green-700 bg-green-100" },
+    { icon: TrendingUp, title: "Löneanalys & assistent", desc: "Förhandlingstips baserat på din specialitet, region och erfarenhet.", badge: "Insight — 149 kr/mån", badgeColor: "text-amber-700 bg-amber-100" },
+    { icon: MessageSquare, title: "Fakturagranskning", desc: "AI granskar dina fakturor och tidrapporter. Hittar vi inget, betalar du inget.", badge: "Prestationsbaserat", badgeColor: "text-purple-700 bg-purple-100" },
+    { icon: Link2, title: "Uppdragsprognos", desc: "Se prognoser baserat på 5 års historik och över 30 000 bemanningsuppdrag.", badge: "Beta", badgeColor: "text-slate-600 bg-slate-100" },
   ];
 
   return (
@@ -169,25 +168,27 @@ export default function Login() {
         </Card>
 
         {/* Feature showcase */}
-        <Card className="border-border/50 bg-card/80 backdrop-blur">
-          <CardHeader className="text-center pb-2">
-            <CardTitle className="text-lg font-semibold text-foreground">Ditt personliga kontrollcenter</CardTitle>
-            <CardDescription>Logga in för att få tillgång till alla verktyg</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-3">
-              {features.map((f) => (
-                <div key={f.title} className="flex items-start gap-2.5 rounded-lg border border-border/40 bg-muted/30 p-3">
-                  <span className="text-xl leading-none mt-0.5">{f.icon}</span>
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium text-foreground leading-tight">{f.title}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5 leading-snug">{f.desc}</p>
+        <div className="space-y-3">
+          <div className="text-center">
+            <p className="text-xs font-semibold uppercase tracking-widest text-[#AFA9EC] mb-1">Plattformen</p>
+            <h3 className="text-base font-bold text-white">Fem verktyg som förenklar din karriär</h3>
+          </div>
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-2.5">
+            {features.map((f) => {
+              const Icon = f.icon;
+              return (
+                <div key={f.title} className="rounded-xl border border-white/10 bg-white/[0.06] backdrop-blur p-3 flex flex-col gap-2">
+                  <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center">
+                    <Icon className="w-4 h-4 text-[#AFA9EC]" />
                   </div>
+                  <p className="text-sm font-semibold text-white leading-tight">{f.title}</p>
+                  <p className="text-[11px] text-white/50 leading-snug flex-1">{f.desc}</p>
+                  <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full w-fit ${f.badgeColor}`}>{f.badge}</span>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
+              );
+            })}
+          </div>
+        </div>
 
         <div className="text-center">
           <Link to="/" className="text-sm text-muted-foreground hover:text-primary inline-flex items-center gap-1">
