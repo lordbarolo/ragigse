@@ -44,7 +44,7 @@ export function useRefProfile(userId: string | undefined) {
       supabase.rpc("ref_calculate_profile_status", { p_profile_id: userId }),
     ]);
 
-    setReferences(refsResult.data || []);
+    setReferences((refsResult.data as any[]) || []);
     if (scoreResult.data) setTrustScore(scoreResult.data as unknown as TrustScoreResult);
     if (statusResult.data) setProfileStatus(statusResult.data as unknown as ProfileStatusResult);
 
