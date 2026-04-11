@@ -28,9 +28,25 @@ export default function Fakturakontroll() {
 
   return (
     <div className="flex flex-col text-foreground">
+      {/* Hero — Value prop */}
+      <section className="px-6 pt-12 pb-10 md:pt-20 md:pb-14">
+        <div className="max-w-3xl mx-auto space-y-4">
+          <p className="text-xs font-bold uppercase tracking-widest text-primary">Fakturagranskning</p>
+          <h1 className="font-display text-3xl md:text-4xl font-extrabold tracking-tight">
+            Du har troligen pengar du inte fått
+          </h1>
+          <p className="text-muted-foreground leading-relaxed max-w-xl">
+            Konsulter missar i snitt 3–8% av fakturerbara timmar. Vi går igenom dina historiska
+            fakturor och tidrapporter och identifierar utestående belopp — utan risk för dig.
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Vi tar 25% av det vi hittar. Hittar vi ingenting kostar det dig ingenting.
+          </p>
+        </div>
+      </section>
 
-      {/* Hero — Steps */}
-      <section className="px-6 pt-16 pb-12 md:pt-24 md:pb-16 bg-muted/40">
+      {/* Steps */}
+      <section className="px-6 pt-8 pb-12 md:pt-12 md:pb-16 bg-muted/40">
         <div className="max-w-5xl mx-auto">
           <p className="text-xs font-bold uppercase tracking-widest text-primary mb-2">Så funkar det</p>
           <h1 className="font-display text-3xl md:text-4xl font-extrabold tracking-tight mb-12">
@@ -126,24 +142,6 @@ export default function Fakturakontroll() {
           </div>
         </div>
       </section>
-
-      {/* Value proposition */}
-      <section className="px-6 py-16 md:py-20">
-        <div className="max-w-3xl mx-auto space-y-4">
-          <p className="text-xs font-bold uppercase tracking-widest text-primary">Fakturagranskning</p>
-          <h2 className="font-display text-2xl md:text-3xl font-extrabold tracking-tight">
-            Du har troligen pengar du inte fått
-          </h2>
-          <p className="text-muted-foreground leading-relaxed max-w-xl">
-            Konsulter missar i snitt 3–8% av fakturerbara timmar. Vi går igenom dina historiska
-            fakturor och tidrapporter och identifierar utestående belopp — utan risk för dig.
-          </p>
-          <p className="text-sm text-muted-foreground">
-            Vi tar 25% av det vi hittar. Hittar vi ingenting kostar det dig ingenting.
-          </p>
-        </div>
-      </section>
-
       {/* Pricing / trust */}
       <section className="px-6 py-16 md:py-24 bg-card border-y border-border">
         <div className="max-w-3xl mx-auto text-center space-y-6">
