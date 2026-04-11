@@ -35,14 +35,15 @@ export default function Fakturakontroll() {
           <h1 className="font-display text-3xl md:text-4xl font-extrabold tracking-tight">
             Har du fakturerat för alla timmar du jobbat?
           </h1>
-          <p className="text-muted-foreground leading-relaxed max-w-xl">
-            Det är lätt att räkna fel på beredskapstimmar eller storhelgstillägg. 
-            Vi analyserar fakturor och tidrapporter från de senaste två åren. 
-            Hittar vi pengar som du saknar så hjälper vi dig att få betalt. 
+          <p className="text-muted-foreground leading-relaxed max-w-xl whitespace-pre-line">
+            Det är lätt att räkna fel på beredskapstimmar eller storhelgstillägg.{"\n"}
+            Vi analyserar fakturor och tidrapporter från de senaste två åren.{"\n"}
+            Hittar vi pengar som du saknar så hjälper vi dig att få betalt.{"\n\n"}
+            Vid avvikelser hjälper vi dig med nya fakturor och säkerställer att du får betalt.{"\n"}
             Hittar vi inget, betalar du inget.
           </p>
           <p className="text-sm text-muted-foreground">
-            Vid avvikelser hjälper vi dig med nya fakturor och säkerställer att du får betalt.
+            {"\u200B"}
           </p>
         </div>
       </section>
