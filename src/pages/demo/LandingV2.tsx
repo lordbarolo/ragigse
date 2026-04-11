@@ -247,7 +247,7 @@ export default function LandingV2() {
         </div>
 
         {/* Flow cards — shared layout for mobile & desktop */}
-        <div className="relative z-10 flex flex-col gap-0 w-full max-w-[260px] flex-shrink-0 mx-auto lg:mx-0 lg:ml-auto lg:mr-10 py-4 lg:py-20 px-6 lg:px-0">
+        <div className="relative z-10 flex flex-col gap-0 w-full max-w-[260px] flex-shrink-0 mx-auto lg:mx-0 lg:ml-auto lg:mr-16 py-4 lg:py-24 lg:self-center px-6 lg:px-0">
           {/* Card 1 */}
           <div className="bg-white/[0.07] border border-white/[0.13] rounded-[14px] px-5 py-4">
             <div className="text-[10px] text-white/40 uppercase tracking-wider mb-1">RAMAVTALSPRIS · ZON 1 · SKR 2026</div>
