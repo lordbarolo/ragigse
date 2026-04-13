@@ -279,7 +279,7 @@ Deno.serve(async (req) => {
 
     await supabase.from("invoice_reviews").update({ status: "extracting" }).eq("id", review_id);
 
-    const model = "google/gemini-2.5-pro";
+    const model = "google/gemini-3-flash-preview";
 
     // 2. Download PDFs
     const fakturaPdf = await downloadPdfBase64(supabase, review.faktura_path);
