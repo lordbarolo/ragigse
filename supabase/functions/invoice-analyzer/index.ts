@@ -114,9 +114,10 @@ function runRuleEngine(
 
   // Calculate expected per shift
   for (const rad of tidrapportRader) {
+    if (!rad.datum || !rad.start_tid || !rad.slut_tid) continue;
     let startH = parseTime(rad.start_tid);
-    let slutH = parseTime(rad.slut_tid.replace("+1", ""));
-    if (rad.slut_tid.includes("+1") || slutH < startH) slutH += 24;
+    let slutH = parseTime((rad.slut_tid ?? "").replace("+1", ""));
+    if ((rad.slut_tid ?? "").includes("+1") || slutH < startH) slutH += 24;
 
     const rastTimmar = (rad.rast_minuter || 0) / 60;
     const bruttoTimmar = slutH - startH;
