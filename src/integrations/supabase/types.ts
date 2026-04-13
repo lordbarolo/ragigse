@@ -1226,66 +1226,99 @@ export type Database = {
       invoice_reviews: {
         Row: {
           avvikelser: Json | null
+          confirmed_at: string | null
+          confirmed_tidrapport: Json | null
           created_at: string
           differens: number | null
           error_message: string | null
+          extracted_faktura: Json | null
+          extracted_tidrapport: Json | null
+          extraction_confidence: Json | null
+          extraction_model: string | null
           faktura_data: Json | null
           faktura_path: string | null
           fakturerad_summa: number | null
           forvantad_summa: number | null
+          grundpris: number | null
           har_avvikelse: boolean
           id: string
+          is_handwritten: boolean
           konsult_godkand: boolean
           kontrakt_data: Json | null
           kontrakt_path: string | null
+          manual_tidrapport: Json | null
           notis_skickad: boolean
           phone: string | null
           status: string
           tidrapport_data: Json | null
           tidrapport_path: string | null
           user_id: string
+          user_rates: Json | null
+          yrkeskategori: string | null
         }
         Insert: {
           avvikelser?: Json | null
+          confirmed_at?: string | null
+          confirmed_tidrapport?: Json | null
           created_at?: string
           differens?: number | null
           error_message?: string | null
+          extracted_faktura?: Json | null
+          extracted_tidrapport?: Json | null
+          extraction_confidence?: Json | null
+          extraction_model?: string | null
           faktura_data?: Json | null
           faktura_path?: string | null
           fakturerad_summa?: number | null
           forvantad_summa?: number | null
+          grundpris?: number | null
           har_avvikelse?: boolean
           id?: string
+          is_handwritten?: boolean
           konsult_godkand?: boolean
           kontrakt_data?: Json | null
           kontrakt_path?: string | null
+          manual_tidrapport?: Json | null
           notis_skickad?: boolean
           phone?: string | null
           status?: string
           tidrapport_data?: Json | null
           tidrapport_path?: string | null
           user_id: string
+          user_rates?: Json | null
+          yrkeskategori?: string | null
         }
         Update: {
           avvikelser?: Json | null
+          confirmed_at?: string | null
+          confirmed_tidrapport?: Json | null
           created_at?: string
           differens?: number | null
           error_message?: string | null
+          extracted_faktura?: Json | null
+          extracted_tidrapport?: Json | null
+          extraction_confidence?: Json | null
+          extraction_model?: string | null
           faktura_data?: Json | null
           faktura_path?: string | null
           fakturerad_summa?: number | null
           forvantad_summa?: number | null
+          grundpris?: number | null
           har_avvikelse?: boolean
           id?: string
+          is_handwritten?: boolean
           konsult_godkand?: boolean
           kontrakt_data?: Json | null
           kontrakt_path?: string | null
+          manual_tidrapport?: Json | null
           notis_skickad?: boolean
           phone?: string | null
           status?: string
           tidrapport_data?: Json | null
           tidrapport_path?: string | null
           user_id?: string
+          user_rates?: Json | null
+          yrkeskategori?: string | null
         }
         Relationships: []
       }

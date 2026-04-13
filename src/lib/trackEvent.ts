@@ -56,6 +56,7 @@ type EventName =
   | "chat_answer_reported"
   | "fakturakontroll_ny_viewed"
   | "fakturakontroll_uploaded"
+  | "fakturakontroll_confirmed"
   | "fakturakontroll_completed";
 
 function isInternalTraffic(): boolean {
