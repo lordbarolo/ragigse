@@ -1,49 +1,135 @@
 
 
-## Plan: Korrigera STORHELG_2026 i invoice-analyzer
+## Fakturakontroll — Komplett byggspecifikation
 
-### Problem
+### Koncept
 
-Nuvarande `STORHELG_2026`-lista i `supabase/functions/invoice-analyzer/index.ts` (rad 10-14) innehåller felaktiga datum. Enligt ramavtalet ska storhelg avse exakt dessa 12 dagar:
+Användaren laddar upp faktura + tidrapport, anger sina avtalade priser, och kan valfritt mata in tidrapportsdata manuellt om tidrapporten är handskriven. Gemini 2.5 Pro extraherar data via structured output med dual-pass. Användaren ser en sammanfattning och bekräftar. En deterministisk regelmotor kör analysen.
+
+### Flöde
 
 ```text
-Nyårsdagen, trettondagen, långfredagen, påskdagen, annandag påsk,
-midsommardagen, juldagen, annandagen,
-påskafton, midsommarafton, julafton och nyårsafton.
+┌─ STEG 1 — Formulär ─────────────────────────────────────────┐
+│  • Ladda upp: Faktura (PDF) + Tidrapport (PDF)               │
+│  • Ange: Yrkeskategori, Grundpris SEK/h, Telefon             │
+│  • Checkbox: "Är din tidrapport handskriven?"                 │
+│    → Om ja: expanderar manuellt inmatningsformulär            │
+│      (datum, start, slut, rast — lägg till rader)             │
+│      Texten: "Våra assistenter klarar oftast av att läsa      │
+│       även handskrivna rapporter men om du vill vara säker    │
+│       på att det blir rätt får du gärna hjälpa oss genom      │
+│       att ange datum, arbetstid och antal timmar här."         │
+│  • Skicka in                                                  │
+└──────────────────┬───────────────────────────────────────────┘
+                   ▼
+┌─ STEG 2 — Extraktion (backend) ─────────────────────────────┐
+│  Om manuell data finns → hoppa över tidrapport-extraktion     │
+│  Annars:                                                      │
+│    Faktura PDF → Gemini 2.5 Pro (tool calling, pass 1+2)      │
+│    Tidrapport PDF → Gemini 2.5 Pro (tool calling, pass 1+2)   │
+│    Jämför pass 1 & 2 → confidence per rad                     │
+│  Sparar rådata i databasen                                    │
+└──────────────────┬───────────────────────────────────────────┘
+                   ▼
+┌─ STEG 3 — Sammanfattning (UI) ──────────────────────────────┐
+│  "Vi hittade 14 pass, 112 timmar, varav 3 nattpass"           │
+│  Om 100% konsensus → en knapp: "Bekräfta"                    │
+│  Om avvikelser → visa bara osäkra rader för korrigering       │
+│  "Visa detaljer" → expanderar full tabell                     │
+│  Bekräfta → triggar regelmotor                                │
+└──────────────────┬───────────────────────────────────────────┘
+                   ▼
+┌─ STEG 4 — Analys (backend, deterministisk) ─────────────────┐
+│  Regelmotor: bekräftad tidrapport + faktura + användarpriser   │
+│  Flaggar A1–A4, sparar resultat, mejlar admin                 │
+│  Ingen AI, $0.00                                              │
+└──────────────────┬───────────────────────────────────────────┘
+                   ▼
+┌─ STEG 5 — Bekräftelse ──────────────────────────────────────┐
+│  "Tack! Vi återkommer inom 48 timmar."                        │
+└──────────────────────────────────────────────────────────────┘
 ```
 
-### Nuvarande fel
+### Kostnad per analys
 
-- `2026-04-02` (skärtorsdag) — **inte storhelg**
-- `2026-05-01` (första maj) — helgdag, inte storhelg
-- `2026-05-14` (kristi himmelsfärdsdag) — helgdag, inte storhelg
-- `2026-05-24` — varken storhelg eller helgdag
-- `2026-06-06` (nationaldagen) — helgdag, inte storhelg
-- `2026-10-31` (alla helgonsdag) — helgdag, inte storhelg
-- `2026-04-04` (påskafton) — **saknas**, ska vara storhelg
+| Scenario | Kostnad |
+|----------|---------|
+| Manuell tidrapport (handskriven) | ~$0.03 (bara faktura-extraktion) |
+| Digital tidrapport, full konsensus | ~$0.10–0.20 |
+| Digital, dual-pass med avvikelser | ~$0.15–0.25 |
 
-### Ändring
+### Tekniska ändringar
 
-Ersätt `STORHELG_2026` med korrekt lista (12 dagar):
+#### 1. Databasmigrering (`invoice_reviews`)
 
-| Datum | Dag |
-|-------|-----|
-| 2026-01-01 | Nyårsdagen |
-| 2026-01-06 | Trettondagen |
-| 2026-04-03 | Långfredagen |
-| 2026-04-04 | Påskafton |
-| 2026-04-05 | Påskdagen |
-| 2026-04-06 | Annandag påsk |
-| 2026-06-19 | Midsommarafton |
-| 2026-06-20 | Midsommardagen |
-| 2026-12-24 | Julafton |
-| 2026-12-25 | Juldagen |
-| 2026-12-26 | Annandagen |
-| 2026-12-31 | Nyårsafton |
+Nya kolumner:
+- `grundpris` numeric — konsultens grundpris SEK/h
+- `yrkeskategori` text — dropdown-val
+- `user_rates` jsonb — OB/jour-faktorer (för läkare)
+- `is_handwritten` boolean default false
+- `manual_tidrapport` jsonb — manuellt inmatade rader (om handskriven)
+- `extracted_faktura` jsonb — rå Gemini-extraktion faktura
+- `extracted_tidrapport` jsonb — rå Gemini-extraktion tidrapport
+- `extraction_confidence` jsonb — confidence per rad (från dual-pass)
+- `extraction_model` text — vilken modell som användes
+- `confirmed_tidrapport` jsonb — slutgiltig bekräftad data
+- `confirmed_at` timestamptz
 
-Lägg dessutom till en separat `HELGDAG_2026`-lista för de fyra helgdagarna (första maj, kristi himmelsfärdsdag, nationaldagen, alla helgonsdag) och uppdatera `isHelgdag()` att kontrollera lördag, söndag **eller** `HELGDAG_2026`.
+Behåll `kontrakt_path`/`kontrakt_data` för bakåtkompatibilitet men använd ej.
 
-### Fil som ändras
+#### 2. Ny edge function: `invoice-extract`
 
-- `supabase/functions/invoice-analyzer/index.ts` — rad 10-14 (STORHELG), ny HELGDAG-konstant, uppdaterad `isHelgdag()`
+- Laddar ner PDF:er från storage
+- Kör Gemini 2.5 Pro via Lovable AI Gateway med **tool calling** (structured output)
+- **Dual-pass**: kör extraktion två gånger med lätt olika prompter, jämför rad för rad
+- Faktura och tidrapport extraheras parallellt
+- Om `manual_tidrapport` finns → skippar tidrapport-extraktion, använder manuell data direkt
+- Few-shot examples: 2–3 exempelextraktioner i prompten
+- Sparar `extracted_faktura`, `extracted_tidrapport`, `extraction_confidence` i databasen
+- Returnerar data + confidence till klienten
+
+#### 3. Förenklad `invoice-analyzer`
+
+- Tar bort all PDF-läsning och Claude-anrop
+- Läser `confirmed_tidrapport` + `extracted_faktura` + `grundpris` + `user_rates` från DB
+- Kör enbart deterministisk regelmotor (A1–A4 flaggor)
+- OB-beräkning med 1.3142-multiplikator för sjuksköterskor
+- Mejlar admin vid avvikelser
+
+#### 4. UI: `FakturakontrollNy.tsx` — 5 steg
+
+**Steg 1 — Upload + priser:**
+- 2 filslots: Faktura + Tidrapport (kontrakt borttaget)
+- Dropdown: Yrkeskategori
+- Input: Grundpris (SEK/h)
+- Telefon
+- Checkbox: "Är din tidrapport handskriven?"
+  - Om ja: expanderbart formulär med rader (datum, start, slut, rast, typ)
+  - Knapp "Lägg till rad" för fler pass
+  - Informativ text som förklarar att AI oftast klarar det men manuell inmatning garanterar precision
+
+**Steg 2 — Extraktion pågår:**
+- Laddningsanimation
+
+**Steg 3 — Sammanfattning + bekräftelse:**
+- Sammanfattningsvy: antal pass, totala timmar, nattpass, OB-timmar
+- Vid 100% konsensus: enkel "Bekräfta"-knapp
+- Vid avvikelser: bara osäkra rader visas för korrigering
+- "Visa detaljer" expanderar full tabell
+- Om manuell inmatning gjordes: visa sammanfattning av det inskickade direkt
+
+**Steg 4 — Analys pågår (kort):**
+- Regelmotor körs
+
+**Steg 5 — Tack-sida:**
+- Bekräftelsemeddelande, "Vi återkommer inom 48 timmar"
+
+#### 5. Filer som skapas/ändras
+
+| Fil | Åtgärd |
+|-----|--------|
+| `supabase/migrations/xxx.sql` | Nya kolumner på invoice_reviews |
+| `supabase/functions/invoice-extract/index.ts` | Ny — Gemini dual-pass extraktion |
+| `supabase/functions/invoice-analyzer/index.ts` | Förenklad — bara regelmotor |
+| `src/pages/consultant/FakturakontrollNy.tsx` | Nytt 5-stegs UI med manuell inmatning |
 
