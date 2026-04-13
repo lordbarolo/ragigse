@@ -251,9 +251,9 @@ Deno.serve(async (req) => {
 
     const harAvvikelse = avvikelser.length > 0;
 
-    // Save results
+    // Save results — always pending_review, admin must approve
     await supabase.from("invoice_reviews").update({
-      status: "completed",
+      status: "pending_review",
       avvikelser,
       forvantad_summa: totalForvantad,
       fakturerad_summa: fakturerad,
@@ -261,12 +261,26 @@ Deno.serve(async (req) => {
       har_avvikelse: harAvvikelse,
     }).eq("id", review_id);
 
-    // Notify admin if deviations found
-    if (harAvvikelse) {
+    // Notify admin for ALL reviews (not just deviations)
+    {
       const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
       const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
       if (RESEND_API_KEY && LOVABLE_API_KEY) {
         try {
+          const subject = harAvvikelse
+            ? `⚠️ Avvikelse hittad — granskning ${review_id}`
+            : `✅ Ny granskning klar — ${review_id}`;
+          const html = harAvvikelse
+            ? `<h2>Fakturaavvikelse</h2>
+                <p><strong>Antal avvikelser:</strong> ${avvikelser.length}</p>
+                <p><strong>Diff:</strong> ${totalForvantad - fakturerad} kr</p>
+                <ul>${avvikelser.map((a) => `<li>[${a.kod}] ${a.beskrivning}</li>`).join("")}</ul>
+                <p><a href="https://compcare.se/admin">Granska i admin</a></p>`
+            : `<h2>Granskning utan avvikelse</h2>
+                <p><strong>Förväntat:</strong> ${totalForvantad} kr</p>
+                <p><strong>Fakturerat:</strong> ${fakturerad} kr</p>
+                <p>Inga avvikelser hittades. Väntar på ditt godkännande.</p>
+                <p><a href="https://compcare.se/admin">Granska i admin</a></p>`;
           await fetch("https://connector-gateway.lovable.dev/resend/emails", {
             method: "POST",
             headers: {
@@ -277,12 +291,8 @@ Deno.serve(async (req) => {
             body: JSON.stringify({
               from: "CompCare <noreply@mail.compcare.se>",
               to: ["halvarholding@gmail.com"],
-              subject: `Avvikelse hittad — granskning ${review_id}`,
-              html: `<h2>Fakturaavvikelse</h2>
-                <p><strong>Antal avvikelser:</strong> ${avvikelser.length}</p>
-                <p><strong>Diff:</strong> ${totalForvantad - fakturerad} kr</p>
-                <ul>${avvikelser.map((a) => `<li>[${a.kod}] ${a.beskrivning}</li>`).join("")}</ul>
-                <p><a href="https://compcare.se/admin">Se detaljer</a></p>`,
+              subject,
+              html,
             }),
           });
           await supabase.from("invoice_reviews").update({ notis_skickad: true }).eq("id", review_id);

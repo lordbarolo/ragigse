@@ -5,6 +5,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -98,6 +100,7 @@ export default function FakturakontrollNy() {
   const [extractionResult, setExtractionResult] = useState<ExtractionResult | null>(null);
   const [reviewId, setReviewId] = useState<string | null>(null);
   const [showDetails, setShowDetails] = useState(false);
+  const [agreedToTerms, setAgreedToTerms] = useState(false);
 
   useEffect(() => {
     trackEvent("fakturakontroll_ny_viewed");
@@ -108,7 +111,7 @@ export default function FakturakontrollNy() {
   const allUploaded = files.faktura && files.tidrapport;
   const manualValid = !isHandwritten || manualShifts.every((s) => s.datum && s.start_tid && s.slut_tid);
 
-  const canSubmit = allUploaded && phoneValid && grundprisValid && yrkeskategori && manualValid;
+  const canSubmit = allUploaded && phoneValid && grundprisValid && yrkeskategori && manualValid && agreedToTerms;
 
   // ── File handling ────────────────────────────────────────────────────────
 
@@ -179,6 +182,7 @@ export default function FakturakontrollNy() {
           is_handwritten: isHandwritten,
           manual_tidrapport: isHandwritten ? manualShifts : null,
           status: "pending",
+          terms_accepted_at: new Date().toISOString(),
         } as any)
         .select("id")
         .single();
@@ -537,6 +541,44 @@ export default function FakturakontrollNy() {
             )}
           </div>
 
+          {/* Terms agreement */}
+          <div className="flex items-start gap-3 p-4 rounded-lg border bg-muted/30">
+            <Checkbox
+              id="terms"
+              checked={agreedToTerms}
+              onCheckedChange={(c) => setAgreedToTerms(c === true)}
+              className="mt-0.5"
+            />
+            <label htmlFor="terms" className="text-sm cursor-pointer">
+              <span>
+                Jag godkänner Compcares{" "}
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <button
+                      type="button"
+                      className="underline text-primary hover:text-primary/80 font-medium"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      avtalsvillkor
+                    </button>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-lg">
+                    <DialogHeader>
+                      <DialogTitle>Compcares avtalsvillkor — Fakturagranskning</DialogTitle>
+                    </DialogHeader>
+                    <ScrollArea className="max-h-[60vh] pr-4">
+                      <div className="prose prose-sm dark:prose-invert">
+                        <p className="text-muted-foreground italic">
+                          [Avtalstext kommer att läggas till]
+                        </p>
+                      </div>
+                    </ScrollArea>
+                  </DialogContent>
+                </Dialog>
+              </span>
+            </label>
+          </div>
+
           <Button
             size="lg"
             className="w-full font-semibold"
@@ -701,8 +743,7 @@ export default function FakturakontrollNy() {
           <div>
             <h2 className="font-display text-xl font-bold mb-2">Tack!</h2>
             <p className="text-muted-foreground text-sm max-w-md mx-auto">
-              Vi har tagit emot och analyserat dina dokument. Compcare återkommer till dig inom 48
-              timmar.
+              Vi har tagit emot dina dokument. Din tidrapport granskas — vi återkommer vanligtvis inom 2 arbetsdagar.
             </p>
           </div>
           <Button variant="outline" onClick={() => navigate("/consultant/fakturakontroll")}>
