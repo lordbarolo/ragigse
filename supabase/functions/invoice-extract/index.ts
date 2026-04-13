@@ -11,14 +11,11 @@ const corsHeaders = {
 const TIDRAPPORT_TOOL = {
   type: "function" as const,
   function: {
-    name: "extract_tidrapport",
-    description: "Extract structured timesheet data from a Swedish healthcare staffing timesheet PDF. The timesheet may be in two formats: (A) row-per-shift with start/end times, or (B) weekly summary grid with hours per time category (Normaltid, Passiv jour, Aktiv jour, etc.) per day.",
+     name: "extract_tidrapport",
+    description: "Extract structured timesheet data from a Swedish healthcare staffing timesheet PDF. Only extract work time types, dates, hours, and clock times. Do NOT extract names, workplaces, employers, or other metadata.",
     parameters: {
       type: "object",
       properties: {
-        konsult_namn: { type: "string", description: "Consultant name" },
-        uppdragsgivare: { type: "string", description: "Client/employer" },
-        uppdragsort: { type: "string", description: "City/municipality" },
         period: { type: "string", description: "YYYY-MM or YYYY-Wxx for weekly reports" },
         format: {
           type: "string",
@@ -36,7 +33,7 @@ const TIDRAPPORT_TOOL = {
               start_tid: { type: "string", description: "HH:MM" },
               slut_tid: { type: "string", description: "HH:MM or HH:MM+1 if past midnight" },
               typ: { type: "string", enum: ["ordinarie", "aktiv_jour", "passiv_jour", "beredskap"] },
-              rast_minuter: { type: "number" },
+              rast_minuter: { type: "number", description: "Break in minutes as stated in document. If not stated, use 0." },
             },
             required: ["datum", "start_tid", "slut_tid", "typ", "rast_minuter"],
             additionalProperties: false,
@@ -62,7 +59,7 @@ const TIDRAPPORT_TOOL = {
               aktiv_jour_typ: { type: "string", enum: ["vardag_1721", "vardag_2108", "helg", "storhelg"], description: "Which active jour category applies" },
               ob_kvall_timmar: { type: "number", description: "OB evening hours (17-21)" },
               ob_natt_timmar: { type: "number", description: "OB night hours (21-06)" },
-              rast_minuter: { type: "number", description: "Break in minutes" },
+              rast_minuter: { type: "number", description: "Break in minutes as stated in document. If not stated, use 0." },
               total_timmar: { type: "number", description: "Total hours for this day" },
               total_minuter: { type: "number", description: "Extra minutes beyond full hours for total" },
             },
@@ -84,7 +81,7 @@ const TIDRAPPORT_TOOL = {
           additionalProperties: false,
         },
       },
-      required: ["konsult_namn", "uppdragsgivare", "uppdragsort", "period", "format"],
+      required: ["period", "format"],
       additionalProperties: false,
     },
   },
@@ -139,9 +136,14 @@ const FAKTURA_TOOL = {
 
 // ── Prompts ──────────────────────────────────────────────────────────────────
 
-const SYSTEM_TIDRAPPORT_PASS1 = `Du extraherar data ur svenska tidrapporter för vårdbemanning (läkare, sjuksköterskor etc.).
+const SYSTEM_TIDRAPPORT_PASS1 = `Du extraherar arbetstidsdata ur svenska tidrapporter för vårdbemanning.
 
-VIKTIGT — Tidrapporter finns i två format:
+VIKTIGT: Extrahera ENBART arbetstidsdata — datum, klockslag, antal timmar och typ av arbetstid.
+Extrahera INTE namn, arbetsplats, uppdragsgivare, ort eller annan metadata.
+
+Anta INGENTING som inte uttryckligen anges i dokumentet. Om rast inte anges, ange 0. Om en tid inte syns, utelämna den.
+
+Tidrapporter finns i två format:
 
 **Format A (shifts):** En rad per arbetspass med start- och sluttid.
 **Format B (weekly_summary):** En veckosammanfattning i tabellform med tidgrupper (Normaltid, Passiv jour vardag, Passiv jour helg, Vardag 17-21 Aktiv, Vardag 21-08 Aktiv, Helg Aktiv, etc.) och timmar per dag.
@@ -153,42 +155,39 @@ Identifiera rätt format och extrahera därefter.
 - Helgdagar räknas som helg/storhelg för jour, INTE som vardag — även om de infaller på en veckodag
 
 **Regler för passiv/aktiv jour:**
-- "Passiv jour vardag" = läkaren är tillgänglig via telefon på vardagar
+- "Passiv jour vardag" = tillgänglig via telefon på vardagar
 - "Passiv jour helg" = passiv jour på helg/helgdag
 - "Vardag 17-21 Aktiv" / "Vardag 21-08 Aktiv" = aktiv jourtid på vardagar
 - "Helg Aktiv" = aktivt arbete under jour på helg/helgdag
 
 **Exempel — Format B (weekly_summary):**
-Tidrapport visar "Summering (Norrland läkare)" med kolumner mån-sön:
 Normaltid: 0, 9h30m, 9h0m, 8h30m, 10h0m, 0, 0 → Totalt 37h 0m
-Passiv jour vardag: 0, 12h0m, 0, 0, 2h30m, 0, 0 → Totalt 14h 30m
-Passiv jour helg: 17h0m, 0, 0, 0, 12h0m, 16h0m, 21h30m → Totalt 66h 30m
-
-→ format: "weekly_summary"
-→ daglig_summering med en rad per dag, t.ex.:
-  {"datum":"2023-05-01","veckodag":"måndag","ar_helgdag":true,"normaltid_timmar":0,"passiv_jour_timmar":17,"passiv_jour_typ":"helg","aktiv_jour_timmar":0.5,"aktiv_jour_typ":"helg","total_timmar":17,"total_minuter":30}
+→ format: "weekly_summary", daglig_summering med en rad per dag
 
 **Exempel — Format A (shifts):**
 Rad: "15 jan 07:00-19:30 rast 30min"
 → {"datum":"2026-01-15","start_tid":"07:00","slut_tid":"19:30","typ":"ordinarie","rast_minuter":30}
 
-Läs av alla rader i tabellen noga. Kontrollera att dina delsummor per dag stämmer med dokumentets "Total tid" per dag.`;
+Rad: "16 jan 07:00-16:00"
+→ {"datum":"2026-01-16","start_tid":"07:00","slut_tid":"16:00","typ":"ordinarie","rast_minuter":0}
 
-const SYSTEM_TIDRAPPORT_PASS2 = `Extrahera alla tider ur den bifogade svenska tidrapporten för vårdbemanning.
+Läs av alla rader noga. Kontrollera att dina delsummor per dag stämmer med dokumentets "Total tid" per dag.`;
+
+const SYSTEM_TIDRAPPORT_PASS2 = `Extrahera arbetstidsdata ur den bifogade svenska tidrapporten.
+
+VIKTIGT: Extrahera ENBART datum, klockslag, antal timmar och typ av arbetstid.
+Extrahera INTE namn, arbetsplats, uppdragsgivare eller annan metadata.
+Anta INGENTING som inte uttryckligen anges. Om rast inte anges, sätt 0.
 
 Tidrapporter kan vara antingen:
 - **shifts**: En rad per arbetspass med klockslag
-- **weekly_summary**: En tabell/grid med tidgrupper (Normaltid, Passiv jour, Aktiv jour etc.) och timmar per dag
+- **weekly_summary**: En tabell/grid med tidgrupper och timmar per dag
 
 Var extra noggrann med:
-1. **Helgdagar** — 1 maj, Kristi himmelsfärd etc. är helgdagar och jour på dessa dagar ska klassas som helg, inte vardag
-2. **Aktiv vs passiv jour** — Skillnaden är avgörande. "Passiv jour" = tillgänglig. "Aktiv" = faktiskt arbete under jourtid
+1. **Helgdagar** — 1 maj, Kristi himmelsfärd etc. är helgdagar och jour på dessa ska klassas som helg
+2. **Aktiv vs passiv jour** — "Passiv jour" = tillgänglig. "Aktiv" = faktiskt arbete under jourtid
 3. **Minuter** — Läs av timmar OCH minuter korrekt (t.ex. "2h 30m" = 2 timmar, 30 minuter)
-4. **Totaler** — Kontrollera att summan av alla dagar stämmer med dokumentets angivna total
-
-Om dokumentet visar en veckosammanfattning med rader som "Normaltid", "Passiv jour vardag", "Passiv jour helg", "Helg Aktiv" etc., använd format "weekly_summary" med daglig_summering.
-
-Kontrollera att dina summor stämmer med dokumentets "Total tid"-rad.`;
+4. **Totaler** — Kontrollera att summan av alla dagar stämmer med dokumentets angivna total`;
 
 const SYSTEM_FAKTURA_PASS1 = `Du extraherar data ur svenska fakturor inom vårdbemanning (nationellt hyrbemanningsavtal). Identifiera varje fakturarad och klassificera som grundpris, ob_tillagg, jour_beredskap, reseschablon, avdrag eller ovrigt. Summor ska matcha fakturans totaler.
 
