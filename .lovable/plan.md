@@ -1,24 +1,49 @@
 
 
-## Plan: Förenkla FakturakontrollNy till två steg
+## Plan: Korrigera STORHELG_2026 i invoice-analyzer
 
-### Nuläge
-Sidan har tre steg: Uppladdning → Analyserar (polling) → Rapport (avvikelser visas).
+### Problem
+
+Nuvarande `STORHELG_2026`-lista i `supabase/functions/invoice-analyzer/index.ts` (rad 10-14) innehåller felaktiga datum. Enligt ramavtalet ska storhelg avse exakt dessa 12 dagar:
+
+```text
+Nyårsdagen, trettondagen, långfredagen, påskdagen, annandag påsk,
+midsommardagen, juldagen, annandagen,
+påskafton, midsommarafton, julafton och nyårsafton.
+```
+
+### Nuvarande fel
+
+- `2026-04-02` (skärtorsdag) — **inte storhelg**
+- `2026-05-01` (första maj) — helgdag, inte storhelg
+- `2026-05-14` (kristi himmelsfärdsdag) — helgdag, inte storhelg
+- `2026-05-24` — varken storhelg eller helgdag
+- `2026-06-06` (nationaldagen) — helgdag, inte storhelg
+- `2026-10-31` (alla helgonsdag) — helgdag, inte storhelg
+- `2026-04-04` (påskafton) — **saknas**, ska vara storhelg
 
 ### Ändring
-Reducera till **två steg**: Uppladdning → Bekräftelse.
 
-**`src/pages/consultant/FakturakontrollNy.tsx`:**
-- Ta bort steg 2 (spinner/polling) och steg 3 (resultatvisning) helt
-- Efter lyckad uppladdning + skapande av review-posten, visa direkt bekräftelsemeddelandet: "Tack! Vi har tagit emot och analyserar dina dokument. Compcare återkommer till dig inom 48 timmar."
-- Ta bort polling-logiken (`useEffect` som kollar status)
-- Ta bort `ReviewResult`-typen, `result`-state och `Avvikelse`-interfacet
-- Behåll triggningen av `invoice-analyzer` edge-funktionen (den körs i bakgrunden, resultatet sparas i databasen för admin)
-- Uppdatera stegindikatorn till två steg: "Ladda upp" → "Bekräftelse"
-- Vid upload-fel visas fortfarande ett felmeddelande med "Försök igen"-knapp
+Ersätt `STORHELG_2026` med korrekt lista (12 dagar):
 
-### Vad som inte ändras
-- Edge-funktionen `invoice-analyzer` — körs som vanligt
-- E-postavisering till admin — skickas som vanligt
-- Databas-lagring av avvikelser — sparas för manuell granskning
+| Datum | Dag |
+|-------|-----|
+| 2026-01-01 | Nyårsdagen |
+| 2026-01-06 | Trettondagen |
+| 2026-04-03 | Långfredagen |
+| 2026-04-04 | Påskafton |
+| 2026-04-05 | Påskdagen |
+| 2026-04-06 | Annandag påsk |
+| 2026-06-19 | Midsommarafton |
+| 2026-06-20 | Midsommardagen |
+| 2026-12-24 | Julafton |
+| 2026-12-25 | Juldagen |
+| 2026-12-26 | Annandagen |
+| 2026-12-31 | Nyårsafton |
+
+Lägg dessutom till en separat `HELGDAG_2026`-lista för de fyra helgdagarna (första maj, kristi himmelsfärdsdag, nationaldagen, alla helgonsdag) och uppdatera `isHelgdag()` att kontrollera lördag, söndag **eller** `HELGDAG_2026`.
+
+### Fil som ändras
+
+- `supabase/functions/invoice-analyzer/index.ts` — rad 10-14 (STORHELG), ny HELGDAG-konstant, uppdaterad `isHelgdag()`
 
