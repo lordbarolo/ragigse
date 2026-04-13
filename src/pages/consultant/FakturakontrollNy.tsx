@@ -27,6 +27,7 @@ export default function FakturakontrollNy() {
   const [step, setStep] = useState<1 | 2>(1);
   const [files, setFiles] = useState<Partial<Record<FileSlot, UploadedFile>>>({});
   const [uploading, setUploading] = useState(false);
+  const [phone, setPhone] = useState("");
 
   useEffect(() => {
     trackEvent("fakturakontroll_ny_viewed");
