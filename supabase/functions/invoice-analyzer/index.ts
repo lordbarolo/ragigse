@@ -352,9 +352,12 @@ Deno.serve(async (req) => {
       (kontrakt.uppdragsort as string) ?? (tidrapport.uppdragsort as string) ?? ""
     );
 
-    // Determine base price
+    // Determine base price — contract is primary source, national rates as fallback
     const yrkeskategori = (kontrakt.yrkeskategori as string) ?? "";
-    const baseprice = getBaseprice(yrkeskategori, zon);
+    const kontraktRate = kontrakt.bashourlyrate as number | null;
+    const nationalRate = getBaseprice(yrkeskategori, zon);
+    const baseprice = (kontraktRate && kontraktRate > 0) ? kontraktRate : nationalRate;
+    const rateSource = (kontraktRate && kontraktRate > 0) ? "kontrakt" : "nationellt_avtal";
 
     const avvikelser: Avvikelse[] = [];
     let totalForvantad = 0;
@@ -398,7 +401,7 @@ Deno.serve(async (req) => {
         avvikelser.push({
           kod: "A4",
           datum: "",
-          beskrivning: `Fel bashourlyrate: fakturerat ${aPris} kr/tim, avtal anger ${baseprice} kr/tim (${yrkeskategori}, zon ${zon})`,
+          beskrivning: `Fel timpris: fakturerat ${aPris} kr/tim, ${rateSource === "kontrakt" ? "kontrakt" : "nationellt avtal"} anger ${baseprice} kr/tim (${yrkeskategori}, zon ${zon})`,
           belopp: 0,
         });
       }
