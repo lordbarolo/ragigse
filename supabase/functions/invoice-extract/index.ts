@@ -369,6 +369,11 @@ Deno.serve(async (req) => {
     const { review_id } = await req.json();
     if (!review_id) throw new Error("review_id is required");
 
+    function parseTimeStr(t: string): number {
+      const [h, m] = (t ?? "0:0").split(":").map(Number);
+      return (h || 0) + (m || 0) / 60;
+    }
+
     // 1. Get review
     const { data: review, error: reviewErr } = await supabase
       .from("invoice_reviews")
