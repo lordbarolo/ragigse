@@ -401,7 +401,7 @@ Deno.serve(async (req) => {
         avvikelser.push({
           kod: "A4",
           datum: "",
-          beskrivning: `Fel bashourlyrate: fakturerat ${aPris} kr/tim, avtal anger ${baseprice} kr/tim (${yrkeskategori}, zon ${zon})`,
+          beskrivning: `Fel timpris: fakturerat ${aPris} kr/tim, ${rateSource === "kontrakt" ? "kontrakt" : "nationellt avtal"} anger ${baseprice} kr/tim (${yrkeskategori}, zon ${zon})`,
           belopp: 0,
         });
       }
