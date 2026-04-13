@@ -8,9 +8,25 @@ const corsHeaders = {
 // ── Constants ────────────────────────────────────────────────────────────────
 
 const STORHELG_2026 = [
-  "2026-01-01","2026-01-06","2026-04-02","2026-04-03","2026-04-05","2026-04-06",
-  "2026-05-01","2026-05-14","2026-05-24","2026-06-06","2026-06-19","2026-06-20",
-  "2026-10-31","2026-12-24","2026-12-25","2026-12-26","2026-12-31",
+  "2026-01-01", // Nyårsdagen
+  "2026-01-06", // Trettondagen
+  "2026-04-03", // Långfredagen
+  "2026-04-04", // Påskafton
+  "2026-04-05", // Påskdagen
+  "2026-04-06", // Annandag påsk
+  "2026-06-19", // Midsommarafton
+  "2026-06-20", // Midsommardagen
+  "2026-12-24", // Julafton
+  "2026-12-25", // Juldagen
+  "2026-12-26", // Annandagen
+  "2026-12-31", // Nyårsafton
+];
+
+const HELGDAG_2026 = [
+  "2026-05-01", // Första maj
+  "2026-05-14", // Kristi himmelsfärdsdag
+  "2026-06-06", // Nationaldagen
+  "2026-10-31", // Alla helgonsdag
 ];
 
 const PRISER: Record<string, number[]> = {
@@ -57,7 +73,7 @@ function isStorhelg(date: string): boolean {
 
 function isHelgdag(date: string): boolean {
   const d = new Date(date + "T12:00:00");
-  return d.getDay() === 0 || d.getDay() === 6;
+  return d.getDay() === 0 || d.getDay() === 6 || HELGDAG_2026.includes(date);
 }
 
 function getZoneForOrt(ort: string): number {
