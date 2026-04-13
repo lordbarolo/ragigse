@@ -1,135 +1,46 @@
 
 
-## Fakturakontroll — Komplett byggspecifikation
+# Plan: Uppdatera steg 5, lägg till avtalsacceptans, och kör skarpt test
 
-### Koncept
+## Sammanfattning
 
-Användaren laddar upp faktura + tidrapport, anger sina avtalade priser, och kan valfritt mata in tidrapportsdata manuellt om tidrapporten är handskriven. Gemini 2.5 Pro extraherar data via structured output med dual-pass. Användaren ser en sammanfattning och bekräftar. En deterministisk regelmotor kör analysen.
+Tre ändringar: (1) uppdatera texten i steg 5, (2) lägga till en avtalscheckbox med placeholder-text som användaren måste acceptera innan inskickning, (3) uppdatera edge functions och databas för att spåra avtalet, samt genomföra ett skarpt test med de uppladdade filerna (faktura 80.pdf + HeromaRapport.pdf).
 
-### Flöde
+## Ändringar
 
-```text
-┌─ STEG 1 — Formulär ─────────────────────────────────────────┐
-│  • Ladda upp: Faktura (PDF) + Tidrapport (PDF)               │
-│  • Ange: Yrkeskategori, Grundpris SEK/h, Telefon             │
-│  • Checkbox: "Är din tidrapport handskriven?"                 │
-│    → Om ja: expanderar manuellt inmatningsformulär            │
-│      (datum, start, slut, rast — lägg till rader)             │
-│      Texten: "Våra assistenter klarar oftast av att läsa      │
-│       även handskrivna rapporter men om du vill vara säker    │
-│       på att det blir rätt får du gärna hjälpa oss genom      │
-│       att ange datum, arbetstid och antal timmar här."         │
-│  • Skicka in                                                  │
-└──────────────────┬───────────────────────────────────────────┘
-                   ▼
-┌─ STEG 2 — Extraktion (backend) ─────────────────────────────┐
-│  Om manuell data finns → hoppa över tidrapport-extraktion     │
-│  Annars:                                                      │
-│    Faktura PDF → Gemini 2.5 Pro (tool calling, pass 1+2)      │
-│    Tidrapport PDF → Gemini 2.5 Pro (tool calling, pass 1+2)   │
-│    Jämför pass 1 & 2 → confidence per rad                     │
-│  Sparar rådata i databasen                                    │
-└──────────────────┬───────────────────────────────────────────┘
-                   ▼
-┌─ STEG 3 — Sammanfattning (UI) ──────────────────────────────┐
-│  "Vi hittade 14 pass, 112 timmar, varav 3 nattpass"           │
-│  Om 100% konsensus → en knapp: "Bekräfta"                    │
-│  Om avvikelser → visa bara osäkra rader för korrigering       │
-│  "Visa detaljer" → expanderar full tabell                     │
-│  Bekräfta → triggar regelmotor                                │
-└──────────────────┬───────────────────────────────────────────┘
-                   ▼
-┌─ STEG 4 — Analys (backend, deterministisk) ─────────────────┐
-│  Regelmotor: bekräftad tidrapport + faktura + användarpriser   │
-│  Flaggar A1–A4, sparar resultat, mejlar admin                 │
-│  Ingen AI, $0.00                                              │
-└──────────────────┬───────────────────────────────────────────┘
-                   ▼
-┌─ STEG 5 — Bekräftelse ──────────────────────────────────────┐
-│  "Tack! Vi återkommer inom 48 timmar."                        │
-└──────────────────────────────────────────────────────────────┘
-```
+### 1. Steg 5 — Uppdatera bekräftelsetext
+Rad 702-706 i `FakturakontrollNy.tsx`: Byt text till:
+- "Vi har tagit emot dina dokument. Din tidrapport granskas — vi återkommer vanligtvis inom 2 arbetsdagar."
 
-### Kostnad per analys
+### 2. Avtalsacceptans före inskickning
+I steg 1, ovanför "Skicka in för granskning"-knappen:
+- Ny `Checkbox` + text: "Jag godkänner Compcares avtalsvillkor" med en klickbar länk som öppnar avtalet i en dialog/modal
+- Avtalsinnehållet är en placeholder: *"[Avtalstext kommer att läggas till]"*
+- `canSubmit` utökas med `agreedToTerms === true`
+- Tidsstämpel för godkännande sparas i `invoice_reviews`
 
-| Scenario | Kostnad |
-|----------|---------|
-| Manuell tidrapport (handskriven) | ~$0.03 (bara faktura-extraktion) |
-| Digital tidrapport, full konsensus | ~$0.10–0.20 |
-| Digital, dual-pass med avvikelser | ~$0.15–0.25 |
+### 3. Databasändring
+Migration: Lägg till kolumner i `invoice_reviews`:
+- `terms_accepted_at` (timestamptz, nullable)
+- `admin_notes` (text, nullable)
+- `reviewed_at` (timestamptz, nullable)
 
-### Tekniska ändringar
+### 4. Edge function: `invoice-analyzer` — status → `pending_review`
+Ändra slutstatus från `"completed"` till `"pending_review"`. Skicka admin-notis för ALLA ärenden (inte bara vid avvikelse).
 
-#### 1. Databasmigrering (`invoice_reviews`)
+### 5. Edge function: `invoice-extract` — summa-diskrepans-flaggning
+Efter extraktion, beräkna summan av extraherade rader och jämför mot dokumentets `summering.total_tid`. Om diskrepans → flagga i DB.
 
-Nya kolumner:
-- `grundpris` numeric — konsultens grundpris SEK/h
-- `yrkeskategori` text — dropdown-val
-- `user_rates` jsonb — OB/jour-faktorer (för läkare)
-- `is_handwritten` boolean default false
-- `manual_tidrapport` jsonb — manuellt inmatade rader (om handskriven)
-- `extracted_faktura` jsonb — rå Gemini-extraktion faktura
-- `extracted_tidrapport` jsonb — rå Gemini-extraktion tidrapport
-- `extraction_confidence` jsonb — confidence per rad (från dual-pass)
-- `extraction_model` text — vilken modell som användes
-- `confirmed_tidrapport` jsonb — slutgiltig bekräftad data
-- `confirmed_at` timestamptz
+### 6. Admin-panel: Ny sektion "Fakturagranskning"
+Ny komponent `InvoiceReviews.tsx` i admin med lista över `pending_review`-ärenden. Visa detaljer, avvikelser, PDF-länk. Knappar för godkänna/avvisa + anteckningar. Ny edge function `admin-review-action` för statusändring.
 
-Behåll `kontrakt_path`/`kontrakt_data` för bakåtkompatibilitet men använd ej.
+### 7. Skarpt test
+Kör de uppladdade filerna (faktura 80.pdf = Ing-Marie Daniels AB, läkare, grundpris 1496 kr/h + HeromaRapport.pdf = Heromatidrapport v.26-27) genom hela flödet via edge function-anrop.
 
-#### 2. Ny edge function: `invoice-extract`
+## Tekniska detaljer
 
-- Laddar ner PDF:er från storage
-- Kör Gemini 2.5 Pro via Lovable AI Gateway med **tool calling** (structured output)
-- **Dual-pass**: kör extraktion två gånger med lätt olika prompter, jämför rad för rad
-- Faktura och tidrapport extraheras parallellt
-- Om `manual_tidrapport` finns → skippar tidrapport-extraktion, använder manuell data direkt
-- Few-shot examples: 2–3 exempelextraktioner i prompten
-- Sparar `extracted_faktura`, `extracted_tidrapport`, `extraction_confidence` i databasen
-- Returnerar data + confidence till klienten
-
-#### 3. Förenklad `invoice-analyzer`
-
-- Tar bort all PDF-läsning och Claude-anrop
-- Läser `confirmed_tidrapport` + `extracted_faktura` + `grundpris` + `user_rates` från DB
-- Kör enbart deterministisk regelmotor (A1–A4 flaggor)
-- OB-beräkning med 1.3142-multiplikator för sjuksköterskor
-- Mejlar admin vid avvikelser
-
-#### 4. UI: `FakturakontrollNy.tsx` — 5 steg
-
-**Steg 1 — Upload + priser:**
-- 2 filslots: Faktura + Tidrapport (kontrakt borttaget)
-- Dropdown: Yrkeskategori
-- Input: Grundpris (SEK/h)
-- Telefon
-- Checkbox: "Är din tidrapport handskriven?"
-  - Om ja: expanderbart formulär med rader (datum, start, slut, rast, typ)
-  - Knapp "Lägg till rad" för fler pass
-  - Informativ text som förklarar att AI oftast klarar det men manuell inmatning garanterar precision
-
-**Steg 2 — Extraktion pågår:**
-- Laddningsanimation
-
-**Steg 3 — Sammanfattning + bekräftelse:**
-- Sammanfattningsvy: antal pass, totala timmar, nattpass, OB-timmar
-- Vid 100% konsensus: enkel "Bekräfta"-knapp
-- Vid avvikelser: bara osäkra rader visas för korrigering
-- "Visa detaljer" expanderar full tabell
-- Om manuell inmatning gjordes: visa sammanfattning av det inskickade direkt
-
-**Steg 4 — Analys pågår (kort):**
-- Regelmotor körs
-
-**Steg 5 — Tack-sida:**
-- Bekräftelsemeddelande, "Vi återkommer inom 48 timmar"
-
-#### 5. Filer som skapas/ändras
-
-| Fil | Åtgärd |
-|-----|--------|
-| `supabase/migrations/xxx.sql` | Nya kolumner på invoice_reviews |
-| `supabase/functions/invoice-extract/index.ts` | Ny — Gemini dual-pass extraktion |
-| `supabase/functions/invoice-analyzer/index.ts` | Förenklad — bara regelmotor |
-| `src/pages/consultant/FakturakontrollNy.tsx` | Nytt 5-stegs UI med manuell inmatning |
+- Fakturan innehåller: Normaltid 76h × 1496, aktiv tid vardag/helg i flera tidsband, passiv beredskap vardag 59h + helg 37h. Total exkl moms: 241 229,50 kr
+- Tidrapporten är Heroma-format (weekly_summary) med arbetstid, jour och beredskap per dag
+- Yrkeskategori: Läkare (inte SSK, så OB-multiplikator ska inte tillämpas)
+- Avtalsplaceholder renderas som en `Dialog` med scrollbar text
 
