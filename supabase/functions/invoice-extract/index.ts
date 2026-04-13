@@ -12,31 +12,79 @@ const TIDRAPPORT_TOOL = {
   type: "function" as const,
   function: {
     name: "extract_tidrapport",
-    description: "Extract structured timesheet data from a Swedish healthcare staffing timesheet PDF.",
+    description: "Extract structured timesheet data from a Swedish healthcare staffing timesheet PDF. The timesheet may be in two formats: (A) row-per-shift with start/end times, or (B) weekly summary grid with hours per time category (Normaltid, Passiv jour, Aktiv jour, etc.) per day.",
     parameters: {
       type: "object",
       properties: {
         konsult_namn: { type: "string", description: "Consultant name" },
         uppdragsgivare: { type: "string", description: "Client/employer" },
         uppdragsort: { type: "string", description: "City/municipality" },
-        period: { type: "string", description: "YYYY-MM" },
+        period: { type: "string", description: "YYYY-MM or YYYY-Wxx for weekly reports" },
+        format: {
+          type: "string",
+          enum: ["shifts", "weekly_summary"],
+          description: "shifts = one row per shift with start/end times. weekly_summary = grid with hours per category per day.",
+        },
+        // Format A: shift-based rows
         rader: {
           type: "array",
+          description: "Used when format=shifts. One entry per shift.",
           items: {
             type: "object",
             properties: {
               datum: { type: "string", description: "YYYY-MM-DD" },
               start_tid: { type: "string", description: "HH:MM" },
               slut_tid: { type: "string", description: "HH:MM or HH:MM+1 if past midnight" },
-              typ: { type: "string", enum: ["ordinarie", "jour", "beredskap"] },
+              typ: { type: "string", enum: ["ordinarie", "aktiv_jour", "passiv_jour", "beredskap"] },
               rast_minuter: { type: "number" },
             },
             required: ["datum", "start_tid", "slut_tid", "typ", "rast_minuter"],
             additionalProperties: false,
           },
         },
+        // Format B: weekly summary grid
+        daglig_summering: {
+          type: "array",
+          description: "Used when format=weekly_summary. One entry per day with hours broken down by category.",
+          items: {
+            type: "object",
+            properties: {
+              datum: { type: "string", description: "YYYY-MM-DD" },
+              veckodag: { type: "string", description: "e.g. måndag, tisdag" },
+              ar_helgdag: { type: "boolean", description: "True if the day is a Swedish public holiday (e.g. 1 maj, Kristi himmelsfärd)" },
+              normaltid_timmar: { type: "number", description: "Hours of regular work (Normaltid)" },
+              normaltid_minuter: { type: "number", description: "Extra minutes beyond full hours for Normaltid" },
+              passiv_jour_timmar: { type: "number", description: "Hours of passive on-call (Passiv jour vardag OR helg)" },
+              passiv_jour_minuter: { type: "number", description: "Extra minutes for passive on-call" },
+              passiv_jour_typ: { type: "string", enum: ["vardag", "helg", "storhelg"], description: "Which passive jour category applies" },
+              aktiv_jour_timmar: { type: "number", description: "Hours of active on-call work" },
+              aktiv_jour_minuter: { type: "number", description: "Extra minutes for active on-call" },
+              aktiv_jour_typ: { type: "string", enum: ["vardag_1721", "vardag_2108", "helg", "storhelg"], description: "Which active jour category applies" },
+              ob_kvall_timmar: { type: "number", description: "OB evening hours (17-21)" },
+              ob_natt_timmar: { type: "number", description: "OB night hours (21-06)" },
+              rast_minuter: { type: "number", description: "Break in minutes" },
+              total_timmar: { type: "number", description: "Total hours for this day" },
+              total_minuter: { type: "number", description: "Extra minutes beyond full hours for total" },
+            },
+            required: ["datum", "veckodag", "ar_helgdag", "normaltid_timmar", "passiv_jour_timmar", "aktiv_jour_timmar", "total_timmar"],
+            additionalProperties: false,
+          },
+        },
+        // Totals from the document itself
+        summering: {
+          type: "object",
+          description: "Summary totals as stated in the document",
+          properties: {
+            normaltid_total: { type: "string", description: "e.g. '37h 0m'" },
+            passiv_jour_vardag_total: { type: "string", description: "e.g. '14h 30m'" },
+            passiv_jour_helg_total: { type: "string", description: "e.g. '66h 30m'" },
+            aktiv_jour_total: { type: "string", description: "e.g. '17h 30m'" },
+            total_tid: { type: "string", description: "e.g. '135h 30m'" },
+          },
+          additionalProperties: false,
+        },
       },
-      required: ["konsult_namn", "uppdragsgivare", "uppdragsort", "period", "rader"],
+      required: ["konsult_namn", "uppdragsgivare", "uppdragsort", "period", "format"],
       additionalProperties: false,
     },
   },
@@ -91,24 +139,56 @@ const FAKTURA_TOOL = {
 
 // ── Prompts ──────────────────────────────────────────────────────────────────
 
-const SYSTEM_TIDRAPPORT_PASS1 = `Du extraherar data ur svenska tidrapporter för vårdbemanning. Fokusera på varje rad/skift. Om sluttid är efter midnatt, ange "+1" i slut_tid. Rast = 0 om inte angiven. Typ = "ordinarie" om osäkert.
+const SYSTEM_TIDRAPPORT_PASS1 = `Du extraherar data ur svenska tidrapporter för vårdbemanning (läkare, sjuksköterskor etc.).
 
-Exempel på korrekt extraktion:
-Rad i tidrapport: "15 jan  07:00-19:30 rast 30min"
+VIKTIGT — Tidrapporter finns i två format:
+
+**Format A (shifts):** En rad per arbetspass med start- och sluttid.
+**Format B (weekly_summary):** En veckosammanfattning i tabellform med tidgrupper (Normaltid, Passiv jour vardag, Passiv jour helg, Vardag 17-21 Aktiv, Vardag 21-08 Aktiv, Helg Aktiv, etc.) och timmar per dag.
+
+Identifiera rätt format och extrahera därefter.
+
+**Regler för helgdagar:**
+- 1 maj, 6 juni, Kristi himmelsfärd, julafton, juldagen, nyårsafton, nyårsdagen, påskdagen, pingstdagen etc. ska markeras som ar_helgdag=true
+- Helgdagar räknas som helg/storhelg för jour, INTE som vardag — även om de infaller på en veckodag
+
+**Regler för passiv/aktiv jour:**
+- "Passiv jour vardag" = läkaren är tillgänglig via telefon på vardagar
+- "Passiv jour helg" = passiv jour på helg/helgdag
+- "Vardag 17-21 Aktiv" / "Vardag 21-08 Aktiv" = aktiv jourtid på vardagar
+- "Helg Aktiv" = aktivt arbete under jour på helg/helgdag
+
+**Exempel — Format B (weekly_summary):**
+Tidrapport visar "Summering (Norrland läkare)" med kolumner mån-sön:
+Normaltid: 0, 9h30m, 9h0m, 8h30m, 10h0m, 0, 0 → Totalt 37h 0m
+Passiv jour vardag: 0, 12h0m, 0, 0, 2h30m, 0, 0 → Totalt 14h 30m
+Passiv jour helg: 17h0m, 0, 0, 0, 12h0m, 16h0m, 21h30m → Totalt 66h 30m
+
+→ format: "weekly_summary"
+→ daglig_summering med en rad per dag, t.ex.:
+  {"datum":"2023-05-01","veckodag":"måndag","ar_helgdag":true,"normaltid_timmar":0,"passiv_jour_timmar":17,"passiv_jour_typ":"helg","aktiv_jour_timmar":0.5,"aktiv_jour_typ":"helg","total_timmar":17,"total_minuter":30}
+
+**Exempel — Format A (shifts):**
+Rad: "15 jan 07:00-19:30 rast 30min"
 → {"datum":"2026-01-15","start_tid":"07:00","slut_tid":"19:30","typ":"ordinarie","rast_minuter":30}
 
-Rad i tidrapport: "20 jan  19:00-07:00 natt"
-→ {"datum":"2026-01-20","start_tid":"19:00","slut_tid":"07:00+1","typ":"ordinarie","rast_minuter":0}
+Läs av alla rader i tabellen noga. Kontrollera att dina delsummor per dag stämmer med dokumentets "Total tid" per dag.`;
 
-Rad i tidrapport: "Jour 22 jan 21:00-08:00"
-→ {"datum":"2026-01-22","start_tid":"21:00","slut_tid":"08:00+1","typ":"jour","rast_minuter":0}`;
+const SYSTEM_TIDRAPPORT_PASS2 = `Extrahera alla tider ur den bifogade svenska tidrapporten för vårdbemanning.
 
-const SYSTEM_TIDRAPPORT_PASS2 = `Extrahera varje arbetspass ur den bifogade svenska tidrapporten. Var noggrann med datum, start- och sluttider, raster. Om passet korsar midnatt lägg till "+1" efter sluttiden. Om du inte kan avgöra typ, sätt "ordinarie". Läs kolumner noga — ibland anges timmar eller totaler i kolumner bredvid tiden.
+Tidrapporter kan vara antingen:
+- **shifts**: En rad per arbetspass med klockslag
+- **weekly_summary**: En tabell/grid med tidgrupper (Normaltid, Passiv jour, Aktiv jour etc.) och timmar per dag
 
-Exempelextraktioner:
-{"datum":"2026-02-03","start_tid":"07:00","slut_tid":"16:00","typ":"ordinarie","rast_minuter":60}
-{"datum":"2026-02-04","start_tid":"21:00","slut_tid":"07:00+1","typ":"ordinarie","rast_minuter":0}
-{"datum":"2026-02-10","start_tid":"07:00","slut_tid":"21:00","typ":"jour","rast_minuter":30}`;
+Var extra noggrann med:
+1. **Helgdagar** — 1 maj, Kristi himmelsfärd etc. är helgdagar och jour på dessa dagar ska klassas som helg, inte vardag
+2. **Aktiv vs passiv jour** — Skillnaden är avgörande. "Passiv jour" = tillgänglig. "Aktiv" = faktiskt arbete under jourtid
+3. **Minuter** — Läs av timmar OCH minuter korrekt (t.ex. "2h 30m" = 2 timmar, 30 minuter)
+4. **Totaler** — Kontrollera att summan av alla dagar stämmer med dokumentets angivna total
+
+Om dokumentet visar en veckosammanfattning med rader som "Normaltid", "Passiv jour vardag", "Passiv jour helg", "Helg Aktiv" etc., använd format "weekly_summary" med daglig_summering.
+
+Kontrollera att dina summor stämmer med dokumentets "Total tid"-rad.`;
 
 const SYSTEM_FAKTURA_PASS1 = `Du extraherar data ur svenska fakturor inom vårdbemanning (nationellt hyrbemanningsavtal). Identifiera varje fakturarad och klassificera som grundpris, ob_tillagg, jour_beredskap, reseschablon, avdrag eller ovrigt. Summor ska matcha fakturans totaler.
 
@@ -164,7 +244,6 @@ async function callGemini(
   const data = await res.json();
   const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
   if (!toolCall) {
-    // Fallback: try to parse content as JSON
     const content = data.choices?.[0]?.message?.content ?? "";
     const match = content.match(/\{[\s\S]*\}/);
     if (match) return JSON.parse(match[0]);
@@ -178,10 +257,16 @@ async function callGemini(
 
 interface TidrapportRad {
   datum: string;
-  start_tid: string;
-  slut_tid: string;
-  typ: string;
-  rast_minuter: number;
+  start_tid?: string;
+  slut_tid?: string;
+  typ?: string;
+  rast_minuter?: number;
+  // Weekly summary fields
+  normaltid_timmar?: number;
+  passiv_jour_timmar?: number;
+  aktiv_jour_timmar?: number;
+  total_timmar?: number;
+  [key: string]: unknown;
 }
 
 interface ComparisonResult {
@@ -191,36 +276,52 @@ interface ComparisonResult {
 }
 
 function compareTidrapportPasses(
-  pass1: { rader: TidrapportRad[] },
-  pass2: { rader: TidrapportRad[] },
+  pass1: Record<string, unknown>,
+  pass2: Record<string, unknown>,
 ): ComparisonResult {
-  const rows1 = pass1.rader ?? [];
-  const rows2 = pass2.rader ?? [];
+  const format1 = pass1.format as string;
+  const format2 = pass2.format as string;
+
+  // Determine which array to use based on format
+  const rows1 = (format1 === "weekly_summary"
+    ? (pass1.daglig_summering as TidrapportRad[])
+    : (pass1.rader as TidrapportRad[])) ?? [];
+  const rows2 = (format2 === "weekly_summary"
+    ? (pass2.daglig_summering as TidrapportRad[])
+    : (pass2.rader as TidrapportRad[])) ?? [];
+
   const confidence: ComparisonResult["confidence"] = [];
   const merged: TidrapportRad[] = [];
 
   for (let i = 0; i < rows1.length; i++) {
     const r1 = rows1[i];
-    // Find matching row in pass2 by datum
-    const r2 = rows2.find(
-      (r) => r.datum === r1.datum && r.start_tid === r1.start_tid,
-    );
+    const r2 = rows2.find((r) => r.datum === r1.datum &&
+      (r1.start_tid ? r.start_tid === r1.start_tid : true));
 
-    const match = r2
-      ? r1.slut_tid === r2.slut_tid &&
-        r1.typ === r2.typ &&
-        Math.abs((r1.rast_minuter ?? 0) - (r2.rast_minuter ?? 0)) < 1
-      : false;
+    let match = false;
+    if (r2) {
+      if (format1 === "weekly_summary") {
+        // Compare hourly totals
+        match =
+          (r1.normaltid_timmar ?? 0) === (r2.normaltid_timmar ?? 0) &&
+          (r1.passiv_jour_timmar ?? 0) === (r2.passiv_jour_timmar ?? 0) &&
+          (r1.aktiv_jour_timmar ?? 0) === (r2.aktiv_jour_timmar ?? 0);
+      } else {
+        match =
+          r1.slut_tid === r2.slut_tid &&
+          r1.typ === r2.typ &&
+          Math.abs((r1.rast_minuter ?? 0) - (r2.rast_minuter ?? 0)) < 1;
+      }
+    }
 
     confidence.push({ index: i, match, pass1: r1, pass2: r2 ?? null });
-    merged.push(r1); // Use pass1 as base
+    merged.push(r1);
   }
 
-  // Check for rows in pass2 not in pass1
+  // Rows in pass2 not in pass1
   for (const r2 of rows2) {
-    const exists = rows1.some(
-      (r1) => r1.datum === r2.datum && r1.start_tid === r2.start_tid,
-    );
+    const exists = rows1.some((r1) => r1.datum === r2.datum &&
+      (r1.start_tid ? r1.start_tid === r2.start_tid : true));
     if (!exists) {
       const idx = merged.length;
       merged.push(r2);
@@ -295,12 +396,12 @@ Deno.serve(async (req) => {
     let tidrapportConfidence: ComparisonResult | null = null;
 
     if (review.manual_tidrapport && Array.isArray(review.manual_tidrapport) && review.manual_tidrapport.length > 0) {
-      // Use manual data directly — full confidence
       extractedTidrapport = {
         konsult_namn: "",
         uppdragsgivare: "",
         uppdragsort: "",
         period: "",
+        format: "shifts",
         rader: review.manual_tidrapport,
       };
       tidrapportConfidence = {
@@ -320,14 +421,14 @@ Deno.serve(async (req) => {
         callGemini(LOVABLE_API_KEY, model, SYSTEM_TIDRAPPORT_PASS2, tidrapportPdf, TIDRAPPORT_TOOL),
       ]);
 
-      tidrapportConfidence = compareTidrapportPasses(
-        tidPass1 as { rader: TidrapportRad[] },
-        tidPass2 as { rader: TidrapportRad[] },
-      );
+      tidrapportConfidence = compareTidrapportPasses(tidPass1, tidPass2);
 
+      const format = tidPass1.format as string;
       extractedTidrapport = {
         ...tidPass1,
-        rader: tidrapportConfidence.merged,
+        ...(format === "weekly_summary"
+          ? { daglig_summering: tidrapportConfidence.merged }
+          : { rader: tidrapportConfidence.merged }),
       };
     }
 
