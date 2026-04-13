@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Upload, FileCheck, Loader2, AlertCircle, CheckCircle2, ChevronRight } from "lucide-react";
+import { Upload, FileCheck, Loader2, CheckCircle2, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/trackEvent";
 
@@ -20,32 +20,12 @@ const FILE_LABELS: Record<FileSlot, { label: string; desc: string }> = {
   kontrakt: { label: "Kontrakt", desc: "Ditt kontrakt med bemanningsföretaget" },
 };
 
-interface Avvikelse {
-  kod: string;
-  datum: string;
-  beskrivning: string;
-  belopp: number;
-}
-
-interface ReviewResult {
-  id: string;
-  status: string;
-  avvikelser: Avvikelse[] | null;
-  forvantad_summa: number | null;
-  fakturerad_summa: number | null;
-  differens: number | null;
-  har_avvikelse: boolean;
-  error_message: string | null;
-}
-
 export default function FakturakontrollNy() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [step, setStep] = useState<1 | 2 | 3>(1);
+  const [step, setStep] = useState<1 | 2>(1);
   const [files, setFiles] = useState<Partial<Record<FileSlot, UploadedFile>>>({});
   const [uploading, setUploading] = useState(false);
-  const [reviewId, setReviewId] = useState<string | null>(null);
-  const [result, setResult] = useState<ReviewResult | null>(null);
 
   useEffect(() => {
     trackEvent("fakturakontroll_ny_viewed");
@@ -71,7 +51,6 @@ export default function FakturakontrollNy() {
     if (file) handleFileSelect(slot, file);
   }, [handleFileSelect]);
 
-  // Step 1 → 2: Upload files + create review + trigger analysis
   const handleSubmit = async () => {
     if (!user || !allUploaded) return;
     setUploading(true);
@@ -80,7 +59,6 @@ export default function FakturakontrollNy() {
       const userId = user.id;
       const paths: Record<FileSlot, string> = {} as Record<FileSlot, string>;
 
-      // Upload each file
       for (const slot of ["faktura", "tidrapport", "kontrakt"] as FileSlot[]) {
         const f = files[slot]!;
         const path = `${userId}/${Date.now()}_${slot}.pdf`;
@@ -91,7 +69,6 @@ export default function FakturakontrollNy() {
         paths[slot] = path;
       }
 
-      // Create review record
       const { data: review, error: insertErr } = await supabase
         .from("invoice_reviews")
         .insert({
@@ -106,14 +83,12 @@ export default function FakturakontrollNy() {
 
       if (insertErr || !review) throw new Error("Could not create review: " + insertErr?.message);
 
-      setReviewId(review.id);
-      setStep(2);
       trackEvent("fakturakontroll_uploaded");
 
-      // Trigger analyzer
+      // Trigger analyzer in background — result is for admin only
       const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
       const { data: { session } } = await supabase.auth.getSession();
-      await fetch(
+      fetch(
         `https://${projectId}.supabase.co/functions/v1/invoice-analyzer`,
         {
           method: "POST",
@@ -124,40 +99,15 @@ export default function FakturakontrollNy() {
           body: JSON.stringify({ review_id: review.id }),
         }
       );
+
+      setStep(2);
     } catch (err) {
       console.error(err);
       toast.error("Något gick fel vid uppladdningen. Försök igen.");
+    } finally {
       setUploading(false);
-      return;
     }
-
-    setUploading(false);
   };
-
-  // Step 2: Poll for results
-  useEffect(() => {
-    if (step !== 2 || !reviewId) return;
-    let cancelled = false;
-    const poll = async () => {
-      while (!cancelled) {
-        await new Promise((r) => setTimeout(r, 3000));
-        const { data } = await supabase
-          .from("invoice_reviews")
-          .select("id, status, avvikelser, forvantad_summa, fakturerad_summa, differens, har_avvikelse, error_message")
-          .eq("id", reviewId)
-          .single();
-
-        if (data && (data.status === "completed" || data.status === "error")) {
-          setResult(data as unknown as ReviewResult);
-          setStep(3);
-          trackEvent("fakturakontroll_completed", { har_avvikelse: data.har_avvikelse });
-          break;
-        }
-      }
-    };
-    poll();
-    return () => { cancelled = true; };
-  }, [step, reviewId]);
 
   if (!user) {
     return (
@@ -174,8 +124,7 @@ export default function FakturakontrollNy() {
       <div className="flex items-center gap-2 mb-8 text-xs font-medium text-muted-foreground">
         {[
           { n: 1, label: "Ladda upp" },
-          { n: 2, label: "Analyserar" },
-          { n: 3, label: "Rapport" },
+          { n: 2, label: "Bekräftelse" },
         ].map((s, i) => (
           <div key={s.n} className="flex items-center gap-2">
             <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold border-2 transition-colors ${
@@ -184,7 +133,7 @@ export default function FakturakontrollNy() {
               {step > s.n ? <CheckCircle2 className="w-4 h-4" /> : s.n}
             </div>
             <span className={step >= s.n ? "text-foreground" : ""}>{s.label}</span>
-            {i < 2 && <ChevronRight className="w-3 h-3 text-muted-foreground/50" />}
+            {i < 1 && <ChevronRight className="w-3 h-3 text-muted-foreground/50" />}
           </div>
         ))}
       </div>
@@ -249,108 +198,24 @@ export default function FakturakontrollNy() {
             {uploading ? (
               <><Loader2 className="w-4 h-4 animate-spin mr-2" /> Laddar upp...</>
             ) : (
-              "Analysera faktura"
+              "Skicka in för granskning"
             )}
           </Button>
         </div>
       )}
 
-      {/* Step 2: Processing */}
+      {/* Step 2: Confirmation */}
       {step === 2 && (
         <div className="text-center space-y-6 py-12">
-          <Loader2 className="w-10 h-10 animate-spin text-primary mx-auto" />
+          <CheckCircle2 className="w-12 h-12 text-primary mx-auto" />
           <div>
-            <h2 className="font-display text-xl font-bold mb-2">Analyserar dina dokument</h2>
-            <p className="text-muted-foreground text-sm">
-              Läser faktura, tidrapport och kontrakt. Det tar ca 30–60 sekunder.
+            <h2 className="font-display text-xl font-bold mb-2">Tack!</h2>
+            <p className="text-muted-foreground text-sm max-w-md mx-auto">
+              Vi har tagit emot och analyserar dina dokument. Compcare återkommer till dig inom 48 timmar.
             </p>
           </div>
-        </div>
-      )}
-
-      {/* Step 3: Results */}
-      {step === 3 && result && (
-        <div className="space-y-6">
-          {result.status === "error" ? (
-            <div className="rounded-xl border border-destructive/30 bg-destructive/[0.04] p-6 text-center space-y-3">
-              <AlertCircle className="w-8 h-8 text-destructive mx-auto" />
-              <h2 className="font-display text-xl font-bold">Något gick fel</h2>
-              <p className="text-muted-foreground text-sm">
-                {result.error_message ?? "Försök igen eller kontakta support."}
-              </p>
-              <Button variant="outline" onClick={() => { setStep(1); setFiles({}); setReviewId(null); setResult(null); }}>
-                Försök igen
-              </Button>
-            </div>
-          ) : !result.har_avvikelse ? (
-            <div className="rounded-xl border border-primary/30 bg-primary/[0.04] p-6 text-center space-y-3">
-              <CheckCircle2 className="w-8 h-8 text-primary mx-auto" />
-              <h2 className="font-display text-xl font-bold">Fakturan ser korrekt ut</h2>
-              <p className="text-muted-foreground text-sm">
-                Vi hittade inga avvikelser mot avtalet. Bra jobbat.
-              </p>
-            </div>
-          ) : (
-            <>
-              <div>
-                <h2 className="font-display text-2xl font-bold tracking-tight mb-2">
-                  Avvikelser hittade
-                </h2>
-                <p className="text-muted-foreground text-sm">
-                  Vi hittade skillnader mellan din tidrapport och faktura.
-                </p>
-              </div>
-
-              {/* Summary card */}
-              <div className="rounded-xl border border-border bg-card p-5 flex items-center justify-between">
-                <div>
-                  <p className="text-xs text-muted-foreground">Beräknad differens</p>
-                  <p className="text-2xl font-bold text-foreground">
-                    {result.differens && result.differens > 0 ? "+" : ""}
-                    {result.differens?.toLocaleString("sv-SE")} kr
-                  </p>
-                </div>
-                <div className="text-right text-xs text-muted-foreground space-y-1">
-                  <p>Förväntat: {result.forvantad_summa?.toLocaleString("sv-SE")} kr</p>
-                  <p>Fakturerat: {result.fakturerad_summa?.toLocaleString("sv-SE")} kr</p>
-                </div>
-              </div>
-
-              {/* Deviation list */}
-              <div className="space-y-2">
-                {(result.avvikelser ?? []).map((a, i) => (
-                  <div key={i} className="rounded-lg border border-border bg-card p-4">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-1">
-                          <span className="text-[10px] font-bold uppercase tracking-wider bg-muted text-muted-foreground px-1.5 py-0.5 rounded">
-                            {a.kod}
-                          </span>
-                          {a.datum && (
-                            <span className="text-xs text-muted-foreground">{a.datum}</span>
-                          )}
-                        </div>
-                        <p className="text-sm">{a.beskrivning}</p>
-                      </div>
-                      {a.belopp !== 0 && (
-                        <span className="text-sm font-semibold text-foreground whitespace-nowrap">
-                          {a.belopp > 0 ? "+" : ""}{a.belopp.toLocaleString("sv-SE")} kr
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <p className="text-xs text-muted-foreground">
-                Vi kontaktar dig inom 48 timmar för att diskutera resultatet.
-              </p>
-            </>
-          )}
-
           <Button
             variant="outline"
-            className="w-full"
             onClick={() => navigate("/consultant/fakturakontroll")}
           >
             Tillbaka till fakturakontroll
