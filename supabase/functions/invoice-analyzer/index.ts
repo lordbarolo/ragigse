@@ -164,9 +164,10 @@ function runRuleEngine(
 
   // A1: Hour mismatch
   const tidrapportTimmar = tidrapportRader.reduce((sum, r) => {
+    if (!r.start_tid || !r.slut_tid) return sum;
     const s = parseTime(r.start_tid);
-    let e = parseTime(r.slut_tid.replace("+1", ""));
-    if (r.slut_tid.includes("+1") || e < s) e += 24;
+    let e = parseTime((r.slut_tid ?? "").replace("+1", ""));
+    if ((r.slut_tid ?? "").includes("+1") || e < s) e += 24;
     return sum + (e - s - (r.rast_minuter || 0) / 60);
   }, 0);
 
