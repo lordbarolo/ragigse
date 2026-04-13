@@ -150,7 +150,7 @@ export default function FakturakontrollNy() {
               Ladda upp dina dokument
             </h1>
             <p className="text-muted-foreground text-sm">
-              Vi analyserar om du fakturerat rätt enligt nationellt avtal.
+              Vi analyserar om du fakturerat rätt och hjälper dig om du har pengar att hämta.
             </p>
           </div>
 
