@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Upload, FileCheck, Loader2, CheckCircle2, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/trackEvent";
@@ -26,11 +27,13 @@ export default function FakturakontrollNy() {
   const [step, setStep] = useState<1 | 2>(1);
   const [files, setFiles] = useState<Partial<Record<FileSlot, UploadedFile>>>({});
   const [uploading, setUploading] = useState(false);
+  const [phone, setPhone] = useState("");
 
   useEffect(() => {
     trackEvent("fakturakontroll_ny_viewed");
   }, []);
 
+  const phoneValid = /^[\d\s+\-()]{7,20}$/.test(phone.trim());
   const allUploaded = files.faktura && files.tidrapport && files.kontrakt;
 
   const handleFileSelect = useCallback((slot: FileSlot, file: File) => {
@@ -52,7 +55,7 @@ export default function FakturakontrollNy() {
   }, [handleFileSelect]);
 
   const handleSubmit = async () => {
-    if (!user || !allUploaded) return;
+    if (!user || !allUploaded || !phoneValid) return;
     setUploading(true);
 
     try {
@@ -76,8 +79,9 @@ export default function FakturakontrollNy() {
           faktura_path: paths.faktura,
           tidrapport_path: paths.tidrapport,
           kontrakt_path: paths.kontrakt,
+          phone: phone.trim(),
           status: "pending",
-        })
+        } as any)
         .select("id")
         .single();
 
@@ -189,10 +193,27 @@ export default function FakturakontrollNy() {
             })}
           </div>
 
+          <div>
+            <label htmlFor="phone" className="block text-sm font-medium mb-1.5">
+              Telefonnummer
+            </label>
+            <Input
+              id="phone"
+              type="tel"
+              placeholder="070-123 45 67"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              maxLength={20}
+            />
+            <p className="text-xs text-muted-foreground mt-1">
+              Så att vi kan nå dig angående resultatet.
+            </p>
+          </div>
+
           <Button
             size="lg"
             className="w-full font-semibold"
-            disabled={!allUploaded || uploading}
+            disabled={!allUploaded || !phoneValid || uploading}
             onClick={handleSubmit}
           >
             {uploading ? (
