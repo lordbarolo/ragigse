@@ -352,9 +352,12 @@ Deno.serve(async (req) => {
       (kontrakt.uppdragsort as string) ?? (tidrapport.uppdragsort as string) ?? ""
     );
 
-    // Determine base price
+    // Determine base price — contract is primary source, national rates as fallback
     const yrkeskategori = (kontrakt.yrkeskategori as string) ?? "";
-    const baseprice = getBaseprice(yrkeskategori, zon);
+    const kontraktRate = kontrakt.bashourlyrate as number | null;
+    const nationalRate = getBaseprice(yrkeskategori, zon);
+    const baseprice = (kontraktRate && kontraktRate > 0) ? kontraktRate : nationalRate;
+    const rateSource = (kontraktRate && kontraktRate > 0) ? "kontrakt" : "nationellt_avtal";
 
     const avvikelser: Avvikelse[] = [];
     let totalForvantad = 0;
