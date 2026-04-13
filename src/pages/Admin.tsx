@@ -9,6 +9,7 @@ import ReferralStats from "@/components/admin/ReferralStats";
 import FeedbackStats from "@/components/admin/FeedbackStats";
 import BugReports from "@/components/admin/BugReports";
 import ChatAnswerReports from "@/components/admin/ChatAnswerReports";
+import InvoiceReviews from "@/components/admin/InvoiceReviews";
 import { useAdminAnalytics } from "@/hooks/useAdminAnalytics";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -326,6 +327,9 @@ export default function Admin() {
 
       {/* Feedback Stats */}
       <FeedbackStats />
+
+      {/* Invoice Reviews */}
+      <InvoiceReviews />
 
       {/* Bug Reports */}
       <BugReports />

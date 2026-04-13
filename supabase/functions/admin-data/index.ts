@@ -66,6 +66,21 @@ Deno.serve(async (req) => {
       });
     }
 
+    // --- INVOICE REVIEWS ---
+    if (action === "invoice-reviews") {
+      const { data, error } = await supabase
+        .from("invoice_reviews")
+        .select("id, created_at, status, yrkeskategori, phone, grundpris, forvantad_summa, fakturerad_summa, differens, har_avvikelse, avvikelser, extracted_faktura, extracted_tidrapport, confirmed_tidrapport, faktura_path, tidrapport_path, admin_notes, error_message")
+        .in("status", ["pending_review", "approved", "rejected"])
+        .order("created_at", { ascending: false })
+        .limit(100);
+
+      if (error) throw error;
+      return new Response(JSON.stringify({ reviews: data }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     // --- REFERRAL STATS ---
     if (action === "referrals") {
       const { data, error } = await supabase

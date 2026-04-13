@@ -1225,6 +1225,7 @@ export type Database = {
       }
       invoice_reviews: {
         Row: {
+          admin_notes: string | null
           avvikelser: Json | null
           confirmed_at: string | null
           confirmed_tidrapport: Json | null
@@ -1249,7 +1250,9 @@ export type Database = {
           manual_tidrapport: Json | null
           notis_skickad: boolean
           phone: string | null
+          reviewed_at: string | null
           status: string
+          terms_accepted_at: string | null
           tidrapport_data: Json | null
           tidrapport_path: string | null
           user_id: string
@@ -1257,6 +1260,7 @@ export type Database = {
           yrkeskategori: string | null
         }
         Insert: {
+          admin_notes?: string | null
           avvikelser?: Json | null
           confirmed_at?: string | null
           confirmed_tidrapport?: Json | null
@@ -1281,7 +1285,9 @@ export type Database = {
           manual_tidrapport?: Json | null
           notis_skickad?: boolean
           phone?: string | null
+          reviewed_at?: string | null
           status?: string
+          terms_accepted_at?: string | null
           tidrapport_data?: Json | null
           tidrapport_path?: string | null
           user_id: string
@@ -1289,6 +1295,7 @@ export type Database = {
           yrkeskategori?: string | null
         }
         Update: {
+          admin_notes?: string | null
           avvikelser?: Json | null
           confirmed_at?: string | null
           confirmed_tidrapport?: Json | null
@@ -1313,7 +1320,9 @@ export type Database = {
           manual_tidrapport?: Json | null
           notis_skickad?: boolean
           phone?: string | null
+          reviewed_at?: string | null
           status?: string
+          terms_accepted_at?: string | null
           tidrapport_data?: Json | null
           tidrapport_path?: string | null
           user_id?: string

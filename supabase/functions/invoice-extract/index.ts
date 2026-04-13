@@ -369,6 +369,11 @@ Deno.serve(async (req) => {
     const { review_id } = await req.json();
     if (!review_id) throw new Error("review_id is required");
 
+    function parseTimeStr(t: string): number {
+      const [h, m] = (t ?? "0:0").split(":").map(Number);
+      return (h || 0) + (m || 0) / 60;
+    }
+
     // 1. Get review
     const { data: review, error: reviewErr } = await supabase
       .from("invoice_reviews")
@@ -431,7 +436,36 @@ Deno.serve(async (req) => {
       };
     }
 
-    // 5. Save to DB
+    // 5. Check for summa-diskrepans between extracted rows and document totals
+    let summaDiskrepans: { beraknad: number; dokumentet: number } | null = null;
+    if (extractedTidrapport) {
+      const tr = extractedTidrapport as any;
+      const summering = tr.summering;
+      if (summering?.total_tid) {
+        // Parse "135h 30m" format
+        const match = (summering.total_tid as string).match(/(\d+)h\s*(\d+)?m?/);
+        if (match) {
+          const docTotalH = parseInt(match[1], 10) + (parseInt(match[2] || "0", 10) / 60);
+          // Calculate sum from rows
+          let rowTotal = 0;
+          if (tr.format === "weekly_summary" && Array.isArray(tr.daglig_summering)) {
+            rowTotal = tr.daglig_summering.reduce((sum: number, d: any) => sum + (d.total_timmar || 0) + (d.total_minuter || 0) / 60, 0);
+          } else if (Array.isArray(tr.rader)) {
+            for (const r of tr.rader) {
+              const s = parseTimeStr(r.start_tid);
+              let e = parseTimeStr((r.slut_tid || "").replace("+1", ""));
+              if ((r.slut_tid || "").includes("+1") || e < s) e += 24;
+              rowTotal += Math.max(0, e - s - (r.rast_minuter || 0) / 60);
+            }
+          }
+          if (Math.abs(rowTotal - docTotalH) > 0.5) {
+            summaDiskrepans = { beraknad: Math.round(rowTotal * 10) / 10, dokumentet: Math.round(docTotalH * 10) / 10 };
+          }
+        }
+      }
+    }
+
+    // 6. Save to DB
     await supabase
       .from("invoice_reviews")
       .update({
@@ -442,9 +476,11 @@ Deno.serve(async (req) => {
           ? {
               overall: tidrapportConfidence.overallConfidence,
               rows: tidrapportConfidence.confidence,
+              summa_diskrepans: summaDiskrepans,
             }
-          : { overall: 1.0, rows: [] },
+          : { overall: 1.0, rows: [], summa_diskrepans: null },
         extraction_model: model,
+        ...(summaDiskrepans ? { har_avvikelse: true } : {}),
       })
       .eq("id", review_id);
 
