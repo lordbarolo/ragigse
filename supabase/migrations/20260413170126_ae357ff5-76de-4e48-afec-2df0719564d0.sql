@@ -1,0 +1,1 @@
+ALTER TABLE public.invoice_reviews ADD COLUMN phone text NULL;

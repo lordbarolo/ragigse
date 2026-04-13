@@ -1239,6 +1239,7 @@ export type Database = {
           kontrakt_data: Json | null
           kontrakt_path: string | null
           notis_skickad: boolean
+          phone: string | null
           status: string
           tidrapport_data: Json | null
           tidrapport_path: string | null
@@ -1259,6 +1260,7 @@ export type Database = {
           kontrakt_data?: Json | null
           kontrakt_path?: string | null
           notis_skickad?: boolean
+          phone?: string | null
           status?: string
           tidrapport_data?: Json | null
           tidrapport_path?: string | null
@@ -1279,6 +1281,7 @@ export type Database = {
           kontrakt_data?: Json | null
           kontrakt_path?: string | null
           notis_skickad?: boolean
+          phone?: string | null
           status?: string
           tidrapport_data?: Json | null
           tidrapport_path?: string | null
