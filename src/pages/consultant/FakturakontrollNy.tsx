@@ -33,6 +33,7 @@ export default function FakturakontrollNy() {
     trackEvent("fakturakontroll_ny_viewed");
   }, []);
 
+  const phoneValid = /^[\d\s+\-()]{7,20}$/.test(phone.trim());
   const allUploaded = files.faktura && files.tidrapport && files.kontrakt;
 
   const handleFileSelect = useCallback((slot: FileSlot, file: File) => {
