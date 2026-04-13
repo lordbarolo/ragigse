@@ -43,12 +43,14 @@ function isHelgdag(date: string): boolean {
 }
 
 function parseTime(t: string): number {
-  const [h, m] = t.split(":").map(Number);
-  return h + (m || 0) / 60;
+  const [h, m] = (t ?? "0:0").split(":").map(Number);
+  return (h || 0) + (m || 0) / 60;
 }
 
 function incrementDate(d: string): string {
+  if (!d || d.length < 10) return d || "";
   const dt = new Date(d + "T12:00:00");
+  if (isNaN(dt.getTime())) return d;
   dt.setDate(dt.getDate() + 1);
   return dt.toISOString().slice(0, 10);
 }
