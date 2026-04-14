@@ -1,46 +1,51 @@
 
 
-# Plan: Uppdatera steg 5, lägg till avtalsacceptans, och kör skarpt test
+# Plan: Skapa CompCare Fakturagranskning-rapport (PDF)
 
 ## Sammanfattning
 
-Tre ändringar: (1) uppdatera texten i steg 5, (2) lägga till en avtalscheckbox med placeholder-text som användaren måste acceptera innan inskickning, (3) uppdatera edge functions och databas för att spåra avtalet, samt genomföra ett skarpt test med de uppladdade filerna (faktura 80.pdf + HeromaRapport.pdf).
+Skapa en professionell PDF-rapport — "Fakturagranskning" — som CompCare kan skicka till kunder efter genomförd granskning av fakturor och tidrapporter. Dokumentet speglar strukturen i Eneas energirevisions-mall men anpassat till CompCares domän (konsultfakturor, tidrapporter, ramavtal).
 
-## Ändringar
+## Dokumentstruktur (6 sidor)
 
-### 1. Steg 5 — Uppdatera bekräftelsetext
-Rad 702-706 i `FakturakontrollNy.tsx`: Byt text till:
-- "Vi har tagit emot dina dokument. Din tidrapport granskas — vi återkommer vanligtvis inom 2 arbetsdagar."
+### Sida 1 — Försättsblad
+- CompCare-logga (vit text, mörk bakgrund `#0D111C` med cyan accent `#00D2E6`)
+- Titel: **FAKTURAGRANSKNING**
+- Kundnamn (placeholder: `[Bolagsnamn]`)
+- Ikon: dokument med förstoringsglas
 
-### 2. Avtalsacceptans före inskickning
-I steg 1, ovanför "Skicka in för granskning"-knappen:
-- Ny `Checkbox` + text: "Jag godkänner Compcares avtalsvillkor" med en klickbar länk som öppnar avtalet i en dialog/modal
-- Avtalsinnehållet är en placeholder: *"[Avtalstext kommer att läggas till]"*
-- `canSubmit` utökas med `agreedToTerms === true`
-- Tidsstämpel för godkännande sparas i `invoice_reviews`
+### Sida 2 — Resultat av granskningen
+- Rubrik: **INFORMATION GENOMFÖRD FAKTURAGRANSKNING**
+- Fält: Bolag, Org nr, Yrkeskategori, Granskningsperiod, Antal fakturor
+- Resultattext (två varianter som placeholder):
+  - Variant A: Inga avvikelser hittades
+  - Variant B: Avvikelser identifierade — sammanfattning av belopp
+- Granskare, datum, CompCare kontaktuppgifter
+- Fotnot: förbehåll om eventuella fel
 
-### 3. Databasändring
-Migration: Lägg till kolumner i `invoice_reviews`:
-- `terms_accepted_at` (timestamptz, nullable)
-- `admin_notes` (text, nullable)
-- `reviewed_at` (timestamptz, nullable)
+### Sida 3 — Konsultfakturan
+- Förklarande text om hur konsultfakturor fungerar
+- Normaltid, OB-tillägg, beredskap, jour
+- Vanliga felkällor (beredskapstimmar, storhelgstillägg, tidbandskategorisering)
 
-### 4. Edge function: `invoice-analyzer` — status → `pending_review`
-Ändra slutstatus från `"completed"` till `"pending_review"`. Skicka admin-notis för ALLA ärenden (inte bara vid avvikelse).
+### Sida 4 — Ramavtal och prissättning
+- Förklaring av ramavtal inom vård/omsorg
+- Hur OB-multiplikatorer och arbetsgivaravgifter påverkar slutpriset
+- Tabell med exempel på typiska OB-nivåer
 
-### 5. Edge function: `invoice-extract` — summa-diskrepans-flaggning
-Efter extraktion, beräkna summan av extraherade rader och jämför mot dokumentets `summering.total_tid`. Om diskrepans → flagga i DB.
+### Sida 5 — Vanliga avvikelser
+- Typexempel på avvikelser CompCare hittar
+- Illustration av hur timmar kan falla bort mellan tidrapport och faktura
 
-### 6. Admin-panel: Ny sektion "Fakturagranskning"
-Ny komponent `InvoiceReviews.tsx` i admin med lista över `pending_review`-ärenden. Visa detaljer, avvikelser, PDF-länk. Knappar för godkänna/avvisa + anteckningar. Ny edge function `admin-review-action` för statusändring.
-
-### 7. Skarpt test
-Kör de uppladdade filerna (faktura 80.pdf = Ing-Marie Daniels AB, läkare, grundpris 1496 kr/h + HeromaRapport.pdf = Heromatidrapport v.26-27) genom hela flödet via edge function-anrop.
+### Sida 6 — CompCares tjänster
+- Kort om CompCare och övriga tjänster (löneanalys, referenshantering)
+- Kontaktuppgifter och webbadress
 
 ## Tekniska detaljer
 
-- Fakturan innehåller: Normaltid 76h × 1496, aktiv tid vardag/helg i flera tidsband, passiv beredskap vardag 59h + helg 37h. Total exkl moms: 241 229,50 kr
-- Tidrapporten är Heroma-format (weekly_summary) med arbetstid, jour och beredskap per dag
-- Yrkeskategori: Läkare (inte SSK, så OB-multiplikator ska inte tillämpas)
-- Avtalsplaceholder renderas som en `Dialog` med scrollbar text
+- Genereras med **reportlab** (Python) som ett snyggt PDF-dokument
+- CompCare-branding: mörk bakgrund (`#0D111C`), cyan accent (`#00D2E6`), vit text, Inter/Arial typsnitt
+- Platshållare markerade med `[hakparenteser]` för att fyllas i per kund
+- Output: `/mnt/documents/compcare_fakturagranskning_mall.pdf`
+- Visuell QA genomförs efter generering
 
