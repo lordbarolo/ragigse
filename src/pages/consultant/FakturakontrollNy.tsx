@@ -23,6 +23,11 @@ import {
   Plus,
   Trash2,
   AlertTriangle,
+  ShieldCheck,
+  BarChart3,
+  FileOutput,
+  HandCoins,
+  Download,
 } from "lucide-react";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/trackEvent";
@@ -337,12 +342,49 @@ export default function FakturakontrollNy() {
         <div className="space-y-6">
           <div>
             <h1 className="font-display text-2xl md:text-3xl font-bold tracking-tight mb-2">
-              Ladda upp dina dokument
+              Fakturagranskning
             </h1>
             <p className="text-muted-foreground text-sm">
               Vi analyserar om du fakturerat rätt och hjälper dig om du har pengar att hämta.
             </p>
           </div>
+
+          {/* ── Processguide: Så fungerar tjänsten ──────────────────────── */}
+          <div className="rounded-xl border bg-card p-5 space-y-4">
+            <h2 className="text-sm font-semibold tracking-tight">Så fungerar tjänsten</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {[
+                { icon: Upload, title: "Ladda upp", desc: "Skicka in faktura och tidrapport" },
+                { icon: BarChart3, title: "Analys", desc: "Vi jämför mot ramavtal" },
+                { icon: FileOutput, title: "Rapport", desc: "Du får en detaljerad rapport" },
+                { icon: HandCoins, title: "No cure, no pay", desc: "Betala bara vid avvikelser" },
+              ].map((s, i) => (
+                <div key={i} className="flex flex-col items-center text-center gap-2">
+                  <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <s.icon className="w-5 h-5 text-primary" />
+                  </div>
+                  <p className="text-xs font-semibold">{s.title}</p>
+                  <p className="text-[11px] text-muted-foreground leading-tight">{s.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ── No cure – no pay info ───────────────────────────────────── */}
+          <div className="flex gap-3 items-start p-4 rounded-xl border border-primary/20 bg-primary/[0.03]">
+            <ShieldCheck className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+            <div>
+              <p className="text-sm font-semibold">Ingen risk — No cure, no pay</p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                Vi granskar dina fakturor och tidrapporter utan kostnad. Hittar vi avvikelser tar vi
+                25 % av identifierat belopp. Hittas inget — kostar det inget.
+              </p>
+            </div>
+          </div>
+
+          <hr className="border-border" />
+
+          <h2 className="text-sm font-semibold tracking-tight">Ladda upp dina dokument</h2>
 
           {/* File uploads */}
           <div className="space-y-3">
@@ -567,12 +609,62 @@ export default function FakturakontrollNy() {
                       <DialogTitle>Compcares avtalsvillkor — Fakturagranskning</DialogTitle>
                     </DialogHeader>
                     <ScrollArea className="max-h-[60vh] pr-4">
-                      <div className="prose prose-sm dark:prose-invert">
-                        <p className="text-muted-foreground italic">
-                          [Avtalstext kommer att läggas till]
+                      <div className="prose prose-sm dark:prose-invert space-y-4">
+                        <p className="text-xs text-muted-foreground">
+                          <strong>Tjänsteleverantör:</strong> CompCare AB (org.nr XXXXXX-XXXX), nedan "CompCare"
+                          <br />
+                          <strong>Kund:</strong> {user?.email ?? "[kundens e-postadress]"}
+                        </p>
+
+                        <ol className="list-decimal pl-5 space-y-2 text-sm">
+                          <li>
+                            Kunden ger CompCare rätt att granska insända fakturor och tidrapporter mot
+                            gällande ramavtalspriser och arbetsscheman.
+                          </li>
+                          <li>
+                            CompCare åtar sig att revidera materialet för att identifiera avvikelser
+                            mellan fakturerade och faktiskt arbetade timmar.
+                          </li>
+                          <li>
+                            Arvodet fastställs till <strong>25 %</strong> av det samlade beloppet som
+                            identifieras som avvikelse. CompCare fakturerar först efter att resultatet
+                            presenterats för kunden. Moms tillkommer.
+                          </li>
+                          <li>
+                            CompCare arbetar efter principen <strong>"no cure – no pay"</strong> —
+                            tjänsten är helt kostnadsfri om inga avvikelser påvisas.
+                          </li>
+                          <li>
+                            Avtalet avslutas automatiskt i samband med att CompCare sänder slutrapport
+                            till kunden.
+                          </li>
+                          <li>
+                            CompCare har tystnadsplikt avseende alla uppgifter som mottas inom ramen
+                            för uppdraget.
+                          </li>
+                          <li>
+                            Uppladdade dokument behandlas i enlighet med GDPR och raderas efter
+                            avslutad granskning.
+                          </li>
+                        </ol>
+
+                        <p className="text-xs text-muted-foreground italic">
+                          Genom att kryssa i rutan godkänner du villkoren ovan. Tidpunkten för ditt
+                          godkännande registreras.
                         </p>
                       </div>
                     </ScrollArea>
+                    <div className="pt-2">
+                      <a
+                        href="/compcare_granskningsavtal.pdf"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline font-medium"
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                        Ladda ner avtal (PDF)
+                      </a>
+                    </div>
                   </DialogContent>
                 </Dialog>
               </span>
