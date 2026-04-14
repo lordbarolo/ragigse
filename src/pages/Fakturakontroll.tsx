@@ -109,8 +109,8 @@ export default function Fakturakontroll() {
 
             {/* CTA button */}
             <Button
-              size="lg"
-              className="w-full text-sm py-3 font-semibold mt-6"
+              size="default"
+              className="text-sm py-3 px-6 font-semibold mt-6"
               onClick={() => {
                 trackEvent("product_cta_clicked", { product: "fakturakontroll" });
                 navigate("/consultant/fakturakontroll/ny");
@@ -190,8 +190,8 @@ export default function Fakturakontroll() {
             Starta din kostnadsfria granskning idag. Vi kontaktar dig inom 48 timmar med resultatet.
           </p>
           <Button
-            size="lg"
-            className="text-sm px-8 py-3 font-semibold"
+            size="default"
+            className="text-sm px-6 py-3 font-semibold"
             onClick={() => {
               trackEvent("product_cta_clicked", { product: "fakturakontroll" });
               navigate("/consultant/fakturakontroll/ny");
