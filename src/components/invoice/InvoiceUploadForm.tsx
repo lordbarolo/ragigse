@@ -156,7 +156,7 @@ export default function InvoiceUploadForm() {
         />
       </div>
 
-      <Button type="submit" size="default" className="w-full text-sm font-semibold py-3" disabled={submitting}>
+      <Button type="submit" size="default" className="text-sm font-semibold px-6 py-3" disabled={submitting}>
         {submitting ? (
           <>
             <Loader2 className="w-4 h-4 animate-spin mr-2" />
