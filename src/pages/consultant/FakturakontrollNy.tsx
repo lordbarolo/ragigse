@@ -672,8 +672,8 @@ export default function FakturakontrollNy() {
           </div>
 
           <Button
-            size="lg"
-            className="w-full font-semibold"
+            size="default"
+            className="text-sm font-semibold px-6 py-3"
             disabled={!canSubmit || uploading}
             onClick={handleSubmit}
           >
@@ -806,7 +806,7 @@ export default function FakturakontrollNy() {
                   </div>
                 )}
 
-                <Button size="lg" className="w-full font-semibold" onClick={handleConfirm}>
+                <Button size="default" className="text-sm font-semibold px-6 py-3" onClick={handleConfirm}>
                   Bekräfta och analysera
                 </Button>
               </>
