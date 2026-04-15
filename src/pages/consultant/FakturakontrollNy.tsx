@@ -92,6 +92,7 @@ const STEP_LABELS = [
 export default function FakturakontrollNy() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const anonymousId = crypto.randomUUID();
   const [step, setStep] = useState(1);
   const [files, setFiles] = useState<Partial<Record<FileSlot, UploadedFile>>>({});
   const [uploading, setUploading] = useState(false);
@@ -158,11 +159,11 @@ export default function FakturakontrollNy() {
   // ── Submit ───────────────────────────────────────────────────────────────
 
   const handleSubmit = async () => {
-    if (!user || !canSubmit) return;
+    if (!canSubmit) return;
     setUploading(true);
 
     try {
-      const userId = user.id;
+      const userId = user?.id ?? anonymousId;
       const paths: Record<FileSlot, string> = {} as Record<FileSlot, string>;
 
       for (const slot of ["faktura", "tidrapport"] as FileSlot[]) {
@@ -301,16 +302,7 @@ export default function FakturakontrollNy() {
     };
   };
 
-  // ── Auth gate ────────────────────────────────────────────────────────────
-
-  if (!user) {
-    return (
-      <div className="max-w-2xl mx-auto px-6 py-16 text-center space-y-4">
-        <h1 className="font-display text-2xl font-bold">Logga in för att använda fakturagranskning</h1>
-        <Button onClick={() => navigate("/logga-in")}>Logga in</Button>
-      </div>
-    );
-  }
+  // (auth gate removed – page is accessible without login)
 
   // ── Render ───────────────────────────────────────────────────────────────
 
