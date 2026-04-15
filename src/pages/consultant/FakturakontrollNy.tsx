@@ -92,6 +92,7 @@ const STEP_LABELS = [
 export default function FakturakontrollNy() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const anonymousId = crypto.randomUUID();
   const [step, setStep] = useState(1);
   const [files, setFiles] = useState<Partial<Record<FileSlot, UploadedFile>>>({});
   const [uploading, setUploading] = useState(false);
