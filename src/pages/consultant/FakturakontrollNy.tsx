@@ -592,15 +592,15 @@ export default function FakturakontrollNy() {
                     <ScrollArea className="max-h-[60vh] pr-4">
                       <div className="prose prose-sm dark:prose-invert space-y-4">
                         <p className="text-xs text-muted-foreground">
-                          <strong>Tjänsteleverantör:</strong> CompCare AB (org.nr XXXXXX-XXXX), nedan "CompCare"
+                          <strong>Tjänsteleverantör:</strong> CompCare, nedan "CompCare"
                           <br />
                           <strong>Kund:</strong> {user?.email ?? "[kundens e-postadress]"}
                         </p>
 
                         <ol className="list-decimal pl-5 space-y-2 text-sm">
                           <li>
-                            Kunden ger CompCare rätt att granska insända fakturor och tidrapporter mot
-                            gällande ramavtalspriser och arbetsscheman.
+                            Kunden ger CompCare rätt att analysera insända dokument i syfte att
+                            hitta avvikelser mellan fakturerad tid och rapporterad tid.
                           </li>
                           <li>
                             CompCare åtar sig att revidera materialet för att identifiera avvikelser
