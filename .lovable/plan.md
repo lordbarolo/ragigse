@@ -1,30 +1,32 @@
 
 
-# Plan: Remove `requests` table entirely
+# Fix: CI logging "unknown" capability on errors
 
-## Summary
-The `requests` table (2,335 rows of call-off data) will be completely removed from the codebase and database. All functions that currently merge data from both `requests` and `calloff_imports` will be updated to use `calloff_imports` only.
+## Problem
+The `catch` block in `compensation-intelligence/index.ts` (line 1061–1080) logs **every** failed query with `capability_key: "unknown"` and `client_type: "unknown"` because the `capability` and `client_type` variables are scoped inside the `try` block and inaccessible in `catch`.
 
-## Affected files
+This explains the 34% of `compensation_queries` rows with `capability_key = 'unknown'` — they are legitimate errors (unresolved roles, missing data, etc.) but the actual capability is lost.
 
-### 1. Edge Function: `get-avrop-predictions/index.ts`
-- Remove the `fetchRequests()` function entirely
-- Update `fetchAllRoles()` to only query `calloff_imports`
-- Remove the merge of `requestRows` — use only `importRows`
+## Fix
 
-### 2. Edge Function: `uppdragsradar-chat/index.ts`
-- Remove the `fetchAll` call for `"requests"` table
-- Update `allData` to use only the `calloff_imports` results
-- Adjust the prompt text referencing "uppdragsdatabasen" (no changes to wording needed, data source just narrows)
+### File: `supabase/functions/compensation-intelligence/index.ts`
 
-### 3. Database migration
-- `DROP TABLE IF EXISTS public.requests;`
+1. **Hoist variables** — declare `capability` and `clientType` before the `try` block with defaults:
+   ```ts
+   let capability = "unknown";
+   let clientType = "unknown";
+   ```
 
-### Not affected
-- `radar-predictions/index.ts` — already uses only `calloff_imports`
-- All `src/` references to "requests" are for other tables (`org_membership_requests`, `ref_representation_requests`, `market_requests`) — unrelated
+2. **Assign inside try** — after parsing body, assign from parsed values so the catch block can reference them.
 
-## Technical details
-- The `calloff_imports` table (~29k rows) contains the same data structure and will remain the sole data source for Uppdragsradarn
-- No UI changes needed — the Radar page already works through the edge functions
+3. **Update catch block** — use the hoisted variables instead of hardcoded `"unknown"`:
+   ```ts
+   capability_key: capability,   // was "unknown"
+   client_type: clientType,      // was "unknown"
+   ```
+
+### Scope
+- Single file edit (~6 lines changed)
+- No schema changes, no new migrations
+- Redeploy `compensation-intelligence` edge function
 
