@@ -87,16 +87,6 @@ export function getNegotiationTips(
 ): string[] {
   const observations: string[] = [];
 
-  if (isUnderpaid) {
-    observations.push(
-      `Ramavtalspriset för ${yrke} ligger ${diffPercent}% över din nuvarande ersättning.`
-    );
-  } else {
-    observations.push(
-      "Din ersättning ligger inom marknadsspannet."
-    );
-  }
-
   if (isEmployee) {
     observations.push("Tjänstepension på minst 4,5% ingår i ramavtalets kalkylmodell.");
     observations.push("OB-tillägg regleras av gällande kollektivavtal.");
