@@ -15,7 +15,7 @@ const STATS = [
 const MODULES_ROW1 = [
   {
     title: "Verify — dokumentvalvet",
-    desc: "Spara legitimationer, intyg och utbildningsbevis på ett säkert ställe. Dela tillgång med länk — aldrig mer bifogade filer till fem bolag.",
+    desc: "Spara legitimationer, intyg och utbildningsbevis på ett säkert ställe. Dela tillgång med länk — aldrig mer bifogade filer som du aldrig vet vart de tar vägen.",
     tag: "Ingår gratis",
     tagColor: "purple" as const,
     iconBg: "#EEEDFE",
