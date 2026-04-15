@@ -117,19 +117,13 @@ Deno.serve(async (req) => {
     // Trim conversation history to last N messages
     const trimmedMessages = messages.slice(-MAX_HISTORY_MESSAGES);
 
-    // Fetch from all sources with paginated fetch
-    const [requests, imports] = await Promise.all([
-      fetchAll(supabase, "requests",
-        "customer, role, specialization, created_at, region, filled, price_median, price_min, price_max",
-        (q: any) => q.eq("role", normalizedRoll).eq("is_public", true).not("created_at", "is", null).not("customer", "is", null),
-        "created_at").catch(() => []),
-      fetchAll(supabase, "calloff_imports",
-        "customer, role, specialization, calloff_date, region, filled, price_median, price_min, price_max",
-        (q: any) => q.eq("role", normalizedRoll).not("calloff_date", "is", null).not("customer", "is", null),
-        "calloff_date"),
-    ]);
+    // Fetch from calloff_imports only
+    const imports = await fetchAll(supabase, "calloff_imports",
+      "customer, role, specialization, calloff_date, region, filled, price_median, price_min, price_max",
+      (q: any) => q.eq("role", normalizedRoll).not("calloff_date", "is", null).not("customer", "is", null),
+      "calloff_date");
 
-    const normalizedImports = (imports || []).map((r: any) => ({
+    const allData = (imports || []).map((r: any) => ({
       customer: r.customer || "Okänd",
       role: r.role,
       specialization: r.specialization,
@@ -139,9 +133,7 @@ Deno.serve(async (req) => {
       price_median: r.price_median,
       price_min: r.price_min,
       price_max: r.price_max,
-    }));
-
-    const allData = [...(requests || []), ...normalizedImports].filter(
+    })).filter(
       (r: any) => r.region && r.created_at
     );
 

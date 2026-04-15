@@ -27,25 +27,6 @@ interface RegionPrediction {
   medianpris: number | null;
 }
 
-/** Fetch from requests table */
-async function fetchRequests(supabase: any, roll: string): Promise<UnifiedRow[]> {
-  const { data } = await supabase
-    .from("requests")
-    .select("customer, role, specialization, created_at, region, filled, price_median")
-    .eq("role", roll)
-    .eq("is_public", true)
-    .order("created_at", { ascending: false });
-  return (data || []).map((r: any) => ({
-    customer: r.customer,
-    role: r.role,
-    specialization: r.specialization,
-    created_at: r.created_at,
-    region: r.region,
-    filled: r.filled ?? false,
-    price_median: r.price_median,
-  }));
-}
-
 /** Fetch from calloff_imports table */
 async function fetchImports(supabase: any, roll: string): Promise<UnifiedRow[]> {
   const { data } = await supabase
@@ -64,14 +45,11 @@ async function fetchImports(supabase: any, roll: string): Promise<UnifiedRow[]> 
   }));
 }
 
-/** Get all unique roles from both tables */
+/** Get all unique roles from calloff_imports */
 async function fetchAllRoles(supabase: any): Promise<string[]> {
-  const [{ data: r1 }, { data: r2 }] = await Promise.all([
-    supabase.from("requests").select("role").limit(2000),
-    supabase.from("calloff_imports").select("role").limit(2000),
-  ]);
+  const { data } = await supabase.from("calloff_imports").select("role").limit(2000);
   const roles = new Set<string>();
-  for (const r of [...(r1 || []), ...(r2 || [])]) {
+  for (const r of (data || [])) {
     if (r.role) roles.add(r.role);
   }
   return [...roles].sort();
@@ -99,13 +77,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    // Fetch from both sources and merge
-    const [requestRows, importRows] = await Promise.all([
-      fetchRequests(supabase, roll),
-      fetchImports(supabase, roll),
-    ]);
-
-    const allRows: UnifiedRow[] = [...requestRows, ...importRows]
+    const allRows: UnifiedRow[] = (await fetchImports(supabase, roll))
       .filter((r) => r.region && r.created_at);
 
     const today = new Date();
