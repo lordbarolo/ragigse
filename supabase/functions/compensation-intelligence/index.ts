@@ -941,10 +941,14 @@ serve(async (req) => {
   }
 
   const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  let capability = "unknown";
+  let client_type = "unknown";
 
   try {
     const body: CIRequest = await req.json();
-    const { capability, version = 1, params, client_type = "anonymous_human" } = body;
+    capability = body.capability ?? "unknown";
+    client_type = body.client_type ?? "anonymous_human";
+    const { version = 1, params } = body;
 
     if (!capability || !params) {
       const policy: CIPolicy = { status: "blocked", client_type: client_type ?? "unknown", fallback_applied: false, fallback_level: null };
@@ -1063,16 +1067,16 @@ serve(async (req) => {
     const errorCode = ERROR_CODES[errMsg] ? errMsg : "INTERNAL_ERROR";
 
     const queryId = await logQuery(supabase, {
-      client_type: "unknown",
+      client_type: client_type,
       client_ip: clientIp,
-      capability_key: "unknown",
+      capability_key: capability,
       capability_version: 1,
       raw_input_text: errMsg,
       policy_result_json: { status: "blocked", reason: errorCode, applied_rules: [] },
     }).catch(() => null);
 
-    const policy: CIPolicy = { status: "blocked", client_type: "unknown", fallback_applied: false, fallback_level: null };
-    const envelope = buildResponse(queryId, "unknown", null, null, policy, [makeError(errorCode)]);
+    const policy: CIPolicy = { status: "blocked", client_type, fallback_applied: false, fallback_level: null };
+    const envelope = buildResponse(queryId, capability, null, null, policy, [makeError(errorCode)]);
 
     if (errorCode === "INTERNAL_ERROR") console.error("compensation-intelligence error:", error);
 
