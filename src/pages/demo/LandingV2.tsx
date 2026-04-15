@@ -30,7 +30,7 @@ const MODULES_ROW1 = [
   },
   {
     title: "Referensplattformen",
-    desc: "Du bestämmer vem som ser dem och när. Referensgivare kan verifiera digitalt istället för att lämna samma uppgifter till flera bolag.",
+    desc: "Du bestämmer vem som får tillgång och när. Referensgivare kan verifiera digitalt istället för att lämna samma uppgifter till flera bolag.",
     tag: "Ingår gratis",
     tagColor: "purple" as const,
     iconBg: "#EEEDFE",
@@ -43,7 +43,7 @@ const MODULES_ROW1 = [
   },
   {
     title: "Löneanalys & löneassistent",
-    desc: "Vet direkt om du är rätt betald. Löneassistenten ger konkreta förhandlingstips baserat på din specialitet, region och erfarenhet.",
+    desc: "Se vad regionen betalar för din tid och vad bemanningsföretagen kan betala utifrån marknadens genomsnittliga marginaler. Med full transparens kring villkor vågar fler testa konsultlivet.",
     tag: "Insight — 149 kr/mån",
     tagColor: "amber" as const,
     iconBg: "#FAEEDA",
