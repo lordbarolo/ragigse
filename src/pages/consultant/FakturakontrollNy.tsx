@@ -59,20 +59,10 @@ interface ExtractionResult {
 }
 
 const YRKESKATEGORIER = [
-  "Legitimerad sjuksköterska",
-  "Specialistsjuksköterska",
-  "Anestesisjuksköterska",
-  "Intensivvårdssjuksköterska",
-  "Operationssjuksköterska",
-  "Röntgensjuksköterska",
-  "Distriktssjuksköterska",
+  "Läkare",
+  "Sjuksköterska",
   "Barnmorska",
-  "Legitimerad läkare",
-  "Specialist läkare",
-  "Anestesiolog",
-  "Intensivvårdsläkare",
-  "Psykiater",
-  "Rättspsykiater",
+  "Övrigt",
 ];
 
 const FILE_LABELS: Record<FileSlot, { label: string; desc: string }> = {
