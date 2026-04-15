@@ -53,10 +53,10 @@ export default function ReijdarChat({
     setRoleSuggestions(null);
 
     if (!hasTrackedStart) {
-      trackEvent("reijdar_chat_started" as any, { role: selectedRole || "" });
+      trackEvent("reijdar_chat_started", { role: selectedRole || "" });
       setHasTrackedStart(true);
     }
-    trackEvent("reijdar_message_sent" as any, { role: selectedRole || "" });
+    trackEvent("reijdar_message_sent", { role: selectedRole || "" });
 
     const userMsg: ChatMsg = { role: "user", content: trimmed };
     const newMessages = [...messages, userMsg];
@@ -136,7 +136,7 @@ export default function ReijdarChat({
         }
       }
 
-      trackEvent("reijdar_advice_received" as any, { role: selectedRole || "" });
+      trackEvent("reijdar_advice_received", { role: selectedRole || "" });
     } catch (e: any) {
       toast({ title: "Chatfel", description: e.message, variant: "destructive" });
     } finally {

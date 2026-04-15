@@ -49,7 +49,7 @@ export default function MarketDiagnosisCard({ diffPercent, isPermanent, yrke, ko
   useEffect(() => {
     if (!trackedRef.current) {
       trackedRef.current = true;
-      trackEvent("diagnosis_shown" as any, { position, diff_percent: diffPercent, role: yrke, kommun });
+      trackEvent("diagnosis_shown", { position, diff_percent: diffPercent, role: yrke, kommun });
     }
   }, []);
 

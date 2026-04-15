@@ -37,7 +37,7 @@ serve(async (req) => {
       .from("analytics_events")
       .select("event_name, metadata, created_at")
       .order("created_at", { ascending: false })
-      .limit(10000);
+      .limit(50000);
 
     if (fromDate) query = query.gte("created_at", `${fromDate}T00:00:00Z`);
     if (toDate) query = query.lte("created_at", `${toDate}T23:59:59Z`);
@@ -53,43 +53,28 @@ serve(async (req) => {
       "survey_completed",
       "analysis_started",
       "email_collected",
+      "analysis_completed",
       "report_viewed",
-      "report_section_viewed",
     ];
 
-    // Aggregate by variant
-    const variants: Record<string, Record<string, number>> = { A: {}, B: {}, unknown: {} };
-    const referralEvents: Record<string, { sent: number; confirmed: number }> = {
-      A: { sent: 0, confirmed: 0 },
-      B: { sent: 0, confirmed: 0 },
-      unknown: { sent: 0, confirmed: 0 },
-    };
-
-    // Revenue tracking (count payment_verified as conversions)
-    const revenueByVariant: Record<string, number> = { A: 0, B: 0, unknown: 0 };
+    // Aggregate combined counts
+    const combinedCounts: Record<string, number> = {};
 
     // Daily event counts for time series
     const dailyCounts: Record<string, Record<string, number>> = {};
 
-    for (const event of events || []) {
-      const meta = event.metadata as Record<string, unknown> | null;
-      const variant = (meta?.ab_variant as string) || "unknown";
-      const variantKey = variant === "A" || variant === "B" ? variant : "unknown";
+    // Referral tracking
+    const referralEvents = { sent: 0, confirmed: 0 };
 
+    for (const event of events || []) {
       // Funnel counts
-      if (!variants[variantKey]) variants[variantKey] = {};
-      variants[variantKey][event.event_name] = (variants[variantKey][event.event_name] || 0) + 1;
+      combinedCounts[event.event_name] = (combinedCounts[event.event_name] || 0) + 1;
 
       // Referral counts
       if (event.event_name === "referral_sent") {
-        referralEvents[variantKey].sent++;
+        referralEvents.sent++;
       } else if (event.event_name === "referral_confirmed") {
-        referralEvents[variantKey].confirmed++;
-      }
-
-      // Revenue (each payment_verified = 1 conversion)
-      if (event.event_name === "payment_verified") {
-        revenueByVariant[variantKey]++;
+        referralEvents.confirmed++;
       }
 
       // Daily breakdown
@@ -98,41 +83,28 @@ serve(async (req) => {
       dailyCounts[day][event.event_name] = (dailyCounts[day][event.event_name] || 0) + 1;
     }
 
-    // Build funnel for each variant (including unknown and combined)
-    const funnels: Record<string, Array<{ step: string; count: number; rate: number }>> = {};
-    
-    // Build combined counts across all variants
-    const combinedCounts: Record<string, number> = {};
-    for (const v of ["A", "B", "unknown"]) {
-      const counts = variants[v] || {};
-      for (const [k, val] of Object.entries(counts)) {
-        combinedCounts[k] = (combinedCounts[k] || 0) + val;
-      }
-    }
-    
-    for (const v of ["A", "B", "all"]) {
-      const counts = v === "all" ? combinedCounts : (variants[v] || {});
-      const funnel = funnelSteps.map((step, i) => {
-        const count = counts[step] || 0;
-        const prevCount = i === 0 ? count : (counts[funnelSteps[i - 1]] || 0);
-        const rate = prevCount > 0 ? Math.round((count / prevCount) * 100) : 0;
-        return { step, count, rate: i === 0 ? 100 : rate };
-      });
-      funnels[v] = funnel;
-    }
+    // Build funnel
+    const funnel = funnelSteps.map((step, i) => {
+      const count = combinedCounts[step] || 0;
+      const prevCount = i === 0 ? count : (combinedCounts[funnelSteps[i - 1]] || 0);
+      const rate = prevCount > 0 ? Math.round((count / prevCount) * 100) : 0;
+      return { step, count, rate: i === 0 ? 100 : rate };
+    });
+
+    const funnels: Record<string, Array<{ step: string; count: number; rate: number }>> = {
+      all: funnel,
+    };
 
     // Conversion rates
-    const conversionRates: Record<string, { sessions: number; conversions: number; rate: string }> = {};
-    for (const v of ["A", "B", "all"]) {
-      const counts = v === "all" ? combinedCounts : (variants[v] || {});
-      const sessions = counts?.["landing_viewed"] || 0;
-      const conversions = counts?.["email_collected"] || 0;
-      conversionRates[v] = {
+    const sessions = combinedCounts["landing_viewed"] || 0;
+    const conversions = combinedCounts["email_collected"] || 0;
+    const conversionRates: Record<string, { sessions: number; conversions: number; rate: string }> = {
+      all: {
         sessions,
         conversions,
         rate: sessions > 0 ? (conversions / sessions * 100).toFixed(1) + "%" : "0%",
-      };
-    }
+      },
+    };
 
     // Sort daily counts
     const sortedDays = Object.keys(dailyCounts).sort();
@@ -146,7 +118,6 @@ serve(async (req) => {
         funnels,
         conversionRates,
         referralEvents,
-        revenueByVariant,
         timeSeries,
         totalEvents: (events || []).length,
       }),
