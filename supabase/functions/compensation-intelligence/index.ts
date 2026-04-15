@@ -941,10 +941,14 @@ serve(async (req) => {
   }
 
   const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  let capability = "unknown";
+  let client_type = "unknown";
 
   try {
     const body: CIRequest = await req.json();
-    const { capability, version = 1, params, client_type = "anonymous_human" } = body;
+    capability = body.capability ?? "unknown";
+    client_type = body.client_type ?? "anonymous_human";
+    const { version = 1, params } = body;
 
     if (!capability || !params) {
       const policy: CIPolicy = { status: "blocked", client_type: client_type ?? "unknown", fallback_applied: false, fallback_level: null };
