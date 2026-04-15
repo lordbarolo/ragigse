@@ -368,8 +368,7 @@ export default function FakturakontrollNy() {
             <div>
               <p className="text-sm font-semibold">Ingen risk — No cure, no pay</p>
               <p className="text-xs text-muted-foreground mt-0.5">
-                Vi granskar dina fakturor och tidrapporter utan kostnad. Hittar vi avvikelser tar vi
-                25 % av identifierat belopp. Hittas inget — kostar det inget.
+                Vi granskar dina fakturor och tidrapporter utan kostnad. Hittar vi avvikelser hjälper vi dig att få betalt för det som tidigare missats. Hittas inget — kostar det inget.
               </p>
             </div>
           </div>
