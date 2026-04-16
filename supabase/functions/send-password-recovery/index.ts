@@ -109,21 +109,18 @@ Deno.serve(async (req) => {
     })
   }
 
-  const hashedToken = recoveryLinkData?.properties?.hashed_token
-  if (!hashedToken) {
-    console.error('Missing recovery hashed_token in generateLink response')
+  // Use the action_link from generateLink — it's a pre-built, working verify URL
+  const actionLink = recoveryLinkData?.properties?.action_link
+  if (!actionLink) {
+    console.error('Missing action_link in generateLink response')
     return new Response(JSON.stringify({ error: 'Failed to process password recovery' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
   }
 
-  // Route through Supabase's built-in verify endpoint so the token exchange
-  // happens server-side (works reliably with PKCE and all auth flows).
-  // Supabase verifies the token, creates a session, then redirects to our page.
-  const confirmationUrl = new URL(`${supabaseUrl}/auth/v1/verify`)
-  confirmationUrl.searchParams.set('token_hash', hashedToken)
-  confirmationUrl.searchParams.set('type', 'recovery')
+  // Replace the redirect_to in the action_link to point to our reset page
+  const confirmationUrl = new URL(actionLink)
   confirmationUrl.searchParams.set('redirect_to', resetUrl.toString())
 
   const html = await renderAsync(
