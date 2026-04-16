@@ -79,6 +79,9 @@ export function DocumentUpload() {
 
     setUploading(true);
     try {
+      const cpId = consultantId || (await resolveConsultantId());
+      if (!cpId) throw new Error("Ingen konsultprofil hittades. Skapa din profil först.");
+
       const filePath = `${user.id}/${selectedType}_${Date.now()}_${file.name}`;
       const { error: storageError } = await supabase.storage
         .from("verifications")
@@ -86,12 +89,8 @@ export function DocumentUpload() {
 
       if (storageError) throw storageError;
 
-      const { data: urlData } = supabase.storage
-        .from("verifications")
-        .getPublicUrl(filePath);
-
       const { error: dbError } = await supabase.from("consultant_documents").insert({
-        consultant_id: user.id,
+        consultant_id: cpId,
         document_type: selectedType,
         file_name: file.name,
         file_url: filePath,
