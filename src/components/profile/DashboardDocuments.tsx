@@ -29,6 +29,17 @@ export default function DashboardDocuments() {
   const [docs, setDocs] = useState<DocRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [showUpload, setShowUpload] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const shareUrl = user ? `${window.location.origin}/profil/${user.id}` : "";
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      setCopied(true);
+      toast.success("Länk kopierad!");
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
 
   useEffect(() => {
     if (!user) return;
