@@ -45,13 +45,7 @@ export function useAuth() {
         .limit(1)
         .maybeSingle();
 
-      if (!error && data) {
-        setRole(data.role as AppRole);
-      } else {
-        // Fallback: check signup metadata
-        const metaRole = user.user_metadata?.role as AppRole | undefined;
-        setRole(metaRole || "individual");
-      }
+      setRole((data?.role as AppRole) ?? "individual");
       setLoading(false);
     };
 
