@@ -92,12 +92,18 @@ export default function DashboardDocuments() {
                 </div>
               ))}
             </div>
-            {!showUpload && (
-              <Button variant="outline" size="sm" className="gap-1.5" onClick={() => setShowUpload(true)}>
-                <Plus className="w-4 h-4" />
-                Ladda upp fler
+            <div className="flex items-center gap-2 flex-wrap">
+              {!showUpload && (
+                <Button variant="outline" size="sm" className="gap-1.5" onClick={() => setShowUpload(true)}>
+                  <Plus className="w-4 h-4" />
+                  Ladda upp fler
+                </Button>
+              )}
+              <Button variant="outline" size="sm" className="gap-1.5" onClick={handleCopyLink}>
+                {copied ? <Check className="w-4 h-4" /> : <Link2 className="w-4 h-4" />}
+                {copied ? "Kopierad!" : "Dela profillänk"}
               </Button>
-            )}
+            </div>
             {showUpload && <DocumentUpload />}
           </div>
         ) : (
