@@ -14,6 +14,11 @@ export default function ResetPassword() {
   const [loading, setLoading] = useState(false);
   const [ready, setReady] = useState(false);
   const [checking, setChecking] = useState(true);
+  const [verifying, setVerifying] = useState(false);
+  const [pendingRecovery, setPendingRecovery] = useState<null | {
+    kind: "code" | "token_hash";
+    value: string;
+  }>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -34,48 +39,34 @@ export default function ResetPassword() {
       window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
     };
 
-    // The recovery email now routes through Supabase's /auth/v1/verify endpoint,
-    // which exchanges the token server-side and redirects here with a session
-    // already established (via cookie or code param depending on PKCE flow).
     const initializeRecovery = async () => {
       const url = new URL(window.location.href);
+      const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ""));
 
-      // PKCE flow: Supabase redirects back with a ?code= param
-      const code = url.searchParams.get("code");
-      if (code) {
-        const { error } = await supabase.auth.exchangeCodeForSession(code);
-        if (!error) {
-          clearRecoveryParams();
-          finish(true);
-          return;
-        }
-      }
-
-      // Fallback: legacy token_hash in URL (shouldn't happen with new flow)
-      const tokenHash = url.searchParams.get("token_hash");
-      const type = url.searchParams.get("type");
-      if (tokenHash && type === "recovery") {
-        const { error } = await supabase.auth.verifyOtp({
-          token_hash: tokenHash,
-          type: "recovery",
-        });
-        if (!error) {
-          clearRecoveryParams();
-          finish(true);
-          return;
-        }
-      }
-
-      // Session may already exist from the redirect
       const { data } = await supabase.auth.getSession();
       if (data.session) {
+        clearRecoveryParams();
         finish(true);
         return;
       }
 
-      // Hash-based recovery (older Supabase flows)
-      if (window.location.hash.includes("type=recovery")) {
+      if (hashParams.get("type") === "recovery") {
         finish(true);
+        return;
+      }
+
+      const code = url.searchParams.get("code");
+      if (code) {
+        setPendingRecovery({ kind: "code", value: code });
+        finish(false);
+        return;
+      }
+
+      const tokenHash = url.searchParams.get("token_hash");
+      const type = url.searchParams.get("type");
+      if (tokenHash && type === "recovery") {
+        setPendingRecovery({ kind: "token_hash", value: tokenHash });
+        finish(false);
         return;
       }
 
@@ -85,6 +76,7 @@ export default function ResetPassword() {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (!active) return;
       if (event === "PASSWORD_RECOVERY" || (event === "SIGNED_IN" && !!session)) {
+        setPendingRecovery(null);
         setReady(true);
         setChecking(false);
       }
@@ -97,6 +89,41 @@ export default function ResetPassword() {
       subscription.unsubscribe();
     };
   }, []);
+
+  const handleStartRecovery = async () => {
+    if (!pendingRecovery) return;
+
+    setVerifying(true);
+
+    const { error } = pendingRecovery.kind === "code"
+      ? await supabase.auth.exchangeCodeForSession(pendingRecovery.value)
+      : await supabase.auth.verifyOtp({
+          token_hash: pendingRecovery.value,
+          type: "recovery",
+        });
+
+    setVerifying(false);
+
+    if (error) {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("token_hash");
+      url.searchParams.delete("type");
+      url.searchParams.delete("code");
+      window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
+      setPendingRecovery(null);
+      toast({ title: "Återställningslänken är ogiltig", description: error.message, variant: "destructive" });
+      return;
+    }
+
+    const url = new URL(window.location.href);
+    url.searchParams.delete("token_hash");
+    url.searchParams.delete("type");
+    url.searchParams.delete("code");
+    window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
+    setPendingRecovery(null);
+    setReady(true);
+    setChecking(false);
+  };
 
   const handleReset = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -150,6 +177,16 @@ export default function ResetPassword() {
                   Uppdatera lösenord
                 </Button>
               </form>
+            ) : pendingRecovery ? (
+              <div className="space-y-4 text-center">
+                <p className="text-sm text-muted-foreground">
+                  Bekräfta återställningen för att välja ett nytt lösenord.
+                </p>
+                <Button type="button" className="w-full" onClick={handleStartRecovery} disabled={verifying}>
+                  {verifying ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                  Fortsätt
+                </Button>
+              </div>
             ) : (
               <p className="text-center text-muted-foreground text-sm">
                 Ogiltigt eller utgånget återställningslänk.{" "}
