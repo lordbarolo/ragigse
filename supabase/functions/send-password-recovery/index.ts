@@ -118,9 +118,13 @@ Deno.serve(async (req) => {
     })
   }
 
-  const confirmationUrl = new URL(resetUrl)
+  // Route through Supabase's built-in verify endpoint so the token exchange
+  // happens server-side (works reliably with PKCE and all auth flows).
+  // Supabase verifies the token, creates a session, then redirects to our page.
+  const confirmationUrl = new URL(`${supabaseUrl}/auth/v1/verify`)
   confirmationUrl.searchParams.set('token_hash', hashedToken)
   confirmationUrl.searchParams.set('type', 'recovery')
+  confirmationUrl.searchParams.set('redirect_to', resetUrl.toString())
 
   const html = await renderAsync(
     React.createElement(RecoveryEmail, {
