@@ -27,15 +27,33 @@ export function DocumentUpload() {
   const [documents, setDocuments] = useState<UploadedDoc[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [selectedType, setSelectedType] = useState("cv");
+  const [consultantId, setConsultantId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Resolve consultant_profiles.id (FK target) from auth user
+  const resolveConsultantId = async () => {
+    if (!user) return null;
+    const { data } = await supabase
+      .from("consultant_profiles")
+      .select("id")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (data) {
+      setConsultantId(data.id);
+      return data.id;
+    }
+    return null;
+  };
 
   // Load existing documents
   const loadDocuments = async () => {
     if (!user) return;
+    const cpId = consultantId || (await resolveConsultantId());
+    if (!cpId) { setLoaded(true); return; }
     const { data } = await supabase
       .from("consultant_documents")
       .select("id, file_name, document_type, uploaded_at")
-      .eq("consultant_id", user.id)
+      .eq("consultant_id", cpId)
       .order("uploaded_at", { ascending: false });
     setDocuments(data || []);
     setLoaded(true);
