@@ -13,6 +13,12 @@ import {
   CheckCircle, ExternalLink,
 } from "lucide-react";
 
+interface PublicDocument {
+  file_name: string;
+  document_type: string;
+  uploaded_at: string;
+}
+
 interface PublicReference {
   relationship: string;
   workplace: string;
@@ -35,7 +41,18 @@ interface PublicProfileData {
   reference_count: number;
   verifications: { bankid: boolean; ivo: boolean; hosp: boolean };
   references: PublicReference[];
+  documents: PublicDocument[];
 }
+
+const DOC_TYPE_LABELS: Record<string, string> = {
+  cv: "CV",
+  certificate: "Certifikat / Intyg",
+  license: "Legitimation",
+  contract: "Avtal",
+  ivo: "IVO-intyg",
+  hosp: "HOSP-intyg",
+  other: "Övrigt",
+};
 
 const TIER_LABEL: Record<string, string> = {
   elite: "Elite",
@@ -149,6 +166,7 @@ export default function PublicProfile() {
   // ── Vault-only view ────────────────────────────────
   const activeRefs = data.references.filter((r) => r.attachable !== false);
   const tierLabel = TIER_LABEL[data.trust_tier] ?? TIER_LABEL.incomplete;
+  const documents = data.documents || [];
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-8">
@@ -193,6 +211,37 @@ export default function PublicProfile() {
           {data.references.map((ref, i) => (
             <PublicVaultCard key={i} reference={ref} />
           ))}
+        </div>
+      )}
+
+      {/* Documents section */}
+      {documents.length > 0 && (
+        <div className="mt-6">
+          <Card className="border-border">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <FileText className="h-4 w-4 text-primary" />
+                <h2 className="text-sm font-semibold text-foreground tracking-tight">Dokument</h2>
+                <Badge variant="secondary" className="text-[10px] ml-auto">{documents.length} st</Badge>
+              </div>
+              <div className="space-y-2">
+                {documents.map((doc, i) => (
+                  <div key={i} className="flex items-center gap-3 bg-secondary/50 rounded-lg px-3 py-2.5">
+                    <FileText className="w-4 h-4 text-muted-foreground shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-foreground truncate">{doc.file_name}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {DOC_TYPE_LABELS[doc.document_type] || doc.document_type} · {new Date(doc.uploaded_at).toLocaleDateString("sv-SE")}
+                      </p>
+                    </div>
+                    <Badge variant="outline" className="text-[10px] gap-1 shrink-0">
+                      <ShieldCheck className="h-3 w-3 text-primary" /> Uppladdad
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </div>
       )}
 

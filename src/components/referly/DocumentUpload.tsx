@@ -27,15 +27,33 @@ export function DocumentUpload() {
   const [documents, setDocuments] = useState<UploadedDoc[]>([]);
   const [loaded, setLoaded] = useState(false);
   const [selectedType, setSelectedType] = useState("cv");
+  const [consultantId, setConsultantId] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Resolve consultant_profiles.id (FK target) from auth user
+  const resolveConsultantId = async () => {
+    if (!user) return null;
+    const { data } = await supabase
+      .from("consultant_profiles")
+      .select("id")
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (data) {
+      setConsultantId(data.id);
+      return data.id;
+    }
+    return null;
+  };
 
   // Load existing documents
   const loadDocuments = async () => {
     if (!user) return;
+    const cpId = consultantId || (await resolveConsultantId());
+    if (!cpId) { setLoaded(true); return; }
     const { data } = await supabase
       .from("consultant_documents")
       .select("id, file_name, document_type, uploaded_at")
-      .eq("consultant_id", user.id)
+      .eq("consultant_id", cpId)
       .order("uploaded_at", { ascending: false });
     setDocuments(data || []);
     setLoaded(true);
@@ -61,6 +79,9 @@ export function DocumentUpload() {
 
     setUploading(true);
     try {
+      const cpId = consultantId || (await resolveConsultantId());
+      if (!cpId) throw new Error("Ingen konsultprofil hittades. Skapa din profil först.");
+
       const filePath = `${user.id}/${selectedType}_${Date.now()}_${file.name}`;
       const { error: storageError } = await supabase.storage
         .from("verifications")
@@ -68,12 +89,8 @@ export function DocumentUpload() {
 
       if (storageError) throw storageError;
 
-      const { data: urlData } = supabase.storage
-        .from("verifications")
-        .getPublicUrl(filePath);
-
       const { error: dbError } = await supabase.from("consultant_documents").insert({
-        consultant_id: user.id,
+        consultant_id: cpId,
         document_type: selectedType,
         file_name: file.name,
         file_url: filePath,

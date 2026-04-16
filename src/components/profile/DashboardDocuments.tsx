@@ -3,8 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ShieldCheck, FileText, Loader2, Plus } from "lucide-react";
+import { ShieldCheck, FileText, Loader2, Plus, Link2, Check } from "lucide-react";
 import { DocumentUpload } from "@/components/referly/DocumentUpload";
+import { toast } from "sonner";
 
 interface DocRow {
   id: string;
@@ -28,6 +29,17 @@ export default function DashboardDocuments() {
   const [docs, setDocs] = useState<DocRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [showUpload, setShowUpload] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const shareUrl = user ? `${window.location.origin}/profil/${user.id}` : "";
+
+  const handleCopyLink = () => {
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      setCopied(true);
+      toast.success("Länk kopierad!");
+      setTimeout(() => setCopied(false), 2000);
+    });
+  };
 
   useEffect(() => {
     if (!user) return;
@@ -80,12 +92,18 @@ export default function DashboardDocuments() {
                 </div>
               ))}
             </div>
-            {!showUpload && (
-              <Button variant="outline" size="sm" className="gap-1.5" onClick={() => setShowUpload(true)}>
-                <Plus className="w-4 h-4" />
-                Ladda upp fler
+            <div className="flex items-center gap-2 flex-wrap">
+              {!showUpload && (
+                <Button variant="outline" size="sm" className="gap-1.5" onClick={() => setShowUpload(true)}>
+                  <Plus className="w-4 h-4" />
+                  Ladda upp fler
+                </Button>
+              )}
+              <Button variant="outline" size="sm" className="gap-1.5" onClick={handleCopyLink}>
+                {copied ? <Check className="w-4 h-4" /> : <Link2 className="w-4 h-4" />}
+                {copied ? "Kopierad!" : "Dela profillänk"}
               </Button>
-            )}
+            </div>
             {showUpload && <DocumentUpload />}
           </div>
         ) : (
