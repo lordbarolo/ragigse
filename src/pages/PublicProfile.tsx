@@ -13,6 +13,12 @@ import {
   CheckCircle, ExternalLink,
 } from "lucide-react";
 
+interface PublicDocument {
+  file_name: string;
+  document_type: string;
+  uploaded_at: string;
+}
+
 interface PublicReference {
   relationship: string;
   workplace: string;
@@ -35,7 +41,18 @@ interface PublicProfileData {
   reference_count: number;
   verifications: { bankid: boolean; ivo: boolean; hosp: boolean };
   references: PublicReference[];
+  documents: PublicDocument[];
 }
+
+const DOC_TYPE_LABELS: Record<string, string> = {
+  cv: "CV",
+  certificate: "Certifikat / Intyg",
+  license: "Legitimation",
+  contract: "Avtal",
+  ivo: "IVO-intyg",
+  hosp: "HOSP-intyg",
+  other: "Övrigt",
+};
 
 const TIER_LABEL: Record<string, string> = {
   elite: "Elite",
