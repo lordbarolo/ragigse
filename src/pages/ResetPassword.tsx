@@ -34,24 +34,13 @@ export default function ResetPassword() {
       window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
     };
 
+    // The recovery email now routes through Supabase's /auth/v1/verify endpoint,
+    // which exchanges the token server-side and redirects here with a session
+    // already established (via cookie or code param depending on PKCE flow).
     const initializeRecovery = async () => {
       const url = new URL(window.location.href);
-      const tokenHash = url.searchParams.get("token_hash");
-      const type = url.searchParams.get("type");
 
-      if (tokenHash && type === "recovery") {
-        const { error } = await supabase.auth.verifyOtp({
-          token_hash: tokenHash,
-          type: "recovery",
-        });
-
-        if (!error) {
-          clearRecoveryParams();
-          finish(true);
-          return;
-        }
-      }
-
+      // PKCE flow: Supabase redirects back with a ?code= param
       const code = url.searchParams.get("code");
       if (code) {
         const { error } = await supabase.auth.exchangeCodeForSession(code);
@@ -62,12 +51,29 @@ export default function ResetPassword() {
         }
       }
 
+      // Fallback: legacy token_hash in URL (shouldn't happen with new flow)
+      const tokenHash = url.searchParams.get("token_hash");
+      const type = url.searchParams.get("type");
+      if (tokenHash && type === "recovery") {
+        const { error } = await supabase.auth.verifyOtp({
+          token_hash: tokenHash,
+          type: "recovery",
+        });
+        if (!error) {
+          clearRecoveryParams();
+          finish(true);
+          return;
+        }
+      }
+
+      // Session may already exist from the redirect
       const { data } = await supabase.auth.getSession();
       if (data.session) {
         finish(true);
         return;
       }
 
+      // Hash-based recovery (older Supabase flows)
       if (window.location.hash.includes("type=recovery")) {
         finish(true);
         return;
