@@ -3,8 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ShieldCheck, FileText, Loader2, Plus } from "lucide-react";
+import { ShieldCheck, FileText, Loader2, Plus, Link2, Check } from "lucide-react";
 import { DocumentUpload } from "@/components/referly/DocumentUpload";
+import { toast } from "sonner";
 
 interface DocRow {
   id: string;
