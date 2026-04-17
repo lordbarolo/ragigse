@@ -156,6 +156,7 @@ export default function HeroRateFinder({ prefillKey }: Props) {
   const [selectedCategory, setSelectedCategory] = useState<RoleGroup | null>(null);
   const [roleDropdownValue, setRoleDropdownValue] = useState("");
   const [selectedKommun, setSelectedKommun] = useState("");
+  const [employmentType, setEmploymentType] = useState<"anstalld" | "foretagare">("anstalld");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<RateResult | null>(null);
@@ -221,7 +222,7 @@ export default function HeroRateFinder({ prefillKey }: Props) {
   useEffect(() => {
     setResult(null);
     setError(null);
-  }, [resolvedYrke, selectedLocation?.kommun]);
+  }, [resolvedYrke, selectedLocation?.kommun, employmentType]);
 
   useEffect(() => {
     if (!resolvedYrke || !selectedLocation) {
@@ -240,7 +241,7 @@ export default function HeroRateFinder({ prefillKey }: Props) {
           body: {
             occupation: resolvedYrke,
             kommun: selectedLocation.kommun,
-            employment_type: "anstalld",
+            employment_type: employmentType,
           },
         });
         if (fnErr) throw fnErr;
@@ -251,10 +252,13 @@ export default function HeroRateFinder({ prefillKey }: Props) {
         const employerFactor = Number(data.employee_factor ?? DEFAULT_EMPLOYER_FACTOR);
         const hoursPerMonth = Number(data.hours_per_month ?? DEFAULT_HOURS_PER_MONTH);
 
-        const hourlyMin = Math.round(timpris * keepMin);
-        const hourlyMax = Math.round(timpris * keepMax);
-        const monthlyMin = Math.round((timpris * keepMin * hoursPerMonth) / employerFactor);
-        const monthlyMax = Math.round((timpris * keepMax * hoursPerMonth) / employerFactor);
+        // For "anstalld": gross salary = (timpris × keep) / employer_factor (1.42)
+        // For "foretagare": hourly = timpris × keep (no employer factor)
+        const factor = employmentType === "anstalld" ? employerFactor : 1;
+        const hourlyMin = Math.round((timpris * keepMin) / factor);
+        const hourlyMax = Math.round((timpris * keepMax) / factor);
+        const monthlyMin = Math.round(hourlyMin * hoursPerMonth);
+        const monthlyMax = Math.round(hourlyMax * hoursPerMonth);
         const marginKrMin = Math.round(timpris * (1 - keepMax));
         const marginKrMax = Math.round(timpris * (1 - keepMin));
 
@@ -307,7 +311,7 @@ export default function HeroRateFinder({ prefillKey }: Props) {
 
     fetchRate();
     return () => { cancelled = true; };
-  }, [resolvedYrke, selectedLocation, selectedCategory, retryNonce]);
+  }, [resolvedYrke, selectedLocation, selectedCategory, employmentType, retryNonce]);
 
   // Display values: real result, or default demo. Hide stale numbers on error.
   const showPlaceholder = !!error;
@@ -326,7 +330,7 @@ export default function HeroRateFinder({ prefillKey }: Props) {
           email: email.trim().toLowerCase(),
           yrke: result.roleName,
           kommun: result.kommun,
-          employment_type: "anstalld",
+          employment_type: employmentType,
           source: "hero_rate_finder",
         })
         .select("id")
@@ -391,6 +395,33 @@ export default function HeroRateFinder({ prefillKey }: Props) {
                 onValueChange={setSelectedKommun}
                 placeholder="Kommun"
               />
+            </div>
+            <div>
+              <div className="text-[10px] text-white/50 uppercase tracking-wider mb-1.5">Anställningsform</div>
+              <div className="grid grid-cols-2 gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setEmploymentType("anstalld")}
+                  className={`min-h-[36px] rounded-lg px-2 py-1.5 text-[12px] font-medium transition-all border ${
+                    employmentType === "anstalld"
+                      ? "bg-white/15 border-[rgba(175,169,236,0.6)] text-white"
+                      : "bg-white/[0.03] border-white/15 text-white/60 hover:bg-white/[0.08]"
+                  }`}
+                >
+                  Anställd
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEmploymentType("foretagare")}
+                  className={`min-h-[36px] rounded-lg px-2 py-1.5 text-[12px] font-medium transition-all border ${
+                    employmentType === "foretagare"
+                      ? "bg-white/15 border-[rgba(175,169,236,0.6)] text-white"
+                      : "bg-white/[0.03] border-white/15 text-white/60 hover:bg-white/[0.08]"
+                  }`}
+                >
+                  Egenföretagare
+                </button>
+              </div>
             </div>
           </div>
         )}
