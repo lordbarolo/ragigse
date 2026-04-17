@@ -311,7 +311,7 @@ export default function HeroRateFinder({ prefillKey }: Props) {
 
     fetchRate();
     return () => { cancelled = true; };
-  }, [resolvedYrke, selectedLocation, selectedCategory, retryNonce]);
+  }, [resolvedYrke, selectedLocation, selectedCategory, employmentType, retryNonce]);
 
   // Display values: real result, or default demo. Hide stale numbers on error.
   const showPlaceholder = !!error;
