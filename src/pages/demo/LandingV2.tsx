@@ -222,28 +222,46 @@ export default function LandingV2() {
           <h1 className="text-[clamp(2.5rem,6vw,64px)] font-bold leading-[1.1] text-white mb-6 tracking-tight">
             Din <span className="text-[#AFA9EC]">tid.</span><br />Din karriär.<br />Dina villkor.
           </h1>
-          <p className="text-lg text-white/[0.68] leading-relaxed mb-8 max-w-[520px]">
-            Säkerställ att du får rätt ersättning,<br />rätt avtalsinnehåll och rätt belopp på dina fakturor. Se Compcare som din personliga sekreterare, som är tillgänglig 24/7.
+          <p className="text-lg text-white/[0.78] leading-relaxed mb-6 max-w-[520px]">
+            Compcare ser till att du aldrig lämnar pengar på bordet. Rätt ersättning, rätt avtalsinnehåll och rätt belopp på dina fakturor — tillgängligt 24/7.
           </p>
 
+          {/* Mobile proof strip — surfaces a number above the fold */}
+          <div className="md:hidden mb-6 bg-white/[0.07] border border-white/15 rounded-xl p-4">
+            <div className="flex items-baseline gap-2 mb-1.5">
+              <span className="text-[28px] font-bold text-white tabular-nums leading-none">482</span>
+              <span className="text-[14px] text-white/60">kr/tim</span>
+              <span className="ml-auto inline-block bg-amber-500/20 text-amber-200 text-[10px] font-semibold px-2 py-0.5 rounded">
+                −12–20% byrå
+              </span>
+            </div>
+            <p className="text-[11px] text-white/55 leading-snug">
+              Exempel: Sjuksköterska, Zon 1 — beräkna ditt eget nedan ↓
+            </p>
+          </div>
+
           {/* Email CTA */}
-          <div className="space-y-3">
-            <p className="text-[13px] text-white/50 italic">Se rätt ersättningsnivåer för varje roll och region</p>
+          <div className="space-y-2">
+            <p className="text-[13px] text-white/60">Se rätt ersättningsnivåer för varje roll och region</p>
             <div className="flex gap-2">
               <input
                 type="email"
                 value={heroEmail}
                 onChange={(e) => setHeroEmail(e.target.value)}
                 placeholder="din@email.se"
-                className="flex-1 px-4 py-3 bg-white/[0.08] border border-white/20 rounded-lg text-white text-sm placeholder:text-white/35 outline-none focus:border-white/40 transition-colors"
+                className="flex-1 px-4 py-3 bg-white/[0.08] border border-white/20 rounded-lg text-white text-sm placeholder:text-white/35 outline-none focus:border-white/40 transition-colors min-h-[44px]"
               />
               <Link to="/registrera">
-                <button className="px-6 py-3 bg-[#534AB7] rounded-lg text-white text-[15px] font-medium whitespace-nowrap">
-                  Visa mig →
+                <button className="px-6 py-3 bg-[#534AB7] hover:bg-[#5e54c8] rounded-lg text-white text-[15px] font-medium whitespace-nowrap min-h-[44px]">
+                  Beräkna min ersättning →
                 </button>
               </Link>
             </div>
-            <p className="text-[11px] text-white/30">Inga kreditkort. Kom igång på 30 sekunder.</p>
+            <p className="text-[11px] text-white/45">Inga kreditkort. Kom igång på 30 sekunder.</p>
+            <p className="text-[11px] text-white/55 flex items-center gap-1.5 pt-1">
+              <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#AFA9EC]" />
+              Används av 800+ vårdkonsulter
+            </p>
           </div>
         </div>
 

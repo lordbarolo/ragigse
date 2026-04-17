@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
-import { ArrowRight, ChevronLeft, Loader2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { ArrowRight, ChevronLeft, Loader2, AlertCircle, RefreshCw } from "lucide-react";
 import { useLocations } from "@/hooks/useCalculator";
 import { supabase } from "@/integrations/supabase/client";
 import SearchableSelect from "@/components/SearchableSelect";
@@ -152,6 +152,7 @@ interface Props {
 
 export default function HeroRateFinder({ prefillKey }: Props) {
   const { data: locations } = useLocations();
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<RoleGroup | null>(null);
   const [roleDropdownValue, setRoleDropdownValue] = useState("");
   const [selectedKommun, setSelectedKommun] = useState("");
@@ -159,6 +160,13 @@ export default function HeroRateFinder({ prefillKey }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<RateResult | null>(null);
   const [hasInteracted, setHasInteracted] = useState(false);
+  const [retryNonce, setRetryNonce] = useState(0);
+
+  // Email capture state
+  const [email, setEmail] = useState("");
+  const [submittingLead, setSubmittingLead] = useState(false);
+  const [leadError, setLeadError] = useState<string | null>(null);
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 
   const doctorRoleOptions = useMemo(() => [
     { value: "__leg", label: "Leg. läkare" },
@@ -208,6 +216,12 @@ export default function HeroRateFinder({ prefillKey }: Props) {
     setResult(null);
     setError(null);
   };
+
+  // Clear stale data immediately when selection changes
+  useEffect(() => {
+    setResult(null);
+    setError(null);
+  }, [resolvedYrke, selectedLocation?.kommun]);
 
   useEffect(() => {
     if (!resolvedYrke || !selectedLocation) {
@@ -293,19 +307,41 @@ export default function HeroRateFinder({ prefillKey }: Props) {
 
     fetchRate();
     return () => { cancelled = true; };
-  }, [resolvedYrke, selectedLocation, selectedCategory]);
+  }, [resolvedYrke, selectedLocation, selectedCategory, retryNonce]);
 
-  // Display values: real result, or default demo
+  // Display values: real result, or default demo. Hide stale numbers on error.
+  const showPlaceholder = !!error;
   const display = result ?? DEFAULT_RESULT;
-  const animatedTimpris = useCountUp(display.timpris);
-  const animatedMargin = useCountUp(Math.round((display.marginKrMin + display.marginKrMax) / 2));
-  const animatedHourly = useCountUp(display.hourlyMax);
+  const animatedTimpris = useCountUp(showPlaceholder ? 0 : display.timpris);
+  const animatedHourly = useCountUp(showPlaceholder ? 0 : display.hourlyMax);
 
-  // CTA prefill: route to / with ?yrke= param if we have a known prefill key
-  const ctaHref = useMemo(() => {
-    if (selectedCategory === "ssk" && roleDropdownValue === "Anestesisjukvård") return "/?yrke=anestesi";
-    return "/";
-  }, [selectedCategory, roleDropdownValue]);
+  const handleSubmitLead = async () => {
+    if (!emailValid || !result || submittingLead) return;
+    setSubmittingLead(true);
+    setLeadError(null);
+    try {
+      const { data, error: insErr } = await supabase
+        .from("leads")
+        .insert({
+          email: email.trim().toLowerCase(),
+          yrke: result.roleName,
+          kommun: result.kommun,
+          employment_type: "anstalld",
+          source: "hero_rate_finder",
+        })
+        .select("id")
+        .single();
+      if (insErr) throw insErr;
+      if (data?.id) {
+        navigate(`/resultat/${data.id}`);
+      } else {
+        navigate("/");
+      }
+    } catch (e) {
+      setLeadError("Kunde inte skicka. Försök igen.");
+      setSubmittingLead(false);
+    }
+  };
 
   return (
     <div className="relative z-10 flex flex-col gap-4 w-full max-w-[300px] flex-shrink-0 mx-auto md:mx-0 md:ml-auto md:mr-16 py-4 md:py-24 md:self-center">
@@ -362,15 +398,23 @@ export default function HeroRateFinder({ prefillKey }: Props) {
 
       {/* ── Result card 1: Ramavtalspris ───────── */}
       <div className="bg-white/[0.07] border border-white/[0.13] rounded-[14px] px-5 py-4">
-        <div className="text-[10px] text-white/40 uppercase tracking-wider mb-1">
-          RAMAVTALSPRIS · {display.zon.toUpperCase()} · SKR 2026
+        <div className="text-[11px] text-white/70 uppercase tracking-wider mb-1 font-medium">
+          RAMAVTALSPRIS · {showPlaceholder ? "—" : display.zon.toUpperCase()} · SKR 2026
         </div>
         <div className="text-[26px] font-medium text-white mb-0.5 tabular-nums">
-          {loading ? <Loader2 className="w-5 h-5 animate-spin inline-block text-white/60" /> : fmt(animatedTimpris)}
-          {!loading && <span className="text-[16px] text-white/50"> kr/tim</span>}
+          {loading ? (
+            <Loader2 className="w-5 h-5 animate-spin inline-block text-white/60" />
+          ) : showPlaceholder ? (
+            <span className="text-white/40 text-[18px]">Data ej tillgänglig</span>
+          ) : (
+            <>
+              {fmt(animatedTimpris)}
+              <span className="text-[16px] text-white/50"> kr/tim</span>
+            </>
+          )}
         </div>
-        <div className="text-[12px] text-white/50 leading-snug">
-          {result ? `${display.roleName} i ${display.kommun}` : display.roleName}
+        <div className="text-[12px] text-white/60 leading-snug">
+          {showPlaceholder ? "Försök med ett annat val" : result ? `${display.roleName} i ${display.kommun}` : display.roleName}
         </div>
       </div>
 
@@ -382,12 +426,16 @@ export default function HeroRateFinder({ prefillKey }: Props) {
 
       {/* ── Result card 2: Marginal ────────────── */}
       <div className="bg-white/[0.07] border border-white/[0.13] rounded-[14px] px-5 py-4">
-        <div className="text-[10px] text-white/40 uppercase tracking-wider mb-1">BRANSCHENS GENOMSNITTSMARGINAL</div>
-        <div className="text-[26px] font-medium text-white mb-0.5 tabular-nums">{display.marginText}</div>
-        <span className="text-red-400/70 text-[11px] font-semibold tabular-nums">
-          −{fmt(display.marginKrMin)}–{fmt(display.marginKrMax)} kr/tim
-        </span>
-        <div className="text-[12px] text-white/50 leading-snug mt-1">Enligt offentliga avtal och branschdata</div>
+        <div className="text-[11px] text-white/70 uppercase tracking-wider mb-1 font-medium">BRANSCHENS GENOMSNITTSMARGINAL</div>
+        <div className="text-[26px] font-medium text-white mb-0.5 tabular-nums">
+          {showPlaceholder ? <span className="text-white/40 text-[18px]">—</span> : display.marginText}
+        </div>
+        {!showPlaceholder && (
+          <span className="inline-block bg-amber-500/20 text-amber-200 text-[11px] font-semibold tabular-nums px-2 py-0.5 rounded">
+            −{fmt(display.marginKrMin)}–{fmt(display.marginKrMax)} kr/tim
+          </span>
+        )}
+        <div className="text-[12px] text-white/60 leading-snug mt-1.5">Enligt offentliga avtal och branschdata</div>
       </div>
 
       <div className="h-2 flex items-center justify-center relative -my-2">
@@ -397,44 +445,99 @@ export default function HeroRateFinder({ prefillKey }: Props) {
 
       {/* ── Result card 3: Konsultlön (highlighted) ── */}
       <div className="bg-[rgba(83,74,183,0.25)] border-2 border-[rgba(175,169,236,0.4)] rounded-[14px] px-5 py-4">
-        <div className="text-[10px] text-[rgba(175,169,236,0.8)] uppercase tracking-wider mb-1">
+        <div className="text-[11px] text-[rgba(195,189,255,0.95)] uppercase tracking-wider mb-1 font-medium">
           ESTIMERAD KONSULTERSÄTTNING
         </div>
         <div className="text-[30px] font-medium text-white mb-0.5 tabular-nums">
-          {loading ? <Loader2 className="w-5 h-5 animate-spin inline-block text-white/60" /> : fmt(animatedHourly)}
-          {!loading && <span className="text-[16px] text-white/50"> kr/tim</span>}
+          {loading ? (
+            <Loader2 className="w-5 h-5 animate-spin inline-block text-white/60" />
+          ) : showPlaceholder ? (
+            <span className="text-white/40 text-[18px]">Data ej tillgänglig</span>
+          ) : (
+            <>
+              {fmt(animatedHourly)}
+              <span className="text-[16px] text-white/50"> kr/tim</span>
+            </>
+          )}
         </div>
-        <div className="text-[12px] text-[rgba(175,169,236,0.8)] leading-snug">
-          {result
-            ? `Spann ${fmt(display.hourlyMin)}–${fmt(display.hourlyMax)} kr/tim`
-            : "Se exakt vad du kan förvänta dig →"}
-        </div>
+        {!showPlaceholder && (
+          <div className="text-[12px] text-[rgba(195,189,255,0.85)] leading-snug">
+            {result
+              ? `Spann ${fmt(display.hourlyMin)}–${fmt(display.hourlyMax)} kr/tim`
+              : "Beräkna din ersättning ovan ↑"}
+          </div>
+        )}
 
         {/* Zone comparison row */}
-        {display.bestZon && display.bestZonDelta > 0 && (
+        {!showPlaceholder && display.bestZon && display.bestZonDelta > 0 && (
           <div className="mt-3 pt-3 border-t border-white/10 flex items-start gap-2">
             <span className="text-[#AFA9EC] text-[13px] leading-none mt-0.5">→</span>
-            <div className="text-[11px] text-white/70 leading-snug">
+            <div className="text-[11px] text-white/80 leading-snug">
               I <span className="font-semibold text-white">{display.bestZon}</span> kan samma roll ge{" "}
               <span className="font-semibold text-[#AFA9EC] tabular-nums">+{fmt(display.bestZonDelta)} kr/tim</span>
             </div>
           </div>
         )}
 
-        {/* CTA shows after real result */}
-        {result && (
-          <Link
-            to={ctaHref}
-            className="mt-4 flex items-center justify-center gap-2 bg-white text-[#1a1545] hover:bg-white/90 rounded-lg px-4 py-2.5 text-[13px] font-medium transition-colors"
-          >
-            Få fullständig analys
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
+        {/* Inline email-capture CTA — primary conversion path */}
+        {result && !showPlaceholder && (
+          <div className="mt-4 pt-4 border-t border-white/15 space-y-2">
+            <input
+              type="email"
+              inputMode="email"
+              autoComplete="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="din@email.se"
+              className="w-full px-3 py-2.5 bg-white/10 border border-white/25 rounded-lg text-white text-[13px] placeholder:text-white/40 outline-none focus:border-white/50 transition-colors"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && emailValid && !submittingLead) handleSubmitLead();
+              }}
+            />
+            <button
+              type="button"
+              onClick={handleSubmitLead}
+              disabled={!emailValid || submittingLead}
+              className={`w-full flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-[13px] font-medium transition-colors ${
+                emailValid && !submittingLead
+                  ? "bg-white text-[#1a1545] hover:bg-white/90"
+                  : "bg-white/30 text-white/60 cursor-not-allowed"
+              }`}
+            >
+              {submittingLead ? (
+                <Loader2 className="w-3.5 h-3.5 animate-spin" />
+              ) : (
+                <>
+                  Få fullständig analys som PDF
+                  <ArrowRight className="w-3.5 h-3.5" />
+                </>
+              )}
+            </button>
+            {leadError && (
+              <p className="text-[11px] text-amber-200 flex items-center gap-1">
+                <AlertCircle className="w-3 h-3" />
+                {leadError}
+              </p>
+            )}
+          </div>
         )}
       </div>
 
       {error && (
-        <div className="text-[11px] text-red-400/80 px-2">{error}</div>
+        <div className="bg-amber-500/10 border border-amber-400/30 rounded-lg px-3 py-2.5 flex items-start gap-2">
+          <AlertCircle className="w-4 h-4 text-amber-300 mt-0.5 flex-shrink-0" />
+          <div className="flex-1">
+            <p className="text-[12px] text-amber-100 leading-snug mb-1.5">{error}</p>
+            <button
+              type="button"
+              onClick={() => setRetryNonce((n) => n + 1)}
+              className="inline-flex items-center gap-1 text-[11px] text-white/90 hover:text-white font-medium"
+            >
+              <RefreshCw className="w-3 h-3" />
+              Försök igen
+            </button>
+          </div>
+        </div>
       )}
 
       {/* Style overrides for SearchableSelect inside dark hero */}
