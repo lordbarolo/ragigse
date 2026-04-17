@@ -330,7 +330,7 @@ export default function HeroRateFinder({ prefillKey }: Props) {
           email: email.trim().toLowerCase(),
           yrke: result.roleName,
           kommun: result.kommun,
-          employment_type: "anstalld",
+          employment_type: employmentType,
           source: "hero_rate_finder",
         })
         .select("id")
