@@ -222,7 +222,7 @@ export default function HeroRateFinder({ prefillKey }: Props) {
   useEffect(() => {
     setResult(null);
     setError(null);
-  }, [resolvedYrke, selectedLocation?.kommun]);
+  }, [resolvedYrke, selectedLocation?.kommun, employmentType]);
 
   useEffect(() => {
     if (!resolvedYrke || !selectedLocation) {
@@ -241,7 +241,7 @@ export default function HeroRateFinder({ prefillKey }: Props) {
           body: {
             occupation: resolvedYrke,
             kommun: selectedLocation.kommun,
-            employment_type: "anstalld",
+            employment_type: employmentType,
           },
         });
         if (fnErr) throw fnErr;
