@@ -1,76 +1,53 @@
 
 
-## Min bedömning av Claudes take
+## Plan: Fixa de 5 prioriterade konverteringsproblemen på `/demo/landing-v2`
 
-**Kort svar: Jag håller med om 80% — med två viktiga reservationer.**
+Baserat på kritiken — de fem rekommendationerna i prioriterad ordning, inom befintlig Kivra-design.
 
-### Där Claude har helt rätt
+### 1. CTA-copy (Critical)
+- Byt **"Visa mig →"** → **"Beräkna min ersättning →"** i `HeroRateFinder.tsx` och i den primära CTA:n i `LandingV2.tsx`.
+- Flytta trust-text "Inga kreditkort. Kom igång på 30 sekunder." direkt under knappen.
 
-1. **Rate-finder i hero som enda prioritet nu** ✅ — Rätt analys. Du har all infrastruktur (`pricing-engine`, `MarketSearchBox`, `roles`/`locations`-tabeller). Wow-faktor utan email-vägg är rätt psykologi för 2026.
+### 2. Mobil hero — surface en siffra above the fold (Critical)
+- På mobil (`<md`): visa ett kompakt **"Proof Strip"** direkt under headline/subtitle, FÖRE CTA:n:
+  - `482 kr/tim` (exempel-ramavtalspris) + `–12–20% byråmarginal` chip
+  - Liten text: "Exempel: Läkare, Zon 1 — beräkna ditt eget nedan ↓"
+- `HeroRateFinder` flyttas under proof strip på mobil men behåller full funktionalitet.
+- Använder befintliga design tokens (`#F2F1F8`, `#534AB7`, Georgia headings).
 
-2. **Zondifferens som andra wow-moment** ✅ — Helt rätt. `geographical-pricing-logic` finns redan med Zon 1/2/3-modellen. 30 min implementation, hög effekt.
+### 3. Widget som primär konverteringsväg (Critical)
+- Efter att resultatet visas i `HeroRateFinder`, ersätt nuvarande "Få fullständig analys"-länk med en **inline email-capture** direkt i resultatkortet:
+  - Input: e-post + knapp "Få fullständig analys som PDF →"
+  - Submit → använd befintlig `lead-capture-funnel-architecture` (skapa lead, routa till `/resultat/:leadId` med prefill)
+  - Återanvänder `save-email` Edge Function eller direkt insert i `leads` (samma mönster som `EmailGate.tsx`)
+- Den vänstra email-formen blir sekundär (eller tas bort om den dubblerar).
 
-3. **Mobile-first-varningen** ✅ — Kritisk. Konsulter är på språng. Detta saknades helt i Geminis underlag.
+### 4. Stale-data + error state (Trust issue)
+- I `HeroRateFinder`: när `pricing-engine` returnerar fel ELLER när användaren ändrar val:
+  - **Rensa resultatkorten omedelbart** vid nytt val (sätt `result` till null innan ny fetch)
+  - Vid fel: visa kort med "Data ej tillgänglig" + retry-knapp med refresh-ikon, INTE stale siffror
+  - Lägg till `AlertCircle`-ikon vid felmeddelandet
 
-4. **Skippa "Reidar"** ✅ — Bryter mot er neutralitetspolicy.
+### 5. Social proof + tillgänglighet
+- **Social proof**: lägg till en rad under CTA: "Används av 800+ vårdkonsulter" (hardcoded för nu, kan kopplas till `leads`-count senare)
+- **Kontrast/storlek**:
+  - Card-labels (`RAMAVTALSPRIS · ZON 1 · SKR 2026`): höj till `text-[11px]` med `text-foreground/70`
+  - Marginal-chip "–92–123 kr/tim": använd `bg-amber-500/20 text-amber-200` istället för ren orange för bättre kontrast på mörk bakgrund
+  - Toggle Läkare/Sjuksköterska: säkerställ `min-h-[44px]` på mobil
+- Subtitle-omskrivning: byt "personlig sekreterare"-formulering till **"Compcare ser till att du aldrig lämnar pengar på bordet."**
 
-5. **Scope creep-varningen** ✅ — App Store, Academy-marknadsplats, HOSP-integration är månader bort.
+### Filer som påverkas
+- `src/components/demo/HeroRateFinder.tsx` — CTA-copy, inline email-capture, error/stale state, kontrast
+- `src/pages/demo/LandingV2.tsx` — mobil proof strip, social proof, subtitle-omskrivning, trust-text-placering, primär CTA-copy
 
-### Två viktiga justeringar mot Claude
+### Tekniska detaljer
+- Email-capture i widget: insert i `leads` med `yrke`, `kommun`, `employment_type` från valet → returnerar `leadId` → `navigate(`/resultat/${leadId}`)`
+- Proof strip på mobil: ren statisk komponent, ingen API-call (snabb LCP)
+- Mobil-QA: 390×844 (iPhone 13) — säkerställ proof strip + CTA båda above the fold
+- Inga nya dependencies, inga nya tabeller, ingen design-system-förändring
 
-**Justering 1: Använd `MarketSearchBox`, inte nya dropdowns**
-
-Claudes prompt säger "Add two dropdowns (Role from roles table, Region from regions table)". Detta är fel för er stack. Ni har redan `MarketSearchBox` med:
-- 64 underspecialiteter mappade
-- Synkad `standardized-role-definitions` mellan Survey och MarketSearchBox
-- Korrekt yrkeskategori → specialisering-flöde
-
-Att bygga nya dropdowns skulle bryta `data/standardized-role-definitions`-policyn och skapa två sanningar.
-
-**Justering 2: Tema, inte "purple/dark"**
-
-Claudes prompt säger "Keep the existing purple/dark theme". `/demo/landing-v2` är **vit Kivra-stil** (vit/#F2F1F8, Georgia, #534AB7 accent) per `landing-v2-visuals` och `brand-design-system`. Ingen dark theme på den routen.
-
-### Där Claude underskattar något
-
-**"Email-capture EFTER resultat" — bra, men nyansera**
-
-Claudes flöde: Visa pris → sen email-gate för PDF. Detta är rätt psykologi MEN ni har redan en mer sofistikerad tratt:
-- `/` (SalaryCheck 6-stegs enkät) → `/resultat/:leadId` → `/teaser` → email-gate → `/rapport/:reportId`
-
-Risken med Claudes förslag: hero-calculatorn på `/demo/landing-v2` blir en **parallell tratt** som inte feedar in i `lead-capture-funnel-architecture`. Lösning:
-- Hero-resultatet får CTA "Få fullständig analys" som routar till `/?yrke=X&kommun=Y&anstallning=Z` (prefill-mönstret finns redan via `survey-prefill-integration`)
-- Då återanvänds hela rapport-pipen, ingen ny lead-väg
-
-### Det Claude missar helt
-
-**Fakturakontrollen är inte bara "post-login"**
-
-Claude säger "post-login-flöde, lägg på nästa sprint". Faktum är:
-- `/consultant/fakturakontroll` finns redan live
-- `invoice-service-agreement` (no cure–no pay 25%) är aktiverad
-- Det som saknas är monetiserings-UI:t ("Vi hittade X kr" + blurred list + "Hämta mina pengar")
-
-Detta är **inte** veckor av jobb — det är 1-2 dagars UI-uppdatering på befintlig backend. Värt att köra parallellt med hero efter att hero landat.
-
-### Rekommenderad ordning
-
-| Prio | Vad | Tid | Värde |
-|---|---|---|---|
-| 1 | Hero rate-finder med `MarketSearchBox` + counter + CTA till `/?prefill` | 1-2 d | Wow-faktor + tratt-feed |
-| 2 | Zon-rad under resultatet ("I zon 3: +340 kr/h") | 30 min | Andra wow-moment |
-| 3 | Mobil QA på iPhone 13-viewport (390×844) | 30 min | Kritisk för målgrupp |
-| 4 | Fakturakontroll-monetisering (blurred + "Hämta mina pengar") | 1-2 d | Konvertering, post-login |
-| 5 | Förhandlingsagent nivåkalibrering | 1-2 d | Förbättrar kärn-AI |
-
-### Slutsats
-
-Claude har rätt strategiskt. Bygg hero-calculatorn nu — men:
-- Använd `MarketSearchBox` (inte nya dropdowns)
-- Vit Kivra-tema (inte dark/purple)
-- Routa till befintlig prefill-tratt (inte parallell email-gate)
-- Lägg till zon-raden i samma sprint
-- Mobil-QA innan release
-
-**Vill du att jag kör Hero rate-finder + zon-rad nu med dessa justeringar?**
+### Vad som INTE ingår
+- Ingen ändring av övriga sektioner på `LandingV2`
+- Ingen ny route eller backend-funktion
+- Ingen A/B-testning (separat sprint)
 
