@@ -396,6 +396,33 @@ export default function HeroRateFinder({ prefillKey }: Props) {
                 placeholder="Kommun"
               />
             </div>
+            <div>
+              <div className="text-[10px] text-white/50 uppercase tracking-wider mb-1.5">Anställningsform</div>
+              <div className="grid grid-cols-2 gap-1.5">
+                <button
+                  type="button"
+                  onClick={() => setEmploymentType("anstalld")}
+                  className={`min-h-[36px] rounded-lg px-2 py-1.5 text-[12px] font-medium transition-all border ${
+                    employmentType === "anstalld"
+                      ? "bg-white/15 border-[rgba(175,169,236,0.6)] text-white"
+                      : "bg-white/[0.03] border-white/15 text-white/60 hover:bg-white/[0.08]"
+                  }`}
+                >
+                  Anställd
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setEmploymentType("foretagare")}
+                  className={`min-h-[36px] rounded-lg px-2 py-1.5 text-[12px] font-medium transition-all border ${
+                    employmentType === "foretagare"
+                      ? "bg-white/15 border-[rgba(175,169,236,0.6)] text-white"
+                      : "bg-white/[0.03] border-white/15 text-white/60 hover:bg-white/[0.08]"
+                  }`}
+                >
+                  Egenföretagare
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>
