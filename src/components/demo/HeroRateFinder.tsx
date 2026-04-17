@@ -156,6 +156,7 @@ export default function HeroRateFinder({ prefillKey }: Props) {
   const [selectedCategory, setSelectedCategory] = useState<RoleGroup | null>(null);
   const [roleDropdownValue, setRoleDropdownValue] = useState("");
   const [selectedKommun, setSelectedKommun] = useState("");
+  const [employmentType, setEmploymentType] = useState<"anstalld" | "foretagare">("anstalld");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<RateResult | null>(null);
