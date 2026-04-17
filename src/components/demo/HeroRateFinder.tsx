@@ -249,13 +249,14 @@ export default function HeroRateFinder({ prefillKey }: Props) {
 
         const { keepMin, keepMax, marginText, marginMidPct } = getMargins(selectedCategory!);
         const timpris = Number(data.rate_customer_sek_per_hour);
-        const employerFactor = employmentType === "anstalld"
-          ? Number(data.employee_factor ?? DEFAULT_EMPLOYER_FACTOR)
-          : 1;
+        const employerFactor = Number(data.employee_factor ?? DEFAULT_EMPLOYER_FACTOR);
         const hoursPerMonth = Number(data.hours_per_month ?? DEFAULT_HOURS_PER_MONTH);
 
-        const hourlyMin = Math.round((timpris * keepMin) / employerFactor);
-        const hourlyMax = Math.round((timpris * keepMax) / employerFactor);
+        // For "anstalld": gross salary = (timpris × keep) / employer_factor (1.42)
+        // For "foretagare": hourly = timpris × keep (no employer factor)
+        const factor = employmentType === "anstalld" ? employerFactor : 1;
+        const hourlyMin = Math.round((timpris * keepMin) / factor);
+        const hourlyMax = Math.round((timpris * keepMax) / factor);
         const monthlyMin = Math.round(hourlyMin * hoursPerMonth);
         const monthlyMax = Math.round(hourlyMax * hoursPerMonth);
         const marginKrMin = Math.round(timpris * (1 - keepMax));
