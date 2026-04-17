@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import HeroRateFinder from "@/components/demo/HeroRateFinder";
 
 /* ───────────────────── data ───────────────────── */
 const NAV_LINKS = ["Verktyg", "Löneanalys", "Fakturagranskning", "Uppdragsprognos", "Priser", "Om oss"];
@@ -246,30 +247,8 @@ export default function LandingV2() {
           </div>
         </div>
 
-        {/* Flow cards — shared layout for mobile & desktop */}
-        <div className="relative z-10 flex flex-col gap-0 w-full max-w-[260px] flex-shrink-0 mx-auto md:mx-0 md:ml-auto md:mr-16 py-4 md:py-24 md:self-center px-0">
-          {/* Card 1 */}
-          <div className="bg-white/[0.07] border border-white/[0.13] rounded-[14px] px-5 py-4">
-            <div className="text-[10px] text-white/40 uppercase tracking-wider mb-1">RAMAVTALSPRIS · ZON 1 · SKR 2026</div>
-            <div className="text-[26px] font-medium text-white mb-0.5">616 <span className="text-[16px] text-white/50">kr/tim</span></div>
-            <div className="text-[12px] text-white/50 leading-snug">Leg. sjuksköterska i storstad</div>
-          </div>
-          <FlowArrow />
-          {/* Card 2 */}
-          <div className="bg-white/[0.07] border border-white/[0.13] rounded-[14px] px-5 py-4">
-            <div className="text-[10px] text-white/40 uppercase tracking-wider mb-1">BRANSCHENS GENOMSNITTSMARGINAL</div>
-            <div className="text-[26px] font-medium text-white mb-0.5">15–20%</div>
-            <span className="text-red-400/70 text-[11px] font-semibold">−92–123 kr/tim</span>
-            <div className="text-[12px] text-white/50 leading-snug mt-1">Enligt offentliga avtal och branschdata</div>
-          </div>
-          <FlowArrow />
-          {/* Card 3 — highlighted */}
-          <div className="bg-[rgba(83,74,183,0.25)] border-2 border-[rgba(175,169,236,0.4)] rounded-[14px] px-5 py-4">
-            <div className="text-[10px] text-[rgba(175,169,236,0.8)] uppercase tracking-wider mb-1">ESTIMERAD KONSULTLÖN</div>
-            <div className="text-[30px] font-medium text-white mb-0.5">508 <span className="text-[16px] text-white/50">kr/tim</span></div>
-            <div className="text-[12px] text-[rgba(175,169,236,0.7)] leading-snug">Se exakt vad du kan förvänta dig →</div>
-          </div>
-        </div>
+        {/* Interactive rate finder — replaces static demo cards */}
+        <HeroRateFinder />
       </section>
 
       {/* ── Trust bar ───────────────────────── */}
