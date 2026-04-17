@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link } from "react-router-dom";
-import { ArrowRight, ChevronLeft, Loader2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { ArrowRight, ChevronLeft, Loader2, AlertCircle, RefreshCw } from "lucide-react";
 import { useLocations } from "@/hooks/useCalculator";
 import { supabase } from "@/integrations/supabase/client";
 import SearchableSelect from "@/components/SearchableSelect";
@@ -152,6 +152,7 @@ interface Props {
 
 export default function HeroRateFinder({ prefillKey }: Props) {
   const { data: locations } = useLocations();
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<RoleGroup | null>(null);
   const [roleDropdownValue, setRoleDropdownValue] = useState("");
   const [selectedKommun, setSelectedKommun] = useState("");
@@ -159,6 +160,13 @@ export default function HeroRateFinder({ prefillKey }: Props) {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<RateResult | null>(null);
   const [hasInteracted, setHasInteracted] = useState(false);
+  const [retryNonce, setRetryNonce] = useState(0);
+
+  // Email capture state
+  const [email, setEmail] = useState("");
+  const [submittingLead, setSubmittingLead] = useState(false);
+  const [leadError, setLeadError] = useState<string | null>(null);
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 
   const doctorRoleOptions = useMemo(() => [
     { value: "__leg", label: "Leg. läkare" },
@@ -208,6 +216,12 @@ export default function HeroRateFinder({ prefillKey }: Props) {
     setResult(null);
     setError(null);
   };
+
+  // Clear stale data immediately when selection changes
+  useEffect(() => {
+    setResult(null);
+    setError(null);
+  }, [resolvedYrke, selectedLocation?.kommun]);
 
   useEffect(() => {
     if (!resolvedYrke || !selectedLocation) {
@@ -293,19 +307,41 @@ export default function HeroRateFinder({ prefillKey }: Props) {
 
     fetchRate();
     return () => { cancelled = true; };
-  }, [resolvedYrke, selectedLocation, selectedCategory]);
+  }, [resolvedYrke, selectedLocation, selectedCategory, retryNonce]);
 
-  // Display values: real result, or default demo
+  // Display values: real result, or default demo. Hide stale numbers on error.
+  const showPlaceholder = !!error;
   const display = result ?? DEFAULT_RESULT;
-  const animatedTimpris = useCountUp(display.timpris);
-  const animatedMargin = useCountUp(Math.round((display.marginKrMin + display.marginKrMax) / 2));
-  const animatedHourly = useCountUp(display.hourlyMax);
+  const animatedTimpris = useCountUp(showPlaceholder ? 0 : display.timpris);
+  const animatedHourly = useCountUp(showPlaceholder ? 0 : display.hourlyMax);
 
-  // CTA prefill: route to / with ?yrke= param if we have a known prefill key
-  const ctaHref = useMemo(() => {
-    if (selectedCategory === "ssk" && roleDropdownValue === "Anestesisjukvård") return "/?yrke=anestesi";
-    return "/";
-  }, [selectedCategory, roleDropdownValue]);
+  const handleSubmitLead = async () => {
+    if (!emailValid || !result || submittingLead) return;
+    setSubmittingLead(true);
+    setLeadError(null);
+    try {
+      const { data, error: insErr } = await supabase
+        .from("leads")
+        .insert({
+          email: email.trim().toLowerCase(),
+          yrke: result.roleName,
+          kommun: result.kommun,
+          employment_type: "anstalld",
+          source: "hero_rate_finder",
+        })
+        .select("id")
+        .single();
+      if (insErr) throw insErr;
+      if (data?.id) {
+        navigate(`/resultat/${data.id}`);
+      } else {
+        navigate("/");
+      }
+    } catch (e) {
+      setLeadError("Kunde inte skicka. Försök igen.");
+      setSubmittingLead(false);
+    }
+  };
 
   return (
     <div className="relative z-10 flex flex-col gap-4 w-full max-w-[300px] flex-shrink-0 mx-auto md:mx-0 md:ml-auto md:mr-16 py-4 md:py-24 md:self-center">
