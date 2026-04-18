@@ -9,6 +9,7 @@ import CompcareLogo from "@/components/CompcareLogo";
 import ThemeToggle from "@/components/ThemeToggle";
 import MissionSection from "@/components/landing/MissionSection";
 import Steps from "@/components/landing/Steps";
+import HeroRateLookup from "@/components/landing/HeroRateLookup";
 
 const faqJsonLd = {
   "@context": "https://schema.org",
@@ -134,6 +135,10 @@ export default function SalaryCheck() {
             </div>
 
             <p className="mt-4 text-sm text-muted-foreground lg:text-[15px]">Informationen hämtas från offentliga avtal och branschens genomsnittsmarginaler.</p>
+
+            <div className="mt-8">
+              <HeroRateLookup />
+            </div>
 
             <div className="mt-8 space-y-2">
               {[
