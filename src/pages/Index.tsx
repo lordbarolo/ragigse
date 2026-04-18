@@ -4,6 +4,7 @@ import { ShieldCheck, FileSearch, MessageSquare, ArrowRight, CheckCircle2 } from
 import { Button } from "@/components/ui/button";
 import CompcareLogo from "@/components/CompcareLogo";
 import ThemeToggle from "@/components/ThemeToggle";
+import HeroRateLookup from "@/components/landing/HeroRateLookup";
 import { trackEvent } from "@/lib/trackEvent";
 
 const platformJsonLd = {
@@ -107,14 +108,18 @@ export default function Index() {
             ))}
           </div>
 
+          <div className="mb-10">
+            <HeroRateLookup />
+          </div>
+
           <div className="flex flex-col items-center gap-4">
             <Link to="/consultant/forhandla">
-              <Button size="lg" className="gap-2 shadow-lg shadow-primary/20">
+              <Button size="sm" variant="outline" className="gap-2 bg-transparent border-hero-foreground/20 text-hero-foreground hover:bg-hero-foreground/10">
                 <MessageSquare className="w-4 h-4" /> Fråga Löneassistenten
               </Button>
             </Link>
-            <p className="max-w-md text-xs text-hero-foreground">
-              Svaren grundas på SKR:s ramavtalspriser 2026, lönestatistik, avrop från 21 regioner och avtalsdata.
+            <p className="max-w-md text-xs text-hero-foreground/60">
+              Priset visar vad regionen betalar bemanningsföretaget. Vill du veta din andel? Fråga assistenten.
             </p>
           </div>
         </div>
