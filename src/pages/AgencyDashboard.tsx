@@ -97,27 +97,13 @@ function AgencyOnboarding({ userId, onComplete }: { userId: string; onComplete: 
     }
     setCreating(true);
     try {
-      const { data: org, error: orgErr } = await supabase
-        .from("organizations")
-        .insert({
-          name: orgName.trim(),
-          org_number: orgNumber.trim() || null,
-          type: "staffing_agency",
-        })
-        .select("id")
-        .single();
+      const { error: rpcErr } = await supabase.rpc("create_org_with_admin" as any, {
+        _name: orgName.trim(),
+        _org_number: orgNumber.trim() || null,
+        _type: "staffing_agency",
+      });
 
-      if (orgErr) throw orgErr;
-
-      const { error: memErr } = await supabase
-        .from("org_members" as any)
-        .insert({
-          user_id: userId,
-          organization_id: org.id,
-          role: "admin",
-        });
-
-      if (memErr) throw memErr;
+      if (rpcErr) throw rpcErr;
 
       toast.success("Organisation skapad!");
       onComplete();
