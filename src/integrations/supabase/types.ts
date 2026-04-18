@@ -3438,6 +3438,14 @@ export type Database = {
       }
     }
     Functions: {
+      approve_org_membership_request: {
+        Args: { _request_id: string }
+        Returns: undefined
+      }
+      create_org_with_admin: {
+        Args: { _name: string; _org_number?: string; _type?: string }
+        Returns: string
+      }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
@@ -3457,6 +3465,10 @@ export type Database = {
           referrer_email: string
           token: string
         }[]
+      }
+      is_org_admin: {
+        Args: { _org_id: string; _user_id: string }
+        Returns: boolean
       }
       move_to_dlq: {
         Args: {
@@ -3578,6 +3590,10 @@ export type Database = {
           _giver_name: string
           _token: string
         }
+        Returns: undefined
+      }
+      reject_org_membership_request: {
+        Args: { _request_id: string }
         Returns: undefined
       }
       top_kommuner: {
