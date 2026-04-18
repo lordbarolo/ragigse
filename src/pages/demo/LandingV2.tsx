@@ -266,12 +266,7 @@ export default function LandingV2() {
             Din <span className="text-[#AFA9EC]">tid.</span><br />Din karriär.<br />Dina villkor.
           </h1>
           <p className="text-lg text-white/[0.78] leading-relaxed mb-6 max-w-[520px]">
-            Compcare ser till att du aldrig lämnar pengar på bordet. Rätt ersättning, rätt avtalsinnehåll och rätt belopp på dina fakturor — tillgängligt 24/7.
-          </p>
-
-          <p className="text-[11px] text-white/55 flex items-center gap-1.5">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#AFA9EC]" />
-            Används av 800+ vårdkonsulter
+            För läkare och sjuksköterskor med styrkan av optimerad Ai
           </p>
         </div>
 
