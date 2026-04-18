@@ -136,9 +136,14 @@ export default function ProfileInsights({ specialtyName, regionName, employmentT
       {/* 2 — Lönespann per zon */}
       {salaryZones.length > 0 && (
         <div>
-          <div className="flex items-center gap-2 mb-3">
-            <MapPin className="w-4 h-4 text-primary" />
-            <p className="text-sm font-medium text-foreground">Förväntat lönespann</p>
+          <div className="flex items-start gap-2 mb-3">
+            <MapPin className="w-4 h-4 text-primary mt-0.5 shrink-0" />
+            <p className="text-sm font-medium text-foreground">
+              Förväntad ersättningsnivå{" "}
+              <span className="font-normal text-muted-foreground">
+                (Avdrag för kostnader kopplade till uppdraget kan påverka)
+              </span>
+            </p>
           </div>
           <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4 snap-x snap-mandatory scrollbar-hide">
             {salaryZones.map((s) => (
