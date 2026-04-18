@@ -115,7 +115,7 @@ export default function MissionSection() {
             suffix="+"
             subtitle="Smarta vårdkonsulter"
             body="Hitta rätt uppdrag. Bygg din karriär. Arbeta på dina villkor."
-            cta="Jag är konsult"
+            cta="Jag jobbar i vården"
             href="/registrera"
           />
           <MissionCard
