@@ -171,18 +171,41 @@ export default function Profile() {
   const employmentLabel = (t: string | null) => t === "consultant" ? "Konsult" : t === "permanent" ? "Tillsvidareanställd" : t || "–";
   const formatSalary = (val: number | null) => val ? val.toLocaleString("sv-SE") : "–";
 
+  // Calculate profile completeness across 7 fields (4 verifications + 3 core profile fields)
+  const emailVerified = !!user?.email_confirmed_at;
+  const completenessChecks = [
+    emailVerified,
+    verification.hasBankid,
+    verification.hasValidHosp,
+    verification.hasValidIvo,
+    !!profile?.specialty_name,
+    !!profile?.region_name,
+    !!(profile?.current_hourly_rate || profile?.current_monthly_salary),
+  ];
+  const completedCount = completenessChecks.filter(Boolean).length;
+  const totalCount = completenessChecks.length;
+
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
       <div className="pt-20 pb-12 px-4 max-w-2xl mx-auto space-y-5">
-        {/* Header + StatusBadge */}
+        {/* Header */}
         <div>
           <h1 className="text-2xl font-bold text-foreground">Min dashboard</h1>
           <p className="text-sm text-muted-foreground">{user?.email}</p>
         </div>
 
-        {/* Referenser & verifikationer — dold tillsvidare */}
+        {/* Profile completeness — Shiftnex-inspired progress hook */}
+        <ProfileCompleteness completed={completedCount} total={totalCount} />
+
+        {/* Trust & Verification checklist */}
+        <TrustVerification
+          emailVerified={emailVerified}
+          identityVerified={verification.hasBankid}
+          hospValid={verification.hasValidHosp}
+          ivoValid={verification.hasValidIvo}
+        />
 
         {/* Profile details */}
         {profile && (
