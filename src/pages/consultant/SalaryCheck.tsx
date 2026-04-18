@@ -156,6 +156,7 @@ export default function SalaryCheck() {
       </section>
 
       <MissionSection />
+      <Steps />
     </div>
   );
 }
