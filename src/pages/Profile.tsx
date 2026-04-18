@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import ProfileInsights from "@/components/profile/ProfileInsights";
+import ProfileCompleteness from "@/components/profile/ProfileCompleteness";
+import TrustVerification from "@/components/profile/TrustVerification";
 import CompensationView from "@/components/report/CompensationView";
 import DashboardReferences from "@/components/profile/DashboardReferences";
 import DashboardDocuments from "@/components/profile/DashboardDocuments";
