@@ -199,8 +199,6 @@ function FlowArrow() {
 
 /* ───────────────────── component ──────────────── */
 export default function LandingV2() {
-  const [heroEmail, setHeroEmail] = useState("");
-
   return (
     <div className="w-full bg-[#F2F1F8] text-foreground font-sans">
       {/* ── Nav ─────────────────────────────── */}
