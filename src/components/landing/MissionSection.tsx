@@ -113,7 +113,7 @@ export default function MissionSection() {
             iconBg="bg-[#534AB7]/15 border-[#534AB7]/30"
             count={500}
             suffix="+"
-            subtitle="Vårdkonsulter"
+            subtitle="Smarta vårdkonsulter"
             body="Hitta rätt uppdrag. Bygg din karriär. Arbeta på dina villkor."
             cta="Jag är konsult"
             href="/registrera"
@@ -122,10 +122,10 @@ export default function MissionSection() {
             play={cardsInView}
             icon={<Building2 className="w-5 h-5 text-[#7DB4FF]" strokeWidth={1.75} />}
             iconBg="bg-blue-500/10 border-blue-400/30"
-            count={500}
+            count={100}
             suffix="+"
-            subtitle="Ledande vårdgivare"
-            body="Tillsätt pass snabbare. Minska kostnader. Optimera personalstyrkan."
+            subtitle="Ledande uppdragsgivare"
+            body="Uppdragsgivare"
             cta="Jag är bemanningsbolag"
             href="/for-bemanningsforetag"
           />
