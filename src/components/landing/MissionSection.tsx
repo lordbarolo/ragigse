@@ -125,7 +125,7 @@ export default function MissionSection() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.6, duration: 0.6 }}
-          className="text-center text-sm text-muted-foreground mt-14"
+          className="text-center text-sm text-[#0F1A2E]/60 mt-14"
         >
           ↓ eller scrolla för att utforska båda ↓
         </motion.p>
