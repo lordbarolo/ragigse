@@ -127,8 +127,8 @@ export default function Index() {
         <div className="absolute bottom-0 left-0 right-0 h-[200px] bg-gradient-to-t from-background to-transparent" />
       </section>
 
-      {/* ── Mission Section ────────────────────────────── */}
-      <MissionSection />
+      {/* ── Mission Section (tillfälligt borttagen) ────── */}
+      {/* <MissionSection /> */}
 
       {/* ── Three Pillars ──────────────────────────────── */}
       <section className="max-w-6xl mx-auto px-6 pt-8 relative z-20 pb-20" aria-label="Tjänster">
