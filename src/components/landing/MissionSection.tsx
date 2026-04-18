@@ -90,7 +90,7 @@ export default function MissionSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-16 md:mb-20"
+          className="text-center text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight text-[#0F1A2E] mb-16 md:mb-20"
         >
           Vilket uppdrag väljer du?
         </motion.h2>
@@ -125,7 +125,7 @@ export default function MissionSection() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.6, duration: 0.6 }}
-          className="text-center text-sm text-muted-foreground mt-14"
+          className="text-center text-sm text-[#0F1A2E]/60 mt-14"
         >
           ↓ eller scrolla för att utforska båda ↓
         </motion.p>
