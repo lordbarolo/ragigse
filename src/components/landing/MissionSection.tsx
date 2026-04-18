@@ -58,7 +58,7 @@ function MissionCard({ icon, iconBg, count, suffix, subtitle, body, cta, href, p
           {icon}
         </div>
 
-        <p className="text-[11px] tracking-[0.2em] font-semibold text-white/40 mb-2">JOIN</p>
+        <p className="text-[11px] tracking-[0.2em] font-semibold text-white/40 mb-2">ANSLUT</p>
         <h3 className="text-5xl md:text-6xl font-bold text-white tracking-tight leading-none mb-2">
           <Counter to={count} suffix={suffix} play={play} />
         </h3>
@@ -113,7 +113,7 @@ export default function MissionSection() {
             iconBg="bg-[#534AB7]/15 border-[#534AB7]/30"
             count={500}
             suffix="+"
-            subtitle="Legitimerade hjältar"
+            subtitle="Vårdkonsulter"
             body="Hitta rätt uppdrag. Bygg din karriär. Arbeta på dina villkor."
             cta="Jag är konsult"
             href="/registrera"
