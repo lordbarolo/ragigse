@@ -272,20 +272,6 @@ export default function LandingV2() {
             Compcare ser till att du aldrig lämnar pengar på bordet. Rätt ersättning, rätt avtalsinnehåll och rätt belopp på dina fakturor — tillgängligt 24/7.
           </p>
 
-          {/* Mobile proof strip — surfaces a number above the fold */}
-          <div className="md:hidden mb-6 bg-white/[0.07] border border-white/15 rounded-xl p-4">
-            <div className="flex items-baseline gap-2 mb-1.5">
-              <span className="text-[28px] font-bold text-white tabular-nums leading-none">482</span>
-              <span className="text-[14px] text-white/60">kr/tim</span>
-              <span className="ml-auto inline-block bg-amber-500/20 text-amber-200 text-[10px] font-semibold px-2 py-0.5 rounded">
-                −12–20% byrå
-              </span>
-            </div>
-            <p className="text-[11px] text-white/55 leading-snug">
-              Exempel: Sjuksköterska, Zon 1 — beräkna ditt eget nedan ↓
-            </p>
-          </div>
-
           {/* Email CTA */}
           <div className="space-y-2">
             <p className="text-[13px] text-white/60">Se rätt ersättningsnivåer för varje roll och region</p>
@@ -299,7 +285,7 @@ export default function LandingV2() {
               />
               <Link to="/registrera">
                 <button className="px-6 py-3 bg-[#534AB7] hover:bg-[#5e54c8] rounded-lg text-white text-[15px] font-medium whitespace-nowrap min-h-[44px]">
-                  Beräkna min ersättning →
+                  Har du rätt lön? →
                 </button>
               </Link>
             </div>
