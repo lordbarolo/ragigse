@@ -168,8 +168,62 @@ export default function PublicProfile() {
   const tierLabel = TIER_LABEL[data.trust_tier] ?? TIER_LABEL.incomplete;
   const documents = data.documents || [];
 
+  // ── JSON-LD for AI agents and search engines ────────
+  const profileJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    identifier: id,
+    name: data.full_name,
+    jobTitle: data.specialty || undefined,
+    url: `https://compcare.se/profil/${id}`,
+    hasCredential: [
+      ...(data.verifications.bankid
+        ? [{
+            "@type": "EducationalOccupationalCredential",
+            credentialCategory: "Digital identity verification",
+            recognizedBy: { "@type": "Organization", name: "CompCare" },
+          }]
+        : []),
+      ...(data.verifications.ivo
+        ? [{
+            "@type": "EducationalOccupationalCredential",
+            credentialCategory: "IVO certificate",
+            recognizedBy: { "@type": "Organization", name: "Inspektionen för vård och omsorg" },
+          }]
+        : []),
+      ...(data.verifications.hosp
+        ? [{
+            "@type": "EducationalOccupationalCredential",
+            credentialCategory: "HOSP certificate",
+            recognizedBy: { "@type": "Organization", name: "Socialstyrelsen" },
+          }]
+        : []),
+    ],
+    additionalProperty: [
+      { "@type": "PropertyValue", name: "trust_tier", value: data.trust_tier },
+      { "@type": "PropertyValue", name: "trust_score", value: data.trust_score },
+      { "@type": "PropertyValue", name: "verified_reference_count", value: activeRefs.length },
+      { "@type": "PropertyValue", name: "total_reference_count", value: data.reference_count },
+    ],
+    subjectOf: {
+      "@type": "DataFeed",
+      name: "Machine-readable profile data",
+      url: `https://ubhhlunhdqbokjvwfebb.supabase.co/functions/v1/get-public-profile?id=${id}`,
+      encodingFormat: "application/json",
+    },
+  };
+
   return (
     <div className="mx-auto max-w-2xl px-4 py-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(profileJsonLd) }}
+      />
+      <link
+        rel="alternate"
+        type="application/json"
+        href={`https://ubhhlunhdqbokjvwfebb.supabase.co/functions/v1/get-public-profile?id=${id}`}
+      />
       <Button variant="ghost" size="sm" className="mb-6 gap-1.5 text-muted-foreground" asChild>
         <Link to="/"><ArrowLeft className="h-4 w-4" /> Tillbaka</Link>
       </Button>
