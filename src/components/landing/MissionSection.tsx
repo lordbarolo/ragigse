@@ -58,62 +58,9 @@ function MissionCard({ icon, iconBg, count, suffix, subtitle, body, cta, href, p
           {icon}
         </div>
 
-        <p className="text-[11px] tracking-[0.2em] font-semibold text-white/40 mb-2">JOIN</p>
-        <h3 className="text-5xl md:text-6xl font-bold text-white tracking-tight leading-none mb-2">
-          <Counter to={count} suffix={suffix} play={play} />
-        </h3>
-        <p className="text-lg font-medium text-white/80 mb-6">{subtitle}</p>
-
-        <p className="text-white/55 text-[15px] leading-relaxed mb-8 max-w-[28ch]">{body}</p>
-
-        <Link
-          to={href}
-          className="inline-flex items-center gap-2 rounded-full border border-white/30 px-5 py-2.5 text-sm font-medium text-white transition-all duration-200 hover:bg-white hover:text-[#0A0A0A] hover:border-white"
-        >
-          {cta}
-          <ArrowRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5" />
-        </Link>
-      </div>
-    </motion.div>
-  );
-}
-
-/* ───────────────────── Section ───────────────────── */
-export default function MissionSection() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const cardsRef = useRef<HTMLDivElement>(null);
-  const cardsInView = useInView(cardsRef, { once: true, amount: 0.3 });
-
-  return (
-    <section
-      ref={sectionRef}
-      className="relative bg-[#0A0A0A] py-24 md:py-36 px-6 overflow-hidden"
-    >
-      {/* Ambient background orbs */}
-      <div className="pointer-events-none absolute -top-40 left-1/4 h-96 w-96 rounded-full bg-[#534AB7]/10 blur-[120px]" />
-      <div className="pointer-events-none absolute -bottom-40 right-1/4 h-96 w-96 rounded-full bg-blue-500/5 blur-[120px]" />
-
-      <div className="relative max-w-6xl mx-auto">
-        {/* Header reveal */}
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white mb-16 md:mb-20"
-        >
-          Vilken är din mission?
-        </motion.h2>
-
-        {/* Cards */}
-        <div ref={cardsRef} className="grid md:grid-cols-2 gap-6 md:gap-8">
-          <MissionCard
-            play={cardsInView}
-            icon={<Stethoscope className="w-5 h-5 text-[#A89BFF]" strokeWidth={1.75} />}
-            iconBg="bg-[#534AB7]/15 border-[#534AB7]/30"
-            count={500}
-            suffix="+"
-            subtitle="Legitimerade hjältar"
+        <p className="text-[11px] tracking-[0.2em] font-semibold text-white/40 mb-2">ANSLUT</p>
+...
+            subtitle="Vårdkonsulter"
             body="Hitta rätt uppdrag. Bygg din karriär. Arbeta på dina villkor."
             cta="Jag är konsult"
             href="/registrera"
