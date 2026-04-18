@@ -111,7 +111,7 @@ export default function MissionSection() {
             play={cardsInView}
             icon={<Stethoscope className="w-5 h-5 text-[#A89BFF]" strokeWidth={1.75} />}
             iconBg="bg-[#534AB7]/15 border-[#534AB7]/30"
-            count={50000}
+            count={500}
             suffix="+"
             subtitle="Legitimerade hjältar"
             body="Hitta rätt uppdrag. Bygg din karriär. Arbeta på dina villkor."
