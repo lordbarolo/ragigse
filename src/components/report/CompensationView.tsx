@@ -106,9 +106,9 @@ export default function CompensationView({ role, location, employmentType }: Com
     },
     {
       icon: MessageSquare,
-      title: "Jämför din lön med rekommenderat intervall",
+      title: "Har du arbetat på samma ställe tidigare?",
       detail:
-        "Intervallet baseras på ramavtalets kundpris minus normala marginaler. En lön under detta intervall innebär att bemanningsföretaget tar en oproportionerligt stor marginal.",
+        "Använd det i förhandlingen. Det behövs ingen intro och risken för avbokning är mindre när kunden vet vem som kommer.",
     },
     {
       icon: Shield,
