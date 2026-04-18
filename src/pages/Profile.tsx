@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import ProfileInsights from "@/components/profile/ProfileInsights";
+import ProfileCompleteness from "@/components/profile/ProfileCompleteness";
+import TrustVerification from "@/components/profile/TrustVerification";
 import CompensationView from "@/components/report/CompensationView";
 import DashboardReferences from "@/components/profile/DashboardReferences";
 import DashboardDocuments from "@/components/profile/DashboardDocuments";
@@ -43,11 +45,22 @@ interface ProfileData {
   current_monthly_salary: number | null;
 }
 
+interface VerificationFlags {
+  hasBankid: boolean;
+  hasValidHosp: boolean;
+  hasValidIvo: boolean;
+}
+
 export default function Profile() {
   const { user, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
   const [reports, setReports] = useState<ReportRow[]>([]);
   const [profile, setProfile] = useState<ProfileData | null>(null);
+  const [verification, setVerification] = useState<VerificationFlags>({
+    hasBankid: false,
+    hasValidHosp: false,
+    hasValidIvo: false,
+  });
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
 
@@ -105,6 +118,22 @@ export default function Profile() {
           current_monthly_salary: cpData.current_monthly_salary,
         });
       }
+
+      // Fetch verification flags from profiles table
+      const { data: profileFlags } = await supabase
+        .from("profiles")
+        .select("has_bankid, has_valid_hosp, has_valid_ivo")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (profileFlags) {
+        setVerification({
+          hasBankid: !!profileFlags.has_bankid,
+          hasValidHosp: !!profileFlags.has_valid_hosp,
+          hasValidIvo: !!profileFlags.has_valid_ivo,
+        });
+      }
+
       setLoading(false);
     };
     fetchData();
@@ -142,18 +171,41 @@ export default function Profile() {
   const employmentLabel = (t: string | null) => t === "consultant" ? "Konsult" : t === "permanent" ? "Tillsvidareanställd" : t || "–";
   const formatSalary = (val: number | null) => val ? val.toLocaleString("sv-SE") : "–";
 
+  // Calculate profile completeness across 7 fields (4 verifications + 3 core profile fields)
+  const emailVerified = !!user?.email_confirmed_at;
+  const completenessChecks = [
+    emailVerified,
+    verification.hasBankid,
+    verification.hasValidHosp,
+    verification.hasValidIvo,
+    !!profile?.specialty_name,
+    !!profile?.region_name,
+    !!(profile?.current_hourly_rate || profile?.current_monthly_salary),
+  ];
+  const completedCount = completenessChecks.filter(Boolean).length;
+  const totalCount = completenessChecks.length;
+
 
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
       <div className="pt-20 pb-12 px-4 max-w-2xl mx-auto space-y-5">
-        {/* Header + StatusBadge */}
+        {/* Header */}
         <div>
           <h1 className="text-2xl font-bold text-foreground">Min dashboard</h1>
           <p className="text-sm text-muted-foreground">{user?.email}</p>
         </div>
 
-        {/* Referenser & verifikationer — dold tillsvidare */}
+        {/* Profile completeness — Shiftnex-inspired progress hook */}
+        <ProfileCompleteness completed={completedCount} total={totalCount} />
+
+        {/* Trust & Verification checklist */}
+        <TrustVerification
+          emailVerified={emailVerified}
+          identityVerified={verification.hasBankid}
+          hospValid={verification.hasValidHosp}
+          ivoValid={verification.hasValidIvo}
+        />
 
         {/* Profile details */}
         {profile && (
