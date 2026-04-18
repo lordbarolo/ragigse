@@ -76,7 +76,7 @@ export default function AgencyLanding() {
               </Button>
             </Link>
             <Link to="/verify-info">
-              <Button size="lg" variant="outline" className="text-base border-white/30 text-white hover:bg-white/10">
+              <Button size="lg" variant="outline" className="text-base border-white/30 text-white bg-primary">
                 Så fungerar det
               </Button>
             </Link>
