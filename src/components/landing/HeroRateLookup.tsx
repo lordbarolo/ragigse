@@ -104,7 +104,7 @@ export default function HeroRateLookup() {
       <div className="flex items-center gap-2 mb-4">
         <Sparkles className="w-4 h-4 text-primary" />
         <h2 className="text-sm font-semibold text-foreground">
-          Vad betalar regionen för din tid?
+          Jämför konsultlönen med priset regionen betalar
         </h2>
       </div>
 
