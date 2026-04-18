@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
-import HeroRateFinder from "@/components/demo/HeroRateFinder";
+import HeroRateLookup from "@/components/landing/HeroRateLookup";
 
 /* ───────────────────── data ───────────────────── */
 const NAV_LINKS = ["Verktyg", "Löneanalys", "Fakturagranskning", "Uppdragsprognos", "Priser", "Om oss"];
@@ -294,8 +294,10 @@ export default function LandingV2() {
           </div>
         </div>
 
-        {/* Interactive rate finder — replaces static demo cards */}
-        <HeroRateFinder />
+        {/* Right column — rate lookup box from main landing */}
+        <div className="relative z-10 w-full md:w-auto md:flex-1 md:max-w-[560px] px-1 sm:px-2 md:px-10 xl:px-16 pt-4 pb-16 md:py-24">
+          <HeroRateLookup />
+        </div>
       </section>
 
       {/* ── Trust bar ───────────────────────── */}
