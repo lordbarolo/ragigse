@@ -197,17 +197,7 @@ export default function Profile() {
     .join(" ") || "Användare";
 
   return (
-    <div className="relative min-h-screen bg-background overflow-hidden">
-      {/* Subtle ambient spotlight in background — softer than /logga-in so cards stay readable */}
-      <div
-        className="absolute top-0 left-1/2 -translate-x-1/2 pointer-events-none"
-        style={{
-          width: "1200px",
-          height: "800px",
-          background:
-            "radial-gradient(ellipse at 50% 0%, rgba(110,95,230,0.10) 0%, rgba(90,78,210,0.04) 30%, transparent 60%)",
-        }}
-      />
+    <div className="relative min-h-screen bg-[#F2F1F8] overflow-hidden">
 
       <Navbar />
 
