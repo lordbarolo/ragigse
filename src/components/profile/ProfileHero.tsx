@@ -48,7 +48,7 @@ export default function ProfileHero({
   return (
     <div className="relative rounded-2xl overflow-hidden bg-card border border-border/50 shadow-sm">
       {/* Cover with purple spotlight (matches /logga-in) */}
-      <div className="relative h-32 sm:h-40 overflow-hidden">
+      <div className="relative h-56 sm:h-64 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[#0d0b2a] via-[#1a1545] via-40% to-[#2a2070]" />
         <div
           className="absolute inset-0 pointer-events-none"
@@ -75,7 +75,7 @@ export default function ProfileHero({
 
       {/* Identity row */}
       <div className="px-4 sm:px-6 pb-5">
-        <div className="flex flex-col sm:flex-row sm:items-end gap-4 -mt-10 sm:-mt-12">
+        <div className="flex flex-col sm:flex-row sm:items-end gap-4 -mt-10 sm:-mt-12 pt-6 sm:pt-10">
           {/* Avatar */}
           <div className="relative shrink-0">
             <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-card border-4 border-card flex items-center justify-center shadow-md ring-1 ring-border">
