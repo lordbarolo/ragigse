@@ -285,7 +285,7 @@ export default function LandingV2() {
               />
               <Link to="/registrera">
                 <button className="px-6 py-3 bg-[#534AB7] hover:bg-[#5e54c8] rounded-lg text-white text-[15px] font-medium whitespace-nowrap min-h-[44px]">
-                  Beräkna min ersättning →
+                  Har du rätt lön? →
                 </button>
               </Link>
             </div>
