@@ -746,6 +746,7 @@
     { "name": "Pricing (Legacy)", "description": "Legacy consultant compensation calculations (delegates to Compensation Intelligence)" },
     { "name": "Benchmarks (Legacy)", "description": "Legacy salary benchmarks (delegates to Compensation Intelligence)" },
     { "name": "Reports", "description": "Full compensation analysis reports and PDF generation" },
-    { "name": "Market Intelligence", "description": "Price monitoring and contract version comparisons" }
+    { "name": "Market Intelligence", "description": "Price monitoring and contract version comparisons" },
+    { "name": "Public Profiles", "description": "Machine-readable consultant profiles for AI agents and automated systems" }
   ]
 }
