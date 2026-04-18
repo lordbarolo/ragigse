@@ -112,9 +112,9 @@ export default function CompensationView({ role, location, employmentType }: Com
     },
     {
       icon: Shield,
-      title: "Lyft fram din yrkeskompetens vid förhandling",
+      title: "Bor du nära arbetsorten?",
       detail:
-        "Säkerställ att du prissätts i rätt yrkeskategori i ramavtalet. Fel kategori kan innebära ett lägre förhandlingsgolv.",
+        "Utan kostnader för resa och boende har uppdragsgivaren mer utrymme till timlönen.",
     },
   ];
 
