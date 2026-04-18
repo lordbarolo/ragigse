@@ -646,6 +646,88 @@
       "ErrorResponse": {
         "type": "object",
         "properties": { "error": { "type": "string" } }
+      },
+      "PublicProfile": {
+        "type": "object",
+        "description": "schema.org Person extended with CompCare verification data",
+        "properties": {
+          "@context": { "type": "string", "example": "https://schema.org" },
+          "@type": { "type": "string", "example": "Person" },
+          "identifier": { "type": "string", "format": "uuid" },
+          "name": { "type": "string" },
+          "jobTitle": { "type": "string", "nullable": true },
+          "description": { "type": "string", "nullable": true },
+          "hasCredential": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "@type": { "type": "string", "example": "EducationalOccupationalCredential" },
+                "credentialCategory": { "type": "string" },
+                "recognizedBy": {
+                  "type": "object",
+                  "properties": {
+                    "@type": { "type": "string" },
+                    "name": { "type": "string" }
+                  }
+                }
+              }
+            }
+          },
+          "compcare": {
+            "type": "object",
+            "description": "CompCare-specific verification metrics",
+            "properties": {
+              "trust_score": { "type": "integer", "minimum": 0, "maximum": 100 },
+              "trust_tier": { "type": "string", "enum": ["elite", "verified_pro", "basic", "incomplete"] },
+              "trust_tier_label": { "type": "string" },
+              "score_updated_at": { "type": "string", "format": "date-time", "nullable": true },
+              "reference_count": { "type": "integer" },
+              "attachable_reference_count": { "type": "integer" },
+              "avg_recommendation": { "type": "number" },
+              "competencies": { "type": "object", "additionalProperties": { "type": "integer" } },
+              "years_licensed": { "type": "integer", "nullable": true }
+            }
+          },
+          "references": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "relationship": { "type": "string" },
+                "workplace": { "type": "string" },
+                "period_start": { "type": "string" },
+                "period_end": { "type": "string", "nullable": true },
+                "recommendation_score": { "type": "integer" },
+                "competencies": { "type": "array", "items": { "type": "string" } },
+                "verification_level": { "type": "string", "enum": ["email", "domain", "ping_confirmed"] },
+                "last_confirmed_at": { "type": "string", "format": "date-time" },
+                "confirmed_at": { "type": "string", "format": "date-time" }
+              }
+            }
+          },
+          "documents": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "file_name": { "type": "string" },
+                "document_type": { "type": "string" },
+                "document_type_label": { "type": "string" },
+                "uploaded_at": { "type": "string", "format": "date-time" }
+              }
+            }
+          },
+          "meta": {
+            "type": "object",
+            "properties": {
+              "generated_at": { "type": "string", "format": "date-time" },
+              "source": { "type": "string", "example": "compcare.se" },
+              "api_version": { "type": "string" },
+              "canonical_url": { "type": "string", "format": "uri" }
+            }
+          }
+        }
       }
     },
     "securitySchemes": {
