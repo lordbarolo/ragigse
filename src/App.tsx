@@ -109,9 +109,8 @@ const App = () => (
               <Route path="/logga-in" element={<Login />} />
               <Route path="/registrera" element={<Signup />} />
               <Route path="/aterstall-losenord" element={<ResetPassword />} />
-              {/* Agency landing — hidden until actively marketed */}
-              {/* <Route path="/for-bemanningsforetag" element={<AgencyLanding />} /> */}
-              {/* <Route path="/registrera/bemanning" element={<AgencySignup />} /> */}
+              <Route path="/for-bemanningsforetag" element={<AgencyLanding />} />
+              <Route path="/registrera/bemanning" element={<AgencySignup />} />
 
               {/* ── Consultant Layout ─────────────── */}
               <Route element={<ConsultantLayout />}>
