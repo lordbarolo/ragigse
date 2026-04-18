@@ -4,7 +4,14 @@ import { ArrowRight } from "lucide-react";
 import HeroRateLookup from "@/components/landing/HeroRateLookup";
 
 /* ───────────────────── data ───────────────────── */
-const NAV_LINKS = ["Verktyg", "Löneanalys", "Fakturagranskning", "Uppdragsprognos", "Priser", "Om oss"];
+const NAV_LINKS: { label: string; href: string; external?: boolean }[] = [
+  { label: "Verktyg", href: "#verktyg" },
+  { label: "Löneanalys", href: "/consultant/salary-check", external: true },
+  { label: "Fakturagranskning", href: "/consultant/fakturakontroll", external: true },
+  { label: "Uppdragsprognos", href: "/uppdragsradar", external: true },
+  { label: "Priser", href: "#priser" },
+  { label: "FAQ", href: "/vanliga-fragor", external: true },
+];
 const TRUST_LOGOS = ["Capio", "Region Stockholm", "Aleris", "Praktikertjänst", "Sahlgrenska"];
 
 const STATS = [
@@ -115,6 +122,7 @@ const PLANS = [
     desc: "Dokumentvalvet, referensplattformen och en kostnadsfri löneanalys. Få full koll utan kostnad — alltid.",
     features: ["Dokumentvalvet", "Referensplattformen", "En kostnadsfri löneanalys", "Bemanningsbolagens pris mot region", "Ingen tidsbegränsning"],
     cta: "Kom igång",
+    href: "/registrera",
     bg: "bg-[#EFEDFA]",
     border: "border-[#534AB7]/20",
     iconBg: "bg-[#534AB7]/10 text-[#3C3489]",
@@ -134,6 +142,7 @@ const PLANS = [
     desc: "Detaljerad löneanalys, AI-driven förhandlingsstöd och uppdragsprognos. Förstå exakt var du står — och var du borde stå.",
     features: ["Allt i Gratis", "Detaljerad löneanalys", "Löneassistent med AI", "Uppdragsprognos", "Regional & specialitetsjämförelse"],
     cta: "Välj Insight",
+    href: "/registrera?plan=insight",
     bg: "bg-[#E6F7F6]",
     border: "border-[#0EA5A4]/30",
     iconBg: "bg-[#0EA5A4]/10 text-[#0EA5A4]",
@@ -153,6 +162,7 @@ const PLANS = [
     desc: "Vi granskar dina fakturor och driver in det du missat. Hittar vi inget kostar det dig ingenting.",
     features: ["AI-granskning av fakturor", "Tidrapportanalys", "Automatisk ny faktura", "Uppföljning mot uppdragsgivare", "25% av återvunnet belopp"],
     cta: "Skicka in fakturor",
+    href: "/consultant/fakturakontroll",
     bg: "bg-[#FCEFE2]",
     border: "border-[#EA6A1F]/30",
     iconBg: "bg-[#EA6A1F]/10 text-[#EA6A1F]",
@@ -201,9 +211,17 @@ export default function LandingV2() {
           CompCare
         </div>
         <div className="hidden md:flex gap-6">
-          {NAV_LINKS.map((l) => (
-            <span key={l} className="text-sm text-muted-foreground cursor-default">{l}</span>
-          ))}
+          {NAV_LINKS.map((l) =>
+            l.external ? (
+              <Link key={l.label} to={l.href} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                {l.label}
+              </Link>
+            ) : (
+              <a key={l.label} href={l.href} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+                {l.label}
+              </a>
+            )
+          )}
         </div>
         <div className="flex items-center gap-3">
           <Link to="/logga-in">
@@ -388,7 +406,7 @@ export default function LandingV2() {
       <div className="h-px bg-border/40 mx-6 lg:mx-10" />
 
       {/* ── Invoice feature ─────────────────── */}
-      <section className="px-6 lg:px-10 py-[72px] bg-[#F2F1F8]">
+      <section id="verktyg" className="px-6 lg:px-10 py-[72px] bg-[#F2F1F8]">
         <div className="max-w-[600px] mx-auto">
           {/* Scaled table */}
           <div className="w-full overflow-hidden mb-8" ref={(el) => {
@@ -464,7 +482,7 @@ export default function LandingV2() {
           </div>
 
           {/* CTA */}
-          <a href="#" className="block w-full py-3.5 bg-[#534AB7] text-white rounded-[10px] text-[15px] font-medium text-center mb-8">Skapa konto</a>
+          <Link to="/registrera" className="block w-full py-3.5 bg-[#534AB7] hover:bg-[#5e54c8] text-white rounded-[10px] text-[15px] font-medium text-center mb-8 transition-colors">Skapa konto</Link>
 
           {/* Copy */}
           <p className="text-[11px] font-semibold text-[#534AB7] uppercase tracking-[0.1em] mb-3.5">Fakturagranskning</p>
@@ -477,7 +495,7 @@ export default function LandingV2() {
       </section>
 
       {/* ── Pricing ─────────────────────────── */}
-      <section className="px-6 lg:px-10 py-[88px] bg-white">
+      <section id="priser" className="px-6 lg:px-10 py-[88px] bg-white">
         <div className="text-center max-w-[680px] mx-auto mb-4">
           <span className="inline-flex items-center gap-1.5 text-[12px] font-medium text-[#534AB7] bg-[#EEEDFE] px-3 py-1 rounded-full mb-5">
             <span className="w-1.5 h-1.5 rounded-full bg-[#534AB7]" />
@@ -535,19 +553,22 @@ export default function LandingV2() {
                 ))}
               </ul>
 
-              <button className={`w-full py-3 rounded-xl text-[14px] font-semibold inline-flex items-center justify-center gap-1.5 transition-colors ${p.btnClass}`}>
+              <Link
+                to={p.href}
+                className={`w-full py-3 rounded-xl text-[14px] font-semibold inline-flex items-center justify-center gap-1.5 transition-colors ${p.btnClass}`}
+              >
                 {p.cta}
                 <svg className="w-3.5 h-3.5" viewBox="0 0 14 14" fill="none">
                   <path d="M2 7H12M12 7L7.5 2.5M12 7L7.5 11.5" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
-              </button>
+              </Link>
             </div>
           ))}
         </div>
 
         <p className="text-center text-[13px] text-muted-foreground mt-10">
           Osäker på vilken modell som passar?{" "}
-          <button className="text-[#534AB7] font-medium underline-offset-2 hover:underline">Chatta med vår AI</button>
+          <Link to="/consultant/forhandla" className="text-[#534AB7] font-medium underline-offset-2 hover:underline">Chatta med vår AI</Link>
         </p>
       </section>
 
@@ -578,11 +599,13 @@ export default function LandingV2() {
       <div className="mx-4 sm:mx-6 lg:mx-10 mb-[72px] rounded-xl bg-[#1a1545] px-6 lg:px-12 py-14 text-center">
         <h2 className="text-[28px] font-medium text-white mb-3">Redo att ta kontroll?</h2>
         <p className="text-base text-white/60 mb-7">Gratis konto. Inga kreditkort. Kom igång på 30 sekunder.</p>
-        <div className="flex gap-3 justify-center">
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link to="/registrera">
-            <button className="px-8 py-3 bg-[#534AB7] rounded-lg text-white text-[15px] font-medium">Skapa konto gratis</button>
+            <button className="w-full sm:w-auto px-8 py-3 bg-[#534AB7] hover:bg-[#5e54c8] rounded-lg text-white text-[15px] font-medium transition-colors">Skapa konto gratis</button>
           </Link>
-          <button className="px-7 py-3 bg-transparent border border-white/30 rounded-lg text-white/80 text-[15px]">Boka en demo</button>
+          <a href="mailto:hej@compcare.se?subject=Boka%20demo%20av%20CompCare">
+            <button className="w-full sm:w-auto px-7 py-3 bg-transparent border border-white/30 hover:bg-white/10 rounded-lg text-white/80 text-[15px] transition-colors">Boka en demo</button>
+          </a>
         </div>
       </div>
 
@@ -601,21 +624,25 @@ export default function LandingV2() {
           <div>
             <h4 className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-3">Verktyg</h4>
             <div className="flex flex-col gap-2 text-[13px] text-muted-foreground">
-              <span>Verify</span><span>Löneanalys</span><span>Fakturagranskning</span><span>Uppdragsprognos</span>
+              <Link to="/verify-info" className="hover:text-foreground transition-colors">Verify</Link>
+              <Link to="/consultant/salary-check" className="hover:text-foreground transition-colors">Löneanalys</Link>
+              <Link to="/consultant/fakturakontroll" className="hover:text-foreground transition-colors">Fakturagranskning</Link>
+              <Link to="/uppdragsradar" className="hover:text-foreground transition-colors">Uppdragsprognos</Link>
             </div>
           </div>
           <div>
             <h4 className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-3">Företag</h4>
             <div className="flex flex-col gap-2 text-[13px] text-muted-foreground">
-              <span>Om CompCare</span>
-              <Link to="/integritetspolicy" className="hover:text-foreground">Integritetspolicy</Link>
-              <span>Villkor</span><span>Kontakt</span>
+              <Link to="/vanliga-fragor" className="hover:text-foreground transition-colors">FAQ</Link>
+              <Link to="/integritetspolicy" className="hover:text-foreground transition-colors">Integritetspolicy</Link>
+              <a href="mailto:hej@compcare.se" className="hover:text-foreground transition-colors">Kontakt</a>
             </div>
           </div>
           <div>
-            <h4 className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-3">Gemenskap</h4>
+            <h4 className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-3">För bemanningsföretag</h4>
             <div className="flex flex-col gap-2 text-[13px] text-muted-foreground">
-              <span>Facebook-grupp</span><span>Nyhetsbrev</span><span>API för bolag</span>
+              <Link to="/for-bemanningsforetag" className="hover:text-foreground transition-colors">Översikt</Link>
+              <Link to="/agency/signup" className="hover:text-foreground transition-colors">Skapa byråkonto</Link>
             </div>
           </div>
         </div>
