@@ -118,6 +118,22 @@ export default function Profile() {
           current_monthly_salary: cpData.current_monthly_salary,
         });
       }
+
+      // Fetch verification flags from profiles table
+      const { data: profileFlags } = await supabase
+        .from("profiles")
+        .select("has_bankid, has_valid_hosp, has_valid_ivo")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (profileFlags) {
+        setVerification({
+          hasBankid: !!profileFlags.has_bankid,
+          hasValidHosp: !!profileFlags.has_valid_hosp,
+          hasValidIvo: !!profileFlags.has_valid_ivo,
+        });
+      }
+
       setLoading(false);
     };
     fetchData();
