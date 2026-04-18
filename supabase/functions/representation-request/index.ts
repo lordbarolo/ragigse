@@ -140,8 +140,9 @@ Deno.serve(async (req) => {
         });
       }
 
+      // Use the safe view to avoid returning secret_token to the agency frontend
       const { data, error } = await admin
-        .from("ref_representation_requests")
+        .from("ref_representation_requests_safe")
         .select("*")
         .eq("agency_id", userId)
         .order("created_at", { ascending: false });
