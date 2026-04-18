@@ -24,13 +24,13 @@ const MODULES_ROW1 = [
     desc: "Spara legitimationer, intyg och utbildningsbevis på ett säkert ställe. Dela tillgång med länk — aldrig mer bifogade filer som du aldrig vet vart de tar vägen.",
     tag: "Ingår gratis",
     tagColor: "purple" as const,
-    iconBg: "#E0E7FF",
+    iconBg: "#EEEDFE",
     icon: (
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-        <rect x="4" y="3" width="12" height="14" rx="2" stroke="#3730A3" strokeWidth="1.2" />
-        <line x1="7" y1="7" x2="13" y2="7" stroke="#3730A3" strokeWidth="1.2" strokeLinecap="round" />
-        <line x1="7" y1="10" x2="13" y2="10" stroke="#3730A3" strokeWidth="1.2" strokeLinecap="round" />
-        <line x1="7" y1="13" x2="11" y2="13" stroke="#3730A3" strokeWidth="1.2" strokeLinecap="round" />
+        <rect x="4" y="3" width="12" height="14" rx="2" stroke="#3C3489" strokeWidth="1.2" />
+        <line x1="7" y1="7" x2="13" y2="7" stroke="#3C3489" strokeWidth="1.2" strokeLinecap="round" />
+        <line x1="7" y1="10" x2="13" y2="10" stroke="#3C3489" strokeWidth="1.2" strokeLinecap="round" />
+        <line x1="7" y1="13" x2="11" y2="13" stroke="#3C3489" strokeWidth="1.2" strokeLinecap="round" />
       </svg>
     ),
   },
@@ -39,11 +39,11 @@ const MODULES_ROW1 = [
     desc: "Du bestämmer vem som får tillgång och när. Referensgivare kan verifiera digitalt istället för att lämna samma uppgifter till flera bolag.",
     tag: "Kommer snart",
     tagColor: "muted" as const,
-    iconBg: "#E0E7FF",
+    iconBg: "#EEEDFE",
     icon: (
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-        <circle cx="10" cy="10" r="6" stroke="#3730A3" strokeWidth="1.2" />
-        <path d="M10 7v3l2 2" stroke="#3730A3" strokeWidth="1.2" strokeLinecap="round" />
+        <circle cx="10" cy="10" r="6" stroke="#3C3489" strokeWidth="1.2" />
+        <path d="M10 7v3l2 2" stroke="#3C3489" strokeWidth="1.2" strokeLinecap="round" />
       </svg>
     ),
   },
@@ -81,12 +81,12 @@ const MODULES_ROW2 = [
     desc: "Öka chanserna att få uppdragen du verkligen vill ha. Se prognoser utifrån uppdrag som publicerats historiskt i din region och specialitet. Vi har analyserat 5 års historik och över 30 000 bemanningsuppdrag. ",
     tag: "Beta",
     tagColor: "purple" as const,
-    iconBg: "#E0E7FF",
+    iconBg: "#EEEDFE",
     icon: (
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-        <circle cx="8" cy="8" r="4" stroke="#3730A3" strokeWidth="1.2" />
-        <circle cx="14" cy="13" r="3" stroke="#3730A3" strokeWidth="1.2" />
-        <line x1="11" y1="9" x2="12" y2="10" stroke="#3730A3" strokeWidth="1.2" strokeLinecap="round" />
+        <circle cx="8" cy="8" r="4" stroke="#3C3489" strokeWidth="1.2" />
+        <circle cx="14" cy="13" r="3" stroke="#3C3489" strokeWidth="1.2" />
+        <line x1="11" y1="9" x2="12" y2="10" stroke="#3C3489" strokeWidth="1.2" strokeLinecap="round" />
       </svg>
     ),
   },
@@ -115,16 +115,16 @@ const PLANS = [
     price: "0 kr",
     unit: " /mån",
     headline: "Grunden — för alltid",
-    headlineColor: "text-[#4F46E5]",
+    headlineColor: "text-[#534AB7]",
     subheadline: "Inga kreditkort",
     desc: "Dokumentvalvet, referensplattformen och en kostnadsfri löneanalys. Få full koll utan kostnad — alltid.",
     features: ["Dokumentvalvet", "Referensplattformen", "En kostnadsfri löneanalys", "Bemanningsbolagens pris mot region", "Ingen tidsbegränsning"],
     cta: "Kom igång",
     href: "/registrera",
     bg: "bg-[#EFEDFA]",
-    border: "border-[#4F46E5]/20",
-    iconBg: "bg-[#4F46E5]/10 text-[#3730A3]",
-    btnClass: "bg-transparent border border-[#4F46E5]/40 text-[#3730A3] hover:bg-[#4F46E5]/5",
+    border: "border-[#534AB7]/20",
+    iconBg: "bg-[#534AB7]/10 text-[#3C3489]",
+    btnClass: "bg-transparent border border-[#534AB7]/40 text-[#3C3489] hover:bg-[#534AB7]/5",
     badge: null,
     featured: false,
   },
@@ -178,7 +178,7 @@ const TESTIMONIALS = [
 
 /* ───────────────────── helpers ─────────────────── */
 const TAG_COLORS: Record<string, string> = {
-  purple: "bg-[#E0E7FF] text-[#3730A3] border-[rgba(83,74,183,0.2)]",
+  purple: "bg-[#EEEDFE] text-[#3C3489] border-[rgba(83,74,183,0.2)]",
   amber: "bg-[#FAEEDA] text-[#854F0B] border-[rgba(186,117,23,0.2)]",
   blue: "bg-[#E6F1FB] text-[#185FA5] border-[rgba(24,95,165,0.2)]",
   green: "bg-[#EAF3DE] text-[#3B6D11] border-[rgba(59,109,17,0.2)]",
@@ -203,7 +203,7 @@ export default function LandingV2() {
       {/* ── Nav ─────────────────────────────── */}
       <nav className="flex items-center justify-between px-6 lg:px-10 h-[60px] bg-white border-b border-border/40">
         <div className="flex items-center gap-2 text-lg font-medium tracking-tight">
-          <span className="w-2 h-2 rounded-full bg-[#4F46E5]" />
+          <span className="w-2 h-2 rounded-full bg-[#534AB7]" />
           CompCare
         </div>
         <div className="hidden md:flex gap-6">
@@ -275,7 +275,7 @@ export default function LandingV2() {
           <HeroRateLookup />
           <div className="mt-4 flex justify-center">
             <Link to="/registrera">
-              <button className="px-6 py-3 bg-[#4F46E5] hover:bg-[#5e54c8] rounded-lg text-white text-[15px] font-medium whitespace-nowrap min-h-[44px]">
+              <button className="px-6 py-3 bg-[#534AB7] hover:bg-[#3C3489] rounded-lg text-white text-[15px] font-medium whitespace-nowrap min-h-[44px]">
                 Har du rätt lön? →
               </button>
             </Link>
@@ -308,7 +308,7 @@ export default function LandingV2() {
       {/* ── Modules ─────────────────────────── */}
       <section className="px-6 lg:px-14 py-20 bg-[#F2F1F8]">
         <div className="mb-[52px]">
-          <span className="inline-block text-[11px] font-semibold uppercase tracking-[0.1em] text-[#4F46E5] bg-[#E0E7FF] border border-[rgba(83,74,183,0.2)] rounded-full px-3.5 py-1 mb-4">
+          <span className="inline-block text-[11px] font-semibold uppercase tracking-[0.1em] text-[#534AB7] bg-[#EEEDFE] border border-[rgba(83,74,183,0.2)] rounded-full px-3.5 py-1 mb-4">
             Plattformen
           </span>
           <h2 className="font-serif text-[34px] font-bold leading-[1.15] tracking-tight text-foreground mb-2.5">
@@ -352,13 +352,13 @@ export default function LandingV2() {
 
       {/* ── Steps ───────────────────────────── */}
       <section className="px-6 lg:px-10 py-[72px] bg-[#ECEAF5]">
-        <p className="text-xs font-medium text-[#4F46E5] uppercase tracking-widest mb-2.5">Så funkar det</p>
+        <p className="text-xs font-medium text-[#534AB7] uppercase tracking-widest mb-2.5">Så funkar det</p>
         <h2 className="text-[30px] font-medium leading-tight tracking-tight mb-10">Fyra steg till full kontroll</h2>
         <div className="flex flex-col md:flex-row gap-0 relative">
           <div className="hidden md:block absolute top-7 left-7 right-7 h-px bg-border/40" />
           {STEPS.map((s) => (
             <div key={s.num} className="flex-1 text-center relative z-10 px-4 mb-8 md:mb-0">
-              <div className="w-14 h-14 rounded-full bg-white border border-border/60 flex items-center justify-center text-[15px] font-medium text-[#4F46E5] mx-auto mb-4">
+              <div className="w-14 h-14 rounded-full bg-white border border-border/60 flex items-center justify-center text-[15px] font-medium text-[#534AB7] mx-auto mb-4">
                 {s.num}
               </div>
               <h4 className="text-sm font-medium mb-1.5">{s.title}</h4>
@@ -392,18 +392,18 @@ export default function LandingV2() {
               <div className="bg-white border border-[#ddd] rounded-[10px] overflow-hidden shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
                 {/* Filter bar */}
                 <div className="flex items-center gap-1.5 px-3.5 py-2.5 border-b border-[#e8e8e8] bg-[#fafafa]">
-                  <button className="text-xs px-2.5 py-1 rounded-[5px] border border-[#4F46E5] bg-[#4F46E5] text-white whitespace-nowrap">Alla</button>
+                  <button className="text-xs px-2.5 py-1 rounded-[5px] border border-[#534AB7] bg-[#534AB7] text-white whitespace-nowrap">Alla</button>
                   <button className="text-xs px-2.5 py-1 rounded-[5px] border border-[#ddd] bg-white text-[#444] whitespace-nowrap flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[#f5a623] inline-block" />Ej granskade</button>
                   <button className="text-xs px-2.5 py-1 rounded-[5px] border border-[#ddd] bg-white text-[#444] whitespace-nowrap flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[#e74c3c] inline-block" />Avvikelser</button>
                   <button className="text-xs px-2.5 py-1 rounded-[5px] border border-[#ddd] bg-white text-[#444] whitespace-nowrap flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[#27ae60] inline-block" />Godkända</button>
-                  <button className="text-xs px-2.5 py-1 rounded-[5px] border border-[#ddd] bg-white text-[#444] whitespace-nowrap flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[#4F46E5] inline-block" />Fakturerade</button>
+                  <button className="text-xs px-2.5 py-1 rounded-[5px] border border-[#ddd] bg-white text-[#444] whitespace-nowrap flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[#534AB7] inline-block" />Fakturerade</button>
                 </div>
 
                 {/* Table */}
                 <table className="w-full border-collapse text-[13px]">
                   <thead>
                     <tr className="bg-[#f5f5f5] border-b border-[#e0e0e0]">
-                      <th className="py-2.5 px-3.5 text-left w-8"><input type="checkbox" className="accent-[#4F46E5] w-[13px] h-[13px]" readOnly /></th>
+                      <th className="py-2.5 px-3.5 text-left w-8"><input type="checkbox" className="accent-[#534AB7] w-[13px] h-[13px]" readOnly /></th>
                       <th className="py-2.5 px-3.5 text-left font-semibold text-[11px] text-[#666] uppercase tracking-[0.05em] whitespace-nowrap">Faktura</th>
                       <th className="py-2.5 px-3.5 text-left font-semibold text-[11px] text-[#666] uppercase tracking-[0.05em] whitespace-nowrap">Fakturerat</th>
                       <th className="py-2.5 px-3.5 text-left font-semibold text-[11px] text-[#666] uppercase tracking-[0.05em] whitespace-nowrap">Arbetat</th>
@@ -421,8 +421,8 @@ export default function LandingV2() {
                       { nr: "#7", fakt: "44 h", arb: "44 h", diff: "—", belopp: "—", ok: true, checked: false },
                     ].map((row, i) => (
                       <tr key={i} className={`border-b border-[#f0f0f0] last:border-b-0 hover:bg-[#faf9ff] ${row.ok ? "" : "bg-[#fff8f8] hover:bg-[#fff2f2]"}`}>
-                        <td className="py-[11px] px-3.5"><input type="checkbox" className="accent-[#4F46E5] w-[13px] h-[13px]" checked={row.checked} readOnly /></td>
-                        <td className="py-[11px] px-3.5 font-semibold text-[#4F46E5] whitespace-nowrap">{row.nr}</td>
+                        <td className="py-[11px] px-3.5"><input type="checkbox" className="accent-[#534AB7] w-[13px] h-[13px]" checked={row.checked} readOnly /></td>
+                        <td className="py-[11px] px-3.5 font-semibold text-[#534AB7] whitespace-nowrap">{row.nr}</td>
                         <td className="py-[11px] px-3.5 text-[#1a1a1a] whitespace-nowrap">{row.fakt}</td>
                         <td className="py-[11px] px-3.5 text-[#1a1a1a] whitespace-nowrap">{row.arb}</td>
                         <td className={`py-[11px] px-3.5 whitespace-nowrap ${row.ok ? "text-[#999]" : "text-[#c0392b] font-semibold"}`}>{row.diff}</td>
@@ -447,10 +447,10 @@ export default function LandingV2() {
           </div>
 
           {/* CTA */}
-          <Link to="/registrera" className="block w-full py-3.5 bg-[#4F46E5] hover:bg-[#5e54c8] text-white rounded-[10px] text-[15px] font-medium text-center mb-8 transition-colors">Skapa konto</Link>
+          <Link to="/registrera" className="block w-full py-3.5 bg-[#534AB7] hover:bg-[#3C3489] text-white rounded-[10px] text-[15px] font-medium text-center mb-8 transition-colors">Skapa konto</Link>
 
           {/* Copy */}
-          <p className="text-[11px] font-semibold text-[#4F46E5] uppercase tracking-[0.1em] mb-3.5">Fakturagranskning</p>
+          <p className="text-[11px] font-semibold text-[#534AB7] uppercase tracking-[0.1em] mb-3.5">Fakturagranskning</p>
           <h2 className="text-[26px] font-bold leading-[1.2] tracking-[-0.5px] mb-3 font-serif">Du har troligen pengar du inte fått</h2>
           <p className="text-[14px] text-[#444] leading-[1.7] mb-2">
             Konsulter missar i snitt 3–8% av fakturerbara timmar. Vi går igenom dina historiska fakturor och tidrapporter och identifierar utestående belopp — utan risk för dig.
@@ -462,19 +462,19 @@ export default function LandingV2() {
       {/* ── Pricing ─────────────────────────── */}
       <section id="priser" className="px-6 lg:px-10 py-[88px] bg-white">
         <div className="text-center max-w-[680px] mx-auto mb-4">
-          <span className="inline-flex items-center gap-1.5 text-[12px] font-medium text-[#4F46E5] bg-[#E0E7FF] px-3 py-1 rounded-full mb-5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#4F46E5]" />
+          <span className="inline-flex items-center gap-1.5 text-[12px] font-medium text-[#534AB7] bg-[#EEEDFE] px-3 py-1 rounded-full mb-5">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#534AB7]" />
             Outcome as a Service
           </span>
           <h2 className="text-[32px] md:text-[40px] font-bold leading-[1.15] tracking-tight mb-4 font-serif">
-            Inga plattformsavgifter. <span className="text-[#4F46E5]">Betala för värde.</span>
+            Inga plattformsavgifter. <span className="text-[#534AB7]">Betala för värde.</span>
           </h2>
           <p className="text-[15px] text-[#555] leading-relaxed max-w-[560px] mx-auto">
             Till skillnad från traditionella lösningar med dyra licenser och dolda avgifter binder vi vår framgång vid din. Inga månadsabonnemang du inte använder. Ingen avgift per användare.
           </p>
           <div className="inline-flex items-center gap-3 mt-6 px-4 py-2 rounded-full bg-[#F5F4FA] text-[13px]">
             <span className="line-through text-muted-foreground">Traditionellt: 1 200 kr/mån</span>
-            <span className="font-semibold text-[#4F46E5]">CompCare: 0 kr i grundavgift</span>
+            <span className="font-semibold text-[#534AB7]">CompCare: 0 kr i grundavgift</span>
           </div>
         </div>
 
@@ -533,7 +533,7 @@ export default function LandingV2() {
 
         <p className="text-center text-[13px] text-muted-foreground mt-10">
           Osäker på vilken modell som passar?{" "}
-          <Link to="/consultant/forhandla" className="text-[#4F46E5] font-medium underline-offset-2 hover:underline">Chatta med vår AI</Link>
+          <Link to="/consultant/forhandla" className="text-[#534AB7] font-medium underline-offset-2 hover:underline">Chatta med vår AI</Link>
         </p>
       </section>
 
@@ -541,7 +541,7 @@ export default function LandingV2() {
 
       {/* ── Testimonials ────────────────────── */}
       <section className="px-6 lg:px-10 py-[72px] bg-white">
-        <p className="text-xs font-medium text-[#4F46E5] uppercase tracking-widest mb-2.5">Vad konsulter säger</p>
+        <p className="text-xs font-medium text-[#534AB7] uppercase tracking-widest mb-2.5">Vad konsulter säger</p>
         <h2 className="text-[30px] font-medium leading-tight tracking-tight mb-10">Byggt med, och för, er</h2>
         <div className="grid md:grid-cols-3 gap-4">
           {TESTIMONIALS.map((t) => (
@@ -549,7 +549,7 @@ export default function LandingV2() {
               <div className="text-[13px] text-[#EF9F27] mb-3">★★★★★</div>
               <p className="text-sm text-muted-foreground leading-relaxed italic mb-4">"{t.quote}"</p>
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-full bg-[#E0E7FF] flex items-center justify-center text-[13px] font-medium text-[#3730A3]">{t.initials}</div>
+                <div className="w-9 h-9 rounded-full bg-[#EEEDFE] flex items-center justify-center text-[13px] font-medium text-[#3C3489]">{t.initials}</div>
                 <div>
                   <div className="text-[13px] font-medium">{t.name}</div>
                   <div className="text-xs text-muted-foreground">{t.role}</div>
@@ -566,7 +566,7 @@ export default function LandingV2() {
         <p className="text-base text-white/60 mb-7">Gratis konto. Inga kreditkort. Kom igång på 30 sekunder.</p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link to="/registrera">
-            <button className="w-full sm:w-auto px-8 py-3 bg-[#4F46E5] hover:bg-[#5e54c8] rounded-lg text-white text-[15px] font-medium transition-colors">Skapa konto gratis</button>
+            <button className="w-full sm:w-auto px-8 py-3 bg-[#534AB7] hover:bg-[#3C3489] rounded-lg text-white text-[15px] font-medium transition-colors">Skapa konto gratis</button>
           </Link>
           <a href="mailto:hej@compcare.se?subject=Boka%20demo%20av%20CompCare">
             <button className="w-full sm:w-auto px-7 py-3 bg-transparent border border-white/30 hover:bg-white/10 rounded-lg text-white/80 text-[15px] transition-colors">Boka en demo</button>
@@ -579,7 +579,7 @@ export default function LandingV2() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
           <div>
             <div className="flex items-center gap-2 text-lg font-medium tracking-tight mb-2.5">
-              <span className="w-2 h-2 rounded-full bg-[#4F46E5]" />
+              <span className="w-2 h-2 rounded-full bg-[#534AB7]" />
               CompCare
             </div>
             <p className="text-[13px] text-muted-foreground leading-relaxed max-w-[220px]">
