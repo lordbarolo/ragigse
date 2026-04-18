@@ -45,11 +45,22 @@ interface ProfileData {
   current_monthly_salary: number | null;
 }
 
+interface VerificationFlags {
+  hasBankid: boolean;
+  hasValidHosp: boolean;
+  hasValidIvo: boolean;
+}
+
 export default function Profile() {
   const { user, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
   const [reports, setReports] = useState<ReportRow[]>([]);
   const [profile, setProfile] = useState<ProfileData | null>(null);
+  const [verification, setVerification] = useState<VerificationFlags>({
+    hasBankid: false,
+    hasValidHosp: false,
+    hasValidIvo: false,
+  });
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
 
