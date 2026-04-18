@@ -50,7 +50,7 @@ const nurseValueMap: Record<string, string> = {
   "Psykiatrisjuksköterska": "Specialistsjuksköterska psykiatrisk vård",
   "Geriatriksjuksköterska": "Specialistsjuksköterska vård av äldre",
   "Ögonsjuksköterska": "Specialistsjuksköterska ögonsjukvård",
-];
+};
 
 function resolveYrke(category: RoleGroup, dropdownValue: string): string {
   if (category === "lakare") {
