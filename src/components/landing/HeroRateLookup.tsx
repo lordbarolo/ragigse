@@ -77,12 +77,11 @@ const DOCTOR_SPECIALTIES = [
 const GROUP_A_SPECIALTIES = new Set([
   "Akutsjukvård",
   "Anestesi och intensivvård",
-  "Barn- och ungdomskirurgi",
   "Handkirurgi",
   "Kirurgi",
   "Kärlkirurgi",
   "Neurokirurgi",
-  "Obstetrik och gynekologi",
+  "Obstetrik/gynekologi",
   "Ortopedi",
   "Plastikkirurgi",
   "Thoraxkirurgi",
