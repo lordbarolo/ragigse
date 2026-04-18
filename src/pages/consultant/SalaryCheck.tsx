@@ -7,6 +7,7 @@ import Survey from "@/components/Survey";
 import handPhoneImage from "@/assets/hand-phone.png";
 import CompcareLogo from "@/components/CompcareLogo";
 import ThemeToggle from "@/components/ThemeToggle";
+import MissionSection from "@/components/landing/MissionSection";
 
 const faqJsonLd = {
   "@context": "https://schema.org",
@@ -92,7 +93,6 @@ export default function SalaryCheck() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppJsonLd) }} />
 
-      {/* ── Header ─────────────────────────────────── */}
       <header className="border-b border-border bg-card/80 backdrop-blur sticky top-0 z-50">
         <div className="max-w-5xl mx-auto flex items-center justify-between px-6 h-14">
           <Link to="/">
@@ -107,27 +107,22 @@ export default function SalaryCheck() {
         </div>
       </header>
 
-      {/* ── Hero: Löneförhandling ── */}
       <section className="relative overflow-hidden bg-background">
         <div className="relative mx-auto max-w-3xl px-6 pt-16 pb-14 md:pt-20 md:pb-16">
           <div className="flex flex-col">
-            {/* Badge */}
             <div className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-3.5 py-1.5 text-[13px] font-medium text-primary backdrop-blur-xl">
               <span className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_14px_hsl(var(--primary)/0.5)]" />
               För sjuksköterskor och läkare i bemanning
             </div>
 
-            {/* Heading */}
             <h1 className="text-[2.25rem] font-bold leading-[1.05] tracking-[-0.035em] text-foreground sm:text-5xl lg:text-[3.5rem]">
               Din nästa löneförhandling börjar här.
             </h1>
 
-            {/* Body */}
             <p className="mt-4 max-w-lg text-[15px] leading-[1.7] text-muted-foreground sm:text-base lg:text-[17px]">
               Gå inte in i nästa samtal med en magkänsla – gå in med data. Vi har kartlagt de faktiska avtalspriserna för 21 regioner och 290 kommuner. Genom att jämföra din nuvarande ersättning mot marknadens realitet ser du direkt om du ligger rätt eller om du har förhandlingsutrymme.
             </p>
 
-            {/* CTA */}
             <div className="mt-6">
               <button
                 onClick={handleStartSurvey}
@@ -137,10 +132,8 @@ export default function SalaryCheck() {
               </button>
             </div>
 
-            {/* Trust line */}
             <p className="mt-4 text-sm text-muted-foreground lg:text-[15px]">Informationen hämtas från offentliga avtal och branschens genomsnittsmarginaler.</p>
 
-            {/* Bullet cards */}
             <div className="mt-8 space-y-2">
               {[
                 { title: "Transparens:", text: "Se rätt avtalsinnehåll och lönenivå för din roll" },
@@ -161,7 +154,7 @@ export default function SalaryCheck() {
         </div>
       </section>
 
-      {/* Sections below temporarily hidden */}
+      <MissionSection />
     </div>
   );
 }
