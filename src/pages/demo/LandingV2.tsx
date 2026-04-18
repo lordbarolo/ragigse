@@ -266,7 +266,7 @@ export default function LandingV2() {
             Din <span className="text-[#AFA9EC]">tid.</span><br />Din karriär.<br />Dina villkor.
           </h1>
           <p className="text-lg text-white/[0.78] leading-relaxed mb-6 max-w-[520px]">
-            Rätt ersättning, rätt kontrakt och rätt fakturering— Din partner före, under och efter uppdraget
+            Rätt ersättning, rätt kontrakt och rätt fakturering— Ai optimerad för vårdbemanning
           </p>
         </div>
 
