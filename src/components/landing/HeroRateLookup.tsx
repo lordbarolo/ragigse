@@ -17,6 +17,113 @@ interface Location {
   region: string;
 }
 
+// All 63 doctor specializations per Socialstyrelsen — alphabetical
+const DOCTOR_SPECIALTIES = [
+  "Akutsjukvård",
+  "Allergologi",
+  "Allmänmedicin",
+  "Anestesi och intensivvård",
+  "Arbetsmedicin",
+  "Arbets- och miljömedicin",
+  "Barn- och ungdomsallergologi",
+  "Barn- och ungdomshematologi och onkologi",
+  "Barn- och ungdomskardiologi",
+  "Barn- och ungdomskirurgi",
+  "Barn- och ungdomsmedicin",
+  "Barn- och ungdomsneurologi med habilitering",
+  "Barn- och ungdomspsykiatri",
+  "Beroendemedicin",
+  "Endokrinologi och diabetologi",
+  "Geriatrik",
+  "Gynekologisk onkologi",
+  "Handkirurgi",
+  "Hematologi",
+  "Hud- och könssjukdomar",
+  "Hörsel- och balansrubbningar",
+  "Infektionssjukdomar",
+  "Internmedicin",
+  "Kardiologi",
+  "Kirurgi",
+  "Klinisk farmakologi",
+  "Klinisk fysiologi",
+  "Klinisk genetik",
+  "Klinisk immunologi och transfusionsmedicin",
+  "Klinisk kemi",
+  "Klinisk mikrobiologi",
+  "Klinisk neurofysiologi",
+  "Klinisk patologi",
+  "Kärlkirurgi",
+  "Lungsjukdomar",
+  "Medicinsk gastroenterologi och hepatologi",
+  "Neonatologi",
+  "Neurokirurgi",
+  "Neurologi",
+  "Neuroradiologi",
+  "Njurmedicin",
+  "Nuklearmedicin",
+  "Obstetrik och gynekologi",
+  "Onkologi",
+  "Ortopedi",
+  "Palliativ medicin",
+  "Plastikkirurgi",
+  "Psykiatri",
+  "Radiologi",
+  "Rehabiliteringsmedicin",
+  "Reumatologi",
+  "Rättsmedicin",
+  "Rättspsykiatri",
+  "Röst- och talrubbningar",
+  "Skolhälsovård",
+  "Smärtlindring",
+  "Socialmedicin",
+  "Thoraxkirurgi",
+  "Urologi",
+  "Vårdhygien",
+  "Äldrepsykiatri",
+  "Ögonsjukdomar",
+  "Öron-, näs- och halssjukdomar",
+];
+
+// SKR 2026: Grupp A = tunga akut/operativa specialiteter. Övriga = Grupp B.
+const GROUP_A_SPECIALTIES = new Set([
+  "Akutsjukvård",
+  "Anestesi och intensivvård",
+  "Barn- och ungdomskirurgi",
+  "Handkirurgi",
+  "Kirurgi",
+  "Kärlkirurgi",
+  "Neurokirurgi",
+  "Obstetrik och gynekologi",
+  "Ortopedi",
+  "Plastikkirurgi",
+  "Thoraxkirurgi",
+  "Urologi",
+]);
+
+// Map nurse role → DB yrkeskategori (Grundpris). Empty string = use generic nurse rate if exists.
+const NURSE_ROLES = [
+  { value: "Sjuksköterska", label: "Sjuksköterska (allmän)" },
+  { value: "Specialistsjuksköterska anestesi", label: "Anestesisjuksköterska" },
+  { value: "Specialistsjuksköterska intensivvård", label: "IVA-sjuksköterska" },
+  { value: "Specialistsjuksköterska operationssjukvård", label: "Operationssjuksköterska" },
+  { value: "Specialistsjuksköterska akutsjukvård", label: "Akutsjuksköterska" },
+  { value: "Specialistsjuksköterska ambulanssjukvård", label: "Ambulanssjuksköterska" },
+  { value: "Specialistsjuksköterska barn och ungdom", label: "Barnsjuksköterska" },
+  { value: "Specialistsjuksköterska psykiatrisk vård", label: "Psykiatrisjuksköterska" },
+  { value: "Specialistsjuksköterska vård av äldre", label: "Geriatriksjuksköterska" },
+  { value: "Specialistsjuksköterska kirurgisk vård", label: "Kirurgsjuksköterska" },
+  { value: "Specialistsjuksköterska medicinsk vård", label: "Medicinsjuksköterska" },
+  { value: "Specialistsjuksköterska onkologisk vård", label: "Onkologisjuksköterska" },
+  { value: "Specialistsjuksköterska hjärtsjukvård", label: "Hjärtsjuksköterska" },
+  { value: "Specialistsjuksköterska infektionssjukvård", label: "Infektionssjuksköterska" },
+  { value: "Specialistsjuksköterska diabetesvård", label: "Diabetessjuksköterska" },
+  { value: "Specialistsjuksköterska palliativ vård", label: "Palliativsjuksköterska" },
+  { value: "Specialistsjuksköterska ögonsjukvård", label: "Ögonsjuksköterska" },
+  { value: "Specialistsjuksköterska företagshälsovård", label: "Företagssköterska" },
+  { value: "Barnmorska", label: "Barnmorska" },
+  { value: "Röntgensjuksköterska", label: "Röntgensjuksköterska" },
+];
+
 /**
  * Hero rate lookup — visitor picks role + location and sees the framework price
  * the region pays staffing companies. Uses public SKR rates (v1.6/v1.7 active).
@@ -49,38 +156,21 @@ export default function HeroRateLookup() {
     };
   }, []);
 
-  // Map DB role names to natural Swedish forms for display
-  const roleLabelOverrides: Record<string, string> = {
-    "Specialistsjuksköterska akutsjukvård": "Akutsjuksköterska",
-    "Specialistsjuksköterska ambulanssjukvård": "Ambulanssjuksköterska",
-    "Specialistsjuksköterska anestesi": "Anestesisjuksköterska",
-    "Specialistsjuksköterska barn och ungdom": "Barnsjuksköterska",
-    "Specialistsjuksköterska diabetesvård": "Diabetessjuksköterska",
-    "Specialistsjuksköterska företagshälsovård": "Företagssköterska",
-    "Specialistsjuksköterska hjärtsjukvård": "Hjärtsjuksköterska",
-    "Specialistsjuksköterska infektionssjukvård": "Infektionssjuksköterska",
-    "Specialistsjuksköterska intensivvård": "IVA-sjuksköterska",
-    "Specialistsjuksköterska kirurgisk vård": "Kirurgsjuksköterska",
-    "Specialistsjuksköterska medicinsk vård": "Medicinsjuksköterska",
-    "Specialistsjuksköterska onkologisk vård": "Onkologisjuksköterska",
-    "Specialistsjuksköterska operationssjukvård": "Operationssjuksköterska",
-    "Specialistsjuksköterska palliativ vård": "Palliativsjuksköterska",
-    "Specialistsjuksköterska psykiatrisk vård": "Psykiatrisjuksköterska",
-    "Specialistsjuksköterska vård av äldre": "Geriatriksjuksköterska",
-    "Specialistsjuksköterska ögonsjukvård": "Ögonsjuksköterska",
-  };
-
+  // Build options: doctors (Leg + 63 specialties alphabetical) + nurses
   const roleOptions: Option[] = useMemo(() => {
-    const unique = Array.from(new Set(rates.map((r) => r.yrkeskategori)))
-      .filter((r) => !r.startsWith("OB-tillägg"))
-      .sort((a, b) => a.localeCompare(b, "sv"));
-    return unique.map((r) => {
-      const group = r.startsWith("Specialistläkare") || r === "Legitimerad läkare"
-        ? "Läkare"
-        : "Sjuksköterskor";
-      return { value: r, label: roleLabelOverrides[r] ?? r, group };
-    });
-  }, [rates]);
+    const doctorOpts: Option[] = [
+      { value: "__leg_lakare", label: "Leg. läkare", group: "Läkare" },
+      ...DOCTOR_SPECIALTIES.map((s) => ({
+        value: `__spec__${s}`,
+        label: s,
+        group: "Specialistläkare",
+      })),
+    ];
+    const nurseOpts: Option[] = NURSE_ROLES
+      .map((n) => ({ value: n.value, label: n.label, group: "Sjuksköterskor" }))
+      .sort((a, b) => a.label.localeCompare(b.label, "sv"));
+    return [...doctorOpts, ...nurseOpts];
+  }, []);
 
   const kommunOptions: Option[] = useMemo(
     () =>
@@ -90,14 +180,35 @@ export default function HeroRateLookup() {
     [locations]
   );
 
+  // Resolve selected role → DB yrkeskategori for price lookup
+  const resolvedRole = useMemo(() => {
+    if (!role) return null;
+    if (role === "__leg_lakare") return { db: "Legitimerad läkare", display: "Leg. läkare" };
+    if (role.startsWith("__spec__")) {
+      const specialty = role.slice("__spec__".length);
+      const group = GROUP_A_SPECIALTIES.has(specialty) ? "A" : "B";
+      const db = `Specialistläkare Grupp ${group}`;
+      return { db, display: `${specialty} (Grupp ${group})` };
+    }
+    // Nurse role — DB value === role
+    const nurse = NURSE_ROLES.find((n) => n.value === role);
+    return { db: role, display: nurse?.label ?? role };
+  }, [role]);
+
   const result = useMemo(() => {
-    if (!role || !kommun) return null;
+    if (!resolvedRole || !kommun) return null;
     const loc = locations.find((l) => l.kommun === kommun);
     if (!loc) return null;
-    const rate = rates.find((r) => r.yrkeskategori === role && r.zon === loc.zon);
+    const rate = rates.find((r) => r.yrkeskategori === resolvedRole.db && r.zon === loc.zon);
     if (!rate) return null;
-    return { price: rate.timpris_kund, zon: loc.zon, region: loc.region, kommun };
-  }, [role, kommun, rates, locations]);
+    return {
+      price: rate.timpris_kund,
+      zon: loc.zon,
+      region: loc.region,
+      kommun,
+      display: resolvedRole.display,
+    };
+  }, [resolvedRole, kommun, rates, locations]);
 
   return (
     <div className="bg-card border border-border rounded-2xl p-5 md:p-6 shadow-xl shadow-black/20 max-w-2xl mx-auto text-left">
@@ -136,7 +247,7 @@ export default function HeroRateLookup() {
       {result && (
         <div className="mt-4 rounded-xl bg-primary/5 border border-primary/20 p-4">
           <p className="text-xs text-muted-foreground mb-1">
-            Ramavtalspris {result.kommun} · {result.zon} · {result.region}
+            {result.display} · Ramavtalspris {result.kommun} · {result.zon} · {result.region}
           </p>
           <div className="flex items-baseline justify-between gap-3 flex-wrap">
             <div>
