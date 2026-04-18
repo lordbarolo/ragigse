@@ -24,31 +24,31 @@ const TOP_DOCTOR_SPECIALTIES = [
 ];
 
 const TOP_NURSE_SPECIALIZATIONS = [
-  "Intensivvård", "Psykiatrisk vård", "Ambulanssjukvård",
-  "Barn och ungdom", "Operationssjukvård", "Anestesisjukvård",
-  "Akutsjukvård", "Hjärtsjukvård", "Distriktssköterska",
-  "Kirurgisk vård", "Palliativ vård", "Vård av äldre",
-  "Medicinsk vård", "Onkologi", "Infektionssjukvård",
+  "IVA-sjuksköterska", "Psykiatrisjuksköterska", "Ambulanssjuksköterska",
+  "Barnsjuksköterska", "Operationssjuksköterska", "Anestesisjuksköterska",
+  "Akutsjuksköterska", "Hjärtsjuksköterska", "Distriktssjuksköterska",
+  "Kirurgsjuksköterska", "Palliativsjuksköterska", "Geriatriksjuksköterska",
+  "Medicinsjuksköterska", "Onkologisjuksköterska", "Infektionssjuksköterska",
 ];
 
 const nurseValueMap: Record<string, string> = {
-  "Akutsjukvård": "Specialistsjuksköterska akutsjukvård",
-  "Ambulanssjukvård": "Specialistsjuksköterska ambulanssjukvård",
-  "Anestesisjukvård": "Specialistsjuksköterska anestesi",
-  "Barn och ungdom": "Specialistsjuksköterska barn och ungdom",
-  "Diabetesvård": "Specialistsjuksköterska diabetesvård",
-  "Distriktssköterska": "Distriktssjuksköterska",
-  "Hjärtsjukvård": "Specialistsjuksköterska hjärtsjukvård",
-  "Infektionssjukvård": "Specialistsjuksköterska infektionssjukvård",
-  "Intensivvård": "Specialistsjuksköterska intensivvård",
-  "Kirurgisk vård": "Specialistsjuksköterska kirurgisk vård",
-  "Medicinsk vård": "Specialistsjuksköterska medicinsk vård",
-  "Onkologi": "Specialistsjuksköterska onkologisk vård",
-  "Operationssjukvård": "Specialistsjuksköterska operationssjukvård",
-  "Palliativ vård": "Specialistsjuksköterska palliativ vård",
-  "Psykiatrisk vård": "Specialistsjuksköterska psykiatrisk vård",
-  "Vård av äldre": "Specialistsjuksköterska vård av äldre",
-  "Ögonsjukvård": "Specialistsjuksköterska ögonsjukvård",
+  "Akutsjuksköterska": "Specialistsjuksköterska akutsjukvård",
+  "Ambulanssjuksköterska": "Specialistsjuksköterska ambulanssjukvård",
+  "Anestesisjuksköterska": "Specialistsjuksköterska anestesi",
+  "Barnsjuksköterska": "Specialistsjuksköterska barn och ungdom",
+  "Diabetessjuksköterska": "Specialistsjuksköterska diabetesvård",
+  "Distriktssjuksköterska": "Distriktssjuksköterska",
+  "Hjärtsjuksköterska": "Specialistsjuksköterska hjärtsjukvård",
+  "Infektionssjuksköterska": "Specialistsjuksköterska infektionssjukvård",
+  "IVA-sjuksköterska": "Specialistsjuksköterska intensivvård",
+  "Kirurgsjuksköterska": "Specialistsjuksköterska kirurgisk vård",
+  "Medicinsjuksköterska": "Specialistsjuksköterska medicinsk vård",
+  "Onkologisjuksköterska": "Specialistsjuksköterska onkologisk vård",
+  "Operationssjuksköterska": "Specialistsjuksköterska operationssjukvård",
+  "Palliativsjuksköterska": "Specialistsjuksköterska palliativ vård",
+  "Psykiatrisjuksköterska": "Specialistsjuksköterska psykiatrisk vård",
+  "Geriatriksjuksköterska": "Specialistsjuksköterska vård av äldre",
+  "Ögonsjuksköterska": "Specialistsjuksköterska ögonsjukvård",
 };
 
 function resolveYrke(category: RoleGroup, dropdownValue: string): string {
