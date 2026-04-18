@@ -125,7 +125,7 @@ export default function MissionSection() {
             count={100}
             suffix="+"
             subtitle="Ledande uppdragsgivare"
-            body="Uppdragsgivare"
+            body="Dela papper utan att bifoga, använd befintliga & verifierade referenser"
             cta="Jag är bemanningsbolag"
             href="/for-bemanningsforetag"
           />
