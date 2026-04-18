@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import CompcareLogo from "@/components/CompcareLogo";
 import ThemeToggle from "@/components/ThemeToggle";
 import HeroRateLookup from "@/components/landing/HeroRateLookup";
+import MissionSection from "@/components/landing/MissionSection";
 import { trackEvent } from "@/lib/trackEvent";
 
 const platformJsonLd = {
@@ -126,8 +127,11 @@ export default function Index() {
         <div className="absolute bottom-0 left-0 right-0 h-[200px] bg-gradient-to-t from-background to-transparent" />
       </section>
 
+      {/* ── Mission Section ────────────────────────────── */}
+      <MissionSection />
+
       {/* ── Three Pillars ──────────────────────────────── */}
-      <section className="max-w-6xl mx-auto px-6 -mt-12 relative z-20 pb-20" aria-label="Tjänster">
+      <section className="max-w-6xl mx-auto px-6 pt-8 relative z-20 pb-20" aria-label="Tjänster">
         <div className="grid md:grid-cols-3 gap-6">
           {PILLARS.map((pillar) => (
             <article
