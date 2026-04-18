@@ -90,7 +90,7 @@ export default function MissionSection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: "-100px" }}
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-          className="text-center text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight text-foreground mb-16 md:mb-20"
+          className="text-center text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight text-[#0F1A2E] mb-16 md:mb-20"
         >
           Vilket uppdrag väljer du?
         </motion.h2>
