@@ -49,6 +49,27 @@ export default function HeroRateLookup() {
     };
   }, []);
 
+  // Map DB role names to natural Swedish forms for display
+  const roleLabelOverrides: Record<string, string> = {
+    "Specialistsjuksköterska akutsjukvård": "Akutsjuksköterska",
+    "Specialistsjuksköterska ambulanssjukvård": "Ambulanssjuksköterska",
+    "Specialistsjuksköterska anestesi": "Anestesisjuksköterska",
+    "Specialistsjuksköterska barn och ungdom": "Barnsjuksköterska",
+    "Specialistsjuksköterska diabetesvård": "Diabetessjuksköterska",
+    "Specialistsjuksköterska företagshälsovård": "Företagssköterska",
+    "Specialistsjuksköterska hjärtsjukvård": "Hjärtsjuksköterska",
+    "Specialistsjuksköterska infektionssjukvård": "Infektionssjuksköterska",
+    "Specialistsjuksköterska intensivvård": "IVA-sjuksköterska",
+    "Specialistsjuksköterska kirurgisk vård": "Kirurgsjuksköterska",
+    "Specialistsjuksköterska medicinsk vård": "Medicinsjuksköterska",
+    "Specialistsjuksköterska onkologisk vård": "Onkologisjuksköterska",
+    "Specialistsjuksköterska operationssjukvård": "Operationssjuksköterska",
+    "Specialistsjuksköterska palliativ vård": "Palliativsjuksköterska",
+    "Specialistsjuksköterska psykiatrisk vård": "Psykiatrisjuksköterska",
+    "Specialistsjuksköterska vård av äldre": "Geriatriksjuksköterska",
+    "Specialistsjuksköterska ögonsjukvård": "Ögonsjuksköterska",
+  };
+
   const roleOptions: Option[] = useMemo(() => {
     const unique = Array.from(new Set(rates.map((r) => r.yrkeskategori)))
       .filter((r) => !r.startsWith("OB-tillägg"))
@@ -57,7 +78,7 @@ export default function HeroRateLookup() {
       const group = r.startsWith("Specialistläkare") || r === "Legitimerad läkare"
         ? "Läkare"
         : "Sjuksköterskor";
-      return { value: r, label: r, group };
+      return { value: r, label: roleLabelOverrides[r] ?? r, group };
     });
   }, [rates]);
 
