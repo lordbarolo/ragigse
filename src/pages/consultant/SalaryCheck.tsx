@@ -8,6 +8,7 @@ import handPhoneImage from "@/assets/hand-phone.png";
 import CompcareLogo from "@/components/CompcareLogo";
 import ThemeToggle from "@/components/ThemeToggle";
 import MissionSection from "@/components/landing/MissionSection";
+import Steps from "@/components/landing/Steps";
 
 const faqJsonLd = {
   "@context": "https://schema.org",
@@ -155,6 +156,7 @@ export default function SalaryCheck() {
       </section>
 
       <MissionSection />
+      <Steps />
     </div>
   );
 }
