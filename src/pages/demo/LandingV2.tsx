@@ -6,9 +6,8 @@ import HeroRateLookup from "@/components/landing/HeroRateLookup";
 /* ───────────────────── data ───────────────────── */
 const NAV_LINKS: { label: string; href: string; external?: boolean }[] = [
   { label: "Verktyg", href: "#verktyg" },
-  { label: "Löneanalys", href: "/consultant/salary-check", external: true },
+  { label: "Löneanalys", href: "/", external: true },
   { label: "Fakturagranskning", href: "/consultant/fakturakontroll", external: true },
-  { label: "Uppdragsprognos", href: "/uppdragsradar", external: true },
   { label: "Priser", href: "#priser" },
   { label: "FAQ", href: "/vanliga-fragor", external: true },
 ];
@@ -625,9 +624,9 @@ export default function LandingV2() {
             <h4 className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-3">Verktyg</h4>
             <div className="flex flex-col gap-2 text-[13px] text-muted-foreground">
               <Link to="/verify-info" className="hover:text-foreground transition-colors">Verify</Link>
-              <Link to="/consultant/salary-check" className="hover:text-foreground transition-colors">Löneanalys</Link>
+              <Link to="/" className="hover:text-foreground transition-colors">Löneanalys</Link>
               <Link to="/consultant/fakturakontroll" className="hover:text-foreground transition-colors">Fakturagranskning</Link>
-              <Link to="/uppdragsradar" className="hover:text-foreground transition-colors">Uppdragsprognos</Link>
+              <Link to="/consultant/forhandla" className="hover:text-foreground transition-colors">Löneassistent</Link>
             </div>
           </div>
           <div>
@@ -642,7 +641,7 @@ export default function LandingV2() {
             <h4 className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-3">För bemanningsföretag</h4>
             <div className="flex flex-col gap-2 text-[13px] text-muted-foreground">
               <Link to="/for-bemanningsforetag" className="hover:text-foreground transition-colors">Översikt</Link>
-              <Link to="/agency/signup" className="hover:text-foreground transition-colors">Skapa byråkonto</Link>
+              <Link to="/registrera/bemanning" className="hover:text-foreground transition-colors">Skapa byråkonto</Link>
             </div>
           </div>
         </div>
