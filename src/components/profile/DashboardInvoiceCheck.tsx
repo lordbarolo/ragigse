@@ -14,7 +14,7 @@ export default function DashboardInvoiceCheck() {
       </CardHeader>
       <CardContent>
         <p className="text-sm text-muted-foreground mb-4">
-          Se till att dina fakturor innehåller alla timmar du har jobbat. Vi granskar mot ramavtalets priser.
+          Se till att dina fakturor innehåller alla timmar du har jobbat. Stärkt av Ai-analys kan vi säkerställa att du fått rätt betalt de senaste åren.
         </p>
         <Link to="/consultant/fakturakontroll/ny">
           <Button variant="outline" size="sm" className="gap-1.5">
