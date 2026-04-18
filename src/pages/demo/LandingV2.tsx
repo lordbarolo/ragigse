@@ -38,8 +38,8 @@ const MODULES_ROW1 = [
   {
     title: "Referensplattformen",
     desc: "Du bestämmer vem som får tillgång och när. Referensgivare kan verifiera digitalt istället för att lämna samma uppgifter till flera bolag.",
-    tag: "Ingår gratis",
-    tagColor: "purple" as const,
+    tag: "Kommer snart",
+    tagColor: "muted" as const,
     iconBg: "#EEEDFE",
     icon: (
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
