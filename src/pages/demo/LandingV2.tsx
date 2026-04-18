@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import HeroRateLookup from "@/components/landing/HeroRateLookup";
@@ -199,8 +198,6 @@ function FlowArrow() {
 
 /* ───────────────────── component ──────────────── */
 export default function LandingV2() {
-  const [heroEmail, setHeroEmail] = useState("");
-
   return (
     <div className="w-full bg-[#F2F1F8] text-foreground font-sans">
       {/* ── Nav ─────────────────────────────── */}
@@ -272,34 +269,22 @@ export default function LandingV2() {
             Compcare ser till att du aldrig lämnar pengar på bordet. Rätt ersättning, rätt avtalsinnehåll och rätt belopp på dina fakturor — tillgängligt 24/7.
           </p>
 
-          {/* Email CTA */}
-          <div className="space-y-2">
-            <p className="text-[13px] text-white/60">Se rätt ersättningsnivåer för varje roll och region</p>
-            <div className="flex gap-2">
-              <input
-                type="email"
-                value={heroEmail}
-                onChange={(e) => setHeroEmail(e.target.value)}
-                placeholder="din@email.se"
-                className="flex-1 px-4 py-3 bg-white/[0.08] border border-white/20 rounded-lg text-white text-sm placeholder:text-white/35 outline-none focus:border-white/40 transition-colors min-h-[44px]"
-              />
-              <Link to="/registrera">
-                <button className="px-6 py-3 bg-[#534AB7] hover:bg-[#5e54c8] rounded-lg text-white text-[15px] font-medium whitespace-nowrap min-h-[44px]">
-                  Har du rätt lön? →
-                </button>
-              </Link>
-            </div>
-            <p className="text-[11px] text-white/45">Inga kreditkort. Kom igång på 30 sekunder.</p>
-            <p className="text-[11px] text-white/55 flex items-center gap-1.5 pt-1">
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#AFA9EC]" />
-              Används av 800+ vårdkonsulter
-            </p>
-          </div>
+          <p className="text-[11px] text-white/55 flex items-center gap-1.5">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-[#AFA9EC]" />
+            Används av 800+ vårdkonsulter
+          </p>
         </div>
 
         {/* Right column — rate lookup box from main landing */}
         <div className="relative z-10 w-full md:w-auto md:flex-1 md:max-w-[560px] px-1 sm:px-2 md:px-10 xl:px-16 pt-4 pb-16 md:py-24">
           <HeroRateLookup />
+          <div className="mt-4 flex justify-center">
+            <Link to="/registrera">
+              <button className="px-6 py-3 bg-[#534AB7] hover:bg-[#5e54c8] rounded-lg text-white text-[15px] font-medium whitespace-nowrap min-h-[44px]">
+                Har du rätt lön? →
+              </button>
+            </Link>
+          </div>
         </div>
       </section>
 
