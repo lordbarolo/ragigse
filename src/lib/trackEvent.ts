@@ -44,6 +44,8 @@ type EventName =
   | "referenser_info_viewed"
   | "verify_info_viewed"
   | "login_clicked"
+  | "login_succeeded"
+  | "login_failed"
   | "signup_completed"
   | "reidar_clicked"
   | "product_page_viewed"
