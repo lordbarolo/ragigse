@@ -1997,6 +1997,94 @@ export type Database = {
         }
         Relationships: []
       }
+      rate_verification_baseline: {
+        Row: {
+          created_at: string
+          id: string
+          source_note: string | null
+          timpris_kund: number
+          typ: string
+          version_id: string
+          yrkeskategori: string
+          zon: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          source_note?: string | null
+          timpris_kund: number
+          typ: string
+          version_id: string
+          yrkeskategori: string
+          zon: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          source_note?: string | null
+          timpris_kund?: number
+          typ?: string
+          version_id?: string
+          yrkeskategori?: string
+          zon?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rate_verification_baseline_version_id_fkey"
+            columns: ["version_id"]
+            isOneToOne: false
+            referencedRelation: "contract_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rate_verification_runs: {
+        Row: {
+          baseline_checksum: string | null
+          current_checksum: string | null
+          diff_json: Json | null
+          error_message: string | null
+          id: string
+          mismatch_count: number
+          run_at: string
+          status: string
+          total_rows: number
+          version_id: string | null
+        }
+        Insert: {
+          baseline_checksum?: string | null
+          current_checksum?: string | null
+          diff_json?: Json | null
+          error_message?: string | null
+          id?: string
+          mismatch_count?: number
+          run_at?: string
+          status?: string
+          total_rows?: number
+          version_id?: string | null
+        }
+        Update: {
+          baseline_checksum?: string | null
+          current_checksum?: string | null
+          diff_json?: Json | null
+          error_message?: string | null
+          id?: string
+          mismatch_count?: number
+          run_at?: string
+          status?: string
+          total_rows?: number
+          version_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rate_verification_runs_version_id_fkey"
+            columns: ["version_id"]
+            isOneToOne: false
+            referencedRelation: "contract_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       rates: {
         Row: {
           detaljer: string | null
