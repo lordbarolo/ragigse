@@ -69,7 +69,10 @@ export default function AgencySignup() {
     setEmail(normalizedEmail);
     setSuccess(true);
 
-    trackEvent("signup_completed", { method: "email", role: "agency" });
+    // Intent event — user submitted signup form successfully.
+    // Note: account is NOT yet active. Real activation fires `signup_confirmed`
+    // from initAuthIdentitySync once the user clicks the email link.
+    trackEvent("signup_initiated", { method: "email", role: "agency" });
 
     supabase.functions.invoke("send-transactional-email", {
       body: {

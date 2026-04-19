@@ -59,6 +59,29 @@ export function resetIdentity() {
 }
 
 /**
+ * Fires `signup_confirmed` exactly once per user when we first detect their
+ * email-confirmed session. Dedup'd via localStorage so refresh/relogin won't
+ * double-count. This is the TRUE signup completion event (vs `signup_initiated`
+ * which fires on form submit before email click).
+ */
+function maybeFireSignupConfirmed(user: { id: string; email_confirmed_at?: string | null; app_metadata?: Record<string, unknown>; user_metadata?: Record<string, unknown> }) {
+  try {
+    if (!user.email_confirmed_at) return;
+    const key = `signup_confirmed:${user.id}`;
+    if (localStorage.getItem(key)) return;
+    localStorage.setItem(key, "1");
+
+    // Lazy-import to avoid circular deps with trackEvent.ts
+    import("@/lib/trackEvent").then(({ trackEvent }) => {
+      const role = (user.user_metadata?.role as string) || "individual";
+      trackEvent("signup_confirmed", { method: "email", role });
+    }).catch(() => { /* silent */ });
+  } catch {
+    /* silent */
+  }
+}
+
+/**
  * Wires a global auth listener so identify() is called automatically
  * whenever Supabase confirms a session (login, token refresh, page reload).
  * Also resets PostHog on sign-out.
@@ -70,6 +93,7 @@ export function initAuthIdentitySync() {
       identifyUser(session.user.id, {
         email: session.user.email ?? undefined,
       });
+      maybeFireSignupConfirmed(session.user);
     }
   });
 
@@ -79,6 +103,7 @@ export function initAuthIdentitySync() {
         identifyUser(session.user.id, {
           email: session.user.email ?? undefined,
         });
+        maybeFireSignupConfirmed(session.user);
       }
     } else if (event === "SIGNED_OUT") {
       resetIdentity();
