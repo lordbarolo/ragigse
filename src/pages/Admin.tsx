@@ -324,7 +324,14 @@ export default function Admin() {
         onRefresh={refetchAnalytics}
       />
 
-      {/* Referral Stats */}
+      {/* Daily Conversion Funnel - per-day breakdown */}
+      <DailyConversionFunnel
+        data={analyticsData}
+        loading={analyticsLoading}
+        period={analyticsPeriod}
+        onRefresh={refetchAnalytics}
+      />
+
       <ReferralStats />
 
       {/* Feedback Stats */}
