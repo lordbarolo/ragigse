@@ -17,78 +17,7 @@ interface Location {
   region: string;
 }
 
-// Doctor specializations — alphabetical (curated list)
-const DOCTOR_SPECIALTIES = [
-  "Akutsjukvård",
-  "Allergologi",
-  "Allmänmedicin",
-  "Anestesi och intensivvård",
-  "Arbetsmedicin",
-  "Arbets- och miljömedicin",
-  "Barn- och ungdomsallergologi",
-  "Barn- och ungdomsmedicin",
-  "Barnneurologi",
-  "Barn- och ungdomspsykiatri",
-  "Beroendemedicin",
-  "Endokrinologi",
-  "Geriatrik",
-  "Gyn onkologi",
-  "Handkirurgi",
-  "Hematologi",
-  "Hud- och könssjukdomar",
-  "Infektionssjukdomar",
-  "Internmedicin",
-  "Kardiologi",
-  "Kirurgi",
-  "Klinisk farmakologi",
-  "Klinisk fysiologi",
-  "Klinisk genetik",
-  "Klinisk immunologi",
-  "Klinisk kemi",
-  "Klinisk mikrobiologi",
-  "Klinisk neurofysiologi",
-  "Klinisk patologi",
-  "Kärlkirurgi",
-  "Lungmedicin",
-  "Neonatologi",
-  "Neurokirurgi",
-  "Neurologi",
-  "Neuroradiologi",
-  "Njurmedicin",
-  "Nuklearmedicin",
-  "Obstetrik/gynekologi",
-  "Onkologi",
-  "Ortopedi",
-  "Palliativ medicin",
-  "Plastikkirurgi",
-  "Psykiatri",
-  "Radiologi",
-  "Rehabiliteringsmedicin",
-  "Reumatologi",
-  "Rättspsykiatri",
-  "Skolhälsovård",
-  "Thoraxkirurgi",
-  "Urologi",
-  "Ögonsjukdomar",
-  "Öron-, näs- och halssjukdomar",
-];
-
-// SKR 2026: Grupp A = tunga akut/operativa specialiteter. Övriga = Grupp B.
-const GROUP_A_SPECIALTIES = new Set([
-  "Akutsjukvård",
-  "Anestesi och intensivvård",
-  "Handkirurgi",
-  "Kirurgi",
-  "Kärlkirurgi",
-  "Neurokirurgi",
-  "Obstetrik/gynekologi",
-  "Ortopedi",
-  "Plastikkirurgi",
-  "Thoraxkirurgi",
-  "Urologi",
-]);
-
-// Map nurse role → DB yrkeskategori (Grundpris). Empty string = use generic nurse rate if exists.
+// Map nurse role → DB yrkeskategori (Grundpris).
 const NURSE_ROLES = [
   { value: "Sjuksköterska", label: "Sjuksköterska (allmän)" },
   { value: "Specialistsjuksköterska anestesi", label: "Anestesisjuksköterska" },
@@ -114,7 +43,8 @@ const NURSE_ROLES = [
 
 /**
  * Hero rate lookup — visitor picks role + location and sees the framework price
- * the region pays staffing companies. Uses public SKR rates (v1.6/v1.7 active).
+ * the region pays staffing companies. Uses official SKR rates loaded from DB
+ * (Läkare v1.6 = 66 specialty-specific rates, Sjuksköterska v1.7).
  */
 export default function HeroRateLookup() {
   const [rates, setRates] = useState<RateRow[]>([]);
@@ -131,7 +61,7 @@ export default function HeroRateLookup() {
           .from("contract_version_rates")
           .select("yrkeskategori, zon, timpris_kund, typ, version_id, contract_versions!inner(is_active)")
           .eq("contract_versions.is_active", true)
-          .in("typ", ["Grundpris", "Läkare"]),
+          .eq("typ", "Grundpris"),
         supabase.from("locations").select("kommun, zon, region").order("kommun"),
       ]);
       if (cancelled) return;
@@ -144,21 +74,31 @@ export default function HeroRateLookup() {
     };
   }, []);
 
-  // Build options: doctors (Leg + 63 specialties alphabetical) + nurses
+  // Build options DIRECTLY from DB so the UI matches the rate table 1:1.
   const roleOptions: Option[] = useMemo(() => {
-    const doctorOpts: Option[] = [
-      { value: "__leg_lakare", label: "Leg. läkare", group: "Läkare" },
-      ...DOCTOR_SPECIALTIES.map((s) => ({
-        value: `__spec__${s}`,
-        label: s,
+    const yks = Array.from(new Set(rates.map((r) => r.yrkeskategori)));
+
+    const doctorBase: Option[] = yks
+      .filter((y) => y === "Legitimerad läkare" || y === "ST-läkare")
+      .map((y) => ({ value: y, label: y, group: "Läkare" }));
+
+    const specialists: Option[] = yks
+      .filter((y) => y.startsWith("Specialistläkare"))
+      .map((y) => ({
+        value: y,
+        label: y.replace(/^Specialistläkare\s+/, ""),
         group: "Specialistläkare",
-      })),
-    ];
-    const nurseOpts: Option[] = NURSE_ROLES
+      }))
+      .sort((a, b) => a.label.localeCompare(b.label, "sv"));
+
+    const nurseYks = new Set(yks);
+    const nurses: Option[] = NURSE_ROLES
+      .filter((n) => nurseYks.has(n.value))
       .map((n) => ({ value: n.value, label: n.label, group: "Sjuksköterskor" }))
       .sort((a, b) => a.label.localeCompare(b.label, "sv"));
-    return [...doctorOpts, ...nurseOpts];
-  }, []);
+
+    return [...doctorBase, ...specialists, ...nurses];
+  }, [rates]);
 
   const kommunOptions: Option[] = useMemo(
     () =>
@@ -168,35 +108,22 @@ export default function HeroRateLookup() {
     [locations]
   );
 
-  // Resolve selected role → DB yrkeskategori for price lookup
-  const resolvedRole = useMemo(() => {
-    if (!role) return null;
-    if (role === "__leg_lakare") return { db: "Legitimerad läkare", display: "Leg. läkare" };
-    if (role.startsWith("__spec__")) {
-      const specialty = role.slice("__spec__".length);
-      const group = GROUP_A_SPECIALTIES.has(specialty) ? "A" : "B";
-      const db = `Specialistläkare Grupp ${group}`;
-      return { db, display: `${specialty} (Grupp ${group})` };
-    }
-    // Nurse role — DB value === role
-    const nurse = NURSE_ROLES.find((n) => n.value === role);
-    return { db: role, display: nurse?.label ?? role };
-  }, [role]);
-
   const result = useMemo(() => {
-    if (!resolvedRole || !kommun) return null;
+    if (!role || !kommun) return null;
     const loc = locations.find((l) => l.kommun === kommun);
     if (!loc) return null;
-    const rate = rates.find((r) => r.yrkeskategori === resolvedRole.db && r.zon === loc.zon);
+    const rate = rates.find((r) => r.yrkeskategori === role && r.zon === loc.zon);
     if (!rate) return null;
+    const display =
+      role.startsWith("Specialistläkare ") ? role.replace(/^Specialistläkare\s+/, "") : role;
     return {
       price: rate.timpris_kund,
       zon: loc.zon,
       region: loc.region,
       kommun,
-      display: resolvedRole.display,
+      display,
     };
-  }, [resolvedRole, kommun, rates, locations]);
+  }, [role, kommun, rates, locations]);
 
   return (
     <div className="bg-card border border-border rounded-2xl p-5 md:p-6 shadow-xl shadow-black/20 max-w-2xl mx-auto text-left">
@@ -251,7 +178,7 @@ export default function HeroRateLookup() {
             </Link>
           </div>
           <p className="text-[11px] text-muted-foreground mt-2 leading-relaxed">
-            Detta är vad regionen betalar bemanningsföretaget enligt SKR:s ramavtal 2026 (grundpris dagtid).
+            Vad regionen betalar bemanningsföretaget enligt SKR:s ramavtal 2026 (grundpris dagtid).
           </p>
         </div>
       )}
