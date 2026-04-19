@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/trackEvent";
-import posthog from "@/lib/posthog";
+import { aliasLead } from "@/lib/identify";
 
 export interface SurveyData {
   email: string;
@@ -394,8 +394,19 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
     const leadId = crypto.randomUUID();
     const track = "consultant";
 
-    // Identify user in PostHog so all funnel events share the same distinct_id
-    try { posthog.identify(leadId); } catch { /* silent */ }
+    // Stitch anonymous PostHog session to leadId so prior funnel events
+    // (landing_viewed, survey_started, survey_step_*) are linked to this person.
+    // Also registers lead_id as super-property for all future events.
+    const hourlyRateForProps = snapshotSalaryType === "monthly"
+      ? Math.round(snapshotCurrentSalary / 167)
+      : snapshotCurrentSalary;
+    aliasLead(leadId, {
+      role: snapshotRole,
+      zone: snapshotZone,
+      employment_type: snapshotEmploymentType,
+      experience_years: snapshotExperience,
+      current_hourly_rate: hourlyRateForProps,
+    });
     const couponCode = searchParams.get("coupon");
     const couponParam = couponCode ? `?coupon=${encodeURIComponent(couponCode)}` : "";
 
