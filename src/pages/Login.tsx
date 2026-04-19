@@ -25,6 +25,13 @@ export default function Login() {
     const { error, data } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
+      const reason =
+        error.message === "Invalid login credentials"
+          ? "invalid_credentials"
+          : error.message.toLowerCase().includes("email not confirmed")
+          ? "email_not_confirmed"
+          : "other";
+      trackEvent("login_failed", { source: "login_page", reason });
       toast({
         title: "Inloggning misslyckades",
         description: error.message === "Invalid login credentials"
@@ -36,6 +43,7 @@ export default function Login() {
       return;
     }
 
+    trackEvent("login_succeeded", { source: "login_page" });
     toast({ title: "Inloggad!" });
 
     // Redirect based on role
