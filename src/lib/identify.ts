@@ -18,6 +18,38 @@ export function identifyUser(
   }
 }
 
+/**
+ * Associates the current anonymous PostHog session with a lead_id.
+ * Uses alias() so all prior anonymous events (landing_viewed, survey_started, etc.)
+ * are stitched to the same person — preserving the full funnel.
+ *
+ * Also registers lead_id as a super-property so it auto-attaches to all future events,
+ * and sets it as a person-property for cohort/funnel grouping in PostHog.
+ */
+export function aliasLead(
+  leadId: string,
+  personProps?: Record<string, string | number | boolean | null | undefined>
+) {
+  try {
+    if (!posthog.has_opted_in_capturing()) return;
+
+    // Stitch anonymous distinct_id → leadId (preserves prior funnel events)
+    posthog.alias(leadId);
+
+    // Auto-attach lead_id to all future events
+    posthog.register({ lead_id: leadId });
+
+    // Set person-level properties for funnel grouping
+    if (personProps && Object.keys(personProps).length > 0) {
+      posthog.setPersonProperties({ lead_id: leadId, ...personProps });
+    } else {
+      posthog.setPersonProperties({ lead_id: leadId });
+    }
+  } catch {
+    /* silent */
+  }
+}
+
 export function resetIdentity() {
   try {
     posthog.reset();
