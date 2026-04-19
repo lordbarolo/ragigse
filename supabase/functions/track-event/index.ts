@@ -52,6 +52,8 @@ const ALLOWED_EVENTS = new Set([
   "login_succeeded",
   "login_failed",
   "signup_completed",
+  "signup_initiated",
+  "signup_confirmed",
   "reidar_clicked",
   "product_page_viewed",
   "product_cta_clicked",
