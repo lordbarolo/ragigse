@@ -50,7 +50,7 @@ export default function RateVerification() {
   };
 
   const StatusBadge = ({ s }: { s: string }) => {
-    if (s === "ok") return <Badge className="bg-green-600"><CheckCircle2 className="w-3 h-3 mr-1" />OK</Badge>;
+    if (s === "ok") return <Badge variant="default"><CheckCircle2 className="w-3 h-3 mr-1" />OK</Badge>;
     if (s === "mismatch") return <Badge variant="destructive"><AlertTriangle className="w-3 h-3 mr-1" />Avvikelse</Badge>;
     if (s === "error") return <Badge variant="destructive"><XCircle className="w-3 h-3 mr-1" />Fel</Badge>;
     return <Badge variant="secondary">{s}</Badge>;
