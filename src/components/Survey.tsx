@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/trackEvent";
-import posthog from "@/lib/posthog";
 import { aliasLead } from "@/lib/identify";
 
 export interface SurveyData {
