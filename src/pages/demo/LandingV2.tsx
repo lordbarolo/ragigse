@@ -18,12 +18,22 @@ const STATS = [
   { num: "508 kr/tim", label: "Se din roll och zon →", subtitle: "ESTIMERAD KONSULTLÖN" },
 ];
 
-const MODULES_ROW1 = [
+type ModuleCard = {
+  title: string;
+  desc: string;
+  tag: string;
+  tagColor: "purple" | "amber" | "blue" | "green" | "muted";
+  iconBg: string;
+  icon: JSX.Element;
+  cta?: { label: string; href: string };
+};
+
+const MODULES_ROW1: ModuleCard[] = [
   {
     title: "Verify — dokumentvalvet",
     desc: "Spara legitimationer, intyg och utbildningsbevis på ett säkert ställe. Dela tillgång med länk — aldrig mer bifogade filer som du aldrig vet vart de tar vägen.",
     tag: "Ingår gratis",
-    tagColor: "purple" as const,
+    tagColor: "purple",
     iconBg: "#EEEDFE",
     icon: (
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -38,7 +48,7 @@ const MODULES_ROW1 = [
     title: "Referensplattformen",
     desc: "Du bestämmer vem som får tillgång och när. Referensgivare kan verifiera digitalt istället för att lämna samma uppgifter till flera bolag.",
     tag: "Kommer snart",
-    tagColor: "muted" as const,
+    tagColor: "muted",
     iconBg: "#EEEDFE",
     icon: (
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -51,13 +61,14 @@ const MODULES_ROW1 = [
     title: "Löneanalys & löneassistent",
     desc: "Se vad regionen betalar för din tid och vad bemanningsföretagen kan betala utifrån marknadens genomsnittliga marginaler. Med full transparens kring villkor vågar fler testa konsultlivet.",
     tag: "Insight — 149 kr/mån",
-    tagColor: "amber" as const,
+    tagColor: "amber",
     iconBg: "#FAEEDA",
     icon: (
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
         <path d="M4 14l4-4 3 3 5-6" stroke="#854F0B" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
+    cta: { label: "Gör löneanalysen", href: "/v1" },
   },
 ];
 
@@ -273,10 +284,15 @@ export default function LandingV2() {
         {/* Right column — rate lookup box from main landing */}
         <div className="relative z-10 w-full md:w-auto md:flex-1 md:max-w-[560px] px-1 sm:px-2 md:px-10 xl:px-16 pt-4 pb-16 md:py-24">
           <HeroRateLookup />
-          <div className="mt-4 flex justify-center">
-            <Link to="/registrera">
-              <button className="px-6 py-3 bg-[#534AB7] hover:bg-[#3C3489] rounded-lg text-white text-[15px] font-medium whitespace-nowrap min-h-[44px]">
-                Har du rätt lön? →
+          <div className="mt-4 flex flex-col sm:flex-row gap-2.5 justify-center">
+            <Link to="/v1" className="w-full sm:w-auto">
+              <button className="w-full px-6 py-3 bg-white hover:bg-white/90 rounded-lg text-[#1a1545] text-[15px] font-semibold whitespace-nowrap min-h-[44px] transition-colors">
+                Gör löneanalysen →
+              </button>
+            </Link>
+            <Link to="/registrera" className="w-full sm:w-auto">
+              <button className="w-full px-6 py-3 bg-[#534AB7] hover:bg-[#3C3489] rounded-lg text-white text-[15px] font-semibold whitespace-nowrap min-h-[44px] transition-colors">
+                Skapa konto
               </button>
             </Link>
           </div>
@@ -328,7 +344,17 @@ export default function LandingV2() {
               </div>
               <h3 className="text-base font-semibold text-foreground mb-2 leading-snug">{m.title}</h3>
               <p className="text-[13px] text-foreground leading-[1.7] flex-1 mb-[22px]">{m.desc}</p>
-              <span className={`inline-block text-[11px] font-medium px-2.5 py-1 rounded-full border w-fit ${TAG_COLORS[m.tagColor]}`}>{m.tag}</span>
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <span className={`inline-block text-[11px] font-medium px-2.5 py-1 rounded-full border w-fit ${TAG_COLORS[m.tagColor]}`}>{m.tag}</span>
+                {m.cta && (
+                  <Link
+                    to={m.cta.href}
+                    className="text-[13px] font-semibold text-[#534AB7] hover:text-[#3C3489] inline-flex items-center gap-1 transition-colors"
+                  >
+                    {m.cta.label} <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                )}
+              </div>
             </div>
           ))}
         </div>
