@@ -18,12 +18,22 @@ const STATS = [
   { num: "508 kr/tim", label: "Se din roll och zon →", subtitle: "ESTIMERAD KONSULTLÖN" },
 ];
 
-const MODULES_ROW1 = [
+type ModuleCard = {
+  title: string;
+  desc: string;
+  tag: string;
+  tagColor: "purple" | "amber" | "blue" | "green" | "muted";
+  iconBg: string;
+  icon: JSX.Element;
+  cta?: { label: string; href: string };
+};
+
+const MODULES_ROW1: ModuleCard[] = [
   {
     title: "Verify — dokumentvalvet",
     desc: "Spara legitimationer, intyg och utbildningsbevis på ett säkert ställe. Dela tillgång med länk — aldrig mer bifogade filer som du aldrig vet vart de tar vägen.",
     tag: "Ingår gratis",
-    tagColor: "purple" as const,
+    tagColor: "purple",
     iconBg: "#EEEDFE",
     icon: (
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -38,7 +48,7 @@ const MODULES_ROW1 = [
     title: "Referensplattformen",
     desc: "Du bestämmer vem som får tillgång och när. Referensgivare kan verifiera digitalt istället för att lämna samma uppgifter till flera bolag.",
     tag: "Kommer snart",
-    tagColor: "muted" as const,
+    tagColor: "muted",
     iconBg: "#EEEDFE",
     icon: (
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -51,13 +61,14 @@ const MODULES_ROW1 = [
     title: "Löneanalys & löneassistent",
     desc: "Se vad regionen betalar för din tid och vad bemanningsföretagen kan betala utifrån marknadens genomsnittliga marginaler. Med full transparens kring villkor vågar fler testa konsultlivet.",
     tag: "Insight — 149 kr/mån",
-    tagColor: "amber" as const,
+    tagColor: "amber",
     iconBg: "#FAEEDA",
     icon: (
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
         <path d="M4 14l4-4 3 3 5-6" stroke="#854F0B" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
+    cta: { label: "Gör löneanalysen", href: "/v1" },
   },
 ];
 
