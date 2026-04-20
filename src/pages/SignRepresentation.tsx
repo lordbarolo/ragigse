@@ -6,30 +6,44 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   ShieldCheck, ShieldAlert, Building2, MapPin, FileText,
-  Loader2, PartyPopper, AlertTriangle, Info,
+  Loader2, PartyPopper, AlertTriangle, Info, Calendar, User, Briefcase,
 } from "lucide-react";
 
 interface RepresentationRequest {
   id: string;
   agency_name: string;
+  agency_org_number: string | null;
   consultant_email: string;
-  assignment_id: string;
+  consultant_name: string | null;
+  competence: string | null;
+  assignment_id: string | null;
   region: string;
+  unit: string | null;
+  period_start: string | null;
+  period_end: string | null;
+  response_deadline: string | null;
   status: string;
   signed_at: string | null;
   verification_id: string | null;
 }
 
-interface CollisionInfo {
+interface ActiveExclusivity {
   agency_name: string;
   signed_at: string;
   verification_id: string | null;
+  response_deadline: string;
+  unit: string | null;
+}
+
+function formatDate(d: string | null): string {
+  if (!d) return "—";
+  return new Date(d).toLocaleDateString("sv-SE", { year: "numeric", month: "short", day: "numeric" });
 }
 
 export default function SignRepresentation() {
   const { token } = useParams<{ token: string }>();
   const [request, setRequest] = useState<RepresentationRequest | null>(null);
-  const [collision, setCollision] = useState<CollisionInfo | null>(null);
+  const [activeExclusivity, setActiveExclusivity] = useState<ActiveExclusivity | null>(null);
   const [loading, setLoading] = useState(true);
   const [signing, setSigning] = useState(false);
   const [signed, setSigned] = useState(false);
@@ -46,7 +60,7 @@ export default function SignRepresentation() {
         if (fnError) throw fnError;
         const req = data.request;
         setRequest(req);
-        setCollision(data.collision || null);
+        setActiveExclusivity(data.activeExclusivity || null);
         if (req.status === "signed") {
           setSigned(true);
           setVerificationId(req.verification_id);
@@ -67,23 +81,7 @@ export default function SignRepresentation() {
       const { data, error: fnError } = await supabase.functions.invoke("representation-request", {
         body: { action: "sign", token },
       });
-      if (fnError) {
-        const ctx = (fnError as any).context;
-        if (ctx) {
-          try {
-            const parsed = await ctx.json();
-            if (parsed?.error === "collision" && parsed.collision) {
-              setCollision(parsed.collision);
-              return;
-            }
-          } catch { /* ignore */ }
-        }
-        throw fnError;
-      }
-      if (data?.error === "collision" && data.collision) {
-        setCollision(data.collision);
-        return;
-      }
+      if (fnError) throw fnError;
       setSigned(true);
       setVerificationId(data.verification_id);
     } catch (err: any) {
@@ -125,43 +123,6 @@ export default function SignRepresentation() {
     );
   }
 
-  // Collision state — block signing
-  if (collision && !signed) {
-    return (
-      <div className="min-h-screen bg-background">
-        <div className="h-1.5 w-full bg-destructive" />
-        <div className="mx-auto max-w-lg px-4 py-12">
-          <Card className="border-destructive/30">
-            <CardContent className="py-10 px-6 text-center space-y-4">
-              <div className="flex justify-center">
-                <div className="rounded-full bg-destructive/10 p-4">
-                  <AlertTriangle className="h-9 w-9 text-destructive" />
-                </div>
-              </div>
-              <h1 className="text-xl font-bold text-foreground">Du är redan signerad för detta uppdrag</h1>
-              <p className="text-sm text-muted-foreground max-w-sm mx-auto leading-relaxed">
-                Du har redan bekräftat representation av{" "}
-                <span className="font-semibold text-foreground">{collision.agency_name}</span>{" "}
-                för uppdrag <span className="font-mono text-xs">{request.assignment_id}</span>.
-              </p>
-              <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-                Endast ett bemanningsföretag i taget kan representera dig för samma uppdrag.
-                Om du vill byta måste det tidigare intyget återkallas först.
-              </p>
-              {collision.verification_id && (
-                <Button variant="outline" size="sm" className="mt-2" asChild>
-                  <Link to={`/verify/${collision.verification_id}`}>
-                    Visa befintligt bevis →
-                  </Link>
-                </Button>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
-
   // Success state
   if (signed) {
     return (
@@ -177,9 +138,9 @@ export default function SignRepresentation() {
               </div>
               <h1 className="text-2xl font-bold text-foreground">Bekräftat!</h1>
               <p className="text-sm text-muted-foreground max-w-sm mx-auto">
-                Du har bekräftat representation av{" "}
+                Du har bekräftat att{" "}
                 <span className="font-medium text-foreground">{request.agency_name || "bemanningsföretaget"}</span>{" "}
-                för uppdrag <span className="font-mono text-xs">{request.assignment_id}</span> i{" "}
+                får representera dig för uppdraget i{" "}
                 <span className="font-medium text-foreground">{request.region}</span>.
               </p>
               <div className="flex items-center justify-center gap-2 text-xs text-primary">
@@ -200,6 +161,10 @@ export default function SignRepresentation() {
     );
   }
 
+  const periodText = request.period_start && request.period_end
+    ? `${formatDate(request.period_start)} – ${formatDate(request.period_end)}`
+    : "uppdragets period";
+
   // Signing form
   return (
     <div className="min-h-screen bg-background">
@@ -212,28 +177,66 @@ export default function SignRepresentation() {
           </h1>
         </div>
 
+        {/* Soft warning vid aktiv exklusivitet — informera, blockera inte */}
+        {activeExclusivity && (
+          <div className="mb-4 rounded-lg border border-yellow-500/30 bg-yellow-500/5 p-4">
+            <div className="flex gap-3">
+              <AlertTriangle className="h-5 w-5 text-yellow-600 shrink-0 mt-0.5" />
+              <div className="space-y-2">
+                <p className="text-sm font-semibold text-foreground">
+                  Du har redan en aktiv exklusivitet i {request.region}
+                </p>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  Du gav <strong className="text-foreground">{activeExclusivity.agency_name}</strong>{" "}
+                  exklusiv rätt {activeExclusivity.unit ? `för ${activeExclusivity.unit} ` : ""}
+                  med svarsdag <strong>{formatDate(activeExclusivity.response_deadline)}</strong>.
+                  Om du bekräftar detta nya intyg ersätts det tidigare automatiskt.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
         <Card className="mb-4">
           <CardContent className="p-6 space-y-4">
             <div className="space-y-3">
               <DetailRow icon={<Building2 className="h-4 w-4 text-muted-foreground" />}
-                label="Bemanningsföretag" value={request.agency_name || "—"} />
-              <DetailRow icon={<FileText className="h-4 w-4 text-muted-foreground" />}
-                label="Uppdrags-ID" value={request.assignment_id} />
+                label="Bemanningsföretag"
+                value={request.agency_name + (request.agency_org_number ? ` (${request.agency_org_number})` : "")} />
               <DetailRow icon={<MapPin className="h-4 w-4 text-muted-foreground" />}
-                label="Region" value={request.region} />
+                label="Region & enhet"
+                value={`${request.region}${request.unit ? ` · ${request.unit}` : ""}`} />
+              {request.consultant_name && (
+                <DetailRow icon={<User className="h-4 w-4 text-muted-foreground" />}
+                  label="Konsult"
+                  value={request.consultant_name + (request.competence ? ` · ${request.competence}` : "")} />
+              )}
+              <DetailRow icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
+                label="Period" value={periodText} />
+              {request.response_deadline && (
+                <DetailRow icon={<Calendar className="h-4 w-4 text-muted-foreground" />}
+                  label="Sista svarsdag" value={formatDate(request.response_deadline)} />
+              )}
+              {request.assignment_id && (
+                <DetailRow icon={<FileText className="h-4 w-4 text-muted-foreground" />}
+                  label="Avropsnummer" value={request.assignment_id} />
+              )}
             </div>
 
             <div className="mt-6 p-4 bg-muted/50 rounded-lg border border-border">
               <p className="text-sm text-foreground leading-relaxed">
-                Jag bekräftar med min signatur att jag har gjort ett{" "}
-                <span className="font-semibold">aktivt val</span> att representeras av{" "}
-                <span className="font-semibold">{request.agency_name || "bemanningsföretaget"}</span>{" "}
-                för uppdrag{" "}
-                <span className="font-mono text-xs font-medium">{request.assignment_id}</span>{" "}
-                i <span className="font-semibold">{request.region}</span>.
+                Jag, <span className="font-semibold">{request.consultant_name || request.consultant_email}</span>,
+                intygar härmed att jag har givit{" "}
+                <span className="font-semibold">{request.agency_name || "bemanningsföretaget"}</span>
+                {request.agency_org_number && ` (org.nr ${request.agency_org_number})`}{" "}
+                <span className="font-semibold">exklusiv rätt</span> att förmedla detta uppdrag för enheten{" "}
+                <span className="font-semibold">{request.unit || "—"}</span> i{" "}
+                <span className="font-semibold">{request.region}</span> under perioden{" "}
+                <span className="font-semibold">{periodText}</span>.
               </p>
               <p className="text-xs text-muted-foreground mt-3">
-                Jag godkänner också att mina verifierade referenser delas i samband med detta.
+                Exklusiviteten gäller fram till och med dagen efter sista svarsdag
+                ({formatDate(request.response_deadline)}).
               </p>
             </div>
           </CardContent>
@@ -267,11 +270,11 @@ export default function SignRepresentation() {
 
 function DetailRow({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
-    <div className="flex items-center gap-3">
-      {icon}
-      <div>
+    <div className="flex items-start gap-3">
+      <div className="mt-0.5">{icon}</div>
+      <div className="min-w-0 flex-1">
         <p className="text-[11px] text-muted-foreground uppercase tracking-wider">{label}</p>
-        <p className="text-sm font-medium text-foreground">{value}</p>
+        <p className="text-sm font-medium text-foreground break-words">{value}</p>
       </div>
     </div>
   );
