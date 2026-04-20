@@ -55,6 +55,28 @@ async function findActiveExclusivity(
   return data;
 }
 
+/**
+ * Logga ett event för representations-funneln. Best-effort — fel sväljs.
+ */
+async function logEvent(
+  admin: ReturnType<typeof createClient>,
+  requestId: string,
+  eventType: string,
+  actor: "agency" | "consultant" | "system",
+  metadata: Record<string, unknown> = {},
+) {
+  try {
+    await admin.from("representation_events").insert({
+      representation_request_id: requestId,
+      event_type: eventType,
+      actor,
+      metadata,
+    });
+  } catch (err) {
+    console.error(`logEvent ${eventType} failed:`, err);
+  }
+}
+
 async function sendInviteEmail(
   admin: ReturnType<typeof createClient>,
   requestId: string,
