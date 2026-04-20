@@ -358,6 +358,10 @@ export default function Profile() {
           </Card>
         )}
       </div>
+
+      {pendingFeedback && (
+        <AssignmentFeedbackDialog pending={pendingFeedback} onClose={dismissFeedback} />
+      )}
     </div>
   );
 }
