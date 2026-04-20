@@ -223,9 +223,18 @@ export default function AgencyIntyg() {
           assignment_id: form.assignment_id || null,
           agency_name: orgName || "Bemanningsföretag",
           agency_org_number: form.agency_org_number || orgNumber || null,
+          intelligence_id: intelligenceId,
+          used_ai: usedAi,
         },
       });
       if (error) throw error;
+
+      trackEvent("intyg_create_submitted", {
+        region: form.region,
+        competence: form.competence || null,
+        used_ai: usedAi,
+        had_collision_warning: !!data?.warning,
+      });
 
       if (data?.warning?.type === "active_exclusivity") {
         toast.warning(
