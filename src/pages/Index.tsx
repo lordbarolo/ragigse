@@ -6,6 +6,7 @@ import CompcareLogo from "@/components/CompcareLogo";
 import ThemeToggle from "@/components/ThemeToggle";
 import HeroRateLookup from "@/components/landing/HeroRateLookup";
 import MissionSection from "@/components/landing/MissionSection";
+import RotatingHeroWord from "@/components/landing/RotatingHeroWord";
 import { trackEvent } from "@/lib/trackEvent";
 
 const platformJsonLd = {
