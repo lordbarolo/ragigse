@@ -98,6 +98,69 @@ export type Database = {
         }
         Relationships: []
       }
+      assignment_feedback: {
+        Row: {
+          created_at: string
+          deviation_notes: string | null
+          dismissed_count: number
+          feedback_stage: string
+          id: string
+          invoice_service_interest: boolean | null
+          matched_contract: boolean | null
+          representation_request_id: string
+          responded_at: string | null
+          snoozed_until: string | null
+          updated_at: string
+          user_id: string
+          was_booked: boolean | null
+        }
+        Insert: {
+          created_at?: string
+          deviation_notes?: string | null
+          dismissed_count?: number
+          feedback_stage: string
+          id?: string
+          invoice_service_interest?: boolean | null
+          matched_contract?: boolean | null
+          representation_request_id: string
+          responded_at?: string | null
+          snoozed_until?: string | null
+          updated_at?: string
+          user_id: string
+          was_booked?: boolean | null
+        }
+        Update: {
+          created_at?: string
+          deviation_notes?: string | null
+          dismissed_count?: number
+          feedback_stage?: string
+          id?: string
+          invoice_service_interest?: boolean | null
+          matched_contract?: boolean | null
+          representation_request_id?: string
+          responded_at?: string | null
+          snoozed_until?: string | null
+          updated_at?: string
+          user_id?: string
+          was_booked?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assignment_feedback_representation_request_id_fkey"
+            columns: ["representation_request_id"]
+            isOneToOne: false
+            referencedRelation: "ref_representation_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignment_feedback_representation_request_id_fkey"
+            columns: ["representation_request_id"]
+            isOneToOne: false
+            referencedRelation: "ref_representation_requests_safe"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       assignments: {
         Row: {
           agency_org_id: string | null

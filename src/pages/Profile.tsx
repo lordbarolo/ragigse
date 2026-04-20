@@ -15,6 +15,9 @@ import CompensationView from "@/components/report/CompensationView";
 import DashboardReferences from "@/components/profile/DashboardReferences";
 import DashboardDocuments from "@/components/profile/DashboardDocuments";
 import DashboardInvoiceCheck from "@/components/profile/DashboardInvoiceCheck";
+import AssignmentFeedbackDialog from "@/components/profile/AssignmentFeedbackDialog";
+import { useAssignmentFeedback } from "@/hooks/useAssignmentFeedback";
+import { trackEvent } from "@/lib/trackEvent";
 
 interface ReportRow {
   id: string;
@@ -53,6 +56,13 @@ export default function Profile() {
   });
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<ProfileTab>("overview");
+  const { pending: pendingFeedback, dismiss: dismissFeedback } = useAssignmentFeedback(user);
+
+  useEffect(() => {
+    if (pendingFeedback) {
+      trackEvent("assignment_feedback_shown", { stage: pendingFeedback.stage });
+    }
+  }, [pendingFeedback?.representation_request_id, pendingFeedback?.stage]);
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/logga-in");
@@ -348,6 +358,10 @@ export default function Profile() {
           </Card>
         )}
       </div>
+
+      {pendingFeedback && (
+        <AssignmentFeedbackDialog pending={pendingFeedback} onClose={dismissFeedback} />
+      )}
     </div>
   );
 }
