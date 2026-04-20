@@ -42,4 +42,17 @@ if (import.meta.env.DEV) {
   console.log("PostHog loaded:", posthog.get_distinct_id());
 }
 
+// Production sanity log — verifies PostHog is active on the live domain
+const __host = window.location.hostname;
+if (__host === "compcare.se" || __host === "www.compcare.se") {
+  console.info(
+    "[PostHog] active on",
+    __host,
+    "distinct_id:",
+    posthog.get_distinct_id(),
+    "opted_in:",
+    posthog.has_opted_in_capturing()
+  );
+}
+
 export default posthog;
