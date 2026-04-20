@@ -117,12 +117,19 @@ async function sendInviteEmail(
       .from("ref_representation_requests")
       .update({ email_sent_at: new Date().toISOString(), email_status: "sent" })
       .eq("id", requestId);
+    await logEvent(admin, requestId, "email_sent", "system", {
+      recipient: payload.consultant_email,
+      region: payload.region,
+    });
   } catch (err) {
     console.error("Failed to send invite email:", err);
     await admin
       .from("ref_representation_requests")
       .update({ email_status: "failed" })
       .eq("id", requestId);
+    await logEvent(admin, requestId, "email_failed", "system", {
+      error: (err as Error).message,
+    });
   }
 }
 
