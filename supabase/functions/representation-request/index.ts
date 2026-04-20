@@ -55,6 +55,28 @@ async function findActiveExclusivity(
   return data;
 }
 
+/**
+ * Logga ett event för representations-funneln. Best-effort — fel sväljs.
+ */
+async function logEvent(
+  admin: ReturnType<typeof createClient>,
+  requestId: string,
+  eventType: string,
+  actor: "agency" | "consultant" | "system",
+  metadata: Record<string, unknown> = {},
+) {
+  try {
+    await admin.from("representation_events").insert({
+      representation_request_id: requestId,
+      event_type: eventType,
+      actor,
+      metadata,
+    });
+  } catch (err) {
+    console.error(`logEvent ${eventType} failed:`, err);
+  }
+}
+
 async function sendInviteEmail(
   admin: ReturnType<typeof createClient>,
   requestId: string,
@@ -95,12 +117,19 @@ async function sendInviteEmail(
       .from("ref_representation_requests")
       .update({ email_sent_at: new Date().toISOString(), email_status: "sent" })
       .eq("id", requestId);
+    await logEvent(admin, requestId, "email_sent", "system", {
+      recipient: payload.consultant_email,
+      region: payload.region,
+    });
   } catch (err) {
     console.error("Failed to send invite email:", err);
     await admin
       .from("ref_representation_requests")
       .update({ email_status: "failed" })
       .eq("id", requestId);
+    await logEvent(admin, requestId, "email_failed", "system", {
+      error: (err as Error).message,
+    });
   }
 }
 
@@ -147,6 +176,13 @@ Deno.serve(async (req) => {
             unit: existing.unit,
           };
         }
+      }
+
+      // Logga link_opened (endast vid pending — undvik dubbeltrigger vid omladdning av success-vyn)
+      if (data.status === "pending") {
+        await logEvent(admin, data.id, "link_opened", "consultant", {
+          had_active_exclusivity: !!activeExclusivity,
+        });
       }
 
       return jsonResponse({ request: data, activeExclusivity });
@@ -251,6 +287,26 @@ Deno.serve(async (req) => {
         throw updateErr;
       }
 
+      // Logga signerings-event och eventuellt superseded
+      const leadTimeDays = request.period_start
+        ? Math.round(
+          (new Date(request.period_start).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+        )
+        : null;
+      await logEvent(admin, request.id, "signed", "consultant", {
+        region: request.region,
+        competence: request.competence,
+        lead_time_days: leadTimeDays,
+        had_collision: !!existing,
+        superseded_request_id: existing?.id || null,
+      });
+      if (existing) {
+        await logEvent(admin, existing.id, "superseded", "system", {
+          superseded_by: request.id,
+          new_agency: request.agency_name,
+        });
+      }
+
       return jsonResponse({
         success: true,
         verification_id: verificationId,
@@ -302,6 +358,8 @@ Deno.serve(async (req) => {
         assignment_id,
         agency_name,
         agency_org_number,
+        intelligence_id,           // valfri koppling från parse-avrop
+        used_ai,                   // bool för funnel-tracking
       } = params;
 
       if (!consultant_email || !region || !response_deadline) {
@@ -333,6 +391,29 @@ Deno.serve(async (req) => {
         .single();
 
       if (error) throw error;
+
+      // Länka avrop_intelligence-raden till intyget om vi fick id:n från parse-avrop
+      if (intelligence_id) {
+        await admin
+          .from("avrop_intelligence")
+          .update({ representation_request_id: data.id })
+          .eq("id", intelligence_id)
+          .eq("agency_id", userId);
+      }
+
+      const leadTimeDays = period_start
+        ? Math.round(
+          (new Date(period_start).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+        )
+        : null;
+      await logEvent(admin, data.id, "created", "agency", {
+        region,
+        competence: competence || null,
+        had_collision_warning: !!existing,
+        used_ai: !!used_ai,
+        lead_time_days: leadTimeDays,
+        intelligence_id: intelligence_id || null,
+      });
 
       sendInviteEmail(admin, data.id, {
         consultant_email,

@@ -211,6 +211,157 @@ export type Database = {
           },
         ]
       }
+      avrop_intelligence: {
+        Row: {
+          agency_id: string | null
+          agency_org_id: string | null
+          assignment_id: string | null
+          avrop_received_at: string | null
+          awarded_at: string | null
+          buyer_name: string | null
+          competence: string | null
+          consultant_email: string | null
+          consultant_name: string | null
+          created_at: string
+          customer_type: string | null
+          duration_weeks: number | null
+          extra_fields: Json | null
+          extraction_confidence: Json | null
+          extraction_latency_ms: number | null
+          extraction_model: string | null
+          hours_per_week: number | null
+          housing_included: boolean | null
+          id: string
+          input_type: string | null
+          ob_required: boolean | null
+          on_call_required: boolean | null
+          period_end: string | null
+          period_start: string | null
+          pii_redacted_at: string | null
+          price_max: number | null
+          price_min: number | null
+          price_type: string | null
+          price_unit: string | null
+          raw_image_path: string | null
+          raw_text: string | null
+          region: string | null
+          representation_request_id: string | null
+          requirements: Json | null
+          response_deadline: string | null
+          shifts_count: number | null
+          source: string | null
+          travel_included: boolean | null
+          unit: string | null
+          updated_at: string
+        }
+        Insert: {
+          agency_id?: string | null
+          agency_org_id?: string | null
+          assignment_id?: string | null
+          avrop_received_at?: string | null
+          awarded_at?: string | null
+          buyer_name?: string | null
+          competence?: string | null
+          consultant_email?: string | null
+          consultant_name?: string | null
+          created_at?: string
+          customer_type?: string | null
+          duration_weeks?: number | null
+          extra_fields?: Json | null
+          extraction_confidence?: Json | null
+          extraction_latency_ms?: number | null
+          extraction_model?: string | null
+          hours_per_week?: number | null
+          housing_included?: boolean | null
+          id?: string
+          input_type?: string | null
+          ob_required?: boolean | null
+          on_call_required?: boolean | null
+          period_end?: string | null
+          period_start?: string | null
+          pii_redacted_at?: string | null
+          price_max?: number | null
+          price_min?: number | null
+          price_type?: string | null
+          price_unit?: string | null
+          raw_image_path?: string | null
+          raw_text?: string | null
+          region?: string | null
+          representation_request_id?: string | null
+          requirements?: Json | null
+          response_deadline?: string | null
+          shifts_count?: number | null
+          source?: string | null
+          travel_included?: boolean | null
+          unit?: string | null
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string | null
+          agency_org_id?: string | null
+          assignment_id?: string | null
+          avrop_received_at?: string | null
+          awarded_at?: string | null
+          buyer_name?: string | null
+          competence?: string | null
+          consultant_email?: string | null
+          consultant_name?: string | null
+          created_at?: string
+          customer_type?: string | null
+          duration_weeks?: number | null
+          extra_fields?: Json | null
+          extraction_confidence?: Json | null
+          extraction_latency_ms?: number | null
+          extraction_model?: string | null
+          hours_per_week?: number | null
+          housing_included?: boolean | null
+          id?: string
+          input_type?: string | null
+          ob_required?: boolean | null
+          on_call_required?: boolean | null
+          period_end?: string | null
+          period_start?: string | null
+          pii_redacted_at?: string | null
+          price_max?: number | null
+          price_min?: number | null
+          price_type?: string | null
+          price_unit?: string | null
+          raw_image_path?: string | null
+          raw_text?: string | null
+          region?: string | null
+          representation_request_id?: string | null
+          requirements?: Json | null
+          response_deadline?: string | null
+          shifts_count?: number | null
+          source?: string | null
+          travel_included?: boolean | null
+          unit?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "avrop_intelligence_agency_org_id_fkey"
+            columns: ["agency_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "avrop_intelligence_representation_request_id_fkey"
+            columns: ["representation_request_id"]
+            isOneToOne: false
+            referencedRelation: "ref_representation_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "avrop_intelligence_representation_request_id_fkey"
+            columns: ["representation_request_id"]
+            isOneToOne: false
+            referencedRelation: "ref_representation_requests_safe"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       benchmark_rates: {
         Row: {
           contract_version_id: string | null
@@ -2999,6 +3150,48 @@ export type Database = {
           },
         ]
       }
+      representation_events: {
+        Row: {
+          actor: string | null
+          created_at: string
+          event_type: string
+          id: string
+          metadata: Json | null
+          representation_request_id: string
+        }
+        Insert: {
+          actor?: string | null
+          created_at?: string
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          representation_request_id: string
+        }
+        Update: {
+          actor?: string | null
+          created_at?: string
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          representation_request_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "representation_events_representation_request_id_fkey"
+            columns: ["representation_request_id"]
+            isOneToOne: false
+            referencedRelation: "ref_representation_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "representation_events_representation_request_id_fkey"
+            columns: ["representation_request_id"]
+            isOneToOne: false
+            referencedRelation: "ref_representation_requests_safe"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       role_aliases: {
         Row: {
           alias: string
@@ -3619,6 +3812,7 @@ export type Database = {
           read_ct: number
         }[]
       }
+      redact_avrop_intelligence_pii: { Args: never; Returns: number }
       ref_calculate_profile_status: {
         Args: { p_profile_id: string }
         Returns: Json

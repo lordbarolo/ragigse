@@ -23,6 +23,7 @@ import {
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { SWEDISH_REGIONS } from "@/lib/swedishRegions";
+import { trackEvent } from "@/lib/trackEvent";
 
 interface RepRequest {
   id: string;
@@ -97,7 +98,13 @@ export default function AgencyIntyg() {
   const [aiText, setAiText] = useState("");
   const [aiImageDataUrl, setAiImageDataUrl] = useState<string | null>(null);
   const [aiBusy, setAiBusy] = useState(false);
+  const [intelligenceId, setIntelligenceId] = useState<string | null>(null);
+  const [usedAi, setUsedAi] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    trackEvent("intyg_dashboard_viewed");
+  }, []);
 
   useEffect(() => {
     if (!user) return;
@@ -143,6 +150,7 @@ export default function AgencyIntyg() {
   const resetForm = () => {
     setForm({ ...EMPTY_FORM, agency_org_number: orgNumber || "" });
     setAiText(""); setAiImageDataUrl(null);
+    setIntelligenceId(null); setUsedAi(false);
   };
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -163,12 +171,16 @@ export default function AgencyIntyg() {
       return;
     }
     setAiBusy(true);
+    const inputType = aiText.trim() && aiImageDataUrl ? "both" : (aiImageDataUrl ? "image" : "text");
     try {
       const { data, error } = await supabase.functions.invoke("parse-avrop", {
         body: { text: aiText.trim() || undefined, imageDataUrl: aiImageDataUrl || undefined },
       });
       if (error) throw error;
       const ex = data?.extracted || {};
+      const filledCount = Object.values(ex).filter(Boolean).length;
+      setIntelligenceId(data?.intelligence_id || null);
+      setUsedAi(true);
       setForm((f) => ({
         ...f,
         region: ex.region || f.region,
@@ -179,9 +191,11 @@ export default function AgencyIntyg() {
         response_deadline: ex.response_deadline || f.response_deadline,
         assignment_id: ex.assignment_id || f.assignment_id,
       }));
+      trackEvent("intyg_ai_extract_run", { input_type: inputType, success: true, fields_filled: filledCount });
       toast.success("Fält ifyllda – granska och justera vid behov");
     } catch (err: any) {
       console.error(err);
+      trackEvent("intyg_ai_extract_run", { input_type: inputType, success: false });
       toast.error("AI-extraktion misslyckades. Fyll i manuellt.");
     } finally {
       setAiBusy(false);
@@ -209,9 +223,18 @@ export default function AgencyIntyg() {
           assignment_id: form.assignment_id || null,
           agency_name: orgName || "Bemanningsföretag",
           agency_org_number: form.agency_org_number || orgNumber || null,
+          intelligence_id: intelligenceId,
+          used_ai: usedAi,
         },
       });
       if (error) throw error;
+
+      trackEvent("intyg_create_submitted", {
+        region: form.region,
+        competence: form.competence || null,
+        used_ai: usedAi,
+        had_collision_warning: !!data?.warning,
+      });
 
       if (data?.warning?.type === "active_exclusivity") {
         toast.warning(

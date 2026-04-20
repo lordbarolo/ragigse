@@ -1,11 +1,16 @@
 /**
  * parse-avrop
  *
- * Tar emot antingen text eller en bild (base64 data URL) av ett avrop och
- * returnerar strukturerade fält för förifyllning av representationsintyget.
+ * Tar emot text och/eller bild av ett vårdavrop och returnerar:
+ *   1. intyg_fields  → används för förifyllning av intygsformuläret
+ *   2. intelligence  → utökad marknadsdata (pris, volym, krav, källa, etc.)
  *
- * Använder Lovable AI Gateway (Gemini Flash, multimodal).
+ * All extraherad data + rådata loggas till `avrop_intelligence` för
+ * långsiktig marknadsanalys. Råtext/bild rensas automatiskt efter 3 dagar
+ * av en cron-funktion (redact_avrop_intelligence_pii).
  */
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -24,16 +29,46 @@ const SWEDISH_REGIONS = [
   "Region Örebro län", "Region Östergötland", "Västra Götalandsregionen",
 ];
 
-const SYSTEM_PROMPT = `Du extraherar fält från svenska vårdavrop till bemanningskonsulter.
+const SYSTEM_PROMPT = `Du extraherar ALL relevant data från svenska vårdavrop till bemanningskonsulter.
 
-Returnera ALLTID ett JSON-objekt med dessa fält (null om okänt):
-- region: en av: ${SWEDISH_REGIONS.join(", ")}. Mappa "VGR" → "Västra Götalandsregionen", "Region Sthlm" → "Region Stockholm" etc.
-- unit: enheten/vårdcentralen/avdelningen som beställer (fritext, ex "Vårdcentralen Mölnlycke", "Akutmottagningen Sahlgrenska")
-- competence: yrkesroll/specialitet (ex "Specialistläkare allmänmedicin", "Sjuksköterska", "Anestesisjuksköterska")
-- period_start: YYYY-MM-DD eller null
-- period_end: YYYY-MM-DD eller null
-- response_deadline: YYYY-MM-DD eller null (sista svarsdag/sista anbudsdag)
-- assignment_id: avropsnummer/uppdrags-ID om angivet (ex "KS-2026-0142") eller null
+Returnera ALLTID ett JSON-objekt med följande struktur (använd null för okända fält):
+
+{
+  "intyg_fields": {
+    "region": "en av: ${SWEDISH_REGIONS.join(", ")} (mappa 'VGR'→'Västra Götalandsregionen', 'Region Sthlm'→'Region Stockholm')",
+    "unit": "vårdcentralen/avdelningen som beställer (fritext)",
+    "competence": "yrkesroll/specialitet",
+    "period_start": "YYYY-MM-DD",
+    "period_end": "YYYY-MM-DD",
+    "response_deadline": "YYYY-MM-DD (sista anbudsdag)",
+    "assignment_id": "avropsnummer/uppdrags-ID"
+  },
+  "intelligence": {
+    "avrop_received_at": "YYYY-MM-DD (datum avropet skickades ut, om angivet)",
+    "source": "adda | region_direct | private | other",
+    "customer_type": "region | kommun | private",
+    "buyer_name": "vårdgivare/beställare i klartext",
+    "price_type": "hourly | fixed | cap (takpris)",
+    "price_min": "siffra utan valuta, ex 1180",
+    "price_max": "siffra utan valuta, ex 1450",
+    "price_unit": "SEK/h | SEK total",
+    "on_call_required": true/false,
+    "ob_required": true/false,
+    "hours_per_week": "siffra, ex 40",
+    "shifts_count": "antal pass om angivet",
+    "duration_weeks": "uppdragets längd i veckor",
+    "requirements": {
+      "journal_system": "ex Cosmic, TakeCare, Melior, Obstetrix",
+      "languages": ["svenska", "engelska"],
+      "certifications": ["legitimation", "specialistbevis"],
+      "experience_years": "siffra om krav anges",
+      "drivers_license": true/false,
+      "other_requirements": "fritext"
+    },
+    "housing_included": true/false,
+    "travel_included": true/false
+  }
+}
 
 Svara endast med JSON, ingen prosa.`;
 
@@ -42,6 +77,18 @@ function jsonResponse(body: unknown, status = 200) {
     status,
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
+}
+
+async function getAuthUserId(req: Request): Promise<string | null> {
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) return null;
+  const supabase = createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_ANON_KEY")!,
+    { global: { headers: { Authorization: authHeader } } },
+  );
+  const { data: { user } } = await supabase.auth.getUser();
+  return user?.id ?? null;
 }
 
 Deno.serve(async (req) => {
@@ -79,6 +126,10 @@ Deno.serve(async (req) => {
       });
     }
 
+    const inputType = text && imageDataUrl ? "both" : (imageDataUrl ? "image" : "text");
+    const startTs = Date.now();
+    const model = "google/gemini-2.5-flash";
+
     const aiResponse = await fetch(AI_URL, {
       method: "POST",
       headers: {
@@ -86,7 +137,7 @@ Deno.serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model,
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
           { role: "user", content: userContent },
@@ -95,15 +146,13 @@ Deno.serve(async (req) => {
       }),
     });
 
+    const latencyMs = Date.now() - startTs;
+
     if (!aiResponse.ok) {
       const errorText = await aiResponse.text();
       console.error("AI gateway error:", aiResponse.status, errorText);
-      if (aiResponse.status === 429) {
-        return jsonResponse({ error: "rate_limited" }, 429);
-      }
-      if (aiResponse.status === 402) {
-        return jsonResponse({ error: "credits_exhausted" }, 402);
-      }
+      if (aiResponse.status === 429) return jsonResponse({ error: "rate_limited" }, 429);
+      if (aiResponse.status === 402) return jsonResponse({ error: "credits_exhausted" }, 402);
       return jsonResponse({ error: "AI extraction failed" }, 500);
     }
 
@@ -117,12 +166,69 @@ Deno.serve(async (req) => {
       return jsonResponse({ error: "Invalid AI response" }, 500);
     }
 
-    // Sanitera region — måste finnas i listan annars null
-    if (parsed.region && !SWEDISH_REGIONS.includes(parsed.region)) {
-      parsed.region = null;
+    const intygFields = parsed.intyg_fields || {};
+    const intelligence = parsed.intelligence || {};
+
+    // Sanitera region
+    if (intygFields.region && !SWEDISH_REGIONS.includes(intygFields.region)) {
+      intygFields.region = null;
     }
 
-    return jsonResponse({ extracted: parsed });
+    // Logga till avrop_intelligence (best-effort, blockera ej svar)
+    const agencyId = await getAuthUserId(req);
+    const admin = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
+    );
+
+    let intelligenceId: string | null = null;
+    try {
+      const { data: inserted } = await admin
+        .from("avrop_intelligence")
+        .insert({
+          agency_id: agencyId,
+          region: intygFields.region || null,
+          unit: intygFields.unit || null,
+          competence: intygFields.competence || null,
+          period_start: intygFields.period_start || null,
+          period_end: intygFields.period_end || null,
+          response_deadline: intygFields.response_deadline || null,
+          assignment_id: intygFields.assignment_id || null,
+          avrop_received_at: intelligence.avrop_received_at || null,
+          source: intelligence.source || null,
+          customer_type: intelligence.customer_type || null,
+          buyer_name: intelligence.buyer_name || null,
+          price_type: intelligence.price_type || null,
+          price_min: intelligence.price_min ?? null,
+          price_max: intelligence.price_max ?? null,
+          price_unit: intelligence.price_unit || null,
+          on_call_required: intelligence.on_call_required ?? null,
+          ob_required: intelligence.ob_required ?? null,
+          hours_per_week: intelligence.hours_per_week ?? null,
+          shifts_count: intelligence.shifts_count ?? null,
+          duration_weeks: intelligence.duration_weeks ?? null,
+          requirements: intelligence.requirements || {},
+          housing_included: intelligence.housing_included ?? null,
+          travel_included: intelligence.travel_included ?? null,
+          raw_text: text || null,
+          // raw_image_path: TODO när bilduppladdning till storage införs
+          extraction_model: model,
+          extraction_latency_ms: latencyMs,
+          input_type: inputType,
+          extra_fields: parsed.extra_fields || {},
+        })
+        .select("id")
+        .single();
+      intelligenceId = inserted?.id || null;
+    } catch (logErr) {
+      console.error("avrop_intelligence insert failed (non-fatal):", logErr);
+    }
+
+    return jsonResponse({
+      extracted: intygFields,           // Bakåtkompatibel
+      intelligence,                     // Ny full data
+      intelligence_id: intelligenceId,  // Använd vid intygskapande för att länka
+    });
   } catch (err) {
     console.error("parse-avrop error:", err);
     return jsonResponse({ error: (err as Error).message }, 500);
