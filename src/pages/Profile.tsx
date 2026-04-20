@@ -15,6 +15,9 @@ import CompensationView from "@/components/report/CompensationView";
 import DashboardReferences from "@/components/profile/DashboardReferences";
 import DashboardDocuments from "@/components/profile/DashboardDocuments";
 import DashboardInvoiceCheck from "@/components/profile/DashboardInvoiceCheck";
+import AssignmentFeedbackDialog from "@/components/profile/AssignmentFeedbackDialog";
+import { useAssignmentFeedback } from "@/hooks/useAssignmentFeedback";
+import { trackEvent } from "@/lib/trackEvent";
 
 interface ReportRow {
   id: string;

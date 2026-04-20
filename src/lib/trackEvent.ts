@@ -68,7 +68,10 @@ type EventName =
   | "intyg_create_submitted"
   | "intyg_link_copied"
   | "intyg_sign_page_viewed"
-  | "intyg_sign_confirmed";
+  | "intyg_sign_confirmed"
+  | "assignment_feedback_shown"
+  | "assignment_feedback_snoozed"
+  | "assignment_feedback_submitted";
 
 function isInternalTraffic(): boolean {
   const host = window.location.hostname;
