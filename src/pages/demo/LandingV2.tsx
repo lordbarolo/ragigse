@@ -344,7 +344,17 @@ export default function LandingV2() {
               </div>
               <h3 className="text-base font-semibold text-foreground mb-2 leading-snug">{m.title}</h3>
               <p className="text-[13px] text-foreground leading-[1.7] flex-1 mb-[22px]">{m.desc}</p>
-              <span className={`inline-block text-[11px] font-medium px-2.5 py-1 rounded-full border w-fit ${TAG_COLORS[m.tagColor]}`}>{m.tag}</span>
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <span className={`inline-block text-[11px] font-medium px-2.5 py-1 rounded-full border w-fit ${TAG_COLORS[m.tagColor]}`}>{m.tag}</span>
+                {m.cta && (
+                  <Link
+                    to={m.cta.href}
+                    className="text-[13px] font-semibold text-[#534AB7] hover:text-[#3C3489] inline-flex items-center gap-1 transition-colors"
+                  >
+                    {m.cta.label} <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                )}
+              </div>
             </div>
           ))}
         </div>
