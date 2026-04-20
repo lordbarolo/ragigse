@@ -2571,6 +2571,8 @@ export type Database = {
           consultant_email: string
           consultant_user_id: string | null
           created_at: string
+          email_sent_at: string | null
+          email_status: string | null
           id: string
           organization_id: string | null
           payload: Json | null
@@ -2588,6 +2590,8 @@ export type Database = {
           consultant_email: string
           consultant_user_id?: string | null
           created_at?: string
+          email_sent_at?: string | null
+          email_status?: string | null
           id?: string
           organization_id?: string | null
           payload?: Json | null
@@ -2605,6 +2609,8 @@ export type Database = {
           consultant_email?: string
           consultant_user_id?: string | null
           created_at?: string
+          email_sent_at?: string | null
+          email_status?: string | null
           id?: string
           organization_id?: string | null
           payload?: Json | null
