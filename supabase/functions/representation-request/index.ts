@@ -287,6 +287,26 @@ Deno.serve(async (req) => {
         throw updateErr;
       }
 
+      // Logga signerings-event och eventuellt superseded
+      const leadTimeDays = request.period_start
+        ? Math.round(
+          (new Date(request.period_start).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+        )
+        : null;
+      await logEvent(admin, request.id, "signed", "consultant", {
+        region: request.region,
+        competence: request.competence,
+        lead_time_days: leadTimeDays,
+        had_collision: !!existing,
+        superseded_request_id: existing?.id || null,
+      });
+      if (existing) {
+        await logEvent(admin, existing.id, "superseded", "system", {
+          superseded_by: request.id,
+          new_agency: request.agency_name,
+        });
+      }
+
       return jsonResponse({
         success: true,
         verification_id: verificationId,
