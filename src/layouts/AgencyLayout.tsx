@@ -10,13 +10,14 @@ import {
   Menu,
   X,
   Activity,
+  ShieldCheck,
 } from "lucide-react";
 import { useState } from "react";
 
 const NAV_ITEMS = [
   { label: "Dashboard", path: "/agency/dashboard", icon: LayoutDashboard },
   { label: "Market Edge", path: "/agency/market-edge", icon: Activity },
-  { label: "Förfrågningar", path: "/agency/requests", icon: FileText },
+  { label: "Intyg", path: "/agency/intyg", icon: ShieldCheck },
   { label: "Inställningar", path: "/agency/settings", icon: Settings },
 ] as const;
 
