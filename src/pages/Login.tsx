@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, ArrowLeft, FileText, Clock, TrendingUp, MessageSquare, Link2 } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 import { trackEvent } from "@/lib/trackEvent";
+import posthog from "@/lib/posthog";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -20,18 +21,13 @@ export default function Login() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    trackEvent("login_clicked", { source: "login_page" });
 
     const { error, data } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
-      const reason =
-        error.message === "Invalid login credentials"
-          ? "invalid_credentials"
-          : error.message.toLowerCase().includes("email not confirmed")
-          ? "email_not_confirmed"
-          : "other";
-      trackEvent("login_failed", { source: "login_page", reason });
+      trackEvent("login_failed", {
+        error_code: error.message.includes("Invalid") ? "invalid_credentials" : "other",
+      });
       toast({
         title: "Inloggning misslyckades",
         description: error.message === "Invalid login credentials"
@@ -43,11 +39,11 @@ export default function Login() {
       return;
     }
 
-    trackEvent("login_succeeded", { source: "login_page" });
     toast({ title: "Inloggad!" });
 
-    // Redirect based on role
+    // Determine role
     const userId = data.user?.id;
+    let userRole: string = "individual";
     if (userId) {
       const { data: roleData } = await supabase
         .from("ref_user_roles")
@@ -55,11 +51,23 @@ export default function Login() {
         .eq("user_id", userId)
         .limit(1)
         .maybeSingle();
+      if (roleData?.role) userRole = roleData.role as string;
+    }
 
-      if ((roleData?.role as string) === "agency") {
-        navigate("/agency/dashboard");
-        return;
+    try {
+      if (data.user) {
+        posthog.identify(data.user.id, {
+          email: data.user.email,
+          role: userRole,
+        });
       }
+    } catch {}
+
+    trackEvent("login_succeeded", { role: userRole });
+
+    if (userRole === "agency") {
+      navigate("/agency/dashboard");
+      return;
     }
     navigate("/profil");
   };

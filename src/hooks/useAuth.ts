@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { User, Session } from "@supabase/supabase-js";
+import posthog from "@/lib/posthog";
 
 export type AppRole = "individual" | "reference_giver" | "client" | "admin" | "agency";
 
@@ -12,9 +13,17 @@ export function useAuth() {
 
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
+      (event, session) => {
         setSession(session);
         setUser(session?.user ?? null);
+        if (session?.user) {
+          try {
+            posthog.identify(session.user.id, { email: session.user.email ?? undefined });
+          } catch {}
+        }
+        if (event === "SIGNED_OUT") {
+          try { posthog.reset(); } catch {}
+        }
         if (!session?.user) {
           setRole(null);
           setLoading(false);

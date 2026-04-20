@@ -12,7 +12,9 @@ if (import.meta.env.DEV && !import.meta.env.VITE_POSTHOG_KEY) {
 }
 
 posthog.init(POSTHOG_KEY, {
-  api_host: "https://eu.i.posthog.com",
+  api_host:
+    (import.meta.env.VITE_POSTHOG_HOST as string | undefined) ??
+    "https://eu.i.posthog.com",
   ui_host: "https://eu.posthog.com",
   opt_out_capturing_by_default: true,
   capture_pageview: false,
