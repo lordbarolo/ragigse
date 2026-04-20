@@ -1,7 +1,17 @@
 import posthog from "posthog-js";
 import { getConsent } from "@/lib/cookieConsent";
 
-posthog.init("phc_GiBn5CBOm72IrzgsdQRuUcK2mujk5Q0ZeI6hs8ixvwv", {
+const POSTHOG_KEY =
+  (import.meta.env.VITE_POSTHOG_KEY as string | undefined) ??
+  "phc_GiBn5CBOm72IrzgsdQRuUcK2mujk5Q0ZeI6hs8ixvwv";
+
+if (import.meta.env.DEV && !import.meta.env.VITE_POSTHOG_KEY) {
+  console.warn(
+    "[PostHog] VITE_POSTHOG_KEY saknas — använder fallback. Lägg till nyckeln i Workspace Settings → Build Secrets för att överstyra."
+  );
+}
+
+posthog.init(POSTHOG_KEY, {
   api_host: "https://eu.i.posthog.com",
   ui_host: "https://eu.posthog.com",
   opt_out_capturing_by_default: true,
