@@ -61,7 +61,14 @@ type EventName =
   | "fakturakontroll_ny_viewed"
   | "fakturakontroll_uploaded"
   | "fakturakontroll_confirmed"
-  | "fakturakontroll_completed";
+  | "fakturakontroll_completed"
+  | "intyg_dashboard_viewed"
+  | "intyg_create_opened"
+  | "intyg_ai_extract_run"
+  | "intyg_create_submitted"
+  | "intyg_link_copied"
+  | "intyg_sign_page_viewed"
+  | "intyg_sign_confirmed";
 
 function isInternalTraffic(): boolean {
   const host = window.location.hostname;
