@@ -358,6 +358,8 @@ Deno.serve(async (req) => {
         assignment_id,
         agency_name,
         agency_org_number,
+        intelligence_id,           // valfri koppling från parse-avrop
+        used_ai,                   // bool för funnel-tracking
       } = params;
 
       if (!consultant_email || !region || !response_deadline) {
@@ -389,6 +391,29 @@ Deno.serve(async (req) => {
         .single();
 
       if (error) throw error;
+
+      // Länka avrop_intelligence-raden till intyget om vi fick id:n från parse-avrop
+      if (intelligence_id) {
+        await admin
+          .from("avrop_intelligence")
+          .update({ representation_request_id: data.id })
+          .eq("id", intelligence_id)
+          .eq("agency_id", userId);
+      }
+
+      const leadTimeDays = period_start
+        ? Math.round(
+          (new Date(period_start).getTime() - Date.now()) / (1000 * 60 * 60 * 24),
+        )
+        : null;
+      await logEvent(admin, data.id, "created", "agency", {
+        region,
+        competence: competence || null,
+        had_collision_warning: !!existing,
+        used_ai: !!used_ai,
+        lead_time_days: leadTimeDays,
+        intelligence_id: intelligence_id || null,
+      });
 
       sendInviteEmail(admin, data.id, {
         consultant_email,
