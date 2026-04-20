@@ -98,7 +98,13 @@ export default function AgencyIntyg() {
   const [aiText, setAiText] = useState("");
   const [aiImageDataUrl, setAiImageDataUrl] = useState<string | null>(null);
   const [aiBusy, setAiBusy] = useState(false);
+  const [intelligenceId, setIntelligenceId] = useState<string | null>(null);
+  const [usedAi, setUsedAi] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    trackEvent("intyg_dashboard_viewed");
+  }, []);
 
   useEffect(() => {
     if (!user) return;
