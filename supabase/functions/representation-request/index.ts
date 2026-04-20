@@ -178,6 +178,13 @@ Deno.serve(async (req) => {
         }
       }
 
+      // Logga link_opened (endast vid pending — undvik dubbeltrigger vid omladdning av success-vyn)
+      if (data.status === "pending") {
+        await logEvent(admin, data.id, "link_opened", "consultant", {
+          had_active_exclusivity: !!activeExclusivity,
+        });
+      }
+
       return jsonResponse({ request: data, activeExclusivity });
     }
 
