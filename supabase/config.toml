@@ -128,3 +128,6 @@ verify_jwt = false
 
 [functions.bankid-auth]
 verify_jwt = false
+
+[functions.bankid-collect]
+verify_jwt = false
