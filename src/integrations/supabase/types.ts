@@ -2566,9 +2566,12 @@ export type Database = {
         Row: {
           agency_id: string
           agency_name: string
-          assignment_id: string
+          agency_org_number: string | null
+          assignment_id: string | null
           bankid_ref: string | null
+          competence: string | null
           consultant_email: string
+          consultant_name: string | null
           consultant_user_id: string | null
           created_at: string
           email_sent_at: string | null
@@ -2576,18 +2579,26 @@ export type Database = {
           id: string
           organization_id: string | null
           payload: Json | null
+          period_end: string | null
+          period_start: string | null
           region: string
+          response_deadline: string | null
           secret_token: string
           signed_at: string | null
           status: Database["public"]["Enums"]["ref_representation_status"]
+          superseded_by: string | null
+          unit: string | null
           verification_id: string | null
         }
         Insert: {
           agency_id: string
           agency_name?: string
-          assignment_id: string
+          agency_org_number?: string | null
+          assignment_id?: string | null
           bankid_ref?: string | null
+          competence?: string | null
           consultant_email: string
+          consultant_name?: string | null
           consultant_user_id?: string | null
           created_at?: string
           email_sent_at?: string | null
@@ -2595,18 +2606,26 @@ export type Database = {
           id?: string
           organization_id?: string | null
           payload?: Json | null
+          period_end?: string | null
+          period_start?: string | null
           region: string
+          response_deadline?: string | null
           secret_token?: string
           signed_at?: string | null
           status?: Database["public"]["Enums"]["ref_representation_status"]
+          superseded_by?: string | null
+          unit?: string | null
           verification_id?: string | null
         }
         Update: {
           agency_id?: string
           agency_name?: string
-          assignment_id?: string
+          agency_org_number?: string | null
+          assignment_id?: string | null
           bankid_ref?: string | null
+          competence?: string | null
           consultant_email?: string
+          consultant_name?: string | null
           consultant_user_id?: string | null
           created_at?: string
           email_sent_at?: string | null
@@ -2614,10 +2633,15 @@ export type Database = {
           id?: string
           organization_id?: string | null
           payload?: Json | null
+          period_end?: string | null
+          period_start?: string | null
           region?: string
+          response_deadline?: string | null
           secret_token?: string
           signed_at?: string | null
           status?: Database["public"]["Enums"]["ref_representation_status"]
+          superseded_by?: string | null
+          unit?: string | null
           verification_id?: string | null
         }
         Relationships: [
@@ -2626,6 +2650,20 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ref_representation_requests_superseded_by_fkey"
+            columns: ["superseded_by"]
+            isOneToOne: false
+            referencedRelation: "ref_representation_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ref_representation_requests_superseded_by_fkey"
+            columns: ["superseded_by"]
+            isOneToOne: false
+            referencedRelation: "ref_representation_requests_safe"
             referencedColumns: ["id"]
           },
         ]
