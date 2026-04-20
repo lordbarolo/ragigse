@@ -54,6 +54,7 @@ const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 const Academy = lazy(() => import("./pages/Academy"));
 const CompensationPreview = lazy(() => import("./pages/CompensationPreview"));
 const AgencyDashboard = lazy(() => import("./pages/AgencyDashboard"));
+const AgencyIntyg = lazy(() => import("./pages/agency/Intyg"));
 const SignRepresentation = lazy(() => import("./pages/SignRepresentation"));
 const AgencyLanding = lazy(() => import("./pages/AgencyLanding"));
 const AgencySignup = lazy(() => import("./pages/AgencySignup"));
@@ -134,7 +135,8 @@ const App = () => (
               <Route element={<ProtectedRoute allowedRoles={["agency", "admin"]}><AgencyLayout /></ProtectedRoute>}>
                 <Route path="/agency/dashboard" element={<AgencyDashboard />} />
                 <Route path="/agency/market-edge" element={<MarketEdge />} />
-                {/* Future: /agency/requests, /agency/settings */}
+                <Route path="/agency/intyg" element={<AgencyIntyg />} />
+                {/* Future: /agency/settings */}
               </Route>
 
               {/* ── Public Verify Layout ──────────── */}

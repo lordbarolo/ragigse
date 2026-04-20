@@ -5,8 +5,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  ShieldCheck, ShieldAlert, Fingerprint, Building2,
-  MapPin, FileText, CheckCircle2, Loader2, PartyPopper,
+  ShieldCheck, ShieldAlert, Building2, MapPin, FileText,
+  Loader2, PartyPopper, AlertTriangle, Info,
 } from "lucide-react";
 
 interface RepresentationRequest {
@@ -20,9 +20,16 @@ interface RepresentationRequest {
   verification_id: string | null;
 }
 
+interface CollisionInfo {
+  agency_name: string;
+  signed_at: string;
+  verification_id: string | null;
+}
+
 export default function SignRepresentation() {
   const { token } = useParams<{ token: string }>();
   const [request, setRequest] = useState<RepresentationRequest | null>(null);
+  const [collision, setCollision] = useState<CollisionInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [signing, setSigning] = useState(false);
   const [signed, setSigned] = useState(false);
@@ -30,7 +37,7 @@ export default function SignRepresentation() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetch() {
+    async function fetchRequest() {
       if (!token) return;
       try {
         const { data, error: fnError } = await supabase.functions.invoke("representation-request", {
@@ -39,6 +46,7 @@ export default function SignRepresentation() {
         if (fnError) throw fnError;
         const req = data.request;
         setRequest(req);
+        setCollision(data.collision || null);
         if (req.status === "signed") {
           setSigned(true);
           setVerificationId(req.verification_id);
@@ -49,7 +57,7 @@ export default function SignRepresentation() {
         setLoading(false);
       }
     }
-    fetch();
+    fetchRequest();
   }, [token]);
 
   const handleSign = async () => {
@@ -59,7 +67,23 @@ export default function SignRepresentation() {
       const { data, error: fnError } = await supabase.functions.invoke("representation-request", {
         body: { action: "sign", token },
       });
-      if (fnError) throw fnError;
+      if (fnError) {
+        const ctx = (fnError as any).context;
+        if (ctx) {
+          try {
+            const parsed = await ctx.json();
+            if (parsed?.error === "collision" && parsed.collision) {
+              setCollision(parsed.collision);
+              return;
+            }
+          } catch { /* ignore */ }
+        }
+        throw fnError;
+      }
+      if (data?.error === "collision" && data.collision) {
+        setCollision(data.collision);
+        return;
+      }
       setSigned(true);
       setVerificationId(data.verification_id);
     } catch (err: any) {
@@ -91,9 +115,46 @@ export default function SignRepresentation() {
               <ShieldAlert className="mx-auto mb-4 h-12 w-12 text-muted-foreground" />
               <h2 className="text-lg font-semibold text-foreground">Förfrågan hittades inte</h2>
               <p className="mt-2 text-sm text-muted-foreground">{error || "Ogiltig eller utgången länk"}</p>
-              <Button variant="outline" className="mt-6" asChild>
+              <Button variant="outline" size="sm" className="mt-6" asChild>
                 <Link to="/">Till startsidan</Link>
               </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // Collision state — block signing
+  if (collision && !signed) {
+    return (
+      <div className="min-h-screen bg-background">
+        <div className="h-1.5 w-full bg-destructive" />
+        <div className="mx-auto max-w-lg px-4 py-12">
+          <Card className="border-destructive/30">
+            <CardContent className="py-10 px-6 text-center space-y-4">
+              <div className="flex justify-center">
+                <div className="rounded-full bg-destructive/10 p-4">
+                  <AlertTriangle className="h-9 w-9 text-destructive" />
+                </div>
+              </div>
+              <h1 className="text-xl font-bold text-foreground">Du är redan signerad för detta uppdrag</h1>
+              <p className="text-sm text-muted-foreground max-w-sm mx-auto leading-relaxed">
+                Du har redan bekräftat representation av{" "}
+                <span className="font-semibold text-foreground">{collision.agency_name}</span>{" "}
+                för uppdrag <span className="font-mono text-xs">{request.assignment_id}</span>.
+              </p>
+              <p className="text-xs text-muted-foreground max-w-sm mx-auto">
+                Endast ett bemanningsföretag i taget kan representera dig för samma uppdrag.
+                Om du vill byta måste det tidigare intyget återkallas först.
+              </p>
+              {collision.verification_id && (
+                <Button variant="outline" size="sm" className="mt-2" asChild>
+                  <Link to={`/verify/${collision.verification_id}`}>
+                    Visa befintligt bevis →
+                  </Link>
+                </Button>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -114,9 +175,9 @@ export default function SignRepresentation() {
                   <PartyPopper className="h-10 w-10 text-primary" />
                 </div>
               </div>
-              <h1 className="text-2xl font-bold text-foreground">Signerat!</h1>
+              <h1 className="text-2xl font-bold text-foreground">Bekräftat!</h1>
               <p className="text-sm text-muted-foreground max-w-sm mx-auto">
-                Du har bekräftat din representation av{" "}
+                Du har bekräftat representation av{" "}
                 <span className="font-medium text-foreground">{request.agency_name || "bemanningsföretaget"}</span>{" "}
                 för uppdrag <span className="font-mono text-xs">{request.assignment_id}</span> i{" "}
                 <span className="font-medium text-foreground">{request.region}</span>.
@@ -126,7 +187,7 @@ export default function SignRepresentation() {
                 <span>Digitalt verifierat representationsbevis</span>
               </div>
               {verificationId && (
-                <Button variant="outline" className="mt-4" asChild>
+                <Button variant="outline" size="sm" className="mt-4" asChild>
                   <Link to={`/verify/${verificationId}`}>
                     Visa bevis →
                   </Link>
@@ -145,34 +206,23 @@ export default function SignRepresentation() {
       <div className="h-1.5 w-full bg-primary" />
       <div className="mx-auto max-w-lg px-4 py-12">
         <div className="flex items-center gap-2 mb-6">
-          <Fingerprint className="h-5 w-5 text-primary" />
+          <ShieldCheck className="h-5 w-5 text-primary" />
           <h1 className="text-xl font-bold text-foreground tracking-tight">
             Bekräfta representation
           </h1>
         </div>
 
-        <Card className="mb-6">
+        <Card className="mb-4">
           <CardContent className="p-6 space-y-4">
-            {/* Details */}
             <div className="space-y-3">
-              <DetailRow
-                icon={<Building2 className="h-4 w-4 text-muted-foreground" />}
-                label="Bemanningsföretag"
-                value={request.agency_name || "—"}
-              />
-              <DetailRow
-                icon={<FileText className="h-4 w-4 text-muted-foreground" />}
-                label="Uppdrags-ID"
-                value={request.assignment_id}
-              />
-              <DetailRow
-                icon={<MapPin className="h-4 w-4 text-muted-foreground" />}
-                label="Region"
-                value={request.region}
-              />
+              <DetailRow icon={<Building2 className="h-4 w-4 text-muted-foreground" />}
+                label="Bemanningsföretag" value={request.agency_name || "—"} />
+              <DetailRow icon={<FileText className="h-4 w-4 text-muted-foreground" />}
+                label="Uppdrags-ID" value={request.assignment_id} />
+              <DetailRow icon={<MapPin className="h-4 w-4 text-muted-foreground" />}
+                label="Region" value={request.region} />
             </div>
 
-            {/* Signing text */}
             <div className="mt-6 p-4 bg-muted/50 rounded-lg border border-border">
               <p className="text-sm text-foreground leading-relaxed">
                 Jag bekräftar med min signatur att jag har gjort ett{" "}
@@ -189,28 +239,26 @@ export default function SignRepresentation() {
           </CardContent>
         </Card>
 
-        <Button
-          onClick={handleSign}
-          disabled={signing}
-          className="w-full h-12 text-base gap-2"
-          size="lg"
-        >
+        {/* BankID notice */}
+        <div className="flex items-start gap-2 rounded-lg bg-muted/40 border border-border p-3 mb-4">
+          <Info className="h-4 w-4 text-muted-foreground mt-0.5 shrink-0" />
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            <span className="font-medium text-foreground">BankID kommer snart.</span>{" "}
+            Tills vidare bekräftas representationen via denna unika länk.
+          </p>
+        </div>
+
+        <Button onClick={handleSign} disabled={signing}
+          className="w-full h-12 text-base gap-2" size="lg">
           {signing ? (
-            <>
-              <Loader2 className="h-5 w-5 animate-spin" />
-              Bekräftar…
-            </>
+            <><Loader2 className="h-5 w-5 animate-spin" />Bekräftar…</>
           ) : (
-            <>
-              <Fingerprint className="h-5 w-5" />
-              Bekräfta representation
-            </>
+            <><ShieldCheck className="h-5 w-5" />Bekräfta representation</>
           )}
         </Button>
 
         <p className="text-[11px] text-muted-foreground text-center mt-4">
-          Ditt representationsbevis blir tillgängligt
-          för bemanningsföretaget och den aktuella regionen.
+          Ditt representationsbevis blir tillgängligt för bemanningsföretaget och den aktuella regionen.
         </p>
       </div>
     </div>
