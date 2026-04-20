@@ -23,6 +23,7 @@ import {
 import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { SWEDISH_REGIONS } from "@/lib/swedishRegions";
+import { trackEvent } from "@/lib/trackEvent";
 
 interface RepRequest {
   id: string;
