@@ -28,31 +28,46 @@ function jsonResponse(body: unknown, status = 200) {
   });
 }
 
-/** Check if a signed representation already exists for this consultant + assignment. */
-async function findExistingSigned(
+/**
+ * Hitta aktiv exklusivitet för (consultant_email, region) där sista svarsdag
+ * fortfarande är ≥ idag. Detta är den nya soft-collision-logiken: en konsult
+ * kan vara representerad av ett bolag i taget per region under aktivt avrop.
+ */
+async function findActiveExclusivity(
   admin: ReturnType<typeof createClient>,
   consultantEmail: string,
-  assignmentId: string,
+  region: string,
+  excludeId?: string,
 ) {
-  const { data } = await admin
+  const today = new Date().toISOString().slice(0, 10);
+  let query = admin
     .from("ref_representation_requests")
-    .select("id, agency_name, signed_at, verification_id")
-    .eq("assignment_id", assignmentId)
+    .select("id, agency_name, signed_at, verification_id, response_deadline, period_start, period_end, unit")
+    .eq("region", region)
     .eq("status", "signed")
+    .is("superseded_by", null)
+    .gte("response_deadline", today)
     .ilike("consultant_email", consultantEmail)
-    .maybeSingle();
+    .order("signed_at", { ascending: false })
+    .limit(1);
+  if (excludeId) query = query.neq("id", excludeId);
+  const { data } = await query.maybeSingle();
   return data;
 }
 
-/** Send invite email via send-transactional-email (fire-and-forget logging). */
 async function sendInviteEmail(
   admin: ReturnType<typeof createClient>,
   requestId: string,
   payload: {
     consultant_email: string;
     agency_name: string;
-    assignment_id: string;
     region: string;
+    unit: string | null;
+    consultant_name: string | null;
+    competence: string | null;
+    period_start: string | null;
+    period_end: string | null;
+    response_deadline: string | null;
     secret_token: string;
   },
 ) {
@@ -64,8 +79,13 @@ async function sendInviteEmail(
         recipientEmail: payload.consultant_email,
         templateData: {
           agencyName: payload.agency_name,
-          assignmentId: payload.assignment_id,
           region: payload.region,
+          unit: payload.unit,
+          consultantName: payload.consultant_name,
+          competence: payload.competence,
+          periodStart: payload.period_start,
+          periodEnd: payload.period_end,
+          responseDeadline: payload.response_deadline,
           signingUrl,
         },
       },
@@ -109,24 +129,27 @@ Deno.serve(async (req) => {
 
       if (error || !data) return jsonResponse({ error: "Request not found" }, 404);
 
-      // Surface collision info if a different signed exists for same assignment+consultant
-      let collision = null;
-      if (data.status === "pending") {
-        const existing = await findExistingSigned(
+      // Surface aktiv exklusivitet (varning, ej blockering)
+      let activeExclusivity = null;
+      if (data.status === "pending" && data.region) {
+        const existing = await findActiveExclusivity(
           admin,
           data.consultant_email,
-          data.assignment_id,
+          data.region,
+          data.id,
         );
-        if (existing && existing.id !== data.id) {
-          collision = {
+        if (existing) {
+          activeExclusivity = {
             agency_name: existing.agency_name,
             signed_at: existing.signed_at,
             verification_id: existing.verification_id,
+            response_deadline: existing.response_deadline,
+            unit: existing.unit,
           };
         }
       }
 
-      return jsonResponse({ request: data, collision });
+      return jsonResponse({ request: data, activeExclusivity });
     }
 
     // ── SIGN (public via token) ───────────────────────
@@ -148,37 +171,43 @@ Deno.serve(async (req) => {
         );
       }
 
-      // Final collision check at signing time
-      const existing = await findExistingSigned(
-        admin,
-        request.consultant_email,
-        request.assignment_id,
-      );
-      if (existing && existing.id !== request.id) {
-        return jsonResponse({
-          error: "collision",
-          collision: {
-            agency_name: existing.agency_name,
-            signed_at: existing.signed_at,
-            verification_id: existing.verification_id,
-          },
-        }, 409);
-      }
+      // Hitta aktiv exklusivitet → markera den som ersatt (soft collision)
+      const existing = request.region
+        ? await findActiveExclusivity(
+            admin,
+            request.consultant_email,
+            request.region,
+            request.id,
+          )
+        : null;
 
-      // Note: full BankID-style identity verification is on the roadmap.
-      // For now we record a link-based confirmation.
       const confirmationRef = `LINK-${crypto.randomUUID().slice(0, 8).toUpperCase()}`;
+
+      const periodText = request.period_start && request.period_end
+        ? `${request.period_start} – ${request.period_end}`
+        : "uppdragets period";
 
       const payload = {
         signed_text:
-          `Jag bekräftar att jag gjort ett aktivt val att representeras av ${request.agency_name} för uppdrag ${request.assignment_id} i ${request.region}.`,
+          `Jag, ${request.consultant_name || request.consultant_email}, intygar härmed ` +
+          `att jag givit ${request.agency_name} (org.nr ${request.agency_org_number || "—"}) ` +
+          `exklusiv rätt att förmedla detta uppdrag för enheten ${request.unit || "—"} ` +
+          `i ${request.region} under perioden ${periodText}.`,
         confirmation_ref: confirmationRef,
         signed_at: new Date().toISOString(),
         consultant_email: request.consultant_email,
+        consultant_name: request.consultant_name,
+        competence: request.competence,
         agency_name: request.agency_name,
-        assignment_id: request.assignment_id,
+        agency_org_number: request.agency_org_number,
         region: request.region,
+        unit: request.unit,
+        period_start: request.period_start,
+        period_end: request.period_end,
+        response_deadline: request.response_deadline,
+        assignment_id: request.assignment_id,
         method: "link_confirmation",
+        superseded_previous: existing?.id || null,
       };
 
       const { data: verification } = await admin
@@ -190,14 +219,22 @@ Deno.serve(async (req) => {
           type: "representation",
           result: "verified",
           notes:
-            `Representation signed for ${request.agency_name}, assignment ${request.assignment_id}`,
+            `Representation: ${request.agency_name} · ${request.region} · ${request.unit || "—"}`,
         })
         .select("id")
         .single();
 
       const verificationId = verification?.id || null;
 
-      // Update with unique-index guard — race condition protection
+      // Markera tidigare aktiv exklusivitet som ersatt INNAN vi sätter status=signed
+      // för att undgå unique-index-konflikt
+      if (existing) {
+        await admin
+          .from("ref_representation_requests")
+          .update({ superseded_by: request.id })
+          .eq("id", existing.id);
+      }
+
       const { error: updateErr } = await admin
         .from("ref_representation_requests")
         .update({
@@ -210,10 +247,7 @@ Deno.serve(async (req) => {
         .eq("id", request.id);
 
       if (updateErr) {
-        // Likely unique-index violation = race-collision
-        if (updateErr.code === "23505") {
-          return jsonResponse({ error: "collision" }, 409);
-        }
+        console.error("Sign update error:", updateErr);
         throw updateErr;
       }
 
@@ -221,6 +255,10 @@ Deno.serve(async (req) => {
         success: true,
         verification_id: verificationId,
         confirmation_ref: confirmationRef,
+        superseded: existing ? {
+          agency_name: existing.agency_name,
+          signed_at: existing.signed_at,
+        } : null,
       });
     }
 
@@ -230,7 +268,7 @@ Deno.serve(async (req) => {
       if (!userId) return jsonResponse({ error: "Unauthorized" }, 401);
 
       const { data, error } = await admin
-        .from("ref_representation_requests_safe")
+        .from("ref_representation_requests")
         .select("*")
         .eq("agency_id", userId)
         .order("created_at", { ascending: false });
@@ -240,9 +278,8 @@ Deno.serve(async (req) => {
       const counts = {
         total: (data || []).length,
         pending: (data || []).filter((r: any) => r.status === "pending").length,
-        signed: (data || []).filter((r: any) => r.status === "signed").length,
-        declined:
-          (data || []).filter((r: any) => r.status === "declined").length,
+        signed: (data || []).filter((r: any) => r.status === "signed" && !r.superseded_by).length,
+        declined: (data || []).filter((r: any) => r.status === "declined").length,
       };
 
       return jsonResponse({ requests: data || [], counts });
@@ -253,52 +290,71 @@ Deno.serve(async (req) => {
       const userId = await getAuthUserId(req);
       if (!userId) return jsonResponse({ error: "Unauthorized" }, 401);
 
-      const { consultant_email, assignment_id, region, agency_name } = params;
-      if (!consultant_email || !assignment_id || !region) {
-        return jsonResponse({ error: "Missing required fields" }, 400);
+      const {
+        consultant_email,
+        consultant_name,
+        competence,
+        region,
+        unit,
+        period_start,
+        period_end,
+        response_deadline,
+        assignment_id,
+        agency_name,
+        agency_org_number,
+      } = params;
+
+      if (!consultant_email || !region || !response_deadline) {
+        return jsonResponse({
+          error: "Missing required fields (consultant_email, region, response_deadline)",
+        }, 400);
       }
 
-      // Pre-create collision check
-      const existing = await findExistingSigned(
-        admin,
-        consultant_email,
-        assignment_id,
-      );
-      if (existing) {
-        return jsonResponse({
-          error: "collision",
-          collision: {
-            agency_name: existing.agency_name,
-            signed_at: existing.signed_at,
-            verification_id: existing.verification_id,
-          },
-        }, 409);
-      }
+      // Soft warning vid skapande — blockera inte, bara informera
+      const existing = await findActiveExclusivity(admin, consultant_email, region);
 
       const { data, error } = await admin
         .from("ref_representation_requests")
         .insert({
           agency_id: userId,
           consultant_email,
-          assignment_id,
+          consultant_name: consultant_name || null,
+          competence: competence || null,
           region,
+          unit: unit || null,
+          period_start: period_start || null,
+          period_end: period_end || null,
+          response_deadline,
+          assignment_id: assignment_id || null,
           agency_name: agency_name || "",
+          agency_org_number: agency_org_number || null,
         })
         .select("id, secret_token")
         .single();
 
       if (error) throw error;
 
-      // Send invite email asynchronously — don't block response
       sendInviteEmail(admin, data.id, {
         consultant_email,
         agency_name: agency_name || "Bemanningsföretag",
-        assignment_id,
         region,
+        unit: unit || null,
+        consultant_name: consultant_name || null,
+        competence: competence || null,
+        period_start: period_start || null,
+        period_end: period_end || null,
+        response_deadline,
         secret_token: data.secret_token,
       }).catch((e) => console.error("Background email send failed:", e));
 
-      return jsonResponse({ created: data });
+      return jsonResponse({
+        created: data,
+        warning: existing ? {
+          type: "active_exclusivity",
+          agency_name: existing.agency_name,
+          response_deadline: existing.response_deadline,
+        } : null,
+      });
     }
 
     return jsonResponse({ error: "Unknown action" }, 400);
