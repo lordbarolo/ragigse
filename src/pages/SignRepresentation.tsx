@@ -179,9 +179,9 @@ export default function SignRepresentation() {
 
         {/* Soft warning vid aktiv exklusivitet — informera, blockera inte */}
         {activeExclusivity && (
-          <div className="mb-4 rounded-lg border border-yellow-500/30 bg-yellow-500/5 p-4">
+          <div className="mb-4 rounded-lg border border-destructive/30 bg-destructive/5 p-4">
             <div className="flex gap-3">
-              <AlertTriangle className="h-5 w-5 text-yellow-600 shrink-0 mt-0.5" />
+              <AlertTriangle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
               <div className="space-y-2">
                 <p className="text-sm font-semibold text-foreground">
                   Du har redan en aktiv exklusivitet i {request.region}
