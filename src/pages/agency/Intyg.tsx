@@ -150,6 +150,7 @@ export default function AgencyIntyg() {
   const resetForm = () => {
     setForm({ ...EMPTY_FORM, agency_org_number: orgNumber || "" });
     setAiText(""); setAiImageDataUrl(null);
+    setIntelligenceId(null); setUsedAi(false);
   };
 
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
