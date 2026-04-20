@@ -9,54 +9,85 @@ const SITE_NAME = 'CompCare'
 
 interface RepresentationInviteProps {
   agencyName?: string
-  assignmentId?: string
   region?: string
+  unit?: string | null
+  consultantName?: string | null
+  competence?: string | null
+  periodStart?: string | null
+  periodEnd?: string | null
+  responseDeadline?: string | null
   signingUrl?: string
+}
+
+const formatDate = (d?: string | null) => {
+  if (!d) return '—'
+  try {
+    return new Date(d).toLocaleDateString('sv-SE', { year: 'numeric', month: 'short', day: 'numeric' })
+  } catch {
+    return d
+  }
 }
 
 const RepresentationInviteEmail = ({
   agencyName,
-  assignmentId,
   region,
+  unit,
+  consultantName,
+  competence,
+  periodStart,
+  periodEnd,
+  responseDeadline,
   signingUrl,
 }: RepresentationInviteProps) => (
   <Html lang="sv" dir="ltr">
     <Head />
     <Preview>
-      {`${agencyName || 'Ett bemanningsföretag'} har skapat ett representationsbevis för dig`}
+      {`${agencyName || 'Ett bemanningsföretag'} ber dig bekräfta representation för uppdrag i ${region || 'en region'}`}
     </Preview>
     <Body style={main}>
       <Container style={container}>
         <Text style={logo}>{SITE_NAME}</Text>
         <Heading style={h1}>Bekräfta representation</Heading>
         <Text style={text}>
-          <strong>{agencyName || 'Ett bemanningsföretag'}</strong> vill att du bekräftar att de
-          representerar dig för ett uppdrag. Det tar mindre än en minut.
+          {consultantName ? <>Hej <strong>{consultantName}</strong>,<br /></> : null}
+          <strong>{agencyName || 'Ett bemanningsföretag'}</strong> har skapat ett representationsintyg
+          som ger dem exklusiv rätt att förmedla nedanstående uppdrag åt dig. Granska och bekräfta — det
+          tar mindre än en minut.
         </Text>
 
         <div style={detailsStyle}>
-          <Text style={detailRow}>
-            <span style={detailLabel}>Uppdrag</span>
-            <strong>{assignmentId || '—'}</strong>
-          </Text>
           <Text style={detailRow}>
             <span style={detailLabel}>Region</span>
             <strong>{region || '—'}</strong>
           </Text>
           <Text style={detailRow}>
-            <span style={detailLabel}>Bemanningsföretag</span>
-            <strong>{agencyName || '—'}</strong>
+            <span style={detailLabel}>Enhet</span>
+            <strong>{unit || '—'}</strong>
+          </Text>
+          {competence && (
+            <Text style={detailRow}>
+              <span style={detailLabel}>Kompetens</span>
+              <strong>{competence}</strong>
+            </Text>
+          )}
+          <Text style={detailRow}>
+            <span style={detailLabel}>Period</span>
+            <strong>{formatDate(periodStart)} – {formatDate(periodEnd)}</strong>
+          </Text>
+          <Text style={detailRow}>
+            <span style={detailLabel}>Svara senast</span>
+            <strong>{formatDate(responseDeadline)}</strong>
           </Text>
         </div>
 
         <Text style={text}>
-          När du bekräftat skapas ett digitalt representationsbevis som byrån kan visa
-          för uppdragsgivaren. Du behöver inte skapa något konto.
+          När du bekräftat skapas ett digitalt representationsbevis som byrån kan visa för
+          uppdragsgivaren. Du behöver inte skapa något konto.
         </Text>
 
         {signingUrl && (
           <Button style={button} href={signingUrl}>
-            Bekräfta representation →
+            Granska & bekräfta →
           </Button>
         )}
 
@@ -76,8 +107,13 @@ export const template = {
   displayName: 'Representationsinbjudan',
   previewData: {
     agencyName: 'Medhelp AB',
-    assignmentId: 'AVR-2026-1234',
     region: 'Region Stockholm',
+    unit: 'Vårdcentralen Liljeholmen',
+    consultantName: 'Anna Andersson',
+    competence: 'Specialistläkare allmänmedicin',
+    periodStart: '2026-05-04',
+    periodEnd: '2026-06-15',
+    responseDeadline: '2026-04-28',
     signingUrl: 'https://compcare.se/sign/abc123',
   },
 } satisfies TemplateEntry
