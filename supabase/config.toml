@@ -125,3 +125,6 @@ verify_jwt = false
 
 [functions.verify-rates]
 verify_jwt = false
+
+[functions.bankid-auth]
+verify_jwt = false
