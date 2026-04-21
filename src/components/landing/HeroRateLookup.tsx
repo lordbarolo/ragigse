@@ -126,7 +126,7 @@ export default function HeroRateLookup() {
   }, [role, kommun, rates, locations]);
 
   return (
-    <div className="bg-card border border-border rounded-2xl p-5 md:p-6 shadow-xl shadow-black/20 max-w-2xl mx-auto text-left">
+    <div className="bg-card border border-border rounded-2xl p-5 md:p-6 shadow-xl shadow-black/20 max-w-3xl mx-auto mt-8 text-left">
       <div className="flex items-center gap-2 mb-4">
         <Sparkles className="w-4 h-4 text-primary" />
         <h2 className="text-sm font-semibold text-foreground">
