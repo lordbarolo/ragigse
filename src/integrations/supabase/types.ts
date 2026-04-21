@@ -425,6 +425,84 @@ export type Database = {
           },
         ]
       }
+      bankid_signatures: {
+        Row: {
+          completed_at: string | null
+          completion_data: Json | null
+          created_at: string
+          end_user_ip: string | null
+          error_message: string | null
+          expires_at: string | null
+          flow: Database["public"]["Enums"]["bankid_signature_flow"]
+          given_name: string | null
+          hint_code: string | null
+          id: string
+          ocsp_response: string | null
+          order_ref: string
+          personal_number_hash: string | null
+          signature: string | null
+          signer_name: string | null
+          started_at: string
+          status: Database["public"]["Enums"]["bankid_signature_status"]
+          subject_id: string | null
+          subject_type: string
+          surname: string | null
+          updated_at: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          completion_data?: Json | null
+          created_at?: string
+          end_user_ip?: string | null
+          error_message?: string | null
+          expires_at?: string | null
+          flow: Database["public"]["Enums"]["bankid_signature_flow"]
+          given_name?: string | null
+          hint_code?: string | null
+          id?: string
+          ocsp_response?: string | null
+          order_ref: string
+          personal_number_hash?: string | null
+          signature?: string | null
+          signer_name?: string | null
+          started_at?: string
+          status?: Database["public"]["Enums"]["bankid_signature_status"]
+          subject_id?: string | null
+          subject_type: string
+          surname?: string | null
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          completion_data?: Json | null
+          created_at?: string
+          end_user_ip?: string | null
+          error_message?: string | null
+          expires_at?: string | null
+          flow?: Database["public"]["Enums"]["bankid_signature_flow"]
+          given_name?: string | null
+          hint_code?: string | null
+          id?: string
+          ocsp_response?: string | null
+          order_ref?: string
+          personal_number_hash?: string | null
+          signature?: string | null
+          signer_name?: string | null
+          started_at?: string
+          status?: Database["public"]["Enums"]["bankid_signature_status"]
+          subject_id?: string | null
+          subject_type?: string
+          surname?: string | null
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       benchmark_rates: {
         Row: {
           contract_version_id: string | null
@@ -3994,6 +4072,13 @@ export type Database = {
       }
     }
     Enums: {
+      bankid_signature_flow: "verify_representation"
+      bankid_signature_status:
+        | "pending"
+        | "complete"
+        | "failed"
+        | "cancelled"
+        | "expired"
       geography_type: "nation" | "region" | "zone" | "municipality"
       ref_app_role: "individual" | "reference_giver" | "client" | "admin"
       ref_ping_status: "sent" | "confirmed" | "denied" | "expired" | "dismissed"
@@ -4126,6 +4211,14 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      bankid_signature_flow: ["verify_representation"],
+      bankid_signature_status: [
+        "pending",
+        "complete",
+        "failed",
+        "cancelled",
+        "expired",
+      ],
       geography_type: ["nation", "region", "zone", "municipality"],
       ref_app_role: ["individual", "reference_giver", "client", "admin"],
       ref_ping_status: ["sent", "confirmed", "denied", "expired", "dismissed"],
