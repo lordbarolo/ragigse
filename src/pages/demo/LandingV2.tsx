@@ -1,6 +1,9 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import HeroRateLookup from "@/components/landing/HeroRateLookup";
+import { trackEvent } from "@/lib/trackEvent";
+import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 
 /* ───────────────────── data ───────────────────── */
 const NAV_LINKS: { label: string; href: string; external?: boolean }[] = [
@@ -209,8 +212,14 @@ function FlowArrow() {
 
 /* ───────────────────── component ──────────────── */
 export default function LandingV2() {
+  useTimeOnPage("landing");
+  useEffect(() => {
+    trackEvent("landing_viewed");
+  }, []);
+
   return (
     <div className="w-full bg-[#F2F1F8] text-foreground font-sans">
+
       {/* ── Nav ─────────────────────────────── */}
       <nav className="flex items-center justify-between px-6 lg:px-10 h-[60px] bg-white border-b border-border/40">
         <div className="flex items-center gap-2 text-lg font-medium tracking-tight">
