@@ -289,11 +289,9 @@ export default function ConsultantTrackContent({
           const recommendedM = recommendedH * hpm;
           const ambitiousM = ambitiousH * hpm;
 
-          const minH = realisticH;
-          const maxH = ambitiousH;
-          const range = maxH - minH;
-          const fillPct = range > 0 ? Math.min(Math.round(((recommendedH - minH) / range) * 100), 100) : 50;
-          const yourPct = range > 0 ? Math.min(Math.max(Math.round(((currentHourly - minH) / range) * 100), 0), 105) : 50;
+          // Dölj hela rutan om användaren redan ligger i eller över övre spann —
+          // då saknar förhandlingsförslagen relevans (de skulle visa lägre nivåer än nuvarande).
+          if (currentHourly >= ambitiousH) return null;
 
           return (
             <div>
