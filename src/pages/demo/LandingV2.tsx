@@ -1,6 +1,9 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
 import HeroRateLookup from "@/components/landing/HeroRateLookup";
+import { trackEvent } from "@/lib/trackEvent";
+import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 
 /* ───────────────────── data ───────────────────── */
 const NAV_LINKS: { label: string; href: string; external?: boolean }[] = [
@@ -209,8 +212,14 @@ function FlowArrow() {
 
 /* ───────────────────── component ──────────────── */
 export default function LandingV2() {
+  useTimeOnPage("landing");
+  useEffect(() => {
+    trackEvent("landing_viewed");
+  }, []);
+
   return (
     <div className="w-full bg-[#F2F1F8] text-foreground font-sans">
+
       {/* ── Nav ─────────────────────────────── */}
       <nav className="flex items-center justify-between px-6 lg:px-10 h-[60px] bg-white border-b border-border/40">
         <div className="flex items-center gap-2 text-lg font-medium tracking-tight">
@@ -285,12 +294,12 @@ export default function LandingV2() {
         <div className="relative z-10 w-full md:w-auto md:flex-1 md:max-w-[560px] px-1 sm:px-2 md:px-10 xl:px-16 pt-4 pb-16 md:py-24">
           <HeroRateLookup />
           <div className="mt-4 flex flex-col sm:flex-row gap-2.5 justify-center">
-            <Link to="/v1" className="w-full sm:w-auto">
+            <Link to="/v1" className="w-full sm:w-auto" onClick={() => trackEvent("product_cta_clicked", { cta: "hero_salary_analysis", target: "/v1" })}>
               <button className="w-full px-6 py-3 bg-white hover:bg-white/90 rounded-lg text-[#1a1545] text-[15px] font-semibold whitespace-nowrap min-h-[44px] transition-colors">
                 Gör löneanalysen →
               </button>
             </Link>
-            <Link to="/registrera" className="w-full sm:w-auto">
+            <Link to="/registrera" className="w-full sm:w-auto" onClick={() => trackEvent("product_cta_clicked", { cta: "hero_signup", target: "/registrera" })}>
               <button className="w-full px-6 py-3 bg-[#534AB7] hover:bg-[#3C3489] rounded-lg text-white text-[15px] font-semibold whitespace-nowrap min-h-[44px] transition-colors">
                 Skapa konto
               </button>
