@@ -47,8 +47,9 @@ export default function SalaryCheck() {
   const [searchParams] = useSearchParams();
   const prefillKey = searchParams.get("yrke") || "";
   const prefill = PREFILL_MAP[prefillKey];
+  const startSurvey = searchParams.get("start") === "1";
 
-  const [showSurvey, setShowSurvey] = useState(!!prefill);
+  const [showSurvey, setShowSurvey] = useState(!!prefill || startSurvey);
   const surveyRef = useRef<HTMLDivElement>(null);
 
   useTimeOnPage("landing");
