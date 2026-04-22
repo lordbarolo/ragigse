@@ -496,23 +496,6 @@ export default function LandingV2() {
 
       {/* ── Pricing ─────────────────────────── */}
       <section id="priser" className="px-6 lg:px-10 py-[88px] bg-white">
-        <div className="text-center max-w-[680px] mx-auto mb-4">
-          <span className="inline-flex items-center gap-1.5 text-[12px] font-medium text-[#534AB7] bg-[#EEEDFE] px-3 py-1 rounded-full mb-5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#534AB7]" />
-            Outcome as a Service
-          </span>
-          <h2 className="text-[32px] md:text-[40px] font-bold leading-[1.15] tracking-tight mb-4 font-serif">
-            Inga plattformsavgifter. <span className="text-[#534AB7]">Betala för värde.</span>
-          </h2>
-          <p className="text-[15px] text-[#555] leading-relaxed max-w-[560px] mx-auto">
-            Till skillnad från traditionella lösningar med dyra licenser och dolda avgifter binder vi vår framgång vid din. Inga månadsabonnemang du inte använder. Ingen avgift per användare.
-          </p>
-          <div className="inline-flex items-center gap-3 mt-6 px-4 py-2 rounded-full bg-[#F5F4FA] text-[13px]">
-            <span className="line-through text-muted-foreground">Traditionellt: 1 200 kr/mån</span>
-            <span className="font-semibold text-[#534AB7]">CompCare: 0 kr i grundavgift</span>
-          </div>
-        </div>
-
         <div className="grid md:grid-cols-3 gap-4 mt-12 max-w-6xl mx-auto">
           {PLANS.map((p) => (
             <div
@@ -570,29 +553,6 @@ export default function LandingV2() {
           Osäker på vilken modell som passar?{" "}
           <Link to="/consultant/forhandla" className="text-[#534AB7] font-medium underline-offset-2 hover:underline">Chatta med vår AI</Link>
         </p>
-      </section>
-
-      <div className="h-px bg-border/40 mx-6 lg:mx-10" />
-
-      {/* ── Testimonials ────────────────────── */}
-      <section className="px-6 lg:px-10 py-[72px] bg-white">
-        <p className="text-xs font-medium text-[#534AB7] uppercase tracking-widest mb-2.5">Vad konsulter säger</p>
-        <h2 className="text-[30px] font-medium leading-tight tracking-tight mb-10">Byggt med, och för, er</h2>
-        <div className="grid md:grid-cols-3 gap-4">
-          {TESTIMONIALS.map((t) => (
-            <div key={t.name} className="bg-white border border-border/40 rounded-xl p-6">
-              <div className="text-[13px] text-[#EF9F27] mb-3">★★★★★</div>
-              <p className="text-sm text-muted-foreground leading-relaxed italic mb-4">"{t.quote}"</p>
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-full bg-[#EEEDFE] flex items-center justify-center text-[13px] font-medium text-[#3C3489]">{t.initials}</div>
-                <div>
-                  <div className="text-[13px] font-medium">{t.name}</div>
-                  <div className="text-xs text-muted-foreground">{t.role}</div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
       </section>
 
       {/* ── CTA Banner ──────────────────────── */}
