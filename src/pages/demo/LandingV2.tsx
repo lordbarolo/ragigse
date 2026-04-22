@@ -71,7 +71,7 @@ const MODULES_ROW1: ModuleCard[] = [
         <path d="M4 14l4-4 3 3 5-6" stroke="#854F0B" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
-    cta: { label: "Gör löneanalysen", href: "/v1" },
+    cta: { label: "Gör löneanalysen", href: "/v1?start=1" },
   },
 ];
 
@@ -294,7 +294,7 @@ export default function LandingV2() {
         <div className="relative z-10 w-full md:w-auto md:flex-1 md:max-w-[560px] px-1 sm:px-2 md:px-10 xl:px-16 pt-4 pb-16 md:py-24">
           <HeroRateLookup />
           <div className="mt-4 flex flex-col sm:flex-row gap-2.5 justify-center">
-            <Link to="/v1" className="w-full sm:w-auto" onClick={() => trackEvent("product_cta_clicked", { cta: "hero_salary_analysis", target: "/v1" })}>
+            <Link to="/v1?start=1" className="w-full sm:w-auto" onClick={() => trackEvent("product_cta_clicked", { cta: "hero_salary_analysis", target: "/v1?start=1" })}>
               <button className="w-full px-6 py-3 bg-white hover:bg-white/90 rounded-lg text-[#1a1545] text-[15px] font-semibold whitespace-nowrap min-h-[44px] transition-colors">
                 Gör löneanalysen →
               </button>
