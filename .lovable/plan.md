@@ -1,86 +1,54 @@
 
 
-# Säkerhets- & Tracking-protokoll inför trafiklansering
+## Diagnos — varför PostHog är "nere"
 
-## Bakgrund
-Inför trafikdrivning behöver vi två stående rutiner:
-1. **Säkerhet**: Varje ändring ska säkerhetsgranskas direkt efter implementation.
-2. **PostHog**: Daglig verifiering att tracking fungerar end-to-end.
+PostHog och `analytics_events` är **inte tekniskt nere**. Problemet är att huvudsidan `/` bytte komponent (`SalaryCheck` → `LandingV2`) men spårnings-koden flyttades aldrig med.
 
-## Del 1 — Säkerhetsprotokoll (sparas som memory)
+**Bevis:**
+- `LandingV2.tsx` (renderas på `/`) innehåller **inga** `trackEvent`-anrop alls.
+- `landing_viewed` finns bara i `SalaryCheck.tsx` (nu på `/v1`) och `b2b_landing_viewed` i `Index.tsx` (på `/b2b`).
+- DB-tabellen `analytics_events` har 0 rader sedan 18 april (3 dagar). Senaste `landing_viewed` = 18 april.
+- Edge function `track-event` har **inga loggar alls** — den anropas inte.
+- Lovable-analytics visar att 6 besökare faktiskt funnits dessa dagar — så trafik finns, men inget spåras.
 
-Skapa `mem://security/change-protocol` som **Core-regel** så det appliceras på varje framtida ändring:
+Posthog-init-koden, cookie-consent, edge function, RLS, super-properties och `identify()` — allt är intakt. Det saknas bara faktiska `trackEvent`-anrop på de sidor som nu utgör trafiken.
 
-**Regel som sparas:**
-> Efter varje kodändring: (1) analysera hur RLS, auth-flow, edge functions, exponerade endpoints eller publika data kan ha påverkats. (2) Vid osäkerhet — kör `security--run_security_scan` och `supabase--linter` direkt. (3) Logga fynd i chatten innan uppgiften markeras klar.
+## Plan — återupprätta tracking
 
-**Konkret checklista som triggas vid:**
-- Nya/ändrade tabeller → kontrollera RLS-policies
-- Nya edge functions → verifiera `requireAdmin`/auth-validering
-- Nya publika routes → kontrollera att ingen PII läcker
-- Storage-bucket-ändringar → verifiera privat/publik-status
-- Ändringar i `handle_new_user` eller roll-tilldelning → granska privilege escalation-risk
+### 1. Lägg in `landing_viewed` + `useTimeOnPage` i `LandingV2.tsx`
+Den primära ytan. Ska skicka `landing_viewed` direkt vid mount + `time_on_page` vid unmount. Detta återställer toppen av tratten.
 
-**Index-uppdatering**: Lägg till en Core-rad: *"Efter varje ändring: säkerhetsanalys obligatorisk. Vid osäkerhet kör security scan + linter."*
+### 2. Lägg in spårning för CTA-klick i `LandingV2`
+Identifiera de viktigaste CTA-knapparna i LandingV2 (t.ex. "Starta löneanalys", "Granska faktura", "Logga in") och fyr `product_cta_clicked` med `cta`-metadata för varje. Gör även en `product_page_viewed` om den fungerar som produktöversikt.
 
-## Del 2 — Daglig PostHog-hälsokontroll
+### 3. Lägg till en safety-net i `useEffect` på rotnivå
+Lägg en `pageview`-spårare i `App.tsx` (lyssnar på `useLocation()`) som fyrar ett enkelt PostHog `$pageview` och vår egen `landing_viewed`/route-baserad event vid varje route-byte. Detta garanterar att framtida sidbyten (som det här) inte tappar tracking igen.
 
-### A. Skapa `mem://tech/posthog-daily-check`
-Dokumentera daglig rutin:
-1. Kontrollera att `posthog.__loaded === true` på produktionsdomän
-2. Verifiera att `landing_viewed` triggar på `/`
-3. Kontrollera att `track-event` edge function loggar till `analytics_events` (senaste 24h)
-4. Verifiera att internal traffic-filtret (`is_internal_traffic`) inte blockerar produktionsbesökare
-5. Kontrollera consent-flödet: `getConsent()` → `posthog.opt_in_capturing()`
+   - Endast PostHog `posthog.capture('$pageview', { path })` — ingen edge-function-call (för att undvika rate-limits).
+   - Vår egen `analytics_events`-tabell behåller endast namngivna funnel-events.
 
-### B. Skapa diagnostik-edge function `posthog-health-check`
-En endpoint jag kan anropa dagligen som returnerar:
-- Antal `analytics_events` senaste 24h (ska > 0 vid trafik)
-- Antal unika `lead_id` senaste 24h
-- Topp-5 event-namn senaste 24h
-- Varning om noll events trots produktionsdomän
+### 4. Lägg till en CI-skydd: lint-regel/manuell checklista
+Skapa `.lovable/memory/tech/tracking-coverage.md` som kräver att varje ny landningssida måste:
+   - kalla `trackEvent("landing_viewed")` ELLER ett unikt `*_page_viewed`-event,
+   - lägga till eventet i både `EventName`-typen i `trackEvent.ts` och `ALLOWED_EVENTS` i `track-event/index.ts`.
 
-### C. Frontend sanity-logg (endast prod)
-I `src/lib/posthog.ts`: lägg till en `console.info("[PostHog] active on", hostname, "distinct_id:", id)` som körs på prod-domän. Ger snabb verifiering i devtools om något brutits.
-
-### D. Verifiera nuvarande PostHog-setup
-Granska att:
-- `VITE_POSTHOG_KEY` läses korrekt (fallback fungerar)
-- `opt_out_capturing_by_default: true` + cookie-consent triggar `opt_in` korrekt
-- `is_internal_traffic`-filtret i `trackEvent.ts` inte filtrerar bort `compcare.se` eller `www.compcare.se` (kontrollerat: filtrerar endast localhost + lovable-domäner ✓)
-- `posthog.identify()` körs vid login (bekräftat i `useAuth.ts` ✓)
-
-## Del 3 — Initial baseline-säkerhetsscan
-
-Kör direkt efter godkännande:
-1. `security--run_security_scan` — fullständig scan
-2. `supabase--linter` — DB-linter
-3. Åtgärda kvarvarande `USING (true)`-policies från förra granskningen:
-   - `campaigns` INSERT → kräv admin-roll
-   - `orgs` INSERT → behåll publik (org-skapande sker före auth ibland) ELLER kräv `authenticated`
-   - `leads` INSERT/UPDATE/DELETE → INSERT publikt OK (lead capture), men UPDATE/DELETE ska kräva admin
-   - `ref_profile_views` / `ref_access_logs` INSERT → behåll publikt (audit-loggar)
+### 5. Verifiering efter deploy
+   - Öppna `compcare.se` i ny inkognitoflik, acceptera cookies.
+   - Kör SQL: `SELECT count(*) FROM analytics_events WHERE created_at > now() - interval '5 minutes';` → ska vara > 0.
+   - I PostHog Live Events ska `landing_viewed` och `$pageview` synas inom sekunder.
+   - Kör `posthog-health-check` edge function dagen efter — ska visa events > 0 och unique leads > 0.
 
 ## Tekniska detaljer
 
-**Filer som ändras/skapas:**
-- `mem://security/change-protocol` (ny memory)
-- `mem://tech/posthog-daily-check` (ny memory)
-- `mem://index.md` (uppdatera Core + Memories-lista)
-- `src/lib/posthog.ts` (lägg till prod sanity-logg)
-- `supabase/functions/posthog-health-check/index.ts` (ny edge function, admin-skyddad)
-- DB-migration för RLS-skärpning på `campaigns`, `leads` UPDATE/DELETE
+**Filer som ändras:**
+- `src/pages/demo/LandingV2.tsx` — lägg till `useEffect` med `trackEvent("landing_viewed")` + `useTimeOnPage("landing")` + CTA-spårning.
+- `src/App.tsx` — global route-watcher som fyrar `posthog.capture('$pageview')` på `useLocation()`-ändring.
+- `.lovable/memory/tech/tracking-coverage.md` — ny memory om kravet att alla landningssidor spåras.
+- `.lovable/memory/index.md` — index-rad för nya memory-filen.
 
-**Säkerhetsanalys efter implementation:**
-- Ny edge function: skyddas med `requireAdmin` → ingen publik exponering av analytics-data
-- RLS-skärpning: minskar attack surface utan att bryta lead capture-flöde
-- Memory-regler: ingen kodpåverkan, men förstärker framtida granskningar
+**Vad ändras inte:**
+- `src/lib/posthog.ts`, `src/lib/trackEvent.ts`, `src/lib/identify.ts`, `track-event/index.ts`, RLS-policies, cookie-consent — all befintlig infrastruktur är korrekt.
+- Inga DB-migrations behövs.
 
-## Daglig rutin från och med imorgon
-
-Varje gång du säger "kör daglig check" eller "morgonkoll":
-1. Anropa `posthog-health-check` edge function
-2. Rapportera event-count, unique leads, top events
-3. Kör `security--run_security_scan` om det gått >7 dagar sedan senast
-4. Rapportera resultat med tydlig ✅/⚠️/❌-status
+**Risker:** Inga. Endast tilläggsspårning på publika sidor. Cookie-consent-gating är redan på plats (PostHog respekterar `opt_out_capturing` by default).
 
