@@ -494,67 +494,6 @@ export default function LandingV2() {
         </div>
       </section>
 
-      {/* ── Pricing ─────────────────────────── */}
-      <section id="priser" className="px-6 lg:px-10 py-[88px] bg-white">
-        <div className="grid md:grid-cols-3 gap-4 mt-12 max-w-6xl mx-auto">
-          {PLANS.map((p) => (
-            <div
-              key={p.name}
-              className={`relative ${p.bg} border ${p.border} rounded-[20px] p-7 flex flex-col ${p.featured ? "ring-2 ring-[#0EA5A4]/40 shadow-[0_8px_30px_rgba(14,165,164,0.12)]" : ""}`}
-            >
-              {p.badge && (
-                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-[#0EA5A4] text-white text-[11px] font-semibold px-3 py-1 rounded-full">
-                  {p.badge}
-                </div>
-              )}
-
-              <div className="flex items-center gap-2.5 mb-3">
-                <div className={`w-10 h-10 rounded-xl ${p.iconBg} flex items-center justify-center text-[11px] font-bold tracking-wide`}>
-                  {p.tag}
-                </div>
-                <div>
-                  <h3 className="text-[20px] font-bold leading-tight">{p.name}</h3>
-                  <p className="text-[12px] text-muted-foreground">{p.tagline}</p>
-                </div>
-              </div>
-
-              <h4 className={`text-[22px] font-bold mt-3 mb-1 ${p.headlineColor}`}>{p.headline}</h4>
-              <p className="text-[13px] text-muted-foreground font-medium mb-4">{p.subheadline}</p>
-
-              <p className="text-[13px] text-[#444] leading-relaxed mb-5">{p.desc}</p>
-
-              <ul className="flex flex-col gap-2.5 mb-7 flex-1">
-                {p.features.map((f) => (
-                  <li key={f} className="text-[13px] text-[#333] flex items-start gap-2">
-                    <span className={`mt-0.5 w-4 h-4 rounded-full ${p.iconBg} flex items-center justify-center shrink-0`}>
-                      <svg className="w-2.5 h-2.5" viewBox="0 0 12 12" fill="none">
-                        <path d="M2.5 6L5 8.5L9.5 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </span>
-                    {f}
-                  </li>
-                ))}
-              </ul>
-
-              <Link
-                to={p.href}
-                className={`w-full py-3 rounded-xl text-[14px] font-semibold inline-flex items-center justify-center gap-1.5 transition-colors ${p.btnClass}`}
-              >
-                {p.cta}
-                <svg className="w-3.5 h-3.5" viewBox="0 0 14 14" fill="none">
-                  <path d="M2 7H12M12 7L7.5 2.5M12 7L7.5 11.5" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </Link>
-            </div>
-          ))}
-        </div>
-
-        <p className="text-center text-[13px] text-muted-foreground mt-10">
-          Osäker på vilken modell som passar?{" "}
-          <Link to="/consultant/forhandla" className="text-[#534AB7] font-medium underline-offset-2 hover:underline">Chatta med vår AI</Link>
-        </p>
-      </section>
-
       {/* ── CTA Banner ──────────────────────── */}
       <div className="mx-4 sm:mx-6 lg:mx-10 mb-[72px] rounded-xl bg-[#1a1545] px-6 lg:px-12 py-14 text-center">
         <h2 className="text-[28px] font-medium text-white mb-3">Redo att ta kontroll?</h2>
