@@ -272,16 +272,37 @@ export default function UppdragsradarV2() {
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Profession</Label>
-              <Select value={profession} onValueChange={setProfession}>
+              <Label className="text-xs">Yrkeskategori</Label>
+              <Select value={category} onValueChange={(v) => setCategory(v as RoleGroup | "__all")}>
                 <SelectTrigger><SelectValue placeholder="Alla yrken" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="__all">Alla yrken</SelectItem>
-                  {professions.map((p) => (
-                    <SelectItem key={p} value={p}>{p}</SelectItem>
+                  {CATEGORIES.map((c) => (
+                    <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs">Specialisering</Label>
+              {category === "__all" ? (
+                <Select disabled value="__all">
+                  <SelectTrigger>
+                    <SelectValue placeholder="Välj yrke först" />
+                  </SelectTrigger>
+                  <SelectContent />
+                </Select>
+              ) : (
+                <SearchableSelect
+                  options={[
+                    { value: "__all", label: "Alla specialiseringar" },
+                    ...specializationOptions,
+                  ]}
+                  value={specialization}
+                  onValueChange={setSpecialization}
+                  placeholder="Sök specialisering…"
+                />
+              )}
             </div>
             <div className="flex items-end">
               <label className="flex items-center gap-2 cursor-pointer text-sm">
