@@ -247,7 +247,7 @@ export default function UppdragsradarV2() {
 
         {/* Filters */}
         <Card>
-          <CardContent className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <CardContent className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             <div className="space-y-1.5">
               <Label className="text-xs">Tidshorisont</Label>
               <Select value={horizon} onValueChange={setHorizon}>
@@ -365,9 +365,9 @@ export default function UppdragsradarV2() {
                         <TableCell className="text-muted-foreground text-xs">{i + 1}</TableCell>
                         <TableCell className="font-medium">{r.customer}</TableCell>
                         <TableCell className="text-sm">{r.region ?? "—"}</TableCell>
-                        <TableCell className="text-sm">{r.profession ?? "—"}</TableCell>
+                        <TableCell className="text-sm">{prettyProfession(r.profession)}</TableCell>
                         <TableCell className="text-sm text-muted-foreground">
-                          {r.specialization ?? "—"}
+                          {prettySpec(r.specialization)}
                         </TableCell>
                         <TableCell className="text-sm tabular-nums">{r.month}</TableCell>
                         <TableCell className="text-right font-semibold tabular-nums">
