@@ -1227,6 +1227,66 @@ export type Database = {
         }
         Relationships: []
       }
+      customer_intelligence: {
+        Row: {
+          customer: string
+          generated_at: string
+          history_months: number | null
+          id: string
+          last_calloff_date: string | null
+          profession: string | null
+          region: string | null
+          seasonal_lows: Json | null
+          seasonal_peaks: Json | null
+          trend_label: string | null
+          trend_ratio: number | null
+          vol_2023: number | null
+          vol_2024: number | null
+          vol_2025: number | null
+          vol_2026_ytd: number | null
+          yoy_ratio: number | null
+          ytd_ratio: number | null
+        }
+        Insert: {
+          customer: string
+          generated_at?: string
+          history_months?: number | null
+          id?: string
+          last_calloff_date?: string | null
+          profession?: string | null
+          region?: string | null
+          seasonal_lows?: Json | null
+          seasonal_peaks?: Json | null
+          trend_label?: string | null
+          trend_ratio?: number | null
+          vol_2023?: number | null
+          vol_2024?: number | null
+          vol_2025?: number | null
+          vol_2026_ytd?: number | null
+          yoy_ratio?: number | null
+          ytd_ratio?: number | null
+        }
+        Update: {
+          customer?: string
+          generated_at?: string
+          history_months?: number | null
+          id?: string
+          last_calloff_date?: string | null
+          profession?: string | null
+          region?: string | null
+          seasonal_lows?: Json | null
+          seasonal_peaks?: Json | null
+          trend_label?: string | null
+          trend_ratio?: number | null
+          vol_2023?: number | null
+          vol_2024?: number | null
+          vol_2025?: number | null
+          vol_2026_ytd?: number | null
+          yoy_ratio?: number | null
+          ytd_ratio?: number | null
+        }
+        Relationships: []
+      }
       email_send_log: {
         Row: {
           created_at: string
@@ -3608,6 +3668,63 @@ export type Database = {
           region?: string
           roll?: string
           user_id?: string
+        }
+        Relationships: []
+      }
+      uppdragsradar_predictions: {
+        Row: {
+          confidence: string | null
+          customer: string
+          expected_calloffs: number | null
+          expected_calloffs_display: number | null
+          generated_at: string
+          id: string
+          is_seasonal_peak: boolean | null
+          is_trend_break: boolean | null
+          month: string
+          profession: string | null
+          region: string | null
+          seasonal_index: number | null
+          specialization: string | null
+          trend_ratio: number | null
+          yoy_ratio: number | null
+          ytd_ratio: number | null
+        }
+        Insert: {
+          confidence?: string | null
+          customer: string
+          expected_calloffs?: number | null
+          expected_calloffs_display?: number | null
+          generated_at?: string
+          id?: string
+          is_seasonal_peak?: boolean | null
+          is_trend_break?: boolean | null
+          month: string
+          profession?: string | null
+          region?: string | null
+          seasonal_index?: number | null
+          specialization?: string | null
+          trend_ratio?: number | null
+          yoy_ratio?: number | null
+          ytd_ratio?: number | null
+        }
+        Update: {
+          confidence?: string | null
+          customer?: string
+          expected_calloffs?: number | null
+          expected_calloffs_display?: number | null
+          generated_at?: string
+          id?: string
+          is_seasonal_peak?: boolean | null
+          is_trend_break?: boolean | null
+          month?: string
+          profession?: string | null
+          region?: string | null
+          seasonal_index?: number | null
+          specialization?: string | null
+          trend_ratio?: number | null
+          yoy_ratio?: number | null
+          ytd_ratio?: number | null
         }
         Relationships: []
       }
