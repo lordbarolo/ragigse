@@ -30,11 +30,59 @@ function clientIp(req: Request): string | null {
   );
 }
 
+const API_VERSION = "1.0.0";
+
+function queryId(): string {
+  return crypto.randomUUID();
+}
+
+function envelope(opts: {
+  capability: string;
+  status: "success" | "error";
+  data?: unknown;
+  source?: { name: string; version: string; confidence: string } | null;
+  policy?: Record<string, unknown>;
+  errors?: Array<{ code: string; message: string }>;
+  pagination?: Record<string, unknown>;
+  meta?: Record<string, unknown>;
+}) {
+  return {
+    query_id: queryId(),
+    capability: opts.capability,
+    status: opts.status,
+    data: opts.data ?? null,
+    source: opts.source ?? null,
+    policy: opts.policy ?? { status: opts.status === "success" ? "allowed" : "blocked" },
+    errors: opts.errors ?? [],
+    pagination: opts.pagination,
+    meta: { api_version: API_VERSION, ...(opts.meta ?? {}) },
+  };
+}
+
 function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
+}
+
+function errorEnvelope(
+  capability: string,
+  code: string,
+  message: string,
+  httpStatus: number,
+  meta: Record<string, unknown> = {},
+): Response {
+  return jsonResponse(
+    envelope({
+      capability,
+      status: "error",
+      policy: { status: "blocked", code },
+      errors: [{ code, message }],
+      meta,
+    }),
+    httpStatus,
+  );
 }
 
 Deno.serve(async (req) => {
@@ -46,9 +94,61 @@ Deno.serve(async (req) => {
 
   // Path: /radar-public-api/<endpoint>
   const pathParts = url.pathname.split("/").filter(Boolean);
-  const endpoint = pathParts[pathParts.length - 1] ?? "";
+  const rawEndpoint = pathParts[pathParts.length - 1] ?? "";
+  // If the last segment is the function name itself, treat as discovery root
+  const endpoint =
+    rawEndpoint === "radar-public-api" || rawEndpoint === "" ? "" : rawEndpoint;
 
-  // API key from header or query
+  // Discovery root — returns capabilities, no auth required
+  if (!endpoint) {
+    return jsonResponse(
+      envelope({
+        capability: "discover",
+        status: "success",
+        source: { name: "CompCare Uppdragsradar", version: API_VERSION, confidence: "high" },
+        data: {
+          api: "Uppdragsradar Public API",
+          version: API_VERSION,
+          base_url: `${url.origin}/functions/v1/radar-public-api`,
+          authentication: {
+            methods: ["X-API-Key header", "Authorization: Bearer", "?api_key= query"],
+            issued_by: "CompCare admin (per consumer)",
+          },
+          endpoints: [
+            {
+              path: "/predictions",
+              method: "GET",
+              description: "Avropsprediktioner per kund/region/profession/månad",
+              params: ["region", "profession", "specialization", "month", "confidence", "limit", "offset"],
+              scope: "predictions",
+            },
+            {
+              path: "/customer_intelligence",
+              method: "GET",
+              description: "Trender och säsongstoppar per kund",
+              params: ["customer", "region", "profession", "limit", "offset"],
+              scope: "customer_intelligence",
+            },
+            {
+              path: "/calloff_imports",
+              method: "GET",
+              description: "Rådata från importerade avrop",
+              params: ["region", "role", "customer", "since", "limit", "offset"],
+              scope: "calloff_imports",
+            },
+          ],
+          envelope: {
+            description: "All responses follow CompCare CI envelope",
+            fields: ["query_id", "capability", "status", "data", "source", "policy", "errors", "pagination", "meta"],
+          },
+          documentation: "https://compcare.se/radar-api-README.md",
+          openapi: "https://compcare.se/openapi.json",
+        },
+      }),
+      200,
+    );
+  }
+
   const apiKey =
     req.headers.get("x-api-key") ??
     req.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ??
@@ -61,14 +161,11 @@ Deno.serve(async (req) => {
   );
 
   if (!apiKey) {
-    return jsonResponse({ error: "Missing API key. Send via X-API-Key header." }, 401);
+    return errorEnvelope(endpoint, "MISSING_API_KEY", "Missing API key. Send via X-API-Key header.", 401);
   }
 
   if (!ALLOWED_ENDPOINTS.has(endpoint)) {
-    return jsonResponse({
-      error: "Unknown endpoint",
-      available: [...ALLOWED_ENDPOINTS],
-    }, 404);
+    return errorEnvelope(endpoint, "UNKNOWN_ENDPOINT", `Unknown endpoint. Available: ${[...ALLOWED_ENDPOINTS].join(", ")}`, 404);
   }
 
   // Verify key
@@ -80,11 +177,11 @@ Deno.serve(async (req) => {
     .maybeSingle();
 
   if (!keyRow || !keyRow.is_active || keyRow.revoked_at) {
-    return jsonResponse({ error: "Invalid or revoked API key" }, 401);
+    return errorEnvelope(endpoint, "INVALID_API_KEY", "Invalid or revoked API key", 401);
   }
 
   if (!keyRow.scopes.includes(endpoint)) {
-    return jsonResponse({ error: `API key lacks scope: ${endpoint}` }, 403);
+    return errorEnvelope(endpoint, "SCOPE_DENIED", `API key lacks scope: ${endpoint}`, 403);
   }
 
   // Rate limit check
@@ -103,10 +200,10 @@ Deno.serve(async (req) => {
       api_key_id: keyRow.id, endpoint, query_params: {},
       row_count: 0, status: "rate_limited_hour", client_ip: ip, user_agent: ua,
     });
-    return jsonResponse({
-      error: "Hourly rate limit exceeded",
-      limit: keyRow.rate_limit_per_hour,
-    }, 429);
+    return errorEnvelope(endpoint, "RATE_LIMITED_HOUR", `Hourly rate limit exceeded (${keyRow.rate_limit_per_hour})`, 429, {
+      consumer: keyRow.name,
+      rate_limit: { per_hour: keyRow.rate_limit_per_hour, per_day: keyRow.rate_limit_per_day },
+    });
   }
 
   if ((dayCount ?? 0) >= keyRow.rate_limit_per_day) {
@@ -114,10 +211,10 @@ Deno.serve(async (req) => {
       api_key_id: keyRow.id, endpoint, query_params: {},
       row_count: 0, status: "rate_limited_day", client_ip: ip, user_agent: ua,
     });
-    return jsonResponse({
-      error: "Daily rate limit exceeded",
-      limit: keyRow.rate_limit_per_day,
-    }, 429);
+    return errorEnvelope(endpoint, "RATE_LIMITED_DAY", `Daily rate limit exceeded (${keyRow.rate_limit_per_day})`, 429, {
+      consumer: keyRow.name,
+      rate_limit: { per_hour: keyRow.rate_limit_per_hour, per_day: keyRow.rate_limit_per_day },
+    });
   }
 
   // Parse pagination/filter params
@@ -211,20 +308,25 @@ Deno.serve(async (req) => {
     service.from("radar_api_keys").update({ last_used_at: new Date().toISOString() })
       .eq("id", keyRow.id).then(() => {}, () => {});
 
-    return jsonResponse({
-      data: rows,
-      pagination: { limit, offset, returned: rows.length, total },
-      meta: {
-        endpoint,
-        consumer: keyRow.name,
-        rate_limit: {
-          per_hour: keyRow.rate_limit_per_hour,
-          per_day: keyRow.rate_limit_per_day,
-          remaining_hour: Math.max(0, keyRow.rate_limit_per_hour - (hourCount ?? 0) - 1),
-          remaining_day: Math.max(0, keyRow.rate_limit_per_day - (dayCount ?? 0) - 1),
+    return jsonResponse(
+      envelope({
+        capability: endpoint,
+        status: "success",
+        source: { name: "CompCare Uppdragsradar", version: API_VERSION, confidence: "high" },
+        data: rows,
+        pagination: { limit, offset, returned: rows.length, total },
+        meta: {
+          endpoint,
+          consumer: keyRow.name,
+          rate_limit: {
+            per_hour: keyRow.rate_limit_per_hour,
+            per_day: keyRow.rate_limit_per_day,
+            remaining_hour: Math.max(0, keyRow.rate_limit_per_hour - (hourCount ?? 0) - 1),
+            remaining_day: Math.max(0, keyRow.rate_limit_per_day - (dayCount ?? 0) - 1),
+          },
         },
-      },
-    });
+      }),
+    );
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error("[radar-public-api] error", msg);
@@ -232,6 +334,6 @@ Deno.serve(async (req) => {
       api_key_id: keyRow.id, endpoint, query_params: queryParams,
       row_count: 0, status: "error", client_ip: ip, user_agent: ua,
     }).then(() => {}, () => {});
-    return jsonResponse({ error: msg }, 500);
+    return errorEnvelope(endpoint, "INTERNAL_ERROR", msg, 500);
   }
 });

@@ -100,6 +100,52 @@ export default function UppdragsradarV2() {
       m.content = desc;
       document.head.appendChild(m);
     }
+
+    // JSON-LD Dataset for AI agents and search engines
+    const ldId = "uppdragsradar-jsonld";
+    document.getElementById(ldId)?.remove();
+    const ld = document.createElement("script");
+    ld.type = "application/ld+json";
+    ld.id = ldId;
+    ld.text = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Dataset",
+      name: "CompCare Uppdragsradar",
+      description:
+        "Prognos för kommande vårduppdrag (avrop) i Sverige baserad på historiska avropsmönster från regioner och kommuner. Visar förväntad volym per kund, region, profession och månad.",
+      url: "https://compcare.se/uppdragsradar",
+      creator: { "@type": "Organization", name: "CompCare", url: "https://compcare.se" },
+      keywords: ["avrop", "vårduppdrag", "bemanning", "prognos", "ramavtal", "Sverige"],
+      isAccessibleForFree: true,
+      license: "https://compcare.se/integritetspolicy",
+      distribution: [
+        {
+          "@type": "DataDownload",
+          encodingFormat: "application/json",
+          contentUrl:
+            "https://ubhhlunhdqbokjvwfebb.supabase.co/functions/v1/radar-public-api/predictions",
+          name: "Uppdragsradar Public API — predictions",
+        },
+        {
+          "@type": "DataDownload",
+          encodingFormat: "application/json",
+          contentUrl:
+            "https://ubhhlunhdqbokjvwfebb.supabase.co/functions/v1/radar-public-api/customer_intelligence",
+          name: "Uppdragsradar Public API — customer intelligence",
+        },
+      ],
+      potentialAction: {
+        "@type": "SearchAction",
+        target:
+          "https://ubhhlunhdqbokjvwfebb.supabase.co/functions/v1/radar-public-api/predictions?region={region}&profession={profession}",
+        "query-input": ["required name=region", "required name=profession"],
+      },
+    });
+    document.head.appendChild(ld);
+
+    return () => {
+      document.getElementById(ldId)?.remove();
+    };
   }, []);
 
   const selectedProfessionCode = useMemo(
