@@ -131,3 +131,9 @@ verify_jwt = false
 
 [functions.bankid-collect]
 verify_jwt = false
+
+[functions.radar-data]
+verify_jwt = false
+
+[functions.radar-import]
+verify_jwt = false

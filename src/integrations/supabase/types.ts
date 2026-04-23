@@ -2260,6 +2260,42 @@ export type Database = {
         }
         Relationships: []
       }
+      radar_access_log: {
+        Row: {
+          client_ip: string | null
+          created_at: string
+          endpoint: string
+          filters: Json | null
+          id: string
+          row_count: number
+          status: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          client_ip?: string | null
+          created_at?: string
+          endpoint: string
+          filters?: Json | null
+          id?: string
+          row_count: number
+          status?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          client_ip?: string | null
+          created_at?: string
+          endpoint?: string
+          filters?: Json | null
+          id?: string
+          row_count?: number
+          status?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       radar_import_log: {
         Row: {
           created_at: string
