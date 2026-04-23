@@ -224,6 +224,26 @@ Dessa delegerar internt till Compensation Intelligence:
 | `POST /generate-pdf` | Generera en brandad PDF-rapport från en befintlig rapport |
 | `POST /run-price-diff` | Jämför priser mellan ramavtalsversioner |
 
+### Uppdragsradar Public API
+
+CompCare exponerar avropsprognoser (Uppdragsradar) som ett separat REST-API för agenter och tredjepartssystem. Designat för programmatisk åtkomst till kommande vårduppdrag baserat på historiska mönster.
+
+- **Bas-URL**: `https://ubhhlunhdqbokjvwfebb.supabase.co/functions/v1/radar-public-api`
+- **Discovery (ingen auth)**: `GET /radar-public-api` — listar endpoints, scopes och autentisering
+- **Dokumentation**: https://compcare.se/radar-api-README.md
+
+| Endpoint | Scope | Beskrivning |
+|----------|-------|-------------|
+| `GET /predictions` | `predictions` | Avropsprognoser per kund/region/profession/månad |
+| `GET /customer_intelligence` | `customer_intelligence` | YoY-trender och säsongstoppar per kund |
+| `GET /calloff_imports` | `calloff_imports` | Rådata från importerade avrop |
+
+**Autentisering**: Per-konsument API-nyckel via `X-API-Key`-header (alternativt `Authorization: Bearer` eller `?api_key=`). Nycklar utfärdas av CompCare-admin med individuella scopes och rate limits.
+
+**Svarformat**: Samma standardiserade CI-envelope som `/compensation-intelligence` — `{ query_id, capability, status, data, source, policy, errors, pagination, meta }`. Felkoder inkluderar `MISSING_API_KEY`, `INVALID_API_KEY`, `SCOPE_DENIED`, `RATE_LIMITED_HOUR`, `RATE_LIMITED_DAY`, `UNKNOWN_ENDPOINT`.
+
+**Begränsningar**: Per-nyckel hourly/daily rate limits och `max_rows_per_request`. Bulk-export stöds inte. Alla anrop loggas i `radar_api_log` för audit.
+
 ### Autentisering
 
 Publika endpoints kräver en `apikey`-header med Supabase anon key.
