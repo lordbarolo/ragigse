@@ -2260,6 +2260,39 @@ export type Database = {
         }
         Relationships: []
       }
+      radar_import_log: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          id: string
+          row_count: number
+          status: string
+          table_name: string
+          truncated: boolean
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          row_count: number
+          status?: string
+          table_name: string
+          truncated?: boolean
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          row_count?: number
+          status?: string
+          table_name?: string
+          truncated?: boolean
+          user_id?: string
+        }
+        Relationships: []
+      }
       radar_notifications: {
         Row: {
           created_at: string
