@@ -165,9 +165,9 @@ export default function RadarApiKeys() {
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-medium">{k.name}</span>
                     {k.is_active ? (
-                      <Badge variant="outline" className="text-emerald-600 border-emerald-600/40">Aktiv</Badge>
+                      <Badge variant="default">Aktiv</Badge>
                     ) : (
-                      <Badge variant="outline" className="text-destructive border-destructive/40">Revokerad</Badge>
+                      <Badge variant="destructive">Revokerad</Badge>
                     )}
                     {k.consumer_project && (
                       <Badge variant="secondary">{k.consumer_project}</Badge>
