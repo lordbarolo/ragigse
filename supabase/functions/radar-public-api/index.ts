@@ -177,11 +177,11 @@ Deno.serve(async (req) => {
     .maybeSingle();
 
   if (!keyRow || !keyRow.is_active || keyRow.revoked_at) {
-    return jsonResponse({ error: "Invalid or revoked API key" }, 401);
+    return errorEnvelope(endpoint, "INVALID_API_KEY", "Invalid or revoked API key", 401);
   }
 
   if (!keyRow.scopes.includes(endpoint)) {
-    return jsonResponse({ error: `API key lacks scope: ${endpoint}` }, 403);
+    return errorEnvelope(endpoint, "SCOPE_DENIED", `API key lacks scope: ${endpoint}`, 403);
   }
 
   // Rate limit check
@@ -200,10 +200,10 @@ Deno.serve(async (req) => {
       api_key_id: keyRow.id, endpoint, query_params: {},
       row_count: 0, status: "rate_limited_hour", client_ip: ip, user_agent: ua,
     });
-    return jsonResponse({
-      error: "Hourly rate limit exceeded",
-      limit: keyRow.rate_limit_per_hour,
-    }, 429);
+    return errorEnvelope(endpoint, "RATE_LIMITED_HOUR", `Hourly rate limit exceeded (${keyRow.rate_limit_per_hour})`, 429, {
+      consumer: keyRow.name,
+      rate_limit: { per_hour: keyRow.rate_limit_per_hour, per_day: keyRow.rate_limit_per_day },
+    });
   }
 
   if ((dayCount ?? 0) >= keyRow.rate_limit_per_day) {
@@ -211,10 +211,10 @@ Deno.serve(async (req) => {
       api_key_id: keyRow.id, endpoint, query_params: {},
       row_count: 0, status: "rate_limited_day", client_ip: ip, user_agent: ua,
     });
-    return jsonResponse({
-      error: "Daily rate limit exceeded",
-      limit: keyRow.rate_limit_per_day,
-    }, 429);
+    return errorEnvelope(endpoint, "RATE_LIMITED_DAY", `Daily rate limit exceeded (${keyRow.rate_limit_per_day})`, 429, {
+      consumer: keyRow.name,
+      rate_limit: { per_hour: keyRow.rate_limit_per_hour, per_day: keyRow.rate_limit_per_day },
+    });
   }
 
   // Parse pagination/filter params
@@ -308,20 +308,25 @@ Deno.serve(async (req) => {
     service.from("radar_api_keys").update({ last_used_at: new Date().toISOString() })
       .eq("id", keyRow.id).then(() => {}, () => {});
 
-    return jsonResponse({
-      data: rows,
-      pagination: { limit, offset, returned: rows.length, total },
-      meta: {
-        endpoint,
-        consumer: keyRow.name,
-        rate_limit: {
-          per_hour: keyRow.rate_limit_per_hour,
-          per_day: keyRow.rate_limit_per_day,
-          remaining_hour: Math.max(0, keyRow.rate_limit_per_hour - (hourCount ?? 0) - 1),
-          remaining_day: Math.max(0, keyRow.rate_limit_per_day - (dayCount ?? 0) - 1),
+    return jsonResponse(
+      envelope({
+        capability: endpoint,
+        status: "success",
+        source: { name: "CompCare Uppdragsradar", version: API_VERSION, confidence: "high" },
+        data: rows,
+        pagination: { limit, offset, returned: rows.length, total },
+        meta: {
+          endpoint,
+          consumer: keyRow.name,
+          rate_limit: {
+            per_hour: keyRow.rate_limit_per_hour,
+            per_day: keyRow.rate_limit_per_day,
+            remaining_hour: Math.max(0, keyRow.rate_limit_per_hour - (hourCount ?? 0) - 1),
+            remaining_day: Math.max(0, keyRow.rate_limit_per_day - (dayCount ?? 0) - 1),
+          },
         },
-      },
-    });
+      }),
+    );
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     console.error("[radar-public-api] error", msg);
@@ -329,6 +334,6 @@ Deno.serve(async (req) => {
       api_key_id: keyRow.id, endpoint, query_params: queryParams,
       row_count: 0, status: "error", client_ip: ip, user_agent: ua,
     }).then(() => {}, () => {});
-    return jsonResponse({ error: msg }, 500);
+    return errorEnvelope(endpoint, "INTERNAL_ERROR", msg, 500);
   }
 });
