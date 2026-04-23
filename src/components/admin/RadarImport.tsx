@@ -91,12 +91,15 @@ function ImportCard({
     try {
       for (let i = 0; i < rows.length; i += CHUNK_SIZE) {
         const slice = rows.slice(i, i + CHUNK_SIZE);
+        const shouldTruncate = truncate && i === 0;
         const { data, error } = await supabase.functions.invoke("radar-import", {
           body: {
             table,
             rows: slice,
             // Only truncate on the very first chunk
-            truncate: truncate && i === 0,
+            truncate: shouldTruncate,
+            // Server requires explicit confirmation matching the table name
+            ...(shouldTruncate ? { truncate_confirm: table } : {}),
           },
         });
         if (error) throw new Error(error.message);
