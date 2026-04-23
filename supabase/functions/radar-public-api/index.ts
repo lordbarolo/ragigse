@@ -13,6 +13,9 @@ const ALLOWED_ENDPOINTS = new Set([
   "calloff_imports",
 ]);
 
+// Endpoints som stöder POST (write)
+const WRITE_ENDPOINTS = new Set(["calloff_imports"]);
+
 async function sha256Hex(input: string): Promise<string> {
   const buf = new TextEncoder().encode(input);
   const hash = await crypto.subtle.digest("SHA-256", buf);
@@ -30,7 +33,7 @@ function clientIp(req: Request): string | null {
   );
 }
 
-const API_VERSION = "1.0.0";
+const API_VERSION = "1.1.0";
 
 function queryId(): string {
   return crypto.randomUUID();
@@ -38,7 +41,7 @@ function queryId(): string {
 
 function envelope(opts: {
   capability: string;
-  status: "success" | "error";
+  status: "success" | "error" | "partial";
   data?: unknown;
   source?: { name: string; version: string; confidence: string } | null;
   policy?: Record<string, unknown>;
@@ -85,6 +88,76 @@ function errorEnvelope(
   );
 }
 
+// Tolerant validering av en calloff-rad. Returnerar { row, flags }.
+// Saknar fält → flagga, men accepteras ändå om vi har minst datum eller kund.
+function normalizeCalloff(input: unknown, partnerSource: string, shareData: boolean): { row: Record<string, unknown> | null; flags: string[] } {
+  const flags: string[] = [];
+  if (!input || typeof input !== "object") {
+    return { row: null, flags: ["INVALID_SHAPE"] };
+  }
+  const r = input as Record<string, unknown>;
+
+  const calloff_date = typeof r.calloff_date === "string" ? r.calloff_date : null;
+  const customer = typeof r.customer === "string" ? r.customer.trim() : null;
+  const region = typeof r.region === "string" ? r.region.trim() : null;
+  const role = typeof r.role === "string" ? r.role.trim() : null;
+
+  if (!calloff_date && !customer) {
+    return { row: null, flags: ["MISSING_DATE_AND_CUSTOMER"] };
+  }
+  if (!calloff_date) flags.push("MISSING_DATE");
+  if (!customer) flags.push("MISSING_CUSTOMER");
+  if (!region) flags.push("MISSING_REGION");
+  if (!role) flags.push("MISSING_ROLE");
+
+  // Datumformat-check (YYYY-MM-DD)
+  if (calloff_date && !/^\d{4}-\d{2}-\d{2}$/.test(calloff_date)) {
+    flags.push("INVALID_DATE_FORMAT");
+  }
+
+  const num = (v: unknown): number | null => {
+    if (v === null || v === undefined || v === "") return null;
+    const n = Number(v);
+    return Number.isFinite(n) ? n : null;
+  };
+
+  const row: Record<string, unknown> = {
+    calloff_date: calloff_date && /^\d{4}-\d{2}-\d{2}$/.test(calloff_date) ? calloff_date : null,
+    customer,
+    region,
+    role,
+    specialization: typeof r.specialization === "string" ? r.specialization.trim() : null,
+    customer_type: typeof r.customer_type === "string" ? r.customer_type : null,
+    level: typeof r.level === "string" ? r.level : null,
+    unit: typeof r.unit === "string" ? r.unit : null,
+    duration_weeks: num(r.duration_weeks),
+    price_min: num(r.price_min),
+    price_median: num(r.price_median),
+    price_max: num(r.price_max),
+    filled: typeof r.filled === "boolean" ? r.filled : null,
+    source: `partner:${partnerSource}`,
+    partner_source: partnerSource,
+    partner_share_data: shareData,
+    raw_data: r,
+    validation_flags: flags,
+  };
+
+  return { row, flags };
+}
+
+async function buildDedupHash(row: Record<string, unknown>): Promise<string> {
+  const key = [
+    row.partner_source ?? "",
+    row.calloff_date ?? "",
+    row.customer ?? "",
+    row.region ?? "",
+    row.role ?? "",
+    row.specialization ?? "",
+    row.price_median ?? "",
+  ].join("|");
+  return sha256Hex(key);
+}
+
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -95,7 +168,6 @@ Deno.serve(async (req) => {
   // Path: /radar-public-api/<endpoint>
   const pathParts = url.pathname.split("/").filter(Boolean);
   const rawEndpoint = pathParts[pathParts.length - 1] ?? "";
-  // If the last segment is the function name itself, treat as discovery root
   const endpoint =
     rawEndpoint === "radar-public-api" || rawEndpoint === "" ? "" : rawEndpoint;
 
@@ -132,8 +204,17 @@ Deno.serve(async (req) => {
             {
               path: "/calloff_imports",
               method: "GET",
-              description: "Rådata från importerade avrop",
+              description: "Rådata från importerade avrop. Inkluderar partnerdata om partnern har share_data=true.",
               params: ["region", "role", "customer", "since", "limit", "offset"],
+              scope: "calloff_imports",
+            },
+            {
+              path: "/calloff_imports",
+              method: "POST",
+              description: "Skicka in egna avropsrader. Kräver can_write=true på API-nyckeln. Body: { rows: [...] }. Tolerant validering — ofullständiga rader flaggas men accepteras.",
+              required_fields_recommended: ["calloff_date (YYYY-MM-DD)", "customer", "region", "role"],
+              optional_fields: ["specialization", "level", "unit", "duration_weeks", "price_min", "price_median", "price_max", "customer_type", "filled"],
+              dedup: "Rader dedupliceras per partner_source + datum + kund + region + roll + specialisering + pris",
               scope: "calloff_imports",
             },
           ],
@@ -172,7 +253,7 @@ Deno.serve(async (req) => {
   const keyHash = await sha256Hex(apiKey);
   const { data: keyRow } = await service
     .from("radar_api_keys")
-    .select("id, name, scopes, rate_limit_per_hour, rate_limit_per_day, max_rows_per_request, is_active, revoked_at")
+    .select("id, name, scopes, rate_limit_per_hour, rate_limit_per_day, max_rows_per_request, is_active, revoked_at, can_write, write_per_hour, write_per_day, max_write_rows_per_request, share_data, partner_source")
     .eq("key_hash", keyHash)
     .maybeSingle();
 
@@ -184,40 +265,185 @@ Deno.serve(async (req) => {
     return errorEnvelope(endpoint, "SCOPE_DENIED", `API key lacks scope: ${endpoint}`, 403);
   }
 
-  // Rate limit check
+  const isWrite = req.method === "POST";
+
+  if (isWrite && !WRITE_ENDPOINTS.has(endpoint)) {
+    return errorEnvelope(endpoint, "WRITE_NOT_SUPPORTED", `Endpoint ${endpoint} does not support POST`, 405);
+  }
+
+  if (isWrite && !keyRow.can_write) {
+    return errorEnvelope(endpoint, "WRITE_DENIED", "API key lacks write permission (can_write=false)", 403);
+  }
+
+  if (isWrite && !keyRow.partner_source) {
+    return errorEnvelope(endpoint, "MISSING_PARTNER_SOURCE", "API key must have partner_source set to write data. Contact CompCare admin.", 403);
+  }
+
+  // Rate limit check (read OR write)
   const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
   const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
+  const statusFilter = isWrite ? ["write_success", "write_partial"] : ["success"];
+
   const [{ count: hourCount }, { count: dayCount }] = await Promise.all([
     service.from("radar_api_log").select("id", { count: "exact", head: true })
-      .eq("api_key_id", keyRow.id).gte("created_at", oneHourAgo),
+      .eq("api_key_id", keyRow.id).gte("created_at", oneHourAgo)
+      .in("status", isWrite ? statusFilter : ["success", "rate_limited_hour", "rate_limited_day", "error"]),
     service.from("radar_api_log").select("id", { count: "exact", head: true })
-      .eq("api_key_id", keyRow.id).gte("created_at", oneDayAgo),
+      .eq("api_key_id", keyRow.id).gte("created_at", oneDayAgo)
+      .in("status", isWrite ? statusFilter : ["success", "rate_limited_hour", "rate_limited_day", "error"]),
   ]);
 
-  if ((hourCount ?? 0) >= keyRow.rate_limit_per_hour) {
+  const hourLimit = isWrite ? keyRow.write_per_hour : keyRow.rate_limit_per_hour;
+  const dayLimit = isWrite ? keyRow.write_per_day : keyRow.rate_limit_per_day;
+
+  if ((hourCount ?? 0) >= hourLimit) {
     await service.from("radar_api_log").insert({
-      api_key_id: keyRow.id, endpoint, query_params: {},
+      api_key_id: keyRow.id, endpoint, query_params: { method: req.method },
       row_count: 0, status: "rate_limited_hour", client_ip: ip, user_agent: ua,
     });
-    return errorEnvelope(endpoint, "RATE_LIMITED_HOUR", `Hourly rate limit exceeded (${keyRow.rate_limit_per_hour})`, 429, {
+    return errorEnvelope(endpoint, "RATE_LIMITED_HOUR", `Hourly rate limit exceeded (${hourLimit})`, 429, {
       consumer: keyRow.name,
-      rate_limit: { per_hour: keyRow.rate_limit_per_hour, per_day: keyRow.rate_limit_per_day },
+      rate_limit: { per_hour: hourLimit, per_day: dayLimit },
     });
   }
 
-  if ((dayCount ?? 0) >= keyRow.rate_limit_per_day) {
+  if ((dayCount ?? 0) >= dayLimit) {
     await service.from("radar_api_log").insert({
-      api_key_id: keyRow.id, endpoint, query_params: {},
+      api_key_id: keyRow.id, endpoint, query_params: { method: req.method },
       row_count: 0, status: "rate_limited_day", client_ip: ip, user_agent: ua,
     });
-    return errorEnvelope(endpoint, "RATE_LIMITED_DAY", `Daily rate limit exceeded (${keyRow.rate_limit_per_day})`, 429, {
+    return errorEnvelope(endpoint, "RATE_LIMITED_DAY", `Daily rate limit exceeded (${dayLimit})`, 429, {
       consumer: keyRow.name,
-      rate_limit: { per_hour: keyRow.rate_limit_per_hour, per_day: keyRow.rate_limit_per_day },
+      rate_limit: { per_hour: hourLimit, per_day: dayLimit },
     });
   }
 
-  // Parse pagination/filter params
+  // ===== POST flow =====
+  if (isWrite) {
+    let body: unknown;
+    try {
+      body = await req.json();
+    } catch {
+      return errorEnvelope(endpoint, "INVALID_JSON", "Request body is not valid JSON", 400);
+    }
+
+    const rowsInput = (body as { rows?: unknown[] })?.rows;
+    if (!Array.isArray(rowsInput) || rowsInput.length === 0) {
+      return errorEnvelope(endpoint, "MISSING_ROWS", "Body must contain a non-empty 'rows' array", 400);
+    }
+
+    if (rowsInput.length > keyRow.max_write_rows_per_request) {
+      return errorEnvelope(
+        endpoint,
+        "TOO_MANY_ROWS",
+        `Max ${keyRow.max_write_rows_per_request} rows per request (received ${rowsInput.length})`,
+        413,
+      );
+    }
+
+    const accepted: Array<{ index: number; flags: string[]; dedup_hash: string }> = [];
+    const rejected: Array<{ index: number; flags: string[] }> = [];
+    const dupes: Array<{ index: number; reason: string }> = [];
+    const insertRows: Record<string, unknown>[] = [];
+
+    for (let i = 0; i < rowsInput.length; i++) {
+      const { row, flags } = normalizeCalloff(rowsInput[i], keyRow.partner_source, keyRow.share_data);
+      if (!row) {
+        rejected.push({ index: i, flags });
+        continue;
+      }
+      const dedup_hash = await buildDedupHash(row);
+      row.dedup_hash = dedup_hash;
+      insertRows.push(row);
+      accepted.push({ index: i, flags, dedup_hash });
+    }
+
+    // Dedup: kolla befintliga hashes
+    let inserted = 0;
+    if (insertRows.length > 0) {
+      const hashes = insertRows.map((r) => r.dedup_hash as string);
+      const { data: existing } = await service
+        .from("calloff_imports")
+        .select("dedup_hash")
+        .in("dedup_hash", hashes);
+      const existingSet = new Set((existing ?? []).map((e: { dedup_hash: string }) => e.dedup_hash));
+
+      const toInsert = insertRows.filter((r) => {
+        const isDupe = existingSet.has(r.dedup_hash as string);
+        if (isDupe) {
+          const idx = accepted.findIndex((a) => a.dedup_hash === r.dedup_hash);
+          if (idx !== -1) {
+            dupes.push({ index: accepted[idx].index, reason: "duplicate_in_db" });
+            accepted.splice(idx, 1);
+          }
+        }
+        return !isDupe;
+      });
+
+      if (toInsert.length > 0) {
+        const { error: insertErr, count } = await service
+          .from("calloff_imports")
+          .insert(toInsert, { count: "exact" });
+        if (insertErr) {
+          await service.from("radar_api_log").insert({
+            api_key_id: keyRow.id, endpoint, query_params: { method: "POST", rows: rowsInput.length },
+            row_count: 0, status: "error", client_ip: ip, user_agent: ua,
+          });
+          return errorEnvelope(endpoint, "INSERT_FAILED", insertErr.message, 500);
+        }
+        inserted = count ?? toInsert.length;
+      }
+    }
+
+    const flagged = accepted.filter((a) => a.flags.length > 0);
+    const status: "success" | "partial" =
+      rejected.length === 0 && dupes.length === 0 ? "success" : "partial";
+
+    // Log
+    service.from("radar_api_log").insert({
+      api_key_id: keyRow.id, endpoint,
+      query_params: { method: "POST", received: rowsInput.length, inserted, dupes: dupes.length, rejected: rejected.length },
+      row_count: inserted, status: status === "success" ? "write_success" : "write_partial",
+      client_ip: ip, user_agent: ua,
+    }).then(() => {}, () => {});
+    service.from("radar_api_keys").update({ last_used_at: new Date().toISOString() })
+      .eq("id", keyRow.id).then(() => {}, () => {});
+
+    return jsonResponse(
+      envelope({
+        capability: endpoint,
+        status,
+        source: { name: "CompCare Uppdragsradar", version: API_VERSION, confidence: "high" },
+        data: {
+          received: rowsInput.length,
+          inserted,
+          duplicates: dupes.length,
+          rejected: rejected.length,
+          flagged: flagged.length,
+          partner_source: keyRow.partner_source,
+          share_data: keyRow.share_data,
+          details: {
+            duplicates: dupes,
+            rejected,
+            flagged: flagged.map((f) => ({ index: f.index, flags: f.flags })),
+          },
+        },
+        meta: {
+          endpoint,
+          consumer: keyRow.name,
+          rate_limit: {
+            per_hour: hourLimit,
+            per_day: dayLimit,
+            remaining_hour: Math.max(0, hourLimit - (hourCount ?? 0) - 1),
+            remaining_day: Math.max(0, dayLimit - (dayCount ?? 0) - 1),
+          },
+        },
+      }),
+    );
+  }
+
+  // ===== GET flow (oförändrad) =====
   const requestedLimit = Number(url.searchParams.get("limit") ?? "50");
   const limit = Math.min(
     Math.max(1, Number.isFinite(requestedLimit) ? requestedLimit : 50),
@@ -235,7 +461,7 @@ Deno.serve(async (req) => {
       const region = url.searchParams.get("region");
       const profession = url.searchParams.get("profession");
       const specialization = url.searchParams.get("specialization");
-      const month = url.searchParams.get("month"); // YYYY-MM
+      const month = url.searchParams.get("month");
       const confidence = url.searchParams.get("confidence");
       Object.assign(queryParams, { region, profession, specialization, month, confidence });
 
@@ -280,14 +506,22 @@ Deno.serve(async (req) => {
       const region = url.searchParams.get("region");
       const role = url.searchParams.get("role");
       const customer = url.searchParams.get("customer");
-      const since = url.searchParams.get("since"); // YYYY-MM-DD
+      const since = url.searchParams.get("since");
       Object.assign(queryParams, { region, role, customer, since });
 
+      // Visa partnerns egna rader + alla rader som är delade publikt
       let q = service
         .from("calloff_imports")
-        .select("id, customer, customer_type, region, role, specialization, level, unit, calloff_date, duration_weeks, price_min, price_median, price_max, filled, source, imported_at", { count: "exact" })
+        .select("id, customer, customer_type, region, role, specialization, level, unit, calloff_date, duration_weeks, price_min, price_median, price_max, filled, source, partner_source, imported_at", { count: "exact" })
         .order("calloff_date", { ascending: false, nullsFirst: false })
         .range(offset, offset + limit - 1);
+
+      // Filtrera: ingen partner-tagg ELLER egen partner-tagg ELLER partner_share_data=true
+      if (keyRow.partner_source) {
+        q = q.or(`partner_source.is.null,partner_source.eq.${keyRow.partner_source},partner_share_data.eq.true`);
+      } else {
+        q = q.or("partner_source.is.null,partner_share_data.eq.true");
+      }
 
       if (region) q = q.eq("region", region);
       if (role) q = q.eq("role", role);
@@ -300,7 +534,6 @@ Deno.serve(async (req) => {
       total = count ?? null;
     }
 
-    // Log success + update last_used_at (fire-and-forget)
     service.from("radar_api_log").insert({
       api_key_id: keyRow.id, endpoint, query_params: queryParams,
       row_count: rows.length, status: "success", client_ip: ip, user_agent: ua,
@@ -319,10 +552,10 @@ Deno.serve(async (req) => {
           endpoint,
           consumer: keyRow.name,
           rate_limit: {
-            per_hour: keyRow.rate_limit_per_hour,
-            per_day: keyRow.rate_limit_per_day,
-            remaining_hour: Math.max(0, keyRow.rate_limit_per_hour - (hourCount ?? 0) - 1),
-            remaining_day: Math.max(0, keyRow.rate_limit_per_day - (dayCount ?? 0) - 1),
+            per_hour: hourLimit,
+            per_day: dayLimit,
+            remaining_hour: Math.max(0, hourLimit - (hourCount ?? 0) - 1),
+            remaining_day: Math.max(0, dayLimit - (dayCount ?? 0) - 1),
           },
         },
       }),
