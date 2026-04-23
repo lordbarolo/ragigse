@@ -100,7 +100,8 @@ function monthsAhead(days: number): string[] {
 export default function UppdragsradarV2() {
   const [horizon, setHorizon] = useState("30");
   const [region, setRegion] = useState<string>("__all");
-  const [profession, setProfession] = useState<string>("__all");
+  const [category, setCategory] = useState<RoleGroup | "__all">("__all");
+  const [specialization, setSpecialization] = useState<string>("__all");
   const [onlyHighConfidence, setOnlyHighConfidence] = useState(false);
 
   useEffect(() => {
@@ -137,22 +138,39 @@ export default function UppdragsradarV2() {
     return Array.from(s).sort();
   }, [data]);
 
-  const professions = useMemo(() => {
-    const s = new Set<string>();
-    data?.forEach((d) => d.profession && s.add(d.profession));
-    return Array.from(s).sort();
-  }, [data]);
+  // Reset specialization when category changes
+  useEffect(() => {
+    setSpecialization("__all");
+  }, [category]);
+
+  const selectedProfessionCode = useMemo(
+    () => (category === "__all" ? null : CATEGORIES.find((c) => c.value === category)?.profession ?? null),
+    [category],
+  );
+
+  // Specialization options driven by data + selected category
+  const specializationOptions = useMemo(() => {
+    if (!data || !selectedProfessionCode) return [];
+    const codes = new Set<string>();
+    data.forEach((d) => {
+      if (d.profession === selectedProfessionCode && d.specialization) codes.add(d.specialization);
+    });
+    return Array.from(codes)
+      .map((code) => ({ value: code, label: prettySpec(code) }))
+      .sort((a, b) => a.label.localeCompare(b.label, "sv"));
+  }, [data, selectedProfessionCode]);
 
   const filtered = useMemo(() => {
     if (!data) return [];
     let rows = data;
     if (region !== "__all") rows = rows.filter((r) => r.region === region);
-    if (profession !== "__all") rows = rows.filter((r) => r.profession === profession);
+    if (selectedProfessionCode) rows = rows.filter((r) => r.profession === selectedProfessionCode);
+    if (specialization !== "__all") rows = rows.filter((r) => r.specialization === specialization);
     if (onlyHighConfidence) rows = rows.filter((r) => r.confidence === "high");
     return [...rows]
       .sort((a, b) => (b.expected_calloffs ?? 0) - (a.expected_calloffs ?? 0))
       .slice(0, 20);
-  }, [data, region, profession, onlyHighConfidence]);
+  }, [data, region, selectedProfessionCode, specialization, onlyHighConfidence]);
 
   const peakCount = filtered.filter((r) => r.is_seasonal_peak).length;
   const breakCount = filtered.filter((r) => r.is_trend_break).length;
