@@ -28,6 +28,7 @@ import {
   Handshake,
   Copy,
   ShieldCheck,
+  LogIn,
 } from "lucide-react";
 import { fmt, formatPartialValue } from "@/shared/formatters";
 import { SectionHeading, StatBlock, CalcRow } from "@/shared/UIComponents";
