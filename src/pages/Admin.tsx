@@ -13,6 +13,7 @@ import ChatAnswerReports from "@/components/admin/ChatAnswerReports";
 import InvoiceReviews from "@/components/admin/InvoiceReviews";
 import RateVerification from "@/components/admin/RateVerification";
 import RadarImport from "@/components/admin/RadarImport";
+import RadarApiKeys from "@/components/admin/RadarApiKeys";
 import { useAdminAnalytics } from "@/hooks/useAdminAnalytics";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -311,6 +312,9 @@ export default function Admin() {
 
       {/* Uppdragsradar import */}
       <RadarImport />
+
+      {/* Uppdragsradar API-nycklar */}
+      <RadarApiKeys />
 
       {/* Daily Visitors - shared analytics data */}
       <DailyVisitors
