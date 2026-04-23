@@ -62,6 +62,7 @@ const DemoLanding = lazy(() => import("./pages/DemoLanding"));
 const ReferenceDemo = lazy(() => import("./pages/demo/ReferenceDemo"));
 const LandingV2 = lazy(() => import("./pages/demo/LandingV2"));
 const Campaign = lazy(() => import("./pages/Campaign"));
+const UppdragsradarV2 = lazy(() => import("./pages/UppdragsradarV2"));
 
 const queryClient = new QueryClient();
 
@@ -159,6 +160,7 @@ const App = () => (
               <Route path="/sign/:token" element={<SignRepresentation />} />
               <Route path="/unsubscribe" element={<Unsubscribe />} />
               <Route path="/kampanj/:role" element={<Campaign />} />
+              <Route path="/uppdragsradar" element={<UppdragsradarV2 />} />
 
               {/* Hidden / protected routes */}
               <Route path="/dela" element={<ProtectedRoute><SharePreview /></ProtectedRoute>} />
