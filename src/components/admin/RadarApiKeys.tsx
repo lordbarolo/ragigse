@@ -8,8 +8,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Switch } from "@/components/ui/switch";
 import { toast } from "@/hooks/use-toast";
-import { KeyRound, Copy, Ban, Plus, Loader2 } from "lucide-react";
+import { KeyRound, Copy, Ban, Plus, Loader2, ArrowUpFromLine } from "lucide-react";
 
 interface ApiKey {
   id: string;
@@ -25,6 +26,12 @@ interface ApiKey {
   last_used_at: string | null;
   revoked_at: string | null;
   notes: string | null;
+  can_write: boolean;
+  write_per_hour: number;
+  write_per_day: number;
+  max_write_rows_per_request: number;
+  share_data: boolean;
+  partner_source: string | null;
 }
 
 const ALL_SCOPES = ["predictions", "customer_intelligence", "calloff_imports"];
@@ -60,6 +67,14 @@ export default function RadarApiKeys() {
   const [maxRows, setMaxRows] = useState(100);
   const [notes, setNotes] = useState("");
 
+  // Write/partner state
+  const [canWrite, setCanWrite] = useState(false);
+  const [partnerSource, setPartnerSource] = useState("");
+  const [shareData, setShareData] = useState(false);
+  const [writePerHour, setWritePerHour] = useState(100);
+  const [writePerDay, setWritePerDay] = useState(1000);
+  const [maxWriteRows, setMaxWriteRows] = useState(100);
+
   const load = async () => {
     setLoading(true);
     const { data, error } = await supabase
@@ -81,11 +96,21 @@ export default function RadarApiKeys() {
     setPerDay(1000);
     setMaxRows(100);
     setNotes("");
+    setCanWrite(false);
+    setPartnerSource("");
+    setShareData(false);
+    setWritePerHour(100);
+    setWritePerDay(1000);
+    setMaxWriteRows(100);
   };
 
   const handleCreate = async () => {
     if (!name.trim()) {
       toast({ title: "Namn krävs", variant: "destructive" });
+      return;
+    }
+    if (canWrite && !partnerSource.trim()) {
+      toast({ title: "Partner-källa krävs vid skrivåtkomst", description: "T.ex. 'avropsplatsen-next'", variant: "destructive" });
       return;
     }
     setCreating(true);
@@ -106,6 +131,12 @@ export default function RadarApiKeys() {
         max_rows_per_request: maxRows,
         notes: notes.trim() || null,
         created_by: user?.id ?? null,
+        can_write: canWrite,
+        partner_source: canWrite ? partnerSource.trim().toLowerCase() : null,
+        share_data: shareData,
+        write_per_hour: writePerHour,
+        write_per_day: writePerDay,
+        max_write_rows_per_request: maxWriteRows,
       });
       if (error) throw error;
 
@@ -131,6 +162,19 @@ export default function RadarApiKeys() {
       toast({ title: "Fel", description: error.message, variant: "destructive" });
     } else {
       toast({ title: "Nyckel revokerad" });
+      load();
+    }
+  };
+
+  const toggleShareData = async (id: string, current: boolean) => {
+    const { error } = await supabase
+      .from("radar_api_keys")
+      .update({ share_data: !current })
+      .eq("id", id);
+    if (error) {
+      toast({ title: "Fel", description: error.message, variant: "destructive" });
+    } else {
+      toast({ title: !current ? "Datadelning aktiverad" : "Datadelning avaktiverad" });
       load();
     }
   };
@@ -172,22 +216,39 @@ export default function RadarApiKeys() {
                     {k.consumer_project && (
                       <Badge variant="secondary">{k.consumer_project}</Badge>
                     )}
+                    {k.can_write && (
+                      <Badge variant="outline" className="border-primary text-primary">
+                        <ArrowUpFromLine className="w-3 h-3 mr-1" /> Skriv
+                      </Badge>
+                    )}
                   </div>
                   <div className="text-xs font-mono text-muted-foreground">{k.key_prefix}</div>
                   <div className="text-xs text-muted-foreground">
-                    Scopes: {k.scopes.join(", ")} · {k.rate_limit_per_hour}/h · {k.rate_limit_per_day}/d · max {k.max_rows_per_request} rader
+                    Scopes: {k.scopes.join(", ")} · Läs {k.rate_limit_per_hour}/h · {k.rate_limit_per_day}/d · max {k.max_rows_per_request} rader
                   </div>
+                  {k.can_write && (
+                    <div className="text-xs text-muted-foreground">
+                      Skriv {k.write_per_hour}/h · {k.write_per_day}/d · max {k.max_write_rows_per_request} rader · partner: <code>{k.partner_source}</code> · delar data: <strong>{k.share_data ? "ja" : "nej"}</strong>
+                    </div>
+                  )}
                   <div className="text-xs text-muted-foreground">
                     Skapad {new Date(k.created_at).toLocaleString("sv-SE")}
                     {k.last_used_at && ` · Senast använd ${new Date(k.last_used_at).toLocaleString("sv-SE")}`}
                   </div>
                   {k.notes && <div className="text-xs italic text-muted-foreground">{k.notes}</div>}
                 </div>
-                {k.is_active && (
-                  <Button size="sm" variant="outline" onClick={() => handleRevoke(k.id)}>
-                    <Ban className="w-4 h-4 mr-1" /> Revokera
-                  </Button>
-                )}
+                <div className="flex flex-col gap-2">
+                  {k.can_write && k.is_active && (
+                    <Button size="sm" variant="outline" onClick={() => toggleShareData(k.id, k.share_data)}>
+                      {k.share_data ? "Sluta dela data" : "Aktivera datadelning"}
+                    </Button>
+                  )}
+                  {k.is_active && (
+                    <Button size="sm" variant="outline" onClick={() => handleRevoke(k.id)}>
+                      <Ban className="w-4 h-4 mr-1" /> Revokera
+                    </Button>
+                  )}
+                </div>
               </div>
             ))}
           </div>
@@ -196,10 +257,10 @@ export default function RadarApiKeys() {
 
       {/* Create dialog */}
       <Dialog open={showCreate} onOpenChange={setShowCreate}>
-        <DialogContent className="max-w-lg">
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Skapa API-nyckel</DialogTitle>
-            <DialogDescription>Konfigurera scopes och rate limits per konsument.</DialogDescription>
+            <DialogDescription>Konfigurera scopes, rate limits och eventuell skrivåtkomst per konsument.</DialogDescription>
           </DialogHeader>
           <div className="space-y-3">
             <div>
@@ -228,11 +289,11 @@ export default function RadarApiKeys() {
             </div>
             <div className="grid grid-cols-3 gap-2">
               <div>
-                <Label>Per timme</Label>
+                <Label>Läs/h</Label>
                 <Input type="number" value={perHour} onChange={(e) => setPerHour(Number(e.target.value))} />
               </div>
               <div>
-                <Label>Per dag</Label>
+                <Label>Läs/dag</Label>
                 <Input type="number" value={perDay} onChange={(e) => setPerDay(Number(e.target.value))} />
               </div>
               <div>
@@ -240,6 +301,60 @@ export default function RadarApiKeys() {
                 <Input type="number" value={maxRows} onChange={(e) => setMaxRows(Number(e.target.value))} />
               </div>
             </div>
+
+            <div className="border-t pt-3 space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label className="flex items-center gap-2">
+                    <ArrowUpFromLine className="w-4 h-4" /> Skrivåtkomst (POST)
+                  </Label>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Tillåter partnern att skicka in egna avrop till <code>/calloff_imports</code>.
+                  </p>
+                </div>
+                <Switch checked={canWrite} onCheckedChange={setCanWrite} />
+              </div>
+
+              {canWrite && (
+                <>
+                  <div>
+                    <Label>Partner-källa *</Label>
+                    <Input
+                      value={partnerSource}
+                      onChange={(e) => setPartnerSource(e.target.value)}
+                      placeholder="t.ex. avropsplatsen-next"
+                    />
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      Taggas på alla rader partnern skickar in. Används för dedup och datasynlighet.
+                    </p>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <Label>Dela data publikt</Label>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Av: bara partnern ser sin egen data. På: ingår i radarns publika aggregat (märkt med källa).
+                      </p>
+                    </div>
+                    <Switch checked={shareData} onCheckedChange={setShareData} />
+                  </div>
+                  <div className="grid grid-cols-3 gap-2">
+                    <div>
+                      <Label>Skriv/h</Label>
+                      <Input type="number" value={writePerHour} onChange={(e) => setWritePerHour(Number(e.target.value))} />
+                    </div>
+                    <div>
+                      <Label>Skriv/dag</Label>
+                      <Input type="number" value={writePerDay} onChange={(e) => setWritePerDay(Number(e.target.value))} />
+                    </div>
+                    <div>
+                      <Label>Max rader/req</Label>
+                      <Input type="number" value={maxWriteRows} onChange={(e) => setMaxWriteRows(Number(e.target.value))} />
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+
             <div>
               <Label>Anteckningar</Label>
               <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} rows={2} />

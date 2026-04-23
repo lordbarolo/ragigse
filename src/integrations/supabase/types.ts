@@ -638,11 +638,14 @@ export type Database = {
           calloff_date: string | null
           customer: string | null
           customer_type: string | null
+          dedup_hash: string | null
           duration_weeks: number | null
           filled: boolean | null
           id: string
           imported_at: string
           level: string | null
+          partner_share_data: boolean
+          partner_source: string | null
           price_max: number | null
           price_median: number | null
           price_min: number | null
@@ -652,16 +655,20 @@ export type Database = {
           source: string | null
           specialization: string | null
           unit: string | null
+          validation_flags: Json | null
         }
         Insert: {
           calloff_date?: string | null
           customer?: string | null
           customer_type?: string | null
+          dedup_hash?: string | null
           duration_weeks?: number | null
           filled?: boolean | null
           id?: string
           imported_at?: string
           level?: string | null
+          partner_share_data?: boolean
+          partner_source?: string | null
           price_max?: number | null
           price_median?: number | null
           price_min?: number | null
@@ -671,16 +678,20 @@ export type Database = {
           source?: string | null
           specialization?: string | null
           unit?: string | null
+          validation_flags?: Json | null
         }
         Update: {
           calloff_date?: string | null
           customer?: string | null
           customer_type?: string | null
+          dedup_hash?: string | null
           duration_weeks?: number | null
           filled?: boolean | null
           id?: string
           imported_at?: string
           level?: string | null
+          partner_share_data?: boolean
+          partner_source?: string | null
           price_max?: number | null
           price_median?: number | null
           price_min?: number | null
@@ -690,6 +701,7 @@ export type Database = {
           source?: string | null
           specialization?: string | null
           unit?: string | null
+          validation_flags?: Json | null
         }
         Relationships: []
       }
@@ -2298,6 +2310,7 @@ export type Database = {
       }
       radar_api_keys: {
         Row: {
+          can_write: boolean
           consumer_project: string | null
           created_at: string
           created_by: string | null
@@ -2307,14 +2320,20 @@ export type Database = {
           key_prefix: string
           last_used_at: string | null
           max_rows_per_request: number
+          max_write_rows_per_request: number
           name: string
           notes: string | null
+          partner_source: string | null
           rate_limit_per_day: number
           rate_limit_per_hour: number
           revoked_at: string | null
           scopes: string[]
+          share_data: boolean
+          write_per_day: number
+          write_per_hour: number
         }
         Insert: {
+          can_write?: boolean
           consumer_project?: string | null
           created_at?: string
           created_by?: string | null
@@ -2324,14 +2343,20 @@ export type Database = {
           key_prefix: string
           last_used_at?: string | null
           max_rows_per_request?: number
+          max_write_rows_per_request?: number
           name: string
           notes?: string | null
+          partner_source?: string | null
           rate_limit_per_day?: number
           rate_limit_per_hour?: number
           revoked_at?: string | null
           scopes?: string[]
+          share_data?: boolean
+          write_per_day?: number
+          write_per_hour?: number
         }
         Update: {
+          can_write?: boolean
           consumer_project?: string | null
           created_at?: string
           created_by?: string | null
@@ -2341,12 +2366,17 @@ export type Database = {
           key_prefix?: string
           last_used_at?: string | null
           max_rows_per_request?: number
+          max_write_rows_per_request?: number
           name?: string
           notes?: string | null
+          partner_source?: string | null
           rate_limit_per_day?: number
           rate_limit_per_hour?: number
           revoked_at?: string | null
           scopes?: string[]
+          share_data?: boolean
+          write_per_day?: number
+          write_per_hour?: number
         }
         Relationships: []
       }
