@@ -12,6 +12,56 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import SearchableSelect from "@/components/SearchableSelect";
+
+type RoleGroup = "lakare" | "ssk" | "fysio";
+
+const CATEGORIES: { value: RoleGroup; label: string; profession: string }[] = [
+  { value: "lakare", label: "Läkare", profession: "DOCTOR" },
+  { value: "ssk", label: "Sjuksköterska / Barnmorska", profession: "NURSE" },
+  { value: "fysio", label: "Fysioterapeut", profession: "PHYSIOTHERAPIST" },
+];
+
+// Pretty-print specialization codes like "DOCTOR_ANESTESIOCHINTENSIVVARD" → "Anestesi och intensivvård"
+const SPEC_REPLACEMENTS: Array<[RegExp, string]> = [
+  [/och/g, " och "],
+  [/sjukdomar/g, "sjukdomar"],
+  [/sjukvard/g, "sjukvård"],
+  [/medicin/g, "medicin"],
+  [/kirurgi/g, "kirurgi"],
+];
+
+function prettySpec(code: string | null | undefined): string {
+  if (!code) return "—";
+  const stripped = code.replace(/^(DOCTOR|NURSE|PHYSIOTHERAPIST)_/, "");
+  if (stripped === "NONE" || stripped === "GENERIC_SPECIALIZATION") return "Allmän";
+  let s = stripped.toLowerCase();
+  // Insert spaces around common Swedish word stems
+  s = s
+    .replace(/och/g, " och ")
+    .replace(/oc h/g, " och ")
+    .replace(/avaldre/g, "av äldre")
+    .replace(/sjukvard/g, "sjukvård")
+    .replace(/varden/g, "vården")
+    .replace(/halssjukdomar/g, "halssjukdomar")
+    .replace(/konssjukdomar/g, "könssjukdomar")
+    .replace(/ogonsjukdomar/g, "ögonsjukdomar")
+    .replace(/oronnasa/g, "öron-, näs- och ")
+    .replace(/aldre/g, "äldre")
+    .replace(/karl/g, "kärl")
+    .replace(/halso/g, "hälso")
+    .replace(/gynekologi/g, "gynekologi")
+    .replace(/sjukskoterska/g, "sjuksköterska")
+    .replace(/kompetens/g, "kompetens");
+  // Capitalize first letter
+  return s.charAt(0).toUpperCase() + s.slice(1).replace(/\s+/g, " ").trim();
+}
+
+function prettyProfession(code: string | null | undefined): string {
+  if (!code) return "—";
+  const cat = CATEGORIES.find((c) => c.profession === code);
+  return cat?.label ?? code;
+}
 
 type Prediction = {
   id: string;
@@ -50,7 +100,8 @@ function monthsAhead(days: number): string[] {
 export default function UppdragsradarV2() {
   const [horizon, setHorizon] = useState("30");
   const [region, setRegion] = useState<string>("__all");
-  const [profession, setProfession] = useState<string>("__all");
+  const [category, setCategory] = useState<RoleGroup | "__all">("__all");
+  const [specialization, setSpecialization] = useState<string>("__all");
   const [onlyHighConfidence, setOnlyHighConfidence] = useState(false);
 
   useEffect(() => {
@@ -87,22 +138,39 @@ export default function UppdragsradarV2() {
     return Array.from(s).sort();
   }, [data]);
 
-  const professions = useMemo(() => {
-    const s = new Set<string>();
-    data?.forEach((d) => d.profession && s.add(d.profession));
-    return Array.from(s).sort();
-  }, [data]);
+  // Reset specialization when category changes
+  useEffect(() => {
+    setSpecialization("__all");
+  }, [category]);
+
+  const selectedProfessionCode = useMemo(
+    () => (category === "__all" ? null : CATEGORIES.find((c) => c.value === category)?.profession ?? null),
+    [category],
+  );
+
+  // Specialization options driven by data + selected category
+  const specializationOptions = useMemo(() => {
+    if (!data || !selectedProfessionCode) return [];
+    const codes = new Set<string>();
+    data.forEach((d) => {
+      if (d.profession === selectedProfessionCode && d.specialization) codes.add(d.specialization);
+    });
+    return Array.from(codes)
+      .map((code) => ({ value: code, label: prettySpec(code) }))
+      .sort((a, b) => a.label.localeCompare(b.label, "sv"));
+  }, [data, selectedProfessionCode]);
 
   const filtered = useMemo(() => {
     if (!data) return [];
     let rows = data;
     if (region !== "__all") rows = rows.filter((r) => r.region === region);
-    if (profession !== "__all") rows = rows.filter((r) => r.profession === profession);
+    if (selectedProfessionCode) rows = rows.filter((r) => r.profession === selectedProfessionCode);
+    if (specialization !== "__all") rows = rows.filter((r) => r.specialization === specialization);
     if (onlyHighConfidence) rows = rows.filter((r) => r.confidence === "high");
     return [...rows]
       .sort((a, b) => (b.expected_calloffs ?? 0) - (a.expected_calloffs ?? 0))
       .slice(0, 20);
-  }, [data, region, profession, onlyHighConfidence]);
+  }, [data, region, selectedProfessionCode, specialization, onlyHighConfidence]);
 
   const peakCount = filtered.filter((r) => r.is_seasonal_peak).length;
   const breakCount = filtered.filter((r) => r.is_trend_break).length;
@@ -179,7 +247,7 @@ export default function UppdragsradarV2() {
 
         {/* Filters */}
         <Card>
-          <CardContent className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <CardContent className="p-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             <div className="space-y-1.5">
               <Label className="text-xs">Tidshorisont</Label>
               <Select value={horizon} onValueChange={setHorizon}>
@@ -204,16 +272,37 @@ export default function UppdragsradarV2() {
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label className="text-xs">Profession</Label>
-              <Select value={profession} onValueChange={setProfession}>
+              <Label className="text-xs">Yrkeskategori</Label>
+              <Select value={category} onValueChange={(v) => setCategory(v as RoleGroup | "__all")}>
                 <SelectTrigger><SelectValue placeholder="Alla yrken" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="__all">Alla yrken</SelectItem>
-                  {professions.map((p) => (
-                    <SelectItem key={p} value={p}>{p}</SelectItem>
+                  {CATEGORIES.map((c) => (
+                    <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label className="text-xs">Specialisering</Label>
+              {category === "__all" ? (
+                <Select disabled value="__all">
+                  <SelectTrigger>
+                    <SelectValue placeholder="Välj yrke först" />
+                  </SelectTrigger>
+                  <SelectContent />
+                </Select>
+              ) : (
+                <SearchableSelect
+                  options={[
+                    { value: "__all", label: "Alla specialiseringar" },
+                    ...specializationOptions,
+                  ]}
+                  value={specialization}
+                  onValueChange={setSpecialization}
+                  placeholder="Sök specialisering…"
+                />
+              )}
             </div>
             <div className="flex items-end">
               <label className="flex items-center gap-2 cursor-pointer text-sm">
@@ -276,9 +365,9 @@ export default function UppdragsradarV2() {
                         <TableCell className="text-muted-foreground text-xs">{i + 1}</TableCell>
                         <TableCell className="font-medium">{r.customer}</TableCell>
                         <TableCell className="text-sm">{r.region ?? "—"}</TableCell>
-                        <TableCell className="text-sm">{r.profession ?? "—"}</TableCell>
+                        <TableCell className="text-sm">{prettyProfession(r.profession)}</TableCell>
                         <TableCell className="text-sm text-muted-foreground">
-                          {r.specialization ?? "—"}
+                          {prettySpec(r.specialization)}
                         </TableCell>
                         <TableCell className="text-sm tabular-nums">{r.month}</TableCell>
                         <TableCell className="text-right font-semibold tabular-nums">
