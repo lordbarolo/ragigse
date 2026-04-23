@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Loader2, Radar, Flame, TrendingUp, Sun } from "lucide-react";
+import { Loader2, Radar, Flame, TrendingUp, Sun, ShieldAlert } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
@@ -22,21 +22,11 @@ const CATEGORIES: { value: RoleGroup; label: string; profession: string }[] = [
   { value: "fysio", label: "Fysioterapeut", profession: "PHYSIOTHERAPIST" },
 ];
 
-// Pretty-print specialization codes like "DOCTOR_ANESTESIOCHINTENSIVVARD" → "Anestesi och intensivvård"
-const SPEC_REPLACEMENTS: Array<[RegExp, string]> = [
-  [/och/g, " och "],
-  [/sjukdomar/g, "sjukdomar"],
-  [/sjukvard/g, "sjukvård"],
-  [/medicin/g, "medicin"],
-  [/kirurgi/g, "kirurgi"],
-];
-
 function prettySpec(code: string | null | undefined): string {
   if (!code) return "—";
   const stripped = code.replace(/^(DOCTOR|NURSE|PHYSIOTHERAPIST)_/, "");
   if (stripped === "NONE" || stripped === "GENERIC_SPECIALIZATION") return "Allmän";
   let s = stripped.toLowerCase();
-  // Insert spaces around common Swedish word stems
   s = s
     .replace(/och/g, " och ")
     .replace(/oc h/g, " och ")
@@ -53,7 +43,6 @@ function prettySpec(code: string | null | undefined): string {
     .replace(/gynekologi/g, "gynekologi")
     .replace(/sjukskoterska/g, "sjuksköterska")
     .replace(/kompetens/g, "kompetens");
-  // Capitalize first letter
   return s.charAt(0).toUpperCase() + s.slice(1).replace(/\s+/g, " ").trim();
 }
 
@@ -84,17 +73,13 @@ const HORIZONS = [
   { value: "90", label: "90 dagar" },
 ];
 
-function monthsAhead(days: number): string[] {
-  const out: string[] = [];
-  const now = new Date();
-  const end = new Date();
-  end.setDate(now.getDate() + days);
-  const cur = new Date(now.getFullYear(), now.getMonth(), 1);
-  while (cur <= end) {
-    out.push(`${cur.getFullYear()}-${String(cur.getMonth() + 1).padStart(2, "0")}`);
-    cur.setMonth(cur.getMonth() + 1);
+async function callRadar<T>(payload: Record<string, unknown>): Promise<T[]> {
+  const { data, error } = await supabase.functions.invoke("radar-data", { body: payload });
+  if (error) throw new Error(error.message);
+  if (data && typeof data === "object" && "error" in data) {
+    throw new Error(String((data as { error: string }).error));
   }
-  return out;
+  return ((data as { rows?: T[] })?.rows ?? []) as T[];
 }
 
 export default function UppdragsradarV2() {
@@ -105,8 +90,8 @@ export default function UppdragsradarV2() {
   const [onlyHighConfidence, setOnlyHighConfidence] = useState(false);
 
   useEffect(() => {
-    document.title = "Uppdragsradar – Top 20 prognoser | CompCare";
-    const desc = "Top 20 förväntade avrop kommande 30/60/90 dagar baserat på historiska mönster.";
+    document.title = "Uppdragsradar – Top 25 prognoser | CompCare";
+    const desc = "Top 25 förväntade avrop kommande 30/60/90 dagar baserat på historiska mönster.";
     const meta = document.querySelector('meta[name="description"]');
     if (meta) meta.setAttribute("content", desc);
     else {
@@ -117,60 +102,53 @@ export default function UppdragsradarV2() {
     }
   }, []);
 
-  const months = useMemo(() => monthsAhead(parseInt(horizon, 10)), [horizon]);
-
-  const { data, isLoading, error } = useQuery({
-    queryKey: ["urdp-all", months],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("uppdragsradar_predictions")
-        .select("*")
-        .in("month", months);
-      if (error) throw error;
-      return (data ?? []) as Prediction[];
-    },
-    staleTime: 5 * 60_000,
-  });
-
-  const regions = useMemo(() => {
-    const s = new Set<string>();
-    data?.forEach((d) => d.region && s.add(d.region));
-    return Array.from(s).sort();
-  }, [data]);
+  const selectedProfessionCode = useMemo(
+    () => (category === "__all" ? null : CATEGORIES.find((c) => c.value === category)?.profession ?? null),
+    [category],
+  );
 
   // Reset specialization when category changes
   useEffect(() => {
     setSpecialization("__all");
   }, [category]);
 
-  const selectedProfessionCode = useMemo(
-    () => (category === "__all" ? null : CATEGORIES.find((c) => c.value === category)?.profession ?? null),
-    [category],
-  );
+  // --- Regions (metadata, cached long) ---
+  const { data: regions = [] } = useQuery({
+    queryKey: ["radar-regions"],
+    queryFn: () => callRadar<{ region: string }>({ endpoint: "regions" }).then((r) => r.map((x) => x.region)),
+    staleTime: 30 * 60_000,
+  });
 
-  // Specialization options driven by data + selected category
-  const specializationOptions = useMemo(() => {
-    if (!data || !selectedProfessionCode) return [];
-    const codes = new Set<string>();
-    data.forEach((d) => {
-      if (d.profession === selectedProfessionCode && d.specialization) codes.add(d.specialization);
-    });
-    return Array.from(codes)
-      .map((code) => ({ value: code, label: prettySpec(code) }))
-      .sort((a, b) => a.label.localeCompare(b.label, "sv"));
-  }, [data, selectedProfessionCode]);
+  // --- Specializations (only when category chosen) ---
+  const { data: specializationOptions = [] } = useQuery({
+    queryKey: ["radar-specs", selectedProfessionCode],
+    queryFn: async () => {
+      if (!selectedProfessionCode) return [];
+      const rows = await callRadar<{ specialization: string }>({
+        endpoint: "specializations",
+        profession: selectedProfessionCode,
+      });
+      return rows
+        .map((r) => ({ value: r.specialization, label: prettySpec(r.specialization) }))
+        .sort((a, b) => a.label.localeCompare(b.label, "sv"));
+    },
+    enabled: !!selectedProfessionCode,
+    staleTime: 30 * 60_000,
+  });
 
-  const filtered = useMemo(() => {
-    if (!data) return [];
-    let rows = data;
-    if (region !== "__all") rows = rows.filter((r) => r.region === region);
-    if (selectedProfessionCode) rows = rows.filter((r) => r.profession === selectedProfessionCode);
-    if (specialization !== "__all") rows = rows.filter((r) => r.specialization === specialization);
-    if (onlyHighConfidence) rows = rows.filter((r) => r.confidence === "high");
-    return [...rows]
-      .sort((a, b) => (b.expected_calloffs ?? 0) - (a.expected_calloffs ?? 0))
-      .slice(0, 20);
-  }, [data, region, selectedProfessionCode, specialization, onlyHighConfidence]);
+  // --- Predictions (server-side filtered & sorted top-N) ---
+  const { data: filtered = [], isLoading, error } = useQuery({
+    queryKey: ["radar-predictions", horizon, region, selectedProfessionCode, specialization, onlyHighConfidence],
+    queryFn: () => callRadar<Prediction>({
+      endpoint: "predictions",
+      horizon: parseInt(horizon, 10),
+      ...(region !== "__all" ? { region } : {}),
+      ...(selectedProfessionCode ? { profession: selectedProfessionCode } : {}),
+      ...(specialization !== "__all" ? { specialization } : {}),
+      only_high_confidence: onlyHighConfidence,
+    }),
+    staleTime: 5 * 60_000,
+  });
 
   const peakCount = filtered.filter((r) => r.is_seasonal_peak).length;
   const breakCount = filtered.filter((r) => r.is_trend_break).length;
@@ -185,6 +163,8 @@ export default function UppdragsradarV2() {
     return "outline" as const;
   };
 
+  const isRateLimited = error instanceof Error && /Rate limit/i.test(error.message);
+
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
@@ -198,7 +178,7 @@ export default function UppdragsradarV2() {
               Uppdragsradar
             </h1>
             <p className="text-sm text-muted-foreground mt-1 max-w-xl">
-              Top 20 förväntade avrop kommande {horizon} dagar — sorterat på prognostiserat antal.
+              Top 25 förväntade avrop kommande {horizon} dagar — sorterat på prognostiserat antal.
             </p>
           </div>
         </div>
@@ -319,13 +299,22 @@ export default function UppdragsradarV2() {
         {/* Table */}
         <Card>
           <CardHeader>
-            <CardTitle className="text-base">Top 20 prognoser</CardTitle>
+            <CardTitle className="text-base">Top 25 prognoser</CardTitle>
           </CardHeader>
           <CardContent className="p-0">
             {isLoading ? (
               <div className="flex items-center justify-center py-16 text-muted-foreground gap-2">
                 <Loader2 className="w-5 h-5 animate-spin text-primary" />
                 <span className="text-sm">Hämtar prognoser…</span>
+              </div>
+            ) : isRateLimited ? (
+              <div className="flex flex-col items-center justify-center py-16 px-4 text-center gap-3">
+                <ShieldAlert className="w-8 h-8 text-destructive" />
+                <div className="text-sm font-medium text-foreground">För många förfrågningar</div>
+                <div className="text-xs text-muted-foreground max-w-sm">
+                  Du har nått timgränsen för datalänkning (30 förfrågningar/timme).
+                  Vänta en stund och försök igen.
+                </div>
               </div>
             ) : error ? (
               <div className="text-center py-16 text-destructive text-sm">
@@ -352,7 +341,6 @@ export default function UppdragsradarV2() {
                 </TableHeader>
                 <TableBody>
                   {filtered.map((r, i) => {
-                    // Färgkodning enligt spec
                     const rowClass = r.is_trend_break
                       ? "bg-destructive/10 hover:bg-destructive/15"
                       : r.is_seasonal_peak
@@ -402,7 +390,7 @@ export default function UppdragsradarV2() {
         </Card>
 
         <p className="text-xs text-muted-foreground">
-          Datakälla: <code>uppdragsradar_predictions</code> · Färg: gul = säsongstopp, röd = trendbrott.
+          Server-medierad åtkomst · Max 25 rader/anrop · 30 förfrågningar/timme · Färg: gul = säsongstopp, röd = trendbrott.
         </p>
       </div>
     </div>
