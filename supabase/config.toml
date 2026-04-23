@@ -137,3 +137,6 @@ verify_jwt = false
 
 [functions.radar-import]
 verify_jwt = false
+
+[functions.radar-public-api]
+verify_jwt = false

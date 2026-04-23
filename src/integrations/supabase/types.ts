@@ -2296,6 +2296,104 @@ export type Database = {
         }
         Relationships: []
       }
+      radar_api_keys: {
+        Row: {
+          consumer_project: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          is_active: boolean
+          key_hash: string
+          key_prefix: string
+          last_used_at: string | null
+          max_rows_per_request: number
+          name: string
+          notes: string | null
+          rate_limit_per_day: number
+          rate_limit_per_hour: number
+          revoked_at: string | null
+          scopes: string[]
+        }
+        Insert: {
+          consumer_project?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          key_hash: string
+          key_prefix: string
+          last_used_at?: string | null
+          max_rows_per_request?: number
+          name: string
+          notes?: string | null
+          rate_limit_per_day?: number
+          rate_limit_per_hour?: number
+          revoked_at?: string | null
+          scopes?: string[]
+        }
+        Update: {
+          consumer_project?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          key_hash?: string
+          key_prefix?: string
+          last_used_at?: string | null
+          max_rows_per_request?: number
+          name?: string
+          notes?: string | null
+          rate_limit_per_day?: number
+          rate_limit_per_hour?: number
+          revoked_at?: string | null
+          scopes?: string[]
+        }
+        Relationships: []
+      }
+      radar_api_log: {
+        Row: {
+          api_key_id: string | null
+          client_ip: string | null
+          created_at: string
+          endpoint: string
+          id: string
+          query_params: Json | null
+          row_count: number | null
+          status: string
+          user_agent: string | null
+        }
+        Insert: {
+          api_key_id?: string | null
+          client_ip?: string | null
+          created_at?: string
+          endpoint: string
+          id?: string
+          query_params?: Json | null
+          row_count?: number | null
+          status: string
+          user_agent?: string | null
+        }
+        Update: {
+          api_key_id?: string | null
+          client_ip?: string | null
+          created_at?: string
+          endpoint?: string
+          id?: string
+          query_params?: Json | null
+          row_count?: number | null
+          status?: string
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "radar_api_log_api_key_id_fkey"
+            columns: ["api_key_id"]
+            isOneToOne: false
+            referencedRelation: "radar_api_keys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       radar_import_log: {
         Row: {
           created_at: string
