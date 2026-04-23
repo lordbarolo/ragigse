@@ -12,6 +12,56 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
+import SearchableSelect from "@/components/SearchableSelect";
+
+type RoleGroup = "lakare" | "ssk" | "fysio";
+
+const CATEGORIES: { value: RoleGroup; label: string; profession: string }[] = [
+  { value: "lakare", label: "Läkare", profession: "DOCTOR" },
+  { value: "ssk", label: "Sjuksköterska / Barnmorska", profession: "NURSE" },
+  { value: "fysio", label: "Fysioterapeut", profession: "PHYSIOTHERAPIST" },
+];
+
+// Pretty-print specialization codes like "DOCTOR_ANESTESIOCHINTENSIVVARD" → "Anestesi och intensivvård"
+const SPEC_REPLACEMENTS: Array<[RegExp, string]> = [
+  [/och/g, " och "],
+  [/sjukdomar/g, "sjukdomar"],
+  [/sjukvard/g, "sjukvård"],
+  [/medicin/g, "medicin"],
+  [/kirurgi/g, "kirurgi"],
+];
+
+function prettySpec(code: string | null | undefined): string {
+  if (!code) return "—";
+  const stripped = code.replace(/^(DOCTOR|NURSE|PHYSIOTHERAPIST)_/, "");
+  if (stripped === "NONE" || stripped === "GENERIC_SPECIALIZATION") return "Allmän";
+  let s = stripped.toLowerCase();
+  // Insert spaces around common Swedish word stems
+  s = s
+    .replace(/och/g, " och ")
+    .replace(/oc h/g, " och ")
+    .replace(/avaldre/g, "av äldre")
+    .replace(/sjukvard/g, "sjukvård")
+    .replace(/varden/g, "vården")
+    .replace(/halssjukdomar/g, "halssjukdomar")
+    .replace(/konssjukdomar/g, "könssjukdomar")
+    .replace(/ogonsjukdomar/g, "ögonsjukdomar")
+    .replace(/oronnasa/g, "öron-, näs- och ")
+    .replace(/aldre/g, "äldre")
+    .replace(/karl/g, "kärl")
+    .replace(/halso/g, "hälso")
+    .replace(/gynekologi/g, "gynekologi")
+    .replace(/sjukskoterska/g, "sjuksköterska")
+    .replace(/kompetens/g, "kompetens");
+  // Capitalize first letter
+  return s.charAt(0).toUpperCase() + s.slice(1).replace(/\s+/g, " ").trim();
+}
+
+function prettyProfession(code: string | null | undefined): string {
+  if (!code) return "—";
+  const cat = CATEGORIES.find((c) => c.profession === code);
+  return cat?.label ?? code;
+}
 
 type Prediction = {
   id: string;
