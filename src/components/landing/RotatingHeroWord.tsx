@@ -10,7 +10,7 @@ import { ShieldCheck } from "lucide-react";
 const WORDS = [
   { text: "tid", durationMs: 1000 },
   { text: "ersättning", durationMs: 2000 },
-  { text: "legitimation", durationMs: 3000 },
+  { text: "legitimation", durationMs: 2000 },
 ] as const;
 
 const HOLD_MS = 700; // håll fullständigt ord kvar innan det försvinner
