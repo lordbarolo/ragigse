@@ -8,7 +8,7 @@ import { ShieldCheck } from "lucide-react";
  * sedan börjar nästa ord. Sköld-ikonen visas endast efter "legitimation".
  */
 const WORDS = [
-  { text: "tid", durationMs: 3000 },
+  { text: "tid", durationMs: 1000 },
   { text: "ersättning", durationMs: 2000 },
   { text: "legitimation", durationMs: 3000 },
 ] as const;
