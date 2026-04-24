@@ -4454,7 +4454,12 @@ export type Database = {
         | "cancelled"
         | "expired"
       geography_type: "nation" | "region" | "zone" | "municipality"
-      ref_app_role: "individual" | "reference_giver" | "client" | "admin"
+      ref_app_role:
+        | "individual"
+        | "reference_giver"
+        | "client"
+        | "admin"
+        | "agency"
       ref_ping_status: "sent" | "confirmed" | "denied" | "expired" | "dismissed"
       ref_reference_status: "pending" | "active" | "revoked" | "expired"
       ref_representation_status: "pending" | "signed" | "declined" | "expired"
@@ -4594,7 +4599,13 @@ export const Constants = {
         "expired",
       ],
       geography_type: ["nation", "region", "zone", "municipality"],
-      ref_app_role: ["individual", "reference_giver", "client", "admin"],
+      ref_app_role: [
+        "individual",
+        "reference_giver",
+        "client",
+        "admin",
+        "agency",
+      ],
       ref_ping_status: ["sent", "confirmed", "denied", "expired", "dismissed"],
       ref_reference_status: ["pending", "active", "revoked", "expired"],
       ref_representation_status: ["pending", "signed", "declined", "expired"],
