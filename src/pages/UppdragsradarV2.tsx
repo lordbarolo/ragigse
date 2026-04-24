@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Loader2, Radar, Flame, TrendingUp, Sun, ShieldAlert } from "lucide-react";
+import { Radar, Flame, TrendingUp, Sun, ShieldAlert } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { supabase } from "@/integrations/supabase/client";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
@@ -349,9 +350,10 @@ export default function UppdragsradarV2() {
           </CardHeader>
           <CardContent className="p-0">
             {isLoading ? (
-              <div className="flex items-center justify-center py-16 text-muted-foreground gap-2">
-                <Loader2 className="w-5 h-5 animate-spin text-primary" />
-                <span className="text-sm">Hämtar prognoser…</span>
+              <div className="p-4 space-y-2" aria-label="Laddar prognoser">
+                {[0, 1, 2, 3, 4, 5].map((i) => (
+                  <Skeleton key={i} className="h-10 w-full rounded-md" />
+                ))}
               </div>
             ) : isRateLimited ? (
               <div className="flex flex-col items-center justify-center py-16 px-4 text-center gap-3">
@@ -363,12 +365,20 @@ export default function UppdragsradarV2() {
                 </div>
               </div>
             ) : error ? (
-              <div className="text-center py-16 text-destructive text-sm">
-                Kunde inte hämta prognoser.
+              <div className="flex flex-col items-center justify-center py-16 px-4 text-center gap-3">
+                <ShieldAlert className="w-8 h-8 text-muted-foreground" />
+                <div className="text-sm font-medium text-foreground">Kunde inte hämta prognoser</div>
+                <div className="text-xs text-muted-foreground max-w-sm">
+                  Något gick fel mot datakällan. Försök igen om en stund.
+                </div>
               </div>
             ) : filtered.length === 0 ? (
-              <div className="text-center py-16 text-muted-foreground text-sm">
-                Inga rader matchar filtren.
+              <div className="flex flex-col items-center justify-center py-16 px-4 text-center gap-3">
+                <Radar className="w-8 h-8 text-muted-foreground/60" />
+                <div className="text-sm font-medium text-foreground">Inga prognoser matchar filtren</div>
+                <div className="text-xs text-muted-foreground max-w-sm">
+                  Prova att vidga sökningen — välj "Alla yrken" eller "Alla regioner".
+                </div>
               </div>
             ) : (
               <Table>

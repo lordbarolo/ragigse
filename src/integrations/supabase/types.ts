@@ -3994,6 +3994,66 @@ export type Database = {
       }
     }
     Views: {
+      calloff_imports_public: {
+        Row: {
+          calloff_date: string | null
+          customer: string | null
+          customer_type: string | null
+          duration_weeks: number | null
+          filled: boolean | null
+          id: string | null
+          imported_at: string | null
+          level: string | null
+          partner_share_data: boolean | null
+          partner_source: string | null
+          price_max: number | null
+          price_median: number | null
+          price_min: number | null
+          region: string | null
+          role: string | null
+          specialization: string | null
+          unit: string | null
+        }
+        Insert: {
+          calloff_date?: string | null
+          customer?: string | null
+          customer_type?: string | null
+          duration_weeks?: number | null
+          filled?: boolean | null
+          id?: string | null
+          imported_at?: string | null
+          level?: string | null
+          partner_share_data?: boolean | null
+          partner_source?: string | null
+          price_max?: number | null
+          price_median?: number | null
+          price_min?: number | null
+          region?: string | null
+          role?: string | null
+          specialization?: string | null
+          unit?: string | null
+        }
+        Update: {
+          calloff_date?: string | null
+          customer?: string | null
+          customer_type?: string | null
+          duration_weeks?: number | null
+          filled?: boolean | null
+          id?: string | null
+          imported_at?: string | null
+          level?: string | null
+          partner_share_data?: boolean | null
+          partner_source?: string | null
+          price_max?: number | null
+          price_median?: number | null
+          price_min?: number | null
+          region?: string | null
+          role?: string | null
+          specialization?: string | null
+          unit?: string | null
+        }
+        Relationships: []
+      }
       ref_pings_safe: {
         Row: {
           confirmed_until: string | null

@@ -5,7 +5,8 @@ import { useAuth } from "@/hooks/useAuth";
 import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, FileText, MapPin, Briefcase, Clock, UserPlus, Check } from "lucide-react";
+import { FileText, MapPin, Briefcase, Clock, UserPlus, Check } from "lucide-react";
+import { ProfilePageSkeleton } from "@/components/ui/page-skeleton";
 import { toast } from "sonner";
 import ProfileHero from "@/components/profile/ProfileHero";
 import ProfileTabs, { type ProfileTab } from "@/components/profile/ProfileTabs";
@@ -146,11 +147,7 @@ export default function Profile() {
   };
 
   if (authLoading || loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="w-6 h-6 animate-spin text-primary" />
-      </div>
-    );
+    return <ProfilePageSkeleton />;
   }
 
   const employmentLabel = (t: string | null) => t === "consultant" ? "Konsult" : t === "permanent" ? "Tillsvidareanställd" : t || "–";
