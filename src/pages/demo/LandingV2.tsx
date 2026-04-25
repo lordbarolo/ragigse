@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight } from "lucide-react";
+import CompcareLogo from "@/components/CompcareLogo";
 import HeroRateLookup from "@/components/landing/HeroRateLookup";
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
