@@ -283,7 +283,7 @@ export default function LandingV2() {
             För läkare &amp; sjuksköterskor
           </div>
           <h1 className="font-bold leading-[1.1] text-white mb-6 tracking-tight text-5xl">
-            Se rätt <span className="text-[#AFA9EC]">ersättning</span> för din roll
+            Förhandla utifrån <span className="text-[#AFA9EC]">data</span>,<br />inte magkänsla
           </h1>
           <p className="text-lg text-white/[0.78] leading-relaxed mb-6 max-w-[520px]">
             Vi visar vad läkare och sjuksköterskor ska tjäna som konsulter. Kostnadsfritt, uppdaterat och synligt för alla.
