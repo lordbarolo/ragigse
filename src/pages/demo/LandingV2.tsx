@@ -79,7 +79,7 @@ const MODULES_ROW1: ModuleCard[] = [
 const MODULES_ROW2 = [
   {
     title: "Fakturagranskning",
-    desc: "AI granskar dina fakturor och tidrapporter. Vi hittar vad du missat och hjälper dig fakturera det. Vi får 25% av det vi hittar i provision. Hittar vi inget, betalar du inget.",
+    desc: "Automatiserad revision av fakturor och tidrapport. Vi söker efter avvikelser och hjälper dig fakturera om vi ser något du missat att ta betalt för. Arvodet är helt prestationsbaserat: vi erhåller 25 % av det belopp vi återvinner åt dig.",
     tag: "Prestationsbaserat",
     tagColor: "green" as const,
     iconBg: "#EAF3DE",
@@ -93,7 +93,7 @@ const MODULES_ROW2 = [
   },
   {
     title: "Uppdragsprognos",
-    desc: "Öka chanserna att få uppdragen du verkligen vill ha. Se prognoser utifrån uppdrag som publicerats historiskt i din region och specialitet. Vi har analyserat 5 års historik och över 30 000 bemanningsuppdrag. ",
+    desc: "Öka chansen att få uppdraget du verkligen vill ha. Vi har analyserat 5 års historik och över 30 000 bemanningsuppdrag. AI ger oss träffsäkra prognoser om kommande behov hos specifika verksamheter.",
     tag: "Beta",
     tagColor: "purple" as const,
     iconBg: "#EEEDFE",
