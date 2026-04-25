@@ -328,12 +328,12 @@ export default function LandingV2() {
             Fem verktyg som förenklar din karriär
           </h2>
           <div className="text-[15px] text-muted-foreground leading-[1.65]">
-            Vi nyttjar avancerad AI för att eliminera informationsövertaget och stärka din position som oberoende konsult.
+            Vi nyttjar avancerad AI för att jämna ut informationstillgången mellan uppdragsgivare och oberoende konsult.
             <ul className="list-disc pl-5 mt-2 space-y-1">
               <li>Hantera din legitimation och dina intyg via tidsbegränsad åtkomst i stället för osäkra filbilagor</li>
               <li>Optimera din löneförhandling med objektiva marknadsdata och regional statistik</li>
               <li>Scanna avtal utifrån snedvriden ansvarsfördelning.</li>
-              <li>Upptäcka historiska fakturor där du missat att ta betalt för arbetade timmar.&nbsp;</li>
+              <li>Analys av tidigare fakturering för att säkerställa att din arbetade tid fakturerats i sin helhet.&nbsp;</li>
             </ul>
           </div>
         </div>
