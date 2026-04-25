@@ -286,7 +286,7 @@ export default function LandingV2() {
             Se rätt <span className="text-[#AFA9EC]">ersättning</span> för din roll
           </h1>
           <p className="text-lg text-white/[0.78] leading-relaxed mb-6 max-w-[520px]">
-            Uppdaterade ersättningsnivåer baserat på offentliga avtal från SKR och omfattande analyser.
+            Vi visar vad läkare och sjuksköterskor ska tjäna som konsulter. Kostnadsfritt, uppdaterat och synligt för alla.
           </p>
         </div>
 
