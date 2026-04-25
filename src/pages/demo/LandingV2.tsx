@@ -283,10 +283,10 @@ export default function LandingV2() {
             För läkare &amp; sjuksköterskor
           </div>
           <h1 className="text-[clamp(2.5rem,6vw,64px)] font-bold leading-[1.1] text-white mb-6 tracking-tight">
-            Din <span className="text-[#AFA9EC]">tid.</span><br />Din karriär.<br />Dina villkor.
+            Jämför din <span className="text-[#AFA9EC]">ersättning</span> och få hjälp med förhandlingen
           </h1>
           <p className="text-lg text-white/[0.78] leading-relaxed mb-6 max-w-[520px]">
-            Rätt ersättning, rätt kontrakt och rätt fakturering— Ai optimerad för vårdbemanning
+            Vi vet vad du borde tjäna och hur du når dit.
           </p>
         </div>
 
