@@ -436,8 +436,8 @@ const SOURCE_RATES: CISource = {
 };
 
 const SOURCE_BENCHMARKS: CISource = {
-  name: "SCB/Medlingsinstitutet lönestatistik",
-  version: "2025",
+  name: "SKR ramavtal + branschmarginal",
+  version: "SKR 2026 v1.0",
   confidence: "high",
 };
 
