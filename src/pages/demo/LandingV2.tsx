@@ -328,9 +328,9 @@ export default function LandingV2() {
             Fem verktyg som förenklar din karriär
           </h2>
           <div className="text-[15px] text-muted-foreground leading-[1.65]">
-            Vi har tagit hjälp av AI för att jämna ut informationstillgången. Vi ger dig möjligheten att:
+            Vi nyttjar avancerad AI för att eliminera informationsövertaget och stärka din position som oberoende konsult.
             <ul className="list-disc pl-5 mt-2 space-y-1">
-              <li>Dela tidsbegränsad tillgång till dina viktigaste dokument, istället för att bifoga filer.</li>
+              <li>Hantera din legitimation och dina intyg via tidsbegränsad åtkomst i stället för osäkra filbilagor</li>
               <li>Förhandla utifrån samma information som uppdragsgivaren.</li>
               <li>Scanna avtal utifrån snedvriden ansvarsfördelning.</li>
               <li>Upptäcka historiska fakturor där du missat att ta betalt för arbetade timmar.&nbsp;</li>
