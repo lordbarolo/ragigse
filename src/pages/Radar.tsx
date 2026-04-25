@@ -131,9 +131,7 @@ export default function Radar() {
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
       <header className="px-5 pt-6 pb-2">
-        <span className="font-display font-extrabold tracking-tight text-foreground text-[18px]">
-          comp<em className="text-primary not-italic">care</em>
-        </span>
+        <CompcareLogo variant="wordmark" />
       </header>
 
       {/* Hero */}
