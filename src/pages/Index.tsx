@@ -33,7 +33,7 @@ const PILLARS = [
   {
     question: "Tjänar jag rätt?",
     title: "Löneanalys",
-    description: "Jämför din ersättning med SKR:s ramavtalspriser och SCB:s lönestatistik i realtid. 290 kommuner, alla specialiseringar.",
+    description: "Jämför din ersättning med SKR:s ramavtalspriser i realtid. 290 kommuner, alla specialiseringar — för konsulter och de som vill bli det.",
     icon: ShieldCheck,
     cta: "Analysera din lön",
     href: "/consultant/salary-check",
@@ -61,9 +61,9 @@ const PILLARS = [
 
 const TRUST_POINTS = [
   "Baserat på SKR:s officiella ramavtal 2026",
-  "Lönestatistik från Medlingsinstitutet",
+  "Branschens marginalmodell (85–90 %)",
   "290 kommuner, alla specialiseringar",
-  
+
 ];
 
 export default function Index() {

@@ -150,7 +150,7 @@ export default function Profile() {
     return <ProfilePageSkeleton />;
   }
 
-  const employmentLabel = (t: string | null) => t === "consultant" ? "Konsult" : t === "permanent" ? "Tillsvidareanställd" : t || "–";
+  const employmentLabel = (t: string | null) => t === "consultant" ? "Konsult" : t === "permanent" ? "Tillsvidareanställd (vill bli konsult)" : t || "–";
   const formatSalary = (val: number | null) => val ? val.toLocaleString("sv-SE") : "–";
 
   const emailVerified = !!user?.email_confirmed_at;

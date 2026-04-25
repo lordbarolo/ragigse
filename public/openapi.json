@@ -3,7 +3,7 @@
   "info": {
     "title": "CompCare API",
     "version": "3.2.0",
-    "description": "Compensation intelligence API for healthcare professionals in Sweden. Provides market rate lookups, salary benchmarks, compensation analysis, and PDF report generation based on official framework agreement prices (ramavtalspriser) from 290+ Swedish healthcare providers.\n\nThe recommended entry point for AI agents is the unified `/compensation-intelligence` endpoint, which supports entity resolution, policy enforcement, and audit logging.\n\nAll CI responses follow a standardized envelope: `{ query_id, capability, status, data, source, policy, errors }`.\n\nData sources: SKR framework agreements (2026), SCB/Medlingsinstitutet salary statistics. Updated continuously as new contract versions are published.\n\nBulk export and enumeration are NOT supported — the API enforces anti-enumeration policies.",
+    "description": "Compensation intelligence API for healthcare professionals in Sweden. Provides consultant market rate lookups based on official framework agreement prices (ramavtalspriser) from 290+ Swedish healthcare providers and the staffing industry's margin model.\n\nThe recommended entry point for AI agents is the unified `/compensation-intelligence` endpoint, which supports entity resolution, policy enforcement, and audit logging.\n\nAll CI responses follow a standardized envelope: `{ query_id, capability, status, data, source, policy, errors }`.\n\nData sources: SKR framework agreements (2026) and the staffing industry's margin model (85–90% of customer price, ×1.42 for employees, 167h/month). Updated continuously as new contract versions are published.\n\nBulk export and enumeration are NOT supported — the API enforces anti-enumeration policies.",
     "contact": {
       "name": "CompCare",
       "url": "https://compcare.se",
@@ -24,7 +24,7 @@
       "post": {
         "operationId": "compensationIntelligence",
         "summary": "Unified compensation intelligence endpoint (recommended)",
-        "description": "Central entry point for all compensation queries. Supports four capabilities: lookup_rate, compare_roles, salary_benchmark, salary_position. Includes entity resolution (fuzzy matching of roles and geographies), policy enforcement (rate limiting, anti-enumeration), and full audit logging.\n\nAll responses use a standardized envelope with query_id, capability, status, data, source, policy, and errors fields.",
+        "description": "Central entry point for all compensation queries. Supports two capabilities: lookup_rate, compare_roles. Includes entity resolution (fuzzy matching of roles and geographies), policy enforcement (rate limiting, anti-enumeration), and full audit logging.\n\nAll responses use a standardized envelope with query_id, capability, status, data, source, policy, and errors fields.",
         "tags": ["Compensation Intelligence"],
         "requestBody": {
           "required": true,
@@ -54,27 +54,6 @@
                       "role_b": "Specialistsjuksköterska",
                       "geography": "Stockholm",
                       "employment_type": "anstalld"
-                    }
-                  }
-                },
-                "salary_benchmark": {
-                  "summary": "Get salary percentiles",
-                  "value": {
-                    "capability": "salary_benchmark",
-                    "params": {
-                      "role": "Sjuksköterska",
-                      "sector": "offentlig"
-                    }
-                  }
-                },
-                "salary_position": {
-                  "summary": "Compare salary against benchmarks",
-                  "value": {
-                    "capability": "salary_position",
-                    "params": {
-                      "role": "Sjuksköterska",
-                      "sector": "offentlig",
-                      "current_salary": 35000
                     }
                   }
                 }
