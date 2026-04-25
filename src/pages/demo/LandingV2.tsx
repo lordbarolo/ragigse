@@ -282,8 +282,8 @@ export default function LandingV2() {
             <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="#AFA9EC" /></svg>
             För läkare &amp; sjuksköterskor
           </div>
-          <h1 className="text-[clamp(2.5rem,6vw,64px)] font-bold leading-[1.1] text-white mb-6 tracking-tight">
-            Jämför din <span className="text-[#AFA9EC]">ersättning</span> och få hjälp med förhandlingen
+          <h1 className="font-bold leading-[1.1] text-white mb-6 tracking-tight text-5xl">
+            Se rätt <span className="text-[#AFA9EC]">ersättning</span> för din roll
           </h1>
           <p className="text-lg text-white/[0.78] leading-relaxed mb-6 max-w-[520px]">
             Uppdaterade ersättningsnivåer baserat på offentliga avtal från SKR och omfattande analyser.
