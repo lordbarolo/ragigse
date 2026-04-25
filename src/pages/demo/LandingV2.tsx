@@ -286,7 +286,7 @@ export default function LandingV2() {
             Jämför din <span className="text-[#AFA9EC]">ersättning</span> och få hjälp med förhandlingen
           </h1>
           <p className="text-lg text-white/[0.78] leading-relaxed mb-6 max-w-[520px]">
-            Vi vet vad du borde tjäna och hur du når dit.
+            Uppdaterade ersättningsnivåer baserat på offentliga avtal från SKR och omfattande analyser.
           </p>
         </div>
 
