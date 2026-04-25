@@ -327,8 +327,8 @@ export default function LandingV2() {
           <h2 className="font-serif text-[34px] font-bold leading-[1.15] tracking-tight text-foreground mb-2.5">
             Fem verktyg som förenklar din karriär
           </h2>
-          <p className="text-[15px] text-muted-foreground leading-[1.65] whitespace-pre-line">
-            Personuppgifter som sprids utan din kontroll. Referenser som tvingas till tidskrävande intervjuer. Begränsad insyn i hur bemanningsföretaget agerar. {"\n\n"}Compcare bygger smarta verktyg som förenklar administrationen för läkare och sjuksköterskor inom bemanning. 
+          <p className="text-[15px] text-muted-foreground leading-[1.65]">
+            Personuppgifter som sprids utan din kontroll. Referenser som tvingas till tidskrävande intervjuer. Begränsad insyn i bemanningsprocessen. Compcare bygger smarta verktyg som förenklar tiden före, under och efter ditt konsultuppdrag.
           </p>
         </div>
 
