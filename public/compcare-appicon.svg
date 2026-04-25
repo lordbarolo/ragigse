@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <rect width="512" height="512" rx="96" ry="96" fill="#0D111C"/>
+  <!-- Grey bar (comparison bar - shorter) -->
+  <rect x="108" y="176" width="180" height="50" rx="8" ry="8" fill="#A0AABE"/>
+  <!-- Cyan bar (comparison bar - longer) -->
+  <rect x="108" y="252" width="300" height="50" rx="8" ry="8" fill="#00D2E6"/>
+</svg>
