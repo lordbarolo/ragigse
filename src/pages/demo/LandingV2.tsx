@@ -283,7 +283,7 @@ export default function LandingV2() {
             För läkare &amp; sjuksköterskor
           </div>
           <h1 className="font-bold leading-[1.1] text-white mb-6 tracking-tight text-5xl">
-            Förhandla utifrån <span className="text-[#AFA9EC]">data</span><br />inte magkänsla
+            Förhandla utifrån <span className="text-[#AFA9EC]">data,</span><br />inte magkänsla
           </h1>
           <p className="text-lg text-white/[0.78] leading-relaxed mb-6 max-w-[520px]">
             Vi visar för läkare och sjuksköterskor på bemanningsuppdrag tjänar som konsulter. Se uppdaterade nivåer för din roll.
