@@ -497,7 +497,7 @@ export default function LandingV2() {
             <button className="w-full sm:w-auto px-8 py-3 bg-[#534AB7] hover:bg-[#3C3489] rounded-lg text-white text-[15px] font-medium transition-colors">Skapa konto gratis</button>
           </Link>
           <a href="mailto:hej@compcare.se?subject=Boka%20demo%20av%20CompCare">
-            <button className="w-full sm:w-auto px-7 py-3 bg-transparent border border-white/30 hover:bg-white/10 rounded-lg text-white/80 text-[15px] transition-colors">Boka en demo</button>
+            <button className="w-full sm:w-auto px-7 py-3 bg-transparent border border-white/30 hover:bg-white/10 rounded-lg text-white/80 text-[15px] transition-colors">​Gör löneanalysen</button>
           </a>
         </div>
       </div>
