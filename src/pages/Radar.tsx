@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { Radio, Search, Loader2 } from "lucide-react";
+import CompcareLogo from "@/components/CompcareLogo";
 import ReijdarPromo from "@/components/radar/ReijdarPromo";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import RadarFilters from "@/components/radar/RadarFilters";
