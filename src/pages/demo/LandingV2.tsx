@@ -328,7 +328,7 @@ export default function LandingV2() {
             Fem verktyg som förenklar din karriär
           </h2>
           <p className="text-[15px] text-muted-foreground leading-[1.65]">
-            Compcare bygger smarta verktyg som förenklar tiden före, under och efter ditt konsultuppdrag.&nbsp;Personuppgifter som sprids utan din kontroll. Referenser som tvingas till tidskrävande intervjuer. Begränsad insyn i bemanningsprocessen.
+            Ref-id skyddar dina referenser från tidskrävande intervjuer. AI-assistenten har nischad juridisk kunskap för att skydda dig från dåliga kontrakt. Tipsa oss gärna om annat vi ska bygga&nbsp;
           </p>
         </div>
 
