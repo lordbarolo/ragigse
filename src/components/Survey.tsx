@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useLocations, useRates } from "@/hooks/useCalculator";
 import { usePricingEngine } from "@/hooks/usePricingEngine";
-import { useBenchmarkEngine } from "@/hooks/useBenchmarkEngine";
+
 import { supabase } from "@/integrations/supabase/client";
 import SearchableSelect from "@/components/SearchableSelect";
 import { Input } from "@/components/ui/input";
@@ -225,7 +225,6 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
   }, []);
 
   const { calculate: pricingCalculate, result: pricingResult } = usePricingEngine();
-  const { calculate: benchmarkCalculate, result: benchmarkResult } = useBenchmarkEngine();
 
   // Derive yrke from the single dropdown value
   const resolvedYrke = useMemo(() => {
@@ -256,12 +255,6 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
     }
   }, [data.yrke, data.kommun, data.employmentType]);
 
-  useEffect(() => {
-    if (data.yrke && data.kommun && data.currentSalary > 0) {
-      const currentMonthly = data.salaryType === "hourly" ? data.currentSalary * 167 : data.currentSalary;
-      benchmarkCalculate(data.yrke, "privat", currentMonthly);
-    }
-  }, [data.yrke, data.kommun, data.currentSalary, data.salaryType]);
 
   const regions = useMemo(() => {
     if (!locations) return [];
@@ -414,7 +407,6 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
     const navigateToTeaser = () => {
       sessionStorage.setItem("leadId", leadId);
       sessionStorage.setItem("surveyData", JSON.stringify({ ...data, track }));
-      if (benchmarkResult) sessionStorage.setItem("benchmarkResult", JSON.stringify(benchmarkResult));
       if (pricingResult) sessionStorage.setItem("pricingResult", JSON.stringify(pricingResult));
       trackStepCompleted(6, snapshotObShare);
       const totalTime = surveyStartTime.current ? Math.round((Date.now() - surveyStartTime.current) / 1000) : 0;
