@@ -504,9 +504,8 @@ export default function LandingV2() {
       <footer className="px-6 lg:px-10 pt-10 pb-24 border-t border-border/40 bg-white">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
           <div>
-            <div className="flex items-center gap-2 text-lg font-medium tracking-tight mb-2.5">
-              <span className="w-2 h-2 rounded-full bg-[#534AB7]" />
-              CompCare
+            <div className="mb-2.5">
+              <CompcareLogo variant="wordmark" />
             </div>
             <p className="text-[13px] text-muted-foreground leading-relaxed max-w-[220px]">
               Transparent marknadsdata och smarta verktyg för Sveriges läkare och sjuksköterskor.
