@@ -35,35 +35,11 @@ type ModuleCard = {
 const MODULES_ROW1: ModuleCard[] = [
   {
     title: "Verify — dokumentvalvet",
-    desc: "Spara legitimationer, intyg och utbildningsbevis på ett säkert ställe. Dela tillgång med länk — aldrig mer bifogade filer som du aldrig vet vart de tar vägen.",
-    tag: "Ingår gratis",
-    tagColor: "purple",
-    iconBg: "#EEEDFE",
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-        <rect x="4" y="3" width="12" height="14" rx="2" stroke="#3C3489" strokeWidth="1.2" />
-        <line x1="7" y1="7" x2="13" y2="7" stroke="#3C3489" strokeWidth="1.2" strokeLinecap="round" />
-        <line x1="7" y1="10" x2="13" y2="10" stroke="#3C3489" strokeWidth="1.2" strokeLinecap="round" />
-        <line x1="7" y1="13" x2="11" y2="13" stroke="#3C3489" strokeWidth="1.2" strokeLinecap="round" />
-      </svg>
-    ),
-  },
-  {
-    title: "Referensplattformen",
-    desc: "Du bestämmer vem som får tillgång och när. Referensgivare kan verifiera digitalt istället för att lämna samma uppgifter till flera bolag.",
-    tag: "Kommer snart",
-    tagColor: "muted",
-    iconBg: "#EEEDFE",
-    icon: (
-      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-        <circle cx="10" cy="10" r="6" stroke="#3C3489" strokeWidth="1.2" />
-        <path d="M10 7v3l2 2" stroke="#3C3489" strokeWidth="1.2" strokeLinecap="round" />
-      </svg>
-    ),
-  },
-  {
-    title: "Löneanalys & löneassistent",
-    desc: "Se vad regionen betalar för din tid och vad bemanningsföretagen kan betala utifrån marknadens genomsnittliga marginaler. Med full transparens kring villkor vågar fler testa konsultlivet.",
+    desc: "Säker lagring av legitimationer, specialistbevis och tjänstgöringsintyg. Hantera åtkomst via krypterade länkar i stället för osäkra filbilagor – för fullständig kontroll över dina känsliga personuppgifter.",
+...
+    desc: "Administrera dina referenser centralt. Du styr vem som får tillgång och när. Dina referensgivare verifierar enkelt med bank-id vid upprepade förfrågningar, vilket eliminerar repetitiv administration och säkrar processens integritet.",
+...
+    desc: "Med full transparens kring avtalsvillkor och branschens marginaler skapar vi förutsättningar för en trygg och hållbar konsultkarriär.\"",search:
     tag: "Insight — 149 kr/mån",
     tagColor: "amber",
     iconBg: "#FAEEDA",
