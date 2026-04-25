@@ -223,10 +223,7 @@ export default function LandingV2() {
 
       {/* ── Nav ─────────────────────────────── */}
       <nav className="flex items-center justify-between px-6 lg:px-10 h-[60px] bg-white border-b border-border/40">
-        <div className="flex items-center gap-2 text-lg font-medium tracking-tight">
-          <span className="w-2 h-2 rounded-full bg-[#534AB7]" />
-          CompCare
-        </div>
+        <CompcareLogo variant="wordmark" />
         <div className="hidden md:flex gap-6">
           {NAV_LINKS.map((l) =>
             l.external ? (
