@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
 import ThemeToggle from "@/components/ThemeToggle";
+import CompcareLogo from "@/components/CompcareLogo";
 
 export default function LandingNav() {
   return (
     <nav className="sticky top-0 z-[200] flex items-center justify-between px-6 lg:px-[60px] h-[60px] bg-background/90 backdrop-blur-[24px] border-b border-foreground/[0.07]">
-      <Link to="/" className="font-display text-xl font-extrabold tracking-tight text-foreground no-underline">
-        comp<em className="text-primary not-italic">care</em>
+      <Link to="/" aria-label="CompCare startsida">
+        <CompcareLogo variant="wordmark" />
       </Link>
       <div className="flex items-center gap-2">
         <ThemeToggle />
