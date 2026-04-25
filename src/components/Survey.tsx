@@ -606,8 +606,6 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                     trackSurveyStarted();
                     setOccupationCategory(opt.value);
                     setRoleDropdownValue("");
-                    trackStepCompleted(1, opt.value);
-                    setTimeout(() => setStep(2), 200);
                   }}
                   className={`group w-full py-5 px-5 rounded-xl border !border-l-[3px] bg-card text-left transition-all active:scale-[0.98] flex items-center justify-between gap-3 ${
                     occupationCategory === opt.value
