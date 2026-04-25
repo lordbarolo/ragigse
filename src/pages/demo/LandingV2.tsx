@@ -377,6 +377,20 @@ export default function LandingV2() {
 
       <div className="h-px bg-border/40 mx-6 lg:mx-10" />
 
+      {/* ── CTA Banner (above steps) ─────────── */}
+      <div className="mx-4 sm:mx-6 lg:mx-10 my-[72px] rounded-xl bg-[#1a1545] px-6 lg:px-12 py-14 text-center">
+        <h2 className="text-[28px] font-medium text-white mb-3">Redo att ta kontroll?</h2>
+        <p className="text-base text-white/60 mb-7">Compcare är kostnadsfritt för konsulter. För alltid.</p>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+          <Link to="/registrera">
+            <button className="w-full sm:w-auto px-8 py-3 bg-[#534AB7] hover:bg-[#3C3489] rounded-lg text-white text-[15px] font-medium transition-colors">Skapa konto</button>
+          </Link>
+          <Link to="/v1?start=1">
+            <button className="w-full sm:w-auto px-7 py-3 bg-transparent border border-white/30 hover:bg-white/10 rounded-lg text-white/80 text-[15px] transition-colors">Gör löneanalysen</button>
+          </Link>
+        </div>
+      </div>
+
       {/* ── Steps ───────────────────────────── */}
       <section className="px-6 lg:px-10 py-[72px] bg-[#ECEAF5]">
         <p className="text-xs font-medium text-[#534AB7] uppercase tracking-widest mb-2.5">Så funkar det</p>
