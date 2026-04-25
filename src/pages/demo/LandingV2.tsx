@@ -283,10 +283,10 @@ export default function LandingV2() {
             För läkare &amp; sjuksköterskor
           </div>
           <h1 className="font-bold leading-[1.1] text-white mb-6 tracking-tight text-5xl">
-            Förhandla utifrån <span className="text-[#AFA9EC]">data</span>,<br />inte magkänsla
+            Förhandla utifrån <span className="text-[#AFA9EC]">data,</span><br />inte magkänsla
           </h1>
           <p className="text-lg text-white/[0.78] leading-relaxed mb-6 max-w-[520px]">
-            Vi visar vad läkare och sjuksköterskor ska tjäna som konsulter. Se uppdaterade nivåer för din roll.
+            Vi visar för läkare och sjuksköterskor på bemanningsuppdrag tjänar som konsulter. Se uppdaterade nivåer för din roll.
           </p>
           <Link to="/v1?start=1" onClick={() => trackEvent("product_cta_clicked", { cta: "hero_salary_analysis", target: "/v1?start=1" })}>
             <button className="px-6 py-3 bg-white hover:bg-white/90 rounded-lg text-[#1a1545] text-[15px] font-semibold whitespace-nowrap min-h-[44px] transition-colors">
@@ -328,7 +328,7 @@ export default function LandingV2() {
             Fem verktyg som förenklar din karriär
           </h2>
           <p className="text-[15px] text-muted-foreground leading-[1.65]">
-            Personuppgifter som sprids utan din kontroll. Referenser som tvingas till tidskrävande intervjuer. Begränsad insyn i bemanningsprocessen. Compcare bygger smarta verktyg som förenklar tiden före, under och efter ditt konsultuppdrag.
+            Compcare bygger smarta verktyg som förenklar tiden före, under och efter ditt konsultuppdrag.&nbsp;Personuppgifter som sprids utan din kontroll. Referenser som tvingas till tidskrävande intervjuer. Begränsad insyn i bemanningsprocessen.
           </p>
         </div>
 
