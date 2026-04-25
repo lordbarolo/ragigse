@@ -121,7 +121,7 @@ export default function CompensationView({ role, location, employmentType }: Com
   return (
     <div className="w-full flex flex-col gap-4">
       {/* ── Hero card ──────────────────────────────────── */}
-      <Card className="relative overflow-hidden bg-[hsl(var(--hero-bg))] text-[hsl(var(--hero-fg))] border-0 p-5">
+      <Card className="hero-gradient relative overflow-hidden border-0 p-5">
         <div className="absolute top-0 right-0 w-28 h-28 rounded-full bg-primary/10 -translate-y-1/2 translate-x-1/2" />
         <p className="text-xs font-medium tracking-wide uppercase opacity-70 mb-1">
           {zone} · {location}
