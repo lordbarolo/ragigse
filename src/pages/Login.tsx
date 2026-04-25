@@ -90,8 +90,8 @@ export default function Login() {
   };
 
   const features = [
-    { icon: FileText, title: "Dokumentvalvet", desc: "Spara legitimationer, intyg och utbildningsbevis. Dela tillgång med länk.", badge: "Ingår gratis", badgeColor: "text-green-700 bg-green-100" },
-    { icon: Clock, title: "Referensplattformen", desc: "Du bestämmer vem som ser dem och när. Referensgivare verifierar digitalt.", badge: "Ingår gratis", badgeColor: "text-green-700 bg-green-100" },
+    { icon: FileText, title: "Dokumentvalvet", desc: "Säker lagring av legitimationer, specialistbevis och tjänstgöringsintyg. Hantera åtkomst via krypterade länkar.", badge: "Ingår gratis", badgeColor: "text-green-700 bg-green-100" },
+    { icon: Clock, title: "Referensplattformen", desc: "Administrera dina referenser centralt. Du styr vem som får tillgång och när. Verifiering med bank-id.", badge: "Ingår gratis", badgeColor: "text-green-700 bg-green-100" },
     { icon: TrendingUp, title: "Löneanalys & assistent", desc: "Förhandlingstips baserat på din specialitet, region och erfarenhet.", badge: "Insight — 149 kr/mån", badgeColor: "text-amber-700 bg-amber-100" },
     { icon: MessageSquare, title: "Fakturagranskning", desc: "AI granskar dina fakturor och tidrapporter. Hittar vi inget, betalar du inget.", badge: "Prestationsbaserat", badgeColor: "text-purple-700 bg-purple-100" },
     { icon: Link2, title: "Uppdragsprognos", desc: "Se prognoser baserat på 5 års historik och över 30 000 bemanningsuppdrag.", badge: "Beta", badgeColor: "text-slate-600 bg-slate-100" },

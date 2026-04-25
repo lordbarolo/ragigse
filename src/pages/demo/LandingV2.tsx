@@ -35,7 +35,7 @@ type ModuleCard = {
 const MODULES_ROW1: ModuleCard[] = [
   {
     title: "Verify — dokumentvalvet",
-    desc: "Spara legitimationer, intyg och utbildningsbevis på ett säkert ställe. Dela tillgång med länk — aldrig mer bifogade filer som du aldrig vet vart de tar vägen.",
+    desc: "Säker lagring av legitimationer, specialistbevis och tjänstgöringsintyg. Hantera åtkomst via krypterade länkar i stället för osäkra filbilagor – för fullständig kontroll över dina känsliga personuppgifter.",
     tag: "Ingår gratis",
     tagColor: "purple",
     iconBg: "#EEEDFE",
@@ -50,7 +50,7 @@ const MODULES_ROW1: ModuleCard[] = [
   },
   {
     title: "Referensplattformen",
-    desc: "Du bestämmer vem som får tillgång och när. Referensgivare kan verifiera digitalt istället för att lämna samma uppgifter till flera bolag.",
+    desc: "Administrera dina referenser centralt. Du styr vem som får tillgång och när. Dina referensgivare verifierar enkelt med bank-id vid upprepade förfrågningar, vilket eliminerar repetitiv administration och säkrar processens integritet.",
     tag: "Kommer snart",
     tagColor: "muted",
     iconBg: "#EEEDFE",
@@ -63,7 +63,7 @@ const MODULES_ROW1: ModuleCard[] = [
   },
   {
     title: "Löneanalys & löneassistent",
-    desc: "Se vad regionen betalar för din tid och vad bemanningsföretagen kan betala utifrån marknadens genomsnittliga marginaler. Med full transparens kring villkor vågar fler testa konsultlivet.",
+    desc: "Med full transparens kring avtalsvillkor och branschens marginaler skapar vi förutsättningar för en trygg och hållbar konsultkarriär.",
     tag: "Insight — 149 kr/mån",
     tagColor: "amber",
     iconBg: "#FAEEDA",
@@ -109,9 +109,9 @@ const MODULES_ROW2 = [
 
 const STEPS = [
   { num: "1", title: "Skapa ditt konto", desc: "Logga in och ange din roll.\nFå tillgång till verktyg och insikter." },
-  { num: "2", title: "Ladda upp dina dokument", desc: "Fakturor, tidrapporter, intyg och cv. Allt struktureras automatiskt." },
-  { num: "3", title: "Få insikt och agera", desc: "Löneanalys, missad fakturering, förhandlingsstöd — direkt." },
-  { num: "4", title: "Dela på dina villkor", desc: "Skicka en länk när du är redo. Aldrig mer bifogade dokument." },
+  { num: "2", title: "Ladda upp dina dokument", desc: "Tidrapporter, intyg och CV. Allt struktureras och säkras i valvet." },
+  { num: "3", title: "Få insikt och agera", desc: "Löneanalys, marknadsdata och förhandlingsstöd — direkt." },
+  { num: "4", title: "Dela på dina villkor", desc: "Skicka en krypterad länk när du är redo. Full kontroll över din data." },
 ];
 
 const INVOICES = [
