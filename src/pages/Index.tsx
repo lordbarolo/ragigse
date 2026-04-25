@@ -6,7 +6,6 @@ import CompcareLogo from "@/components/CompcareLogo";
 import ThemeToggle from "@/components/ThemeToggle";
 import HeroRateLookup from "@/components/landing/HeroRateLookup";
 import MissionSection from "@/components/landing/MissionSection";
-import RotatingHeroWord from "@/components/landing/RotatingHeroWord";
 import { trackEvent } from "@/lib/trackEvent";
 
 const platformJsonLd = {
@@ -91,39 +90,14 @@ export default function Index() {
       <section className="hero-dark relative pt-16 pb-28 px-6" aria-labelledby="hero-heading">
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <h1 id="hero-heading" className="font-bold mb-6 tracking-tight" style={{ fontSize: "clamp(2.25rem, 6.5vw, 5rem)" }}>
-            Skydda din <RotatingHeroWord />
+            Jämför din ersättning och få hjälp med förhandlingen
           </h1>
 
-          <p className="text-hero-foreground/70 text-lg md:text-2xl max-w-2xl mx-auto mb-4 leading-relaxed">
-            Ett säkert valv för din legitimation, dina referenser och din ersättningshistorik.
+          <p className="text-hero-foreground/70 text-lg md:text-2xl max-w-2xl mx-auto mb-10 leading-relaxed">
+            Vi vet vad du borde tjäna och hur du når dit.
           </p>
 
-          <p className="text-hero-foreground/60 text-base md:text-lg max-w-2xl mx-auto mb-2 leading-relaxed">
-            Våra AI-assistenter har läst över 20&nbsp;000 avtal och avrop så att du ska slippa.
-          </p>
-          <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-10">
-            {["Personlig rådgivare", "Tillgänglig dygnet runt", "Fråga vad du vill om branschen"].map((point) => (
-              <span key={point} className="flex items-center gap-2 text-hero-foreground/60 text-sm md:text-base">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
-                {point}
-              </span>
-            ))}
-          </div>
-
-          <div className="mb-10">
-            <HeroRateLookup />
-          </div>
-
-          <div className="flex flex-col items-center gap-4">
-            <Link to="/consultant/forhandla">
-              <Button size="sm" variant="outline" className="gap-2 bg-transparent border-hero-foreground/20 text-hero-foreground hover:bg-hero-foreground/10">
-                <MessageSquare className="w-4 h-4" /> Fråga Löneassistenten
-              </Button>
-            </Link>
-            <p className="max-w-md text-xs text-hero-foreground/60">
-              Priset visar vad regionen betalar bemanningsföretaget. Vill du veta din andel? Fråga assistenten.
-            </p>
-          </div>
+          <HeroRateLookup />
         </div>
         <div className="absolute bottom-0 left-0 right-0 h-[200px] bg-gradient-to-t from-background to-transparent" />
       </section>
