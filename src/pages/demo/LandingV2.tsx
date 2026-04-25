@@ -286,7 +286,7 @@ export default function LandingV2() {
             Förhandla utifrån <span className="text-[#AFA9EC]">data</span>,<br />inte magkänsla
           </h1>
           <p className="text-lg text-white/[0.78] leading-relaxed mb-6 max-w-[520px]">
-            Vi visar vad läkare och sjuksköterskor ska tjäna som konsulter. Kostnadsfritt, uppdaterat och synligt för alla.
+            Vi visar vad läkare och sjuksköterskor ska tjäna som konsulter. Se uppdaterade nivåer för din roll.
           </p>
           <Link to="/v1?start=1" onClick={() => trackEvent("product_cta_clicked", { cta: "hero_salary_analysis", target: "/v1?start=1" })}>
             <button className="px-6 py-3 bg-white hover:bg-white/90 rounded-lg text-[#1a1545] text-[15px] font-semibold whitespace-nowrap min-h-[44px] transition-colors">
