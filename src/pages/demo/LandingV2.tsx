@@ -282,7 +282,7 @@ export default function LandingV2() {
             <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="#AFA9EC" /></svg>
             För läkare &amp; sjuksköterskor
           </div>
-          <h1 className="font-bold leading-[1.1] text-white mb-6 tracking-tight text-5xl">
+          <h1 className="font-bold leading-[1.1] text-white mb-6 tracking-tight text-4xl">
             Förhandla utifrån <span className="text-[#AFA9EC]">data</span>,<br />inte magkänsla
           </h1>
           <p className="text-lg text-white/[0.78] leading-relaxed mb-6 max-w-[520px]">

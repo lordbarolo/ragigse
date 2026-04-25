@@ -89,7 +89,7 @@ export default function Index() {
       {/* ── Hero ───────────────────────────────────────── */}
       <section className="hero-dark relative pt-16 pb-28 px-6" aria-labelledby="hero-heading">
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <h1 id="hero-heading" className="font-bold mb-6 tracking-tight text-5xl leading-[1.1]">
+          <h1 id="hero-heading" className="font-bold mb-6 tracking-tight text-4xl leading-[1.1]">
             Förhandla utifrån data,<br />inte magkänsla
           </h1>
 
