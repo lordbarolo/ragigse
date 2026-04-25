@@ -3,7 +3,7 @@ import { getConsent } from "@/lib/cookieConsent";
 
 const POSTHOG_KEY =
   (import.meta.env.VITE_POSTHOG_KEY as string | undefined) ??
-  "phc_GiBn5CBOm72IrzgsdQRuUcK2mujk5Q0ZeI6hs8ixvwv";
+  "phc_AFPm7q5MQPFhR8cNu3LiRapyRaanNZNKWN2hzZrRkDoY";
 
 if (import.meta.env.DEV && !import.meta.env.VITE_POSTHOG_KEY) {
   console.warn(
