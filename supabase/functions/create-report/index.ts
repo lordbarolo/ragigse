@@ -7,39 +7,6 @@ import {
   type MarginModel,
 } from "../_shared/calc.ts";
 
-type GapCategory = "small" | "medium" | "large";
-
-function categorizeGap(currentSalary: number, p75: number): GapCategory {
-  const gap = p75 - currentSalary;
-  const gapPct = gap / currentSalary;
-  if (gapPct <= 0.05) return "small";
-  if (gapPct <= 0.15) return "medium";
-  return "large";
-}
-
-// Map survey occupation names to DB occupation names
-const OCCUPATION_MAP: Record<string, string> = {
-  "Sjuksköterska": "Grundutbildade sjuksköterskor",
-  "Allmänsjuksköterska": "Grundutbildade sjuksköterskor",
-  "Barnmorska": "Barnmorskor",
-  "Specialistsjuksköterska": "Övriga specialistsjuksköterskor",
-  "Legitimerad läkare": "Övriga läkare",
-  "Specialistläkare": "Specialistläkare",
-  "ST-läkare": "ST-läkare",
-  "Anestesisjuksköterska": "Anestesisjuksköterskor",
-  "Intensivvårdssjuksköterska": "Intensivvårdssjuksköterskor",
-  "Operationssjuksköterska": "Operationssjuksköterskor",
-  "Barnsjuksköterska": "Barnsjuksköterskor",
-  "Ambulanssjuksköterska": "Ambulanssjuksköterskor m.fl.",
-  "Distriktssköterska": "Distriktssköterskor",
-  "Psykiatrisjuksköterska": "Psykiatrisjuksköterskor",
-  "Röntgensjuksköterska": "Röntgensjuksköterskor",
-  "Skolsköterska": "Skolsköterskor",
-  "Geriatriksjuksköterska": "Geriatriksjuksköterskor",
-  "Företagssköterska": "Företagssköterskor",
-  "Psykolog": "Psykologer",
-  "AT-läkare": "AT-läkare",
-};
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -63,8 +30,6 @@ serve(async (req) => {
       experience,
       current_salary,
       salary_type,
-      track,
-      sector,
       ob_share,
     } = body;
 
