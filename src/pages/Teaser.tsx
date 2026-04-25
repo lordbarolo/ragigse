@@ -3,7 +3,7 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { usePricingEngine } from "@/hooks/usePricingEngine";
 import { useRates, useLocations } from "@/hooks/useCalculator";
 import type { SurveyData } from "@/components/Survey";
-import type { BenchmarkResult } from "@/hooks/useBenchmarkEngine";
+
 import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
 
@@ -31,7 +31,6 @@ export default function Teaser() {
   const { data: rates } = useRates();
   const { data: locations } = useLocations();
   const [survey, setSurvey] = useState<SurveyData | null>(null);
-  const [benchmarkResult, setBenchmarkResult] = useState<BenchmarkResult | null>(null);
   const [loadError, setLoadError] = useState(false);
   const [leadId, setLeadId] = useState("");
   const [reportId, setReportId] = useState("");
@@ -96,11 +95,7 @@ export default function Teaser() {
       setReportId(sessionStorage.getItem("reportId") || "");
       trackEvent("teaser_viewed");
 
-      const savedBenchmark = sessionStorage.getItem("benchmarkResult");
-      if (savedBenchmark) setBenchmarkResult(JSON.parse(savedBenchmark) as BenchmarkResult);
-
-      const savedTrack = (parsed as SurveyData & { track?: string }).track;
-      if (parsed.yrke && parsed.kommun && parsed.employmentType && savedTrack !== "permanent") {
+      if (parsed.yrke && parsed.kommun && parsed.employmentType) {
         calculate(parsed.yrke, parsed.kommun, parsed.employmentType as "anstalld" | "foretagare");
       }
       return;
@@ -122,7 +117,7 @@ export default function Teaser() {
 
         trackEvent("teaser_viewed");
 
-        if (surveyData.yrke && surveyData.kommun && surveyData.employmentType && surveyData.track !== "permanent") {
+        if (surveyData.yrke && surveyData.kommun && surveyData.employmentType) {
           calculate(surveyData.yrke, surveyData.kommun, surveyData.employmentType as "anstalld" | "foretagare");
         }
       } catch {
@@ -152,8 +147,8 @@ export default function Teaser() {
     });
   }, [leadId, survey, reportId]);
 
-  const { isPermanent, result, benchmarkMonthly, userMonthly, userHourly, isUnderpaid, diffPercent, isAboveThreshold } =
-    useTeaserData(survey, pricingResult, benchmarkResult);
+  const { result, userHourly, isUnderpaid, diffPercent, isAboveThreshold } =
+    useTeaserData(survey, pricingResult);
 
   const handleEmailSubmit = async (emailValue: string) => {
     setEmailSaving(true);
@@ -204,16 +199,6 @@ export default function Teaser() {
     const zon = pricingResult?.zon || "";
     const occupation = survey?.yrke || "";
 
-    if (isPermanent) {
-      if (!benchmarkMonthly) return null;
-      const gap = benchmarkMonthly.p75 - userMonthly;
-      const hourlyGap = Math.round(gap / 167);
-      if (gap > 0) {
-        return { tier: "underpaid" as const, hourlyGap, monthlyGap: gap, kommun, currentRate: userHourly, occupation };
-      }
-      return { tier: "above_market" as const, hourlyGap: 0, monthlyGap: 0, kommun, zon, pctEarningMore: 25, currentRate: userHourly, occupation };
-    }
-
     if (!result) return null;
 
     if (isAboveThreshold) {
@@ -259,7 +244,7 @@ export default function Teaser() {
       currentRate: userHourly,
       occupation,
     };
-  }, [survey, isPermanent, result, pricingResult, benchmarkMonthly, userHourly, userMonthly, isUnderpaid, isAboveThreshold]);
+  }, [survey, result, pricingResult, userHourly, isUnderpaid, isAboveThreshold]);
 
   // Error state
   if (loadError) {
@@ -274,7 +259,7 @@ export default function Teaser() {
 
   if (!survey) return null;
 
-  if (!isPermanent && !result) {
+  if (!result) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="w-6 h-6 animate-spin text-primary" />
@@ -311,7 +296,6 @@ export default function Teaser() {
         {/* Market position — top of page */}
         <MarketDiagnosisCard
           diffPercent={diffPercent}
-          isPermanent={isPermanent}
           yrke={survey.yrke}
           kommun={survey.kommun}
           isAboveThreshold={isAboveThreshold}
@@ -333,10 +317,7 @@ export default function Teaser() {
 
         {/* What's in the report */}
         <div className="rounded-xl bg-foreground/[0.02] p-5">
-          <ReportPreviewList
-            isPermanent={isPermanent}
-            yrke={survey.yrke}
-          />
+          <ReportPreviewList yrke={survey.yrke} />
         </div>
       </main>
     </div>
