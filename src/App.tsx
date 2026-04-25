@@ -61,6 +61,7 @@ const AgencySignup = lazy(() => import("./pages/AgencySignup"));
 const DemoLanding = lazy(() => import("./pages/DemoLanding"));
 const ReferenceDemo = lazy(() => import("./pages/demo/ReferenceDemo"));
 const LandingV2 = lazy(() => import("./pages/demo/LandingV2"));
+const LandingExtras = lazy(() => import("./pages/demo/LandingExtras"));
 const Campaign = lazy(() => import("./pages/Campaign"));
 const UppdragsradarV2 = lazy(() => import("./pages/UppdragsradarV2"));
 
@@ -105,6 +106,7 @@ const App = () => (
             <Routes>
               {/* ── Landing — new design (LandingV2) ── */}
               <Route path="/" element={<LandingV2 />} />
+              <Route path="/demo/landing-extras" element={<LandingExtras />} />
               <Route path="/v1" element={<SalaryCheck />} />
               <Route path="/b2b" element={<Index />} />
 
