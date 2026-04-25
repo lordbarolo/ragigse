@@ -327,9 +327,15 @@ export default function LandingV2() {
           <h2 className="font-serif text-[34px] font-bold leading-[1.15] tracking-tight text-foreground mb-2.5">
             Fem verktyg som förenklar din karriär
           </h2>
-          <p className="text-[15px] text-muted-foreground leading-[1.65]">
-            Ref-id skyddar dina referenser från tidskrävande intervjuer. AI-assistenten har nischad juridisk kunskap för att skydda dig från dåliga kontrakt. Tipsa oss gärna om annat vi ska bygga&nbsp;
-          </p>
+          <div className="text-[15px] text-muted-foreground leading-[1.65]">
+            Vi har tagit hjälp av AI för att jämna ut informationstillgången. Vi ger dig möjligheten att:
+            <ul className="list-disc pl-5 mt-2 space-y-1">
+              <li>Dela tidsbegränsad tillgång till dina viktigaste dokument, istället för att bifoga filer.</li>
+              <li>Förhandla utifrån samma information som uppdragsgivaren.</li>
+              <li>Scanna avtal utifrån snedvriden ansvarsfördelning.</li>
+              <li>Upptäcka historiska fakturor där du missat att ta betalt för arbetade timmar.&nbsp;</li>
+            </ul>
+          </div>
         </div>
 
         {/* Row 1 — 3 cards */}
