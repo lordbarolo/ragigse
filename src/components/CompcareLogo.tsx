@@ -24,7 +24,7 @@ const CompcareLogo = forwardRef<HTMLSpanElement, CompcareLogoProps>(
 
     // If `inverted` is explicitly set, force a single variant.
     if (typeof inverted === "boolean") {
-      const src = inverted ? "/compcare-logo-dark.png" : "/compcare-logo-light.png";
+      const src = inverted ? "/compcare-logo-dark.svg" : "/compcare-logo-light.svg";
       return (
         <span
           ref={ref}
@@ -53,13 +53,13 @@ const CompcareLogo = forwardRef<HTMLSpanElement, CompcareLogoProps>(
         {...rest}
       >
         <img
-          src="/compcare-logo-light.png"
+          src="/compcare-logo-light.svg"
           alt="CompCare"
           className="h-full w-auto select-none block dark:hidden"
           draggable={false}
         />
         <img
-          src="/compcare-logo-dark.png"
+          src="/compcare-logo-dark.svg"
           alt="CompCare"
           className="h-full w-auto select-none hidden dark:block"
           draggable={false}
