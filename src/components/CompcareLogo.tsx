@@ -10,21 +10,36 @@ interface CompcareLogoProps extends HTMLAttributes<HTMLSpanElement> {
 }
 
 /**
- * Renders the CompCare wordmark using the official PNG logo assets.
- * Automatically switches between light and dark variants based on the
- * `dark` class on <html> (set by the theme system).
+ * Renders the official CompCare logo using the brand SVG assets.
  *
- * - logo light = mörk text → används på ljus bakgrund
- * - logo dark  = vit text  → används på mörk bakgrund
+ * Variants:
+ *  - "wordmark" → ren typografi (compcare) utan ikonstaplar
+ *  - "full"     → ikonstaplar + text horisontellt
+ *  - "icon"     → endast ikonstaplar (kvadratisk)
+ *
+ * Light/dark växling sker automatiskt via Tailwinds `dark:`-klass
+ * (eller via `inverted`-propet om man vill tvinga ett läge).
  */
 const CompcareLogo = forwardRef<HTMLSpanElement, CompcareLogoProps>(
   ({ variant = "wordmark", className = "", inverted, ...rest }, ref) => {
     const sizeClass =
-      variant === "full" ? "h-9" : variant === "icon" ? "h-7" : "h-8";
+      variant === "icon" ? "h-8 w-8" : variant === "full" ? "h-9" : "h-7";
 
-    // If `inverted` is explicitly set, force a single variant.
+    const fileFor = (mode: "light" | "dark") => {
+      if (variant === "icon") return "/compcare-icon.svg";
+      if (variant === "wordmark") {
+        return mode === "dark"
+          ? "/compcare-wordmark-dark.svg"
+          : "/compcare-wordmark-light.svg";
+      }
+      // full
+      return mode === "dark"
+        ? "/compcare-logo-dark.svg"
+        : "/compcare-logo-light.svg";
+    };
+
     if (typeof inverted === "boolean") {
-      const src = inverted ? "/compcare-logo-dark.svg" : "/compcare-logo-light.svg";
+      const src = fileFor(inverted ? "dark" : "light");
       return (
         <span
           ref={ref}
@@ -33,17 +48,26 @@ const CompcareLogo = forwardRef<HTMLSpanElement, CompcareLogoProps>(
           role="img"
           {...rest}
         >
-          <img
-            src={src}
-            alt="CompCare"
-            className="h-full w-auto select-none"
-            draggable={false}
-          />
+          <img src={src} alt="CompCare" className="h-full w-auto select-none" draggable={false} />
         </span>
       );
     }
 
-    // Otherwise, render both and let CSS show the right one based on theme.
+    // Icon-varianten är färgneutral och behöver ingen växling
+    if (variant === "icon") {
+      return (
+        <span
+          ref={ref}
+          className={`inline-flex items-center ${sizeClass} ${className}`}
+          aria-label="CompCare"
+          role="img"
+          {...rest}
+        >
+          <img src="/compcare-icon.svg" alt="CompCare" className="h-full w-auto select-none" draggable={false} />
+        </span>
+      );
+    }
+
     return (
       <span
         ref={ref}
@@ -53,13 +77,13 @@ const CompcareLogo = forwardRef<HTMLSpanElement, CompcareLogoProps>(
         {...rest}
       >
         <img
-          src="/compcare-logo-light.svg"
+          src={fileFor("light")}
           alt="CompCare"
           className="h-full w-auto select-none block dark:hidden"
           draggable={false}
         />
         <img
-          src="/compcare-logo-dark.svg"
+          src={fileFor("dark")}
           alt="CompCare"
           className="h-full w-auto select-none hidden dark:block"
           draggable={false}
