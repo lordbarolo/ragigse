@@ -691,8 +691,6 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                         onClick={() => {
                           setData({ ...data, kommun: k.kommun });
                           setSelectedRegion(k.region);
-                          trackStepCompleted(3, k.kommun);
-                          setTimeout(() => setStep(4), 200);
                         }}
                         className={`group w-full py-3 px-4 text-left text-sm transition-all flex items-center justify-between border-b border-border/50 last:border-b-0 ${
                           data.kommun === k.kommun
