@@ -180,6 +180,7 @@ Deno.serve(async (req) => {
         nextMonthExpected: number;
         anyPeak: boolean;
         anyBreak: boolean;
+        anyUnderReview: boolean;
         bestConfidence: "low" | "med" | "high";
       }>();
 
@@ -195,6 +196,7 @@ Deno.serve(async (req) => {
           nextMonthExpected: 0,
           anyPeak: false,
           anyBreak: false,
+          anyUnderReview: false,
           bestConfidence: "low" as "low" | "med" | "high",
         };
         cur.totalExpected += f.expected_calloffs;
@@ -210,6 +212,7 @@ Deno.serve(async (req) => {
         }
         if (f.is_seasonal_peak) cur.anyPeak = true;
         if (f.is_trend_break) cur.anyBreak = true;
+        if (f.is_under_review) cur.anyUnderReview = true;
         const cConf = (f.confidence ?? "low") as "low" | "med" | "high";
         if (confRank[cConf] > confRank[cur.bestConfidence]) cur.bestConfidence = cConf;
         regionAgg.set(f.region, cur);
