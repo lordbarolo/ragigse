@@ -679,37 +679,39 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                 />
               </div>
 
-              {/* Results */}
+              {/* Results — 2-col grid on desktop, 1-col on mobile, fixed scroll height */}
               <div className="rounded-xl border border-border overflow-hidden">
-                <div className="flex flex-col max-h-[180px] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-primary/25">
+                <div className="max-h-[220px] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-primary/25">
                   {filteredKommunerSearch.length === 0 ? (
                     <p className="py-8 text-center text-body-sm">Inga kommuner hittades</p>
                   ) : (
-                    filteredKommunerSearch.map((k) => (
-                      <button
-                        key={k.kommun}
-                        onClick={() => {
-                          setData({ ...data, kommun: k.kommun });
-                          setSelectedRegion(k.region);
-                        }}
-                        className={`group w-full py-3 px-4 text-left text-sm transition-all flex items-center justify-between border-b border-border/50 last:border-b-0 ${
-                          data.kommun === k.kommun
-                            ? "bg-primary/[0.08] border-l-2 border-l-primary"
-                            : "hover:bg-primary/[0.04]"
-                        }`}
-                      >
-                        <div className="flex items-center gap-2">
-                          {data.kommun === k.kommun && (
-                            <Check className="w-4 h-4 text-primary shrink-0" />
-                          )}
-                          <div>
-                            <span className="font-medium text-foreground">{k.kommun}</span>
-                            <span className="ml-2 text-xs text-muted-foreground">{k.region}</span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-border/50">
+                      {filteredKommunerSearch.map((k) => (
+                        <button
+                          key={k.kommun}
+                          onClick={() => {
+                            setData({ ...data, kommun: k.kommun });
+                            setSelectedRegion(k.region);
+                          }}
+                          className={`group w-full py-3 px-4 text-left text-sm transition-all flex items-center justify-between bg-card ${
+                            data.kommun === k.kommun
+                              ? "bg-primary/[0.08] border-l-2 border-l-primary"
+                              : "hover:bg-primary/[0.04]"
+                          }`}
+                        >
+                          <div className="flex items-center gap-2 min-w-0">
+                            {data.kommun === k.kommun && (
+                              <Check className="w-4 h-4 text-primary shrink-0" />
+                            )}
+                            <div className="min-w-0">
+                              <span className="font-medium text-foreground truncate block">{k.kommun}</span>
+                              <span className="text-xs text-muted-foreground truncate block">{k.region}</span>
+                            </div>
                           </div>
-                        </div>
-                        <ArrowRight className="w-4 h-4 text-muted-foreground/20 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
-                      </button>
-                    ))
+                          <ArrowRight className="w-4 h-4 text-muted-foreground/20 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
+                        </button>
+                      ))}
+                    </div>
                   )}
                 </div>
               </div>
