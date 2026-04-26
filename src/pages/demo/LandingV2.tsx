@@ -362,16 +362,21 @@ export default function LandingV2() {
 
       {/* ═══════════════════ B2B-CTA-rad ═══════════════════ */}
       <section className="px-5 sm:px-6 lg:px-10 pb-14">
-        <div className="max-w-5xl mx-auto bg-[#1a1545] rounded-xl px-6 md:px-8 py-5 md:py-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-          <p className="text-[14px] sm:text-[15px] text-white/85">
-            Driver du ett bemanningsföretag?
-          </p>
+        <div className="max-w-5xl mx-auto bg-[#0B2A6B] rounded-xl px-6 md:px-8 py-6 md:py-7 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+          <div className="md:max-w-[640px]">
+            <h3 className="text-[17px] sm:text-[19px] font-semibold text-white leading-snug mb-1.5">
+              Sluta gissa på priset inför nästa avrop
+            </h3>
+            <p className="text-[13.5px] sm:text-[14px] text-white/80 leading-relaxed">
+              Vi visar vad marknaden faktiskt betalar — från den dolda zonskillnaden på 386 kr/h till prisskillnader mellan privata och offentliga aktörer. Se hur ni undviker de tilldelningsavvisningar som kostar mer än ni tror genom att säkra er representation digitalt.
+            </p>
+          </div>
           <Link
             to="/for-bemanningsforetag"
             onClick={() => trackEvent("product_cta_clicked", { cta: "b2b_footer_cta", target: "/for-bemanningsforetag" })}
-            className="text-[14px] font-semibold text-white hover:text-[#AFA9EC] inline-flex items-center gap-1.5 transition-colors whitespace-nowrap"
+            className="self-start md:self-auto bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-[14px] font-semibold rounded-lg px-5 py-2.5 inline-flex items-center gap-1.5 transition-colors whitespace-nowrap"
           >
-            Läs om CompCare Insight <ArrowRight className="w-4 h-4" />
+            Utforska CompCare Business <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </section>
