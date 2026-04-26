@@ -6,7 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import CookieBanner from "@/components/CookieBanner";
 import Index from "./pages/Index";
@@ -93,6 +93,11 @@ function ScrollToTop() {
 function RedirectWithParams({ to }: { to: string }) {
   const location = useLocation();
   return <Navigate to={`${to}${location.search}`} replace />;
+}
+
+function LegacyVerifyRedirect() {
+  const { applicationId } = useParams();
+  return <Navigate to={`/samarbetsintyg/${applicationId ?? ""}`} replace />;
 }
 
 const App = () => (
