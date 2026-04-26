@@ -213,6 +213,7 @@ function FlowArrow() {
 /* ───────────────────── component ──────────────── */
 export default function LandingV2() {
   useTimeOnPage("landing");
+  const [menuOpen, setMenuOpen] = useState(false);
   useEffect(() => {
     trackEvent("landing_viewed");
   }, []);
