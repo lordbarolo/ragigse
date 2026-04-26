@@ -55,7 +55,7 @@ export default function ReferenserInfo() {
             Verifierad tillit
           </div>
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground mb-6">
-            Referenser &<br />Verifikationer
+            Ref ID - Minimera störning<br />av dina referenser
           </h1>
           <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed mb-4">
             Ta kontroll över dina handlingar och intyg. Samla allt i en miljö du äger — dela på dina villkor, spårbart och säkert.
