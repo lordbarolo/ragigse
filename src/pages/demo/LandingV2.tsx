@@ -34,7 +34,7 @@ type ModuleCard = {
 
 const MODULES_ROW1: ModuleCard[] = [
   {
-    title: "Dokhus — dokumentvalvet",
+    title: "Dokhus — Där dina dokument bor",
     desc: "Säker lagring av legitimationer, specialistbevis och tjänstgöringsintyg. Hantera åtkomst via krypterade länkar i stället för osäkra filbilagor – för fullständig kontroll över dina känsliga personuppgifter.",
     tag: "Ingår gratis",
     tagColor: "purple",
