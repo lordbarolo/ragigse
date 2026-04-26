@@ -92,7 +92,7 @@ export default function Login() {
   const features = [
     { icon: FileText, title: "Dokumentvalvet", desc: "Säker lagring av legitimationer, specialistbevis och tjänstgöringsintyg. Hantera åtkomst via krypterade länkar.", badge: "Ingår gratis", badgeColor: "text-green-700 bg-green-100" },
     { icon: Clock, title: "Referensplattformen", desc: "Administrera dina referenser centralt. Du styr vem som får tillgång och när. Verifiering med bank-id.", badge: "Ingår gratis", badgeColor: "text-green-700 bg-green-100" },
-    { icon: TrendingUp, title: "Löneanalys & assistent", desc: "Förhandlingstips baserat på din specialitet, region och erfarenhet.", badge: "Insight — 149 kr/mån", badgeColor: "text-amber-700 bg-amber-100" },
+    { icon: TrendingUp, title: "Ersättningsanalys - Se aktuella arvoden", desc: "Förhandlingstips baserat på din specialitet, region och erfarenhet.", badge: "Insight — 149 kr/mån", badgeColor: "text-amber-700 bg-amber-100" },
     { icon: MessageSquare, title: "Fakturagranskning", desc: "Automatiserad revision av fakturor och tidrapport. Arvodet är helt prestationsbaserat: vi erhåller 25 % av det belopp vi återvinner åt dig.", badge: "Prestationsbaserat", badgeColor: "text-purple-700 bg-purple-100" },
     { icon: Link2, title: "Uppdragsprognos", desc: "Öka chansen att få uppdraget du verkligen vill ha. AI ger oss träffsäkra prognoser om kommande behov baserat på 5 års historik och över 30 000 bemanningsuppdrag.", badge: "Beta", badgeColor: "text-slate-600 bg-slate-100" },
   ];
