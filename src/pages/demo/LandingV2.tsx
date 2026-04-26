@@ -72,7 +72,6 @@ const MODULES_ROW1: ModuleCard[] = [
         <path d="M4 14l4-4 3 3 5-6" stroke="#854F0B" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     ),
-    cta: { label: "Gör löneanalysen", href: "/v1?start=1" },
   },
 ];
 
