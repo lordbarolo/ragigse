@@ -12,8 +12,6 @@ export default function VerifyInfo() {
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
-      <LandingNav />
-
       {/* Hero */}
       <section className="pt-28 pb-16 px-6">
         <div className="max-w-3xl mx-auto text-center">
