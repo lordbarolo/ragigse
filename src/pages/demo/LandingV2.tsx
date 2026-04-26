@@ -328,7 +328,7 @@ export default function LandingV2() {
             Eliminera tråkig administration och lägg tiden på något roligare.
             <ul className="list-disc pl-5 mt-2 space-y-1">
               <li>Hantera din legitimation och dina intyg via tidsbegränsad åtkomst i stället för osäkra filbilagor</li>
-              <li>Optimera din löneförhandling med objektiva marknadsdata och regional statistik</li>
+              <li>Optimera din förhandling med objektiva marknadsdata och regional statistik</li>
               <li>Identifiera juridiska risker och obalanserad ansvarsfördelning i konsultavtal före signering.</li>
               <li>Analys av tidigare fakturering för att säkerställa att din arbetade tid fakturerats i sin helhet.&nbsp;</li>
             </ul>
