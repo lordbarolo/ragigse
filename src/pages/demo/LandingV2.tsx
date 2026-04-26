@@ -34,7 +34,7 @@ type ModuleCard = {
 
 const MODULES_ROW1: ModuleCard[] = [
   {
-    title: "Verify — dokumentvalvet",
+    title: "Dokhus — dokumentvalvet",
     desc: "Säker lagring av legitimationer, specialistbevis och tjänstgöringsintyg. Hantera åtkomst via krypterade länkar i stället för osäkra filbilagor – för fullständig kontroll över dina känsliga personuppgifter.",
     tag: "Ingår gratis",
     tagColor: "purple",
@@ -404,7 +404,7 @@ export default function LandingV2() {
           <div>
             <h4 className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-3">Verktyg</h4>
             <div className="flex flex-col gap-2 text-[13px] text-muted-foreground">
-              <Link to="/verify-info" className="hover:text-foreground transition-colors">Verify</Link>
+              <Link to="/dokhus-info" className="hover:text-foreground transition-colors">Dokhus</Link>
               <Link to="/" className="hover:text-foreground transition-colors">Löneanalys</Link>
               <Link to="/consultant/fakturakontroll" className="hover:text-foreground transition-colors">Fakturagranskning</Link>
               <Link to="/consultant/forhandla" className="hover:text-foreground transition-colors">Löneassistent</Link>

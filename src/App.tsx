@@ -6,7 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import CookieBanner from "@/components/CookieBanner";
 import Index from "./pages/Index";
@@ -95,6 +95,11 @@ function RedirectWithParams({ to }: { to: string }) {
   return <Navigate to={`${to}${location.search}`} replace />;
 }
 
+function LegacyVerifyRedirect() {
+  const { applicationId } = useParams();
+  return <Navigate to={`/samarbetsintyg/${applicationId ?? ""}`} replace />;
+}
+
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
@@ -143,11 +148,15 @@ const App = () => (
                 {/* Future: /agency/settings */}
               </Route>
 
-              {/* ── Public Verify Layout ──────────── */}
+              {/* ── Public Dokhus Layout ──────────── */}
               <Route element={<PublicVerifyLayout />}>
-                <Route path="/verify/:applicationId" element={<VerifyProof />} />
+                <Route path="/samarbetsintyg/:applicationId" element={<VerifyProof />} />
+                {/* Legacy redirect: /verify/:id → /samarbetsintyg/:id */}
+                <Route path="/verify/:applicationId" element={<LegacyVerifyRedirect />} />
                 <Route path="/profil/:id" element={<PublicProfile />} />
-                <Route path="/verify-info" element={<VerifyInfo />} />
+                <Route path="/dokhus-info" element={<VerifyInfo />} />
+                {/* Legacy redirect */}
+                <Route path="/verify-info" element={<Navigate to="/dokhus-info" replace />} />
               </Route>
 
               {/* ── Public routes (no layout) ────── */}

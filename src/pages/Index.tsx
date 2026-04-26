@@ -156,7 +156,7 @@ export default function Index() {
           <div className="flex gap-6 text-sm text-muted-foreground">
             <Link to="/vanliga-fragor" className="hover:text-foreground transition-colors">FAQ</Link>
             <Link to="/integritetspolicy" className="hover:text-foreground transition-colors">Integritetspolicy</Link>
-            <Link to="/verify-info" className="hover:text-foreground transition-colors">Verify</Link>
+            <Link to="/dokhus-info" className="hover:text-foreground transition-colors">Dokhus</Link>
           </div>
           <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} CompCare</p>
         </div>

@@ -271,10 +271,10 @@ export default function AgencyIntyg() {
       <div className="flex items-start justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl font-bold text-foreground tracking-tight">
-            Representationsintyg
+            Samarbetsintyg
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            {orgName ? `${orgName} · ` : ""}Skapa och hantera digitala representationsbevis
+            {orgName ? `${orgName} · ` : ""}Skapa och hantera digitala samarbetsintyg
           </p>
         </div>
         <Dialog open={createOpen} onOpenChange={(o) => { setCreateOpen(o); if (!o) resetForm(); }}>
@@ -503,7 +503,7 @@ export default function AgencyIntyg() {
                             )}
                             {r.status === "signed" && r.verification_id && (
                               <Button variant="ghost" size="sm" className="h-7 px-2 gap-1" asChild>
-                                <Link to={`/verify/${r.verification_id}`}>
+                                <Link to={`/samarbetsintyg/${r.verification_id}`}>
                                   <ExternalLink className="h-3.5 w-3.5" />
                                 </Link>
                               </Button>
