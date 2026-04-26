@@ -884,7 +884,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                 : "bg-muted text-muted-foreground cursor-not-allowed"
             }`}
           >
-            {saving ? "Analyserar..." : "Visa min analys"}
+            {saving ? "Analyserar..." : "Generera min ersättningsanalys"}
             {!saving && <ArrowRight className="w-5 h-5" />}
           </button>
         )}
