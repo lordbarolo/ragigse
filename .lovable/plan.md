@@ -1,29 +1,18 @@
 ## Mål
-Förenkla hero på `/` till en tydlig rubrik + en underrubrik. Allt brus runt omkring (roterande ord, två extra meningar, bullets, sekundär CTA, disclaimer) tas bort. `HeroRateLookup`-widgeten behålls som primär handling.
+CTA-bannern "Redo att ta kontroll?" (LandingV2.tsx, rad 426) använder idag en platt mörklila bakgrund (`bg-[#1a1545]`). Den ska få exakt samma visuella bakgrund som hero-sektionen högst upp på sidan: gradient + två radiella ljus-overlays + ett subtilt grid-mönster.
 
-## Ny hero-struktur
+## Ändring
+I `src/pages/demo/LandingV2.tsx` byts CTA-banner-blocket (rad 425–437) ut mot en variant som:
 
-```text
-[ Rubrik:    Jämför din ersättning och få hjälp med förhandlingen ]
-[ Subrubrik: Vi vet vad du borde tjäna och hur du når dit         ]
-[ HeroRateLookup-widget                                            ]
-```
+1. Använder `relative overflow-hidden` på wrappern (samma rundade hörn och spacing behålls).
+2. Lägger in fyra absoluta bakgrundslager identiska med hero (rad 294–319):
+   - Bas-gradient: `bg-gradient-to-br from-[#0d0b2a] via-[#1a1545] via-40% to-[#2a2070]`
+   - Stort radiellt ljus uppe till höger (lila glow, 1000×900px)
+   - Mindre radiellt highlight uppe till höger (520×600px)
+   - Grid-mönster med `opacity-5` (vita linjer var 40:e px)
+3. Innehåll (rubrik, paragraf, knappar) wrappas i `relative z-10` så det alltid ligger ovanpå bakgrundslagren.
 
-## Ändringar i `src/pages/Index.tsx` (rad 91–129)
+Inga andra sektioner, färger eller text ändras. Knapparna behåller sin lila/transparenta styling som matchar bra mot den nya bakgrunden (precis som CTA-knappen i hero).
 
-1. **Rubrik** — ersätt `Skydda din <RotatingHeroWord />` med statisk text:
-   *"Jämför din ersättning och få hjälp med förhandlingen"*
-2. **Subrubrik** — ersätt de två befintliga `<p>`-styckena med en enda mening:
-   *"Vi vet vad du borde tjäna och hur du når dit"*
-3. **Ta bort** de tre bullet-punkterna (rad 104–111).
-4. **Ta bort** sekundär CTA-knappen + disclaimer (rad 117–126). Widgeten har redan en CTA ("Se din ersättning") när roll+kommun valts.
-5. **Behåll** `HeroRateLookup` oförändrad.
-6. **Städa imports** — ta bort `RotatingHeroWord` och `MessageSquare` (om inte använd någon annanstans i filen; `MessageSquare` används fortfarande av pelaren `Förhandlingsassistent` så den stannar).
-
-## Inte i scope
-- `RotatingHeroWord.tsx` lämnas i kodbasen (bara importen tas bort).
-- Pelar-sektionen, trust-sektionen och footer rörs inte.
-- Inga ändringar i `HeroRateLookup`.
-
-## Filer som ändras
-- `src/pages/Index.tsx` — endast hero-blocket + en import.
+## Resultat
+CTA-bannern får samma djup, ljusspel och rutnät som hero-sektionen — visuellt sammanhållen ram runt sidan med två "speglande" mörka ytor i topp och botten.
