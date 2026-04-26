@@ -143,11 +143,15 @@ const App = () => (
                 {/* Future: /agency/settings */}
               </Route>
 
-              {/* ── Public Verify Layout ──────────── */}
+              {/* ── Public Dokhus Layout ──────────── */}
               <Route element={<PublicVerifyLayout />}>
-                <Route path="/verify/:applicationId" element={<VerifyProof />} />
+                <Route path="/samarbetsintyg/:applicationId" element={<VerifyProof />} />
+                {/* Legacy redirect: /verify/:id → /samarbetsintyg/:id */}
+                <Route path="/verify/:applicationId" element={<Navigate to="/samarbetsintyg/:applicationId" replace />} />
                 <Route path="/profil/:id" element={<PublicProfile />} />
-                <Route path="/verify-info" element={<VerifyInfo />} />
+                <Route path="/dokhus-info" element={<VerifyInfo />} />
+                {/* Legacy redirect */}
+                <Route path="/verify-info" element={<Navigate to="/dokhus-info" replace />} />
               </Route>
 
               {/* ── Public routes (no layout) ────── */}
