@@ -147,15 +147,17 @@ Deno.serve(async (req) => {
 
     const runId = latestRun?.[0]?.forecast_run_id;
 
+    const profession = mapRoleToProfession(roll);
+
     let forecasts: ForecastRow[] = [];
-    if (runId) {
+    if (runId && profession) {
       const { data } = await supabase
         .from("uppdragsradar_predictions")
         .select(
           "customer, region, profession, specialization, month, expected_calloffs, seasonal_index, yoy_ratio, confidence, is_seasonal_peak, is_trend_break, generated_at",
         )
         .eq("forecast_run_id", runId)
-        .eq("profession", roll)
+        .eq("profession", profession)
         .gte("month", currentYM)
         .in("confidence", ["med", "high"])
         .order("month", { ascending: true });
