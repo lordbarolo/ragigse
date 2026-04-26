@@ -28,7 +28,7 @@ export default function HeroInlineForm() {
   }, [query]);
 
   const handlePick = (slug: string, label: string) => {
-    trackEvent("hero_inline_role_selected", { role: label, slug });
+    trackEvent("product_cta_clicked", { cta: "hero_inline_role", target: `/v1?yrke=${slug}`, role: label });
     navigate(`/v1?start=1&yrke=${encodeURIComponent(slug)}`);
   };
 
