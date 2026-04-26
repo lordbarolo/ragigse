@@ -10,9 +10,9 @@ export default function VerifyInfo() {
   useEffect(() => {
     trackEvent("verify_info_viewed");
     setPageMeta({
-      title: "Dokhus — digitalt dokumentvalv för vårdkonsulter | CompCare",
+      title: "Samarbetsintyg — eliminera dubbelpresentationer | CompCare",
       description:
-        "Dokhus är ditt digitala dokumentvalv. Auktorisera bemanningsföretag att representera dig och dela ett samarbetsintyg med uppdragsgivaren — utan dubbelpresentationer.",
+        "Ett digitalt signerat samarbetsintyg som visar exakt vilket bemanningsföretag du auktoriserat — inga duplicerade CV:n, inga oklarheter för regionen.",
     });
   }, []);
 
@@ -26,10 +26,10 @@ export default function VerifyInfo() {
             Digitalt säkrad auktorisering
           </div>
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground mb-6">
-            Dokhus — Eliminera<br />dubbelpresentationer
+            Samarbetsintyg —<br />eliminera dubbelpresentationer
           </h1>
           <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed mb-10">
-            Dokhus är en digital källa till sanning. Du auktoriserar bemanningsföretag att representera dig — regionen ser samarbetsintyget, inte duplicerade CV:n.
+            Ett digitalt signerat intyg som visar exakt vilket bemanningsföretag du auktoriserat att representera dig. Regionen ser intyget — inte duplicerade CV:n.
           </p>
         </div>
       </section>
@@ -38,7 +38,7 @@ export default function VerifyInfo() {
       <section className="py-16 px-6 bg-card border-y border-border">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-2xl font-bold tracking-tight text-foreground mb-8">
-            Så fungerar Dokhus
+            Så fungerar det
           </h2>
 
           <div className="space-y-6">
@@ -102,7 +102,7 @@ export default function VerifyInfo() {
             Redo att ta kontroll?
           </h2>
           <p className="text-muted-foreground mb-8">
-            Skapa ett konto för att börja samla referenser och aktivera Dokhus.
+            Skapa ett konto för att börja samla referenser och utfärda samarbetsintyg.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link
