@@ -145,12 +145,12 @@ export default function SignRepresentation() {
               </p>
               <div className="flex items-center justify-center gap-2 text-xs text-primary">
                 <ShieldCheck className="h-4 w-4" />
-                <span>Digitalt verifierat representationsbevis</span>
+                <span>Digitalt verifierat samarbetsintyg</span>
               </div>
               {verificationId && (
                 <Button variant="outline" size="sm" className="mt-4" asChild>
-                  <Link to={`/verify/${verificationId}`}>
-                    Visa bevis →
+                  <Link to={`/samarbetsintyg/${verificationId}`}>
+                    Visa samarbetsintyg →
                   </Link>
                 </Button>
               )}

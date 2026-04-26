@@ -503,7 +503,7 @@ export default function AgencyIntyg() {
                             )}
                             {r.status === "signed" && r.verification_id && (
                               <Button variant="ghost" size="sm" className="h-7 px-2 gap-1" asChild>
-                                <Link to={`/verify/${r.verification_id}`}>
+                                <Link to={`/samarbetsintyg/${r.verification_id}`}>
                                   <ExternalLink className="h-3.5 w-3.5" />
                                 </Link>
                               </Button>
