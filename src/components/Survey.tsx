@@ -883,14 +883,14 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
               handleNext();
             }}
             disabled={saving}
-            className={`flex-1 flex items-center justify-center gap-2 py-4 px-6 rounded-xl text-base font-semibold transition-all duration-200 active:scale-[0.97] ${
+            className={`flex-1 flex items-center justify-center gap-1.5 py-4 px-3 rounded-xl text-sm sm:text-base font-semibold whitespace-nowrap transition-all duration-200 active:scale-[0.97] ${
               canProceed && !saving
                 ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
                 : "bg-muted text-muted-foreground cursor-not-allowed"
             }`}
           >
-            {saving ? "Analyserar..." : "Generera min ersättningsanalys"}
-            {!saving && <ArrowRight className="w-5 h-5" />}
+            {saving ? "Analyserar..." : "Visa min analys"}
+            {!saving && <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />}
           </button>
         )}
       </div>
