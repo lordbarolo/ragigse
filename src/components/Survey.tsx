@@ -630,7 +630,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
 
         {/* Step 2: Single dropdown for role selection */}
         {step === 2 && (
-          <StepWrapper title="Vad är din specialisering?" subtitle="Vi behöver veta din specialisering för att matcha rätt avtalspriser.">
+          <StepWrapper title="Vad är din specialisering?" subtitle="Vi matchar din kompetens mot SKR:s ramavtalspriser för över 60 specialistroller.">
             <div className="flex flex-col flex-1">
               {/* Upper decorative area */}
               <div className="flex-1 flex flex-col items-center justify-center gap-4 py-6">
@@ -651,7 +651,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                   onValueChange={(v) => {
                     setRoleDropdownValue(v);
                   }}
-                  placeholder={occupationCategory === "lakare" ? "Välj läkarroll eller specialisering..." : "Välj roll eller vidareutbildning..."}
+                  placeholder={occupationCategory === "lakare" ? "Välj din specialisering eller specialistkompetens..." : "Välj din roll eller vidareutbildning..."}
                   options={occupationCategory === "lakare" ? doctorRoleOptions : nurseRoleOptions}
                 />
               </div>
