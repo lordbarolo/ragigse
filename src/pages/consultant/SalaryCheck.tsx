@@ -10,6 +10,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import MissionSection from "@/components/landing/MissionSection";
 import Steps from "@/components/landing/Steps";
 import HeroRateLookup from "@/components/landing/HeroRateLookup";
+import { SPECIALITY_BY_SLUG } from "@/lib/specialitySlugs";
 
 const faqJsonLd = {
   "@context": "https://schema.org",
@@ -33,8 +34,32 @@ const webAppJsonLd = {
   offers: { "@type": "Offer", price: "0", priceCurrency: "SEK", description: "Gratis jämförelse av konsultersättning" },
 };
 
-const PREFILL_MAP: Record<string, { category: "ssk" | "lakare"; role: string }> = {
+// Legacy alias retained for backwards compat with existing campaign URLs.
+const PREFILL_LEGACY: Record<string, { category: "ssk" | "lakare"; role: string }> = {
   anestesi: { category: "ssk", role: "Anestesisjukvård" },
+};
+
+const resolvePrefill = (key: string): { category: "ssk" | "lakare"; role: string } | undefined => {
+  if (!key) return undefined;
+  if (PREFILL_LEGACY[key]) return PREFILL_LEGACY[key];
+  const opt = SPECIALITY_BY_SLUG[key];
+  if (!opt) return undefined;
+  // Survey resolves the role label internally; we hand it the dropdown value
+  // by category. For doctor specialties the dropdown value equals the bare
+  // specialty (e.g. "Akutsjukvård"); for generic roles we pass the marker.
+  if (opt.category === "lakare") {
+    if (opt.resolvedRole === "Legitimerad läkare") return { category: "lakare", role: "__leg" };
+    if (opt.resolvedRole === "ST-läkare") return { category: "lakare", role: "__st" };
+    // Strip "Specialistläkare " prefix to get the dropdown value
+    const bare = opt.resolvedRole.replace(/^Specialistläkare\s+/, "");
+    // Survey expects the original cased specialty string (matches TOP_DOCTOR_SPECIALTIES)
+    return { category: "lakare", role: bare.charAt(0).toUpperCase() + bare.slice(1) };
+  }
+  // Nurse mapping
+  if (opt.resolvedRole === "Sjuksköterska") return { category: "ssk", role: "__allman" };
+  if (opt.resolvedRole === "Barnmorska") return { category: "ssk", role: "__barnmorska" };
+  if (opt.resolvedRole === "Röntgensjuksköterska") return { category: "ssk", role: "__rontgen" };
+  return { category: "ssk", role: opt.label };
 };
 
 const TRUST_SIGNALS = [
@@ -46,7 +71,7 @@ const TRUST_SIGNALS = [
 export default function SalaryCheck() {
   const [searchParams] = useSearchParams();
   const prefillKey = searchParams.get("yrke") || "";
-  const prefill = PREFILL_MAP[prefillKey];
+  const prefill = resolvePrefill(prefillKey);
   const startSurvey = searchParams.get("start") === "1";
 
   const [showSurvey, setShowSurvey] = useState(!!prefill || startSurvey);
