@@ -112,7 +112,7 @@ export default function Report() {
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm opacity-80">
             <span className="whitespace-nowrap">{report.kommun}{report.user_zone ? ` (${report.user_zone})` : ""}</span>
             <span className="w-1 h-1 rounded-full bg-current opacity-40" />
-            <span>Konsultuppdrag</span>
+            <span className="whitespace-nowrap">Konsultuppdrag</span>
             <span className="w-1 h-1 rounded-full bg-current opacity-40" />
             <span>{isEmployee ? "Anställd" : "Eget bolag"}</span>
           </div>
