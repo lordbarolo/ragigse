@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Menu, X } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 import HeroRateLookup from "@/components/landing/HeroRateLookup";
 import { trackEvent } from "@/lib/trackEvent";
@@ -213,6 +213,7 @@ function FlowArrow() {
 /* ───────────────────── component ──────────────── */
 export default function LandingV2() {
   useTimeOnPage("landing");
+  const [menuOpen, setMenuOpen] = useState(false);
   useEffect(() => {
     trackEvent("landing_viewed");
   }, []);
@@ -221,26 +222,57 @@ export default function LandingV2() {
     <div className="w-full bg-[#F2F1F8] text-foreground font-sans">
 
       {/* ── Nav ─────────────────────────────── */}
-      <nav className="flex items-center justify-between px-6 lg:px-10 h-[60px] bg-white border-b border-border/40">
+      <nav className="relative flex items-center justify-between px-6 lg:px-10 h-[60px] bg-white border-b border-border/40">
         <CompcareLogo variant="wordmark" />
-        <div className="hidden md:flex gap-6">
-          {NAV_LINKS.map((l) =>
-            l.external ? (
-              <Link key={l.label} to={l.href} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                {l.label}
-              </Link>
-            ) : (
-              <a key={l.label} href={l.href} className="text-sm text-muted-foreground hover:text-foreground transition-colors">
-                {l.label}
-              </a>
-            )
-          )}
-        </div>
         <div className="flex items-center gap-3">
           <Link to="/logga-in">
             <button className="text-sm px-4 py-2 border border-border rounded-lg bg-transparent text-foreground">Logga in</button>
           </Link>
+          <button
+            type="button"
+            aria-label={menuOpen ? "Stäng meny" : "Öppna meny"}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((v) => !v)}
+            className="inline-flex items-center justify-center h-9 w-9 rounded-lg border border-border text-foreground hover:bg-muted/50 transition-colors"
+          >
+            {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
+
+        {menuOpen && (
+          <>
+            <div
+              className="fixed inset-0 bg-black/30 z-40"
+              onClick={() => setMenuOpen(false)}
+              aria-hidden="true"
+            />
+            <div className="absolute top-full right-4 lg:right-10 mt-2 w-72 bg-white border border-border rounded-xl shadow-lg z-50 overflow-hidden">
+              <div className="flex flex-col py-2">
+                {NAV_LINKS.map((l) =>
+                  l.external ? (
+                    <Link
+                      key={l.label}
+                      to={l.href}
+                      onClick={() => setMenuOpen(false)}
+                      className="px-4 py-3 text-sm text-foreground hover:bg-muted/50 transition-colors"
+                    >
+                      {l.label}
+                    </Link>
+                  ) : (
+                    <a
+                      key={l.label}
+                      href={l.href}
+                      onClick={() => setMenuOpen(false)}
+                      className="px-4 py-3 text-sm text-foreground hover:bg-muted/50 transition-colors"
+                    >
+                      {l.label}
+                    </a>
+                  )
+                )}
+              </div>
+            </div>
+          </>
+        )}
       </nav>
 
       {/* ── Hero ────────────────────────────── */}
