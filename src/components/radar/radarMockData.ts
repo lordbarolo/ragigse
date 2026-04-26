@@ -23,4 +23,5 @@ export interface Prediction {
   summary: string;
   reasons: string[];
   history: HistoricalCalloff[];
+  isUnderReview?: boolean;
 }
