@@ -114,7 +114,7 @@ export default function Report() {
             <span className="w-1 h-1 rounded-full bg-current opacity-40" />
             <span className="whitespace-nowrap">Konsultuppdrag</span>
             <span className="w-1 h-1 rounded-full bg-current opacity-40" />
-            <span>{isEmployee ? "Anställd" : "Eget bolag"}</span>
+            <span className="whitespace-nowrap">{isEmployee ? "Anställd" : "Eget bolag"}</span>
           </div>
         </div>
       </header>
