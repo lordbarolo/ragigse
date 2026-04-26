@@ -208,7 +208,7 @@ Deno.serve(async (req) => {
       .from("pipeline_health_logs")
       .select("*")
       .eq("task_name", BACKTEST_TASK)
-      .eq("status", "success")
+      .in("status", ["success", "partial"])
       .order("created_at", { ascending: false })
       .limit(1);
     const latestBacktest = (backtestRows?.[0] as HealthLog | undefined) ?? null;
