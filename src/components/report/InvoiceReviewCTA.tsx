@@ -100,9 +100,9 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }
           ))}
         </div>
 
-        <Button onClick={handleSubmit} disabled={loading} className="w-full gap-2">
-          {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <ShieldCheck className="w-4 h-4" />}
-          Ja, granska mina fakturor kostnadsfritt →
+        <Button onClick={handleSubmit} disabled={loading} className="w-full gap-2 whitespace-normal h-auto py-3 text-sm sm:text-base">
+          {loading ? <Loader2 className="w-4 h-4 animate-spin shrink-0" /> : <ShieldCheck className="w-4 h-4 shrink-0" />}
+          <span>Ja, granska mina fakturor kostnadsfritt</span>
         </Button>
 
         <p className="text-micro text-center text-muted-foreground">
