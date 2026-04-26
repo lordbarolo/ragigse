@@ -4281,6 +4281,17 @@ export type Database = {
       }
     }
     Functions: {
+      aggregate_calloff_monthly: {
+        Args: { _months_back?: number }
+        Returns: {
+          calloff_count: number
+          customer: string
+          region: string
+          role: string
+          specialization: string
+          year_month: string
+        }[]
+      }
       approve_org_membership_request: {
         Args: { _request_id: string }
         Returns: undefined
