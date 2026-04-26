@@ -413,8 +413,18 @@ export default function LandingV2() {
             <div>
               <h4 className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-3">För bemanningsföretag</h4>
               <div className="flex flex-col gap-2 text-[13px] text-muted-foreground">
-                <Link to="/for-bemanningsforetag" className="hover:text-foreground transition-colors">Översikt</Link>
-                <Link to="/registrera/bemanning" className="hover:text-foreground transition-colors">Skapa byråkonto</Link>
+                <Link to="/for-bemanningsforetag" className="hover:text-foreground transition-colors">
+                  <span className="text-foreground font-medium">CompCare Insight</span> — beslutsstöd för prissättning baserat på aktuella tilldelningsdata
+                </Link>
+                <Link to="/for-bemanningsforetag" className="hover:text-foreground transition-colors">
+                  <span className="text-foreground font-medium">CompCare Verify</span> — digital exklusivitet som eliminerar risk för dubbelpresentationer
+                </Link>
+                <Link to="/for-bemanningsforetag" className="hover:text-foreground transition-colors">
+                  <span className="text-foreground font-medium">Intygsmodulen</span> — juridiskt hållbara konsultbekräftelser enligt nationella krav
+                </Link>
+                <Link to="/registrera/bemanning" className="hover:text-foreground transition-colors">
+                  <span className="text-foreground font-medium">Bli partner</span> — kontakta oss för integration och tidig access
+                </Link>
               </div>
             </div>
           </div>
