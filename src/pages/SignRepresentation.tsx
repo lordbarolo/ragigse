@@ -261,7 +261,7 @@ export default function SignRepresentation() {
         </Button>
 
         <p className="text-[11px] text-muted-foreground text-center mt-4">
-          Ditt representationsbevis blir tillgängligt för bemanningsföretaget och den aktuella regionen.
+          Ditt samarbetsintyg blir tillgängligt för bemanningsföretaget och den aktuella regionen.
         </p>
       </div>
     </div>

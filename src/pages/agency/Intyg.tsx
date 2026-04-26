@@ -271,10 +271,10 @@ export default function AgencyIntyg() {
       <div className="flex items-start justify-between gap-4 mb-8">
         <div>
           <h1 className="text-2xl font-bold text-foreground tracking-tight">
-            Representationsintyg
+            Samarbetsintyg
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            {orgName ? `${orgName} · ` : ""}Skapa och hantera digitala representationsbevis
+            {orgName ? `${orgName} · ` : ""}Skapa och hantera digitala samarbetsintyg
           </p>
         </div>
         <Dialog open={createOpen} onOpenChange={(o) => { setCreateOpen(o); if (!o) resetForm(); }}>
