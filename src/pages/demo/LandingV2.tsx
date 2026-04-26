@@ -104,6 +104,19 @@ const MODULES_ROW2 = [
       </svg>
     ),
   },
+  {
+    title: "Förhandlingsassistent - AI-stöd i realtid",
+    desc: "Få objektiva marknadsdata, avtalsvillkor och konkreta förhandlingsargument direkt i chatten. Löneassistenten hjälper dig bygga ett starkt underlag inför ditt nästa konsultuppdrag — baserat på SKR:s ramavtal och regional statistik.",
+    tag: "Premium — 99 kr/mån",
+    tagColor: "amber" as const,
+    iconBg: "#FAEEDA",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M4 5h12v8H8l-4 3V5z" stroke="#854F0B" strokeWidth="1.2" strokeLinejoin="round" />
+        <line x1="7" y1="9" x2="13" y2="9" stroke="#854F0B" strokeWidth="1.2" strokeLinecap="round" />
+      </svg>
+    ),
+  },
 ];
 
 const STEPS = [
