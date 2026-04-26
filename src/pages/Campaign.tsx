@@ -256,7 +256,7 @@ export default function Campaign() {
             Allt för din yrkesekonomi på ett ställe
           </h2>
           <p className="text-sm text-muted-foreground max-w-lg mx-auto leading-relaxed">
-            Löneanalys, förhandlingsunderlag och fakturakontroll – samlat i en plattform
+            Ersättningsanalys, förhandlingsunderlag och fakturakontroll – samlat i en plattform
             byggd för dig som vårdkonsult. Data hämtas från SKR:s ramavtal 2026
             och avropsdata från 21 regioner.
           </p>
