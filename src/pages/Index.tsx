@@ -157,6 +157,7 @@ export default function Index() {
             <Link to="/vanliga-fragor" className="hover:text-foreground transition-colors">FAQ</Link>
             <Link to="/integritetspolicy" className="hover:text-foreground transition-colors">Integritetspolicy</Link>
             <Link to="/dokhus-info" className="hover:text-foreground transition-colors">Dokhus</Link>
+            <Link to="/referenser-info" className="hover:text-foreground transition-colors">Ref ID</Link>
           </div>
           <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} CompCare</p>
         </div>
