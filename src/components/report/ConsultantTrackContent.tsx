@@ -8,6 +8,7 @@ import PriceNuggets from "./PriceNuggets";
 import type { PriceChange } from "@/shared/types";
 import { Separator } from "@/components/ui/separator";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import {
   TrendingUp,
   Lock,
@@ -235,7 +236,7 @@ export default function ConsultantTrackContent({
             <li className="flex items-start gap-3">
               <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
               <span className="text-body-sm leading-relaxed">
-                Vanlig ersättning till konsult är {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h.
+                Beräknat marknadsspann för konsulter är {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h.
               </span>
             </li>
             <li className="flex items-start gap-3">
@@ -317,9 +318,29 @@ export default function ConsultantTrackContent({
                   <span className={`${monoClass} text-micro block`}>{fmt(ambitiousM)} kr/mån</span>
                 </div>
               </div>
-              <p className="text-micro text-center leading-relaxed pt-1.5">
-                Baserat på ramavtalspris och branschens marginaler i {userZone || "din zon"}.
-              </p>
+              <div className="flex items-center justify-center gap-1.5 pt-1.5">
+                <p className="text-micro text-center leading-relaxed">
+                  Baserat på ramavtalspris och branschens marginaler i {userZone || "din zon"}.
+                </p>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      aria-label="Visa beräkningsmetod"
+                      className="text-muted-foreground/60 hover:text-primary transition-colors shrink-0"
+                    >
+                      <Info className="w-3.5 h-3.5" />
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent side="top" className="w-72 text-xs leading-relaxed">
+                    <p className="font-semibold text-foreground mb-1.5">Så beräknar vi spannet</p>
+                    <p className="text-muted-foreground">
+                      Vi utgår från regionens kundpris (SKR:s ramavtal, zon-differentierat för {userZone || "din zon"}) och drar av en yrkesspecifik branschmarginal{" "}
+                      {isEmployee ? "på 12–18 % (anställd via bemanningsbolag)" : "på 8–15 % (egenföretagare)"}.
+                    </p>
+                  </PopoverContent>
+                </Popover>
+              </div>
             </div>
           );
         })()

@@ -293,7 +293,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
         .map((k) => allKommuner.find((ak) => ak.kommun === k))
         .filter(Boolean) as typeof allKommuner;
       const rest = allKommuner.filter((k) => !topSet.has(k.kommun));
-      return [...topItems, ...rest].slice(0, 10);
+      return [...topItems, ...rest].slice(0, 16);
     }
     const q = kommunSearch.toLowerCase();
     return allKommuner.filter((k) => k.kommun.toLowerCase().includes(q));
@@ -630,7 +630,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
 
         {/* Step 2: Single dropdown for role selection */}
         {step === 2 && (
-          <StepWrapper title="Vad är din specialisering?" subtitle="Vi behöver veta din specialisering för att matcha rätt avtalspriser.">
+          <StepWrapper title="Vad är din specialisering?" subtitle="Vi matchar din kompetens mot SKR:s ramavtalspriser för över 60 specialistroller.">
             <div className="flex flex-col flex-1">
               {/* Upper decorative area */}
               <div className="flex-1 flex flex-col items-center justify-center gap-4 py-6">
@@ -651,7 +651,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                   onValueChange={(v) => {
                     setRoleDropdownValue(v);
                   }}
-                  placeholder={occupationCategory === "lakare" ? "Välj läkarroll eller specialisering..." : "Välj roll eller vidareutbildning..."}
+                  placeholder={occupationCategory === "lakare" ? "Välj din specialisering eller specialistkompetens..." : "Välj din roll eller vidareutbildning..."}
                   options={occupationCategory === "lakare" ? doctorRoleOptions : nurseRoleOptions}
                 />
               </div>
@@ -679,37 +679,39 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                 />
               </div>
 
-              {/* Results */}
+              {/* Results — 2-col grid on desktop, 1-col on mobile, fixed scroll height */}
               <div className="rounded-xl border border-border overflow-hidden">
-                <div className="flex flex-col max-h-[180px] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-primary/25">
+                <div className="max-h-[220px] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-primary/25">
                   {filteredKommunerSearch.length === 0 ? (
                     <p className="py-8 text-center text-body-sm">Inga kommuner hittades</p>
                   ) : (
-                    filteredKommunerSearch.map((k) => (
-                      <button
-                        key={k.kommun}
-                        onClick={() => {
-                          setData({ ...data, kommun: k.kommun });
-                          setSelectedRegion(k.region);
-                        }}
-                        className={`group w-full py-3 px-4 text-left text-sm transition-all flex items-center justify-between border-b border-border/50 last:border-b-0 ${
-                          data.kommun === k.kommun
-                            ? "bg-primary/[0.08] border-l-2 border-l-primary"
-                            : "hover:bg-primary/[0.04]"
-                        }`}
-                      >
-                        <div className="flex items-center gap-2">
-                          {data.kommun === k.kommun && (
-                            <Check className="w-4 h-4 text-primary shrink-0" />
-                          )}
-                          <div>
-                            <span className="font-medium text-foreground">{k.kommun}</span>
-                            <span className="ml-2 text-xs text-muted-foreground">{k.region}</span>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-border/50">
+                      {filteredKommunerSearch.map((k) => (
+                        <button
+                          key={k.kommun}
+                          onClick={() => {
+                            setData({ ...data, kommun: k.kommun });
+                            setSelectedRegion(k.region);
+                          }}
+                          className={`group w-full py-3 px-4 text-left text-sm transition-all flex items-center justify-between bg-card ${
+                            data.kommun === k.kommun
+                              ? "bg-primary/[0.08] border-l-2 border-l-primary"
+                              : "hover:bg-primary/[0.04]"
+                          }`}
+                        >
+                          <div className="flex items-center gap-2 min-w-0">
+                            {data.kommun === k.kommun && (
+                              <Check className="w-4 h-4 text-primary shrink-0" />
+                            )}
+                            <div className="min-w-0">
+                              <span className="font-medium text-foreground truncate block">{k.kommun}</span>
+                              <span className="text-xs text-muted-foreground truncate block">{k.region}</span>
+                            </div>
                           </div>
-                        </div>
-                        <ArrowRight className="w-4 h-4 text-muted-foreground/20 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
-                      </button>
-                    ))
+                          <ArrowRight className="w-4 h-4 text-muted-foreground/20 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
+                        </button>
+                      ))}
+                    </div>
                   )}
                 </div>
               </div>
@@ -745,6 +747,9 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                   <span className="text-base font-medium text-foreground">{opt.label}</span>
                 </button>
               ))}
+              <p className="text-hint text-center mt-1 px-2 leading-relaxed">
+                Detta avgör hur vi beräknar bemanningsbolagets marginal och din nettoersättning utifrån regionens kundpris.
+              </p>
             </div>
           </StepWrapper>
         )}
@@ -836,7 +841,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
       </div>
 
       {/* Navigation */}
-      <div className={`flex gap-3 mt-8 ${step === 6 ? "sticky bottom-0 bg-background pt-3 pb-4 -mx-1 px-1 z-10" : ""}`}>
+      <div className={`flex gap-3 mt-8 ${(step === 3 || step === 6) ? "sticky bottom-0 bg-background pt-3 pb-4 -mx-1 px-1 z-10" : ""}`}>
         {(step > 1 || onBack) && (
           <button
             onClick={handleBack}
@@ -881,7 +886,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                 : "bg-muted text-muted-foreground cursor-not-allowed"
             }`}
           >
-            {saving ? "Analyserar..." : "Visa min analys"}
+            {saving ? "Analyserar..." : "Generera min ersättningsanalys"}
             {!saving && <ArrowRight className="w-5 h-5" />}
           </button>
         )}
