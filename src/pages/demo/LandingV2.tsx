@@ -109,7 +109,7 @@ const MODULES_ROW2 = [
 const STEPS = [
   { num: "1", title: "Skapa ditt konto", desc: "Logga in och ange din roll.\nFå tillgång till verktyg och insikter." },
   { num: "2", title: "Ladda upp dina dokument", desc: "Tidrapporter, intyg och CV. Allt struktureras och säkras i valvet." },
-  { num: "3", title: "Få insikt och agera", desc: "Löneanalys, marknadsdata och förhandlingsstöd — direkt." },
+  { num: "3", title: "Få insikt och agera", desc: "Ersättningsanalys, marknadsdata och förhandlingsstöd — direkt." },
   { num: "4", title: "Dela på dina villkor", desc: "Skicka en krypterad länk när du är redo. Full kontroll över din data." },
 ];
 
