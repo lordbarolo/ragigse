@@ -3,11 +3,17 @@ import { useEffect } from "react";
 import { ShieldCheck, Fingerprint, FileCheck, ArrowRight, CheckCircle, Lock } from "lucide-react";
 import LandingFooter from "@/components/landing/LandingFooter";
 import { trackEvent } from "@/lib/trackEvent";
+import { setPageMeta } from "@/lib/setPageMeta";
 import { Badge } from "@/components/ui/badge";
 
 export default function VerifyInfo() {
   useEffect(() => {
     trackEvent("verify_info_viewed");
+    setPageMeta({
+      title: "Dokhus — digitalt dokumentvalv för vårdkonsulter | CompCare",
+      description:
+        "Dokhus är ditt digitala dokumentvalv. Auktorisera bemanningsföretag att representera dig och dela ett samarbetsintyg med uppdragsgivaren — utan dubbelpresentationer.",
+    });
   }, []);
 
   return (

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { setPageMeta } from "@/lib/setPageMeta";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -90,6 +91,22 @@ export default function VerifyProof() {
       })
       .then(() => {});
   }, [applicationId]);
+
+  // ── SEO + social share meta (re-runs when representation loads) ──
+  useEffect(() => {
+    if (representation) {
+      setPageMeta({
+        title: `Samarbetsintyg — ${representation.agency_name} (${representation.region}) | Dokhus`,
+        description: `Digitalt signerat samarbetsintyg som bekräftar att ${representation.agency_name} har auktoriserats att representera konsulten i ${representation.region}. Verifierat via Dokhus.`,
+      });
+    } else {
+      setPageMeta({
+        title: "Samarbetsintyg | Dokhus",
+        description:
+          "Digitalt signerat samarbetsintyg från Dokhus — verifierar vilket bemanningsföretag som auktoriserats att representera konsulten hos uppdragsgivaren.",
+      });
+    }
+  }, [representation]);
 
   useEffect(() => {
     async function fetchData() {
