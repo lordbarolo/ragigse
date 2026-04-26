@@ -97,7 +97,9 @@ function RedirectWithParams({ to }: { to: string }) {
 
 function LegacyVerifyRedirect() {
   const { applicationId } = useParams();
-  return <Navigate to={`/samarbetsintyg/${applicationId ?? ""}`} replace />;
+  // Defensive: route requires :applicationId, but fall back to /dokhus-info if it ever arrives empty
+  if (!applicationId) return <Navigate to="/dokhus-info" replace />;
+  return <Navigate to={`/samarbetsintyg/${applicationId}`} replace />;
 }
 
 const App = () => (
