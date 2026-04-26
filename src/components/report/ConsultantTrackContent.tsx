@@ -317,9 +317,29 @@ export default function ConsultantTrackContent({
                   <span className={`${monoClass} text-micro block`}>{fmt(ambitiousM)} kr/mån</span>
                 </div>
               </div>
-              <p className="text-micro text-center leading-relaxed pt-1.5">
-                Baserat på ramavtalspris och branschens marginaler i {userZone || "din zon"}.
-              </p>
+              <div className="flex items-center justify-center gap-1.5 pt-1.5">
+                <p className="text-micro text-center leading-relaxed">
+                  Baserat på ramavtalspris och branschens marginaler i {userZone || "din zon"}.
+                </p>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      aria-label="Visa beräkningsmetod"
+                      className="text-muted-foreground/60 hover:text-primary transition-colors shrink-0"
+                    >
+                      <Info className="w-3.5 h-3.5" />
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent side="top" className="w-72 text-xs leading-relaxed">
+                    <p className="font-semibold text-foreground mb-1.5">Så beräknar vi spannet</p>
+                    <p className="text-muted-foreground">
+                      Vi utgår från regionens kundpris (SKR:s ramavtal, zon-differentierat för {userZone || "din zon"}) och drar av en yrkesspecifik branschmarginal{" "}
+                      {isEmployee ? "på 12–18 % (anställd via bemanningsbolag)" : "på 8–15 % (egenföretagare)"}.
+                    </p>
+                  </PopoverContent>
+                </Popover>
+              </div>
             </div>
           );
         })()
