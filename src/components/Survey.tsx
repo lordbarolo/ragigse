@@ -293,7 +293,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
         .map((k) => allKommuner.find((ak) => ak.kommun === k))
         .filter(Boolean) as typeof allKommuner;
       const rest = allKommuner.filter((k) => !topSet.has(k.kommun));
-      return [...topItems, ...rest].slice(0, 10);
+      return [...topItems, ...rest].slice(0, 16);
     }
     const q = kommunSearch.toLowerCase();
     return allKommuner.filter((k) => k.kommun.toLowerCase().includes(q));
