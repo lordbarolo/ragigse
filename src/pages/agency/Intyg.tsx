@@ -286,7 +286,7 @@ export default function AgencyIntyg() {
           </DialogTrigger>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>Skapa representationsintyg</DialogTitle>
+              <DialogTitle>Skapa samarbetsintyg</DialogTitle>
               <DialogDescription>
                 Klistra in avropet eller ladda upp en bild så fyller AI:n i fälten åt dig. Du kan
                 också fylla i manuellt.
@@ -452,7 +452,7 @@ export default function AgencyIntyg() {
               <FileText className="mx-auto h-10 w-10 text-muted-foreground/40 mb-3" />
               <p className="text-sm font-medium text-foreground">Inga intyg ännu</p>
               <p className="text-xs text-muted-foreground mt-1">
-                Skapa ditt första representationsintyg för att komma igång.
+                Skapa ditt första samarbetsintyg för att komma igång.
               </p>
             </div>
           ) : (
