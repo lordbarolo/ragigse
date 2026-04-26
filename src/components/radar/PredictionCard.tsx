@@ -66,6 +66,13 @@ export default function PredictionCard({ prediction, onOpen, onWatch }: Predicti
         <div className="text-[12px] opacity-70">{prediction.lastActivity}</div>
       </div>
 
+      {/* Under-review disclaimer (neutral, data-driven) */}
+      {prediction.isUnderReview && (
+        <div className="text-[11px] text-muted-foreground bg-muted/40 border border-border rounded-lg px-2.5 py-2 leading-snug">
+          Prognosen baseras på begränsad historik och granskas för närvarande för ökad precision.
+        </div>
+      )}
+
       {/* Actions */}
       <div className="flex gap-2 pt-1">
         <button
