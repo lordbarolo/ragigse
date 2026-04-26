@@ -77,7 +77,7 @@ const MODULES_ROW1: ModuleCard[] = [
 
 const MODULES_ROW2 = [
   {
-    title: "Fakturagranskning",
+    title: "Fakturagranskning - Få betalt för all din tid",
     desc: "Automatiserad revision av fakturor och tidrapport. Vi söker efter avvikelser och hjälper dig fakturera om vi ser något du missat att ta betalt för. Arvodet är helt prestationsbaserat: vi erhåller 25 % av det belopp vi återvinner åt dig.",
     tag: "Prestationsbaserat",
     tagColor: "green" as const,
@@ -164,7 +164,7 @@ const PLANS = [
   },
   {
     tag: "FK",
-    name: "Fakturagranskning",
+    name: "Fakturagranskning - Få betalt för all din tid",
     tagline: "Växande affärsmodell",
     price: "0 kr",
     unit: " förhandsavgift",
