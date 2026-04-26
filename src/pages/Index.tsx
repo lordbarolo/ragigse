@@ -7,6 +7,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import HeroRateLookup from "@/components/landing/HeroRateLookup";
 import MissionSection from "@/components/landing/MissionSection";
 import { trackEvent } from "@/lib/trackEvent";
+import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 
 const platformJsonLd = {
   "@context": "https://schema.org",
