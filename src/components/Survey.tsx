@@ -630,7 +630,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
 
         {/* Step 2: Single dropdown for role selection */}
         {step === 2 && (
-          <StepWrapper title="Vad är din specialisering?" subtitle="Vi matchar din kompetens mot SKR:s ramavtalspriser för över 60 specialistroller.">
+          <StepWrapper title="Vad är din specialisering?" subtitle="Vi matchar din kompetens mot aktuella ramavtalspriser för över 60 specialistroller inom vårdsektorn.">
             <div className="flex flex-col flex-1">
               {/* Upper decorative area */}
               <div className="flex-1 flex flex-col items-center justify-center gap-4 py-6">
