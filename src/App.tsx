@@ -105,10 +105,9 @@ const App = () => (
           <ScrollToTop />
           <Suspense fallback={<Loading />}>
             <Routes>
-              {/* ── Landing — "Förhandla utifrån data" ── */}
-              <Route path="/" element={<Index />} />
-              <Route path="/v2" element={<LandingV2 />} />
-              <Route path="/b2b" element={<Navigate to="/" replace />} />
+              {/* ── Landing — Kivra-stil "Förhandla utifrån data, inte magkänsla" (LandingV2) ── */}
+              <Route path="/" element={<LandingV2 />} />
+              <Route path="/b2b" element={<Index />} />
               <Route path="/demo/landing-extras" element={<LandingExtras />} />
               <Route path="/v1" element={<SalaryCheck />} />
 
