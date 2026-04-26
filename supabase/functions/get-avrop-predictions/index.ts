@@ -30,6 +30,7 @@ interface RegionPrediction {
   confidence?: "low" | "med" | "high";
   is_seasonal_peak?: boolean;
   is_trend_break?: boolean;
+  is_under_review?: boolean;
 }
 
 interface ForecastRow {
@@ -44,6 +45,7 @@ interface ForecastRow {
   confidence: "low" | "med" | "high" | null;
   is_seasonal_peak: boolean;
   is_trend_break: boolean;
+  is_under_review: boolean;
   generated_at: string;
 }
 
