@@ -654,7 +654,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                   onValueChange={(v) => {
                     setRoleDropdownValue(v);
                   }}
-                  placeholder={occupationCategory === "lakare" ? "Välj din specialisering eller specialistkompetens..." : "Välj din roll eller vidareutbildning..."}
+                  placeholder={occupationCategory === "lakare" ? "Välj specialisering..." : "Välj din roll..."}
                   options={occupationCategory === "lakare" ? doctorRoleOptions : nurseRoleOptions}
                 />
               </div>
