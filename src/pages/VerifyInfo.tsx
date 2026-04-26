@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import { ShieldCheck, Fingerprint, FileCheck, ArrowRight, CheckCircle, Lock } from "lucide-react";
-import LandingNav from "@/components/landing/LandingNav";
 import LandingFooter from "@/components/landing/LandingFooter";
 import { trackEvent } from "@/lib/trackEvent";
 import { Badge } from "@/components/ui/badge";
