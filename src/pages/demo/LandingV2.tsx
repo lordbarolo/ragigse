@@ -9,7 +9,7 @@ import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 /* ───────────────────── data ───────────────────── */
 const NAV_LINKS: { label: string; href: string; external?: boolean }[] = [
   { label: "Verktyg", href: "#verktyg" },
-  { label: "Löneanalys", href: "/", external: true },
+  { label: "Ersättningsanalys", href: "/", external: true },
   { label: "Fakturagranskning", href: "/consultant/fakturakontroll", external: true },
   { label: "Priser", href: "#priser" },
   { label: "FAQ", href: "/vanliga-fragor", external: true },
@@ -62,7 +62,7 @@ const MODULES_ROW1: ModuleCard[] = [
     ),
   },
   {
-    title: "Löneanalys & löneassistent",
+    title: "Ersättningsanalys - Se aktuella arvoden",
     desc: "Med full transparens kring avtalsvillkor och branschens marginaler skapar vi förutsättningar för en trygg och hållbar konsultkarriär.",
     tag: "Insight — 149 kr/mån",
     tagColor: "amber",
@@ -109,7 +109,7 @@ const MODULES_ROW2 = [
 const STEPS = [
   { num: "1", title: "Skapa ditt konto", desc: "Logga in och ange din roll.\nFå tillgång till verktyg och insikter." },
   { num: "2", title: "Ladda upp dina dokument", desc: "Tidrapporter, intyg och CV. Allt struktureras och säkras i valvet." },
-  { num: "3", title: "Få insikt och agera", desc: "Löneanalys, marknadsdata och förhandlingsstöd — direkt." },
+  { num: "3", title: "Få insikt och agera", desc: "Ersättningsanalys, marknadsdata och förhandlingsstöd — direkt." },
   { num: "4", title: "Dela på dina villkor", desc: "Skicka en krypterad länk när du är redo. Full kontroll över din data." },
 ];
 
@@ -131,8 +131,8 @@ const PLANS = [
     headline: "Grunden — för alltid",
     headlineColor: "text-[#534AB7]",
     subheadline: "Inga kreditkort",
-    desc: "Dokumentvalvet, Ref ID och en kostnadsfri löneanalys. Få full koll utan kostnad — alltid.",
-    features: ["Dokumentvalvet", "Ref ID", "En kostnadsfri löneanalys", "Bemanningsbolagens pris mot region", "Ingen tidsbegränsning"],
+    desc: "Dokumentvalvet, Ref ID och en kostnadsfri ersättningsanalys. Få full koll utan kostnad — alltid.",
+    features: ["Dokumentvalvet", "Ref ID", "En kostnadsfri ersättningsanalys", "Bemanningsbolagens pris mot region", "Ingen tidsbegränsning"],
     cta: "Kom igång",
     href: "/registrera",
     bg: "bg-[#EFEDFA]",
@@ -151,8 +151,8 @@ const PLANS = [
     headline: "Hela analysen",
     headlineColor: "text-[#0EA5A4]",
     subheadline: "Aligned med ditt nästa uppdrag",
-    desc: "Detaljerad löneanalys, AI-driven förhandlingsstöd och uppdragsprognos. Förstå exakt var du står — och var du borde stå.",
-    features: ["Allt i Gratis", "Detaljerad löneanalys", "Löneassistent med AI", "Uppdragsprognos", "Regional & specialitetsjämförelse"],
+    desc: "Detaljerad ersättningsanalys, AI-driven förhandlingsstöd och uppdragsprognos. Förstå exakt var du står — och var du borde stå.",
+    features: ["Allt i Gratis", "Detaljerad ersättningsanalys", "Löneassistent med AI", "Uppdragsprognos", "Regional & specialitetsjämförelse"],
     cta: "Välj Insight",
     href: "/registrera?plan=insight",
     bg: "bg-[#E6F7F6]",
@@ -187,7 +187,7 @@ const PLANS = [
 const TESTIMONIALS = [
   { quote: "Jag hittade 11 400 kr jag aldrig fakturerat. Pengarna var på kontot inom en vecka.", initials: "MH", name: "Maria H.", role: "Specialistsjuksköterska, Stockholm" },
   { quote: "Äntligen slipper jag skicka samma intyg till varje nytt bemanningsbolag. Det tar fem sekunder nu.", initials: "JA", name: "Jonas A.", role: "Distriktsläkare, Göteborg" },
-  { quote: "Löneassistenten visade mig att jag var 18% under marknadssnitt. Jag förhandlade upp det på en vecka.", initials: "CL", name: "Cecilia L.", role: "Intensivvårdssjuksköterska, Malmö" },
+  { quote: "Ersättningsanalysen visade mig att jag var 18% under marknadssnitt. Jag förhandlade upp det på en vecka.", initials: "CL", name: "Cecilia L.", role: "Intensivvårdssjuksköterska, Malmö" },
 ];
 
 /* ───────────────────── helpers ─────────────────── */
@@ -328,7 +328,7 @@ export default function LandingV2() {
             Eliminera tråkig administration och lägg tiden på något roligare.
             <ul className="list-disc pl-5 mt-2 space-y-1">
               <li>Hantera din legitimation och dina intyg via tidsbegränsad åtkomst i stället för osäkra filbilagor</li>
-              <li>Optimera din löneförhandling med objektiva marknadsdata och regional statistik</li>
+              <li>Optimera din förhandling med objektiva marknadsdata och regional statistik</li>
               <li>Identifiera juridiska risker och obalanserad ansvarsfördelning i konsultavtal före signering.</li>
               <li>Analys av tidigare fakturering för att säkerställa att din arbetade tid fakturerats i sin helhet.&nbsp;</li>
             </ul>
@@ -405,9 +405,9 @@ export default function LandingV2() {
             <h4 className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-3">Verktyg</h4>
             <div className="flex flex-col gap-2 text-[13px] text-muted-foreground">
               <Link to="/dokhus-info" className="hover:text-foreground transition-colors">Dokhus</Link>
-              <Link to="/" className="hover:text-foreground transition-colors">Löneanalys</Link>
+              <Link to="/" className="hover:text-foreground transition-colors">Ersättningsanalys</Link>
               <Link to="/consultant/fakturakontroll" className="hover:text-foreground transition-colors">Fakturagranskning</Link>
-              <Link to="/consultant/forhandla" className="hover:text-foreground transition-colors">Löneassistent</Link>
+              <Link to="/consultant/forhandla" className="hover:text-foreground transition-colors">Ersättningsanalys</Link>
             </div>
           </div>
           <div>

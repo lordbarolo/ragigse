@@ -33,7 +33,7 @@ const platformJsonLd = {
 const PILLARS = [
   {
     question: "Tjänar jag rätt?",
-    title: "Löneanalys",
+    title: "Ersättningsanalys",
     description: "Jämför din ersättning med SKR:s ramavtalspriser i realtid. 290 kommuner, alla specialiseringar — för konsulter och de som vill bli det.",
     icon: ShieldCheck,
     cta: "Analysera din lön",
