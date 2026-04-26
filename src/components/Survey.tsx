@@ -624,6 +624,9 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                   <ArrowRight className="w-5 h-5 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
                 </button>
               ))}
+              <p className="text-hint text-center mt-3 px-2 leading-relaxed">
+                Inkluderar zon-analys och SKR:s ramavtal 2026.
+              </p>
             </div>
           </StepWrapper>
         )}
