@@ -7,6 +7,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import HeroRateLookup from "@/components/landing/HeroRateLookup";
 import MissionSection from "@/components/landing/MissionSection";
 import { trackEvent } from "@/lib/trackEvent";
+import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 
 const platformJsonLd = {
   "@context": "https://schema.org",
@@ -67,7 +68,11 @@ const TRUST_POINTS = [
 ];
 
 export default function Index() {
-  useEffect(() => { trackEvent("b2b_landing_viewed"); }, []);
+  useTimeOnPage("landing");
+  useEffect(() => {
+    trackEvent("landing_viewed");
+    trackEvent("b2b_landing_viewed");
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
