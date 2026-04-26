@@ -255,6 +255,7 @@ Deno.serve(async (req) => {
           confidence: agg.bestConfidence,
           is_seasonal_peak: agg.anyPeak,
           is_trend_break: agg.anyBreak,
+          is_under_review: agg.anyUnderReview,
         });
       }
 
