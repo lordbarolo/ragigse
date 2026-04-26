@@ -35,7 +35,7 @@ type ModuleCard = {
 const MODULES_ROW1: ModuleCard[] = [
   {
     title: "Dokhus — Där dina dokument bor",
-    desc: "Säker lagring av legitimationer, specialistbevis och tjänstgöringsintyg. Hantera åtkomst via krypterade länkar i stället för osäkra filbilagor – för fullständig kontroll över dina känsliga personuppgifter.",
+    desc: "Säker lagring av legitimationer, specialistbevis och tjänstgöringsintyg. Dela tillgång till en miljö du kontrollerar istället för att sprida filer via mail. Spårbart med unik stämpel för varje visning.",
     tag: "Ingår gratis",
     tagColor: "purple",
     iconBg: "#EEEDFE",
@@ -50,7 +50,7 @@ const MODULES_ROW1: ModuleCard[] = [
   },
   {
     title: "Ref ID - Minimera störning av dina referenser",
-    desc: "Administrera dina referenser centralt. Du styr vem som får tillgång och när. Dina referensgivare verifierar enkelt med bank-id vid upprepade förfrågningar, vilket eliminerar repetitiv administration och säkrar processens integritet.",
+    desc: "Du styr vem som får tillgång och när. Dina referenser lämnar uppgifter EN gång och kan därefter verifiera med bank-ID. verifierar enkelt med bank-id vid Eliminerar tidskrävande processer och säkrar processens integritet.",
     tag: "Kommer snart",
     tagColor: "muted",
     iconBg: "#EEEDFE",
@@ -63,7 +63,7 @@ const MODULES_ROW1: ModuleCard[] = [
   },
   {
     title: "Ersättningsanalys - Se aktuella arvoden",
-    desc: "Med full transparens kring avtalsvillkor och branschens marginaler skapar vi förutsättningar för en trygg och hållbar konsultkarriär.",
+    desc: "Med full transparens kring avtalsvillkor och branschens marginaler skapar vi förutsättningar för en trygg och hållbar konsultkarriär. Se rätt ersättningsnivåer för alla roller och regioner.",
     tag: "Insight — 149 kr/mån",
     tagColor: "amber",
     iconBg: "#FAEEDA",
@@ -78,7 +78,7 @@ const MODULES_ROW1: ModuleCard[] = [
 const MODULES_ROW2 = [
   {
     title: "Fakturagranskning - Få betalt för all din tid",
-    desc: "Automatiserad revision av fakturor och tidrapport. Vi söker efter avvikelser och hjälper dig fakturera om vi ser något du missat att ta betalt för. Arvodet är helt prestationsbaserat: vi erhåller 25 % av det belopp vi återvinner åt dig.",
+    desc: "Automatiserad revision av fakturor du skickat senaste 2 åren. Vi söker efter avvikelser och hjälper dig fakturera om vi ser något du missat att ta betalt för. Arvodet är helt prestationsbaserat: Hittar vi inget, betalar du inget.",
     tag: "Prestationsbaserat",
     tagColor: "green" as const,
     iconBg: "#EAF3DE",
@@ -106,7 +106,7 @@ const MODULES_ROW2 = [
   },
   {
     title: "Förhandlingsassistent - AI-stöd i realtid",
-    desc: "Få objektiva marknadsdata, avtalsvillkor och konkreta förhandlingsargument direkt i chatten. Löneassistenten hjälper dig bygga ett starkt underlag inför ditt nästa konsultuppdrag — baserat på SKR:s ramavtal och regional statistik.",
+    desc: "Med hjälp av avancerad AI och branschspecifik kunskap får du ett starkt underlag inför ditt nästa konsultuppdrag. Vi ger dig argumenten, så att du kan vinna förhandlingen. ",
     tag: "Premium — 99 kr/mån",
     tagColor: "amber" as const,
     iconBg: "#FAEEDA",
