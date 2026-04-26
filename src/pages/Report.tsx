@@ -110,7 +110,7 @@ export default function Report() {
             {report.occupation}
           </h1>
           <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm opacity-80">
-            <span>{report.kommun}{report.user_zone ? ` (${report.user_zone})` : ""}</span>
+            <span className="whitespace-nowrap">{report.kommun}{report.user_zone ? ` (${report.user_zone})` : ""}</span>
             <span className="w-1 h-1 rounded-full bg-current opacity-40" />
             <span>Konsultuppdrag</span>
             <span className="w-1 h-1 rounded-full bg-current opacity-40" />
