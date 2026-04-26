@@ -75,7 +75,7 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }
         <div className="flex items-start gap-2">
           <ShieldCheck className="w-5 h-5 text-primary shrink-0 mt-0.5" />
           <p className="font-semibold text-foreground text-base">
-            Konsulter missar att fakturera i snitt 30 000 kr per år. 3/10 fakturerar dessutom fel varje månad. Är du säker på att du fakturerat rätt?
+            Vår analys av tidrapporter indikerar att vårdkonsulter ofta missar mellan 20 000–40 000 kr i årlig ersättning på grund av faktureringsavvikelser. Är du säker på att du fakturerat rätt?
           </p>
         </div>
 
