@@ -30,7 +30,7 @@ const CATEGORIES = [
   { key: "role" as const, label: "Chefsreferenser", icon: Users, details: (b: ScoreBreakdown) => `${b.role.chiefs} chefer, ${b.role.colleagues} kollegor` },
   { key: "domain" as const, label: "Domänverifiering", icon: Building2, details: (b: ScoreBreakdown) => `${b.domain.verified_count} verifierade domäner` },
   { key: "recency" as const, label: "Aktualitet", icon: Clock, details: (b: ScoreBreakdown) => b.recency.freshest_months < 999 ? `Färskaste: ${Math.round(b.recency.freshest_months)} mån sedan` : "Inga aktiva referenser" },
-  { key: "ping" as const, label: "Ping-bekräftelse", icon: Bell, details: (b: ScoreBreakdown) => b.ping.has_active_ping ? "Aktiv ping-bekräftelse" : "Ingen aktiv ping" },
+  { key: "ping" as const, label: "Ref-ID pling", icon: Bell, details: (b: ScoreBreakdown) => b.ping.has_active_ping ? "Aktiv pling-bekräftelse" : "Ingen aktiv pling" },
   { key: "compliance" as const, label: "Myndighetskontroll", icon: Landmark, details: () => "IVO & HOSP" },
 ];
 

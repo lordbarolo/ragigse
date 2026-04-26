@@ -378,7 +378,7 @@ export default function VerifyProof() {
 
       {/* Footer */}
       <div className="mt-12 border-t border-border pt-6 text-center text-xs text-muted-foreground space-y-2">
-        <p>Verifierat via CompCare · Referly Vault</p>
+        <p>Verifierat via CompCare · Ref-ID Vault</p>
         <p className="font-mono text-[10px] text-muted-foreground/60" data-field="proof-full-id">
           Bevis-ID: {applicationId}
         </p>
