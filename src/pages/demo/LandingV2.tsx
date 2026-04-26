@@ -325,7 +325,7 @@ export default function LandingV2() {
             Fem verktyg som förenklar din karriär
           </h2>
           <div className="text-[15px] text-muted-foreground leading-[1.65]">
-            Vi nyttjar avancerad AI för att jämna ut informationstillgången mellan uppdragsgivare och oberoende konsult.
+            Eliminera tråkig administration och lägg tiden på något roligare.
             <ul className="list-disc pl-5 mt-2 space-y-1">
               <li>Hantera din legitimation och dina intyg via tidsbegränsad åtkomst i stället för osäkra filbilagor</li>
               <li>Optimera din löneförhandling med objektiva marknadsdata och regional statistik</li>
