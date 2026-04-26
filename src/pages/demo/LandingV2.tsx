@@ -9,7 +9,7 @@ import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 /* ───────────────────── data ───────────────────── */
 const NAV_LINKS: { label: string; href: string; external?: boolean }[] = [
   { label: "Verktyg", href: "#verktyg" },
-  { label: "Löneanalys", href: "/", external: true },
+  { label: "Ersättningsanalys", href: "/", external: true },
   { label: "Fakturagranskning", href: "/consultant/fakturakontroll", external: true },
   { label: "Priser", href: "#priser" },
   { label: "FAQ", href: "/vanliga-fragor", external: true },
