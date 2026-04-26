@@ -185,7 +185,7 @@ export default function Campaign() {
           </h2>
 
           <div className="grid gap-4 sm:grid-cols-3">
-            {/* Card 1: Löneanalys — open */}
+            {/* Card 1: Ersättningsanalys — open */}
             <button
               onClick={() => navigate("/")}
               className="group text-left border border-border rounded-2xl p-6 bg-card hover:shadow-md transition-all"
@@ -194,7 +194,7 @@ export default function Campaign() {
                 <BarChart3 className="w-5 h-5 text-blue-600" />
               </div>
               <h3 className="font-semibold text-foreground mb-1.5" style={{ fontFamily: "var(--font-display)" }}>
-                Löneanalys
+                Ersättningsanalys
               </h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Jämför din ersättning mot regionernas faktiska priser i realtid.
@@ -204,7 +204,7 @@ export default function Campaign() {
               </span>
             </button>
 
-            {/* Card 2: Löneassistenten — locked */}
+            {/* Card 2: Ersättningsanalys — locked */}
             <button
               onClick={() => setShowAuthModal(true)}
               className="group text-left border border-border rounded-2xl p-6 bg-card hover:shadow-md transition-all relative"
@@ -216,7 +216,7 @@ export default function Campaign() {
                 <MessageSquare className="w-5 h-5 text-violet-600" />
               </div>
               <h3 className="font-semibold text-foreground mb-1.5" style={{ fontFamily: "var(--font-display)" }}>
-                Löneassistenten
+                Ersättningsanalys
               </h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Få personlig rådgivning baserad på din specifika erfarenhet.
