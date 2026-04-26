@@ -109,11 +109,16 @@ export default function Report() {
           <h1 className="text-2xl sm:text-3xl font-bold leading-tight tracking-tight drop-shadow-sm">
             {report.occupation}
           </h1>
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm opacity-80">
-            <span className="whitespace-nowrap">{report.kommun}{report.user_zone ? ` (${report.user_zone})` : ""}</span>
-            <span className="w-1 h-1 rounded-full bg-current opacity-40" />
+          <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-sm opacity-80">
+            <span className="whitespace-nowrap">{report.kommun}</span>
+            {report.user_zone && (
+              <span className="whitespace-nowrap text-xs px-1.5 py-0.5 rounded-md bg-foreground/10">
+                {report.user_zone}
+              </span>
+            )}
+            <span className="w-1 h-1 rounded-full bg-current opacity-40 mx-0.5" />
             <span className="whitespace-nowrap">Konsultuppdrag</span>
-            <span className="w-1 h-1 rounded-full bg-current opacity-40" />
+            <span className="w-1 h-1 rounded-full bg-current opacity-40 mx-0.5" />
             <span className="whitespace-nowrap">{isEmployee ? "Anställd" : "Eget bolag"}</span>
           </div>
         </div>
