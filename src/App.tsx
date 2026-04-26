@@ -1,11 +1,12 @@
-import { lazy, Suspense, useEffect } from "react";
+import { Suspense, useEffect } from "react";
+import { lazyWithRetry as lazy } from "@/lib/lazyWithRetry";
 import posthog from "@/lib/posthog";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import CookieBanner from "@/components/CookieBanner";
 import Index from "./pages/Index";
@@ -54,13 +55,16 @@ const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 const Academy = lazy(() => import("./pages/Academy"));
 const CompensationPreview = lazy(() => import("./pages/CompensationPreview"));
 const AgencyDashboard = lazy(() => import("./pages/AgencyDashboard"));
+const AgencyIntyg = lazy(() => import("./pages/agency/Intyg"));
 const SignRepresentation = lazy(() => import("./pages/SignRepresentation"));
 const AgencyLanding = lazy(() => import("./pages/AgencyLanding"));
 const AgencySignup = lazy(() => import("./pages/AgencySignup"));
 const DemoLanding = lazy(() => import("./pages/DemoLanding"));
 const ReferenceDemo = lazy(() => import("./pages/demo/ReferenceDemo"));
 const LandingV2 = lazy(() => import("./pages/demo/LandingV2"));
+const LandingExtras = lazy(() => import("./pages/demo/LandingExtras"));
 const Campaign = lazy(() => import("./pages/Campaign"));
+const UppdragsradarV2 = lazy(() => import("./pages/UppdragsradarV2"));
 
 const queryClient = new QueryClient();
 
@@ -91,6 +95,13 @@ function RedirectWithParams({ to }: { to: string }) {
   return <Navigate to={`${to}${location.search}`} replace />;
 }
 
+function LegacyVerifyRedirect() {
+  const { applicationId } = useParams();
+  // Defensive: route requires :applicationId, but fall back to /dokhus-info if it ever arrives empty
+  if (!applicationId) return <Navigate to="/dokhus-info" replace />;
+  return <Navigate to={`/samarbetsintyg/${applicationId}`} replace />;
+}
+
 const App = () => (
   <ErrorBoundary>
     <QueryClientProvider client={queryClient}>
@@ -101,17 +112,18 @@ const App = () => (
           <ScrollToTop />
           <Suspense fallback={<Loading />}>
             <Routes>
-              {/* ── Landing — salary analysis funnel ── */}
-              <Route path="/" element={<SalaryCheck />} />
+              {/* ── Landing — Kivra-stil "Förhandla utifrån data, inte magkänsla" (LandingV2) ── */}
+              <Route path="/" element={<LandingV2 />} />
               <Route path="/b2b" element={<Index />} />
+              <Route path="/demo/landing-extras" element={<LandingExtras />} />
+              <Route path="/v1" element={<SalaryCheck />} />
 
               {/* ── Auth (no layout) ──────────────── */}
               <Route path="/logga-in" element={<Login />} />
               <Route path="/registrera" element={<Signup />} />
               <Route path="/aterstall-losenord" element={<ResetPassword />} />
-              {/* Agency landing — hidden until actively marketed */}
-              {/* <Route path="/for-bemanningsforetag" element={<AgencyLanding />} /> */}
-              {/* <Route path="/registrera/bemanning" element={<AgencySignup />} /> */}
+              <Route path="/for-bemanningsforetag" element={<AgencyLanding />} />
+              <Route path="/registrera/bemanning" element={<AgencySignup />} />
 
               {/* ── Consultant Layout ─────────────── */}
               <Route element={<ConsultantLayout />}>
@@ -134,14 +146,19 @@ const App = () => (
               <Route element={<ProtectedRoute allowedRoles={["agency", "admin"]}><AgencyLayout /></ProtectedRoute>}>
                 <Route path="/agency/dashboard" element={<AgencyDashboard />} />
                 <Route path="/agency/market-edge" element={<MarketEdge />} />
-                {/* Future: /agency/requests, /agency/settings */}
+                <Route path="/agency/intyg" element={<AgencyIntyg />} />
+                {/* Future: /agency/settings */}
               </Route>
 
-              {/* ── Public Verify Layout ──────────── */}
+              {/* ── Public Dokhus Layout ──────────── */}
               <Route element={<PublicVerifyLayout />}>
-                <Route path="/verify/:applicationId" element={<VerifyProof />} />
+                <Route path="/samarbetsintyg/:applicationId" element={<VerifyProof />} />
+                {/* Legacy redirect: /verify/:id → /samarbetsintyg/:id */}
+                <Route path="/verify/:applicationId" element={<LegacyVerifyRedirect />} />
                 <Route path="/profil/:id" element={<PublicProfile />} />
-                <Route path="/verify-info" element={<VerifyInfo />} />
+                <Route path="/dokhus-info" element={<VerifyInfo />} />
+                {/* Legacy redirect */}
+                <Route path="/verify-info" element={<Navigate to="/dokhus-info" replace />} />
               </Route>
 
               {/* ── Public routes (no layout) ────── */}
@@ -157,6 +174,7 @@ const App = () => (
               <Route path="/sign/:token" element={<SignRepresentation />} />
               <Route path="/unsubscribe" element={<Unsubscribe />} />
               <Route path="/kampanj/:role" element={<Campaign />} />
+              <Route path="/uppdragsradar" element={<UppdragsradarV2 />} />
 
               {/* Hidden / protected routes */}
               <Route path="/dela" element={<ProtectedRoute><SharePreview /></ProtectedRoute>} />

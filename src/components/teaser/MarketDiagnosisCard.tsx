@@ -6,7 +6,6 @@ type Position = "under" | "near" | "above";
 
 interface Props {
   diffPercent: number;
-  isPermanent: boolean;
   yrke: string;
   kommun: string;
   isAboveThreshold?: boolean;
@@ -40,7 +39,7 @@ const positionConfig: Record<Position, { label: string; color: string; bgColor: 
   },
 };
 
-export default function MarketDiagnosisCard({ diffPercent, isPermanent, yrke, kommun, isAboveThreshold = false, emailProvided = false }: Props) {
+export default function MarketDiagnosisCard({ diffPercent, yrke, kommun, isAboveThreshold = false, emailProvided = false }: Props) {
   const trackedRef = useRef(false);
   const position = getPosition(diffPercent, isAboveThreshold);
   const config = positionConfig[position];
@@ -101,9 +100,7 @@ export default function MarketDiagnosisCard({ diffPercent, isPermanent, yrke, ko
       </div>
 
       <p className="text-hint mt-3">
-        {isPermanent
-          ? "Baserat på Medlingsinstitutets lönestatistik"
-          : `Baserat på ramavtalspriser i ${kommun}`}
+        {`Baserat på ramavtalspriser i ${kommun}`}
       </p>
     </div>
   );

@@ -33,9 +33,6 @@ verify_jwt = false
 [functions.get-lead]
 verify_jwt = false
 
-[functions.salary-benchmark-engine]
-verify_jwt = false
-
 [functions.redeem-coupon]
 verify_jwt = false
 
@@ -121,4 +118,22 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.send-password-recovery]
+verify_jwt = false
+
+[functions.verify-rates]
+verify_jwt = false
+
+[functions.bankid-auth]
+verify_jwt = false
+
+[functions.bankid-collect]
+verify_jwt = false
+
+[functions.radar-data]
+verify_jwt = false
+
+[functions.radar-import]
+verify_jwt = false
+
+[functions.radar-public-api]
 verify_jwt = false

@@ -44,7 +44,11 @@ type EventName =
   | "referenser_info_viewed"
   | "verify_info_viewed"
   | "login_clicked"
+  | "login_succeeded"
+  | "login_failed"
   | "signup_completed"
+  | "signup_initiated"
+  | "signup_confirmed"
   | "reidar_clicked"
   | "product_page_viewed"
   | "product_cta_clicked"
@@ -57,7 +61,17 @@ type EventName =
   | "fakturakontroll_ny_viewed"
   | "fakturakontroll_uploaded"
   | "fakturakontroll_confirmed"
-  | "fakturakontroll_completed";
+  | "fakturakontroll_completed"
+  | "intyg_dashboard_viewed"
+  | "intyg_create_opened"
+  | "intyg_ai_extract_run"
+  | "intyg_create_submitted"
+  | "intyg_link_copied"
+  | "intyg_sign_page_viewed"
+  | "intyg_sign_confirmed"
+  | "assignment_feedback_shown"
+  | "assignment_feedback_snoozed"
+  | "assignment_feedback_submitted";
 
 function isInternalTraffic(): boolean {
   const host = window.location.hostname;

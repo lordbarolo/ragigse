@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useRef, useCallback } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useLocations, useRates } from "@/hooks/useCalculator";
 import { usePricingEngine } from "@/hooks/usePricingEngine";
-import { useBenchmarkEngine } from "@/hooks/useBenchmarkEngine";
+
 import { supabase } from "@/integrations/supabase/client";
 import SearchableSelect from "@/components/SearchableSelect";
 import { Input } from "@/components/ui/input";
@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/trackEvent";
-import posthog from "@/lib/posthog";
+import { aliasLead } from "@/lib/identify";
 
 export interface SurveyData {
   email: string;
@@ -30,42 +30,100 @@ const TOTAL_STEPS = 6;
 type OccupationCategory = "" | "lakare" | "ssk";
 type CommuteType = "veckovis" | "dagligen" | "inte_alls" | "";
 
-// Top doctor specializations — ordered by search frequency
+// All 63 doctor specializations per Socialstyrelsen — alphabetical
 const TOP_DOCTOR_SPECIALTIES = [
-  "Allmänmedicin", "Anestesi och intensivvård", "Internmedicin",
-  "Barn- och ungdomsmedicin", "Psykiatri", "Radiologi",
-  "Geriatrik", "Kardiologi", "Kirurgi",
-  "Obstetrik och gynekologi", "Onkologi", "Ortopedi",
-  "Infektionssjukdomar", "Lungsjukdomar", "Neurologi",
+  "Akutsjukvård",
+  "Allergologi",
+  "Allmänmedicin",
+  "Anestesi och intensivvård",
+  "Arbetsmedicin",
+  "Arbets- och miljömedicin",
+  "Barn- och ungdomsallergologi",
+  "Barn- och ungdomshematologi och onkologi",
+  "Barn- och ungdomskardiologi",
+  "Barn- och ungdomskirurgi",
+  "Barn- och ungdomsmedicin",
+  "Barn- och ungdomsneurologi med habilitering",
+  "Barn- och ungdomspsykiatri",
+  "Beroendemedicin",
+  "Endokrinologi och diabetologi",
+  "Geriatrik",
+  "Gynekologisk onkologi",
+  "Handkirurgi",
+  "Hematologi",
+  "Hud- och könssjukdomar",
+  "Hörsel- och balansrubbningar",
+  "Infektionssjukdomar",
+  "Internmedicin",
+  "Kardiologi",
+  "Kirurgi",
+  "Klinisk farmakologi",
+  "Klinisk fysiologi",
+  "Klinisk genetik",
+  "Klinisk immunologi och transfusionsmedicin",
+  "Klinisk kemi",
+  "Klinisk mikrobiologi",
+  "Klinisk neurofysiologi",
+  "Klinisk patologi",
+  "Kärlkirurgi",
+  "Lungsjukdomar",
+  "Medicinsk gastroenterologi och hepatologi",
+  "Neonatologi",
+  "Neurokirurgi",
+  "Neurologi",
+  "Neuroradiologi",
+  "Njurmedicin",
+  "Nuklearmedicin",
+  "Obstetrik och gynekologi",
+  "Onkologi",
+  "Ortopedi",
+  "Palliativ medicin",
+  "Plastikkirurgi",
+  "Psykiatri",
+  "Radiologi",
+  "Rehabiliteringsmedicin",
+  "Reumatologi",
+  "Rättsmedicin",
+  "Rättspsykiatri",
+  "Röst- och talrubbningar",
+  "Skolhälsovård",
+  "Smärtlindring",
+  "Socialmedicin",
+  "Thoraxkirurgi",
+  "Urologi",
+  "Vårdhygien",
+  "Äldrepsykiatri",
+  "Ögonsjukdomar",
+  "Öron-, näs- och halssjukdomar",
 ];
 
 // Top nurse specializations — ordered by search frequency
 const TOP_NURSE_SPECIALIZATIONS = [
-  "Intensivvård", "Psykiatrisk vård", "Ambulanssjukvård",
-  "Barn och ungdom", "Operationssjukvård", "Anestesisjukvård",
-  "Akutsjukvård", "Hjärtsjukvård", "Distriktssköterska",
-  "Kirurgisk vård", "Palliativ vård", "Vård av äldre",
-  "Medicinsk vård", "Onkologi", "Infektionssjukvård",
+  "IVA-sjuksköterska", "Psykiatrisjuksköterska", "Ambulanssjuksköterska",
+  "Barnsjuksköterska", "Operationssjuksköterska", "Anestesisjuksköterska",
+  "Akutsjuksköterska", "Hjärtsjuksköterska", "Distriktssjuksköterska",
+  "Kirurgsjuksköterska", "Palliativsjuksköterska", "Geriatriksjuksköterska",
+  "Medicinsjuksköterska", "Onkologisjuksköterska", "Infektionssjuksköterska",
 ];
 
 const nurseValueMap: Record<string, string> = {
-  "Akutsjukvård": "Specialistsjuksköterska akutsjukvård",
-  "Ambulanssjukvård": "Specialistsjuksköterska ambulanssjukvård",
-  "Anestesisjukvård": "Specialistsjuksköterska anestesi",
-  "Barn och ungdom": "Specialistsjuksköterska barn och ungdom",
-  "Diabetesvård": "Specialistsjuksköterska diabetesvård",
-  "Distriktssköterska": "Distriktssjuksköterska",
-  "Hjärtsjukvård": "Specialistsjuksköterska hjärtsjukvård",
-  "Infektionssjukvård": "Specialistsjuksköterska infektionssjukvård",
-  "Intensivvård": "Specialistsjuksköterska intensivvård",
-  "Kirurgisk vård": "Specialistsjuksköterska kirurgisk vård",
-  "Medicinsk vård": "Specialistsjuksköterska medicinsk vård",
-  "Onkologi": "Specialistsjuksköterska onkologisk vård",
-  "Operationssjukvård": "Specialistsjuksköterska operationssjukvård",
-  "Palliativ vård": "Specialistsjuksköterska palliativ vård",
-  "Psykiatrisk vård": "Specialistsjuksköterska psykiatrisk vård",
-  "Vård av äldre": "Specialistsjuksköterska vård av äldre",
-  "Ögonsjukvård": "Specialistsjuksköterska ögonsjukvård",
+  "Akutsjuksköterska": "Specialistsjuksköterska akutsjukvård",
+  "Ambulanssjuksköterska": "Specialistsjuksköterska ambulanssjukvård",
+  "Anestesisjuksköterska": "Specialistsjuksköterska anestesi",
+  "Barnsjuksköterska": "Specialistsjuksköterska barn och ungdom",
+  "Diabetessjuksköterska": "Specialistsjuksköterska diabetesvård",
+  "Distriktssjuksköterska": "Distriktssjuksköterska",
+  "Hjärtsjuksköterska": "Specialistsjuksköterska hjärtsjukvård",
+  "Infektionssjuksköterska": "Specialistsjuksköterska infektionssjukvård",
+  "IVA-sjuksköterska": "Specialistsjuksköterska intensivvård",
+  "Kirurgsjuksköterska": "Specialistsjuksköterska kirurgisk vård",
+  "Medicinsjuksköterska": "Specialistsjuksköterska medicinsk vård",
+  "Onkologisjuksköterska": "Specialistsjuksköterska onkologisk vård",
+  "Operationssjuksköterska": "Specialistsjuksköterska operationssjukvård",
+  "Palliativsjuksköterska": "Specialistsjuksköterska palliativ vård",
+  "Psykiatrisjuksköterska": "Specialistsjuksköterska psykiatrisk vård",
+  "Geriatriksjuksköterska": "Specialistsjuksköterska vård av äldre",
+  "Ögonsjuksköterska": "Specialistsjuksköterska ögonsjukvård",
 };
 
 export interface SurveyResult {
@@ -167,7 +225,6 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
   }, []);
 
   const { calculate: pricingCalculate, result: pricingResult } = usePricingEngine();
-  const { calculate: benchmarkCalculate, result: benchmarkResult } = useBenchmarkEngine();
 
   // Derive yrke from the single dropdown value
   const resolvedYrke = useMemo(() => {
@@ -198,12 +255,6 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
     }
   }, [data.yrke, data.kommun, data.employmentType]);
 
-  useEffect(() => {
-    if (data.yrke && data.kommun && data.currentSalary > 0) {
-      const currentMonthly = data.salaryType === "hourly" ? data.currentSalary * 167 : data.currentSalary;
-      benchmarkCalculate(data.yrke, "privat", currentMonthly);
-    }
-  }, [data.yrke, data.kommun, data.currentSalary, data.salaryType]);
 
   const regions = useMemo(() => {
     if (!locations) return [];
@@ -336,8 +387,19 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
     const leadId = crypto.randomUUID();
     const track = "consultant";
 
-    // Identify user in PostHog so all funnel events share the same distinct_id
-    try { posthog.identify(leadId); } catch { /* silent */ }
+    // Stitch anonymous PostHog session to leadId so prior funnel events
+    // (landing_viewed, survey_started, survey_step_*) are linked to this person.
+    // Also registers lead_id as super-property for all future events.
+    const hourlyRateForProps = snapshotSalaryType === "monthly"
+      ? Math.round(snapshotCurrentSalary / 167)
+      : snapshotCurrentSalary;
+    aliasLead(leadId, {
+      role: snapshotRole,
+      zone: snapshotZone,
+      employment_type: snapshotEmploymentType,
+      experience_years: snapshotExperience,
+      current_hourly_rate: hourlyRateForProps,
+    });
     const couponCode = searchParams.get("coupon");
     const couponParam = couponCode ? `?coupon=${encodeURIComponent(couponCode)}` : "";
 
@@ -345,7 +407,6 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
     const navigateToTeaser = () => {
       sessionStorage.setItem("leadId", leadId);
       sessionStorage.setItem("surveyData", JSON.stringify({ ...data, track }));
-      if (benchmarkResult) sessionStorage.setItem("benchmarkResult", JSON.stringify(benchmarkResult));
       if (pricingResult) sessionStorage.setItem("pricingResult", JSON.stringify(pricingResult));
       trackStepCompleted(6, snapshotObShare);
       const totalTime = surveyStartTime.current ? Math.round((Date.now() - surveyStartTime.current) / 1000) : 0;
@@ -545,8 +606,6 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                     trackSurveyStarted();
                     setOccupationCategory(opt.value);
                     setRoleDropdownValue("");
-                    trackStepCompleted(1, opt.value);
-                    setTimeout(() => setStep(2), 200);
                   }}
                   className={`group w-full py-5 px-5 rounded-xl border !border-l-[3px] bg-card text-left transition-all active:scale-[0.98] flex items-center justify-between gap-3 ${
                     occupationCategory === opt.value
@@ -591,12 +650,6 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                   value={roleDropdownValue}
                   onValueChange={(v) => {
                     setRoleDropdownValue(v);
-                    if (v) {
-                      setTimeout(() => {
-                        trackStepCompleted(2, v);
-                        setStep(3);
-                      }, 300);
-                    }
                   }}
                   placeholder={occupationCategory === "lakare" ? "Välj läkarroll eller specialisering..." : "Välj roll eller vidareutbildning..."}
                   options={occupationCategory === "lakare" ? doctorRoleOptions : nurseRoleOptions}
@@ -610,7 +663,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
           <StepWrapper title="Var jobbar du?">
             <div className="rounded-2xl border border-border bg-card p-5 space-y-4 flex flex-col items-center justify-center flex-1">
                <p className="text-body-sm text-center max-w-xs">
-                  Ange din kommun där du ska jobba, startlistan visar vanligaste valen.
+                  Ange orten där du ska jobba, startlistan visar vanligaste valen.
                </p>
 
               {/* Search input */}
@@ -638,8 +691,6 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                         onClick={() => {
                           setData({ ...data, kommun: k.kommun });
                           setSelectedRegion(k.region);
-                          trackStepCompleted(3, k.kommun);
-                          setTimeout(() => setStep(4), 200);
                         }}
                         className={`group w-full py-3 px-4 text-left text-sm transition-all flex items-center justify-between border-b border-border/50 last:border-b-0 ${
                           data.kommun === k.kommun
@@ -679,10 +730,6 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                   key={opt.value}
                   onClick={() => {
                      setData({ ...data, employmentType: opt.value });
-                     setTimeout(() => {
-                       trackStepCompleted(4, opt.value);
-                       setStep(5);
-                     }, 300);
                    }}
                   className={`group w-full py-5 px-5 rounded-xl border !border-l-[3px] bg-card text-left transition-all active:scale-[0.98] flex items-center gap-3 ${
                     data.employmentType === opt.value
@@ -716,10 +763,6 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                   key={opt.value}
                   onClick={() => {
                      setData({ ...data, obShare: opt.value });
-                     setTimeout(() => {
-                       trackStepCompleted(5, opt.value);
-                       setStep(6);
-                     }, 300);
                   }}
                   className={`group w-full py-5 px-5 rounded-xl border !border-l-[3px] bg-card text-left transition-all active:scale-[0.98] flex items-center gap-3 ${
                     data.obShare === opt.value
@@ -803,7 +846,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
             Tillbaka
           </button>
         )}
-        {step !== 3 && step !== 6 && (
+        {step !== 6 && (
           <button
             onClick={() => {
               if (!canProceed) return;

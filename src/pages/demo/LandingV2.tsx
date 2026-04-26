@@ -1,9 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Menu, X } from "lucide-react";
+import CompcareLogo from "@/components/CompcareLogo";
+import HeroRateLookup from "@/components/landing/HeroRateLookup";
+import { trackEvent } from "@/lib/trackEvent";
+import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 
 /* ───────────────────── data ───────────────────── */
-const NAV_LINKS = ["Verktyg", "Löneanalys", "Fakturagranskning", "Uppdragsprognos", "Priser", "Om oss"];
+const NAV_LINKS: { label: string; href: string; external?: boolean }[] = [
+  { label: "Verktyg", href: "#verktyg" },
+  { label: "Ersättningsanalys", href: "/", external: true },
+  { label: "Fakturagranskning - Få betalt för all din tid", href: "/consultant/fakturakontroll", external: true },
+  { label: "Priser", href: "#priser" },
+  { label: "FAQ", href: "/vanliga-fragor", external: true },
+];
 const TRUST_LOGOS = ["Capio", "Region Stockholm", "Aleris", "Praktikertjänst", "Sahlgrenska"];
 
 const STATS = [
@@ -12,12 +22,22 @@ const STATS = [
   { num: "508 kr/tim", label: "Se din roll och zon →", subtitle: "ESTIMERAD KONSULTLÖN" },
 ];
 
-const MODULES_ROW1 = [
+type ModuleCard = {
+  title: string;
+  desc: string;
+  tag: string;
+  tagColor: "purple" | "amber" | "blue" | "green" | "muted";
+  iconBg: string;
+  icon: JSX.Element;
+  cta?: { label: string; href: string };
+};
+
+const MODULES_ROW1: ModuleCard[] = [
   {
-    title: "Verify — dokumentvalvet",
-    desc: "Spara legitimationer, intyg och utbildningsbevis på ett säkert ställe. Dela tillgång med länk — aldrig mer bifogade filer som du aldrig vet vart de tar vägen.",
+    title: "Dokhus — Där dina dokument bor",
+    desc: "Säker lagring av legitimationer, specialistbevis och tjänstgöringsintyg. Hantera åtkomst via krypterade länkar i stället för osäkra filbilagor – för fullständig kontroll över dina känsliga personuppgifter.",
     tag: "Ingår gratis",
-    tagColor: "purple" as const,
+    tagColor: "purple",
     iconBg: "#EEEDFE",
     icon: (
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -29,10 +49,10 @@ const MODULES_ROW1 = [
     ),
   },
   {
-    title: "Referensplattformen",
-    desc: "Du bestämmer vem som får tillgång och när. Referensgivare kan verifiera digitalt istället för att lämna samma uppgifter till flera bolag.",
-    tag: "Ingår gratis",
-    tagColor: "purple" as const,
+    title: "Ref ID - Minimera störning av dina referenser",
+    desc: "Administrera dina referenser centralt. Du styr vem som får tillgång och när. Dina referensgivare verifierar enkelt med bank-id vid upprepade förfrågningar, vilket eliminerar repetitiv administration och säkrar processens integritet.",
+    tag: "Kommer snart",
+    tagColor: "muted",
     iconBg: "#EEEDFE",
     icon: (
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -42,10 +62,10 @@ const MODULES_ROW1 = [
     ),
   },
   {
-    title: "Löneanalys & löneassistent",
-    desc: "Se vad regionen betalar för din tid och vad bemanningsföretagen kan betala utifrån marknadens genomsnittliga marginaler. Med full transparens kring villkor vågar fler testa konsultlivet.",
+    title: "Ersättningsanalys - Se aktuella arvoden",
+    desc: "Med full transparens kring avtalsvillkor och branschens marginaler skapar vi förutsättningar för en trygg och hållbar konsultkarriär.",
     tag: "Insight — 149 kr/mån",
-    tagColor: "amber" as const,
+    tagColor: "amber",
     iconBg: "#FAEEDA",
     icon: (
       <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -57,8 +77,8 @@ const MODULES_ROW1 = [
 
 const MODULES_ROW2 = [
   {
-    title: "Fakturagranskning",
-    desc: "AI granskar dina fakturor och tidrapporter. Vi hittar vad du missat och hjälper dig fakturera det. Vi får 25% av det vi hittar i provision. Hittar vi inget, betalar du inget.",
+    title: "Fakturagranskning - Få betalt för all din tid",
+    desc: "Automatiserad revision av fakturor och tidrapport. Vi söker efter avvikelser och hjälper dig fakturera om vi ser något du missat att ta betalt för. Arvodet är helt prestationsbaserat: vi erhåller 25 % av det belopp vi återvinner åt dig.",
     tag: "Prestationsbaserat",
     tagColor: "green" as const,
     iconBg: "#EAF3DE",
@@ -71,8 +91,8 @@ const MODULES_ROW2 = [
     ),
   },
   {
-    title: "Uppdragsprognos",
-    desc: "Öka chanserna att få uppdragen du verkligen vill ha. Se prognoser utifrån uppdrag som publicerats historiskt i din region och specialitet. Vi har analyserat 5 års historik och över 30 000 bemanningsuppdrag. ",
+    title: "Uppdragsprognos - Baserat på historik",
+    desc: "Öka chansen att få uppdraget du verkligen vill ha. Vi har analyserat 5 års historik och över 30 000 bemanningsuppdrag. AI ger oss träffsäkra prognoser om kommande behov hos specifika verksamheter.",
     tag: "Beta",
     tagColor: "purple" as const,
     iconBg: "#EEEDFE",
@@ -84,13 +104,26 @@ const MODULES_ROW2 = [
       </svg>
     ),
   },
+  {
+    title: "Förhandlingsassistent - AI-stöd i realtid",
+    desc: "Få objektiva marknadsdata, avtalsvillkor och konkreta förhandlingsargument direkt i chatten. Löneassistenten hjälper dig bygga ett starkt underlag inför ditt nästa konsultuppdrag — baserat på SKR:s ramavtal och regional statistik.",
+    tag: "Premium — 99 kr/mån",
+    tagColor: "amber" as const,
+    iconBg: "#FAEEDA",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M4 5h12v8H8l-4 3V5z" stroke="#854F0B" strokeWidth="1.2" strokeLinejoin="round" />
+        <line x1="7" y1="9" x2="13" y2="9" stroke="#854F0B" strokeWidth="1.2" strokeLinecap="round" />
+      </svg>
+    ),
+  },
 ];
 
 const STEPS = [
   { num: "1", title: "Skapa ditt konto", desc: "Logga in och ange din roll.\nFå tillgång till verktyg och insikter." },
-  { num: "2", title: "Ladda upp dina dokument", desc: "Fakturor, tidrapporter, intyg och cv. Allt struktureras automatiskt." },
-  { num: "3", title: "Få insikt och agera", desc: "Löneanalys, missad fakturering, förhandlingsstöd — direkt." },
-  { num: "4", title: "Dela på dina villkor", desc: "Skicka en länk när du är redo. Aldrig mer bifogade dokument." },
+  { num: "2", title: "Ladda upp dina dokument", desc: "Tidrapporter, intyg och CV. Allt struktureras och säkras i valvet." },
+  { num: "3", title: "Få insikt och agera", desc: "Ersättningsanalys, marknadsdata och förhandlingsstöd — direkt." },
+  { num: "4", title: "Dela på dina villkor", desc: "Skicka en krypterad länk när du är redo. Full kontroll över din data." },
 ];
 
 const INVOICES = [
@@ -103,31 +136,63 @@ const INVOICES = [
 
 const PLANS = [
   {
+    tag: "GR",
     name: "Gratis",
+    tagline: "Alltid kostnadsfri",
     price: "0 kr",
     unit: " /mån",
-    desc: "Grundverktygen utan kostnad — för alltid.",
-    features: ["Dokumentvalvet", "Referensplattformen", "En kostnadsfri löneanalys", "Bemanningsbolagens pris mot region"],
+    headline: "Grunden — för alltid",
+    headlineColor: "text-[#534AB7]",
+    subheadline: "Inga kreditkort",
+    desc: "Dokumentvalvet, Ref ID och en kostnadsfri ersättningsanalys. Få full koll utan kostnad — alltid.",
+    features: ["Dokumentvalvet", "Ref ID", "En kostnadsfri ersättningsanalys", "Bemanningsbolagens pris mot region", "Ingen tidsbegränsning"],
     cta: "Kom igång",
+    href: "/registrera",
+    bg: "bg-[#EFEDFA]",
+    border: "border-[#534AB7]/20",
+    iconBg: "bg-[#534AB7]/10 text-[#3C3489]",
+    btnClass: "bg-transparent border border-[#534AB7]/40 text-[#3C3489] hover:bg-[#534AB7]/5",
+    badge: null,
     featured: false,
   },
   {
+    tag: "IN",
     name: "Insight",
+    tagline: "Sätt din egen kurs",
     price: "149 kr",
     unit: " /mån",
-    desc: "Full löneanalys, förhandlingsstöd och uppdragsprognos.",
-    features: ["Allt i Gratis", "Detaljerad löneanalys", "Löneassistent med AI", "Uppdragsprognos", "Regional och specialitetsjämförelse"],
+    headline: "Hela analysen",
+    headlineColor: "text-[#0EA5A4]",
+    subheadline: "Aligned med ditt nästa uppdrag",
+    desc: "Detaljerad ersättningsanalys, AI-driven förhandlingsstöd och uppdragsprognos - baserat på historik. Förstå exakt var du står — och var du borde stå.",
+    features: ["Allt i Gratis", "Detaljerad ersättningsanalys", "Löneassistent med AI", "Uppdragsprognos - baserat på historik", "Regional & specialitetsjämförelse"],
     cta: "Välj Insight",
-    featured: true,
+    href: "/registrera?plan=insight",
+    bg: "bg-[#E6F7F6]",
+    border: "border-[#0EA5A4]/30",
+    iconBg: "bg-[#0EA5A4]/10 text-[#0EA5A4]",
+    btnClass: "bg-[#0EA5A4] text-white hover:bg-[#0E9090]",
     badge: "Mest populär",
+    featured: true,
   },
   {
-    name: "Fakturagranskning",
+    tag: "FK",
+    name: "Fakturagranskning - Få betalt för all din tid",
+    tagline: "Växande affärsmodell",
     price: "0 kr",
     unit: " förhandsavgift",
-    desc: "Vi tar 25% av vad vi hittar. Inget fynd — ingen kostnad.",
-    features: ["AI-granskning av fakturor", "Tidrapportanalys", "Automatisk ny faktura", "Uppföljning mot uppdragsgivare"],
+    headline: "Provisionsbaserad",
+    headlineColor: "text-[#EA6A1F]",
+    subheadline: "Framgångsbaserat partnerskap",
+    desc: "Vi granskar dina fakturor och driver in det du missat. Hittar vi inget kostar det dig ingenting.",
+    features: ["AI-granskning av fakturor", "Tidrapportanalys", "Automatisk ny faktura", "Uppföljning mot uppdragsgivare", "25% av återvunnet belopp"],
     cta: "Skicka in fakturor",
+    href: "/consultant/fakturakontroll",
+    bg: "bg-[#FCEFE2]",
+    border: "border-[#EA6A1F]/30",
+    iconBg: "bg-[#EA6A1F]/10 text-[#EA6A1F]",
+    btnClass: "bg-transparent border border-[#EA6A1F]/40 text-[#EA6A1F] hover:bg-[#EA6A1F]/5",
+    badge: null,
     featured: false,
   },
 ];
@@ -135,7 +200,7 @@ const PLANS = [
 const TESTIMONIALS = [
   { quote: "Jag hittade 11 400 kr jag aldrig fakturerat. Pengarna var på kontot inom en vecka.", initials: "MH", name: "Maria H.", role: "Specialistsjuksköterska, Stockholm" },
   { quote: "Äntligen slipper jag skicka samma intyg till varje nytt bemanningsbolag. Det tar fem sekunder nu.", initials: "JA", name: "Jonas A.", role: "Distriktsläkare, Göteborg" },
-  { quote: "Löneassistenten visade mig att jag var 18% under marknadssnitt. Jag förhandlade upp det på en vecka.", initials: "CL", name: "Cecilia L.", role: "Intensivvårdssjuksköterska, Malmö" },
+  { quote: "Ersättningsanalysen visade mig att jag var 18% under marknadssnitt. Jag förhandlade upp det på en vecka.", initials: "CL", name: "Cecilia L.", role: "Intensivvårdssjuksköterska, Malmö" },
 ];
 
 /* ───────────────────── helpers ─────────────────── */
@@ -160,26 +225,67 @@ function FlowArrow() {
 
 /* ───────────────────── component ──────────────── */
 export default function LandingV2() {
-  const [heroEmail, setHeroEmail] = useState("");
+  useTimeOnPage("landing");
+  const [menuOpen, setMenuOpen] = useState(false);
+  useEffect(() => {
+    trackEvent("landing_viewed");
+  }, []);
 
   return (
     <div className="w-full bg-[#F2F1F8] text-foreground font-sans">
+
       {/* ── Nav ─────────────────────────────── */}
-      <nav className="flex items-center justify-between px-6 lg:px-10 h-[60px] bg-white border-b border-border/40">
-        <div className="flex items-center gap-2 text-lg font-medium tracking-tight">
-          <span className="w-2 h-2 rounded-full bg-[#534AB7]" />
-          CompCare
-        </div>
-        <div className="hidden md:flex gap-6">
-          {NAV_LINKS.map((l) => (
-            <span key={l} className="text-sm text-muted-foreground cursor-default">{l}</span>
-          ))}
-        </div>
+      <nav className="relative flex items-center justify-between px-6 lg:px-10 h-[60px] bg-white border-b border-border/40">
+        <CompcareLogo variant="wordmark" />
         <div className="flex items-center gap-3">
           <Link to="/logga-in">
             <button className="text-sm px-4 py-2 border border-border rounded-lg bg-transparent text-foreground">Logga in</button>
           </Link>
+          <button
+            type="button"
+            aria-label={menuOpen ? "Stäng meny" : "Öppna meny"}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((v) => !v)}
+            className="inline-flex items-center justify-center h-9 w-9 rounded-lg border border-border text-foreground hover:bg-muted/50 transition-colors"
+          >
+            {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
         </div>
+
+        {menuOpen && (
+          <>
+            <div
+              className="fixed inset-0 bg-black/30 z-40"
+              onClick={() => setMenuOpen(false)}
+              aria-hidden="true"
+            />
+            <div className="absolute top-full right-4 lg:right-10 mt-2 w-72 bg-white border border-border rounded-xl shadow-lg z-50 overflow-hidden">
+              <div className="flex flex-col py-2">
+                {NAV_LINKS.map((l) =>
+                  l.external ? (
+                    <Link
+                      key={l.label}
+                      to={l.href}
+                      onClick={() => setMenuOpen(false)}
+                      className="px-4 py-3 text-sm text-foreground hover:bg-muted/50 transition-colors"
+                    >
+                      {l.label}
+                    </Link>
+                  ) : (
+                    <a
+                      key={l.label}
+                      href={l.href}
+                      onClick={() => setMenuOpen(false)}
+                      className="px-4 py-3 text-sm text-foreground hover:bg-muted/50 transition-colors"
+                    >
+                      {l.label}
+                    </a>
+                  )
+                )}
+              </div>
+            </div>
+          </>
+        )}
       </nav>
 
       {/* ── Hero ────────────────────────────── */}
@@ -213,62 +319,22 @@ export default function LandingV2() {
         />
 
         {/* content — left */}
-        <div className="relative z-10 px-1 sm:px-2 md:px-10 xl:px-16 pt-16 pb-8 md:py-24 max-w-[680px] flex-1">
+        <div className="relative z-10 px-1 sm:px-2 md:px-10 xl:px-16 pt-16 pb-8 md:py-24 max-w-[760px] flex-1">
           <div className="inline-flex items-center gap-1.5 text-xs font-medium text-[#AFA9EC] bg-[rgba(83,74,183,0.2)] border border-[rgba(127,119,221,0.35)] rounded-full px-3 py-1 mb-5 uppercase tracking-wider">
             <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="#AFA9EC" /></svg>
             För läkare &amp; sjuksköterskor
           </div>
-          <h1 className="text-[clamp(2.5rem,6vw,64px)] font-bold leading-[1.1] text-white mb-6 tracking-tight">
-            Din <span className="text-[#AFA9EC]">tid.</span><br />Din karriär.<br />Dina villkor.
+          <h1 className="font-bold leading-[1.1] text-white mb-6 tracking-tight text-3xl sm:text-4xl md:text-5xl whitespace-nowrap">
+            Förhandla utifrån <span className="text-[#AFA9EC]">data,</span><br />inte magkänsla
           </h1>
-          <p className="text-lg text-white/[0.68] leading-relaxed mb-8 max-w-[520px]">
-            Säkerställ att du får rätt ersättning,<br />rätt avtalsinnehåll och rätt belopp på dina fakturor. Se Compcare som din personliga sekreterare, som är tillgänglig 24/7.
+          <p className="text-lg text-white/[0.78] leading-relaxed mb-6 max-w-[520px]">
+            Vi visar aktuella ersättningar för läkare och sjuksköterskor. Se uppdaterat konsultarvode för din roll och region.
           </p>
-
-          {/* Email CTA */}
-          <div className="space-y-3">
-            <p className="text-[13px] text-white/50 italic">Se rätt ersättningsnivåer för varje roll och region</p>
-            <div className="flex gap-2">
-              <input
-                type="email"
-                value={heroEmail}
-                onChange={(e) => setHeroEmail(e.target.value)}
-                placeholder="din@email.se"
-                className="flex-1 px-4 py-3 bg-white/[0.08] border border-white/20 rounded-lg text-white text-sm placeholder:text-white/35 outline-none focus:border-white/40 transition-colors"
-              />
-              <Link to="/registrera">
-                <button className="px-6 py-3 bg-[#534AB7] rounded-lg text-white text-[15px] font-medium whitespace-nowrap">
-                  Visa mig →
-                </button>
-              </Link>
-            </div>
-            <p className="text-[11px] text-white/30">Inga kreditkort. Kom igång på 30 sekunder.</p>
-          </div>
-        </div>
-
-        {/* Flow cards — shared layout for mobile & desktop */}
-        <div className="relative z-10 flex flex-col gap-0 w-full max-w-[260px] flex-shrink-0 mx-auto md:mx-0 md:ml-auto md:mr-16 py-4 md:py-24 md:self-center px-0">
-          {/* Card 1 */}
-          <div className="bg-white/[0.07] border border-white/[0.13] rounded-[14px] px-5 py-4">
-            <div className="text-[10px] text-white/40 uppercase tracking-wider mb-1">RAMAVTALSPRIS · ZON 1 · SKR 2026</div>
-            <div className="text-[26px] font-medium text-white mb-0.5">616 <span className="text-[16px] text-white/50">kr/tim</span></div>
-            <div className="text-[12px] text-white/50 leading-snug">Leg. sjuksköterska i storstad</div>
-          </div>
-          <FlowArrow />
-          {/* Card 2 */}
-          <div className="bg-white/[0.07] border border-white/[0.13] rounded-[14px] px-5 py-4">
-            <div className="text-[10px] text-white/40 uppercase tracking-wider mb-1">BRANSCHENS GENOMSNITTSMARGINAL</div>
-            <div className="text-[26px] font-medium text-white mb-0.5">15–20%</div>
-            <span className="text-red-400/70 text-[11px] font-semibold">−92–123 kr/tim</span>
-            <div className="text-[12px] text-white/50 leading-snug mt-1">Enligt offentliga avtal och branschdata</div>
-          </div>
-          <FlowArrow />
-          {/* Card 3 — highlighted */}
-          <div className="bg-[rgba(83,74,183,0.25)] border-2 border-[rgba(175,169,236,0.4)] rounded-[14px] px-5 py-4">
-            <div className="text-[10px] text-[rgba(175,169,236,0.8)] uppercase tracking-wider mb-1">ESTIMERAD KONSULTLÖN</div>
-            <div className="text-[30px] font-medium text-white mb-0.5">508 <span className="text-[16px] text-white/50">kr/tim</span></div>
-            <div className="text-[12px] text-[rgba(175,169,236,0.7)] leading-snug">Se exakt vad du kan förvänta dig →</div>
-          </div>
+          <Link to="/v1?start=1" onClick={() => trackEvent("product_cta_clicked", { cta: "hero_salary_analysis", target: "/v1?start=1" })}>
+            <button className="px-6 py-3 bg-white hover:bg-white/90 rounded-lg text-[#1a1545] text-[15px] font-semibold whitespace-nowrap min-h-[44px] transition-colors">
+              Gör analysen →
+            </button>
+          </Link>
         </div>
       </section>
 
@@ -303,9 +369,15 @@ export default function LandingV2() {
           <h2 className="font-serif text-[34px] font-bold leading-[1.15] tracking-tight text-foreground mb-2.5">
             Fem verktyg som förenklar din karriär
           </h2>
-          <p className="text-[15px] text-muted-foreground leading-[1.65]">
-            Allt du behöver som konsult inom vården — samlat på ett ställe som du kontrollerar.
-          </p>
+          <div className="text-[15px] text-muted-foreground leading-[1.65]">
+            Eliminera tråkig administration och lägg tiden på något roligare.
+            <ul className="list-disc pl-5 mt-2 space-y-1">
+              <li>Hantera din legitimation och dina intyg via tidsbegränsad åtkomst i stället för osäkra filbilagor</li>
+              <li>Optimera din förhandling med objektiva marknadsdata och regional statistik</li>
+              <li>Identifiera juridiska risker och obalanserad ansvarsfördelning i konsultavtal före signering.</li>
+              <li>Analys av tidigare fakturering för att säkerställa att din arbetade tid fakturerats i sin helhet.&nbsp;</li>
+            </ul>
+          </div>
         </div>
 
         {/* Row 1 — 3 cards */}
@@ -317,13 +389,23 @@ export default function LandingV2() {
               </div>
               <h3 className="text-base font-semibold text-foreground mb-2 leading-snug">{m.title}</h3>
               <p className="text-[13px] text-foreground leading-[1.7] flex-1 mb-[22px]">{m.desc}</p>
-              <span className={`inline-block text-[11px] font-medium px-2.5 py-1 rounded-full border w-fit ${TAG_COLORS[m.tagColor]}`}>{m.tag}</span>
+              <div className="flex items-center justify-between gap-3 flex-wrap">
+                <span className={`inline-block text-[11px] font-medium px-2.5 py-1 rounded-full border w-fit ${TAG_COLORS[m.tagColor]}`}>{m.tag}</span>
+                {m.cta && (
+                  <Link
+                    to={m.cta.href}
+                    className="text-[13px] font-semibold text-[#534AB7] hover:text-[#3C3489] inline-flex items-center gap-1 transition-colors"
+                  >
+                    {m.cta.label} <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                )}
+              </div>
             </div>
           ))}
         </div>
 
-        {/* Row 2 — 2 cards, 2/3 width */}
-        <div className="grid md:grid-cols-2 gap-4 md:max-w-[calc(66.66%-8px)]">
+        {/* Row 2 — 3 cards, full width */}
+        <div className="grid md:grid-cols-3 gap-4 mt-4">
           {MODULES_ROW2.map((m) => (
             <div key={m.title} className="bg-white border border-[rgba(0,0,0,0.08)] rounded-[18px] p-7 flex flex-col hover:border-[rgba(83,74,183,0.25)] hover:shadow-[0_4px_24px_rgba(83,74,183,0.08)] transition-all">
               <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-5 shrink-0" style={{ background: m.iconBg }}>
@@ -339,175 +421,17 @@ export default function LandingV2() {
 
       <div className="h-px bg-border/40 mx-6 lg:mx-10" />
 
-      {/* ── Steps ───────────────────────────── */}
-      <section className="px-6 lg:px-10 py-[72px] bg-[#ECEAF5]">
-        <p className="text-xs font-medium text-[#534AB7] uppercase tracking-widest mb-2.5">Så funkar det</p>
-        <h2 className="text-[30px] font-medium leading-tight tracking-tight mb-10">Fyra steg till full kontroll</h2>
-        <div className="flex flex-col md:flex-row gap-0 relative">
-          <div className="hidden md:block absolute top-7 left-7 right-7 h-px bg-border/40" />
-          {STEPS.map((s) => (
-            <div key={s.num} className="flex-1 text-center relative z-10 px-4 mb-8 md:mb-0">
-              <div className="w-14 h-14 rounded-full bg-white border border-border/60 flex items-center justify-center text-[15px] font-medium text-[#534AB7] mx-auto mb-4">
-                {s.num}
-              </div>
-              <h4 className="text-sm font-medium mb-1.5">{s.title}</h4>
-              <p className="text-[13px] text-muted-foreground leading-snug whitespace-pre-line">{s.desc}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <div className="h-px bg-border/40 mx-6 lg:mx-10" />
-
-      {/* ── Invoice feature ─────────────────── */}
-      <section className="px-6 lg:px-10 py-[72px] bg-[#F2F1F8]">
-        <div className="max-w-[600px] mx-auto">
-          {/* Scaled table */}
-          <div className="w-full overflow-hidden mb-8" ref={(el) => {
-            if (!el) return;
-            const inner = el.querySelector<HTMLDivElement>('[data-scale-inner]');
-            if (!inner) return;
-            const fit = () => {
-              const scale = el.offsetWidth / 860;
-              inner.style.transform = `scale(${scale})`;
-              inner.style.transformOrigin = 'top left';
-              el.style.height = `${inner.offsetHeight * scale}px`;
-            };
-            fit();
-            const ro = new ResizeObserver(fit);
-            ro.observe(el);
-          }}>
-            <div data-scale-inner style={{ width: 860 }}>
-              <div className="bg-white border border-[#ddd] rounded-[10px] overflow-hidden shadow-[0_2px_16px_rgba(0,0,0,0.06)]">
-                {/* Filter bar */}
-                <div className="flex items-center gap-1.5 px-3.5 py-2.5 border-b border-[#e8e8e8] bg-[#fafafa]">
-                  <button className="text-xs px-2.5 py-1 rounded-[5px] border border-[#534AB7] bg-[#534AB7] text-white whitespace-nowrap">Alla</button>
-                  <button className="text-xs px-2.5 py-1 rounded-[5px] border border-[#ddd] bg-white text-[#444] whitespace-nowrap flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[#f5a623] inline-block" />Ej granskade</button>
-                  <button className="text-xs px-2.5 py-1 rounded-[5px] border border-[#ddd] bg-white text-[#444] whitespace-nowrap flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[#e74c3c] inline-block" />Avvikelser</button>
-                  <button className="text-xs px-2.5 py-1 rounded-[5px] border border-[#ddd] bg-white text-[#444] whitespace-nowrap flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[#27ae60] inline-block" />Godkända</button>
-                  <button className="text-xs px-2.5 py-1 rounded-[5px] border border-[#ddd] bg-white text-[#444] whitespace-nowrap flex items-center gap-1"><span className="w-2 h-2 rounded-full bg-[#534AB7] inline-block" />Fakturerade</button>
-                </div>
-
-                {/* Table */}
-                <table className="w-full border-collapse text-[13px]">
-                  <thead>
-                    <tr className="bg-[#f5f5f5] border-b border-[#e0e0e0]">
-                      <th className="py-2.5 px-3.5 text-left w-8"><input type="checkbox" className="accent-[#534AB7] w-[13px] h-[13px]" readOnly /></th>
-                      <th className="py-2.5 px-3.5 text-left font-semibold text-[11px] text-[#666] uppercase tracking-[0.05em] whitespace-nowrap">Faktura</th>
-                      <th className="py-2.5 px-3.5 text-left font-semibold text-[11px] text-[#666] uppercase tracking-[0.05em] whitespace-nowrap">Fakturerat</th>
-                      <th className="py-2.5 px-3.5 text-left font-semibold text-[11px] text-[#666] uppercase tracking-[0.05em] whitespace-nowrap">Arbetat</th>
-                      <th className="py-2.5 px-3.5 text-left font-semibold text-[11px] text-[#666] uppercase tracking-[0.05em] whitespace-nowrap">Diff</th>
-                      <th className="py-2.5 px-3.5 text-left font-semibold text-[11px] text-[#666] uppercase tracking-[0.05em] whitespace-nowrap">Belopp</th>
-                      <th className="py-2.5 px-3.5 text-left font-semibold text-[11px] text-[#666] uppercase tracking-[0.05em] whitespace-nowrap">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {[
-                      { nr: "#3", fakt: "42 h", arb: "42 h", diff: "—", belopp: "—", ok: true, checked: false },
-                      { nr: "#4", fakt: "36 h", arb: "42 h", diff: "−6 h", belopp: "−6 900 kr", ok: false, checked: true },
-                      { nr: "#5", fakt: "38 h", arb: "38 h", diff: "—", belopp: "—", ok: true, checked: false },
-                      { nr: "#6", fakt: "40 h", arb: "43.5 h", diff: "−3.5 h", belopp: "−4 025 kr", ok: false, checked: true },
-                      { nr: "#7", fakt: "44 h", arb: "44 h", diff: "—", belopp: "—", ok: true, checked: false },
-                    ].map((row, i) => (
-                      <tr key={i} className={`border-b border-[#f0f0f0] last:border-b-0 hover:bg-[#faf9ff] ${row.ok ? "" : "bg-[#fff8f8] hover:bg-[#fff2f2]"}`}>
-                        <td className="py-[11px] px-3.5"><input type="checkbox" className="accent-[#534AB7] w-[13px] h-[13px]" checked={row.checked} readOnly /></td>
-                        <td className="py-[11px] px-3.5 font-semibold text-[#534AB7] whitespace-nowrap">{row.nr}</td>
-                        <td className="py-[11px] px-3.5 text-[#1a1a1a] whitespace-nowrap">{row.fakt}</td>
-                        <td className="py-[11px] px-3.5 text-[#1a1a1a] whitespace-nowrap">{row.arb}</td>
-                        <td className={`py-[11px] px-3.5 whitespace-nowrap ${row.ok ? "text-[#999]" : "text-[#c0392b] font-semibold"}`}>{row.diff}</td>
-                        <td className={`py-[11px] px-3.5 whitespace-nowrap ${row.ok ? "text-[#999]" : "text-[#c0392b] font-semibold"}`}>{row.belopp}</td>
-                        <td className="py-[11px] px-3.5 whitespace-nowrap">
-                          <span className={`inline-flex items-center text-[11px] font-medium px-2 py-[3px] rounded-full ${row.ok ? "bg-[#eaf5ea] text-[#2d7a2d]" : "bg-[#fdecea] text-[#c0392b]"}`}>
-                            {row.ok ? "✓ OK" : "! Avvikelse"}
-                          </span>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-
-                {/* Summary bar */}
-                <div className="flex items-center justify-between px-4 py-3.5 bg-[#f7f6fe] border-t border-[#e0dff5]">
-                  <div className="text-[13px] text-[#444]">Hittade <strong className="text-[#0f0f0f]">9,5 h</strong> som ger</div>
-                  <div className="text-lg font-bold text-[#2d7a2d]">+10 925 kr</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* CTA */}
-          <a href="#" className="block w-full py-3.5 bg-[#534AB7] text-white rounded-[10px] text-[15px] font-medium text-center mb-8">Skapa konto</a>
-
-          {/* Copy */}
-          <p className="text-[11px] font-semibold text-[#534AB7] uppercase tracking-[0.1em] mb-3.5">Fakturagranskning</p>
-          <h2 className="text-[26px] font-bold leading-[1.2] tracking-[-0.5px] mb-3 font-serif">Du har troligen pengar du inte fått</h2>
-          <p className="text-[14px] text-[#444] leading-[1.7] mb-2">
-            Konsulter missar i snitt 3–8% av fakturerbara timmar. Vi går igenom dina historiska fakturor och tidrapporter och identifierar utestående belopp — utan risk för dig.
-          </p>
-          <p className="text-xs leading-[1.6] text-inherit">Vi tar 25% av det vi hittar. Hittar vi ingenting kostar det dig ingenting.</p>
-        </div>
-      </section>
-
-      {/* ── Pricing ─────────────────────────── */}
-      <section className="px-6 lg:px-10 py-[72px] bg-[#ECEAF5]">
-        <p className="text-xs font-medium text-[#534AB7] uppercase tracking-widest mb-2.5">Priser</p>
-        <h2 className="text-[30px] font-medium leading-tight tracking-tight mb-3">Transparent och enkelt</h2>
-        <p className="text-base text-muted-foreground leading-relaxed max-w-[520px] mb-10">Börja gratis. Uppgradera när det ger värde.</p>
-        <div className="grid md:grid-cols-3 gap-4">
-          {PLANS.map((p) => (
-            <div key={p.name} className={`bg-white border rounded-xl p-7 ${p.featured ? "border-2 border-[#534AB7]" : "border-border/40"}`}>
-              {p.badge && <span className="inline-block text-[11px] font-medium bg-[#EEEDFE] text-[#3C3489] px-2.5 py-0.5 rounded-full mb-3">{p.badge}</span>}
-              <h3 className="text-base font-medium mb-1">{p.name}</h3>
-              <div className="text-[28px] font-medium my-3">{p.price}<span className="text-sm font-normal text-muted-foreground">{p.unit}</span></div>
-              <p className="text-[13px] text-muted-foreground leading-snug mb-5">{p.desc}</p>
-              <ul className="flex flex-col gap-2 mb-6">
-                {p.features.map((f) => (
-                  <li key={f} className="text-[13px] text-muted-foreground flex items-center gap-2">
-                    <span className="w-3.5 h-3.5 rounded-full bg-[#EEEDFE] shrink-0" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <button className={`w-full py-2.5 rounded-lg text-sm font-medium ${p.featured ? "bg-[#534AB7] text-white" : "bg-transparent border border-border text-foreground"}`}>
-                {p.cta}
-              </button>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <div className="h-px bg-border/40 mx-6 lg:mx-10" />
-
-      {/* ── Testimonials ────────────────────── */}
-      <section className="px-6 lg:px-10 py-[72px] bg-white">
-        <p className="text-xs font-medium text-[#534AB7] uppercase tracking-widest mb-2.5">Vad konsulter säger</p>
-        <h2 className="text-[30px] font-medium leading-tight tracking-tight mb-10">Byggt med, och för, er</h2>
-        <div className="grid md:grid-cols-3 gap-4">
-          {TESTIMONIALS.map((t) => (
-            <div key={t.name} className="bg-white border border-border/40 rounded-xl p-6">
-              <div className="text-[13px] text-[#EF9F27] mb-3">★★★★★</div>
-              <p className="text-sm text-muted-foreground leading-relaxed italic mb-4">"{t.quote}"</p>
-              <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-full bg-[#EEEDFE] flex items-center justify-center text-[13px] font-medium text-[#3C3489]">{t.initials}</div>
-                <div>
-                  <div className="text-[13px] font-medium">{t.name}</div>
-                  <div className="text-xs text-muted-foreground">{t.role}</div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* ── CTA Banner ──────────────────────── */}
-      <div className="mx-4 sm:mx-6 lg:mx-10 mb-[72px] rounded-xl bg-[#1a1545] px-6 lg:px-12 py-14 text-center">
+      {/* ── CTA Banner (above steps) ─────────── */}
+      <div className="mx-4 sm:mx-6 lg:mx-10 my-[72px] rounded-xl bg-[#1a1545] px-6 lg:px-12 py-14 text-center">
         <h2 className="text-[28px] font-medium text-white mb-3">Redo att ta kontroll?</h2>
-        <p className="text-base text-white/60 mb-7">Gratis konto. Inga kreditkort. Kom igång på 30 sekunder.</p>
-        <div className="flex gap-3 justify-center">
+        <p className="text-base text-white/60 mb-7">Compcare är kostnadsfritt för konsulter. För alltid.</p>
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link to="/registrera">
-            <button className="px-8 py-3 bg-[#534AB7] rounded-lg text-white text-[15px] font-medium">Skapa konto gratis</button>
+            <button className="w-full sm:w-auto px-8 py-3 bg-[#534AB7] hover:bg-[#3C3489] rounded-lg text-white text-[15px] font-medium transition-colors">Skapa konto</button>
           </Link>
-          <button className="px-7 py-3 bg-transparent border border-white/30 rounded-lg text-white/80 text-[15px]">Boka en demo</button>
+          <Link to="/v1?start=1">
+            <button className="w-full sm:w-auto px-7 py-3 bg-transparent border border-white/30 hover:bg-white/10 rounded-lg text-white/80 text-[15px] transition-colors">Gör löneanalysen</button>
+          </Link>
         </div>
       </div>
 
@@ -515,9 +439,8 @@ export default function LandingV2() {
       <footer className="px-6 lg:px-10 pt-10 pb-24 border-t border-border/40 bg-white">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
           <div>
-            <div className="flex items-center gap-2 text-lg font-medium tracking-tight mb-2.5">
-              <span className="w-2 h-2 rounded-full bg-[#534AB7]" />
-              CompCare
+            <div className="mb-2.5">
+              <CompcareLogo variant="wordmark" />
             </div>
             <p className="text-[13px] text-muted-foreground leading-relaxed max-w-[220px]">
               Transparent marknadsdata och smarta verktyg för Sveriges läkare och sjuksköterskor.
@@ -526,21 +449,25 @@ export default function LandingV2() {
           <div>
             <h4 className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-3">Verktyg</h4>
             <div className="flex flex-col gap-2 text-[13px] text-muted-foreground">
-              <span>Verify</span><span>Löneanalys</span><span>Fakturagranskning</span><span>Uppdragsprognos</span>
+              <Link to="/dokhus-info" className="hover:text-foreground transition-colors">Dokhus</Link>
+              <Link to="/" className="hover:text-foreground transition-colors">Ersättningsanalys</Link>
+              <Link to="/consultant/fakturakontroll" className="hover:text-foreground transition-colors">Fakturagranskning - Få betalt för all din tid</Link>
+              <Link to="/consultant/forhandla" className="hover:text-foreground transition-colors">Ersättningsanalys</Link>
             </div>
           </div>
           <div>
             <h4 className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-3">Företag</h4>
             <div className="flex flex-col gap-2 text-[13px] text-muted-foreground">
-              <span>Om CompCare</span>
-              <Link to="/integritetspolicy" className="hover:text-foreground">Integritetspolicy</Link>
-              <span>Villkor</span><span>Kontakt</span>
+              <Link to="/vanliga-fragor" className="hover:text-foreground transition-colors">FAQ</Link>
+              <Link to="/integritetspolicy" className="hover:text-foreground transition-colors">Integritetspolicy</Link>
+              <a href="mailto:hej@compcare.se" className="hover:text-foreground transition-colors">Kontakt</a>
             </div>
           </div>
           <div>
-            <h4 className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-3">Gemenskap</h4>
+            <h4 className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-3">För bemanningsföretag</h4>
             <div className="flex flex-col gap-2 text-[13px] text-muted-foreground">
-              <span>Facebook-grupp</span><span>Nyhetsbrev</span><span>API för bolag</span>
+              <Link to="/for-bemanningsforetag" className="hover:text-foreground transition-colors">Översikt</Link>
+              <Link to="/registrera/bemanning" className="hover:text-foreground transition-colors">Skapa byråkonto</Link>
             </div>
           </div>
         </div>

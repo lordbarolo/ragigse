@@ -9,7 +9,7 @@ import { trackEvent } from "@/lib/trackEvent";
 const STEPS = [
   { num: "1", title: "Skapa ditt konto", desc: "Logga in och ange din roll.\nFå tillgång till verktyg och insikter." },
   { num: "2", title: "Ladda upp dina dokument", desc: "Fakturor, tidrapporter, intyg och cv. Allt struktureras automatiskt." },
-  { num: "3", title: "Få insikt och agera", desc: "Löneanalys, missad fakturering, förhandlingsstöd — direkt." },
+  { num: "3", title: "Få insikt och agera", desc: "Ersättningsanalys, missad fakturering, förhandlingsstöd — direkt." },
   { num: "4", title: "Dela på dina villkor", desc: "Skicka en länk när du är redo. Aldrig mer bifogade dokument." },
 ];
 
@@ -34,7 +34,7 @@ export default function Fakturakontroll() {
       {/* Hero — Value prop */}
       <section className="px-6 pt-12 pb-4 md:pt-20 md:pb-6">
         <div className="max-w-3xl mx-auto space-y-4">
-          <p className="text-xs font-bold uppercase tracking-widest text-primary">Fakturagranskning</p>
+          <p className="text-xs font-bold uppercase tracking-widest text-primary">Fakturagranskning - Få betalt för all din tid</p>
           <h1 className="font-display text-3xl md:text-4xl font-extrabold tracking-tight">
             Har du fakturerat för alla timmar du jobbat?
           </h1>

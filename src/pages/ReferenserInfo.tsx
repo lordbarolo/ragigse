@@ -20,7 +20,7 @@ const FEATURES = [
   {
     icon: FileCheck,
     title: "Verifieringsstege",
-    desc: "Varje referens genomgår en verifieringsstege: inskickad → e-post → domän → ping-bekräftad. Ju högre nivå, desto starkare tillit.",
+    desc: "Varje referens genomgår en verifieringsstege: inskickad → e-post → domän → pling-bekräftad. Ju högre nivå, desto starkare tillit.",
   },
   {
     icon: Clock,
@@ -33,7 +33,7 @@ const TRUST_LEVELS = [
   { level: "Submitted", label: "Inskickad", color: "bg-muted-foreground/20" },
   { level: "Email", label: "E-postverifierad", color: "bg-amber-500/20 text-amber-700 dark:text-amber-400" },
   { level: "Domain", label: "Domänverifierad", color: "bg-blue-500/20 text-blue-700 dark:text-blue-400" },
-  { level: "Confirmed", label: "Ping-bekräftad", color: "bg-primary/20 text-primary" },
+  { level: "Confirmed", label: "Pling-bekräftad", color: "bg-primary/20 text-primary" },
 ];
 
 export default function ReferenserInfo() {
@@ -55,7 +55,7 @@ export default function ReferenserInfo() {
             Verifierad tillit
           </div>
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground mb-6">
-            Referenser &<br />Verifikationer
+            Ref ID - Minimera störning<br />av dina referenser
           </h1>
           <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed mb-4">
             Ta kontroll över dina handlingar och intyg. Samla allt i en miljö du äger — dela på dina villkor, spårbart och säkert.
@@ -134,15 +134,15 @@ export default function ReferenserInfo() {
         </div>
       </section>
 
-      {/* Verify section */}
+      {/* Dokhus section */}
       <section className="py-16 px-6">
         <div className="max-w-3xl mx-auto">
-          <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-2">Verify</p>
+          <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-2">Dokhus</p>
           <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground mb-4">
             Eliminera dubbelpresentationer
           </h2>
           <p className="text-muted-foreground mb-6 max-w-lg leading-relaxed">
-            Med Verify kan bemanningsföretag verifiera att du auktoriserat deras presentation — digitalt och säkert. Regioner och uppdragsgivare ser ett kryptografiskt bevis istället för att behöva fråga konsulten direkt.
+            Med Dokhus kan bemanningsföretag verifiera att du auktoriserat deras presentation — digitalt och säkert. Regioner och uppdragsgivare ser ett kryptografiskt samarbetsintyg istället för att behöva fråga konsulten direkt.
           </p>
 
           <div className="bg-card border border-border rounded-2xl p-8 mb-8">

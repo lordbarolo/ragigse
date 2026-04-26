@@ -82,10 +82,22 @@ export function DocumentUpload() {
       const cpId = consultantId || (await resolveConsultantId());
       if (!cpId) throw new Error("Ingen konsultprofil hittades. Skapa din profil först.");
 
-      const filePath = `${user.id}/${selectedType}_${Date.now()}_${file.name}`;
+      // Sanitize filename: Supabase Storage rejects spaces, åäö and most non-ASCII.
+      const safeName = file.name
+        .normalize("NFKD")
+        .replace(/[\u0300-\u036f]/g, "") // strip diacritics
+        .replace(/[^a-zA-Z0-9._-]+/g, "_") // collapse anything else to _
+        .replace(/_+/g, "_")
+        .replace(/^_+|_+$/g, "")
+        .slice(0, 120) || "file";
+
+      const filePath = `${user.id}/${selectedType}_${Date.now()}_${safeName}`;
       const { error: storageError } = await supabase.storage
         .from("verifications")
-        .upload(filePath, file);
+        .upload(filePath, file, {
+          contentType: file.type || "application/octet-stream",
+          upsert: false,
+        });
 
       if (storageError) throw storageError;
 
@@ -102,7 +114,9 @@ export function DocumentUpload() {
       loadDocuments();
     } catch (err: any) {
       console.error("Upload error:", err);
-      toast.error("Uppladdningen misslyckades", { description: err.message });
+      toast.error("Uppladdningen misslyckades", {
+        description: err?.message || "Okänt fel. Försök igen.",
+      });
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";

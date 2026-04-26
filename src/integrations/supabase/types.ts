@@ -98,6 +98,69 @@ export type Database = {
         }
         Relationships: []
       }
+      assignment_feedback: {
+        Row: {
+          created_at: string
+          deviation_notes: string | null
+          dismissed_count: number
+          feedback_stage: string
+          id: string
+          invoice_service_interest: boolean | null
+          matched_contract: boolean | null
+          representation_request_id: string
+          responded_at: string | null
+          snoozed_until: string | null
+          updated_at: string
+          user_id: string
+          was_booked: boolean | null
+        }
+        Insert: {
+          created_at?: string
+          deviation_notes?: string | null
+          dismissed_count?: number
+          feedback_stage: string
+          id?: string
+          invoice_service_interest?: boolean | null
+          matched_contract?: boolean | null
+          representation_request_id: string
+          responded_at?: string | null
+          snoozed_until?: string | null
+          updated_at?: string
+          user_id: string
+          was_booked?: boolean | null
+        }
+        Update: {
+          created_at?: string
+          deviation_notes?: string | null
+          dismissed_count?: number
+          feedback_stage?: string
+          id?: string
+          invoice_service_interest?: boolean | null
+          matched_contract?: boolean | null
+          representation_request_id?: string
+          responded_at?: string | null
+          snoozed_until?: string | null
+          updated_at?: string
+          user_id?: string
+          was_booked?: boolean | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "assignment_feedback_representation_request_id_fkey"
+            columns: ["representation_request_id"]
+            isOneToOne: false
+            referencedRelation: "ref_representation_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "assignment_feedback_representation_request_id_fkey"
+            columns: ["representation_request_id"]
+            isOneToOne: false
+            referencedRelation: "ref_representation_requests_safe"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       assignments: {
         Row: {
           agency_org_id: string | null
@@ -210,6 +273,235 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      avrop_intelligence: {
+        Row: {
+          agency_id: string | null
+          agency_org_id: string | null
+          assignment_id: string | null
+          avrop_received_at: string | null
+          awarded_at: string | null
+          buyer_name: string | null
+          competence: string | null
+          consultant_email: string | null
+          consultant_name: string | null
+          created_at: string
+          customer_type: string | null
+          duration_weeks: number | null
+          extra_fields: Json | null
+          extraction_confidence: Json | null
+          extraction_latency_ms: number | null
+          extraction_model: string | null
+          hours_per_week: number | null
+          housing_included: boolean | null
+          id: string
+          input_type: string | null
+          ob_required: boolean | null
+          on_call_required: boolean | null
+          period_end: string | null
+          period_start: string | null
+          pii_redacted_at: string | null
+          price_max: number | null
+          price_min: number | null
+          price_type: string | null
+          price_unit: string | null
+          raw_image_path: string | null
+          raw_text: string | null
+          region: string | null
+          representation_request_id: string | null
+          requirements: Json | null
+          response_deadline: string | null
+          shifts_count: number | null
+          source: string | null
+          travel_included: boolean | null
+          unit: string | null
+          updated_at: string
+        }
+        Insert: {
+          agency_id?: string | null
+          agency_org_id?: string | null
+          assignment_id?: string | null
+          avrop_received_at?: string | null
+          awarded_at?: string | null
+          buyer_name?: string | null
+          competence?: string | null
+          consultant_email?: string | null
+          consultant_name?: string | null
+          created_at?: string
+          customer_type?: string | null
+          duration_weeks?: number | null
+          extra_fields?: Json | null
+          extraction_confidence?: Json | null
+          extraction_latency_ms?: number | null
+          extraction_model?: string | null
+          hours_per_week?: number | null
+          housing_included?: boolean | null
+          id?: string
+          input_type?: string | null
+          ob_required?: boolean | null
+          on_call_required?: boolean | null
+          period_end?: string | null
+          period_start?: string | null
+          pii_redacted_at?: string | null
+          price_max?: number | null
+          price_min?: number | null
+          price_type?: string | null
+          price_unit?: string | null
+          raw_image_path?: string | null
+          raw_text?: string | null
+          region?: string | null
+          representation_request_id?: string | null
+          requirements?: Json | null
+          response_deadline?: string | null
+          shifts_count?: number | null
+          source?: string | null
+          travel_included?: boolean | null
+          unit?: string | null
+          updated_at?: string
+        }
+        Update: {
+          agency_id?: string | null
+          agency_org_id?: string | null
+          assignment_id?: string | null
+          avrop_received_at?: string | null
+          awarded_at?: string | null
+          buyer_name?: string | null
+          competence?: string | null
+          consultant_email?: string | null
+          consultant_name?: string | null
+          created_at?: string
+          customer_type?: string | null
+          duration_weeks?: number | null
+          extra_fields?: Json | null
+          extraction_confidence?: Json | null
+          extraction_latency_ms?: number | null
+          extraction_model?: string | null
+          hours_per_week?: number | null
+          housing_included?: boolean | null
+          id?: string
+          input_type?: string | null
+          ob_required?: boolean | null
+          on_call_required?: boolean | null
+          period_end?: string | null
+          period_start?: string | null
+          pii_redacted_at?: string | null
+          price_max?: number | null
+          price_min?: number | null
+          price_type?: string | null
+          price_unit?: string | null
+          raw_image_path?: string | null
+          raw_text?: string | null
+          region?: string | null
+          representation_request_id?: string | null
+          requirements?: Json | null
+          response_deadline?: string | null
+          shifts_count?: number | null
+          source?: string | null
+          travel_included?: boolean | null
+          unit?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "avrop_intelligence_agency_org_id_fkey"
+            columns: ["agency_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "avrop_intelligence_representation_request_id_fkey"
+            columns: ["representation_request_id"]
+            isOneToOne: false
+            referencedRelation: "ref_representation_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "avrop_intelligence_representation_request_id_fkey"
+            columns: ["representation_request_id"]
+            isOneToOne: false
+            referencedRelation: "ref_representation_requests_safe"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bankid_signatures: {
+        Row: {
+          completed_at: string | null
+          completion_data: Json | null
+          created_at: string
+          end_user_ip: string | null
+          error_message: string | null
+          expires_at: string | null
+          flow: Database["public"]["Enums"]["bankid_signature_flow"]
+          given_name: string | null
+          hint_code: string | null
+          id: string
+          ocsp_response: string | null
+          order_ref: string
+          personal_number_hash: string | null
+          signature: string | null
+          signer_name: string | null
+          started_at: string
+          status: Database["public"]["Enums"]["bankid_signature_status"]
+          subject_id: string | null
+          subject_type: string
+          surname: string | null
+          updated_at: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          completed_at?: string | null
+          completion_data?: Json | null
+          created_at?: string
+          end_user_ip?: string | null
+          error_message?: string | null
+          expires_at?: string | null
+          flow: Database["public"]["Enums"]["bankid_signature_flow"]
+          given_name?: string | null
+          hint_code?: string | null
+          id?: string
+          ocsp_response?: string | null
+          order_ref: string
+          personal_number_hash?: string | null
+          signature?: string | null
+          signer_name?: string | null
+          started_at?: string
+          status?: Database["public"]["Enums"]["bankid_signature_status"]
+          subject_id?: string | null
+          subject_type: string
+          surname?: string | null
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          completed_at?: string | null
+          completion_data?: Json | null
+          created_at?: string
+          end_user_ip?: string | null
+          error_message?: string | null
+          expires_at?: string | null
+          flow?: Database["public"]["Enums"]["bankid_signature_flow"]
+          given_name?: string | null
+          hint_code?: string | null
+          id?: string
+          ocsp_response?: string | null
+          order_ref?: string
+          personal_number_hash?: string | null
+          signature?: string | null
+          signer_name?: string | null
+          started_at?: string
+          status?: Database["public"]["Enums"]["bankid_signature_status"]
+          subject_id?: string | null
+          subject_type?: string
+          surname?: string | null
+          updated_at?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
       }
       benchmark_rates: {
         Row: {
@@ -346,11 +638,14 @@ export type Database = {
           calloff_date: string | null
           customer: string | null
           customer_type: string | null
+          dedup_hash: string | null
           duration_weeks: number | null
           filled: boolean | null
           id: string
           imported_at: string
           level: string | null
+          partner_share_data: boolean
+          partner_source: string | null
           price_max: number | null
           price_median: number | null
           price_min: number | null
@@ -360,16 +655,20 @@ export type Database = {
           source: string | null
           specialization: string | null
           unit: string | null
+          validation_flags: Json | null
         }
         Insert: {
           calloff_date?: string | null
           customer?: string | null
           customer_type?: string | null
+          dedup_hash?: string | null
           duration_weeks?: number | null
           filled?: boolean | null
           id?: string
           imported_at?: string
           level?: string | null
+          partner_share_data?: boolean
+          partner_source?: string | null
           price_max?: number | null
           price_median?: number | null
           price_min?: number | null
@@ -379,16 +678,20 @@ export type Database = {
           source?: string | null
           specialization?: string | null
           unit?: string | null
+          validation_flags?: Json | null
         }
         Update: {
           calloff_date?: string | null
           customer?: string | null
           customer_type?: string | null
+          dedup_hash?: string | null
           duration_weeks?: number | null
           filled?: boolean | null
           id?: string
           imported_at?: string
           level?: string | null
+          partner_share_data?: boolean
+          partner_source?: string | null
           price_max?: number | null
           price_median?: number | null
           price_min?: number | null
@@ -398,6 +701,7 @@ export type Database = {
           source?: string | null
           specialization?: string | null
           unit?: string | null
+          validation_flags?: Json | null
         }
         Relationships: []
       }
@@ -932,6 +1236,66 @@ export type Database = {
           used?: boolean
           used_at?: string | null
           used_by_report_id?: string | null
+        }
+        Relationships: []
+      }
+      customer_intelligence: {
+        Row: {
+          customer: string
+          generated_at: string
+          history_months: number | null
+          id: string
+          last_calloff_date: string | null
+          profession: string | null
+          region: string | null
+          seasonal_lows: Json | null
+          seasonal_peaks: Json | null
+          trend_label: string | null
+          trend_ratio: number | null
+          vol_2023: number | null
+          vol_2024: number | null
+          vol_2025: number | null
+          vol_2026_ytd: number | null
+          yoy_ratio: number | null
+          ytd_ratio: number | null
+        }
+        Insert: {
+          customer: string
+          generated_at?: string
+          history_months?: number | null
+          id?: string
+          last_calloff_date?: string | null
+          profession?: string | null
+          region?: string | null
+          seasonal_lows?: Json | null
+          seasonal_peaks?: Json | null
+          trend_label?: string | null
+          trend_ratio?: number | null
+          vol_2023?: number | null
+          vol_2024?: number | null
+          vol_2025?: number | null
+          vol_2026_ytd?: number | null
+          yoy_ratio?: number | null
+          ytd_ratio?: number | null
+        }
+        Update: {
+          customer?: string
+          generated_at?: string
+          history_months?: number | null
+          id?: string
+          last_calloff_date?: string | null
+          profession?: string | null
+          region?: string | null
+          seasonal_lows?: Json | null
+          seasonal_peaks?: Json | null
+          trend_label?: string | null
+          trend_ratio?: number | null
+          vol_2023?: number | null
+          vol_2024?: number | null
+          vol_2025?: number | null
+          vol_2026_ytd?: number | null
+          yoy_ratio?: number | null
+          ytd_ratio?: number | null
         }
         Relationships: []
       }
@@ -1773,6 +2137,93 @@ export type Database = {
           },
         ]
       }
+      pipeline_health_logs: {
+        Row: {
+          created_at: string
+          duration_ms: number | null
+          error_message: string | null
+          id: string
+          metadata: Json | null
+          rows_processed: number | null
+          sanity_checks: Json | null
+          status: string
+          task_name: string
+        }
+        Insert: {
+          created_at?: string
+          duration_ms?: number | null
+          error_message?: string | null
+          id?: string
+          metadata?: Json | null
+          rows_processed?: number | null
+          sanity_checks?: Json | null
+          status: string
+          task_name: string
+        }
+        Update: {
+          created_at?: string
+          duration_ms?: number | null
+          error_message?: string | null
+          id?: string
+          metadata?: Json | null
+          rows_processed?: number | null
+          sanity_checks?: Json | null
+          status?: string
+          task_name?: string
+        }
+        Relationships: []
+      }
+      prediction_backtests: {
+        Row: {
+          abs_error: number
+          actual_calloffs: number
+          confidence: string | null
+          customer: string
+          drift_ratio: number | null
+          evaluated_at: string
+          expected_calloffs: number
+          forecast_run_id: string
+          id: string
+          is_drift_alert: boolean
+          month: string
+          profession: string | null
+          region: string | null
+          specialization: string | null
+        }
+        Insert: {
+          abs_error: number
+          actual_calloffs: number
+          confidence?: string | null
+          customer: string
+          drift_ratio?: number | null
+          evaluated_at?: string
+          expected_calloffs: number
+          forecast_run_id: string
+          id?: string
+          is_drift_alert?: boolean
+          month: string
+          profession?: string | null
+          region?: string | null
+          specialization?: string | null
+        }
+        Update: {
+          abs_error?: number
+          actual_calloffs?: number
+          confidence?: string | null
+          customer?: string
+          drift_ratio?: number | null
+          evaluated_at?: string
+          expected_calloffs?: number
+          forecast_run_id?: string
+          id?: string
+          is_drift_alert?: boolean
+          month?: string
+          profession?: string | null
+          region?: string | null
+          specialization?: string | null
+        }
+        Relationships: []
+      }
       price_changes: {
         Row: {
           change_type: string
@@ -1908,6 +2359,191 @@ export type Database = {
         }
         Relationships: []
       }
+      radar_access_log: {
+        Row: {
+          client_ip: string | null
+          created_at: string
+          endpoint: string
+          filters: Json | null
+          id: string
+          row_count: number
+          status: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          client_ip?: string | null
+          created_at?: string
+          endpoint: string
+          filters?: Json | null
+          id?: string
+          row_count: number
+          status?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          client_ip?: string | null
+          created_at?: string
+          endpoint?: string
+          filters?: Json | null
+          id?: string
+          row_count?: number
+          status?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      radar_api_keys: {
+        Row: {
+          can_write: boolean
+          consumer_project: string | null
+          created_at: string
+          created_by: string | null
+          id: string
+          is_active: boolean
+          key_hash: string
+          key_prefix: string
+          last_used_at: string | null
+          max_rows_per_request: number
+          max_write_rows_per_request: number
+          name: string
+          notes: string | null
+          partner_source: string | null
+          rate_limit_per_day: number
+          rate_limit_per_hour: number
+          revoked_at: string | null
+          scopes: string[]
+          share_data: boolean
+          write_per_day: number
+          write_per_hour: number
+        }
+        Insert: {
+          can_write?: boolean
+          consumer_project?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          key_hash: string
+          key_prefix: string
+          last_used_at?: string | null
+          max_rows_per_request?: number
+          max_write_rows_per_request?: number
+          name: string
+          notes?: string | null
+          partner_source?: string | null
+          rate_limit_per_day?: number
+          rate_limit_per_hour?: number
+          revoked_at?: string | null
+          scopes?: string[]
+          share_data?: boolean
+          write_per_day?: number
+          write_per_hour?: number
+        }
+        Update: {
+          can_write?: boolean
+          consumer_project?: string | null
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          is_active?: boolean
+          key_hash?: string
+          key_prefix?: string
+          last_used_at?: string | null
+          max_rows_per_request?: number
+          max_write_rows_per_request?: number
+          name?: string
+          notes?: string | null
+          partner_source?: string | null
+          rate_limit_per_day?: number
+          rate_limit_per_hour?: number
+          revoked_at?: string | null
+          scopes?: string[]
+          share_data?: boolean
+          write_per_day?: number
+          write_per_hour?: number
+        }
+        Relationships: []
+      }
+      radar_api_log: {
+        Row: {
+          api_key_id: string | null
+          client_ip: string | null
+          created_at: string
+          endpoint: string
+          id: string
+          query_params: Json | null
+          row_count: number | null
+          status: string
+          user_agent: string | null
+        }
+        Insert: {
+          api_key_id?: string | null
+          client_ip?: string | null
+          created_at?: string
+          endpoint: string
+          id?: string
+          query_params?: Json | null
+          row_count?: number | null
+          status: string
+          user_agent?: string | null
+        }
+        Update: {
+          api_key_id?: string | null
+          client_ip?: string | null
+          created_at?: string
+          endpoint?: string
+          id?: string
+          query_params?: Json | null
+          row_count?: number | null
+          status?: string
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "radar_api_log_api_key_id_fkey"
+            columns: ["api_key_id"]
+            isOneToOne: false
+            referencedRelation: "radar_api_keys"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      radar_import_log: {
+        Row: {
+          created_at: string
+          error_message: string | null
+          id: string
+          row_count: number
+          status: string
+          table_name: string
+          truncated: boolean
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          row_count: number
+          status?: string
+          table_name: string
+          truncated?: boolean
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          error_message?: string | null
+          id?: string
+          row_count?: number
+          status?: string
+          table_name?: string
+          truncated?: boolean
+          user_id?: string
+        }
+        Relationships: []
+      }
       radar_notifications: {
         Row: {
           created_at: string
@@ -1996,6 +2632,94 @@ export type Database = {
           id?: string
         }
         Relationships: []
+      }
+      rate_verification_baseline: {
+        Row: {
+          created_at: string
+          id: string
+          source_note: string | null
+          timpris_kund: number
+          typ: string
+          version_id: string
+          yrkeskategori: string
+          zon: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          source_note?: string | null
+          timpris_kund: number
+          typ: string
+          version_id: string
+          yrkeskategori: string
+          zon: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          source_note?: string | null
+          timpris_kund?: number
+          typ?: string
+          version_id?: string
+          yrkeskategori?: string
+          zon?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rate_verification_baseline_version_id_fkey"
+            columns: ["version_id"]
+            isOneToOne: false
+            referencedRelation: "contract_versions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rate_verification_runs: {
+        Row: {
+          baseline_checksum: string | null
+          current_checksum: string | null
+          diff_json: Json | null
+          error_message: string | null
+          id: string
+          mismatch_count: number
+          run_at: string
+          status: string
+          total_rows: number
+          version_id: string | null
+        }
+        Insert: {
+          baseline_checksum?: string | null
+          current_checksum?: string | null
+          diff_json?: Json | null
+          error_message?: string | null
+          id?: string
+          mismatch_count?: number
+          run_at?: string
+          status?: string
+          total_rows?: number
+          version_id?: string | null
+        }
+        Update: {
+          baseline_checksum?: string | null
+          current_checksum?: string | null
+          diff_json?: Json | null
+          error_message?: string | null
+          id?: string
+          mismatch_count?: number
+          run_at?: string
+          status?: string
+          total_rows?: number
+          version_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rate_verification_runs_version_id_fkey"
+            columns: ["version_id"]
+            isOneToOne: false
+            referencedRelation: "contract_versions"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       rates: {
         Row: {
@@ -2478,52 +3202,82 @@ export type Database = {
         Row: {
           agency_id: string
           agency_name: string
-          assignment_id: string
+          agency_org_number: string | null
+          assignment_id: string | null
           bankid_ref: string | null
+          competence: string | null
           consultant_email: string
+          consultant_name: string | null
           consultant_user_id: string | null
           created_at: string
+          email_sent_at: string | null
+          email_status: string | null
           id: string
           organization_id: string | null
           payload: Json | null
+          period_end: string | null
+          period_start: string | null
           region: string
+          response_deadline: string | null
           secret_token: string
           signed_at: string | null
           status: Database["public"]["Enums"]["ref_representation_status"]
+          superseded_by: string | null
+          unit: string | null
           verification_id: string | null
         }
         Insert: {
           agency_id: string
           agency_name?: string
-          assignment_id: string
+          agency_org_number?: string | null
+          assignment_id?: string | null
           bankid_ref?: string | null
+          competence?: string | null
           consultant_email: string
+          consultant_name?: string | null
           consultant_user_id?: string | null
           created_at?: string
+          email_sent_at?: string | null
+          email_status?: string | null
           id?: string
           organization_id?: string | null
           payload?: Json | null
+          period_end?: string | null
+          period_start?: string | null
           region: string
+          response_deadline?: string | null
           secret_token?: string
           signed_at?: string | null
           status?: Database["public"]["Enums"]["ref_representation_status"]
+          superseded_by?: string | null
+          unit?: string | null
           verification_id?: string | null
         }
         Update: {
           agency_id?: string
           agency_name?: string
-          assignment_id?: string
+          agency_org_number?: string | null
+          assignment_id?: string | null
           bankid_ref?: string | null
+          competence?: string | null
           consultant_email?: string
+          consultant_name?: string | null
           consultant_user_id?: string | null
           created_at?: string
+          email_sent_at?: string | null
+          email_status?: string | null
           id?: string
           organization_id?: string | null
           payload?: Json | null
+          period_end?: string | null
+          period_start?: string | null
           region?: string
+          response_deadline?: string | null
           secret_token?: string
           signed_at?: string | null
           status?: Database["public"]["Enums"]["ref_representation_status"]
+          superseded_by?: string | null
+          unit?: string | null
           verification_id?: string | null
         }
         Relationships: [
@@ -2532,6 +3286,20 @@ export type Database = {
             columns: ["organization_id"]
             isOneToOne: false
             referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ref_representation_requests_superseded_by_fkey"
+            columns: ["superseded_by"]
+            isOneToOne: false
+            referencedRelation: "ref_representation_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ref_representation_requests_superseded_by_fkey"
+            columns: ["superseded_by"]
+            isOneToOne: false
+            referencedRelation: "ref_representation_requests_safe"
             referencedColumns: ["id"]
           },
         ]
@@ -2867,6 +3635,48 @@ export type Database = {
           },
         ]
       }
+      representation_events: {
+        Row: {
+          actor: string | null
+          created_at: string
+          event_type: string
+          id: string
+          metadata: Json | null
+          representation_request_id: string
+        }
+        Insert: {
+          actor?: string | null
+          created_at?: string
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          representation_request_id: string
+        }
+        Update: {
+          actor?: string | null
+          created_at?: string
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          representation_request_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "representation_events_representation_request_id_fkey"
+            columns: ["representation_request_id"]
+            isOneToOne: false
+            referencedRelation: "ref_representation_requests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "representation_events_representation_request_id_fkey"
+            columns: ["representation_request_id"]
+            isOneToOne: false
+            referencedRelation: "ref_representation_requests_safe"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       role_aliases: {
         Row: {
           alias: string
@@ -3145,6 +3955,69 @@ export type Database = {
         }
         Relationships: []
       }
+      uppdragsradar_predictions: {
+        Row: {
+          confidence: string | null
+          customer: string
+          expected_calloffs: number | null
+          expected_calloffs_display: number | null
+          forecast_run_id: string
+          generated_at: string
+          id: string
+          is_seasonal_peak: boolean | null
+          is_trend_break: boolean | null
+          is_under_review: boolean
+          month: string
+          profession: string | null
+          region: string | null
+          seasonal_index: number | null
+          specialization: string | null
+          trend_ratio: number | null
+          yoy_ratio: number | null
+          ytd_ratio: number | null
+        }
+        Insert: {
+          confidence?: string | null
+          customer: string
+          expected_calloffs?: number | null
+          expected_calloffs_display?: number | null
+          forecast_run_id?: string
+          generated_at?: string
+          id?: string
+          is_seasonal_peak?: boolean | null
+          is_trend_break?: boolean | null
+          is_under_review?: boolean
+          month: string
+          profession?: string | null
+          region?: string | null
+          seasonal_index?: number | null
+          specialization?: string | null
+          trend_ratio?: number | null
+          yoy_ratio?: number | null
+          ytd_ratio?: number | null
+        }
+        Update: {
+          confidence?: string | null
+          customer?: string
+          expected_calloffs?: number | null
+          expected_calloffs_display?: number | null
+          forecast_run_id?: string
+          generated_at?: string
+          id?: string
+          is_seasonal_peak?: boolean | null
+          is_trend_break?: boolean | null
+          is_under_review?: boolean
+          month?: string
+          profession?: string | null
+          region?: string | null
+          seasonal_index?: number | null
+          specialization?: string | null
+          trend_ratio?: number | null
+          yoy_ratio?: number | null
+          ytd_ratio?: number | null
+        }
+        Relationships: []
+      }
       work_patterns: {
         Row: {
           consultant_id: string
@@ -3214,6 +4087,66 @@ export type Database = {
       }
     }
     Views: {
+      calloff_imports_public: {
+        Row: {
+          calloff_date: string | null
+          customer: string | null
+          customer_type: string | null
+          duration_weeks: number | null
+          filled: boolean | null
+          id: string | null
+          imported_at: string | null
+          level: string | null
+          partner_share_data: boolean | null
+          partner_source: string | null
+          price_max: number | null
+          price_median: number | null
+          price_min: number | null
+          region: string | null
+          role: string | null
+          specialization: string | null
+          unit: string | null
+        }
+        Insert: {
+          calloff_date?: string | null
+          customer?: string | null
+          customer_type?: string | null
+          duration_weeks?: number | null
+          filled?: boolean | null
+          id?: string | null
+          imported_at?: string | null
+          level?: string | null
+          partner_share_data?: boolean | null
+          partner_source?: string | null
+          price_max?: number | null
+          price_median?: number | null
+          price_min?: number | null
+          region?: string | null
+          role?: string | null
+          specialization?: string | null
+          unit?: string | null
+        }
+        Update: {
+          calloff_date?: string | null
+          customer?: string | null
+          customer_type?: string | null
+          duration_weeks?: number | null
+          filled?: boolean | null
+          id?: string | null
+          imported_at?: string | null
+          level?: string | null
+          partner_share_data?: boolean | null
+          partner_source?: string | null
+          price_max?: number | null
+          price_median?: number | null
+          price_min?: number | null
+          region?: string | null
+          role?: string | null
+          specialization?: string | null
+          unit?: string | null
+        }
+        Relationships: []
+      }
       ref_pings_safe: {
         Row: {
           confirmed_until: string | null
@@ -3438,6 +4371,25 @@ export type Database = {
       }
     }
     Functions: {
+      aggregate_calloff_monthly: {
+        Args: { _months_back?: number }
+        Returns: {
+          calloff_count: number
+          customer: string
+          region: string
+          role: string
+          specialization: string
+          year_month: string
+        }[]
+      }
+      approve_org_membership_request: {
+        Args: { _request_id: string }
+        Returns: undefined
+      }
+      create_org_with_admin: {
+        Args: { _name: string; _org_number?: string; _type?: string }
+        Returns: string
+      }
       delete_email: {
         Args: { message_id: number; queue_name: string }
         Returns: boolean
@@ -3458,6 +4410,10 @@ export type Database = {
           token: string
         }[]
       }
+      is_org_admin: {
+        Args: { _org_id: string; _user_id: string }
+        Returns: boolean
+      }
       move_to_dlq: {
         Args: {
           dlq_name: string
@@ -3475,6 +4431,7 @@ export type Database = {
           read_ct: number
         }[]
       }
+      redact_avrop_intelligence_pii: { Args: never; Returns: number }
       ref_calculate_profile_status: {
         Args: { p_profile_id: string }
         Returns: Json
@@ -3580,6 +4537,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      reject_org_membership_request: {
+        Args: { _request_id: string }
+        Returns: undefined
+      }
       top_kommuner: {
         Args: { lim?: number }
         Returns: {
@@ -3589,8 +4550,20 @@ export type Database = {
       }
     }
     Enums: {
+      bankid_signature_flow: "verify_representation"
+      bankid_signature_status:
+        | "pending"
+        | "complete"
+        | "failed"
+        | "cancelled"
+        | "expired"
       geography_type: "nation" | "region" | "zone" | "municipality"
-      ref_app_role: "individual" | "reference_giver" | "client" | "admin"
+      ref_app_role:
+        | "individual"
+        | "reference_giver"
+        | "client"
+        | "admin"
+        | "agency"
       ref_ping_status: "sent" | "confirmed" | "denied" | "expired" | "dismissed"
       ref_reference_status: "pending" | "active" | "revoked" | "expired"
       ref_representation_status: "pending" | "signed" | "declined" | "expired"
@@ -3721,8 +4694,22 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
+      bankid_signature_flow: ["verify_representation"],
+      bankid_signature_status: [
+        "pending",
+        "complete",
+        "failed",
+        "cancelled",
+        "expired",
+      ],
       geography_type: ["nation", "region", "zone", "municipality"],
-      ref_app_role: ["individual", "reference_giver", "client", "admin"],
+      ref_app_role: [
+        "individual",
+        "reference_giver",
+        "client",
+        "admin",
+        "agency",
+      ],
       ref_ping_status: ["sent", "confirmed", "denied", "expired", "dismissed"],
       ref_reference_status: ["pending", "active", "revoked", "expired"],
       ref_representation_status: ["pending", "signed", "declined", "expired"],

@@ -12,7 +12,6 @@ import Navbar from "@/components/Navbar";
 import ShareButton from "@/components/ShareButton";
 import type { ReportData } from "@/shared/types";
 
-import PermanentTrackContent from "@/components/report/PermanentTrackContent";
 import ConsultantTrackContent from "@/components/report/ConsultantTrackContent";
 
 
@@ -92,7 +91,6 @@ export default function Report() {
   }
 
   const r = report.result_json;
-  const isPermanentTrack = r.track === "permanent";
   const isEmployee = report.employment_type === "anstalld";
   const isFriendCoupon = getCouponCode()?.toLowerCase() === "vänner500";
 
@@ -114,7 +112,7 @@ export default function Report() {
           <div className="flex items-center gap-2 text-sm opacity-80">
             <span>{report.kommun}{report.user_zone ? ` (${report.user_zone})` : ""}</span>
             <span className="w-1 h-1 rounded-full bg-current opacity-40" />
-            <span>{isPermanentTrack ? "Fast tjänst" : "Konsultuppdrag"}</span>
+            <span>Konsultuppdrag</span>
             <span className="w-1 h-1 rounded-full bg-current opacity-40" />
             <span>{isEmployee ? "Anställd" : "Eget bolag"}</span>
           </div>
@@ -123,31 +121,20 @@ export default function Report() {
 
       <main className="px-4 py-6 max-w-lg mx-auto space-y-2.5">
 
-        {isPermanentTrack ? (
-          <PermanentTrackContent
-            r={r}
-            isFullAccess={true}
-            occupation={report.occupation}
-            kommun={report.kommun}
-            leadId={report.lead_id}
-            userZone={report.user_zone}
-          />
-        ) : (
-          <ConsultantTrackContent
-            r={r}
-            isFullAccess={true}
-            isEmployee={isEmployee}
-            occupation={report.occupation}
-            kommun={report.kommun}
-            zoneComparisons={report.zone_comparisons}
-            userZone={report.user_zone}
-            registerSectionRef={registerSectionRef}
-            leadId={report.lead_id}
-            email={report.email}
-            reportId={report.id}
-            priceHistory={report.price_history}
-          />
-        )}
+        <ConsultantTrackContent
+          r={r}
+          isFullAccess={true}
+          isEmployee={isEmployee}
+          occupation={report.occupation}
+          kommun={report.kommun}
+          zoneComparisons={report.zone_comparisons}
+          userZone={report.user_zone}
+          registerSectionRef={registerSectionRef}
+          leadId={report.lead_id}
+          email={report.email}
+          reportId={report.id}
+          priceHistory={report.price_history}
+        />
 
 
 

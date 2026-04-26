@@ -7,9 +7,9 @@ const CARDS = [
   },
   {
     icon: "📊",
-    title: "SCB & Medlingsinstitutet",
-    desc: "Lönestatistik (p25/p50/p75) per yrkeskategori och sektor. Samma data som arbetsgivare och fackförbund använder i löneförhandlingar.",
-    source: "Källa: Medlingsinstitutet 2024",
+    title: "Branschens marginalmodell",
+    desc: "Bemanningsbranschens marginal ligger normalt på 10–15 % av kundpriset. Vi använder 85–90 % som ditt spann (×1,42 sociala avgifter för anställda).",
+    source: "Källa: branschpraxis 2026",
   },
   {
     icon: "🗺",

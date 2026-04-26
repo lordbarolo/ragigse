@@ -1,0 +1,1 @@
+CREATE POLICY "temp_public_read_imports_logos" ON storage.objects FOR SELECT USING (bucket_id = 'imports' AND (name LIKE 'logo%' OR name LIKE 'favicon%' OR name LIKE 'apple-touch%' OR name LIKE 'android-chrome%' OR name LIKE 'mstile%'));

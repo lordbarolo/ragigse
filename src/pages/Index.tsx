@@ -4,7 +4,10 @@ import { ShieldCheck, FileSearch, MessageSquare, ArrowRight, CheckCircle2 } from
 import { Button } from "@/components/ui/button";
 import CompcareLogo from "@/components/CompcareLogo";
 import ThemeToggle from "@/components/ThemeToggle";
+import HeroRateLookup from "@/components/landing/HeroRateLookup";
+import MissionSection from "@/components/landing/MissionSection";
 import { trackEvent } from "@/lib/trackEvent";
+import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 
 const platformJsonLd = {
   "@context": "https://schema.org",
@@ -30,8 +33,8 @@ const platformJsonLd = {
 const PILLARS = [
   {
     question: "Tjänar jag rätt?",
-    title: "Löneanalys",
-    description: "Jämför din ersättning med SKR:s ramavtalspriser och SCB:s lönestatistik i realtid. 290 kommuner, alla specialiseringar.",
+    title: "Ersättningsanalys",
+    description: "Jämför din ersättning med SKR:s ramavtalspriser i realtid. 290 kommuner, alla specialiseringar — för konsulter och de som vill bli det.",
     icon: ShieldCheck,
     cta: "Analysera din lön",
     href: "/consultant/salary-check",
@@ -39,7 +42,7 @@ const PILLARS = [
   },
   {
     question: "Fakturerar jag rätt?",
-    title: "Fakturakontroll",
+    title: "Fakturagranskning - Få betalt för all din tid",
     description: "AI-assistenten granskar dina fakturor retroaktivt för att se om du missat att fakturera för redan arbetad tid. Finns det avvikelser hittar vi det.",
     icon: FileSearch,
     cta: "Granska fakturor",
@@ -59,13 +62,17 @@ const PILLARS = [
 
 const TRUST_POINTS = [
   "Baserat på SKR:s officiella ramavtal 2026",
-  "Lönestatistik från Medlingsinstitutet",
+  "Branschens marginalmodell (85–90 %)",
   "290 kommuner, alla specialiseringar",
-  
+
 ];
 
 export default function Index() {
-  useEffect(() => { trackEvent("b2b_landing_viewed"); }, []);
+  useTimeOnPage("landing");
+  useEffect(() => {
+    trackEvent("landing_viewed");
+    trackEvent("b2b_landing_viewed");
+  }, []);
 
   return (
     <div className="min-h-screen bg-background">
@@ -87,42 +94,24 @@ export default function Index() {
       {/* ── Hero ───────────────────────────────────────── */}
       <section className="hero-dark relative pt-16 pb-28 px-6" aria-labelledby="hero-heading">
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <h1 id="hero-heading" className="font-bold mb-6 tracking-tight" style={{ fontSize: "clamp(2.5rem, 7vw, 5.5rem)" }}>
-            För vårdens konsulter
+          <h1 id="hero-heading" className="font-bold mb-6 tracking-tight text-5xl leading-[1.1]">
+            Förhandla utifrån data,<br />inte magkänsla
           </h1>
 
-          <p className="text-hero-foreground/60 text-xl md:text-2xl max-w-2xl mx-auto mb-4 leading-relaxed">
-            Marknadsinsikter och smarta tjänster för läkare och sjuksköterskor.
+          <p className="text-hero-foreground/70 text-lg md:text-2xl max-w-2xl mx-auto mb-10 leading-relaxed">
+            Vi vet vad du borde tjäna och hur du når dit.
           </p>
 
-          <p className="text-hero-foreground/60 text-base md:text-lg max-w-2xl mx-auto mb-2 leading-relaxed">
-            Våra AI-assistenter har läst över 20&nbsp;000 avtal och avrop så att du ska slippa.
-          </p>
-          <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-10">
-            {["Personlig rådgivare", "Tillgänglig dygnet runt", "Fråga vad du vill om branschen"].map((point) => (
-              <span key={point} className="flex items-center gap-2 text-hero-foreground/60 text-sm md:text-base">
-                <span className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
-                {point}
-              </span>
-            ))}
-          </div>
-
-          <div className="flex flex-col items-center gap-4">
-            <Link to="/consultant/forhandla">
-              <Button size="lg" className="gap-2 shadow-lg shadow-primary/20">
-                <MessageSquare className="w-4 h-4" /> Fråga Löneassistenten
-              </Button>
-            </Link>
-            <p className="max-w-md text-xs text-hero-foreground">
-              Svaren grundas på SKR:s ramavtalspriser 2026, lönestatistik, avrop från 21 regioner och avtalsdata.
-            </p>
-          </div>
+          <HeroRateLookup />
         </div>
         <div className="absolute bottom-0 left-0 right-0 h-[200px] bg-gradient-to-t from-background to-transparent" />
       </section>
 
+      {/* ── Mission Section (tillfälligt borttagen) ────── */}
+      {/* <MissionSection /> */}
+
       {/* ── Three Pillars ──────────────────────────────── */}
-      <section className="max-w-6xl mx-auto px-6 -mt-12 relative z-20 pb-20" aria-label="Tjänster">
+      <section className="max-w-6xl mx-auto px-6 pt-8 relative z-20 pb-20" aria-label="Tjänster">
         <div className="grid md:grid-cols-3 gap-6">
           {PILLARS.map((pillar) => (
             <article
@@ -167,7 +156,8 @@ export default function Index() {
           <div className="flex gap-6 text-sm text-muted-foreground">
             <Link to="/vanliga-fragor" className="hover:text-foreground transition-colors">FAQ</Link>
             <Link to="/integritetspolicy" className="hover:text-foreground transition-colors">Integritetspolicy</Link>
-            <Link to="/verify-info" className="hover:text-foreground transition-colors">Verify</Link>
+            <Link to="/dokhus-info" className="hover:text-foreground transition-colors">Dokhus</Link>
+            <Link to="/referenser-info" className="hover:text-foreground transition-colors">Ref ID</Link>
           </div>
           <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} CompCare</p>
         </div>

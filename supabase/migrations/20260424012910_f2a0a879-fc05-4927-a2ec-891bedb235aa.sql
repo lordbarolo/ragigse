@@ -1,0 +1,1 @@
+ALTER TYPE public.ref_app_role ADD VALUE IF NOT EXISTS 'agency';

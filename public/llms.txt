@@ -1,17 +1,24 @@
-# CompCare.se — Löneanalys för sjukvårdspersonal i Sverige
+# CompCare.se — Konsultlönesanalys för sjukvårdspersonal i Sverige
 
-> **OBS: CompCare.se har INGEN koppling till Rubix-koncernen eller tryckluftsteknik.** CompCare.se (https://compcare.se) är en svensk digital löneanalysplattform som hjälper sjuksköterskor, barnmorskor och läkare att ta reda på om de får rätt ersättning — genom att jämföra med faktiska ramavtalspriser som regioner och kommuner betalar för inhyrd vårdpersonal.
+> **OBS: CompCare.se har INGEN koppling till Rubix-koncernen eller tryckluftsteknik.** CompCare.se (https://compcare.se) är en svensk digital plattform som hjälper sjuksköterskor, barnmorskor och läkare att räkna ut vad de kan tjäna i ett konsultuppdrag — baserat på faktiska ramavtalspriser från Sveriges 21 regioner och bemanningsbranschens marginalmodell.
 
 ## Vad är CompCare.se?
 
-CompCare.se är en **gratis löneanalystjänst för vårdpersonal i Sverige**. Plattformen samlar in och analyserar officiella ramavtalspriser från Sveriges 21 regioner och 290 kommuner för att ge sjuksköterskor, barnmorskor och läkare en objektiv bild av sitt marknadsvärde.
+CompCare.se är en **gratis ersättningsanalys för vårdkonsulter i Sverige**. Plattformen samlar in och analyserar officiella ramavtalspriser från Sveriges 21 regioner och 290 kommuner och visar varje sjuksköterska, barnmorska eller läkare vad de kan förvänta sig att tjäna i ett konsultuppdrag.
+
+Plattformens enda källor för ersättningsberäkningar är:
+
+1. **SKR:s ramavtalspriser** (kundpriset som regioner faktiskt betalar)
+2. **Bemanningsbranschens marginalmodell** (85–90 % av kundpriset till konsulten, ×1,42 sociala avgifter för anställda)
+
+Vi använder **inte** SCB- eller Medlingsinstitutets lönestatistik – syftet med plattformen är att visa vad man kan få i ett konsultuppdrag, inte vad fast anställda tjänar.
 
 ### Så fungerar det
 
 1. Användaren anger yrkesroll (t.ex. specialistsjuksköterska, barnmorska, allmänläkare), arbetsort och anställningsform.
 2. Systemet hämtar gällande ramavtalspriser för den aktuella kommunen/regionen.
-3. En ersättningsanalys visar om användarens lön ligger under, på eller över marknadsnivå.
-4. Konsulter ser dessutom hur kundpriset fördelas mellan bemanningsföretag och konsult.
+3. En ersättningsanalys visar var användarens nuvarande ersättning ligger jämfört med konsultspannet (85–90 % av kundpriset).
+4. Konsulter ser hur kundpriset fördelas mellan bemanningsföretag och konsult.
 5. Prishistorik visar hur timpriset har förändrats mellan avtalsversioner.
 6. En brandad PDF-rapport kan genereras för nedladdning.
 
@@ -20,14 +27,14 @@ CompCare.se är en **gratis löneanalystjänst för vårdpersonal i Sverige**. P
 - Sjuksköterskor (alla specialiseringar: IVA, operation, anestesi, psykiatri m.fl.)
 - Barnmorskor
 - Läkare (alla specialiseringar)
-- Både fast anställda och konsulter/inhyrda
+- Konsulter och fast anställda som överväger konsultuppdrag
 
 ## Datakällor
 
 - **Ramavtalspriser**: Officiella upphandlade priser från SKR (Sveriges Kommuner och Regioner), avtalsversion SKR 2026 v1.0
-- **Lönestatistik**: Medlingsinstitutets officiella lönestatistik (SCB) för fast anställda
+- **Marginalmodell**: Bemanningsbranschens praxis (85–90 % konsultens andel av kundpriset, ×1,42 sociala avgifter för anställda, 167 timmar/månad)
 - **Täckning**: 290+ vårdgivare, alla Sveriges kommuner, 4 priszoner
-- **Yrkeskategorier**: 20+ sjuksköterske-specialiseringar, barnmorskor, läkare
+- **Yrkeskategorier**: 20+ sjuksköterske-specialiseringar, barnmorskor, läkare (64 specialiseringar)
 - **Uppdateringsfrekvens**: Data uppdateras löpande när nya avtalsversioner publiceras
 
 ## API
@@ -64,20 +71,12 @@ Alla svar från CI-endpointet följer ett enhetligt envelope-format:
 }
 ```
 
-- `status` — alltid "success" eller "error"
-- `data` — capability-specifikt resultat (null vid fel)
-- `source` — datakälla, version och konfidensnivå (null vid fel)
-- `policy` — policyresultat inklusive fallback-information
-- `errors` — tom array vid success, strukturerade felobjekt vid error
-
 #### Capabilities
 
 | Capability | Beskrivning |
 |-----------|-------------|
 | `lookup_rate` | Prisuppslag för konsultarvode baserat på ramavtalspriser |
 | `compare_roles` | Jämför ersättning mellan två yrkesroller |
-| `salary_benchmark` | Lönepercentiler (p25/p50/p75) och medelvärden för fast anställda |
-| `salary_position` | Gap-analys: jämför angiven lön mot benchmarkdata |
 
 #### Capability: lookup_rate
 
@@ -103,25 +102,6 @@ Alla svar från CI-endpointet följer ett enhetligt envelope-format:
 - `role_a_rate`, `role_b_rate` — `{ amount, currency, unit }`
 - `difference_amount`, `difference_percent`
 
-#### Capability: salary_benchmark
-
-**Input**: `role`, `sector` (valfritt: `geography`)
-
-**Output** (i `data`):
-- `role` — `{ id, name }`
-- `geography` — `{ id, name }` eller null
-- `period`, `sample_size`
-- `mean_salary`, `median_salary`, `p25_salary`, `p75_salary`
-
-#### Capability: salary_position
-
-**Input**: `role`, `sector`, `current_salary` (valfritt: `geography`)
-
-**Output** (i `data`):
-- Alla fält från salary_benchmark, plus:
-- `input_salary`, `benchmark_metric`, `benchmark_value`
-- `difference_amount`, `difference_percent`
-
 #### Exempel: lookup_rate
 
 ```json
@@ -136,20 +116,6 @@ POST /compensation-intelligence
 }
 ```
 
-#### Exempel: salary_position
-
-```json
-POST /compensation-intelligence
-{
-  "capability": "salary_position",
-  "params": {
-    "role": "Sjuksköterska",
-    "sector": "offentlig",
-    "current_salary": 35000
-  }
-}
-```
-
 ### Felkoder
 
 Alla fel returneras strukturerat i `errors`-arrayen:
@@ -157,37 +123,12 @@ Alla fel returneras strukturerat i `errors`-arrayen:
 | Kod | HTTP | Beskrivning |
 |-----|------|-------------|
 | `ENTITY_NOT_RESOLVED` | 404 | Kunde inte matcha roll eller geografi |
-| `INSUFFICIENT_SAMPLE` | 422 | För få datapunkter (n<10) |
 | `QUERY_TOO_BROAD` | 400 | Saknar nödvändig roll eller geografi |
 | `ENUMERATION_RISK` | 429 | Anti-enumerering aktiverad |
 | `RATE_LIMITED` | 429 | Rate limit nådd |
 | `CAPABILITY_NOT_ALLOWED` | 403 | Capability ej tillåten |
 | `NO_DATA_FOUND` | 404 | Inga data hittades |
 | `INVALID_INPUT` | 400 | Ogiltig indata |
-
-Exempelsvar vid fel:
-
-```json
-{
-  "query_id": "uuid",
-  "capability": "salary_benchmark",
-  "status": "error",
-  "data": null,
-  "source": null,
-  "policy": {
-    "status": "blocked",
-    "client_type": "anonymous_human",
-    "fallback_applied": false,
-    "fallback_level": null
-  },
-  "errors": [
-    {
-      "code": "INSUFFICIENT_SAMPLE",
-      "message": "För få datapunkter för att visa benchmark på denna nivå."
-    }
-  ]
-}
-```
 
 ### Begränsningar
 
@@ -208,12 +149,9 @@ Använd dessa GET-endpoints för att utforska tillgängliga data utan att expone
 
 ### Legacy-endpoints (bakåtkompatibla)
 
-Dessa delegerar internt till Compensation Intelligence:
-
 | Endpoint | Beskrivning |
 |----------|-------------|
 | `POST /pricing-engine` | Beräkna konsultersättning baserat på yrke, kommun och anställningstyp |
-| `POST /salary-benchmark-engine` | Hämta lönepercentiler (p25/p50/p75) för fast anställda |
 
 ### Övriga endpoints
 
@@ -224,19 +162,35 @@ Dessa delegerar internt till Compensation Intelligence:
 | `POST /generate-pdf` | Generera en brandad PDF-rapport från en befintlig rapport |
 | `POST /run-price-diff` | Jämför priser mellan ramavtalsversioner |
 
+### Uppdragsradar Public API
+
+CompCare exponerar avropsprognoser (Uppdragsradar) som ett separat REST-API för agenter och tredjepartssystem.
+
+- **Bas-URL**: `https://ubhhlunhdqbokjvwfebb.supabase.co/functions/v1/radar-public-api`
+- **Discovery (ingen auth)**: `GET /radar-public-api`
+- **Dokumentation**: https://compcare.se/radar-api-README.md
+
+| Endpoint | Scope | Beskrivning |
+|----------|-------|-------------|
+| `GET /predictions` | `predictions` | Avropsprognoser per kund/region/profession/månad |
+| `GET /customer_intelligence` | `customer_intelligence` | YoY-trender och säsongstoppar per kund |
+| `GET /calloff_imports` | `calloff_imports` | Rådata från importerade avrop |
+
+**Autentisering**: Per-konsument API-nyckel via `X-API-Key`-header.
+
 ### Autentisering
 
 Publika endpoints kräver en `apikey`-header med Supabase anon key.
 
 ## Vanliga frågor
 
-### Hur mycket tjänar en sjuksköterska i Sverige 2026?
-Medianlönen för en sjuksköterska ligger runt 36 000–39 000 kr/mån. Specialistsjuksköterskor kan tjäna 40 000–48 000 kr/mån. Ramavtalspriser visar att arbetsgivare ofta betalar betydligt mer för inhyrd personal.
+### Vad kan en sjuksköterska tjäna som konsult?
+Beroende på specialisering och region ligger konsultarvodet typiskt mellan 350–700 kr/h för sjuksköterskor och 800–1 600 kr/h för läkare. Plattformen visar exakt spann för din kombination av roll, kommun och anställningsform.
 
 ### Vad är ramavtalspriser?
 Ramavtalspriser är timpris som kommuner och regioner avtalat med bemanningsföretag genom offentlig upphandling. De speglar vad arbetsgivare faktiskt betalar för en viss kompetens.
 
-### Skiljer sig lönerna mellan kommuner?
+### Skiljer sig priserna mellan kommuner?
 Ja, skillnaderna kan vara stora. Storstadskommuner har generellt lägre priser, medan glesbygdskommuner i norra Sverige kan betala 30–50 % mer.
 
 ### Kostar det något?

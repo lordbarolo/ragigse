@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, ArrowLeft, FileText, Clock, TrendingUp, MessageSquare, Link2 } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 import { trackEvent } from "@/lib/trackEvent";
+import posthog from "@/lib/posthog";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -20,11 +21,13 @@ export default function Login() {
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    trackEvent("login_clicked", { source: "login_page" });
 
     const { error, data } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
+      trackEvent("login_failed", {
+        error_code: error.message.includes("Invalid") ? "invalid_credentials" : "other",
+      });
       toast({
         title: "Inloggning misslyckades",
         description: error.message === "Invalid login credentials"
@@ -38,8 +41,9 @@ export default function Login() {
 
     toast({ title: "Inloggad!" });
 
-    // Redirect based on role
+    // Determine role
     const userId = data.user?.id;
+    let userRole: string = "individual";
     if (userId) {
       const { data: roleData } = await supabase
         .from("ref_user_roles")
@@ -47,11 +51,23 @@ export default function Login() {
         .eq("user_id", userId)
         .limit(1)
         .maybeSingle();
+      if (roleData?.role) userRole = roleData.role as string;
+    }
 
-      if ((roleData?.role as string) === "agency") {
-        navigate("/agency/dashboard");
-        return;
+    try {
+      if (data.user) {
+        posthog.identify(data.user.id, {
+          email: data.user.email,
+          role: userRole,
+        });
       }
+    } catch {}
+
+    trackEvent("login_succeeded", { role: userRole });
+
+    if (userRole === "agency") {
+      navigate("/agency/dashboard");
+      return;
     }
     navigate("/profil");
   };
@@ -74,11 +90,11 @@ export default function Login() {
   };
 
   const features = [
-    { icon: FileText, title: "Dokumentvalvet", desc: "Spara legitimationer, intyg och utbildningsbevis. Dela tillgång med länk.", badge: "Ingår gratis", badgeColor: "text-green-700 bg-green-100" },
-    { icon: Clock, title: "Referensplattformen", desc: "Du bestämmer vem som ser dem och när. Referensgivare verifierar digitalt.", badge: "Ingår gratis", badgeColor: "text-green-700 bg-green-100" },
-    { icon: TrendingUp, title: "Löneanalys & assistent", desc: "Förhandlingstips baserat på din specialitet, region och erfarenhet.", badge: "Insight — 149 kr/mån", badgeColor: "text-amber-700 bg-amber-100" },
-    { icon: MessageSquare, title: "Fakturagranskning", desc: "AI granskar dina fakturor och tidrapporter. Hittar vi inget, betalar du inget.", badge: "Prestationsbaserat", badgeColor: "text-purple-700 bg-purple-100" },
-    { icon: Link2, title: "Uppdragsprognos", desc: "Se prognoser baserat på 5 års historik och över 30 000 bemanningsuppdrag.", badge: "Beta", badgeColor: "text-slate-600 bg-slate-100" },
+    { icon: FileText, title: "Dokumentvalvet", desc: "Säker lagring av legitimationer, specialistbevis och tjänstgöringsintyg. Hantera åtkomst via krypterade länkar.", badge: "Ingår gratis", badgeColor: "text-green-700 bg-green-100" },
+    { icon: Clock, title: "Referensplattformen", desc: "Administrera dina referenser centralt. Du styr vem som får tillgång och när. Verifiering med bank-id.", badge: "Ingår gratis", badgeColor: "text-green-700 bg-green-100" },
+    { icon: TrendingUp, title: "Ersättningsanalys - Se aktuella arvoden", desc: "Förhandlingstips baserat på din specialitet, region och erfarenhet.", badge: "Insight — 149 kr/mån", badgeColor: "text-amber-700 bg-amber-100" },
+    { icon: MessageSquare, title: "Fakturagranskning", desc: "Automatiserad revision av fakturor och tidrapport. Arvodet är helt prestationsbaserat: vi erhåller 25 % av det belopp vi återvinner åt dig.", badge: "Prestationsbaserat", badgeColor: "text-purple-700 bg-purple-100" },
+    { icon: Link2, title: "Uppdragsprognos", desc: "Öka chansen att få uppdraget du verkligen vill ha. AI ger oss träffsäkra prognoser om kommande behov baserat på 5 års historik och över 30 000 bemanningsuppdrag.", badge: "Beta", badgeColor: "text-slate-600 bg-slate-100" },
   ];
 
   return (

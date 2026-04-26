@@ -9,13 +9,13 @@ const BENEFITS = [
     icon: FileCheck,
     title: "Eliminera dubbelpresentationer",
     description:
-      "Digitalt representationsbevis med säker signering. Uppdragsgivaren verifierar direkt — ingen tvekan om vem som företräder konsulten.",
+      "Digitalt samarbetsintyg med säker signering. Uppdragsgivaren verifierar direkt — ingen tvekan om vem som företräder konsulten.",
   },
   {
     icon: Users,
     title: "Smidig konsulthantering",
     description:
-      "Skicka representationsförfrågningar, följ signeringsstatus i realtid och hämta bevis med ett klick.",
+      "Skicka representationsförfrågningar, följ signeringsstatus i realtid och hämta samarbetsintyg med ett klick.",
   },
   {
     icon: Lock,
@@ -63,10 +63,10 @@ export default function AgencyLanding() {
           <h1 className="text-3xl md:text-5xl font-bold leading-tight font-[family-name:var(--font-display)]">
             Slipp dubbelpresentationer.
             <br />
-            <span className="text-primary-foreground/80">Få digitalt representationsbevis.</span>
+            <span className="text-primary-foreground/80">Få digitalt samarbetsintyg.</span>
           </h1>
           <p className="text-lg md:text-xl text-white/70 max-w-2xl mx-auto">
-            CompCare ger ert bemanningsföretag ett digitalt signerat bevis som eliminerar tveksamheter
+            CompCare ger ert bemanningsföretag ett digitalt signerat samarbetsintyg som eliminerar tveksamheter
             hos uppdragsgivare. Hela flödet tar under två minuter.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
@@ -75,8 +75,8 @@ export default function AgencyLanding() {
                 Kom igång gratis <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
-            <Link to="/verify-info">
-              <Button size="lg" variant="outline" className="text-base border-white/30 text-white hover:bg-white/10">
+            <Link to="/dokhus-info">
+              <Button size="lg" variant="outline" className="text-base border-white/30 text-white bg-primary">
                 Så fungerar det
               </Button>
             </Link>

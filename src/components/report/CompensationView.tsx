@@ -106,39 +106,48 @@ export default function CompensationView({ role, location, employmentType }: Com
     },
     {
       icon: MessageSquare,
-      title: "Jämför din lön med rekommenderat intervall",
+      title: "Har du arbetat på samma ställe tidigare?",
       detail:
-        "Intervallet baseras på ramavtalets kundpris minus normala marginaler. En lön under detta intervall innebär att bemanningsföretaget tar en oproportionerligt stor marginal.",
+        "Använd det i förhandlingen. Det behövs ingen intro och risken för avbokning är mindre när kunden vet vem som kommer.",
     },
     {
       icon: Shield,
-      title: "Lyft fram din yrkeskompetens vid förhandling",
+      title: "Bor du nära arbetsorten?",
       detail:
-        "Säkerställ att du prissätts i rätt yrkeskategori i ramavtalet. Fel kategori kan innebära ett lägre förhandlingsgolv.",
+        "Utan kostnader för resa och boende har uppdragsgivaren mer utrymme till timlönen.",
     },
   ];
 
   return (
     <div className="w-full flex flex-col gap-4">
       {/* ── Hero card ──────────────────────────────────── */}
-      <Card className="relative overflow-hidden bg-[hsl(var(--hero-bg))] text-[hsl(var(--hero-fg))] border-0 p-5">
-        <div className="absolute top-0 right-0 w-28 h-28 rounded-full bg-primary/10 -translate-y-1/2 translate-x-1/2" />
-        <p className="text-xs font-medium tracking-wide uppercase opacity-70 mb-1">
-          {zone} · {location}
-        </p>
-        <h2 className="font-display text-lg font-bold leading-snug mb-4">
-          {role}
-        </h2>
-        <div className="flex items-baseline gap-1.5 mb-1">
-          <span className="font-display text-3xl font-extrabold tracking-tight">
-            {fmt(invoiceRate)} kr
-          </span>
-          <span className="text-sm opacity-60">/tim</span>
+      <Card className="relative overflow-hidden border-0 p-5 text-white bg-gradient-to-br from-[#0d0b2a] via-[#1a1545] via-40% to-[#2a2070]">
+        {/* Purple spotlight overlay — matches ProfileHero */}
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              "radial-gradient(ellipse at 75% 30%, rgba(110,95,230,0.55) 0%, rgba(90,78,210,0.25) 25%, rgba(70,60,190,0.08) 50%, transparent 70%)",
+          }}
+        />
+        <div className="relative">
+          <p className="text-xs font-medium tracking-wide uppercase opacity-70 mb-1">
+            {zone} · {location}
+          </p>
+          <h2 className="font-display text-lg font-bold leading-snug mb-4">
+            {role}
+          </h2>
+          <div className="flex items-baseline gap-1.5 mb-1">
+            <span className="font-display text-3xl font-extrabold tracking-tight">
+              {fmt(invoiceRate)} kr
+            </span>
+            <span className="text-sm opacity-60">/tim</span>
+          </div>
+          <p className="text-[11px] opacity-50 flex items-center gap-1">
+            <FileText className="w-3 h-3" />
+            {contractLabel}
+          </p>
         </div>
-        <p className="text-[11px] opacity-50 flex items-center gap-1">
-          <FileText className="w-3 h-3" />
-          {contractLabel}
-        </p>
       </Card>
 
       {/* ── Salary range card ──────────────────────────── */}

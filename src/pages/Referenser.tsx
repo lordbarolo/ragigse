@@ -4,7 +4,7 @@ import { useAuth } from "@/hooks/useAuth";
 import Navbar from "@/components/Navbar";
 import BottomNav from "@/components/radar/BottomNav";
 import { ReferenceDashboard } from "@/components/referly/ReferenceDashboard";
-import { Loader2 } from "lucide-react";
+import { ReferencesPageSkeleton } from "@/components/ui/page-skeleton";
 import ComingSoonOverlay from "@/components/ComingSoonOverlay";
 
 export default function Referenser() {
@@ -16,11 +16,7 @@ export default function Referenser() {
   }, [loading, user, navigate]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="w-6 h-6 animate-spin text-primary" />
-      </div>
-    );
+    return <ReferencesPageSkeleton />;
   }
 
   return (

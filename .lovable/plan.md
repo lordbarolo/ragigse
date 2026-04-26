@@ -1,28 +1,29 @@
+## Mål
+Förenkla hero på `/` till en tydlig rubrik + en underrubrik. Allt brus runt omkring (roterande ord, två extra meningar, bullets, sekundär CTA, disclaimer) tas bort. `HeroRateLookup`-widgeten behålls som primär handling.
 
+## Ny hero-struktur
 
-## Fix: Remove metadata role fallback in useAuth.ts
-
-**Problem**: When no `ref_user_roles` row exists, `useAuth.ts` falls back to `user.user_metadata.role`. Since users can update their own metadata via `supabase.auth.updateUser()`, they could self-elevate to `admin` and access admin UI pages.
-
-**Fix**: Remove the metadata fallback. Default to `'individual'` when no DB role is found.
-
-### Change
-
-**File**: `src/hooks/useAuth.ts` (lines 45–53)
-
-Replace the role-fetching logic:
-```typescript
-// Before (vulnerable)
-if (!error && data) {
-  setRole(data.role as AppRole);
-} else {
-  const metaRole = user.user_metadata?.role as AppRole | undefined;
-  setRole(metaRole || "individual");
-}
-
-// After (safe)
-setRole((data?.role as AppRole) ?? "individual");
+```text
+[ Rubrik:    Jämför din ersättning och få hjälp med förhandlingen ]
+[ Subrubrik: Vi vet vad du borde tjäna och hur du når dit         ]
+[ HeroRateLookup-widget                                            ]
 ```
 
-This is a one-line fix. Server-side admin checks (`requireAdmin`) already query the database directly, so this only closes the client-side UI exposure.
+## Ändringar i `src/pages/Index.tsx` (rad 91–129)
 
+1. **Rubrik** — ersätt `Skydda din <RotatingHeroWord />` med statisk text:
+   *"Jämför din ersättning och få hjälp med förhandlingen"*
+2. **Subrubrik** — ersätt de två befintliga `<p>`-styckena med en enda mening:
+   *"Vi vet vad du borde tjäna och hur du når dit"*
+3. **Ta bort** de tre bullet-punkterna (rad 104–111).
+4. **Ta bort** sekundär CTA-knappen + disclaimer (rad 117–126). Widgeten har redan en CTA ("Se din ersättning") när roll+kommun valts.
+5. **Behåll** `HeroRateLookup` oförändrad.
+6. **Städa imports** — ta bort `RotatingHeroWord` och `MessageSquare` (om inte använd någon annanstans i filen; `MessageSquare` används fortfarande av pelaren `Förhandlingsassistent` så den stannar).
+
+## Inte i scope
+- `RotatingHeroWord.tsx` lämnas i kodbasen (bara importen tas bort).
+- Pelar-sektionen, trust-sektionen och footer rörs inte.
+- Inga ändringar i `HeroRateLookup`.
+
+## Filer som ändras
+- `src/pages/Index.tsx` — endast hero-blocket + en import.

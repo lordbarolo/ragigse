@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";
 import { Radio, Loader2, Send, MapPin, Calendar, Clock, MessageSquare } from "lucide-react";
+import CompcareLogo from "@/components/CompcareLogo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -187,9 +188,7 @@ export default function Uppdragsradar() {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="px-5 pt-6 pb-2">
-        <span className="font-display font-extrabold tracking-tight text-foreground text-[18px]">
-          comp<em className="text-primary not-italic">care</em>
-        </span>
+        <CompcareLogo variant="wordmark" />
       </header>
 
       {/* Hero */}

@@ -1,20 +1,23 @@
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
 import { ShieldCheck, Fingerprint, FileCheck, ArrowRight, CheckCircle, Lock } from "lucide-react";
-import LandingNav from "@/components/landing/LandingNav";
 import LandingFooter from "@/components/landing/LandingFooter";
 import { trackEvent } from "@/lib/trackEvent";
+import { setPageMeta } from "@/lib/setPageMeta";
 import { Badge } from "@/components/ui/badge";
 
 export default function VerifyInfo() {
   useEffect(() => {
     trackEvent("verify_info_viewed");
+    setPageMeta({
+      title: "Samarbetsintyg — eliminera dubbelpresentationer | CompCare",
+      description:
+        "Ett digitalt signerat samarbetsintyg som visar exakt vilket bemanningsföretag du auktoriserat — inga duplicerade CV:n, inga oklarheter för regionen.",
+    });
   }, []);
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
-      <LandingNav />
-
       {/* Hero */}
       <section className="pt-28 pb-16 px-6">
         <div className="max-w-3xl mx-auto text-center">
@@ -23,10 +26,10 @@ export default function VerifyInfo() {
             Digitalt säkrad auktorisering
           </div>
           <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground mb-6">
-            Verify — Eliminera<br />dubbelpresentationer
+            Samarbetsintyg —<br />eliminera dubbelpresentationer
           </h1>
           <p className="text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed mb-10">
-            Verify är en digital källa till sanning. Du auktoriserar bemanningsföretag att representera dig — regionen ser beviset, inte duplicerade CV:n.
+            Ett digitalt signerat intyg som visar exakt vilket bemanningsföretag du auktoriserat att representera dig. Regionen ser intyget — inte duplicerade CV:n.
           </p>
         </div>
       </section>
@@ -35,14 +38,14 @@ export default function VerifyInfo() {
       <section className="py-16 px-6 bg-card border-y border-border">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-2xl font-bold tracking-tight text-foreground mb-8">
-            Så fungerar Verify
+            Så fungerar det
           </h2>
 
           <div className="space-y-6">
             {[
               { step: "1", title: "Förfrågan skickas", desc: "Bemanningsföretaget initierar en verifieringsförfrågan för ett specifikt uppdrag." },
               { step: "2", title: "Bekräfta via länk", desc: "Du får en länk via e-post eller SMS, öppnar den och bekräftar din representation. Hela processen tar under 30 sekunder." },
-              { step: "3", title: "Bevis genereras", desc: "Ett digitalt bevis skapas som kan delas med uppdragsgivaren. Beviset visar exakt vilken aktör du auktoriserat." },
+              { step: "3", title: "Samarbetsintyg genereras", desc: "Ett digitalt samarbetsintyg skapas som kan delas med uppdragsgivaren. Intyget visar exakt vilken aktör du auktoriserat." },
             ].map((s) => (
               <div key={s.step} className="flex gap-4">
                 <span className="w-8 h-8 rounded-full bg-primary/10 text-primary text-sm font-bold flex items-center justify-center shrink-0 mt-0.5">
@@ -79,7 +82,7 @@ export default function VerifyInfo() {
             {[
               { icon: ShieldCheck, title: "Skydd mot dubbelpresentationer", desc: "Regioner ser omedelbart vilka bemanningsföretag som är auktoriserade." },
               { icon: Fingerprint, title: "Digital verifiering", desc: "Bekräftelsen loggas och kan verifieras av motparten via en säker länk." },
-              { icon: FileCheck, title: "Audit Trail", desc: "Varje steg loggas transparent — du har full insyn i vem som sett beviset." },
+              { icon: FileCheck, title: "Audit Trail", desc: "Varje steg loggas transparent — du har full insyn i vem som sett samarbetsintyget." },
               { icon: CheckCircle, title: "Source of Truth", desc: "En enda källa till sanning istället för e-postkedjor och telefonsamtal." },
             ].map((b, i) => (
               <div key={i} className="bg-card border border-border rounded-2xl p-6">
@@ -99,7 +102,7 @@ export default function VerifyInfo() {
             Redo att ta kontroll?
           </h2>
           <p className="text-muted-foreground mb-8">
-            Skapa ett konto för att börja samla referenser och aktivera Verify.
+            Skapa ett konto för att börja samla referenser och utfärda samarbetsintyg.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <Link

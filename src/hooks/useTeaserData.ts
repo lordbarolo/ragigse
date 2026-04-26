@@ -1,7 +1,5 @@
 import { useMemo } from "react";
 import type { SurveyData } from "@/components/Survey";
-import type { BenchmarkResult } from "@/hooks/useBenchmarkEngine";
-import type { BenchmarkMonthly } from "@/shared/types";
 
 interface PricingResult {
   recommended_hourly_min: number;
@@ -23,37 +21,28 @@ function getSessionNoiseFactor(): number {
   return 0.97 + parseFloat(seed) * 0.06;
 }
 
+/**
+ * Teaser data — every analysis is a consultant analysis.
+ * If the user is currently a permanent employee, we still show what they
+ * could earn as a consultant (since that is the platform's purpose).
+ *
+ * The user's reported salary is normalised to an hourly rate using 167h/month.
+ * Permanent employees enter monthly salary, which we convert to an implied
+ * hourly rate so it can be compared to the consultant range.
+ */
 export function useTeaserData(
   survey: SurveyData | null,
   pricingResult: PricingResult | null,
-  benchmarkResult: BenchmarkResult | null,
 ) {
-  const track = (survey as SurveyData & { track?: string })?.track;
-  const isPermanent = track === "permanent";
-
   const result = pricingResult
     ? { low: pricingResult.recommended_hourly_min, high: pricingResult.recommended_hourly_max }
     : null;
 
-  // Noise only for consultant track — permanent track uses official stats
-  const noiseFactor = useMemo(() => {
-    if (isPermanent) return 1;
-    return getSessionNoiseFactor();
-  }, [isPermanent]);
+  const noiseFactor = useMemo(() => getSessionNoiseFactor(), []);
 
   /** Noised market values for display — prevents reverse-engineering */
   const noisedResult = result
     ? { low: Math.round(result.low * noiseFactor), high: Math.round(result.high * noiseFactor) }
-    : null;
-
-  const benchmarkMonthly: BenchmarkMonthly | null = benchmarkResult
-    ? {
-        p25: benchmarkResult.percentile_25,
-        p50: benchmarkResult.percentile_50,
-        p75: benchmarkResult.percentile_75,
-        gapPct: benchmarkResult.gap_pct ?? 0,
-        category: benchmarkResult.category,
-      }
     : null;
 
   const userMonthly = useMemo(() => {
@@ -67,16 +56,19 @@ export function useTeaserData(
   }, [survey]);
 
   // Threshold uses real values (not noised)
-  const isUnderpaid = isPermanent
-    ? (benchmarkMonthly ? userMonthly < benchmarkMonthly.p75 : false)
-    : (result ? userHourly < result.high : false);
+  const isUnderpaid = result ? userHourly < result.high : false;
+  const diffPercent = result ? Math.round(((result.high - userHourly) / result.high) * 100) : 0;
+  const isAboveThreshold = result ? userHourly >= result.high : false;
 
-  const diffPercent = isPermanent
-    ? (benchmarkMonthly ? benchmarkMonthly.gapPct : 0)
-    : (result ? Math.round(((result.high - userHourly) / result.high) * 100) : 0);
-
-  // Above threshold = user earns more than recommended max (after margin)
-  const isAboveThreshold = !isPermanent && result ? userHourly >= result.high : false;
-
-  return { isPermanent, result, noisedResult, benchmarkMonthly, userMonthly, userHourly, isUnderpaid, diffPercent, isAboveThreshold };
+  return {
+    isPermanent: false as const,
+    result,
+    noisedResult,
+    benchmarkMonthly: null,
+    userMonthly,
+    userHourly,
+    isUnderpaid,
+    diffPercent,
+    isAboveThreshold,
+  };
 }

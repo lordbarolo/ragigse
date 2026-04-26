@@ -5,24 +5,20 @@ import { useAuth } from "@/hooks/useAuth";
 import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, FileText, MapPin, Briefcase, Clock, LogOut, UserPlus, Trash2 } from "lucide-react";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import { FileText, MapPin, Briefcase, Clock, UserPlus, Check } from "lucide-react";
+import { ProfilePageSkeleton } from "@/components/ui/page-skeleton";
 import { toast } from "sonner";
+import ProfileHero from "@/components/profile/ProfileHero";
+import ProfileTabs, { type ProfileTab } from "@/components/profile/ProfileTabs";
 import ProfileInsights from "@/components/profile/ProfileInsights";
+import TrustVerification from "@/components/profile/TrustVerification";
 import CompensationView from "@/components/report/CompensationView";
 import DashboardReferences from "@/components/profile/DashboardReferences";
 import DashboardDocuments from "@/components/profile/DashboardDocuments";
 import DashboardInvoiceCheck from "@/components/profile/DashboardInvoiceCheck";
+import AssignmentFeedbackDialog from "@/components/profile/AssignmentFeedbackDialog";
+import { useAssignmentFeedback } from "@/hooks/useAssignmentFeedback";
+import { trackEvent } from "@/lib/trackEvent";
 
 interface ReportRow {
   id: string;
@@ -43,13 +39,31 @@ interface ProfileData {
   current_monthly_salary: number | null;
 }
 
+interface VerificationFlags {
+  hasBankid: boolean;
+  hasValidHosp: boolean;
+  hasValidIvo: boolean;
+}
+
 export default function Profile() {
   const { user, loading: authLoading, signOut } = useAuth();
   const navigate = useNavigate();
   const [reports, setReports] = useState<ReportRow[]>([]);
   const [profile, setProfile] = useState<ProfileData | null>(null);
+  const [verification, setVerification] = useState<VerificationFlags>({
+    hasBankid: false,
+    hasValidHosp: false,
+    hasValidIvo: false,
+  });
   const [loading, setLoading] = useState(true);
-  const [deleting, setDeleting] = useState(false);
+  const [activeTab, setActiveTab] = useState<ProfileTab>("overview");
+  const { pending: pendingFeedback, dismiss: dismissFeedback } = useAssignmentFeedback(user);
+
+  useEffect(() => {
+    if (pendingFeedback) {
+      trackEvent("assignment_feedback_shown", { stage: pendingFeedback.stage });
+    }
+  }, [pendingFeedback?.representation_request_id, pendingFeedback?.stage]);
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/logga-in");
@@ -83,7 +97,6 @@ export default function Profile() {
           regionName = reg?.kommun || null;
         }
 
-        // Fallback: use latest report data if consultant_profiles lacks role/region
         if (!specialtyName || !regionName) {
           const { data: latestReport } = await supabase
             .from("reports")
@@ -105,180 +118,247 @@ export default function Profile() {
           current_monthly_salary: cpData.current_monthly_salary,
         });
       }
+
+      const { data: profileFlags } = await supabase
+        .from("profiles")
+        .select("has_bankid, has_valid_hosp, has_valid_ivo")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (profileFlags) {
+        setVerification({
+          hasBankid: !!profileFlags.has_bankid,
+          hasValidHosp: !!profileFlags.has_valid_hosp,
+          hasValidIvo: !!profileFlags.has_valid_ivo,
+        });
+      }
+
       setLoading(false);
     };
     fetchData();
   }, [user]);
 
+  const handleSignOut = async () => { await signOut(); navigate("/"); };
+
+  const handleShare = () => {
+    if (!user) return;
+    const url = `${window.location.origin}/profil/${user.id}`;
+    navigator.clipboard.writeText(url).then(() => toast.success("Profillänk kopierad!"));
+  };
+
   if (authLoading || loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="w-6 h-6 animate-spin text-primary" />
-      </div>
-    );
+    return <ProfilePageSkeleton />;
   }
 
-  const handleSignOut = async () => { await signOut(); navigate("/"); };
-  const handleDeleteAccount = async () => {
-    setDeleting(true);
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) throw new Error("Ingen session");
-      const { data, error } = await supabase.functions.invoke("delete-account", {
-        headers: { Authorization: `Bearer ${session.access_token}` },
-      });
-      if (error) throw error;
-      if (data?.deleted) {
-        await signOut();
-        navigate("/");
-        toast.success("Ditt konto har raderats");
-      }
-    } catch (err: any) {
-      toast.error("Kunde inte radera kontot", { description: err.message });
-    } finally {
-      setDeleting(false);
-    }
-  };
-  const employmentLabel = (t: string | null) => t === "consultant" ? "Konsult" : t === "permanent" ? "Tillsvidareanställd" : t || "–";
+  const employmentLabel = (t: string | null) => t === "consultant" ? "Konsult" : t === "permanent" ? "Tillsvidareanställd (vill bli konsult)" : t || "–";
   const formatSalary = (val: number | null) => val ? val.toLocaleString("sv-SE") : "–";
 
+  const emailVerified = !!user?.email_confirmed_at;
+  const completenessChecks = [
+    emailVerified,
+    verification.hasBankid,
+    verification.hasValidHosp,
+    verification.hasValidIvo,
+    !!profile?.specialty_name,
+    !!profile?.region_name,
+    !!(profile?.current_hourly_rate || profile?.current_monthly_salary),
+  ];
+  const completedCount = completenessChecks.filter(Boolean).length;
+  const totalCount = completenessChecks.length;
+
+  const displayName = user?.email?.split("@")[0]
+    ?.split(/[._-]/)
+    .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
+    .join(" ") || "Användare";
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="relative min-h-screen bg-[#F2F1F8] overflow-hidden">
+
       <Navbar />
-      <div className="pt-20 pb-12 px-4 max-w-2xl mx-auto space-y-5">
-        {/* Header + StatusBadge */}
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Min dashboard</h1>
-          <p className="text-sm text-muted-foreground">{user?.email}</p>
-        </div>
 
-        {/* Referenser & verifikationer — dold tillsvidare */}
+      <div className="relative pt-20 pb-12 px-4 max-w-5xl mx-auto space-y-5">
+        {/* Hero */}
+        <ProfileHero
+          name={displayName}
+          email={user?.email || ""}
+          role={profile?.specialty_name}
+          location={profile?.region_name}
+          connections={0}
+          completedCount={completedCount}
+          totalCount={totalCount}
+          onShare={handleShare}
+        />
 
-        {/* Profile details */}
-        {profile && (
+        {/* Tabs */}
+        <ProfileTabs active={activeTab} onChange={setActiveTab} />
+
+        {/* === OVERVIEW === */}
+        {activeTab === "overview" && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+            {/* Left column (2/3) */}
+            <div className="lg:col-span-2 space-y-5">
+              {/* About / Profile details */}
+              {profile && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-base flex items-center gap-2">
+                      <Briefcase className="w-4 h-4 text-primary" />
+                      Yrkesinformation
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2 text-sm">
+                    {profile.specialty_name && (
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <Briefcase className="w-4 h-4" /> {profile.specialty_name}
+                      </div>
+                    )}
+                    {profile.region_name && (
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <MapPin className="w-4 h-4" /> {profile.region_name}
+                      </div>
+                    )}
+                    {profile.experience_years != null && (
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <Clock className="w-4 h-4" /> {profile.experience_years} års erfarenhet
+                      </div>
+                    )}
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <FileText className="w-4 h-4" /> {employmentLabel(profile.employment_type)}
+                      {profile.salary_type === "hourly" && profile.current_hourly_rate
+                        ? ` · ${formatSalary(profile.current_hourly_rate)} kr/h`
+                        : profile.current_monthly_salary
+                          ? ` · ${formatSalary(profile.current_monthly_salary)} kr/mån`
+                          : ""}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Compensation view */}
+              <CompensationView
+                role={profile?.specialty_name || null}
+                location={profile?.region_name || null}
+                employmentType={profile?.employment_type || null}
+              />
+
+              {/* Insights */}
+              <Card>
+                <CardContent className="pt-6">
+                  <ProfileInsights
+                    specialtyName={profile?.specialty_name || null}
+                    regionName={profile?.region_name || null}
+                    employmentType={profile?.employment_type || null}
+                  />
+                </CardContent>
+              </Card>
+            </div>
+
+            {/* Right column (1/3) */}
+            <div className="space-y-5">
+              <TrustVerification
+                emailVerified={emailVerified}
+                identityVerified={verification.hasBankid}
+                hospValid={verification.hasValidHosp}
+                ivoValid={verification.hasValidIvo}
+              />
+              <DashboardInvoiceCheck />
+            </div>
+          </div>
+        )}
+
+        {/* === WORK === */}
+        {activeTab === "work" && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <Card>
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <FileText className="w-4 h-4 text-primary" />
+                  Mina rapporter
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {reports.length === 0 ? (
+                  <div className="text-center py-6">
+                    <p className="text-muted-foreground text-sm mb-3">Inga rapporter ännu</p>
+                    <Link to="/">
+                      <Button size="sm">
+                        <UserPlus className="w-4 h-4 mr-1" />
+                        Skapa din första analys
+                      </Button>
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="space-y-3">
+                    {reports.map((r) => (
+                      <Link key={r.id} to={`/rapport/${r.id}`} className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors group">
+                        <div>
+                          <p className="font-medium text-foreground group-hover:text-primary transition-colors">{r.occupation || "Analys"}</p>
+                          <p className="text-xs text-muted-foreground">{r.kommun && `${r.kommun} · `}{new Date(r.created_at).toLocaleDateString("sv-SE")}</p>
+                        </div>
+                        <span className="text-xs text-muted-foreground">→</span>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            <DashboardInvoiceCheck />
+          </div>
+        )}
+
+        {/* === CREDS (verifications + documents + references) === */}
+        {activeTab === "creds" && (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <div className="space-y-5">
+              <TrustVerification
+                emailVerified={emailVerified}
+                identityVerified={verification.hasBankid}
+                hospValid={verification.hasValidHosp}
+                ivoValid={verification.hasValidIvo}
+              />
+              <DashboardDocuments />
+            </div>
+            <div className="space-y-5">
+              <DashboardReferences />
+            </div>
+          </div>
+        )}
+
+        {/* === NETWORK === */}
+        {activeTab === "network" && (
           <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Profil</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2 text-sm">
-              {profile.specialty_name && (
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Briefcase className="w-4 h-4" /> {profile.specialty_name}
-                </div>
-              )}
-              {profile.region_name && (
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <MapPin className="w-4 h-4" /> {profile.region_name}
-                </div>
-              )}
-              {profile.experience_years != null && (
-                <div className="flex items-center gap-2 text-muted-foreground">
-                  <Clock className="w-4 h-4" /> {profile.experience_years} års erfarenhet
-                </div>
-              )}
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <FileText className="w-4 h-4" /> {employmentLabel(profile.employment_type)}
-                {profile.salary_type === "hourly" && profile.current_hourly_rate
-                  ? ` · ${formatSalary(profile.current_hourly_rate)} kr/h`
-                  : profile.current_monthly_salary
-                    ? ` · ${formatSalary(profile.current_monthly_salary)} kr/mån`
-                    : ""}
+            <CardContent className="py-12 text-center space-y-3">
+              <div className="w-12 h-12 mx-auto rounded-full bg-muted flex items-center justify-center">
+                <Check className="w-5 h-5 text-muted-foreground" />
               </div>
+              <p className="text-sm font-medium text-foreground">Nätverket lanseras snart</p>
+              <p className="text-xs text-muted-foreground max-w-sm mx-auto">
+                Snart kan du koppla ihop dig med andra konsulter och referensgivare i ditt nätverk.
+              </p>
             </CardContent>
           </Card>
         )}
 
-        {/* Compensation view — invoice rate, salary range & tips */}
-        <CompensationView
-          role={profile?.specialty_name || null}
-          location={profile?.region_name || null}
-          employmentType={profile?.employment_type || null}
-        />
-
-        {/* Zone pricing, salary ranges & upcoming assignments */}
-        <ProfileInsights
-          specialtyName={profile?.specialty_name || null}
-          regionName={profile?.region_name || null}
-          employmentType={profile?.employment_type || null}
-        />
-
-        {/* Invoice check */}
-        <DashboardInvoiceCheck />
-
-        {/* Reports */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <FileText className="w-5 h-5 text-primary" />
-              Mina rapporter
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {reports.length === 0 ? (
-              <div className="text-center py-6">
-                <p className="text-muted-foreground text-sm mb-3">Inga rapporter ännu</p>
-                <Link to="/">
-                  <Button size="sm">
-                    <UserPlus className="w-4 h-4 mr-1" />
-                    Skapa din första analys
-                  </Button>
-                </Link>
+        {/* === SAVED === */}
+        {activeTab === "saved" && (
+          <Card>
+            <CardContent className="py-12 text-center space-y-3">
+              <div className="w-12 h-12 mx-auto rounded-full bg-muted flex items-center justify-center">
+                <FileText className="w-5 h-5 text-muted-foreground" />
               </div>
-            ) : (
-              <div className="space-y-3">
-                {reports.map((r) => (
-                  <Link key={r.id} to={`/rapport/${r.id}`} className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors group">
-                    <div>
-                      <p className="font-medium text-foreground group-hover:text-primary transition-colors">{r.occupation || "Analys"}</p>
-                      <p className="text-xs text-muted-foreground">{r.kommun && `${r.kommun} · `}{new Date(r.created_at).toLocaleDateString("sv-SE")}</p>
-                    </div>
-                    <span className="text-xs text-muted-foreground">→</span>
-                  </Link>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* References */}
-        <DashboardReferences />
-
-        {/* Verified documents */}
-        <DashboardDocuments />
-
-        {/* Delete account */}
-        <div className="pt-4 border-t border-border">
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10 gap-2">
-                <Trash2 className="w-4 h-4" />
-                Radera mitt konto
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Radera konto permanent?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  All din data raderas permanent — rapporter, profil, referenser och dokument. Detta kan inte ångras.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Avbryt</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={handleDeleteAccount}
-                  disabled={deleting}
-                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                >
-                  {deleting ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : null}
-                  Ja, radera mitt konto
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </div>
+              <p className="text-sm font-medium text-foreground">Inget sparat ännu</p>
+              <p className="text-xs text-muted-foreground max-w-sm mx-auto">
+                Spara analyser, uppdrag och artiklar för att hitta dem snabbt här.
+              </p>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
+      {pendingFeedback && (
+        <AssignmentFeedbackDialog pending={pendingFeedback} onClose={dismissFeedback} />
+      )}
     </div>
   );
 }

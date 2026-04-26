@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from "react";
 import { Radio, Search, Loader2 } from "lucide-react";
+import CompcareLogo from "@/components/CompcareLogo";
 import ReijdarPromo from "@/components/radar/ReijdarPromo";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import RadarFilters from "@/components/radar/RadarFilters";
@@ -130,9 +131,7 @@ export default function Radar() {
     <div className="min-h-screen bg-background pb-20">
       {/* Header */}
       <header className="px-5 pt-6 pb-2">
-        <span className="font-display font-extrabold tracking-tight text-foreground text-[18px]">
-          comp<em className="text-primary not-italic">care</em>
-        </span>
+        <CompcareLogo variant="wordmark" />
       </header>
 
       {/* Hero */}

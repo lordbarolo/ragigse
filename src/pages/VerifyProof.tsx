@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { setPageMeta } from "@/lib/setPageMeta";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -90,6 +91,22 @@ export default function VerifyProof() {
       })
       .then(() => {});
   }, [applicationId]);
+
+  // ── SEO + social share meta (re-runs when representation loads) ──
+  useEffect(() => {
+    if (representation) {
+      setPageMeta({
+        title: `Samarbetsintyg — ${representation.agency_name} (${representation.region}) | Dokhus`,
+        description: `Digitalt signerat samarbetsintyg som bekräftar att ${representation.agency_name} har auktoriserats att representera konsulten i ${representation.region}. Verifierat via Dokhus.`,
+      });
+    } else {
+      setPageMeta({
+        title: "Samarbetsintyg | Dokhus",
+        description:
+          "Digitalt signerat samarbetsintyg från Dokhus — verifierar vilket bemanningsföretag som auktoriserats att representera konsulten hos uppdragsgivaren.",
+      });
+    }
+  }, [representation]);
 
   useEffect(() => {
     async function fetchData() {
@@ -185,12 +202,12 @@ export default function VerifyProof() {
         <div className="flex items-center gap-2 mb-2">
           <Fingerprint className="h-5 w-5 text-primary" />
           <h1 className="text-xl font-bold text-foreground tracking-tight">
-            Representationsbevis
+            Samarbetsintyg
           </h1>
         </div>
         <p className="text-sm text-muted-foreground">
           {representation
-            ? `Signerat representationsbevis för ${representation.region}`
+            ? `Signerat samarbetsintyg för ${representation.region}`
             : "Verifierade referenser bifogade till ansökan"}
         </p>
         <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground">
@@ -361,7 +378,7 @@ export default function VerifyProof() {
 
       {/* Footer */}
       <div className="mt-12 border-t border-border pt-6 text-center text-xs text-muted-foreground space-y-2">
-        <p>Verifierat via CompCare · Referly Vault</p>
+        <p>Verifierat via CompCare · Ref-ID Vault</p>
         <p className="font-mono text-[10px] text-muted-foreground/60" data-field="proof-full-id">
           Bevis-ID: {applicationId}
         </p>

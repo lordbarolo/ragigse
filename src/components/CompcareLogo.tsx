@@ -1,49 +1,95 @@
-import { forwardRef } from "react";
+import { forwardRef, HTMLAttributes } from "react";
 
 type LogoVariant = "wordmark" | "full" | "icon";
 
-interface CompcareLogoProps {
+interface CompcareLogoProps extends HTMLAttributes<HTMLSpanElement> {
   variant?: LogoVariant;
   className?: string;
-  /** Use light colors (for dark backgrounds) */
+  /** Force light/dark variant. If omitted, uses CSS class-based theme switching. */
   inverted?: boolean;
 }
 
-const CompcareLogo = forwardRef<SVGSVGElement, CompcareLogoProps>(
-  ({ variant = "wordmark", className = "", inverted = false }, ref) => {
-    const textFill = inverted ? "white" : "hsl(var(--foreground))";
-    const accentFill = "hsl(var(--primary))";
-    const barMuted = "#94A3B8";
+/**
+ * Renders the official CompCare logo using the brand SVG assets.
+ *
+ * Variants:
+ *  - "wordmark" → ren typografi (compcare) utan ikonstaplar
+ *  - "full"     → ikonstaplar + text horisontellt
+ *  - "icon"     → endast ikonstaplar (kvadratisk)
+ *
+ * Light/dark växling sker automatiskt via Tailwinds `dark:`-klass
+ * (eller via `inverted`-propet om man vill tvinga ett läge).
+ */
+const CompcareLogo = forwardRef<HTMLSpanElement, CompcareLogoProps>(
+  ({ variant = "wordmark", className = "", inverted, ...rest }, ref) => {
+    const sizeClass =
+      variant === "icon" ? "h-8 w-8" : variant === "full" ? "h-9" : "h-7";
 
-    if (variant === "wordmark") {
+    const fileFor = (mode: "light" | "dark") => {
+      if (variant === "icon") return "/compcare-icon.svg";
+      if (variant === "wordmark") {
+        return mode === "dark"
+          ? "/compcare-wordmark-dark.svg"
+          : "/compcare-wordmark-light.svg";
+      }
+      // full
+      return mode === "dark"
+        ? "/compcare-logo-dark.svg"
+        : "/compcare-logo-light.svg";
+    };
+
+    if (typeof inverted === "boolean") {
+      const src = fileFor(inverted ? "dark" : "light");
       return (
-        <svg ref={ref} viewBox="0 0 160 28" fill="none" xmlns="http://www.w3.org/2000/svg" className={`h-7 w-auto ${className}`} aria-label="Compcare" role="img">
-          <text x="0" y="22" fontFamily="'Inter', sans-serif" fontSize="24" fontWeight="700" letterSpacing="-0.02em">
-            <tspan fill={textFill}>comp</tspan>
-            <tspan fill={accentFill}>care</tspan>
-          </text>
-        </svg>
+        <span
+          ref={ref}
+          className={`inline-flex items-center ${sizeClass} ${className}`}
+          aria-label="CompCare"
+          role="img"
+          {...rest}
+        >
+          <img src={src} alt="CompCare" className="h-full w-auto select-none" draggable={false} />
+        </span>
       );
     }
 
-    if (variant === "full") {
+    // Icon-varianten är färgneutral och behöver ingen växling
+    if (variant === "icon") {
       return (
-        <svg ref={ref} viewBox="0 0 204 32" fill="none" xmlns="http://www.w3.org/2000/svg" className={`h-8 w-auto ${className}`} aria-label="Compcare" role="img">
-          <rect x="0" y="5" width="20" height="7" rx="2" fill={barMuted} />
-          <rect x="0" y="17" width="33" height="7" rx="2" fill={accentFill} />
-          <text x="43" y="24" fontFamily="'Inter', sans-serif" fontSize="24" fontWeight="700" letterSpacing="-0.02em">
-            <tspan fill={textFill}>comp</tspan>
-            <tspan fill={accentFill}>care</tspan>
-          </text>
-        </svg>
+        <span
+          ref={ref}
+          className={`inline-flex items-center ${sizeClass} ${className}`}
+          aria-label="CompCare"
+          role="img"
+          {...rest}
+        >
+          <img src="/compcare-icon.svg" alt="CompCare" className="h-full w-auto select-none" draggable={false} />
+        </span>
       );
     }
 
     return (
-      <svg ref={ref} viewBox="0 0 33 24" fill="none" xmlns="http://www.w3.org/2000/svg" className={`h-6 w-auto ${className}`} aria-label="Compcare" role="img">
-        <rect x="0" y="0" width="20" height="7" rx="2" fill={barMuted} />
-        <rect x="0" y="12" width="33" height="7" rx="2" fill={accentFill} />
-      </svg>
+      <span
+        ref={ref}
+        className={`inline-flex items-center ${sizeClass} ${className}`}
+        aria-label="CompCare"
+        role="img"
+        {...rest}
+      >
+        <img
+          src={fileFor("light")}
+          alt="CompCare"
+          className="h-full w-auto select-none block dark:hidden"
+          draggable={false}
+        />
+        <img
+          src={fileFor("dark")}
+          alt="CompCare"
+          className="h-full w-auto select-none hidden dark:block"
+          draggable={false}
+          aria-hidden="true"
+        />
+      </span>
     );
   }
 );

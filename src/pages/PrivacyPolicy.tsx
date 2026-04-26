@@ -1,7 +1,49 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { Button } from "@/components/ui/button";
+import { Loader2, Trash2 } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 import logoDark from "@/assets/logo-dark.png";
 
 const PrivacyPolicy = () => {
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDeleteAccount = async () => {
+    setDeleting(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error("Ingen session");
+      const { data, error } = await supabase.functions.invoke("delete-account", {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      });
+      if (error) throw error;
+      if (data?.deleted) {
+        await signOut();
+        navigate("/");
+        toast.success("Ditt konto har raderats");
+      }
+    } catch (err: any) {
+      toast.error("Kunde inte radera kontot", { description: err.message });
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <header className="py-8 px-5 border-b border-border">
@@ -48,7 +90,7 @@ const PrivacyPolicy = () => {
               Du kan registrera referensgivare med namn, e-post, telefonnummer, organisation och yrkesroll. Vi skickar inbjudningar via e-post och erbjuder digital verifiering. Referensgivarens personuppgifter behandlas för att möjliggöra verifieringstjänsten. Rättslig grund: berättigat intresse (artikel 6.1f GDPR). Referensgivaren kan när som helst begära radering av sina uppgifter.
             </p>
 
-            <h3 className="text-base font-medium text-foreground mt-4">2.5 Löneanalys och förhandlingschat</h3>
+            <h3 className="text-base font-medium text-foreground mt-4">2.5 Ersättningsanalys och förhandlingschat</h3>
             <p className="text-sm text-muted-foreground leading-relaxed mt-1">
               Uppgifter du anger i enkäten (yrkesroll, specialisering, zon, anställningsform, ersättning) används för att beräkna din marknadsposition. Om du använder vår AI-drivna förhandlingsassistent sparas konversationshistoriken kopplat till din rapport-session.
             </p>
@@ -171,6 +213,44 @@ const PrivacyPolicy = () => {
               <li>Adress: Stockholm, Sverige</li>
             </ul>
           </div>
+
+          {user && (
+            <div className="border-t border-border pt-8">
+              <h2 className="text-xl font-semibold text-foreground">12. Radera ditt konto</h2>
+              <p className="text-sm text-muted-foreground leading-relaxed mt-2">
+                Du kan när som helst radera ditt konto och all tillhörande data — rapporter, profil, referenser och dokument. Detta är permanent och kan inte ångras.
+              </p>
+              <div className="mt-4 not-prose">
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="outline" size="sm" className="text-destructive hover:text-destructive hover:bg-destructive/10 border-destructive/30 gap-2">
+                      <Trash2 className="w-4 h-4" />
+                      Radera mitt konto
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Radera konto permanent?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        All din data raderas permanent — rapporter, profil, referenser och dokument. Detta kan inte ångras.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Avbryt</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={handleDeleteAccount}
+                        disabled={deleting}
+                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      >
+                        {deleting ? <Loader2 className="w-4 h-4 animate-spin mr-1" /> : null}
+                        Ja, radera mitt konto
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            </div>
+          )}
         </section>
       </main>
 

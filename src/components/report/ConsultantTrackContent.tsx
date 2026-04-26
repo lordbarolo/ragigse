@@ -28,6 +28,7 @@ import {
   Handshake,
   Copy,
   ShieldCheck,
+  LogIn,
 } from "lucide-react";
 import { fmt, formatPartialValue } from "@/shared/formatters";
 import { SectionHeading, StatBlock, CalcRow } from "@/shared/UIComponents";
@@ -289,11 +290,9 @@ export default function ConsultantTrackContent({
           const recommendedM = recommendedH * hpm;
           const ambitiousM = ambitiousH * hpm;
 
-          const minH = realisticH;
-          const maxH = ambitiousH;
-          const range = maxH - minH;
-          const fillPct = range > 0 ? Math.min(Math.round(((recommendedH - minH) / range) * 100), 100) : 50;
-          const yourPct = range > 0 ? Math.min(Math.max(Math.round(((currentHourly - minH) / range) * 100), 0), 105) : 50;
+          // Dölj hela rutan om användaren redan ligger i eller över övre spann —
+          // då saknar förhandlingsförslagen relevans (de skulle visa lägre nivåer än nuvarande).
+          if (currentHourly >= ambitiousH) return null;
 
           return (
             <div>
@@ -382,11 +381,11 @@ export default function ConsultantTrackContent({
             </div>
             <div className="px-5 py-5">
               <Link
-                to={`/forhandla?role=${encodeURIComponent(occupation || "")}&geo=${encodeURIComponent(kommun || "")}&emp=${encodeURIComponent(isEmployee ? "anstalld" : "consultant")}${r?.recommendation?.recommended_hourly_min ? `&rate=${r.recommendation.recommended_hourly_min}` : ""}&from=report`}
+                to="/logga-in"
                 className="w-full flex items-center justify-center gap-2 rounded-[10px] bg-primary px-4 py-3.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
               >
-                <Handshake className="w-4 h-4" />
-                Starta förhandling →
+                <LogIn className="w-4 h-4" />
+                Logga in
               </Link>
             </div>
           </div>
