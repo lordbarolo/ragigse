@@ -3874,6 +3874,7 @@ export type Database = {
           customer: string
           expected_calloffs: number | null
           expected_calloffs_display: number | null
+          forecast_run_id: string
           generated_at: string
           id: string
           is_seasonal_peak: boolean | null
@@ -3892,6 +3893,7 @@ export type Database = {
           customer: string
           expected_calloffs?: number | null
           expected_calloffs_display?: number | null
+          forecast_run_id?: string
           generated_at?: string
           id?: string
           is_seasonal_peak?: boolean | null
@@ -3910,6 +3912,7 @@ export type Database = {
           customer?: string
           expected_calloffs?: number | null
           expected_calloffs_display?: number | null
+          forecast_run_id?: string
           generated_at?: string
           id?: string
           is_seasonal_peak?: boolean | null
