@@ -349,6 +349,12 @@ export default function AgencyDashboard() {
 
   const copyVerifyLink = (req: RepresentationRequest) => {
     const id = req.verification_id || req.id;
+    if (!id) {
+      toast.error("Kunde inte kopiera länk", {
+        description: "Samarbetsintyget saknar ID — försök igen när signeringen är klar.",
+      });
+      return;
+    }
     const url = `${window.location.origin}/samarbetsintyg/${id}`;
     navigator.clipboard.writeText(url);
     toast.success("Länk till samarbetsintyg kopierad");
