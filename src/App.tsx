@@ -147,7 +147,7 @@ const App = () => (
               <Route element={<PublicVerifyLayout />}>
                 <Route path="/samarbetsintyg/:applicationId" element={<VerifyProof />} />
                 {/* Legacy redirect: /verify/:id → /samarbetsintyg/:id */}
-                <Route path="/verify/:applicationId" element={<Navigate to="/samarbetsintyg/:applicationId" replace />} />
+                <Route path="/verify/:applicationId" element={<LegacyVerifyRedirect />} />
                 <Route path="/profil/:id" element={<PublicProfile />} />
                 <Route path="/dokhus-info" element={<VerifyInfo />} />
                 {/* Legacy redirect */}
