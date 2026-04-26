@@ -35,7 +35,7 @@ type ModuleCard = {
 const MODULES_ROW1: ModuleCard[] = [
   {
     title: "Dokhus — Där dina dokument bor",
-    desc: "Säker lagring av legitimationer, specialistbevis och tjänstgöringsintyg. Hantera åtkomst via krypterade länkar i stället för osäkra filbilagor – för fullständig kontroll över dina känsliga personuppgifter.",
+    desc: "Säker lagring av legitimationer, specialistbevis och tjänstgöringsintyg. Dela tillgång till en miljö du kontrollerar istället för att sprida filer via mail. Spårbart med unik stämpel för varje visning.",
     tag: "Ingår gratis",
     tagColor: "purple",
     iconBg: "#EEEDFE",
@@ -50,7 +50,7 @@ const MODULES_ROW1: ModuleCard[] = [
   },
   {
     title: "Ref ID - Minimera störning av dina referenser",
-    desc: "Administrera dina referenser centralt. Du styr vem som får tillgång och när. Dina referensgivare verifierar enkelt med bank-id vid upprepade förfrågningar, vilket eliminerar repetitiv administration och säkrar processens integritet.",
+    desc: "Du styr vem som får tillgång och när. Dina referenser lämnar uppgifter EN gång och kan därefter verifiera med bank-ID. verifierar enkelt med bank-id vid Eliminerar tidskrävande processer och säkrar processens integritet.",
     tag: "Kommer snart",
     tagColor: "muted",
     iconBg: "#EEEDFE",
@@ -63,7 +63,7 @@ const MODULES_ROW1: ModuleCard[] = [
   },
   {
     title: "Ersättningsanalys - Se aktuella arvoden",
-    desc: "Med full transparens kring avtalsvillkor och branschens marginaler skapar vi förutsättningar för en trygg och hållbar konsultkarriär.",
+    desc: "Med full transparens kring avtalsvillkor och branschens marginaler skapar vi förutsättningar för en trygg och hållbar konsultkarriär. Se rätt ersättningsnivåer för alla roller och regioner.",
     tag: "Insight — 149 kr/mån",
     tagColor: "amber",
     iconBg: "#FAEEDA",
@@ -78,7 +78,7 @@ const MODULES_ROW1: ModuleCard[] = [
 const MODULES_ROW2 = [
   {
     title: "Fakturagranskning - Få betalt för all din tid",
-    desc: "Automatiserad revision av fakturor och tidrapport. Vi söker efter avvikelser och hjälper dig fakturera om vi ser något du missat att ta betalt för. Arvodet är helt prestationsbaserat: vi erhåller 25 % av det belopp vi återvinner åt dig.",
+    desc: "Automatiserad revision av fakturor du skickat senaste 2 åren. Vi söker efter avvikelser och hjälper dig fakturera om vi ser något du missat att ta betalt för. Arvodet är helt prestationsbaserat: Hittar vi inget, betalar du inget.",
     tag: "Prestationsbaserat",
     tagColor: "green" as const,
     iconBg: "#EAF3DE",
@@ -106,7 +106,7 @@ const MODULES_ROW2 = [
   },
   {
     title: "Förhandlingsassistent - AI-stöd i realtid",
-    desc: "Få objektiva marknadsdata, avtalsvillkor och konkreta förhandlingsargument direkt i chatten. Löneassistenten hjälper dig bygga ett starkt underlag inför ditt nästa konsultuppdrag — baserat på SKR:s ramavtal och regional statistik.",
+    desc: "Med hjälp av avancerad AI och branschspecifik kunskap får du ett starkt underlag inför ditt nästa konsultuppdrag. Vi ger dig argumenten, så att du kan vinna förhandlingen. ",
     tag: "Premium — 99 kr/mån",
     tagColor: "amber" as const,
     iconBg: "#FAEEDA",
@@ -328,7 +328,8 @@ export default function LandingV2() {
             Förhandla utifrån <span className="text-[#AFA9EC]">data,</span><br />inte magkänsla
           </h1>
           <p className="text-lg text-white/[0.78] leading-relaxed mb-6 max-w-[520px]">
-            Vi visar aktuella ersättningar för läkare och sjuksköterskor. Se uppdaterat konsultarvode för din roll och region.
+            Vi visar aktuella ersättningar för alla bemanningsuppdrag.<br />
+            Se vart du ska börja din nästa förhandling.
           </p>
           <Link to="/v1?start=1" onClick={() => trackEvent("product_cta_clicked", { cta: "hero_salary_analysis", target: "/v1?start=1" })}>
             <button className="px-6 py-3 bg-white hover:bg-white/90 rounded-lg text-[#1a1545] text-[15px] font-semibold whitespace-nowrap min-h-[44px] transition-colors">
@@ -422,16 +423,45 @@ export default function LandingV2() {
       <div className="h-px bg-border/40 mx-6 lg:mx-10" />
 
       {/* ── CTA Banner (above steps) ─────────── */}
-      <div className="mx-4 sm:mx-6 lg:mx-10 my-[72px] rounded-xl bg-[#1a1545] px-6 lg:px-12 py-14 text-center">
-        <h2 className="text-[28px] font-medium text-white mb-3">Redo att ta kontroll?</h2>
-        <p className="text-base text-white/60 mb-7">Compcare är kostnadsfritt för konsulter. För alltid.</p>
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link to="/registrera">
-            <button className="w-full sm:w-auto px-8 py-3 bg-[#534AB7] hover:bg-[#3C3489] rounded-lg text-white text-[15px] font-medium transition-colors">Skapa konto</button>
-          </Link>
-          <Link to="/v1?start=1">
-            <button className="w-full sm:w-auto px-7 py-3 bg-transparent border border-white/30 hover:bg-white/10 rounded-lg text-white/80 text-[15px] transition-colors">Gör löneanalysen</button>
-          </Link>
+      <div className="relative mx-4 sm:mx-6 lg:mx-10 my-[72px] rounded-xl overflow-hidden px-6 lg:px-12 py-14 text-center">
+        {/* bg layers — match hero */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0d0b2a] via-[#1a1545] via-40% to-[#2a2070]" />
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            top: '-100px', right: '-100px',
+            width: '1000px', height: '900px',
+            zIndex: 1,
+            background: 'radial-gradient(ellipse at 75% 10%, rgba(110,95,230,0.55) 0%, rgba(90,78,210,0.25) 25%, rgba(70,60,190,0.08) 50%, transparent 70%)',
+          }}
+        />
+        <div
+          className="absolute top-0 right-0 pointer-events-none"
+          style={{
+            width: '520px', height: '600px',
+            zIndex: 1,
+            background: 'radial-gradient(ellipse at 90% 15%, rgba(140,125,245,0.3) 0%, rgba(110,95,220,0.12) 40%, transparent 65%)',
+          }}
+        />
+        <div
+          className="absolute inset-0 opacity-5 pointer-events-none"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(0deg,transparent,transparent 39px,#fff 39px,#fff 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,#fff 39px,#fff 40px)",
+          }}
+        />
+
+        <div className="relative z-10">
+          <h2 className="text-[28px] font-medium text-white mb-3">Redo att ta kontroll?</h2>
+          <p className="text-base text-white/60 mb-7">Compcare är kostnadsfritt för konsulter. För alltid.</p>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link to="/registrera">
+              <button className="w-full sm:w-auto px-8 py-3 bg-[#534AB7] hover:bg-[#3C3489] rounded-lg text-white text-[15px] font-medium transition-colors">Skapa konto</button>
+            </Link>
+            <Link to="/v1?start=1">
+              <button className="w-full sm:w-auto px-7 py-3 bg-transparent border border-white/30 hover:bg-white/10 rounded-lg text-white/80 text-[15px] transition-colors">Gör löneanalysen</button>
+            </Link>
+          </div>
         </div>
       </div>
 
