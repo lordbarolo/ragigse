@@ -17,7 +17,7 @@ import { useState } from "react";
 const NAV_ITEMS = [
   { label: "Dashboard", path: "/agency/dashboard", icon: LayoutDashboard },
   { label: "Market Edge", path: "/agency/market-edge", icon: Activity },
-  { label: "Intyg", path: "/agency/intyg", icon: ShieldCheck },
+  { label: "Samarbetsintyg", path: "/agency/intyg", icon: ShieldCheck },
   { label: "Inställningar", path: "/agency/settings", icon: Settings },
 ] as const;
 
