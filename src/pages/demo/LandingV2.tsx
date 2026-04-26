@@ -10,7 +10,7 @@ import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 const NAV_LINKS: { label: string; href: string; external?: boolean }[] = [
   { label: "Verktyg", href: "#verktyg" },
   { label: "Ersättningsanalys", href: "/", external: true },
-  { label: "Fakturagranskning", href: "/consultant/fakturakontroll", external: true },
+  { label: "Fakturagranskning - Få betalt för all din tid", href: "/consultant/fakturakontroll", external: true },
   { label: "Priser", href: "#priser" },
   { label: "FAQ", href: "/vanliga-fragor", external: true },
 ];
@@ -406,7 +406,7 @@ export default function LandingV2() {
             <div className="flex flex-col gap-2 text-[13px] text-muted-foreground">
               <Link to="/dokhus-info" className="hover:text-foreground transition-colors">Dokhus</Link>
               <Link to="/" className="hover:text-foreground transition-colors">Ersättningsanalys</Link>
-              <Link to="/consultant/fakturakontroll" className="hover:text-foreground transition-colors">Fakturagranskning</Link>
+              <Link to="/consultant/fakturakontroll" className="hover:text-foreground transition-colors">Fakturagranskning - Få betalt för all din tid</Link>
               <Link to="/consultant/forhandla" className="hover:text-foreground transition-colors">Ersättningsanalys</Link>
             </div>
           </div>
