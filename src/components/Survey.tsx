@@ -624,13 +624,16 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                   <ArrowRight className="w-5 h-5 text-muted-foreground/40 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
                 </button>
               ))}
+              <p className="text-hint text-center mt-3 px-2 leading-relaxed">
+                Inkluderar zon-analys och SKR:s ramavtal 2026.
+              </p>
             </div>
           </StepWrapper>
         )}
 
         {/* Step 2: Single dropdown for role selection */}
         {step === 2 && (
-          <StepWrapper title="Vad är din specialisering?" subtitle="Vi matchar din kompetens mot SKR:s ramavtalspriser för över 60 specialistroller.">
+          <StepWrapper title="Vad är din specialisering?" subtitle="Vi matchar din kompetens mot aktuella ramavtalspriser för över 60 specialistroller inom vårdsektorn.">
             <div className="flex flex-col flex-1">
               {/* Upper decorative area */}
               <div className="flex-1 flex flex-col items-center justify-center gap-4 py-6">
@@ -651,7 +654,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                   onValueChange={(v) => {
                     setRoleDropdownValue(v);
                   }}
-                  placeholder={occupationCategory === "lakare" ? "Välj din specialisering eller specialistkompetens..." : "Välj din roll eller vidareutbildning..."}
+                  placeholder={occupationCategory === "lakare" ? "Välj specialisering..." : "Välj din roll..."}
                   options={occupationCategory === "lakare" ? doctorRoleOptions : nurseRoleOptions}
                 />
               </div>
@@ -880,14 +883,14 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
               handleNext();
             }}
             disabled={saving}
-            className={`flex-1 flex items-center justify-center gap-2 py-4 px-6 rounded-xl text-base font-semibold transition-all duration-200 active:scale-[0.97] ${
+            className={`flex-1 flex items-center justify-center gap-1.5 py-4 px-3 rounded-xl text-sm sm:text-base font-semibold whitespace-nowrap transition-all duration-200 active:scale-[0.97] ${
               canProceed && !saving
                 ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
                 : "bg-muted text-muted-foreground cursor-not-allowed"
             }`}
           >
-            {saving ? "Analyserar..." : "Generera min ersättningsanalys"}
-            {!saving && <ArrowRight className="w-5 h-5" />}
+            {saving ? "Analyserar..." : "Visa min analys"}
+            {!saving && <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />}
           </button>
         )}
       </div>

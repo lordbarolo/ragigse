@@ -109,12 +109,12 @@ export default function Report() {
           <h1 className="text-2xl sm:text-3xl font-bold leading-tight tracking-tight drop-shadow-sm">
             {report.occupation}
           </h1>
-          <div className="flex items-center gap-2 text-sm opacity-80">
-            <span>{report.kommun}{report.user_zone ? ` (${report.user_zone})` : ""}</span>
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm opacity-80">
+            <span className="whitespace-nowrap">{report.kommun}{report.user_zone ? ` (${report.user_zone})` : ""}</span>
             <span className="w-1 h-1 rounded-full bg-current opacity-40" />
-            <span>Konsultuppdrag</span>
+            <span className="whitespace-nowrap">Konsultuppdrag</span>
             <span className="w-1 h-1 rounded-full bg-current opacity-40" />
-            <span>{isEmployee ? "Anställd" : "Eget bolag"}</span>
+            <span className="whitespace-nowrap">{isEmployee ? "Anställd" : "Eget bolag"}</span>
           </div>
         </div>
       </header>

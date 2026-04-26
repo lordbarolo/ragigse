@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import InvoiceReviewCTA from "./InvoiceReviewCTA";
+import IncomeImpactCard from "./IncomeImpactCard";
 import PersonalInsights from "./PersonalInsights";
 
 import PriceHistory from "./PriceHistory";
@@ -216,7 +217,34 @@ export default function ConsultantTrackContent({
         </div>
       )}
 
-      {/* ═══ Sammanfattning av marknadsdata ═══ */}
+      {/* ═══ ÅRLIG PÅVERKAN — wow-kortet, lyft direkt efter ersättningsjämförelsen ═══ */}
+      {isConsultantFullAccess && rec && (
+        <IncomeImpactCard
+          currentHourly={currentHourly}
+          recommendedMin={rec.recommended_hourly_min}
+          recommendedMax={rec.recommended_hourly_max}
+          isEmployee={isEmployee}
+          hoursPerMonth={rec.hours_per_month || 167}
+        />
+      )}
+
+      {/* ═══ Viktigt att veta — OB-policy & privat vårdgivare ═══ */}
+      {isConsultantFullAccess && rec && (
+        <div className="rounded-xl border border-foreground/[0.07] bg-foreground/[0.02] p-3.5 space-y-2">
+          <div className="flex items-start gap-2.5">
+            <Info className="w-3.5 h-3.5 text-muted-foreground mt-0.5 shrink-0" />
+            <p className="text-hint leading-relaxed">
+              Analysen avser <span className="font-semibold text-foreground">grundersättning</span>. Eventuella OB-tillägg, jour- och beredskapsersättning tillkommer enligt gällande avtal.
+            </p>
+          </div>
+          <div className="flex items-start gap-2.5">
+            <Info className="w-3.5 h-3.5 text-muted-foreground mt-0.5 shrink-0" />
+            <p className="text-hint leading-relaxed">
+              För <span className="font-semibold text-foreground">privata vårdgivare</span> gäller inte SKR:s nationella ramavtal. Ersättningen förhandlas fritt och kan avvika från analysen.
+            </p>
+          </div>
+        </div>
+      )}
       {isConsultantFullAccess && rec && !isAboveThreshold && (
         <div className="relative rounded-2xl bg-gradient-to-b from-foreground/[0.06] to-foreground/[0.02] border border-foreground/10 p-6 overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent" />
