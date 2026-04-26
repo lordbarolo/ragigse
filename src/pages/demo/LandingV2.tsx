@@ -404,8 +404,8 @@ export default function LandingV2() {
           ))}
         </div>
 
-        {/* Row 2 — 2 cards, 2/3 width */}
-        <div className="grid md:grid-cols-2 gap-4 md:max-w-[calc(66.66%-8px)]">
+        {/* Row 2 — 3 cards, full width */}
+        <div className="grid md:grid-cols-3 gap-4 mt-4">
           {MODULES_ROW2.map((m) => (
             <div key={m.title} className="bg-white border border-[rgba(0,0,0,0.08)] rounded-[18px] p-7 flex flex-col hover:border-[rgba(83,74,183,0.25)] hover:shadow-[0_4px_24px_rgba(83,74,183,0.08)] transition-all">
               <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-5 shrink-0" style={{ background: m.iconBg }}>
