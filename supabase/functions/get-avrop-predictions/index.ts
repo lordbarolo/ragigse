@@ -57,6 +57,20 @@ async function fetchAllRoles(supabase: any): Promise<string[]> {
   return [...roles].sort();
 }
 
+/**
+ * Mappa fri-text roll (calloff_imports.role, t.ex. "Läkare", "Specialistläkare Allmänmedicin")
+ * till profession-ENUM som används i uppdragsradar_predictions ("DOCTOR" | "NURSE" | "PHYSIOTHERAPIST").
+ */
+function mapRoleToProfession(roll: string): string | null {
+  if (!roll) return null;
+  const r = roll.toLowerCase();
+  if (r === "doctor" || r === "nurse" || r === "physiotherapist") return roll.toUpperCase();
+  if (r.includes("läkare") || r.includes("lakare")) return "DOCTOR";
+  if (r.includes("sjuksköt") || r.includes("sjukskot") || r.includes("barnmorska")) return "NURSE";
+  if (r.includes("fysioterapeut") || r.includes("sjukgymnast")) return "PHYSIOTHERAPIST";
+  return null;
+}
+
 /** Hämta senaste avropsdatum + medianpris per region för en roll (för UI-kontext) */
 async function fetchRegionContext(
   supabase: any,
