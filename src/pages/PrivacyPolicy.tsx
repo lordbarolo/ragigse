@@ -90,7 +90,7 @@ const PrivacyPolicy = () => {
               Du kan registrera referensgivare med namn, e-post, telefonnummer, organisation och yrkesroll. Vi skickar inbjudningar via e-post och erbjuder digital verifiering. Referensgivarens personuppgifter behandlas för att möjliggöra verifieringstjänsten. Rättslig grund: berättigat intresse (artikel 6.1f GDPR). Referensgivaren kan när som helst begära radering av sina uppgifter.
             </p>
 
-            <h3 className="text-base font-medium text-foreground mt-4">2.5 Löneanalys och förhandlingschat</h3>
+            <h3 className="text-base font-medium text-foreground mt-4">2.5 Ersättningsanalys och förhandlingschat</h3>
             <p className="text-sm text-muted-foreground leading-relaxed mt-1">
               Uppgifter du anger i enkäten (yrkesroll, specialisering, zon, anställningsform, ersättning) används för att beräkna din marknadsposition. Om du använder vår AI-drivna förhandlingsassistent sparas konversationshistoriken kopplat till din rapport-session.
             </p>
