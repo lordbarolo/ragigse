@@ -104,6 +104,19 @@ const MODULES_ROW2 = [
       </svg>
     ),
   },
+  {
+    title: "Förhandlingsassistent - AI-stöd i realtid",
+    desc: "Få objektiva marknadsdata, avtalsvillkor och konkreta förhandlingsargument direkt i chatten. Löneassistenten hjälper dig bygga ett starkt underlag inför ditt nästa konsultuppdrag — baserat på SKR:s ramavtal och regional statistik.",
+    tag: "Premium — 99 kr/mån",
+    tagColor: "amber" as const,
+    iconBg: "#FAEEDA",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M4 5h12v8H8l-4 3V5z" stroke="#854F0B" strokeWidth="1.2" strokeLinejoin="round" />
+        <line x1="7" y1="9" x2="13" y2="9" stroke="#854F0B" strokeWidth="1.2" strokeLinecap="round" />
+      </svg>
+    ),
+  },
 ];
 
 const STEPS = [
@@ -391,8 +404,8 @@ export default function LandingV2() {
           ))}
         </div>
 
-        {/* Row 2 — 2 cards, 2/3 width */}
-        <div className="grid md:grid-cols-2 gap-4 md:max-w-[calc(66.66%-8px)]">
+        {/* Row 2 — 3 cards, full width */}
+        <div className="grid md:grid-cols-3 gap-4 mt-4">
           {MODULES_ROW2.map((m) => (
             <div key={m.title} className="bg-white border border-[rgba(0,0,0,0.08)] rounded-[18px] p-7 flex flex-col hover:border-[rgba(83,74,183,0.25)] hover:shadow-[0_4px_24px_rgba(83,74,183,0.08)] transition-all">
               <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-5 shrink-0" style={{ background: m.iconBg }}>
