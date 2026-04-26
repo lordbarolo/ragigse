@@ -105,11 +105,12 @@ const App = () => (
           <ScrollToTop />
           <Suspense fallback={<Loading />}>
             <Routes>
-              {/* ── Landing — new design (LandingV2) ── */}
-              <Route path="/" element={<LandingV2 />} />
+              {/* ── Landing — "Förhandla utifrån data" ── */}
+              <Route path="/" element={<Index />} />
+              <Route path="/v2" element={<LandingV2 />} />
+              <Route path="/b2b" element={<Navigate to="/" replace />} />
               <Route path="/demo/landing-extras" element={<LandingExtras />} />
               <Route path="/v1" element={<SalaryCheck />} />
-              <Route path="/b2b" element={<Index />} />
 
               {/* ── Auth (no layout) ──────────────── */}
               <Route path="/logga-in" element={<Login />} />
