@@ -2137,6 +2137,93 @@ export type Database = {
           },
         ]
       }
+      pipeline_health_logs: {
+        Row: {
+          created_at: string
+          duration_ms: number | null
+          error_message: string | null
+          id: string
+          metadata: Json | null
+          rows_processed: number | null
+          sanity_checks: Json | null
+          status: string
+          task_name: string
+        }
+        Insert: {
+          created_at?: string
+          duration_ms?: number | null
+          error_message?: string | null
+          id?: string
+          metadata?: Json | null
+          rows_processed?: number | null
+          sanity_checks?: Json | null
+          status: string
+          task_name: string
+        }
+        Update: {
+          created_at?: string
+          duration_ms?: number | null
+          error_message?: string | null
+          id?: string
+          metadata?: Json | null
+          rows_processed?: number | null
+          sanity_checks?: Json | null
+          status?: string
+          task_name?: string
+        }
+        Relationships: []
+      }
+      prediction_backtests: {
+        Row: {
+          abs_error: number
+          actual_calloffs: number
+          confidence: string | null
+          customer: string
+          drift_ratio: number | null
+          evaluated_at: string
+          expected_calloffs: number
+          forecast_run_id: string
+          id: string
+          is_drift_alert: boolean
+          month: string
+          profession: string | null
+          region: string | null
+          specialization: string | null
+        }
+        Insert: {
+          abs_error: number
+          actual_calloffs: number
+          confidence?: string | null
+          customer: string
+          drift_ratio?: number | null
+          evaluated_at?: string
+          expected_calloffs: number
+          forecast_run_id: string
+          id?: string
+          is_drift_alert?: boolean
+          month: string
+          profession?: string | null
+          region?: string | null
+          specialization?: string | null
+        }
+        Update: {
+          abs_error?: number
+          actual_calloffs?: number
+          confidence?: string | null
+          customer?: string
+          drift_ratio?: number | null
+          evaluated_at?: string
+          expected_calloffs?: number
+          forecast_run_id?: string
+          id?: string
+          is_drift_alert?: boolean
+          month?: string
+          profession?: string | null
+          region?: string | null
+          specialization?: string | null
+        }
+        Relationships: []
+      }
       price_changes: {
         Row: {
           change_type: string
@@ -3879,6 +3966,7 @@ export type Database = {
           id: string
           is_seasonal_peak: boolean | null
           is_trend_break: boolean | null
+          is_under_review: boolean
           month: string
           profession: string | null
           region: string | null
@@ -3898,6 +3986,7 @@ export type Database = {
           id?: string
           is_seasonal_peak?: boolean | null
           is_trend_break?: boolean | null
+          is_under_review?: boolean
           month: string
           profession?: string | null
           region?: string | null
@@ -3917,6 +4006,7 @@ export type Database = {
           id?: string
           is_seasonal_peak?: boolean | null
           is_trend_break?: boolean | null
+          is_under_review?: boolean
           month?: string
           profession?: string | null
           region?: string | null

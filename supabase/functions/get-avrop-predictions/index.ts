@@ -30,6 +30,7 @@ interface RegionPrediction {
   confidence?: "low" | "med" | "high";
   is_seasonal_peak?: boolean;
   is_trend_break?: boolean;
+  is_under_review?: boolean;
 }
 
 interface ForecastRow {
@@ -44,6 +45,7 @@ interface ForecastRow {
   confidence: "low" | "med" | "high" | null;
   is_seasonal_peak: boolean;
   is_trend_break: boolean;
+  is_under_review: boolean;
   generated_at: string;
 }
 
@@ -154,7 +156,7 @@ Deno.serve(async (req) => {
       const { data } = await supabase
         .from("uppdragsradar_predictions")
         .select(
-          "customer, region, profession, specialization, month, expected_calloffs, seasonal_index, yoy_ratio, confidence, is_seasonal_peak, is_trend_break, generated_at",
+          "customer, region, profession, specialization, month, expected_calloffs, seasonal_index, yoy_ratio, confidence, is_seasonal_peak, is_trend_break, is_under_review, generated_at",
         )
         .eq("forecast_run_id", runId)
         .eq("profession", profession)
@@ -178,6 +180,7 @@ Deno.serve(async (req) => {
         nextMonthExpected: number;
         anyPeak: boolean;
         anyBreak: boolean;
+        anyUnderReview: boolean;
         bestConfidence: "low" | "med" | "high";
       }>();
 
@@ -193,6 +196,7 @@ Deno.serve(async (req) => {
           nextMonthExpected: 0,
           anyPeak: false,
           anyBreak: false,
+          anyUnderReview: false,
           bestConfidence: "low" as "low" | "med" | "high",
         };
         cur.totalExpected += f.expected_calloffs;
@@ -208,6 +212,7 @@ Deno.serve(async (req) => {
         }
         if (f.is_seasonal_peak) cur.anyPeak = true;
         if (f.is_trend_break) cur.anyBreak = true;
+        if (f.is_under_review) cur.anyUnderReview = true;
         const cConf = (f.confidence ?? "low") as "low" | "med" | "high";
         if (confRank[cConf] > confRank[cur.bestConfidence]) cur.bestConfidence = cConf;
         regionAgg.set(f.region, cur);
@@ -250,6 +255,7 @@ Deno.serve(async (req) => {
           confidence: agg.bestConfidence,
           is_seasonal_peak: agg.anyPeak,
           is_trend_break: agg.anyBreak,
+          is_under_review: agg.anyUnderReview,
         });
       }
 
