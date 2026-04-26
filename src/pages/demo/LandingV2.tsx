@@ -62,7 +62,7 @@ const MODULES_ROW1: ModuleCard[] = [
     ),
   },
   {
-    title: "Löneanalys & löneassistent",
+    title: "Ersättningsanalys - Se aktuella arvoden",
     desc: "Med full transparens kring avtalsvillkor och branschens marginaler skapar vi förutsättningar för en trygg och hållbar konsultkarriär.",
     tag: "Insight — 149 kr/mån",
     tagColor: "amber",
