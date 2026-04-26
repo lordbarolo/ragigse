@@ -745,6 +745,9 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                   <span className="text-base font-medium text-foreground">{opt.label}</span>
                 </button>
               ))}
+              <p className="text-hint text-center mt-1 px-2 leading-relaxed">
+                Detta avgör hur vi beräknar bemanningsbolagets marginal och din nettoersättning utifrån regionens kundpris.
+              </p>
             </div>
           </StepWrapper>
         )}
