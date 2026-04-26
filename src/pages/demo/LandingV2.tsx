@@ -319,12 +319,12 @@ export default function LandingV2() {
         />
 
         {/* content — left */}
-        <div className="relative z-10 px-1 sm:px-2 md:px-10 xl:px-16 pt-16 pb-8 md:py-24 max-w-[680px] flex-1">
+        <div className="relative z-10 px-1 sm:px-2 md:px-10 xl:px-16 pt-16 pb-8 md:py-24 max-w-[760px] flex-1">
           <div className="inline-flex items-center gap-1.5 text-xs font-medium text-[#AFA9EC] bg-[rgba(83,74,183,0.2)] border border-[rgba(127,119,221,0.35)] rounded-full px-3 py-1 mb-5 uppercase tracking-wider">
             <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="#AFA9EC" /></svg>
             För läkare &amp; sjuksköterskor
           </div>
-          <h1 className="font-bold leading-[1.1] text-white mb-6 tracking-tight text-3xl">
+          <h1 className="font-bold leading-[1.1] text-white mb-6 tracking-tight text-3xl sm:text-4xl md:text-5xl whitespace-nowrap">
             Förhandla utifrån <span className="text-[#AFA9EC]">data,</span><br />inte magkänsla
           </h1>
           <p className="text-lg text-white/[0.78] leading-relaxed mb-6 max-w-[520px]">
