@@ -10,7 +10,7 @@ import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 const NAV_LINKS: { label: string; href: string; external?: boolean }[] = [
   { label: "Verktyg", href: "#verktyg" },
   { label: "Ersättningsanalys", href: "/", external: true },
-  { label: "Fakturagranskning", href: "/consultant/fakturakontroll", external: true },
+  { label: "Fakturagranskning - Få betalt för all din tid", href: "/consultant/fakturakontroll", external: true },
   { label: "Priser", href: "#priser" },
   { label: "FAQ", href: "/vanliga-fragor", external: true },
 ];
@@ -77,7 +77,7 @@ const MODULES_ROW1: ModuleCard[] = [
 
 const MODULES_ROW2 = [
   {
-    title: "Fakturagranskning",
+    title: "Fakturagranskning - Få betalt för all din tid",
     desc: "Automatiserad revision av fakturor och tidrapport. Vi söker efter avvikelser och hjälper dig fakturera om vi ser något du missat att ta betalt för. Arvodet är helt prestationsbaserat: vi erhåller 25 % av det belopp vi återvinner åt dig.",
     tag: "Prestationsbaserat",
     tagColor: "green" as const,
@@ -164,7 +164,7 @@ const PLANS = [
   },
   {
     tag: "FK",
-    name: "Fakturagranskning",
+    name: "Fakturagranskning - Få betalt för all din tid",
     tagline: "Växande affärsmodell",
     price: "0 kr",
     unit: " förhandsavgift",
@@ -406,7 +406,7 @@ export default function LandingV2() {
             <div className="flex flex-col gap-2 text-[13px] text-muted-foreground">
               <Link to="/dokhus-info" className="hover:text-foreground transition-colors">Dokhus</Link>
               <Link to="/" className="hover:text-foreground transition-colors">Ersättningsanalys</Link>
-              <Link to="/consultant/fakturakontroll" className="hover:text-foreground transition-colors">Fakturagranskning</Link>
+              <Link to="/consultant/fakturakontroll" className="hover:text-foreground transition-colors">Fakturagranskning - Få betalt för all din tid</Link>
               <Link to="/consultant/forhandla" className="hover:text-foreground transition-colors">Ersättningsanalys</Link>
             </div>
           </div>
