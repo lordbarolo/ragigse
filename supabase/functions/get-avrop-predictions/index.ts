@@ -156,7 +156,7 @@ Deno.serve(async (req) => {
       const { data } = await supabase
         .from("uppdragsradar_predictions")
         .select(
-          "customer, region, profession, specialization, month, expected_calloffs, seasonal_index, yoy_ratio, confidence, is_seasonal_peak, is_trend_break, generated_at",
+          "customer, region, profession, specialization, month, expected_calloffs, seasonal_index, yoy_ratio, confidence, is_seasonal_peak, is_trend_break, is_under_review, generated_at",
         )
         .eq("forecast_run_id", runId)
         .eq("profession", profession)
