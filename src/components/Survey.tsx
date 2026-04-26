@@ -606,8 +606,6 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                     trackSurveyStarted();
                     setOccupationCategory(opt.value);
                     setRoleDropdownValue("");
-                    trackStepCompleted(1, opt.value);
-                    setTimeout(() => setStep(2), 200);
                   }}
                   className={`group w-full py-5 px-5 rounded-xl border !border-l-[3px] bg-card text-left transition-all active:scale-[0.98] flex items-center justify-between gap-3 ${
                     occupationCategory === opt.value
@@ -652,12 +650,6 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                   value={roleDropdownValue}
                   onValueChange={(v) => {
                     setRoleDropdownValue(v);
-                    if (v) {
-                      setTimeout(() => {
-                        trackStepCompleted(2, v);
-                        setStep(3);
-                      }, 300);
-                    }
                   }}
                   placeholder={occupationCategory === "lakare" ? "Välj läkarroll eller specialisering..." : "Välj roll eller vidareutbildning..."}
                   options={occupationCategory === "lakare" ? doctorRoleOptions : nurseRoleOptions}
@@ -699,8 +691,6 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                         onClick={() => {
                           setData({ ...data, kommun: k.kommun });
                           setSelectedRegion(k.region);
-                          trackStepCompleted(3, k.kommun);
-                          setTimeout(() => setStep(4), 200);
                         }}
                         className={`group w-full py-3 px-4 text-left text-sm transition-all flex items-center justify-between border-b border-border/50 last:border-b-0 ${
                           data.kommun === k.kommun
@@ -740,10 +730,6 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                   key={opt.value}
                   onClick={() => {
                      setData({ ...data, employmentType: opt.value });
-                     setTimeout(() => {
-                       trackStepCompleted(4, opt.value);
-                       setStep(5);
-                     }, 300);
                    }}
                   className={`group w-full py-5 px-5 rounded-xl border !border-l-[3px] bg-card text-left transition-all active:scale-[0.98] flex items-center gap-3 ${
                     data.employmentType === opt.value
@@ -777,10 +763,6 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                   key={opt.value}
                   onClick={() => {
                      setData({ ...data, obShare: opt.value });
-                     setTimeout(() => {
-                       trackStepCompleted(5, opt.value);
-                       setStep(6);
-                     }, 300);
                   }}
                   className={`group w-full py-5 px-5 rounded-xl border !border-l-[3px] bg-card text-left transition-all active:scale-[0.98] flex items-center gap-3 ${
                     data.obShare === opt.value
@@ -864,7 +846,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
             Tillbaka
           </button>
         )}
-        {step !== 3 && step !== 6 && (
+        {step !== 6 && (
           <button
             onClick={() => {
               if (!canProceed) return;
