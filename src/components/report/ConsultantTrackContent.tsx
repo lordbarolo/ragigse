@@ -8,6 +8,7 @@ import PriceNuggets from "./PriceNuggets";
 import type { PriceChange } from "@/shared/types";
 import { Separator } from "@/components/ui/separator";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import {
   TrendingUp,
   Lock,
