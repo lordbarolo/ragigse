@@ -119,7 +119,7 @@ export default function AgencySignup() {
           <CardHeader className="text-center">
             <CardTitle className="text-xl font-semibold text-foreground">Registrera bemanningsföretag</CardTitle>
             <CardDescription>
-              Få tillgång till CompCare:s representationsbevis och verifieringsinfrastruktur
+              Få tillgång till CompCare:s samarbetsintyg och verifieringsinfrastruktur
             </CardDescription>
           </CardHeader>
           <CardContent>

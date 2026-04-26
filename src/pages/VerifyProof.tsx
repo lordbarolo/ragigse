@@ -185,12 +185,12 @@ export default function VerifyProof() {
         <div className="flex items-center gap-2 mb-2">
           <Fingerprint className="h-5 w-5 text-primary" />
           <h1 className="text-xl font-bold text-foreground tracking-tight">
-            Representationsbevis
+            Samarbetsintyg
           </h1>
         </div>
         <p className="text-sm text-muted-foreground">
           {representation
-            ? `Signerat representationsbevis för ${representation.region}`
+            ? `Signerat samarbetsintyg för ${representation.region}`
             : "Verifierade referenser bifogade till ansökan"}
         </p>
         <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground">
