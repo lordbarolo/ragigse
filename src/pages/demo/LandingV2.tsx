@@ -209,7 +209,7 @@ export default function LandingV2() {
             Aktuella ersättningar för alla bemanningsuppdrag — direkt från SKR:s ramavtal 2026. Inget formulär, ingen registrering.
           </p>
           <HeroInlineForm />
-          <p className="mt-4 text-[12px] text-white/45">
+          <p className="mt-4 text-[12px] text-white/45 text-center">
             Anonymt · Klart på 60 sekunder · Vi sparar inte dina uppgifter
           </p>
         </div>
