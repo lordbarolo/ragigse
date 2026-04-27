@@ -79,9 +79,9 @@ const INFRASTRUCTURE: InfraCard[] = [
 ];
 
 const TRUST_POINTS = [
-  { icon: ShieldCheck, title: "BankID-verifiering", note: "Aktiveras inom kort", muted: true },
+  { icon: ShieldCheck, title: "BankID-verifiering", note: "LANSERAS I MAJ 2026", muted: true },
   { icon: Lock, title: "GDPR-kompatibel", note: "All data lagras inom EU" },
-  { icon: FileLock2, title: "Aldrig till tredje part", note: "Vi säljer inte din data till bemanningsföretag" },
+  { icon: FileLock2, title: "Aldrig till tredje part", note: "Vi säljer inte din data" },
 ];
 
 const TAG_COLORS: Record<string, string> = {
