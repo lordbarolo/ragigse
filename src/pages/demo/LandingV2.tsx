@@ -188,7 +188,7 @@ export default function LandingV2() {
             <span className="text-gradient-violet">är värd?</span>
           </h1>
           <p className="text-[16px] sm:text-lg text-white/75 leading-relaxed mb-8 max-w-[480px]">
-            Aktuella ersättningar för alla bemanningsuppdrag — direkt från SKR:s ramavtal 2026. Inget formulär, ingen registrering.
+            Vi visar acceptabla ersättningsnivåer för alla roller och regioner. Baserat på SKR:s ramavtal för 2026 och djupgående AI-analyser av bemanningsbranschens marginaler.
           </p>
           <HeroInlineForm />
           <p className="mt-4 text-[12px] text-white/45 text-center">
