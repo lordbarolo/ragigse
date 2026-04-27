@@ -1,8 +1,11 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ShieldCheck, CheckCircle2, ArrowRight, FileCheck, Users, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CompcareLogo from "@/components/CompcareLogo";
 import ThemeToggle from "@/components/ThemeToggle";
+import { trackEvent } from "@/lib/trackEvent";
+import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 
 const BENEFITS = [
   {
@@ -33,6 +36,11 @@ const STEPS = [
 ];
 
 export default function AgencyLanding() {
+  useTimeOnPage("agency-landing");
+  useEffect(() => {
+    trackEvent("b2b_landing_viewed");
+  }, []);
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* ── Nav ─────────────────────────────────── */}
