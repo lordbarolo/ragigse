@@ -352,8 +352,8 @@ export default function ConsultantTrackContent({
                   <PopoverContent side="top" className="w-72 text-xs leading-relaxed">
                     <p className="font-semibold text-foreground mb-1.5">Så beräknar vi spannet</p>
                     <p className="text-muted-foreground">
-                      Vi utgår från regionens kundpris (SKR:s ramavtal, zon-differentierat för {userZone || "din zon"}) och drar av en yrkesspecifik branschmarginal{" "}
-                      {isEmployee ? "på 12–18 % (anställd via bemanningsbolag)" : "på 8–15 % (egenföretagare)"}.
+                      Vi utgår från regionens kundpris (SKR:s ramavtal, zon-differentierat för {userZone || "din zon"}) och drar av en branschmarginal{" "}
+                      på 15–20 % (10–15 % för specialistläkare). Samma marginal gäller både anställda och egenföretagare.
                     </p>
                   </PopoverContent>
                 </Popover>

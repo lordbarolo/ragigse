@@ -10,9 +10,10 @@ import {
   resolveYrke as resolveYrkeBase,
   type RoleGroup,
 } from "@/lib/specialityLists";
+import { getMarginShares } from "@/lib/calc";
 
 /* ───────────────────── data (same shape as MarketSearchBox) ───────────────────── */
-const DEFAULT_EMPLOYER_FACTOR = 1.47;
+const DEFAULT_EMPLOYER_FACTOR = 1.42;
 const DEFAULT_HOURS_PER_MONTH = 167;
 
 const CATEGORIES: { value: RoleGroup; label: string }[] = [
@@ -32,10 +33,12 @@ function resolveYrkeHero(category: RoleGroup, dropdownValue: string): string {
   return resolveYrkeBase(category, dropdownValue);
 }
 
-function getMargins(group: RoleGroup) {
-  return group === "lakare"
-    ? { keepMin: 0.85, keepMax: 0.92, marginMidPct: 11.5, marginText: "8–15 %" }
-    : { keepMin: 0.8, keepMax: 0.88, marginMidPct: 16, marginText: "12–20 %" };
+function getMargins(role: string) {
+  const { share_min, share_max, margin_text } = getMarginShares(role);
+  // Mid-point of the agency margin (1 - mid share)
+  const midShare = (share_min + share_max) / 2;
+  const marginMidPct = Math.round((1 - midShare) * 100 * 10) / 10;
+  return { keepMin: share_min, keepMax: share_max, marginMidPct, marginText: margin_text };
 }
 
 interface RateResult {
@@ -97,8 +100,8 @@ const DEFAULT_RESULT: RateResult = {
   hourlyMax: 482,
   monthlyMin: 72144,
   monthlyMax: 80494,
-  marginText: "12–20 %",
-  marginMidPct: 16,
+  marginText: "15–20 %",
+  marginMidPct: 17.5,
   marginKrMin: 92,
   marginKrMax: 123,
   bestZon: "Zon 3",
@@ -207,7 +210,7 @@ export default function HeroRateFinder({ prefillKey }: Props) {
         if (fnErr) throw fnErr;
         if (!data?.rate_customer_sek_per_hour) throw new Error("NO_RATE_FOUND");
 
-        const { keepMin, keepMax, marginText, marginMidPct } = getMargins(selectedCategory!);
+        const { keepMin, keepMax, marginText, marginMidPct } = getMargins(resolvedYrke);
         const timpris = Number(data.rate_customer_sek_per_hour);
         const employerFactor = Number(data.employee_factor ?? DEFAULT_EMPLOYER_FACTOR);
         const hoursPerMonth = Number(data.hours_per_month ?? DEFAULT_HOURS_PER_MONTH);

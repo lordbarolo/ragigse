@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import {
   calculateSalaryRange,
+  getMarginShares,
   monthlyDelta,
   type EmploymentType,
   type MarginModel,
@@ -122,19 +123,18 @@ serve(async (req) => {
       );
     }
 
-    // Calculate using shared module with DB model
+    // Calculate using shared module with role-based margin model.
+    // Specialistläkare → 10–15% bemanningsmarginal, övriga roller → 15–20%.
+    // Anställd vs företagare påverkar BARA employer_factor, inte share.
     const empType = employment_type as EmploymentType;
-    // For foretagare: 8-15% margin (85-92% to consultant)
-    const FORETAGARE_SHARE_MIN = 0.85;
-    const FORETAGARE_SHARE_MAX = 0.92;
-    const effectiveModel: MarginModel | undefined = model
-      ? (empType === "foretagare"
-        ? { ...model, share_min: FORETAGARE_SHARE_MIN, share_max: FORETAGARE_SHARE_MAX }
-        : model)
-      : (empType === "foretagare"
-        ? { share_min: FORETAGARE_SHARE_MIN, share_max: FORETAGARE_SHARE_MAX, employer_factor: 1.47, hours_per_month: 167 }
-        : undefined);
-    const effectiveM = effectiveModel ?? m;
+    const roleShares = getMarginShares(occupation);
+    const effectiveModel: MarginModel = {
+      share_min: roleShares.share_min,
+      share_max: roleShares.share_max,
+      employer_factor: m.employer_factor,
+      hours_per_month: m.hours_per_month,
+    };
+    const effectiveM = effectiveModel;
     const range = calculateSalaryRange(timprisKund, empType, effectiveModel);
     const factor = empType === "anstalld" ? effectiveM.employer_factor : 1;
 

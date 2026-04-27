@@ -9,8 +9,9 @@ import {
   resolveYrke,
   type RoleGroup,
 } from "@/lib/specialityLists";
+import { getMarginShares } from "@/lib/calc";
 
-const DEFAULT_EMPLOYER_FACTOR = 1.47;
+const DEFAULT_EMPLOYER_FACTOR = 1.42;
 const DEFAULT_HOURS_PER_MONTH = 167;
 
 const CATEGORIES: { value: RoleGroup; label: string }[] = [
@@ -20,10 +21,9 @@ const CATEGORIES: { value: RoleGroup; label: string }[] = [
 
 // Specialty lists, nurseValueMap & resolveYrke imported from @/lib/specialityLists
 
-function getMargins(group: RoleGroup) {
-  return group === "lakare"
-    ? { keepMin: 0.85, keepMax: 0.92, marginText: "8–15 %" }
-    : { keepMin: 0.8, keepMax: 0.88, marginText: "12–20 %" };
+function getMargins(role: string) {
+  const { share_min, share_max, margin_text } = getMarginShares(role);
+  return { keepMin: share_min, keepMax: share_max, marginText: margin_text };
 }
 
 interface MarketResult {
@@ -122,7 +122,7 @@ export default function MarketSearchBox() {
         if (functionError) throw functionError;
         if (!data?.rate_customer_sek_per_hour) throw new Error("NO_RATE_FOUND");
 
-        const { keepMin, keepMax, marginText } = getMargins(selectedCategory!);
+        const { keepMin, keepMax, marginText } = getMargins(resolvedYrke);
         const timpris = Number(data.rate_customer_sek_per_hour);
         const employerFactor = Number(data.employee_factor ?? DEFAULT_EMPLOYER_FACTOR);
         const hoursPerMonth = Number(data.hours_per_month ?? DEFAULT_HOURS_PER_MONTH);
