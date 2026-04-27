@@ -29,7 +29,7 @@ const HOW_IT_WORKS = [
   {
     num: "02",
     title: "Få ditt spann",
-    desc: "Median, undre och övre intervall direkt — baserat på SKR:s ramavtal 2026.",
+    desc: "Median, undre och övre intervall.",
   },
   {
     num: "03",
