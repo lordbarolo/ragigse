@@ -209,7 +209,9 @@ async function callGemini(
   systemPrompt: string,
   pdfBase64: string,
   tool: typeof TIDRAPPORT_TOOL | typeof FAKTURA_TOOL,
+  feature: string = "invoice-extract",
 ): Promise<Record<string, unknown>> {
+  const startedAt = Date.now();
   const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
     headers: {
@@ -235,13 +237,32 @@ async function callGemini(
       tool_choice: { type: "function", function: { name: tool.function.name } },
     }),
   });
+  const durationMs = Date.now() - startedAt;
 
   if (!res.ok) {
     const body = await res.text();
+    logAiUsage({
+      feature,
+      model,
+      status: res.status === 429 ? "rate_limited" : res.status === 402 ? "payment_required" : "error",
+      durationMs,
+      errorMessage: `gateway_${res.status}: ${body.slice(0, 200)}`,
+      metadata: { tool: tool.function.name },
+    });
     throw new Error(`AI Gateway error [${res.status}]: ${body}`);
   }
 
   const data = await res.json();
+  const { inputTokens, outputTokens } = extractTokensFromResponse(data);
+  logAiUsage({
+    feature,
+    model,
+    inputTokens,
+    outputTokens,
+    durationMs,
+    metadata: { tool: tool.function.name, has_pdf: true },
+  });
+
   const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
   if (!toolCall) {
     const content = data.choices?.[0]?.message?.content ?? "";
