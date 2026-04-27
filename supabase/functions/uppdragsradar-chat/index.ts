@@ -1,6 +1,22 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { checkRateLimit, rateLimitResponse } from "../_shared/rateLimit.ts";
-import { logAiUsage } from "../_shared/ai-usage-logger.ts";
+import { logAiUsage, checkAiRateLimit, aiRateLimitResponse } from "../_shared/ai-usage-logger.ts";
+
+async function getAuthUserId(req: Request): Promise<string | null> {
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) return null;
+  try {
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!,
+      { global: { headers: { Authorization: authHeader } } },
+    );
+    const { data: { user } } = await supabase.auth.getUser();
+    return user?.id ?? null;
+  } catch {
+    return null;
+  }
+}
 
 // Rough token estimator (~4 chars per token for Latin text)
 function estimateTokens(text: string): number {
@@ -106,10 +122,14 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Rate limiting: 20 requests per IP per hour
+    // Rate limiting: IP-based (20/h) + per-user daily AI quota
     const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
     const rl = await checkRateLimit(supabase, "uppdragsradar-chat", clientIp, 20, 60);
     if (!rl.allowed) return rateLimitResponse(rl, corsHeaders);
+
+    const userId = await getAuthUserId(req);
+    const aiRl = await checkAiRateLimit(userId);
+    if (!aiRl.allowed) return aiRateLimitResponse(aiRl, corsHeaders);
 
     // --- FALLBACK 1: selectedRole is missing ---
     const selectedRole: string | null = (roll && typeof roll === "string" && roll.trim()) ? roll.trim() : null;

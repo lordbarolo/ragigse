@@ -122,3 +122,87 @@ export function extractTokensFromResponse(json: unknown): {
     outputTokens: usage?.completion_tokens ?? 0,
   };
 }
+
+// =============================================================
+// Rate limiting
+// =============================================================
+
+export interface RateLimitStatus {
+  allowed: boolean;
+  used: number;
+  limit: number | null;
+  remaining?: number;
+  resets_at?: string;
+  is_admin?: boolean;
+  reason?: string;
+}
+
+/**
+ * Checks the per-user daily AI rate limit by calling public.check_ai_rate_limit.
+ * Returns { allowed: true } and fails OPEN if userId is missing or DB call fails
+ * (we never want to block users due to infrastructure issues).
+ *
+ * Admins always get { allowed: true, is_admin: true }.
+ */
+export async function checkAiRateLimit(
+  userId: string | null | undefined,
+  dailyLimit = 30,
+): Promise<RateLimitStatus> {
+  if (!userId) {
+    return { allowed: true, used: 0, limit: dailyLimit, remaining: dailyLimit };
+  }
+  try {
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    if (!supabaseUrl || !serviceKey) {
+      console.warn("[ai-rate-limit] missing env vars; allowing request");
+      return { allowed: true, used: 0, limit: dailyLimit };
+    }
+    const resp = await fetch(`${supabaseUrl}/rest/v1/rpc/check_ai_rate_limit`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        apikey: serviceKey,
+        Authorization: `Bearer ${serviceKey}`,
+      },
+      body: JSON.stringify({ _user_id: userId, _daily_limit: dailyLimit }),
+    });
+    if (!resp.ok) {
+      console.error("[ai-rate-limit] RPC failed", resp.status, await resp.text());
+      return { allowed: true, used: 0, limit: dailyLimit };
+    }
+    const data = await resp.json();
+    return data as RateLimitStatus;
+  } catch (err) {
+    console.error("[ai-rate-limit] unexpected error:", err);
+    return { allowed: true, used: 0, limit: dailyLimit };
+  }
+}
+
+/**
+ * Builds a 429 response body for rate-limited AI requests.
+ */
+export function aiRateLimitResponse(
+  status: RateLimitStatus,
+  corsHeaders: Record<string, string>,
+): Response {
+  return new Response(
+    JSON.stringify({
+      error: "rate_limited",
+      message: `Du har nått dagens gräns på ${status.limit} AI-anrop. Återställs vid midnatt.`,
+      used: status.used,
+      limit: status.limit,
+      resets_at: status.resets_at,
+    }),
+    {
+      status: 429,
+      headers: {
+        ...corsHeaders,
+        "Content-Type": "application/json",
+        "X-RateLimit-Limit": String(status.limit ?? ""),
+        "X-RateLimit-Remaining": "0",
+        "X-RateLimit-Reset": status.resets_at ?? "",
+      },
+    },
+  );
+}

@@ -4451,6 +4451,10 @@ export type Database = {
         Args: { _request_id: string }
         Returns: undefined
       }
+      check_ai_rate_limit: {
+        Args: { _daily_limit?: number; _user_id: string }
+        Returns: Json
+      }
       create_org_with_admin: {
         Args: { _name: string; _org_number?: string; _type?: string }
         Returns: string
