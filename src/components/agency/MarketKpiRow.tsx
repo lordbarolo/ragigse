@@ -98,40 +98,50 @@ export default function MarketKpiRow({ topRate, specialtyCount }: KpiRowProps) {
   }, [data]);
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-      <KpiCard
-        icon={Activity}
-        label="Avrop · senaste 30d"
-        value={loading ? "—" : data?.calloffs30d.toLocaleString("sv-SE") ?? "0"}
-        trend={calloffsTrend}
-        trendLabel="vs. föregående 30d"
-        spark={data?.spark.map((s) => s.cnt) ?? []}
-        loading={loading}
-      />
-      <KpiCard
-        icon={TrendingUp}
-        label="Fyllnadsgrad"
-        value={loading ? "—" : fillRate !== null ? `${fillRate}%` : "—"}
-        sublabel={
-          loading || !data
-            ? undefined
-            : `${data.filled30d.toLocaleString("sv-SE")} av ${data.decidable30d.toLocaleString("sv-SE")}`
-        }
-        loading={loading}
-      />
-      <KpiCard
-        icon={MapPin}
-        label="Aktiva regioner"
-        value={loading ? "—" : `${data?.regions30d ?? 0}`}
-        sublabel="av 21 totalt · senaste 30d"
-        loading={loading}
-      />
-      <KpiCard
-        icon={Crown}
-        label="Topptak ramavtal"
-        value={topRate ? `${topRate.toLocaleString("sv-SE")} kr` : "—"}
-        sublabel={`över ${specialtyCount} roller`}
-      />
+    <div className="space-y-2">
+      <div className="flex items-baseline justify-between gap-2 px-0.5">
+        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+          Historisk översikt · senaste 30 dagarna
+        </h2>
+        <span className="text-[10px] text-muted-foreground/70">
+          Endast historiska avrop · inga prognoser
+        </span>
+      </div>
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <KpiCard
+          icon={Activity}
+          label="Avrop · publicerade"
+          value={loading ? "—" : data?.calloffs30d.toLocaleString("sv-SE") ?? "0"}
+          trend={calloffsTrend}
+          trendLabel="vs. föregående 30d"
+          spark={data?.spark.map((s) => s.cnt) ?? []}
+          loading={loading}
+        />
+        <KpiCard
+          icon={TrendingUp}
+          label="Historisk fyllnadsgrad"
+          value={loading ? "—" : fillRate !== null ? `${fillRate}%` : "—"}
+          sublabel={
+            loading || !data
+              ? undefined
+              : `${data.filled30d.toLocaleString("sv-SE")} av ${data.decidable30d.toLocaleString("sv-SE")} tillsattes`
+          }
+          loading={loading}
+        />
+        <KpiCard
+          icon={MapPin}
+          label="Regioner med data"
+          value={loading ? "—" : `${data?.regions30d ?? 0}`}
+          sublabel="av 21 totalt"
+          loading={loading}
+        />
+        <KpiCard
+          icon={Crown}
+          label="Topptak ramavtal"
+          value={topRate ? `${topRate.toLocaleString("sv-SE")} kr` : "—"}
+          sublabel={`över ${specialtyCount} roller`}
+        />
+      </div>
     </div>
   );
 }
