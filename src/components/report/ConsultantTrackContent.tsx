@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import InvoiceReviewCTA from "./InvoiceReviewCTA";
-import IncomeImpactCard from "./IncomeImpactCard";
+
 import PersonalInsights from "./PersonalInsights";
 
 import PriceHistory from "./PriceHistory";
@@ -215,17 +215,6 @@ export default function ConsultantTrackContent({
             </div>
           </div>
         </div>
-      )}
-
-      {/* ═══ ÅRLIG PÅVERKAN — wow-kortet, lyft direkt efter ersättningsjämförelsen ═══ */}
-      {isConsultantFullAccess && rec && (
-        <IncomeImpactCard
-          currentHourly={currentHourly}
-          recommendedMin={rec.recommended_hourly_min}
-          recommendedMax={rec.recommended_hourly_max}
-          isEmployee={isEmployee}
-          hoursPerMonth={rec.hours_per_month || 167}
-        />
       )}
 
       {/* ═══ Viktigt att veta — OB-policy & privat vårdgivare ═══ */}
