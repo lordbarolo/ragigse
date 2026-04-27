@@ -122,10 +122,14 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Rate limiting: 20 requests per IP per hour
+    // Rate limiting: IP-based (20/h) + per-user daily AI quota
     const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
     const rl = await checkRateLimit(supabase, "uppdragsradar-chat", clientIp, 20, 60);
     if (!rl.allowed) return rateLimitResponse(rl, corsHeaders);
+
+    const userId = await getAuthUserId(req);
+    const aiRl = await checkAiRateLimit(userId);
+    if (!aiRl.allowed) return aiRateLimitResponse(aiRl, corsHeaders);
 
     // --- FALLBACK 1: selectedRole is missing ---
     const selectedRole: string | null = (roll && typeof roll === "string" && roll.trim()) ? roll.trim() : null;
