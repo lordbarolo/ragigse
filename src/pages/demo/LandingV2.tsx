@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Menu, X, ShieldCheck, Lock, FileLock2, Database, MapPin, History } from "lucide-react";
+import { ArrowRight, Menu, X, ShieldCheck, Lock, FileLock2, Database, MapPin, History, Sparkles, Zap, LineChart, GitBranch } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 import HeroInlineForm from "@/components/landing/HeroInlineForm";
 import { trackEvent } from "@/lib/trackEvent";
@@ -21,21 +21,9 @@ const DATA_STATS = [
 ];
 
 const HOW_IT_WORKS = [
-  {
-    num: "01",
-    title: "Välj din roll",
-    desc: "Specialitet och ort i två klick. Inga formulär, ingen registrering.",
-  },
-  {
-    num: "02",
-    title: "Få ditt spann",
-    desc: "Median, undre och övre intervall.",
-  },
-  {
-    num: "03",
-    title: "Förhandla med data",
-    desc: "Konkreta argument för nästa samtal med uppdragsgivaren.",
-  },
+  { num: "01", title: "Välj din roll", desc: "Specialitet och ort i två klick. Inga formulär, ingen registrering." },
+  { num: "02", title: "Få ditt spann", desc: "Median, undre och övre intervall." },
+  { num: "03", title: "Förhandla med data", desc: "Konkreta argument för nästa samtal med uppdragsgivaren." },
 ];
 
 type ProductCard = {
@@ -44,7 +32,7 @@ type ProductCard = {
   tagline: string;
   desc: string;
   tag: string;
-  tagColor: "purple" | "amber" | "green" | "muted";
+  tagColor: "violet" | "pink" | "cyan" | "muted";
   href: string;
   cta: string;
 };
@@ -56,7 +44,7 @@ const PRIMARY_PRODUCTS: ProductCard[] = [
     tagline: "Vet vad du är värd",
     desc: "Jämför din ersättning mot 290 kommuners ramavtalspriser. Se median och spann för din specialitet och zon — på 60 sekunder.",
     tag: "Gratis",
-    tagColor: "green",
+    tagColor: "cyan",
     href: "/v1?start=1",
     cta: "Gör analysen",
   },
@@ -66,7 +54,7 @@ const PRIMARY_PRODUCTS: ProductCard[] = [
     tagline: "Hitta rätt uppdrag",
     desc: "AI-prognoser baserade på 30 000+ historiska avrop. Vi förutsäger när och var nästa uppdrag dyker upp inom din specialitet.",
     tag: "Beta",
-    tagColor: "purple",
+    tagColor: "violet",
     href: "/uppdragsradar",
     cta: "Se prognoser",
   },
@@ -76,34 +64,18 @@ const PRIMARY_PRODUCTS: ProductCard[] = [
     tagline: "Vinn förhandlingen",
     desc: "AI-assistent som ger dig argumenten i realtid. Branschspecifik kunskap, neutral analys, konkreta nästa steg.",
     tag: "Premium · 99 kr/mån",
-    tagColor: "amber",
+    tagColor: "pink",
     href: "/consultant/forhandla",
     cta: "Starta",
   },
 ];
 
-type InfraCard = {
-  title: string;
-  desc: string;
-  href: string;
-};
+type InfraCard = { title: string; desc: string; href: string };
 
 const INFRASTRUCTURE: InfraCard[] = [
-  {
-    title: "Dokhus",
-    desc: "Säker lagring och tidsbegränsad delning av legitimation, intyg och CV.",
-    href: "/dokhus-info",
-  },
-  {
-    title: "Ref-ID",
-    desc: "Dina referenser lämnar uppgifter en gång. Du styr vem som får tillgång och när.",
-    href: "/referenser-info",
-  },
-  {
-    title: "Fakturagranskning",
-    desc: "AI granskar fakturor från senaste 2 åren. Hittar vi inget — kostar det ingenting.",
-    href: "/consultant/fakturakontroll",
-  },
+  { title: "Dokhus", desc: "Säker lagring och tidsbegränsad delning av legitimation, intyg och CV.", href: "/dokhus-info" },
+  { title: "Ref-ID", desc: "Dina referenser lämnar uppgifter en gång. Du styr vem som får tillgång och när.", href: "/referenser-info" },
+  { title: "Fakturagranskning", desc: "AI granskar fakturor från senaste 2 åren. Hittar vi inget — kostar det ingenting.", href: "/consultant/fakturakontroll" },
 ];
 
 const TRUST_POINTS = [
@@ -113,31 +85,45 @@ const TRUST_POINTS = [
 ];
 
 const TAG_COLORS: Record<string, string> = {
-  purple: "bg-[#EEEDFE] text-[#3C3489] border-[rgba(83,74,183,0.2)]",
-  amber: "bg-[#FAEEDA] text-[#854F0B] border-[rgba(186,117,23,0.2)]",
-  green: "bg-[#EAF3DE] text-[#3B6D11] border-[rgba(59,109,17,0.2)]",
-  muted: "bg-[#F2F1F8] text-muted-foreground border-border/40",
+  violet: "bg-[hsl(256_100%_67%_/_0.18)] text-[hsl(256_100%_82%)] border-[hsl(256_100%_67%_/_0.35)]",
+  pink:   "bg-[hsl(320_95%_65%_/_0.16)] text-[hsl(320_95%_82%)] border-[hsl(320_95%_65%_/_0.35)]",
+  cyan:   "bg-[hsl(190_95%_55%_/_0.16)] text-[hsl(190_95%_78%)] border-[hsl(190_95%_55%_/_0.35)]",
+  muted:  "bg-white/5 text-white/70 border-white/10",
+};
+
+/* Make-stil pillar-flikar */
+const PILLARS = [
+  { id: "data", label: "Datadriven analys", icon: LineChart },
+  { id: "agent", label: "Agentisk AI", icon: Sparkles },
+  { id: "speed", label: "60-sekunders svar", icon: Zap },
+  { id: "trust", label: "Verifierad data", icon: GitBranch },
+];
+
+const PILLAR_CONTENT: Record<string, { title: string; desc: string }> = {
+  data:  { title: "Skalbar & datadriven analys", desc: "Vi kombinerar 20 000+ ramavtal med historisk avropsdata för att ge dig ett spann som faktiskt speglar marknaden — inte en gissning." },
+  agent: { title: "Autonoma agenter, alltid på", desc: "Förhandlingsagenten håller koll på prisuppdateringar, ramavtalsändringar och nya avrop åt dig — och pingar när något händer." },
+  speed: { title: "Från fråga till svar — på 60 sekunder", desc: "Inga formulär. Välj roll och ort, få ditt ersättningsspann direkt. Hela rapporten levereras innan du hinner brygga kaffet." },
+  trust: { title: "Verifierad data, hela vägen", desc: "All ersättningsdata kommer direkt från SKR:s ramavtal 2026. Inga tredjepartsskattningar, inga sociala benchmarks." },
 };
 
 /* ───────────────────── component ──────────────── */
 export default function LandingV2() {
   useTimeOnPage("landing");
   const [menuOpen, setMenuOpen] = useState(false);
-  useEffect(() => {
-    trackEvent("landing_viewed");
-  }, []);
+  const [activePillar, setActivePillar] = useState("data");
+  useEffect(() => { trackEvent("landing_viewed"); }, []);
 
   return (
-    <div className="w-full bg-[#F2F1F8] text-foreground font-sans">
+    <div className="w-full text-foreground font-sans">
 
       {/* ── Nav ─────────────────────────────── */}
-      <nav className="relative flex items-center justify-between px-5 sm:px-6 lg:px-10 h-[60px] bg-white border-b border-border/40">
+      <nav className="relative flex items-center justify-between px-5 sm:px-6 lg:px-10 h-[60px] glass-strong border-b border-white/10">
         <Link to="/" aria-label="CompCare startsida">
-          <CompcareLogo variant="full" inverted={false} />
+          <CompcareLogo variant="full" inverted={true} />
         </Link>
         <div className="flex items-center gap-2 sm:gap-3">
           <Link to="/logga-in">
-            <button className="text-sm px-3 sm:px-4 py-2 border border-border rounded-lg bg-transparent text-foreground hover:bg-muted/40 transition-colors">
+            <button className="text-sm px-3 sm:px-4 py-2 border border-white/15 rounded-lg bg-transparent text-white hover:bg-white/5 transition-colors">
               Logga in
             </button>
           </Link>
@@ -146,7 +132,7 @@ export default function LandingV2() {
             aria-label={menuOpen ? "Stäng meny" : "Öppna meny"}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((v) => !v)}
-            className="inline-flex items-center justify-center h-9 w-9 rounded-lg border border-border text-foreground hover:bg-muted/50 transition-colors"
+            className="inline-flex items-center justify-center h-9 w-9 rounded-lg border border-white/15 text-white hover:bg-white/5 transition-colors"
           >
             {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
@@ -154,19 +140,15 @@ export default function LandingV2() {
 
         {menuOpen && (
           <>
-            <div
-              className="fixed inset-0 bg-black/30 z-40"
-              onClick={() => setMenuOpen(false)}
-              aria-hidden="true"
-            />
-            <div className="absolute top-full right-4 lg:right-10 mt-2 w-72 bg-white border border-border rounded-xl shadow-lg z-50 overflow-hidden">
+            <div className="fixed inset-0 bg-black/60 z-40" onClick={() => setMenuOpen(false)} aria-hidden="true" />
+            <div className="absolute top-full right-4 lg:right-10 mt-2 w-72 glass-strong border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden">
               <div className="flex flex-col py-2">
                 {NAV_LINKS.map((l) => (
                   <Link
                     key={l.label}
                     to={l.href}
                     onClick={() => setMenuOpen(false)}
-                    className="px-4 py-3 text-sm text-foreground hover:bg-muted/50 transition-colors"
+                    className="px-4 py-3 text-sm text-white/85 hover:bg-white/5 hover:text-white transition-colors"
                   >
                     {l.label}
                   </Link>
@@ -179,18 +161,17 @@ export default function LandingV2() {
 
       {/* ═══════════════════ 1. HERO med inline-form ═══════════════════ */}
       <section className="relative min-h-[560px] md:min-h-[600px] flex flex-col items-start overflow-hidden px-5 sm:px-6 lg:px-10">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0d0b2a] via-[#1a1545] via-40% to-[#2a2070]" />
         <div
           className="absolute pointer-events-none"
           style={{
             top: '-100px', right: '-100px',
             width: '1000px', height: '900px',
             zIndex: 1,
-            background: 'radial-gradient(ellipse at 75% 10%, rgba(110,95,230,0.55) 0%, rgba(90,78,210,0.25) 25%, rgba(70,60,190,0.08) 50%, transparent 70%)',
+            background: 'radial-gradient(ellipse at 75% 10%, hsl(var(--glow-violet) / 0.45) 0%, hsl(var(--glow-pink) / 0.18) 30%, transparent 70%)',
           }}
         />
         <div
-          className="absolute inset-0 opacity-5"
+          className="absolute inset-0 opacity-[0.04]"
           style={{
             backgroundImage:
               "repeating-linear-gradient(0deg,transparent,transparent 39px,#fff 39px,#fff 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,#fff 39px,#fff 40px)",
@@ -198,14 +179,15 @@ export default function LandingV2() {
         />
 
         <div className="relative z-10 w-full max-w-[760px] mx-auto md:mx-0 pt-14 md:pt-24 pb-12 md:pb-20">
-          <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-medium text-[#AFA9EC] bg-[rgba(83,74,183,0.2)] border border-[rgba(127,119,221,0.35)] rounded-full px-3 py-1 mb-5 uppercase tracking-wider">
-            <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="#AFA9EC" /></svg>
+          <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-medium text-[hsl(256_100%_85%)] bg-[hsl(256_100%_67%_/_0.18)] border border-[hsl(256_100%_67%_/_0.35)] rounded-full px-3 py-1 mb-5 uppercase tracking-wider">
+            <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="currentColor" /></svg>
             För läkare &amp; sjuksköterskor
           </div>
           <h1 className="font-bold leading-[1.05] text-white mb-5 tracking-tight text-[34px] sm:text-5xl md:text-[56px]">
-            Vet du vad du<br />är värd?
+            Vet du vad du<br />
+            <span className="text-gradient-violet">är värd?</span>
           </h1>
-          <p className="text-[16px] sm:text-lg text-white/[0.78] leading-relaxed mb-8 max-w-[480px]">
+          <p className="text-[16px] sm:text-lg text-white/75 leading-relaxed mb-8 max-w-[480px]">
             Aktuella ersättningar för alla bemanningsuppdrag — direkt från SKR:s ramavtal 2026. Inget formulär, ingen registrering.
           </p>
           <HeroInlineForm />
@@ -216,24 +198,143 @@ export default function LandingV2() {
       </section>
 
       {/* ═══════════════════ 2. DATAKREDIBILITET ═══════════════════ */}
-      <section className="bg-white border-b border-border/40 py-10 md:py-14 px-5 sm:px-6 lg:px-10">
+      <section className="border-y border-white/10 py-10 md:py-14 px-5 sm:px-6 lg:px-10 bg-[hsl(260_50%_6%_/_0.4)]">
         <div className="max-w-5xl mx-auto">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
             {DATA_STATS.map((s) => (
               <div key={s.label} className="flex items-start sm:flex-col gap-3 sm:gap-2">
-                <div className="w-10 h-10 rounded-lg bg-[#EEEDFE] flex items-center justify-center shrink-0">
-                  <s.icon className="w-5 h-5 text-[#3C3489]" />
+                <div className="w-10 h-10 rounded-lg bg-[hsl(256_100%_67%_/_0.15)] border border-[hsl(256_100%_67%_/_0.3)] flex items-center justify-center shrink-0">
+                  <s.icon className="w-5 h-5 text-[hsl(256_100%_78%)]" />
                 </div>
                 <div>
-                  <div className="text-[26px] sm:text-[32px] font-bold text-foreground leading-none">{s.num}</div>
-                  <div className="text-[13px] text-muted-foreground mt-1.5">{s.label}</div>
+                  <div className="text-[26px] sm:text-[32px] font-bold text-white leading-none">{s.num}</div>
+                  <div className="text-[13px] text-white/60 mt-1.5">{s.label}</div>
                 </div>
               </div>
             ))}
           </div>
-          <p className="text-[12px] sm:text-[13px] text-muted-foreground text-center mt-6 sm:mt-8">
+          <p className="text-[12px] sm:text-[13px] text-white/55 text-center mt-6 sm:mt-8">
             All data från SKR:s ramavtal 2026 — ingen tredjeparts-skattning.
           </p>
+        </div>
+      </section>
+
+      {/* ═══════════════════ MAKE-STIL: PILLAR-SEKTION ═══════════════════ */}
+      <section className="relative px-5 sm:px-6 lg:px-10 py-20 md:py-28 overflow-hidden">
+        <div
+          className="absolute inset-0 pointer-events-none"
+          style={{
+            background:
+              'radial-gradient(ellipse 60% 50% at 50% 0%, hsl(var(--glow-violet) / 0.25) 0%, transparent 65%), radial-gradient(ellipse 50% 40% at 85% 50%, hsl(var(--glow-pink) / 0.18) 0%, transparent 60%)',
+          }}
+        />
+        <div className="relative max-w-6xl mx-auto">
+          <h2 className="font-bold text-center text-white tracking-tight leading-[1.1] text-[32px] sm:text-[44px] md:text-[56px] max-w-[920px] mx-auto mb-12 md:mb-16">
+            Datadriven löneanalys och förhandling med{" "}
+            <span className="text-gradient-violet">agentisk intelligens</span> inbyggd
+          </h2>
+
+          {/* Tab pills */}
+          <div className="glass rounded-full p-1.5 max-w-3xl mx-auto mb-12 md:mb-16 flex flex-wrap items-center justify-center gap-1">
+            {PILLARS.map((p) => {
+              const active = activePillar === p.id;
+              return (
+                <button
+                  key={p.id}
+                  onClick={() => setActivePillar(p.id)}
+                  className={`relative inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-full text-[13px] sm:text-sm font-medium transition-all ${
+                    active
+                      ? "bg-[hsl(256_100%_67%_/_0.25)] text-white border border-[hsl(256_100%_67%_/_0.5)] shadow-[0_0_30px_-5px_hsl(var(--glow-violet)/0.5)]"
+                      : "text-white/70 hover:text-white border border-transparent"
+                  }`}
+                >
+                  <p.icon className="w-4 h-4" />
+                  {p.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Showcase row */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
+            <div>
+              <h3 className="font-bold text-white text-[26px] sm:text-[32px] leading-tight mb-4 tracking-tight">
+                {PILLAR_CONTENT[activePillar].title}
+              </h3>
+              <p className="text-white/70 text-[15px] sm:text-base leading-relaxed mb-6 max-w-[460px]">
+                {PILLAR_CONTENT[activePillar].desc}
+              </p>
+              <Link
+                to="/v1?start=1"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-[hsl(256_100%_82%)] hover:text-white transition-colors"
+              >
+                Prova nu <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+
+            {/* Illustrativa flytande kort à la Make */}
+            <div className="relative h-[340px] sm:h-[400px]">
+              <div className="absolute top-0 left-0 glass rounded-2xl p-4 w-[180px] shadow-[0_8px_40px_-8px_hsl(var(--glow-violet)/0.5)] rotate-[-4deg]">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-7 h-7 rounded-full bg-[hsl(256_100%_67%)] flex items-center justify-center">
+                    <Sparkles className="w-3.5 h-3.5 text-white" />
+                  </div>
+                  <div className="text-[11px] font-semibold text-white">Förhandlingsagent</div>
+                </div>
+                <div className="space-y-1.5">
+                  <div className="h-1.5 rounded bg-white/15 w-full" />
+                  <div className="h-1.5 rounded bg-white/10 w-4/5" />
+                  <div className="h-1.5 rounded bg-white/10 w-3/5" />
+                </div>
+              </div>
+
+              <div className="absolute top-12 right-2 sm:right-8 glass-strong rounded-2xl p-5 w-[220px] shadow-[0_12px_50px_-10px_hsl(var(--glow-pink)/0.5)] rotate-[3deg]">
+                <div className="text-[10px] uppercase tracking-wider text-white/50 mb-2">Ersättningsspann</div>
+                <div className="text-2xl font-bold text-white">1 240 kr/h</div>
+                <div className="text-[11px] text-[hsl(190_95%_70%)] mt-1">+8% mot fjolåret</div>
+                <div className="mt-3 h-12 flex items-end gap-1">
+                  {[40, 65, 50, 80, 70, 95, 85].map((h, i) => (
+                    <div
+                      key={i}
+                      className="flex-1 rounded-sm bg-gradient-to-t from-[hsl(256_100%_67%)] to-[hsl(320_95%_65%)] opacity-80"
+                      style={{ height: `${h}%` }}
+                    />
+                  ))}
+                </div>
+              </div>
+
+              <div className="absolute bottom-0 left-6 sm:left-12 glass rounded-2xl p-4 w-[200px] shadow-[0_8px_40px_-8px_hsl(var(--glow-cyan)/0.4)] rotate-[2deg]">
+                <div className="flex items-center gap-2 mb-2.5">
+                  <div className="w-6 h-6 rounded-md bg-[hsl(190_95%_55%_/_0.25)] flex items-center justify-center">
+                    <LineChart className="w-3.5 h-3.5 text-[hsl(190_95%_75%)]" />
+                  </div>
+                  <div className="text-[11px] font-semibold text-white">Uppdragsradar</div>
+                </div>
+                <div className="text-[10px] text-white/60 mb-2">3 nya prognoser i Stockholm</div>
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between text-[10px]">
+                    <span className="text-white/70">Anestesi v.18</span>
+                    <span className="text-[hsl(190_95%_75%)] font-semibold">92%</span>
+                  </div>
+                  <div className="flex items-center justify-between text-[10px]">
+                    <span className="text-white/70">IVA v.19</span>
+                    <span className="text-[hsl(190_95%_75%)] font-semibold">78%</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Dotted connection line */}
+              <svg className="absolute inset-0 w-full h-full pointer-events-none" aria-hidden="true">
+                <path
+                  d="M 100 60 Q 200 100, 260 130 T 180 320"
+                  stroke="hsl(320 95% 65% / 0.4)"
+                  strokeWidth="1.5"
+                  strokeDasharray="3 5"
+                  fill="none"
+                />
+              </svg>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -241,21 +342,21 @@ export default function LandingV2() {
       <section className="px-5 sm:px-6 lg:px-10 py-16 md:py-20">
         <div className="max-w-5xl mx-auto">
           <div className="mb-10 md:mb-12 text-center">
-            <span className="inline-block text-[11px] font-semibold uppercase tracking-[0.1em] text-[#534AB7] bg-[#EEEDFE] border border-[rgba(83,74,183,0.2)] rounded-full px-3.5 py-1 mb-4">
+            <span className="inline-block text-[11px] font-semibold uppercase tracking-[0.1em] text-[hsl(256_100%_82%)] bg-[hsl(256_100%_67%_/_0.15)] border border-[hsl(256_100%_67%_/_0.3)] rounded-full px-3.5 py-1 mb-4">
               Hur det fungerar
             </span>
-            <h2 className="font-serif text-[28px] sm:text-[34px] font-bold leading-[1.15] tracking-tight text-foreground">
+            <h2 className="text-[28px] sm:text-[34px] font-bold leading-[1.15] tracking-tight text-white">
               Tre steg från fråga till svar
             </h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
             {HOW_IT_WORKS.map((s, i) => (
-              <div key={s.num} className="relative bg-white border border-border/60 rounded-2xl p-6 md:p-7">
-                <div className="text-[12px] font-semibold tracking-wider text-[#534AB7] mb-3">{s.num}</div>
-                <h3 className="text-[17px] font-semibold text-foreground mb-2">{s.title}</h3>
-                <p className="text-[14px] text-muted-foreground leading-relaxed">{s.desc}</p>
+              <div key={s.num} className="relative glass rounded-2xl p-6 md:p-7 glow-hover">
+                <div className="text-[12px] font-semibold tracking-wider text-[hsl(256_100%_82%)] mb-3">{s.num}</div>
+                <h3 className="text-[17px] font-semibold text-white mb-2">{s.title}</h3>
+                <p className="text-[14px] text-white/70 leading-relaxed">{s.desc}</p>
                 {i < HOW_IT_WORKS.length - 1 && (
-                  <div className="hidden md:block absolute top-1/2 -right-3 w-6 h-px bg-border" />
+                  <div className="hidden md:block absolute top-1/2 -right-3 w-6 h-px bg-white/15" />
                 )}
               </div>
             ))}
@@ -264,16 +365,16 @@ export default function LandingV2() {
       </section>
 
       {/* ═══════════════════ 4. PRIMÄR PRODUKTTRAPPA ═══════════════════ */}
-      <section className="px-5 sm:px-6 lg:px-10 py-16 md:py-20 bg-white border-y border-border/40">
+      <section className="px-5 sm:px-6 lg:px-10 py-16 md:py-20 border-y border-white/10 bg-[hsl(260_50%_6%_/_0.4)]">
         <div className="max-w-6xl mx-auto">
           <div className="mb-10 md:mb-14">
-            <span className="inline-block text-[11px] font-semibold uppercase tracking-[0.1em] text-[#534AB7] bg-[#EEEDFE] border border-[rgba(83,74,183,0.2)] rounded-full px-3.5 py-1 mb-4">
+            <span className="inline-block text-[11px] font-semibold uppercase tracking-[0.1em] text-[hsl(256_100%_82%)] bg-[hsl(256_100%_67%_/_0.15)] border border-[hsl(256_100%_67%_/_0.3)] rounded-full px-3.5 py-1 mb-4">
               Konsultplattformen
             </span>
-            <h2 className="font-serif text-[28px] sm:text-[34px] font-bold leading-[1.15] tracking-tight text-foreground mb-2.5">
+            <h2 className="text-[28px] sm:text-[34px] font-bold leading-[1.15] tracking-tight text-white mb-2.5">
               Från svar till resultat
             </h2>
-            <p className="text-[15px] text-muted-foreground max-w-[560px]">
+            <p className="text-[15px] text-white/70 max-w-[560px]">
               Tre steg som bygger på varandra. Varje verktyg är fristående — eller del av en längre resa.
             </p>
           </div>
@@ -281,19 +382,19 @@ export default function LandingV2() {
             {PRIMARY_PRODUCTS.map((p) => (
               <article
                 key={p.title}
-                className="bg-[#FAFAF8] border border-border/60 rounded-[18px] p-7 flex flex-col hover:border-[rgba(83,74,183,0.35)] hover:shadow-[0_8px_28px_rgba(83,74,183,0.08)] transition-all"
+                className="glass rounded-[18px] p-7 flex flex-col glow-hover"
               >
                 <div className="flex items-baseline gap-3 mb-4">
-                  <span className="text-[13px] font-bold tracking-wider text-[#534AB7]">{p.step}</span>
+                  <span className="text-[13px] font-bold tracking-wider text-[hsl(256_100%_82%)]">{p.step}</span>
                   <span className={`inline-block text-[11px] font-medium px-2.5 py-0.5 rounded-full border ${TAG_COLORS[p.tagColor]}`}>{p.tag}</span>
                 </div>
-                <h3 className="text-[20px] font-bold text-foreground mb-1 leading-tight">{p.title}</h3>
-                <p className="text-[13px] font-medium text-[#534AB7] mb-3 italic">{p.tagline}</p>
-                <p className="text-[14px] text-foreground/80 leading-[1.65] flex-1 mb-5">{p.desc}</p>
+                <h3 className="text-[20px] font-bold text-white mb-1 leading-tight">{p.title}</h3>
+                <p className="text-[13px] font-medium text-[hsl(256_100%_82%)] mb-3 italic">{p.tagline}</p>
+                <p className="text-[14px] text-white/75 leading-[1.65] flex-1 mb-5">{p.desc}</p>
                 <Link
                   to={p.href}
                   onClick={() => trackEvent("product_cta_clicked", { cta: `primary_${p.title.toLowerCase()}`, target: p.href })}
-                  className="text-[14px] font-semibold text-[#534AB7] hover:text-[#3C3489] inline-flex items-center gap-1.5 transition-colors"
+                  className="text-[14px] font-semibold text-[hsl(256_100%_82%)] hover:text-white inline-flex items-center gap-1.5 transition-colors"
                 >
                   {p.cta} <ArrowRight className="w-4 h-4" />
                 </Link>
@@ -307,10 +408,10 @@ export default function LandingV2() {
       <section className="px-5 sm:px-6 lg:px-10 py-14 md:py-16">
         <div className="max-w-5xl mx-auto">
           <div className="mb-8 md:mb-10">
-            <h2 className="text-[18px] sm:text-[20px] font-semibold text-foreground mb-1.5">
+            <h2 className="text-[18px] sm:text-[20px] font-semibold text-white mb-1.5">
               Bakomliggande infrastruktur
             </h2>
-            <p className="text-[13px] text-muted-foreground max-w-[480px]">
+            <p className="text-[13px] text-white/60 max-w-[480px]">
               Stödverktyg som du också får tillgång till — när du är redo.
             </p>
           </div>
@@ -319,13 +420,13 @@ export default function LandingV2() {
               <Link
                 key={c.title}
                 to={c.href}
-                className="bg-white/60 border border-border/40 rounded-xl p-5 hover:bg-white hover:border-border transition-all group"
+                className="glass-subtle rounded-xl p-5 hover:bg-white/5 transition-all group glow-hover"
               >
-                <h3 className="text-[15px] font-semibold text-foreground mb-1.5 inline-flex items-center gap-1.5">
+                <h3 className="text-[15px] font-semibold text-white mb-1.5 inline-flex items-center gap-1.5">
                   {c.title}
-                  <ArrowRight className="w-3.5 h-3.5 text-muted-foreground group-hover:text-foreground transition-colors" />
+                  <ArrowRight className="w-3.5 h-3.5 text-white/50 group-hover:text-white transition-colors" />
                 </h3>
-                <p className="text-[13px] text-muted-foreground leading-relaxed">{c.desc}</p>
+                <p className="text-[13px] text-white/65 leading-relaxed">{c.desc}</p>
               </Link>
             ))}
           </div>
@@ -334,24 +435,24 @@ export default function LandingV2() {
 
       {/* ═══════════════════ 6. FÖRTROENDE ═══════════════════ */}
       <section className="px-5 sm:px-6 lg:px-10 pb-14 md:pb-20">
-        <div className="max-w-5xl mx-auto bg-white border border-border/60 rounded-2xl p-7 md:p-10">
+        <div className="max-w-5xl mx-auto glass rounded-2xl p-7 md:p-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
             {TRUST_POINTS.map((t) => (
               <div key={t.title} className="flex items-start gap-3">
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${t.muted ? "bg-muted text-muted-foreground" : "bg-[#EAF3DE] text-[#3B6D11]"}`}>
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${t.muted ? "bg-white/5 text-white/50" : "bg-[hsl(190_95%_55%_/_0.18)] text-[hsl(190_95%_75%)] border border-[hsl(190_95%_55%_/_0.35)]"}`}>
                   <t.icon className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="text-[14px] font-semibold text-foreground inline-flex items-center gap-2 flex-wrap">
+                  <div className="text-[14px] font-semibold text-white inline-flex items-center gap-2 flex-wrap">
                     {t.title}
                     {t.muted && (
-                      <span className="text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded-full bg-muted text-muted-foreground">
+                      <span className="text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/8 text-white/60">
                         {t.note}
                       </span>
                     )}
                   </div>
                   {!t.muted && (
-                    <p className="text-[13px] text-muted-foreground mt-1 leading-relaxed">{t.note}</p>
+                    <p className="text-[13px] text-white/65 mt-1 leading-relaxed">{t.note}</p>
                   )}
                 </div>
               </div>
@@ -362,19 +463,19 @@ export default function LandingV2() {
 
       {/* ═══════════════════ B2B-CTA-rad ═══════════════════ */}
       <section className="px-5 sm:px-6 lg:px-10 pb-14">
-        <div className="max-w-5xl mx-auto bg-[#0B2A6B] rounded-xl px-6 md:px-8 py-6 md:py-7 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="max-w-5xl mx-auto rounded-xl px-6 md:px-8 py-6 md:py-7 flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-gradient-to-r from-[hsl(256_100%_67%_/_0.18)] to-[hsl(320_95%_65%_/_0.18)] border border-white/10">
           <div className="md:max-w-[640px]">
             <h3 className="text-[17px] sm:text-[19px] font-semibold text-white leading-snug mb-1.5">
-              Är du beredd att lita på din magkänsla om den kan kosta dig 100 000kr? Luta dig mot vår data istället.
+              Är du beredd att lita på din magkänsla om den kan kosta dig 100 000 kr? Luta dig mot vår data istället.
             </h3>
-            <p className="text-[13.5px] sm:text-[14px] text-white/80 leading-relaxed">
+            <p className="text-[13.5px] sm:text-[14px] text-white/75 leading-relaxed">
               Vi visar vad marknaden faktiskt betalar — från den dolda zonskillnaden på 386 kr/h till prisskillnader mellan privata och offentliga aktörer. Se hur ni undviker de tilldelningsavvisningar som kostar mer än ni tror genom att säkra er representation digitalt.
             </p>
           </div>
           <Link
             to="/for-bemanningsforetag"
             onClick={() => trackEvent("product_cta_clicked", { cta: "b2b_footer_cta", target: "/for-bemanningsforetag" })}
-            className="self-start md:self-auto bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-[14px] font-semibold rounded-lg px-5 py-2.5 inline-flex items-center gap-1.5 transition-colors whitespace-nowrap"
+            className="self-start md:self-auto bg-[hsl(256_100%_67%)] hover:bg-[hsl(256_100%_72%)] text-white text-sm font-semibold rounded-lg px-6 py-3 inline-flex items-center gap-1.5 transition-colors whitespace-nowrap shadow-[0_8px_30px_-8px_hsl(var(--glow-violet)/0.6)]"
           >
             Utforska CompCare Business <ArrowRight className="w-4 h-4" />
           </Link>
@@ -382,53 +483,53 @@ export default function LandingV2() {
       </section>
 
       {/* ── Footer ──────────────────────────── */}
-      <footer className="px-5 sm:px-6 lg:px-10 pt-10 pb-12 border-t border-border/40 bg-white">
+      <footer className="px-5 sm:px-6 lg:px-10 pt-10 pb-12 border-t border-white/10 bg-[hsl(260_50%_5%_/_0.6)]">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="mb-2.5">
-                <CompcareLogo variant="full" inverted={false} />
+                <CompcareLogo variant="full" inverted={true} />
               </div>
-              <p className="text-[13px] text-muted-foreground leading-relaxed max-w-[220px]">
+              <p className="text-[13px] text-white/60 leading-relaxed max-w-[220px]">
                 Transparent marknadsdata och smarta verktyg för Sveriges läkare och sjuksköterskor.
               </p>
             </div>
             <div>
-              <h4 className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-3">Konsult</h4>
-              <div className="flex flex-col gap-2 text-[13px] text-muted-foreground">
-                <Link to="/v1?start=1" className="hover:text-foreground transition-colors">Lönanalys</Link>
-                <Link to="/uppdragsradar" className="hover:text-foreground transition-colors">Uppdragsradar</Link>
-                <Link to="/consultant/forhandla" className="hover:text-foreground transition-colors">Förhandlingsagent</Link>
-                <Link to="/consultant/fakturakontroll" className="hover:text-foreground transition-colors">Fakturagranskning</Link>
+              <h4 className="text-xs font-medium uppercase tracking-widest text-white/50 mb-3">Konsult</h4>
+              <div className="flex flex-col gap-2 text-[13px] text-white/70">
+                <Link to="/v1?start=1" className="hover:text-white transition-colors">Lönanalys</Link>
+                <Link to="/uppdragsradar" className="hover:text-white transition-colors">Uppdragsradar</Link>
+                <Link to="/consultant/forhandla" className="hover:text-white transition-colors">Förhandlingsagent</Link>
+                <Link to="/consultant/fakturakontroll" className="hover:text-white transition-colors">Fakturagranskning</Link>
               </div>
             </div>
             <div>
-              <h4 className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-3">Företag</h4>
-              <div className="flex flex-col gap-2 text-[13px] text-muted-foreground">
-                <Link to="/vanliga-fragor" className="hover:text-foreground transition-colors">FAQ</Link>
-                <Link to="/integritetspolicy" className="hover:text-foreground transition-colors">Integritetspolicy</Link>
-                <a href="mailto:hej@compcare.se" className="hover:text-foreground transition-colors">Kontakt</a>
+              <h4 className="text-xs font-medium uppercase tracking-widest text-white/50 mb-3">Företag</h4>
+              <div className="flex flex-col gap-2 text-[13px] text-white/70">
+                <Link to="/vanliga-fragor" className="hover:text-white transition-colors">FAQ</Link>
+                <Link to="/integritetspolicy" className="hover:text-white transition-colors">Integritetspolicy</Link>
+                <a href="mailto:hej@compcare.se" className="hover:text-white transition-colors">Kontakt</a>
               </div>
             </div>
             <div>
-              <h4 className="text-xs font-medium uppercase tracking-widest text-muted-foreground mb-3">För bemanningsföretag</h4>
-              <div className="flex flex-col gap-2 text-[13px] text-muted-foreground">
-                <Link to="/for-bemanningsforetag" className="hover:text-foreground transition-colors">
-                  <span className="text-foreground font-medium">CompCare Insight</span> — beslutsstöd för prissättning baserat på aktuella tilldelningsdata
+              <h4 className="text-xs font-medium uppercase tracking-widest text-white/50 mb-3">För bemanningsföretag</h4>
+              <div className="flex flex-col gap-2 text-[13px] text-white/70">
+                <Link to="/for-bemanningsforetag" className="hover:text-white transition-colors">
+                  <span className="text-white font-medium">CompCare Insight</span> — beslutsstöd för prissättning baserat på aktuella tilldelningsdata
                 </Link>
-                <Link to="/for-bemanningsforetag" className="hover:text-foreground transition-colors">
-                  <span className="text-foreground font-medium">CompCare Dokhus</span> — digital exklusivitet som eliminerar risk för dubbelpresentationer
+                <Link to="/for-bemanningsforetag" className="hover:text-white transition-colors">
+                  <span className="text-white font-medium">CompCare Dokhus</span> — digital exklusivitet som eliminerar risk för dubbelpresentationer
                 </Link>
-                <Link to="/for-bemanningsforetag" className="hover:text-foreground transition-colors">
-                  <span className="text-foreground font-medium">Intygsmodulen</span> — juridiskt hållbara konsultbekräftelser enligt nationella krav
+                <Link to="/for-bemanningsforetag" className="hover:text-white transition-colors">
+                  <span className="text-white font-medium">Intygsmodulen</span> — juridiskt hållbara konsultbekräftelser enligt nationella krav
                 </Link>
-                <Link to="/registrera/bemanning" className="hover:text-foreground transition-colors">
-                  <span className="text-foreground font-medium">Bli partner</span> — kontakta oss för integration och tidig access
+                <Link to="/registrera/bemanning" className="hover:text-white transition-colors">
+                  <span className="text-white font-medium">Bli partner</span> — kontakta oss för integration och tidig access
                 </Link>
               </div>
             </div>
           </div>
-          <div className="border-t border-border/40 pt-5 flex flex-col md:flex-row justify-between items-center gap-2 text-xs text-muted-foreground">
+          <div className="border-t border-white/10 pt-5 flex flex-col md:flex-row justify-between items-center gap-2 text-xs text-white/50">
             <p>© 2026 CompCare — Piemonte Invest AB</p>
             <p>GDPR-kompatibel · Datan tillhör dig</p>
           </div>
