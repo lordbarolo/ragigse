@@ -100,8 +100,8 @@ const DEFAULT_RESULT: RateResult = {
   hourlyMax: 482,
   monthlyMin: 72144,
   monthlyMax: 80494,
-  marginText: "12–20 %",
-  marginMidPct: 16,
+  marginText: "15–20 %",
+  marginMidPct: 17.5,
   marginKrMin: 92,
   marginKrMax: 123,
   bestZon: "Zon 3",
@@ -210,7 +210,7 @@ export default function HeroRateFinder({ prefillKey }: Props) {
         if (fnErr) throw fnErr;
         if (!data?.rate_customer_sek_per_hour) throw new Error("NO_RATE_FOUND");
 
-        const { keepMin, keepMax, marginText, marginMidPct } = getMargins(selectedCategory!);
+        const { keepMin, keepMax, marginText, marginMidPct } = getMargins(resolvedYrke);
         const timpris = Number(data.rate_customer_sek_per_hour);
         const employerFactor = Number(data.employee_factor ?? DEFAULT_EMPLOYER_FACTOR);
         const hoursPerMonth = Number(data.hours_per_month ?? DEFAULT_HOURS_PER_MONTH);
