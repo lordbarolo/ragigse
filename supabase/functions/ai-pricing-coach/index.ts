@@ -38,13 +38,24 @@ function mapEmployment(t: string | null | undefined): "foretagare" | "anstalld" 
   return (t === "foretagare" || t === "consultant") ? "foretagare" : "anstalld";
 }
 
-function calcRange(customerPrice: number, empType: "foretagare" | "anstalld") {
-  // Match src/lib/calc.ts model
-  if (empType === "foretagare") {
-    return { hourly_min: Math.round(customerPrice * 0.85), hourly_max: Math.round(customerPrice * 0.92) };
-  }
-  // anstalld — 12-18% margin model (anesthesia-style; conservative default)
-  return { hourly_min: Math.round(customerPrice * 0.78), hourly_max: Math.round(customerPrice * 0.84) };
+function isSpecialistDoctor(role: string): boolean {
+  const n = role.trim().toLowerCase();
+  return n.startsWith("specialistläkare") || n.startsWith("specialistlakare");
+}
+
+function calcRange(customerPrice: number, empType: "foretagare" | "anstalld", role: string) {
+  // Role-based margin (matches _shared/calc.ts):
+  //  - Specialistläkare: bemanning behåller 10–15% → konsult 85–90%
+  //  - Övriga roller: bemanning behåller 15–20% → konsult 80–85%
+  // Anställda divideras med employer_factor 1.42 för att få timlön.
+  const isSpec = isSpecialistDoctor(role);
+  const shareMin = isSpec ? 0.85 : 0.80;
+  const shareMax = isSpec ? 0.90 : 0.85;
+  const factor = empType === "anstalld" ? 1.42 : 1;
+  return {
+    hourly_min: Math.round((customerPrice * shareMin) / factor),
+    hourly_max: Math.round((customerPrice * shareMax) / factor),
+  };
 }
 
 const SYSTEM = `Du är CompCares neutrala marknadsanalytiker. Aldrig "topp X%" eller social benchmarking.
