@@ -133,7 +133,7 @@ export default function LandingV2() {
       {/* ── Nav ─────────────────────────────── */}
       <nav className="relative flex items-center justify-between px-5 sm:px-6 lg:px-10 h-[60px] bg-white border-b border-border/40">
         <Link to="/" aria-label="CompCare startsida">
-          <CompcareLogo variant="wordmark" />
+          <CompcareLogo variant="full" inverted={false} />
         </Link>
         <div className="flex items-center gap-2 sm:gap-3">
           <Link to="/logga-in">
@@ -387,7 +387,7 @@ export default function LandingV2() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="mb-2.5">
-                <CompcareLogo variant="wordmark" />
+                <CompcareLogo variant="full" inverted={false} />
               </div>
               <p className="text-[13px] text-muted-foreground leading-relaxed max-w-[220px]">
                 Transparent marknadsdata och smarta verktyg för Sveriges läkare och sjuksköterskor.
