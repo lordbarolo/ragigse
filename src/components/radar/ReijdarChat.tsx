@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import { trackEvent } from "@/lib/trackEvent";
 import { sanitizeReijdarText } from "@/lib/reijdarText";
+import { useAiQuota } from "@/hooks/useAiQuota";
 
 type ChatMsg = { role: "user" | "assistant"; content: string };
 type RoleSuggestion = { message: string; roles: string[] };
@@ -25,11 +26,13 @@ export default function ReijdarChat({
   onRoleChange?: (role: string) => void;
 }) {
   const { user, loading: authLoading } = useAuth();
+  const quota = useAiQuota();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
   const [hasTrackedStart, setHasTrackedStart] = useState(false);
+  const [hasWarned80, setHasWarned80] = useState(false);
   const [roleSuggestions, setRoleSuggestions] = useState<RoleSuggestion | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
