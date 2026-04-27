@@ -216,10 +216,66 @@
     -webkit-text-fill-color: transparent;
     color: transparent;
   }
+
+  /* ── Agentic loading states ────────────────────────── */
+  @keyframes agentic-pulse {
+    0%, 100% {
+      box-shadow:
+        0 0 0 1px hsl(var(--primary) / 0.35),
+        0 0 24px -4px hsl(var(--primary) / 0.35),
+        0 0 60px -10px hsl(var(--primary) / 0.25);
+    }
+    50% {
+      box-shadow:
+        0 0 0 1px hsl(var(--accent) / 0.5),
+        0 0 36px -4px hsl(var(--accent) / 0.55),
+        0 0 80px -10px hsl(var(--accent) / 0.4);
+    }
+  }
+
+  @keyframes agentic-shimmer-sweep {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(200%); }
+  }
+
+  @keyframes agentic-dot {
+    0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+    40% { transform: scale(1); opacity: 1; }
+  }
+
+  .agentic-loading {
+    position: relative;
+    overflow: hidden;
+    animation: agentic-pulse 2.4s ease-in-out infinite;
+  }
+
+  .agentic-shimmer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      100deg,
+      transparent 0%,
+      hsl(var(--primary) / 0.08) 40%,
+      hsl(var(--accent) / 0.18) 50%,
+      hsl(var(--primary) / 0.08) 60%,
+      transparent 100%
+    );
+    transform: translateX(-100%);
+    animation: agentic-shimmer-sweep 2.2s ease-in-out infinite;
+    border-radius: inherit;
+  }
+
+  .btn-loading-glow {
+    animation: agentic-pulse 1.8s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  .agentic-dot {
+    animation: agentic-dot 1.4s ease-in-out infinite both;
+  }
 }
 
-@layer utilities {
-  .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
