@@ -8,6 +8,7 @@ import {
 import {
   Activity, Brain, TrendingUp, Zap, Target, BarChart3, Info,
 } from "lucide-react";
+import MarketKpiRow from "@/components/agency/MarketKpiRow";
 
 /* ────────── types ────────── */
 interface RateRow {
@@ -158,6 +159,9 @@ export default function MarketEdge() {
           <p className="text-xs text-muted-foreground">Realtidsdata från ramavtal · {specialties.length} roller · {ZONES.length} zoner</p>
         </div>
       </div>
+
+      {/* ── KPI Control Center ── */}
+      <MarketKpiRow topRate={maxPrice} specialtyCount={specialties.length} />
 
       {/* ── Row 1: Price Elasticity Simulator ── */}
       <Card
