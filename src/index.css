@@ -118,7 +118,13 @@
     min-height: 100vh;
   }
 
-  /* Global Deep Space glow background */
+  /* Prevent horizontal scroll caused by glow / wide gradients on mobile */
+  html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  /* Global Deep Space glow background — toned down on mobile for readability */
   body::before {
     content: "";
     position: fixed;
@@ -126,10 +132,20 @@
     z-index: -1;
     pointer-events: none;
     background:
-      radial-gradient(ellipse 60% 50% at 15% 0%, hsl(var(--glow-violet) / 0.22) 0%, transparent 60%),
-      radial-gradient(ellipse 55% 45% at 90% 10%, hsl(var(--glow-pink) / 0.16) 0%, transparent 55%),
-      radial-gradient(ellipse 70% 50% at 50% 100%, hsl(var(--glow-cyan) / 0.10) 0%, transparent 60%),
+      radial-gradient(ellipse 80% 40% at 20% 0%, hsl(var(--glow-violet) / 0.14) 0%, transparent 65%),
+      radial-gradient(ellipse 70% 35% at 90% 8%, hsl(var(--glow-pink) / 0.10) 0%, transparent 60%),
+      radial-gradient(ellipse 90% 40% at 50% 100%, hsl(var(--glow-cyan) / 0.06) 0%, transparent 65%),
       hsl(var(--background));
+  }
+
+  @media (min-width: 768px) {
+    body::before {
+      background:
+        radial-gradient(ellipse 60% 50% at 15% 0%, hsl(var(--glow-violet) / 0.22) 0%, transparent 60%),
+        radial-gradient(ellipse 55% 45% at 90% 10%, hsl(var(--glow-pink) / 0.16) 0%, transparent 55%),
+        radial-gradient(ellipse 70% 50% at 50% 100%, hsl(var(--glow-cyan) / 0.10) 0%, transparent 60%),
+        hsl(var(--background));
+    }
   }
 
   h1, h2, h3, h4 {
