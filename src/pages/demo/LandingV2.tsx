@@ -387,7 +387,7 @@ export default function LandingV2() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
             <div>
               <div className="mb-2.5">
-                <CompcareLogo variant="wordmark" />
+                <CompcareLogo variant="full" inverted={false} />
               </div>
               <p className="text-[13px] text-muted-foreground leading-relaxed max-w-[220px]">
                 Transparent marknadsdata och smarta verktyg för Sveriges läkare och sjuksköterskor.
