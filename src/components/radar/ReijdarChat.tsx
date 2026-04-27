@@ -142,12 +142,29 @@ export default function ReijdarChat({
       }
 
       trackEvent("reijdar_advice_received", { role: selectedRole || "" });
+
+      // Refresh quota & soft-warn at 80%
+      const updated = await (async () => { await quota.refresh(); return null; })();
+      void updated;
     } catch (e: any) {
       toast({ title: "Chatfel", description: e.message, variant: "destructive" });
     } finally {
       setIsStreaming(false);
     }
   };
+
+  // Soft warning at 80% of daily limit
+  useEffect(() => {
+    if (!quota.limit || quota.isAdmin || hasWarned80) return;
+    const pct = quota.used / quota.limit;
+    if (pct >= 0.8 && quota.remaining > 0) {
+      toast({
+        title: "Närmar dig dagens gräns",
+        description: `Du har ${quota.remaining} av ${quota.limit} AI-anrop kvar idag.`,
+      });
+      setHasWarned80(true);
+    }
+  }, [quota.used, quota.limit, quota.remaining, quota.isAdmin, hasWarned80, toast]);
 
   const handleSend = () => sendMessage(input);
 
