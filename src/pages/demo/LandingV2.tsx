@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Menu, X, ShieldCheck, Lock, FileLock2, Database, MapPin, History, Sparkles, Zap, LineChart, GitBranch } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 import HeroInlineForm from "@/components/landing/HeroInlineForm";
+import AgentNetwork from "@/components/landing/AgentNetwork";
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 
@@ -159,43 +160,54 @@ export default function LandingV2() {
         )}
       </nav>
 
-      {/* ═══════════════════ 1. HERO med inline-form ═══════════════════ */}
-      <section className="relative min-h-[560px] md:min-h-[600px] flex flex-col items-start overflow-hidden px-5 sm:px-6 lg:px-10">
+      {/* ═══════════════════ 1. HERO med inline-form + Make-style network ═══════════════════ */}
+      <section className="relative min-h-[640px] md:min-h-[760px] overflow-hidden px-5 sm:px-6 lg:px-10 hero-make-bg">
+        {/* Subtle grid */}
         <div
-          className="absolute pointer-events-none"
-          style={{
-            top: '-100px', right: '-100px',
-            width: '1000px', height: '900px',
-            zIndex: 1,
-            background: 'radial-gradient(ellipse at 75% 10%, hsl(var(--glow-violet) / 0.45) 0%, hsl(var(--glow-pink) / 0.18) 30%, transparent 70%)',
-          }}
-        />
-        <div
-          className="absolute inset-0 opacity-[0.04]"
+          className="absolute inset-0 opacity-[0.035] pointer-events-none"
           style={{
             backgroundImage:
               "repeating-linear-gradient(0deg,transparent,transparent 39px,#fff 39px,#fff 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,#fff 39px,#fff 40px)",
           }}
         />
+        {/* Soft right-side glow accent */}
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            top: '10%', right: '-10%',
+            width: '780px', height: '780px',
+            background: 'radial-gradient(circle, hsl(320 95% 55% / 0.22) 0%, hsl(256 100% 67% / 0.12) 35%, transparent 70%)',
+            filter: 'blur(20px)',
+          }}
+        />
 
-        <div className="relative z-10 w-full max-w-[760px] mx-auto md:mx-0 pt-14 md:pt-24 pb-12 md:pb-20">
-          <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-medium text-[hsl(256_100%_85%)] bg-[hsl(256_100%_67%_/_0.18)] border border-[hsl(256_100%_67%_/_0.35)] rounded-full px-3 py-1 mb-5 uppercase tracking-wider">
-            <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="currentColor" /></svg>
-            För läkare &amp; sjuksköterskor
+        <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-10 lg:gap-8 items-center pt-14 md:pt-24 pb-16 md:pb-24">
+          {/* Vänster: copy + form */}
+          <div className="w-full max-w-[620px]">
+            <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-medium text-[hsl(256_100%_85%)] bg-[hsl(256_100%_67%_/_0.18)] border border-[hsl(256_100%_67%_/_0.35)] rounded-full px-3 py-1 mb-5 uppercase tracking-wider">
+              <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="currentColor" /></svg>
+              För läkare &amp; sjuksköterskor
+            </div>
+            <h1 className="font-bold leading-[1.05] text-white mb-5 tracking-tight text-[34px] sm:text-5xl md:text-[56px]">
+              Vet du vad du<br />
+              <span className="text-gradient-violet">är värd?</span>
+            </h1>
+            <p className="text-[16px] sm:text-lg text-white/75 leading-relaxed mb-8 max-w-[480px]">
+              Vi visar acceptabla ersättningsnivåer för alla roller och regioner. Baserat på SKR:s ramavtal för 2026 och djupgående AI-analyser av bemanningsbranschens marginaler.
+            </p>
+            <HeroInlineForm />
+            <p className="mt-4 text-[12px] text-white/45 text-center md:text-left">
+              Anonymt · Kostnadsfritt · Klart på 60 sekunder
+            </p>
           </div>
-          <h1 className="font-bold leading-[1.05] text-white mb-5 tracking-tight text-[34px] sm:text-5xl md:text-[56px]">
-            Vet du vad du<br />
-            <span className="text-gradient-violet">är värd?</span>
-          </h1>
-          <p className="text-[16px] sm:text-lg text-white/75 leading-relaxed mb-8 max-w-[480px]">
-            Vi visar acceptabla ersättningsnivåer för alla roller och regioner. Baserat på SKR:s ramavtal för 2026 och djupgående AI-analyser av bemanningsbranschens marginaler.
-          </p>
-          <HeroInlineForm />
-          <p className="mt-4 text-[12px] text-white/45 text-center">
-            Anonymt · Kostnadsfritt · Klart på 60 sekunder
-          </p>
+
+          {/* Höger: Agent network animation */}
+          <div className="relative w-full h-[360px] sm:h-[460px] lg:h-[560px] hidden md:block">
+            <AgentNetwork />
+          </div>
         </div>
       </section>
+
 
       {/* ═══════════════════ 2. DATAKREDIBILITET ═══════════════════ */}
       <section className="border-y border-white/10 py-10 md:py-14 px-5 sm:px-6 lg:px-10 bg-[hsl(260_50%_6%_/_0.4)]">
