@@ -212,7 +212,7 @@ export default function HeroRateFinder({ prefillKey }: Props) {
         const employerFactor = Number(data.employee_factor ?? DEFAULT_EMPLOYER_FACTOR);
         const hoursPerMonth = Number(data.hours_per_month ?? DEFAULT_HOURS_PER_MONTH);
 
-        // For "anstalld": gross salary = (timpris × keep) / employer_factor (1.42)
+        // For "anstalld": gross salary = (timpris × keep) / employer_factor (1.47)
         // For "foretagare": hourly = timpris × keep (no employer factor)
         const factor = employmentType === "anstalld" ? employerFactor : 1;
         const hourlyMin = Math.round((timpris * keepMin) / factor);
