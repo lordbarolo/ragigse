@@ -98,8 +98,9 @@ export default function Index() {
             Förhandla utifrån data,<br />inte magkänsla
           </h1>
 
-          <p className="text-hero-foreground/70 text-lg md:text-2xl max-w-2xl mx-auto mb-10 leading-relaxed">
-            Vi vet vad du borde tjäna och hur du når dit.
+          <p className="text-hero-foreground/70 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed whitespace-pre-line">
+            Vi visar aktuella ersättningsnivåer för läkare och sjuksköterskor på bemanningsuppdrag. Sök efter din roll och region för att se svaret direkt.{"\n"}
+            Baserat på SKR:s ramavtal för 2026 och AI-analyser av bemanningsbranschens marginaler.
           </p>
 
           <HeroRateLookup />
