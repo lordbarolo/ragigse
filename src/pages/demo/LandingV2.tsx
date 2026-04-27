@@ -133,7 +133,7 @@ export default function LandingV2() {
       {/* ── Nav ─────────────────────────────── */}
       <nav className="relative flex items-center justify-between px-5 sm:px-6 lg:px-10 h-[60px] bg-white border-b border-border/40">
         <Link to="/" aria-label="CompCare startsida">
-          <CompcareLogo variant="wordmark" />
+          <CompcareLogo variant="full" inverted={false} />
         </Link>
         <div className="flex items-center gap-2 sm:gap-3">
           <Link to="/logga-in">
