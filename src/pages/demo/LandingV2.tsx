@@ -210,7 +210,7 @@ export default function LandingV2() {
           </p>
           <HeroInlineForm />
           <p className="mt-4 text-[12px] text-white/45 text-center">
-            Anonymt · Klart på 60 sekunder · Vi sparar inte dina uppgifter
+            Anonymt · Kostnadsfritt · Klart på 60 sekunder
           </p>
         </div>
       </section>
