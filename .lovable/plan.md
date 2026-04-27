@@ -1,55 +1,67 @@
-# Fix: tomt hero-formulär ska landa på fråga 1, inte fråga 3
+# Fix: "Tillbaka"-knappen i enkäten hoppar fel
 
 ## Problem
 
-I `HeroInlineForm.tsx` (på `/`) submittar användaren formuläret utan att välja specialitet. Idag navigerar koden då till `/v1?start=1` — vilket öppnar enkäten direkt på det första öppna steget men **utan** yrke prefyllt. Eftersom enkäten antar att man hoppat in mitt i flödet (start=1) och saknar prefill-data, hamnar användaren på fel ställe (uppfattas som "fråga 3").
+När en användare kommer till enkäten via en prefill-länk (t.ex. klickar på en specialitet i hero-formuläret → `/v1?start=1&yrke=anestesi`), öppnar enkäten på **fråga 3** (kommun) eftersom yrke och kategori redan är ifyllda.
 
-Förväntat beteende: ett tomt formulär ska skicka användaren till **fråga 1** i enkäten, dvs. yrkeskategori-valet.
+Klick på "tillbaka" på fråga 3 → användaren landar på `lovable.dev/projects/...` (eller fastnar i ett konstigt limbo) istället för att gå till fråga 2.
 
 ## Rotorsak
 
-I `src/components/landing/HeroInlineForm.tsx` rad 35–39:
+I `src/components/Survey.tsx` rad 434–451 har `handleBack` ett specialfall:
 
 ```ts
-const handleSubmit = (e: React.FormEvent) => {
-  e.preventDefault();
-  if (filtered[0]) handlePick(filtered[0].slug, filtered[0].label);
-  else navigate("/v1?start=1");   // ← problemet
-};
+} else if (step === 3 && initialRole) {
+  onBack?.();   // ← buggen
+}
 ```
 
-Två separata buggar i denna fallback:
+Detta antogs "stänga enkäten och gå tillbaka till hero" om man kom in via prefill. Men:
+1. `onBack` i `SalaryCheck.tsx` rad 112 är bara `() => setShowSurvey(false)`. Den ändrar inte URL:en.
+2. URL:en har fortfarande `?yrke=...&start=1`, vilket gör att `showSurvey` återinitieras till `true` direkt (`useState(!!prefill || startSurvey)`).
+3. Användaren upplever att "tillbaka" inte gör något — eller att navigeringen hamnar fel beroende på kontext.
 
-1. **Den plockar `filtered[0]` även när användaren inte skrivit något.** Om sökfältet är tomt visar `filtered` "topp 8 default-specialiteter" (för dropdown-UX). Submit utan input plockar då första default-rollen — användaren får en analys för ett yrke hen aldrig valt.
-2. **`navigate("/v1?start=1")`** triggar `startSurvey = true` i `SalaryCheck.tsx` (rad 75), vilket öppnar enkäten utan prefill men ändå bortom första steget eftersom `start=1` också används av andra prefill-länkar som hoppar in djupare.
+Önskat beteende:
+- Tillbaka från **fråga 3** → fråga 2
+- Tillbaka från **fråga 2** → fråga 1
+- Tillbaka från **fråga 1** → startsidan `/`
 
 ## Lösning
 
-Ändra `handleSubmit` så att tomt sökfält:
-- inte auto-plockar från default-listan
-- navigerar till `/v1` **utan** `start=1`-flaggan, så enkäten öppnar sin landningsvy där användaren börjar på fråga 1 (yrkeskategori).
+Ta bort specialfallet för `step === 3 && initialRole` så att fråga 3 alltid går till fråga 2 internt. Komplettera fråga 1-fallet med en explicit `navigate("/")` så att eventuella prefill-parametrar i URL:en rensas — annars renderas Survey direkt igen p.g.a. `prefill || startSurvey` i `SalaryCheck`.
 
-Ny logik:
+Ny `handleBack`:
 
 ```ts
-const handleSubmit = (e: React.FormEvent) => {
-  e.preventDefault();
-  const hasQuery = query.trim().length > 0;
-  if (hasQuery && filtered[0]) {
-    handlePick(filtered[0].slug, filtered[0].label);
-  } else {
-    trackEvent("product_cta_clicked", { cta: "hero_inline_empty", target: "/v1" });
-    navigate("/v1");
+const handleBack = () => {
+  if (step === 1) {
+    // Fråga 1 → startsidan. navigate('/') rensar ev. prefill i URL
+    // så att SalaryCheck inte direkt återöppnar Survey.
+    onBack?.();
+    navigate("/");
+  } else if (step === 3) {
+    setKommunSearch("");
+    setSelectedRegion("");
+    setData({ ...data, kommun: "" });
+    setStep(2);
+  } else if (step === 2) {
+    setOccupationCategory("");
+    setRoleDropdownValue("");
+    setStep(1);
+  } else if (step > 1) {
+    setStep(step - 1);
   }
 };
 ```
 
 ## Filer som ändras
 
-- `src/components/landing/HeroInlineForm.tsx` — bara `handleSubmit`-funktionen.
+- `src/components/Survey.tsx` — endast `handleBack`-funktionen (rad 434–451).
 
 ## Verifiering
 
-1. Öppna `/`, klicka submit på hero-formuläret utan att skriva eller välja något → ska landa på fråga 1 (yrkeskategori).
-2. Skriv "anestesi" och klicka submit → ska fortsatt hoppa rakt in på rätt steg med specialitet förvald (oförändrat beteende).
-3. Klicka på en specialitet i dropdownen → oförändrat (rad 30–33 påverkas inte).
+1. Öppna `/`, klicka på en specialitet i hero (eller besök `/v1?start=1&yrke=anestesi`) → landar på fråga 3.
+2. Klicka **Tillbaka** → ska landa på fråga 2 (yrkeskategori-val) med samma kategori (läkare/ssk) bevarad så användaren kan byta specialitet.
+3. Klicka **Tillbaka** igen → ska landa på fråga 1 (yrkeskategori).
+4. Klicka **Tillbaka** igen → ska landa på startsidan `/`.
+5. Vanligt flöde utan prefill (klicka in via "Visa min analys" med tomt fält → fråga 1 → fråga 2 → fråga 3 → tillbaka → tillbaka → tillbaka → startsidan) ska fungera identiskt.

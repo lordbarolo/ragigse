@@ -433,9 +433,10 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
 
   const handleBack = () => {
     if (step === 1) {
+      // Fråga 1 → startsidan. navigate('/') rensar ev. prefill i URL
+      // så att SalaryCheck inte direkt återöppnar Survey.
       onBack?.();
-    } else if (step === 3 && initialRole) {
-      onBack?.();
+      navigate("/");
     } else if (step === 3) {
       setKommunSearch("");
       setSelectedRegion("");
