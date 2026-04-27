@@ -395,12 +395,12 @@ export default function ConsultantTrackContent({
         </div>
       ) : null}
 
-      {/* ═══ Nästa steg – Förhandlingsassistent ═══ */}
+      {/* ═══ Förhandla bättre — Förhandlingsassistent ═══ */}
       {isConsultantFullAccess && (
-        <div>
+        <div className="pt-4">
           <div className="mb-3">
-            <span className="text-[10px] font-semibold tracking-[1.4px] uppercase whitespace-nowrap">
-              Nästa steg
+            <span className="text-[10px] font-semibold tracking-[1.4px] uppercase whitespace-nowrap text-muted-foreground">
+              Förhandla bättre
             </span>
           </div>
           <div className="rounded-[18px] bg-card border border-foreground/[0.07] overflow-hidden card-shadow">
@@ -408,10 +408,13 @@ export default function ConsultantTrackContent({
               <div className="flex items-start gap-2">
                 <Handshake className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                 <p className="font-semibold text-foreground text-base leading-snug">
-                  Nu vet du vad marknaden betalar. Vill du ha stöd i förhandlingen?
+                  Förhandlingsassistenten gör skillnaden mellan ”ungefär marknadspris” och rätt timpris.
                 </p>
               </div>
-              <p className="font-semibold text-foreground text-sm">
+              <p className="text-body-sm text-muted-foreground leading-relaxed">
+                Du loggar in och får färdiga formuleringar, jourfaktor-argument och en checklista för vitesklausul — anpassade efter din roll och region. De flesta använder den inför nästa avropssamtal.
+              </p>
+              <p className="font-semibold text-foreground text-sm pt-1">
                 Vi hjälper dig förhandla kring:
               </p>
               <div className="grid grid-cols-2 gap-2">
@@ -434,7 +437,7 @@ export default function ConsultantTrackContent({
                 className="w-full flex items-center justify-center gap-2 rounded-[10px] bg-primary px-4 py-3.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
               >
                 <LogIn className="w-4 h-4" />
-                Logga in
+                Öppna förhandlingsassistenten
               </Link>
             </div>
           </div>
@@ -442,13 +445,20 @@ export default function ConsultantTrackContent({
       )}
 
       {isConsultantFullAccess && leadId && email && (
-        <InvoiceReviewCTA
-          leadId={leadId}
-          email={email}
-          role={occupation}
-          zone={userZone}
-          reportId={reportId}
-        />
+        <div className="pt-6">
+          <div className="mb-3">
+            <span className="text-[10px] font-semibold tracking-[1.4px] uppercase whitespace-nowrap text-muted-foreground">
+              Granska din faktura
+            </span>
+          </div>
+          <InvoiceReviewCTA
+            leadId={leadId}
+            email={email}
+            role={occupation}
+            zone={userZone}
+            reportId={reportId}
+          />
+        </div>
       )}
 
       {/* ═══ Feedback ═══ */}
