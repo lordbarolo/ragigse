@@ -204,12 +204,28 @@ export default function ReijdarChat({
                 <span className="text-[11px] text-muted-foreground ml-1.5">AI-assistent</span>
               </div>
             </div>
-            <button
-              onClick={() => setOpen(false)}
-              className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
-            >
-              <X className="w-4 h-4" />
-            </button>
+            <div className="flex items-center gap-2">
+              {user && !quota.loading && quota.limit && !quota.isAdmin && (
+                <span
+                  className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
+                    quota.remaining === 0
+                      ? "bg-destructive/15 text-destructive"
+                      : quota.used / quota.limit >= 0.8
+                      ? "bg-amber-500/15 text-amber-700 dark:text-amber-400"
+                      : "bg-secondary text-muted-foreground"
+                  }`}
+                  title={`${quota.used} av ${quota.limit} AI-anrop använda idag`}
+                >
+                  {quota.remaining}/{quota.limit}
+                </span>
+              )}
+              <button
+                onClick={() => setOpen(false)}
+                className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
           {/* Auth gate */}
