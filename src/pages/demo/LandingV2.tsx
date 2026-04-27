@@ -184,7 +184,7 @@ export default function LandingV2() {
           }}
         />
 
-        <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-10 lg:gap-8 items-center pt-14 md:pt-24 pb-16 md:pb-24">
+        <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-10 md:gap-8 items-center pt-14 md:pt-24 pb-16 md:pb-24">
           {/* Vänster: copy + form */}
           <div className="w-full max-w-[620px]">
             <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-medium text-[hsl(256_100%_85%)] bg-[hsl(256_100%_67%_/_0.18)] border border-[hsl(256_100%_67%_/_0.35)] rounded-full px-3 py-1 mb-5 uppercase tracking-wider">
