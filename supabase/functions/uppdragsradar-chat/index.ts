@@ -1,5 +1,11 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { checkRateLimit, rateLimitResponse } from "../_shared/rateLimit.ts";
+import { logAiUsage } from "../_shared/ai-usage-logger.ts";
+
+// Rough token estimator (~4 chars per token for Latin text)
+function estimateTokens(text: string): number {
+  return Math.ceil(text.length / 4);
+}
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
