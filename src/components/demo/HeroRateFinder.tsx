@@ -4,131 +4,32 @@ import { ArrowRight, ChevronLeft, Loader2, AlertCircle, RefreshCw } from "lucide
 import { useLocations } from "@/hooks/useCalculator";
 import { supabase } from "@/integrations/supabase/client";
 import SearchableSelect from "@/components/SearchableSelect";
+import {
+  DOCTOR_SPECIALTIES as TOP_DOCTOR_SPECIALTIES,
+  NURSE_SPECIALIZATIONS as TOP_NURSE_SPECIALIZATIONS,
+  resolveYrke,
+  type RoleGroup,
+} from "@/lib/specialityLists";
 
 /* ───────────────────── data (same shape as MarketSearchBox) ───────────────────── */
-const DEFAULT_EMPLOYER_FACTOR = 1.42;
+const DEFAULT_EMPLOYER_FACTOR = 1.47;
 const DEFAULT_HOURS_PER_MONTH = 167;
-
-type RoleGroup = "lakare" | "ssk";
 
 const CATEGORIES: { value: RoleGroup; label: string }[] = [
   { value: "lakare", label: "Läkare" },
   { value: "ssk", label: "Sjuksköterska / Barnmorska" },
 ];
 
-// All 63 doctor specializations per Socialstyrelsen — alphabetical
-const TOP_DOCTOR_SPECIALTIES = [
-  "Akutsjukvård",
-  "Allergologi",
-  "Allmänmedicin",
-  "Anestesi och intensivvård",
-  "Arbetsmedicin",
-  "Arbets- och miljömedicin",
-  "Barn- och ungdomsallergologi",
-  "Barn- och ungdomshematologi och onkologi",
-  "Barn- och ungdomskardiologi",
-  "Barn- och ungdomskirurgi",
-  "Barn- och ungdomsmedicin",
-  "Barn- och ungdomsneurologi med habilitering",
-  "Barn- och ungdomspsykiatri",
-  "Beroendemedicin",
-  "Endokrinologi och diabetologi",
-  "Geriatrik",
-  "Gynekologisk onkologi",
-  "Handkirurgi",
-  "Hematologi",
-  "Hud- och könssjukdomar",
-  "Hörsel- och balansrubbningar",
-  "Infektionssjukdomar",
-  "Internmedicin",
-  "Kardiologi",
-  "Kirurgi",
-  "Klinisk farmakologi",
-  "Klinisk fysiologi",
-  "Klinisk genetik",
-  "Klinisk immunologi och transfusionsmedicin",
-  "Klinisk kemi",
-  "Klinisk mikrobiologi",
-  "Klinisk neurofysiologi",
-  "Klinisk patologi",
-  "Kärlkirurgi",
-  "Lungsjukdomar",
-  "Medicinsk gastroenterologi och hepatologi",
-  "Neonatologi",
-  "Neurokirurgi",
-  "Neurologi",
-  "Neuroradiologi",
-  "Njurmedicin",
-  "Nuklearmedicin",
-  "Obstetrik och gynekologi",
-  "Onkologi",
-  "Ortopedi",
-  "Palliativ medicin",
-  "Plastikkirurgi",
-  "Psykiatri",
-  "Radiologi",
-  "Rehabiliteringsmedicin",
-  "Reumatologi",
-  "Rättsmedicin",
-  "Rättspsykiatri",
-  "Röst- och talrubbningar",
-  "Skolhälsovård",
-  "Smärtlindring",
-  "Socialmedicin",
-  "Thoraxkirurgi",
-  "Urologi",
-  "Vårdhygien",
-  "Äldrepsykiatri",
-  "Ögonsjukdomar",
-  "Öron-, näs- och halssjukdomar",
-];
-
-const TOP_NURSE_SPECIALIZATIONS = [
-  "IVA-sjuksköterska", "Psykiatrisjuksköterska", "Ambulanssjuksköterska",
-  "Barnsjuksköterska", "Operationssjuksköterska", "Anestesisjuksköterska",
-  "Akutsjuksköterska", "Hjärtsjuksköterska", "Distriktssjuksköterska",
-  "Kirurgsjuksköterska", "Palliativsjuksköterska", "Geriatriksjuksköterska",
-  "Medicinsjuksköterska", "Onkologisjuksköterska", "Infektionssjuksköterska",
-];
-
-const nurseValueMap: Record<string, string> = {
-  "Akutsjuksköterska": "Specialistsjuksköterska akutsjukvård",
-  "Ambulanssjuksköterska": "Specialistsjuksköterska ambulanssjukvård",
-  "Anestesisjuksköterska": "Specialistsjuksköterska anestesi",
-  "Barnsjuksköterska": "Specialistsjuksköterska barn och ungdom",
-  "Diabetessjuksköterska": "Specialistsjuksköterska diabetesvård",
-  "Distriktssjuksköterska": "Distriktssjuksköterska",
-  "Hjärtsjuksköterska": "Specialistsjuksköterska hjärtsjukvård",
-  "Infektionssjuksköterska": "Specialistsjuksköterska infektionssjukvård",
-  "IVA-sjuksköterska": "Specialistsjuksköterska intensivvård",
-  "Kirurgsjuksköterska": "Specialistsjuksköterska kirurgisk vård",
-  "Medicinsjuksköterska": "Specialistsjuksköterska medicinsk vård",
-  "Onkologisjuksköterska": "Specialistsjuksköterska onkologisk vård",
-  "Operationssjuksköterska": "Specialistsjuksköterska operationssjukvård",
-  "Palliativsjuksköterska": "Specialistsjuksköterska palliativ vård",
-  "Psykiatrisjuksköterska": "Specialistsjuksköterska psykiatrisk vård",
-  "Geriatriksjuksköterska": "Specialistsjuksköterska vård av äldre",
-  "Ögonsjuksköterska": "Specialistsjuksköterska ögonsjukvård",
-};
-
-function resolveYrke(category: RoleGroup, dropdownValue: string): string {
+// Specialty lists, nurseValueMap & resolveYrke imported from @/lib/specialityLists
+// HeroRateFinder uses an opinionated resolveYrke for a few common doctor specs
+// (rather than the generic prefix), so we override resolveYrke locally for läkare.
+function resolveYrkeHero(category: RoleGroup, dropdownValue: string): string {
   if (category === "lakare") {
-    if (dropdownValue === "__leg") return "Legitimerad läkare";
-    if (dropdownValue === "__st") return "ST-läkare";
-    if (dropdownValue === "__ovrig") return "Specialistläkare";
     if (dropdownValue === "Anestesi och intensivvård") return "Specialistläkare anestesi och intensivvård";
     if (dropdownValue === "Barn- och ungdomsmedicin") return "Specialistläkare barn- och ungdomsmedicin";
     if (dropdownValue === "Obstetrik och gynekologi") return "Specialistläkare obstetrik och gynekologi";
-    return `Specialistläkare ${dropdownValue.toLowerCase()}`;
   }
-  if (category === "ssk") {
-    if (dropdownValue === "__allman") return "Sjuksköterska";
-    if (dropdownValue === "__barnmorska") return "Barnmorska";
-    if (dropdownValue === "__rontgen") return "Röntgensjuksköterska";
-    if (dropdownValue === "__ovrig") return "Specialistsjuksköterska";
-    return nurseValueMap[dropdownValue] || dropdownValue;
-  }
-  return "";
+  return resolveYrke(category, dropdownValue);
 }
 
 function getMargins(group: RoleGroup) {
