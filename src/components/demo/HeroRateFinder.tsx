@@ -7,7 +7,7 @@ import SearchableSelect from "@/components/SearchableSelect";
 import {
   DOCTOR_SPECIALTIES as TOP_DOCTOR_SPECIALTIES,
   NURSE_SPECIALIZATIONS as TOP_NURSE_SPECIALIZATIONS,
-  resolveYrke,
+  resolveYrke as resolveYrkeBase,
   type RoleGroup,
 } from "@/lib/specialityLists";
 
@@ -29,7 +29,7 @@ function resolveYrkeHero(category: RoleGroup, dropdownValue: string): string {
     if (dropdownValue === "Barn- och ungdomsmedicin") return "Specialistläkare barn- och ungdomsmedicin";
     if (dropdownValue === "Obstetrik och gynekologi") return "Specialistläkare obstetrik och gynekologi";
   }
-  return resolveYrke(category, dropdownValue);
+  return resolveYrkeBase(category, dropdownValue);
 }
 
 function getMargins(group: RoleGroup) {
@@ -148,7 +148,7 @@ export default function HeroRateFinder({ prefillKey }: Props) {
 
   const resolvedYrke = useMemo(() => {
     if (!selectedCategory || !roleDropdownValue) return "";
-    return resolveYrke(selectedCategory, roleDropdownValue);
+    return resolveYrkeHero(selectedCategory, roleDropdownValue);
   }, [selectedCategory, roleDropdownValue]);
 
   const selectedLocation = useMemo(
