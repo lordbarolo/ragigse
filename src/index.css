@@ -6,107 +6,102 @@
 
 @layer base {
   :root {
-    /* ── Institutional Proof / Light ─────────────────── */
-    --background: 210 15% 96%;         /* #F4F6F8 paper-white */
-    --foreground: 222 47% 11%;         /* #111827 */
+    /* ── Deep Space / Agentic UI (default) ─────────────── */
+    --background: 260 60% 4%;          /* #0D001A deep space */
+    --foreground: 250 30% 96%;         /* near-white w/ violet tint */
 
-    --card: 0 0% 100%;                 /* #FFFFFF */
-    --card-foreground: 222 47% 11%;
+    --card: 260 40% 9% / 0.55;         /* glass card base (alpha used via utility) */
+    --card-solid: 260 40% 9%;          /* solid fallback */
+    --card-foreground: 250 30% 96%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover: 260 40% 9%;
+    --popover-foreground: 250 30% 96%;
 
-    --primary: 243 76% 59%;            /* #4F46E5 indigo */
+    --primary: 256 100% 67%;           /* #8155FF violet */
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 15% 96%;          /* paper */
-    --secondary-foreground: 222 47% 11%;
+    --secondary: 260 35% 14%;
+    --secondary-foreground: 250 30% 96%;
 
-    --muted: 210 15% 96%;
-    --muted-foreground: 215 25% 27%;   /* #334155 darker for readability */
+    --muted: 260 30% 14%;
+    --muted-foreground: 250 15% 70%;
 
-    --accent: 210 15% 96%;
-    --accent-foreground: 222 47% 11%;
+    --accent: 320 95% 65%;             /* hot pink accent */
+    --accent-foreground: 0 0% 100%;
+
+    --cyan: 190 95% 55%;               /* cyan accent */
+    --glow-violet: 256 100% 67%;
+    --glow-pink: 320 95% 65%;
+    --glow-cyan: 190 95% 55%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 11% 90%;             /* #E2E6EA */
-    --input: 210 11% 90%;
-    --ring: 243 76% 59%;
+    --border: 260 30% 18%;             /* subtle violet-tinted border */
+    --input: 260 30% 14%;
+    --ring: 256 100% 67%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
-    /* ── Semantic extras ─────────────────────────────── */
-    --hero-bg: 222 47% 11%;            /* #0F172A slate-900 */
-    --hero-fg: 0 0% 100%;
-    --success: 168 80% 31%;            /* #0D9488 teal */
-    --success-foreground: 0 0% 100%;
-    --warning: 36 93% 44%;             /* #D97706 amber */
-    --warning-foreground: 0 0% 100%;
-    --green: 168 80% 31%;              /* same as success */
-    --amber: 36 93% 44%;               /* same as warning */
+    --hero-bg: 260 60% 4%;
+    --hero-fg: 250 30% 96%;
+    --success: 160 80% 50%;
+    --success-foreground: 260 60% 4%;
+    --warning: 36 100% 60%;
+    --warning-foreground: 260 60% 4%;
+    --green: 160 80% 50%;
+    --amber: 36 100% 60%;
 
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 222 47% 11%;
-    --sidebar-primary: 243 76% 59%;
+    --sidebar-background: 260 50% 6% / 0.6;
+    --sidebar-foreground: 250 20% 80%;
+    --sidebar-primary: 256 100% 67%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 15% 96%;
-    --sidebar-accent-foreground: 222 47% 11%;
-    --sidebar-border: 210 11% 90%;
-    --sidebar-ring: 243 76% 59%;
+    --sidebar-accent: 260 35% 14%;
+    --sidebar-accent-foreground: 250 30% 96%;
+    --sidebar-border: 260 30% 18%;
+    --sidebar-ring: 256 100% 67%;
 
-    --font-display: 'Work Sans', sans-serif;
+    --font-display: 'Inter', sans-serif;
     --font-body: 'Inter', sans-serif;
     --font-mono: 'JetBrains Mono', ui-monospace, monospace;
   }
 
+  /* .dark mirrors :root — Deep Space is the only theme */
   .dark {
-    --background: 222 47% 7%;          /* ~#0B0F1A */
-    --foreground: 210 40% 96%;         /* slate-100 */
-
-    --card: 222 47% 10%;               /* ~#121829 */
-    --card-foreground: 210 40% 96%;
-
-    --popover: 222 47% 10%;
-    --popover-foreground: 210 40% 96%;
-
-    --primary: 239 84% 67%;            /* #818CF8 indigo-400 */
-    --primary-foreground: 222 47% 7%;
-
-    --secondary: 222 30% 16%;
-    --secondary-foreground: 210 40% 90%;
-
-    --muted: 222 30% 16%;
-    --muted-foreground: 215 16% 57%;
-
-    --accent: 222 30% 16%;
-    --accent-foreground: 210 40% 90%;
-
+    --background: 260 60% 4%;
+    --foreground: 250 30% 96%;
+    --card: 260 40% 9% / 0.55;
+    --card-solid: 260 40% 9%;
+    --card-foreground: 250 30% 96%;
+    --popover: 260 40% 9%;
+    --popover-foreground: 250 30% 96%;
+    --primary: 256 100% 67%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 260 35% 14%;
+    --secondary-foreground: 250 30% 96%;
+    --muted: 260 30% 14%;
+    --muted-foreground: 250 15% 70%;
+    --accent: 320 95% 65%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
-
-    --border: 222 20% 20%;
-    --input: 222 20% 20%;
-    --ring: 239 84% 67%;
-
-    --hero-bg: 222 47% 5%;
-    --hero-fg: 210 40% 96%;
-    --success: 168 80% 31%;
-    --success-foreground: 0 0% 100%;
-    --warning: 36 93% 44%;
-    --warning-foreground: 0 0% 100%;
-    --green: 168 80% 31%;
-    --amber: 36 93% 44%;
-
-    --sidebar-background: 222 47% 10%;
-    --sidebar-foreground: 210 40% 96%;
-    --sidebar-primary: 239 84% 67%;
-    --sidebar-primary-foreground: 222 47% 7%;
-    --sidebar-accent: 222 30% 16%;
-    --sidebar-accent-foreground: 210 40% 90%;
-    --sidebar-border: 222 20% 20%;
-    --sidebar-ring: 239 84% 67%;
+    --border: 260 30% 18%;
+    --input: 260 30% 14%;
+    --ring: 256 100% 67%;
+    --hero-bg: 260 60% 4%;
+    --hero-fg: 250 30% 96%;
+    --success: 160 80% 50%;
+    --success-foreground: 260 60% 4%;
+    --warning: 36 100% 60%;
+    --warning-foreground: 260 60% 4%;
+    --sidebar-background: 260 50% 6% / 0.6;
+    --sidebar-foreground: 250 20% 80%;
+    --sidebar-primary: 256 100% 67%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 260 35% 14%;
+    --sidebar-accent-foreground: 250 30% 96%;
+    --sidebar-border: 260 30% 18%;
+    --sidebar-ring: 256 100% 67%;
   }
 }
 
@@ -115,34 +110,111 @@
     @apply border-border;
   }
 
-  body {
+  html, body {
     @apply bg-background text-foreground;
     font-family: var(--font-body);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
   }
 
-  h1, h2, h3 {
+  /* Global Deep Space glow background */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 60% 50% at 15% 0%, hsl(var(--glow-violet) / 0.22) 0%, transparent 60%),
+      radial-gradient(ellipse 55% 45% at 90% 10%, hsl(var(--glow-pink) / 0.16) 0%, transparent 55%),
+      radial-gradient(ellipse 70% 50% at 50% 100%, hsl(var(--glow-cyan) / 0.10) 0%, transparent 60%),
+      hsl(var(--background));
+  }
+
+  h1, h2, h3, h4 {
     font-family: var(--font-display);
-    letter-spacing: -0.025em;
+    letter-spacing: -0.02em;
+  }
+
+  h1 { letter-spacing: -0.03em; }
+
+  /* Section eyebrow / label letter-spacing */
+  .eyebrow, [data-eyebrow] {
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    font-weight: 500;
   }
 }
 
 @layer utilities {
-  /* Dark hero section utility */
   .hero-dark {
     background-color: hsl(var(--hero-bg));
     color: hsl(var(--hero-fg));
   }
 
-  /* Gradient hero background */
   .hero-gradient {
-    background: linear-gradient(135deg, hsl(var(--hero-bg)), hsl(222 47% 15%));
+    background: linear-gradient(135deg, hsl(var(--hero-bg)), hsl(260 50% 10%));
     color: hsl(var(--hero-fg));
   }
 
   .safe-area-bottom {
     padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  }
+
+  /* ── Glassmorphism ─────────────────────────────────── */
+  .glass {
+    background: hsl(260 40% 9% / 0.5);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    border: 1px solid hsl(var(--border) / 0.6);
+  }
+
+  .glass-strong {
+    background: hsl(260 40% 9% / 0.75);
+    backdrop-filter: blur(24px) saturate(160%);
+    -webkit-backdrop-filter: blur(24px) saturate(160%);
+    border: 1px solid hsl(var(--border) / 0.7);
+  }
+
+  .glass-subtle {
+    background: hsl(260 40% 12% / 0.35);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid hsl(var(--border) / 0.4);
+  }
+
+  /* Glow on hover for interactive cards */
+  .glow-hover {
+    transition: box-shadow 300ms ease, transform 300ms ease, border-color 300ms ease;
+  }
+  .glow-hover:hover {
+    box-shadow:
+      0 0 0 1px hsl(var(--primary) / 0.4),
+      0 8px 32px -8px hsl(var(--primary) / 0.45),
+      0 0 60px -10px hsl(var(--primary) / 0.3);
+    border-color: hsl(var(--primary) / 0.5);
+  }
+
+  /* Permanent subtle glow for hero CTAs / featured cards */
+  .glow-violet {
+    box-shadow: 0 8px 40px -8px hsl(var(--glow-violet) / 0.5);
+  }
+  .glow-pink {
+    box-shadow: 0 8px 40px -8px hsl(var(--glow-pink) / 0.4);
+  }
+  .glow-cyan {
+    box-shadow: 0 8px 40px -8px hsl(var(--glow-cyan) / 0.4);
+  }
+
+  /* Text gradients */
+  .text-gradient-violet {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
   }
 }
 
