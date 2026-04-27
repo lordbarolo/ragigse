@@ -85,7 +85,9 @@ export default function ReijdarChat({
       if (!resp.ok || !resp.body) {
         const errData = await resp.json().catch(() => ({}));
         if (resp.status === 429) {
-          toast({ title: "För många försök", description: "Försök igen om en stund.", variant: "destructive" });
+          const msg = errData.message || `Du har nått dagens gräns på ${quota.limit ?? 30} AI-anrop. Återställs vid midnatt.`;
+          toast({ title: "Daglig gräns nådd", description: msg, variant: "destructive" });
+          quota.refresh();
           return;
         }
         throw new Error(errData.error || "Chatfel");
