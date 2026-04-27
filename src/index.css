@@ -317,3 +317,42 @@
     display: none;
   }
 }
+
+@layer utilities {
+  /* ─── Make.com-stil agent network animations ─── */
+  @keyframes agent-float {
+    0%, 100% { transform: translate(-50%, -50%) translateY(0px); }
+    50%      { transform: translate(-50%, -50%) translateY(-6px); }
+  }
+  .agent-float { animation: agent-float 5s ease-in-out infinite; }
+
+  @keyframes agent-halo {
+    0%, 100% { transform: scale(1);   opacity: 0.55; filter: blur(6px); }
+    50%      { transform: scale(1.6); opacity: 0;    filter: blur(10px); }
+  }
+  .agent-halo { animation: agent-halo 2.6s ease-out infinite; }
+
+  @keyframes agent-center-pulse {
+    0%, 100% { transform: scale(1);   opacity: 0.7; }
+    50%      { transform: scale(1.25); opacity: 1; }
+  }
+  .agent-center-pulse { animation: agent-center-pulse 3s ease-in-out infinite; }
+
+  @keyframes agent-line-pulse {
+    0%   { opacity: 0; }
+    30%  { opacity: 1; }
+    100% { opacity: 0; }
+  }
+  .agent-line-pulse { animation: agent-line-pulse 0.6s ease-out forwards; }
+
+  .agent-packet { filter: drop-shadow(0 0 1.5px hsl(320 95% 75%)); }
+
+  /* Make-style hero gradient bg */
+  .hero-make-bg {
+    background:
+      radial-gradient(ellipse 90% 70% at 80% 40%, hsl(280 80% 35% / 0.55) 0%, transparent 60%),
+      radial-gradient(ellipse 70% 60% at 20% 80%, hsl(256 90% 25% / 0.5) 0%, transparent 65%),
+      radial-gradient(ellipse 100% 80% at 50% 0%, hsl(270 70% 20% / 0.6) 0%, transparent 70%),
+      linear-gradient(180deg, #1a0833 0%, #0d001a 50%, #07000f 100%);
+  }
+}
