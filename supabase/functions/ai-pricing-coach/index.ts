@@ -121,7 +121,7 @@ serve(async (req) => {
   const zoneRate = rates.find((r) => r.zon === zone) ?? rates[0];
 
   const empType = mapEmployment(body.employmentType);
-  const range = calcRange(zoneRate.timpris_kund, empType);
+  const range = calcRange(zoneRate.timpris_kund, empType, body.role);
 
   // Enforce safety threshold
   let safeMin = range.hourly_min;
