@@ -217,17 +217,6 @@ export default function ConsultantTrackContent({
         </div>
       )}
 
-      {/* ═══ ÅRLIG PÅVERKAN — wow-kortet, lyft direkt efter ersättningsjämförelsen ═══ */}
-      {isConsultantFullAccess && rec && (
-        <IncomeImpactCard
-          currentHourly={currentHourly}
-          recommendedMin={rec.recommended_hourly_min}
-          recommendedMax={rec.recommended_hourly_max}
-          isEmployee={isEmployee}
-          hoursPerMonth={rec.hours_per_month || 167}
-        />
-      )}
-
       {/* ═══ Viktigt att veta — OB-policy & privat vårdgivare ═══ */}
       {isConsultantFullAccess && rec && (
         <div className="rounded-xl border border-foreground/[0.07] bg-foreground/[0.02] p-3.5 space-y-2">
