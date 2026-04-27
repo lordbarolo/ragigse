@@ -185,7 +185,7 @@ export default function HeroRateLookup() {
 
       {!result && (
         <p className="text-xs text-muted-foreground mt-3">
-          Välj roll och kommun för att se ramavtalspriset från SKR 2026.
+          Sök efter din roll och region för att se svaret direkt. Baserat på SKR:s ramavtal 2026.
         </p>
       )}
     </div>
