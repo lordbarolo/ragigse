@@ -13,6 +13,11 @@ import {
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/trackEvent";
 import { aliasLead } from "@/lib/identify";
+import {
+  DOCTOR_SPECIALTIES as TOP_DOCTOR_SPECIALTIES,
+  NURSE_SPECIALIZATIONS as TOP_NURSE_SPECIALIZATIONS,
+  NURSE_VALUE_MAP as nurseValueMap,
+} from "@/lib/specialityLists";
 
 export interface SurveyData {
   email: string;
@@ -30,101 +35,8 @@ const TOTAL_STEPS = 6;
 type OccupationCategory = "" | "lakare" | "ssk";
 type CommuteType = "veckovis" | "dagligen" | "inte_alls" | "";
 
-// All 63 doctor specializations per Socialstyrelsen — alphabetical
-const TOP_DOCTOR_SPECIALTIES = [
-  "Akutsjukvård",
-  "Allergologi",
-  "Allmänmedicin",
-  "Anestesi och intensivvård",
-  "Arbetsmedicin",
-  "Arbets- och miljömedicin",
-  "Barn- och ungdomsallergologi",
-  "Barn- och ungdomshematologi och onkologi",
-  "Barn- och ungdomskardiologi",
-  "Barn- och ungdomskirurgi",
-  "Barn- och ungdomsmedicin",
-  "Barn- och ungdomsneurologi med habilitering",
-  "Barn- och ungdomspsykiatri",
-  "Beroendemedicin",
-  "Endokrinologi och diabetologi",
-  "Geriatrik",
-  "Gynekologisk onkologi",
-  "Handkirurgi",
-  "Hematologi",
-  "Hud- och könssjukdomar",
-  "Hörsel- och balansrubbningar",
-  "Infektionssjukdomar",
-  "Internmedicin",
-  "Kardiologi",
-  "Kirurgi",
-  "Klinisk farmakologi",
-  "Klinisk fysiologi",
-  "Klinisk genetik",
-  "Klinisk immunologi och transfusionsmedicin",
-  "Klinisk kemi",
-  "Klinisk mikrobiologi",
-  "Klinisk neurofysiologi",
-  "Klinisk patologi",
-  "Kärlkirurgi",
-  "Lungsjukdomar",
-  "Medicinsk gastroenterologi och hepatologi",
-  "Neonatologi",
-  "Neurokirurgi",
-  "Neurologi",
-  "Neuroradiologi",
-  "Njurmedicin",
-  "Nuklearmedicin",
-  "Obstetrik och gynekologi",
-  "Onkologi",
-  "Ortopedi",
-  "Palliativ medicin",
-  "Plastikkirurgi",
-  "Psykiatri",
-  "Radiologi",
-  "Rehabiliteringsmedicin",
-  "Reumatologi",
-  "Rättsmedicin",
-  "Rättspsykiatri",
-  "Röst- och talrubbningar",
-  "Skolhälsovård",
-  "Smärtlindring",
-  "Socialmedicin",
-  "Thoraxkirurgi",
-  "Urologi",
-  "Vårdhygien",
-  "Äldrepsykiatri",
-  "Ögonsjukdomar",
-  "Öron-, näs- och halssjukdomar",
-];
-
-// Top nurse specializations — ordered by search frequency
-const TOP_NURSE_SPECIALIZATIONS = [
-  "IVA-sjuksköterska", "Psykiatrisjuksköterska", "Ambulanssjuksköterska",
-  "Barnsjuksköterska", "Operationssjuksköterska", "Anestesisjuksköterska",
-  "Akutsjuksköterska", "Hjärtsjuksköterska", "Distriktssjuksköterska",
-  "Kirurgsjuksköterska", "Palliativsjuksköterska", "Geriatriksjuksköterska",
-  "Medicinsjuksköterska", "Onkologisjuksköterska", "Infektionssjuksköterska",
-];
-
-const nurseValueMap: Record<string, string> = {
-  "Akutsjuksköterska": "Specialistsjuksköterska akutsjukvård",
-  "Ambulanssjuksköterska": "Specialistsjuksköterska ambulanssjukvård",
-  "Anestesisjuksköterska": "Specialistsjuksköterska anestesi",
-  "Barnsjuksköterska": "Specialistsjuksköterska barn och ungdom",
-  "Diabetessjuksköterska": "Specialistsjuksköterska diabetesvård",
-  "Distriktssjuksköterska": "Distriktssjuksköterska",
-  "Hjärtsjuksköterska": "Specialistsjuksköterska hjärtsjukvård",
-  "Infektionssjuksköterska": "Specialistsjuksköterska infektionssjukvård",
-  "IVA-sjuksköterska": "Specialistsjuksköterska intensivvård",
-  "Kirurgsjuksköterska": "Specialistsjuksköterska kirurgisk vård",
-  "Medicinsjuksköterska": "Specialistsjuksköterska medicinsk vård",
-  "Onkologisjuksköterska": "Specialistsjuksköterska onkologisk vård",
-  "Operationssjuksköterska": "Specialistsjuksköterska operationssjukvård",
-  "Palliativsjuksköterska": "Specialistsjuksköterska palliativ vård",
-  "Psykiatrisjuksköterska": "Specialistsjuksköterska psykiatrisk vård",
-  "Geriatriksjuksköterska": "Specialistsjuksköterska vård av äldre",
-  "Ögonsjuksköterska": "Specialistsjuksköterska ögonsjukvård",
-};
+// Specialty lists & nurseValueMap imported from @/lib/specialityLists
+// (single source of truth shared with HeroRateFinder & MarketSearchBox)
 
 export interface SurveyResult {
   yrke: string;

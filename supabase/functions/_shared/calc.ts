@@ -10,7 +10,7 @@
 export const SHARE_MIN = 0.85;
 export const SHARE_MAX = 0.90;
 export const SHARE_MID = 0.875;
-export const EMPLOYER_FACTOR = 1.42;
+export const EMPLOYER_FACTOR = 1.47;
 export const HOURS_PER_MONTH = 167;
 
 // ── Types ────────────────────────────────────────────────────────────────────

@@ -72,7 +72,7 @@ serve(async (req) => {
         }
       : undefined;
 
-    const m = model ?? { share_min: 0.85, share_max: 0.90, employer_factor: 1.42, hours_per_month: 167 };
+    const m = model ?? { share_min: 0.85, share_max: 0.90, employer_factor: 1.47, hours_per_month: 167 };
 
     // Look up zone from locations
     const { data: locData } = await supabase
@@ -132,7 +132,7 @@ serve(async (req) => {
         ? { ...model, share_min: FORETAGARE_SHARE_MIN, share_max: FORETAGARE_SHARE_MAX }
         : model)
       : (empType === "foretagare"
-        ? { share_min: FORETAGARE_SHARE_MIN, share_max: FORETAGARE_SHARE_MAX, employer_factor: 1.42, hours_per_month: 167 }
+        ? { share_min: FORETAGARE_SHARE_MIN, share_max: FORETAGARE_SHARE_MAX, employer_factor: 1.47, hours_per_month: 167 }
         : undefined);
     const effectiveM = effectiveModel ?? m;
     const range = calculateSalaryRange(timprisKund, empType, effectiveModel);

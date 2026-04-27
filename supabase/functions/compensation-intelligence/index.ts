@@ -469,8 +469,8 @@ async function capLookupRate(
   const effectiveModel: MarginModel = baseModel
     ? empType === "foretagare" ? { ...baseModel, share_min: FORETAGARE_SHARE_MIN, share_max: FORETAGARE_SHARE_MAX } : baseModel
     : empType === "foretagare"
-      ? { share_min: FORETAGARE_SHARE_MIN, share_max: FORETAGARE_SHARE_MAX, employer_factor: 1.42, hours_per_month: 167 }
-      : { share_min: 0.85, share_max: 0.90, employer_factor: 1.42, hours_per_month: 167 };
+      ? { share_min: FORETAGARE_SHARE_MIN, share_max: FORETAGARE_SHARE_MAX, employer_factor: 1.47, hours_per_month: 167 }
+      : { share_min: 0.85, share_max: 0.90, employer_factor: 1.47, hours_per_month: 167 };
 
   // Rate lookup
   let timprisKund = 0;
