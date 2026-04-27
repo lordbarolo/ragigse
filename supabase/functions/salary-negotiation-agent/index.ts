@@ -2,7 +2,23 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { z } from "https://esm.sh/zod@3.23.8";
 import { checkRateLimit, rateLimitResponse } from "../_shared/rateLimit.ts";
-import { logAiUsage, extractTokensFromResponse } from "../_shared/ai-usage-logger.ts";
+import { logAiUsage, extractTokensFromResponse, checkAiRateLimit, aiRateLimitResponse } from "../_shared/ai-usage-logger.ts";
+
+async function getAuthUserId(req: Request): Promise<string | null> {
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) return null;
+  try {
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!,
+      { global: { headers: { Authorization: authHeader } } },
+    );
+    const { data: { user } } = await supabase.auth.getUser();
+    return user?.id ?? null;
+  } catch {
+    return null;
+  }
+}
 
 /**
  * salary-negotiation-agent
@@ -637,6 +653,11 @@ serve(async (req) => {
     if (!rl.allowed) {
       return rateLimitResponse(rl, corsHeaders);
     }
+
+    // Per-user daily AI quota
+    const userId = await getAuthUserId(req);
+    const aiRl = await checkAiRateLimit(userId);
+    if (!aiRl.allowed) return aiRateLimitResponse(aiRl, corsHeaders);
 
     const { message, context, history: rawHistory } = (await req.json()) as AgentRequest;
     const history = normalizeHistory(rawHistory);
