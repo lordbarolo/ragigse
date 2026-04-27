@@ -119,8 +119,11 @@ export default function LandingV2() {
 
       {/* ── Nav ─────────────────────────────── */}
       <nav className="relative flex items-center justify-between px-5 sm:px-6 lg:px-10 h-[60px] glass-strong border-b border-white/10">
-        <Link to="/" aria-label="CompCare startsida">
-          <CompcareLogo variant="full" inverted={true} />
+        <Link to="/" aria-label="CompCare startsida" className="inline-flex items-center">
+          <span className="font-sans font-semibold text-[22px] sm:text-[24px] tracking-tight leading-none">
+            <span className="text-white">comp</span>
+            <span className="text-[hsl(320_95%_70%)]">care</span>
+          </span>
         </Link>
         <div className="flex items-center gap-2 sm:gap-3">
           <Link to="/logga-in">
