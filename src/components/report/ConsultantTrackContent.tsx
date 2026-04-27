@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import InvoiceReviewCTA from "./InvoiceReviewCTA";
-import IncomeImpactCard from "./IncomeImpactCard";
+
 import PersonalInsights from "./PersonalInsights";
 
 import PriceHistory from "./PriceHistory";
