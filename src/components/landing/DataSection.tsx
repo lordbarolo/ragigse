@@ -8,7 +8,7 @@ const CARDS = [
   {
     icon: "📊",
     title: "Branschens marginalmodell",
-    desc: "Bemanningsbranschens marginal ligger normalt på 10–15 % av kundpriset. Vi använder 85–90 % som ditt spann (×1,42 sociala avgifter för anställda).",
+    desc: "Bemanningsbranschens marginal ligger normalt på 15–20 % av kundpriset (10–15 % för specialistläkare). Vi använder motsvarande andel som ditt spann (×1,42 sociala avgifter för anställda).",
     source: "Källa: branschpraxis 2026",
   },
   {
