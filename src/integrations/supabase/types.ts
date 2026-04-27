@@ -41,6 +41,57 @@ export type Database = {
         }
         Relationships: []
       }
+      ai_usage_logs: {
+        Row: {
+          cost_sek: number
+          cost_usd: number
+          created_at: string
+          duration_ms: number | null
+          error_message: string | null
+          feature: string
+          id: string
+          input_tokens: number
+          metadata: Json | null
+          model: string
+          output_tokens: number
+          status: string
+          total_tokens: number | null
+          user_id: string | null
+        }
+        Insert: {
+          cost_sek?: number
+          cost_usd?: number
+          created_at?: string
+          duration_ms?: number | null
+          error_message?: string | null
+          feature: string
+          id?: string
+          input_tokens?: number
+          metadata?: Json | null
+          model: string
+          output_tokens?: number
+          status?: string
+          total_tokens?: number | null
+          user_id?: string | null
+        }
+        Update: {
+          cost_sek?: number
+          cost_usd?: number
+          created_at?: string
+          duration_ms?: number | null
+          error_message?: string | null
+          feature?: string
+          id?: string
+          input_tokens?: number
+          metadata?: Json | null
+          model?: string
+          output_tokens?: number
+          status?: string
+          total_tokens?: number | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       analyses: {
         Row: {
           created_at: string
@@ -4380,6 +4431,20 @@ export type Database = {
           role: string
           specialization: string
           year_month: string
+        }[]
+      }
+      ai_usage_summary: {
+        Args: { _days?: number; _user_id?: string }
+        Returns: {
+          call_count: number
+          error_count: number
+          feature: string
+          model: string
+          total_cost_sek: number
+          total_cost_usd: number
+          total_input_tokens: number
+          total_output_tokens: number
+          user_id: string
         }[]
       }
       approve_org_membership_request: {
