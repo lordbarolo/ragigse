@@ -21,6 +21,25 @@ const DATA_STATS = [
   { icon: History, num: "8 års", label: "prissättningshistorik" },
 ];
 
+// Snittersättning per roll (snitt över zon 1–3, SKR ramavtal 2026)
+// Exkluderar: allmänsjuksköterska, psykiatri, distrikt, anestesi, operation, röntgen
+const NURSE_RATE_TICKER = [
+  { role: "IVA-sjuksköterska", price: "825" },
+  { role: "Barnmorska", price: "825" },
+  { role: "Akutsjuksköterska", price: "770" },
+  { role: "Ambulanssjuksköterska", price: "770" },
+  { role: "Barnsjuksköterska", price: "770" },
+  { role: "Hjärtsjuksköterska", price: "770" },
+  { role: "Onkologisjuksköterska", price: "770" },
+  { role: "Kirurgsjuksköterska", price: "770" },
+  { role: "Infektionssjuksköterska", price: "770" },
+  { role: "Medicinsjuksköterska", price: "770" },
+  { role: "Palliativsjuksköterska", price: "770" },
+  { role: "Geriatriksjuksköterska", price: "770" },
+  { role: "Diabetessjuksköterska", price: "770" },
+  { role: "Ögonsjuksköterska", price: "770" },
+];
+
 const HOW_IT_WORKS = [
   { num: "01", title: "Välj din roll", desc: "Specialitet och ort i två klick. Inga formulär, ingen registrering." },
   { num: "02", title: "Få ditt spann", desc: "Median, undre och övre intervall." },
