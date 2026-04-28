@@ -319,31 +319,53 @@
 }
 
 @layer utilities {
-  /* ─── Make.com-stil agent network animations ─── */
-  @keyframes agent-float {
-    0%, 100% { transform: translate(-50%, -50%) translateY(0px); }
-    50%      { transform: translate(-50%, -50%) translateY(-6px); }
-  }
-  .agent-float { animation: agent-float 5s ease-in-out infinite; }
+  /* ─── Constellation Settle: agent network ─── */
 
-  @keyframes agent-halo {
-    0%, 100% { transform: scale(1);   opacity: 0.55; filter: blur(6px); }
-    50%      { transform: scale(1.6); opacity: 0;    filter: blur(10px); }
+  /* Boot: satelliter studsar in från slumpad offset till sin slutposition */
+  @keyframes agent-boot-in {
+    0%   { transform: translate(-50%, -50%) scale(0.2); opacity: 0; }
+    60%  { transform: translate(-50%, -50%) scale(1.08); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
   }
-  .agent-halo { animation: agent-halo 2.6s ease-out infinite; }
-
-  @keyframes agent-center-pulse {
-    0%, 100% { transform: scale(1);   opacity: 0.7; }
-    50%      { transform: scale(1.25); opacity: 1; }
+  .agent-boot-in {
+    animation: agent-boot-in 900ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
   }
-  .agent-center-pulse { animation: agent-center-pulse 3s ease-in-out infinite; }
 
-  @keyframes agent-line-pulse {
+  /* Linjer ritas in från center mot satellit */
+  @keyframes agent-line-draw {
+    0%   { stroke-dashoffset: 100; opacity: 0; }
+    40%  { opacity: 1; }
+    100% { stroke-dashoffset: 0;   opacity: 0.55; }
+  }
+  .agent-line-draw {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: agent-line-draw 1100ms ease-out both;
+  }
+
+  /* Center-noden andas mycket långsamt i idle */
+  @keyframes agent-breathe {
+    0%, 100% { transform: scale(1);    opacity: 0.9; }
+    50%      { transform: scale(1.04); opacity: 1; }
+  }
+  .agent-breathe { animation: agent-breathe 8s ease-in-out infinite; }
+
+  /* Engångs broadcast-ring vid övergång boot → idle */
+  @keyframes agent-broadcast {
+    0%   { transform: translate(-50%, -50%) scale(0.6); opacity: 0.7; }
+    100% { transform: translate(-50%, -50%) scale(3.2); opacity: 0; }
+  }
+  .agent-broadcast {
+    animation: agent-broadcast 1400ms ease-out forwards;
+  }
+
+  /* Lugn idle-puls längs en enskild linje */
+  @keyframes agent-line-flash {
     0%   { opacity: 0; }
-    30%  { opacity: 1; }
+    30%  { opacity: 0.9; }
     100% { opacity: 0; }
   }
-  .agent-line-pulse { animation: agent-line-pulse 0.6s ease-out forwards; }
+  .agent-line-flash { animation: agent-line-flash 1.6s ease-out forwards; }
 
   .agent-packet { filter: drop-shadow(0 0 1.5px hsl(320 95% 75%)); }
 
