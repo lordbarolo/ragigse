@@ -369,7 +369,10 @@
 
   .agent-packet { filter: drop-shadow(0 0 1.5px hsl(320 95% 75%)); }
 
-  /* Make-style hero gradient bg */
+  /* Smooth, krispig hero-bakgrund (utan rutnät) */
+  .hero-smooth-bg {
+    background: linear-gradient(180deg, #160a2e 0%, #0d001a 55%, #07000f 100%);
+  }
   .hero-make-bg {
     background:
       radial-gradient(ellipse 90% 70% at 80% 40%, hsl(280 80% 35% / 0.55) 0%, transparent 60%),
