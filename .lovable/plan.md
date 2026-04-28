@@ -1,67 +1,43 @@
-# Fix: "Tillbaka"-knappen i enkäten hoppar fel
+## Mål
+Ersätt nuvarande `AgentNetwork` (12 spretiga noder, ständigt pulserande linjer och floatande satelliter) med en lugnare, mer fokuserad agentisk animation till höger i hero — som **rör sig mycket initialt** och sedan **lugnar ner sig** till ett stilla, andande sluttillstånd.
 
-## Problem
+## Designkoncept: "Constellation Settle"
+En central CompCare-nod med **6 satellitnoder** (istället för 12) i en ren cirkulär formation. Animationen har tre faser:
 
-När en användare kommer till enkäten via en prefill-länk (t.ex. klickar på en specialitet i hero-formuläret → `/v1?start=1&yrke=anestesi`), öppnar enkäten på **fråga 3** (kommun) eftersom yrke och kategori redan är ifyllda.
+1. **0–1.2s — Boot:** Satelliter flyger in från slumpade positioner utanför viewporten, linjer ritas en efter en från center, datapaket skjuts ut snabbt mot varje nod (stagger).
+2. **1.2–2.5s — Settle:** Noderna studsar mjukt på plats (spring easing), linjerna bleknar in till låg opacitet, ett sista "broadcast"-pulse går ut från center.
+3. **2.5s+ — Idle (lugnt sluttillstånd):** Bara mycket subtila tecken på liv:
+   - Center-noden andas långsamt (8s scale 1.0 → 1.04 → 1.0).
+   - En enda långsam datapuls vandrar från center till en slumpad satellit var ~4s (inte 0.6s som nu).
+   - Halos är statiska/mycket dämpade — ingen konstant pulsering på alla noder samtidigt.
+   - Inga floatande noder. Inga blinkande linjer.
 
-Klick på "tillbaka" på fråga 3 → användaren landar på `lovable.dev/projects/...` (eller fastnar i ett konstigt limbo) istället för att gå till fråga 2.
+Resultat: imponerande "den vaknar till liv"-känsla första 2.5 sekunderna, sedan en stilla, professionell konstellation som inte stjäl uppmärksamhet från hero-copy och formuläret.
 
-## Rotorsak
+## Tekniska ändringar
 
-I `src/components/Survey.tsx` rad 434–451 har `handleBack` ett specialfall:
+**Fil:** `src/components/landing/AgentNetwork.tsx` (skrivs om)
+- Reducera `NODES` från 12 → 6, jämnt fördelade i en cirkel (radie ~38%).
+- Ta bort `agent-float` och `agent-halo` på alla satelliter (orsaken till "spretigheten").
+- Lägg till `useState` för `phase: 'boot' | 'settle' | 'idle'` styrd av `setTimeout`.
+- Boot-fas: satelliter renderas med `transform: translate(randomX, randomY) scale(0)` och animeras till slutposition via CSS-transition (cubic-bezier spring, 900ms stagger 120ms).
+- Linjer ritas med `stroke-dasharray` + animerad `stroke-dashoffset` (draw-in effekt) under boot.
+- Idle-fas: ett `setInterval` på **4000ms** (inte 600ms) väljer en nod för en mjuk datapuls.
+- Center-nod får långsam `breathe` keyframe (8s).
 
-```ts
-} else if (step === 3 && initialRole) {
-  onBack?.();   // ← buggen
-}
-```
+**Fil:** `src/index.css`
+- Ta bort/ersätt `agent-float` och `agent-halo` keyframes (kvarstår nu som källa till oroligheten).
+- Lägg till nya keyframes:
+  - `agent-boot-in` — scale + translate spring för satelliter.
+  - `agent-line-draw` — stroke-dashoffset från full till 0 (line draw-in).
+  - `agent-breathe` — 8s mycket subtil scale 1 → 1.04 → 1 för center.
+  - `agent-broadcast` — engångs ring-pulse runt center vid övergång boot → idle.
 
-Detta antogs "stänga enkäten och gå tillbaka till hero" om man kom in via prefill. Men:
-1. `onBack` i `SalaryCheck.tsx` rad 112 är bara `() => setShowSurvey(false)`. Den ändrar inte URL:en.
-2. URL:en har fortfarande `?yrke=...&start=1`, vilket gör att `showSurvey` återinitieras till `true` direkt (`useState(!!prefill || startSurvey)`).
-3. Användaren upplever att "tillbaka" inte gör något — eller att navigeringen hamnar fel beroende på kontext.
+**Fil:** `src/pages/demo/LandingV2.tsx`
+- Ingen layoutändring — komponenten sitter redan korrekt i höger kolumn (rad 207–210).
 
-Önskat beteende:
-- Tillbaka från **fråga 3** → fråga 2
-- Tillbaka från **fråga 2** → fråga 1
-- Tillbaka från **fråga 1** → startsidan `/`
-
-## Lösning
-
-Ta bort specialfallet för `step === 3 && initialRole` så att fråga 3 alltid går till fråga 2 internt. Komplettera fråga 1-fallet med en explicit `navigate("/")` så att eventuella prefill-parametrar i URL:en rensas — annars renderas Survey direkt igen p.g.a. `prefill || startSurvey` i `SalaryCheck`.
-
-Ny `handleBack`:
-
-```ts
-const handleBack = () => {
-  if (step === 1) {
-    // Fråga 1 → startsidan. navigate('/') rensar ev. prefill i URL
-    // så att SalaryCheck inte direkt återöppnar Survey.
-    onBack?.();
-    navigate("/");
-  } else if (step === 3) {
-    setKommunSearch("");
-    setSelectedRegion("");
-    setData({ ...data, kommun: "" });
-    setStep(2);
-  } else if (step === 2) {
-    setOccupationCategory("");
-    setRoleDropdownValue("");
-    setStep(1);
-  } else if (step > 1) {
-    setStep(step - 1);
-  }
-};
-```
-
-## Filer som ändras
-
-- `src/components/Survey.tsx` — endast `handleBack`-funktionen (rad 434–451).
-
-## Verifiering
-
-1. Öppna `/`, klicka på en specialitet i hero (eller besök `/v1?start=1&yrke=anestesi`) → landar på fråga 3.
-2. Klicka **Tillbaka** → ska landa på fråga 2 (yrkeskategori-val) med samma kategori (läkare/ssk) bevarad så användaren kan byta specialitet.
-3. Klicka **Tillbaka** igen → ska landa på fråga 1 (yrkeskategori).
-4. Klicka **Tillbaka** igen → ska landa på startsidan `/`.
-5. Vanligt flöde utan prefill (klicka in via "Visa min analys" med tomt fält → fråga 1 → fråga 2 → fråga 3 → tillbaka → tillbaka → tillbaka → startsidan) ska fungera identiskt.
+## Vad användaren kommer märka
+- Tydlig "wow"-moment vid sidladdning (första ~2.5s).
+- Lugn, ren konstellation efter det — inga 12 ikoner som svävar och pulserar samtidigt.
+- Center-noden fortsätter andas så det inte ser "fruset" ut.
+- Endast en datapuls åt gången, glesare intervall — fokus stannar på hero-texten.
