@@ -21,23 +21,24 @@ const DATA_STATS = [
   { icon: History, num: "8 års", label: "prissättningshistorik" },
 ];
 
-// Snittersättning per roll (snitt över zon 1–3, SKR ramavtal 2026)
+// Snitt-bruttolön/mån för anställd konsult (kundpris × 82,5% / 1,42 × 167h)
+// Baserat på SKR ramavtal 2026, snitt över zon 1–3
 // Exkluderar: allmänsjuksköterska, psykiatri, distrikt, anestesi, operation, röntgen
 const NURSE_RATE_TICKER = [
-  { role: "IVA-sjuksköterska", price: "825" },
-  { role: "Barnmorska", price: "825" },
-  { role: "Akutsjuksköterska", price: "770" },
-  { role: "Ambulanssjuksköterska", price: "770" },
-  { role: "Barnsjuksköterska", price: "770" },
-  { role: "Hjärtsjuksköterska", price: "770" },
-  { role: "Onkologisjuksköterska", price: "770" },
-  { role: "Kirurgsjuksköterska", price: "770" },
-  { role: "Infektionssjuksköterska", price: "770" },
-  { role: "Medicinsjuksköterska", price: "770" },
-  { role: "Palliativsjuksköterska", price: "770" },
-  { role: "Geriatriksjuksköterska", price: "770" },
-  { role: "Diabetessjuksköterska", price: "770" },
-  { role: "Ögonsjuksköterska", price: "770" },
+  { role: "IVA-sjuksköterska", salary: "80 000" },
+  { role: "Barnmorska", salary: "80 000" },
+  { role: "Akutsjuksköterska", salary: "75 000" },
+  { role: "Ambulanssjuksköterska", salary: "75 000" },
+  { role: "Barnsjuksköterska", salary: "75 000" },
+  { role: "Hjärtsjuksköterska", salary: "75 000" },
+  { role: "Onkologisjuksköterska", salary: "75 000" },
+  { role: "Kirurgsjuksköterska", salary: "75 000" },
+  { role: "Infektionssjuksköterska", salary: "75 000" },
+  { role: "Medicinsjuksköterska", salary: "75 000" },
+  { role: "Palliativsjuksköterska", salary: "75 000" },
+  { role: "Geriatriksjuksköterska", salary: "75 000" },
+  { role: "Diabetessjuksköterska", salary: "75 000" },
+  { role: "Ögonsjuksköterska", salary: "75 000" },
 ];
 
 const HOW_IT_WORKS = [
@@ -213,12 +214,12 @@ export default function LandingV2() {
       <section className="border-y border-slate-200 py-5 bg-white overflow-hidden">
         <div className="flex items-center gap-3 px-5 sm:px-6 lg:px-10 mb-3 max-w-5xl mx-auto">
           <span className="text-[11px] font-semibold tracking-[0.14em] uppercase text-slate-500">
-            Snittersättning · SKR-ramavtal 2026
+            Snitt-bruttolön/mån · SKR-ramavtal 2026
           </span>
           <span className="h-px flex-1 bg-slate-200" />
         </div>
         <div className="overflow-hidden whitespace-nowrap select-none">
-          <div className="inline-flex gap-10 animate-[tick_50s_linear_infinite]">
+          <div className="inline-flex gap-10 animate-marquee" style={{ width: "max-content" }}>
             {[...NURSE_RATE_TICKER, ...NURSE_RATE_TICKER].map((item, i) => (
               <span
                 key={i}
@@ -227,13 +228,13 @@ export default function LandingV2() {
                 <span className="w-1.5 h-1.5 rounded-full bg-[hsl(256_100%_67%)] flex-shrink-0" />
                 <span className="text-slate-900 font-semibold">{item.role}</span>
                 <span className="text-slate-400">·</span>
-                <span className="text-[hsl(256_100%_55%)] font-semibold tabular-nums">{item.price} kr/h</span>
+                <span className="text-[hsl(256_100%_55%)] font-semibold tabular-nums">{item.salary} kr/mån</span>
               </span>
             ))}
           </div>
         </div>
         <p className="text-[11px] text-slate-400 text-center mt-4 px-5">
-          Snittpris kund 2026 · genomsnitt över zon 1–3
+          Bruttolön anställd konsult · snitt över zon 1–3
         </p>
       </section>
 
