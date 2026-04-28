@@ -187,6 +187,9 @@ export default function LandingV2() {
       </section>
 
 
+      {/* ═══ Ljus sektion-wrapper för allt under hero ═══ */}
+      <div className="bg-[#F7F5FB] text-slate-900 [&_.text-white]:!text-slate-900 [&_.text-white\/85]:!text-slate-700 [&_.text-white\/80]:!text-slate-700 [&_.text-white\/75]:!text-slate-600 [&_.text-white\/70]:!text-slate-600 [&_.text-white\/65]:!text-slate-600 [&_.text-white\/60]:!text-slate-500 [&_.text-white\/55]:!text-slate-500 [&_.text-white\/50]:!text-slate-500 [&_.text-white\/45]:!text-slate-400 [&_.border-white\/10]:!border-slate-200 [&_.border-white\/15]:!border-slate-200 [&_.glass]:!bg-white [&_.glass]:!border-slate-200 [&_.glass]:!shadow-sm [&_.glass-strong]:!bg-white [&_.glass-strong]:!border-slate-200 [&_.glass-subtle]:!bg-white [&_.glass-subtle]:!border-slate-200 [&_.bg-white\/5]:!bg-slate-100 [&_.bg-white\/8]:!bg-slate-100 [&_.hover\:bg-white\/5:hover]:!bg-slate-100">
+
       {/* ═══════════════════ 2. DATAKREDIBILITET ═══════════════════ */}
       <section className="border-y border-white/10 py-10 md:py-14 px-5 sm:px-6 lg:px-10 bg-[hsl(260_50%_6%_/_0.4)]">
         <div className="max-w-5xl mx-auto">
