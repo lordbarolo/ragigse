@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Menu, X, ShieldCheck, Lock, FileLock2, Database, MapPin, History, Sparkles, Zap, LineChart, GitBranch } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 import HeroInlineForm from "@/components/landing/HeroInlineForm";
-import heroDoctor from "@/assets/hero-doctor.jpg";
+
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 
@@ -165,39 +165,24 @@ export default function LandingV2() {
 
       {/* ═══════════════════ 1. HERO med inline-form + porträtt ═══════════════════ */}
       <section className="relative min-h-[640px] md:min-h-[760px] overflow-hidden px-5 sm:px-6 lg:px-10 hero-smooth-bg">
-        <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-10 md:gap-8 items-center pt-14 md:pt-24 pb-16 md:pb-24">
-          {/* Vänster: copy + form */}
+        <div className="relative z-10 max-w-3xl mx-auto flex flex-col items-center text-center pt-14 md:pt-24 pb-16 md:pb-24">
+          <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-medium text-[hsl(256_100%_85%)] bg-[hsl(256_100%_67%_/_0.18)] border border-[hsl(256_100%_67%_/_0.35)] rounded-full px-3 py-1 mb-5 uppercase tracking-wider">
+            <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="currentColor" /></svg>
+            För läkare &amp; sjuksköterskor
+          </div>
+          <h1 className="font-bold leading-[1.05] text-white mb-5 tracking-tight text-[34px] sm:text-5xl md:text-[56px]">
+            Vet du vad du<br />
+            <span className="text-gradient-violet">är värd?</span>
+          </h1>
+          <p className="text-[16px] sm:text-lg text-white/75 leading-relaxed mb-8 max-w-[560px]">
+            Vi visar acceptabla ersättningsnivåer för alla roller och regioner. Baserat på SKR:s ramavtal för 2026 och djupgående AI-analyser av bemanningsbranschens marginaler.
+          </p>
           <div className="w-full max-w-[620px]">
-            <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-medium text-[hsl(256_100%_85%)] bg-[hsl(256_100%_67%_/_0.18)] border border-[hsl(256_100%_67%_/_0.35)] rounded-full px-3 py-1 mb-5 uppercase tracking-wider">
-              <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="currentColor" /></svg>
-              För läkare &amp; sjuksköterskor
-            </div>
-            <h1 className="font-bold leading-[1.05] text-white mb-5 tracking-tight text-[34px] sm:text-5xl md:text-[56px]">
-              Vet du vad du<br />
-              <span className="text-gradient-violet">är värd?</span>
-            </h1>
-            <p className="text-[16px] sm:text-lg text-white/75 leading-relaxed mb-8 max-w-[480px]">
-              Vi visar acceptabla ersättningsnivåer för alla roller och regioner. Baserat på SKR:s ramavtal för 2026 och djupgående AI-analyser av bemanningsbranschens marginaler.
-            </p>
             <HeroInlineForm />
-            <p className="mt-4 text-[12px] text-white/45 text-center md:text-left">
-              Anonymt · Kostnadsfritt · Klart på 60 sekunder
-            </p>
           </div>
-
-          {/* Höger: porträtt */}
-          <div className="relative w-full hidden md:block">
-            <div className="relative w-full aspect-[4/5] max-w-[520px] ml-auto rounded-3xl overflow-hidden shadow-[0_30px_80px_-20px_hsl(256_100%_30%/0.6)] ring-1 ring-white/10">
-              <img
-                src={heroDoctor}
-                alt="Läkare"
-                width={1024}
-                height={1280}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0d001a]/60 via-transparent to-transparent pointer-events-none" />
-            </div>
-          </div>
+          <p className="mt-4 text-[12px] text-white/45">
+            Anonymt · Kostnadsfritt · Klart på 60 sekunder
+          </p>
         </div>
       </section>
 
