@@ -21,6 +21,25 @@ const DATA_STATS = [
   { icon: History, num: "8 års", label: "prissättningshistorik" },
 ];
 
+// Snittersättning per roll (snitt över zon 1–3, SKR ramavtal 2026)
+// Exkluderar: allmänsjuksköterska, psykiatri, distrikt, anestesi, operation, röntgen
+const NURSE_RATE_TICKER = [
+  { role: "IVA-sjuksköterska", price: "825" },
+  { role: "Barnmorska", price: "825" },
+  { role: "Akutsjuksköterska", price: "770" },
+  { role: "Ambulanssjuksköterska", price: "770" },
+  { role: "Barnsjuksköterska", price: "770" },
+  { role: "Hjärtsjuksköterska", price: "770" },
+  { role: "Onkologisjuksköterska", price: "770" },
+  { role: "Kirurgsjuksköterska", price: "770" },
+  { role: "Infektionssjuksköterska", price: "770" },
+  { role: "Medicinsjuksköterska", price: "770" },
+  { role: "Palliativsjuksköterska", price: "770" },
+  { role: "Geriatriksjuksköterska", price: "770" },
+  { role: "Diabetessjuksköterska", price: "770" },
+  { role: "Ögonsjuksköterska", price: "770" },
+];
+
 const HOW_IT_WORKS = [
   { num: "01", title: "Välj din roll", desc: "Specialitet och ort i två klick. Inga formulär, ingen registrering." },
   { num: "02", title: "Få ditt spann", desc: "Median, undre och övre intervall." },
@@ -190,26 +209,32 @@ export default function LandingV2() {
       {/* ═══ Ljus sektion-wrapper för allt under hero ═══ */}
       <div className="bg-[#F7F5FB] text-slate-900 [&_.text-white]:!text-slate-900 [&_.text-white\/85]:!text-slate-700 [&_.text-white\/80]:!text-slate-700 [&_.text-white\/75]:!text-slate-600 [&_.text-white\/70]:!text-slate-600 [&_.text-white\/65]:!text-slate-600 [&_.text-white\/60]:!text-slate-500 [&_.text-white\/55]:!text-slate-500 [&_.text-white\/50]:!text-slate-500 [&_.text-white\/45]:!text-slate-400 [&_.border-white\/10]:!border-slate-200 [&_.border-white\/15]:!border-slate-200 [&_.glass]:!bg-white [&_.glass]:!border-slate-200 [&_.glass]:!shadow-sm [&_.glass-strong]:!bg-white [&_.glass-strong]:!border-slate-200 [&_.glass-subtle]:!bg-white [&_.glass-subtle]:!border-slate-200 [&_.bg-white\/5]:!bg-slate-100 [&_.bg-white\/8]:!bg-slate-100 [&_.hover\:bg-white\/5:hover]:!bg-slate-100">
 
-      {/* ═══════════════════ 2. DATAKREDIBILITET ═══════════════════ */}
-      <section className="border-y border-white/10 py-10 md:py-14 px-5 sm:px-6 lg:px-10 bg-[hsl(260_50%_6%_/_0.4)]">
-        <div className="max-w-5xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
-            {DATA_STATS.map((s) => (
-              <div key={s.label} className="flex items-start sm:flex-col gap-3 sm:gap-2">
-                <div className="w-10 h-10 rounded-lg bg-[hsl(256_100%_67%_/_0.15)] border border-[hsl(256_100%_67%_/_0.3)] flex items-center justify-center shrink-0">
-                  <s.icon className="w-5 h-5 text-[hsl(256_100%_78%)]" />
-                </div>
-                <div>
-                  <div className="text-[26px] sm:text-[32px] font-bold text-white leading-none">{s.num}</div>
-                  <div className="text-[13px] text-white/60 mt-1.5">{s.label}</div>
-                </div>
-              </div>
+      {/* ═══════════════════ 2. RULLANDE ERSÄTTNINGSBANNER ═══════════════════ */}
+      <section className="border-y border-slate-200 py-5 bg-white overflow-hidden">
+        <div className="flex items-center gap-3 px-5 sm:px-6 lg:px-10 mb-3 max-w-5xl mx-auto">
+          <span className="text-[11px] font-semibold tracking-[0.14em] uppercase text-slate-500">
+            Snittersättning · SKR-ramavtal 2026
+          </span>
+          <span className="h-px flex-1 bg-slate-200" />
+        </div>
+        <div className="overflow-hidden whitespace-nowrap select-none">
+          <div className="inline-flex gap-10 animate-[tick_50s_linear_infinite]">
+            {[...NURSE_RATE_TICKER, ...NURSE_RATE_TICKER].map((item, i) => (
+              <span
+                key={i}
+                className="font-display text-sm font-medium text-slate-700 tracking-wide flex items-center gap-3"
+              >
+                <span className="w-1.5 h-1.5 rounded-full bg-[hsl(256_100%_67%)] flex-shrink-0" />
+                <span className="text-slate-900 font-semibold">{item.role}</span>
+                <span className="text-slate-400">·</span>
+                <span className="text-[hsl(256_100%_55%)] font-semibold tabular-nums">{item.price} kr/h</span>
+              </span>
             ))}
           </div>
-          <p className="text-[12px] sm:text-[13px] text-white/55 text-center mt-6 sm:mt-8">
-            All data från SKR:s ramavtal 2026 — ingen tredjeparts-skattning.
-          </p>
         </div>
+        <p className="text-[11px] text-slate-400 text-center mt-4 px-5">
+          Snittpris kund 2026 · genomsnitt över zon 1–3
+        </p>
       </section>
 
       {/* ═══════════════════ MAKE-STIL: PILLAR-SEKTION ═══════════════════ */}
