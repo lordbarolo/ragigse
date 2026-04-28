@@ -21,24 +21,30 @@ const DATA_STATS = [
   { icon: History, num: "8 års", label: "prissättningshistorik" },
 ];
 
-// Snitt-bruttolön/mån för anställd konsult (kundpris × 82,5% / 1,42 × 167h)
-// Baserat på SKR ramavtal 2026, snitt över zon 1–3
-// Exkluderar: allmänsjuksköterska, psykiatri, distrikt, anestesi, operation, röntgen
+// Snitt-bruttolön/mån för anställd konsult, varierat över roller och zoner.
+// Beräkning: kundpris × share / 1,42 × 167h. Share = 0,825 (övriga roller),
+// 0,875 (specialistläkare). Källa: SKR ramavtal 2026.
 const NURSE_RATE_TICKER = [
-  { role: "IVA-sjuksköterska", salary: "80 000" },
-  { role: "Barnmorska", salary: "80 000" },
-  { role: "Akutsjuksköterska", salary: "75 000" },
-  { role: "Ambulanssjuksköterska", salary: "75 000" },
-  { role: "Barnsjuksköterska", salary: "75 000" },
-  { role: "Hjärtsjuksköterska", salary: "75 000" },
-  { role: "Onkologisjuksköterska", salary: "75 000" },
-  { role: "Kirurgsjuksköterska", salary: "75 000" },
-  { role: "Infektionssjuksköterska", salary: "75 000" },
-  { role: "Medicinsjuksköterska", salary: "75 000" },
-  { role: "Palliativsjuksköterska", salary: "75 000" },
-  { role: "Geriatriksjuksköterska", salary: "75 000" },
-  { role: "Diabetessjuksköterska", salary: "75 000" },
-  { role: "Ögonsjuksköterska", salary: "75 000" },
+  { role: "Sjuksköterska · Zon 1", salary: "60 000" },
+  { role: "Sjuksköterska · Zon 3", salary: "69 000" },
+  { role: "Barnmorska · Zon 2", salary: "80 000" },
+  { role: "Barnmorska · Zon 3", salary: "85 000" },
+  { role: "Skolsköterska · Zon 1", salary: "69 000" },
+  { role: "Röntgensjuksköterska · Zon 2", salary: "64 000" },
+  { role: "Distriktssjuksköterska · Zon 3", salary: "85 000" },
+  { role: "Legitimerad läkare · Zon 1", salary: "82 000" },
+  { role: "Legitimerad läkare · Zon 2", salary: "101 000" },
+  { role: "Legitimerad läkare · Zon 3", salary: "120 000" },
+  { role: "Specialist akutsjukvård · Zon 1", salary: "127 000" },
+  { role: "Specialist akutsjukvård · Zon 3", salary: "184 000" },
+  { role: "Specialist allmänmedicin · Zon 2", salary: "156 000" },
+  { role: "Specialist anestesi · Zon 3", salary: "184 000" },
+  { role: "Specialist äldrepsykiatri · Zon 1", salary: "150 000" },
+  { role: "Specialist äldrepsykiatri · Zon 3", salary: "201 000" },
+  { role: "Specialist barnkirurgi · Zon 2", salary: "156 000" },
+  { role: "Specialist allergologi · Zon 3", salary: "184 000" },
+  { role: "Specialist arbetsmedicin · Zon 1", salary: "127 000" },
+  { role: "Specialist barnkardiologi · Zon 3", salary: "184 000" },
 ];
 
 const HOW_IT_WORKS = [
