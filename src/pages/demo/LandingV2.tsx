@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import { ArrowRight, Menu, X, ShieldCheck, Lock, FileLock2, Database, MapPin, History, Sparkles, Zap, LineChart, GitBranch } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 import HeroInlineForm from "@/components/landing/HeroInlineForm";
-import AgentNetwork from "@/components/landing/AgentNetwork";
+import heroDoctor from "@/assets/hero-doctor.jpg";
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 
@@ -163,27 +163,8 @@ export default function LandingV2() {
         )}
       </nav>
 
-      {/* ═══════════════════ 1. HERO med inline-form + Make-style network ═══════════════════ */}
-      <section className="relative min-h-[640px] md:min-h-[760px] overflow-hidden px-5 sm:px-6 lg:px-10 hero-make-bg">
-        {/* Subtle grid */}
-        <div
-          className="absolute inset-0 opacity-[0.035] pointer-events-none"
-          style={{
-            backgroundImage:
-              "repeating-linear-gradient(0deg,transparent,transparent 39px,#fff 39px,#fff 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,#fff 39px,#fff 40px)",
-          }}
-        />
-        {/* Soft right-side glow accent */}
-        <div
-          className="absolute pointer-events-none"
-          style={{
-            top: '10%', right: '-10%',
-            width: '780px', height: '780px',
-            background: 'radial-gradient(circle, hsl(320 95% 55% / 0.22) 0%, hsl(256 100% 67% / 0.12) 35%, transparent 70%)',
-            filter: 'blur(20px)',
-          }}
-        />
-
+      {/* ═══════════════════ 1. HERO med inline-form + porträtt ═══════════════════ */}
+      <section className="relative min-h-[640px] md:min-h-[760px] overflow-hidden px-5 sm:px-6 lg:px-10 hero-smooth-bg">
         <div className="relative z-10 max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-10 md:gap-8 items-center pt-14 md:pt-24 pb-16 md:pb-24">
           {/* Vänster: copy + form */}
           <div className="w-full max-w-[620px]">
@@ -204,9 +185,18 @@ export default function LandingV2() {
             </p>
           </div>
 
-          {/* Höger: Agent network animation */}
-          <div className="relative w-full h-[360px] sm:h-[460px] lg:h-[560px] hidden md:block">
-            <AgentNetwork />
+          {/* Höger: porträtt */}
+          <div className="relative w-full hidden md:block">
+            <div className="relative w-full aspect-[4/5] max-w-[520px] ml-auto rounded-3xl overflow-hidden shadow-[0_30px_80px_-20px_hsl(256_100%_30%/0.6)] ring-1 ring-white/10">
+              <img
+                src={heroDoctor}
+                alt="Läkare"
+                width={1024}
+                height={1280}
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0d001a]/60 via-transparent to-transparent pointer-events-none" />
+            </div>
           </div>
         </div>
       </section>
