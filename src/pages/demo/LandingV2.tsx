@@ -475,6 +475,9 @@ export default function LandingV2() {
         </div>
       </section>
 
+      </div>
+      {/* ── /Ljus sektion-wrapper ── */}
+
       {/* ── Footer ──────────────────────────── */}
       <footer className="px-5 sm:px-6 lg:px-10 pt-10 pb-12 border-t border-white/10 bg-[hsl(260_50%_5%_/_0.6)]">
         <div className="max-w-6xl mx-auto">
