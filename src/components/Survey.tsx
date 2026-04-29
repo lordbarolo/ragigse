@@ -752,7 +752,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                 return;
               }
               if (!canProceed) return;
-              trackStepCompleted(6, data.currentSalary);
+              trackStepCompleted(5, data.currentSalary);
               handleNext();
             }}
             disabled={saving}
