@@ -668,46 +668,8 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
           </StepWrapper>
         )}
 
-        {/* Step 5: Uppdragsgivare */}
+        {/* Step 5: Ersättning (final step) */}
         {step === 5 && (
-          <StepWrapper title="Vem är din uppdragsgivare?">
-            <div className="rounded-2xl border border-border bg-card p-5 flex flex-col gap-3">
-              {([
-                { value: "bemanningsforetag", label: "Bemanningsföretag" },
-                { value: "region", label: "Region" },
-                { value: "kommun", label: "Kommun" },
-                { value: "privat_vardgivare", label: "Privat vårdgivare" },
-              ]).map((opt) => (
-                <button
-                  key={opt.value}
-                  onClick={() => {
-                     setData({ ...data, obShare: opt.value });
-                  }}
-                  className={`group w-full py-5 px-5 rounded-xl border !border-l-[3px] bg-card text-left transition-all active:scale-[0.98] flex items-center gap-3 ${
-                    data.obShare === opt.value
-                      ? "border-primary !border-l-primary bg-primary/[0.06] ring-1 ring-primary/20"
-                      : "border-border !border-l-primary hover:border-primary/40 hover:bg-primary/[0.03]"
-                  }`}
-                >
-                  {data.obShare === opt.value && (
-                    <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center shrink-0">
-                      <Check className="w-3 h-3 text-primary-foreground" />
-                    </div>
-                  )}
-                  <span className="text-base font-medium text-foreground">{opt.label}</span>
-                </button>
-              ))}
-              {data.obShare === "privat_vardgivare" && (
-                <p className="text-hint text-center mt-1 px-2">
-                  Analysen baseras på SKR:s ramavtal och kan avvika från privata avtal. Resultatet ger en marknadsjämförelse.
-                </p>
-              )}
-            </div>
-          </StepWrapper>
-        )}
-
-        {/* Step 6: Ersättning (final step) */}
-        {step === 6 && (
           <StepWrapper title="Vad får du i ersättning idag?">
             <div className="rounded-2xl border border-border bg-card p-5 space-y-5">
               <div className="flex gap-3">
