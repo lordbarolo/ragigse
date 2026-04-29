@@ -231,7 +231,7 @@ export default function Profile() {
             <div className="flex items-center gap-3 shrink-0">
               <span className="text-2xl font-semibold text-slate-900 tabular-nums">{percent}%</span>
               <Link to="/profil">
-                <Button size="sm" variant="outline" className="gap-1.5 h-9 text-sm border-slate-300 text-slate-700 hover:bg-slate-100">
+                <Button size="sm" className="gap-1.5 h-9 text-sm font-semibold text-white border-0 bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] hover:from-[#7c3aed] hover:to-[#c026d3] shadow-sm hover:shadow-md transition-all">
                   <Pencil className="w-3.5 h-3.5" />
                   Redigera
                 </Button>

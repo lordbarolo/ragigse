@@ -99,26 +99,26 @@ export default function Login() {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden">
-      {/* Deep Space-bakgrund — matchar landningssidan */}
-      <div className="absolute inset-0 bg-[#0D001A]" />
-      {/* Spotlight — violett glow uppe till höger */}
+      {/* Make.com-inspirerad djupviolett bakgrund */}
+      <div className="absolute inset-0 bg-[#1a0b3d]" />
+      {/* Spotlight — mjuk violett glow uppe till höger */}
       <div
         className="absolute pointer-events-none"
         style={{
-          top: '-100px', right: '-100px',
-          width: '1000px', height: '900px',
+          top: '-150px', right: '-150px',
+          width: '1100px', height: '1000px',
           zIndex: 1,
-          background: 'radial-gradient(ellipse at 75% 10%, hsl(256 100% 67% / 0.45) 0%, hsl(256 100% 67% / 0.18) 25%, hsl(256 100% 67% / 0.05) 50%, transparent 70%)',
+          background: 'radial-gradient(ellipse at 75% 15%, rgba(168,85,247,0.35) 0%, rgba(139,92,246,0.15) 30%, rgba(91,33,182,0.05) 55%, transparent 75%)',
         }}
       />
-      {/* Sekundär glow — hot pink, nere till vänster */}
+      {/* Sekundär glow — magenta nere till vänster (Make-signatur) */}
       <div
         className="absolute pointer-events-none"
         style={{
-          bottom: '-150px', left: '-150px',
-          width: '700px', height: '700px',
+          bottom: '-200px', left: '-150px',
+          width: '800px', height: '800px',
           zIndex: 1,
-          background: 'radial-gradient(ellipse at 20% 80%, hsl(320 95% 65% / 0.18) 0%, hsl(320 95% 65% / 0.06) 40%, transparent 65%)',
+          background: 'radial-gradient(ellipse at 25% 80%, rgba(217,70,239,0.20) 0%, rgba(192,38,211,0.08) 40%, transparent 70%)',
         }}
       />
       <div className="relative z-10 w-full max-w-lg space-y-6">
