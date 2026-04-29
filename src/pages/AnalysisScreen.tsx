@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/trackEvent";
 import { toast } from "sonner";
 import type { SurveyData } from "@/components/Survey";
-import { Mail, ArrowRight, MapPin, TrendingUp } from "lucide-react";
+import { Mail, ArrowRight, MapPin, TrendingUp, Lock } from "lucide-react";
 import { fetchLead, leadToSurvey, createReport, saveEmail } from "@/services/leadService";
 import Navbar from "@/components/Navbar";
 
@@ -191,37 +191,36 @@ export default function AnalysisScreen() {
             Ramavtalspriser
           </p>
           <h1 className="font-display text-[22px] sm:text-[26px] font-extrabold tracking-tight text-foreground leading-tight">
-            Regionens pris till bemanningsföretag
+            Din zons ersättningsspann
           </h1>
           <p className="text-[14px] text-foreground/55 mt-2 leading-relaxed">
-            Så här ser ramavtalspriserna ut för <strong className="text-foreground/80">{survey.yrke}</strong> i de olika zonerna.
+            Här är ramavtalspriset för <strong className="text-foreground/80">{survey.yrke}</strong>{userZone && <> i <strong className="text-foreground/80">{userZone}</strong></>}. Ange din e-post för att se övriga zoner och hur vi räknat.
           </p>
         </div>
 
-        {/* ── Zone price cards ── */}
+        {/* ── Zone price cards (user zone visible, others teased) ── */}
         {loadingRates ? (
           <div className="flex items-center justify-center py-12">
             <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin" />
           </div>
         ) : sortedZones.length > 0 ? (
           <div className="space-y-3">
-            {sortedZones.map((rate, i) => {
+            {sortedZones.map((rate) => {
               const isUserZone = rate.zon === userZone;
               return (
                 <div
                   key={rate.zon}
-                  className={`relative rounded-[14px] border p-5 transition-all ${
+                  className={`relative rounded-[14px] border p-5 transition-all overflow-hidden ${
                     isUserZone
                       ? "bg-primary/[0.04] border-primary/30 shadow-[0_0_20px_rgba(0,194,255,0.06)]"
                       : "bg-card border-foreground/[0.08]"
                   }`}
                 >
-                  {/* User zone indicator */}
                   {isUserZone && (
                     <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-primary to-primary/40 rounded-t-[14px]" />
                   )}
 
-                  <div className="flex items-start justify-between">
+                  <div className={`flex items-start justify-between ${!isUserZone ? "blur-[6px] select-none pointer-events-none" : ""}`}>
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
                         <span className={`text-[15px] font-display font-bold ${isUserZone ? "text-primary" : "text-foreground"}`}>
@@ -251,16 +250,27 @@ export default function AnalysisScreen() {
 
                     <div className="text-right">
                       <p className={`font-display text-[28px] font-extrabold tracking-tight ${isUserZone ? "text-primary" : "text-foreground"}`}>
-                        {fmt(rate.timpris_kund)}
+                        {isUserZone ? fmt(rate.timpris_kund) : "•••"}
                       </p>
                       <p className="text-[12px] text-foreground/45 font-medium">kr/h</p>
                     </div>
                   </div>
 
-                  {rate.detaljer && (
+                  {isUserZone && rate.detaljer && (
                     <p className="text-[12px] text-foreground/40 mt-2 leading-relaxed">
                       {rate.detaljer}
                     </p>
+                  )}
+
+                  {!isUserZone && (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-background/80 border border-foreground/10 backdrop-blur-sm">
+                        <Lock className="w-3.5 h-3.5 text-foreground/50" />
+                        <span className="text-[12px] font-display font-semibold text-foreground/65">
+                          Lås upp med e-post
+                        </span>
+                      </div>
+                    </div>
                   )}
                 </div>
               );
@@ -274,17 +284,25 @@ export default function AnalysisScreen() {
           </div>
         )}
 
-        {/* ── Insight ── */}
-        {sortedZones.length >= 2 && (
-          <div className="flex items-start gap-3 p-4 rounded-xl bg-foreground/[0.03] border border-foreground/[0.06]">
+        {/* ── Locked insights teaser ── */}
+        <div className="rounded-xl border border-dashed border-foreground/15 bg-foreground/[0.02] p-4">
+          <div className="flex items-start gap-3">
             <div className="w-8 h-8 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
               <TrendingUp className="w-4 h-4 text-primary" />
             </div>
-            <p className="text-[13px] text-foreground/60 leading-relaxed">
-              Prisskillnaden mellan zonerna speglar tillgång och efterfrågan. Glesbygd har normalt högre priser för att kompensera för reseavstånd.
-            </p>
+            <div className="space-y-1.5">
+              <p className="text-[13px] font-display font-semibold text-foreground/80">
+                Det här ingår också i rapporten
+              </p>
+              <ul className="text-[13px] text-foreground/55 leading-relaxed space-y-1">
+                <li>· Ersättningsspann för Zon 1, 2 och 3</li>
+                <li>· Så har vi räknat — metod &amp; ramavtalskällor</li>
+                <li>· Ditt förhandlingsspann jämfört med din nuvarande ersättning</li>
+                <li>· Prisskillnader mellan zoner och vad de beror på</li>
+              </ul>
+            </div>
           </div>
-        )}
+        </div>
 
         {/* ── CTA section ── */}
         <div className="space-y-4 pt-2">
