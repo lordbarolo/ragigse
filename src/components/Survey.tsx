@@ -318,7 +318,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
       sessionStorage.setItem("leadId", leadId);
       sessionStorage.setItem("surveyData", JSON.stringify({ ...data, track }));
       if (pricingResult) sessionStorage.setItem("pricingResult", JSON.stringify(pricingResult));
-      trackStepCompleted(6, snapshotObShare);
+      trackStepCompleted(5, snapshotCurrentSalary);
       const totalTime = surveyStartTime.current ? Math.round((Date.now() - surveyStartTime.current) / 1000) : 0;
       const hourlyRate = snapshotSalaryType === "monthly"
         ? Math.round(snapshotCurrentSalary / 167)
