@@ -30,7 +30,7 @@ export interface SurveyData {
   obShare: string;
 }
 
-const TOTAL_STEPS = 6;
+const TOTAL_STEPS = 5;
 
 type OccupationCategory = "" | "lakare" | "ssk";
 type CommuteType = "veckovis" | "dagligen" | "inte_alls" | "";
