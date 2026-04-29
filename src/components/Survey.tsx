@@ -76,7 +76,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
     experience: 5,
     salaryType: "hourly",
     currentSalary: 0,
-    obShare: "",
+    obShare: "bemanningsforetag",
   });
 
   // Step 1 state
