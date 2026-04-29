@@ -1,9 +1,5 @@
 import { Link } from "react-router-dom";
-import { Card, CardContent } from "@/components/ui/card";
 import InvoiceReviewCTA from "./InvoiceReviewCTA";
-
-import PersonalInsights from "./PersonalInsights";
-
 import PriceHistory from "./PriceHistory";
 import PriceNuggets from "./PriceNuggets";
 import type { PriceChange } from "@/shared/types";
@@ -11,16 +7,12 @@ import { Separator } from "@/components/ui/separator";
 import { Collapsible, CollapsibleTrigger, CollapsibleContent } from "@/components/ui/collapsible";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import {
-  TrendingUp,
   Lock,
   ChevronDown,
   ArrowRight,
   BarChart3,
-  MessageSquareQuote,
-  Building2,
   Briefcase,
   MapPin,
-  Lightbulb,
   Info,
   CheckCircle,
   Clock,
@@ -28,15 +20,12 @@ import {
   Home,
   FileWarning,
   Handshake,
-  Copy,
-  ShieldCheck,
   LogIn,
 } from "lucide-react";
 import { fmt, formatPartialValue } from "@/shared/formatters";
 import { SectionHeading, StatBlock, CalcRow } from "@/shared/UIComponents";
 import type { ResultJson, ZoneComparison } from "@/shared/types";
-import { getNegotiationTips, APPROVED_SUPPLIERS } from "./negotiationData";
-import { toast } from "@/hooks/use-toast";
+import { getNegotiationTips } from "./negotiationData";
 import ReportFeedback from "./ReportFeedback";
 
 interface Props {
