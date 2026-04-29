@@ -118,6 +118,14 @@ const TAG_COLORS: Record<string, string> = {
   muted:  "bg-white/5 text-white/70 border-white/10",
 };
 
+/* Ljus variant för produkttrappan på vit bakgrund */
+const TAG_COLORS_LIGHT: Record<string, string> = {
+  violet: "bg-[hsl(256_100%_67%_/_0.10)] text-[hsl(256_70%_45%)] border-[hsl(256_100%_67%_/_0.30)]",
+  pink:   "bg-[hsl(320_95%_65%_/_0.10)] text-[hsl(320_70%_45%)] border-[hsl(320_95%_65%_/_0.30)]",
+  cyan:   "bg-[hsl(190_95%_45%_/_0.10)] text-[hsl(190_80%_30%)] border-[hsl(190_95%_45%_/_0.30)]",
+  muted:  "bg-slate-100 text-slate-600 border-slate-200",
+};
+
 /* Make-stil pillar-flikar */
 const PILLARS = [
   { id: "data", label: "Datadriven analys", icon: LineChart },
