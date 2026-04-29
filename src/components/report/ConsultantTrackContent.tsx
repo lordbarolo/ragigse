@@ -43,42 +43,6 @@ interface Props {
   priceHistory?: PriceChange[];
 }
 
-/** Copyable script block with timeline styling */
-function ScriptStep({ step, title, text }: { step: number; title: string; text: string }) {
-  const isQuote = text.startsWith('"') || text.startsWith('\u201C');
-
-  const handleCopy = () => {
-    const cleanText = text.replace(/^[""\u201C]+|[""\u201D]+$/g, '');
-    navigator.clipboard.writeText(cleanText);
-    toast({ title: "Kopierat!" });
-  };
-
-  return (
-    <div className="flex gap-4 relative">
-      <div className="w-8 h-8 rounded-full bg-primary/20 border border-primary/40 flex items-center justify-center flex-shrink-0 z-10">
-        <span className="text-primary text-xs font-bold">{step}</span>
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="font-semibold text-foreground text-sm">{title}</p>
-        {isQuote ? (
-          <div className="bg-foreground/[0.04] rounded-lg p-3 mt-2 relative group">
-            <p className="text-body-sm italic pr-8">{text}</p>
-            <button
-              onClick={handleCopy}
-              className="absolute top-2 right-2 opacity-60 hover:opacity-100 transition-opacity text-muted-foreground hover:text-primary"
-              aria-label="Kopiera"
-            >
-              <Copy className="w-4 h-4" />
-            </button>
-          </div>
-        ) : (
-          <p className="text-body-sm mt-1">{text}</p>
-        )}
-      </div>
-    </div>
-  );
-}
-
 /** Section label */
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
