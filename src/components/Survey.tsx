@@ -727,7 +727,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
             Tillbaka
           </button>
         )}
-        {step !== 6 && (
+        {step !== 5 && (
           <button
             onClick={() => {
               if (!canProceed) return;
