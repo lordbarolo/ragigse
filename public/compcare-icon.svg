@@ -1,6 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
-  <!-- Grey bar (comparison bar - shorter) -->
-  <rect x="96" y="152" width="200" height="54" rx="8" ry="8" fill="#A0AABE"/>
-  <!-- Cyan bar (comparison bar - longer) -->
-  <rect x="96" y="236" width="334" height="54" rx="8" ry="8" fill="#00D2E6"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" fill="currentColor">
+  <rect x="96" y="152" width="200" height="54" rx="8" ry="8"/>
+  <rect x="96" y="236" width="334" height="54" rx="8" ry="8"/>
 </svg>
