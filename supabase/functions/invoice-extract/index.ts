@@ -427,7 +427,12 @@ Deno.serve(async (req) => {
 
     await supabase.from("invoice_reviews").update({ status: "extracting" }).eq("id", review_id);
 
-    const model = "google/gemini-3-flash-preview";
+    // ⚠️ LÅST: Modellen för fakturakontrollen är produktionskritisk.
+    // Ändringar i modell, prompt-versioner eller dual-pass-logik kräver
+    // EXPLICIT admingodkännande (Anders) innan deploy. Tidigare byte till
+    // gemini-3-flash-preview gav instabila resultat — vi har återgått till
+    // gemini-2.5-flash som är den senast verifierat stabila versionen.
+    const model = "google/gemini-2.5-flash";
 
     // 2. Download PDFs
     const fakturaPdf = await downloadPdfBase64(supabase, review.faktura_path);
