@@ -129,7 +129,6 @@ export default function SalaryCheck() {
             <Link to="/logga-in" className="text-sm text-muted-foreground hover:text-primary transition-colors font-medium">
               Logga in
             </Link>
-            <ThemeToggle />
           </div>
         </div>
       </header>
