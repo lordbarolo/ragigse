@@ -17,7 +17,10 @@ export default function DashboardInvoiceCheck() {
           Säkerställ att du fakturerat rätt senaste åren. Med stöd av Ai hittar vi pengar du inte visste att du saknade.
         </p>
         <Link to="/consultant/fakturakontroll/ny">
-          <Button variant="outline" size="sm" className="gap-1.5">
+          <Button
+            size="sm"
+            className="gap-1.5 bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] text-white border-0 hover:from-[#7c3aed] hover:to-[#c026d3]"
+          >
             Starta granskning
             <ArrowRight className="w-4 h-4" />
           </Button>

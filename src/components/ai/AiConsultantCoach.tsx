@@ -142,7 +142,7 @@ export default function AiConsultantCoach(ctx: Props) {
                 <button
                   key={s}
                   type="button"
-                  className="text-xs rounded-full border border-border bg-muted/40 hover:bg-muted px-3 py-1.5 text-foreground transition-colors"
+                  className="text-xs rounded-full border border-[#8b5cf6]/30 bg-[#8b5cf6]/10 hover:bg-[#8b5cf6]/15 px-3 py-1.5 text-[#5b21b6] transition-colors"
                   onClick={() => send(s)}
                   disabled={streaming}
                 >
@@ -159,8 +159,8 @@ export default function AiConsultantCoach(ctx: Props) {
                 key={i}
                 className={`text-xs leading-relaxed rounded-lg p-3 ${
                   m.role === "user"
-                    ? "bg-primary/10 ml-6"
-                    : "bg-muted/40 mr-6"
+                    ? "bg-[#8b5cf6]/10 ml-6"
+                    : "bg-[#f5f3ff] mr-6"
                 }`}
               >
                 {m.role === "assistant" ? (
@@ -182,10 +182,15 @@ export default function AiConsultantCoach(ctx: Props) {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Skriv en fråga…"
-            className="text-sm h-9"
+            className="text-sm h-9 bg-white border-[#8b5cf6]/20 focus-visible:ring-[#8b5cf6]/40"
             disabled={streaming}
           />
-          <Button type="submit" size="sm" disabled={streaming || !input.trim()} className="shrink-0">
+          <Button
+            type="submit"
+            size="sm"
+            disabled={streaming || !input.trim()}
+            className="shrink-0 bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] text-white border-0 hover:from-[#7c3aed] hover:to-[#c026d3]"
+          >
             {streaming ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
           </Button>
         </form>
