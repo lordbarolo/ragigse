@@ -744,7 +744,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
             <ArrowRight className="w-5 h-5" />
           </button>
         )}
-        {step === 6 && (
+        {step === 5 && (
           <button
             onClick={() => {
               if (data.currentSalary <= 0) {
