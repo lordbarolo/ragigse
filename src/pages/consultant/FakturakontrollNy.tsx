@@ -187,34 +187,34 @@ export default function FakturakontrollNy() {
       setReviewId(review.id);
 
       trackEvent("fakturakontroll_uploaded");
-      setStep(2);
 
-      // Trigger extraction
+      // Trigger extraction + analysis in the background — user is not informed about progress or results.
+      // They only see a confirmation that we'll get back within 2 business days.
       const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
       const {
         data: { session },
       } = await supabase.auth.getSession();
+      const authHeader = `Bearer ${session?.access_token ?? ""}`;
 
-      const extractRes = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/invoice-extract`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session?.access_token ?? ""}`,
-          },
-          body: JSON.stringify({ review_id: review.id }),
-        },
-      );
+      // Fire-and-forget: chain extract -> analyzer server-side trigger, but never expose results to user.
+      void fetch(`https://${projectId}.supabase.co/functions/v1/invoice-extract`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: authHeader },
+        body: JSON.stringify({ review_id: review.id }),
+      })
+        .then(async (res) => {
+          if (!res.ok) return;
+          // After successful extraction, kick off analyzer (admin-only result destination)
+          await fetch(`https://${projectId}.supabase.co/functions/v1/invoice-analyzer`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: authHeader },
+            body: JSON.stringify({ review_id: review.id }),
+          });
+        })
+        .catch((e) => console.error("background invoice processing failed:", e));
 
-      if (!extractRes.ok) {
-        const errBody = await extractRes.text();
-        throw new Error(`Extraction failed: ${errBody}`);
-      }
-
-      const result = await extractRes.json();
-      setExtractionResult(result);
-      setStep(3);
+      // Skip step 2/3/4 entirely — go straight to confirmation screen.
+      setStep(5);
     } catch (err) {
       console.error(err);
       toast.error("Något gick fel. Försök igen.");
