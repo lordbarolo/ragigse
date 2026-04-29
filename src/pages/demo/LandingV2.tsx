@@ -239,8 +239,8 @@ export default function LandingV2() {
             ))}
           </div>
         </div>
-        <p className="text-[11px] text-slate-400 text-center mt-4 px-5">
-          Bruttolön anställd konsult · snitt över zon 1–3
+        <p className="text-[11px] text-center mt-4 px-5 text-muted">
+          Exempel på den vanligaste bruttolönen per roll och zon. Logga in för att se vilken zon din ort tillhör.
         </p>
       </section>
 
