@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100" width="400" height="100">
-  <rect width="400" height="100" fill="#0D111C"/>
+  
   <!-- Icon bars - compact -->
   <rect x="20" y="24" width="40" height="16" rx="3" ry="3" fill="#A0AABE"/>
   <rect x="20" y="48" width="66" height="16" rx="3" ry="3" fill="#AFA9EC"/>
