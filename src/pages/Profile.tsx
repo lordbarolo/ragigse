@@ -344,7 +344,7 @@ export default function Profile() {
         {/* === WORK === */}
         {activeTab === "work" && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            <Card>
+            <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
               <CardHeader>
                 <CardTitle className="text-base flex items-center gap-2">
                   <FileText className="w-4 h-4 text-primary" />
@@ -402,7 +402,7 @@ export default function Profile() {
 
         {/* === NETWORK === */}
         {activeTab === "network" && (
-          <Card>
+          <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
             <CardContent className="py-12 text-center space-y-3">
               <div className="w-12 h-12 mx-auto rounded-full bg-muted flex items-center justify-center">
                 <Check className="w-5 h-5 text-muted-foreground" />
@@ -417,7 +417,7 @@ export default function Profile() {
 
         {/* === SAVED === */}
         {activeTab === "saved" && (
-          <Card>
+          <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
             <CardContent className="py-12 text-center space-y-3">
               <div className="w-12 h-12 mx-auto rounded-full bg-muted flex items-center justify-center">
                 <FileText className="w-5 h-5 text-muted-foreground" />
