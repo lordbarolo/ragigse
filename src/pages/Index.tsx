@@ -135,7 +135,7 @@ export default function Index() {
       </section>
 
       {/* ── Trust indicators ───────────────────────────── */}
-      <section className="max-w-4xl mx-auto px-6 pb-20" aria-label="Datakällor">
+      <section className="max-w-4xl mx-auto px-6 pb-12" aria-label="Datakällor">
         <div className="bg-card border border-border rounded-2xl p-8 md:p-10">
           <h2 className="text-2xl font-bold text-foreground mb-6 text-center">Verifierad marknadsdata</h2>
           <div className="grid sm:grid-cols-2 gap-4">
