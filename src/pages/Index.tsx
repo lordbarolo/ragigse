@@ -92,13 +92,13 @@ export default function Index() {
       </nav>
 
       {/* ── Hero ───────────────────────────────────────── */}
-      <section className="hero-dark relative pt-16 pb-28 px-6" aria-labelledby="hero-heading">
+      <section className="hero-dark relative pt-12 pb-20 px-6" aria-labelledby="hero-heading">
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <h1 id="hero-heading" className="font-bold mb-6 tracking-tight text-5xl leading-[1.1]">
+          <h1 id="hero-heading" className="font-bold mb-5 tracking-tight text-5xl leading-[1.1]">
             Förhandla utifrån data,<br />inte magkänsla
           </h1>
 
-          <p className="text-hero-foreground/70 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed whitespace-pre-line">
+          <p className="text-hero-foreground/70 text-lg md:text-xl max-w-2xl mx-auto mb-8 leading-relaxed whitespace-pre-line">
             Vi visar aktuella ersättningsnivåer för läkare och sjuksköterskor på bemanningsuppdrag. Sök efter din roll och region för att se svaret direkt.{"\n"}
             Baserat på SKR:s ramavtal för 2026 och AI-analyser av bemanningsbranschens marginaler.
           </p>
@@ -112,7 +112,7 @@ export default function Index() {
       {/* <MissionSection /> */}
 
       {/* ── Three Pillars ──────────────────────────────── */}
-      <section className="max-w-6xl mx-auto px-6 pt-8 relative z-20 pb-20" aria-label="Tjänster">
+      <section className="max-w-6xl mx-auto px-6 pt-4 relative z-20 pb-12" aria-label="Tjänster">
         <div className="grid md:grid-cols-3 gap-6">
           {PILLARS.map((pillar) => (
             <article
@@ -135,7 +135,7 @@ export default function Index() {
       </section>
 
       {/* ── Trust indicators ───────────────────────────── */}
-      <section className="max-w-4xl mx-auto px-6 pb-20" aria-label="Datakällor">
+      <section className="max-w-4xl mx-auto px-6 pb-12" aria-label="Datakällor">
         <div className="bg-card border border-border rounded-2xl p-8 md:p-10">
           <h2 className="text-2xl font-bold text-foreground mb-6 text-center">Verifierad marknadsdata</h2>
           <div className="grid sm:grid-cols-2 gap-4">
