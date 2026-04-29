@@ -4,7 +4,7 @@ export default function InvoiceSection() {
   const navigate = useNavigate();
 
   return (
-    <section className="pb-16 md:pb-20 px-6">
+    <section className="pb-8 md:pb-12 px-6">
       <div className="max-w-6xl mx-auto">
         <div className="rounded-2xl border border-border bg-card/60 backdrop-blur-sm p-8 md:p-12 flex flex-col md:flex-row gap-8 md:gap-12 items-start">
           {/* Icon */}
