@@ -203,7 +203,7 @@ export default function LandingV2() {
           <p className="text-[16px] sm:text-lg text-white/75 leading-relaxed mb-8 max-w-[560px]">
             Vi visar ersättningsnivåer för läkare och sjuksköterskor inom bemanning. Baserat på SKR:s ramavtal för 2026 och djupgående AI-analyser av bemanningsbranschens marginaler.
           </p>
-          <div className="w-full max-w-[620px]">
+          <div className="w-full max-w-[560px]">
             <HeroInlineForm />
           </div>
           <p className="mt-4 text-[12px] text-white/45">
