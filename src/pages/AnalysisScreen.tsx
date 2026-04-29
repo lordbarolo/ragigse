@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/trackEvent";
 import { toast } from "sonner";
 import type { SurveyData } from "@/components/Survey";
-import { Mail, ArrowRight, MapPin, TrendingUp } from "lucide-react";
+import { Mail, ArrowRight, MapPin, TrendingUp, Lock } from "lucide-react";
 import { fetchLead, leadToSurvey, createReport, saveEmail } from "@/services/leadService";
 import Navbar from "@/components/Navbar";
 
