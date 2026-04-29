@@ -181,7 +181,30 @@ export default function Profile() {
     .join("") || (user?.email?.slice(0, 2).toUpperCase() ?? "U");
 
   return (
-    <div className="relative min-h-screen bg-[#F7F5FB] overflow-hidden">
+    <div className="profile-light relative min-h-screen bg-[#F7F5FB] overflow-hidden">
+      {/* Scoped overrides: force all cards in profile to light theme */}
+      <style>{`
+        .profile-light [class*="rounded-2xl"][class*="bg-[hsl(260"],
+        .profile-light .rounded-xl.bg-card,
+        .profile-light [data-slot="card"] { }
+      `}</style>
+      <style>{`
+        .profile-light .relative.rounded-2xl.border.bg-\\[hsl\\(260_40\\%_9\\%_\\/_0\\.5\\)\\] {
+          background: #ffffff !important;
+          border-color: rgb(226 232 240) !important;
+          backdrop-filter: none !important;
+          box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
+          color: rgb(15 23 42) !important;
+        }
+        .profile-light .bg-card { background: #ffffff !important; }
+        .profile-light .border-border { border-color: rgb(226 232 240) !important; }
+        .profile-light .text-foreground { color: rgb(15 23 42) !important; }
+        .profile-light .text-muted-foreground { color: rgb(100 116 139) !important; }
+        .profile-light .bg-muted { background: rgb(241 245 249) !important; }
+        .profile-light .bg-secondary\\/50 { background: rgb(248 250 252) !important; }
+        .profile-light .hover\\:bg-secondary:hover { background: rgb(241 245 249) !important; }
+        .profile-light .divide-border > * + * { border-color: rgb(226 232 240) !important; }
+      `}</style>
       {/* Subtle glow gradients matching landing page section 2 */}
       <div
         className="absolute inset-x-0 top-0 h-[600px] pointer-events-none"
