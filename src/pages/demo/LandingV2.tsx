@@ -389,16 +389,16 @@ export default function LandingV2() {
       </section>
 
       {/* ═══════════════════ 4. PRIMÄR PRODUKTTRAPPA ═══════════════════ */}
-      <section className="px-5 sm:px-6 lg:px-10 py-16 md:py-20 border-y border-white/10 bg-[hsl(260_50%_6%_/_0.4)]">
+      <section className="px-5 sm:px-6 lg:px-10 py-16 md:py-20 border-y border-slate-200 bg-white">
         <div className="max-w-6xl mx-auto">
           <div className="mb-10 md:mb-14">
-            <span className="inline-block text-[11px] font-semibold uppercase tracking-[0.1em] text-[hsl(256_100%_82%)] bg-[hsl(256_100%_67%_/_0.15)] border border-[hsl(256_100%_67%_/_0.3)] rounded-full px-3.5 py-1 mb-4">
+            <span className="inline-block text-[11px] font-semibold uppercase tracking-[0.1em] text-[hsl(256_60%_45%)] bg-[hsl(256_100%_67%_/_0.08)] border border-[hsl(256_100%_67%_/_0.25)] rounded-full px-3.5 py-1 mb-4">
               Konsultplattformen
             </span>
-            <h2 className="text-[28px] sm:text-[34px] font-bold leading-[1.15] tracking-tight text-white mb-2.5">
+            <h2 className="text-[28px] sm:text-[34px] font-bold leading-[1.15] tracking-tight text-slate-900 mb-2.5">
               Från svar till resultat
             </h2>
-            <p className="text-[15px] text-white/70 max-w-[560px]">
+            <p className="text-[15px] text-slate-600 max-w-[560px]">
               Tre steg som bygger på varandra. Varje verktyg är fristående — eller del av en längre resa.
             </p>
           </div>
@@ -406,19 +406,19 @@ export default function LandingV2() {
             {PRIMARY_PRODUCTS.map((p) => (
               <article
                 key={p.title}
-                className="glass rounded-[18px] p-7 flex flex-col glow-hover"
+                className="bg-white border border-slate-200 rounded-[18px] p-7 flex flex-col shadow-sm hover:shadow-md hover:border-[hsl(256_100%_67%_/_0.4)] transition-all"
               >
                 <div className="flex items-baseline gap-3 mb-4">
-                  <span className="text-[13px] font-bold tracking-wider text-[hsl(256_100%_82%)]">{p.step}</span>
-                  <span className={`inline-block text-[11px] font-medium px-2.5 py-0.5 rounded-full border ${TAG_COLORS[p.tagColor]}`}>{p.tag}</span>
+                  <span className="text-[13px] font-bold tracking-wider text-[hsl(256_70%_50%)]">{p.step}</span>
+                  <span className={`inline-block text-[11px] font-medium px-2.5 py-0.5 rounded-full border ${TAG_COLORS_LIGHT[p.tagColor]}`}>{p.tag}</span>
                 </div>
-                <h3 className="text-[20px] font-bold text-white mb-1 leading-tight">{p.title}</h3>
-                <p className="text-[13px] font-medium text-[hsl(256_100%_82%)] mb-3 italic">{p.tagline}</p>
-                <p className="text-[14px] text-white/75 leading-[1.65] flex-1 mb-5">{p.desc}</p>
+                <h3 className="text-[20px] font-bold text-slate-900 mb-1 leading-tight">{p.title}</h3>
+                <p className="text-[13px] font-medium text-[hsl(256_60%_50%)] mb-3 italic">{p.tagline}</p>
+                <p className="text-[14px] text-slate-600 leading-[1.65] flex-1 mb-5">{p.desc}</p>
                 <Link
                   to={p.href}
                   onClick={() => trackEvent("product_cta_clicked", { cta: `primary_${p.title.toLowerCase()}`, target: p.href })}
-                  className="text-[14px] font-semibold text-[hsl(256_100%_82%)] hover:text-white inline-flex items-center gap-1.5 transition-colors"
+                  className="text-[14px] font-semibold text-[hsl(256_70%_50%)] hover:text-[hsl(256_70%_40%)] inline-flex items-center gap-1.5 transition-colors"
                 >
                   {p.cta} <ArrowRight className="w-4 h-4" />
                 </Link>
