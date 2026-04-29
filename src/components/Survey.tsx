@@ -245,8 +245,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
       case 2: return !!resolvedYrke;
       case 3: return !!data.kommun;
       case 4: return !!data.employmentType;
-      case 5: return !!data.obShare;
-      case 6: return data.currentSalary > 0;
+      case 5: return data.currentSalary > 0;
       default: return false;
     }
   })();
