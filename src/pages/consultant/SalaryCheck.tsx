@@ -6,7 +6,7 @@ import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 import Survey from "@/components/Survey";
 import handPhoneImage from "@/assets/hand-phone.png";
 import CompcareLogo from "@/components/CompcareLogo";
-import ThemeToggle from "@/components/ThemeToggle";
+
 import MissionSection from "@/components/landing/MissionSection";
 import Steps from "@/components/landing/Steps";
 import HeroRateLookup from "@/components/landing/HeroRateLookup";
