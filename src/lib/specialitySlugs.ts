@@ -1,0 +1,106 @@
+// Shared specialty list & slug helpers used by hero inline-form and Survey prefill.
+// Mirrors the lists in src/components/Survey.tsx so the hero can redirect with
+// ?yrke=<slug> into the survey, which then resolves the slug via PREFILL_MAP.
+
+export type SpecialityCategory = "lakare" | "ssk";
+
+export interface SpecialityOption {
+  slug: string;
+  label: string;
+  category: SpecialityCategory;
+  resolvedRole: string; // matches Survey's resolvedYrke output
+}
+
+const slugify = (s: string): string =>
+  s
+    .toLowerCase()
+    .replace(/å/g, "a")
+    .replace(/ä/g, "a")
+    .replace(/ö/g, "o")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+// Doctors — generic + 63 specialties. Resolved role mirrors Survey.tsx logic.
+const DOCTOR_GENERIC: Array<[string, string]> = [
+  ["Legitimerad läkare", "Legitimerad läkare"],
+  ["ST-läkare", "ST-läkare"],
+];
+
+const DOCTOR_SPECIALTIES = [
+  "Akutsjukvård", "Allergologi", "Allmänmedicin", "Anestesi och intensivvård",
+  "Arbetsmedicin", "Arbets- och miljömedicin", "Barn- och ungdomsallergologi",
+  "Barn- och ungdomshematologi och onkologi", "Barn- och ungdomskardiologi",
+  "Barn- och ungdomskirurgi", "Barn- och ungdomsmedicin",
+  "Barn- och ungdomsneurologi med habilitering", "Barn- och ungdomspsykiatri",
+  "Beroendemedicin", "Endokrinologi och diabetologi", "Geriatrik",
+  "Gynekologisk onkologi", "Handkirurgi", "Hematologi", "Hud- och könssjukdomar",
+  "Hörsel- och balansrubbningar", "Infektionssjukdomar", "Internmedicin",
+  "Kardiologi", "Kirurgi", "Klinisk farmakologi", "Klinisk fysiologi",
+  "Klinisk genetik", "Klinisk immunologi och transfusionsmedicin",
+  "Klinisk kemi", "Klinisk mikrobiologi", "Klinisk neurofysiologi",
+  "Klinisk patologi", "Kärlkirurgi", "Lungsjukdomar",
+  "Medicinsk gastroenterologi och hepatologi", "Neonatologi", "Neurokirurgi",
+  "Neurologi", "Neuroradiologi", "Njurmedicin", "Nuklearmedicin",
+  "Obstetrik och gynekologi", "Onkologi", "Ortopedi", "Palliativ medicin",
+  "Plastikkirurgi", "Psykiatri", "Radiologi", "Rehabiliteringsmedicin",
+  "Reumatologi", "Rättsmedicin", "Rättspsykiatri", "Röst- och talrubbningar",
+  "Skolhälsovård", "Smärtlindring", "Socialmedicin", "Thoraxkirurgi",
+  "Urologi", "Vårdhygien", "Äldrepsykiatri", "Ögonsjukdomar",
+  "Öron-, näs- och halssjukdomar",
+];
+
+// Nurses — generic + top specializations
+const NURSE_GENERIC: Array<[string, string]> = [
+  ["Legitimerad sjuksköterska", "Sjuksköterska"],
+  ["Barnmorska", "Barnmorska"],
+  ["Röntgensjuksköterska", "Röntgensjuksköterska"],
+];
+
+const NURSE_SPECIALIZATION_MAP: Record<string, string> = {
+  "IVA-sjuksköterska": "Specialistsjuksköterska intensivvård",
+  "Psykiatrisjuksköterska": "Specialistsjuksköterska psykiatrisk vård",
+  "Ambulanssjuksköterska": "Specialistsjuksköterska ambulanssjukvård",
+  "Barnsjuksköterska": "Specialistsjuksköterska barn och ungdom",
+  "Operationssjuksköterska": "Specialistsjuksköterska operationssjukvård",
+  "Anestesisjuksköterska": "Specialistsjuksköterska anestesi",
+  "Akutsjuksköterska": "Specialistsjuksköterska akutsjukvård",
+  "Hjärtsjuksköterska": "Specialistsjuksköterska hjärtsjukvård",
+  "Distriktssjuksköterska": "Distriktssjuksköterska",
+  "Kirurgsjuksköterska": "Specialistsjuksköterska kirurgisk vård",
+  "Palliativsjuksköterska": "Specialistsjuksköterska palliativ vård",
+  "Geriatriksjuksköterska": "Specialistsjuksköterska vård av äldre",
+  "Medicinsjuksköterska": "Specialistsjuksköterska medicinsk vård",
+  "Onkologisjuksköterska": "Specialistsjuksköterska onkologisk vård",
+  "Infektionssjuksköterska": "Specialistsjuksköterska infektionssjukvård",
+};
+
+export const SPECIALITY_OPTIONS: SpecialityOption[] = [
+  ...DOCTOR_GENERIC.map(([label, resolvedRole]) => ({
+    slug: slugify(label),
+    label,
+    category: "lakare" as const,
+    resolvedRole,
+  })),
+  ...DOCTOR_SPECIALTIES.map((label) => ({
+    slug: slugify(label),
+    label: `Specialistläkare ${label.toLowerCase()}`,
+    category: "lakare" as const,
+    resolvedRole: `Specialistläkare ${label.toLowerCase()}`,
+  })),
+  ...NURSE_GENERIC.map(([label, resolvedRole]) => ({
+    slug: slugify(label),
+    label,
+    category: "ssk" as const,
+    resolvedRole,
+  })),
+  ...Object.entries(NURSE_SPECIALIZATION_MAP).map(([label, resolvedRole]) => ({
+    slug: slugify(label),
+    label,
+    category: "ssk" as const,
+    resolvedRole,
+  })),
+];
+
+export const SPECIALITY_BY_SLUG: Record<string, SpecialityOption> = Object.fromEntries(
+  SPECIALITY_OPTIONS.map((o) => [o.slug, o])
+);

@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import ReactMarkdown from "react-markdown";
 import { trackEvent } from "@/lib/trackEvent";
 import { sanitizeReijdarText } from "@/lib/reijdarText";
+import { useAiQuota } from "@/hooks/useAiQuota";
 
 type ChatMsg = { role: "user" | "assistant"; content: string };
 type RoleSuggestion = { message: string; roles: string[] };
@@ -25,11 +26,13 @@ export default function ReijdarChat({
   onRoleChange?: (role: string) => void;
 }) {
   const { user, loading: authLoading } = useAuth();
+  const quota = useAiQuota();
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
   const [hasTrackedStart, setHasTrackedStart] = useState(false);
+  const [hasWarned80, setHasWarned80] = useState(false);
   const [roleSuggestions, setRoleSuggestions] = useState<RoleSuggestion | null>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
@@ -82,7 +85,9 @@ export default function ReijdarChat({
       if (!resp.ok || !resp.body) {
         const errData = await resp.json().catch(() => ({}));
         if (resp.status === 429) {
-          toast({ title: "För många försök", description: "Försök igen om en stund.", variant: "destructive" });
+          const msg = errData.message || `Du har nått dagens gräns på ${quota.limit ?? 30} AI-anrop. Återställs vid midnatt.`;
+          toast({ title: "Daglig gräns nådd", description: msg, variant: "destructive" });
+          quota.refresh();
           return;
         }
         throw new Error(errData.error || "Chatfel");
@@ -137,12 +142,29 @@ export default function ReijdarChat({
       }
 
       trackEvent("reijdar_advice_received", { role: selectedRole || "" });
+
+      // Refresh quota & soft-warn at 80%
+      const updated = await (async () => { await quota.refresh(); return null; })();
+      void updated;
     } catch (e: any) {
       toast({ title: "Chatfel", description: e.message, variant: "destructive" });
     } finally {
       setIsStreaming(false);
     }
   };
+
+  // Soft warning at 80% of daily limit
+  useEffect(() => {
+    if (!quota.limit || quota.isAdmin || hasWarned80) return;
+    const pct = quota.used / quota.limit;
+    if (pct >= 0.8 && quota.remaining > 0) {
+      toast({
+        title: "Närmar dig dagens gräns",
+        description: `Du har ${quota.remaining} av ${quota.limit} AI-anrop kvar idag.`,
+      });
+      setHasWarned80(true);
+    }
+  }, [quota.used, quota.limit, quota.remaining, quota.isAdmin, hasWarned80, toast]);
 
   const handleSend = () => sendMessage(input);
 
@@ -182,12 +204,28 @@ export default function ReijdarChat({
                 <span className="text-[11px] text-muted-foreground ml-1.5">AI-assistent</span>
               </div>
             </div>
-            <button
-              onClick={() => setOpen(false)}
-              className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
-            >
-              <X className="w-4 h-4" />
-            </button>
+            <div className="flex items-center gap-2">
+              {user && !quota.loading && quota.limit && !quota.isAdmin && (
+                <span
+                  className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${
+                    quota.remaining === 0
+                      ? "bg-destructive/15 text-destructive"
+                      : quota.used / quota.limit >= 0.8
+                      ? "bg-amber-500/15 text-amber-700 dark:text-amber-400"
+                      : "bg-secondary text-muted-foreground"
+                  }`}
+                  title={`${quota.used} av ${quota.limit} AI-anrop använda idag`}
+                >
+                  {quota.remaining}/{quota.limit}
+                </span>
+              )}
+              <button
+                onClick={() => setOpen(false)}
+                className="p-1.5 rounded-lg text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
           {/* Auth gate */}

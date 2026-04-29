@@ -2,8 +2,28 @@ import * as React from "react";
 
 import { cn } from "@/lib/utils";
 
-const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn("rounded-lg border bg-card text-card-foreground shadow-sm", className)} {...props} />
+interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
+  /** Adds glow-on-hover and subtle lift. Use on clickable/interactive cards. */
+  interactive?: boolean;
+  /** Renders an animated agentic loading state (pulse-glow + shimmer). */
+  loading?: boolean;
+}
+
+const Card = React.forwardRef<HTMLDivElement, CardProps>(({ className, interactive, loading, children, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn(
+      "relative rounded-2xl border border-border/60 bg-[hsl(260_40%_9%_/_0.5)] backdrop-blur-xl text-card-foreground shadow-[0_8px_32px_-12px_hsl(260_60%_2%_/_0.6)]",
+      interactive && "glow-hover hover:-translate-y-0.5 cursor-pointer",
+      loading && "agentic-loading",
+      className,
+    )}
+    aria-busy={loading || undefined}
+    {...props}
+  >
+    {children}
+    {loading && <span className="agentic-shimmer" aria-hidden="true" />}
+  </div>
 ));
 Card.displayName = "Card";
 

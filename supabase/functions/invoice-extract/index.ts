@@ -1,4 +1,21 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
+import { logAiUsage, extractTokensFromResponse, checkAiRateLimit, aiRateLimitResponse } from "../_shared/ai-usage-logger.ts";
+
+async function getAuthUserId(req: Request): Promise<string | null> {
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) return null;
+  try {
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!,
+      { global: { headers: { Authorization: authHeader } } },
+    );
+    const { data: { user } } = await supabase.auth.getUser();
+    return user?.id ?? null;
+  } catch {
+    return null;
+  }
+}
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -208,7 +225,9 @@ async function callGemini(
   systemPrompt: string,
   pdfBase64: string,
   tool: typeof TIDRAPPORT_TOOL | typeof FAKTURA_TOOL,
+  feature: string = "invoice-extract",
 ): Promise<Record<string, unknown>> {
+  const startedAt = Date.now();
   const res = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
     headers: {
@@ -234,13 +253,32 @@ async function callGemini(
       tool_choice: { type: "function", function: { name: tool.function.name } },
     }),
   });
+  const durationMs = Date.now() - startedAt;
 
   if (!res.ok) {
     const body = await res.text();
+    logAiUsage({
+      feature,
+      model,
+      status: res.status === 429 ? "rate_limited" : res.status === 402 ? "payment_required" : "error",
+      durationMs,
+      errorMessage: `gateway_${res.status}: ${body.slice(0, 200)}`,
+      metadata: { tool: tool.function.name },
+    });
     throw new Error(`AI Gateway error [${res.status}]: ${body}`);
   }
 
   const data = await res.json();
+  const { inputTokens, outputTokens } = extractTokensFromResponse(data);
+  logAiUsage({
+    feature,
+    model,
+    inputTokens,
+    outputTokens,
+    durationMs,
+    metadata: { tool: tool.function.name, has_pdf: true },
+  });
+
   const toolCall = data.choices?.[0]?.message?.tool_calls?.[0];
   if (!toolCall) {
     const content = data.choices?.[0]?.message?.content ?? "";
@@ -366,6 +404,11 @@ Deno.serve(async (req) => {
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
+    // Per-user daily AI quota
+    const userId = await getAuthUserId(req);
+    const aiRl = await checkAiRateLimit(userId);
+    if (!aiRl.allowed) return aiRateLimitResponse(aiRl, corsHeaders);
+
     const { review_id } = await req.json();
     if (!review_id) throw new Error("review_id is required");
 
@@ -384,7 +427,12 @@ Deno.serve(async (req) => {
 
     await supabase.from("invoice_reviews").update({ status: "extracting" }).eq("id", review_id);
 
-    const model = "google/gemini-3-flash-preview";
+    // ⚠️ LÅST: Modellen för fakturakontrollen är produktionskritisk.
+    // Ändringar i modell, prompt-versioner eller dual-pass-logik kräver
+    // EXPLICIT admingodkännande (Anders) innan deploy. Tidigare byte till
+    // gemini-3-flash-preview gav instabila resultat — vi har återgått till
+    // gemini-2.5-flash som är den senast verifierat stabila versionen.
+    const model = "google/gemini-2.5-flash";
 
     // 2. Download PDFs
     const fakturaPdf = await downloadPdfBase64(supabase, review.faktura_path);

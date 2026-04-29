@@ -13,6 +13,11 @@ import {
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/trackEvent";
 import { aliasLead } from "@/lib/identify";
+import {
+  DOCTOR_SPECIALTIES as TOP_DOCTOR_SPECIALTIES,
+  NURSE_SPECIALIZATIONS as TOP_NURSE_SPECIALIZATIONS,
+  NURSE_VALUE_MAP as nurseValueMap,
+} from "@/lib/specialityLists";
 
 export interface SurveyData {
   email: string;
@@ -25,106 +30,13 @@ export interface SurveyData {
   obShare: string;
 }
 
-const TOTAL_STEPS = 6;
+const TOTAL_STEPS = 5;
 
 type OccupationCategory = "" | "lakare" | "ssk";
 type CommuteType = "veckovis" | "dagligen" | "inte_alls" | "";
 
-// All 63 doctor specializations per Socialstyrelsen — alphabetical
-const TOP_DOCTOR_SPECIALTIES = [
-  "Akutsjukvård",
-  "Allergologi",
-  "Allmänmedicin",
-  "Anestesi och intensivvård",
-  "Arbetsmedicin",
-  "Arbets- och miljömedicin",
-  "Barn- och ungdomsallergologi",
-  "Barn- och ungdomshematologi och onkologi",
-  "Barn- och ungdomskardiologi",
-  "Barn- och ungdomskirurgi",
-  "Barn- och ungdomsmedicin",
-  "Barn- och ungdomsneurologi med habilitering",
-  "Barn- och ungdomspsykiatri",
-  "Beroendemedicin",
-  "Endokrinologi och diabetologi",
-  "Geriatrik",
-  "Gynekologisk onkologi",
-  "Handkirurgi",
-  "Hematologi",
-  "Hud- och könssjukdomar",
-  "Hörsel- och balansrubbningar",
-  "Infektionssjukdomar",
-  "Internmedicin",
-  "Kardiologi",
-  "Kirurgi",
-  "Klinisk farmakologi",
-  "Klinisk fysiologi",
-  "Klinisk genetik",
-  "Klinisk immunologi och transfusionsmedicin",
-  "Klinisk kemi",
-  "Klinisk mikrobiologi",
-  "Klinisk neurofysiologi",
-  "Klinisk patologi",
-  "Kärlkirurgi",
-  "Lungsjukdomar",
-  "Medicinsk gastroenterologi och hepatologi",
-  "Neonatologi",
-  "Neurokirurgi",
-  "Neurologi",
-  "Neuroradiologi",
-  "Njurmedicin",
-  "Nuklearmedicin",
-  "Obstetrik och gynekologi",
-  "Onkologi",
-  "Ortopedi",
-  "Palliativ medicin",
-  "Plastikkirurgi",
-  "Psykiatri",
-  "Radiologi",
-  "Rehabiliteringsmedicin",
-  "Reumatologi",
-  "Rättsmedicin",
-  "Rättspsykiatri",
-  "Röst- och talrubbningar",
-  "Skolhälsovård",
-  "Smärtlindring",
-  "Socialmedicin",
-  "Thoraxkirurgi",
-  "Urologi",
-  "Vårdhygien",
-  "Äldrepsykiatri",
-  "Ögonsjukdomar",
-  "Öron-, näs- och halssjukdomar",
-];
-
-// Top nurse specializations — ordered by search frequency
-const TOP_NURSE_SPECIALIZATIONS = [
-  "IVA-sjuksköterska", "Psykiatrisjuksköterska", "Ambulanssjuksköterska",
-  "Barnsjuksköterska", "Operationssjuksköterska", "Anestesisjuksköterska",
-  "Akutsjuksköterska", "Hjärtsjuksköterska", "Distriktssjuksköterska",
-  "Kirurgsjuksköterska", "Palliativsjuksköterska", "Geriatriksjuksköterska",
-  "Medicinsjuksköterska", "Onkologisjuksköterska", "Infektionssjuksköterska",
-];
-
-const nurseValueMap: Record<string, string> = {
-  "Akutsjuksköterska": "Specialistsjuksköterska akutsjukvård",
-  "Ambulanssjuksköterska": "Specialistsjuksköterska ambulanssjukvård",
-  "Anestesisjuksköterska": "Specialistsjuksköterska anestesi",
-  "Barnsjuksköterska": "Specialistsjuksköterska barn och ungdom",
-  "Diabetessjuksköterska": "Specialistsjuksköterska diabetesvård",
-  "Distriktssjuksköterska": "Distriktssjuksköterska",
-  "Hjärtsjuksköterska": "Specialistsjuksköterska hjärtsjukvård",
-  "Infektionssjuksköterska": "Specialistsjuksköterska infektionssjukvård",
-  "IVA-sjuksköterska": "Specialistsjuksköterska intensivvård",
-  "Kirurgsjuksköterska": "Specialistsjuksköterska kirurgisk vård",
-  "Medicinsjuksköterska": "Specialistsjuksköterska medicinsk vård",
-  "Onkologisjuksköterska": "Specialistsjuksköterska onkologisk vård",
-  "Operationssjuksköterska": "Specialistsjuksköterska operationssjukvård",
-  "Palliativsjuksköterska": "Specialistsjuksköterska palliativ vård",
-  "Psykiatrisjuksköterska": "Specialistsjuksköterska psykiatrisk vård",
-  "Geriatriksjuksköterska": "Specialistsjuksköterska vård av äldre",
-  "Ögonsjuksköterska": "Specialistsjuksköterska ögonsjukvård",
-};
+// Specialty lists & nurseValueMap imported from @/lib/specialityLists
+// (single source of truth shared with HeroRateFinder & MarketSearchBox)
 
 export interface SurveyResult {
   yrke: string;
@@ -164,7 +76,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
     experience: 5,
     salaryType: "hourly",
     currentSalary: 0,
-    obShare: "",
+    obShare: "bemanningsforetag",
   });
 
   // Step 1 state
@@ -189,7 +101,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
   const stepEntryTime = useRef<number>(Date.now());
   const surveyStarted = useRef(false);
 
-  const STEP_NAMES = ["yrkeskategori", "specialisering", "kommun", "anstallningsform", "uppdragsgivare", "ersattning"];
+  const STEP_NAMES = ["yrkeskategori", "specialisering", "kommun", "anstallningsform", "ersattning"];
 
   // Fire survey_started immediately when survey mounts with a pre-selected category
   // (step 1 is skipped so the click handler there never runs)
@@ -333,8 +245,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
       case 2: return !!resolvedYrke;
       case 3: return !!data.kommun;
       case 4: return !!data.employmentType;
-      case 5: return !!data.obShare;
-      case 6: return data.currentSalary > 0;
+      case 5: return data.currentSalary > 0;
       default: return false;
     }
   })();
@@ -347,8 +258,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
         2: roleDropdownValue,
         3: data.kommun,
         4: data.employmentType,
-        5: data.obShare,
-        6: data.currentSalary,
+        5: data.currentSalary,
       };
       trackStepCompleted(step, stepAnswers[step]);
       setStep(step + 1);
@@ -408,7 +318,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
       sessionStorage.setItem("leadId", leadId);
       sessionStorage.setItem("surveyData", JSON.stringify({ ...data, track }));
       if (pricingResult) sessionStorage.setItem("pricingResult", JSON.stringify(pricingResult));
-      trackStepCompleted(6, snapshotObShare);
+      trackStepCompleted(5, snapshotCurrentSalary);
       const totalTime = surveyStartTime.current ? Math.round((Date.now() - surveyStartTime.current) / 1000) : 0;
       const hourlyRate = snapshotSalaryType === "monthly"
         ? Math.round(snapshotCurrentSalary / 167)
@@ -521,9 +431,10 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
 
   const handleBack = () => {
     if (step === 1) {
+      // Fråga 1 → startsidan. navigate('/') rensar ev. prefill i URL
+      // så att SalaryCheck inte direkt återöppnar Survey.
       onBack?.();
-    } else if (step === 3 && initialRole) {
-      onBack?.();
+      navigate("/");
     } else if (step === 3) {
       setKommunSearch("");
       setSelectedRegion("");
@@ -757,46 +668,8 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
           </StepWrapper>
         )}
 
-        {/* Step 5: Uppdragsgivare */}
+        {/* Step 5: Ersättning (final step) */}
         {step === 5 && (
-          <StepWrapper title="Vem är din uppdragsgivare?">
-            <div className="rounded-2xl border border-border bg-card p-5 flex flex-col gap-3">
-              {([
-                { value: "bemanningsforetag", label: "Bemanningsföretag" },
-                { value: "region", label: "Region" },
-                { value: "kommun", label: "Kommun" },
-                { value: "privat_vardgivare", label: "Privat vårdgivare" },
-              ]).map((opt) => (
-                <button
-                  key={opt.value}
-                  onClick={() => {
-                     setData({ ...data, obShare: opt.value });
-                  }}
-                  className={`group w-full py-5 px-5 rounded-xl border !border-l-[3px] bg-card text-left transition-all active:scale-[0.98] flex items-center gap-3 ${
-                    data.obShare === opt.value
-                      ? "border-primary !border-l-primary bg-primary/[0.06] ring-1 ring-primary/20"
-                      : "border-border !border-l-primary hover:border-primary/40 hover:bg-primary/[0.03]"
-                  }`}
-                >
-                  {data.obShare === opt.value && (
-                    <div className="w-5 h-5 rounded-full bg-primary flex items-center justify-center shrink-0">
-                      <Check className="w-3 h-3 text-primary-foreground" />
-                    </div>
-                  )}
-                  <span className="text-base font-medium text-foreground">{opt.label}</span>
-                </button>
-              ))}
-              {data.obShare === "privat_vardgivare" && (
-                <p className="text-hint text-center mt-1 px-2">
-                  Analysen baseras på SKR:s ramavtal och kan avvika från privata avtal. Resultatet ger en marknadsjämförelse.
-                </p>
-              )}
-            </div>
-          </StepWrapper>
-        )}
-
-        {/* Step 6: Ersättning (final step) */}
-        {step === 6 && (
           <StepWrapper title="Vad får du i ersättning idag?">
             <div className="rounded-2xl border border-border bg-card p-5 space-y-5">
               <div className="flex gap-3">
@@ -844,7 +717,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
       </div>
 
       {/* Navigation */}
-      <div className={`flex gap-3 mt-8 ${(step === 3 || step === 6) ? "sticky bottom-0 bg-background pt-3 pb-4 -mx-1 px-1 z-10" : ""}`}>
+      <div className={`flex gap-3 mt-8 ${(step === 3 || step === 5) ? "sticky bottom-0 bg-background pt-3 pb-4 -mx-1 px-1 z-10" : ""}`}>
         {(step > 1 || onBack) && (
           <button
             onClick={handleBack}
@@ -854,7 +727,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
             Tillbaka
           </button>
         )}
-        {step !== 6 && (
+        {step !== 5 && (
           <button
             onClick={() => {
               if (!canProceed) return;
@@ -871,7 +744,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
             <ArrowRight className="w-5 h-5" />
           </button>
         )}
-        {step === 6 && (
+        {step === 5 && (
           <button
             onClick={() => {
               if (data.currentSalary <= 0) {
@@ -879,7 +752,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                 return;
               }
               if (!canProceed) return;
-              trackStepCompleted(6, data.currentSalary);
+              trackStepCompleted(5, data.currentSalary);
               handleNext();
             }}
             disabled={saving}

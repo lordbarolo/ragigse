@@ -15,7 +15,7 @@ export default {
     extend: {
       fontFamily: {
         sans: ['"Inter"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        display: ['"Work Sans"', 'sans-serif'],
+        display: ['"Inter"', 'sans-serif'],
         body: ['"Inter"', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
       },

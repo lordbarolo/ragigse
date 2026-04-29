@@ -1,7 +1,8 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ShieldCheck, CheckCircle, TrendingUp } from "lucide-react";
+import { ShieldCheck, CheckCircle, TrendingUp, Sparkles } from "lucide-react";
 import InvoiceUploadForm from "@/components/invoice/InvoiceUploadForm";
+import InvoiceEmailDrafter from "@/components/ai/InvoiceEmailDrafter";
 import { Button } from "@/components/ui/button";
 import LandingFooter from "@/components/landing/LandingFooter";
 import { trackEvent } from "@/lib/trackEvent";
@@ -163,6 +164,32 @@ export default function Fakturakontroll() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* AI Invoice → Email demo */}
+      <section className="px-6 py-12 md:py-16">
+        <div className="max-w-2xl mx-auto space-y-4">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-primary" />
+            <p className="text-xs font-bold uppercase tracking-widest text-primary">Nyhet — AI-utkast</p>
+          </div>
+          <h2 className="font-display text-2xl md:text-3xl font-bold tracking-tight">
+            Från avvikelse till mejl — på 10 sekunder
+          </h2>
+          <p className="text-muted-foreground text-sm leading-relaxed">
+            När vi hittat en avvikelse hjälper AI dig att formulera ett professionellt mejl till bemanningsbolaget.
+            Du granskar, redigerar och skickar själv från din egen mejl.
+          </p>
+          <InvoiceEmailDrafter
+            findings={[
+              { invoiceRef: "#4", workedHours: 42, invoicedHours: 36, diffHours: -6, diffAmountSek: 6900, type: "ob_missing", description: "OB-tillägg saknas på 6 timmar storhelg" },
+              { invoiceRef: "#6", workedHours: 43.5, invoicedHours: 40, diffHours: -3.5, diffAmountSek: 4025, type: "weekend_missing", description: "Helgtillägg saknas på 3,5 timmar" },
+            ]}
+            totalRecoverable={10925}
+            consultantName="Demo Konsult"
+            agencyName="Bemanningsbolag AB"
+          />
         </div>
       </section>
 

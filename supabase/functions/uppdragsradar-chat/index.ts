@@ -1,5 +1,27 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { checkRateLimit, rateLimitResponse } from "../_shared/rateLimit.ts";
+import { logAiUsage, checkAiRateLimit, aiRateLimitResponse } from "../_shared/ai-usage-logger.ts";
+
+async function getAuthUserId(req: Request): Promise<string | null> {
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) return null;
+  try {
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!,
+      { global: { headers: { Authorization: authHeader } } },
+    );
+    const { data: { user } } = await supabase.auth.getUser();
+    return user?.id ?? null;
+  } catch {
+    return null;
+  }
+}
+
+// Rough token estimator (~4 chars per token for Latin text)
+function estimateTokens(text: string): number {
+  return Math.ceil(text.length / 4);
+}
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -100,10 +122,14 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Rate limiting: 20 requests per IP per hour
+    // Rate limiting: IP-based (20/h) + per-user daily AI quota
     const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
     const rl = await checkRateLimit(supabase, "uppdragsradar-chat", clientIp, 20, 60);
     if (!rl.allowed) return rateLimitResponse(rl, corsHeaders);
+
+    const userId = await getAuthUserId(req);
+    const aiRl = await checkAiRateLimit(userId);
+    if (!aiRl.allowed) return aiRateLimitResponse(aiRl, corsHeaders);
 
     // --- FALLBACK 1: selectedRole is missing ---
     const selectedRole: string | null = (roll && typeof roll === "string" && roll.trim()) ? roll.trim() : null;
@@ -289,6 +315,11 @@ DATAREGLER
 - Om användaren frågar om källa, svara att analysen bygger uteslutande på uppdragsdatan.
 - Basera alla svar uteslutande på den uppdragsdata som tillhandahålls ovan.`;
 
+    const startedAt = Date.now();
+    const model = "google/gemini-3-flash-preview";
+    const inputText = systemPrompt + trimmedMessages.map((m: any) => m.content).join(" ");
+    const inputTokens = estimateTokens(inputText);
+
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -296,7 +327,7 @@ DATAREGLER
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-3-flash-preview",
+        model,
         messages: [
           { role: "system", content: systemPrompt },
           ...trimmedMessages,
@@ -306,6 +337,15 @@ DATAREGLER
     });
 
     if (!response.ok) {
+      const durationMs = Date.now() - startedAt;
+      logAiUsage({
+        feature: "uppdragsradar-chat",
+        model,
+        inputTokens,
+        status: response.status === 429 ? "rate_limited" : response.status === 402 ? "payment_required" : "error",
+        durationMs,
+        errorMessage: `gateway_${response.status}`,
+      });
       if (response.status === 429) {
         return new Response(JSON.stringify({ error: "För många förfrågningar, försök igen om en stund." }), {
           status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -323,7 +363,43 @@ DATAREGLER
       });
     }
 
-    return new Response(response.body, {
+    // For streaming we estimate output tokens by tee:ing the stream and counting chars.
+    const [streamForClient, streamForCount] = response.body!.tee();
+    (async () => {
+      try {
+        const reader = streamForCount.getReader();
+        const decoder = new TextDecoder();
+        let outChars = 0;
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const chunk = decoder.decode(value, { stream: true });
+          // Sum lengths of "content" deltas in the SSE chunks
+          for (const line of chunk.split("\n")) {
+            if (!line.startsWith("data: ")) continue;
+            const json = line.slice(6).trim();
+            if (json === "[DONE]") continue;
+            try {
+              const parsed = JSON.parse(json);
+              const c = parsed.choices?.[0]?.delta?.content;
+              if (typeof c === "string") outChars += c.length;
+            } catch { /* ignore partials */ }
+          }
+        }
+        logAiUsage({
+          feature: "uppdragsradar-chat",
+          model,
+          inputTokens,
+          outputTokens: estimateTokens("x".repeat(outChars)),
+          durationMs: Date.now() - startedAt,
+          metadata: { streamed: true, estimated: true },
+        });
+      } catch (e) {
+        console.error("[uppdragsradar-chat] usage logging failed:", e);
+      }
+    })();
+
+    return new Response(streamForClient, {
       headers: { ...corsHeaders, "Content-Type": "text/event-stream" },
     });
   } catch (e) {

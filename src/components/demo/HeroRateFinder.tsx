@@ -4,137 +4,41 @@ import { ArrowRight, ChevronLeft, Loader2, AlertCircle, RefreshCw } from "lucide
 import { useLocations } from "@/hooks/useCalculator";
 import { supabase } from "@/integrations/supabase/client";
 import SearchableSelect from "@/components/SearchableSelect";
+import {
+  DOCTOR_SPECIALTIES as TOP_DOCTOR_SPECIALTIES,
+  NURSE_SPECIALIZATIONS as TOP_NURSE_SPECIALIZATIONS,
+  resolveYrke as resolveYrkeBase,
+  type RoleGroup,
+} from "@/lib/specialityLists";
+import { getMarginShares } from "@/lib/calc";
 
 /* ───────────────────── data (same shape as MarketSearchBox) ───────────────────── */
 const DEFAULT_EMPLOYER_FACTOR = 1.42;
 const DEFAULT_HOURS_PER_MONTH = 167;
-
-type RoleGroup = "lakare" | "ssk";
 
 const CATEGORIES: { value: RoleGroup; label: string }[] = [
   { value: "lakare", label: "Läkare" },
   { value: "ssk", label: "Sjuksköterska / Barnmorska" },
 ];
 
-// All 63 doctor specializations per Socialstyrelsen — alphabetical
-const TOP_DOCTOR_SPECIALTIES = [
-  "Akutsjukvård",
-  "Allergologi",
-  "Allmänmedicin",
-  "Anestesi och intensivvård",
-  "Arbetsmedicin",
-  "Arbets- och miljömedicin",
-  "Barn- och ungdomsallergologi",
-  "Barn- och ungdomshematologi och onkologi",
-  "Barn- och ungdomskardiologi",
-  "Barn- och ungdomskirurgi",
-  "Barn- och ungdomsmedicin",
-  "Barn- och ungdomsneurologi med habilitering",
-  "Barn- och ungdomspsykiatri",
-  "Beroendemedicin",
-  "Endokrinologi och diabetologi",
-  "Geriatrik",
-  "Gynekologisk onkologi",
-  "Handkirurgi",
-  "Hematologi",
-  "Hud- och könssjukdomar",
-  "Hörsel- och balansrubbningar",
-  "Infektionssjukdomar",
-  "Internmedicin",
-  "Kardiologi",
-  "Kirurgi",
-  "Klinisk farmakologi",
-  "Klinisk fysiologi",
-  "Klinisk genetik",
-  "Klinisk immunologi och transfusionsmedicin",
-  "Klinisk kemi",
-  "Klinisk mikrobiologi",
-  "Klinisk neurofysiologi",
-  "Klinisk patologi",
-  "Kärlkirurgi",
-  "Lungsjukdomar",
-  "Medicinsk gastroenterologi och hepatologi",
-  "Neonatologi",
-  "Neurokirurgi",
-  "Neurologi",
-  "Neuroradiologi",
-  "Njurmedicin",
-  "Nuklearmedicin",
-  "Obstetrik och gynekologi",
-  "Onkologi",
-  "Ortopedi",
-  "Palliativ medicin",
-  "Plastikkirurgi",
-  "Psykiatri",
-  "Radiologi",
-  "Rehabiliteringsmedicin",
-  "Reumatologi",
-  "Rättsmedicin",
-  "Rättspsykiatri",
-  "Röst- och talrubbningar",
-  "Skolhälsovård",
-  "Smärtlindring",
-  "Socialmedicin",
-  "Thoraxkirurgi",
-  "Urologi",
-  "Vårdhygien",
-  "Äldrepsykiatri",
-  "Ögonsjukdomar",
-  "Öron-, näs- och halssjukdomar",
-];
-
-const TOP_NURSE_SPECIALIZATIONS = [
-  "IVA-sjuksköterska", "Psykiatrisjuksköterska", "Ambulanssjuksköterska",
-  "Barnsjuksköterska", "Operationssjuksköterska", "Anestesisjuksköterska",
-  "Akutsjuksköterska", "Hjärtsjuksköterska", "Distriktssjuksköterska",
-  "Kirurgsjuksköterska", "Palliativsjuksköterska", "Geriatriksjuksköterska",
-  "Medicinsjuksköterska", "Onkologisjuksköterska", "Infektionssjuksköterska",
-];
-
-const nurseValueMap: Record<string, string> = {
-  "Akutsjuksköterska": "Specialistsjuksköterska akutsjukvård",
-  "Ambulanssjuksköterska": "Specialistsjuksköterska ambulanssjukvård",
-  "Anestesisjuksköterska": "Specialistsjuksköterska anestesi",
-  "Barnsjuksköterska": "Specialistsjuksköterska barn och ungdom",
-  "Diabetessjuksköterska": "Specialistsjuksköterska diabetesvård",
-  "Distriktssjuksköterska": "Distriktssjuksköterska",
-  "Hjärtsjuksköterska": "Specialistsjuksköterska hjärtsjukvård",
-  "Infektionssjuksköterska": "Specialistsjuksköterska infektionssjukvård",
-  "IVA-sjuksköterska": "Specialistsjuksköterska intensivvård",
-  "Kirurgsjuksköterska": "Specialistsjuksköterska kirurgisk vård",
-  "Medicinsjuksköterska": "Specialistsjuksköterska medicinsk vård",
-  "Onkologisjuksköterska": "Specialistsjuksköterska onkologisk vård",
-  "Operationssjuksköterska": "Specialistsjuksköterska operationssjukvård",
-  "Palliativsjuksköterska": "Specialistsjuksköterska palliativ vård",
-  "Psykiatrisjuksköterska": "Specialistsjuksköterska psykiatrisk vård",
-  "Geriatriksjuksköterska": "Specialistsjuksköterska vård av äldre",
-  "Ögonsjuksköterska": "Specialistsjuksköterska ögonsjukvård",
-};
-
-function resolveYrke(category: RoleGroup, dropdownValue: string): string {
+// Specialty lists, nurseValueMap & resolveYrke imported from @/lib/specialityLists
+// HeroRateFinder uses an opinionated resolveYrke for a few common doctor specs
+// (rather than the generic prefix), so we override resolveYrke locally for läkare.
+function resolveYrkeHero(category: RoleGroup, dropdownValue: string): string {
   if (category === "lakare") {
-    if (dropdownValue === "__leg") return "Legitimerad läkare";
-    if (dropdownValue === "__st") return "ST-läkare";
-    if (dropdownValue === "__ovrig") return "Specialistläkare";
     if (dropdownValue === "Anestesi och intensivvård") return "Specialistläkare anestesi och intensivvård";
     if (dropdownValue === "Barn- och ungdomsmedicin") return "Specialistläkare barn- och ungdomsmedicin";
     if (dropdownValue === "Obstetrik och gynekologi") return "Specialistläkare obstetrik och gynekologi";
-    return `Specialistläkare ${dropdownValue.toLowerCase()}`;
   }
-  if (category === "ssk") {
-    if (dropdownValue === "__allman") return "Sjuksköterska";
-    if (dropdownValue === "__barnmorska") return "Barnmorska";
-    if (dropdownValue === "__rontgen") return "Röntgensjuksköterska";
-    if (dropdownValue === "__ovrig") return "Specialistsjuksköterska";
-    return nurseValueMap[dropdownValue] || dropdownValue;
-  }
-  return "";
+  return resolveYrkeBase(category, dropdownValue);
 }
 
-function getMargins(group: RoleGroup) {
-  return group === "lakare"
-    ? { keepMin: 0.85, keepMax: 0.92, marginMidPct: 11.5, marginText: "8–15 %" }
-    : { keepMin: 0.8, keepMax: 0.88, marginMidPct: 16, marginText: "12–20 %" };
+function getMargins(role: string) {
+  const { share_min, share_max, margin_text } = getMarginShares(role);
+  // Mid-point of the agency margin (1 - mid share)
+  const midShare = (share_min + share_max) / 2;
+  const marginMidPct = Math.round((1 - midShare) * 100 * 10) / 10;
+  return { keepMin: share_min, keepMax: share_max, marginMidPct, marginText: margin_text };
 }
 
 interface RateResult {
@@ -196,8 +100,8 @@ const DEFAULT_RESULT: RateResult = {
   hourlyMax: 482,
   monthlyMin: 72144,
   monthlyMax: 80494,
-  marginText: "12–20 %",
-  marginMidPct: 16,
+  marginText: "15–20 %",
+  marginMidPct: 17.5,
   marginKrMin: 92,
   marginKrMax: 123,
   bestZon: "Zon 3",
@@ -247,7 +151,7 @@ export default function HeroRateFinder({ prefillKey }: Props) {
 
   const resolvedYrke = useMemo(() => {
     if (!selectedCategory || !roleDropdownValue) return "";
-    return resolveYrke(selectedCategory, roleDropdownValue);
+    return resolveYrkeHero(selectedCategory, roleDropdownValue);
   }, [selectedCategory, roleDropdownValue]);
 
   const selectedLocation = useMemo(
@@ -306,12 +210,12 @@ export default function HeroRateFinder({ prefillKey }: Props) {
         if (fnErr) throw fnErr;
         if (!data?.rate_customer_sek_per_hour) throw new Error("NO_RATE_FOUND");
 
-        const { keepMin, keepMax, marginText, marginMidPct } = getMargins(selectedCategory!);
+        const { keepMin, keepMax, marginText, marginMidPct } = getMargins(resolvedYrke);
         const timpris = Number(data.rate_customer_sek_per_hour);
         const employerFactor = Number(data.employee_factor ?? DEFAULT_EMPLOYER_FACTOR);
         const hoursPerMonth = Number(data.hours_per_month ?? DEFAULT_HOURS_PER_MONTH);
 
-        // For "anstalld": gross salary = (timpris × keep) / employer_factor (1.42)
+        // For "anstalld": gross salary = (timpris × keep) / employer_factor (1.47)
         // For "foretagare": hourly = timpris × keep (no employer factor)
         const factor = employmentType === "anstalld" ? employerFactor : 1;
         const hourlyMin = Math.round((timpris * keepMin) / factor);

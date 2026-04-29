@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import {
   calculateSalaryRange,
+  getMarginShares,
   type EmploymentType,
   type MarginModel,
 } from "../_shared/calc.ts";
@@ -459,18 +460,20 @@ async function capLookupRate(
     .limit(1)
     .single();
 
-  const FORETAGARE_SHARE_MIN = 0.85;
-  const FORETAGARE_SHARE_MAX = 0.92;
+  // Role-based margin: Specialistläkare → 10–15%, övriga → 15–20%.
+  // Anställd vs företagare påverkar BARA employer_factor, inte share.
+  const roleShares = getMarginShares(role.name);
 
   const baseModel: MarginModel | undefined = modelData
     ? { share_min: Number(modelData.share_min), share_max: Number(modelData.share_max), employer_factor: Number(modelData.employer_factor), hours_per_month: Number(modelData.hours_per_month) }
     : undefined;
 
-  const effectiveModel: MarginModel = baseModel
-    ? empType === "foretagare" ? { ...baseModel, share_min: FORETAGARE_SHARE_MIN, share_max: FORETAGARE_SHARE_MAX } : baseModel
-    : empType === "foretagare"
-      ? { share_min: FORETAGARE_SHARE_MIN, share_max: FORETAGARE_SHARE_MAX, employer_factor: 1.42, hours_per_month: 167 }
-      : { share_min: 0.85, share_max: 0.90, employer_factor: 1.42, hours_per_month: 167 };
+  const effectiveModel: MarginModel = {
+    share_min: roleShares.share_min,
+    share_max: roleShares.share_max,
+    employer_factor: baseModel?.employer_factor ?? 1.42,
+    hours_per_month: baseModel?.hours_per_month ?? 167,
+  };
 
   // Rate lookup
   let timprisKund = 0;

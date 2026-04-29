@@ -86,12 +86,27 @@ export function useNegotiationChat() {
       });
     } catch (err: unknown) {
       console.error("[Chat] Error:", err);
-      const is429 = err && typeof err === "object" && "status" in err && (err as { status: number }).status === 429;
+      // supabase.functions.invoke wraps non-2xx as FunctionsHttpError with .context
+      let is429 = false;
+      let rateLimitMsg: string | null = null;
+      if (err && typeof err === "object" && "context" in err) {
+        const ctx = (err as { context?: Response }).context;
+        if (ctx?.status === 429) {
+          is429 = true;
+          try {
+            const body = await ctx.clone().json();
+            rateLimitMsg = body?.message ?? null;
+          } catch { /* ignore */ }
+        }
+      }
+      if (err && typeof err === "object" && "status" in err && (err as { status: number }).status === 429) {
+        is429 = true;
+      }
       const errorMsg: ChatMessage = {
         id: makeId(),
         role: "assistant",
         content: is429
-          ? "För många försök — testa igen om en stund."
+          ? (rateLimitMsg ?? "Du har nått dagens gräns på 30 AI-anrop. Återställs vid midnatt.")
           : "Något gick fel — försök igen om en stund.",
         timestamp: new Date(),
       };

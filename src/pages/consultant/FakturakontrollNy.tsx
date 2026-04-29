@@ -72,9 +72,7 @@ const FILE_LABELS: Record<FileSlot, { label: string; desc: string }> = {
 
 const STEP_LABELS = [
   { n: 1, label: "Ladda upp" },
-  { n: 2, label: "Analys" },
-  { n: 3, label: "Sammanfattning" },
-  { n: 4, label: "Bekräftelse" },
+  { n: 5, label: "Bekräftelse" },
 ];
 
 // ── Component ────────────────────────────────────────────────────────────────
@@ -187,34 +185,34 @@ export default function FakturakontrollNy() {
       setReviewId(review.id);
 
       trackEvent("fakturakontroll_uploaded");
-      setStep(2);
 
-      // Trigger extraction
+      // Trigger extraction + analysis in the background — user is not informed about progress or results.
+      // They only see a confirmation that we'll get back within 2 business days.
       const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
       const {
         data: { session },
       } = await supabase.auth.getSession();
+      const authHeader = `Bearer ${session?.access_token ?? ""}`;
 
-      const extractRes = await fetch(
-        `https://${projectId}.supabase.co/functions/v1/invoice-extract`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session?.access_token ?? ""}`,
-          },
-          body: JSON.stringify({ review_id: review.id }),
-        },
-      );
+      // Fire-and-forget: chain extract -> analyzer server-side trigger, but never expose results to user.
+      void fetch(`https://${projectId}.supabase.co/functions/v1/invoice-extract`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: authHeader },
+        body: JSON.stringify({ review_id: review.id }),
+      })
+        .then(async (res) => {
+          if (!res.ok) return;
+          // After successful extraction, kick off analyzer (admin-only result destination)
+          await fetch(`https://${projectId}.supabase.co/functions/v1/invoice-analyzer`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", Authorization: authHeader },
+            body: JSON.stringify({ review_id: review.id }),
+          });
+        })
+        .catch((e) => console.error("background invoice processing failed:", e));
 
-      if (!extractRes.ok) {
-        const errBody = await extractRes.text();
-        throw new Error(`Extraction failed: ${errBody}`);
-      }
-
-      const result = await extractRes.json();
-      setExtractionResult(result);
-      setStep(3);
+      // Skip step 2/3/4 entirely — go straight to confirmation screen.
+      setStep(5);
     } catch (err) {
       console.error(err);
       toast.error("Något gick fel. Försök igen.");
@@ -669,146 +667,7 @@ export default function FakturakontrollNy() {
         </div>
       )}
 
-      {/* ── STEP 2: Extracting ─────────────────────────────────────────── */}
-      {step === 2 && (
-        <div className="text-center space-y-6 py-16">
-          <Loader2 className="w-10 h-10 animate-spin text-primary mx-auto" />
-          <div>
-            <h2 className="font-display text-xl font-bold mb-2">Analyserar dina dokument</h2>
-            <p className="text-muted-foreground text-sm">
-              Våra AI-assistenter läser igenom faktura och tidrapport. Det tar vanligtvis 20–40
-              sekunder.
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* ── STEP 3: Summary + confirm ──────────────────────────────────── */}
-      {step === 3 && extractionResult && (
-        <div className="space-y-6">
-          <div>
-            <h2 className="font-display text-xl font-bold mb-2">Sammanfattning</h2>
-            <p className="text-muted-foreground text-sm">
-              Granska att uppgifterna nedan stämmer och bekräfta.
-            </p>
-          </div>
-
-          {(() => {
-            const summary = getSummary();
-            const confidence = extractionResult.confidence;
-            const hasLowConfidence = confidence.overall < 1.0;
-            const lowRows = confidence.rows.filter((r) => !r.match);
-
-            return (
-              <>
-                {/* Summary cards */}
-                {summary && (
-                  <div className="grid grid-cols-3 gap-3">
-                    <div className="p-4 rounded-xl bg-muted/50 text-center">
-                      <p className="text-2xl font-bold">{summary.antalPass}</p>
-                      <p className="text-xs text-muted-foreground">pass</p>
-                    </div>
-                    <div className="p-4 rounded-xl bg-muted/50 text-center">
-                      <p className="text-2xl font-bold">{summary.totalTimmar}</p>
-                      <p className="text-xs text-muted-foreground">timmar</p>
-                    </div>
-                    <div className="p-4 rounded-xl bg-muted/50 text-center">
-                      <p className="text-2xl font-bold">{summary.nattpass}</p>
-                      <p className="text-xs text-muted-foreground">nattpass</p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Low confidence warning */}
-                {hasLowConfidence && (
-                  <div className="p-4 rounded-xl border border-yellow-500/30 bg-yellow-500/5 flex gap-3">
-                    <AlertTriangle className="w-5 h-5 text-yellow-600 shrink-0 mt-0.5" />
-                    <div>
-                      <p className="text-sm font-medium">
-                        {lowRows.length} rad{lowRows.length > 1 ? "er" : ""} kunde inte verifieras
-                        automatiskt
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-0.5">
-                        Visa detaljer nedan för att kontrollera.
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                {/* Details toggle */}
-                <button
-                  onClick={() => setShowDetails(!showDetails)}
-                  className="text-sm text-primary hover:underline"
-                >
-                  {showDetails ? "Dölj detaljer" : "Visa detaljer"}
-                </button>
-
-                {showDetails && (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-sm border rounded-lg overflow-hidden">
-                      <thead className="bg-muted/50">
-                        <tr>
-                          <th className="text-left p-2 font-medium">Datum</th>
-                          <th className="text-left p-2 font-medium">Start</th>
-                          <th className="text-left p-2 font-medium">Slut</th>
-                          <th className="text-left p-2 font-medium">Rast</th>
-                          <th className="text-left p-2 font-medium">Typ</th>
-                          <th className="p-2 w-8"></th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {((extractionResult.tidrapport as any)?.rader ?? []).map(
-                          (rad: any, i: number) => {
-                            const rowConf = confidence.rows.find((r) => r.index === i);
-                            const isLow = rowConf && !rowConf.match;
-                            return (
-                              <tr
-                                key={i}
-                                className={isLow ? "bg-yellow-500/10" : ""}
-                              >
-                                <td className="p-2">{rad.datum}</td>
-                                <td className="p-2">{rad.start_tid}</td>
-                                <td className="p-2">{rad.slut_tid}</td>
-                                <td className="p-2">{rad.rast_minuter}m</td>
-                                <td className="p-2">{rad.typ}</td>
-                                <td className="p-2">
-                                  {isLow ? (
-                                    <AlertTriangle className="w-4 h-4 text-yellow-600" />
-                                  ) : (
-                                    <CheckCircle2 className="w-4 h-4 text-primary" />
-                                  )}
-                                </td>
-                              </tr>
-                            );
-                          },
-                        )}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-
-                <Button size="default" className="text-sm font-semibold px-6 py-3" onClick={handleConfirm}>
-                  Bekräfta och analysera
-                </Button>
-              </>
-            );
-          })()}
-        </div>
-      )}
-
-      {/* ── STEP 4: Analyzing ──────────────────────────────────────────── */}
-      {step === 4 && (
-        <div className="text-center space-y-6 py-16">
-          <Loader2 className="w-10 h-10 animate-spin text-primary mx-auto" />
-          <div>
-            <h2 className="font-display text-xl font-bold mb-2">Kör analys</h2>
-            <p className="text-muted-foreground text-sm">
-              Jämför faktura med tidrapport och dina avtalade priser...
-            </p>
-          </div>
-        </div>
-      )}
-
+      {/* Steps 2/3/4 intentionally removed — user is never shown extraction/analysis progress or results. */}
       {/* ── STEP 5: Thank you ──────────────────────────────────────────── */}
       {step === 5 && (
         <div className="text-center space-y-6 py-12">

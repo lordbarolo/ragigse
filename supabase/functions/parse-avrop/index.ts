@@ -10,6 +10,7 @@
  * av en cron-funktion (redact_avrop_intelligence_pii).
  */
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { checkAiRateLimit, aiRateLimitResponse } from "../_shared/ai-usage-logger.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -99,6 +100,22 @@ Deno.serve(async (req) => {
   try {
     if (!LOVABLE_API_KEY) {
       return jsonResponse({ error: "AI gateway not configured" }, 500);
+    }
+
+    // Per-user daily AI quota
+    const userId = await getAuthUserId(req);
+    const aiRl = await checkAiRateLimit(userId);
+    if (!aiRl.allowed) {
+      return new Response(JSON.stringify({
+        error: "rate_limited",
+        message: `Du har nått dagens gräns på ${aiRl.limit} AI-anrop. Återställs vid midnatt.`,
+        used: aiRl.used,
+        limit: aiRl.limit,
+        resets_at: aiRl.resets_at,
+      }), {
+        status: 429,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     const { text, imageDataUrl } = await req.json();

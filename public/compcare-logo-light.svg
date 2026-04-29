@@ -1,9 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100" width="400" height="100">
   <!-- Icon bars - compact -->
-  <rect x="20" y="24" width="40" height="16" rx="3" ry="3" fill="#A0AABE"/>
-  <rect x="20" y="48" width="66" height="16" rx="3" ry="3" fill="#00D2E6"/>
+  <rect x="20" y="24" width="40" height="16" rx="3" ry="3" fill="#000000"/>
+  <rect x="20" y="48" width="66" height="16" rx="3" ry="3" fill="#000000"/>
   <!-- Text: compcare -->
-  <text x="108" y="56" font-family="Sora, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="36" font-weight="600" letter-spacing="0.5">
-    <tspan fill="#0D111C">comp</tspan><tspan fill="#00D2E6">care</tspan>
-  </text>
+  <text x="108" y="56" font-family="Sora, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="36" font-weight="600" letter-spacing="0.5" fill="#000000">compcare</text>
 </svg>

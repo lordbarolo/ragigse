@@ -294,7 +294,7 @@ Deno.serve(async (req) => {
             },
             body: JSON.stringify({
               from: "CompCare <noreply@mail.compcare.se>",
-              to: ["halvarholding@gmail.com"],
+              to: ["anders@compcare.se"],
               subject,
               html,
             }),

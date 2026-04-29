@@ -91,7 +91,7 @@ export default function Login() {
 
   const features = [
     { icon: FileText, title: "Dokumentvalvet", desc: "Säker lagring av legitimationer, specialistbevis och tjänstgöringsintyg. Dela tillgång till en miljö du kontrollerar istället för att sprida filer via mail.", badge: "Ingår gratis", badgeColor: "text-green-700 bg-green-100" },
-    { icon: Clock, title: "Referensplattformen", desc: "Du styr vem som får tillgång och när. Dina referenser lämnar uppgifter EN gång och kan därefter verifiera med bank-ID.", badge: "Ingår gratis", badgeColor: "text-green-700 bg-green-100" },
+    { icon: Clock, title: "Referensplattformen", desc: "Enu styr vem som får tillgång och när. Uppgifter verifieras med Bank-ID istället för återkommande intervjuer.", badge: "Ingår gratis", badgeColor: "text-green-700 bg-green-100" },
     { icon: TrendingUp, title: "Ersättningsanalys - Se aktuella arvoden", desc: "Förhandlingstips baserat på din specialitet, region och erfarenhet.", badge: "Insight — 149 kr/mån", badgeColor: "text-amber-700 bg-amber-100" },
     { icon: MessageSquare, title: "Fakturagranskning", desc: "Automatiserad revision av fakturor du skickat senaste 2 åren. Hittar vi inget, betalar du inget.", badge: "Prestationsbaserat", badgeColor: "text-purple-700 bg-purple-100" },
     { icon: Link2, title: "Uppdragsprognos", desc: "Öka chansen att få uppdraget du verkligen vill ha. AI ger oss träffsäkra prognoser om kommande behov baserat på 5 års historik och över 30 000 bemanningsuppdrag.", badge: "Beta", badgeColor: "text-slate-600 bg-slate-100" },
@@ -99,30 +99,26 @@ export default function Login() {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden">
-      {/* Background layers matching landing-v2 hero */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0d0b2a] via-[#1a1545] via-40% to-[#2a2070]" />
+      {/* Make.com-inspirerad djupviolett bakgrund */}
+      <div className="absolute inset-0 bg-[#1a0b3d]" />
+      {/* Spotlight — mjuk violett glow uppe till höger */}
       <div
         className="absolute pointer-events-none"
         style={{
-          top: '-100px', right: '-100px',
-          width: '1000px', height: '900px',
+          top: '-150px', right: '-150px',
+          width: '1100px', height: '1000px',
           zIndex: 1,
-          background: 'radial-gradient(ellipse at 75% 10%, rgba(110,95,230,0.55) 0%, rgba(90,78,210,0.25) 25%, rgba(70,60,190,0.08) 50%, transparent 70%)',
+          background: 'radial-gradient(ellipse at 75% 15%, rgba(168,85,247,0.35) 0%, rgba(139,92,246,0.15) 30%, rgba(91,33,182,0.05) 55%, transparent 75%)',
         }}
       />
+      {/* Sekundär glow — magenta nere till vänster (Make-signatur) */}
       <div
-        className="absolute top-0 right-0 pointer-events-none"
+        className="absolute pointer-events-none"
         style={{
-          width: '520px', height: '600px',
+          bottom: '-200px', left: '-150px',
+          width: '800px', height: '800px',
           zIndex: 1,
-          background: 'radial-gradient(ellipse at 90% 15%, rgba(140,125,245,0.3) 0%, rgba(110,95,220,0.12) 40%, transparent 65%)',
-        }}
-      />
-      <div
-        className="absolute inset-0 opacity-5"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(0deg,transparent,transparent 39px,#fff 39px,#fff 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,#fff 39px,#fff 40px)",
+          background: 'radial-gradient(ellipse at 25% 80%, rgba(217,70,239,0.20) 0%, rgba(192,38,211,0.08) 40%, transparent 70%)',
         }}
       />
       <div className="relative z-10 w-full max-w-lg space-y-6">

@@ -22,22 +22,22 @@ export default function Navbar() {
   const isHome = location.pathname === "/";
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 h-14 md:h-16 flex items-center px-4 md:px-6 lg:px-8 bg-[hsl(var(--background))]/80 backdrop-blur-sm border-b border-border/20" role="navigation" aria-label="Huvudnavigation">
+    <nav className="fixed top-0 left-0 right-0 z-50 h-14 md:h-16 flex items-center px-4 md:px-6 lg:px-8 bg-[#F7F5FB]/85 backdrop-blur-md border-b border-slate-200/70 text-slate-900" role="navigation" aria-label="Huvudnavigation">
       {!isHome && (
         <button
           onClick={() => navigate(-1)}
-          className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-secondary transition-colors mr-2"
+          className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-slate-200/70 transition-colors mr-2"
           aria-label="Gå tillbaka"
         >
-          <ArrowLeft className="w-4 h-4 text-muted-foreground" />
+          <ArrowLeft className="w-4 h-4 text-slate-600" />
         </button>
       )}
       <Link to="/" className="flex items-center" aria-label="CompCare startsida">
         <div className="block md:hidden">
-          <CompcareLogo variant="wordmark" />
+          <CompcareLogo variant="wordmark" inverted={false} />
         </div>
         <div className="hidden md:block">
-          <CompcareLogo variant="full" />
+          <CompcareLogo variant="full" inverted={false} />
         </div>
       </Link>
       <div className="flex-1" />
@@ -45,7 +45,7 @@ export default function Navbar() {
         {/* Role-specific nav links */}
         {links.map((link) => (
           <Link key={link.to} to={link.to}>
-            <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground">
+            <Button variant="ghost" size="sm" className="gap-2 text-slate-600 hover:text-slate-900 hover:bg-slate-200/60">
               <link.icon className="w-4 h-4" />
               <span className="hidden sm:inline">{link.label}</span>
             </Button>
@@ -57,20 +57,20 @@ export default function Navbar() {
             <>
               {role !== "agency" && (
                 <Link to="/consultant/profil">
-                  <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground">
+                  <Button variant="ghost" size="sm" className="gap-2 text-slate-600 hover:text-slate-900 hover:bg-slate-200/60">
                     <User className="w-4 h-4" />
                     <span className="hidden sm:inline">Min profil</span>
                   </Button>
                 </Link>
               )}
-              <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground" onClick={signOut}>
+              <Button variant="ghost" size="sm" className="gap-2 text-slate-600 hover:text-slate-900 hover:bg-slate-200/60" onClick={signOut}>
                 <LogOut className="w-4 h-4" />
                 <span className="hidden sm:inline">Logga ut</span>
               </Button>
             </>
           ) : (
             <Link to="/logga-in">
-              <Button variant="ghost" size="sm" className="gap-2 text-muted-foreground hover:text-foreground">
+              <Button variant="ghost" size="sm" className="gap-2 text-slate-600 hover:text-slate-900 hover:bg-slate-200/60">
                 <LogIn className="w-4 h-4" />
                 <span className="hidden sm:inline">Logga in</span>
               </Button>
