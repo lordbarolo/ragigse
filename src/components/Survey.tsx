@@ -101,7 +101,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
   const stepEntryTime = useRef<number>(Date.now());
   const surveyStarted = useRef(false);
 
-  const STEP_NAMES = ["yrkeskategori", "specialisering", "kommun", "anstallningsform", "uppdragsgivare", "ersattning"];
+  const STEP_NAMES = ["yrkeskategori", "specialisering", "kommun", "anstallningsform", "ersattning"];
 
   // Fire survey_started immediately when survey mounts with a pre-selected category
   // (step 1 is skipped so the click handler there never runs)
