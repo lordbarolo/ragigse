@@ -6,7 +6,7 @@ import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 import Survey from "@/components/Survey";
 import handPhoneImage from "@/assets/hand-phone.png";
 import CompcareLogo from "@/components/CompcareLogo";
-import ThemeToggle from "@/components/ThemeToggle";
+
 import MissionSection from "@/components/landing/MissionSection";
 import Steps from "@/components/landing/Steps";
 import HeroRateLookup from "@/components/landing/HeroRateLookup";
@@ -95,13 +95,12 @@ export default function SalaryCheck() {
         <header className="border-b border-border bg-card/80 backdrop-blur sticky top-0 z-50">
           <div className="max-w-5xl mx-auto flex items-center justify-between px-6 h-14">
             <Link to="/">
-              <CompcareLogo variant="full" />
+              <CompcareLogo variant="full" inverted />
             </Link>
             <div className="flex items-center gap-3">
               <Link to="/logga-in" className="text-sm text-muted-foreground hover:text-primary transition-colors font-medium">
                 Logga in
               </Link>
-              <ThemeToggle />
             </div>
           </div>
         </header>
@@ -124,13 +123,12 @@ export default function SalaryCheck() {
       <header className="border-b border-border bg-card/80 backdrop-blur sticky top-0 z-50">
         <div className="max-w-5xl mx-auto flex items-center justify-between px-6 h-14">
           <Link to="/">
-            <CompcareLogo variant="full" />
+            <CompcareLogo variant="full" inverted />
           </Link>
           <div className="flex items-center gap-3">
             <Link to="/logga-in" className="text-sm text-muted-foreground hover:text-primary transition-colors font-medium">
               Logga in
             </Link>
-            <ThemeToggle />
           </div>
         </div>
       </header>
