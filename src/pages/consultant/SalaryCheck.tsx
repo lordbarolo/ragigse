@@ -95,7 +95,7 @@ export default function SalaryCheck() {
         <header className="border-b border-border bg-card/80 backdrop-blur sticky top-0 z-50">
           <div className="max-w-5xl mx-auto flex items-center justify-between px-6 h-14">
             <Link to="/">
-              <CompcareLogo variant="full" />
+              <CompcareLogo variant="full" inverted />
             </Link>
             <div className="flex items-center gap-3">
               <Link to="/logga-in" className="text-sm text-muted-foreground hover:text-primary transition-colors font-medium">
