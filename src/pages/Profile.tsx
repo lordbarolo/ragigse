@@ -194,29 +194,44 @@ export default function Profile() {
       <Navbar />
 
       <div className="relative pt-20 pb-12 px-4 max-w-5xl mx-auto space-y-5">
-        {/* Compact action bar (replaces cover) */}
-        <div className="flex items-center justify-end gap-2">
-          <Link to="/profil">
-            <Button size="sm" variant="outline" className="gap-1.5 h-9 text-sm">
-              <Pencil className="w-3.5 h-3.5" />
-              Redigera
-            </Button>
-          </Link>
-          <Button variant="outline" size="icon" className="h-9 w-9" onClick={handleShare} aria-label="Dela profil">
-            <Share2 className="w-4 h-4" />
-          </Button>
-        </div>
-
-        {/* Profilstatus inline (kept for completeness signal) */}
-        <div className="rounded-xl bg-white border border-slate-200 shadow-sm px-4 py-3">
-          <div className="flex items-center justify-between mb-1.5">
-            <p className="text-xs sm:text-sm font-medium text-foreground">Profilstatus</p>
-            <span className="text-xs sm:text-sm font-semibold text-primary">{percent}%</span>
+        {/* Top progression bar — replaces old Profilstatus */}
+        <div className="rounded-2xl bg-white border border-slate-200 shadow-sm px-5 py-4">
+          <div className="flex items-center justify-between gap-4 mb-2">
+            <div className="min-w-0">
+              <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-slate-500">Profilstatus</p>
+              <p className="text-sm text-slate-900 mt-0.5 truncate">
+                {percent >= 100
+                  ? "Din profil är komplett."
+                  : `${completedCount} av ${totalCount} steg klara — komplettera för bättre matchning.`}
+              </p>
+            </div>
+            <div className="flex items-center gap-3 shrink-0">
+              <span className="text-2xl font-semibold text-slate-900 tabular-nums">{percent}%</span>
+              <Link to="/profil">
+                <Button size="sm" variant="outline" className="gap-1.5 h-9 text-sm border-slate-300 text-slate-700 hover:bg-slate-100">
+                  <Pencil className="w-3.5 h-3.5" />
+                  Redigera
+                </Button>
+              </Link>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-9 w-9 border-slate-300 text-slate-700 hover:bg-slate-100"
+                onClick={handleShare}
+                aria-label="Dela profil"
+              >
+                <Share2 className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
-          <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+          <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
             <div
-              className="h-full bg-primary rounded-full transition-all duration-500 ease-out"
-              style={{ width: `${percent}%` }}
+              className="h-full rounded-full transition-all duration-700 ease-out"
+              style={{
+                width: `${percent}%`,
+                background:
+                  "linear-gradient(90deg, hsl(256 90% 60%) 0%, hsl(280 85% 65%) 50%, hsl(330 90% 70%) 100%)",
+              }}
             />
           </div>
         </div>
@@ -230,9 +245,9 @@ export default function Profile() {
             {/* Left column (2/3) */}
             <div className="lg:col-span-2 space-y-5">
               {/* Personliga uppgifter (header + identity merged) */}
-              <Card>
+              <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
                 <CardHeader>
-                  <CardTitle className="text-base flex items-center gap-2">
+                  <CardTitle className="text-base flex items-center gap-2 text-slate-900">
                     <User className="w-4 h-4 text-primary" />
                     Personliga uppgifter
                   </CardTitle>
@@ -244,8 +259,8 @@ export default function Profile() {
                       <span className="text-base font-semibold text-primary">{initials}</span>
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold text-foreground truncate">{displayName}</p>
-                      <p className="text-xs text-muted-foreground truncate inline-flex items-center gap-1.5">
+                      <p className="text-sm font-semibold text-slate-900 truncate">{displayName}</p>
+                      <p className="text-xs text-slate-500 truncate inline-flex items-center gap-1.5">
                         <Mail className="w-3 h-3" /> {user?.email || "–"}
                       </p>
                     </div>
@@ -253,22 +268,22 @@ export default function Profile() {
 
                   {/* Meta details */}
                   <div className="space-y-2 text-sm">
-                    <div className="flex items-center gap-2 text-muted-foreground">
+                    <div className="flex items-center gap-2 text-slate-600">
                       <Briefcase className="w-4 h-4" /> {profile?.specialty_name || "–"}
                     </div>
-                    <div className="flex items-center gap-2 text-muted-foreground">
+                    <div className="flex items-center gap-2 text-slate-600">
                       <MapPin className="w-4 h-4" /> {profile?.region_name || "–"}
                     </div>
-                    <div className="flex items-center gap-2 text-muted-foreground">
+                    <div className="flex items-center gap-2 text-slate-600">
                       <Users className="w-4 h-4" /> 0 kopplingar
                     </div>
                     {profile?.experience_years != null && (
-                      <div className="flex items-center gap-2 text-muted-foreground">
+                      <div className="flex items-center gap-2 text-slate-600">
                         <Clock className="w-4 h-4" /> {profile.experience_years} års erfarenhet
                       </div>
                     )}
                     {profile && (
-                      <div className="flex items-center gap-2 text-muted-foreground">
+                      <div className="flex items-center gap-2 text-slate-600">
                         <FileText className="w-4 h-4" /> {employmentLabel(profile.employment_type)}
                         {profile.salary_type === "hourly" && profile.current_hourly_rate
                           ? ` · ${formatSalary(profile.current_hourly_rate)} kr/h`
@@ -289,7 +304,7 @@ export default function Profile() {
               />
 
               {/* Insights */}
-              <Card>
+              <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
                 <CardContent className="pt-6">
                   <ProfileInsights
                     specialtyName={profile?.specialty_name || null}
