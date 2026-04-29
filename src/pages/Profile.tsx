@@ -5,10 +5,9 @@ import { useAuth } from "@/hooks/useAuth";
 import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, MapPin, Briefcase, Clock, UserPlus, Check } from "lucide-react";
+import { FileText, MapPin, Briefcase, Clock, UserPlus, Check, Mail, Users, User, Share2, Pencil } from "lucide-react";
 import { ProfilePageSkeleton } from "@/components/ui/page-skeleton";
 import { toast } from "sonner";
-import ProfileHero from "@/components/profile/ProfileHero";
 import ProfileTabs, { type ProfileTab } from "@/components/profile/ProfileTabs";
 import ProfileInsights from "@/components/profile/ProfileInsights";
 import TrustVerification from "@/components/profile/TrustVerification";
@@ -173,23 +172,54 @@ export default function Profile() {
     .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
     .join(" ") || "Användare";
 
+  const percent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+  const initials = displayName
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((n) => n[0]?.toUpperCase() || "")
+    .join("") || (user?.email?.slice(0, 2).toUpperCase() ?? "U");
+
   return (
-    <div className="relative min-h-screen bg-[#F2F1F8] overflow-hidden">
+    <div className="relative min-h-screen bg-[#F7F5FB] overflow-hidden">
+      {/* Subtle glow gradients matching landing page section 2 */}
+      <div
+        className="absolute inset-x-0 top-0 h-[600px] pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse 60% 40% at 50% 0%, hsl(256 100% 67% / 0.08) 0%, transparent 65%), radial-gradient(ellipse 50% 35% at 90% 30%, hsl(330 90% 70% / 0.07) 0%, transparent 60%)",
+        }}
+      />
 
       <Navbar />
 
       <div className="relative pt-20 pb-12 px-4 max-w-5xl mx-auto space-y-5">
-        {/* Hero */}
-        <ProfileHero
-          name={displayName}
-          email={user?.email || ""}
-          role={profile?.specialty_name}
-          location={profile?.region_name}
-          connections={0}
-          completedCount={completedCount}
-          totalCount={totalCount}
-          onShare={handleShare}
-        />
+        {/* Compact action bar (replaces cover) */}
+        <div className="flex items-center justify-end gap-2">
+          <Link to="/profil">
+            <Button size="sm" variant="outline" className="gap-1.5 h-9 text-sm">
+              <Pencil className="w-3.5 h-3.5" />
+              Redigera
+            </Button>
+          </Link>
+          <Button variant="outline" size="icon" className="h-9 w-9" onClick={handleShare} aria-label="Dela profil">
+            <Share2 className="w-4 h-4" />
+          </Button>
+        </div>
+
+        {/* Profilstatus inline (kept for completeness signal) */}
+        <div className="rounded-xl bg-white border border-slate-200 shadow-sm px-4 py-3">
+          <div className="flex items-center justify-between mb-1.5">
+            <p className="text-xs sm:text-sm font-medium text-foreground">Profilstatus</p>
+            <span className="text-xs sm:text-sm font-semibold text-primary">{percent}%</span>
+          </div>
+          <div className="h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-primary rounded-full transition-all duration-500 ease-out"
+              style={{ width: `${percent}%` }}
+            />
+          </div>
+        </div>
 
         {/* Tabs */}
         <ProfileTabs active={activeTab} onChange={setActiveTab} />
@@ -199,42 +229,57 @@ export default function Profile() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
             {/* Left column (2/3) */}
             <div className="lg:col-span-2 space-y-5">
-              {/* About / Profile details */}
-              {profile && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-base flex items-center gap-2">
-                      <Briefcase className="w-4 h-4 text-primary" />
-                      Yrkesinformation
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-2 text-sm">
-                    {profile.specialty_name && (
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <Briefcase className="w-4 h-4" /> {profile.specialty_name}
-                      </div>
-                    )}
-                    {profile.region_name && (
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <MapPin className="w-4 h-4" /> {profile.region_name}
-                      </div>
-                    )}
-                    {profile.experience_years != null && (
+              {/* Personliga uppgifter (header + identity merged) */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <User className="w-4 h-4 text-primary" />
+                    Personliga uppgifter
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {/* Identity row: avatar + name + email */}
+                  <div className="flex items-center gap-3 pb-3 mb-3 border-b border-slate-200">
+                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                      <span className="text-base font-semibold text-primary">{initials}</span>
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-foreground truncate">{displayName}</p>
+                      <p className="text-xs text-muted-foreground truncate inline-flex items-center gap-1.5">
+                        <Mail className="w-3 h-3" /> {user?.email || "–"}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Meta details */}
+                  <div className="space-y-2 text-sm">
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <Briefcase className="w-4 h-4" /> {profile?.specialty_name || "–"}
+                    </div>
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <MapPin className="w-4 h-4" /> {profile?.region_name || "–"}
+                    </div>
+                    <div className="flex items-center gap-2 text-muted-foreground">
+                      <Users className="w-4 h-4" /> 0 kopplingar
+                    </div>
+                    {profile?.experience_years != null && (
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <Clock className="w-4 h-4" /> {profile.experience_years} års erfarenhet
                       </div>
                     )}
-                    <div className="flex items-center gap-2 text-muted-foreground">
-                      <FileText className="w-4 h-4" /> {employmentLabel(profile.employment_type)}
-                      {profile.salary_type === "hourly" && profile.current_hourly_rate
-                        ? ` · ${formatSalary(profile.current_hourly_rate)} kr/h`
-                        : profile.current_monthly_salary
-                          ? ` · ${formatSalary(profile.current_monthly_salary)} kr/mån`
-                          : ""}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
+                    {profile && (
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <FileText className="w-4 h-4" /> {employmentLabel(profile.employment_type)}
+                        {profile.salary_type === "hourly" && profile.current_hourly_rate
+                          ? ` · ${formatSalary(profile.current_hourly_rate)} kr/h`
+                          : profile.current_monthly_salary
+                            ? ` · ${formatSalary(profile.current_monthly_salary)} kr/mån`
+                            : ""}
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
 
               {/* Compensation view */}
               <CompensationView
