@@ -100,9 +100,8 @@ const PRIMARY_PRODUCTS: ProductCard[] = [
 type InfraCard = { title: string; desc: string; href: string };
 
 const INFRASTRUCTURE: InfraCard[] = [
-  { title: "Dokhus", desc: "Säker lagring och tidsbegränsad delning av legitimation, intyg och CV.", href: "/dokhus-info" },
+  { title: "Dokhus", desc: "Säker lagring och tidsbegränsad delning av legitimation, intyg och CV. Aldrig mer bifogade filer.", href: "/dokhus-info" },
   { title: "Ref-ID", desc: "Du styr vem som får tillgång och när. Uppgifter verifieras med Bank-ID istället för återkommande intervjuer.", href: "/referenser-info" },
-  { title: "Fakturagranskning", desc: "AI granskar fakturor från senaste 2 åren. Vi letar efter arbetad tid som du ej fått betalt för. Hittar vi inget, kostar det inget.", href: "/consultant/fakturakontroll" },
 ];
 
 const TRUST_POINTS = [
