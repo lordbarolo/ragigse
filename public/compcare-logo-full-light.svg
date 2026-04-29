@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" width="800" height="800">
-  <rect width="800" height="800" fill="#FFFFFF"/>
+  
   <!-- Grey bar (comparison bar - shorter) -->
   <rect x="200" y="288" width="252" height="68" rx="10" ry="10" fill="#A0AABE"/>
   <!-- Cyan bar (comparison bar - longer) -->
