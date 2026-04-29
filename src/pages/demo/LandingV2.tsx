@@ -77,16 +77,6 @@ const PRIMARY_PRODUCTS: ProductCard[] = [
   },
   {
     step: "02",
-    title: "Uppdragsradar",
-    tagline: "Hitta rätt uppdrag",
-    desc: "AI-prognoser baserade på 30 000+ historiska avrop. Vi förutsäger när och var nästa uppdrag dyker upp inom din specialitet.",
-    tag: "Beta",
-    tagColor: "violet",
-    href: "/uppdragsradar",
-    cta: "Se prognoser",
-  },
-  {
-    step: "03",
     title: "Förhandlingsagent",
     tagline: "Vinn förhandlingen",
     desc: "AI-assistent som ger dig argumenten i realtid. Branschspecifik kunskap, neutral analys, konkreta nästa steg.",
@@ -95,14 +85,23 @@ const PRIMARY_PRODUCTS: ProductCard[] = [
     href: "/consultant/forhandla",
     cta: "Starta",
   },
+  {
+    step: "03",
+    title: "Fakturakollen",
+    tagline: "Få det du förtjänat",
+    desc: "AI-analyser av fakturor och tidrapporter de senaste 2 åren. Vi ser vad du missat. Hittar vi inget, betalar du inget.",
+    tag: "No cure – no pay",
+    tagColor: "violet",
+    href: "/consultant/fakturakontroll",
+    cta: "Starta granskning",
+  },
 ];
 
 type InfraCard = { title: string; desc: string; href: string };
 
 const INFRASTRUCTURE: InfraCard[] = [
-  { title: "Dokhus", desc: "Säker lagring och tidsbegränsad delning av legitimation, intyg och CV.", href: "/dokhus-info" },
+  { title: "Dokhus", desc: "Säker lagring och tidsbegränsad delning av legitimation, intyg och CV. Aldrig mer bifogade filer.", href: "/dokhus-info" },
   { title: "Ref-ID", desc: "Du styr vem som får tillgång och när. Uppgifter verifieras med Bank-ID istället för återkommande intervjuer.", href: "/referenser-info" },
-  { title: "Fakturagranskning", desc: "AI granskar fakturor från senaste 2 åren. Vi letar efter arbetad tid som du ej fått betalt för. Hittar vi inget, kostar det inget.", href: "/consultant/fakturakontroll" },
 ];
 
 const TRUST_POINTS = [
