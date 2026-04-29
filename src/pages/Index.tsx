@@ -112,7 +112,7 @@ export default function Index() {
       {/* <MissionSection /> */}
 
       {/* ── Three Pillars ──────────────────────────────── */}
-      <section className="max-w-6xl mx-auto px-6 pt-8 relative z-20 pb-20" aria-label="Tjänster">
+      <section className="max-w-6xl mx-auto px-6 pt-4 relative z-20 pb-12" aria-label="Tjänster">
         <div className="grid md:grid-cols-3 gap-6">
           {PILLARS.map((pillar) => (
             <article
