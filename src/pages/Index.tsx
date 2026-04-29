@@ -94,11 +94,11 @@ export default function Index() {
       {/* ── Hero ───────────────────────────────────────── */}
       <section className="hero-dark relative pt-12 pb-20 px-6" aria-labelledby="hero-heading">
         <div className="max-w-4xl mx-auto text-center relative z-10">
-          <h1 id="hero-heading" className="font-bold mb-6 tracking-tight text-5xl leading-[1.1]">
+          <h1 id="hero-heading" className="font-bold mb-5 tracking-tight text-5xl leading-[1.1]">
             Förhandla utifrån data,<br />inte magkänsla
           </h1>
 
-          <p className="text-hero-foreground/70 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed whitespace-pre-line">
+          <p className="text-hero-foreground/70 text-lg md:text-xl max-w-2xl mx-auto mb-8 leading-relaxed whitespace-pre-line">
             Vi visar aktuella ersättningsnivåer för läkare och sjuksköterskor på bemanningsuppdrag. Sök efter din roll och region för att se svaret direkt.{"\n"}
             Baserat på SKR:s ramavtal för 2026 och AI-analyser av bemanningsbranschens marginaler.
           </p>
