@@ -72,9 +72,7 @@ const FILE_LABELS: Record<FileSlot, { label: string; desc: string }> = {
 
 const STEP_LABELS = [
   { n: 1, label: "Ladda upp" },
-  { n: 2, label: "Analys" },
-  { n: 3, label: "Sammanfattning" },
-  { n: 4, label: "Bekräftelse" },
+  { n: 5, label: "Bekräftelse" },
 ];
 
 // ── Component ────────────────────────────────────────────────────────────────
