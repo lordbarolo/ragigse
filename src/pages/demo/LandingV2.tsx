@@ -102,6 +102,7 @@ type InfraCard = { title: string; desc: string; href: string };
 const INFRASTRUCTURE: InfraCard[] = [
   { title: "Dokhus", desc: "Säker lagring och tidsbegränsad delning av legitimation, intyg och CV. Aldrig mer bifogade filer.", href: "/dokhus-info" },
   { title: "Ref-ID", desc: "Dina referenser får ETT samtal och verifierar därefter med bank-ID. Referenstagningen sparas i ett utrymme du kontrollerar. Du delar tillgång till uppgifterna med samarbetspartners. ", href: "/referenser-info" },
+  { title: "Eget bolag", desc: "Går du i tankar på att starta ett aktiebolag? Vår assistent svarar på dina frågor och hjälper dig ta de första stegen. Fördelarna är många för dig som återkommande arbetar som konsult.", href: "/eget-bolag" },
 ];
 
 const TRUST_POINTS = [
