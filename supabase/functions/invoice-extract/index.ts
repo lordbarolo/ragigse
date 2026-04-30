@@ -42,17 +42,19 @@ const TIDRAPPORT_TOOL = {
         // Format A: shift-based rows
         rader: {
           type: "array",
-          description: "Used when format=shifts. One entry per shift.",
+          description: "Used when format=shifts. One entry per shift across ALL pages and ALL weeks in the document.",
           items: {
             type: "object",
             properties: {
-              datum: { type: "string", description: "YYYY-MM-DD" },
+              datum: { type: "string", description: "YYYY-MM-DD. Derived from the year stated in the document and the day/month on the row." },
+              veckodag: { type: "string", description: "e.g. måndag, tisdag, lördag, söndag" },
               start_tid: { type: "string", description: "HH:MM" },
-              slut_tid: { type: "string", description: "HH:MM or HH:MM+1 if past midnight" },
+              slut_tid: { type: "string", description: "HH:MM. Append '+1' if the shift ends after midnight, e.g. '07:15+1'." },
               typ: { type: "string", enum: ["ordinarie", "aktiv_jour", "passiv_jour", "beredskap"] },
               rast_minuter: { type: "number", description: "Break in minutes as stated in document. If not stated, use 0." },
+              ar_helgdag: { type: "boolean", description: "True if the day is Saturday, Sunday, or a Swedish public holiday (1 maj, Kristi himmelsfärd, midsommarafton, julafton etc.)" },
             },
-            required: ["datum", "start_tid", "slut_tid", "typ", "rast_minuter"],
+            required: ["datum", "start_tid", "slut_tid", "typ", "rast_minuter", "ar_helgdag"],
             additionalProperties: false,
           },
         },
