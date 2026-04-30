@@ -129,7 +129,7 @@ const TAG_COLORS_LIGHT: Record<string, string> = {
 /* Make-stil pillar-flikar */
 const PILLARS = [
   { id: "data", label: "Datadriven analys", icon: LineChart },
-  { id: "agent", label: "Agentisk AI", icon: Sparkles },
+  { id: "agent", label: "Agentbaserad AI", icon: Sparkles },
   { id: "speed", label: "60-sekunders svar", icon: Zap },
   { id: "trust", label: "Verifierad data", icon: GitBranch },
 ];
