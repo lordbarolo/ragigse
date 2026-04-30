@@ -158,56 +158,57 @@ const FAKTURA_TOOL = {
 
 const SYSTEM_TIDRAPPORT_PASS1 = `Du extraherar arbetstidsdata ur svenska tidrapporter för vårdbemanning.
 
-VIKTIGT: Extrahera ENBART arbetstidsdata — datum, klockslag, antal timmar och typ av arbetstid.
-Extrahera INTE namn, arbetsplats, uppdragsgivare, ort eller annan metadata.
+KRITISKT — LÄS HELA DOKUMENTET:
+- Tidrapporter sträcker sig OFTA över FLERA SIDOR och FLERA VECKOR i samma PDF.
+- Du MÅSTE läsa varje sida och inkludera ALLA pass från ALLA veckor i listan "rader".
+- Om dokumentet visar v16 OCH v17, extrahera pass från BÅDA veckorna. Hoppa aldrig över sidor.
+- Innan du svarar: räkna antalet "Tidrapporterad"-rader i HELA dokumentet och bekräfta att din "rader"-lista har lika många poster.
 
-Anta INGENTING som inte uttryckligen anges i dokumentet. Om rast inte anges, ange 0. Om en tid inte syns, utelämna den.
+EXTRAHERA ENBART arbetstidsdata: datum, klockslag, antal timmar och typ.
+Extrahera INTE namn, arbetsplats, uppdragsgivare, ort eller annan metadata.
+Anta INGENTING som inte uttryckligen anges i dokumentet. Om rast inte anges, ange 0.
 
 Tidrapporter finns i två format:
-
 **Format A (shifts):** En rad per arbetspass med start- och sluttid.
-**Format B (weekly_summary):** En veckosammanfattning i tabellform med tidgrupper (Normaltid, Passiv jour vardag, Passiv jour helg, Vardag 17-21 Aktiv, Vardag 21-08 Aktiv, Helg Aktiv, etc.) och timmar per dag.
+**Format B (weekly_summary):** En veckosammanfattning i tabellform med tidgrupper (Normaltid, Passiv jour vardag/helg, Aktiv jour, etc.) och timmar per dag.
 
-Identifiera rätt format och extrahera därefter.
+Identifiera rätt format och extrahera därefter. Om dokumentet visar enskilda pass med klockslag — använd shifts.
 
-**Regler för helgdagar:**
-- 1 maj, 6 juni, Kristi himmelsfärd, julafton, juldagen, nyårsafton, nyårsdagen, påskdagen, pingstdagen etc. ska markeras som ar_helgdag=true
-- Helgdagar räknas som helg/storhelg för jour, INTE som vardag — även om de infaller på en veckodag
+**Klockslag som går över midnatt:**
+Om ett pass börjar på kvällen och slutar på morgonen efter, ange slut_tid med suffixet "+1", t.ex. "07:15+1". Detta gäller alla nattpass.
 
-**Regler för passiv/aktiv jour:**
-- "Passiv jour vardag" = tillgänglig via telefon på vardagar
-- "Passiv jour helg" = passiv jour på helg/helgdag
-- "Vardag 17-21 Aktiv" / "Vardag 21-08 Aktiv" = aktiv jourtid på vardagar
-- "Helg Aktiv" = aktivt arbete under jour på helg/helgdag
+**Helgdagar (ar_helgdag=true):**
+- Lördagar och söndagar: ALLTID true
+- Svenska helgdagar (1 maj, 6 juni, Kristi himmelsfärd, midsommarafton, julafton, juldagen, nyårsafton, nyårsdagen, påsk-/pingstdagen etc.): ALLTID true
+- Helgdagar räknas som helg/storhelg även om de infaller på en veckodag
 
-**Exempel — Format B (weekly_summary):**
-Normaltid: 0, 9h30m, 9h0m, 8h30m, 10h0m, 0, 0 → Totalt 37h 0m
-→ format: "weekly_summary", daglig_summering med en rad per dag
+**Passiv vs aktiv jour:**
+- "Passiv jour vardag/helg" = tillgänglig via telefon
+- "Aktiv jour" / "Vardag 17-21 Aktiv" / "Helg Aktiv" = aktivt arbete under jourtid
 
-**Exempel — Format A (shifts):**
-Rad: "15 jan 07:00-19:30 rast 30min"
-→ {"datum":"2026-01-15","start_tid":"07:00","slut_tid":"19:30","typ":"ordinarie","rast_minuter":30}
+**Summering:**
+Ange dokumentets EGEN totalsumma både som text (total_tid) och som decimal (total_timmar). Om dokumentet säger "Ni är schemalagd 30,25 timmar v.16" och "Ni är schemalagd 30 timmar v.17", är total_timmar = 60.25.
 
-Rad: "16 jan 07:00-16:00"
-→ {"datum":"2026-01-16","start_tid":"07:00","slut_tid":"16:00","typ":"ordinarie","rast_minuter":0}
+**Exempel — shifts:**
+"21 fredag — Schema kl 21:00 - 07:15 — Tidrapporterad"
+→ {"datum":"2023-04-21","veckodag":"fredag","start_tid":"21:00","slut_tid":"07:15+1","typ":"ordinarie","rast_minuter":0,"ar_helgdag":false}
 
-Läs av alla rader noga. Kontrollera att dina delsummor per dag stämmer med dokumentets "Total tid" per dag.`;
+Läs av alla rader noga. Kontrollera att antalet rader matchar antalet "Tidrapporterad"-statusar i hela PDF:en.`;
 
 const SYSTEM_TIDRAPPORT_PASS2 = `Extrahera arbetstidsdata ur den bifogade svenska tidrapporten.
 
-VIKTIGT: Extrahera ENBART datum, klockslag, antal timmar och typ av arbetstid.
-Extrahera INTE namn, arbetsplats, uppdragsgivare eller annan metadata.
-Anta INGENTING som inte uttryckligen anges. Om rast inte anges, sätt 0.
-
-Tidrapporter kan vara antingen:
-- **shifts**: En rad per arbetspass med klockslag
-- **weekly_summary**: En tabell/grid med tidgrupper och timmar per dag
+VIKTIGT — FLERSIDIGA DOKUMENT:
+Tidrapporter spänner ofta över flera sidor (t.ex. v16 på sida 1, v17 på sida 2). Du måste läsa ALLA sidor och inkludera ALLA arbetspass i utdatan. Hoppa aldrig över en sida.
 
 Var extra noggrann med:
-1. **Helgdagar** — 1 maj, Kristi himmelsfärd etc. är helgdagar och jour på dessa ska klassas som helg
-2. **Aktiv vs passiv jour** — "Passiv jour" = tillgänglig. "Aktiv" = faktiskt arbete under jourtid
-3. **Minuter** — Läs av timmar OCH minuter korrekt (t.ex. "2h 30m" = 2 timmar, 30 minuter)
-4. **Totaler** — Kontrollera att summan av alla dagar stämmer med dokumentets angivna total`;
+1. **Antal rader** — räkna "Tidrapporterad"-statusar i hela dokumentet och se till att du har lika många pass i "rader"
+2. **Nattpass** — om ett pass slutar efter midnatt, ange slut_tid med suffixet "+1" (t.ex. "07:15+1")
+3. **Helgdagar (ar_helgdag)** — lördag, söndag och svenska helgdagar = true
+4. **Aktiv vs passiv jour** — "Passiv jour" = tillgänglig. "Aktiv" = faktiskt arbete under jourtid
+5. **Datum** — använd ÅRTAL från dokumenthuvudet + dag/månad från rader för att bygga YYYY-MM-DD
+6. **Totalsumma** — ange total_timmar som decimal (summera alla veckor om flera) och total_tid som text
+
+Extrahera INTE namn, arbetsplats, uppdragsgivare. Anta INGENTING som inte explicit står i dokumentet.`;
 
 const SYSTEM_FAKTURA_PASS1 = `Du extraherar data ur svenska fakturor inom vårdbemanning (nationellt hyrbemanningsavtal). Identifiera varje fakturarad och klassificera som grundpris, ob_tillagg, jour_beredskap, reseschablon, avdrag eller ovrigt. Summor ska matcha fakturans totaler.
 
