@@ -6,6 +6,9 @@ verify_jwt = false
 [functions.confirm-referral]
 verify_jwt = false
 
+[functions.get-public-profile]
+verify_jwt = false
+
 [functions.create-checkout]
 verify_jwt = false
 
