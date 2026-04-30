@@ -129,7 +129,7 @@ const App = () => (
               <Route element={<ConsultantLayout />}>
                 <Route path="/consultant/forhandla" element={<Negotiate />} />
                 <Route path="/consultant/fakturakontroll" element={<Fakturakontroll />} />
-                <Route path="/consultant/fakturakontroll/ny" element={<FakturakontrollNy />} />
+                <Route path="/consultant/fakturakontroll/ny" element={<ProtectedRoute><FakturakontrollNy /></ProtectedRoute>} />
                 <Route path="/consultant/ersattning" element={<CompensationPreview />} />
 
                 {/* Protected — require login */}
