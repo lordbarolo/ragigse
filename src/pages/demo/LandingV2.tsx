@@ -228,7 +228,7 @@ export default function LandingV2() {
       <section className="border-y border-slate-200 py-5 bg-white overflow-hidden">
         <div className="flex justify-center px-5 sm:px-6 lg:px-10 mb-3">
           <span className="text-[11px] font-semibold tracking-[0.14em] uppercase text-slate-500 text-center">
-            LÖNENIVÅER BERÄKNADE PÅ STANDARDMARGINALER I 290 KOMMUNER OCH 21 REGIONER
+            LÖNENIVÅER BERÄKNADE PÅ STANDARDMARGINALER OCH OFFENTLIGA RAMAVTAL I 290 KOMMUNER OCH 21 REGIONER
           </span>
         </div>
         <div className="overflow-hidden whitespace-nowrap select-none">
