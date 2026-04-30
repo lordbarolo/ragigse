@@ -489,30 +489,59 @@ Deno.serve(async (req) => {
     }
 
     // 5. Check for summa-diskrepans between extracted rows and document totals
+    function parseDocTotal(summering: any): number | null {
+      if (!summering) return null;
+      // Prefer parsed decimal field if Gemini provided it
+      if (typeof summering.total_timmar === "number" && summering.total_timmar > 0) {
+        return summering.total_timmar;
+      }
+      const raw = (summering.total_tid as string | undefined) ?? "";
+      if (!raw) return null;
+      // Sum all "Xh Ym" occurrences
+      const hmRegex = /(\d+)\s*h\s*(\d+)?\s*m?/gi;
+      let total = 0;
+      let found = false;
+      let m: RegExpExecArray | null;
+      while ((m = hmRegex.exec(raw)) !== null) {
+        total += parseInt(m[1], 10) + (parseInt(m[2] || "0", 10) / 60);
+        found = true;
+      }
+      if (found) return total;
+      // Sum all decimal numbers (handle "30,25 + 30 timmar" or "60.25 h")
+      const decRegex = /(\d+(?:[.,]\d+)?)/g;
+      let dec = 0;
+      let decFound = false;
+      while ((m = decRegex.exec(raw)) !== null) {
+        const n = parseFloat(m[1].replace(",", "."));
+        if (!isNaN(n)) { dec += n; decFound = true; }
+      }
+      return decFound ? dec : null;
+    }
+
     let summaDiskrepans: { beraknad: number; dokumentet: number } | null = null;
     if (extractedTidrapport) {
       const tr = extractedTidrapport as any;
-      const summering = tr.summering;
-      if (summering?.total_tid) {
-        // Parse "135h 30m" format
-        const match = (summering.total_tid as string).match(/(\d+)h\s*(\d+)?m?/);
-        if (match) {
-          const docTotalH = parseInt(match[1], 10) + (parseInt(match[2] || "0", 10) / 60);
-          // Calculate sum from rows
-          let rowTotal = 0;
-          if (tr.format === "weekly_summary" && Array.isArray(tr.daglig_summering)) {
-            rowTotal = tr.daglig_summering.reduce((sum: number, d: any) => sum + (d.total_timmar || 0) + (d.total_minuter || 0) / 60, 0);
-          } else if (Array.isArray(tr.rader)) {
-            for (const r of tr.rader) {
-              const s = parseTimeStr(r.start_tid);
-              let e = parseTimeStr((r.slut_tid || "").replace("+1", ""));
-              if ((r.slut_tid || "").includes("+1") || e < s) e += 24;
-              rowTotal += Math.max(0, e - s - (r.rast_minuter || 0) / 60);
-            }
+      const docTotalH = parseDocTotal(tr.summering);
+      if (docTotalH !== null && docTotalH > 0) {
+        let rowTotal = 0;
+        if (tr.format === "weekly_summary" && Array.isArray(tr.daglig_summering)) {
+          rowTotal = tr.daglig_summering.reduce(
+            (sum: number, d: any) => sum + (d.total_timmar || 0) + (d.total_minuter || 0) / 60,
+            0,
+          );
+        } else if (Array.isArray(tr.rader)) {
+          for (const r of tr.rader) {
+            const s = parseTimeStr(r.start_tid);
+            let e = parseTimeStr((r.slut_tid || "").replace("+1", ""));
+            if ((r.slut_tid || "").includes("+1") || e < s) e += 24;
+            rowTotal += Math.max(0, e - s - (r.rast_minuter || 0) / 60);
           }
-          if (Math.abs(rowTotal - docTotalH) > 0.5) {
-            summaDiskrepans = { beraknad: Math.round(rowTotal * 10) / 10, dokumentet: Math.round(docTotalH * 10) / 10 };
-          }
+        }
+        if (Math.abs(rowTotal - docTotalH) > 0.5) {
+          summaDiskrepans = {
+            beraknad: Math.round(rowTotal * 100) / 100,
+            dokumentet: Math.round(docTotalH * 100) / 100,
+          };
         }
       }
     }
