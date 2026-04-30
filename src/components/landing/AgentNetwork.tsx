@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Stethoscope, Syringe, Brain, UserRound, ShieldCheck, Activity, Sparkles } from "lucide-react";
 
 /**
- * Constellation Settle — agentisk nätverksanimation.
+ * Constellation Settle — agentbaserad nätverksanimation.
  * Tre faser:
  *   boot   (0–1.2s)   satelliter studsar in, linjer ritas
  *   settle (1.2–2.5s) broadcast-pulse, allt landar

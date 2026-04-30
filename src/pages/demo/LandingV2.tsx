@@ -129,7 +129,7 @@ const TAG_COLORS_LIGHT: Record<string, string> = {
 /* Make-stil pillar-flikar */
 const PILLARS = [
   { id: "data", label: "Datadriven analys", icon: LineChart },
-  { id: "agent", label: "Agentisk AI", icon: Sparkles },
+  { id: "agent", label: "Agentbaserad AI", icon: Sparkles },
   { id: "speed", label: "60-sekunders svar", icon: Zap },
   { id: "trust", label: "Verifierad data", icon: GitBranch },
 ];
@@ -263,7 +263,7 @@ export default function LandingV2() {
         <div className="relative max-w-6xl mx-auto">
           <h2 className="font-bold text-center text-white tracking-tight leading-[1.1] text-[32px] sm:text-[44px] md:text-[56px] max-w-[920px] mx-auto mb-12 md:mb-16">
             Datadriven löneanalys och förhandling med{" "}
-            <span className="text-gradient-violet">agentisk intelligens</span> inbyggd
+            <span className="text-gradient-violet">agentbaserad intelligens</span> inbyggd
           </h2>
 
           {/* Tab pills */}
