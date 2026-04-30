@@ -323,7 +323,7 @@ function compareTidrapportPasses(
   const format1 = pass1.format as string;
   const format2 = pass2.format as string;
 
-  // Determine which array to use based on format
+  // Determine which array to use based on each pass's own format
   const rows1 = (format1 === "weekly_summary"
     ? (pass1.daglig_summering as TidrapportRad[])
     : (pass1.rader as TidrapportRad[])) ?? [];
@@ -331,8 +331,61 @@ function compareTidrapportPasses(
     ? (pass2.daglig_summering as TidrapportRad[])
     : (pass2.rader as TidrapportRad[])) ?? [];
 
+  // Helper to compute a day's total hours regardless of format
+  function dayTotalHours(r: TidrapportRad): number {
+    if (typeof r.total_timmar === "number" && r.total_timmar > 0) return r.total_timmar;
+    if (typeof r.normaltid_timmar === "number" || typeof r.passiv_jour_timmar === "number" || typeof r.aktiv_jour_timmar === "number") {
+      return (r.normaltid_timmar ?? 0) + (r.passiv_jour_timmar ?? 0) + (r.aktiv_jour_timmar ?? 0);
+    }
+    if (r.start_tid && r.slut_tid) {
+      const [sh, sm] = String(r.start_tid).split(":").map(Number);
+      const slut = String(r.slut_tid).replace("+1", "");
+      const [eh, em] = slut.split(":").map(Number);
+      let s = (sh || 0) + (sm || 0) / 60;
+      let e = (eh || 0) + (em || 0) / 60;
+      if (String(r.slut_tid).includes("+1") || e < s) e += 24;
+      return Math.max(0, e - s - ((r.rast_minuter as number) || 0) / 60);
+    }
+    return 0;
+  }
+
+  // Aggregate per-date totals for cross-format comparison
+  function aggregateByDate(rows: TidrapportRad[]): Map<string, number> {
+    const m = new Map<string, number>();
+    for (const r of rows) {
+      const d = r.datum;
+      if (!d) continue;
+      m.set(d, (m.get(d) ?? 0) + dayTotalHours(r));
+    }
+    return m;
+  }
+
   const confidence: ComparisonResult["confidence"] = [];
   const merged: TidrapportRad[] = [];
+
+  if (format1 !== format2) {
+    // Cross-format comparison: compare day-totals only
+    const agg1 = aggregateByDate(rows1);
+    const agg2 = aggregateByDate(rows2);
+    const allDates = new Set([...agg1.keys(), ...agg2.keys()]);
+    let i = 0;
+    for (const d of allDates) {
+      const t1 = agg1.get(d) ?? 0;
+      const t2 = agg2.get(d) ?? 0;
+      const match = Math.abs(t1 - t2) <= 0.5;
+      confidence.push({
+        index: i++,
+        match,
+        pass1: { datum: d, total_timmar: t1 },
+        pass2: { datum: d, total_timmar: t2 },
+      });
+    }
+    // Use pass1 rows as merged (preserve richer structure)
+    merged.push(...rows1);
+    const matchCount = confidence.filter((c) => c.match).length;
+    const overallConfidence = confidence.length > 0 ? matchCount / confidence.length : 1;
+    return { merged, confidence, overallConfidence };
+  }
 
   for (let i = 0; i < rows1.length; i++) {
     const r1 = rows1[i];
