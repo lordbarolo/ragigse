@@ -199,7 +199,7 @@ export default function LandingV2() {
 
       {/* ═══════════════════ 1. HERO med inline-form + porträtt ═══════════════════ */}
       <section className="relative overflow-hidden px-5 sm:px-6 lg:px-10 hero-smooth-bg">
-        <div className="relative z-10 max-w-3xl mx-auto flex flex-col items-center text-center pt-14 md:pt-24 pb-8 md:pb-12">
+        <div className="relative z-10 max-w-3xl mx-auto flex flex-col items-center text-center pt-14 md:pt-24 pb-3 md:pb-4">
           <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-medium text-[hsl(256_100%_85%)] bg-[hsl(256_100%_67%_/_0.18)] border border-[hsl(256_100%_67%_/_0.35)] rounded-full px-3 py-1 mb-5 uppercase tracking-wider">
             <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="currentColor" /></svg>
             För läkare &amp; sjuksköterskor
@@ -225,7 +225,7 @@ export default function LandingV2() {
       <div className="bg-[#F7F5FB] text-slate-900 [&_.text-white]:!text-slate-900 [&_.text-white\/85]:!text-slate-700 [&_.text-white\/80]:!text-slate-700 [&_.text-white\/75]:!text-slate-600 [&_.text-white\/70]:!text-slate-600 [&_.text-white\/65]:!text-slate-600 [&_.text-white\/60]:!text-slate-500 [&_.text-white\/55]:!text-slate-500 [&_.text-white\/50]:!text-slate-500 [&_.text-white\/45]:!text-slate-400 [&_.border-white\/10]:!border-slate-200 [&_.border-white\/15]:!border-slate-200 [&_.glass]:!bg-white [&_.glass]:!border-slate-200 [&_.glass]:!shadow-sm [&_.glass-strong]:!bg-white [&_.glass-strong]:!border-slate-200 [&_.glass-subtle]:!bg-white [&_.glass-subtle]:!border-slate-200 [&_.bg-white\/5]:!bg-slate-100 [&_.bg-white\/8]:!bg-slate-100 [&_.hover\:bg-white\/5:hover]:!bg-slate-100">
 
       {/* ═══════════════════ 2. RULLANDE ERSÄTTNINGSBANNER ═══════════════════ */}
-      <section className="border-y border-slate-200 py-5 bg-white overflow-hidden">
+      <section className="border-y border-slate-200 pt-3 pb-4 bg-white overflow-hidden">
         <div className="flex justify-center px-5 sm:px-6 lg:px-10 mb-3">
           <span className="text-[11px] font-semibold tracking-[0.14em] uppercase text-slate-500 text-center">
             LÖNENIVÅER BERÄKNADE PÅ STANDARDMARGINALER OCH OFFENTLIGA RAMAVTAL I 290 KOMMUNER OCH 21 REGIONER
