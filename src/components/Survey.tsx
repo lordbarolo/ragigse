@@ -741,7 +741,10 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
       </div>
 
       {/* Navigation */}
-      <div className={`flex gap-3 mt-8 ${(step === 3 || step === 5) ? "sticky bottom-0 bg-background pt-3 pb-4 -mx-1 px-1 z-10" : ""}`}>
+      <div
+        className={`flex gap-3 mt-8 ${(step === 3 || step === 5) ? "sticky bg-background pt-3 pb-4 -mx-1 px-1 z-10" : ""}`}
+        style={(step === 3 || step === 5) ? { bottom: keyboardOffset } : undefined}
+      >
         {(step > 1 || onBack) && (
           <button
             onClick={handleBack}
