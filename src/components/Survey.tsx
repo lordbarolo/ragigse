@@ -198,18 +198,10 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
   }, [locations]);
 
   const filteredKommunerSearch = useMemo(() => {
-    if (!kommunSearch.trim()) {
-      // Show top 7 popular first, then fill remaining alphabetically
-      const topSet = new Set(topKommuner);
-      const topItems = topKommuner
-        .map((k) => allKommuner.find((ak) => ak.kommun === k))
-        .filter(Boolean) as typeof allKommuner;
-      const rest = allKommuner.filter((k) => !topSet.has(k.kommun));
-      return [...topItems, ...rest].slice(0, 16);
-    }
-    const q = kommunSearch.toLowerCase();
-    return allKommuner.filter((k) => k.kommun.toLowerCase().includes(q));
-  }, [allKommuner, kommunSearch, topKommuner]);
+    const q = kommunSearch.trim().toLowerCase();
+    if (!q) return [] as typeof allKommuner;
+    return allKommuner.filter((k) => k.kommun.toLowerCase().includes(q)).slice(0, 20);
+  }, [allKommuner, kommunSearch]);
 
   const filteredKommuner = useMemo(() => {
     if (!locations || !selectedRegion) return [];
