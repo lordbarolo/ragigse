@@ -181,12 +181,6 @@ export default function ConsultantTrackContent({
               Analysen avser <span className="font-semibold text-foreground">grundersättning</span>. Eventuella OB-tillägg, jour- och beredskapsersättning tillkommer enligt gällande avtal.
             </p>
           </div>
-          <div className="flex items-start gap-2.5">
-            <Info className="w-3.5 h-3.5 text-muted-foreground mt-0.5 shrink-0" />
-            <p className="text-hint leading-relaxed">
-              För <span className="font-semibold text-foreground">privata vårdgivare</span> gäller inte SKR:s nationella ramavtal. Ersättningen förhandlas fritt och kan avvika från analysen.
-            </p>
-          </div>
         </div>
       )}
 
