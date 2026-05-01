@@ -198,18 +198,10 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
   }, [locations]);
 
   const filteredKommunerSearch = useMemo(() => {
-    if (!kommunSearch.trim()) {
-      // Show top 7 popular first, then fill remaining alphabetically
-      const topSet = new Set(topKommuner);
-      const topItems = topKommuner
-        .map((k) => allKommuner.find((ak) => ak.kommun === k))
-        .filter(Boolean) as typeof allKommuner;
-      const rest = allKommuner.filter((k) => !topSet.has(k.kommun));
-      return [...topItems, ...rest].slice(0, 16);
-    }
-    const q = kommunSearch.toLowerCase();
-    return allKommuner.filter((k) => k.kommun.toLowerCase().includes(q));
-  }, [allKommuner, kommunSearch, topKommuner]);
+    const q = kommunSearch.trim().toLowerCase();
+    if (!q) return [] as typeof allKommuner;
+    return allKommuner.filter((k) => k.kommun.toLowerCase().includes(q)).slice(0, 20);
+  }, [allKommuner, kommunSearch]);
 
   const filteredKommuner = useMemo(() => {
     if (!locations || !selectedRegion) return [];
@@ -575,10 +567,10 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
 
         {step === 3 && (
           <StepWrapper title="Var jobbar du?">
-            <div className="rounded-2xl border border-border bg-card p-5 space-y-4 flex flex-col items-center justify-center flex-1">
-               <p className="text-body-sm text-center max-w-xs">
-                  Ange orten där du ska jobba, startlistan visar vanligaste valen.
-               </p>
+            <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 space-y-3">
+              <p className="text-body-sm text-center">
+                Sök på kommunen där du ska jobba.
+              </p>
 
               {/* Search input */}
               <div className="relative">
@@ -588,48 +580,62 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                   type="text"
                   value={kommunSearch}
                   onChange={(e) => setKommunSearch(e.target.value)}
-                  placeholder="Sök kommun"
-                   className="h-12 pl-12 text-base"
+                  placeholder="Sök kommun (t.ex. Stockholm)"
+                  className="h-12 pl-12 text-base"
                 />
               </div>
 
-              {/* Results — 2-col grid on desktop, 1-col on mobile, fixed scroll height */}
-              <div className="rounded-xl border border-border overflow-hidden">
-                <div className="max-h-[220px] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-primary/25">
-                  {filteredKommunerSearch.length === 0 ? (
-                    <p className="py-8 text-center text-body-sm">Inga kommuner hittades</p>
-                  ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-border/50">
-                      {filteredKommunerSearch.map((k) => (
-                        <button
-                          key={k.kommun}
-                          onClick={() => {
-                            setData({ ...data, kommun: k.kommun });
-                            setSelectedRegion(k.region);
-                          }}
-                          className={`group w-full py-3 px-4 text-left text-sm transition-all flex items-center justify-between bg-card ${
-                            data.kommun === k.kommun
-                              ? "bg-primary/[0.08] border-l-2 border-l-primary"
-                              : "hover:bg-primary/[0.04]"
-                          }`}
-                        >
-                          <div className="flex items-center gap-2 min-w-0">
-                            {data.kommun === k.kommun && (
-                              <Check className="w-4 h-4 text-primary shrink-0" />
-                            )}
-                            <div className="min-w-0">
-                              <span className="font-medium text-foreground truncate block">{k.kommun}</span>
-                              <span className="text-xs text-muted-foreground truncate block">{k.region}</span>
+              {/* Results — only shown when user has typed */}
+              {kommunSearch.trim().length > 0 && (
+                <div className="rounded-xl border border-border overflow-hidden">
+                  <div className="max-h-[180px] sm:max-h-[240px] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-primary/25">
+                    {filteredKommunerSearch.length === 0 ? (
+                      <p className="py-6 text-center text-body-sm">Inga kommuner hittades</p>
+                    ) : (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-border/50">
+                        {filteredKommunerSearch.map((k) => (
+                          <button
+                            key={k.kommun}
+                            onClick={() => {
+                              setData({ ...data, kommun: k.kommun });
+                              setSelectedRegion(k.region);
+                            }}
+                            className={`group w-full py-2.5 px-4 text-left text-sm transition-all flex items-center justify-between bg-card ${
+                              data.kommun === k.kommun
+                                ? "bg-primary/[0.08] border-l-2 border-l-primary"
+                                : "hover:bg-primary/[0.04]"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2 min-w-0">
+                              {data.kommun === k.kommun && (
+                                <Check className="w-4 h-4 text-primary shrink-0" />
+                              )}
+                              <div className="min-w-0">
+                                <span className="font-medium text-foreground truncate block">{k.kommun}</span>
+                                <span className="text-xs text-muted-foreground truncate block">{k.region}</span>
+                              </div>
                             </div>
-                          </div>
-                          <ArrowRight className="w-4 h-4 text-muted-foreground/20 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
-                        </button>
-                      ))}
-                    </div>
-                  )}
+                            <ArrowRight className="w-4 h-4 text-muted-foreground/20 group-hover:text-primary group-hover:translate-x-0.5 transition-all shrink-0" />
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
 
+              {/* Selected confirmation when no search active */}
+              {kommunSearch.trim().length === 0 && data.kommun && (
+                <div className="rounded-xl border border-primary/30 bg-primary/[0.06] py-2.5 px-4 flex items-center gap-2">
+                  <Check className="w-4 h-4 text-primary shrink-0" />
+                  <div className="min-w-0">
+                    <span className="font-medium text-foreground truncate block text-sm">{data.kommun}</span>
+                    {selectedRegion && (
+                      <span className="text-xs text-muted-foreground truncate block">{selectedRegion}</span>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </StepWrapper>
         )}
