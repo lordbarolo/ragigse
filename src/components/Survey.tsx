@@ -91,6 +91,24 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
   const [kommunSearch, setKommunSearch] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
 
+  // Visual viewport offset — keeps sticky nav above the on-screen keyboard on mobile
+  const [keyboardOffset, setKeyboardOffset] = useState(0);
+  useEffect(() => {
+    const vv = typeof window !== "undefined" ? window.visualViewport : null;
+    if (!vv) return;
+    const update = () => {
+      const offset = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+      setKeyboardOffset(offset);
+    };
+    update();
+    vv.addEventListener("resize", update);
+    vv.addEventListener("scroll", update);
+    return () => {
+      vv.removeEventListener("resize", update);
+      vv.removeEventListener("scroll", update);
+    };
+  }, []);
+
   // Commute state
   const [commute, setCommute] = useState<CommuteType>("");
 
@@ -723,7 +741,10 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
       </div>
 
       {/* Navigation */}
-      <div className={`flex gap-3 mt-8 ${(step === 3 || step === 5) ? "sticky bottom-0 bg-background pt-3 pb-4 -mx-1 px-1 z-10" : ""}`}>
+      <div
+        className={`flex gap-3 mt-8 ${(step === 3 || step === 5) ? "sticky bg-background pt-3 pb-4 -mx-1 px-1 z-10" : ""}`}
+        style={(step === 3 || step === 5) ? { bottom: keyboardOffset } : undefined}
+      >
         {(step > 1 || onBack) && (
           <button
             onClick={handleBack}
