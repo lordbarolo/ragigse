@@ -91,6 +91,24 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
   const [kommunSearch, setKommunSearch] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
 
+  // Visual viewport offset — keeps sticky nav above the on-screen keyboard on mobile
+  const [keyboardOffset, setKeyboardOffset] = useState(0);
+  useEffect(() => {
+    const vv = typeof window !== "undefined" ? window.visualViewport : null;
+    if (!vv) return;
+    const update = () => {
+      const offset = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+      setKeyboardOffset(offset);
+    };
+    update();
+    vv.addEventListener("resize", update);
+    vv.addEventListener("scroll", update);
+    return () => {
+      vv.removeEventListener("resize", update);
+      vv.removeEventListener("scroll", update);
+    };
+  }, []);
+
   // Commute state
   const [commute, setCommute] = useState<CommuteType>("");
 
