@@ -149,6 +149,27 @@ export type Database = {
         }
         Relationships: []
       }
+      app_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          updated_by: string | null
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          updated_by?: string | null
+          value: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          updated_by?: string | null
+          value?: Json
+        }
+        Relationships: []
+      }
       assignment_feedback: {
         Row: {
           created_at: string
@@ -4467,6 +4488,7 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
+      get_feature_flag: { Args: { _key: string }; Returns: Json }
       get_referral_by_token: {
         Args: { _token: string }
         Returns: {

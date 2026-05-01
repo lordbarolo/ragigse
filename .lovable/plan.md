@@ -1,43 +1,92 @@
-## Mål
-Ersätt nuvarande `AgentNetwork` (12 spretiga noder, ständigt pulserande linjer och floatande satelliter) med en lugnare, mer fokuserad agentisk animation till höger i hero — som **rör sig mycket initialt** och sedan **lugnar ner sig** till ett stilla, andande sluttillstånd.
+# Slutlig plan: Frys v1.0 + Marketplace Isolation
 
-## Designkoncept: "Constellation Settle"
-En central CompCare-nod med **6 satellitnoder** (istället för 12) i en ren cirkulär formation. Animationen har tre faser:
+## 0. Direktiv som gäller från och med nu (memory-regel)
 
-1. **0–1.2s — Boot:** Satelliter flyger in från slumpade positioner utanför viewporten, linjer ritas en efter en från center, datapaket skjuts ut snabbt mot varje nod (stagger).
-2. **1.2–2.5s — Settle:** Noderna studsar mjukt på plats (spring easing), linjerna bleknar in till låg opacitet, ett sista "broadcast"-pulse går ut från center.
-3. **2.5s+ — Idle (lugnt sluttillstånd):** Bara mycket subtila tecken på liv:
-   - Center-noden andas långsamt (8s scale 1.0 → 1.04 → 1.0).
-   - En enda långsam datapuls vandrar från center till en slumpad satellit var ~4s (inte 0.6s som nu).
-   - Halos är statiska/mycket dämpade — ingen konstant pulsering på alla noder samtidigt.
-   - Inga floatande noder. Inga blinkande linjer.
+**Marketplace Isolation Rule** läggs in i `mem://index.md` som Core-regel så att alla framtida AI-sessioner respekterar den automatiskt:
 
-Resultat: imponerande "den vaknar till liv"-känsla första 2.5 sekunderna, sedan en stilla, professionell konstellation som inte stjäl uppmärksamhet från hero-copy och formuläret.
+> All marketplace- och agentbaserad-förhandlings-utveckling sker bakom `VITE_FEATURE_MARKETPLACE`-flag, i `mp_*`-tabeller och `marketplace-*` edge functions med `/marketplace`-route-prefix. Befintlig kod, routes, copy, DB-schema, RLS-policies, cron-jobb och edge functions rörs ALDRIG utan explicit OK från användaren. Default: flagga OFF i prod.
 
-## Tekniska ändringar
+Detta är en hård regel — ingen tolkning, ingen "smart sammanslagning", inga "passa på"-refaktoreringar i befintliga filer.
 
-**Fil:** `src/components/landing/AgentNetwork.tsx` (skrivs om)
-- Reducera `NODES` från 12 → 6, jämnt fördelade i en cirkel (radie ~38%).
-- Ta bort `agent-float` och `agent-halo` på alla satelliter (orsaken till "spretigheten").
-- Lägg till `useState` för `phase: 'boot' | 'settle' | 'idle'` styrd av `setTimeout`.
-- Boot-fas: satelliter renderas med `transform: translate(randomX, randomY) scale(0)` och animeras till slutposition via CSS-transition (cubic-bezier spring, 900ms stagger 120ms).
-- Linjer ritas med `stroke-dasharray` + animerad `stroke-dashoffset` (draw-in effekt) under boot.
-- Idle-fas: ett `setInterval` på **4000ms** (inte 600ms) väljer en nod för en mjuk datapuls.
-- Center-nod får långsam `breathe` keyframe (8s).
+## 1. De 9 godkända kritiska punkterna (sammanfattning)
 
-**Fil:** `src/index.css`
-- Ta bort/ersätt `agent-float` och `agent-halo` keyframes (kvarstår nu som källa till oroligheten).
-- Lägg till nya keyframes:
-  - `agent-boot-in` — scale + translate spring för satelliter.
-  - `agent-line-draw` — stroke-dashoffset från full till 0 (line draw-in).
-  - `agent-breathe` — 8s mycket subtil scale 1 → 1.04 → 1 för center.
-  - `agent-broadcast` — engångs ring-pulse runt center vid övergång boot → idle.
+Alla 9 punkter från tidigare review är inbakade i denna plan:
+1. Feature flag både i klient (`VITE_FEATURE_MARKETPLACE`) och DB (`app_settings.marketplace_enabled`) — dubbelt skydd
+2. Strikt namnrymd: `mp_*` för tabeller, `marketplace-*` för edge functions, `/marketplace/*` för routes
+3. Inga `ALTER TABLE` på befintliga tabeller — endast nya `mp_*`-tabeller
+4. Egna RLS-policies per `mp_*`-tabell, ingen återanvändning av existerande policies
+5. Egna cron-jobb med `mp_`-prefix, befintliga jobb orörda
+6. Diff-check före varje marketplace-PR: lista över rörda filer får inte innehålla något utanför `marketplace/`-, `mp_`- eller `/marketplace`-namnrymd (förutom router-registrering och flag-läsning)
+7. Rollback via chat-revert + DB-flag + drop av `mp_*`-tabeller
+8. `LAUNCH_SNAPSHOT.md` som baseline-dokumentation av v1.0
+9. Memory-regel som persisterar direktivet över sessioner
 
-**Fil:** `src/pages/demo/LandingV2.tsx`
-- Ingen layoutändring — komponenten sitter redan korrekt i höger kolumn (rad 207–210).
+## 2. Steg 0 — Leverabel innan marketplace-bygget startar
 
-## Vad användaren kommer märka
-- Tydlig "wow"-moment vid sidladdning (första ~2.5s).
-- Lugn, ren konstellation efter det — inga 12 ikoner som svävar och pulserar samtidigt.
-- Center-noden fortsätter andas så det inte ser "fruset" ut.
-- Endast en datapuls åt gången, glesare intervall — fokus stannar på hero-texten.
+Tre konkreta saker, helt utan att röra befintlig produktkod:
+
+### 2.1 `LAUNCH_SNAPSHOT.md`
+Baseline-dokumentation i repo-roten:
+- Lista över alla aktiva routes (från `src/App.tsx`)
+- Lista över alla edge functions (från `supabase/config.toml`)
+- Lista över alla aktiva pg_cron-jobb
+- Lista över alla storage buckets + privacy-status
+- Git/chat-revert-punkt: meddelandet märks "v1.0-launch"
+- Datum + version
+
+### 2.2 Feature flag-infrastruktur
+Migration som skapar:
+- `app_settings`-tabell: `key text primary key, value jsonb, updated_at timestamptz`
+- Seed-rad: `('marketplace_enabled', 'false'::jsonb)`
+- RLS: endast admin kan UPDATE; alla autentiserade kan SELECT på `marketplace_enabled`-raden via en safe-view eller security-definer-funktion `public.get_feature_flag(key text)`
+- Klient-helper `src/lib/featureFlags.ts` som läser `VITE_FEATURE_MARKETPLACE` (build-time) OCH `marketplace_enabled` från DB (runtime). Båda måste vara true för att marketplace-UI ska visas.
+
+Inget UI ändras i detta steg — bara infra.
+
+### 2.3 Memory-regel
+Skriv `mem://constraints/marketplace-isolation.md` med fullständig regel + reference den i Core-sektionen i `mem://index.md`.
+
+## 3. Marketplace-bygget (kommer EFTER ditt OK på steg 0)
+
+När du sagt "kör marketplace steg 1" startar isolerat arbete enligt:
+
+### 3.1 Namnrymd (hård)
+- DB-tabeller: `mp_listings`, `mp_offers`, `mp_negotiations`, `mp_agent_runs`, etc.
+- Edge functions: `marketplace-create-listing`, `marketplace-agent-negotiate`, etc.
+- Routes: `/marketplace`, `/marketplace/listing/:id`, `/marketplace/agent/:id`
+- React-kod: `src/pages/marketplace/*`, `src/components/marketplace/*`, `src/hooks/marketplace/*`
+
+### 3.2 Skydd mot läckage
+- Marketplace-routes registreras i `App.tsx` bakom `if (featureFlag) { ... }`-block
+- Inga marketplace-imports i befintliga komponenter
+- Diff-check körs före varje commit: `git diff --name-only` får bara matcha tillåtna paths
+
+### 3.3 Testbarhet
+- `VITE_FEATURE_MARKETPLACE=true` lokalt + i preview
+- `marketplace_enabled=false` i prod-DB tills du säger "lansera"
+- Ingen "halvvägs"-exponering där en användare kan snubbla in
+
+## 4. Rollback-vägar (tre lager)
+
+1. **Chat-revert**: tillbaka till "v1.0-launch"-meddelandet → hela repot återställs
+2. **DB-flag**: `UPDATE app_settings SET value='false' WHERE key='marketplace_enabled'` → marketplace försvinner instant utan deploy
+3. **DB-cleanup**: `DROP TABLE mp_*` påverkar ingen befintlig data eftersom inga FK pekar in i existerande tabeller
+
+## 5. Tekniska detaljer
+
+**Filer som skapas i steg 0:**
+- `LAUNCH_SNAPSHOT.md` (ny, repo-rot)
+- `supabase/migrations/<timestamp>_app_settings.sql` (ny migration)
+- `src/lib/featureFlags.ts` (ny helper)
+- `mem://constraints/marketplace-isolation.md` (ny memory)
+- `mem://index.md` (uppdaterad — Core + Memories-sektion)
+
+**Filer som INTE rörs i steg 0:**
+Alla andra. Inga ändringar i `App.tsx`, `Survey.tsx`, edge functions, RLS eller någon befintlig komponent.
+
+**Säkerhetsgrind:**
+Efter migrationen körs `security--run_security_scan` + `supabase--linter` för att säkra att `app_settings` har korrekt RLS och att inga nya warnings introducerats. Resultat loggas i chat före leverabel-bekräftelse.
+
+## 6. Vad som händer när du säger "kör"
+
+Jag växlar till build-mode och levererar exakt steg 0 (de tre artefakterna ovan), inget annat. Sen pausar jag och väntar på "kör marketplace steg 1" innan något i `mp_*`-namespace skapas.
