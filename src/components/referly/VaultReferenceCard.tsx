@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Shield, ShieldCheck, ShieldAlert, RefreshCw, Paperclip, Clock, FileText } from "lucide-react";
