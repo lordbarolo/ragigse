@@ -209,7 +209,7 @@ export default function LandingV2() {
             <span className="text-gradient-violet">är värd?</span>
           </h1>
           <p className="text-[16px] sm:text-lg text-white/75 leading-relaxed mb-8 max-w-[560px]">
-            Vi visar ersättningsnivåer för läkare och sjuksköterskor inom bemanning. Baserat på SKR:s ramavtal för 2026 och djupgående AI-analyser av bemanningsbranschens marginaler.
+            Se om din lön är marknadsmässig och få förhandlingsstöd direkt i mobilen.
           </p>
           <div className="w-full max-w-[560px] text-center">
             <HeroInlineForm />
