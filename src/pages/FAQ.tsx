@@ -36,7 +36,7 @@ const FAQ_ITEMS = [
   {
     question: "Vad innehåller CompCare-rapporten?",
     answer:
-      "Rapporten visar ramavtalspriser för din yrkesroll och zon, ersättningsspannet efter marginal, samt hur din ersättning förhåller sig till marknadens percentiler.",
+      "Rapporten visar ramavtalspriser för din yrkesroll och zon, marknadmässig lön efter marginal, samt hur din ersättning förhåller sig till marknadens percentiler.",
   },
   {
     question: "Skiljer sig ersättningarna mellan olika kommuner?",
