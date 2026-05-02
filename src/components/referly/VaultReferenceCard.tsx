@@ -1,3 +1,4 @@
+import { forwardRef } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Shield, ShieldCheck, ShieldAlert, RefreshCw, Paperclip, Clock, FileText } from "lucide-react";
@@ -38,7 +39,7 @@ function formatDate(dateStr: string | null): string {
   return new Date(dateStr).toLocaleDateString("sv-SE", { year: "numeric", month: "short", day: "numeric" });
 }
 
-export function VaultReferenceCard({ reference, onRefresh }: VaultReferenceCardProps) {
+export const VaultReferenceCard = forwardRef<HTMLDivElement, VaultReferenceCardProps>(({ reference, onRefresh }, ref) => {
   const config = VERIFICATION_CONFIG[reference.verification_level] || VERIFICATION_CONFIG.submitted;
   const isPending = reference.group === "pending";
   const isStale = reference.group === "stale";
@@ -169,4 +170,5 @@ export function VaultReferenceCard({ reference, onRefresh }: VaultReferenceCardP
       )}
     </div>
   );
-}
+});
+VaultReferenceCard.displayName = "VaultReferenceCard";
