@@ -318,7 +318,7 @@ export default function LandingV2() {
               </div>
 
               <div className="absolute top-12 right-2 sm:right-8 glass-strong rounded-2xl p-5 w-[220px] shadow-[0_12px_50px_-10px_hsl(var(--glow-pink)/0.5)] rotate-[3deg]">
-                <div className="text-[10px] uppercase tracking-wider text-white/50 mb-2">Ersättningsspann</div>
+                <div className="text-[10px] uppercase tracking-wider text-white/50 mb-2">Marknadmässig lön</div>
                 <div className="text-2xl font-bold text-white">1 240 kr/h</div>
                 <div className="text-[11px] text-[hsl(190_95%_70%)] mt-1 text-indigo-800">+8% mot fjolåret</div>
                 <div className="mt-3 h-12 flex items-end gap-1">
