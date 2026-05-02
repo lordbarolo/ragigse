@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Menu, X, ShieldCheck, Lock, FileLock2, Database, MapPin, History, Sparkles, Zap, LineChart, GitBranch } from "lucide-react";
+import { ArrowRight, Menu, X, ShieldCheck, Lock, FileLock2, Database, MapPin, History, Sparkles, Zap, LineChart, GitBranch, Receipt } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 import HeroInlineForm from "@/components/landing/HeroInlineForm";
 
@@ -87,7 +87,7 @@ const PRIMARY_PRODUCTS: ProductCard[] = [
   },
   {
     step: "03",
-    title: "Fakturakollen",
+    title: "Fakturagranskning",
     tagline: "Få det du förtjänat",
     desc: "AI-analyser av fakturor och tidrapporter de senaste 2 åren. Vi ser vad du missat. Hittar vi inget, betalar du inget.",
     tag: "No cure – no pay",
@@ -135,7 +135,7 @@ const PILLARS = [
 ];
 
 const PILLAR_CONTENT: Record<string, { title: string; desc: string }> = {
-  data:  { title: "Skalbar & datadriven analys", desc: "Vi har analyserat 20 000+ avtal samt data från de senaste 5 åren för att ge dig ett spann som faktiskt speglar marknadens ersättningar — inte en gissning." },
+  data:  { title: "Skalbar & datadriven analys", desc: "Vi har analyserat 20 000+ avtal för att ge dig en siffra som faktiskt speglar marknaden — inte en gissning." },
   agent: { title: "Autonoma agenter, alltid på", desc: "Förhandlingsagenten håller koll på prisuppdateringar, ramavtalsändringar och nya avrop åt dig — och pingar när något händer." },
   speed: { title: "Från fråga till svar — på 60 sekunder", desc: "Inga formulär. Välj roll och ort, få din marknadmässig lön direkt. Hela rapporten levereras innan du hinner brygga kaffet." },
   trust: { title: "Verifierad data, hela vägen", desc: "All ersättningsdata kommer direkt från SKR:s ramavtal 2026. Uppgifter som alltid varit offentliga men aldrig paketerade för dig som jobbar." },
@@ -146,7 +146,21 @@ export default function LandingV2() {
   useTimeOnPage("landing");
   const [menuOpen, setMenuOpen] = useState(false);
   const [activePillar, setActivePillar] = useState("data");
-  useEffect(() => { trackEvent("landing_viewed"); }, []);
+  const [invoiceStep, setInvoiceStep] = useState(0);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    trackEvent("landing_viewed");
+    
+    // Auto-rotate invoice card steps
+    intervalRef.current = setInterval(() => {
+      setInvoiceStep((s) => (s + 1) % 3);
+    }, 2800);
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, []);
 
   return (
     <div className="w-full text-foreground font-sans">
@@ -209,7 +223,7 @@ export default function LandingV2() {
             <span className="text-gradient-violet">är värd?</span>
           </h1>
           <p className="text-[16px] sm:text-lg text-white/75 leading-relaxed mb-8 max-w-[560px]">
-            Vi visar ersättningsnivåer för läkare och sjuksköterskor inom bemanning. Baserat på SKR:s ramavtal för 2026 och djupgående AI-analyser av bemanningsbranschens marginaler.
+            Se om din lön är marknadsmässig och få förhandlingsstöd direkt i mobilen.
           </p>
           <div className="w-full max-w-[560px] text-center">
             <HeroInlineForm />
@@ -332,23 +346,78 @@ export default function LandingV2() {
                 </div>
               </div>
 
-              <div className="absolute bottom-0 left-6 sm:left-12 glass rounded-2xl p-4 w-[200px] shadow-[0_8px_40px_-8px_hsl(var(--glow-cyan)/0.4)] rotate-[2deg]">
+              <div 
+                className="absolute bottom-0 left-6 sm:left-12 glass rounded-2xl p-4 w-[230px] shadow-[0_8px_40px_-8px_hsl(150_80%_50%/0.35)] rotate-[2deg] cursor-pointer group"
+                onMouseEnter={() => intervalRef.current && clearInterval(intervalRef.current)}
+                onMouseLeave={() => {
+                  intervalRef.current = setInterval(() => setInvoiceStep((s) => (s + 1) % 3), 2800);
+                }}
+                onClick={() => setInvoiceStep((s) => (s + 1) % 3)}
+              >
                 <div className="flex items-center gap-2 mb-2.5">
-                  <div className="w-6 h-6 rounded-md bg-[hsl(190_95%_55%_/_0.25)] flex items-center justify-center">
-                    <LineChart className="w-3.5 h-3.5 text-[hsl(190_95%_75%)]" />
+                  <div className="w-7 h-7 rounded-md bg-emerald-400/20 flex items-center justify-center animate-pulse">
+                    <Receipt className="w-4 h-4 text-emerald-300" />
                   </div>
-                  <div className="text-[11px] font-semibold text-white">Uppdragsradar</div>
+                  <div className="text-[12px] font-semibold text-white">Fakturagranskning</div>
                 </div>
-                <div className="text-[10px] text-white/60 mb-2">3 nya prognoser i Stockholm</div>
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between text-[10px]">
-                    <span className="text-white/70">Anestesi v.18</span>
-                    <span className="text-[hsl(190_95%_75%)] font-semibold">92%</span>
-                  </div>
-                  <div className="flex items-center justify-between text-[10px]">
-                    <span className="text-white/70">IVA v.19</span>
-                    <span className="text-[hsl(190_95%_75%)] font-semibold">78%</span>
-                  </div>
+
+                <div className="min-h-[64px] transition-all duration-300">
+                  {invoiceStep === 0 && (
+                    <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+                      <div className="text-[11px] text-white/75 mb-2">Skannar faktura...</div>
+                      <div className="space-y-1.5">
+                        <div className="h-1 rounded bg-white/10 overflow-hidden">
+                          <div className="h-full bg-emerald-400/40 animate-[shimmer_2s_infinite]" style={{ width: '60%' }} />
+                        </div>
+                        <div className="flex items-center gap-1.5 text-[10px] text-white/60">
+                          <div className="w-1 h-1 rounded-full bg-emerald-400" />
+                          Läser tidrapport
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {invoiceStep === 1 && (
+                    <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+                      <div className="text-[11px] text-white/75 mb-2">Hittade avvikelser</div>
+                      <div className="space-y-1">
+                        <div className="flex items-center justify-between text-[11px]">
+                          <span className="text-white/85">OB-tillägg #4</span>
+                          <span className="text-emerald-300 font-semibold">+6 900 kr</span>
+                        </div>
+                        <div className="flex items-center justify-between text-[11px]">
+                          <span className="text-white/85">Helgtillägg #6</span>
+                          <span className="text-emerald-300 font-semibold">+4 025 kr</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {invoiceStep === 2 && (
+                    <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+                      <div className="text-[11px] text-white/75 mb-1">Att återvinna</div>
+                      <div className="text-[20px] font-bold text-emerald-300 mb-1">+10 925 kr</div>
+                      <Link 
+                        to="/consultant/fakturakontroll" 
+                        className="text-[10px] text-white/50 hover:text-white flex items-center gap-1 transition-colors"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          trackEvent("product_cta_clicked", { cta: "hero_invoice_card", target: "/consultant/fakturakontroll" });
+                        }}
+                      >
+                        Se hur det fungerar <ArrowRight className="w-3 h-3" />
+                      </Link>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex gap-1 mt-3 justify-center">
+                  {[0, 1, 2].map((i) => (
+                    <div 
+                      key={i} 
+                      className={`w-1 h-1 rounded-full transition-colors ${invoiceStep === i ? "bg-emerald-300" : "bg-white/20"}`}
+                    />
+                  ))}
                 </div>
               </div>
 
@@ -495,7 +564,7 @@ export default function LandingV2() {
         <div className="max-w-5xl mx-auto rounded-xl px-6 md:px-8 py-6 md:py-7 flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-gradient-to-r from-[hsl(256_100%_67%_/_0.18)] to-[hsl(320_95%_65%_/_0.18)] border border-white/10">
           <div className="md:max-w-[640px]">
             <h3 className="text-[17px] sm:text-[19px] font-semibold text-white leading-snug mb-1.5">
-              Är du beredd att lita på din magkänsla om den kan kosta dig 100 000 kr? Luta dig mot vår data istället.
+              Din magkänsla kan kosta dig 100 000kr/år.{"\n"}Låt vår data vägleda dig istället.
             </h3>
             <p className="text-[13.5px] sm:text-[14px] text-white/75 leading-relaxed">
               Vi visar vad marknaden faktiskt betalar — från den dolda zonskillnaden på 386 kr/h till prisskillnader mellan privata och offentliga aktörer. Se hur ni undviker de tilldelningsavvisningar som kostar mer än ni tror genom att säkra er representation digitalt.
