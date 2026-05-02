@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
-import { ArrowRight, Menu, X, ShieldCheck, Lock, FileLock2, Database, MapPin, History, Sparkles, Zap, LineChart, GitBranch } from "lucide-react";
+import { ArrowRight, Menu, X, ShieldCheck, Lock, FileLock2, Database, MapPin, History, Sparkles, Zap, LineChart, GitBranch, Receipt } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 import HeroInlineForm from "@/components/landing/HeroInlineForm";
 
