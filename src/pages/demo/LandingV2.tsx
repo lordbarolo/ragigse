@@ -495,7 +495,7 @@ export default function LandingV2() {
         <div className="max-w-5xl mx-auto rounded-xl px-6 md:px-8 py-6 md:py-7 flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-gradient-to-r from-[hsl(256_100%_67%_/_0.18)] to-[hsl(320_95%_65%_/_0.18)] border border-white/10">
           <div className="md:max-w-[640px]">
             <h3 className="text-[17px] sm:text-[19px] font-semibold text-white leading-snug mb-1.5">
-              Är du beredd att lita på din magkänsla om den kan kosta dig 100 000 kr? Luta dig mot vår data istället.
+              Din magkänsla kan kosta dig 100 000kr/år.{"\n"}Låt vår data vägleda dig istället.
             </h3>
             <p className="text-[13.5px] sm:text-[14px] text-white/75 leading-relaxed">
               Vi visar vad marknaden faktiskt betalar — från den dolda zonskillnaden på 386 kr/h till prisskillnader mellan privata och offentliga aktörer. Se hur ni undviker de tilldelningsavvisningar som kostar mer än ni tror genom att säkra er representation digitalt.
