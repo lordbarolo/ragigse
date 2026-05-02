@@ -135,7 +135,7 @@ const PILLARS = [
 ];
 
 const PILLAR_CONTENT: Record<string, { title: string; desc: string }> = {
-  data:  { title: "Skalbar & datadriven analys", desc: "Vi kombinerar 20 000+ ramavtal med historisk avropsdata för att ge dig ett spann som faktiskt speglar marknaden — inte en gissning." },
+  data:  { title: "Skalbar & datadriven analys", desc: "Vi har analyserat 20 000+ avtal samt data från de senaste 5 åren för att ge dig ett spann som faktiskt speglar marknadens ersättningar — inte en gissning." },
   agent: { title: "Autonoma agenter, alltid på", desc: "Förhandlingsagenten håller koll på prisuppdateringar, ramavtalsändringar och nya avrop åt dig — och pingar när något händer." },
   speed: { title: "Från fråga till svar — på 60 sekunder", desc: "Inga formulär. Välj roll och ort, få ditt ersättningsspann direkt. Hela rapporten levereras innan du hinner brygga kaffet." },
   trust: { title: "Verifierad data, hela vägen", desc: "All ersättningsdata kommer direkt från SKR:s ramavtal 2026. Uppgifter som alltid varit offentliga men aldrig paketerade för dig som jobbar." },
