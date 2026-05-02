@@ -87,7 +87,7 @@ const PRIMARY_PRODUCTS: ProductCard[] = [
   },
   {
     step: "03",
-    title: "Fakturakollen",
+    title: "Fakturagranskning",
     tagline: "Få det du förtjänat",
     desc: "AI-analyser av fakturor och tidrapporter de senaste 2 åren. Vi ser vad du missat. Hittar vi inget, betalar du inget.",
     tag: "No cure – no pay",
