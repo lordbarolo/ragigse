@@ -402,7 +402,7 @@ export default function LandingV2() {
                         className="text-[10px] text-white/50 hover:text-white flex items-center gap-1 transition-colors"
                         onClick={(e) => {
                           e.stopPropagation();
-                          trackEvent("hero_invoice_card_cta_clicked");
+                          trackEvent("product_cta_clicked", { cta: "hero_invoice_card", target: "/consultant/fakturakontroll" });
                         }}
                       >
                         Se hur det fungerar <ArrowRight className="w-3 h-3" />
