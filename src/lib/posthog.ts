@@ -22,12 +22,24 @@ posthog.init(POSTHOG_KEY, {
   cross_subdomain_cookie: true,
 });
 
-// Mark internal traffic with a super property
-if (
-  window.location.hostname === "localhost" ||
-  window.location.hostname.includes("lovable")
-) {
+// Mark internal traffic with a super property.
+// IMPORTANT: Only dev/preview hosts count as internal — the user's *published*
+// Lovable URL (e.g. preview--compcare-se.lovable.app) is real production
+// traffic and must be tracked. Keep this logic in sync with
+// `isInternalTraffic()` in src/lib/trackEvent.ts.
+const __hostname = window.location.hostname;
+const __isInternal =
+  __hostname === "localhost" ||
+  __hostname === "127.0.0.1" ||
+  __hostname.endsWith(".lovableproject.com") ||
+  __hostname.startsWith("id-preview--");
+if (__isInternal) {
   posthog.register({ is_internal_traffic: true });
+} else {
+  // Defensive: clear any stale super-property from a previous visit on a
+  // dev host that left `is_internal_traffic=true` in the persisted PostHog
+  // state when the same browser later visits production.
+  posthog.unregister("is_internal_traffic");
 }
 
 // Sync with any existing cookie consent on load
