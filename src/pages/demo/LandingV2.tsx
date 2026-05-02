@@ -146,7 +146,21 @@ export default function LandingV2() {
   useTimeOnPage("landing");
   const [menuOpen, setMenuOpen] = useState(false);
   const [activePillar, setActivePillar] = useState("data");
-  useEffect(() => { trackEvent("landing_viewed"); }, []);
+  const [invoiceStep, setInvoiceStep] = useState(0);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    trackEvent("landing_viewed");
+    
+    // Auto-rotate invoice card steps
+    intervalRef.current = setInterval(() => {
+      setInvoiceStep((s) => (s + 1) % 3);
+    }, 2800);
+
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, []);
 
   return (
     <div className="w-full text-foreground font-sans">
