@@ -246,9 +246,6 @@ export default function LandingV2() {
             ))}
           </div>
         </div>
-        <p className="text-[11px] text-center mt-4 px-5 text-muted">
-          Exempel på den vanligaste bruttolönen per roll och zon. Logga in för att se vilken zon din ort tillhör.
-        </p>
       </section>
 
       {/* ═══════════════════ MAKE-STIL: PILLAR-SEKTION ═══════════════════ */}
