@@ -402,7 +402,7 @@ export default function AnalysisScreen() {
                 Det här ingår också i rapporten
               </p>
               <ul className="text-[13px] text-foreground/55 leading-relaxed space-y-1">
-                <li>· Ersättningsspann för Zon 1, 2 och 3</li>
+                <li>· Marknadmässig lön för Zon 1, 2 och 3</li>
                 <li>· Så har vi räknat — metod &amp; ramavtalskällor</li>
                 <li>· Ditt förhandlingsspann jämfört med din nuvarande ersättning</li>
                 <li>· Prisskillnader mellan zoner och vad de beror på</li>

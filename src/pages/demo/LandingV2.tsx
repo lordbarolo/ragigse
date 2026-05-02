@@ -137,7 +137,7 @@ const PILLARS = [
 const PILLAR_CONTENT: Record<string, { title: string; desc: string }> = {
   data:  { title: "Skalbar & datadriven analys", desc: "Vi har analyserat 20 000+ avtal samt data från de senaste 5 åren för att ge dig ett spann som faktiskt speglar marknadens ersättningar — inte en gissning." },
   agent: { title: "Autonoma agenter, alltid på", desc: "Förhandlingsagenten håller koll på prisuppdateringar, ramavtalsändringar och nya avrop åt dig — och pingar när något händer." },
-  speed: { title: "Från fråga till svar — på 60 sekunder", desc: "Inga formulär. Välj roll och ort, få ditt ersättningsspann direkt. Hela rapporten levereras innan du hinner brygga kaffet." },
+  speed: { title: "Från fråga till svar — på 60 sekunder", desc: "Inga formulär. Välj roll och ort, få din marknadmässig lön direkt. Hela rapporten levereras innan du hinner brygga kaffet." },
   trust: { title: "Verifierad data, hela vägen", desc: "All ersättningsdata kommer direkt från SKR:s ramavtal 2026. Uppgifter som alltid varit offentliga men aldrig paketerade för dig som jobbar." },
 };
 
@@ -318,7 +318,7 @@ export default function LandingV2() {
               </div>
 
               <div className="absolute top-12 right-2 sm:right-8 glass-strong rounded-2xl p-5 w-[220px] shadow-[0_12px_50px_-10px_hsl(var(--glow-pink)/0.5)] rotate-[3deg]">
-                <div className="text-[10px] uppercase tracking-wider text-white/50 mb-2">Ersättningsspann</div>
+                <div className="text-[10px] uppercase tracking-wider text-white/50 mb-2">Marknadmässig lön</div>
                 <div className="text-2xl font-bold text-white">1 240 kr/h</div>
                 <div className="text-[11px] text-[hsl(190_95%_70%)] mt-1 text-indigo-800">+8% mot fjolåret</div>
                 <div className="mt-3 h-12 flex items-end gap-1">
