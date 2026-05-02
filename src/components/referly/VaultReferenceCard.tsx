@@ -170,4 +170,5 @@ export const VaultReferenceCard = forwardRef<HTMLDivElement, VaultReferenceCardP
       )}
     </div>
   );
-}
+});
+VaultReferenceCard.displayName = "VaultReferenceCard";
