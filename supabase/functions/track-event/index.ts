@@ -67,6 +67,16 @@ const ALLOWED_EVENTS = new Set([
   "fakturakontroll_uploaded",
   "fakturakontroll_confirmed",
   "fakturakontroll_completed",
+  "intyg_dashboard_viewed",
+  "intyg_create_opened",
+  "intyg_ai_extract_run",
+  "intyg_create_submitted",
+  "intyg_link_copied",
+  "intyg_sign_page_viewed",
+  "intyg_sign_confirmed",
+  "assignment_feedback_shown",
+  "assignment_feedback_snoozed",
+  "assignment_feedback_submitted",
 ]);
 
 serve(async (req) => {
