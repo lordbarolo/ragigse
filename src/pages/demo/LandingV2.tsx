@@ -572,7 +572,7 @@ export default function LandingV2() {
             <div>
               <h4 className="text-xs font-medium uppercase tracking-widest text-white/50 mb-3">Konsult</h4>
               <div className="flex flex-col gap-2 text-[13px] text-white/70">
-                <Link to="/v1?start=1" className="hover:text-white transition-colors">Lönanalys</Link>
+                <Link to="/v1?start=1" className="hover:text-white transition-colors">Löneanalys</Link>
                 <Link to="/uppdragsradar" className="hover:text-white transition-colors">Uppdragsradar</Link>
                 <Link to="/consultant/forhandla" className="hover:text-white transition-colors">Förhandlingsagent</Link>
                 <Link to="/consultant/fakturakontroll" className="hover:text-white transition-colors">Fakturagranskning</Link>
