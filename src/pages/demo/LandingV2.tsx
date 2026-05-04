@@ -387,7 +387,7 @@ export default function LandingV2() {
                         </div>
                         <div className="flex items-center justify-between text-[11px]">
                           <span className="text-white/85">Helgtillägg #6</span>
-                          <span className="text-emerald-300 font-semibold">+4 025 kr</span>
+                          <span className="text-emerald-300 font-semibold">+930 kr</span>
                         </div>
                       </div>
                     </div>
