@@ -68,7 +68,7 @@ const PRIMARY_PRODUCTS: ProductCard[] = [
   {
     step: "01",
     title: "Lönanalys",
-    tagline: "Vet vad du är värd",
+    tagline: "Se uppdaterad branschstandard",
     desc: "Jämför din ersättning mot 290 kommuners ramavtalspriser. Se median och spann för din specialitet och zon — på 60 sekunder.",
     tag: "Gratis",
     tagColor: "cyan",
