@@ -105,7 +105,7 @@ export default function Report() {
           { id: "flow-regional", label: "Villkoren på andra orter" },
           { id: "flow-negotiation", label: "Din förhandlingspotential" },
           { id: "flow-stod", label: "Få stöd i din förhandling" },
-          { id: "flow-fakturor", label: "Nöjd med villkoren? Kolla fakturorna" },
+          { id: "flow-fakturor", label: "Har du tagit betalt för allt?" },
           { id: "flow-market", label: "Marknadsintelligens" },
           { id: "flow-method", label: "Beräkningsmetod" },
         ]}
