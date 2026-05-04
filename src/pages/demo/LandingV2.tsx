@@ -90,7 +90,7 @@ const PRIMARY_PRODUCTS: ProductCard[] = [
     title: "Fakturagranskning",
     tagline: "Få det du förtjänat",
     desc: "AI-analyser av fakturor och tidrapporter de senaste 2 åren. Vi ser vad du missat och hjälper dig få betalt.",
-    tag: "No cure – no pay",
+    tag: "Provision",
     tagColor: "violet",
     href: "/consultant/fakturakontroll",
     cta: "Starta granskning",
