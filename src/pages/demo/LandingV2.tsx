@@ -541,7 +541,7 @@ export default function LandingV2() {
               Din magkänsla kan kosta dig +100 000kr per år.{"\n"}Låt bekräftad marknadsdata guida dig istället.
             </h3>
             <p className="text-[13.5px] sm:text-[14px] text-white/75 leading-relaxed">
-              Vi visar vad marknaden faktiskt betalar — från den dolda zonskillnaden på 386 kr/h till prisskillnader mellan privata och offentliga aktörer. Se hur ni undviker de tilldelningsavvisningar som kostar mer än ni tror genom att säkra er representation digitalt.
+              Vi visar villkor och fallgropar helt öppet. Medan du fokuserar på patienterna ser vi till att du får rätt information om jourersättningen på helgnatt, prisskillnaden mellan olika städer och reseersättningen i Norrland. För dig med företag dubbelkollar vi att din faktura stämmer överens med tidrapporten. För dig som är anställd meddelar vi när du tjänar på att ha aktiebolag samt när du bör öka din skattesats för att undvika restskatt.
             </p>
           </div>
           <Link
