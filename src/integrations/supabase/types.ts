@@ -2005,6 +2005,267 @@ export type Database = {
           },
         ]
       }
+      mp_agent_runs: {
+        Row: {
+          action: string
+          agent_id: string
+          client_ip: string | null
+          created_at: string
+          id: string
+          listing_id: string | null
+          offer_id: string | null
+          request_payload: Json | null
+          response_payload: Json | null
+          status_code: number | null
+          user_agent: string | null
+        }
+        Insert: {
+          action: string
+          agent_id: string
+          client_ip?: string | null
+          created_at?: string
+          id?: string
+          listing_id?: string | null
+          offer_id?: string | null
+          request_payload?: Json | null
+          response_payload?: Json | null
+          status_code?: number | null
+          user_agent?: string | null
+        }
+        Update: {
+          action?: string
+          agent_id?: string
+          client_ip?: string | null
+          created_at?: string
+          id?: string
+          listing_id?: string | null
+          offer_id?: string | null
+          request_payload?: Json | null
+          response_payload?: Json | null
+          status_code?: number | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mp_agent_runs_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "mp_listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_agent_runs_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "mp_offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mp_listings: {
+        Row: {
+          available_from: string | null
+          available_to: string | null
+          closed_at: string | null
+          created_at: string
+          currency: string
+          employment_type: string
+          hours_per_week: number | null
+          id: string
+          kommun: string | null
+          metadata: Json
+          price_max_sek: number
+          price_min_sek: number
+          published_at: string | null
+          region: string | null
+          role: string
+          signed_at: string | null
+          specialization: string | null
+          status: Database["public"]["Enums"]["mp_listing_status"]
+          terms_md: string | null
+          updated_at: string
+          user_id: string
+          verified_at_publish: boolean
+        }
+        Insert: {
+          available_from?: string | null
+          available_to?: string | null
+          closed_at?: string | null
+          created_at?: string
+          currency?: string
+          employment_type?: string
+          hours_per_week?: number | null
+          id?: string
+          kommun?: string | null
+          metadata?: Json
+          price_max_sek: number
+          price_min_sek: number
+          published_at?: string | null
+          region?: string | null
+          role: string
+          signed_at?: string | null
+          specialization?: string | null
+          status?: Database["public"]["Enums"]["mp_listing_status"]
+          terms_md?: string | null
+          updated_at?: string
+          user_id: string
+          verified_at_publish?: boolean
+        }
+        Update: {
+          available_from?: string | null
+          available_to?: string | null
+          closed_at?: string | null
+          created_at?: string
+          currency?: string
+          employment_type?: string
+          hours_per_week?: number | null
+          id?: string
+          kommun?: string | null
+          metadata?: Json
+          price_max_sek?: number
+          price_min_sek?: number
+          published_at?: string | null
+          region?: string | null
+          role?: string
+          signed_at?: string | null
+          specialization?: string | null
+          status?: Database["public"]["Enums"]["mp_listing_status"]
+          terms_md?: string | null
+          updated_at?: string
+          user_id?: string
+          verified_at_publish?: boolean
+        }
+        Relationships: []
+      }
+      mp_negotiation_events: {
+        Row: {
+          actor_id: string | null
+          actor_kind: string
+          created_at: string
+          id: string
+          kind: Database["public"]["Enums"]["mp_event_kind"]
+          listing_id: string | null
+          offer_id: string | null
+          payload: Json
+        }
+        Insert: {
+          actor_id?: string | null
+          actor_kind: string
+          created_at?: string
+          id?: string
+          kind: Database["public"]["Enums"]["mp_event_kind"]
+          listing_id?: string | null
+          offer_id?: string | null
+          payload?: Json
+        }
+        Update: {
+          actor_id?: string | null
+          actor_kind?: string
+          created_at?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["mp_event_kind"]
+          listing_id?: string | null
+          offer_id?: string | null
+          payload?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mp_negotiation_events_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "mp_listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_negotiation_events_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "mp_offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mp_offers: {
+        Row: {
+          agent_contact: string | null
+          agent_id: string
+          agent_org: string | null
+          agent_signature: string | null
+          created_at: string
+          end_date: string | null
+          hours_per_week: number | null
+          id: string
+          listing_id: string
+          message_md: string | null
+          metadata: Json
+          offered_price_sek: number
+          parent_offer_id: string | null
+          responded_at: string | null
+          responded_message_md: string | null
+          response_token: string
+          start_date: string | null
+          status: Database["public"]["Enums"]["mp_offer_status"]
+          updated_at: string
+        }
+        Insert: {
+          agent_contact?: string | null
+          agent_id: string
+          agent_org?: string | null
+          agent_signature?: string | null
+          created_at?: string
+          end_date?: string | null
+          hours_per_week?: number | null
+          id?: string
+          listing_id: string
+          message_md?: string | null
+          metadata?: Json
+          offered_price_sek: number
+          parent_offer_id?: string | null
+          responded_at?: string | null
+          responded_message_md?: string | null
+          response_token?: string
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["mp_offer_status"]
+          updated_at?: string
+        }
+        Update: {
+          agent_contact?: string | null
+          agent_id?: string
+          agent_org?: string | null
+          agent_signature?: string | null
+          created_at?: string
+          end_date?: string | null
+          hours_per_week?: number | null
+          id?: string
+          listing_id?: string
+          message_md?: string | null
+          metadata?: Json
+          offered_price_sek?: number
+          parent_offer_id?: string | null
+          responded_at?: string | null
+          responded_message_md?: string | null
+          response_token?: string
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["mp_offer_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mp_offers_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "mp_listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_offers_parent_offer_id_fkey"
+            columns: ["parent_offer_id"]
+            isOneToOne: false
+            referencedRelation: "mp_offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       offers: {
         Row: {
           accepted: boolean | null
@@ -4553,6 +4814,7 @@ export type Database = {
         }
         Returns: number
       }
+      mp_can_publish: { Args: { _user_id: string }; Returns: boolean }
       read_email_batch: {
         Args: { batch_size: number; queue_name: string; vt: number }
         Returns: {
@@ -4688,6 +4950,25 @@ export type Database = {
         | "cancelled"
         | "expired"
       geography_type: "nation" | "region" | "zone" | "municipality"
+      mp_event_kind:
+        | "listing_created"
+        | "listing_updated"
+        | "listing_published"
+        | "listing_paused"
+        | "listing_closed"
+        | "offer_created"
+        | "offer_countered"
+        | "offer_accepted"
+        | "offer_rejected"
+        | "offer_withdrawn"
+        | "agent_run"
+      mp_listing_status: "draft" | "published" | "paused" | "closed"
+      mp_offer_status:
+        | "pending"
+        | "accepted"
+        | "rejected"
+        | "countered"
+        | "withdrawn"
       ref_app_role:
         | "individual"
         | "reference_giver"
@@ -4833,6 +5114,27 @@ export const Constants = {
         "expired",
       ],
       geography_type: ["nation", "region", "zone", "municipality"],
+      mp_event_kind: [
+        "listing_created",
+        "listing_updated",
+        "listing_published",
+        "listing_paused",
+        "listing_closed",
+        "offer_created",
+        "offer_countered",
+        "offer_accepted",
+        "offer_rejected",
+        "offer_withdrawn",
+        "agent_run",
+      ],
+      mp_listing_status: ["draft", "published", "paused", "closed"],
+      mp_offer_status: [
+        "pending",
+        "accepted",
+        "rejected",
+        "countered",
+        "withdrawn",
+      ],
       ref_app_role: [
         "individual",
         "reference_giver",

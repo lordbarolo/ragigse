@@ -65,6 +65,7 @@ const LandingV2 = lazy(() => import("./pages/demo/LandingV2"));
 const LandingExtras = lazy(() => import("./pages/demo/LandingExtras"));
 const Campaign = lazy(() => import("./pages/Campaign"));
 const UppdragsradarV2 = lazy(() => import("./pages/UppdragsradarV2"));
+const MarketplaceHome = lazy(() => import("./pages/marketplace/MarketplaceHome"));
 
 const queryClient = new QueryClient();
 
@@ -180,6 +181,7 @@ const App = () => (
               <Route path="/dela" element={<ProtectedRoute><SharePreview /></ProtectedRoute>} />
               <Route path="/referenser-info" element={<ProtectedRoute><ReferenserInfo /></ProtectedRoute>} />
               <Route path="/admin" element={<ProtectedRoute allowedRoles={["admin"]}><Admin /></ProtectedRoute>} />
+              <Route path="/marketplace" element={<ProtectedRoute><MarketplaceHome /></ProtectedRoute>} />
               <Route path="/dev/theme-preview" element={<ProtectedRoute allowedRoles={["admin"]}><ThemePreview /></ProtectedRoute>} />
               <Route path="/dev/analytics" element={<ProtectedRoute allowedRoles={["admin"]}><AnalyticsDashboard /></ProtectedRoute>} />
               <Route path="/dev/e2e-test" element={import.meta.env.PROD ? <NotFound /> : <E2ETest />} />
