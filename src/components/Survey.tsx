@@ -546,7 +546,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                 </button>
               ))}
               <p className="text-hint text-center mt-3 px-2 leading-relaxed">
-                Inkluderar zon-analys och SKR:s ramavtal 2026.
+                SKR baserar priser för hyrpersonal på roll och arbetsort.
               </p>
             </div>
           </StepWrapper>
