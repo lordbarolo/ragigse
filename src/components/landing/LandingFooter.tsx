@@ -12,7 +12,7 @@ export default function LandingFooter() {
         <Link to="/integritetspolicy" className="text-sm md:text-[13px] text-foreground/35 no-underline hover:text-foreground transition-colors">Integritetspolicy</Link>
         <BugReportButton />
       </div>
-      <span className="text-xs md:text-[11px] text-foreground/15">© 2026 CompCare · Piemonte Invest AB</span>
+      <span className="text-xs md:text-[11px] text-foreground/15">© 2026 Compcare</span>
     </footer>
   );
 }

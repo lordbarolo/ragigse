@@ -605,7 +605,7 @@ export default function LandingV2() {
             </div>
           </div>
           <div className="border-t border-white/10 pt-5 flex flex-col md:flex-row justify-between items-center gap-2 text-xs text-white/50">
-            <p>© 2026 CompCare — Piemonte Invest AB</p>
+            <p>© 2026 Compcare</p>
             <p>GDPR-kompatibel · Datan tillhör dig</p>
           </div>
         </div>
