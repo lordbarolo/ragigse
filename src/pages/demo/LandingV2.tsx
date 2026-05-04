@@ -9,7 +9,7 @@ import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 
 /* ───────────────────── data ───────────────────── */
 const NAV_LINKS: { label: string; href: string; external?: boolean }[] = [
-  { label: "Lönanalys", href: "/v1?start=1", external: true },
+  { label: "Löneanalys", href: "/v1?start=1", external: true },
   { label: "Uppdragsradar", href: "/uppdragsradar", external: true },
   { label: "Förhandlingsagent", href: "/consultant/forhandla", external: true },
   { label: "FAQ", href: "/vanliga-fragor", external: true },
@@ -67,7 +67,7 @@ type ProductCard = {
 const PRIMARY_PRODUCTS: ProductCard[] = [
   {
     step: "01",
-    title: "Lönanalys",
+    title: "Löneanalys",
     tagline: "Se uppdaterad branschstandard",
     desc: "Att förhandla kan vara obekvämt. Speciellt för den som gör det sällan. Vi gör det lite lättare genom att visa vad som är en vanlig ersättning för din roll.",
     tag: "Gratis",
@@ -572,7 +572,7 @@ export default function LandingV2() {
             <div>
               <h4 className="text-xs font-medium uppercase tracking-widest text-white/50 mb-3">Konsult</h4>
               <div className="flex flex-col gap-2 text-[13px] text-white/70">
-                <Link to="/v1?start=1" className="hover:text-white transition-colors">Lönanalys</Link>
+                <Link to="/v1?start=1" className="hover:text-white transition-colors">Löneanalys</Link>
                 <Link to="/uppdragsradar" className="hover:text-white transition-colors">Uppdragsradar</Link>
                 <Link to="/consultant/forhandla" className="hover:text-white transition-colors">Förhandlingsagent</Link>
                 <Link to="/consultant/fakturakontroll" className="hover:text-white transition-colors">Fakturagranskning</Link>
