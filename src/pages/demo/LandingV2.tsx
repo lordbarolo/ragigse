@@ -379,7 +379,7 @@ export default function LandingV2() {
 
                   {invoiceStep === 1 && (
                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-                      <div className="text-[11px] text-white/75 mb-2">Hittade avvikelser</div>
+                      <div className="text-[11px] text-white/75 mb-2">Diff. mot tidrapport</div>
                       <div className="space-y-1">
                         <div className="flex items-center justify-between text-[11px]">
                           <span className="text-white/85">OB-tillägg #4</span>
