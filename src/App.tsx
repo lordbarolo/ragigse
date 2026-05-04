@@ -66,6 +66,7 @@ const LandingExtras = lazy(() => import("./pages/demo/LandingExtras"));
 const Campaign = lazy(() => import("./pages/Campaign"));
 const UppdragsradarV2 = lazy(() => import("./pages/UppdragsradarV2"));
 const MarketplaceHome = lazy(() => import("./pages/marketplace/MarketplaceHome"));
+const EgetBolag = lazy(() => import("./pages/EgetBolag"));
 
 const queryClient = new QueryClient();
 
@@ -180,6 +181,7 @@ const App = () => (
               {/* Hidden / protected routes */}
               <Route path="/dela" element={<ProtectedRoute><SharePreview /></ProtectedRoute>} />
               <Route path="/referenser-info" element={<ProtectedRoute><ReferenserInfo /></ProtectedRoute>} />
+              <Route path="/eget-bolag" element={<EgetBolag />} />
               <Route path="/admin" element={<ProtectedRoute allowedRoles={["admin"]}><Admin /></ProtectedRoute>} />
               <Route path="/marketplace" element={<ProtectedRoute><MarketplaceHome /></ProtectedRoute>} />
               <Route path="/dev/theme-preview" element={<ProtectedRoute allowedRoles={["admin"]}><ThemePreview /></ProtectedRoute>} />
