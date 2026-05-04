@@ -10,6 +10,7 @@ import ReferralStats from "@/components/admin/ReferralStats";
 import FeedbackStats from "@/components/admin/FeedbackStats";
 import BugReports from "@/components/admin/BugReports";
 import ChatAnswerReports from "@/components/admin/ChatAnswerReports";
+import EventCoverage from "@/components/admin/EventCoverage";
 import InvoiceReviews from "@/components/admin/InvoiceReviews";
 import RateVerification from "@/components/admin/RateVerification";
 import RadarImport from "@/components/admin/RadarImport";
