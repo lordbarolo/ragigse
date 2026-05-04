@@ -125,6 +125,45 @@ export type Database = {
         }
         Relationships: []
       }
+      analytics_event_rejections: {
+        Row: {
+          client_ip: string | null
+          created_at: string
+          event_name: string | null
+          id: string
+          lead_id: string | null
+          metadata: Json | null
+          origin: string | null
+          reason: string
+          referer: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          client_ip?: string | null
+          created_at?: string
+          event_name?: string | null
+          id?: string
+          lead_id?: string | null
+          metadata?: Json | null
+          origin?: string | null
+          reason: string
+          referer?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          client_ip?: string | null
+          created_at?: string
+          event_name?: string | null
+          id?: string
+          lead_id?: string | null
+          metadata?: Json | null
+          origin?: string | null
+          reason?: string
+          referer?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       analytics_events: {
         Row: {
           created_at: string

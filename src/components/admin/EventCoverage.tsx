@@ -12,12 +12,31 @@ interface EventRow {
   last_seen: string;
 }
 
+interface RejectionRow {
+  created_at: string;
+  reason: string;
+  event_name: string | null;
+  client_ip: string | null;
+  user_agent: string | null;
+  origin: string | null;
+  referer: string | null;
+  metadata: any;
+}
+
+interface Rejections {
+  total: number;
+  by_reason: Record<string, number>;
+  unknown_events: Record<string, number>;
+  recent: RejectionRow[];
+}
+
 const PERIODS = [7, 30, 90] as const;
 
 export default function EventCoverage() {
   const [days, setDays] = useState<7 | 30 | 90>(30);
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState<EventRow[]>([]);
+  const [rejections, setRejections] = useState<Rejections | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = async () => {
@@ -30,6 +49,7 @@ export default function EventCoverage() {
       );
       if (err) throw err;
       setRows((data?.events as EventRow[]) || []);
+      setRejections((data?.rejections as Rejections) || null);
     } catch (e: any) {
       setError(e.message || "Kunde inte hämta event-data");
     } finally {
@@ -94,6 +114,49 @@ export default function EventCoverage() {
               <Stat label="Tysta (allowed)" value={stats.silent.length} tone="warn" />
               <Stat label="Okända events" value={stats.unknown.length} tone={stats.unknown.length ? "bad" : "ok"} />
             </div>
+
+            {/* Rejection log */}
+            {rejections && rejections.total > 0 && (
+              <Section title={`Avvisade events (${rejections.total} senaste ${days}d)`}>
+                <div className="flex flex-wrap gap-1.5 mb-3">
+                  {Object.entries(rejections.by_reason)
+                    .sort(([, a], [, b]) => b - a)
+                    .map(([reason, n]) => (
+                      <Badge key={reason} variant="destructive" className="font-mono text-xs">
+                        {reason}: {n}
+                      </Badge>
+                    ))}
+                </div>
+                <div className="overflow-x-auto max-h-[360px] overflow-y-auto border rounded-lg">
+                  <table className="w-full text-xs">
+                    <thead className="sticky top-0 bg-muted">
+                      <tr className="text-left">
+                        <th className="p-2 font-medium">Tid</th>
+                        <th className="p-2 font-medium">Reason</th>
+                        <th className="p-2 font-medium">Event</th>
+                        <th className="p-2 font-medium">Origin</th>
+                        <th className="p-2 font-medium">IP</th>
+                        <th className="p-2 font-medium">User-Agent</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rejections.recent.slice(0, 100).map((r, i) => (
+                        <tr key={i} className="border-t align-top">
+                          <td className="p-2 text-muted-foreground whitespace-nowrap">
+                            {new Date(r.created_at).toLocaleString("sv-SE")}
+                          </td>
+                          <td className="p-2 font-mono">{r.reason}</td>
+                          <td className="p-2 font-mono">{r.event_name ?? "—"}</td>
+                          <td className="p-2 text-muted-foreground truncate max-w-[140px]">{r.origin ?? "—"}</td>
+                          <td className="p-2 text-muted-foreground">{r.client_ip ?? "—"}</td>
+                          <td className="p-2 text-muted-foreground truncate max-w-[180px]">{r.user_agent ?? "—"}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </Section>
+            )}
 
             {/* Unknown events – sent by client but rejected by track-event */}
             {stats.unknown.length > 0 && (
