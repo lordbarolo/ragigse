@@ -694,7 +694,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
 
         {/* Step 5: Ersättning (final step) */}
         {step === 5 && (
-          <StepWrapper title="Vad får du i ersättning idag?">
+          <StepWrapper title="Vilken är din nuvarande ersättning?">
             <div className="rounded-2xl border border-border bg-card p-5 space-y-5">
               <div className="flex gap-3">
                 {([
