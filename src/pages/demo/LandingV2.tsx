@@ -382,7 +382,7 @@ export default function LandingV2() {
                       <div className="text-[11px] text-white/75 mb-2">Diff. mot tidrapport</div>
                       <div className="space-y-1">
                         <div className="flex items-center justify-between text-[11px]">
-                          <span className="text-white/85">OB-tillägg #4</span>
+                          <span className="text-white/85">Storhelgstillägg</span>
                           <span className="text-emerald-300 font-semibold">+6 900 kr</span>
                         </div>
                         <div className="flex items-center justify-between text-[11px]">
