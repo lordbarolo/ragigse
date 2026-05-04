@@ -587,7 +587,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
           <StepWrapper title="På vilken ort ska du arbeta?">
             <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 space-y-3">
               <p className="text-xs text-muted-foreground text-center">
-                Priset kan skilja +400kr per timme för olika kommuner i samma region.
+                Priset kan skilja +500kr per timme för olika kommuner i samma region.
               </p>
 
               {/* Search input */}
