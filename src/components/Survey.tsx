@@ -587,7 +587,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
           <StepWrapper title="Var jobbar du?">
             <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 space-y-3">
               <p className="text-body-sm text-center">
-                Sök på kommunen där du ska jobba.
+                ​I vilken kommun ligger orten där du ska jobba?
               </p>
 
               {/* Search input */}
