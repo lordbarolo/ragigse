@@ -10,17 +10,17 @@ interface Props {
 }
 
 /**
- * Vertical flow indicator ("röd tråd") shown on the left side of the report
- * on lg+ viewports. Tracks the currently visible section via IntersectionObserver
- * and lets the user click to jump.
+ * Vertical flow indicator ("röd tråd") tucked against the left edge.
+ * Collapsed by default (only dots visible) — expands on hover/focus
+ * to reveal labels. Tracks active section via IntersectionObserver.
  */
 export default function ReportFlowIndicator({ steps }: Props) {
   const [activeId, setActiveId] = useState<string>(steps[0]?.id || "");
+  const [expanded, setExpanded] = useState(false);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
-        // Pick the entry closest to the top of viewport that's intersecting
         const visible = entries
           .filter((e) => e.isIntersecting)
           .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
@@ -47,35 +47,56 @@ export default function ReportFlowIndicator({ steps }: Props) {
   return (
     <aside
       aria-label="Innehåll i rapporten"
-      className="hidden lg:block fixed left-6 xl:left-10 top-1/2 -translate-y-1/2 z-30 max-w-[220px]"
+      onMouseEnter={() => setExpanded(true)}
+      onMouseLeave={() => setExpanded(false)}
+      onFocus={() => setExpanded(true)}
+      onBlur={() => setExpanded(false)}
+      className="hidden lg:block fixed left-0 top-1/2 -translate-y-1/2 z-30 group"
     >
-      <ol className="relative border-l border-foreground/10 pl-4 space-y-3.5">
-        {steps.map((step) => {
-          const isActive = activeId === step.id;
-          return (
-            <li key={step.id} className="relative">
-              <span
-                className={`absolute -left-[21px] top-[7px] w-2 h-2 rounded-full transition-all ${
-                  isActive
-                    ? "bg-primary ring-4 ring-primary/15 scale-110"
-                    : "bg-foreground/20"
-                }`}
-              />
-              <button
-                type="button"
-                onClick={() => handleClick(step.id)}
-                className={`text-left text-[12px] leading-snug transition-colors ${
-                  isActive
-                    ? "text-foreground font-semibold"
-                    : "text-muted-foreground/70 hover:text-foreground"
-                }`}
-              >
-                {step.label}
-              </button>
-            </li>
-          );
-        })}
-      </ol>
+      <div
+        className={`transition-all duration-300 ease-out pl-3 pr-4 py-5 rounded-r-2xl ${
+          expanded
+            ? "bg-background/80 backdrop-blur-md border-y border-r border-foreground/[0.06] shadow-sm"
+            : "bg-transparent"
+        }`}
+      >
+        <ol className="relative space-y-4">
+          {steps.map((step) => {
+            const isActive = activeId === step.id;
+            return (
+              <li key={step.id} className="relative flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => handleClick(step.id)}
+                  aria-label={step.label}
+                  className="flex items-center gap-3 group/item focus:outline-none"
+                >
+                  <span
+                    className={`shrink-0 rounded-full transition-all duration-300 ${
+                      isActive
+                        ? "bg-primary w-1.5 h-6"
+                        : "bg-foreground/20 group-hover:bg-foreground/40 w-1.5 h-1.5"
+                    }`}
+                  />
+                  <span
+                    className={`whitespace-nowrap text-[12px] leading-snug transition-all duration-300 ${
+                      expanded
+                        ? "opacity-100 translate-x-0"
+                        : "opacity-0 -translate-x-2 pointer-events-none"
+                    } ${
+                      isActive
+                        ? "text-foreground font-semibold"
+                        : "text-muted-foreground/80 group-hover/item:text-foreground"
+                    }`}
+                  >
+                    {step.label}
+                  </span>
+                </button>
+              </li>
+            );
+          })}
+        </ol>
+      </div>
     </aside>
   );
 }
