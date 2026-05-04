@@ -13,6 +13,7 @@ import ShareButton from "@/components/ShareButton";
 import type { ReportData } from "@/shared/types";
 
 import ConsultantTrackContent from "@/components/report/ConsultantTrackContent";
+import ReportFlowIndicator from "@/components/report/ReportFlowIndicator";
 
 
 
