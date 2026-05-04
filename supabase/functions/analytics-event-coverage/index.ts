@@ -60,8 +60,35 @@ serve(async (req) => {
       .map(([event_name, count]) => ({ event_name, count, last_seen: lastSeen[event_name] }))
       .sort((a, b) => b.count - a.count);
 
+    // Recent rejections + grouped reasons
+    const { data: recentRejections } = await supabase
+      .from("analytics_event_rejections")
+      .select("created_at, reason, event_name, client_ip, user_agent, origin, referer, metadata")
+      .gte("created_at", since)
+      .order("created_at", { ascending: false })
+      .limit(200);
+
+    const reasonCounts: Record<string, number> = {};
+    const unknownEventCounts: Record<string, number> = {};
+    for (const r of recentRejections ?? []) {
+      reasonCounts[r.reason] = (reasonCounts[r.reason] ?? 0) + 1;
+      if (r.reason === "unknown_event_name" && r.event_name) {
+        unknownEventCounts[r.event_name] = (unknownEventCounts[r.event_name] ?? 0) + 1;
+      }
+    }
+
     return new Response(
-      JSON.stringify({ days, total_distinct: events.length, events }),
+      JSON.stringify({
+        days,
+        total_distinct: events.length,
+        events,
+        rejections: {
+          total: recentRejections?.length ?? 0,
+          by_reason: reasonCounts,
+          unknown_events: unknownEventCounts,
+          recent: recentRejections ?? [],
+        },
+      }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (err: any) {
