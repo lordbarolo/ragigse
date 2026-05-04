@@ -12,12 +12,31 @@ interface EventRow {
   last_seen: string;
 }
 
+interface RejectionRow {
+  created_at: string;
+  reason: string;
+  event_name: string | null;
+  client_ip: string | null;
+  user_agent: string | null;
+  origin: string | null;
+  referer: string | null;
+  metadata: any;
+}
+
+interface Rejections {
+  total: number;
+  by_reason: Record<string, number>;
+  unknown_events: Record<string, number>;
+  recent: RejectionRow[];
+}
+
 const PERIODS = [7, 30, 90] as const;
 
 export default function EventCoverage() {
   const [days, setDays] = useState<7 | 30 | 90>(30);
   const [loading, setLoading] = useState(false);
   const [rows, setRows] = useState<EventRow[]>([]);
+  const [rejections, setRejections] = useState<Rejections | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const fetchData = async () => {
@@ -30,6 +49,7 @@ export default function EventCoverage() {
       );
       if (err) throw err;
       setRows((data?.events as EventRow[]) || []);
+      setRejections((data?.rejections as Rejections) || null);
     } catch (e: any) {
       setError(e.message || "Kunde inte hämta event-data");
     } finally {
