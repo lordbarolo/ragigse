@@ -102,7 +102,7 @@ export default function ConsultantTrackContent({
           2. SUMMARY CARD — Din lön vs Marknadsspann
           ═══════════════════════════════════════════════════════════════ */}
       {isConsultantFullAccess && rec && (
-        <div ref={registerSectionRef?.("summary_card")}>
+        <div id="flow-din-ersattning" ref={registerSectionRef?.("summary_card")} className="scroll-mt-24">
           <SectionLabel>Ersättningsjämförelse</SectionLabel>
           <div className="rounded-[18px] bg-foreground/[0.035] border border-foreground/[0.07] overflow-hidden">
             {/* Din ersättning row */}
@@ -186,7 +186,7 @@ export default function ConsultantTrackContent({
 
       {/* "Vad det här betyder för dig" — narrativ tolkning av Summary */}
       {isConsultantFullAccess && rec && !isAboveThreshold && (
-        <div className="relative rounded-2xl bg-gradient-to-b from-foreground/[0.06] to-foreground/[0.02] border border-foreground/10 p-6 overflow-hidden">
+        <div id="flow-situation" className="scroll-mt-24 relative rounded-2xl bg-gradient-to-b from-foreground/[0.06] to-foreground/[0.02] border border-foreground/10 p-6 overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent" />
           <div className="flex items-center gap-3 mb-6">
             <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
@@ -219,7 +219,7 @@ export default function ConsultantTrackContent({
 
       {/* Toppskiktet — för konsulter nära kundpris */}
       {isConsultantFullAccess && isAboveThreshold && (
-        <div className="relative rounded-2xl bg-gradient-to-b from-foreground/[0.06] to-foreground/[0.02] border border-foreground/10 p-6 overflow-hidden">
+        <div id="flow-situation" className="scroll-mt-24 relative rounded-2xl bg-gradient-to-b from-foreground/[0.06] to-foreground/[0.02] border border-foreground/10 p-6 overflow-hidden">
           <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent" />
           <div className="flex items-center gap-3 mb-4">
             <CheckCircle className="w-5 h-5 text-primary" />
@@ -252,7 +252,7 @@ export default function ConsultantTrackContent({
           3. REGIONAL COMPARISON — Skapar kontext för lönen
           ═══════════════════════════════════════════════════════════════ */}
       {isConsultantFullAccess && zoneComparisons && zoneComparisons.length > 0 && (
-        <div ref={registerSectionRef?.("regional_comparison")} className="pt-4">
+        <div id="flow-regional" ref={registerSectionRef?.("regional_comparison")} className="scroll-mt-24 pt-4">
           <SectionLabel>Regional jämförelse</SectionLabel>
           <p className="text-hint mb-3 leading-relaxed">
             Vad regionen betalar bemanningsföretag för {occupation} per zon:
@@ -334,7 +334,7 @@ export default function ConsultantTrackContent({
           if (currentHourly >= ambitiousH) return null;
 
           return (
-            <div ref={registerSectionRef?.("negotiation_range")} className="pt-4">
+            <div id="flow-negotiation" ref={registerSectionRef?.("negotiation_range")} className="scroll-mt-24 pt-4">
               <SectionLabel>Förhandlingsspann · {userZone || "Din zon"}</SectionLabel>
               <div className="grid grid-cols-3 gap-1.5">
                 <div className="rounded-[14px] bg-foreground/[0.035] border border-foreground/[0.07] p-3 text-center">
@@ -409,7 +409,7 @@ export default function ConsultantTrackContent({
           5. ACTION HUB — Verktygen
           ═══════════════════════════════════════════════════════════════ */}
       {isConsultantFullAccess && (
-        <div ref={registerSectionRef?.("action_hub")} className="pt-6 space-y-4">
+        <div id="flow-stod" ref={registerSectionRef?.("action_hub")} className="scroll-mt-24 pt-6 space-y-4">
           <SectionLabel>Agera på resultatet</SectionLabel>
 
           {/* 5a. Förhandlingsassistenten */}
@@ -454,13 +454,15 @@ export default function ConsultantTrackContent({
 
           {/* 5b. Fakturagranskning */}
           {leadId && email && (
-            <InvoiceReviewCTA
-              leadId={leadId}
-              email={email}
-              role={occupation}
-              zone={userZone}
-              reportId={reportId}
-            />
+            <div id="flow-fakturor" className="scroll-mt-24">
+              <InvoiceReviewCTA
+                leadId={leadId}
+                email={email}
+                role={occupation}
+                zone={userZone}
+                reportId={reportId}
+              />
+            </div>
           )}
         </div>
       )}
@@ -469,7 +471,7 @@ export default function ConsultantTrackContent({
           6. MARKET INTELLIGENCE — Senaste avtalsändringar & noteringar
           ═══════════════════════════════════════════════════════════════ */}
       {isConsultantFullAccess && (
-        <div ref={registerSectionRef?.("market_intelligence")} className="pt-6 space-y-3">
+        <div id="flow-market" ref={registerSectionRef?.("market_intelligence")} className="scroll-mt-24 pt-6 space-y-3">
           <SectionLabel>Marknadsintelligens</SectionLabel>
 
           {/* 6a. Prishistorik (avtalsändringar) */}
@@ -523,7 +525,7 @@ export default function ConsultantTrackContent({
           7. FOOTER / METHODOLOGY — Hur vi räknar
           ═══════════════════════════════════════════════════════════════ */}
       {isConsultantFullAccess && rec && (
-        <div className="pt-6 space-y-3">
+        <div id="flow-method" className="scroll-mt-24 pt-6 space-y-3">
           <SectionLabel>Metod & antaganden</SectionLabel>
 
           <Collapsible>
