@@ -25,8 +25,8 @@ export default function EventCoverage() {
     setError(null);
     try {
       const { data, error: err } = await supabase.functions.invoke(
-        `analytics-event-coverage?days=${days}`,
-        { method: "GET" }
+        "analytics-event-coverage",
+        { body: { days } }
       );
       if (err) throw err;
       setRows((data?.events as EventRow[]) || []);
