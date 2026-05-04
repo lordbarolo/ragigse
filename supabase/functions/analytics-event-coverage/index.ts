@@ -20,8 +20,17 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    const url = new URL(req.url);
-    const days = Math.min(Math.max(parseInt(url.searchParams.get("days") || "30", 10), 1), 90);
+    let days = 30;
+    try {
+      const url = new URL(req.url);
+      const qp = parseInt(url.searchParams.get("days") || "", 10);
+      if (!Number.isNaN(qp)) days = qp;
+      if (req.method === "POST") {
+        const body = await req.json().catch(() => ({}));
+        if (typeof body?.days === "number") days = body.days;
+      }
+    } catch { /* noop */ }
+    days = Math.min(Math.max(days, 1), 90);
     const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
 
     // Pull events (page through to avoid 1000-row cap)
