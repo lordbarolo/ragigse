@@ -383,7 +383,7 @@ export default function LandingV2() {
                       <div className="space-y-1">
                         <div className="flex items-center justify-between text-[11px]">
                           <span className="text-white/85">Storhelgstillägg</span>
-                          <span className="text-emerald-300 font-semibold">+6 900 kr</span>
+                          <span className="text-emerald-300 font-semibold">+1 625 kr</span>
                         </div>
                         <div className="flex items-center justify-between text-[11px]">
                           <span className="text-white/85">Aktiv jour</span>
