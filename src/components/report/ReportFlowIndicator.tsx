@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface FlowStep {
   id: string;
@@ -7,17 +7,22 @@ interface FlowStep {
 
 interface Props {
   steps: FlowStep[];
+  /** Section id whose top edge the indicator should align with initially. */
+  anchorId?: string;
 }
 
 /**
  * Vertical flow indicator ("röd tråd") tucked against the left edge.
- * Collapsed by default (only dots visible) — expands on hover/focus
- * to reveal labels. Tracks active section via IntersectionObserver.
+ * Starts aligned with `anchorId`'s top edge and follows scroll upward
+ * until it reaches its centered resting position, where it sticks.
  */
-export default function ReportFlowIndicator({ steps }: Props) {
+export default function ReportFlowIndicator({ steps, anchorId }: Props) {
   const [activeId, setActiveId] = useState<string>(steps[0]?.id || "");
   const [expanded, setExpanded] = useState(false);
+  const [topPx, setTopPx] = useState<number | null>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
+  // Track active section
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -39,10 +44,50 @@ export default function ReportFlowIndicator({ steps }: Props) {
     return () => observer.disconnect();
   }, [steps]);
 
+  // Track sticky top position relative to anchor
+  useEffect(() => {
+    if (!anchorId) return;
+    let raf = 0;
+
+    const update = () => {
+      raf = 0;
+      const anchor = document.getElementById(anchorId);
+      const indicatorH = wrapperRef.current?.offsetHeight ?? 0;
+      const minTop = Math.max(16, (window.innerHeight - indicatorH) / 2);
+      if (!anchor) {
+        setTopPx(minTop);
+        return;
+      }
+      const anchorTop = anchor.getBoundingClientRect().top;
+      setTopPx(Math.max(minTop, anchorTop));
+    };
+
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(update);
+    };
+
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, [anchorId]);
+
   const handleClick = (id: string) => {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+
+  const positionStyle =
+    topPx !== null
+      ? { top: `${topPx}px` }
+      : undefined;
+  const positionClass =
+    topPx !== null ? "" : "top-1/2 -translate-y-1/2";
 
   return (
     <aside
@@ -51,9 +96,11 @@ export default function ReportFlowIndicator({ steps }: Props) {
       onMouseLeave={() => setExpanded(false)}
       onFocus={() => setExpanded(true)}
       onBlur={() => setExpanded(false)}
-      className="hidden lg:block fixed left-0 top-1/2 -translate-y-1/2 z-30 group"
+      className={`hidden lg:block fixed left-0 z-30 group ${positionClass}`}
+      style={positionStyle}
     >
       <div
+        ref={wrapperRef}
         className={`transition-all duration-300 ease-out pl-3 pr-4 py-5 rounded-r-2xl ${
           expanded
             ? "bg-background/80 backdrop-blur-md border-y border-r border-foreground/[0.06] shadow-sm"
