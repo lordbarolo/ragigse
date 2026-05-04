@@ -436,32 +436,6 @@ export default function LandingV2() {
         </div>
       </section>
 
-      {/* ═══════════════════ 3. HUR DET FUNGERAR ═══════════════════ */}
-      <section className="px-5 sm:px-6 lg:px-10 py-16 md:py-20">
-        <div className="max-w-5xl mx-auto">
-          <div className="mb-10 md:mb-12 text-center">
-            <span className="inline-block text-[11px] font-semibold uppercase tracking-[0.1em] text-[hsl(256_100%_82%)] bg-[hsl(256_100%_67%_/_0.15)] border border-[hsl(256_100%_67%_/_0.3)] rounded-full px-3.5 py-1 mb-4">
-              Hur det fungerar
-            </span>
-            <h2 className="text-[28px] sm:text-[34px] font-bold leading-[1.15] tracking-tight text-white">
-              Tre steg från fråga till svar
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5">
-            {HOW_IT_WORKS.map((s, i) => (
-              <div key={s.num} className="relative glass rounded-2xl p-6 md:p-7 glow-hover">
-                <div className="text-[12px] font-semibold tracking-wider text-[hsl(256_100%_82%)] mb-3">{s.num}</div>
-                <h3 className="text-[17px] font-semibold text-white mb-2">{s.title}</h3>
-                <p className="text-[14px] text-white/70 leading-relaxed">{s.desc}</p>
-                {i < HOW_IT_WORKS.length - 1 && (
-                  <div className="hidden md:block absolute top-1/2 -right-3 w-6 h-px bg-white/15" />
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ═══════════════════ 4. PRIMÄR PRODUKTTRAPPA ═══════════════════ */}
       <section className="px-5 sm:px-6 lg:px-10 py-16 md:py-20 border-y border-slate-200 bg-white">
         <div className="max-w-6xl mx-auto">
