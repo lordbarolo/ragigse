@@ -67,7 +67,7 @@ type ProductCard = {
 const PRIMARY_PRODUCTS: ProductCard[] = [
   {
     step: "01",
-    title: "Lönanalys",
+    title: "Löneanalys",
     tagline: "Se uppdaterad branschstandard",
     desc: "Att förhandla kan vara obekvämt. Speciellt för den som gör det sällan. Vi gör det lite lättare genom att visa vad som är en vanlig ersättning för din roll.",
     tag: "Gratis",
