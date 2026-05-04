@@ -541,7 +541,7 @@ export default function LandingV2() {
               Din magkänsla kan kosta dig +100 000kr per år.<br />Låt bekräftad marknadsdata guida dig istället.
             </h3>
             <p className="text-[13.5px] sm:text-[14px] text-white/75 leading-relaxed">
-              Vi visar villkor och fallgropar helt öppet. Medan du fokuserar på patienterna ser vi till att du får rätt information om jourersättningen på helgnatt, prisskillnaden mellan olika städer och reseersättningen i Norrland. För dig med företag dubbelkollar vi att din faktura stämmer överens med tidrapporten. För dig som är anställd meddelar vi när du tjänar på att ha aktiebolag samt när du bör öka din skattesats för att undvika restskatt.
+              Vi visar villkor och fallgropar helt öppet. Medan du fokuserar på patienterna säkerställer vi att du har rätt beslutsunderlag. Du behöver inte leta information om indexjusterad jourersättning, vitesbelopp vid frånvaro och HLR-intygets giltighet.
             </p>
           </div>
           <Link
