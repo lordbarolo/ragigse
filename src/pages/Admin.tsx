@@ -358,6 +358,9 @@ export default function Admin() {
       {/* Chat Answer Reports */}
       <ChatAnswerReports />
 
+      {/* PostHog event coverage */}
+      <EventCoverage />
+
       {/* Salary Insights */}
       <SalaryInsights />
 
