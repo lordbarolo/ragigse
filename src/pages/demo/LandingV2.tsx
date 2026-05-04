@@ -83,7 +83,7 @@ const PRIMARY_PRODUCTS: ProductCard[] = [
     tag: "Premium · 99 kr/mån",
     tagColor: "pink",
     href: "/consultant/forhandla",
-    cta: "Situationsanpassad rådgivning",
+    cta: "Individuell rådgivning",
   },
   {
     step: "03",
