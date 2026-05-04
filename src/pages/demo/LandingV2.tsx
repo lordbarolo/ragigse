@@ -101,7 +101,7 @@ type InfraCard = { title: string; desc: string; href: string };
 
 const INFRASTRUCTURE: InfraCard[] = [
   { title: "Dokhus", desc: "Där dina dokument och intyg bor. Dela tillgång med hjälp av krypterade och tidsbestämda länkar. Varje visad version är spårbar och tidsbegränsad.", href: "/dokhus-info" },
-  { title: "Ref-ID", desc: "Referenser får ETT samtal och verifierar därefter nya förfrågningar med bank-ID. Referensuppgifterna stannar under din kontroll och du ger tidsbegränsad tillgång.", href: "/referenser-info" },
+  { title: "Ref-ID", desc: "Referensgivare får ETT samtal och verifierar därefter nya förfrågningar med bank-ID. Referensuppgifterna stannar under din kontroll och du ger tidsbegränsad tillgång.", href: "/referenser-info" },
   { title: "Eget bolag", desc: "Går du i tankar på att starta ett aktiebolag? Vår assistent svarar på dina frågor och hjälper dig ta de första stegen. Fördelarna är många för dig som återkommande arbetar som konsult.", href: "/eget-bolag" },
 ];
 
