@@ -364,7 +364,7 @@ export default function LandingV2() {
                 <div className="min-h-[64px] transition-all duration-300">
                   {invoiceStep === 0 && (
                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-                      <div className="text-[11px] text-white/75 mb-2">Skannar faktura...</div>
+                      <div className="text-[11px] text-white/75 mb-2 flex items-center gap-1.5"><span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-emerald-400/20 text-emerald-300 text-[9px] font-bold">1</span>Skannar faktura...</div>
                       <div className="space-y-1.5">
                         <div className="h-1 rounded bg-white/10 overflow-hidden">
                           <div className="h-full bg-emerald-400/40 animate-[shimmer_2s_infinite]" style={{ width: '60%' }} />
@@ -379,7 +379,7 @@ export default function LandingV2() {
 
                   {invoiceStep === 1 && (
                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-                      <div className="text-[11px] text-white/75 mb-2">Diff. mot tidrapport</div>
+                      <div className="text-[11px] text-white/75 mb-2 flex items-center gap-1.5"><span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-emerald-400/20 text-emerald-300 text-[9px] font-bold">2</span>Diff. mot tidrapport</div>
                       <div className="space-y-1">
                         <div className="flex items-center justify-between text-[11px]">
                           <span className="text-white/85">Storhelgstillägg</span>
@@ -395,7 +395,7 @@ export default function LandingV2() {
 
                   {invoiceStep === 2 && (
                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-                      <div className="text-[11px] text-white/75 mb-1">Extra att fakturera</div>
+                      <div className="text-[11px] text-white/75 mb-1 flex items-center gap-1.5"><span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-emerald-400/20 text-emerald-300 text-[9px] font-bold">3</span>Extra att fakturera</div>
                       <div className="text-[20px] font-bold text-emerald-300 mb-1">+10 925 kr</div>
                       <Link 
                         to="/consultant/fakturakontroll" 
