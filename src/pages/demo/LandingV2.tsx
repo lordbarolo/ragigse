@@ -358,7 +358,7 @@ export default function LandingV2() {
                   <div className="w-7 h-7 rounded-md bg-emerald-400/20 flex items-center justify-center animate-pulse">
                     <Receipt className="w-4 h-4 text-emerald-300" />
                   </div>
-                  <div className="text-[12px] font-semibold text-white">Fakturagranskning</div>
+                  <div className="text-[12px] font-semibold text-white">Faktureringsstöd</div>
                 </div>
 
                 <div className="min-h-[64px] transition-all duration-300">
