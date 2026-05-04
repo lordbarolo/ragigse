@@ -98,6 +98,18 @@ export default function Report() {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
+      <ReportFlowIndicator
+        steps={[
+          { id: "flow-din-ersattning", label: "Din ersättning & marknadsspann" },
+          { id: "flow-situation", label: "Vad det betyder för dig" },
+          { id: "flow-regional", label: "Villkoren på andra orter" },
+          { id: "flow-negotiation", label: "Din förhandlingspotential" },
+          { id: "flow-stod", label: "Få stöd i din förhandling" },
+          { id: "flow-fakturor", label: "Nöjd med villkoren? Kolla fakturorna" },
+          { id: "flow-market", label: "Marknadsintelligens" },
+          { id: "flow-method", label: "Beräkningsmetod" },
+        ]}
+      />
       {/* Header — premium, mobile-first */}
       <header className="relative overflow-hidden hero-gradient px-5 pt-20 pb-10 sm:pt-24 sm:pb-12">
         {/* Subtle decorative element */}
