@@ -137,52 +137,32 @@ export default function CompensationView({ role, location, employmentType }: Com
           <h2 className="font-display text-lg font-bold leading-snug mb-4">
             {role}
           </h2>
-          <div className="flex items-baseline gap-1.5 mb-1">
-            <span className="font-display text-3xl font-extrabold tracking-tight">
-              {fmt(invoiceRate)} kr
-            </span>
-            <span className="text-sm opacity-60">/tim</span>
+
+          <div className="flex flex-col gap-2">
+            <div className="flex items-baseline justify-between">
+              <span className="text-sm opacity-70">Timlön</span>
+              <span className="font-display text-lg font-bold">
+                {fmt(salaryRange.hourlyMin)} – {fmt(salaryRange.hourlyMax)}{" "}
+                <span className="text-sm font-normal opacity-60">kr/tim</span>
+              </span>
+            </div>
+
+            <div className="h-px bg-white/15" />
+
+            <div className="flex items-baseline justify-between">
+              <span className="text-sm opacity-70">Månadslön</span>
+              <span className="font-display text-lg font-bold">
+                {fmt(monthlyMin)} – {fmt(monthlyMax)}{" "}
+                <span className="text-sm font-normal opacity-60">kr/mån</span>
+              </span>
+            </div>
           </div>
-          <p className="text-[11px] opacity-50 flex items-center gap-1">
+
+          <p className="text-[11px] opacity-50 mt-3 flex items-center gap-1">
             <FileText className="w-3 h-3" />
             {contractLabel}
           </p>
         </div>
-      </Card>
-
-      {/* ── Salary range card ──────────────────────────── */}
-      <Card className="p-5 border border-border bg-card">
-        <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-3">
-          LÖNENIVÅER BERÄKNADE PÅ STANDARDMARGINALER OCH OFFENTLIGA RAMAVTAL I 290 KOMMUNER OCH 21 REGIONER
-        </h3>
-
-        <div className="flex flex-col gap-2">
-          <div className="flex items-baseline justify-between">
-            <span className="text-sm text-muted-foreground">Timlön</span>
-            <span className="font-display text-lg font-bold text-foreground">
-              {fmt(salaryRange.hourlyMin)} – {fmt(salaryRange.hourlyMax)}{" "}
-              <span className="text-sm font-normal text-muted-foreground">
-                kr/tim
-              </span>
-            </span>
-          </div>
-
-          <div className="h-px bg-border" />
-
-          <div className="flex items-baseline justify-between">
-            <span className="text-sm text-muted-foreground">Månadslön</span>
-            <span className="font-display text-lg font-bold text-foreground">
-              {fmt(monthlyMin)} – {fmt(monthlyMax)}{" "}
-              <span className="text-sm font-normal text-muted-foreground">
-                kr/mån
-              </span>
-            </span>
-          </div>
-        </div>
-
-        <p className="text-[11px] text-muted-foreground mt-3 whitespace-pre-line">
-          Baserat på {hoursPerMonth} arbetstimmar. Ersättningsnivå kan variera utifrån kostnader så som resor, logi, utbildningar m.m
-        </p>
       </Card>
 
       {/* ── Negotiation tips ───────────────────────────── */}
