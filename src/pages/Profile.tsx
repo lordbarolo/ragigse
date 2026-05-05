@@ -225,7 +225,7 @@ export default function Profile() {
               <p className="text-sm text-slate-900 mt-0.5 truncate">
                 {percent >= 100
                   ? "Din profil är komplett."
-                  : `${completedCount} av ${totalCount} steg klara — komplettera för bättre matchning.`}
+                  : `${completedCount} av ${totalCount} steg klara — komplettera för komplett profil.`}
               </p>
             </div>
             <div className="flex items-center gap-3 shrink-0">
