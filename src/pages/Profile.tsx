@@ -346,12 +346,6 @@ export default function Profile() {
                 hospValid={verification.hasValidHosp}
                 ivoValid={verification.hasValidIvo}
               />
-              <AiPricingCoach
-                role={profile?.specialty_name || null}
-                region={profile?.region_name || null}
-                employmentType={profile?.employment_type || null}
-                currentRate={profile?.current_hourly_rate || null}
-              />
               <AiConsultantCoach
                 role={profile?.specialty_name || null}
                 region={profile?.region_name || null}
