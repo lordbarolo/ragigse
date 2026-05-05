@@ -212,7 +212,7 @@ export default function LandingV2() {
       </nav>
 
       {/* ═══════════════════ 1. HERO med inline-form + porträtt ═══════════════════ */}
-      <section className="relative overflow-hidden px-5 sm:px-6 lg:px-10 hero-smooth-bg">
+      <section className="relative z-20 overflow-visible px-5 sm:px-6 lg:px-10 hero-smooth-bg">
         <div className="relative z-10 max-w-3xl mx-auto flex flex-col items-center text-center pt-14 md:pt-24 pb-3 md:pb-4">
           <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-medium text-[hsl(256_100%_85%)] bg-[hsl(256_100%_67%_/_0.18)] border border-[hsl(256_100%_67%_/_0.35)] rounded-full px-3 py-1 mb-5 uppercase tracking-wider">
             <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="currentColor" /></svg>
