@@ -75,7 +75,7 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }
         <div className="flex items-start gap-2">
           <ShieldCheck className="w-5 h-5 text-primary shrink-0 mt-0.5" />
           <p className="font-semibold text-foreground text-base">
-            Vår analys av tidrapporter indikerar att vårdkonsulter ofta missar mellan 20 000–40 000 kr i årlig ersättning på grund av faktureringsavvikelser. Är du säker på att du fakturerat rätt?
+            Vår analys av tidrapporter indikerar att vårdkonsulter missar tiotusentals kronor i årlig ersättning på grund av enkla räknefel. Är du säker på att du fakturerat rätt?
           </p>
         </div>
 
