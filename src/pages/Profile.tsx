@@ -218,9 +218,9 @@ export default function Profile() {
 
       <div className="relative pt-20 pb-12 px-4 max-w-5xl mx-auto space-y-5">
         {/* Top progression bar — replaces old Profilstatus */}
-        <div className="rounded-2xl bg-white border border-slate-200 shadow-sm px-5 py-4">
-          <div className="flex items-center justify-between gap-4 mb-2">
-            <div className="min-w-0">
+        <div className="rounded-2xl bg-white border border-slate-200 shadow-sm px-4 sm:px-5 py-4">
+          <div className="flex items-center justify-between gap-3 mb-3">
+            <div className="min-w-0 flex-1">
               <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-slate-500">Profilstatus</p>
               <p className="text-sm text-slate-900 mt-0.5 truncate">
                 {percent >= 100
@@ -228,26 +228,9 @@ export default function Profile() {
                   : `${completedCount} av ${totalCount} steg klara.`}
               </p>
             </div>
-            <div className="flex items-center gap-3 shrink-0">
-              <span className="text-2xl font-semibold text-slate-900 tabular-nums">{percent}%</span>
-              <Link to="/profil">
-                <Button size="sm" className="gap-1.5 h-9 text-sm font-semibold text-white border-0 bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] hover:from-[#7c3aed] hover:to-[#c026d3] shadow-sm hover:shadow-md transition-all">
-                  <Pencil className="w-3.5 h-3.5" />
-                  Redigera
-                </Button>
-              </Link>
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-9 w-9 border-slate-300 text-slate-700 hover:bg-slate-100"
-                onClick={handleShare}
-                aria-label="Dela profil"
-              >
-                <Share2 className="w-4 h-4" />
-              </Button>
-            </div>
+            <span className="text-2xl font-semibold text-slate-900 tabular-nums shrink-0">{percent}%</span>
           </div>
-          <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+          <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden mb-3">
             <div
               className="h-full rounded-full transition-all duration-700 ease-out"
               style={{
@@ -256,6 +239,23 @@ export default function Profile() {
                   "linear-gradient(90deg, hsl(256 90% 60%) 0%, hsl(280 85% 65%) 50%, hsl(330 90% 70%) 100%)",
               }}
             />
+          </div>
+          <div className="flex items-center gap-2">
+            <Link to="/profil" className="flex-1 sm:flex-initial">
+              <Button size="sm" className="w-full sm:w-auto gap-1.5 h-9 text-sm font-semibold text-white border-0 bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] hover:from-[#7c3aed] hover:to-[#c026d3] shadow-sm hover:shadow-md transition-all">
+                <Pencil className="w-3.5 h-3.5" />
+                Redigera
+              </Button>
+            </Link>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-9 w-9 border-slate-300 text-slate-700 hover:bg-slate-100 shrink-0"
+              onClick={handleShare}
+              aria-label="Dela profil"
+            >
+              <Share2 className="w-4 h-4" />
+            </Button>
           </div>
         </div>
 
