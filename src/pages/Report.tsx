@@ -99,7 +99,6 @@ export default function Report() {
     <div className="min-h-screen bg-background">
       <Navbar />
       <ReportFlowIndicator
-        anchorId="flow-regional"
         steps={[
           { id: "flow-din-ersattning", label: "Din ersättning & marknadsspann" },
           { id: "flow-situation", label: "Vad det betyder för dig" },
