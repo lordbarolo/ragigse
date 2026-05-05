@@ -16,7 +16,7 @@ import DashboardReferences from "@/components/profile/DashboardReferences";
 import DashboardDocuments from "@/components/profile/DashboardDocuments";
 import DashboardInvoiceCheck from "@/components/profile/DashboardInvoiceCheck";
 import AssignmentFeedbackDialog from "@/components/profile/AssignmentFeedbackDialog";
-import AiPricingCoach from "@/components/ai/AiPricingCoach";
+
 import AiConsultantCoach from "@/components/ai/AiConsultantCoach";
 import { useAssignmentFeedback } from "@/hooks/useAssignmentFeedback";
 import { trackEvent } from "@/lib/trackEvent";
