@@ -7,6 +7,7 @@ export function useRefProfile(userId: string | undefined) {
   const [trustScore, setTrustScore] = useState<TrustScoreResult | null>(null);
   const [profileStatus, setProfileStatus] = useState<ProfileStatusResult | null>(null);
   const [loading, setLoading] = useState(true);
+  const [initialLoading, setInitialLoading] = useState(true);
   const [hasRefProfile, setHasRefProfile] = useState(false);
 
   const refresh = useCallback(async () => {
@@ -49,11 +50,12 @@ export function useRefProfile(userId: string | undefined) {
     if (statusResult.data) setProfileStatus(statusResult.data as unknown as ProfileStatusResult);
 
     setLoading(false);
+    setInitialLoading(false);
   }, [userId]);
 
   useEffect(() => {
     refresh();
   }, [refresh]);
 
-  return { references, trustScore, profileStatus, loading, hasRefProfile, refresh };
+  return { references, trustScore, profileStatus, loading, initialLoading, hasRefProfile, refresh };
 }
