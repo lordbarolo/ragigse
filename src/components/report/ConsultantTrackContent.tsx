@@ -554,6 +554,14 @@ export default function ConsultantTrackContent({
                   </p>
                 )}
               </div>
+              {isEmployee && rec && (
+                <EmployerCostBreakdown
+                  hourlySalary={currentHourly}
+                  customerRate={marketRate}
+                  marginShare={{ min: shareMin, max: shareMax }}
+                  marginLabel={marginLabel}
+                />
+              )}
               <Separator className="opacity-20" />
               <div className="p-4 rounded-xl bg-foreground/[0.02] border border-border/30 space-y-3">
                 <div className="flex items-center gap-2">
