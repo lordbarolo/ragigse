@@ -27,6 +27,7 @@ import { SectionHeading, StatBlock, CalcRow } from "@/shared/UIComponents";
 import type { ResultJson, ZoneComparison } from "@/shared/types";
 import { getNegotiationTips } from "./negotiationData";
 import ReportFeedback from "./ReportFeedback";
+import EmployerCostBreakdown from "./EmployerCostBreakdown";
 
 interface Props {
   r: ResultJson;
