@@ -80,7 +80,7 @@ const PRIMARY_PRODUCTS: ProductCard[] = [
     title: "Förhandlingsagent",
     tagline: "Vinn förhandlingen",
     desc: "AI-assistent som ger dig argumenten i realtid. Branschspecifik kunskap, neutral analys, konkreta nästa steg.",
-    tag: "Premium · 99 kr/mån",
+    tag: "Gratis",
     tagColor: "pink",
     href: "/consultant/forhandla",
     cta: "Individuell rådgivning",
