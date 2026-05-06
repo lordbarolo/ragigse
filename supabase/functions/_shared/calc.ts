@@ -33,6 +33,81 @@ export const SHARE_MID = (STANDARD_SHARE_MIN + STANDARD_SHARE_MAX) / 2;
 export const EMPLOYER_FACTOR = 1.42;
 export const HOURS_PER_MONTH = 167;
 
+// ── Employer cost step function (ITP 1, 1979+) ───────────────────────────────
+// Antaganden: semesterersättning ingår i timlönen (bruttolön).
+// Komponenter:
+//   - Arbetsgivaravgifter: 31.42 % av bruttolön
+//   - ITP 1 pension: 4.5 % under brytpunkten (7.5 IBB), 30 % över
+//   - Särskild löneskatt på pension: 24.26 % av pensionspremien
+//   - AFA/TFA-försäkringar: 0.85 % av bruttolön
+//
+// Brytpunkten 7.5 IBB 2025 ≈ 52 750 kr/mån. Lönen jämförs månadsvis (timlön × 167).
+export const ARBETSGIVARAVGIFT = 0.3142;
+export const ITP1_LOW = 0.045;
+export const ITP1_HIGH = 0.30;
+export const ITP1_THRESHOLD_MONTHLY = 52750; // 7.5 IBB 2025
+export const SARSKILD_LONESKATT = 0.2426;
+export const AFA_TFA = 0.0085;
+
+export interface EmployerCostBreakdown {
+  hourly_salary: number;          // bruttolön/h (semester inkl.)
+  monthly_salary: number;         // bruttolön/mån = hourly × 167
+  arbetsgivaravgift_per_h: number;
+  itp1_per_month: number;         // total ITP-premie per månad
+  itp1_per_h: number;
+  itp1_low_part: number;          // del under brytpunkt
+  itp1_high_part: number;         // del över brytpunkt
+  sarskild_loneskatt_per_h: number;
+  afa_tfa_per_h: number;
+  total_employer_cost_per_h: number;
+  total_factor: number;           // total / hourly_salary
+  components: Array<{ label: string; per_hour: number; pct_of_salary: number }>;
+}
+
+export function computeEmployerCost(
+  hourly_salary: number,
+  hours_per_month: number = HOURS_PER_MONTH
+): EmployerCostBreakdown {
+  const monthly = hourly_salary * hours_per_month;
+
+  const arbetsgivaravgift = hourly_salary * ARBETSGIVARAVGIFT;
+
+  // ITP 1 step function
+  const lowPart = Math.min(monthly, ITP1_THRESHOLD_MONTHLY);
+  const highPart = Math.max(0, monthly - ITP1_THRESHOLD_MONTHLY);
+  const itp1Monthly = lowPart * ITP1_LOW + highPart * ITP1_HIGH;
+  const itp1PerH = itp1Monthly / hours_per_month;
+
+  const sarskild = itp1PerH * SARSKILD_LONESKATT;
+  const afa = hourly_salary * AFA_TFA;
+
+  const total = hourly_salary + arbetsgivaravgift + itp1PerH + sarskild + afa;
+  const factor = total / hourly_salary;
+
+  const components = [
+    { label: "Bruttolön (semester inkl.)", per_hour: hourly_salary, pct_of_salary: 1 },
+    { label: "Arbetsgivaravgifter (31,42 %)", per_hour: arbetsgivaravgift, pct_of_salary: ARBETSGIVARAVGIFT },
+    { label: "ITP 1 pension", per_hour: itp1PerH, pct_of_salary: itp1PerH / hourly_salary },
+    { label: "Särskild löneskatt på pension (24,26 %)", per_hour: sarskild, pct_of_salary: sarskild / hourly_salary },
+    { label: "AFA/TFA-försäkringar (0,85 %)", per_hour: afa, pct_of_salary: AFA_TFA },
+  ];
+
+  return {
+    hourly_salary,
+    monthly_salary: monthly,
+    arbetsgivaravgift_per_h: arbetsgivaravgift,
+    itp1_per_month: itp1Monthly,
+    itp1_per_h: itp1PerH,
+    itp1_low_part: lowPart,
+    itp1_high_part: highPart,
+    sarskild_loneskatt_per_h: sarskild,
+    afa_tfa_per_h: afa,
+    total_employer_cost_per_h: total,
+    total_factor: factor,
+    components,
+  };
+}
+
 // ── Types ────────────────────────────────────────────────────────────────────
 
 export type EmploymentType = "anstalld" | "foretagare";
