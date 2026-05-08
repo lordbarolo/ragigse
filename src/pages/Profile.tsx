@@ -354,6 +354,8 @@ export default function Profile() {
                 identityVerified={verification.hasBankid}
                 hospValid={verification.hasValidHosp}
                 ivoValid={verification.hasValidIvo}
+                onUpload={goUpload}
+                onVerifyIdentity={goVerifyIdentity}
               />
               <DashboardInvoiceCheck />
             </div>
@@ -410,8 +412,10 @@ export default function Profile() {
                 identityVerified={verification.hasBankid}
                 hospValid={verification.hasValidHosp}
                 ivoValid={verification.hasValidIvo}
+                onUpload={goUpload}
+                onVerifyIdentity={goVerifyIdentity}
               />
-              <DashboardDocuments />
+              <DashboardDocuments ref={docsRef} />
             </div>
             <div className="space-y-5">
               <DashboardReferences />
