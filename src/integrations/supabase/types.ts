@@ -1419,6 +1419,44 @@ export type Database = {
         }
         Relationships: []
       }
+      document_share_views: {
+        Row: {
+          action: string
+          document_id: string | null
+          id: string
+          ip_address: string | null
+          share_id: string
+          user_agent: string | null
+          viewed_at: string
+        }
+        Insert: {
+          action?: string
+          document_id?: string | null
+          id?: string
+          ip_address?: string | null
+          share_id: string
+          user_agent?: string | null
+          viewed_at?: string
+        }
+        Update: {
+          action?: string
+          document_id?: string | null
+          id?: string
+          ip_address?: string | null
+          share_id?: string
+          user_agent?: string | null
+          viewed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_share_views_share_id_fkey"
+            columns: ["share_id"]
+            isOneToOne: false
+            referencedRelation: "document_shares"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       document_shares: {
         Row: {
           created_at: string
@@ -4862,6 +4900,17 @@ export type Database = {
       is_org_admin: {
         Args: { _org_id: string; _user_id: string }
         Returns: boolean
+      }
+      list_my_document_shares: { Args: never; Returns: Json }
+      log_document_share_view: {
+        Args: {
+          _action?: string
+          _document_id?: string
+          _ip?: string
+          _token: string
+          _user_agent?: string
+        }
+        Returns: undefined
       }
       move_to_dlq: {
         Args: {
