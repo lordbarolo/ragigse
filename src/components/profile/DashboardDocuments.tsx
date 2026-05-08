@@ -92,6 +92,7 @@ const DashboardDocuments = forwardRef<DashboardDocumentsHandle>((_, ref) => {
                   {(d.document_type === "ivo" || d.document_type === "hosp") && (
                     <DocumentNameCheck
                       documentId={d.id}
+                      documentType={d.document_type}
                       documentLabel={d.document_type === "ivo" ? "IVO-utdraget" : "HOSP-utdraget"}
                     />
                   )}

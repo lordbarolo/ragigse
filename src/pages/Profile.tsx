@@ -14,6 +14,7 @@ import TrustVerification from "@/components/profile/TrustVerification";
 import CompensationView from "@/components/report/CompensationView";
 import DashboardReferences from "@/components/profile/DashboardReferences";
 import DashboardDocuments, { type DashboardDocumentsHandle } from "@/components/profile/DashboardDocuments";
+import ProfileAuditLog from "@/components/profile/ProfileAuditLog";
 import DashboardInvoiceCheck from "@/components/profile/DashboardInvoiceCheck";
 import AssignmentFeedbackDialog from "@/components/profile/AssignmentFeedbackDialog";
 
@@ -416,6 +417,7 @@ export default function Profile() {
                 onVerifyIdentity={goVerifyIdentity}
               />
               <DashboardDocuments ref={docsRef} />
+              <ProfileAuditLog />
             </div>
             <div className="space-y-5">
               <DashboardReferences />
