@@ -13,6 +13,8 @@ Deno.serve(async (req) => {
   try {
     const url = new URL(req.url);
     const token = url.searchParams.get("token");
+    const action = url.searchParams.get("action") || "view";
+    const documentId = url.searchParams.get("document_id");
     if (!token || token.length < 16) {
       return new Response(JSON.stringify({ error: "Invalid token" }), { status: 400, headers: corsHeaders });
     }
@@ -21,6 +23,21 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
+
+    const ip =
+      req.headers.get("cf-connecting-ip") ||
+      req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
+      null;
+    const ua = req.headers.get("user-agent") || null;
+
+    // Logga åtkomst (bästa möjliga, blockerar inte svar)
+    supabase.rpc("log_document_share_view", {
+      _token: token,
+      _ip: ip,
+      _user_agent: ua,
+      _document_id: documentId,
+      _action: action,
+    }).then(({ error }) => { if (error) console.error("log error", error); });
 
     const { data, error } = await supabase.rpc("get_document_share_by_token", { _token: token });
     if (error) throw error;

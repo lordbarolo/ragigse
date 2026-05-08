@@ -116,12 +116,22 @@ export default function SharedDocuments() {
                   </p>
                 </div>
                 {d.signed_url ? (
-                  <a href={d.signed_url} target="_blank" rel="noopener noreferrer">
-                    <Button size="sm" variant="outline" className="gap-1.5 text-sm font-semibold">
-                      <Download className="w-3.5 h-3.5" />
-                      Öppna
-                    </Button>
-                  </a>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="gap-1.5 text-sm font-semibold"
+                    onClick={() => {
+                      // Logga öppnande (fire-and-forget)
+                      fetch(`${ENDPOINT}?token=${encodeURIComponent(token!)}&action=download&document_id=${d.id}`, {
+                        headers: { apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string },
+                        keepalive: true,
+                      }).catch(() => {});
+                      window.open(d.signed_url!, "_blank", "noopener,noreferrer");
+                    }}
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    Öppna
+                  </Button>
                 ) : (
                   <span className="text-xs text-rose-500">Otillgänglig</span>
                 )}

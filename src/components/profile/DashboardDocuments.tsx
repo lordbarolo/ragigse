@@ -3,9 +3,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ShieldCheck, FileText, Loader2, Plus, Link2 } from "lucide-react";
+import { ShieldCheck, FileText, Loader2, Plus, Link2, History } from "lucide-react";
 import { DocumentUpload } from "@/components/referly/DocumentUpload";
 import ShareDocumentsDialog from "./ShareDocumentsDialog";
+import ShareActivityDialog from "./ShareActivityDialog";
 import DocumentNameCheck from "./DocumentNameCheck";
 
 interface DocRow {
@@ -35,6 +36,7 @@ const DashboardDocuments = forwardRef<DashboardDocumentsHandle>((_, ref) => {
   const [loading, setLoading] = useState(true);
   const [showUpload, setShowUpload] = useState(false);
   const [shareOpen, setShareOpen] = useState(false);
+  const [activityOpen, setActivityOpen] = useState(false);
 
   useImperativeHandle(ref, () => ({
     openUpload: () => setShowUpload(true),
@@ -111,6 +113,15 @@ const DashboardDocuments = forwardRef<DashboardDocumentsHandle>((_, ref) => {
                 <Link2 className="w-4 h-4" />
                 Skapa delningslänk
               </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1.5 text-sm font-semibold"
+                onClick={() => setActivityOpen(true)}
+              >
+                <History className="w-4 h-4" />
+                Aktivitet
+              </Button>
             </div>
             {showUpload && <DocumentUpload />}
           </div>
@@ -129,6 +140,7 @@ const DashboardDocuments = forwardRef<DashboardDocumentsHandle>((_, ref) => {
         )}
       </CardContent>
       <ShareDocumentsDialog open={shareOpen} onOpenChange={setShareOpen} />
+      <ShareActivityDialog open={activityOpen} onOpenChange={setActivityOpen} />
     </Card>
   );
 });
