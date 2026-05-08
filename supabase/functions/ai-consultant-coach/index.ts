@@ -63,7 +63,7 @@ Hårda regler:
 - Vid frågor om referenser: hänvisa till Ref-ID och plingar.
 - Vid frågor om dokument: hänvisa till Dokhus och samarbetsintyg.
 - Aldrig hänvisa till "live" eller "pågående" uppdrag — endast historiska mönster i Uppdragsradar.
-- Använd korta, tydliga svar (max 4-6 meningar). Markdown är OK.`;
+- Använd korta, tydliga svar (max 5 meningar). Markdown är OK.`;
 }
 
 serve(async (req) => {
