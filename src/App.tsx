@@ -183,6 +183,7 @@ const App = () => (
               <Route path="/dela" element={<ProtectedRoute><SharePreview /></ProtectedRoute>} />
               <Route path="/referenser-info" element={<ProtectedRoute><ReferenserInfo /></ProtectedRoute>} />
               <Route path="/eget-bolag" element={<EgetBolag />} />
+              <Route path="/delade-dokument/:token" element={<SharedDocuments />} />
               <Route path="/admin" element={<ProtectedRoute allowedRoles={["admin"]}><Admin /></ProtectedRoute>} />
               <Route path="/marketplace" element={<ProtectedRoute><MarketplaceHome /></ProtectedRoute>} />
               <Route path="/dev/theme-preview" element={<ProtectedRoute allowedRoles={["admin"]}><ThemePreview /></ProtectedRoute>} />
