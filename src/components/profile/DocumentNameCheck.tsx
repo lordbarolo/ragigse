@@ -16,6 +16,7 @@ import {
 interface Props {
   documentId: string;
   documentLabel: string;
+  documentType?: "ivo" | "hosp" | string;
   onProfileUpdated?: (newName: string) => void;
 }
 
@@ -30,6 +31,7 @@ interface CheckResult {
 export default function DocumentNameCheck({
   documentId,
   documentLabel,
+  documentType,
   onProfileUpdated,
 }: Props) {
   const { user } = useAuth();
@@ -69,11 +71,23 @@ export default function DocumentNameCheck({
     setSaving(true);
     try {
       const newName = result.extracted_name;
+      const oldName = result.profile_name || "";
       const { error: e1 } = await supabase
         .from("ref_profiles")
         .update({ full_name: newName })
         .eq("id", user.id);
       if (e1) throw e1;
+
+      // Logga till revisionslogg
+      await supabase.from("profile_audit_log").insert({
+        user_id: user.id,
+        field_name: "full_name",
+        old_value: oldName,
+        new_value: newName,
+        source: documentType === "hosp" ? "hosp" : documentType === "ivo" ? "ivo" : "manual",
+        source_document_id: documentId,
+      });
+
       toast.success("Profilnamn uppdaterat");
       onProfileUpdated?.(newName);
       setOpen(false);
