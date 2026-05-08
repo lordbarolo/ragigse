@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -13,7 +13,7 @@ import ProfileInsights from "@/components/profile/ProfileInsights";
 import TrustVerification from "@/components/profile/TrustVerification";
 import CompensationView from "@/components/report/CompensationView";
 import DashboardReferences from "@/components/profile/DashboardReferences";
-import DashboardDocuments from "@/components/profile/DashboardDocuments";
+import DashboardDocuments, { type DashboardDocumentsHandle } from "@/components/profile/DashboardDocuments";
 import DashboardInvoiceCheck from "@/components/profile/DashboardInvoiceCheck";
 import AssignmentFeedbackDialog from "@/components/profile/AssignmentFeedbackDialog";
 
