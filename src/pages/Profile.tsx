@@ -269,6 +269,29 @@ export default function Profile() {
           </div>
         </div>
 
+        {/* CTA: gör enkäten om den inte är gjord */}
+        {reports.length === 0 && !profile?.specialty_name && (
+          <div className="rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 to-pink-50 p-5 sm:p-6 shadow-sm">
+            <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-violet-700">
+              Kom igång
+            </p>
+            <h2 className="text-lg sm:text-xl font-semibold text-slate-900 mt-1">
+              Gör din löneanalys på 60 sekunder
+            </h2>
+            <p className="text-sm text-slate-600 mt-1 mb-4 max-w-xl">
+              Svara på 6 korta frågor så jämför vi din ersättning mot SKR:s ramavtal och skapar din personliga rapport.
+            </p>
+            <Link to="/">
+              <Button
+                size="sm"
+                className="text-sm font-semibold px-6 py-3 text-white border-0 bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] hover:from-[#7c3aed] hover:to-[#c026d3]"
+              >
+                Starta enkäten
+              </Button>
+            </Link>
+          </div>
+        )}
+
         {/* Tabs */}
         <ProfileTabs active={activeTab} onChange={setActiveTab} />
 
