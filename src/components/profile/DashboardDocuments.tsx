@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, forwardRef, useImperativeHandle } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ShieldCheck, FileText, Loader2, Plus, Link2, Check } from "lucide-react";
+import { ShieldCheck, FileText, Loader2, Plus, Link2 } from "lucide-react";
 import { DocumentUpload } from "@/components/referly/DocumentUpload";
-import { toast } from "sonner";
+import ShareDocumentsDialog from "./ShareDocumentsDialog";
 
 interface DocRow {
   id: string;
@@ -24,27 +24,24 @@ const DOC_TYPE_LABELS: Record<string, string> = {
   other: "Övrigt",
 };
 
-export default function DashboardDocuments() {
+export interface DashboardDocumentsHandle {
+  openUpload: () => void;
+}
+
+const DashboardDocuments = forwardRef<DashboardDocumentsHandle>((_, ref) => {
   const { user } = useAuth();
   const [docs, setDocs] = useState<DocRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [showUpload, setShowUpload] = useState(false);
-  const [copied, setCopied] = useState(false);
+  const [shareOpen, setShareOpen] = useState(false);
 
-  const shareUrl = user ? `${window.location.origin}/profil/${user.id}` : "";
-
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(shareUrl).then(() => {
-      setCopied(true);
-      toast.success("Länk kopierad!");
-      setTimeout(() => setCopied(false), 2000);
-    });
-  };
+  useImperativeHandle(ref, () => ({
+    openUpload: () => setShowUpload(true),
+  }));
 
   useEffect(() => {
     if (!user) return;
     const load = async () => {
-      // Get consultant_profile id
       const { data: cp } = await supabase
         .from("consultant_profiles")
         .select("id")
@@ -62,7 +59,7 @@ export default function DashboardDocuments() {
       setLoading(false);
     };
     load();
-  }, [user]);
+  }, [user, showUpload]);
 
   return (
     <Card>
@@ -94,14 +91,18 @@ export default function DashboardDocuments() {
             </div>
             <div className="flex items-center gap-2 flex-wrap">
               {!showUpload && (
-                <Button variant="outline" size="sm" className="gap-1.5" onClick={() => setShowUpload(true)}>
+                <Button variant="outline" size="sm" className="gap-1.5 text-sm font-semibold" onClick={() => setShowUpload(true)}>
                   <Plus className="w-4 h-4" />
                   Ladda upp fler
                 </Button>
               )}
-              <Button variant="outline" size="sm" className="gap-1.5" onClick={handleCopyLink}>
-                {copied ? <Check className="w-4 h-4" /> : <Link2 className="w-4 h-4" />}
-                {copied ? "Kopierad!" : "Dela profillänk"}
+              <Button
+                size="sm"
+                className="gap-1.5 text-sm font-semibold text-white border-0 bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] hover:from-[#7c3aed] hover:to-[#c026d3]"
+                onClick={() => setShareOpen(true)}
+              >
+                <Link2 className="w-4 h-4" />
+                Skapa delningslänk
               </Button>
             </div>
             {showUpload && <DocumentUpload />}
@@ -110,7 +111,7 @@ export default function DashboardDocuments() {
           <div className="text-center py-6">
             <p className="text-muted-foreground text-sm mb-3">Inga dokument uppladdade</p>
             {!showUpload ? (
-              <Button size="sm" className="gap-1.5" onClick={() => setShowUpload(true)}>
+              <Button size="sm" className="gap-1.5 text-sm font-semibold" onClick={() => setShowUpload(true)}>
                 <Plus className="w-4 h-4" />
                 Ladda upp dokument
               </Button>
@@ -120,6 +121,10 @@ export default function DashboardDocuments() {
           </div>
         )}
       </CardContent>
+      <ShareDocumentsDialog open={shareOpen} onOpenChange={setShareOpen} />
     </Card>
   );
-}
+});
+
+DashboardDocuments.displayName = "DashboardDocuments";
+export default DashboardDocuments;
