@@ -1,5 +1,4 @@
 import { Check, Circle, Shield, Mail, FileCheck, BadgeCheck } from "lucide-react";
-import { Link } from "react-router-dom";
 
 interface TrustItem {
   key: string;
@@ -8,7 +7,7 @@ interface TrustItem {
   icon: typeof Shield;
   verified: boolean;
   ctaLabel?: string;
-  ctaHref?: string;
+  action?: "upload" | "identity";
 }
 
 interface Props {
@@ -16,6 +15,8 @@ interface Props {
   identityVerified: boolean;
   hospValid: boolean;
   ivoValid: boolean;
+  onUpload?: () => void;
+  onVerifyIdentity?: () => void;
 }
 
 export default function TrustVerification({
@@ -23,6 +24,8 @@ export default function TrustVerification({
   identityVerified,
   hospValid,
   ivoValid,
+  onUpload,
+  onVerifyIdentity,
 }: Props) {
   const items: TrustItem[] = [
     {
@@ -32,7 +35,7 @@ export default function TrustVerification({
       icon: Shield,
       verified: identityVerified,
       ctaLabel: "Verifiera",
-      ctaHref: "/profil",
+      action: "identity",
     },
     {
       key: "email",
@@ -48,7 +51,7 @@ export default function TrustVerification({
       icon: BadgeCheck,
       verified: hospValid,
       ctaLabel: "Ladda upp",
-      ctaHref: "/profil",
+      action: "upload",
     },
     {
       key: "ivo",
@@ -56,12 +59,17 @@ export default function TrustVerification({
       description: ivoValid ? "Verifierad i IVO-registret" : "Bekräfta din IVO-registrering",
       icon: FileCheck,
       verified: ivoValid,
-      ctaLabel: "Bekräfta",
-      ctaHref: "/profil",
+      ctaLabel: "Ladda upp",
+      action: "upload",
     },
   ];
 
   const completedCount = items.filter((i) => i.verified).length;
+
+  const handleAction = (action?: "upload" | "identity") => {
+    if (action === "upload") onUpload?.();
+    else if (action === "identity") onVerifyIdentity?.();
+  };
 
   return (
     <div className="rounded-xl border border-border bg-card overflow-hidden">
@@ -99,13 +107,14 @@ export default function TrustVerification({
                 <div className="w-5 h-5 rounded-full bg-emerald-500/15 flex items-center justify-center shrink-0">
                   <Check className="w-3 h-3 text-emerald-600 dark:text-emerald-400" strokeWidth={3} />
                 </div>
-              ) : item.ctaHref && item.ctaLabel ? (
-                <Link
-                  to={item.ctaHref}
+              ) : item.ctaLabel && item.action ? (
+                <button
+                  type="button"
+                  onClick={() => handleAction(item.action)}
                   className="text-xs font-medium text-primary hover:underline shrink-0"
                 >
                   {item.ctaLabel}
-                </Link>
+                </button>
               ) : (
                 <Circle className="w-4 h-4 text-muted-foreground/40 shrink-0" />
               )}

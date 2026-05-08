@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -13,7 +13,7 @@ import ProfileInsights from "@/components/profile/ProfileInsights";
 import TrustVerification from "@/components/profile/TrustVerification";
 import CompensationView from "@/components/report/CompensationView";
 import DashboardReferences from "@/components/profile/DashboardReferences";
-import DashboardDocuments from "@/components/profile/DashboardDocuments";
+import DashboardDocuments, { type DashboardDocumentsHandle } from "@/components/profile/DashboardDocuments";
 import DashboardInvoiceCheck from "@/components/profile/DashboardInvoiceCheck";
 import AssignmentFeedbackDialog from "@/components/profile/AssignmentFeedbackDialog";
 
@@ -58,7 +58,16 @@ export default function Profile() {
   });
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<ProfileTab>("overview");
+  const docsRef = useRef<DashboardDocumentsHandle>(null);
   const { pending: pendingFeedback, dismiss: dismissFeedback } = useAssignmentFeedback(user);
+
+  const goUpload = () => {
+    setActiveTab("creds");
+    setTimeout(() => docsRef.current?.openUpload(), 50);
+  };
+  const goVerifyIdentity = () => {
+    toast.info("Digital signering är på väg", { description: "Vi öppnar identitetsverifiering inom kort." });
+  };
 
   useEffect(() => {
     if (pendingFeedback) {
@@ -345,6 +354,8 @@ export default function Profile() {
                 identityVerified={verification.hasBankid}
                 hospValid={verification.hasValidHosp}
                 ivoValid={verification.hasValidIvo}
+                onUpload={goUpload}
+                onVerifyIdentity={goVerifyIdentity}
               />
               <DashboardInvoiceCheck />
             </div>
@@ -401,8 +412,10 @@ export default function Profile() {
                 identityVerified={verification.hasBankid}
                 hospValid={verification.hasValidHosp}
                 ivoValid={verification.hasValidIvo}
+                onUpload={goUpload}
+                onVerifyIdentity={goVerifyIdentity}
               />
-              <DashboardDocuments />
+              <DashboardDocuments ref={docsRef} />
             </div>
             <div className="space-y-5">
               <DashboardReferences />
