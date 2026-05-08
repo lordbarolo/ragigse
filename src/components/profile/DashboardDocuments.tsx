@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ShieldCheck, FileText, Loader2, Plus, Link2 } from "lucide-react";
 import { DocumentUpload } from "@/components/referly/DocumentUpload";
 import ShareDocumentsDialog from "./ShareDocumentsDialog";
+import DocumentNameCheck from "./DocumentNameCheck";
 
 interface DocRow {
   id: string;
@@ -86,6 +87,12 @@ const DashboardDocuments = forwardRef<DashboardDocumentsHandle>((_, ref) => {
                       {DOC_TYPE_LABELS[d.document_type] || d.document_type} · {new Date(d.uploaded_at).toLocaleDateString("sv-SE")}
                     </p>
                   </div>
+                  {(d.document_type === "ivo" || d.document_type === "hosp") && (
+                    <DocumentNameCheck
+                      documentId={d.id}
+                      documentLabel={d.document_type === "ivo" ? "IVO-utdraget" : "HOSP-utdraget"}
+                    />
+                  )}
                 </div>
               ))}
             </div>
