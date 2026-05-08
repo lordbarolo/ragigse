@@ -1410,6 +1410,42 @@ export type Database = {
         }
         Relationships: []
       }
+      document_shares: {
+        Row: {
+          created_at: string
+          document_ids: string[]
+          expires_at: string
+          id: string
+          last_viewed_at: string | null
+          recipient_label: string | null
+          token: string
+          user_id: string
+          view_count: number
+        }
+        Insert: {
+          created_at?: string
+          document_ids: string[]
+          expires_at: string
+          id?: string
+          last_viewed_at?: string | null
+          recipient_label?: string | null
+          token: string
+          user_id: string
+          view_count?: number
+        }
+        Update: {
+          created_at?: string
+          document_ids?: string[]
+          expires_at?: string
+          id?: string
+          last_viewed_at?: string | null
+          recipient_label?: string | null
+          token?: string
+          user_id?: string
+          view_count?: number
+        }
+        Relationships: []
+      }
       email_send_log: {
         Row: {
           created_at: string
@@ -4776,6 +4812,18 @@ export type Database = {
         Args: { _daily_limit?: number; _user_id: string }
         Returns: Json
       }
+      create_document_share: {
+        Args: {
+          _document_ids: string[]
+          _expires_in_hours: number
+          _recipient_label?: string
+        }
+        Returns: {
+          expires_at: string
+          id: string
+          token: string
+        }[]
+      }
       create_org_with_admin: {
         Args: { _name: string; _org_number?: string; _type?: string }
         Returns: string
@@ -4788,6 +4836,7 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
+      get_document_share_by_token: { Args: { _token: string }; Returns: Json }
       get_feature_flag: { Args: { _key: string }; Returns: Json }
       get_referral_by_token: {
         Args: { _token: string }
