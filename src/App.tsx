@@ -67,6 +67,7 @@ const Campaign = lazy(() => import("./pages/Campaign"));
 const UppdragsradarV2 = lazy(() => import("./pages/UppdragsradarV2"));
 const MarketplaceHome = lazy(() => import("./pages/marketplace/MarketplaceHome"));
 const EgetBolag = lazy(() => import("./pages/EgetBolag"));
+const SharedDocuments = lazy(() => import("./pages/SharedDocuments"));
 
 const queryClient = new QueryClient();
 
