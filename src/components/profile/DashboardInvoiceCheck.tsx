@@ -9,7 +9,7 @@ export default function DashboardInvoiceCheck() {
       <CardHeader>
         <CardTitle className="text-lg flex items-center gap-2">
           <Receipt className="w-5 h-5 text-primary" />
-          Fakturakontroll
+          Faktureringsstöd
         </CardTitle>
       </CardHeader>
       <CardContent>
