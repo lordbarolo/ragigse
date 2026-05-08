@@ -38,8 +38,8 @@ export default function HeroInlineForm() {
     if (hasQuery && filtered[0]) {
       handlePick(filtered[0].slug, filtered[0].label);
     } else {
-      trackEvent("product_cta_clicked", { cta: "hero_inline_empty", target: "/v1" });
-      navigate("/v1");
+      trackEvent("product_cta_clicked", { cta: "hero_inline_empty", target: "/v1?start=1" });
+      navigate("/v1?start=1");
     }
   };
 
