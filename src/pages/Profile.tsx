@@ -17,7 +17,7 @@ import DashboardDocuments from "@/components/profile/DashboardDocuments";
 import DashboardInvoiceCheck from "@/components/profile/DashboardInvoiceCheck";
 import AssignmentFeedbackDialog from "@/components/profile/AssignmentFeedbackDialog";
 
-import AiConsultantCoach from "@/components/ai/AiConsultantCoach";
+
 import { useAssignmentFeedback } from "@/hooks/useAssignmentFeedback";
 import { trackEvent } from "@/lib/trackEvent";
 
@@ -345,13 +345,6 @@ export default function Profile() {
                 identityVerified={verification.hasBankid}
                 hospValid={verification.hasValidHosp}
                 ivoValid={verification.hasValidIvo}
-              />
-              <AiConsultantCoach
-                role={profile?.specialty_name || null}
-                region={profile?.region_name || null}
-                employmentType={profile?.employment_type || null}
-                experienceYears={profile?.experience_years || null}
-                currentRate={profile?.current_hourly_rate || null}
               />
               <DashboardInvoiceCheck />
             </div>
