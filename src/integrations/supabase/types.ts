@@ -1030,9 +1030,12 @@ export type Database = {
           consultant_id: string
           document_type: string
           expires_at: string | null
+          extracted_name: string | null
           file_name: string
           file_url: string
           id: string
+          name_check_at: string | null
+          name_check_status: string | null
           notes: string | null
           uploaded_at: string
         }
@@ -1040,9 +1043,12 @@ export type Database = {
           consultant_id: string
           document_type: string
           expires_at?: string | null
+          extracted_name?: string | null
           file_name: string
           file_url: string
           id?: string
+          name_check_at?: string | null
+          name_check_status?: string | null
           notes?: string | null
           uploaded_at?: string
         }
@@ -1050,9 +1056,12 @@ export type Database = {
           consultant_id?: string
           document_type?: string
           expires_at?: string | null
+          extracted_name?: string | null
           file_name?: string
           file_url?: string
           id?: string
+          name_check_at?: string | null
+          name_check_status?: string | null
           notes?: string | null
           uploaded_at?: string
         }
