@@ -9,6 +9,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useParams } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import CookieBanner from "@/components/CookieBanner";
+import FloatingProfileButton from "@/components/FloatingProfileButton";
 import Index from "./pages/Index";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
@@ -208,6 +209,7 @@ const App = () => (
             </Routes>
           </Suspense>
           <CookieBanner />
+          <FloatingProfileButton />
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>
