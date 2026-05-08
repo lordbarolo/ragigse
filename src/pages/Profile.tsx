@@ -58,7 +58,16 @@ export default function Profile() {
   });
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<ProfileTab>("overview");
+  const docsRef = useRef<DashboardDocumentsHandle>(null);
   const { pending: pendingFeedback, dismiss: dismissFeedback } = useAssignmentFeedback(user);
+
+  const goUpload = () => {
+    setActiveTab("creds");
+    setTimeout(() => docsRef.current?.openUpload(), 50);
+  };
+  const goVerifyIdentity = () => {
+    toast.info("Digital signering är på väg", { description: "Vi öppnar identitetsverifiering inom kort." });
+  };
 
   useEffect(() => {
     if (pendingFeedback) {
