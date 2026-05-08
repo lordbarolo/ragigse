@@ -15,7 +15,7 @@ const platformJsonLd = {
   name: "CompCare",
   url: "https://compcare.se",
   applicationCategory: "BusinessApplication",
-  description: "Verifieringsinfrastruktur för vårdens konsulter — löneanalys, fakturakontroll och förhandlingsstöd baserat på SKR:s ramavtal.",
+  description: "Verifieringsinfrastruktur för vårdens konsulter — löneanalys, faktureringsstöd och förhandlingsstöd baserat på SKR:s ramavtal.",
   operatingSystem: "All",
   offers: {
     "@type": "AggregateOffer",

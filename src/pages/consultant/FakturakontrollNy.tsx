@@ -679,7 +679,7 @@ export default function FakturakontrollNy() {
             </p>
           </div>
           <Button variant="outline" onClick={() => navigate("/consultant/fakturakontroll")}>
-            Tillbaka till fakturakontroll
+            Tillbaka till faktureringsstöd
           </Button>
         </div>
       )}
