@@ -74,10 +74,6 @@ export default function DocumentNameCheck({
         .update({ full_name: newName })
         .eq("id", user.id);
       if (e1) throw e1;
-      await supabase
-        .from("profiles")
-        .update({ full_name: newName })
-        .eq("user_id", user.id);
       toast.success("Profilnamn uppdaterat");
       onProfileUpdated?.(newName);
       setOpen(false);
