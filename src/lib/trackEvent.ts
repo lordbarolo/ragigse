@@ -71,7 +71,8 @@ type EventName =
   | "intyg_sign_confirmed"
   | "assignment_feedback_shown"
   | "assignment_feedback_snoozed"
-  | "assignment_feedback_submitted";
+  | "assignment_feedback_submitted"
+  | "survey_prefill_failed";
 
 function isInternalTraffic(): boolean {
   const host = window.location.hostname;
