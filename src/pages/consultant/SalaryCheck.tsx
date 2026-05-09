@@ -78,10 +78,28 @@ export default function SalaryCheck() {
   const surveyRef = useRef<HTMLDivElement>(null);
 
   useTimeOnPage("landing");
-  useEffect(() => { trackEvent("landing_viewed"); }, []);
+  useEffect(() => {
+    trackEvent("landing_viewed");
+    // Track when ?yrke=… arrives but doesn't resolve to a known specialty,
+    // so we can see broken hero/campaign URLs in PostHog.
+    if (prefillKey && !prefill) {
+      trackEvent("survey_prefill_failed", { yrke: prefillKey });
+    }
+    // If we land already in the survey (prefill or ?start=1), make sure
+    // survey_started fires here — Survey.tsx only auto-fires on a valid
+    // initialCategory, so ?start=1 alone would otherwise be invisible.
+    if (showSurvey) {
+      trackEvent("survey_started", {
+        source: prefill ? "prefill" : startSurvey ? "start_param" : "direct",
+        yrke: prefillKey || null,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleStartSurvey = () => {
     setShowSurvey(true);
+    trackEvent("survey_started", { source: "cta_click" });
     setTimeout(() => {
       surveyRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 100);
