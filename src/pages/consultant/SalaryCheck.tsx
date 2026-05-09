@@ -88,9 +88,11 @@ export default function SalaryCheck() {
     // If we land already in the survey (prefill or ?start=1), make sure
     // survey_started fires here — Survey.tsx only auto-fires on a valid
     // initialCategory, so ?start=1 alone would otherwise be invisible.
-    if (showSurvey) {
+    // Avoid double-fire: Survey.tsx already auto-fires survey_started when
+    // it mounts with a valid initialCategory (i.e. when `prefill` is set).
+    if (showSurvey && !prefill) {
       trackEvent("survey_started", {
-        source: prefill ? "prefill" : startSurvey ? "start_param" : "direct",
+        source: startSurvey ? "start_param" : "direct",
         yrke: prefillKey || null,
       });
     }
