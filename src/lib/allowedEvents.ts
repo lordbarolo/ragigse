@@ -69,6 +69,7 @@ export const ALLOWED_EVENTS = [
   "assignment_feedback_shown",
   "assignment_feedback_snoozed",
   "assignment_feedback_submitted",
+  "survey_prefill_failed",
 ] as const;
 
 export type AllowedEventName = (typeof ALLOWED_EVENTS)[number];
