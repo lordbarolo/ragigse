@@ -351,6 +351,9 @@ export default function Admin() {
         onRefresh={refetchAnalytics}
       />
 
+      {/* Survey prefill debug — initialCategory/slug at mount + failed prefills */}
+      <SurveyPrefillDebug />
+
       <ReferralStats />
 
       {/* Feedback Stats */}
