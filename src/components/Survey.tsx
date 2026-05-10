@@ -121,9 +121,15 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
 
   const STEP_NAMES = ["yrkeskategori", "specialisering", "kommun", "anstallningsform", "ersattning"];
 
-  // Fire survey_started immediately when survey mounts with a pre-selected category
-  // (step 1 is skipped so the click handler there never runs)
+  // Fire survey_mounted on every Survey mount (regardless of prefill) so we
+  // can see in PostHog whether the component renders at all when the CTA is
+  // clicked. Pair with hero_cta_clicked to debug funnel breaks.
   useEffect(() => {
+    trackEvent("survey_mounted", {
+      has_initial_category: !!initialCategory,
+      initial_category: initialCategory ?? null,
+      initial_role: initialRole ?? null,
+    });
     if (initialCategory) {
       trackSurveyStarted();
     }

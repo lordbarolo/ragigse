@@ -79,7 +79,16 @@ export default function SalaryCheck() {
 
   useTimeOnPage("landing");
   useEffect(() => {
-    trackEvent("landing_viewed");
+    trackEvent("landing_viewed", {
+      has_yrke_param: !!prefillKey,
+      yrke_slug: prefillKey || null,
+      has_start_param: startSurvey,
+      prefill_resolved: !!prefill,
+      prefill_category: prefill?.category ?? null,
+      prefill_role: prefill?.role ?? null,
+      auto_show_survey: !!prefill || startSurvey,
+      referrer: document.referrer || null,
+    });
     // Track when ?yrke=… arrives but doesn't resolve to a known specialty,
     // so we can see broken hero/campaign URLs in PostHog.
     if (prefillKey && !prefill) {
@@ -100,6 +109,11 @@ export default function SalaryCheck() {
   }, []);
 
   const handleStartSurvey = () => {
+    trackEvent("hero_cta_clicked", {
+      cta: "se_villkor",
+      had_prefill: !!prefill,
+      already_showing_survey: showSurvey,
+    });
     setShowSurvey(true);
     trackEvent("survey_started", { source: "cta_click" });
     setTimeout(() => {
