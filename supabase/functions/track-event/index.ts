@@ -78,6 +78,8 @@ const ALLOWED_EVENTS = new Set([
   "assignment_feedback_snoozed",
   "assignment_feedback_submitted",
   "survey_prefill_failed",
+  "hero_cta_clicked",
+  "survey_mounted",
 ]);
 
 serve(async (req) => {
