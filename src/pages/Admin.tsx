@@ -6,6 +6,7 @@ import SalaryInsights from "@/components/admin/SalaryInsights";
 import ConversionFunnel from "@/components/admin/ConversionFunnel";
 import DailyConversionFunnel from "@/components/admin/DailyConversionFunnel";
 import SurveyStepFunnel from "@/components/admin/SurveyStepFunnel";
+import SurveyPrefillDebug from "@/components/admin/SurveyPrefillDebug";
 import DailyVisitors from "@/components/admin/DailyVisitors";
 import ReferralStats from "@/components/admin/ReferralStats";
 import FeedbackStats from "@/components/admin/FeedbackStats";
