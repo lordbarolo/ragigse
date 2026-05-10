@@ -5,6 +5,7 @@ import { useAdminAuth } from "@/hooks/useAdminAuth";
 import SalaryInsights from "@/components/admin/SalaryInsights";
 import ConversionFunnel from "@/components/admin/ConversionFunnel";
 import DailyConversionFunnel from "@/components/admin/DailyConversionFunnel";
+import SurveyStepFunnel from "@/components/admin/SurveyStepFunnel";
 import DailyVisitors from "@/components/admin/DailyVisitors";
 import ReferralStats from "@/components/admin/ReferralStats";
 import FeedbackStats from "@/components/admin/FeedbackStats";
@@ -335,6 +336,14 @@ export default function Admin() {
 
       {/* Daily Conversion Funnel - per-day breakdown */}
       <DailyConversionFunnel
+        data={analyticsData}
+        loading={analyticsLoading}
+        period={analyticsPeriod}
+        onRefresh={refetchAnalytics}
+      />
+
+      {/* Survey Step Funnel - landing → started → step viewed → step completed */}
+      <SurveyStepFunnel
         data={analyticsData}
         loading={analyticsLoading}
         period={analyticsPeriod}
