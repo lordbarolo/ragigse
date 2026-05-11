@@ -11,7 +11,6 @@ export function identifyUser(
   properties?: Record<string, string | number | boolean | null | undefined>
 ) {
   try {
-    if (!posthog.has_opted_in_capturing()) return;
     posthog.identify(userId, properties);
   } catch {
     /* silent */
@@ -31,8 +30,6 @@ export function aliasLead(
   personProps?: Record<string, string | number | boolean | null | undefined>
 ) {
   try {
-    if (!posthog.has_opted_in_capturing()) return;
-
     // Stitch anonymous distinct_id → leadId (preserves prior funnel events)
     posthog.alias(leadId);
 

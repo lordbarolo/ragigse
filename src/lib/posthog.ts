@@ -15,10 +15,11 @@ posthog.init(POSTHOG_KEY, {
     (import.meta.env.VITE_POSTHOG_HOST as string | undefined) ??
     "https://eu.i.posthog.com",
   ui_host: "https://eu.posthog.com",
-  // Cookieless / consent-free setup:
-  // - `persistence: "memory"` → no cookies or localStorage, no consent banner required (GDPR/ePrivacy compliant)
-  // - `person_profiles: "identified_only"` → no person profile until we call posthog.identify(leadId)
-  // Trade-off: distinct_id resets per tab/session, but our funnel is session-scoped and we identify leads.
+  // Cookieless / consent-free setup (GDPR + ePrivacy compliant):
+  // - `persistence: "memory"` → no cookies/localStorage, no consent banner required
+  // - `person_profiles: "identified_only"` → no person profile until posthog.identify(leadId)
+  // Trade-off: distinct_id resets per tab/session. Our funnel is session-scoped
+  // and we explicitly identify leads via aliasLead(), so this is acceptable.
   person_profiles: "identified_only",
   persistence: "memory",
   capture_pageview: true,
@@ -38,11 +39,6 @@ const __isInternal =
   __hostname.startsWith("id-preview--");
 if (__isInternal) {
   posthog.register({ is_internal_traffic: true });
-} else {
-  // Defensive: clear any stale super-property from a previous visit on a
-  // dev host that left `is_internal_traffic=true` in the persisted PostHog
-  // state when the same browser later visits production.
-  posthog.unregister("is_internal_traffic");
 }
 
 if (import.meta.env.DEV) {
@@ -56,9 +52,7 @@ if (__host === "compcare.se" || __host === "www.compcare.se") {
     "[PostHog] active on",
     __host,
     "distinct_id:",
-    posthog.get_distinct_id(),
-    "opted_in:",
-    posthog.has_opted_in_capturing()
+    posthog.get_distinct_id()
   );
 }
 
