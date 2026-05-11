@@ -16,10 +16,15 @@ posthog.init(POSTHOG_KEY, {
     (import.meta.env.VITE_POSTHOG_HOST as string | undefined) ??
     "https://eu.i.posthog.com",
   ui_host: "https://eu.posthog.com",
-  opt_out_capturing_by_default: true,
+  // Opt-in by default for anonymous analytics — the cookie banner controls
+  // *explicit* opt-out, not initial capture. This mirrors how the backend
+  // `track-event` edge function logs to `analytics_events` regardless of
+  // banner state, so PostHog stays in sync with our funnel data.
+  opt_out_capturing_by_default: false,
   capture_pageview: false,
   capture_pageleave: true,
   cross_subdomain_cookie: true,
+  persistence: "localStorage+cookie",
 });
 
 // Mark internal traffic with a super property.
@@ -42,12 +47,14 @@ if (__isInternal) {
   posthog.unregister("is_internal_traffic");
 }
 
-// Sync with any existing cookie consent on load
+// Sync with any existing cookie consent on load.
+// Default is opt-in; only opt out if user has *explicitly* rejected.
 const existing = getConsent();
-if (existing === "accepted") {
-  posthog.opt_in_capturing();
-} else if (existing === "rejected") {
+if (existing === "rejected") {
   posthog.opt_out_capturing();
+} else {
+  // Both "accepted" and null (no decision yet) → keep capturing.
+  posthog.opt_in_capturing();
 }
 
 if (import.meta.env.DEV) {
