@@ -1,5 +1,4 @@
 import posthog from "posthog-js";
-import { getConsent } from "@/lib/cookieConsent";
 
 const POSTHOG_KEY =
   (import.meta.env.VITE_POSTHOG_KEY as string | undefined) ??
@@ -16,15 +15,14 @@ posthog.init(POSTHOG_KEY, {
     (import.meta.env.VITE_POSTHOG_HOST as string | undefined) ??
     "https://eu.i.posthog.com",
   ui_host: "https://eu.posthog.com",
-  // Opt-in by default for anonymous analytics — the cookie banner controls
-  // *explicit* opt-out, not initial capture. This mirrors how the backend
-  // `track-event` edge function logs to `analytics_events` regardless of
-  // banner state, so PostHog stays in sync with our funnel data.
-  opt_out_capturing_by_default: false,
-  capture_pageview: false,
+  // Cookieless / consent-free setup:
+  // - `persistence: "memory"` → no cookies or localStorage, no consent banner required (GDPR/ePrivacy compliant)
+  // - `person_profiles: "identified_only"` → no person profile until we call posthog.identify(leadId)
+  // Trade-off: distinct_id resets per tab/session, but our funnel is session-scoped and we identify leads.
+  person_profiles: "identified_only",
+  persistence: "memory",
+  capture_pageview: true,
   capture_pageleave: true,
-  cross_subdomain_cookie: true,
-  persistence: "localStorage+cookie",
 });
 
 // Mark internal traffic with a super property.
@@ -45,16 +43,6 @@ if (__isInternal) {
   // dev host that left `is_internal_traffic=true` in the persisted PostHog
   // state when the same browser later visits production.
   posthog.unregister("is_internal_traffic");
-}
-
-// Sync with any existing cookie consent on load.
-// Default is opt-in; only opt out if user has *explicitly* rejected.
-const existing = getConsent();
-if (existing === "rejected") {
-  posthog.opt_out_capturing();
-} else {
-  // Both "accepted" and null (no decision yet) → keep capturing.
-  posthog.opt_in_capturing();
 }
 
 if (import.meta.env.DEV) {
