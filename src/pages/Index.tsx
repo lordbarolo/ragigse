@@ -132,6 +132,28 @@ export default function Index() {
             </article>
           ))}
         </div>
+
+        <div className="mt-10 flex flex-col items-center text-center gap-3">
+          <p className="text-sm text-muted-foreground max-w-md">
+            Skapa ett konto för att spara analyser, följa marknadspriser över tid och få tillgång till förhandlingsassistenten.
+          </p>
+          <Link to="/registrera">
+            <Button
+              size="sm"
+              className="gap-2"
+              data-cta="register_section_2"
+              onClick={() =>
+                trackEvent("product_cta_clicked", {
+                  cta: "register_section_2",
+                  section: "forhandlingsanalys",
+                  location: "landing_pillars",
+                })
+              }
+            >
+              Registrera dig kostnadsfritt <ArrowRight className="w-3 h-3" />
+            </Button>
+          </Link>
+        </div>
       </section>
 
       {/* ── Trust indicators ───────────────────────────── */}
