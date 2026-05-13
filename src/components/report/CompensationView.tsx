@@ -10,6 +10,7 @@ import {
 import { supabase } from "@/integrations/supabase/client";
 import { calculateSalaryRange } from "@/lib/calc";
 import type { EmploymentType } from "@/lib/calc";
+import PriceRangeGuard from "@/components/PriceRangeGuard";
 
 interface CompensationViewProps {
   role: string | null;
