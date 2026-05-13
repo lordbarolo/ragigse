@@ -103,3 +103,5 @@ describe("priceRangeGuard.validateRange", () => {
     expect(r.ok).toBe(true);
   });
 });
+
+// ── Component-level teaser modes är testade via PriceRangeGuard.test.tsx ────
