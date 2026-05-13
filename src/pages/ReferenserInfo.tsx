@@ -137,12 +137,12 @@ export default function ReferenserInfo() {
       {/* Dokhus section */}
       <section className="py-16 px-6">
         <div className="max-w-3xl mx-auto">
-          <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-2">Dokhus</p>
+          <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-2">Din data</p>
           <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground mb-4">
             Eliminera dubbelpresentationer
           </h2>
           <p className="text-muted-foreground mb-6 max-w-lg leading-relaxed">
-            Med Dokhus kan bemanningsföretag verifiera att du auktoriserat deras presentation — digitalt och säkert. Regioner och uppdragsgivare ser ett kryptografiskt samarbetsintyg istället för att behöva fråga konsulten direkt.
+            Med Din data kan bemanningsföretag verifiera att du auktoriserat deras presentation — digitalt och säkert. Regioner och uppdragsgivare ser ett kryptografiskt samarbetsintyg istället för att behöva fråga konsulten direkt.
           </p>
 
           <div className="bg-card border border-border rounded-2xl p-8 mb-8">
