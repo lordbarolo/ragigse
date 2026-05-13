@@ -593,7 +593,7 @@ export default function LandingV2() {
                   <span className="text-white font-medium">CompCare Insight</span> — beslutsstöd för prissättning baserat på aktuella tilldelningsdata
                 </Link>
                 <Link to="/for-bemanningsforetag" className="hover:text-white transition-colors">
-                  <span className="text-white font-medium">CompCare Dokhus</span> — digital exklusivitet som eliminerar risk för dubbelpresentationer
+                  <span className="text-white font-medium">CompCare Din data</span> — digital exklusivitet som eliminerar risk för dubbelpresentationer
                 </Link>
                 <Link to="/for-bemanningsforetag" className="hover:text-white transition-colors">
                   <span className="text-white font-medium">Intygsmodulen</span> — juridiskt hållbara konsultbekräftelser enligt nationella krav
