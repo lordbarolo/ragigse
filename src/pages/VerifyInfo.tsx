@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 
 export default function VerifyInfo() {
   useEffect(() => {
-    trackEvent("din_data_info_viewed");
+    trackEvent("verify_info_viewed");
     setPageMeta({
       title: "Din data — samarbetsintyg och dokumenthantering | CompCare",
       description:
