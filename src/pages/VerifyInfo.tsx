@@ -8,11 +8,11 @@ import { Badge } from "@/components/ui/badge";
 
 export default function VerifyInfo() {
   useEffect(() => {
-    trackEvent("verify_info_viewed");
+    trackEvent("din_data_info_viewed");
     setPageMeta({
-      title: "Samarbetsintyg — eliminera dubbelpresentationer | CompCare",
+      title: "Din data — samarbetsintyg och dokumenthantering | CompCare",
       description:
-        "Ett digitalt signerat samarbetsintyg som visar exakt vilket bemanningsföretag du auktoriserat — inga duplicerade CV:n, inga oklarheter för regionen.",
+        "Din data är CompCares säkra dokumentvalv. Skapa digitala samarbetsintyg, dela med tidsbegränsade länkar och behåll full kontroll över dina uppdrag och referenser.",
     });
   }, []);
 
