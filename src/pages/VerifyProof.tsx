@@ -96,14 +96,14 @@ export default function VerifyProof() {
   useEffect(() => {
     if (representation) {
       setPageMeta({
-        title: `Samarbetsintyg — ${representation.agency_name} (${representation.region}) | Dokhus`,
-        description: `Digitalt signerat samarbetsintyg som bekräftar att ${representation.agency_name} har auktoriserats att representera konsulten i ${representation.region}. Verifierat via Dokhus.`,
+        title: `Samarbetsintyg — ${representation.agency_name} (${representation.region}) | Din data`,
+        description: `Digitalt signerat samarbetsintyg som bekräftar att ${representation.agency_name} har auktoriserats att representera konsulten i ${representation.region}. Verifierat via Din data.`,
       });
     } else {
       setPageMeta({
-        title: "Samarbetsintyg | Dokhus",
+        title: "Samarbetsintyg | Din data",
         description:
-          "Digitalt signerat samarbetsintyg från Dokhus — verifierar vilket bemanningsföretag som auktoriserats att representera konsulten hos uppdragsgivaren.",
+          "Digitalt signerat samarbetsintyg från Din data — verifierar vilket bemanningsföretag som auktoriserats att representera konsulten hos uppdragsgivaren.",
       });
     }
   }, [representation]);
