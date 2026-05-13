@@ -204,7 +204,7 @@ export default function MarketplaceHome() {
           </div>
           {listing?.status === "published" && (
             <p className="text-xs text-muted-foreground">
-              Status: <strong>publicerad</strong> · Dokhus-verifierad: <strong>{listing.verified_at_publish ? "Ja" : "Nej"}</strong>
+              Status: <strong>publicerad</strong> · Din data-verifierad: <strong>{listing.verified_at_publish ? "Ja" : "Nej"}</strong>
             </p>
           )}
         </Card>
