@@ -80,6 +80,7 @@ const ALLOWED_EVENTS = new Set([
   "survey_prefill_failed",
   "hero_cta_clicked",
   "survey_mounted",
+  "price_range_mismatch",
 ]);
 
 serve(async (req) => {

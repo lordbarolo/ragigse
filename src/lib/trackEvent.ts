@@ -74,7 +74,8 @@ type EventName =
   | "assignment_feedback_submitted"
   | "survey_prefill_failed"
   | "hero_cta_clicked"
-  | "survey_mounted";
+  | "survey_mounted"
+  | "price_range_mismatch";
 
 function isInternalTraffic(): boolean {
   const host = window.location.hostname;

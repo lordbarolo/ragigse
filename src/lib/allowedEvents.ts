@@ -72,6 +72,7 @@ export const ALLOWED_EVENTS = [
   "survey_prefill_failed",
   "hero_cta_clicked",
   "survey_mounted",
+  "price_range_mismatch",
 ] as const;
 
 export type AllowedEventName = (typeof ALLOWED_EVENTS)[number];
