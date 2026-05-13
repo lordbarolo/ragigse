@@ -100,7 +100,7 @@ const PRIMARY_PRODUCTS: ProductCard[] = [
 type InfraCard = { title: string; desc: string; href: string };
 
 const INFRASTRUCTURE: InfraCard[] = [
-  { title: "Dokhus", desc: "Där dina dokument och intyg bor. Dela tillgång med hjälp av krypterade och tidsbestämda länkar. Varje visad version är spårbar och tidsbegränsad.", href: "/dokhus-info" },
+  { title: "Din data", desc: "Där dina dokument och intyg bor. Dela tillgång med hjälp av krypterade och tidsbestämda länkar. Varje visad version är spårbar och tidsbegränsad.", href: "/dokhus-info" },
   { title: "Ref-ID", desc: "Referensgivare får ETT samtal och verifierar därefter nya förfrågningar med bank-ID. Referensuppgifterna stannar under din kontroll och du ger tidsbegränsad tillgång.", href: "/referenser-info" },
   { title: "Eget bolag", desc: "AI assistenten har branschspecifik kunskap och svarar på dina frågor dygnet runt. Det finns många fördelar med att ha ett eget aktiebolag för dig som arbetar återkommande som konsult.", href: "/eget-bolag" },
 ];
