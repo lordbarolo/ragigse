@@ -154,15 +154,20 @@ const App = () => (
                 {/* Future: /agency/settings */}
               </Route>
 
-              {/* ── Public Dokhus Layout ──────────── */}
+              {/* ── Public Din data Layout ──────────── */}
               <Route element={<PublicVerifyLayout />}>
                 <Route path="/samarbetsintyg/:applicationId" element={<VerifyProof />} />
-                {/* Legacy redirect: /verify/:id → /samarbetsintyg/:id */}
+                {/* Legacy: old /verify/:id → /samarbetsintyg/:id */}
                 <Route path="/verify/:applicationId" element={<LegacyVerifyRedirect />} />
+                {/* Legacy: /verify (root) → /din-data */}
+                <Route path="/verify" element={<Navigate to="/din-data" replace />} />
                 <Route path="/profil/:id" element={<PublicProfile />} />
-                <Route path="/dokhus-info" element={<VerifyInfo />} />
-                {/* Legacy redirect */}
-                <Route path="/verify-info" element={<Navigate to="/dokhus-info" replace />} />
+                {/* Canonical: /din-data (Din data info page) */}
+                <Route path="/din-data" element={<VerifyInfo />} />
+                {/* Legacy: /dokhus-info → /din-data */}
+                <Route path="/dokhus-info" element={<Navigate to="/din-data" replace />} />
+                {/* Legacy: /verify-info → /din-data */}
+                <Route path="/verify-info" element={<Navigate to="/din-data" replace />} />
               </Route>
 
               {/* ── Public routes (no layout) ────── */}
