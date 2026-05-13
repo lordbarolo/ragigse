@@ -119,52 +119,65 @@ export default function CompensationView({ role, location, employmentType }: Com
     },
   ];
 
+  const empType: EmploymentType = employmentType === "foretagare" ? "foretagare" : "anstalld";
+
   return (
     <div className="w-full flex flex-col gap-4">
-      {/* ── Hero card ──────────────────────────────────── */}
-      <Card className="relative overflow-hidden border-0 p-5 text-white bg-gradient-to-br from-[#0d0b2a] via-[#1a1545] via-40% to-[#2a2070]">
-        {/* Purple spotlight overlay — matches ProfileHero */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              "radial-gradient(ellipse at 75% 30%, rgba(110,95,230,0.55) 0%, rgba(90,78,210,0.25) 25%, rgba(70,60,190,0.08) 50%, transparent 70%)",
-          }}
-        />
-        <div className="relative">
-          <p className="text-xs font-medium tracking-wide uppercase opacity-70 mb-1">
-            {zone} · {location}
-          </p>
-          <h2 className="font-display text-lg font-bold leading-snug mb-4">
-            {role}
-          </h2>
+      {/* ── Hero card (guarded mot pricing-invariant) ──── */}
+      <PriceRangeGuard
+        surface="report.compensation"
+        role={role}
+        timpris_kund={invoiceRate}
+        employmentType={empType}
+        hourly_min={salaryRange.hourlyMin}
+        hourly_max={salaryRange.hourlyMax}
+      >
+        {() => (
+          <Card className="relative overflow-hidden border-0 p-5 text-white bg-gradient-to-br from-[#0d0b2a] via-[#1a1545] via-40% to-[#2a2070]">
+            {/* Purple spotlight overlay — matches ProfileHero */}
+            <div
+              className="absolute inset-0 pointer-events-none"
+              style={{
+                background:
+                  "radial-gradient(ellipse at 75% 30%, rgba(110,95,230,0.55) 0%, rgba(90,78,210,0.25) 25%, rgba(70,60,190,0.08) 50%, transparent 70%)",
+              }}
+            />
+            <div className="relative">
+              <p className="text-xs font-medium tracking-wide uppercase opacity-70 mb-1">
+                {zone} · {location}
+              </p>
+              <h2 className="font-display text-lg font-bold leading-snug mb-4">
+                {role}
+              </h2>
 
-          <div className="flex flex-col gap-2">
-            <div className="flex items-baseline justify-between">
-              <span className="text-sm opacity-70">Timlön</span>
-              <span className="font-display text-lg font-bold">
-                {fmt(salaryRange.hourlyMin)} – {fmt(salaryRange.hourlyMax)}{" "}
-                <span className="text-sm font-normal opacity-60">kr/tim</span>
-              </span>
+              <div className="flex flex-col gap-2">
+                <div className="flex items-baseline justify-between">
+                  <span className="text-sm opacity-70">Timlön</span>
+                  <span className="font-display text-lg font-bold">
+                    {fmt(salaryRange.hourlyMin)} – {fmt(salaryRange.hourlyMax)}{" "}
+                    <span className="text-sm font-normal opacity-60">kr/tim</span>
+                  </span>
+                </div>
+
+                <div className="h-px bg-white/15" />
+
+                <div className="flex items-baseline justify-between">
+                  <span className="text-sm opacity-70">Månadslön</span>
+                  <span className="font-display text-lg font-bold">
+                    {fmt(monthlyMin)} – {fmt(monthlyMax)}{" "}
+                    <span className="text-sm font-normal opacity-60">kr/mån</span>
+                  </span>
+                </div>
+              </div>
+
+              <p className="text-[11px] opacity-50 mt-3 flex items-center gap-1">
+                <FileText className="w-3 h-3" />
+                {contractLabel}
+              </p>
             </div>
-
-            <div className="h-px bg-white/15" />
-
-            <div className="flex items-baseline justify-between">
-              <span className="text-sm opacity-70">Månadslön</span>
-              <span className="font-display text-lg font-bold">
-                {fmt(monthlyMin)} – {fmt(monthlyMax)}{" "}
-                <span className="text-sm font-normal opacity-60">kr/mån</span>
-              </span>
-            </div>
-          </div>
-
-          <p className="text-[11px] opacity-50 mt-3 flex items-center gap-1">
-            <FileText className="w-3 h-3" />
-            {contractLabel}
-          </p>
-        </div>
-      </Card>
+          </Card>
+        )}
+      </PriceRangeGuard>
 
       {/* ── Negotiation tips ───────────────────────────── */}
       <Card className="p-4 border border-border bg-card">
