@@ -83,7 +83,7 @@ export default function AgencyLanding() {
                 Kom igång gratis <ArrowRight className="w-4 h-4" />
               </Button>
             </Link>
-            <Link to="/dokhus-info">
+            <Link to="/din-data">
               <Button size="lg" variant="outline" className="text-base border-white/30 text-white bg-primary">
                 Så fungerar det
               </Button>
