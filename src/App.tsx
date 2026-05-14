@@ -80,6 +80,7 @@ const Loading = () => (
 
 function ScrollToTop() {
   const { pathname } = useLocation();
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
     window.scrollTo(0, 0);
