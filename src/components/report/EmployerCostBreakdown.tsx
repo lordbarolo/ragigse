@@ -67,6 +67,14 @@ export default function EmployerCostBreakdown({
               </div>
             </div>
           </div>
+          <div className="rounded-lg border border-border/60 bg-muted/30 p-3 text-xs text-muted-foreground leading-relaxed">
+            <span className="font-semibold text-foreground">Vad ingår i bemanningens marginal?</span>{" "}
+            Utöver vinst och administration täcker marginalen även bemanningsbolagets kostnader
+            för konsultens <span className="font-medium text-foreground">resor och boende</span> i
+            samband med uppdraget, samt risk för vite, avbokningar och garantitid. Dessa kostnader
+            är alltså redan inräknade i den marginal vi använder ({marginLabel ?? "15–20 %"}) och
+            dras inte separat från konsultens ersättning.
+          </div>
         </div>
       )}
 
