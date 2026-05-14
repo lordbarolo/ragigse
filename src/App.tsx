@@ -213,6 +213,7 @@ const App = () => (
               {/* ── Catch-all ─────────────────────── */}
               <Route path="*" element={<NotFound />} />
             </Routes>
+            </main>
           </Suspense>
           <CookieBanner />
           <FloatingProfileButton />
