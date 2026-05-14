@@ -114,8 +114,14 @@ const App = () => (
         <Sonner />
         <BrowserRouter>
           <ScrollToTop />
+          <a
+            href="#main-content"
+            className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[100] focus:rounded-md focus:bg-primary focus:px-4 focus:py-2 focus:text-primary-foreground focus:shadow-lg"
+          >
+            Hoppa till innehåll
+          </a>
           <Suspense fallback={<Loading />}>
-            <main id="main-content">
+            <main id="main-content" role="main" tabIndex={-1} aria-label="Huvudinnehåll">
             <Routes>
               {/* ── Landing — Kivra-stil "Förhandla utifrån data, inte magkänsla" (LandingV2) ── */}
               <Route path="/" element={<LandingV2 />} />
