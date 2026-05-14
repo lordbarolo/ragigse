@@ -60,13 +60,12 @@ export default function ShiftnexClone() {
     setSubmitted(true);
   };
 
+  useEffect(() => {
+    document.title = "CompCare Network – Demo (shiftnex-stil)";
+  }, []);
+
   return (
     <>
-      <Helmet>
-        <title>CompCare Network – Demo (shiftnex-stil)</title>
-        <meta name="description" content="Intern jämförelsedemo i shiftnex.ai-stil. Inte länkad från produktionen." />
-        <meta name="robots" content="noindex,nofollow" />
-      </Helmet>
 
       {/* Local light-theme scope. Inline style overrides global dark tokens just for this page. */}
       <main
