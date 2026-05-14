@@ -320,6 +320,7 @@ export default function ReijdarChat({
               size="icon"
               onClick={handleSend}
               disabled={isStreaming || !input.trim()}
+              aria-label="Skicka meddelande"
             >
               {isStreaming ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
