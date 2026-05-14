@@ -1,5 +1,4 @@
-import { useState, useMemo } from "react";
-import { Helmet } from "react-helmet-async";
+import { useState, useMemo, useEffect } from "react";
 
 /**
  * /demo/shiftnex
