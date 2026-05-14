@@ -4,11 +4,11 @@ Allow: /teaser
 Disallow: /dev/
 Disallow: /rest/v1/
 
-Sitemap: https://compcare.se/sitemap.xml
+Sitemap: https://www.compcare.se/sitemap.xml
 
 # LLMs.txt – AI-optimerad beskrivning av CompCare.se
 # Se https://llmstxt.org för specifikation
-LLMs-Txt: https://compcare.se/llms.txt
+LLMs-Txt: https://www.compcare.se/llms.txt
 
 # AI crawlers – välkomna till publika sidor
 User-agent: GPTBot
