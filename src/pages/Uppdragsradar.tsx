@@ -349,6 +349,7 @@ export default function Uppdragsradar() {
                   size="icon"
                   onClick={sendChat}
                   disabled={isStreaming || !chatInput.trim()}
+                  aria-label="Skicka meddelande"
                 >
                   {isStreaming ? (
                     <Loader2 className="w-4 h-4 animate-spin" />
