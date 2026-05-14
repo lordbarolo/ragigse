@@ -220,6 +220,7 @@ const App = () => (
               <Route path="/demo" element={<DemoLanding />} />
               <Route path="/demo/referenser" element={<ReferenceDemo />} />
               <Route path="/demo/landing-v2" element={<LandingV2 />} />
+              <Route path="/demo/shiftnex" element={<ShiftnexClone />} />
               <Route path="/dev/demo" element={<Navigate to="/demo" replace />} />
 
               {/* ── Backwards-compat redirects ───── */}
