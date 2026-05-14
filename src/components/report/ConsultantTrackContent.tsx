@@ -250,7 +250,69 @@ export default function ConsultantTrackContent({
       )}
 
       {/* ═══════════════════════════════════════════════════════════════
-          3. REGIONAL COMPARISON — Skapar kontext för lönen
+          3. ACTION HUB — Verktygen (flyttad före regional jämförelse)
+          ═══════════════════════════════════════════════════════════════ */}
+      {isConsultantFullAccess && (
+        <div id="flow-stod" ref={registerSectionRef?.("action_hub")} className="scroll-mt-24 pt-6 space-y-4">
+          <SectionLabel>Agera på resultatet</SectionLabel>
+
+          {/* 3a. Förhandlingsassistenten */}
+          <div className="rounded-[18px] bg-card border border-foreground/[0.07] overflow-hidden card-shadow">
+            <div className="pt-6 px-5 space-y-4">
+              <div className="flex items-start gap-2">
+                <Handshake className="w-5 h-5 text-primary shrink-0 mt-0.5" />
+                <p className="font-semibold text-foreground text-base leading-snug">
+                  Förhandlingsassistenten gör skillnaden mellan ”ungefär marknadspris” och rätt timpris.
+                </p>
+              </div>
+              <p className="text-body-sm text-muted-foreground leading-relaxed">
+                Du loggar in och får färdiga formuleringar, jourfaktor-argument och en checklista för vitesklausul — anpassade efter din roll och region. De flesta använder den inför nästa avropssamtal.
+              </p>
+              <p className="font-semibold text-foreground text-sm pt-1">
+                Vi hjälper dig förhandla kring:
+              </p>
+              <div className="grid grid-cols-2 gap-2">
+                {[
+                  { icon: Car, label: "Reseersättning" },
+                  { icon: Clock, label: "Jourfaktor" },
+                  { icon: Home, label: "Betalt boende" },
+                  { icon: FileWarning, label: "Vitesklausul" },
+                ].map(({ icon: Icon, label }) => (
+                  <div key={label} className="flex items-center gap-2 p-2.5 rounded-lg bg-foreground/[0.03]">
+                    <Icon className="w-3.5 h-3.5 text-primary shrink-0" />
+                    <span className="text-[12px] font-medium">{label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="px-5 py-5">
+              <Link
+                to="/logga-in"
+                className="inline-flex items-center justify-center gap-2 rounded-[10px] bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
+              >
+                <LogIn className="w-4 h-4" />
+                Öppna förhandlingsassistenten
+              </Link>
+            </div>
+          </div>
+
+          {/* 3b. Fakturagranskning */}
+          {leadId && email && (
+            <div id="flow-fakturor" className="scroll-mt-24">
+              <InvoiceReviewCTA
+                leadId={leadId}
+                email={email}
+                role={occupation}
+                zone={userZone}
+                reportId={reportId}
+              />
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ═══════════════════════════════════════════════════════════════
+          4. REGIONAL COMPARISON — Skapar kontext för lönen
           ═══════════════════════════════════════════════════════════════ */}
       {isConsultantFullAccess && zoneComparisons && zoneComparisons.length > 0 && (
         <div id="flow-regional" ref={registerSectionRef?.("regional_comparison")} className="scroll-mt-24 pt-4">
@@ -318,7 +380,7 @@ export default function ConsultantTrackContent({
       )}
 
       {/* ═══════════════════════════════════════════════════════════════
-          4. DEEP DIVE — Negotiation Range (Undre / Median / Övre)
+          5. DEEP DIVE — Negotiation Range (Undre / Median / Övre)
           ═══════════════════════════════════════════════════════════════ */}
       {isConsultantFullAccess && rec ? (
         (() => {
@@ -405,68 +467,6 @@ export default function ConsultantTrackContent({
           </div>
         </div>
       ) : null}
-
-      {/* ═══════════════════════════════════════════════════════════════
-          5. ACTION HUB — Verktygen
-          ═══════════════════════════════════════════════════════════════ */}
-      {isConsultantFullAccess && (
-        <div id="flow-stod" ref={registerSectionRef?.("action_hub")} className="scroll-mt-24 pt-6 space-y-4">
-          <SectionLabel>Agera på resultatet</SectionLabel>
-
-          {/* 5a. Förhandlingsassistenten */}
-          <div className="rounded-[18px] bg-card border border-foreground/[0.07] overflow-hidden card-shadow">
-            <div className="pt-6 px-5 space-y-4">
-              <div className="flex items-start gap-2">
-                <Handshake className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <p className="font-semibold text-foreground text-base leading-snug">
-                  Förhandlingsassistenten gör skillnaden mellan ”ungefär marknadspris” och rätt timpris.
-                </p>
-              </div>
-              <p className="text-body-sm text-muted-foreground leading-relaxed">
-                Du loggar in och får färdiga formuleringar, jourfaktor-argument och en checklista för vitesklausul — anpassade efter din roll och region. De flesta använder den inför nästa avropssamtal.
-              </p>
-              <p className="font-semibold text-foreground text-sm pt-1">
-                Vi hjälper dig förhandla kring:
-              </p>
-              <div className="grid grid-cols-2 gap-2">
-                {[
-                  { icon: Car, label: "Reseersättning" },
-                  { icon: Clock, label: "Jourfaktor" },
-                  { icon: Home, label: "Betalt boende" },
-                  { icon: FileWarning, label: "Vitesklausul" },
-                ].map(({ icon: Icon, label }) => (
-                  <div key={label} className="flex items-center gap-2 p-2.5 rounded-lg bg-foreground/[0.03]">
-                    <Icon className="w-3.5 h-3.5 text-primary shrink-0" />
-                    <span className="text-[12px] font-medium">{label}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="px-5 py-5">
-              <Link
-                to="/logga-in"
-                className="inline-flex items-center justify-center gap-2 rounded-[10px] bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
-              >
-                <LogIn className="w-4 h-4" />
-                Öppna förhandlingsassistenten
-              </Link>
-            </div>
-          </div>
-
-          {/* 5b. Fakturagranskning */}
-          {leadId && email && (
-            <div id="flow-fakturor" className="scroll-mt-24">
-              <InvoiceReviewCTA
-                leadId={leadId}
-                email={email}
-                role={occupation}
-                zone={userZone}
-                reportId={reportId}
-              />
-            </div>
-          )}
-        </div>
-      )}
 
       {/* ═══════════════════════════════════════════════════════════════
           6. MARKET INTELLIGENCE — Senaste avtalsändringar & noteringar
