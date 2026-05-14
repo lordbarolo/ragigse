@@ -115,6 +115,7 @@ const App = () => (
         <BrowserRouter>
           <ScrollToTop />
           <Suspense fallback={<Loading />}>
+            <main id="main-content">
             <Routes>
               {/* ── Landing — Kivra-stil "Förhandla utifrån data, inte magkänsla" (LandingV2) ── */}
               <Route path="/" element={<LandingV2 />} />
@@ -212,6 +213,7 @@ const App = () => (
               {/* ── Catch-all ─────────────────────── */}
               <Route path="*" element={<NotFound />} />
             </Routes>
+            </main>
           </Suspense>
           <CookieBanner />
           <FloatingProfileButton />
