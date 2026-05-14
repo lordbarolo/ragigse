@@ -126,9 +126,9 @@ export default function Fakturakontroll() {
       <section className="px-6 pt-8 pb-12 md:pt-12 md:pb-16 bg-muted/40">
         <div className="max-w-5xl mx-auto">
           <p className="text-xs font-bold uppercase tracking-widest text-primary mb-2">Så funkar det</p>
-          <h1 className="font-display text-3xl md:text-4xl font-extrabold tracking-tight mb-12">
+          <h2 className="font-display text-3xl md:text-4xl font-extrabold tracking-tight mb-12">
             Fyra steg till full kontroll
-          </h1>
+          </h2>
 
           {/* Step circles + line */}
           <div className="relative flex items-start justify-between">
