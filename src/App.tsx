@@ -83,6 +83,19 @@ function ScrollToTop() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+
+    // Move focus to the main landmark on route change so keyboard/screen-reader
+    // users land on the new page content instead of staying inside stale UI.
+    // Skip the very first mount so we don't steal focus from initial form fields.
+    if (!isFirstRender.current) {
+      const main = document.getElementById("main-content");
+      if (main) {
+        main.focus({ preventScroll: true });
+      }
+    } else {
+      isFirstRender.current = false;
+    }
+
     if (typeof window.gtag === 'function') {
       window.gtag('config', 'G-8TKTZH3KZZ', { page_path: pathname });
     }
