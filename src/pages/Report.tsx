@@ -102,9 +102,9 @@ export default function Report() {
         steps={[
           { id: "flow-din-ersattning", label: "Din ersättning & marknadsspann" },
           { id: "flow-situation", label: "Vad det betyder för dig" },
+          { id: "flow-stod", label: "Få stöd i din förhandling" },
           { id: "flow-regional", label: "Villkoren på andra orter" },
           { id: "flow-negotiation", label: "Din förhandlingspotential" },
-          { id: "flow-stod", label: "Få stöd i din förhandling" },
           { id: "flow-fakturor", label: "Har du tagit betalt för allt?" },
           { id: "flow-market", label: "Marknadsintelligens" },
           { id: "flow-method", label: "Beräkningsmetod" },
