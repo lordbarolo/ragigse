@@ -130,6 +130,37 @@ export default function EmployerCostBreakdown({
           Faktor: × {breakdown.total_factor.toLocaleString("sv-SE", { maximumFractionDigits: 4 })}
           {" "}(jämfört med tidigare schablon × 1,42).
         </p>
+
+        {/* Förklaring av varje kostnadspost — full transparens */}
+        <div className="rounded-lg border border-border/60 bg-muted/30 p-4 space-y-2.5 text-xs leading-relaxed">
+          <p className="font-semibold text-foreground text-sm">Vad går arbetsgivarens pengar till?</p>
+          <ul className="space-y-2 text-muted-foreground">
+            <li>
+              <span className="font-semibold text-foreground">Arbetsgivaravgifter (31,42 %):</span>{" "}
+              Lagstadgad avgift som arbetsgivaren betalar till staten — finansierar pension, sjukförsäkring,
+              föräldraförsäkring och arbetsmarknadsavgift.
+            </li>
+            <li>
+              <span className="font-semibold text-foreground">Tjänstepension ITP 1 (4,5 % / 30 %):</span>{" "}
+              Kollektivavtalad pensionspremie. 4,5 % på lön upp till 7,5 inkomstbasbelopp
+              ({fmt(ITP1_THRESHOLD_MONTHLY)} kr/mån), 30 % på den del som överstiger.
+            </li>
+            <li>
+              <span className="font-semibold text-foreground">Särskild löneskatt på pension (24,26 %):</span>{" "}
+              Skatt arbetsgivaren betalar ovanpå pensionspremien — räknas på ITP-premien.
+            </li>
+            <li>
+              <span className="font-semibold text-foreground">AFA/TFA-försäkringar (0,85 %):</span>{" "}
+              Kollektivavtalade försäkringar: trygghetsförsäkring vid arbetsskada, sjukförsäkring,
+              omställningsstöd och tjänstegrupplivförsäkring.
+            </li>
+            <li>
+              <span className="font-semibold text-foreground">Semesterersättning (12 %):</span>{" "}
+              Ingår redan i bruttotimlönen ovan ({fmt2(hourlySalary * 0.12 / 1.12)} kr/h motsvarar
+              semesterdelen). Schablonen 12 % motsvarar 25 semesterdagar enligt semesterlagen.
+            </li>
+          </ul>
+        </div>
       </div>
     </Card>
   );
