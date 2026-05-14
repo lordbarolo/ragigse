@@ -6,6 +6,30 @@ import HeroInlineForm from "@/components/landing/HeroInlineForm";
 
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
+import { setPageMeta } from "@/lib/setPageMeta";
+
+const LANDING_JSONLD = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "CompCare",
+    url: "https://www.compcare.se/",
+    inLanguage: "sv-SE",
+    potentialAction: {
+      "@type": "SearchAction",
+      target: "https://www.compcare.se/v1?yrke={search_term_string}",
+      "query-input": "required name=search_term_string",
+    },
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "CompCare",
+    url: "https://www.compcare.se/",
+    logo: "https://www.compcare.se/compcare-logo.svg",
+    sameAs: ["https://www.compcare.se/"],
+  },
+];
 
 /* ───────────────────── data ───────────────────── */
 const NAV_LINKS: { label: string; href: string; external?: boolean }[] = [
@@ -151,7 +175,13 @@ export default function LandingV2() {
 
   useEffect(() => {
     trackEvent("landing_viewed");
-    
+    setPageMeta({
+      title: "CompCare – Lön & ramavtalspriser för vårdkonsulter",
+      description:
+        "Jämför ditt erbjudande mot SKR:s ramavtalspriser i 290 kommuner. Gratis löneanalys för sjuksköterskor, barnmorskor och läkare.",
+      path: "/",
+    });
+
     // Auto-rotate invoice card steps
     intervalRef.current = setInterval(() => {
       setInvoiceStep((s) => (s + 1) % 3);
