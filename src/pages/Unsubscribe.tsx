@@ -81,7 +81,7 @@ export default function Unsubscribe() {
 
             {status === "valid" && (
               <>
-                <h2 className="text-xl font-semibold text-foreground">Avsluta prenumeration</h2>
+                <h1 className="text-xl font-semibold text-foreground">Avsluta prenumeration</h1>
                 <p className="text-muted-foreground text-sm">
                   Vill du sluta ta emot app-mejl från CompCare? Du kommer fortfarande
                   att kunna använda tjänsten.
@@ -102,7 +102,7 @@ export default function Unsubscribe() {
             {status === "done" && (
               <>
                 <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto" />
-                <h2 className="text-xl font-semibold text-foreground">Avprenumererad</h2>
+                <h1 className="text-xl font-semibold text-foreground">Avprenumererad</h1>
                 <p className="text-muted-foreground text-sm">
                   Du kommer inte längre att ta emot app-mejl från CompCare.
                 </p>
@@ -112,7 +112,7 @@ export default function Unsubscribe() {
             {status === "already" && (
               <>
                 <CheckCircle2 className="w-12 h-12 text-muted-foreground mx-auto" />
-                <h2 className="text-xl font-semibold text-foreground">Redan avprenumererad</h2>
+                <h1 className="text-xl font-semibold text-foreground">Redan avprenumererad</h1>
                 <p className="text-muted-foreground text-sm">
                   Din e-post är redan borttagen från mejlutskick.
                 </p>
@@ -122,9 +122,9 @@ export default function Unsubscribe() {
             {(status === "invalid" || status === "error") && (
               <>
                 <XCircle className="w-12 h-12 text-destructive mx-auto" />
-                <h2 className="text-xl font-semibold text-foreground">
+                <h1 className="text-xl font-semibold text-foreground">
                   {status === "invalid" ? "Ogiltig länk" : "Något gick fel"}
-                </h2>
+                </h1>
                 <p className="text-muted-foreground text-sm">
                   {status === "invalid"
                     ? "Länken är ogiltig eller har redan använts."

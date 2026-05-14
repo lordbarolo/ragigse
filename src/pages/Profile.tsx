@@ -275,9 +275,9 @@ export default function Profile() {
             <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-violet-700">
               Kom igång
             </p>
-            <h2 className="text-lg sm:text-xl font-semibold text-slate-900 mt-1">
+            <h1 className="text-lg sm:text-xl font-semibold text-slate-900 mt-1">
               Gör din löneanalys på 60 sekunder
-            </h2>
+            </h1>
             <p className="text-sm text-slate-600 mt-1 mb-4 max-w-xl">
               Svara på 6 korta frågor så jämför vi din ersättning mot SKR:s ramavtal och skapar din personliga rapport.
             </p>
