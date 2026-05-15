@@ -168,6 +168,7 @@ const App = () => (
                 <Route path="/consultant/salary-check" element={<Navigate to="/" replace />} />
                 {/* <Route path="/consultant/radar" element={<ProtectedRoute><Radar /></ProtectedRoute>} /> */}
                 <Route path="/consultant/academy" element={<ProtectedRoute><Academy /></ProtectedRoute>} />
+                <Route path="/consultant/agent-access" element={<ProtectedRoute><AgentAccess /></ProtectedRoute>} />
               </Route>
 
               {/* ── Agency Layout ─────────────────── */}
