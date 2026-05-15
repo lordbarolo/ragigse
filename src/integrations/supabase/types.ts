@@ -41,6 +41,147 @@ export type Database = {
         }
         Relationships: []
       }
+      agent_api_keys: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          key_hash: string
+          key_prefix: string
+          last_used_at: string | null
+          name: string
+          notes: string | null
+          rate_limit_daily: number
+          revoked_at: string | null
+          scopes: string[]
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          key_hash: string
+          key_prefix: string
+          last_used_at?: string | null
+          name: string
+          notes?: string | null
+          rate_limit_daily?: number
+          revoked_at?: string | null
+          scopes?: string[]
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          key_hash?: string
+          key_prefix?: string
+          last_used_at?: string | null
+          name?: string
+          notes?: string | null
+          rate_limit_daily?: number
+          revoked_at?: string | null
+          scopes?: string[]
+        }
+        Relationships: []
+      }
+      agent_api_logs: {
+        Row: {
+          api_key_id: string | null
+          created_at: string
+          endpoint: string
+          error_message: string | null
+          id: string
+          ip: string | null
+          latency_ms: number | null
+          method: string
+          params: Json | null
+          response_size_bytes: number | null
+          status_code: number
+          user_agent: string | null
+          user_token_id: string | null
+        }
+        Insert: {
+          api_key_id?: string | null
+          created_at?: string
+          endpoint: string
+          error_message?: string | null
+          id?: string
+          ip?: string | null
+          latency_ms?: number | null
+          method?: string
+          params?: Json | null
+          response_size_bytes?: number | null
+          status_code: number
+          user_agent?: string | null
+          user_token_id?: string | null
+        }
+        Update: {
+          api_key_id?: string | null
+          created_at?: string
+          endpoint?: string
+          error_message?: string | null
+          id?: string
+          ip?: string | null
+          latency_ms?: number | null
+          method?: string
+          params?: Json | null
+          response_size_bytes?: number | null
+          status_code?: number
+          user_agent?: string | null
+          user_token_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_api_logs_api_key_id_fkey"
+            columns: ["api_key_id"]
+            isOneToOne: false
+            referencedRelation: "agent_api_keys"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_api_logs_user_token_id_fkey"
+            columns: ["user_token_id"]
+            isOneToOne: false
+            referencedRelation: "agent_user_tokens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_user_tokens: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          label: string
+          last_used_at: string | null
+          revoked_at: string | null
+          token_hash: string
+          token_prefix: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: string
+          label: string
+          last_used_at?: string | null
+          revoked_at?: string | null
+          token_hash: string
+          token_prefix: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          label?: string
+          last_used_at?: string | null
+          revoked_at?: string | null
+          token_hash?: string
+          token_prefix?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       ai_usage_logs: {
         Row: {
           cost_sek: number
@@ -4859,6 +5000,7 @@ export type Database = {
       }
     }
     Functions: {
+      agent_api_count_today: { Args: { _key_id: string }; Returns: number }
       aggregate_calloff_monthly: {
         Args: { _months_back?: number }
         Returns: {

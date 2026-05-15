@@ -140,3 +140,18 @@ verify_jwt = false
 
 [functions.radar-public-api]
 verify_jwt = false
+
+[functions.agent-api-rates]
+verify_jwt = false
+
+[functions.agent-api-market-history]
+verify_jwt = false
+
+[functions.agent-api-user-context]
+verify_jwt = false
+
+[functions.agent-api-admin]
+verify_jwt = false
+
+[functions.agent-api-user-tokens]
+verify_jwt = false

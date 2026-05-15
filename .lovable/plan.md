@@ -1,92 +1,119 @@
-# Slutlig plan: Frys v1.0 + Marketplace Isolation
+## Vad det här betyder (förklaring först)
 
-## 0. Direktiv som gäller från och med nu (memory-regel)
+Du vill att en agent som lever **utanför** CompCare (t.ex. Claude managed agent, en kunds eget AI-system, eller framtida marketplace-agenter) ska kunna ställa tre frågor till CompCare:
 
-**Marketplace Isolation Rule** läggs in i `mem://index.md` som Core-regel så att alla framtida AI-sessioner respekterar den automatiskt:
+1. *"Vad är ramavtalspriset för rollen X i region Y?"*
+2. *"Hur såg avropshistoriken ut i kommun Z senaste 12 mån?"*
+3. *"Vilken profil/roll/region har den här användaren?"* (endast om användaren själv gett tillstånd)
 
-> All marketplace- och agentbaserad-förhandlings-utveckling sker bakom `VITE_FEATURE_MARKETPLACE`-flag, i `mp_*`-tabeller och `marketplace-*` edge functions med `/marketplace`-route-prefix. Befintlig kod, routes, copy, DB-schema, RLS-policies, cron-jobb och edge functions rörs ALDRIG utan explicit OK från användaren. Default: flagga OFF i prod.
+Utan att agenten får direktaccess till databasen, RLS-policies eller känslig data den inte ska se.
 
-Detta är en hård regel — ingen tolkning, ingen "smart sammanslagning", inga "passa på"-refaktoreringar i befintliga filer.
+**Lösningen** är en tunn agent-gateway: tre `agent-api-*` edge functions som autentiseras med API-nycklar (eller user-scoped tokens), returnerar **bara whitelistade fält**, loggar varje anrop, och rate-limitas per nyckel.
 
-## 1. De 9 godkända kritiska punkterna (sammanfattning)
+Detta är samma mönster som Stripe, Linear och OpenAI använder — du exponerar *intent* (hämta priser), inte *implementation* (kör SQL).
 
-Alla 9 punkter från tidigare review är inbakade i denna plan:
-1. Feature flag både i klient (`VITE_FEATURE_MARKETPLACE`) och DB (`app_settings.marketplace_enabled`) — dubbelt skydd
-2. Strikt namnrymd: `mp_*` för tabeller, `marketplace-*` för edge functions, `/marketplace/*` för routes
-3. Inga `ALTER TABLE` på befintliga tabeller — endast nya `mp_*`-tabeller
-4. Egna RLS-policies per `mp_*`-tabell, ingen återanvändning av existerande policies
-5. Egna cron-jobb med `mp_`-prefix, befintliga jobb orörda
-6. Diff-check före varje marketplace-PR: lista över rörda filer får inte innehålla något utanför `marketplace/`-, `mp_`- eller `/marketplace`-namnrymd (förutom router-registrering och flag-läsning)
-7. Rollback via chat-revert + DB-flag + drop av `mp_*`-tabeller
-8. `LAUNCH_SNAPSHOT.md` som baseline-dokumentation av v1.0
-9. Memory-regel som persisterar direktivet över sessioner
+---
 
-## 2. Steg 0 — Leverabel innan marketplace-bygget startar
+## Arkitektur
 
-Tre konkreta saker, helt utan att röra befintlig produktkod:
+```text
+External Agent (Claude/GPT/eget)
+        │  Bearer <api_key>
+        ▼
+┌────────────────────────────────────────┐
+│  Edge Function: agent-api-*            │
+│  ├─ Validera API-nyckel (hash)         │
+│  ├─ Kontrollera scope                  │
+│  ├─ Rate-limit (per nyckel/dag)        │
+│  ├─ Logga anrop                        │
+│  └─ Returnera whitelistat JSON         │
+└────────────────────────────────────────┘
+        │  service_role (server-side)
+        ▼
+   Supabase tabeller (RLS-skyddade)
+```
 
-### 2.1 `LAUNCH_SNAPSHOT.md`
-Baseline-dokumentation i repo-roten:
-- Lista över alla aktiva routes (från `src/App.tsx`)
-- Lista över alla edge functions (från `supabase/config.toml`)
-- Lista över alla aktiva pg_cron-jobb
-- Lista över alla storage buckets + privacy-status
-- Git/chat-revert-punkt: meddelandet märks "v1.0-launch"
-- Datum + version
+Agenten ser **aldrig** databasen, anon-nyckeln eller user tokens.
 
-### 2.2 Feature flag-infrastruktur
-Migration som skapar:
-- `app_settings`-tabell: `key text primary key, value jsonb, updated_at timestamptz`
-- Seed-rad: `('marketplace_enabled', 'false'::jsonb)`
-- RLS: endast admin kan UPDATE; alla autentiserade kan SELECT på `marketplace_enabled`-raden via en safe-view eller security-definer-funktion `public.get_feature_flag(key text)`
-- Klient-helper `src/lib/featureFlags.ts` som läser `VITE_FEATURE_MARKETPLACE` (build-time) OCH `marketplace_enabled` från DB (runtime). Båda måste vara true för att marketplace-UI ska visas.
+---
 
-Inget UI ändras i detta steg — bara infra.
+## Endpoints
 
-### 2.3 Memory-regel
-Skriv `mem://constraints/marketplace-isolation.md` med fullständig regel + reference den i Core-sektionen i `mem://index.md`.
+**`GET /agent-api-rates`** — SKR-ramavtalspriser
+- Query: `role`, `region`, `year?` (default 2026), `employment_type?`
+- Scope krävs: `rates:read`
+- Returnerar: `{ role, region, base_price, ob_factor, source: "SKR 1.7/1.6", year, valid_from, valid_until }`
+- Aldrig: marginalformler, interna nyckeltal, leadsdata
 
-## 3. Marketplace-bygget (kommer EFTER ditt OK på steg 0)
+**`GET /agent-api-market-history`** — Historiska avrop (Uppdragsradar)
+- Query: `role`, `region`, `months_back?` (max 24)
+- Scope krävs: `market:read`
+- Returnerar: aggregerad data per månad — `{ month, calloff_count, avg_listed_price, customer_categories: ["region", "private"] }`
+- Aldrig: enskilda avrops-IDs, kundnamn (utöver `share_data=true`), PII
+- Använder befintlig `aggregate_calloff_monthly`-funktion
 
-När du sagt "kör marketplace steg 1" startar isolerat arbete enligt:
+**`GET /agent-api-user-context`** — Användarprofil (consent-gated)
+- Header: `Authorization: Bearer <user_scoped_token>` (inte en API-nyckel — en token användaren själv har genererat och delat med agenten)
+- Returnerar: `{ role, region, employment_type, experience_years, current_rate_range }` — *inte* email, namn, dokument
+- Token har TTL (default 30 dagar) och kan revokeras från `/dashboard/agent-access`
 
-### 3.1 Namnrymd (hård)
-- DB-tabeller: `mp_listings`, `mp_offers`, `mp_negotiations`, `mp_agent_runs`, etc.
-- Edge functions: `marketplace-create-listing`, `marketplace-agent-negotiate`, etc.
-- Routes: `/marketplace`, `/marketplace/listing/:id`, `/marketplace/agent/:id`
-- React-kod: `src/pages/marketplace/*`, `src/components/marketplace/*`, `src/hooks/marketplace/*`
+---
 
-### 3.2 Skydd mot läckage
-- Marketplace-routes registreras i `App.tsx` bakom `if (featureFlag) { ... }`-block
-- Inga marketplace-imports i befintliga komponenter
-- Diff-check körs före varje commit: `git diff --name-only` får bara matcha tillåtna paths
+## Säkerhetsmodell
 
-### 3.3 Testbarhet
-- `VITE_FEATURE_MARKETPLACE=true` lokalt + i preview
-- `marketplace_enabled=false` i prod-DB tills du säger "lansera"
-- Ingen "halvvägs"-exponering där en användare kan snubbla in
+| Skydd | Implementation |
+|---|---|
+| API-nyckel | `agent_api_keys` tabell, `key_hash` (SHA-256), aldrig plain text efter creation |
+| Scopes | `text[]` per nyckel — `rates:read`, `market:read` |
+| Rate limit | Räknas i `agent_api_logs`, max 1000/dag default, override per nyckel |
+| User consent | `agent_user_tokens` — användare genererar själv, ser alla aktiva i UI |
+| Audit | Varje anrop loggas (endpoint, params, status, latency, response_size) |
+| Field whitelist | Hårdkodad i edge function — DB-tillägg läcker inte automatiskt |
+| RLS | Alla nya tabeller har strikt RLS; service_role bara från edge function |
 
-## 4. Rollback-vägar (tre lager)
+**Marketplace-isolation:** `market_history` läser från befintlig `calloff_imports` (inte `mp_*`), så detta är OK utanför marketplace-flaggan.
 
-1. **Chat-revert**: tillbaka till "v1.0-launch"-meddelandet → hela repot återställs
-2. **DB-flag**: `UPDATE app_settings SET value='false' WHERE key='marketplace_enabled'` → marketplace försvinner instant utan deploy
-3. **DB-cleanup**: `DROP TABLE mp_*` påverkar ingen befintlig data eftersom inga FK pekar in i existerande tabeller
+---
 
-## 5. Tekniska detaljer
+## Filer som skapas
 
-**Filer som skapas i steg 0:**
-- `LAUNCH_SNAPSHOT.md` (ny, repo-rot)
-- `supabase/migrations/<timestamp>_app_settings.sql` (ny migration)
-- `src/lib/featureFlags.ts` (ny helper)
-- `mem://constraints/marketplace-isolation.md` (ny memory)
-- `mem://index.md` (uppdaterad — Core + Memories-sektion)
+**Migration:**
+- `agent_api_keys` (id, name, key_hash, scopes, rate_limit_daily, created_by, last_used_at, revoked_at)
+- `agent_user_tokens` (id, user_id, token_hash, label, expires_at, revoked_at)
+- `agent_api_logs` (id, key_id/token_id, endpoint, status, latency_ms, ip, created_at)
+- RLS: bara admin ser nycklar; user ser sina egna tokens; loggar bara admin
 
-**Filer som INTE rörs i steg 0:**
-Alla andra. Inga ändringar i `App.tsx`, `Survey.tsx`, edge functions, RLS eller någon befintlig komponent.
+**Edge functions** (alla `verify_jwt = false`, validerar i kod):
+- `supabase/functions/agent-api-rates/index.ts`
+- `supabase/functions/agent-api-market-history/index.ts`
+- `supabase/functions/agent-api-user-context/index.ts`
+- `supabase/functions/_shared/agent-auth.ts` (gemensam nyckel/scope/rate-limit-helper)
 
-**Säkerhetsgrind:**
-Efter migrationen körs `security--run_security_scan` + `supabase--linter` för att säkra att `app_settings` har korrekt RLS och att inga nya warnings introducerats. Resultat loggas i chat före leverabel-bekräftelse.
+**Admin UI:**
+- `src/pages/admin/AgentApiKeys.tsx` — skapa/revokera nycklar (visa plain text *en gång*)
 
-## 6. Vad som händer när du säger "kör"
+**User UI:**
+- `src/pages/consultant/AgentAccess.tsx` — generera personlig token, se aktiva, revokera
 
-Jag växlar till build-mode och levererar exakt steg 0 (de tre artefakterna ovan), inget annat. Sen pausar jag och väntar på "kör marketplace steg 1" innan något i `mp_*`-namespace skapas.
+**Dokumentation:**
+- `public/agent-api.md` — exempel curl-anrop, scopes, rate-limits, fältdefinitioner
+- Uppdatera `public/openapi.json` med de tre endpointsen
+
+---
+
+## Vad jag INTE bygger i det här steget
+
+- Skriv-endpoints (publicera avrop, posta erbjudanden) — kommer i marketplace-flödet
+- OAuth/MCP-flow — kan läggas på senare ovanpå denna grund
+- Webhook-utskick till agenter — separat feature
+- Per-fält granulär scope (t.ex. `rates:read:ob_only`) — overkill nu
+
+---
+
+## Vad du behöver bestämma innan jag kör
+
+1. **Rate-limit default:** 1000 anrop/dag/nyckel räcker för normal agent-användning. OK?
+2. **User token TTL:** 30 dagar default med möjlighet att sätta 7/30/90/365. OK?
+3. **Pris för rates/market i framtiden:** ska detta vara gratis-tier eller redan från start kopplat till abonnemang? (Jag bygger gratis-tier nu — paywall blir en `is_paid_tier`-check senare.)
+
+Säg **"kör"** så bygger jag steg 1 (tabeller + tre edge functions + admin-UI + dokumentation). User-token-UI kan komma som steg 2.

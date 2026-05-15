@@ -49,6 +49,8 @@ const PublicProfile = lazy(() => import("./pages/PublicProfile"));
 const VerifyProof = lazy(() => import("./pages/VerifyProof"));
 const Fakturakontroll = lazy(() => import("./pages/Fakturakontroll"));
 const FakturakontrollNy = lazy(() => import("./pages/consultant/FakturakontrollNy"));
+const AgentAccess = lazy(() => import("./pages/consultant/AgentAccess"));
+const AgentApiKeys = lazy(() => import("./pages/admin/AgentApiKeys"));
 const ReferenserInfo = lazy(() => import("./pages/ReferenserInfo"));
 const VerifyInfo = lazy(() => import("./pages/VerifyInfo"));
 
@@ -166,6 +168,7 @@ const App = () => (
                 <Route path="/consultant/salary-check" element={<Navigate to="/" replace />} />
                 {/* <Route path="/consultant/radar" element={<ProtectedRoute><Radar /></ProtectedRoute>} /> */}
                 <Route path="/consultant/academy" element={<ProtectedRoute><Academy /></ProtectedRoute>} />
+                <Route path="/consultant/agent-access" element={<ProtectedRoute><AgentAccess /></ProtectedRoute>} />
               </Route>
 
               {/* ── Agency Layout ─────────────────── */}
@@ -213,6 +216,7 @@ const App = () => (
               <Route path="/eget-bolag" element={<EgetBolag />} />
               <Route path="/delade-dokument/:token" element={<SharedDocuments />} />
               <Route path="/admin" element={<ProtectedRoute allowedRoles={["admin"]}><Admin /></ProtectedRoute>} />
+              <Route path="/admin/agent-api-keys" element={<ProtectedRoute allowedRoles={["admin"]}><AgentApiKeys /></ProtectedRoute>} />
               <Route path="/marketplace" element={<ProtectedRoute><MarketplaceHome /></ProtectedRoute>} />
               <Route path="/dev/theme-preview" element={<ProtectedRoute allowedRoles={["admin"]}><ThemePreview /></ProtectedRoute>} />
               <Route path="/dev/analytics" element={<ProtectedRoute allowedRoles={["admin"]}><AnalyticsDashboard /></ProtectedRoute>} />
