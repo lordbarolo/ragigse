@@ -49,6 +49,8 @@ const PublicProfile = lazy(() => import("./pages/PublicProfile"));
 const VerifyProof = lazy(() => import("./pages/VerifyProof"));
 const Fakturakontroll = lazy(() => import("./pages/Fakturakontroll"));
 const FakturakontrollNy = lazy(() => import("./pages/consultant/FakturakontrollNy"));
+const AgentAccess = lazy(() => import("./pages/consultant/AgentAccess"));
+const AgentApiKeys = lazy(() => import("./pages/admin/AgentApiKeys"));
 const ReferenserInfo = lazy(() => import("./pages/ReferenserInfo"));
 const VerifyInfo = lazy(() => import("./pages/VerifyInfo"));
 
