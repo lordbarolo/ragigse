@@ -15,6 +15,7 @@ import ChatAnswerReports from "@/components/admin/ChatAnswerReports";
 import EventCoverage from "@/components/admin/EventCoverage";
 import InvoiceReviews from "@/components/admin/InvoiceReviews";
 import RateVerification from "@/components/admin/RateVerification";
+import ConstantsVerification from "@/components/admin/ConstantsVerification";
 import RadarImport from "@/components/admin/RadarImport";
 import RadarApiKeys from "@/components/admin/RadarApiKeys";
 import { useAdminAnalytics } from "@/hooks/useAdminAnalytics";
@@ -361,6 +362,9 @@ export default function Admin() {
 
       {/* Rate Verification */}
       <RateVerification />
+
+      {/* Constants Verification */}
+      <ConstantsVerification />
 
       {/* Invoice Reviews */}
       <InvoiceReviews />

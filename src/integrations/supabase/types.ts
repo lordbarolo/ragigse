@@ -1166,6 +1166,63 @@ export type Database = {
           },
         ]
       }
+      constants_verification_baseline: {
+        Row: {
+          created_at: string
+          expected_value: Json
+          id: string
+          key: string
+          source_note: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          expected_value: Json
+          id?: string
+          key: string
+          source_note?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          expected_value?: Json
+          id?: string
+          key?: string
+          source_note?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      constants_verification_runs: {
+        Row: {
+          diff_json: Json | null
+          error_message: string | null
+          id: string
+          mismatch_count: number
+          run_at: string
+          status: string
+          total_keys: number
+        }
+        Insert: {
+          diff_json?: Json | null
+          error_message?: string | null
+          id?: string
+          mismatch_count?: number
+          run_at?: string
+          status: string
+          total_keys?: number
+        }
+        Update: {
+          diff_json?: Json | null
+          error_message?: string | null
+          id?: string
+          mismatch_count?: number
+          run_at?: string
+          status?: string
+          total_keys?: number
+        }
+        Relationships: []
+      }
       consultant_documents: {
         Row: {
           consultant_id: string
@@ -3238,6 +3295,45 @@ export type Database = {
           location?: string
           predicted_date?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      rate_baseline_acknowledgments: {
+        Row: {
+          acknowledged_by: string
+          created_at: string
+          id: string
+          new_value: number
+          old_value: number | null
+          reason: string
+          typ: string
+          version_id: string
+          yrkeskategori: string
+          zon: string
+        }
+        Insert: {
+          acknowledged_by: string
+          created_at?: string
+          id?: string
+          new_value: number
+          old_value?: number | null
+          reason: string
+          typ: string
+          version_id: string
+          yrkeskategori: string
+          zon: string
+        }
+        Update: {
+          acknowledged_by?: string
+          created_at?: string
+          id?: string
+          new_value?: number
+          old_value?: number | null
+          reason?: string
+          typ?: string
+          version_id?: string
+          yrkeskategori?: string
+          zon?: string
         }
         Relationships: []
       }
