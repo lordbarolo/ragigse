@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { calculateSalaryRange } from "@/lib/calc";
 import type { EmploymentType } from "@/lib/calc";
 import PriceRangeGuard from "@/components/PriceRangeGuard";
+import PensionImpactSimulator from "@/components/report/PensionImpactSimulator";
 
 interface CompensationViewProps {
   role: string | null;
@@ -205,6 +206,11 @@ export default function CompensationView({ role, location, employmentType }: Com
           ))}
         </Accordion>
       </Card>
+
+      {/* ── Pension simulator ──────────────────────────── */}
+      <PensionImpactSimulator
+        initialSalary={Math.round(((salaryRange.hourlyMin + salaryRange.hourlyMax) / 2) * hoursPerMonth)}
+      />
     </div>
   );
 }
