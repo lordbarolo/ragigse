@@ -21,10 +21,8 @@ export default function HeroInlineForm() {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return SPECIALITY_OPTIONS.slice(0, 8);
-    return SPECIALITY_OPTIONS.filter(
-      (o) => o.label.toLowerCase().includes(q),
-    ).slice(0, 12);
+    if (!q) return SPECIALITY_OPTIONS;
+    return SPECIALITY_OPTIONS.filter((o) => o.label.toLowerCase().includes(q));
   }, [query]);
 
   const handlePick = (slug: string, label: string) => {
