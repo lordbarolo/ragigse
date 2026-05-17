@@ -16,6 +16,7 @@ import DashboardReferences from "@/components/profile/DashboardReferences";
 import DashboardDocuments, { type DashboardDocumentsHandle } from "@/components/profile/DashboardDocuments";
 import ProfileAuditLog from "@/components/profile/ProfileAuditLog";
 import DashboardInvoiceCheck from "@/components/profile/DashboardInvoiceCheck";
+import PensionImpactSimulator from "@/components/report/PensionImpactSimulator";
 import AssignmentFeedbackDialog from "@/components/profile/AssignmentFeedbackDialog";
 
 
@@ -388,42 +389,48 @@ export default function Profile() {
 
         {/* === WORK === */}
         {activeTab === "work" && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
-              <CardHeader>
-                <CardTitle className="text-base flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-primary" />
-                  Mina rapporter
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {reports.length === 0 ? (
-                  <div className="text-center py-6">
-                    <p className="text-muted-foreground text-sm mb-3">Inga rapporter ännu</p>
-                    <Link to="/">
-                      <Button size="sm">
-                        <UserPlus className="w-4 h-4 mr-1" />
-                        Skapa din första analys
-                      </Button>
-                    </Link>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {reports.map((r) => (
-                      <Link key={r.id} to={`/rapport/${r.id}`} className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors group">
-                        <div>
-                          <p className="font-medium text-foreground group-hover:text-primary transition-colors">{r.occupation || "Analys"}</p>
-                          <p className="text-xs text-muted-foreground">{r.kommun && `${r.kommun} · `}{new Date(r.created_at).toLocaleDateString("sv-SE")}</p>
-                        </div>
-                        <span className="text-xs text-muted-foreground">→</span>
+          <div className="space-y-5">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+              <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
+                <CardHeader>
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-primary" />
+                    Mina rapporter
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {reports.length === 0 ? (
+                    <div className="text-center py-6">
+                      <p className="text-muted-foreground text-sm mb-3">Inga rapporter ännu</p>
+                      <Link to="/">
+                        <Button size="sm">
+                          <UserPlus className="w-4 h-4 mr-1" />
+                          Skapa din första analys
+                        </Button>
                       </Link>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {reports.map((r) => (
+                        <Link key={r.id} to={`/rapport/${r.id}`} className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors group">
+                          <div>
+                            <p className="font-medium text-foreground group-hover:text-primary transition-colors">{r.occupation || "Analys"}</p>
+                            <p className="text-xs text-muted-foreground">{r.kommun && `${r.kommun} · `}{new Date(r.created_at).toLocaleDateString("sv-SE")}</p>
+                          </div>
+                          <span className="text-xs text-muted-foreground">→</span>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
 
-            <DashboardInvoiceCheck />
+              <DashboardInvoiceCheck />
+            </div>
+
+            <PensionImpactSimulator
+              initialSalary={profile?.current_monthly_salary || 55000}
+            />
           </div>
         )}
 
