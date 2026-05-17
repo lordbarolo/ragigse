@@ -16,6 +16,7 @@ import DashboardReferences from "@/components/profile/DashboardReferences";
 import DashboardDocuments, { type DashboardDocumentsHandle } from "@/components/profile/DashboardDocuments";
 import ProfileAuditLog from "@/components/profile/ProfileAuditLog";
 import DashboardInvoiceCheck from "@/components/profile/DashboardInvoiceCheck";
+import PensionImpactSimulator from "@/components/report/PensionImpactSimulator";
 import AssignmentFeedbackDialog from "@/components/profile/AssignmentFeedbackDialog";
 
 
