@@ -21,10 +21,8 @@ export default function HeroInlineForm() {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return SPECIALITY_OPTIONS.slice(0, 8);
-    return SPECIALITY_OPTIONS.filter(
-      (o) => o.label.toLowerCase().includes(q),
-    ).slice(0, 12);
+    if (!q) return SPECIALITY_OPTIONS;
+    return SPECIALITY_OPTIONS.filter((o) => o.label.toLowerCase().includes(q));
   }, [query]);
 
   const handlePick = (slug: string, label: string) => {
@@ -65,7 +63,11 @@ export default function HeroInlineForm() {
           autoComplete="off"
         />
         {open && filtered.length > 0 && (
-          <div className="absolute z-30 left-0 right-0 mt-1.5 bg-white border border-[#E2E1EC] rounded-lg shadow-lg max-h-64 overflow-auto">
+          <div
+            onMouseDown={(e) => e.preventDefault()}
+            onTouchStart={(e) => e.stopPropagation()}
+            className="absolute z-30 left-0 right-0 mt-1.5 bg-white border border-[#E2E1EC] rounded-lg shadow-lg max-h-64 overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch]"
+          >
             {filtered.map((o) => (
               <button
                 key={o.slug}
