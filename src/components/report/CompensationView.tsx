@@ -207,10 +207,6 @@ export default function CompensationView({ role, location, employmentType }: Com
         </Accordion>
       </Card>
 
-      {/* ── Pension simulator ──────────────────────────── */}
-      <PensionImpactSimulator
-        initialSalary={Math.round(((salaryRange.hourlyMin + salaryRange.hourlyMax) / 2) * hoursPerMonth)}
-      />
     </div>
   );
 }
