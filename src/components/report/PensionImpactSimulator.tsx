@@ -65,12 +65,17 @@ export default function PensionImpactSimulator({
           <span className="text-xs uppercase tracking-wide text-muted-foreground font-medium">
             Bruttolön
           </span>
-          <span className="font-display text-lg font-bold text-foreground tabular-nums">
-            {fmt(salary)}{" "}
-            <span className="text-xs font-normal text-muted-foreground">
-              kr/mån
-            </span>
-          </span>
+          <div className="text-right">
+            <div className="font-display text-lg font-bold text-foreground tabular-nums">
+              {fmt(salary)}{" "}
+              <span className="text-xs font-normal text-muted-foreground">
+                kr/mån
+              </span>
+            </div>
+            <div className="text-xs text-muted-foreground tabular-nums mt-0.5">
+              {fmt(scenarios.none.hourlyEquivalent)} kr/h
+            </div>
+          </div>
         </div>
         <Slider
           value={[salary]}
