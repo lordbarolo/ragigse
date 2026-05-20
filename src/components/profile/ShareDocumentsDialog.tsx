@@ -202,7 +202,7 @@ export default function ShareDocumentsDialog({ open, onOpenChange }: Props) {
               <div>
                 <Label className="text-xs font-medium text-slate-700 mb-1 block">Giltig i</Label>
                 <Select value={expiry} onValueChange={setExpiry}>
-                  <SelectTrigger className="bg-white"><SelectValue /></SelectTrigger>
+                  <SelectTrigger className="bg-white text-slate-900"><SelectValue /></SelectTrigger>
                   <SelectContent className="bg-white">
                     {EXPIRY_OPTIONS.map((o) => (
                       <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
@@ -216,6 +216,7 @@ export default function ShareDocumentsDialog({ open, onOpenChange }: Props) {
                   placeholder="t.ex. Region Skåne"
                   value={recipient}
                   onChange={(e) => setRecipient(e.target.value)}
+                  className="bg-white text-slate-900 placeholder:text-slate-400"
                 />
               </div>
             </div>
