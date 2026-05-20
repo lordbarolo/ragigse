@@ -602,23 +602,6 @@ export default function LandingV2() {
                 <a href="mailto:hej@compcare.se" className="hover:text-white transition-colors">Kontakt</a>
               </div>
             </div>
-            <div>
-              <h4 className="text-xs font-medium uppercase tracking-widest text-white/50 mb-3">För bemanningsföretag</h4>
-              <div className="flex flex-col gap-2 text-[13px] text-white/70">
-                <Link to="/for-bemanningsforetag" className="hover:text-white transition-colors">
-                  <span className="text-white font-medium">CompCare Insight</span> — beslutsstöd för prissättning baserat på aktuella tilldelningsdata
-                </Link>
-                <Link to="/for-bemanningsforetag" className="hover:text-white transition-colors">
-                  <span className="text-white font-medium">CompCare Din data</span> — digital exklusivitet som eliminerar risk för dubbelpresentationer
-                </Link>
-                <Link to="/for-bemanningsforetag" className="hover:text-white transition-colors">
-                  <span className="text-white font-medium">Intygsmodulen</span> — juridiskt hållbara konsultbekräftelser enligt nationella krav
-                </Link>
-                <Link to="/registrera/bemanning" className="hover:text-white transition-colors">
-                  <span className="text-white font-medium">Bli partner</span> — kontakta oss för integration och tidig access
-                </Link>
-              </div>
-            </div>
           </div>
           <div className="border-t border-white/10 pt-5 flex flex-col md:flex-row justify-between items-center gap-2 text-xs text-white/50">
             <p>© 2026 Compcare</p>
