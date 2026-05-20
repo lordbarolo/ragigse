@@ -576,7 +576,7 @@ export default function LandingV2() {
       {/* ── Footer ──────────────────────────── */}
       <footer className="px-5 sm:px-6 lg:px-10 pt-10 pb-12 border-t border-white/10 bg-[hsl(260_50%_5%_/_0.6)]">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 mb-8">
             <div>
               <div className="mb-2.5">
                 <CompcareLogo variant="full" inverted={true} />
@@ -600,23 +600,6 @@ export default function LandingV2() {
                 <Link to="/vanliga-fragor" className="hover:text-white transition-colors">FAQ</Link>
                 <Link to="/integritetspolicy" className="hover:text-white transition-colors">Integritetspolicy</Link>
                 <a href="mailto:hej@compcare.se" className="hover:text-white transition-colors">Kontakt</a>
-              </div>
-            </div>
-            <div>
-              <h4 className="text-xs font-medium uppercase tracking-widest text-white/50 mb-3">För bemanningsföretag</h4>
-              <div className="flex flex-col gap-2 text-[13px] text-white/70">
-                <Link to="/for-bemanningsforetag" className="hover:text-white transition-colors">
-                  <span className="text-white font-medium">CompCare Insight</span> — beslutsstöd för prissättning baserat på aktuella tilldelningsdata
-                </Link>
-                <Link to="/for-bemanningsforetag" className="hover:text-white transition-colors">
-                  <span className="text-white font-medium">CompCare Din data</span> — digital exklusivitet som eliminerar risk för dubbelpresentationer
-                </Link>
-                <Link to="/for-bemanningsforetag" className="hover:text-white transition-colors">
-                  <span className="text-white font-medium">Intygsmodulen</span> — juridiskt hållbara konsultbekräftelser enligt nationella krav
-                </Link>
-                <Link to="/registrera/bemanning" className="hover:text-white transition-colors">
-                  <span className="text-white font-medium">Bli partner</span> — kontakta oss för integration och tidig access
-                </Link>
               </div>
             </div>
           </div>
