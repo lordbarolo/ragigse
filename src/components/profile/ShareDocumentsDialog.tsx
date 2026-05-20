@@ -142,26 +142,52 @@ export default function ShareDocumentsDialog({ open, onOpenChange }: Props) {
         <DialogHeader>
           <DialogTitle>Dela dokument via länk</DialogTitle>
           <DialogDescription>
-            Välj vilka dokument uppdragsgivaren ska få se och hur länge länken ska gälla.
+            Skapa en säker länk till valda dokument. Du bestämmer hur länge den ska fungera och kan skicka den direkt via e-post eller SMS — eller kopiera och dela själv.
           </DialogDescription>
         </DialogHeader>
 
         {shareUrl ? (
-          <div className="space-y-3">
+          <div className="space-y-4">
             <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800">
-              Länken är giltig i {expiryLabel?.toLowerCase()}.
+              Klar! Länken fungerar i {expiryLabel?.toLowerCase()}. Skicka den till mottagaren via e-post, SMS eller valfri chatt.
             </div>
-            <div className="flex gap-2">
-              <Input value={shareUrl} readOnly className="text-xs" />
-              <Button onClick={handleCopy} className="text-sm font-semibold px-4 py-3 gap-1.5">
-                {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-                {copied ? "Kopierad" : "Kopiera"}
-              </Button>
+
+            <div>
+              <Label className="text-xs font-medium text-slate-700 mb-1 block">Länk</Label>
+              <div className="flex gap-2">
+                <Input value={shareUrl} readOnly className="text-xs bg-white text-slate-900" />
+                <Button onClick={handleCopy} variant="outline" className="text-sm font-semibold px-4 py-3 gap-1.5">
+                  {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
+                  {copied ? "Kopierad" : "Kopiera"}
+                </Button>
+              </div>
             </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              <a
+                href={`mailto:?subject=${encodeURIComponent(`Dokument från ${recipient ? recipient : "CompCare"}`)}&body=${encodeURIComponent(`Hej,\n\nHär är en säker länk till mina dokument (giltig i ${expiryLabel?.toLowerCase()}):\n\n${shareUrl}\n\nVänliga hälsningar`)}`}
+                className="inline-flex items-center justify-center gap-1.5 rounded-md border border-slate-200 bg-white text-slate-900 hover:bg-slate-50 text-sm font-semibold px-4 py-3"
+              >
+                <Mail className="w-4 h-4" />
+                Skicka via e-post
+              </a>
+              <a
+                href={`sms:?&body=${encodeURIComponent(`Länk till mina dokument (giltig i ${expiryLabel?.toLowerCase()}): ${shareUrl}`)}`}
+                className="inline-flex items-center justify-center gap-1.5 rounded-md border border-slate-200 bg-white text-slate-900 hover:bg-slate-50 text-sm font-semibold px-4 py-3"
+              >
+                <MessageSquare className="w-4 h-4" />
+                Skicka via SMS
+              </a>
+            </div>
+
+            <p className="text-[11px] text-slate-500">
+              E-post och SMS öppnas i din egen app med länken förifylld — du ser och kan redigera innan du skickar.
+            </p>
+
             <Button
               variant="outline"
               onClick={() => onOpenChange(false)}
-              className="text-sm font-semibold px-6 py-3 w-full"
+              className="text-sm font-semibold px-6 py-3"
             >
               Stäng
             </Button>
