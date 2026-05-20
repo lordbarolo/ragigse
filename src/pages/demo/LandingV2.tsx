@@ -569,26 +569,6 @@ export default function LandingV2() {
         </div>
       </section>
 
-      {/* ═══════════════════ B2B-CTA-rad ═══════════════════ */}
-      <section className="px-5 sm:px-6 lg:px-10 pb-14">
-        <div className="max-w-5xl mx-auto rounded-xl px-6 md:px-8 py-6 md:py-7 flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-gradient-to-r from-[hsl(256_100%_67%_/_0.18)] to-[hsl(320_95%_65%_/_0.18)] border border-white/10">
-          <div className="md:max-w-[640px]">
-            <h3 className="text-[17px] sm:text-[19px] font-semibold text-white leading-snug mb-1.5">
-              Vågar du lita på din magkänsla?<br />Låt bekräftad marknadsdata guida dig istället.
-            </h3>
-            <p className="text-[13.5px] sm:text-[14px] text-white/75 leading-relaxed">
-              Vi visar villkor och fallgropar helt öppet. Medan du fokuserar på patienterna säkerställer vi att du har rätt beslutsunderlag. Du behöver inte leta information om indexjusterad jourersättning, vitesbelopp vid frånvaro och HLR-intygets giltighet.
-            </p>
-          </div>
-          <Link
-            to="/for-bemanningsforetag"
-            onClick={() => trackEvent("product_cta_clicked", { cta: "b2b_footer_cta", target: "/for-bemanningsforetag" })}
-            className="self-start md:self-auto bg-[hsl(256_100%_67%)] hover:bg-[hsl(256_100%_72%)] text-white text-sm font-semibold rounded-lg px-6 py-3 inline-flex items-center gap-1.5 transition-colors whitespace-nowrap shadow-[0_8px_30px_-8px_hsl(var(--glow-violet)/0.6)]"
-          >
-            Utforska CompCare Business <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
-      </section>
 
       </div>
       {/* ── /Ljus sektion-wrapper ── */}
