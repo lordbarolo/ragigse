@@ -60,13 +60,28 @@ export default function Profile() {
   });
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<ProfileTab>("overview");
+  const [pendingUploadOpen, setPendingUploadOpen] = useState(false);
   const docsRef = useRef<DashboardDocumentsHandle>(null);
   const { pending: pendingFeedback, dismiss: dismissFeedback } = useAssignmentFeedback(user);
 
   const goUpload = () => {
-    setActiveTab("creds");
-    setTimeout(() => docsRef.current?.openUpload(), 50);
+    if (activeTab !== "creds") {
+      setPendingUploadOpen(true);
+      setActiveTab("creds");
+    } else {
+      docsRef.current?.openUpload();
+    }
   };
+
+  useEffect(() => {
+    if (activeTab === "creds" && pendingUploadOpen) {
+      const id = window.setTimeout(() => {
+        docsRef.current?.openUpload();
+        setPendingUploadOpen(false);
+      }, 100);
+      return () => window.clearTimeout(id);
+    }
+  }, [activeTab, pendingUploadOpen]);
   const goVerifyIdentity = () => {
     toast.info("Digital signering är på väg", { description: "Vi öppnar identitetsverifiering inom kort." });
   };
