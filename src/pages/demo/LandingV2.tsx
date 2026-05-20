@@ -576,7 +576,7 @@ export default function LandingV2() {
       {/* ── Footer ──────────────────────────── */}
       <footer className="px-5 sm:px-6 lg:px-10 pt-10 pb-12 border-t border-white/10 bg-[hsl(260_50%_5%_/_0.6)]">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-8 mb-8">
             <div>
               <div className="mb-2.5">
                 <CompcareLogo variant="full" inverted={true} />
