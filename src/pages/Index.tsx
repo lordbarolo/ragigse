@@ -4,7 +4,7 @@ import { ShieldCheck, FileSearch, MessageSquare, ArrowRight, CheckCircle2 } from
 import { Button } from "@/components/ui/button";
 import CompcareLogo from "@/components/CompcareLogo";
 import ThemeToggle from "@/components/ThemeToggle";
-import HeroRateLookup from "@/components/landing/HeroRateLookup";
+import InlineTerminalSurvey from "@/components/survey/InlineTerminalSurvey";
 import MissionSection from "@/components/landing/MissionSection";
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
@@ -103,7 +103,7 @@ export default function Index() {
             Baserat på SKR:s ramavtal för 2026 och AI-analyser av bemanningsbranschens marginaler.
           </p>
 
-          <HeroRateLookup />
+          <InlineTerminalSurvey />
         </div>
         <div className="absolute bottom-0 left-0 right-0 h-[200px] bg-gradient-to-t from-background to-transparent" />
       </section>

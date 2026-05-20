@@ -1,54 +1,69 @@
-# Säkerhetsnät för pris- och beräkningsmodellen
+## Mål
 
-Mål: göra det omöjligt för fel siffror eller fel formler att ligga osedda i prod i mer än en dag.
+Bygga den valda v3-riktningen (Terminal Glass Flow) som riktig komponent i appen. Frågorna ska ligga inline på startsidan — användaren förs aldrig bort. Besvarade frågor blir små klickbara chips ovanför aktiv fråga.
 
-## Vad som byggs
+## Scope (vad som ändras)
 
-### A. Sjuksköterskor v1.7 — baseline + nattlig kontroll
-- Snapshotar nuvarande 87 rader från `contract_version_rates` till `rate_verification_baseline` (`source_note = 'Initial seed v1.7 2026-05-16'`).
-- Generaliserar `verify-rates` så den loopar över **alla** aktiva `contract_versions` (idag Läkare v1.6 + Sjuksköterskor v1.7, imorgon ev. fler) och skriver en run per version.
-- Befintlig pg_cron 03:00 ger nu täckning för båda katalogerna.
+1. **Ny komponent**: `src/components/survey/InlineTerminalSurvey.tsx`
+   - Visuell terminal-glassmorphism (mörk bakgrund #0D001A, violetta/cyan accenter, JetBrains Mono för prompts, Inter för svar).
+   - "Window header" med traffic-light-prickar och statustext (`compcare://salary-check`).
+   - Mono-prompt per fråga (`$ select_employment_type`), blinkande cursor, "Waiting for user input...".
+   - Chip-rad ovanför aktiv fråga: `Yrke: Sjuksköterska ✏️`, `Kommun: Stockholm ✏️` etc. Klick → hoppa tillbaka till den frågan.
+   - Stegfooter: `STEG 3 / 5 — ANONYMT • KOSTNADSFRITT • KLART PÅ 60 SEKUNDER`.
 
-### B. Öppen läkar-diff (8 dagar)
-- Rotorsak: baseline har felaktigt importerat värde (Hud Zon 3 = 1678 = samma som Zon 2; live har korrekta 1953). Bug i 2026-importen, inte i live.
-- Bygger admin-knapp **"Granska och re-snapshota baseline"** i `RateVerification.tsx`:
-  - Visar varje diff med både värden och kräver explicit godkännande per rad.
-  - Vid godkännande: skriver om baseline-raden + loggar i ny tabell `rate_baseline_acknowledgments` (vem, när, varför, gammalt/nytt värde).
-- Lägger **watchdog** `rate-mismatch-watchdog` (pg_cron daglig 09:00): om någon `rate_verification_runs` med `status='mismatch'` är äldre än 48 h och inte erkänd → POST till admin-mejl via `send-transactional-email`.
+2. **Återanvänd befintlig logik** från `src/components/Survey.tsx`:
+   - Samma 5 steg, samma `SurveyData`-form, samma `usePricingEngine`, samma `aliasLead`/`leads`-insert/`create-report`-flöde, samma PostHog-events (`survey_mounted`, `survey_step_viewed/completed`, `survey_completed`).
+   - Samma rollistor (`doctorRoleOptions`, `nurseRoleOptions`), `top_kommuner`, `nurseValueMap`, `resolvedYrke`-derivering.
+   - Inga ändringar i edge functions, DB-tabeller, RLS eller analytics-pipeline.
 
-### C. Konstanter (marginaler, OB-faktorer, alias, zoner)
-- Ny tabell `constants_verification_baseline` (key, expected_value JSONB, source_note).
-- Seed med:
-  - `margin.specialist.share_min/max` = 0.85 / 0.90
-  - `margin.standard.share_min/max` = 0.80 / 0.85
-  - `margin.anesthesia.share_min/max` = 0.82 / 0.88
-  - `employer.factor` = 1.42
-  - `hours.per_month` = 167
-  - `ob.sjukskoterska.factor` = 1.3142
-  - `role_aliases.count` = 117 (drift-detektor)
-  - `locations.with_zon.count` / `locations.total.count` = 290/290
-- Ny edge function `verify-constants`:
-  - Läser `calc.ts`-konstanter (importerade via en delad `_shared/constants.ts` så client och edge har en sanning).
-  - Räknar `role_aliases` och `locations.zon`.
-  - Jämför mot `constants_verification_baseline`, skriver run i `constants_verification_runs` (samma schema som rates: status/diff_json/checksum).
-- pg_cron 03:15 dagligen.
-- Admin-UI: ny `<ConstantsVerification />` jämte `<RateVerification />` på admin-dashboard.
+3. **Inline-placering på startsidan** (`src/pages/Index.tsx`):
+   - Ersätt nuvarande `<HeroRateLookup />` i hero med `<InlineTerminalSurvey />`.
+   - Hero-rubrik och brödtext bibehålls ovanför så användaren ser utgångspunkten.
+   - När alla 5 steg är klara → samma navigation som idag (`navigate('/resultat/:leadId')`).
+   - Tre pelar-sektionen, trust-sektionen och footern lämnas orörda.
 
-## Skyddsmekanismer
+4. **SalaryCheck-route** (`/consultant/salary-check`):
+   - Behålls oförändrad som fallback/djuplänk (`?start=1`, `?yrke=…` prefill). Survey.tsx rörs ej — vi bygger en ny komponent vid sidan av.
 
-1. **Ingen tyst rättning**: baseline kan bara ändras via admin-erkännande (logg + RLS endast admin).
-2. **Watchdog**: öppna diffar >48 h triggar mejl — den 8-dagars-luckan kan aldrig uppstå igen.
-3. **Konstanter låsta**: drift i marginalmodeller eller alias-tabellen syns nästa natt.
-4. **Generisk över versioner**: när nästa katalog (barnmorska, etc.) läggs in är allt vad som krävs ett baseline-snapshot — funktionen täcker resten.
+## Designdetaljer (från v3-prototypen)
 
-## Filer som ändras/skapas
-- Migration: `constants_verification_baseline`, `constants_verification_runs`, `rate_baseline_acknowledgments`, seed sjuksköterska v1.7 baseline + konstanter, pg_cron jobs.
-- `supabase/functions/verify-rates/index.ts` — loop över aktiva versioner.
-- `supabase/functions/verify-constants/index.ts` — ny.
-- `supabase/functions/rate-mismatch-watchdog/index.ts` — ny.
-- `supabase/functions/_shared/calc-constants.ts` — delad sanning.
-- `src/components/admin/RateVerification.tsx` — re-baseline-knapp + per-versions-vy.
-- `src/components/admin/ConstantsVerification.tsx` — ny.
-- `src/pages/Admin.tsx` — visa ny komponent.
+- Bakgrund: `bg-[#0D001A]` med radial violet glow top + cyan glow bottom.
+- Terminal-kort: `rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl`.
+- Header: tre färgprickar (`#ff5f57 #febc2e #28c840`) + monospace path.
+- Frågetext: `font-mono text-cyan-300 text-sm` prompt, `font-sans text-white text-2xl font-semibold` fråga.
+- Svarsknappar: kompakt (`text-sm font-semibold px-6 py-3` enligt button-standarden), violett hover-glow.
+- Chips: `inline-flex bg-white/5 border border-white/10 rounded-full px-3 py-1 text-xs text-white/70 hover:bg-violet-500/20`.
+- Blinkande cursor: rent CSS `animate-pulse` på `▋`.
 
-Kör?
+## Mobil
+
+- Vertikal stack, chips wrappar.
+- Navigation (Tillbaka/Nästa) sticky längst ner med samma `visualViewport`-keyboard-offset-logik som befintlig Survey.
+
+## Vad som INTE ändras
+
+- Survey.tsx, SalaryCheck.tsx, edge functions, leads-tabellen, pricing-engine, teaser/resultat-flödet, PostHog-events, naming/copy-konventioner.
+- Inga nya beroenden.
+
+## Tekniska detaljer
+
+```text
+src/
+├─ components/
+│  ├─ survey/
+│  │  └─ InlineTerminalSurvey.tsx   ← NY (återanvänder logik från Survey.tsx)
+│  └─ Survey.tsx                    ← oförändrad
+└─ pages/
+   └─ Index.tsx                     ← byter ut <HeroRateLookup/> mot <InlineTerminalSurvey/>
+```
+
+Logiken lyfts ut till en delad hook `useSurveyController` (samma fil) som båda komponenterna kan dela senare — i detta steg kopieras den dock som ren funktion till den nya komponenten för att inte röra Survey.tsx.
+
+## Acceptanskriterier
+
+- Startsidan visar terminal-survey direkt i hero, ingen navigation mellan frågorna.
+- Chips för besvarade frågor — klick återgår till det steget med svaret förifyllt.
+- Steg 5 → samma `/resultat/:leadId` som idag.
+- PostHog-funneln (`survey_started → survey_step_viewed/completed → survey_completed`) oförändrad.
+- Mobil: sticky nav-bar respekterar tangentbordet.
+- Inga ändringar i `Survey.tsx` eller backend.
