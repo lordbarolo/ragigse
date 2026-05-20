@@ -237,13 +237,16 @@ export default function ShareDocumentsDialog({ open, onOpenChange }: Props) {
                 </Select>
               </div>
               <div>
-                <Label className="text-xs font-medium text-slate-700 mb-1 block">Mottagare (valfritt)</Label>
+                <Label className="text-xs font-medium text-slate-700 mb-1 block">Etikett (valfritt)</Label>
                 <Input
                   placeholder="t.ex. Region Skåne"
                   value={recipient}
                   onChange={(e) => setRecipient(e.target.value)}
                   className="bg-white text-slate-900 placeholder:text-slate-400"
                 />
+                <p className="text-[11px] text-slate-500 mt-1">
+                  Bara för dig — så du i efterhand ser vem länken skapades för. Inget mail skickas härifrån.
+                </p>
               </div>
             </div>
 
