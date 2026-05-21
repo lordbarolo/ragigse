@@ -103,7 +103,7 @@ const PRIMARY_PRODUCTS: ProductCard[] = [
   },
   {
     step: "02",
-    title: "AI-assistent som agerar förhandlingsrådgivsre",
+    title: "AI-assistent som agerar förhandlingsrådgivare",
     tagline: "Vinn förhandlingen",
     desc: "AI-assistent som ger dig argumenten i realtid. Branschspecifik kunskap, neutral analys, konkreta nästa steg.",
     tag: "Gratis",
