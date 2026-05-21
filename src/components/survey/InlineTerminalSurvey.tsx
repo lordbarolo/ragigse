@@ -340,233 +340,164 @@ export default function InlineTerminalSurvey() {
           <span className="font-mono text-[11px] text-white/40 ml-2 tracking-wide">
             compcare://salary-check
           </span>
-          <span className="ml-auto font-mono text-[11px] text-cyan-300/70">
-            STEG {step} / {TOTAL_STEPS}
-          </span>
         </div>
 
-        <div className="p-5 sm:p-7 font-sans text-white">
-          {/* Chips: answered questions */}
-          {chipValues.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-5">
-              {chipValues.map((c) => (
-                <button
-                  key={c.idx}
-                  onClick={() => goToStep(c.idx)}
-                  className="group inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70 hover:bg-violet-500/20 hover:border-violet-400/40 transition-all"
-                  title={`Ändra ${c.label.toLowerCase()}`}
-                >
-                  <span className="text-white/40">{c.label}:</span>
-                  <span className="font-medium text-white">{c.value}</span>
-                  <Pencil className="w-3 h-3 text-white/30 group-hover:text-violet-300" />
-                </button>
-              ))}
-            </div>
-          )}
-
-          {/* Mono prompt */}
-          <div className="font-mono text-[12px] text-cyan-300/90 mb-2 flex items-center gap-2">
-            <span className="text-violet-400">$</span>
-            <span>{STEP_PROMPTS[step - 1]}</span>
-            <span className="inline-block w-2 h-3.5 bg-cyan-300/80 animate-pulse" />
-          </div>
-
-          {/* Step content */}
-          <div className="min-h-[220px]">
-            {step === 1 && (
-              <StepShell question="Vad jobbar du som?">
-                <div className="grid sm:grid-cols-2 gap-3">
-                  {([
-                    { value: "lakare" as Category, label: "Läkare" },
-                    { value: "ssk" as Category, label: "Sjuksköterska / Barnmorska" },
-                  ]).map((opt) => {
-                    const active = s.category === opt.value;
-                    return (
-                      <button
-                        key={opt.value}
-                        onClick={() => {
-                          trackStarted();
-                          setS((p) => ({ ...p, category: opt.value, roleValue: "", yrke: "" }));
-                        }}
-                        className={`group relative rounded-xl border px-5 py-4 text-left transition-all ${
-                          active
-                            ? "border-violet-400/60 bg-violet-500/10 shadow-[0_0_30px_-10px_rgba(129,85,255,0.6)]"
-                            : "border-white/10 bg-white/[0.03] hover:border-violet-400/30 hover:bg-white/[0.05]"
-                        }`}
-                      >
-                        <div className="flex items-center justify-between gap-3">
-                          <span className="text-base font-semibold">{opt.label}</span>
-                          {active ? (
-                            <Check className="w-4 h-4 text-violet-300" />
-                          ) : (
-                            <ArrowRight className="w-4 h-4 text-white/30 group-hover:text-violet-300" />
-                          )}
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </StepShell>
-            )}
-
-            {step === 2 && (
-              <StepShell question={s.category === "lakare" ? "Vilken specialisering?" : "Vilken roll?"}>
-                <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
-                  <SearchableSelect
-                    value={s.roleValue}
-                    onValueChange={(v) => setS((p) => ({ ...p, roleValue: v }))}
-                    placeholder={s.category === "lakare" ? "Välj specialisering..." : "Välj din roll..."}
-                    options={s.category === "lakare" ? doctorRoleOptions : nurseRoleOptions}
-                  />
-                </div>
-              </StepShell>
-            )}
-
-            {step === 3 && (
-              <StepShell question="På vilken ort ska du arbeta?">
-                <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 space-y-3">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
-                    <Input
-                      autoFocus
-                      value={kommunSearch}
-                      onChange={(e) => setKommunSearch(e.target.value)}
-                      placeholder="Sök kommun (t.ex. Stockholm)"
-                      className="h-11 pl-10 bg-white/[0.04] border-white/10 text-white placeholder:text-white/30 focus-visible:ring-violet-400/40"
-                    />
-                  </div>
-                  {kommunSearch.trim().length > 0 && (
-                    <div className="max-h-[220px] overflow-y-auto rounded-lg border border-white/10 divide-y divide-white/5">
-                      {filteredKommuner.length === 0 ? (
-                        <p className="px-3 py-4 text-sm text-white/50 text-center">Inga träffar</p>
+        <div className="p-5 sm:p-7 font-sans text-white space-y-6">
+          {/* 1. Yrkeskategori */}
+          <Section index={1} question="Vad jobbar du som?">
+            <div className="grid sm:grid-cols-2 gap-3">
+              {([
+                { value: "lakare" as Category, label: "Läkare" },
+                { value: "ssk" as Category, label: "Sjuksköterska / Barnmorska" },
+              ]).map((opt) => {
+                const active = s.category === opt.value;
+                return (
+                  <button
+                    key={opt.value}
+                    onClick={() => {
+                      trackStarted();
+                      setS((p) => ({ ...p, category: opt.value, roleValue: "", yrke: "" }));
+                    }}
+                    className={`group relative rounded-xl border px-5 py-4 text-left transition-all ${
+                      active
+                        ? "border-violet-400/60 bg-violet-500/10 shadow-[0_0_30px_-10px_rgba(129,85,255,0.6)]"
+                        : "border-white/10 bg-white/[0.03] hover:border-violet-400/30 hover:bg-white/[0.05]"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-base font-semibold">{opt.label}</span>
+                      {active ? (
+                        <Check className="w-4 h-4 text-violet-300" />
                       ) : (
-                        filteredKommuner.map((k) => {
-                          const active = s.kommun === k.kommun;
-                          return (
-                            <button
-                              key={k.kommun}
-                              onClick={() => setS((p) => ({ ...p, kommun: k.kommun, region: k.region }))}
-                              className={`w-full px-3 py-2 text-left text-sm transition-colors flex items-center justify-between ${
-                                active
-                                  ? "bg-violet-500/15 text-white"
-                                  : "text-white/80 hover:bg-white/[0.04]"
-                              }`}
-                            >
-                              <span className="flex items-center gap-2 min-w-0">
-                                <MapPin className="w-3.5 h-3.5 text-violet-300/70 shrink-0" />
-                                <span className="truncate">{k.kommun}</span>
-                                <span className="text-xs text-white/40 truncate">— {k.region}</span>
-                              </span>
-                              {active && <Check className="w-4 h-4 text-violet-300 shrink-0" />}
-                            </button>
-                          );
-                        })
+                        <ArrowRight className="w-4 h-4 text-white/30 group-hover:text-violet-300" />
                       )}
                     </div>
-                  )}
-                  {kommunSearch.trim().length === 0 && s.kommun && (
-                    <div className="rounded-lg border border-violet-400/30 bg-violet-500/10 px-3 py-2 flex items-center gap-2 text-sm">
-                      <Check className="w-4 h-4 text-violet-300" />
-                      <span className="font-medium">{s.kommun}</span>
-                      {s.region && <span className="text-white/50 text-xs">— {s.region}</span>}
-                    </div>
-                  )}
-                </div>
-              </StepShell>
-            )}
+                  </button>
+                );
+              })}
+            </div>
+          </Section>
 
-            {step === 4 && (
-              <StepShell question="Är du anställd eller egen företagare?">
-                <div className="grid sm:grid-cols-2 gap-3">
-                  {([
-                    { value: "anstalld" as const, label: "Anställd", desc: "Lön via vårdgivare/bemanning" },
-                    { value: "foretagare" as const, label: "Eget bolag", desc: "Fakturerar via bemanning/direkt" },
-                  ]).map((opt) => {
-                    const active = s.employmentType === opt.value;
-                    return (
-                      <button
-                        key={opt.value}
-                        onClick={() => setS((p) => ({ ...p, employmentType: opt.value }))}
-                        className={`rounded-xl border px-5 py-4 text-left transition-all ${
-                          active
-                            ? "border-violet-400/60 bg-violet-500/10 shadow-[0_0_30px_-10px_rgba(129,85,255,0.6)]"
-                            : "border-white/10 bg-white/[0.03] hover:border-violet-400/30"
-                        }`}
-                      >
-                        <div className="text-base font-semibold mb-1">{opt.label}</div>
-                        <div className="text-xs text-white/50">{opt.desc}</div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </StepShell>
-            )}
+          {/* 2. Specialisering */}
+          <Section
+            index={2}
+            question={s.category === "ssk" ? "Vilken roll?" : "Vilken specialisering?"}
+            disabled={!s.category}
+          >
+            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+              <SearchableSelect
+                value={s.roleValue}
+                onValueChange={(v) => setS((p) => ({ ...p, roleValue: v }))}
+                placeholder={
+                  !s.category
+                    ? "Välj först yrke ovan…"
+                    : s.category === "lakare"
+                    ? "Välj specialisering..."
+                    : "Välj din roll..."
+                }
+                options={s.category === "lakare" ? doctorRoleOptions : nurseRoleOptions}
+              />
+            </div>
+          </Section>
 
-            {step === 5 && (
-              <StepShell question="Vilken är din nuvarande ersättning?">
-                <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4 space-y-4">
-                  <div className="flex gap-2">
-                    {([
-                      { value: "hourly" as const, label: "Per timme" },
-                      { value: "monthly" as const, label: "Per månad" },
-                    ]).map((opt) => {
-                      const active = s.salaryType === opt.value;
+          {/* 3. Anställd eller företagare */}
+          <Section index={3} question="Är du anställd eller egen företagare?">
+            <div className="grid sm:grid-cols-2 gap-3">
+              {([
+                { value: "anstalld" as const, label: "Anställd", desc: "Lön via vårdgivare/bemanning" },
+                { value: "foretagare" as const, label: "Eget bolag", desc: "Fakturerar via bemanning/direkt" },
+              ]).map((opt) => {
+                const active = s.employmentType === opt.value;
+                return (
+                  <button
+                    key={opt.value}
+                    onClick={() => setS((p) => ({ ...p, employmentType: opt.value }))}
+                    className={`rounded-xl border px-5 py-4 text-left transition-all ${
+                      active
+                        ? "border-violet-400/60 bg-violet-500/10 shadow-[0_0_30px_-10px_rgba(129,85,255,0.6)]"
+                        : "border-white/10 bg-white/[0.03] hover:border-violet-400/30"
+                    }`}
+                  >
+                    <div className="text-base font-semibold mb-1">{opt.label}</div>
+                    <div className="text-xs text-white/50">{opt.desc}</div>
+                  </button>
+                );
+              })}
+            </div>
+          </Section>
+
+          {/* 4. Ort */}
+          <Section index={4} question="På vilken ort ska du arbeta?">
+            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 space-y-3">
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
+                <Input
+                  value={kommunSearch}
+                  onChange={(e) => setKommunSearch(e.target.value)}
+                  placeholder="Sök kommun (t.ex. Stockholm)"
+                  className="h-11 pl-10 bg-white/[0.04] border-white/10 text-white placeholder:text-white/30 focus-visible:ring-violet-400/40"
+                />
+              </div>
+              {kommunSearch.trim().length > 0 && (
+                <div className="max-h-[220px] overflow-y-auto rounded-lg border border-white/10 divide-y divide-white/5">
+                  {filteredKommuner.length === 0 ? (
+                    <p className="px-3 py-4 text-sm text-white/50 text-center">Inga träffar</p>
+                  ) : (
+                    filteredKommuner.map((k) => {
+                      const active = s.kommun === k.kommun;
                       return (
                         <button
-                          key={opt.value}
-                          onClick={() => setS((p) => ({ ...p, salaryType: opt.value }))}
-                          className={`flex-1 py-2.5 px-4 rounded-lg border text-sm font-medium transition-all ${
+                          key={k.kommun}
+                          onClick={() => {
+                            setS((p) => ({ ...p, kommun: k.kommun, region: k.region }));
+                            setKommunSearch("");
+                          }}
+                          className={`w-full px-3 py-2 text-left text-sm transition-colors flex items-center justify-between ${
                             active
-                              ? "border-violet-400/60 bg-violet-500/10 text-white"
-                              : "border-white/10 bg-white/[0.02] text-white/60 hover:border-violet-400/30"
+                              ? "bg-violet-500/15 text-white"
+                              : "text-white/80 hover:bg-white/[0.04]"
                           }`}
                         >
-                          {opt.label}
+                          <span className="flex items-center gap-2 min-w-0">
+                            <MapPin className="w-3.5 h-3.5 text-violet-300/70 shrink-0" />
+                            <span className="truncate">{k.kommun}</span>
+                            <span className="text-xs text-white/40 truncate">— {k.region}</span>
+                          </span>
+                          {active && <Check className="w-4 h-4 text-violet-300 shrink-0" />}
                         </button>
                       );
-                    })}
-                  </div>
-                  <div className="relative">
-                    <Input
-                      type="number"
-                      inputMode="numeric"
-                      placeholder="Ange ersättning"
-                      value={s.currentSalary || ""}
-                      onChange={(e) => setS((p) => ({ ...p, currentSalary: Number(e.target.value) }))}
-                      className="h-14 text-xl font-semibold pr-20 text-center bg-white/[0.04] border-white/10 text-white placeholder:text-white/30 focus-visible:ring-violet-400/40"
-                    />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-white/50 font-medium">
-                      {s.salaryType === "hourly" ? "kr/h" : "kr/mån"}
-                    </span>
-                  </div>
-                  <p className="font-mono text-[11px] text-white/40 text-center">
-                    {s.salaryType === "hourly" ? "// timersättning före skatt" : "// månadsersättning före skatt"}
-                  </p>
+                    })
+                  )}
                 </div>
-              </StepShell>
-            )}
-          </div>
+              )}
+              {kommunSearch.trim().length === 0 && s.kommun && (
+                <div className="rounded-lg border border-violet-400/30 bg-violet-500/10 px-3 py-2 flex items-center gap-2 text-sm">
+                  <Check className="w-4 h-4 text-violet-300" />
+                  <span className="font-medium">{s.kommun}</span>
+                  {s.region && <span className="text-white/50 text-xs">— {s.region}</span>}
+                  <button
+                    onClick={() => setS((p) => ({ ...p, kommun: "", region: "" }))}
+                    className="ml-auto text-xs text-white/50 hover:text-white"
+                  >
+                    Byt
+                  </button>
+                </div>
+              )}
+            </div>
+          </Section>
 
-          {/* Nav */}
-          <div className="flex items-center gap-3 mt-6">
-            {step > 1 && (
-              <button
-                onClick={() => setStep(step - 1)}
-                className="inline-flex items-center gap-1.5 text-sm font-medium text-white/60 hover:text-white px-3 py-2 transition-colors"
-              >
-                <ChevronLeft className="w-4 h-4" /> Tillbaka
-              </button>
-            )}
+          {/* Submit */}
+          <div className="pt-2">
             <button
-              onClick={handleNext}
-              disabled={!canProceed || saving}
-              className={`ml-auto inline-flex items-center gap-2 text-sm font-semibold px-6 py-3 rounded-lg transition-all ${
-                canProceed && !saving
+              onClick={submit}
+              disabled={!allAnswered || saving}
+              className={`w-full sm:w-auto sm:ml-auto sm:flex inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 rounded-lg transition-all ${
+                allAnswered && !saving
                   ? "bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white shadow-[0_0_30px_-8px_rgba(129,85,255,0.8)] hover:shadow-[0_0_40px_-6px_rgba(255,45,170,0.6)]"
                   : "bg-white/10 text-white/40 cursor-not-allowed"
               }`}
             >
-              {saving ? "Bearbetar..." : step === TOTAL_STEPS ? "Se min ersättning" : "Nästa"}
+              {saving ? "Bearbetar..." : "Visa resultat"}
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
@@ -579,6 +510,7 @@ export default function InlineTerminalSurvey() {
           </p>
         </div>
       </div>
+
     </div>
   );
 }
