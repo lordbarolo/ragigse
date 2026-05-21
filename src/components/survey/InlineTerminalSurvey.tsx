@@ -17,8 +17,8 @@ import { toast } from "sonner";
 type Category = "" | "lakare" | "ssk";
 type EmploymentType = "" | "anstalld" | "foretagare";
 
-const TOTAL_STEPS = 4;
-const STEP_NAMES = ["yrkeskategori", "specialisering", "anstallningsform", "kommun"];
+const TOTAL_STEPS = 5;
+const STEP_NAMES = ["yrkeskategori", "specialisering", "anstallningsform", "kommun", "ersattning"];
 
 interface State {
   category: Category;
@@ -27,6 +27,7 @@ interface State {
   kommun: string;
   region: string;
   employmentType: EmploymentType;
+  currentSalary: string;
 }
 
 const initialState: State = {
@@ -36,6 +37,7 @@ const initialState: State = {
   kommun: "",
   region: "",
   employmentType: "",
+  currentSalary: "",
 };
 
 export default function InlineTerminalSurvey() {
