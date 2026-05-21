@@ -67,6 +67,7 @@ const ReferenceDemo = lazy(() => import("./pages/demo/ReferenceDemo"));
 const LandingV2 = lazy(() => import("./pages/demo/LandingV2"));
 const LandingExtras = lazy(() => import("./pages/demo/LandingExtras"));
 const ShiftnexClone = lazy(() => import("./pages/demo/ShiftnexClone"));
+const HeroTailwind = lazy(() => import("./pages/demo/HeroTailwind"));
 const Campaign = lazy(() => import("./pages/Campaign"));
 const UppdragsradarV2 = lazy(() => import("./pages/UppdragsradarV2"));
 const MarketplaceHome = lazy(() => import("./pages/marketplace/MarketplaceHome"));
@@ -225,6 +226,7 @@ const App = () => (
               <Route path="/demo/referenser" element={<ReferenceDemo />} />
               <Route path="/demo/landing-v2" element={<LandingV2 />} />
               <Route path="/demo/shiftnex" element={<ShiftnexClone />} />
+              <Route path="/demo/hero-tailwind" element={<HeroTailwind />} />
               <Route path="/dev/demo" element={<Navigate to="/demo" replace />} />
 
               {/* ── Backwards-compat redirects ───── */}
