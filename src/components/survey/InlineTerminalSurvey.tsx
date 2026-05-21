@@ -17,8 +17,8 @@ import { toast } from "sonner";
 type Category = "" | "lakare" | "ssk";
 type EmploymentType = "" | "anstalld" | "foretagare";
 
-const TOTAL_STEPS = 4;
-const STEP_NAMES = ["yrkeskategori", "specialisering", "anstallningsform", "kommun"];
+const TOTAL_STEPS = 5;
+const STEP_NAMES = ["yrkeskategori", "specialisering", "anstallningsform", "kommun", "ersattning"];
 
 interface State {
   category: Category;
@@ -27,6 +27,7 @@ interface State {
   kommun: string;
   region: string;
   employmentType: EmploymentType;
+  currentSalary: string;
 }
 
 const initialState: State = {
@@ -36,6 +37,7 @@ const initialState: State = {
   kommun: "",
   region: "",
   employmentType: "",
+  currentSalary: "",
 };
 
 export default function InlineTerminalSurvey() {
@@ -179,7 +181,11 @@ export default function InlineTerminalSurvey() {
   const handleKommun = (v: string) => {
     const match = allKommuner.find((k) => k.kommun === v);
     setS((p) => ({ ...p, kommun: v, region: match?.region || "" }));
+    window.setTimeout(() => goNext(4, v), 280);
   };
+
+  const salaryType: "hourly" | "monthly" = s.employmentType === "foretagare" ? "hourly" : "monthly";
+  const salaryUnit = salaryType === "hourly" ? "kr/h" : "kr/mån";
 
   const submit = async () => {
     setSaving(true);
@@ -187,12 +193,13 @@ export default function InlineTerminalSurvey() {
     const track = "consultant";
     const couponCode = searchParams.get("coupon");
     const couponParam = couponCode ? `?coupon=${encodeURIComponent(couponCode)}` : "";
+    const currentSalaryNum = Number(s.currentSalary.replace(/\s/g, "")) || 0;
 
     aliasLead(leadId, {
       role: s.yrke,
       zone: s.kommun,
       employment_type: s.employmentType,
-      current_hourly_rate: 0,
+      current_hourly_rate: salaryType === "hourly" ? currentSalaryNum : 0,
     });
 
     const navigateToTeaser = () => {
@@ -205,14 +212,14 @@ export default function InlineTerminalSurvey() {
           yrke: s.yrke,
           kommun: s.kommun,
           experience: 5,
-          salaryType: "hourly",
-          currentSalary: 0,
+          salaryType,
+          currentSalary: currentSalaryNum,
           obShare: "bemanningsforetag",
           track,
         }),
       );
       if (pricingResult) sessionStorage.setItem("pricingResult", JSON.stringify(pricingResult));
-      trackStepCompleted(4, s.kommun);
+      trackStepCompleted(5, currentSalaryNum);
       const totalTime = surveyStartTime.current
         ? Math.round((Date.now() - surveyStartTime.current) / 1000)
         : 0;
@@ -221,7 +228,8 @@ export default function InlineTerminalSurvey() {
         total_time_seconds: totalTime,
         role: s.yrke,
         zone: s.kommun,
-        current_hourly_rate: 0,
+        current_hourly_rate: salaryType === "hourly" ? currentSalaryNum : 0,
+        current_monthly_salary: salaryType === "monthly" ? currentSalaryNum : 0,
         experience_years: 5,
         employment_type: s.employmentType === "foretagare" ? "Eget bolag" : "Fast",
         agency_name: null,
@@ -238,8 +246,8 @@ export default function InlineTerminalSurvey() {
         yrke: s.yrke,
         kommun: s.kommun,
         experience: 5,
-        salary_type: "hourly",
-        current_salary: 0,
+        salary_type: salaryType,
+        current_salary: currentSalaryNum,
         ob_share: "bemanningsforetag",
       });
       if (error) throw error;
@@ -251,8 +259,8 @@ export default function InlineTerminalSurvey() {
           employment_type: s.employmentType,
           kommun: s.kommun,
           experience: 5,
-          current_salary: 0,
-          salary_type: "hourly",
+          current_salary: currentSalaryNum,
+          salary_type: salaryType,
           track,
           commute: "",
           ob_share: "bemanningsforetag",
@@ -377,22 +385,51 @@ export default function InlineTerminalSurvey() {
                 question="På vilken ort ska du arbeta?"
                 subtitle="Sök bland Sveriges kommuner."
               >
+                <SearchableSelect
+                  value={s.kommun}
+                  onValueChange={handleKommun}
+                  placeholder="Sök kommun…"
+                  options={allKommuner.map((k) => ({
+                    value: k.kommun,
+                    label: k.kommun,
+                    group: k.region,
+                  }))}
+                />
+              </Step>
+            )}
+
+            {step === 5 && (
+              <Step
+                question="Vad har du för ersättning idag?"
+                subtitle={
+                  salaryType === "hourly"
+                    ? "Ange ditt nuvarande timpris (kr/h, exkl. moms)."
+                    : "Ange din nuvarande månadslön (kr/mån, brutto)."
+                }
+              >
                 <div className="space-y-4">
-                  <SearchableSelect
-                    value={s.kommun}
-                    onValueChange={handleKommun}
-                    placeholder="Sök kommun…"
-                    options={allKommuner.map((k) => ({
-                      value: k.kommun,
-                      label: k.kommun,
-                      group: k.region,
-                    }))}
-                  />
+                  <div className="relative">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      autoFocus
+                      value={s.currentSalary}
+                      onChange={(e) => {
+                        const v = e.target.value.replace(/[^\d\s]/g, "");
+                        setS((p) => ({ ...p, currentSalary: v }));
+                      }}
+                      placeholder={salaryType === "hourly" ? "t.ex. 1100" : "t.ex. 48000"}
+                      className="w-full bg-white/[0.04] border border-white/10 rounded-lg px-4 py-3 pr-16 text-white text-base placeholder:text-white/30 focus:outline-none focus:border-violet-400/60 focus:bg-white/[0.06] transition-colors"
+                    />
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[12px] font-mono text-white/40 pointer-events-none">
+                      {salaryUnit}
+                    </span>
+                  </div>
                   <button
                     onClick={submit}
-                    disabled={!s.kommun || saving}
+                    disabled={!s.currentSalary || saving}
                     className={`inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 rounded-lg transition-all ${
-                      s.kommun && !saving
+                      s.currentSalary && !saving
                         ? "bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white shadow-[0_0_30px_-8px_rgba(129,85,255,0.8)] hover:shadow-[0_0_40px_-6px_rgba(255,45,170,0.6)]"
                         : "bg-white/10 text-white/40 cursor-not-allowed"
                     }`}
