@@ -295,21 +295,6 @@ export default function InlineTerminalSurvey() {
       </div>
 
       <div className="rounded-2xl border border-white/10 bg-[#0D001A]/90 backdrop-blur-xl shadow-2xl overflow-hidden">
-        {/* Window header */}
-        <div className="flex items-center gap-2 px-4 py-3 border-b border-white/10 bg-white/[0.02]">
-          <div className="flex gap-1.5">
-            <span className="w-3 h-3 rounded-full bg-[#ff5f57]" />
-            <span className="w-3 h-3 rounded-full bg-[#febc2e]" />
-            <span className="w-3 h-3 rounded-full bg-[#28c840]" />
-          </div>
-          <span className="font-mono text-[11px] text-white/40 ml-2 tracking-wide">
-            Svara på fem frågor för att se aktuella villkor
-          </span>
-          <span className="ml-auto font-mono text-[10px] text-white/30">
-            {step}/{TOTAL_STEPS}
-          </span>
-        </div>
-
         {/* Progress bar */}
         <div className="h-[2px] bg-white/5">
           <div
