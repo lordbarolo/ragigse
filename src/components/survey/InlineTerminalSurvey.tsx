@@ -338,36 +338,19 @@ export default function InlineTerminalSurvey() {
         <div className="p-5 sm:p-7 font-sans text-white space-y-6">
           {/* 1. Yrkeskategori */}
           <Section index={1} question="Vad jobbar du som?">
-            <div className="grid sm:grid-cols-2 gap-3">
-              {([
-                { value: "lakare" as Category, label: "Läkare" },
-                { value: "ssk" as Category, label: "Sjuksköterska / Barnmorska" },
-              ]).map((opt) => {
-                const active = s.category === opt.value;
-                return (
-                  <button
-                    key={opt.value}
-                    onClick={() => {
-                      trackStarted();
-                      setS((p) => ({ ...p, category: opt.value, roleValue: "", yrke: "" }));
-                    }}
-                    className={`group relative rounded-xl border px-5 py-4 text-left transition-all ${
-                      active
-                        ? "border-violet-400/60 bg-violet-500/10 shadow-[0_0_30px_-10px_rgba(129,85,255,0.6)]"
-                        : "border-white/10 bg-white/[0.03] hover:border-violet-400/30 hover:bg-white/[0.05]"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="text-base font-semibold">{opt.label}</span>
-                      {active ? (
-                        <Check className="w-4 h-4 text-violet-300" />
-                      ) : (
-                        <ArrowRight className="w-4 h-4 text-white/30 group-hover:text-violet-300" />
-                      )}
-                    </div>
-                  </button>
-                );
-              })}
+            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+              <SearchableSelect
+                value={s.category}
+                onValueChange={(v) => {
+                  trackStarted();
+                  setS((p) => ({ ...p, category: v as Category, roleValue: "", yrke: "" }));
+                }}
+                placeholder="Välj yrke..."
+                options={[
+                  { value: "lakare", label: "Läkare" },
+                  { value: "ssk", label: "Sjuksköterska / Barnmorska" },
+                ]}
+              />
             </div>
           </Section>
 
@@ -395,89 +378,38 @@ export default function InlineTerminalSurvey() {
 
           {/* 3. Anställd eller företagare */}
           <Section index={3} question="Är du anställd eller egen företagare?">
-            <div className="grid sm:grid-cols-2 gap-3">
-              {([
-                { value: "anstalld" as const, label: "Anställd", desc: "Lön via vårdgivare/bemanning" },
-                { value: "foretagare" as const, label: "Eget bolag", desc: "Fakturerar via bemanning/direkt" },
-              ]).map((opt) => {
-                const active = s.employmentType === opt.value;
-                return (
-                  <button
-                    key={opt.value}
-                    onClick={() => setS((p) => ({ ...p, employmentType: opt.value }))}
-                    className={`rounded-xl border px-5 py-4 text-left transition-all ${
-                      active
-                        ? "border-violet-400/60 bg-violet-500/10 shadow-[0_0_30px_-10px_rgba(129,85,255,0.6)]"
-                        : "border-white/10 bg-white/[0.03] hover:border-violet-400/30"
-                    }`}
-                  >
-                    <div className="text-base font-semibold mb-1">{opt.label}</div>
-                    <div className="text-xs text-white/50">{opt.desc}</div>
-                  </button>
-                );
-              })}
+            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+              <SearchableSelect
+                value={s.employmentType}
+                onValueChange={(v) => setS((p) => ({ ...p, employmentType: v as EmploymentType }))}
+                placeholder="Välj anställningsform..."
+                options={[
+                  { value: "anstalld", label: "Anställd" },
+                  { value: "foretagare", label: "Eget bolag" },
+                ]}
+              />
             </div>
           </Section>
 
           {/* 4. Ort */}
           <Section index={4} question="På vilken ort ska du arbeta?">
-            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 space-y-3">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" />
-                <Input
-                  value={kommunSearch}
-                  onChange={(e) => setKommunSearch(e.target.value)}
-                  placeholder="Sök kommun (t.ex. Stockholm)"
-                  className="h-11 pl-10 bg-white/[0.04] border-white/10 text-white placeholder:text-white/30 focus-visible:ring-violet-400/40"
-                />
-              </div>
-              {kommunSearch.trim().length > 0 && (
-                <div className="max-h-[220px] overflow-y-auto rounded-lg border border-white/10 divide-y divide-white/5">
-                  {filteredKommuner.length === 0 ? (
-                    <p className="px-3 py-4 text-sm text-white/50 text-center">Inga träffar</p>
-                  ) : (
-                    filteredKommuner.map((k) => {
-                      const active = s.kommun === k.kommun;
-                      return (
-                        <button
-                          key={k.kommun}
-                          onClick={() => {
-                            setS((p) => ({ ...p, kommun: k.kommun, region: k.region }));
-                            setKommunSearch("");
-                          }}
-                          className={`w-full px-3 py-2 text-left text-sm transition-colors flex items-center justify-between ${
-                            active
-                              ? "bg-violet-500/15 text-white"
-                              : "text-white/80 hover:bg-white/[0.04]"
-                          }`}
-                        >
-                          <span className="flex items-center gap-2 min-w-0">
-                            <MapPin className="w-3.5 h-3.5 text-violet-300/70 shrink-0" />
-                            <span className="truncate">{k.kommun}</span>
-                            <span className="text-xs text-white/40 truncate">— {k.region}</span>
-                          </span>
-                          {active && <Check className="w-4 h-4 text-violet-300 shrink-0" />}
-                        </button>
-                      );
-                    })
-                  )}
-                </div>
-              )}
-              {kommunSearch.trim().length === 0 && s.kommun && (
-                <div className="rounded-lg border border-violet-400/30 bg-violet-500/10 px-3 py-2 flex items-center gap-2 text-sm">
-                  <Check className="w-4 h-4 text-violet-300" />
-                  <span className="font-medium">{s.kommun}</span>
-                  {s.region && <span className="text-white/50 text-xs">— {s.region}</span>}
-                  <button
-                    onClick={() => setS((p) => ({ ...p, kommun: "", region: "" }))}
-                    className="ml-auto text-xs text-white/50 hover:text-white"
-                  >
-                    Byt
-                  </button>
-                </div>
-              )}
+            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
+              <SearchableSelect
+                value={s.kommun}
+                onValueChange={(v) => {
+                  const match = allKommuner.find((k) => k.kommun === v);
+                  setS((p) => ({ ...p, kommun: v, region: match?.region || "" }));
+                }}
+                placeholder="Välj kommun..."
+                options={allKommuner.map((k) => ({
+                  value: k.kommun,
+                  label: k.kommun,
+                  group: k.region,
+                }))}
+              />
             </div>
           </Section>
+
 
           {/* Submit */}
           <div className="pt-2">
