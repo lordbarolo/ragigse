@@ -130,45 +130,6 @@ export default function ConsultantTrackContent({
               </span>
             </div>
 
-            {/* Visual comparison bars */}
-            <div className="px-4 pt-3 pb-4 flex flex-col gap-3">
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-foreground/60 shrink-0" />
-                <div className="flex-1">
-                  <p className="text-micro font-medium text-muted-foreground mb-1">Din ersättning</p>
-                  <div className="h-[6px] bg-foreground/[0.06] rounded-full overflow-hidden">
-                    <div className="h-full rounded-full bg-foreground/60" style={{ width: `${Math.round((currentHourly / Math.max(currentHourly, rec.recommended_hourly_max, marketRate)) * 100)}%` }} />
-                  </div>
-                </div>
-                <span className={`${monoClass} text-hint font-medium w-20 text-right flex-shrink-0`}>{fmt(currentHourly)} kr/h</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-primary shrink-0" />
-                <div className="flex-1">
-                  <p className="text-micro font-medium text-primary/80 mb-1">Marknadsspann</p>
-                  <div className="h-[6px] bg-foreground/[0.06] rounded-full overflow-hidden">
-                    <div
-                      className="h-full rounded-full bg-primary"
-                      style={{ width: `${Math.round((rec.recommended_hourly_max / Math.max(currentHourly, rec.recommended_hourly_max, marketRate)) * 100)}%` }}
-                    />
-                  </div>
-                </div>
-                <span className={`${monoClass} text-hint font-medium w-20 text-right flex-shrink-0`}>{fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)}</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-2 rounded-full bg-muted-foreground/40 shrink-0" />
-                <div className="flex-1">
-                  <p className="text-micro font-medium text-muted-foreground mb-1">Kundpris (regionen betalar)</p>
-                  <div className="h-[6px] bg-foreground/[0.06] rounded-full overflow-hidden">
-                    <div
-                      className="h-full rounded-full bg-muted-foreground/40"
-                      style={{ width: `${Math.round((marketRate / Math.max(currentHourly, rec.recommended_hourly_max, marketRate)) * 100)}%` }}
-                    />
-                  </div>
-                </div>
-                <span className={`${monoClass} text-hint font-medium w-20 text-right flex-shrink-0`}>{fmt(marketRate)} kr/h</span>
-              </div>
-            </div>
           </div>
         </div>
       )}
