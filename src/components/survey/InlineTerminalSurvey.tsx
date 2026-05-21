@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { ArrowRight, ChevronLeft, MapPin, Pencil, Search, Check } from "lucide-react";
+import { ArrowLeft, ArrowRight, Briefcase, Building2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import SearchableSelect, { type Option } from "@/components/SearchableSelect";
-import { Input } from "@/components/ui/input";
 import { useLocations } from "@/hooks/useCalculator";
 import { usePricingEngine } from "@/hooks/usePricingEngine";
 import { trackEvent } from "@/lib/trackEvent";
@@ -17,18 +16,9 @@ import { toast } from "sonner";
 
 type Category = "" | "lakare" | "ssk";
 type EmploymentType = "" | "anstalld" | "foretagare";
-type SalaryType = "hourly" | "monthly";
 
-const TOTAL_STEPS = 5;
-const STEP_NAMES = ["yrkeskategori", "specialisering", "kommun", "anstallningsform", "ersattning"];
-const STEP_PROMPTS = [
-  "select_role_category",
-  "select_specialization",
-  "select_municipality",
-  "select_employment_type",
-  "enter_compensation",
-];
-const STEP_LABELS = ["Yrke", "Specialisering", "Kommun", "Anställning", "Ersättning"];
+const TOTAL_STEPS = 4;
+const STEP_NAMES = ["yrkeskategori", "specialisering", "anstallningsform", "kommun"];
 
 interface State {
   category: Category;
@@ -37,8 +27,6 @@ interface State {
   kommun: string;
   region: string;
   employmentType: EmploymentType;
-  salaryType: SalaryType;
-  currentSalary: number;
 }
 
 const initialState: State = {
@@ -48,8 +36,6 @@ const initialState: State = {
   kommun: "",
   region: "",
   employmentType: "",
-  salaryType: "hourly",
-  currentSalary: 0,
 };
 
 export default function InlineTerminalSurvey() {
@@ -59,15 +45,14 @@ export default function InlineTerminalSurvey() {
   const { calculate: pricingCalculate, result: pricingResult } = usePricingEngine();
 
   const [step, setStep] = useState(1);
+  const [direction, setDirection] = useState<1 | -1>(1);
   const [s, setS] = useState<State>(initialState);
-  const [kommunSearch, setKommunSearch] = useState("");
   const [saving, setSaving] = useState(false);
 
   const surveyStarted = useRef(false);
   const surveyStartTime = useRef<number | null>(null);
   const stepEntryTime = useRef<number>(Date.now());
 
-  // Lifecycle tracking — mirror Survey.tsx
   useEffect(() => {
     trackEvent("survey_mounted", {
       has_initial_category: false,
@@ -104,7 +89,6 @@ export default function InlineTerminalSurvey() {
     });
   }, []);
 
-  // Derive yrke from category + roleValue (mirrors Survey.tsx)
   const resolvedYrke = useMemo(() => {
     if (!s.roleValue) return "";
     if (s.category === "lakare") {
@@ -133,7 +117,6 @@ export default function InlineTerminalSurvey() {
     }
   }, [s.yrke, s.kommun, s.employmentType]);
 
-  // Options
   const doctorRoleOptions: Option[] = useMemo(
     () => [
       { value: "__leg", label: "Leg. läkare" },
@@ -162,55 +145,40 @@ export default function InlineTerminalSurvey() {
       .sort((a, b) => a.kommun.localeCompare(b.kommun, "sv"));
   }, [locations]);
 
-  const filteredKommuner = useMemo(() => {
-    const q = kommunSearch.trim().toLowerCase();
-    if (!q) return [] as typeof allKommuner;
-    return allKommuner.filter((k) => k.kommun.toLowerCase().includes(q)).slice(0, 14);
-  }, [allKommuner, kommunSearch]);
-
-  // Display labels for chips
-  const displayRole = useMemo(() => {
-    if (!s.roleValue) return "";
-    if (s.category === "lakare") {
-      if (s.roleValue === "__leg") return "Leg. läkare";
-      if (s.roleValue === "__st") return "ST-läkare";
-      if (s.roleValue === "__ovrig") return "Specialistläkare";
-      return s.roleValue;
+  const goNext = (fromStep: number, ans?: string | number) => {
+    trackStepCompleted(fromStep, ans);
+    if (fromStep < TOTAL_STEPS) {
+      setDirection(1);
+      setStep(fromStep + 1);
     }
-    if (s.category === "ssk") {
-      if (s.roleValue === "__allman") return "Allmänsjuksköterska";
-      if (s.roleValue === "__barnmorska") return "Barnmorska";
-      if (s.roleValue === "__rontgen") return "Röntgensjuksköterska";
-      if (s.roleValue === "__ovrig") return "Specialistsjuksköterska";
-      return s.roleValue;
-    }
-    return "";
-  }, [s.category, s.roleValue]);
+  };
 
-  const chipValues: Array<{ idx: number; label: string; value: string }> = useMemo(() => {
-    const out: Array<{ idx: number; label: string; value: string }> = [];
-    if (s.category) out.push({ idx: 1, label: STEP_LABELS[0], value: s.category === "lakare" ? "Läkare" : "Sjuksköterska" });
-    if (displayRole) out.push({ idx: 2, label: STEP_LABELS[1], value: displayRole });
-    if (s.kommun) out.push({ idx: 3, label: STEP_LABELS[2], value: s.kommun });
-    if (s.employmentType) out.push({ idx: 4, label: STEP_LABELS[3], value: s.employmentType === "anstalld" ? "Anställd" : "Eget bolag" });
-    if (s.currentSalary > 0) out.push({ idx: 5, label: STEP_LABELS[4], value: `${s.currentSalary} ${s.salaryType === "hourly" ? "kr/h" : "kr/mån"}` });
-    return out.filter((c) => c.idx < step);
-  }, [s, displayRole, step]);
+  const goBack = () => {
+    if (step <= 1) return;
+    setDirection(-1);
+    setStep(step - 1);
+  };
 
-  const allAnswered = !!s.category && !!resolvedYrke && !!s.employmentType && !!s.kommun;
-  const canProceed = allAnswered;
+  // Auto-advance handlers
+  const handleCategory = (v: Category) => {
+    trackStarted();
+    setS((p) => ({ ...p, category: v, roleValue: "", yrke: "" }));
+    window.setTimeout(() => goNext(1, v), 280);
+  };
 
+  const handleRole = (v: string) => {
+    setS((p) => ({ ...p, roleValue: v }));
+    window.setTimeout(() => goNext(2, v), 280);
+  };
 
-  const handleNext = async () => {
-    if (step < TOTAL_STEPS) {
-      const ans: Record<number, string | number> = {
-        1: s.category, 2: s.roleValue, 3: s.kommun, 4: s.employmentType, 5: s.currentSalary,
-      };
-      trackStepCompleted(step, ans[step]);
-      setStep(step + 1);
-      return;
-    }
-    await submit();
+  const handleEmployment = (v: EmploymentType) => {
+    setS((p) => ({ ...p, employmentType: v }));
+    window.setTimeout(() => goNext(3, v), 280);
+  };
+
+  const handleKommun = (v: string) => {
+    const match = allKommuner.find((k) => k.kommun === v);
+    setS((p) => ({ ...p, kommun: v, region: match?.region || "" }));
   };
 
   const submit = async () => {
@@ -220,14 +188,11 @@ export default function InlineTerminalSurvey() {
     const couponCode = searchParams.get("coupon");
     const couponParam = couponCode ? `?coupon=${encodeURIComponent(couponCode)}` : "";
 
-    const hourlyRateForProps = s.salaryType === "monthly"
-      ? Math.round(s.currentSalary / 167)
-      : s.currentSalary;
     aliasLead(leadId, {
       role: s.yrke,
       zone: s.kommun,
       employment_type: s.employmentType,
-      current_hourly_rate: hourlyRateForProps,
+      current_hourly_rate: 0,
     });
 
     const navigateToTeaser = () => {
@@ -240,14 +205,14 @@ export default function InlineTerminalSurvey() {
           yrke: s.yrke,
           kommun: s.kommun,
           experience: 5,
-          salaryType: s.salaryType,
-          currentSalary: s.currentSalary,
+          salaryType: "hourly",
+          currentSalary: 0,
           obShare: "bemanningsforetag",
           track,
         }),
       );
       if (pricingResult) sessionStorage.setItem("pricingResult", JSON.stringify(pricingResult));
-      trackStepCompleted(5, s.currentSalary);
+      trackStepCompleted(4, s.kommun);
       const totalTime = surveyStartTime.current
         ? Math.round((Date.now() - surveyStartTime.current) / 1000)
         : 0;
@@ -256,7 +221,7 @@ export default function InlineTerminalSurvey() {
         total_time_seconds: totalTime,
         role: s.yrke,
         zone: s.kommun,
-        current_hourly_rate: hourlyRateForProps,
+        current_hourly_rate: 0,
         experience_years: 5,
         employment_type: s.employmentType === "foretagare" ? "Eget bolag" : "Fast",
         agency_name: null,
@@ -273,8 +238,8 @@ export default function InlineTerminalSurvey() {
         yrke: s.yrke,
         kommun: s.kommun,
         experience: 5,
-        salary_type: s.salaryType,
-        current_salary: s.currentSalary,
+        salary_type: "hourly",
+        current_salary: 0,
         ob_share: "bemanningsforetag",
       });
       if (error) throw error;
@@ -286,8 +251,8 @@ export default function InlineTerminalSurvey() {
           employment_type: s.employmentType,
           kommun: s.kommun,
           experience: 5,
-          current_salary: s.currentSalary,
-          salary_type: s.salaryType,
+          current_salary: 0,
+          salary_type: "hourly",
           track,
           commute: "",
           ob_share: "bemanningsforetag",
@@ -311,12 +276,11 @@ export default function InlineTerminalSurvey() {
     }
   };
 
-  const goToStep = (n: number) => setStep(n);
+  const progressPct = (step / TOTAL_STEPS) * 100;
 
-  // ── Render ─────────────────────────────────────────────────────────────
   return (
-    <div className="relative w-full max-w-2xl mx-auto mt-8 text-left">
-      {/* Glow gradients behind card */}
+    <div className="relative w-full max-w-xl mx-auto mt-8 text-left">
+      {/* Glow gradients */}
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-3xl">
         <div className="absolute -top-20 left-1/4 h-64 w-64 rounded-full bg-[#8155FF]/30 blur-3xl" />
         <div className="absolute -bottom-20 right-1/4 h-64 w-64 rounded-full bg-cyan-500/20 blur-3xl" />
@@ -333,86 +297,128 @@ export default function InlineTerminalSurvey() {
           <span className="font-mono text-[11px] text-white/40 ml-2 tracking-wide">
             compcare://salary-check
           </span>
+          <span className="ml-auto font-mono text-[10px] text-white/30">
+            {step}/{TOTAL_STEPS}
+          </span>
         </div>
 
-        <div className="p-4 sm:p-5 font-sans text-white space-y-2">
-          {/* 1. Yrkeskategori */}
-          <Section index={1}>
-            <SearchableSelect
-              value={s.category}
-              onValueChange={(v) => {
-                trackStarted();
-                setS((p) => ({ ...p, category: v as Category, roleValue: "", yrke: "" }));
-              }}
-              placeholder="Vad jobbar du som?"
-              options={[
-                { value: "lakare", label: "Läkare" },
-                { value: "ssk", label: "Sjuksköterska / Barnmorska" },
-              ]}
-            />
-          </Section>
+        {/* Progress bar */}
+        <div className="h-[2px] bg-white/5">
+          <div
+            className="h-full bg-gradient-to-r from-violet-500 to-fuchsia-500 transition-all duration-500 ease-out"
+            style={{ width: `${progressPct}%` }}
+          />
+        </div>
 
-          {/* 2. Specialisering */}
-          <Section index={2} disabled={!s.category}>
-            <SearchableSelect
-              value={s.roleValue}
-              onValueChange={(v) => setS((p) => ({ ...p, roleValue: v }))}
-              placeholder={
-                !s.category
-                  ? "Välj först yrke ovan…"
-                  : s.category === "lakare"
-                  ? "Vilken specialisering?"
-                  : "Vilken roll?"
-              }
-              options={s.category === "lakare" ? doctorRoleOptions : nurseRoleOptions}
-            />
-          </Section>
+        {/* Step content (fixed min-height to avoid jump) */}
+        <div className="relative px-6 py-7 sm:px-8 sm:py-8 font-sans text-white min-h-[280px] overflow-hidden">
+          <StepTransition stepKey={step} direction={direction}>
+            {step === 1 && (
+              <Step
+                question="Vad jobbar du som?"
+                subtitle="Välj din yrkeskategori för att komma igång."
+              >
+                <SearchableSelect
+                  value={s.category}
+                  onValueChange={(v) => handleCategory(v as Category)}
+                  placeholder="Välj yrke…"
+                  options={[
+                    { value: "lakare", label: "Läkare" },
+                    { value: "ssk", label: "Sjuksköterska / Barnmorska" },
+                  ]}
+                />
+              </Step>
+            )}
 
-          {/* 3. Anställd eller företagare */}
-          <Section index={3}>
-            <SearchableSelect
-              value={s.employmentType}
-              onValueChange={(v) => setS((p) => ({ ...p, employmentType: v as EmploymentType }))}
-              placeholder="Är du anställd eller egen företagare?"
-              options={[
-                { value: "anstalld", label: "Anställd" },
-                { value: "foretagare", label: "Eget bolag" },
-              ]}
-            />
-          </Section>
+            {step === 2 && (
+              <Step
+                question="Vad är din specialitet?"
+                subtitle={
+                  s.category === "lakare"
+                    ? "Välj din specialisering – sökbar lista."
+                    : "Välj din roll eller vidareutbildning."
+                }
+              >
+                <SearchableSelect
+                  value={s.roleValue}
+                  onValueChange={handleRole}
+                  placeholder={s.category === "lakare" ? "Välj specialisering…" : "Välj roll…"}
+                  options={s.category === "lakare" ? doctorRoleOptions : nurseRoleOptions}
+                />
+              </Step>
+            )}
 
-          {/* 4. Ort */}
-          <Section index={4}>
-            <SearchableSelect
-              value={s.kommun}
-              onValueChange={(v) => {
-                const match = allKommuner.find((k) => k.kommun === v);
-                setS((p) => ({ ...p, kommun: v, region: match?.region || "" }));
-              }}
-              placeholder="På vilken ort ska du arbeta?"
-              options={allKommuner.map((k) => ({
-                value: k.kommun,
-                label: k.kommun,
-                group: k.region,
-              }))}
-            />
-          </Section>
+            {step === 3 && (
+              <Step
+                question="Hur driver du ditt uppdrag?"
+                subtitle="Detta avgör hur ersättningen beräknas."
+              >
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <ChoiceCard
+                    icon={<Briefcase className="w-5 h-5" />}
+                    title="Anställd"
+                    sub="A-skatt"
+                    active={s.employmentType === "anstalld"}
+                    onClick={() => handleEmployment("anstalld")}
+                  />
+                  <ChoiceCard
+                    icon={<Building2 className="w-5 h-5" />}
+                    title="Eget företag"
+                    sub="F-skatt"
+                    active={s.employmentType === "foretagare"}
+                    onClick={() => handleEmployment("foretagare")}
+                  />
+                </div>
+              </Step>
+            )}
 
-          {/* Submit */}
-          <div className="pt-2">
+            {step === 4 && (
+              <Step
+                question="På vilken ort ska du arbeta?"
+                subtitle="Sök bland Sveriges kommuner."
+              >
+                <div className="space-y-4">
+                  <SearchableSelect
+                    value={s.kommun}
+                    onValueChange={handleKommun}
+                    placeholder="Sök kommun…"
+                    options={allKommuner.map((k) => ({
+                      value: k.kommun,
+                      label: k.kommun,
+                      group: k.region,
+                    }))}
+                  />
+                  <button
+                    onClick={submit}
+                    disabled={!s.kommun || saving}
+                    className={`inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 rounded-lg transition-all ${
+                      s.kommun && !saving
+                        ? "bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white shadow-[0_0_30px_-8px_rgba(129,85,255,0.8)] hover:shadow-[0_0_40px_-6px_rgba(255,45,170,0.6)]"
+                        : "bg-white/10 text-white/40 cursor-not-allowed"
+                    }`}
+                  >
+                    {saving ? "Bearbetar…" : "Visa resultat"}
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </Step>
+            )}
+          </StepTransition>
+        </div>
+
+        {/* Back link */}
+        <div className="flex items-center justify-between px-6 sm:px-8 pb-3 min-h-[28px]">
+          {step > 1 ? (
             <button
-              onClick={submit}
-              disabled={!allAnswered || saving}
-              className={`w-full sm:w-auto sm:ml-auto sm:flex inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 rounded-lg transition-all ${
-                allAnswered && !saving
-                  ? "bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white shadow-[0_0_30px_-8px_rgba(129,85,255,0.8)] hover:shadow-[0_0_40px_-6px_rgba(255,45,170,0.6)]"
-                  : "bg-white/10 text-white/40 cursor-not-allowed"
-              }`}
+              onClick={goBack}
+              className="inline-flex items-center gap-1 text-[11px] font-mono text-white/40 hover:text-white/80 transition-colors"
             >
-              {saving ? "Bearbetar..." : "Visa resultat"}
-              <ArrowRight className="w-4 h-4" />
+              <ArrowLeft className="w-3 h-3" />
+              Tillbaka
             </button>
-          </div>
+          ) : (
+            <span />
+          )}
         </div>
 
         {/* Footer */}
@@ -422,25 +428,112 @@ export default function InlineTerminalSurvey() {
           </p>
         </div>
       </div>
-
     </div>
   );
 }
 
-function Section({
-  index,
-  disabled,
+function Step({
+  question,
+  subtitle,
   children,
 }: {
-  index: number;
-  disabled?: boolean;
+  question: string;
+  subtitle?: string;
   children: React.ReactNode;
 }) {
   return (
-    <div className={`flex items-center gap-2 ${disabled ? "opacity-50 pointer-events-none" : ""}`}>
-      <span className="font-mono text-[11px] text-violet-400/80 w-6 shrink-0">0{index}.</span>
-      <div className="flex-1 min-w-0">{children}</div>
+    <div className="space-y-5">
+      <div className="space-y-1.5">
+        <h2 className="text-xl sm:text-2xl font-semibold tracking-tight text-white">
+          {question}
+        </h2>
+        {subtitle && (
+          <p className="text-sm text-white/50 leading-relaxed">{subtitle}</p>
+        )}
+      </div>
+      <div>{children}</div>
     </div>
   );
 }
 
+function StepTransition({
+  stepKey,
+  direction,
+  children,
+}: {
+  stepKey: number;
+  direction: 1 | -1;
+  children: React.ReactNode;
+}) {
+  const [render, setRender] = useState({ key: stepKey, children });
+  const [entering, setEntering] = useState(false);
+
+  useEffect(() => {
+    if (stepKey === render.key) {
+      setRender((r) => ({ ...r, children }));
+      return;
+    }
+    setEntering(true);
+    const t = window.setTimeout(() => {
+      setRender({ key: stepKey, children });
+      // next frame -> end entering
+      requestAnimationFrame(() => requestAnimationFrame(() => setEntering(false)));
+    }, 180);
+    return () => window.clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stepKey, children]);
+
+  const translate = entering
+    ? direction === 1
+      ? "-translate-x-3 opacity-0"
+      : "translate-x-3 opacity-0"
+    : "translate-x-0 opacity-100";
+
+  return (
+    <div
+      key={render.key}
+      className={`transition-all duration-300 ease-in-out ${translate}`}
+    >
+      {render.children}
+    </div>
+  );
+}
+
+function ChoiceCard({
+  icon,
+  title,
+  sub,
+  active,
+  onClick,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  sub: string;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`group relative text-left rounded-xl border p-4 transition-all overflow-hidden ${
+        active
+          ? "border-violet-400/60 bg-violet-500/10 shadow-[0_0_30px_-10px_rgba(129,85,255,0.7)]"
+          : "border-white/10 bg-white/[0.03] hover:border-white/20 hover:bg-white/[0.06]"
+      }`}
+    >
+      <div className="flex items-center gap-3">
+        <span
+          className={`flex h-9 w-9 items-center justify-center rounded-lg ${
+            active ? "bg-violet-500/20 text-violet-200" : "bg-white/5 text-white/70"
+          }`}
+        >
+          {icon}
+        </span>
+        <div>
+          <div className="text-sm font-semibold text-white">{title}</div>
+          <div className="text-[11px] font-mono text-white/40 tracking-wide">{sub}</div>
+        </div>
+      </div>
+    </button>
+  );
+}
