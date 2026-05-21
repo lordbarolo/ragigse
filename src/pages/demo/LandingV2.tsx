@@ -197,6 +197,66 @@ export default function LandingV2() {
   const [invoiceStep, setInvoiceStep] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
+  // ── Price range guard for the rolling ticker under the hero ──
+  // Validates each ticker entry against SKR rates × marginalspann / 1,42 × 167h.
+  // Mismatches are hidden and logged to PostHog as `price_range_mismatch`
+  // (surface = "landing.ticker"), same invariant used by report views.
+  const { data: ratesData } = useRates();
+  const tickerFiredRef = useRef(false);
+  const validTickerItems = useMemo(() => {
+    if (!ratesData || ratesData.length === 0) return NURSE_RATE_TICKER;
+    const rateLookup = new Map<string, number>();
+    for (const r of ratesData as Array<{ yrkeskategori: string; zon: string; typ: string; timpris_kund: number }>) {
+      if (r.typ !== "Grundpris") continue;
+      rateLookup.set(`${r.yrkeskategori}|${r.zon}`, r.timpris_kund);
+    }
+    const ok: typeof NURSE_RATE_TICKER = [];
+    const mismatches: Array<{ item: TickerItem; expected: number; shown: number; deviation_pct: number; reason: string }> = [];
+    for (const item of NURSE_RATE_TICKER) {
+      const timpris = rateLookup.get(`${item.yrkeskategori}|${item.zon}`);
+      const shown = Number(item.salary.replace(/\s/g, ""));
+      if (!timpris) {
+        mismatches.push({ item, expected: 0, shown, deviation_pct: 0, reason: "missing_rate" });
+        continue;
+      }
+      const shares = getMarginShares(item.yrkeskategori);
+      const shareMid = (shares.share_min + shares.share_max) / 2;
+      const expected = (timpris * shareMid * HOURS_PER_MONTH) / EMPLOYER_FACTOR;
+      const dev = Math.abs(shown - expected) / expected;
+      if (dev > TICKER_TOLERANCE) {
+        mismatches.push({
+          item,
+          expected: Math.round(expected),
+          shown,
+          deviation_pct: +(dev * 100).toFixed(2),
+          reason: "out_of_tolerance",
+        });
+      } else {
+        ok.push(item);
+      }
+    }
+    if (mismatches.length && !tickerFiredRef.current) {
+      tickerFiredRef.current = true;
+      for (const m of mismatches) {
+        trackEvent("price_range_mismatch", {
+          surface: "landing.ticker",
+          role: m.item.yrkeskategori,
+          zon: m.item.zon,
+          employment_type: "anstalld",
+          shown_monthly: m.shown,
+          expected_monthly: m.expected,
+          mid_deviation_pct: m.deviation_pct,
+          reason: m.reason,
+        } as any);
+      }
+      if (import.meta.env.DEV) {
+        // eslint-disable-next-line no-console
+        console.warn("[LandingV2.ticker] price_range_mismatch", mismatches);
+      }
+    }
+    return ok;
+  }, [ratesData]);
+
   useEffect(() => {
     trackEvent("landing_viewed");
 
