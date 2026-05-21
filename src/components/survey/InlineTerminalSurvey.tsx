@@ -197,16 +197,9 @@ export default function InlineTerminalSurvey() {
     return out.filter((c) => c.idx < step);
   }, [s, displayRole, step]);
 
-  const canProceed = (() => {
-    switch (step) {
-      case 1: return !!s.category;
-      case 2: return !!resolvedYrke;
-      case 3: return !!s.kommun;
-      case 4: return !!s.employmentType;
-      case 5: return s.currentSalary > 0;
-      default: return false;
-    }
-  })();
+  const allAnswered = !!s.category && !!resolvedYrke && !!s.employmentType && !!s.kommun;
+  const canProceed = allAnswered;
+
 
   const handleNext = async () => {
     if (step < TOTAL_STEPS) {
