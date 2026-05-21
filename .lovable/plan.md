@@ -1,69 +1,49 @@
 ## Mål
+Bygg en isolerad demo-sida som återskapar exakt utformningen från Tailwind UI-hjälten "With phone mockup" (ljust tema, prickigt rutnät i bakgrunden, två-kolumns layout med text vänster och lutande telefon-mockup höger). Ingen toppnav. Hero-innehållet byts till CompCare-copy och telefonens skärm renderar vårt befintliga `InlineTerminalSurvey`.
 
-Bygga den valda v3-riktningen (Terminal Glass Flow) som riktig komponent i appen. Frågorna ska ligga inline på startsidan — användaren förs aldrig bort. Besvarade frågor blir små klickbara chips ovanför aktiv fråga.
+## Route & filer
+- Ny route: `/demo/hero-tailwind` (registreras i `src/App.tsx` tillsammans med övriga `/demo/*`).
+- Ny sida: `src/pages/demo/HeroTailwind.tsx`.
+- Ny komponent: `src/components/demo/PhoneMockup.tsx` — ren presentational wrapper (telefon-frame i SVG/CSS) som tar `children` och renderar innehållet inuti skärmen med korrekt clipping och rundade hörn.
+- Återanvänder: `InlineTerminalSurvey` (befintlig) som `children` i telefonen.
 
-## Scope (vad som ändras)
+## Visuell spec (matchar bilden 1:1)
+- Bakgrund: vit `#ffffff` med subtilt prickigt rutnät (radial-gradient dots, `rgba(15,23,42,0.08)`, ~24px grid) som tonar ut mot kanterna via mask-image.
+- Container: `max-w-7xl mx-auto px-6 lg:px-8`, hero-padding `pt-24 pb-32 lg:pt-32 lg:pb-40`.
+- Grid: `lg:grid-cols-2 gap-12 items-center`. Text vänster, telefon höger.
+- Vänster kolumn:
+  - Pill-badge överst: rundad full, vit bakgrund, tunn grå border, två segment delade av vertikal linje. Vänster: violett text "Vi rekryterar inte". Höger: grå text "Läs mer →". (CompCare-anpassning av "We're hiring · See open positions").
+  - H1: `text-5xl lg:text-6xl font-bold tracking-tight text-slate-900` — "Ett bättre sätt att förhandla din ersättning".
+  - Ingress: `text-lg text-slate-600 max-w-xl` — kort CompCare-pitch (neutral ton, inga värdeord, ingen peer-jämförelse).
+  - CTA-rad: primärknapp violett `bg-[#4f46e5] hover:bg-[#4338ca] text-white text-sm font-semibold px-6 py-3 rounded-md` "Kom igång" + textlänk `Läs mer →` i mörk slate. Följer button-standard (kompakt, ej `lg`, ej `w-full`).
+- Höger kolumn (telefon):
+  - Telefon-frame: ~`w-[320px] h-[640px]`, mörk `#0f172a` chassi, rundade hörn `rounded-[3rem]`, tunn inre border, notch upptill, sidoknappar (vänster vol, höger power) som tunna avlånga rektanglar.
+  - Skärm-innehåll: vit bakgrund, `rounded-[2.5rem]` clipping, padding `p-4`. Renderar `<InlineTerminalSurvey />` skalad så att hero-formuläret får plats (CSS `transform: scale(0.75)` + `transform-origin: top center` på en wrapper, höjd kompenseras).
+  - Liten lutning: `rotate-[2deg]` + mjuk skugga `shadow-2xl` för att matcha bildens perspektiv.
+- Responsivt: under `lg` staplas kolumnerna; telefonen centreras under texten med `mx-auto`, ingen rotation på mobil.
 
-1. **Ny komponent**: `src/components/survey/InlineTerminalSurvey.tsx`
-   - Visuell terminal-glassmorphism (mörk bakgrund #0D001A, violetta/cyan accenter, JetBrains Mono för prompts, Inter för svar).
-   - "Window header" med traffic-light-prickar och statustext (`compcare://salary-check`).
-   - Mono-prompt per fråga (`$ select_employment_type`), blinkande cursor, "Waiting for user input...".
-   - Chip-rad ovanför aktiv fråga: `Yrke: Sjuksköterska ✏️`, `Kommun: Stockholm ✏️` etc. Klick → hoppa tillbaka till den frågan.
-   - Stegfooter: `STEG 3 / 5 — ANONYMT • KOSTNADSFRITT • KLART PÅ 60 SEKUNDER`.
+## Innehåll (CompCare-copy, neutralt)
+- Badge: "Vi rekryterar inte | Vi visar bara vad ramavtalen säger →"
+- H1: "Ett bättre sätt att förhandla din ersättning"
+- Ingress: "Jämför din nuvarande ersättning mot SKR:s ramavtal på under 60 sekunder. Neutral analys, inga säljsamtal."
+- Primär CTA: "Kom igång" (scrollar fokus till telefonens formulär på mobil, eller fokuserar första input på desktop).
+- Sekundär: "Så funkar det →" (länk till `/sa-funkar-det` om finns, annars anchor).
 
-2. **Återanvänd befintlig logik** från `src/components/Survey.tsx`:
-   - Samma 5 steg, samma `SurveyData`-form, samma `usePricingEngine`, samma `aliasLead`/`leads`-insert/`create-report`-flöde, samma PostHog-events (`survey_mounted`, `survey_step_viewed/completed`, `survey_completed`).
-   - Samma rollistor (`doctorRoleOptions`, `nurseRoleOptions`), `top_kommuner`, `nurseValueMap`, `resolvedYrke`-derivering.
-   - Inga ändringar i edge functions, DB-tabeller, RLS eller analytics-pipeline.
-
-3. **Inline-placering på startsidan** (`src/pages/Index.tsx`):
-   - Ersätt nuvarande `<HeroRateLookup />` i hero med `<InlineTerminalSurvey />`.
-   - Hero-rubrik och brödtext bibehålls ovanför så användaren ser utgångspunkten.
-   - När alla 5 steg är klara → samma navigation som idag (`navigate('/resultat/:leadId')`).
-   - Tre pelar-sektionen, trust-sektionen och footern lämnas orörda.
-
-4. **SalaryCheck-route** (`/consultant/salary-check`):
-   - Behålls oförändrad som fallback/djuplänk (`?start=1`, `?yrke=…` prefill). Survey.tsx rörs ej — vi bygger en ny komponent vid sidan av.
-
-## Designdetaljer (från v3-prototypen)
-
-- Bakgrund: `bg-[#0D001A]` med radial violet glow top + cyan glow bottom.
-- Terminal-kort: `rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-xl`.
-- Header: tre färgprickar (`#ff5f57 #febc2e #28c840`) + monospace path.
-- Frågetext: `font-mono text-cyan-300 text-sm` prompt, `font-sans text-white text-2xl font-semibold` fråga.
-- Svarsknappar: kompakt (`text-sm font-semibold px-6 py-3` enligt button-standarden), violett hover-glow.
-- Chips: `inline-flex bg-white/5 border border-white/10 rounded-full px-3 py-1 text-xs text-white/70 hover:bg-violet-500/20`.
-- Blinkande cursor: rent CSS `animate-pulse` på `▋`.
-
-## Mobil
-
-- Vertikal stack, chips wrappar.
-- Navigation (Tillbaka/Nästa) sticky längst ner med samma `visualViewport`-keyboard-offset-logik som befintlig Survey.
-
-## Vad som INTE ändras
-
-- Survey.tsx, SalaryCheck.tsx, edge functions, leads-tabellen, pricing-engine, teaser/resultat-flödet, PostHog-events, naming/copy-konventioner.
-- Inga nya beroenden.
+## Vad som INTE byggs
+- Ingen toppnav (per ditt val).
+- Ingen dark mode-toggle, inga "Get the code"-element från originalet.
+- Befintliga `/` (LandingV2) rörs inte.
+- Inga ändringar i `InlineTerminalSurvey` — den används som den är.
 
 ## Tekniska detaljer
-
-```text
-src/
-├─ components/
-│  ├─ survey/
-│  │  └─ InlineTerminalSurvey.tsx   ← NY (återanvänder logik från Survey.tsx)
-│  └─ Survey.tsx                    ← oförändrad
-└─ pages/
-   └─ Index.tsx                     ← byter ut <HeroRateLookup/> mot <InlineTerminalSurvey/>
-```
-
-Logiken lyfts ut till en delad hook `useSurveyController` (samma fil) som båda komponenterna kan dela senare — i detta steg kopieras den dock som ren funktion till den nya komponenten för att inte röra Survey.tsx.
+- Färger inline (hex) tillåts här eftersom det är en visuell 1:1-klon av extern referens; designtokens kunde användas men violett `#4f46e5` matchar referensen direkt. Övriga ytor använder Tailwinds slate-skala.
+- Inga nya beroenden.
+- SEO: `<SEO>` med `noindex` (demo-sida).
+- PostHog: ingen ny tracking; sidan är en visuell prototyp.
 
 ## Acceptanskriterier
-
-- Startsidan visar terminal-survey direkt i hero, ingen navigation mellan frågorna.
-- Chips för besvarade frågor — klick återgår till det steget med svaret förifyllt.
-- Steg 5 → samma `/resultat/:leadId` som idag.
-- PostHog-funneln (`survey_started → survey_step_viewed/completed → survey_completed`) oförändrad.
-- Mobil: sticky nav-bar respekterar tangentbordet.
-- Inga ändringar i `Survey.tsx` eller backend.
+1. `/demo/hero-tailwind` renderar utan errors.
+2. Desktop matchar referensbilden visuellt (badge, H1, ingress, knappar, prickigt rutnät, lutande telefon höger).
+3. Telefon-mockupen visar `InlineTerminalSurvey` korrekt klippt inom skärmen.
+4. Mobilvyn staplar kolumnerna utan horisontell scroll.
+5. Inga ändringar i `/` eller andra produktionssidor.
