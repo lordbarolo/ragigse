@@ -385,22 +385,51 @@ export default function InlineTerminalSurvey() {
                 question="På vilken ort ska du arbeta?"
                 subtitle="Sök bland Sveriges kommuner."
               >
+                <SearchableSelect
+                  value={s.kommun}
+                  onValueChange={handleKommun}
+                  placeholder="Sök kommun…"
+                  options={allKommuner.map((k) => ({
+                    value: k.kommun,
+                    label: k.kommun,
+                    group: k.region,
+                  }))}
+                />
+              </Step>
+            )}
+
+            {step === 5 && (
+              <Step
+                question="Vad har du för ersättning idag?"
+                subtitle={
+                  salaryType === "hourly"
+                    ? "Ange ditt nuvarande timpris (kr/h, exkl. moms)."
+                    : "Ange din nuvarande månadslön (kr/mån, brutto)."
+                }
+              >
                 <div className="space-y-4">
-                  <SearchableSelect
-                    value={s.kommun}
-                    onValueChange={handleKommun}
-                    placeholder="Sök kommun…"
-                    options={allKommuner.map((k) => ({
-                      value: k.kommun,
-                      label: k.kommun,
-                      group: k.region,
-                    }))}
-                  />
+                  <div className="relative">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      autoFocus
+                      value={s.currentSalary}
+                      onChange={(e) => {
+                        const v = e.target.value.replace(/[^\d\s]/g, "");
+                        setS((p) => ({ ...p, currentSalary: v }));
+                      }}
+                      placeholder={salaryType === "hourly" ? "t.ex. 1100" : "t.ex. 48000"}
+                      className="w-full bg-white/[0.04] border border-white/10 rounded-lg px-4 py-3 pr-16 text-white text-base placeholder:text-white/30 focus:outline-none focus:border-violet-400/60 focus:bg-white/[0.06] transition-colors"
+                    />
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[12px] font-mono text-white/40 pointer-events-none">
+                      {salaryUnit}
+                    </span>
+                  </div>
                   <button
                     onClick={submit}
-                    disabled={!s.kommun || saving}
+                    disabled={!s.currentSalary || saving}
                     className={`inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 rounded-lg transition-all ${
-                      s.kommun && !saving
+                      s.currentSalary && !saving
                         ? "bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white shadow-[0_0_30px_-8px_rgba(129,85,255,0.8)] hover:shadow-[0_0_40px_-6px_rgba(255,45,170,0.6)]"
                         : "bg-white/10 text-white/40 cursor-not-allowed"
                     }`}
