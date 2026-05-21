@@ -335,81 +335,68 @@ export default function InlineTerminalSurvey() {
           </span>
         </div>
 
-        <div className="p-5 sm:p-7 font-sans text-white space-y-6">
+        <div className="p-4 sm:p-5 font-sans text-white space-y-2">
           {/* 1. Yrkeskategori */}
-          <Section index={1} question="Vad jobbar du som?">
-            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
-              <SearchableSelect
-                value={s.category}
-                onValueChange={(v) => {
-                  trackStarted();
-                  setS((p) => ({ ...p, category: v as Category, roleValue: "", yrke: "" }));
-                }}
-                placeholder="Välj yrke..."
-                options={[
-                  { value: "lakare", label: "Läkare" },
-                  { value: "ssk", label: "Sjuksköterska / Barnmorska" },
-                ]}
-              />
-            </div>
+          <Section index={1}>
+            <SearchableSelect
+              value={s.category}
+              onValueChange={(v) => {
+                trackStarted();
+                setS((p) => ({ ...p, category: v as Category, roleValue: "", yrke: "" }));
+              }}
+              placeholder="Vad jobbar du som?"
+              options={[
+                { value: "lakare", label: "Läkare" },
+                { value: "ssk", label: "Sjuksköterska / Barnmorska" },
+              ]}
+            />
           </Section>
 
           {/* 2. Specialisering */}
-          <Section
-            index={2}
-            question={s.category === "ssk" ? "Vilken roll?" : "Vilken specialisering?"}
-            disabled={!s.category}
-          >
-            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
-              <SearchableSelect
-                value={s.roleValue}
-                onValueChange={(v) => setS((p) => ({ ...p, roleValue: v }))}
-                placeholder={
-                  !s.category
-                    ? "Välj först yrke ovan…"
-                    : s.category === "lakare"
-                    ? "Välj specialisering..."
-                    : "Välj din roll..."
-                }
-                options={s.category === "lakare" ? doctorRoleOptions : nurseRoleOptions}
-              />
-            </div>
+          <Section index={2} disabled={!s.category}>
+            <SearchableSelect
+              value={s.roleValue}
+              onValueChange={(v) => setS((p) => ({ ...p, roleValue: v }))}
+              placeholder={
+                !s.category
+                  ? "Välj först yrke ovan…"
+                  : s.category === "lakare"
+                  ? "Vilken specialisering?"
+                  : "Vilken roll?"
+              }
+              options={s.category === "lakare" ? doctorRoleOptions : nurseRoleOptions}
+            />
           </Section>
 
           {/* 3. Anställd eller företagare */}
-          <Section index={3} question="Är du anställd eller egen företagare?">
-            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
-              <SearchableSelect
-                value={s.employmentType}
-                onValueChange={(v) => setS((p) => ({ ...p, employmentType: v as EmploymentType }))}
-                placeholder="Välj anställningsform..."
-                options={[
-                  { value: "anstalld", label: "Anställd" },
-                  { value: "foretagare", label: "Eget bolag" },
-                ]}
-              />
-            </div>
+          <Section index={3}>
+            <SearchableSelect
+              value={s.employmentType}
+              onValueChange={(v) => setS((p) => ({ ...p, employmentType: v as EmploymentType }))}
+              placeholder="Är du anställd eller egen företagare?"
+              options={[
+                { value: "anstalld", label: "Anställd" },
+                { value: "foretagare", label: "Eget bolag" },
+              ]}
+            />
           </Section>
 
           {/* 4. Ort */}
-          <Section index={4} question="På vilken ort ska du arbeta?">
-            <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
-              <SearchableSelect
-                value={s.kommun}
-                onValueChange={(v) => {
-                  const match = allKommuner.find((k) => k.kommun === v);
-                  setS((p) => ({ ...p, kommun: v, region: match?.region || "" }));
-                }}
-                placeholder="Välj kommun..."
-                options={allKommuner.map((k) => ({
-                  value: k.kommun,
-                  label: k.kommun,
-                  group: k.region,
-                }))}
-              />
-            </div>
+          <Section index={4}>
+            <SearchableSelect
+              value={s.kommun}
+              onValueChange={(v) => {
+                const match = allKommuner.find((k) => k.kommun === v);
+                setS((p) => ({ ...p, kommun: v, region: match?.region || "" }));
+              }}
+              placeholder="På vilken ort ska du arbeta?"
+              options={allKommuner.map((k) => ({
+                value: k.kommun,
+                label: k.kommun,
+                group: k.region,
+              }))}
+            />
           </Section>
-
 
           {/* Submit */}
           <div className="pt-2">
@@ -442,22 +429,17 @@ export default function InlineTerminalSurvey() {
 
 function Section({
   index,
-  question,
   disabled,
   children,
 }: {
   index: number;
-  question: string;
   disabled?: boolean;
   children: React.ReactNode;
 }) {
   return (
-    <div className={`space-y-3 ${disabled ? "opacity-50 pointer-events-none" : ""}`}>
-      <div className="flex items-baseline gap-2">
-        <span className="font-mono text-[11px] text-violet-400/80">0{index}.</span>
-        <h2 className="text-lg sm:text-xl font-semibold tracking-tight">{question}</h2>
-      </div>
-      {children}
+    <div className={`flex items-center gap-2 ${disabled ? "opacity-50 pointer-events-none" : ""}`}>
+      <span className="font-mono text-[11px] text-violet-400/80 w-6 shrink-0">0{index}.</span>
+      <div className="flex-1 min-w-0">{children}</div>
     </div>
   );
 }
