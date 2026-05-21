@@ -184,8 +184,8 @@ export default function InlineTerminalSurvey() {
     window.setTimeout(() => goNext(4, v), 280);
   };
 
-  const salaryType: "hourly" | "monthly" = s.employmentType === "foretagare" ? "hourly" : "monthly";
-  const salaryUnit = salaryType === "hourly" ? "kr/h" : "kr/mån";
+  const salaryType: "hourly" | "monthly" = "hourly";
+  const salaryUnit = "kr/h";
 
   const submit = async () => {
     setSaving(true);
