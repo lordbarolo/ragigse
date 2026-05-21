@@ -6,7 +6,7 @@ import InlineTerminalSurvey from "@/components/survey/InlineTerminalSurvey";
 
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
-import { setPageMeta } from "@/lib/setPageMeta";
+import { SEO } from "@/components/SEO";
 
 const LANDING_JSONLD = [
   {
@@ -29,7 +29,18 @@ const LANDING_JSONLD = [
     logo: "https://www.compcare.se/compcare-logo.svg",
     sameAs: ["https://www.compcare.se/"],
   },
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    name: "CompCare",
+    applicationCategory: "BusinessApplication",
+    operatingSystem: "Web",
+    url: "https://www.compcare.se/",
+    offers: { "@type": "Offer", price: "0", priceCurrency: "SEK" },
+    description: "Löneanalys och förhandlingsdata för vårdkonsulter, baserat på SKR:s ramavtalspriser.",
+  },
 ];
+
 
 /* ───────────────────── data ───────────────────── */
 const NAV_LINKS: { label: string; href: string; external?: boolean }[] = [
