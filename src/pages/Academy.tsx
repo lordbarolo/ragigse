@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Settings, ClipboardList, PenLine, Pill, TestTube, FileText, Bell, Video, Zap, Key, Lightbulb, AlertTriangle, BookOpen, Search, BarChart3, User, Play, Check, X } from "lucide-react";
+import { SEO } from "@/components/SEO";
+
 
 interface Module {
   id: string;
