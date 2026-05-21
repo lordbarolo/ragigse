@@ -272,7 +272,7 @@ export default function AnalysisScreen() {
 
             {/* Rekommenderad ersättning */}
             <div>
-              <p className="text-[12px] text-foreground/55 mb-1">Många anger denna nivå</p>
+              <p className="text-[12px] text-foreground/55 mb-1">Många uppger denna nivå</p>
               <p className="font-display text-[32px] font-extrabold tracking-tight text-[hsl(var(--green))]">
                 {fmt(comparison.recMin)}–{fmt(comparison.recMax)} <span className="text-[20px] font-bold">kr/h</span>
               </p>
