@@ -296,7 +296,7 @@ export default function LandingV2() {
           </span>
         </div>
         <div className="overflow-hidden whitespace-nowrap select-none">
-          <div className="inline-flex gap-10 animate-marquee" style={{ width: "max-content", animationDuration: "60s" }}>
+          <div className="inline-flex gap-10 animate-marquee" style={{ width: "max-content", animationDuration: "120s" }}>
             {[...NURSE_RATE_TICKER, ...NURSE_RATE_TICKER].map((item, i) => (
               <span
                 key={i}
