@@ -259,7 +259,7 @@ export default function LandingV2() {
             <span className="text-gradient-violet">är värd?</span>
           </h1>
           <p className="text-[16px] sm:text-lg text-white/75 leading-relaxed mb-8 max-w-[560px]">
-            Se om din lön är marknadsmässig och få förhandlingsstöd direkt i mobilen.
+            Se om din konsultersättning är marknadsmässig
           </p>
           <div className="w-full max-w-[560px] text-center">
             <HeroInlineForm />
