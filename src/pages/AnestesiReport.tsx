@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import CompcareLogo from "@/components/CompcareLogo";
 import Navbar from "@/components/Navbar";
-import { setPageMeta } from "@/lib/setPageMeta";
+import { SEO } from "@/components/SEO";
 
 const ARTICLE_JSONLD = {
   "@context": "https://schema.org",
