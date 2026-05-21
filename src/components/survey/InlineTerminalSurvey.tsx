@@ -14,7 +14,7 @@ import {
 } from "@/lib/specialityLists";
 import { toast } from "sonner";
 
-type Category = "" | "lakare" | "ssk";
+type Category = "" | "lakare" | "ssk" | "barnmorska";
 type EmploymentType = "" | "anstalld" | "foretagare";
 
 const TOTAL_STEPS = 5;
@@ -101,11 +101,11 @@ export default function InlineTerminalSurvey() {
     }
     if (s.category === "ssk") {
       if (s.roleValue === "__allman") return "Sjuksköterska";
-      if (s.roleValue === "__barnmorska") return "Barnmorska";
       if (s.roleValue === "__rontgen") return "Röntgensjuksköterska";
       if (s.roleValue === "__ovrig") return "Specialistsjuksköterska";
       return nurseValueMap[s.roleValue] || s.roleValue;
     }
+    if (s.category === "barnmorska") return "Barnmorska";
     return "";
   }, [s.category, s.roleValue]);
 
@@ -132,7 +132,6 @@ export default function InlineTerminalSurvey() {
   const nurseRoleOptions: Option[] = useMemo(
     () => [
       { value: "__allman", label: "Allmänsjuksköterska", group: "" },
-      { value: "__barnmorska", label: "Barnmorska", group: "" },
       { value: "__rontgen", label: "Röntgensjuksköterska", group: "" },
       ...NURSE_SPECIALIZATIONS.map((x) => ({ value: x, label: x, group: "Vidareutbildning (VUB)" })),
       { value: "__ovrig", label: "Övrig VUB", group: "Vidareutbildning (VUB)" },
@@ -158,14 +157,30 @@ export default function InlineTerminalSurvey() {
   const goBack = () => {
     if (step <= 1) return;
     setDirection(-1);
+    // Skip step 2 (specialisering) when category is barnmorska
+    if (step === 3 && s.category === "barnmorska") {
+      setStep(1);
+      return;
+    }
     setStep(step - 1);
   };
 
   // Auto-advance handlers
   const handleCategory = (v: Category) => {
     trackStarted();
-    setS((p) => ({ ...p, category: v, roleValue: "", yrke: "" }));
-    window.setTimeout(() => goNext(1, v), 280);
+    const isBarnmorska = v === "barnmorska";
+    setS((p) => ({
+      ...p,
+      category: v,
+      roleValue: isBarnmorska ? "__barnmorska" : "",
+      yrke: isBarnmorska ? "Barnmorska" : "",
+    }));
+    window.setTimeout(() => {
+      trackStepCompleted(1, v);
+      setDirection(1);
+      // Skip specialisering-steget för barnmorska
+      setStep(isBarnmorska ? 3 : 2);
+    }, 280);
   };
 
   const handleRole = (v: string) => {
@@ -317,7 +332,8 @@ export default function InlineTerminalSurvey() {
                   placeholder="Välj yrke…"
                   options={[
                     { value: "lakare", label: "Läkare" },
-                    { value: "ssk", label: "Sjuksköterska / Barnmorska" },
+                    { value: "ssk", label: "Sjuksköterska" },
+                    { value: "barnmorska", label: "Barnmorska" },
                   ]}
                 />
               </Step>
