@@ -6,6 +6,8 @@ import InvoiceEmailDrafter from "@/components/ai/InvoiceEmailDrafter";
 import { Button } from "@/components/ui/button";
 import LandingFooter from "@/components/landing/LandingFooter";
 import { trackEvent } from "@/lib/trackEvent";
+import { SEO } from "@/components/SEO";
+
 
 const STEPS = [
   { num: "1", title: "Skapa ditt konto", desc: "Logga in och ange din roll.\nFå tillgång till verktyg och insikter." },
