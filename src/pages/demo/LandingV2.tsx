@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Menu, X, ShieldCheck, Lock, FileLock2, Database, MapPin, History, Sparkles, Zap, LineChart, GitBranch, Receipt } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
-import HeroInlineForm from "@/components/landing/HeroInlineForm";
+import InlineTerminalSurvey from "@/components/survey/InlineTerminalSurvey";
 
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
@@ -261,8 +261,8 @@ export default function LandingV2() {
           <p className="text-[16px] sm:text-lg text-white/75 leading-relaxed mb-8 max-w-[560px]">
             Se om din konsultersättning är marknadsmässig
           </p>
-          <div className="w-full max-w-[560px] text-center">
-            <HeroInlineForm />
+          <div className="w-full max-w-2xl text-center">
+            <InlineTerminalSurvey />
           </div>
           <p className="mt-4 text-[12px] text-white/45">
             Anonymt · Kostnadsfritt · Klart på 60 sekunder
