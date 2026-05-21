@@ -515,11 +515,25 @@ export default function InlineTerminalSurvey() {
   );
 }
 
-function StepShell({ question, children }: { question: string; children: React.ReactNode }) {
+function Section({
+  index,
+  question,
+  disabled,
+  children,
+}: {
+  index: number;
+  question: string;
+  disabled?: boolean;
+  children: React.ReactNode;
+}) {
   return (
-    <div className="space-y-4">
-      <h2 className="text-xl sm:text-2xl font-semibold tracking-tight">{question}</h2>
+    <div className={`space-y-3 ${disabled ? "opacity-50 pointer-events-none" : ""}`}>
+      <div className="flex items-baseline gap-2">
+        <span className="font-mono text-[11px] text-violet-400/80">0{index}.</span>
+        <h2 className="text-lg sm:text-xl font-semibold tracking-tight">{question}</h2>
+      </div>
       {children}
     </div>
   );
 }
+
