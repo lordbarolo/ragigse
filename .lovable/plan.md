@@ -1,49 +1,31 @@
 ## Mål
-Bygg en isolerad demo-sida som återskapar exakt utformningen från Tailwind UI-hjälten "With phone mockup" (ljust tema, prickigt rutnät i bakgrunden, två-kolumns layout med text vänster och lutande telefon-mockup höger). Ingen toppnav. Hero-innehållet byts till CompCare-copy och telefonens skärm renderar vårt befintliga `InlineTerminalSurvey`.
+I hero-formuläret på `/` (komponent `InlineTerminalSurvey`) ska `Barnmorska` lyftas ut ur "Sjuksköterska / Barnmorska" och bli ett eget val i steg 1, jämställt med Läkare och Sjuksköterska. När användaren väljer Barnmorska hoppas rollsteget över och vi går direkt till kommun-steget.
 
-## Route & filer
-- Ny route: `/demo/hero-tailwind` (registreras i `src/App.tsx` tillsammans med övriga `/demo/*`).
-- Ny sida: `src/pages/demo/HeroTailwind.tsx`.
-- Ny komponent: `src/components/demo/PhoneMockup.tsx` — ren presentational wrapper (telefon-frame i SVG/CSS) som tar `children` och renderar innehållet inuti skärmen med korrekt clipping och rundade hörn.
-- Återanvänder: `InlineTerminalSurvey` (befintlig) som `children` i telefonen.
+## Scope
+- Endast `src/components/survey/InlineTerminalSurvey.tsx`.
+- Övriga ytor (Survey.tsx på /consultant/salary-check, MarketSearchBox, HeroRateLookup, RoleSelector, UppdragsradarV2, Campaign m.fl.) rörs INTE.
 
-## Visuell spec (matchar bilden 1:1)
-- Bakgrund: vit `#ffffff` med subtilt prickigt rutnät (radial-gradient dots, `rgba(15,23,42,0.08)`, ~24px grid) som tonar ut mot kanterna via mask-image.
-- Container: `max-w-7xl mx-auto px-6 lg:px-8`, hero-padding `pt-24 pb-32 lg:pt-32 lg:pb-40`.
-- Grid: `lg:grid-cols-2 gap-12 items-center`. Text vänster, telefon höger.
-- Vänster kolumn:
-  - Pill-badge överst: rundad full, vit bakgrund, tunn grå border, två segment delade av vertikal linje. Vänster: violett text "Vi rekryterar inte". Höger: grå text "Läs mer →". (CompCare-anpassning av "We're hiring · See open positions").
-  - H1: `text-5xl lg:text-6xl font-bold tracking-tight text-slate-900` — "Ett bättre sätt att förhandla din ersättning".
-  - Ingress: `text-lg text-slate-600 max-w-xl` — kort CompCare-pitch (neutral ton, inga värdeord, ingen peer-jämförelse).
-  - CTA-rad: primärknapp violett `bg-[#4f46e5] hover:bg-[#4338ca] text-white text-sm font-semibold px-6 py-3 rounded-md` "Kom igång" + textlänk `Läs mer →` i mörk slate. Följer button-standard (kompakt, ej `lg`, ej `w-full`).
-- Höger kolumn (telefon):
-  - Telefon-frame: ~`w-[320px] h-[640px]`, mörk `#0f172a` chassi, rundade hörn `rounded-[3rem]`, tunn inre border, notch upptill, sidoknappar (vänster vol, höger power) som tunna avlånga rektanglar.
-  - Skärm-innehåll: vit bakgrund, `rounded-[2.5rem]` clipping, padding `p-4`. Renderar `<InlineTerminalSurvey />` skalad så att hero-formuläret får plats (CSS `transform: scale(0.75)` + `transform-origin: top center` på en wrapper, höjd kompenseras).
-  - Liten lutning: `rotate-[2deg]` + mjuk skugga `shadow-2xl` för att matcha bildens perspektiv.
-- Responsivt: under `lg` staplas kolumnerna; telefonen centreras under texten med `mx-auto`, ingen rotation på mobil.
+## Ändringar i `InlineTerminalSurvey.tsx`
+1. **Category-typ**: utöka `Category` från `"lakare" | "ssk"` till `"lakare" | "ssk" | "barnmorska"`.
+2. **Steg 1-alternativ** (rad ~318–321): byt till tre val:
+   - `{ value: "lakare", label: "Läkare" }`
+   - `{ value: "ssk", label: "Sjuksköterska" }` (text uppdateras — ingen "/ Barnmorska")
+   - `{ value: "barnmorska", label: "Barnmorska" }`
+3. **`handleCategory`**: när `barnmorska` väljs, sätt `roleValue = "__barnmorska"` och `yrke = "Barnmorska"` direkt, och hoppa från steg 1 → steg 3 (kommun) istället för steg 2.
+4. **Ta bort "Barnmorska" ur nurseRoleOptions** (rad 135) eftersom det nu finns som egen kategori.
+5. **`resolvedYrke`** (rad 94–110): lägg till gren `if (s.category === "barnmorska") return "Barnmorska"`.
+6. **Steg 2 fallback**: om `category === "barnmorska"` ska steg 2 aldrig visas (bakåtknapp från steg 3 går också direkt till steg 1).
+7. **Bakåt-navigation**: i `goBack` (om finns i `InlineTerminalSurvey`), när nuvarande steg är 3 och `category === "barnmorska"`, gå till steg 1 istället för 2.
 
-## Innehåll (CompCare-copy, neutralt)
-- Badge: "Vi rekryterar inte | Vi visar bara vad ramavtalen säger →"
-- H1: "Ett bättre sätt att förhandla din ersättning"
-- Ingress: "Jämför din nuvarande ersättning mot SKR:s ramavtal på under 60 sekunder. Neutral analys, inga säljsamtal."
-- Primär CTA: "Kom igång" (scrollar fokus till telefonens formulär på mobil, eller fokuserar första input på desktop).
-- Sekundär: "Så funkar det →" (länk till `/sa-funkar-det` om finns, annars anchor).
-
-## Vad som INTE byggs
-- Ingen toppnav (per ditt val).
-- Ingen dark mode-toggle, inga "Get the code"-element från originalet.
-- Befintliga `/` (LandingV2) rörs inte.
-- Inga ändringar i `InlineTerminalSurvey` — den används som den är.
-
-## Tekniska detaljer
-- Färger inline (hex) tillåts här eftersom det är en visuell 1:1-klon av extern referens; designtokens kunde användas men violett `#4f46e5` matchar referensen direkt. Övriga ytor använder Tailwinds slate-skala.
-- Inga nya beroenden.
-- SEO: `<SEO>` med `noindex` (demo-sida).
-- PostHog: ingen ny tracking; sidan är en visuell prototyp.
+## Vad som INTE ändras
+- Backend-rollmappning (`Barnmorska` finns redan som giltig `yrkeskategori` i pricing-logiken).
+- Andra survey-/sökkomponenter.
+- PostHog-events (samma event-namn; bara `category`-värdet får ett tredje legalt värde).
 
 ## Acceptanskriterier
-1. `/demo/hero-tailwind` renderar utan errors.
-2. Desktop matchar referensbilden visuellt (badge, H1, ingress, knappar, prickigt rutnät, lutande telefon höger).
-3. Telefon-mockupen visar `InlineTerminalSurvey` korrekt klippt inom skärmen.
-4. Mobilvyn staplar kolumnerna utan horisontell scroll.
-5. Inga ändringar i `/` eller andra produktionssidor.
+1. På `/` visar steg 1 tre val: Läkare, Sjuksköterska, Barnmorska.
+2. Val av Barnmorska → kommun-steget (steg 3) öppnas direkt, `resolvedYrke = "Barnmorska"`.
+3. Val av Sjuksköterska → steg 2 visar nurseRoleOptions UTAN Barnmorska.
+4. Pricing-anrop sker med `yrke = "Barnmorska"` som tidigare.
+5. Bakåtknapp från kommun-steget när category = barnmorska går till steg 1.
+6. Inga ändringar i andra survey-komponenter.
