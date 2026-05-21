@@ -188,12 +188,6 @@ export default function LandingV2() {
 
   useEffect(() => {
     trackEvent("landing_viewed");
-    setPageMeta({
-      title: "CompCare – Lön & ramavtalspriser för vårdkonsulter",
-      description:
-        "Jämför ditt erbjudande mot SKR:s ramavtalspriser i 290 kommuner. Gratis löneanalys för sjuksköterskor, barnmorskor och läkare.",
-      path: "/",
-    });
 
     // Auto-rotate invoice card steps
     intervalRef.current = setInterval(() => {
@@ -207,10 +201,13 @@ export default function LandingV2() {
 
   return (
     <div className="w-full text-foreground font-sans">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(LANDING_JSONLD) }}
+      <SEO
+        title="CompCare – Lön & ramavtalspriser för vårdkonsulter"
+        description="Jämför ditt erbjudande mot SKR:s ramavtalspriser i 290 kommuner. Gratis löneanalys för sjuksköterskor, barnmorskor och läkare."
+        path="/"
+        jsonLd={LANDING_JSONLD}
       />
+
 
       {/* ── Nav ─────────────────────────────── */}
       <nav className="relative flex items-center justify-between px-5 sm:px-6 lg:px-10 h-[60px] glass-strong border-b border-white/10">
