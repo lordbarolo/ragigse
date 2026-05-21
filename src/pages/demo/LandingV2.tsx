@@ -249,26 +249,32 @@ export default function LandingV2() {
 
       {/* ═══════════════════ 1. HERO med inline-form + porträtt ═══════════════════ */}
       <section className="relative z-20 overflow-visible px-5 sm:px-6 lg:px-10 hero-smooth-bg">
-        <div className="relative z-10 max-w-3xl mx-auto flex flex-col items-center text-center pt-14 md:pt-24 pb-3 md:pb-4">
-          <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-medium text-[hsl(256_100%_85%)] bg-[hsl(256_100%_67%_/_0.18)] border border-[hsl(256_100%_67%_/_0.35)] rounded-full px-3 py-1 mb-5 uppercase tracking-wider">
-            <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="currentColor" /></svg>
-            För läkare &amp; sjuksköterskor
+        <div className="relative z-10 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center pt-14 md:pt-24 pb-3 md:pb-4">
+          {/* Vänster: rubrik och pitch */}
+          <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
+            <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-medium text-[hsl(256_100%_85%)] bg-[hsl(256_100%_67%_/_0.18)] border border-[hsl(256_100%_67%_/_0.35)] rounded-full px-3 py-1 mb-5 uppercase tracking-wider">
+              <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="currentColor" /></svg>
+              För läkare &amp; sjuksköterskor
+            </div>
+            <h1 className="font-bold leading-[1.05] text-white mb-5 tracking-tight text-[34px] sm:text-5xl md:text-[56px]">
+              Vet du vad du<br />
+              <span className="text-gradient-violet">är värd?</span>
+            </h1>
+            <p className="text-[16px] sm:text-lg text-white/75 leading-relaxed mb-2 max-w-[560px]">
+              Se om din konsultersättning är marknadsmässig
+            </p>
+            <p className="mt-4 text-[12px] text-white/45">
+              Anonymt · Kostnadsfritt · Klart på 60 sekunder
+            </p>
           </div>
-          <h1 className="font-bold leading-[1.05] text-white mb-5 tracking-tight text-[34px] sm:text-5xl md:text-[56px]">
-            Vet du vad du<br />
-            <span className="text-gradient-violet">är värd?</span>
-          </h1>
-          <p className="text-[16px] sm:text-lg text-white/75 leading-relaxed mb-8 max-w-[560px]">
-            Se om din konsultersättning är marknadsmässig
-          </p>
-          <div className="w-full max-w-2xl text-center">
+
+          {/* Höger: formulär */}
+          <div className="w-full">
             <InlineTerminalSurvey />
           </div>
-          <p className="mt-4 text-[12px] text-white/45">
-            Anonymt · Kostnadsfritt · Klart på 60 sekunder
-          </p>
         </div>
       </section>
+
 
 
       {/* ═══ Ljus sektion-wrapper för allt under hero ═══ */}
