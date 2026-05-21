@@ -303,7 +303,7 @@ export default function InlineTerminalSurvey() {
             <span className="w-3 h-3 rounded-full bg-[#28c840]" />
           </div>
           <span className="font-mono text-[11px] text-white/40 ml-2 tracking-wide">
-            compcare://salary-check
+            Svara på fem frågor för att se aktuella villkor
           </span>
           <span className="ml-auto font-mono text-[10px] text-white/30">
             {step}/{TOTAL_STEPS}
