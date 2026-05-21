@@ -63,28 +63,37 @@ const DATA_STATS = [
 // Konsultandel = 0,825 för sjuksköterskor/barnmorskor, 0,875 för läkare.
 // Alla värden härledda från rates-tabellen (contract 2026), avrundat till
 // närmaste 1 000 kr/mån. Källa: SKR Personaluthyrning 2026.
-const NURSE_RATE_TICKER = [
-  { role: "Sjuksköterska · Zon 1", salary: "60 000" },
-  { role: "Sjuksköterska · Zon 3", salary: "69 000" },
-  { role: "Barnmorska · Zon 3", salary: "85 000" },
-  { role: "Distriktssjuksköterska · Zon 3", salary: "85 000" },
-  { role: "Röntgensjuksköterska · Zon 2", salary: "64 000" },
-  { role: "Skolsköterska · Zon 1", salary: "69 000" },
-  { role: "Legitimerad läkare · Zon 2", salary: "107 000" },
-  { role: "Specialist allmänmedicin · Zon 2", salary: "156 000" },
-  { role: "Specialist akutsjukvård · Zon 3", salary: "184 000" },
-  { role: "Specialist anestesi och intensivvård · Zon 3", salary: "184 000" },
-  { role: "Specialist arbetsmedicin · Zon 1", salary: "127 000" },
-  { role: "Specialist geriatrik · Zon 2", salary: "156 000" },
-  { role: "Specialist kardiologi · Zon 1", salary: "127 000" },
-  { role: "Specialist obstetrik och gynekologi · Zon 3", salary: "184 000" },
-  { role: "Specialist ortopedi · Zon 2", salary: "156 000" },
-  { role: "Specialist neurologi · Zon 3", salary: "184 000" },
-  { role: "Specialist psykiatri · Zon 3", salary: "201 000" },
-  { role: "Specialist äldrepsykiatri · Zon 1", salary: "150 000" },
-  { role: "Specialist barn- och ungdomspsykiatri · Zon 2", salary: "173 000" },
-  { role: "Specialist hud- och könssjukdomar · Zon 3", salary: "201 000" },
+type TickerItem = {
+  role: string;
+  salary: string;
+  yrkeskategori: string;
+  zon: "Zon 1" | "Zon 2" | "Zon 3";
+};
+const NURSE_RATE_TICKER: TickerItem[] = [
+  { role: "Sjuksköterska · Zon 1", salary: "60 000", yrkeskategori: "Sjuksköterska", zon: "Zon 1" },
+  { role: "Sjuksköterska · Zon 3", salary: "69 000", yrkeskategori: "Sjuksköterska", zon: "Zon 3" },
+  { role: "Barnmorska · Zon 3", salary: "85 000", yrkeskategori: "Barnmorska", zon: "Zon 3" },
+  { role: "Distriktssjuksköterska · Zon 3", salary: "85 000", yrkeskategori: "Distriktssjuksköterska", zon: "Zon 3" },
+  { role: "Röntgensjuksköterska · Zon 2", salary: "64 000", yrkeskategori: "Röntgensjuksköterska", zon: "Zon 2" },
+  { role: "Skolsköterska · Zon 1", salary: "69 000", yrkeskategori: "Skolsköterska", zon: "Zon 1" },
+  { role: "Legitimerad läkare · Zon 2", salary: "107 000", yrkeskategori: "Legitimerad läkare", zon: "Zon 2" },
+  { role: "Specialist allmänmedicin · Zon 2", salary: "156 000", yrkeskategori: "Specialistläkare allmänmedicin", zon: "Zon 2" },
+  { role: "Specialist akutsjukvård · Zon 3", salary: "184 000", yrkeskategori: "Specialistläkare akutsjukvård", zon: "Zon 3" },
+  { role: "Specialist anestesi och intensivvård · Zon 3", salary: "184 000", yrkeskategori: "Specialistläkare anestesi och intensivvård", zon: "Zon 3" },
+  { role: "Specialist arbetsmedicin · Zon 1", salary: "127 000", yrkeskategori: "Specialistläkare arbetsmedicin", zon: "Zon 1" },
+  { role: "Specialist geriatrik · Zon 2", salary: "156 000", yrkeskategori: "Specialistläkare geriatrik", zon: "Zon 2" },
+  { role: "Specialist kardiologi · Zon 1", salary: "127 000", yrkeskategori: "Specialistläkare kardiologi", zon: "Zon 1" },
+  { role: "Specialist obstetrik och gynekologi · Zon 3", salary: "184 000", yrkeskategori: "Specialistläkare obstetrik och gynekologi", zon: "Zon 3" },
+  { role: "Specialist ortopedi · Zon 2", salary: "156 000", yrkeskategori: "Specialistläkare ortopedi", zon: "Zon 2" },
+  { role: "Specialist neurologi · Zon 3", salary: "184 000", yrkeskategori: "Specialistläkare neurologi", zon: "Zon 3" },
+  { role: "Specialist psykiatri · Zon 3", salary: "201 000", yrkeskategori: "Specialistläkare psykiatri", zon: "Zon 3" },
+  { role: "Specialist äldrepsykiatri · Zon 1", salary: "150 000", yrkeskategori: "Specialistläkare äldrepsykiatri", zon: "Zon 1" },
+  { role: "Specialist barn- och ungdomspsykiatri · Zon 2", salary: "173 000", yrkeskategori: "Specialistläkare barn- och ungdomspsykiatri", zon: "Zon 2" },
+  { role: "Specialist hud- och könssjukdomar · Zon 3", salary: "201 000", yrkeskategori: "Specialistläkare hud- och könssjukdomar", zon: "Zon 3" },
 ];
+
+/** Tolerance for ticker monthly values (allows ~1 000 kr rounding + minor drift). */
+const TICKER_TOLERANCE = 0.02;
 
 const HOW_IT_WORKS = [
   { num: "01", title: "Välj din roll", desc: "Specialitet och ort i två klick. Inga formulär, ingen registrering." },
