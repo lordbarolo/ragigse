@@ -181,7 +181,11 @@ export default function InlineTerminalSurvey() {
   const handleKommun = (v: string) => {
     const match = allKommuner.find((k) => k.kommun === v);
     setS((p) => ({ ...p, kommun: v, region: match?.region || "" }));
+    window.setTimeout(() => goNext(4, v), 280);
   };
+
+  const salaryType: "hourly" | "monthly" = s.employmentType === "foretagare" ? "hourly" : "monthly";
+  const salaryUnit = salaryType === "hourly" ? "kr/h" : "kr/mån";
 
   const submit = async () => {
     setSaving(true);
