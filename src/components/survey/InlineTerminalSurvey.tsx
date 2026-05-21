@@ -419,9 +419,6 @@ export default function InlineTerminalSurvey() {
                     options={s.category === "lakare" ? doctorRoleOptions : nurseRoleOptions}
                   />
                 </div>
-                <p className="mt-3 font-mono text-[11px] text-white/40">
-                  // matchar SKR:s ramavtal 2026 — 60+ roller
-                </p>
               </StepShell>
             )}
 
