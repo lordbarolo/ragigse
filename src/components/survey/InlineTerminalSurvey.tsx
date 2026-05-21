@@ -136,10 +136,10 @@ export default function InlineTerminalSurvey() {
   // Options
   const doctorRoleOptions: Option[] = useMemo(
     () => [
-      { value: "__leg", label: "Leg. läkare", group: "" },
-      { value: "__st", label: "ST-läkare", group: "" },
-      ...DOCTOR_SPECIALTIES.map((x) => ({ value: x, label: x, group: "Specialisering" })),
-      { value: "__ovrig", label: "Övrig specialisering", group: "Specialisering" },
+      { value: "__leg", label: "Leg. läkare" },
+      { value: "__st", label: "ST-läkare" },
+      ...DOCTOR_SPECIALTIES.map((x) => ({ value: x, label: x })),
+      { value: "__ovrig", label: "Övrig specialisering" },
     ],
     [],
   );
