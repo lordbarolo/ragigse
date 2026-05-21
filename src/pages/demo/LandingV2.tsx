@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { ArrowRight, Menu, X, ShieldCheck, Lock, FileLock2, Database, MapPin, History, Sparkles, Zap, LineChart, GitBranch, Receipt } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
@@ -7,6 +7,8 @@ import InlineTerminalSurvey from "@/components/survey/InlineTerminalSurvey";
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 import { SEO } from "@/components/SEO";
+import { useRates } from "@/hooks/useCalculator";
+import { getMarginShares, EMPLOYER_FACTOR, HOURS_PER_MONTH } from "@/lib/calc";
 
 const LANDING_JSONLD = [
   {
