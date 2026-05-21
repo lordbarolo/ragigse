@@ -193,12 +193,13 @@ export default function InlineTerminalSurvey() {
     const track = "consultant";
     const couponCode = searchParams.get("coupon");
     const couponParam = couponCode ? `?coupon=${encodeURIComponent(couponCode)}` : "";
+    const currentSalaryNum = Number(s.currentSalary.replace(/\s/g, "")) || 0;
 
     aliasLead(leadId, {
       role: s.yrke,
       zone: s.kommun,
       employment_type: s.employmentType,
-      current_hourly_rate: 0,
+      current_hourly_rate: salaryType === "hourly" ? currentSalaryNum : 0,
     });
 
     const navigateToTeaser = () => {
@@ -211,14 +212,14 @@ export default function InlineTerminalSurvey() {
           yrke: s.yrke,
           kommun: s.kommun,
           experience: 5,
-          salaryType: "hourly",
-          currentSalary: 0,
+          salaryType,
+          currentSalary: currentSalaryNum,
           obShare: "bemanningsforetag",
           track,
         }),
       );
       if (pricingResult) sessionStorage.setItem("pricingResult", JSON.stringify(pricingResult));
-      trackStepCompleted(4, s.kommun);
+      trackStepCompleted(5, currentSalaryNum);
       const totalTime = surveyStartTime.current
         ? Math.round((Date.now() - surveyStartTime.current) / 1000)
         : 0;
@@ -227,7 +228,8 @@ export default function InlineTerminalSurvey() {
         total_time_seconds: totalTime,
         role: s.yrke,
         zone: s.kommun,
-        current_hourly_rate: 0,
+        current_hourly_rate: salaryType === "hourly" ? currentSalaryNum : 0,
+        current_monthly_salary: salaryType === "monthly" ? currentSalaryNum : 0,
         experience_years: 5,
         employment_type: s.employmentType === "foretagare" ? "Eget bolag" : "Fast",
         agency_name: null,
@@ -244,8 +246,8 @@ export default function InlineTerminalSurvey() {
         yrke: s.yrke,
         kommun: s.kommun,
         experience: 5,
-        salary_type: "hourly",
-        current_salary: 0,
+        salary_type: salaryType,
+        current_salary: currentSalaryNum,
         ob_share: "bemanningsforetag",
       });
       if (error) throw error;
@@ -257,8 +259,8 @@ export default function InlineTerminalSurvey() {
           employment_type: s.employmentType,
           kommun: s.kommun,
           experience: 5,
-          current_salary: 0,
-          salary_type: "hourly",
+          current_salary: currentSalaryNum,
+          salary_type: salaryType,
           track,
           commute: "",
           ob_share: "bemanningsforetag",
