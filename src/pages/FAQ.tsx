@@ -1,6 +1,7 @@
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
+import { SEO } from "@/components/SEO";
+
 
 const FAQ_ITEMS = [
   {
@@ -69,25 +70,15 @@ const faqJsonLd = {
 };
 
 export default function FAQ() {
-  useEffect(() => {
-    document.title =
-      "Vanliga frågor om ramavtalspriser och ersättning | CompCare.se";
-    const meta = document.querySelector('meta[name="description"]');
-    if (meta) {
-      meta.setAttribute(
-        "content",
-        "Svar på vanliga frågor om ersättning, ramavtalspriser och hur CompCare.se hjälper dig jämföra din ersättning med marknadsdata."
-      );
-    }
-  }, []);
-
   return (
     <div className="min-h-screen bg-background">
-      {/* JSON-LD */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      <SEO
+        title="Vanliga frågor om ersättning för vårdkonsulter | CompCare"
+        description="Svar på vanliga frågor om ersättning, SKR-ramavtalspriser och hur CompCare hjälper dig jämföra din ersättning med marknadsdata."
+        path="/vanliga-fragor"
+        jsonLd={faqJsonLd}
       />
+
 
       {/* Header */}
       <header className="hero-gradient py-10 px-5 text-center sm:py-14">

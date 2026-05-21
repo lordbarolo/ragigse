@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Settings, ClipboardList, PenLine, Pill, TestTube, FileText, Bell, Video, Zap, Key, Lightbulb, AlertTriangle, BookOpen, Search, BarChart3, User, Play, Check, X } from "lucide-react";
+import { SEO } from "@/components/SEO";
+
 
 interface Module {
   id: string;
@@ -223,6 +225,19 @@ export default function Academy() {
 
   return (
     <div className="min-h-screen bg-background pb-24">
+      <SEO
+        title="CompCare Academy — lär dig Cosmic EHR snabbt"
+        description="Praktisk Cosmic-skola för vårdkonsulter. Lär dig dokumentation, recept, remisser och journal på under en timme — modul för modul."
+        path="/consultant/academy"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Course",
+          name: "CompCare Academy — Cosmic EHR",
+          description: "Modulbaserad introduktion till Cosmic EHR för vårdkonsulter.",
+          provider: { "@type": "Organization", name: "CompCare", url: "https://www.compcare.se" },
+        }}
+      />
+
       {/* Hero */}
       <section className="hero-gradient px-5 pt-10 pb-12 text-center">
         <div className="text-5xl mb-3">🖥️</div>

@@ -1,10 +1,10 @@
-import { useEffect } from "react";
+
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import CompcareLogo from "@/components/CompcareLogo";
 import Navbar from "@/components/Navbar";
-import { setPageMeta } from "@/lib/setPageMeta";
+import { SEO } from "@/components/SEO";
 
 const ARTICLE_JSONLD = {
   "@context": "https://schema.org",
@@ -64,22 +64,17 @@ export default function AnestesiReport() {
   const recMinA = Math.round(zone1Rate * SHARE_MIN_ANSTALLD);
   const recMaxA = Math.round(zone1Rate * SHARE_MAX_ANSTALLD);
 
-  useEffect(() => {
-    setPageMeta({
-      title: "Anestesisjuksköterska – timpris & lön 2026 | CompCare",
-      description:
-        "Aktuella ramavtalspriser, OB-tillägg och rekommenderat konsultarvode för anestesisjuksköterskor i Sveriges tre priszoner.",
-      path: "/rapport/anestesisjukskoterska",
-    });
-  }, []);
-
   return (
     <div className="min-h-screen bg-background">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(ARTICLE_JSONLD) }}
+      <SEO
+        title="Anestesisjuksköterska – timpris & lön 2026 | CompCare"
+        description="Aktuella ramavtalspriser, OB-tillägg och rekommenderat konsultarvode för anestesisjuksköterskor i Sveriges tre priszoner."
+        path="/rapport/anestesisjukskoterska"
+        ogType="article"
+        jsonLd={ARTICLE_JSONLD}
       />
       <Navbar />
+
 
       {/* Hero header */}
       <header className="relative overflow-hidden hero-gradient px-5 pt-20 pb-10 sm:pt-24 sm:pb-12">
