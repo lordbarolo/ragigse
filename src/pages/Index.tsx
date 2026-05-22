@@ -92,24 +92,20 @@ export default function Index() {
       </nav>
 
       {/* ── Hero ───────────────────────────────────────── */}
-      <section className="relative pt-16 pb-20 px-6 bg-[#EFECE3]" aria-labelledby="hero-heading">
-        <div className="max-w-4xl mx-auto relative z-10">
-          <h1
-            id="hero-heading"
-            className="text-black font-extrabold tracking-tight leading-[1.05] text-5xl md:text-7xl mb-8"
-          >
-            <span className="underline underline-offset-[6px] decoration-[5px] md:decoration-[6px]">Löneanalys</span>{" "}
-            och{" "}
-            <span className="underline underline-offset-[6px] decoration-[5px] md:decoration-[6px]">förhandlingsstöd</span>{" "}
-            för vårdens konsulter
+      <section className="hero-dark relative pt-12 pb-20 px-6" aria-labelledby="hero-heading">
+        <div className="max-w-4xl mx-auto text-center relative z-10">
+          <h1 id="hero-heading" className="font-bold mb-5 tracking-tight text-5xl leading-[1.1]">
+            Förhandla utifrån data,<br />inte magkänsla
           </h1>
 
-          <p className="text-neutral-700 text-lg md:text-xl max-w-2xl mb-10 leading-relaxed">
-            Jämför din ersättning mot SKR:s ramavtal 2026. Neutral analys, inga säljsamtal — på under 60 sekunder.
+          <p className="text-hero-foreground/70 text-lg md:text-xl max-w-2xl mx-auto mb-8 leading-relaxed whitespace-pre-line">
+            Vi visar aktuella ersättningsnivåer för läkare och sjuksköterskor på bemanningsuppdrag. Sök efter din roll och region för att se svaret direkt.{"\n"}
+            Baserat på SKR:s ramavtal för 2026 och AI-analyser av bemanningsbranschens marginaler.
           </p>
 
           <InlineTerminalSurvey />
         </div>
+        <div className="absolute bottom-0 left-1 right-1 h-[200px] bg-gradient-to-t from-background to-transparent" />
       </section>
 
       {/* ── Mission Section (tillfälligt borttagen) ────── */}
