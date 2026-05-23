@@ -305,7 +305,7 @@ export default function InlineTerminalSurvey() {
     <div className="relative w-full max-w-xl mx-auto mt-8 text-left">
       {/* Glow gradients */}
       <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-3xl">
-        <div className="absolute inset-0 bg-slate-700" />
+        <div className="absolute inset-0 bg-stone-900" />
       </div>
 
       <div className="rounded-2xl border border-white/10 bg-[#0D001A]/90 backdrop-blur-xl shadow-2xl overflow-hidden">
