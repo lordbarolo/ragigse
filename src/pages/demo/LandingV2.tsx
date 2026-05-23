@@ -558,7 +558,7 @@ export default function LandingV2() {
       </section>
 
       {/* ═══════════════════ 4. PRIMÄR PRODUKTTRAPPA ═══════════════════ */}
-      <section className="px-5 sm:px-6 lg:px-10 py-16 md:py-20 border-y border-slate-200 bg-white">
+      <section className="px-5 sm:px-6 lg:px-10 py-16 md:py-20 border-y border-slate-200 bg-yellow-200">
         <div className="max-w-6xl mx-auto">
           <div className="mb-10 md:mb-14">
             <span className="inline-block text-[11px] font-semibold uppercase tracking-[0.1em] text-[hsl(256_60%_45%)] bg-[hsl(256_100%_67%_/_0.08)] border border-[hsl(256_100%_67%_/_0.25)] rounded-full px-3.5 py-1 mb-4">
