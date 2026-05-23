@@ -598,7 +598,7 @@ export default function LandingV2() {
       </section>
 
       {/* ═══════════════════ 5. INFRASTRUKTUR (sekundär) ═══════════════════ */}
-      <section className="px-5 sm:px-6 lg:px-10 py-14 md:py-16">
+      <section className="px-5 sm:px-6 lg:px-10 py-14 md:py-16 bg-yellow-200">
         <div className="max-w-5xl mx-auto">
           <div className="mb-8 md:mb-10">
             <h2 className="text-[18px] sm:text-[20px] font-semibold text-white mb-1.5">
