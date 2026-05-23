@@ -659,7 +659,7 @@ export default function LandingV2() {
       {/* ── /Ljus sektion-wrapper ── */}
 
       {/* ── Footer ──────────────────────────── */}
-      <footer className="px-5 sm:px-6 lg:px-10 pt-10 pb-12 border-t border-white/10 bg-[hsl(260_50%_5%_/_0.6)]">
+      <footer className="px-5 sm:px-6 lg:px-10 pt-10 pb-12 border-t border-white/10 bg-[hsl(260_50%_5%_/_0.6)] bg-inherit">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-3 gap-8 mb-8">
             <div>
