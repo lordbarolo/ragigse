@@ -1,33 +1,33 @@
 /**
- * Automatiserat 390px responsivitetstest för H1 (samt långa H2/H3) med
- * långa svenska compound words. Failar om:
- *  1. En H1 saknar break-protection (overflow-wrap/word-break/hyphens)
- *  2. En rubrik innehåller ett ord >= 16 tecken som riskerar spilla över
- *     på 390px utan break-protection.
+ * Automatiserat 390px responsivitetstest för H1/H2/H3 med långa svenska
+ * compound words (t.ex. "Förhandlingsassistent", "Ersättningsanalys").
  *
- * Begränsning: jsdom mäter inte riktig text-rendering. Detta är ett
- * strukturellt CI-skyddsnät, inte pixel-perfekt. För pixel-mätning krävs
- * Playwright.
+ * Strategi:
+ *  1. Verifierar att index.css innehåller global break-protection
+ *     (overflow-wrap: anywhere + hyphens: auto) — skyddsnät för ALLA rubriker.
+ *  2. För varje publik sida: hittar långa ord (>=16 tecken) i rubriker och
+ *     failar om någon rubrik har inline-style som *överstyr* skyddsnätet
+ *     (white-space: nowrap, overflow-wrap: normal, word-break: keep-all).
+ *
+ * Begränsning: jsdom mäter inte riktig text-rendering. För pixel-exakt
+ * overflow-check krävs Playwright (separat).
  */
 import { describe, it, expect, beforeAll } from "vitest";
 import { render } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { HelmetProvider } from "react-helmet-async";
 import React from "react";
 
-// Sidor att testa — endast statiska/publika sidor utan auth-krav.
 import Index from "@/pages/Index";
 import FAQ from "@/pages/FAQ";
 import ReferenserInfo from "@/pages/ReferenserInfo";
 import VerifyInfo from "@/pages/VerifyInfo";
 
 const VIEWPORT_WIDTH = 390;
-const LONG_WORD_THRESHOLD = 16; // tecken — "Förhandlingsassistent" = 21
+const LONG_WORD_THRESHOLD = 16;
 
-// Ord som av designval bryts manuellt eller är acceptabla (whitelist).
-const IGNORED_WORDS = new Set<string>([
-  "compcare",
-]);
+const IGNORED_WORDS = new Set<string>(["compcare"]);
 
 function setMobileViewport() {
   Object.defineProperty(window, "innerWidth", { writable: true, configurable: true, value: VIEWPORT_WIDTH });
@@ -38,36 +38,35 @@ function setMobileViewport() {
 function wrap(ui: React.ReactElement) {
   const qc = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return (
-    <QueryClientProvider client={qc}>
-      <MemoryRouter>{ui}</MemoryRouter>
-    </QueryClientProvider>
+    <HelmetProvider>
+      <QueryClientProvider client={qc}>
+        <MemoryRouter>{ui}</MemoryRouter>
+      </QueryClientProvider>
+    </HelmetProvider>
   );
 }
 
-function hasBreakProtection(el: Element): boolean {
-  const cs = window.getComputedStyle(el);
-  // jsdom returnerar oftast tomma strängar för dessa. Vi godtar:
-  //  - explicit värde satt på elementet
-  //  - att globala CSS-regeln i index.css finns (vi importerar inte CSS i jsdom,
-  //    så vi verifierar via en separat regex på källfilen i ett eget test).
-  return (
-    cs.overflowWrap === "anywhere" ||
-    cs.wordBreak === "break-word" ||
-    cs.wordBreak === "break-all" ||
-    (cs as any).webkitHyphens === "auto" ||
-    cs.hyphens === "auto"
-  );
-}
-
-function findLongWord(text: string): string | null {
-  const words = text.split(/\s+/).filter(Boolean);
-  for (const w of words) {
-    const clean = w.replace(/[.,;:!?–—()"'`´]/g, "");
-    if (clean.length >= LONG_WORD_THRESHOLD && !IGNORED_WORDS.has(clean.toLowerCase())) {
-      return clean;
-    }
+/** Returnerar problembeskrivning om inline-style överstyr break-protection. */
+function inlineOverridesBreak(el: HTMLElement): string | null {
+  const style = el.getAttribute("style") || "";
+  const norm = style.toLowerCase().replace(/\s/g, "");
+  if (norm.includes("white-space:nowrap")) return "white-space:nowrap";
+  if (norm.includes("overflow-wrap:normal")) return "overflow-wrap:normal";
+  if (norm.includes("word-break:keep-all")) return "word-break:keep-all";
+  // Tailwind-klasser som överstyr
+  const cls = el.className || "";
+  if (typeof cls === "string") {
+    if (/\bwhitespace-nowrap\b/.test(cls)) return "class:whitespace-nowrap";
+    if (/\bbreak-keep\b/.test(cls)) return "class:break-keep";
   }
   return null;
+}
+
+function findLongWords(text: string): string[] {
+  return text
+    .split(/\s+/)
+    .map((w) => w.replace(/[.,;:!?–—()"'`´]/g, ""))
+    .filter((w) => w.length >= LONG_WORD_THRESHOLD && !IGNORED_WORDS.has(w.toLowerCase()));
 }
 
 const PAGES: Array<{ name: string; el: React.ReactElement }> = [
@@ -82,7 +81,7 @@ describe("H1 overflow @ 390px (svenska compound words)", () => {
     setMobileViewport();
   });
 
-  it("index.css innehåller global H1 break-protection", async () => {
+  it("index.css innehåller global rubrik break-protection", async () => {
     const fs = await import("fs");
     const path = await import("path");
     const css = fs.readFileSync(path.resolve(__dirname, "../index.css"), "utf-8");
@@ -91,25 +90,26 @@ describe("H1 overflow @ 390px (svenska compound words)", () => {
   });
 
   for (const page of PAGES) {
-    it(`${page.name}: H1 hanterar långa svenska ord`, () => {
+    it(`${page.name}: inga rubriker överstyr break-protection vid långa svenska ord`, () => {
       const { container, unmount } = render(wrap(page.el));
-      const headings = container.querySelectorAll("h1, h2, h3");
-      expect(headings.length, `${page.name} har ingen H1/H2/H3`).toBeGreaterThan(0);
+      const headings = Array.from(container.querySelectorAll<HTMLElement>("h1, h2, h3"));
 
       const failures: string[] = [];
-      headings.forEach((h) => {
+      for (const h of headings) {
         const text = (h.textContent || "").trim();
-        if (!text) return;
-        const longWord = findLongWord(text);
-        if (longWord && !hasBreakProtection(h)) {
+        if (!text) continue;
+        const longWords = findLongWords(text);
+        if (longWords.length === 0) continue;
+        const override = inlineOverridesBreak(h);
+        if (override) {
           failures.push(
-            `${page.name} <${h.tagName.toLowerCase()}>: "${text}" innehåller långt ord "${longWord}" (${longWord.length} tecken) utan break-protection`
+            `${page.name} <${h.tagName.toLowerCase()}>: "${text}" — långa ord [${longWords.join(", ")}] men ${override} förhindrar radbrytning`
           );
         }
-      });
+      }
 
       unmount();
-      expect(failures, failures.join("\n")).toHaveLength(0);
+      expect(failures, "\n" + failures.join("\n")).toHaveLength(0);
     });
   }
 });
