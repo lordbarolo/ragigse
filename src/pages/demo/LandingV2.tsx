@@ -384,7 +384,7 @@ export default function LandingV2() {
       </section>
 
       {/* ═══════════════════ MAKE-STIL: PILLAR-SEKTION ═══════════════════ */}
-      <section className="relative px-5 sm:px-6 lg:px-10 py-20 md:py-28 overflow-hidden">
+      <section className="relative px-5 sm:px-6 lg:px-10 py-20 md:py-28 overflow-hidden bg-yellow-200">
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
