@@ -627,7 +627,7 @@ export default function LandingV2() {
       </section>
 
       {/* ═══════════════════ 6. FÖRTROENDE ═══════════════════ */}
-      <section className="px-5 sm:px-6 lg:px-10 pb-14 md:pb-20">
+      <section className="px-5 sm:px-6 lg:px-10 pb-14 md:pb-20 bg-yellow-200">
         <div className="max-w-5xl mx-auto glass rounded-2xl p-7 md:p-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
             {TRUST_POINTS.map((t) => (
