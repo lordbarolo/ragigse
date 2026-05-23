@@ -155,6 +155,16 @@
 
   h1 { letter-spacing: -0.03em; }
 
+  /* Skyddsnät för långa svenska compound words (t.ex. "Förhandlingsassistent",
+     "Ersättningsanalys") så de bryts snyggt på smala viewports (390px) istället
+     för att spilla över containern. Påverkar inte desktop visuellt. */
+  h1, h2, h3, h4 {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    hyphens: auto;
+    -webkit-hyphens: auto;
+  }
+
   /* Section eyebrow / label letter-spacing */
   .eyebrow, [data-eyebrow] {
     letter-spacing: 0.18em;
