@@ -327,7 +327,7 @@ export default function LandingV2() {
       </nav>
 
       {/* ═══════════════════ 1. HERO med inline-form + porträtt ═══════════════════ */}
-      <section className="relative z-20 overflow-visible px-5 sm:px-6 lg:px-10 hero-smooth-bg bg-yellow-200">
+      <section className="relative z-20 overflow-visible px-5 sm:px-6 lg:px-10 bg-yellow-200">
         <div className="relative z-10 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center pt-14 md:pt-24 pb-3 md:pb-4">
           {/* Vänster: rubrik och pitch */}
           <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
