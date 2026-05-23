@@ -281,7 +281,7 @@ export default function LandingV2() {
 
 
       {/* ── Nav ─────────────────────────────── */}
-      <nav className="relative flex items-center justify-between px-5 sm:px-6 lg:px-10 h-[60px] glass-strong border-b border-white/10">
+      <nav className="relative flex items-center justify-between px-5 sm:px-6 lg:px-10 h-[60px] glass-strong border-b border-white/10 bg-black">
         <Link to="/" aria-label="CompCare startsida" className="inline-flex items-center">
           <span className="font-sans font-semibold text-[22px] sm:text-[24px] tracking-tight leading-none">
             <span className="text-white">comp</span>
@@ -327,7 +327,7 @@ export default function LandingV2() {
       </nav>
 
       {/* ═══════════════════ 1. HERO med inline-form + porträtt ═══════════════════ */}
-      <section className="relative z-20 overflow-visible px-5 sm:px-6 lg:px-10 bg-yellow-200">
+      <section className="relative z-20 overflow-visible px-5 sm:px-6 lg:px-10 bg-slate-700">
         <div className="relative z-10 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center pt-14 md:pt-24 pb-3 md:pb-4">
           {/* Vänster: rubrik och pitch */}
           <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
@@ -337,7 +337,7 @@ export default function LandingV2() {
             </div>
             <h1 className="font-bold leading-[1.05] text-white mb-5 tracking-tight text-[34px] sm:text-5xl md:text-[56px]">
               Vet du vad du<br />
-              <span className="text-gradient-violet">är värd?</span>
+              <span className="text-gradient-violet text-white">är värd?</span>
             </h1>
             <p className="text-[16px] sm:text-lg text-white/75 leading-relaxed mb-2 max-w-[560px]">
               Se om din konsultersättning är marknadsmässig
