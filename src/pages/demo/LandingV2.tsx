@@ -327,7 +327,7 @@ export default function LandingV2() {
       </nav>
 
       {/* ═══════════════════ 1. HERO med inline-form + porträtt ═══════════════════ */}
-      <section className="relative z-20 overflow-visible px-5 sm:px-6 lg:px-10 hero-smooth-bg">
+      <section className="relative z-20 overflow-visible px-5 sm:px-6 lg:px-10 hero-smooth-bg bg-pink-50">
         <div className="relative z-10 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center pt-14 md:pt-24 pb-3 md:pb-4">
           {/* Vänster: rubrik och pitch */}
           <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
@@ -384,7 +384,7 @@ export default function LandingV2() {
       </section>
 
       {/* ═══════════════════ MAKE-STIL: PILLAR-SEKTION ═══════════════════ */}
-      <section className="relative px-5 sm:px-6 lg:px-10 py-20 md:py-28 overflow-hidden">
+      <section className="relative px-5 sm:px-6 lg:px-10 py-20 md:py-28 overflow-hidden bg-yellow-200">
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -558,7 +558,7 @@ export default function LandingV2() {
       </section>
 
       {/* ═══════════════════ 4. PRIMÄR PRODUKTTRAPPA ═══════════════════ */}
-      <section className="px-5 sm:px-6 lg:px-10 py-16 md:py-20 border-y border-slate-200 bg-white">
+      <section className="px-5 sm:px-6 lg:px-10 py-16 md:py-20 border-y border-slate-200 bg-yellow-200">
         <div className="max-w-6xl mx-auto">
           <div className="mb-10 md:mb-14">
             <span className="inline-block text-[11px] font-semibold uppercase tracking-[0.1em] text-[hsl(256_60%_45%)] bg-[hsl(256_100%_67%_/_0.08)] border border-[hsl(256_100%_67%_/_0.25)] rounded-full px-3.5 py-1 mb-4">
@@ -598,7 +598,7 @@ export default function LandingV2() {
       </section>
 
       {/* ═══════════════════ 5. INFRASTRUKTUR (sekundär) ═══════════════════ */}
-      <section className="px-5 sm:px-6 lg:px-10 py-14 md:py-16">
+      <section className="px-5 sm:px-6 lg:px-10 py-14 md:py-16 bg-yellow-200">
         <div className="max-w-5xl mx-auto">
           <div className="mb-8 md:mb-10">
             <h2 className="text-[18px] sm:text-[20px] font-semibold text-white mb-1.5">
@@ -627,7 +627,7 @@ export default function LandingV2() {
       </section>
 
       {/* ═══════════════════ 6. FÖRTROENDE ═══════════════════ */}
-      <section className="px-5 sm:px-6 lg:px-10 pb-14 md:pb-20">
+      <section className="px-5 sm:px-6 lg:px-10 pb-14 md:pb-20 bg-yellow-200">
         <div className="max-w-5xl mx-auto glass rounded-2xl p-7 md:p-10">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
             {TRUST_POINTS.map((t) => (
@@ -659,7 +659,7 @@ export default function LandingV2() {
       {/* ── /Ljus sektion-wrapper ── */}
 
       {/* ── Footer ──────────────────────────── */}
-      <footer className="px-5 sm:px-6 lg:px-10 pt-10 pb-12 border-t border-white/10 bg-[hsl(260_50%_5%_/_0.6)]">
+      <footer className="px-5 sm:px-6 lg:px-10 pt-10 pb-12 border-t border-white/10 bg-[hsl(260_50%_5%_/_0.6)] bg-inherit">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-3 gap-8 mb-8">
             <div>
