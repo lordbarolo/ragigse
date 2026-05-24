@@ -337,15 +337,15 @@ export default function LandingV2() {
       </nav>
 
       {/* ═══════════════════ 1. HERO med inline-form + porträtt ═══════════════════ */}
-      <section data-no-roomy className="relative z-20 overflow-visible px-5 sm:px-6 lg:px-10 bg-black pt-14 md:pt-[60px] pb-3 md:pb-4">
-        <div className="relative z-10 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center lg:items-start">
+      <section data-no-roomy className="relative z-20 overflow-visible px-5 sm:px-6 lg:px-10 bg-black pt-14 md:pt-20 pb-3 md:pb-4">
+        <div className="relative z-10 max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12 items-center md:items-start">
           {/* Vänster: rubrik och pitch */}
-          <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
+          <div className="flex flex-col items-center md:items-start text-center md:text-left md:w-full">
             <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-medium rounded-full px-3 py-1 mb-5 uppercase tracking-wider" style={{ backgroundColor: '#E8E4F0', color: '#3D3491', border: '1px solid #3D3491' }}>
               <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="currentColor" /></svg>
               För läkare &amp; sjuksköterskor
             </div>
-            <h1 className="font-bold leading-[1.05] text-white mb-5 tracking-tight text-[34px] sm:text-5xl md:text-[56px]">
+            <h1 className="font-bold leading-[1.05] text-white mb-5 tracking-tight text-[34px] sm:text-5xl md:text-[64px]">
               Vet du vad du<br />
               <span className="text-gradient-violet text-white">är värd?</span>
             </h1>
@@ -358,7 +358,7 @@ export default function LandingV2() {
           </div>
 
           {/* Höger: formulär */}
-          <div className="w-full">
+          <div className="w-full md:max-w-[480px] md:justify-self-end">
             <InlineTerminalSurvey />
           </div>
         </div>
@@ -394,33 +394,14 @@ export default function LandingV2() {
       </section>
 
       {/* ═══════════════════ MAKE-STIL: PILLAR-SEKTION ═══════════════════ */}
-      <section className="relative px-5 sm:px-6 lg:px-10 py-20 md:py-28 overflow-hidden bg-[#EEEBE4]">
+      <section data-no-roomy className="relative px-5 sm:px-6 lg:px-10 py-16 md:py-20 overflow-hidden bg-[#EEEBE4]">
         <div className="absolute inset-0 pointer-events-none bg-[#EEEBE4]" />
         <div className="relative max-w-6xl mx-auto">
-          <h2 className="font-bold text-center text-[#0A0A0A] tracking-tight leading-[1.1] text-[32px] sm:text-[44px] md:text-[56px] max-w-[920px] mx-auto mb-12 md:mb-16">
+          <h2 className="font-bold text-left text-[#0A0A0A] tracking-tight leading-[1.1] text-[32px] sm:text-[40px] md:text-[48px] max-w-[920px] mb-12 md:mb-16">
             Du borde veta vad du är värd — innan du skriver på.
           </h2>
 
-          {/* Tab pills */}
-          <div className="glass rounded-full p-1.5 max-w-3xl mx-auto mb-12 md:mb-16 flex flex-wrap items-center justify-center gap-1">
-            {PILLARS.map((p) => {
-              const active = activePillar === p.id;
-              return (
-                <button
-                  key={p.id}
-                  onClick={() => setActivePillar(p.id)}
-                  className={`relative inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-full text-[13px] sm:text-sm font-medium transition-all ${
-                    active
-                      ? "bg-[#E8E4F0] text-[#0A0A0A] border border-[#3D3491]/30 shadow-[0_0_30px_-5px_rgba(61,52,145,0.15)]"
-                      : "text-[#4A4A4A] hover:text-[#0A0A0A] border border-transparent"
-                  }`}
-                >
-                  <p.icon className="w-4 h-4" />
-                  {p.label}
-                </button>
-              );
-            })}
-          </div>
+
 
           {/* Showcase row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
@@ -561,7 +542,7 @@ export default function LandingV2() {
       </section>
 
       {/* ═══════════════════ 4. PRIMÄR PRODUKTTRAPPA ═══════════════════ */}
-      <section className="px-5 sm:px-6 lg:px-10 py-16 md:py-20 border-y border-slate-200 bg-[#EEEBE4]">
+      <section data-no-roomy className="px-5 sm:px-6 lg:px-10 py-16 md:pt-20 md:pb-8 border-y border-slate-200 bg-[#EEEBE4]">
         <div className="max-w-6xl mx-auto">
           <div className="mb-10 md:mb-14">
             <span className="inline-block text-[11px] font-semibold uppercase tracking-[0.1em] text-[hsl(256_60%_45%)] bg-[hsl(256_100%_67%_/_0.08)] border border-[hsl(256_100%_67%_/_0.25)] rounded-full px-3.5 py-1 mb-4">
@@ -601,7 +582,7 @@ export default function LandingV2() {
       </section>
 
       {/* ═══════════════════ 5. INFRASTRUKTUR (sekundär) ═══════════════════ */}
-      <section className="px-5 sm:px-6 lg:px-10 py-14 md:py-16 bg-inherit">
+      <section data-no-roomy className="px-5 sm:px-6 lg:px-10 py-14 md:pt-8 md:pb-16 bg-inherit">
         <div className="max-w-5xl mx-auto">
           <div className="mb-8 md:mb-10">
             <h2 className="text-[18px] sm:text-[20px] font-semibold text-[#0A0A0A] mb-1.5">

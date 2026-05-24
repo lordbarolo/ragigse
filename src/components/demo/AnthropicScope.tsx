@@ -130,8 +130,8 @@ export default function AnthropicScope({
         }
         @media (min-width: 768px) {
           .demo-anthropic-scope section:not([data-no-roomy]) {
-            padding-top: 128px !important;
-            padding-bottom: 128px !important;
+            padding-top: 80px !important;
+            padding-bottom: 80px !important;
           }
         }
         ` : ``}
