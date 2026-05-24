@@ -316,15 +316,15 @@ export default function LandingV2() {
 
         {menuOpen && (
           <>
-            <div className="fixed inset-0 bg-black/60 z-40" onClick={() => setMenuOpen(false)} aria-hidden="true" />
-            <div className="absolute top-full right-4 lg:right-10 mt-2 w-72 glass-strong border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden">
+            <div className="fixed inset-0 bg-black/30 z-40" onClick={() => setMenuOpen(false)} aria-hidden="true" />
+            <div className="absolute top-full right-4 lg:right-10 mt-2 w-72 border border-black/10 rounded-xl shadow-2xl z-50 overflow-hidden bg-white">
               <div className="flex flex-col py-2">
                 {NAV_LINKS.map((l) => (
                   <Link
                     key={l.label}
                     to={l.href}
                     onClick={() => setMenuOpen(false)}
-                    className="px-4 py-3 text-sm text-white/85 hover:bg-white/5 hover:text-white transition-colors"
+                    className="px-4 py-3 text-sm text-black/85 hover:bg-black/5 hover:text-black transition-colors"
                   >
                     {l.label}
                   </Link>
@@ -333,6 +333,7 @@ export default function LandingV2() {
             </div>
           </>
         )}
+
       </nav>
 
       {/* ═══════════════════ 1. HERO med inline-form + porträtt ═══════════════════ */}
