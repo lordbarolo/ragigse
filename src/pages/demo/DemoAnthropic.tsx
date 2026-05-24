@@ -21,7 +21,7 @@ export default function DemoAnthropic() {
             ["--font-display" as any]: 'Georgia, "Times New Roman", serif',
             ["--font-body" as any]:
               '"Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-            backgroundColor: "#0A0A0A",
+            backgroundColor: "#EEEBE4",
             backgroundImage: [
               "radial-gradient(ellipse 70% 55% at 15% 25%, hsl(196 100% 50% / 0.18) 0%, transparent 55%)",
               "radial-gradient(ellipse 55% 50% at 85% 20%, hsl(245 58% 60% / 0.14) 0%, transparent 50%)",
@@ -34,14 +34,14 @@ export default function DemoAnthropic() {
         }
       >
         <style>{`
-          /* ── Bakgrund: tvinga #0A0A0A över hela scopet ── */
+          /* ── Bakgrund: tvinga #EEEBE4 över hela scopet ── */
           .demo-anthropic-scope,
           .demo-anthropic-scope .bg-black,
           .demo-anthropic-scope [class*="bg-slate-"],
           .demo-anthropic-scope [class*="bg-neutral-"],
           .demo-anthropic-scope [class*="bg-zinc-"],
           .demo-anthropic-scope [class*="bg-gray-"] {
-            background-color: #0A0A0A !important;
+            background-color: #EEEBE4 !important;
           }
 
           /* ── Typografi: Georgia för rubriker ── */
@@ -52,7 +52,7 @@ export default function DemoAnthropic() {
           .demo-anthropic-scope h5,
           .demo-anthropic-scope h6 {
             font-family: Georgia, "Times New Roman", serif !important;
-            color: #FFFFFF !important;
+            color: #000000 !important;
             letter-spacing: -0.02em;
             font-weight: 600;
           }
@@ -61,14 +61,14 @@ export default function DemoAnthropic() {
             line-height: 1.05;
           }
 
-          /* Ta bort violet text-gradient så rubriker blir helvita */
+          /* Ta bort violet text-gradient så rubriker blir svarta */
           .demo-anthropic-scope .text-gradient-violet {
             background: none !important;
-            -webkit-text-fill-color: #FFFFFF !important;
-            color: #FFFFFF !important;
+            -webkit-text-fill-color: #000000 !important;
+            color: #000000 !important;
           }
 
-          /* ── Brödtext: sans-serif, #A3A3A3 ── */
+          /* ── Brödtext: sans-serif, svart ── */
           .demo-anthropic-scope,
           .demo-anthropic-scope p,
           .demo-anthropic-scope li,
@@ -81,7 +81,7 @@ export default function DemoAnthropic() {
           .demo-anthropic-scope p,
           .demo-anthropic-scope li,
           .demo-anthropic-scope blockquote {
-            color: #A3A3A3;
+            color: #000000;
           }
 
           /* ── Sekundär text / labels / eyebrows ── */
@@ -91,7 +91,7 @@ export default function DemoAnthropic() {
           .demo-anthropic-scope .eyebrow,
           .demo-anthropic-scope [data-eyebrow],
           .demo-anthropic-scope .uppercase {
-            color: #6B7280 !important;
+            color: #555555 !important;
           }
 
           /* UI-element behåller sans */
