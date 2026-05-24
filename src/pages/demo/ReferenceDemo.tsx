@@ -86,6 +86,6 @@ export default function ReferenceDemo() {
           />
         </div>
       </div>
-    </div>
+    </AnthropicScope>
   );
 }
