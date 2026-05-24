@@ -154,7 +154,7 @@ const INFRASTRUCTURE: InfraCard[] = [
 ];
 
 const TRUST_POINTS = [
-  { icon: ShieldCheck, title: "BankID-verifiering", note: "LANSERAS I MAJ 2026", muted: true },
+  { icon: ShieldCheck, title: "BankID-verifiering" },
   { icon: Lock, title: "GDPR-kompatibel", note: "All data lagras inom EU" },
   { icon: FileLock2, title: "Aldrig till tredje part", note: "Vi säljer inte din data" },
 ];
