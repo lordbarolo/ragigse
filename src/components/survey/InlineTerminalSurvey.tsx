@@ -304,7 +304,7 @@ export default function InlineTerminalSurvey() {
   const progressPct = (step / TOTAL_STEPS) * 100;
 
   return (
-    <div className="relative w-full max-w-xl mx-auto mt-8 text-left">
+    <div data-dark-surface className="relative w-full max-w-xl mx-auto mt-8 text-left">
       <div className="rounded-xl border border-[#2D2D2D] bg-[#1A1A1A] p-6 shadow-2xl overflow-hidden">
         {/* Progress bar */}
         <div className="h-[2px] bg-white/5 -mx-6 -mt-6 mb-6">

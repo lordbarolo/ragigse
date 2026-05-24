@@ -100,6 +100,27 @@ export default function DemoAnthropic() {
               BlinkMacSystemFont, "Segoe UI", sans-serif !important;
           }
 
+          /* ── Undantag: mörka ytor (t.ex. hero-formuläret) behåller vit text ── */
+          .demo-anthropic-scope [data-dark-surface],
+          .demo-anthropic-scope [data-dark-surface] *,
+          .demo-anthropic-scope [data-dark-surface] h1,
+          .demo-anthropic-scope [data-dark-surface] h2,
+          .demo-anthropic-scope [data-dark-surface] h3,
+          .demo-anthropic-scope [data-dark-surface] h4,
+          .demo-anthropic-scope [data-dark-surface] h5,
+          .demo-anthropic-scope [data-dark-surface] h6,
+          .demo-anthropic-scope [data-dark-surface] p,
+          .demo-anthropic-scope [data-dark-surface] li,
+          .demo-anthropic-scope [data-dark-surface] label,
+          .demo-anthropic-scope [data-dark-surface] span {
+            color: #FFFFFF !important;
+          }
+          .demo-anthropic-scope [data-dark-surface] .text-white\/40,
+          .demo-anthropic-scope [data-dark-surface] [class*="text-white/"] {
+            color: rgba(255,255,255,0.6) !important;
+          }
+
+
           /* ── Generös vertikal white space mellan sektioner (mobil ≥80px) ── */
           .demo-anthropic-scope section {
             padding-top: 80px !important;
