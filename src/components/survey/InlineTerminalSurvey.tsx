@@ -165,7 +165,7 @@ export default function InlineTerminalSurvey() {
     setStep(step - 1);
   };
 
-  // Auto-advance handlers
+  // Step 1: select category (no auto-advance — user clicks CTA)
   const handleCategory = (v: Category) => {
     trackStarted();
     const isBarnmorska = v === "barnmorska";
@@ -175,12 +175,14 @@ export default function InlineTerminalSurvey() {
       roleValue: isBarnmorska ? "__barnmorska" : "",
       yrke: isBarnmorska ? "Barnmorska" : "",
     }));
-    window.setTimeout(() => {
-      trackStepCompleted(1, v);
-      setDirection(1);
-      // Skip specialisering-steget för barnmorska
-      setStep(isBarnmorska ? 3 : 2);
-    }, 280);
+  };
+
+  const handleStartCompare = () => {
+    if (!s.category) return;
+    const isBarnmorska = s.category === "barnmorska";
+    trackStepCompleted(1, s.category);
+    setDirection(1);
+    setStep(isBarnmorska ? 3 : 2);
   };
 
   const handleRole = (v: string) => {
@@ -303,14 +305,9 @@ export default function InlineTerminalSurvey() {
 
   return (
     <div className="relative w-full max-w-xl mx-auto mt-8 text-left">
-      {/* Glow gradients */}
-      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-3xl">
-        <div className="absolute inset-0 bg-inherit" />
-      </div>
-
-      <div className="rounded-2xl border border-white/10 bg-[#0D001A]/90 backdrop-blur-xl shadow-2xl overflow-hidden">
+      <div className="rounded-xl border border-[#2D2D2D] bg-[#1A1A1A] p-6 shadow-2xl overflow-hidden">
         {/* Progress bar */}
-        <div className="h-[2px] bg-white/5">
+        <div className="h-[2px] bg-white/5 -mx-6 -mt-6 mb-6">
           <div
             className="h-full bg-gradient-to-r from-violet-500 to-fuchsia-500 transition-all duration-500 ease-out"
             style={{ width: `${progressPct}%` }}
@@ -318,23 +315,35 @@ export default function InlineTerminalSurvey() {
         </div>
 
         {/* Step content (fixed min-height to avoid jump) */}
-        <div className="relative px-6 py-7 sm:px-8 sm:py-8 font-sans text-white min-h-[280px] overflow-hidden">
+        <div className="relative font-sans text-white min-h-[280px] overflow-hidden">
           <StepTransition stepKey={step} direction={direction}>
             {step === 1 && (
-              <Step
-                question="Vad jobbar du som?"
-                subtitle="Välj din yrkeskategori för att komma igång."
-              >
-                <SearchableSelect
-                  value={s.category}
-                  onValueChange={(v) => handleCategory(v as Category)}
-                  placeholder="Välj yrke…"
-                  options={[
-                    { value: "lakare", label: "Läkare" },
-                    { value: "ssk", label: "Sjuksköterska" },
-                    { value: "barnmorska", label: "Barnmorska" },
-                  ]}
-                />
+              <Step question="Vad jobbar du som?">
+                <div className="space-y-4">
+                  <SearchableSelect
+                    value={s.category}
+                    onValueChange={(v) => handleCategory(v as Category)}
+                    placeholder="Välj yrke..."
+                    options={[
+                      { value: "lakare", label: "Läkare" },
+                      { value: "ssk", label: "Sjuksköterska" },
+                      { value: "barnmorska", label: "Barnmorska" },
+                    ]}
+                    triggerClassName="bg-[#2D2D2D] border-[#3D3D3D] text-[#E5E5E5] !focus:ring-[#534AB7]"
+                    placeholderClassName="text-[#6B7280]"
+                  />
+                  <button
+                    onClick={handleStartCompare}
+                    disabled={!s.category}
+                    className="w-full inline-flex items-center justify-center text-white font-semibold text-base rounded-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                    style={{
+                      backgroundColor: "#534AB7",
+                      padding: "14px",
+                    }}
+                  >
+                    Jämför min lön
+                  </button>
+                </div>
               </Step>
             )}
 
@@ -444,7 +453,7 @@ export default function InlineTerminalSurvey() {
         </div>
 
         {/* Back link */}
-        <div className="flex items-center justify-between px-6 sm:px-8 pb-3 min-h-[28px]">
+        <div className="flex items-center justify-between pb-3 min-h-[28px]">
           {step > 1 ? (
             <button
               onClick={goBack}
@@ -456,13 +465,6 @@ export default function InlineTerminalSurvey() {
           ) : (
             <span />
           )}
-        </div>
-
-        {/* Footer */}
-        <div className="px-5 py-3 border-t border-white/10 bg-white/[0.02]">
-          <p className="font-mono text-[10px] text-white/40 text-center tracking-wider">
-            ANONYMT • KOSTNADSFRITT • KLART PÅ 60 SEKUNDER
-          </p>
         </div>
       </div>
     </div>
