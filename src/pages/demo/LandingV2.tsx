@@ -183,7 +183,7 @@ const PILLARS = [
 ];
 
 const PILLAR_CONTENT: Record<string, { title: string; desc: string }> = {
-  data:  { title: "Skalbar & datadriven analys", desc: "Vi har analyserat 20 000+ avtal och rapporter för att ge dig insyn i ersättningen för läkare och sjuksksöterskor inom vårdbemanning." },
+  data:  { title: "Byggt på 20 000+ verkliga avtal", desc: "Vi har analyserat 20 000+ avtal och rapporter för att ge dig insyn i ersättningen för läkare och sjuksksöterskor inom vårdbemanning." },
   agent: { title: "Autonoma agenter, alltid på", desc: "Förhandlingsagenten håller koll på prisuppdateringar, ramavtalsändringar och nya avrop åt dig — och pingar när något händer." },
   speed: { title: "Från fråga till svar — på 60 sekunder", desc: "Inga formulär. Välj roll och ort, få din marknadmässig lön direkt. Hela rapporten levereras innan du hinner brygga kaffet." },
   trust: { title: "Verifierad data, hela vägen", desc: "All ersättningsdata kommer direkt från SKR:s ramavtal 2026. Uppgifter som alltid varit offentliga men aldrig paketerade för dig som jobbar." },
@@ -370,8 +370,8 @@ export default function LandingV2() {
       {/* ═══════════════════ 2. RULLANDE ERSÄTTNINGSBANNER ═══════════════════ */}
       <section className="border-y border-slate-200 pt-3 pb-4 bg-white overflow-hidden">
         <div className="flex justify-center px-5 sm:px-6 lg:px-10 mb-3">
-          <span className="text-[11px] font-semibold tracking-[0.14em] uppercase text-slate-500 text-center">
-            LÖNENIVÅER BERÄKNADE PÅ STANDARDMARGINALER OCH OFFENTLIGA RAMAVTAL I 290 KOMMUNER OCH 21 REGIONER
+          <span className="text-[11px] font-semibold tracking-[0.14em] text-slate-500 text-center">
+            Baserat på offentliga ramavtal · 290 kommuner · 21 regioner
           </span>
         </div>
         <div className="overflow-hidden whitespace-nowrap select-none">
@@ -402,8 +402,7 @@ export default function LandingV2() {
         />
         <div className="relative max-w-6xl mx-auto">
           <h2 className="font-bold text-center text-white tracking-tight leading-[1.1] text-[32px] sm:text-[44px] md:text-[56px] max-w-[920px] mx-auto mb-12 md:mb-16">
-            Datadriven löneanalys och förhandling med{" "}
-            <span className="text-gradient-violet text-white">agentbaserad intelligens</span> inbyggd
+            Du borde veta vad du är värd — innan du skriver på.
           </h2>
 
           {/* Tab pills */}
