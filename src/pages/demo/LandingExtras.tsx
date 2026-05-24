@@ -10,7 +10,7 @@ const STEPS = [
 
 export default function LandingExtras() {
   return (
-    <div className="w-full bg-[#F2F1F8] text-foreground font-sans">
+    <div className="w-full text-foreground font-sans" style={{ ...heroBackgroundStyle, minHeight: "100vh" }}>
       {/* ── Nav ─────────────────────────────── */}
       <nav className="flex items-center justify-between px-6 lg:px-10 h-[60px] bg-white border-b border-border/40">
         <Link to="/"><CompcareLogo variant="wordmark" /></Link>
