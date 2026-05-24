@@ -307,7 +307,7 @@ export default function InlineTerminalSurvey() {
     <div className="relative w-full max-w-xl mx-auto mt-8 text-left">
       <div className="rounded-xl border border-[#2D2D2D] bg-[#1A1A1A] p-6 shadow-2xl overflow-hidden">
         {/* Progress bar */}
-        <div className="h-[2px] bg-white/5">
+        <div className="h-[2px] bg-white/5 -mx-6 -mt-6 mb-6">
           <div
             className="h-full bg-gradient-to-r from-violet-500 to-fuchsia-500 transition-all duration-500 ease-out"
             style={{ width: `${progressPct}%` }}
