@@ -271,7 +271,7 @@ export default function LandingV2() {
   }, []);
 
   return (
-    <div className="w-full text-foreground font-sans">
+    <div className="w-full text-foreground font-sans bg-black min-h-screen">
       <SEO
         title="CompCare – Lön & ramavtalspriser för vårdkonsulter"
         description="Jämför ditt erbjudande mot SKR:s ramavtalspriser i 290 kommuner. Gratis löneanalys för sjuksköterskor, barnmorskor och läkare."
@@ -283,10 +283,7 @@ export default function LandingV2() {
       {/* ── Nav ─────────────────────────────── */}
       <nav className="relative flex items-center justify-between px-5 sm:px-6 lg:px-10 h-[60px] glass-strong border-b border-white/10 bg-black">
         <Link to="/" aria-label="CompCare startsida" className="inline-flex items-center">
-          <span className="font-sans font-semibold text-[22px] sm:text-[24px] tracking-tight leading-none">
-            <span className="text-white">comp</span>
-            <span className="text-[hsl(320_95%_70%)]">care</span>
-          </span>
+          <CompcareLogo variant="full" inverted={true} />
         </Link>
         <div className="flex items-center gap-2 sm:gap-3">
           <Link to="/logga-in">
@@ -327,7 +324,7 @@ export default function LandingV2() {
       </nav>
 
       {/* ═══════════════════ 1. HERO med inline-form + porträtt ═══════════════════ */}
-      <section className="relative z-20 overflow-visible px-5 sm:px-6 lg:px-10 bg-slate-700">
+      <section className="relative z-20 overflow-visible px-5 sm:px-6 lg:px-10 bg-black">
         <div className="relative z-10 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center pt-14 md:pt-24 pb-3 md:pb-4">
           {/* Vänster: rubrik och pitch */}
           <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
@@ -356,8 +353,8 @@ export default function LandingV2() {
 
 
 
-      {/* ═══ Ljus sektion-wrapper för allt under hero ═══ */}
-      <div className="bg-yellow-200 text-slate-900 [&_.text-white]:!text-slate-900 [&_.text-white\/85]:!text-slate-700 [&_.text-white\/80]:!text-slate-700 [&_.text-white\/75]:!text-slate-600 [&_.text-white\/70]:!text-slate-600 [&_.text-white\/65]:!text-slate-600 [&_.text-white\/60]:!text-slate-500 [&_.text-white\/55]:!text-slate-500 [&_.text-white\/50]:!text-slate-500 [&_.text-white\/45]:!text-slate-400 [&_.border-white\/10]:!border-slate-200 [&_.border-white\/15]:!border-slate-200 [&_.glass]:!bg-white [&_.glass]:!border-slate-200 [&_.glass]:!shadow-sm [&_.glass-strong]:!bg-white [&_.glass-strong]:!border-slate-200 [&_.glass-subtle]:!bg-white [&_.glass-subtle]:!border-slate-200 [&_.bg-white\/5]:!bg-slate-100 [&_.bg-white\/8]:!bg-slate-100 [&_.hover\:bg-white\/5:hover]:!bg-slate-100">
+      {/* ═══ Mörk sektion-wrapper för allt under hero ═══ */}
+      <div className="bg-black">
 
       {/* ═══════════════════ 2. RULLANDE ERSÄTTNINGSBANNER ═══════════════════ */}
       <section className="border-y border-slate-200 pt-3 pb-4 bg-white overflow-hidden">
