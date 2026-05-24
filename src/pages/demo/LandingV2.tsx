@@ -582,7 +582,7 @@ export default function LandingV2() {
       </section>
 
       {/* ═══════════════════ 5. INFRASTRUKTUR (sekundär) ═══════════════════ */}
-      <section className="px-5 sm:px-6 lg:px-10 py-14 md:py-16 bg-inherit">
+      <section data-no-roomy className="px-5 sm:px-6 lg:px-10 py-14 md:pt-8 md:pb-16 bg-inherit">
         <div className="max-w-5xl mx-auto">
           <div className="mb-8 md:mb-10">
             <h2 className="text-[18px] sm:text-[20px] font-semibold text-[#0A0A0A] mb-1.5">
