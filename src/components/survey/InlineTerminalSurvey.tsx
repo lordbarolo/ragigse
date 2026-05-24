@@ -453,7 +453,7 @@ export default function InlineTerminalSurvey() {
         </div>
 
         {/* Back link */}
-        <div className="flex items-center justify-between px-6 sm:px-8 pb-3 min-h-[28px]">
+        <div className="flex items-center justify-between pb-3 min-h-[28px]">
           {step > 1 ? (
             <button
               onClick={goBack}
@@ -465,13 +465,6 @@ export default function InlineTerminalSurvey() {
           ) : (
             <span />
           )}
-        </div>
-
-        {/* Footer */}
-        <div className="px-5 py-3 border-t border-white/10 bg-white/[0.02]">
-          <p className="font-mono text-[10px] text-white/40 text-center tracking-wider">
-            ANONYMT • KOSTNADSFRITT • KLART PÅ 60 SEKUNDER
-          </p>
         </div>
       </div>
     </div>
