@@ -270,7 +270,15 @@ export default function ConsultantTrackContent({
             <div className="px-5 py-5">
               <Link
                 to="/logga-in"
-                className="inline-flex items-center justify-center gap-2 rounded-[10px] bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 transition-colors"
+                className="flex items-center justify-center gap-2 w-full"
+                style={{
+                  backgroundColor: '#3D3491',
+                  color: '#FFFFFF',
+                  padding: '16px 24px',
+                  fontSize: '16px',
+                  fontWeight: 600,
+                  borderRadius: '8px',
+                }}
               >
                 <LogIn className="w-4 h-4" />
                 Öppna förhandlingsassistenten
