@@ -14,6 +14,8 @@ interface SearchableSelectProps {
   onValueChange: (value: string) => void;
   placeholder?: string;
   className?: string;
+  triggerClassName?: string;
+  placeholderClassName?: string;
 }
 
 export default function SearchableSelect({
