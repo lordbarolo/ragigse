@@ -370,8 +370,8 @@ export default function LandingV2() {
       {/* ═══════════════════ 2. RULLANDE ERSÄTTNINGSBANNER ═══════════════════ */}
       <section className="border-y border-slate-200 pt-3 pb-4 bg-white overflow-hidden">
         <div className="flex justify-center px-5 sm:px-6 lg:px-10 mb-3">
-          <span className="text-[11px] font-semibold tracking-[0.14em] uppercase text-slate-500 text-center">
-            LÖNENIVÅER BERÄKNADE PÅ STANDARDMARGINALER OCH OFFENTLIGA RAMAVTAL I 290 KOMMUNER OCH 21 REGIONER
+          <span className="text-[11px] font-semibold tracking-[0.14em] text-slate-500 text-center">
+            Baserat på offentliga ramavtal · 290 kommuner · 21 regioner
           </span>
         </div>
         <div className="overflow-hidden whitespace-nowrap select-none">
