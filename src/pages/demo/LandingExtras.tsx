@@ -136,5 +136,6 @@ export default function LandingExtras() {
         </div>
       </div>
     </div>
+    </AnthropicScope>
   );
 }
