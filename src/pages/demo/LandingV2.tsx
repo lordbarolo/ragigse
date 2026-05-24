@@ -281,9 +281,9 @@ export default function LandingV2() {
 
 
       {/* ── Nav ─────────────────────────────── */}
-      <nav className="relative flex items-center justify-between px-5 sm:px-6 lg:px-10 h-[60px] glass-strong border-b border-white/10 bg-black">
-        <Link to="/" aria-label="CompCare startsida" className="inline-flex items-center">
-          <CompcareLogo variant="full" inverted={true} />
+      <nav className="relative flex items-center justify-between px-5 sm:px-6 lg:px-10 h-[60px] border-b border-black/10 bg-transparent">
+        <Link to="/" aria-label="CompCare startsida" className="inline-flex items-center text-black">
+          <CompcareLogo variant="full" inverted={false} />
         </Link>
         <div className="flex items-center gap-2 sm:gap-3">
           <Link to="/registrera">
@@ -296,8 +296,8 @@ export default function LandingV2() {
           </Link>
           <Link to="/logga-in">
             <button
-              className="text-sm text-white hover:bg-white/10 transition-colors"
-              style={{ backgroundColor: 'transparent', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '6px', padding: '8px 16px' }}
+              className="text-sm text-black hover:bg-black/5 transition-colors"
+              style={{ backgroundColor: 'transparent', border: '1px solid rgba(0,0,0,0.3)', borderRadius: '6px', padding: '8px 16px' }}
             >
               Logga in
             </button>
@@ -307,11 +307,12 @@ export default function LandingV2() {
             aria-label={menuOpen ? "Stäng meny" : "Öppna meny"}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((v) => !v)}
-            className="inline-flex items-center justify-center h-9 w-9 rounded-lg border border-white/15 text-white hover:bg-white/5 transition-colors"
+            className="inline-flex items-center justify-center h-9 w-9 rounded-lg border border-black/15 text-black hover:bg-black/5 transition-colors"
           >
             {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
+
 
         {menuOpen && (
           <>
