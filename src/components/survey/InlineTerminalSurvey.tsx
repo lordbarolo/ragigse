@@ -303,12 +303,7 @@ export default function InlineTerminalSurvey() {
 
   return (
     <div className="relative w-full max-w-xl mx-auto mt-8 text-left">
-      {/* Glow gradients */}
-      <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden rounded-3xl">
-        <div className="absolute inset-0 bg-inherit" />
-      </div>
-
-      <div className="rounded-2xl border border-white/10 bg-[#0D001A]/90 backdrop-blur-xl shadow-2xl overflow-hidden">
+      <div className="rounded-xl border border-[#2D2D2D] bg-[#1A1A1A] p-6 shadow-2xl overflow-hidden">
         {/* Progress bar */}
         <div className="h-[2px] bg-white/5">
           <div
