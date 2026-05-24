@@ -1,45 +1,57 @@
 ## Mål
-Ersätt nuvarande logo-filer med de tre uppladdade SVG:erna och regenerera favicon + OG-bild från transparent-varianten. `CompcareLogo`-komponenten och alla användningsställen (~20 filer) lämnas orörda — bara filinnehåll byts.
+Skapa en återanvändbar säkerhetsrevisions-mall för CompCare som täcker alla 8 delar (de 5 ursprungliga + 3 CompCare-specifika tillägg som identifierades i förra svaret).
 
-## Mappning
+## Leverabel
+En fil: `security-reports/AUDIT_TEMPLATE.md`
 
-| Ny fil | Ersätter | Variant i komponent |
-|---|---|---|
-| `compcare-logo-light.svg` (beige bg) | `public/compcare-logo-light.svg` + `public/compcare-logo-full-light.svg` | `full` (light mode) |
-| `compcare-logo-dark.svg` (svart bg) | `public/compcare-logo-dark.svg` + `public/compcare-logo-full-dark.svg` | `full` (dark mode) |
-| `compcare-logo-transparent.svg` | `public/compcare-wordmark-light.svg` + `public/compcare-wordmark-dark.svg` + `public/compcare-logo.svg` | `wordmark` (båda modes) + JSON-LD-referens |
+## Innehåll i mallen
 
-Behålls oförändrat: `compcare-icon.svg`, `compcare-appicon.svg` (används för `variant="icon"`).
+**Metadata-block** (datum, projekt, granskare, version, tidigare rapport).
 
-## Filer som byts ut i `public/`
+**DEL 1 — RLS-policies** (original)
+- Alla tabeller + RLS on/off, SELECT/INSERT/UPDATE/DELETE-policies, cross-user-läsning, anon-läsning, flaggning av `FOR ALL TO public`.
 
-1. `compcare-logo-light.svg` ← ny light
-2. `compcare-logo-dark.svg` ← ny dark
-3. `compcare-logo-full-light.svg` ← ny light
-4. `compcare-logo-full-dark.svg` ← ny dark
-5. `compcare-wordmark-light.svg` ← transparent
-6. `compcare-wordmark-dark.svg` ← transparent (samma — wordmark-varianten i `CompcareLogo` används bara på ljusa bakgrunder i nuvarande kod, men växlas via `dark:`-klass; vi använder transparent för båda så texten ärver inget bg)
-7. `compcare-logo.svg` ← transparent (används i JSON-LD och som fallback)
-8. `compcare-logo-light.png`, `compcare-logo-dark.png` ← regenereras från nya SVG (används i mail/PrivacyPolicy)
-9. `src/assets/logo.png`, `src/assets/logo-dark.png` ← regenereras (används i `PrivacyPolicy.tsx`)
+**DEL 2 — Storage buckets** (original)
+- Publik/privat, SELECT/INSERT/DELETE-policies, anon upload, cross-user file access.
 
-## Favicon + OG (regenereras från transparent-varianten via `imagegen--edit_image`)
+**DEL 3 — SECURITY DEFINER-funktioner** (original)
+- Namn, syfte, anropare, GRANTs, motivering.
 
-- `favicon.ico` (multistorlek)
-- `favicon-16/32/48/96/128/192/256/512.png`
-- `apple-touch-icon.png` (180×180)
-- `favicon.png`
-- `og-image.png` + `compcare-og.png` + `compcare-social.png` (1200×630, transparent → vit bakgrund med centrerad logo + violett accent enligt brand)
+**DEL 4 — Exponerade nycklar & secrets** (original + utökning)
+- `service_role` i frontend, hårdkodade nycklar, `.env` i git, **+ `git log -p -S "service_role"` för commit-historik**.
 
-För ren ikon-favicon (utan "compcare"-texten) använder vi befintlig `compcare-icon.svg` som källa, så favicon förblir bara stapelmärket. Sociala bilder (OG) får full wordmark + ikon.
+**DEL 5 — Edge functions** (original + utökning)
+- Auth, input-validering, anrops-kontroll, känsliga logs, **+ kryssa mot `supabase/config.toml` att `verify_jwt`-flagga matchar avsikt**, **+ verifiera `requireAdmin()` faktiskt anropas i alla `admin-*` functions**.
 
-## Inga kodändringar
-`CompcareLogo.tsx`, alla sidor som importerar den, samt `index.html`-referenser till favicons förblir oförändrade — sökvägarna är desamma, bara filinnehållet byts.
+**DEL 6 — Jämförelse mot tidigare rapport** (original)
+- Nya/åtgärdade/kvarstående fynd, trend.
 
-## Verifiering
-1. Visuell kontroll: öppna `/` (light, wordmark), `/logga-in` (dark, full inverted), `/agency` (light, full), `/uppdragsradar` (wordmark).
-2. Kontroll av JSON-LD: `/rapport/anestesisjukskoterska` källkod ska peka på ny `compcare-logo.svg`.
-3. Favicon i webbläsarflik + ny OG-bild via OG-debugger-render.
+**DEL 7 — Lovable Cloud-specifika kontroller** (NY)
+- 7.1 **Views** — lista alla i `public`, `security_invoker` on/off, exponerade kolumner, GRANTs till anon/authenticated.
+- 7.2 **RLS-policy-logik** — flagga `USING (col IS NULL OR ...)` på nullable, `USING (true)`, `FOR ALL` utan `WITH CHECK`, `auth.uid()` mot nullable kolumn.
+- 7.3 **Triggers** — alla triggers på `auth.*`, särskilt `handle_new_user` (whitelist för `raw_user_meta_data->>'role'`).
+- 7.4 **pg_cron-jobb** — lista alla, ägare, funktion, privilegier.
+- 7.5 **Realtime-publikationer** — vilka tabeller i `supabase_realtime`.
+- 7.6 **Storage upload-konvention** — verifiera kod uploadar till `{user_id}/...`, inte rotmappen.
+- 7.7 **Client-side auth-bypass** — sök `localStorage`/`sessionStorage` för admin-flags, routes endast skyddade av `ProtectedRoute` utan RLS-motpart.
+- 7.8 **PII på publika token-routes** — `/profil/:id`, `/samarbetsintyg/:id`, `/dela`, `/kampanj/:role`: tokens i Referer/analytics, PostHog PII, JSON-LD whitelist.
+- 7.9 **Rate limiting** — AI-quota multi-account-bypass, BankID-endpoints, `delete-account`.
+- 7.10 **CORS** — `Access-Control-Allow-Origin` per edge function, dokumentera medvetna `*`.
 
-## Risk
-Låg. Inga API-, RLS-, eller backendändringar. Säkerhetsanalys (RLS/edge/PII) inte tillämplig — bara statiska assets.
+**DEL 8 — Beroenden & supply chain** (NY)
+- `npm audit`, lockfile-integritet, `package.json` overrides, outdated critical deps.
+
+**DEL 9 — Automatiserade verktyg** (NY)
+- Kör parallellt: `supabase--linter` + intern `security--run_security_scan` + denna manuella check. Lista vilka klasser av buggar varje verktyg fångar.
+
+**Rapport-format-block** (original)
+- Sammanfattning, kritiska/allvarliga/måttliga fynd, rekommendationer, filsökväg `security-reports/YYYY-MM-DD-security-audit.md`.
+
+**CompCare-specifika kända safe-zones** (för att slippa falska positiva)
+- `calloff_imports_public` view är medvetet `SECURITY DEFINER` (vår fix).
+- Token-views på `ref_*` är medvetet publika via RPC.
+- Publika edge functions i `config.toml` (komplett lista) — validerar input internt.
+
+## Vad jag INTE gör i denna plan
+- Kör inte revisionen nu (det är en separat task).
+- Ändrar inte den befintliga AUDIT_BRIEF.md (kompletterar med en ny fil).
