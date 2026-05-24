@@ -190,6 +190,6 @@ export default function ShiftnexClone() {
           }
         `}</style>
       </main>
-    </>
+    </AnthropicScope>
   );
 }
