@@ -395,15 +395,9 @@ export default function LandingV2() {
 
       {/* ═══════════════════ MAKE-STIL: PILLAR-SEKTION ═══════════════════ */}
       <section className="relative px-5 sm:px-6 lg:px-10 py-20 md:py-28 overflow-hidden bg-[#EEEBE4]">
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background:
-              'radial-gradient(ellipse 60% 50% at 50% 0%, rgba(61,52,145,0.30) 0%, transparent 65%), radial-gradient(ellipse 50% 40% at 85% 50%, rgba(61,52,145,0.20) 0%, transparent 60%)',
-          }}
-        />
+        <div className="absolute inset-0 pointer-events-none bg-[#EEEBE4]" />
         <div className="relative max-w-6xl mx-auto">
-          <h2 className="font-bold text-center text-white tracking-tight leading-[1.1] text-[32px] sm:text-[44px] md:text-[56px] max-w-[920px] mx-auto mb-12 md:mb-16">
+          <h2 className="font-bold text-center text-[#0A0A0A] tracking-tight leading-[1.1] text-[32px] sm:text-[44px] md:text-[56px] max-w-[920px] mx-auto mb-12 md:mb-16">
             Du borde veta vad du är värd — innan du skriver på.
           </h2>
 
@@ -417,8 +411,8 @@ export default function LandingV2() {
                   onClick={() => setActivePillar(p.id)}
                   className={`relative inline-flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-full text-[13px] sm:text-sm font-medium transition-all ${
                     active
-                      ? "bg-[hsl(256_100%_67%_/_0.25)] text-white border border-[hsl(256_100%_67%_/_0.5)] shadow-[0_0_30px_-5px_hsl(var(--glow-violet)/0.5)]"
-                      : "text-white/70 hover:text-white border border-transparent"
+                      ? "bg-[#E8E4F0] text-[#0A0A0A] border border-[#3D3491]/30 shadow-[0_0_30px_-5px_rgba(61,52,145,0.15)]"
+                      : "text-[#4A4A4A] hover:text-[#0A0A0A] border border-transparent"
                   }`}
                 >
                   <p.icon className="w-4 h-4" />
@@ -431,15 +425,15 @@ export default function LandingV2() {
           {/* Showcase row */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center">
             <div>
-              <h3 className="font-bold text-white text-[26px] sm:text-[32px] leading-tight mb-4 tracking-tight">
+              <h3 className="font-bold text-[#0A0A0A] text-[26px] sm:text-[32px] leading-tight mb-4 tracking-tight" style={{ wordBreak: 'keep-all' }}>
                 {PILLAR_CONTENT[activePillar].title}
               </h3>
-              <p className="text-white/70 text-[15px] sm:text-base leading-relaxed mb-6 max-w-[460px]">
+              <p className="text-[#4A4A4A] text-[15px] sm:text-base leading-relaxed mb-6 max-w-[460px]">
                 {PILLAR_CONTENT[activePillar].desc}
               </p>
               <Link
                 to="/v1?start=1"
-                className="inline-flex items-center gap-1.5 text-sm font-semibold text-[hsl(256_100%_82%)] hover:text-white transition-colors"
+                className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#3D3491] hover:text-[#0A0A0A] transition-colors"
               >
                 Prova nu <ArrowRight className="w-4 h-4" />
               </Link>
@@ -447,24 +441,24 @@ export default function LandingV2() {
 
             {/* Illustrativa flytande kort à la Make */}
             <div className="relative h-[340px] sm:h-[400px]">
-              <div className="absolute top-0 left-0 glass rounded-2xl p-4 w-[180px] shadow-[0_8px_40px_-8px_hsl(var(--glow-violet)/0.5)] rotate-[-4deg]">
+              <div className="absolute top-0 left-0 bg-white/80 backdrop-blur-sm border border-[#E0DBD3] rounded-2xl p-4 w-[180px] shadow-[0_8px_40px_-8px_rgba(61,52,145,0.15)] rotate-[-4deg]">
                 <div className="flex items-center gap-2 mb-2">
-                  <div className="w-7 h-7 rounded-full bg-[hsl(256_100%_67%)] flex items-center justify-center">
+                  <div className="w-7 h-7 rounded-full bg-[#3D3491] flex items-center justify-center">
                     <Sparkles className="w-3.5 h-3.5 text-white" />
                   </div>
-                  <div className="text-[11px] font-semibold text-white">Förhandlingsagent</div>
+                  <div className="text-[11px] font-semibold text-[#0A0A0A]">Förhandlingsagent</div>
                 </div>
                 <div className="space-y-1.5">
-                  <div className="h-1.5 rounded bg-white/15 w-full" />
-                  <div className="h-1.5 rounded bg-white/10 w-4/5" />
-                  <div className="h-1.5 rounded bg-white/10 w-3/5" />
+                  <div className="h-1.5 rounded bg-[#E0DBD3] w-full" />
+                  <div className="h-1.5 rounded bg-[#E8E4F0] w-4/5" />
+                  <div className="h-1.5 rounded bg-[#E8E4F0] w-3/5" />
                 </div>
               </div>
 
-              <div className="absolute top-12 right-2 sm:right-8 glass-strong rounded-2xl p-5 w-[220px] shadow-[0_12px_50px_-10px_rgba(61,52,145,0.5)] rotate-[3deg]">
-                <div className="text-[10px] uppercase tracking-wider text-white/50 mb-2">Marknadmässig lön</div>
-                <div className="text-2xl font-bold text-white">1 240 kr/h</div>
-                <div className="text-[11px] text-[hsl(190_95%_70%)] mt-1 text-indigo-800">+8% mot fjolåret</div>
+              <div className="absolute top-12 right-2 sm:right-8 bg-white border border-[#E0DBD3] rounded-2xl p-5 w-[220px] shadow-[0_12px_50px_-10px_rgba(61,52,145,0.15)] rotate-[3deg]">
+                <div className="text-[10px] uppercase tracking-wider text-[#4A4A4A] mb-2">Marknadmässig lön</div>
+                <div className="text-2xl font-bold text-[#0A0A0A]">1 240 kr/h</div>
+                <div className="text-[11px] text-[#3D3491] mt-1">+8% mot fjolåret</div>
                 <div className="mt-3 h-12 flex items-end gap-1">
                   {[40, 65, 50, 80, 70, 95, 85].map((h, i) => (
                     <div
@@ -477,7 +471,7 @@ export default function LandingV2() {
               </div>
 
               <div 
-                className="absolute bottom-0 left-6 sm:left-12 glass rounded-2xl p-4 w-[230px] shadow-[0_8px_40px_-8px_hsl(150_80%_50%/0.35)] rotate-[2deg] cursor-pointer group"
+                className="absolute bottom-0 left-6 sm:left-12 bg-white/80 backdrop-blur-sm border border-[#E0DBD3] rounded-2xl p-4 w-[230px] shadow-[0_8px_40px_-8px_rgba(61,52,145,0.15)] rotate-[2deg] cursor-pointer group"
                 onMouseEnter={() => intervalRef.current && clearInterval(intervalRef.current)}
                 onMouseLeave={() => {
                   intervalRef.current = setInterval(() => setInvoiceStep((s) => (s + 1) % 3), 2800);
@@ -485,22 +479,22 @@ export default function LandingV2() {
                 onClick={() => setInvoiceStep((s) => (s + 1) % 3)}
               >
                 <div className="flex items-center gap-2 mb-2.5">
-                  <div className="w-7 h-7 rounded-md bg-emerald-400/20 flex items-center justify-center animate-pulse">
-                    <Receipt className="w-4 h-4 text-emerald-300" />
+                  <div className="w-7 h-7 rounded-md bg-[#E8E4F0] flex items-center justify-center animate-pulse">
+                    <Receipt className="w-4 h-4 text-[#3D3491]" />
                   </div>
-                  <div className="text-[12px] font-semibold text-white">Faktureringsstöd</div>
+                  <div className="text-[12px] font-semibold text-[#0A0A0A]">Faktureringsstöd</div>
                 </div>
 
                 <div className="min-h-[64px] transition-all duration-300">
                   {invoiceStep === 0 && (
                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-                      <div className="text-[11px] text-white/75 mb-2 flex items-center gap-1.5"><span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-emerald-400/20 text-emerald-300 text-[9px] font-bold">1</span>Skannar faktura...</div>
+                      <div className="text-[11px] text-[#4A4A4A] mb-2 flex items-center gap-1.5"><span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-[#E8E4F0] text-[#3D3491] text-[9px] font-bold">1</span>Skannar faktura...</div>
                       <div className="space-y-1.5">
-                        <div className="h-1 rounded bg-white/10 overflow-hidden">
-                          <div className="h-full bg-emerald-400/40 animate-[shimmer_2s_infinite]" style={{ width: '60%' }} />
+                        <div className="h-1 rounded bg-[#E8E4F0] overflow-hidden">
+                          <div className="h-full bg-[#3D3491]/40 animate-[shimmer_2s_infinite]" style={{ width: '60%' }} />
                         </div>
-                        <div className="flex items-center gap-1.5 text-[10px] text-white/60">
-                          <div className="w-1 h-1 rounded-full bg-emerald-400" />
+                        <div className="flex items-center gap-1.5 text-[10px] text-[#4A4A4A]">
+                          <div className="w-1 h-1 rounded-full bg-[#3D3491]" />
                           Läser tidrapport
                         </div>
                       </div>
@@ -509,15 +503,15 @@ export default function LandingV2() {
 
                   {invoiceStep === 1 && (
                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-                      <div className="text-[11px] text-white/75 mb-2 flex items-center gap-1.5"><span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-emerald-400/20 text-emerald-300 text-[9px] font-bold">2</span>Diff. mot tidrapport</div>
+                      <div className="text-[11px] text-[#4A4A4A] mb-2 flex items-center gap-1.5"><span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-[#E8E4F0] text-[#3D3491] text-[9px] font-bold">2</span>Diff. mot tidrapport</div>
                       <div className="space-y-1">
                         <div className="flex items-center justify-between text-[11px]">
-                          <span className="text-white/85">Storhelgstillägg</span>
-                          <span className="text-emerald-300 font-semibold">+1 625 kr</span>
+                          <span className="text-[#0A0A0A]">Storhelgstillägg</span>
+                          <span className="text-[#3D3491] font-semibold">+1 625 kr</span>
                         </div>
                         <div className="flex items-center justify-between text-[11px]">
-                          <span className="text-white/85">Aktiv jour</span>
-                          <span className="text-emerald-300 font-semibold">+9 300 kr</span>
+                          <span className="text-[#0A0A0A]">Aktiv jour</span>
+                          <span className="text-[#3D3491] font-semibold">+9 300 kr</span>
                         </div>
                       </div>
                     </div>
@@ -525,11 +519,11 @@ export default function LandingV2() {
 
                   {invoiceStep === 2 && (
                     <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-                      <div className="text-[11px] text-white/75 mb-1 flex items-center gap-1.5"><span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-emerald-400/20 text-emerald-300 text-[9px] font-bold">3</span>Extra att fakturera</div>
-                      <div className="text-[20px] font-bold text-emerald-300 mb-1">+10 925 kr</div>
+                      <div className="text-[11px] text-[#4A4A4A] mb-1 flex items-center gap-1.5"><span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-[#E8E4F0] text-[#3D3491] text-[9px] font-bold">3</span>Extra att fakturera</div>
+                      <div className="text-[20px] font-bold text-[#3D3491] mb-1">+10 925 kr</div>
                       <Link 
                         to="/consultant/fakturakontroll" 
-                        className="text-[10px] text-white/50 hover:text-white flex items-center gap-1 transition-colors"
+                        className="text-[10px] text-[#4A4A4A] hover:text-[#0A0A0A] flex items-center gap-1 transition-colors"
                         onClick={(e) => {
                           e.stopPropagation();
                           trackEvent("product_cta_clicked", { cta: "hero_invoice_card", target: "/consultant/fakturakontroll" });
@@ -545,7 +539,7 @@ export default function LandingV2() {
                   {[0, 1, 2].map((i) => (
                     <div 
                       key={i} 
-                      className={`w-1 h-1 rounded-full transition-colors ${invoiceStep === i ? "bg-emerald-300" : "bg-white/20"}`}
+                      className={`w-1 h-1 rounded-full transition-colors ${invoiceStep === i ? "bg-[#3D3491]" : "bg-[#E0DBD3]"}`}
                     />
                   ))}
                 </div>
@@ -555,7 +549,7 @@ export default function LandingV2() {
               <svg className="absolute inset-0 w-full h-full pointer-events-none" aria-hidden="true">
                 <path
                   d="M 100 60 Q 200 100, 260 130 T 180 320"
-                  stroke="hsl(320 95% 65% / 0.4)"
+                  stroke="rgba(61,52,145,0.4)"
                   strokeWidth="1.5"
                   strokeDasharray="3 5"
                   fill="none"
@@ -610,10 +604,10 @@ export default function LandingV2() {
       <section className="px-5 sm:px-6 lg:px-10 py-14 md:py-16 bg-inherit">
         <div className="max-w-5xl mx-auto">
           <div className="mb-8 md:mb-10">
-            <h2 className="text-[18px] sm:text-[20px] font-semibold text-white mb-1.5">
+            <h2 className="text-[18px] sm:text-[20px] font-semibold text-[#0A0A0A] mb-1.5">
               Allt på ett ställe
             </h2>
-            <p className="text-[13px] text-white/60 max-w-[480px]">
+            <p className="text-[13px] text-[#4A4A4A] max-w-[480px]">
               Stödverktyg som du också får tillgång till — när du är redo.
             </p>
           </div>
@@ -622,13 +616,13 @@ export default function LandingV2() {
               <Link
                 key={c.title}
                 to={c.href}
-                className="glass-subtle rounded-xl p-5 hover:bg-white/5 transition-all group glow-hover"
+                className="bg-white rounded-xl p-5 border border-[#E0DBD3] hover:bg-[#F5F3EE] transition-all group glow-hover"
               >
-                <h3 className="text-[15px] font-semibold text-white mb-1.5 inline-flex items-center gap-1.5">
+                <h3 className="text-[15px] font-semibold text-[#0A0A0A] mb-1.5 inline-flex items-center gap-1.5">
                   {c.title}
-                  <ArrowRight className="w-3.5 h-3.5 text-white/50 group-hover:text-white transition-colors" />
+                  <ArrowRight className="w-3.5 h-3.5 text-[#4A4A4A] group-hover:text-[#0A0A0A] transition-colors" />
                 </h3>
-                <p className="text-[13px] text-white/65 leading-relaxed">{c.desc}</p>
+                <p className="text-[13px] text-[#4A4A4A] leading-relaxed">{c.desc}</p>
               </Link>
             ))}
           </div>
@@ -637,24 +631,24 @@ export default function LandingV2() {
 
       {/* ═══════════════════ 6. FÖRTROENDE ═══════════════════ */}
       <section className="px-5 sm:px-6 lg:px-10 pb-14 md:pb-20 bg-[#EEEBE4]">
-        <div className="max-w-5xl mx-auto glass rounded-2xl p-7 md:p-10">
+        <div className="max-w-5xl mx-auto bg-white rounded-2xl p-7 md:p-10 border border-[#E0DBD3]">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
             {TRUST_POINTS.map((t) => (
               <div key={t.title} className="flex items-start gap-3">
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${!!t.muted ? "bg-white/5 text-white/50" : "bg-[hsl(190_95%_55%_/_0.18)] text-[hsl(190_95%_75%)] border border-[hsl(190_95%_55%_/_0.35)]"}`}>
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${!!t.muted ? "bg-[#F5F3EE] text-[#4A4A4A]" : "bg-[#E8E4F0] text-[#3D3491] border border-[#3D3491]/20"}`}>
                   <t.icon className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="text-[14px] font-semibold text-white inline-flex items-center gap-2 flex-wrap">
+                  <div className="text-[14px] font-semibold text-[#0A0A0A] inline-flex items-center gap-2 flex-wrap">
                     {t.title}
                     {!!t.muted && (
-                      <span className="text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/8 text-white/60">
+                      <span className="text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#F5F3EE] text-[#4A4A4A]">
                         {t.note}
                       </span>
                     )}
                   </div>
                   {!t.muted && (
-                    <p className="text-[13px] text-white/65 mt-1 leading-relaxed">{t.note}</p>
+                    <p className="text-[13px] text-[#4A4A4A] mt-1 leading-relaxed">{t.note}</p>
                   )}
                 </div>
               </div>
