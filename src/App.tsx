@@ -142,8 +142,8 @@ const App = () => (
           <Suspense fallback={<Loading />}>
             <main id="main-content" role="main" tabIndex={-1} aria-label="Huvudinnehåll">
             <Routes>
-              {/* ── Landing — Kivra-stil "Förhandla utifrån data, inte magkänsla" (LandingV2) ── */}
-              <Route path="/" element={<LandingV2 />} />
+              {/* ── Landing — LandingV2 inramad i Anthropic-typografi (svart bg, Georgia rubriker, generöst whitespace) ── */}
+              <Route path="/" element={<DemoAnthropic />} />
               <Route path="/b2b" element={<Index />} />
               <Route path="/demo/landing-extras" element={<LandingExtras />} />
               <Route path="/v1" element={<SalaryCheck />} />

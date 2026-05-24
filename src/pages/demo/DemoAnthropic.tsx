@@ -1,22 +1,19 @@
-import { Helmet } from "react-helmet-async";
 import LandingV2 from "./LandingV2";
 
 /**
- * /demo
  * Anthropic-inspirerad typografi och layout ovanpå LandingV2:
  * - Bakgrund #0A0A0A globalt
  * - Rubriker: Georgia serif, #FFFFFF
  * - Brödtext: sans-serif, #A3A3A3
  * - Sekundär text/labels: #6B7280
  * - Generös vertikal white space (≥80px) mellan sektioner på mobil
+ *
+ * Används som wrapper för startsidan (/) och /demo. SEO/Helmet hanteras
+ * av LandingV2 så att startsidan behåller sin indexerbarhet.
  */
 export default function DemoAnthropic() {
   return (
     <>
-      <Helmet>
-        <title>CompCare (Anthropic-typografi) · demo</title>
-        <meta name="robots" content="noindex,nofollow" />
-      </Helmet>
       <div
         className="demo-anthropic-scope"
         style={
