@@ -11,7 +11,8 @@ const STEPS = [
 
 export default function LandingExtras() {
   return (
-    <div className="w-full text-foreground font-sans" style={{ ...heroBackgroundStyle, minHeight: "100vh" }}>
+    <AnthropicScope>
+    <div className="w-full text-foreground">
       {/* ── Nav ─────────────────────────────── */}
       <nav className="flex items-center justify-between px-6 lg:px-10 h-[60px] bg-white border-b border-border/40">
         <Link to="/"><CompcareLogo variant="wordmark" /></Link>
