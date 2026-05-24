@@ -318,20 +318,32 @@ export default function InlineTerminalSurvey() {
         <div className="relative font-sans text-white min-h-[280px] overflow-hidden">
           <StepTransition stepKey={step} direction={direction}>
             {step === 1 && (
-              <Step
-                question="Vad jobbar du som?"
-                subtitle="Välj din yrkeskategori för att komma igång."
-              >
-                <SearchableSelect
-                  value={s.category}
-                  onValueChange={(v) => handleCategory(v as Category)}
-                  placeholder="Välj yrke…"
-                  options={[
-                    { value: "lakare", label: "Läkare" },
-                    { value: "ssk", label: "Sjuksköterska" },
-                    { value: "barnmorska", label: "Barnmorska" },
-                  ]}
-                />
+              <Step question="Vad jobbar du som?">
+                <div className="space-y-4">
+                  <SearchableSelect
+                    value={s.category}
+                    onValueChange={(v) => handleCategory(v as Category)}
+                    placeholder="Välj yrke..."
+                    options={[
+                      { value: "lakare", label: "Läkare" },
+                      { value: "ssk", label: "Sjuksköterska" },
+                      { value: "barnmorska", label: "Barnmorska" },
+                    ]}
+                    triggerClassName="bg-[#2D2D2D] border-[#3D3D3D] text-[#E5E5E5] !focus:ring-[#534AB7]"
+                    placeholderClassName="text-[#6B7280]"
+                  />
+                  <button
+                    onClick={handleStartCompare}
+                    disabled={!s.category}
+                    className="w-full inline-flex items-center justify-center text-white font-semibold text-base rounded-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                    style={{
+                      backgroundColor: "#534AB7",
+                      padding: "14px",
+                    }}
+                  >
+                    Jämför min lön
+                  </button>
+                </div>
               </Step>
             )}
 
