@@ -397,7 +397,7 @@ export default function LandingV2() {
       <section data-no-roomy className="relative px-5 sm:px-6 lg:px-10 py-10 md:py-20 overflow-hidden bg-[#EEEBE4]">
         <div className="absolute inset-0 pointer-events-none bg-[#EEEBE4]" />
         <div className="relative max-w-6xl mx-auto">
-          <h2 className="font-bold text-left text-[#0A0A0A] tracking-tight leading-[1.1] text-[32px] sm:text-[40px] md:text-[48px] max-w-[920px] mb-12 md:mb-16">
+          <h2 className="font-bold text-left text-[#0A0A0A] tracking-tight leading-[1.1] text-[32px] sm:text-[40px] md:text-[48px] max-w-[920px] mb-8 md:mb-16">
             Du borde veta vad du är värd — innan du skriver på.
           </h2>
 
