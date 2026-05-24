@@ -2,6 +2,7 @@ import { Helmet } from "react-helmet-async";
 import { ArrowRight } from "lucide-react";
 import { PhoneMockup } from "@/components/demo/PhoneMockup";
 import InlineTerminalSurvey from "@/components/survey/InlineTerminalSurvey";
+import { heroBackgroundStyle } from "@/lib/heroBackground";
 
 /**
  * /demo/hero-tailwind
