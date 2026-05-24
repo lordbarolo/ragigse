@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import CompcareLogo from "@/components/CompcareLogo";
+import { heroBackgroundStyle } from "@/lib/heroBackground";
 
 const STEPS = [
   { num: "1", title: "Skapa ditt konto", desc: "Logga in och ange din roll.\nFå tillgång till verktyg och insikter." },
