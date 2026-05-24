@@ -10,7 +10,7 @@ export default function ReferenceDemo() {
   const [refPanelOpen, setRefPanelOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen" style={heroBackgroundStyle}>
       <Navbar />
       <div className="pt-20 pb-12 px-4">
         <div className="flex flex-row gap-4 items-start justify-center">
