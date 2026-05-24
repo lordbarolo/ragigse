@@ -165,7 +165,7 @@ export default function InlineTerminalSurvey() {
     setStep(step - 1);
   };
 
-  // Auto-advance handlers
+  // Step 1: select category (no auto-advance — user clicks CTA)
   const handleCategory = (v: Category) => {
     trackStarted();
     const isBarnmorska = v === "barnmorska";
@@ -175,12 +175,14 @@ export default function InlineTerminalSurvey() {
       roleValue: isBarnmorska ? "__barnmorska" : "",
       yrke: isBarnmorska ? "Barnmorska" : "",
     }));
-    window.setTimeout(() => {
-      trackStepCompleted(1, v);
-      setDirection(1);
-      // Skip specialisering-steget för barnmorska
-      setStep(isBarnmorska ? 3 : 2);
-    }, 280);
+  };
+
+  const handleStartCompare = () => {
+    if (!s.category) return;
+    const isBarnmorska = s.category === "barnmorska";
+    trackStepCompleted(1, s.category);
+    setDirection(1);
+    setStep(isBarnmorska ? 3 : 2);
   };
 
   const handleRole = (v: string) => {
