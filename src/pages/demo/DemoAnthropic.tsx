@@ -1,4 +1,5 @@
 import LandingV2 from "./LandingV2";
+import { heroBackgroundStyle } from "@/lib/heroBackground";
 
 /**
  * Anthropic-inspirerad typografi och layout ovanpå LandingV2:
