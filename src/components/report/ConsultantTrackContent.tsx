@@ -133,6 +133,24 @@ export default function ConsultantTrackContent({
               </span>
             </div>
 
+            {/* Progress bar */}
+            {rec.recommended_hourly_max > 1 && (
+              <div className="px-3.5 pb-3.5 -mt-1">
+                <div
+                  className="w-full h-[6px] rounded-[3px]"
+                  style={{ backgroundColor: '#E8E4F0' }}
+                >
+                  <div
+                    className="h-full rounded-[3px]"
+                    style={{
+                      backgroundColor: '#3D3491',
+                      width: `${Math.min(100, Math.max(1, (currentHourly / rec.recommended_hourly_max) * 100))}%`,
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+
           </div>
         </div>
       )}
