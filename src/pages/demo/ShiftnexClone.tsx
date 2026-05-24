@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { heroBackgroundStyle } from "@/lib/heroBackground";
 
 /**
  * /demo/shiftnex
