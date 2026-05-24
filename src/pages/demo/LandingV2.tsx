@@ -150,7 +150,7 @@ type InfraCard = { title: string; desc: string; href: string };
 const INFRASTRUCTURE: InfraCard[] = [
   { title: "Din data", desc: "Där dina dokument och intyg bor. Dela tillgång med hjälp av krypterade och tidsbestämda länkar. Varje visad version är spårbar och tidsbegränsad.", href: "/din-data" },
   { title: "Ref-ID", desc: "Referensgivare får ETT samtal och verifierar därefter nya förfrågningar med bank-ID. Referensuppgifterna stannar under din kontroll och du ger tidsbegränsad tillgång.", href: "/referenser-info" },
-  { title: "Eget bolag", desc: "AI assistenten har branschspecifik kunskap och svarar på dina frågor dygnet runt. Det finns många fördelar med att ha ett eget aktiebolag för dig som arbetar återkommande som konsult.", href: "/eget-bolag" },
+  { title: "Eget bolag", desc: "Eget bolag ger dig lägre skatt, bättre pension och mer att förhandla med. Vår AI-assistent guidar dig genom vad som gäller för just din situation.", href: "/eget-bolag" },
 ];
 
 const TRUST_POINTS = [
@@ -609,7 +609,7 @@ export default function LandingV2() {
         <div className="max-w-5xl mx-auto">
           <div className="mb-8 md:mb-10">
             <h2 className="text-[18px] sm:text-[20px] font-semibold text-white mb-1.5">
-              Bakomliggande infrastruktur
+              Allt på ett ställe
             </h2>
             <p className="text-[13px] text-white/60 max-w-[480px]">
               Stödverktyg som du också får tillgång till — när du är redo.
