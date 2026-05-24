@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import CompcareLogo from "@/components/CompcareLogo";
-import { heroBackgroundStyle } from "@/lib/heroBackground";
+import AnthropicScope from "@/components/demo/AnthropicScope";
 
 const STEPS = [
   { num: "1", title: "Skapa ditt konto", desc: "Logga in och ange din roll.\nFå tillgång till verktyg och insikter." },
@@ -11,7 +11,8 @@ const STEPS = [
 
 export default function LandingExtras() {
   return (
-    <div className="w-full text-foreground font-sans" style={{ ...heroBackgroundStyle, minHeight: "100vh" }}>
+    <AnthropicScope>
+    <div className="w-full text-foreground">
       {/* ── Nav ─────────────────────────────── */}
       <nav className="flex items-center justify-between px-6 lg:px-10 h-[60px] bg-white border-b border-border/40">
         <Link to="/"><CompcareLogo variant="wordmark" /></Link>
@@ -135,5 +136,6 @@ export default function LandingExtras() {
         </div>
       </div>
     </div>
+    </AnthropicScope>
   );
 }

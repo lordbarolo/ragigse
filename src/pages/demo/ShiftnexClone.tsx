@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import { heroBackgroundStyle } from "@/lib/heroBackground";
+import AnthropicScope from "@/components/demo/AnthropicScope";
 
 /**
  * /demo/shiftnex
@@ -66,13 +66,12 @@ export default function ShiftnexClone() {
   }, []);
 
   return (
-    <>
+    <AnthropicScope>
 
       {/* Local light-theme scope. Inline style overrides global dark tokens just for this page. */}
       <main
         className="relative min-h-screen w-full overflow-hidden font-sans"
         style={{
-          ...heroBackgroundStyle,
           color: "#0f172a",
         }}
       >
@@ -191,6 +190,6 @@ export default function ShiftnexClone() {
           }
         `}</style>
       </main>
-    </>
+    </AnthropicScope>
   );
 }

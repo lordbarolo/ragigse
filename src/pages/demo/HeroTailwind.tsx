@@ -2,7 +2,7 @@ import { Helmet } from "react-helmet-async";
 import { ArrowRight } from "lucide-react";
 import { PhoneMockup } from "@/components/demo/PhoneMockup";
 import InlineTerminalSurvey from "@/components/survey/InlineTerminalSurvey";
-import { heroBackgroundStyle } from "@/lib/heroBackground";
+import AnthropicScope from "@/components/demo/AnthropicScope";
 
 /**
  * /demo/hero-tailwind
@@ -11,7 +11,8 @@ import { heroBackgroundStyle } from "@/lib/heroBackground";
  */
 export default function HeroTailwind() {
   return (
-    <div className="relative min-h-screen overflow-hidden" style={heroBackgroundStyle}>
+    <AnthropicScope>
+      <div className="relative min-h-screen overflow-hidden">
       <Helmet>
         <title>Hero (Tailwind-mockup) · CompCare demo</title>
         <meta name="robots" content="noindex,nofollow" />
@@ -102,6 +103,7 @@ export default function HeroTailwind() {
           </div>
         </div>
       </section>
-    </div>
+      </div>
+    </AnthropicScope>
   );
 }

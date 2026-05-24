@@ -4,13 +4,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Users, UserPlus, Briefcase, MapPin, Clock, FileText } from "lucide-react";
 import ReferenceSlidePanel from "@/components/profile/ReferenceSlidePanel";
-import { heroBackgroundStyle } from "@/lib/heroBackground";
+import AnthropicScope from "@/components/demo/AnthropicScope";
 
 export default function ReferenceDemo() {
   const [refPanelOpen, setRefPanelOpen] = useState(false);
 
   return (
-    <div className="min-h-screen" style={heroBackgroundStyle}>
+    <AnthropicScope>
       <Navbar />
       <div className="pt-20 pb-12 px-4">
         <div className="flex flex-row gap-4 items-start justify-center">
@@ -86,6 +86,6 @@ export default function ReferenceDemo() {
           />
         </div>
       </div>
-    </div>
+    </AnthropicScope>
   );
 }
