@@ -144,19 +144,19 @@ export default function Report() {
           <h1 className="leading-tight" style={{ fontFamily: 'Georgia, serif', fontSize: '28px', fontWeight: 700, color: '#0A0A0A' }}>
             {report.occupation}
           </h1>
-          <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-sm" style={{ color: '#3D3D3D' }}>
+          <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1" style={{ fontSize: '13px', color: '#6B7280' }}>
             <span className="whitespace-nowrap">{report.kommun}</span>
             {report.user_zone && (
               <span
-                className="whitespace-nowrap text-xs px-1.5 py-0.5 rounded-md"
-                style={{ backgroundColor: '#FFFFFF', border: '1px solid #E0DBD3', color: '#0A0A0A' }}
+                className="whitespace-nowrap px-1.5 py-0.5 rounded-md"
+                style={{ backgroundColor: '#FFFFFF', border: '1px solid #E0DBD3', color: '#0A0A0A', fontSize: '13px' }}
               >
                 {report.user_zone}
               </span>
             )}
-            <span className="w-1 h-1 rounded-full bg-current opacity-40 mx-0.5" />
+            <span className="w-1 h-1 rounded-full mx-0.5" style={{ backgroundColor: '#3D3491' }} />
             <span className="whitespace-nowrap">Konsultuppdrag</span>
-            <span className="w-1 h-1 rounded-full bg-current opacity-40 mx-0.5" />
+            <span className="w-1 h-1 rounded-full mx-0.5" style={{ backgroundColor: '#3D3491' }} />
             <span className="whitespace-nowrap">{isEmployee ? "Anställd" : "Eget bolag"}</span>
           </div>
         </div>
