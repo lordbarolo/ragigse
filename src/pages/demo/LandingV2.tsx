@@ -161,7 +161,7 @@ const TRUST_POINTS = [
 
 const TAG_COLORS: Record<string, string> = {
   violet: "bg-[hsl(256_100%_67%_/_0.18)] text-[hsl(256_100%_82%)] border-[hsl(256_100%_67%_/_0.35)]",
-  pink:   "bg-[hsl(320_95%_65%_/_0.16)] text-[hsl(320_95%_82%)] border-[hsl(320_95%_65%_/_0.35)]",
+  pink:   "bg-[#3D3491]/20 text-[#C9C2EE] border-[#3D3491]/50",
   cyan:   "bg-[hsl(190_95%_55%_/_0.16)] text-[hsl(190_95%_78%)] border-[hsl(190_95%_55%_/_0.35)]",
   muted:  "bg-white/5 text-white/70 border-white/10",
 };
@@ -169,7 +169,7 @@ const TAG_COLORS: Record<string, string> = {
 /* Ljus variant för produkttrappan på vit bakgrund */
 const TAG_COLORS_LIGHT: Record<string, string> = {
   violet: "bg-[hsl(256_100%_67%_/_0.10)] text-[hsl(256_70%_45%)] border-[hsl(256_100%_67%_/_0.30)]",
-  pink:   "bg-[hsl(320_95%_65%_/_0.10)] text-[hsl(320_70%_45%)] border-[hsl(320_95%_65%_/_0.30)]",
+  pink:   "bg-[#E8E4F0] text-[#3D3491] border-[#3D3491]/30",
   cyan:   "bg-[hsl(190_95%_45%_/_0.10)] text-[hsl(190_80%_30%)] border-[hsl(190_95%_45%_/_0.30)]",
   muted:  "bg-slate-100 text-slate-600 border-slate-200",
 };
@@ -289,7 +289,7 @@ export default function LandingV2() {
           <Link to="/registrera">
             <button
               className="text-sm text-white hover:opacity-90 transition-opacity"
-              style={{ backgroundColor: '#534AB7', borderRadius: '6px', padding: '8px 16px' }}
+              style={{ backgroundColor: '#3D3491', color: '#FFFFFF', borderRadius: '6px', padding: '8px 16px' }}
             >
               Kom igång gratis
             </button>
@@ -341,7 +341,7 @@ export default function LandingV2() {
         <div className="relative z-10 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center pt-14 md:pt-24 pb-3 md:pb-4">
           {/* Vänster: rubrik och pitch */}
           <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
-            <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-medium text-[hsl(256_100%_85%)] bg-[hsl(256_100%_67%_/_0.18)] border border-[hsl(256_100%_67%_/_0.35)] rounded-full px-3 py-1 mb-5 uppercase tracking-wider">
+            <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-medium rounded-full px-3 py-1 mb-5 uppercase tracking-wider" style={{ backgroundColor: '#E8E4F0', color: '#3D3491', border: '1px solid #3D3491' }}>
               <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="currentColor" /></svg>
               För läkare &amp; sjuksköterskor
             </div>
@@ -399,7 +399,7 @@ export default function LandingV2() {
           className="absolute inset-0 pointer-events-none"
           style={{
             background:
-              'radial-gradient(ellipse 60% 50% at 50% 0%, hsl(var(--glow-violet) / 0.25) 0%, transparent 65%), radial-gradient(ellipse 50% 40% at 85% 50%, hsl(var(--glow-pink) / 0.18) 0%, transparent 60%)',
+              'radial-gradient(ellipse 60% 50% at 50% 0%, rgba(61,52,145,0.30) 0%, transparent 65%), radial-gradient(ellipse 50% 40% at 85% 50%, rgba(61,52,145,0.20) 0%, transparent 60%)',
           }}
         />
         <div className="relative max-w-6xl mx-auto">
@@ -461,7 +461,7 @@ export default function LandingV2() {
                 </div>
               </div>
 
-              <div className="absolute top-12 right-2 sm:right-8 glass-strong rounded-2xl p-5 w-[220px] shadow-[0_12px_50px_-10px_hsl(var(--glow-pink)/0.5)] rotate-[3deg]">
+              <div className="absolute top-12 right-2 sm:right-8 glass-strong rounded-2xl p-5 w-[220px] shadow-[0_12px_50px_-10px_rgba(61,52,145,0.5)] rotate-[3deg]">
                 <div className="text-[10px] uppercase tracking-wider text-white/50 mb-2">Marknadmässig lön</div>
                 <div className="text-2xl font-bold text-white">1 240 kr/h</div>
                 <div className="text-[11px] text-[hsl(190_95%_70%)] mt-1 text-indigo-800">+8% mot fjolåret</div>
@@ -469,7 +469,7 @@ export default function LandingV2() {
                   {[40, 65, 50, 80, 70, 95, 85].map((h, i) => (
                     <div
                       key={i}
-                      className="flex-1 rounded-sm bg-gradient-to-t from-[hsl(256_100%_67%)] to-[hsl(320_95%_65%)] opacity-80"
+                      className="flex-1 rounded-sm bg-gradient-to-t from-[#3D3491] to-[#6B5FC4] opacity-80"
                       style={{ height: `${h}%` }}
                     />
                   ))}

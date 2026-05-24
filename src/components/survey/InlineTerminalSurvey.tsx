@@ -335,9 +335,10 @@ export default function InlineTerminalSurvey() {
                   <button
                     onClick={handleStartCompare}
                     disabled={!s.category}
-                    className="w-full inline-flex items-center justify-center text-white font-semibold text-base rounded-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="w-full inline-flex items-center justify-center font-semibold text-base rounded-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                     style={{
-                      backgroundColor: "#534AB7",
+                      backgroundColor: "#3D3491",
+                      color: "#FFFFFF",
                       padding: "14px",
                     }}
                   >
