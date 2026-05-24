@@ -121,6 +121,28 @@ export default function ConsultantTrackContent({
               </span>
             </div>
 
+            {/* Progress bar between Din ersättning and Marknadsspann */}
+            {rec.recommended_hourly_max > 1 && (
+              <div className="px-3.5 py-3 border-t border-foreground/[0.05]">
+                <div
+                  className="w-full rounded-[3px]"
+                  style={{ backgroundColor: '#E8E4F0', height: '6px' }}
+                >
+                  <div
+                    className="h-full rounded-[3px]"
+                    style={{
+                      backgroundColor: '#3D3491',
+                      width: `${Math.min(100, Math.max(1, (currentHourly / rec.recommended_hourly_max) * 100))}%`,
+                    }}
+                  />
+                </div>
+                <div className="flex justify-between mt-2" style={{ fontSize: '12px', color: '#6B7280' }}>
+                  <span>{fmt(currentHourly)} kr/h (din nivå)</span>
+                  <span>{fmt(rec.recommended_hourly_max)} kr/h (marknad)</span>
+                </div>
+              </div>
+            )}
+
             {/* Marknadsspann row */}
             <div className="flex items-center justify-between p-3.5 border-t border-foreground/[0.05]">
               <div>
@@ -132,24 +154,6 @@ export default function ConsultantTrackContent({
                 Marknad
               </span>
             </div>
-
-            {/* Progress bar */}
-            {rec.recommended_hourly_max > 1 && (
-              <div className="px-3.5 pb-3.5 -mt-1">
-                <div
-                  className="w-full h-[6px] rounded-[3px]"
-                  style={{ backgroundColor: '#E8E4F0' }}
-                >
-                  <div
-                    className="h-full rounded-[3px]"
-                    style={{
-                      backgroundColor: '#3D3491',
-                      width: `${Math.min(100, Math.max(1, (currentHourly / rec.recommended_hourly_max) * 100))}%`,
-                    }}
-                  />
-                </div>
-              </div>
-            )}
 
           </div>
         </div>
