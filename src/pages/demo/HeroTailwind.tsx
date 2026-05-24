@@ -11,7 +11,7 @@ import { heroBackgroundStyle } from "@/lib/heroBackground";
  */
 export default function HeroTailwind() {
   return (
-    <div className="relative min-h-screen overflow-hidden bg-white">
+    <div className="relative min-h-screen overflow-hidden" style={heroBackgroundStyle}>
       <Helmet>
         <title>Hero (Tailwind-mockup) · CompCare demo</title>
         <meta name="robots" content="noindex,nofollow" />
