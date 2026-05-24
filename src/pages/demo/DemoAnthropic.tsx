@@ -3,9 +3,12 @@ import LandingV2 from "./LandingV2";
 
 /**
  * /demo
- * Kopia av nuvarande landningssida (LandingV2) men med Anthropic-inspirerad
- * typografi: Inter Tight (sans, rubriker) + Source Serif 4 (serif, brödtext).
- * Fonterna är gratis Google Fonts-ersättare för Styrene / Tiempos.
+ * Anthropic-inspirerad typografi och layout ovanpå LandingV2:
+ * - Bakgrund #0A0A0A globalt
+ * - Rubriker: Georgia serif, #FFFFFF
+ * - Brödtext: sans-serif, #A3A3A3
+ * - Sekundär text/labels: #6B7280
+ * - Generös vertikal white space (≥80px) mellan sektioner på mobil
  */
 export default function DemoAnthropic() {
   return (
@@ -18,35 +21,95 @@ export default function DemoAnthropic() {
         className="demo-anthropic-scope"
         style={
           {
-            // Overrida globala font-vars endast inom denna scope
-            ["--font-display" as any]: '"Inter Tight", "Inter", system-ui, sans-serif',
-            ["--font-body" as any]: '"Source Serif 4", Georgia, serif',
-            fontFamily: '"Source Serif 4", Georgia, serif',
+            ["--font-display" as any]: 'Georgia, "Times New Roman", serif',
+            ["--font-body" as any]:
+              '"Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+            backgroundColor: "#0A0A0A",
+            minHeight: "100vh",
           } as React.CSSProperties
         }
       >
         <style>{`
+          /* ── Bakgrund: tvinga #0A0A0A över hela scopet ── */
+          .demo-anthropic-scope,
+          .demo-anthropic-scope .bg-black,
+          .demo-anthropic-scope [class*="bg-slate-"],
+          .demo-anthropic-scope [class*="bg-neutral-"],
+          .demo-anthropic-scope [class*="bg-zinc-"],
+          .demo-anthropic-scope [class*="bg-gray-"] {
+            background-color: #0A0A0A !important;
+          }
+
+          /* ── Typografi: Georgia för rubriker ── */
           .demo-anthropic-scope h1,
           .demo-anthropic-scope h2,
           .demo-anthropic-scope h3,
-          .demo-anthropic-scope h4 {
-            font-family: "Inter Tight", "Inter", system-ui, sans-serif !important;
-            letter-spacing: -0.035em;
-            font-weight: 800;
+          .demo-anthropic-scope h4,
+          .demo-anthropic-scope h5,
+          .demo-anthropic-scope h6 {
+            font-family: Georgia, "Times New Roman", serif !important;
+            color: #FFFFFF !important;
+            letter-spacing: -0.02em;
+            font-weight: 600;
+          }
+          .demo-anthropic-scope h1 {
+            letter-spacing: -0.03em;
+            line-height: 1.05;
+          }
+
+          /* Ta bort violet text-gradient så rubriker blir helvita */
+          .demo-anthropic-scope .text-gradient-violet {
+            background: none !important;
+            -webkit-text-fill-color: #FFFFFF !important;
+            color: #FFFFFF !important;
+          }
+
+          /* ── Brödtext: sans-serif, #A3A3A3 ── */
+          .demo-anthropic-scope,
+          .demo-anthropic-scope p,
+          .demo-anthropic-scope li,
+          .demo-anthropic-scope blockquote,
+          .demo-anthropic-scope span,
+          .demo-anthropic-scope div {
+            font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+              "Segoe UI", sans-serif;
           }
           .demo-anthropic-scope p,
           .demo-anthropic-scope li,
           .demo-anthropic-scope blockquote {
-            font-family: "Source Serif 4", Georgia, serif !important;
+            color: #A3A3A3;
           }
-          /* UI-element (knappar, badges, inputs) ska behålla sans */
+
+          /* ── Sekundär text / labels / eyebrows ── */
+          .demo-anthropic-scope label,
+          .demo-anthropic-scope small,
+          .demo-anthropic-scope figcaption,
+          .demo-anthropic-scope .eyebrow,
+          .demo-anthropic-scope [data-eyebrow],
+          .demo-anthropic-scope .uppercase {
+            color: #6B7280 !important;
+          }
+
+          /* UI-element behåller sans */
           .demo-anthropic-scope button,
           .demo-anthropic-scope input,
           .demo-anthropic-scope select,
           .demo-anthropic-scope textarea,
-          .demo-anthropic-scope label,
           .demo-anthropic-scope [role="button"] {
-            font-family: "Inter Tight", "Inter", system-ui, sans-serif !important;
+            font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+              "Segoe UI", sans-serif !important;
+          }
+
+          /* ── Generös vertikal white space mellan sektioner (mobil ≥80px) ── */
+          .demo-anthropic-scope section {
+            padding-top: 80px !important;
+            padding-bottom: 80px !important;
+          }
+          @media (min-width: 768px) {
+            .demo-anthropic-scope section {
+              padding-top: 128px !important;
+              padding-bottom: 128px !important;
+            }
           }
         `}</style>
         <LandingV2 />
