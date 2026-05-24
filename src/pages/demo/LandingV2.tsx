@@ -286,8 +286,19 @@ export default function LandingV2() {
           <CompcareLogo variant="full" inverted={true} />
         </Link>
         <div className="flex items-center gap-2 sm:gap-3">
+          <Link to="/registrera">
+            <button
+              className="text-sm text-white hover:opacity-90 transition-opacity"
+              style={{ backgroundColor: '#534AB7', borderRadius: '6px', padding: '8px 16px' }}
+            >
+              Kom igång gratis
+            </button>
+          </Link>
           <Link to="/logga-in">
-            <button className="text-sm px-3 sm:px-4 py-2 border border-white/15 rounded-lg bg-transparent text-white hover:bg-white/5 transition-colors">
+            <button
+              className="text-sm text-white hover:bg-white/10 transition-colors"
+              style={{ backgroundColor: 'transparent', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '6px', padding: '8px 16px' }}
+            >
               Logga in
             </button>
           </Link>
