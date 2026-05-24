@@ -3,11 +3,10 @@ import { heroBackgroundStyle } from "@/lib/heroBackground";
 
 /**
  * Anthropic-inspirerad typografi och layout ovanpå LandingV2:
- * - Bakgrund #0A0A0A globalt
- * - Rubriker: Georgia serif, #FFFFFF
- * - Brödtext: sans-serif, #A3A3A3
- * - Sekundär text/labels: #6B7280
- * - Generös vertikal white space (≥80px) mellan sektioner på mobil
+ * - Bakgrund #EEEBE4 (varm off-white) + mjuka mesh-gradients
+ * - Rubriker: Inter Tight 800 (Styrene-likt), svart, tight tracking
+ * - Brödtext: Source Serif 4 (Tiempos-likt), svart
+ * - Sekundär text/labels: #555555
  *
  * Används som wrapper för startsidan (/) och /demo. SEO/Helmet hanteras
  * av LandingV2 så att startsidan behåller sin indexerbarhet.
