@@ -337,15 +337,15 @@ export default function LandingV2() {
       </nav>
 
       {/* ═══════════════════ 1. HERO med inline-form + porträtt ═══════════════════ */}
-      <section data-no-roomy className="relative z-20 overflow-visible px-5 sm:px-6 lg:px-10 bg-black pt-14 md:pt-[60px] pb-3 md:pb-4">
-        <div className="relative z-10 max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-12 items-center lg:items-start">
+      <section data-no-roomy className="relative z-20 overflow-visible px-5 sm:px-6 lg:px-10 bg-black pt-14 md:pt-20 pb-3 md:pb-4">
+        <div className="relative z-10 max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12 items-center md:items-start">
           {/* Vänster: rubrik och pitch */}
-          <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
+          <div className="flex flex-col items-center md:items-start text-center md:text-left md:w-full">
             <div className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-medium rounded-full px-3 py-1 mb-5 uppercase tracking-wider" style={{ backgroundColor: '#E8E4F0', color: '#3D3491', border: '1px solid #3D3491' }}>
               <svg width="10" height="10" viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="currentColor" /></svg>
               För läkare &amp; sjuksköterskor
             </div>
-            <h1 className="font-bold leading-[1.05] text-white mb-5 tracking-tight text-[34px] sm:text-5xl md:text-[56px]">
+            <h1 className="font-bold leading-[1.05] text-white mb-5 tracking-tight text-[34px] sm:text-5xl md:text-[64px]">
               Vet du vad du<br />
               <span className="text-gradient-violet text-white">är värd?</span>
             </h1>
@@ -358,7 +358,7 @@ export default function LandingV2() {
           </div>
 
           {/* Höger: formulär */}
-          <div className="w-full">
+          <div className="w-full md:max-w-[480px] md:justify-self-end">
             <InlineTerminalSurvey />
           </div>
         </div>
