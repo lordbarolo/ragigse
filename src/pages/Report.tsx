@@ -141,7 +141,7 @@ export default function Report() {
           <p className="text-[10px] uppercase tracking-[0.2em] font-medium" style={{ color: '#6B7280' }}>
             Ersättningsanalys
           </p>
-          <h1 className="text-2xl sm:text-3xl font-bold leading-tight tracking-tight" style={{ color: '#0A0A0A' }}>
+          <h1 className="leading-tight" style={{ fontFamily: 'Georgia, serif', fontSize: '28px', fontWeight: 700, color: '#0A0A0A' }}>
             {report.occupation}
           </h1>
           <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-sm" style={{ color: '#3D3D3D' }}>

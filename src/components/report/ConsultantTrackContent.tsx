@@ -48,7 +48,10 @@ interface Props {
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <div className="mb-3">
-      <span className="text-micro font-semibold tracking-[1.4px] uppercase whitespace-nowrap">
+      <span
+        className="uppercase whitespace-nowrap"
+        style={{ fontFamily: 'sans-serif', fontSize: '11px', letterSpacing: '0.12em', fontWeight: 600, color: '#3D3491' }}
+      >
         {children}
       </span>
     </div>
