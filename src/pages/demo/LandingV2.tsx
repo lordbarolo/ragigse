@@ -639,13 +639,13 @@ export default function LandingV2() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
             {TRUST_POINTS.map((t) => (
               <div key={t.title} className="flex items-start gap-3">
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${t.muted ? "bg-white/5 text-white/50" : "bg-[hsl(190_95%_55%_/_0.18)] text-[hsl(190_95%_75%)] border border-[hsl(190_95%_55%_/_0.35)]"}`}>
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${!!t.muted ? "bg-white/5 text-white/50" : "bg-[hsl(190_95%_55%_/_0.18)] text-[hsl(190_95%_75%)] border border-[hsl(190_95%_55%_/_0.35)]"}`}>
                   <t.icon className="w-5 h-5" />
                 </div>
                 <div>
                   <div className="text-[14px] font-semibold text-white inline-flex items-center gap-2 flex-wrap">
                     {t.title}
-                    {t.muted && (
+                    {!!t.muted && (
                       <span className="text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/8 text-white/60">
                         {t.note}
                       </span>
