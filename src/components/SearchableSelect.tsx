@@ -106,9 +106,12 @@ export default function SearchableSelect({
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="flex h-14 w-full items-center justify-between rounded-md border border-primary/30 bg-background px-3 py-2 text-base shadow-[var(--input-glow)] ring-offset-background transition-shadow focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+        className={cn(
+          "flex h-14 w-full items-center justify-between rounded-md border border-primary/30 bg-background px-3 py-2 text-base shadow-[var(--input-glow)] ring-offset-background transition-shadow focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+          triggerClassName
+        )}
       >
-        <span className={cn("truncate", !selectedLabel && "text-muted-foreground")}>
+        <span className={cn("truncate", !selectedLabel && (placeholderClassName || "text-muted-foreground"))}>
           {selectedLabel || placeholder}
         </span>
         <ChevronDown className="h-4 w-4 opacity-50 shrink-0" />
