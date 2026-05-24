@@ -281,9 +281,9 @@ export default function LandingV2() {
 
 
       {/* ── Nav ─────────────────────────────── */}
-      <nav className="relative flex items-center justify-between px-5 sm:px-6 lg:px-10 h-[60px] glass-strong border-b border-white/10 bg-black">
-        <Link to="/" aria-label="CompCare startsida" className="inline-flex items-center">
-          <CompcareLogo variant="full" inverted={true} />
+      <nav className="relative flex items-center justify-between px-5 sm:px-6 lg:px-10 h-[60px] border-b border-black/10 bg-transparent">
+        <Link to="/" aria-label="CompCare startsida" className="inline-flex items-center text-black">
+          <CompcareLogo variant="full" inverted={false} />
         </Link>
         <div className="flex items-center gap-2 sm:gap-3">
           <Link to="/registrera">
@@ -296,8 +296,8 @@ export default function LandingV2() {
           </Link>
           <Link to="/logga-in">
             <button
-              className="text-sm text-white hover:bg-white/10 transition-colors"
-              style={{ backgroundColor: 'transparent', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '6px', padding: '8px 16px' }}
+              className="text-sm text-black hover:bg-black/5 transition-colors"
+              style={{ backgroundColor: 'transparent', border: '1px solid rgba(0,0,0,0.3)', borderRadius: '6px', padding: '8px 16px' }}
             >
               Logga in
             </button>
@@ -307,23 +307,24 @@ export default function LandingV2() {
             aria-label={menuOpen ? "Stäng meny" : "Öppna meny"}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((v) => !v)}
-            className="inline-flex items-center justify-center h-9 w-9 rounded-lg border border-white/15 text-white hover:bg-white/5 transition-colors"
+            className="inline-flex items-center justify-center h-9 w-9 rounded-lg border border-black/15 text-black hover:bg-black/5 transition-colors"
           >
             {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
 
+
         {menuOpen && (
           <>
-            <div className="fixed inset-0 bg-black/60 z-40" onClick={() => setMenuOpen(false)} aria-hidden="true" />
-            <div className="absolute top-full right-4 lg:right-10 mt-2 w-72 glass-strong border border-white/10 rounded-xl shadow-2xl z-50 overflow-hidden">
+            <div className="fixed inset-0 bg-black/30 z-40" onClick={() => setMenuOpen(false)} aria-hidden="true" />
+            <div className="absolute top-full right-4 lg:right-10 mt-2 w-72 border border-black/10 rounded-xl shadow-2xl z-50 overflow-hidden bg-white">
               <div className="flex flex-col py-2">
                 {NAV_LINKS.map((l) => (
                   <Link
                     key={l.label}
                     to={l.href}
                     onClick={() => setMenuOpen(false)}
-                    className="px-4 py-3 text-sm text-white/85 hover:bg-white/5 hover:text-white transition-colors"
+                    className="px-4 py-3 text-sm text-black/85 hover:bg-black/5 hover:text-black transition-colors"
                   >
                     {l.label}
                   </Link>
@@ -332,6 +333,7 @@ export default function LandingV2() {
             </div>
           </>
         )}
+
       </nav>
 
       {/* ═══════════════════ 1. HERO med inline-form + porträtt ═══════════════════ */}
@@ -666,41 +668,42 @@ export default function LandingV2() {
       {/* ── /Ljus sektion-wrapper ── */}
 
       {/* ── Footer ──────────────────────────── */}
-      <footer className="px-5 sm:px-6 lg:px-10 pt-10 pb-12 border-t border-white/10 bg-[hsl(260_50%_5%_/_0.6)] bg-inherit">
+      <footer className="px-5 sm:px-6 lg:px-10 pt-10 pb-12 border-t border-black/10 bg-transparent">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-3 gap-8 mb-8">
             <div>
-              <div className="mb-2.5">
-                <CompcareLogo variant="full" inverted={true} />
+              <div className="mb-2.5 text-black">
+                <CompcareLogo variant="full" inverted={false} />
               </div>
-              <p className="text-[13px] text-white/60 leading-relaxed max-w-[220px]">
+              <p className="text-[13px] text-black/70 leading-relaxed max-w-[220px]">
                 Transparent marknadsdata och smarta verktyg för Sveriges läkare och sjuksköterskor.
               </p>
             </div>
             <div>
-              <h4 className="text-xs font-medium uppercase tracking-widest text-white/50 mb-3">Konsult</h4>
-              <div className="flex flex-col gap-2 text-[13px] text-white/70">
-                <Link to="/v1?start=1" className="hover:text-white transition-colors">Löneanalys</Link>
-                <Link to="/uppdragsradar" className="hover:text-white transition-colors">Uppdragsradar</Link>
-                <Link to="/consultant/forhandla" className="hover:text-white transition-colors">Förhandlingsagent</Link>
-                <Link to="/consultant/fakturakontroll" className="hover:text-white transition-colors">Fakturagranskning</Link>
+              <h4 className="text-xs font-medium uppercase tracking-widest text-black/60 mb-3">Konsult</h4>
+              <div className="flex flex-col gap-2 text-[13px] text-black/75">
+                <Link to="/v1?start=1" className="hover:text-black transition-colors">Löneanalys</Link>
+                <Link to="/uppdragsradar" className="hover:text-black transition-colors">Uppdragsradar</Link>
+                <Link to="/consultant/forhandla" className="hover:text-black transition-colors">Förhandlingsagent</Link>
+                <Link to="/consultant/fakturakontroll" className="hover:text-black transition-colors">Fakturagranskning</Link>
               </div>
             </div>
             <div>
-              <h4 className="text-xs font-medium uppercase tracking-widest text-white/50 mb-3">Företag</h4>
-              <div className="flex flex-col gap-2 text-[13px] text-white/70">
-                <Link to="/vanliga-fragor" className="hover:text-white transition-colors">FAQ</Link>
-                <Link to="/integritetspolicy" className="hover:text-white transition-colors">Integritetspolicy</Link>
-                <a href="mailto:hej@compcare.se" className="hover:text-white transition-colors">Kontakt</a>
+              <h4 className="text-xs font-medium uppercase tracking-widest text-black/60 mb-3">Företag</h4>
+              <div className="flex flex-col gap-2 text-[13px] text-black/75">
+                <Link to="/vanliga-fragor" className="hover:text-black transition-colors">FAQ</Link>
+                <Link to="/integritetspolicy" className="hover:text-black transition-colors">Integritetspolicy</Link>
+                <a href="mailto:hej@compcare.se" className="hover:text-black transition-colors">Kontakt</a>
               </div>
             </div>
           </div>
-          <div className="border-t border-white/10 pt-5 flex flex-col md:flex-row justify-between items-center gap-2 text-xs text-white/50">
+          <div className="border-t border-black/10 pt-5 flex flex-col md:flex-row justify-between items-center gap-2 text-xs text-black/60">
             <p>© 2026 Compcare</p>
             <p>GDPR-kompatibel · Datan tillhör dig</p>
           </div>
         </div>
       </footer>
+
     </div>
   );
 }
