@@ -394,10 +394,10 @@ export default function LandingV2() {
       </section>
 
       {/* ═══════════════════ MAKE-STIL: PILLAR-SEKTION ═══════════════════ */}
-      <section data-no-roomy className="relative px-5 sm:px-6 lg:px-10 py-16 md:py-20 overflow-hidden bg-[#EEEBE4]">
+      <section data-no-roomy className="relative px-5 sm:px-6 lg:px-10 py-10 md:py-20 overflow-hidden bg-[#EEEBE4]">
         <div className="absolute inset-0 pointer-events-none bg-[#EEEBE4]" />
         <div className="relative max-w-6xl mx-auto">
-          <h2 className="font-bold text-left text-[#0A0A0A] tracking-tight leading-[1.1] text-[32px] sm:text-[40px] md:text-[48px] max-w-[920px] mb-12 md:mb-16">
+          <h2 className="font-bold text-left text-[#0A0A0A] tracking-tight leading-[1.1] text-[32px] sm:text-[40px] md:text-[48px] max-w-[920px] mb-8 md:mb-16">
             Du borde veta vad du är värd — innan du skriver på.
           </h2>
 
@@ -542,7 +542,7 @@ export default function LandingV2() {
       </section>
 
       {/* ═══════════════════ 4. PRIMÄR PRODUKTTRAPPA ═══════════════════ */}
-      <section data-no-roomy className="px-5 sm:px-6 lg:px-10 py-16 md:pt-20 md:pb-8 border-y border-slate-200 bg-[#EEEBE4]">
+      <section data-no-roomy className="px-5 sm:px-6 lg:px-10 py-10 md:pt-20 md:pb-8 border-y border-slate-200 bg-[#EEEBE4]">
         <div className="max-w-6xl mx-auto">
           <div className="mb-10 md:mb-14">
             <span className="inline-block text-[11px] font-semibold uppercase tracking-[0.1em] text-[hsl(256_60%_45%)] bg-[hsl(256_100%_67%_/_0.08)] border border-[hsl(256_100%_67%_/_0.25)] rounded-full px-3.5 py-1 mb-4">
@@ -582,7 +582,7 @@ export default function LandingV2() {
       </section>
 
       {/* ═══════════════════ 5. INFRASTRUKTUR (sekundär) ═══════════════════ */}
-      <section data-no-roomy className="px-5 sm:px-6 lg:px-10 py-14 md:pt-8 md:pb-16 bg-inherit">
+      <section data-no-roomy className="px-5 sm:px-6 lg:px-10 py-10 md:pt-8 md:pb-16 bg-inherit">
         <div className="max-w-5xl mx-auto">
           <div className="mb-8 md:mb-10">
             <h2 className="text-[18px] sm:text-[20px] font-semibold text-[#0A0A0A] mb-1.5">
@@ -611,7 +611,7 @@ export default function LandingV2() {
       </section>
 
       {/* ═══════════════════ 6. FÖRTROENDE ═══════════════════ */}
-      <section className="px-5 sm:px-6 lg:px-10 pb-14 md:pb-20 bg-[#EEEBE4]">
+      <section className="px-5 sm:px-6 lg:px-10 pb-10 md:pb-20 bg-[#EEEBE4]">
         <div className="max-w-5xl mx-auto bg-white rounded-2xl p-7 md:p-10 border border-[#E0DBD3]">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
             {TRUST_POINTS.map((t) => (
