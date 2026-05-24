@@ -1,43 +1,45 @@
-
 ## Mål
-Automatiskt fånga när H1-rubriker spiller över på 390px (iPhone-bredd) på grund av långa svenska compound words — innan det når produktion.
+Ersätt nuvarande logo-filer med de tre uppladdade SVG:erna och regenerera favicon + OG-bild från transparent-varianten. `CompcareLogo`-komponenten och alla användningsställen (~20 filer) lämnas orörda — bara filinnehåll byts.
 
-## Två delar
+## Mappning
 
-### Del 1 — Global CSS-skyddsnät (i `src/index.css`)
-Lägg till på alla H1 globalt:
-```css
-h1 {
-  overflow-wrap: anywhere;
-  word-break: break-word;
-  hyphens: auto;
-  -webkit-hyphens: auto;
-}
-html { lang: sv; } /* säkerställs i index.html för korrekt avstavning */
-```
-Detta gör att ord som "Förhandlingsassistent" bryts snyggt istället för att spilla över. Påverkar inte desktop visuellt eftersom orden får plats där.
+| Ny fil | Ersätter | Variant i komponent |
+|---|---|---|
+| `compcare-logo-light.svg` (beige bg) | `public/compcare-logo-light.svg` + `public/compcare-logo-full-light.svg` | `full` (light mode) |
+| `compcare-logo-dark.svg` (svart bg) | `public/compcare-logo-dark.svg` + `public/compcare-logo-full-dark.svg` | `full` (dark mode) |
+| `compcare-logo-transparent.svg` | `public/compcare-wordmark-light.svg` + `public/compcare-wordmark-dark.svg` + `public/compcare-logo.svg` | `wordmark` (båda modes) + JSON-LD-referens |
 
-### Del 2 — Automatiserat Vitest-test (`src/test/h1-overflow.test.tsx`)
-En testfil som:
-1. Definierar en lista publika routes att testa: `/`, `/consultant/salary-check`, `/fakturakontroll`, `/consultant/forhandla`, `/vanliga-fragor`, `/din-data`, `/referenser-info`.
-2. För varje route: renderar sidan i jsdom med viewport-bredd 390px (sätter `window.innerWidth = 390` + mockar `getBoundingClientRect`).
-3. Hittar alla `<h1>`-element via `document.querySelectorAll`.
-4. Failar om någon H1:s `scrollWidth > clientWidth` (= overflow) eller om något enskilt ord >20 tecken saknar `overflow-wrap: anywhere`/`break-word`-arvad style.
-5. Loggar route + rubriktext + ordet som spränger, så man direkt ser var problemet ligger.
+Behålls oförändrat: `compcare-icon.svg`, `compcare-appicon.svg` (används för `variant="icon"`).
 
-## Begränsningar (transparent)
-- jsdom mäter inte riktig text-rendering → testet fångar **strukturella** problem (saknade CSS-regler, för smala containers med `max-w`), inte pixel-perfekt overflow. Det är "good enough" som CI-skyddsnät; för pixel-exakt mätning krävs Playwright (separat förslag).
-- Testet kör endast statiskt renderade rubriker (ej de bakom auth/lazy-load). Auth-routes hoppas över.
+## Filer som byts ut i `public/`
 
-## Tekniska detaljer
-- Filer som ändras:
-  - `src/index.css` — lägg till H1-overflow-regler i `@layer base`.
-  - `src/test/h1-overflow.test.tsx` — ny testfil.
-  - `index.html` — säkerställ `<html lang="sv">` (för `hyphens: auto`).
-- Inga nya dependencies — använder befintlig vitest+jsdom+@testing-library/react setup.
-- Hero på `/` använder `clamp(42px, 8vw, 72px)` → på 390px blir det ~31px, vilket är ok. Index.tsx hero använder fast `text-5xl` (48px) → riskzon, fångas av testet om overflow uppstår.
+1. `compcare-logo-light.svg` ← ny light
+2. `compcare-logo-dark.svg` ← ny dark
+3. `compcare-logo-full-light.svg` ← ny light
+4. `compcare-logo-full-dark.svg` ← ny dark
+5. `compcare-wordmark-light.svg` ← transparent
+6. `compcare-wordmark-dark.svg` ← transparent (samma — wordmark-varianten i `CompcareLogo` används bara på ljusa bakgrunder i nuvarande kod, men växlas via `dark:`-klass; vi använder transparent för båda så texten ärver inget bg)
+7. `compcare-logo.svg` ← transparent (används i JSON-LD och som fallback)
+8. `compcare-logo-light.png`, `compcare-logo-dark.png` ← regenereras från nya SVG (används i mail/PrivacyPolicy)
+9. `src/assets/logo.png`, `src/assets/logo-dark.png` ← regenereras (används i `PrivacyPolicy.tsx`)
 
-## Vad detta INTE gör
-- Ändrar inte befintliga rubriktexter.
-- Lägger inte till Playwright/visuell regressionstest (kan föreslås separat).
-- Rör inte H2/H3 (kan utökas senare om du vill).
+## Favicon + OG (regenereras från transparent-varianten via `imagegen--edit_image`)
+
+- `favicon.ico` (multistorlek)
+- `favicon-16/32/48/96/128/192/256/512.png`
+- `apple-touch-icon.png` (180×180)
+- `favicon.png`
+- `og-image.png` + `compcare-og.png` + `compcare-social.png` (1200×630, transparent → vit bakgrund med centrerad logo + violett accent enligt brand)
+
+För ren ikon-favicon (utan "compcare"-texten) använder vi befintlig `compcare-icon.svg` som källa, så favicon förblir bara stapelmärket. Sociala bilder (OG) får full wordmark + ikon.
+
+## Inga kodändringar
+`CompcareLogo.tsx`, alla sidor som importerar den, samt `index.html`-referenser till favicons förblir oförändrade — sökvägarna är desamma, bara filinnehållet byts.
+
+## Verifiering
+1. Visuell kontroll: öppna `/` (light, wordmark), `/logga-in` (dark, full inverted), `/agency` (light, full), `/uppdragsradar` (wordmark).
+2. Kontroll av JSON-LD: `/rapport/anestesisjukskoterska` källkod ska peka på ny `compcare-logo.svg`.
+3. Favicon i webbläsarflik + ny OG-bild via OG-debugger-render.
+
+## Risk
+Låg. Inga API-, RLS-, eller backendändringar. Säkerhetsanalys (RLS/edge/PII) inte tillämplig — bara statiska assets.
