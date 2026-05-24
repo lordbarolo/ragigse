@@ -67,6 +67,17 @@ export default function Report() {
   }, [reportId, navigate]);
 
   useEffect(() => {
+    const prevHtml = document.documentElement.style.backgroundColor;
+    const prevBody = document.body.style.backgroundColor;
+    document.documentElement.style.backgroundColor = '#EEEBE4';
+    document.body.style.backgroundColor = '#EEEBE4';
+    return () => {
+      document.documentElement.style.backgroundColor = prevHtml;
+      document.body.style.backgroundColor = prevBody;
+    };
+  }, []);
+
+  useEffect(() => {
     if (report && !reportViewedRef.current) {
       reportViewedRef.current = true;
       trackEvent("report_viewed", { role: report.occupation || "", zone: report.kommun || "" });
