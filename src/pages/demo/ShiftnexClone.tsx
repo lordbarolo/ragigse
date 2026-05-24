@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import { heroBackgroundStyle } from "@/lib/heroBackground";
+import AnthropicScope from "@/components/demo/AnthropicScope";
 
 /**
  * /demo/shiftnex
