@@ -668,41 +668,42 @@ export default function LandingV2() {
       {/* ── /Ljus sektion-wrapper ── */}
 
       {/* ── Footer ──────────────────────────── */}
-      <footer className="px-5 sm:px-6 lg:px-10 pt-10 pb-12 border-t border-white/10 bg-[hsl(260_50%_5%_/_0.6)] bg-inherit">
+      <footer className="px-5 sm:px-6 lg:px-10 pt-10 pb-12 border-t border-black/10 bg-transparent">
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-3 gap-8 mb-8">
             <div>
-              <div className="mb-2.5">
-                <CompcareLogo variant="full" inverted={true} />
+              <div className="mb-2.5 text-black">
+                <CompcareLogo variant="full" inverted={false} />
               </div>
-              <p className="text-[13px] text-white/60 leading-relaxed max-w-[220px]">
+              <p className="text-[13px] text-black/70 leading-relaxed max-w-[220px]">
                 Transparent marknadsdata och smarta verktyg för Sveriges läkare och sjuksköterskor.
               </p>
             </div>
             <div>
-              <h4 className="text-xs font-medium uppercase tracking-widest text-white/50 mb-3">Konsult</h4>
-              <div className="flex flex-col gap-2 text-[13px] text-white/70">
-                <Link to="/v1?start=1" className="hover:text-white transition-colors">Löneanalys</Link>
-                <Link to="/uppdragsradar" className="hover:text-white transition-colors">Uppdragsradar</Link>
-                <Link to="/consultant/forhandla" className="hover:text-white transition-colors">Förhandlingsagent</Link>
-                <Link to="/consultant/fakturakontroll" className="hover:text-white transition-colors">Fakturagranskning</Link>
+              <h4 className="text-xs font-medium uppercase tracking-widest text-black/60 mb-3">Konsult</h4>
+              <div className="flex flex-col gap-2 text-[13px] text-black/75">
+                <Link to="/v1?start=1" className="hover:text-black transition-colors">Löneanalys</Link>
+                <Link to="/uppdragsradar" className="hover:text-black transition-colors">Uppdragsradar</Link>
+                <Link to="/consultant/forhandla" className="hover:text-black transition-colors">Förhandlingsagent</Link>
+                <Link to="/consultant/fakturakontroll" className="hover:text-black transition-colors">Fakturagranskning</Link>
               </div>
             </div>
             <div>
-              <h4 className="text-xs font-medium uppercase tracking-widest text-white/50 mb-3">Företag</h4>
-              <div className="flex flex-col gap-2 text-[13px] text-white/70">
-                <Link to="/vanliga-fragor" className="hover:text-white transition-colors">FAQ</Link>
-                <Link to="/integritetspolicy" className="hover:text-white transition-colors">Integritetspolicy</Link>
-                <a href="mailto:hej@compcare.se" className="hover:text-white transition-colors">Kontakt</a>
+              <h4 className="text-xs font-medium uppercase tracking-widest text-black/60 mb-3">Företag</h4>
+              <div className="flex flex-col gap-2 text-[13px] text-black/75">
+                <Link to="/vanliga-fragor" className="hover:text-black transition-colors">FAQ</Link>
+                <Link to="/integritetspolicy" className="hover:text-black transition-colors">Integritetspolicy</Link>
+                <a href="mailto:hej@compcare.se" className="hover:text-black transition-colors">Kontakt</a>
               </div>
             </div>
           </div>
-          <div className="border-t border-white/10 pt-5 flex flex-col md:flex-row justify-between items-center gap-2 text-xs text-white/50">
+          <div className="border-t border-black/10 pt-5 flex flex-col md:flex-row justify-between items-center gap-2 text-xs text-black/60">
             <p>© 2026 Compcare</p>
             <p>GDPR-kompatibel · Datan tillhör dig</p>
           </div>
         </div>
       </footer>
+
     </div>
   );
 }
