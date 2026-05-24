@@ -3,21 +3,22 @@ import { useEffect } from "react";
 import { ShieldCheck, Fingerprint, FileCheck, ArrowRight, CheckCircle, Lock } from "lucide-react";
 import LandingFooter from "@/components/landing/LandingFooter";
 import { trackEvent } from "@/lib/trackEvent";
-import { setPageMeta } from "@/lib/setPageMeta";
 import { Badge } from "@/components/ui/badge";
+import { SEO } from "@/components/SEO";
 
 export default function VerifyInfo() {
   useEffect(() => {
     trackEvent("verify_info_viewed");
-    setPageMeta({
-      title: "Samarbetsintyg — eliminera dubbelpresentationer | CompCare",
-      description:
-        "Ett digitalt signerat samarbetsintyg som visar exakt vilket bemanningsföretag du auktoriserat — inga duplicerade CV:n, inga oklarheter för regionen.",
-    });
   }, []);
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground">
+      <SEO
+        title="Din data — samarbetsintyg och dokumenthantering | CompCare"
+        description="Säkert dokumentvalv för vårdkonsulter. Skapa digitala samarbetsintyg, dela via tidsbegränsade länkar, behåll kontroll över dina uppdrag."
+        path="/din-data"
+      />
+
       {/* Hero */}
       <section className="pt-28 pb-16 px-6">
         <div className="max-w-3xl mx-auto text-center">

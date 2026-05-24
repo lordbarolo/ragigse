@@ -13,6 +13,7 @@ import ShareButton from "@/components/ShareButton";
 import type { ReportData } from "@/shared/types";
 
 import ConsultantTrackContent from "@/components/report/ConsultantTrackContent";
+import ReportFlowIndicator from "@/components/report/ReportFlowIndicator";
 
 
 
@@ -66,6 +67,17 @@ export default function Report() {
   }, [reportId, navigate]);
 
   useEffect(() => {
+    const prevHtml = document.documentElement.style.backgroundColor;
+    const prevBody = document.body.style.backgroundColor;
+    document.documentElement.style.backgroundColor = '#EEEBE4';
+    document.body.style.backgroundColor = '#EEEBE4';
+    return () => {
+      document.documentElement.style.backgroundColor = prevHtml;
+      document.body.style.backgroundColor = prevBody;
+    };
+  }, []);
+
+  useEffect(() => {
     if (report && !reportViewedRef.current) {
       reportViewedRef.current = true;
       trackEvent("report_viewed", { role: report.occupation || "", zone: report.kommun || "" });
@@ -95,30 +107,67 @@ export default function Report() {
   const isFriendCoupon = getCouponCode()?.toLowerCase() === "vänner500";
 
   return (
-    <div className="min-h-screen bg-background">
+    <div
+      className="min-h-screen"
+      style={{
+        // Light "cream" report theme — overrides global tokens only on this page
+        ['--background' as any]: '40 18% 91%',     // #EEEBE4
+        ['--foreground' as any]: '0 0% 4%',         // #0A0A0A
+        ['--card' as any]: '0 0% 100%',             // #FFFFFF
+        ['--card-foreground' as any]: '0 0% 4%',
+        ['--popover' as any]: '0 0% 100%',
+        ['--popover-foreground' as any]: '0 0% 4%',
+        ['--muted' as any]: '40 18% 91%',
+        ['--muted-foreground' as any]: '220 9% 46%', // #6B7280
+        ['--secondary' as any]: '40 18% 91%',
+        ['--secondary-foreground' as any]: '0 0% 4%',
+        ['--accent' as any]: '40 18% 91%',
+        ['--accent-foreground' as any]: '0 0% 4%',
+        ['--border' as any]: '35 17% 85%',          // #E0DBD3
+        ['--input' as any]: '35 17% 85%',
+        ['--radius' as any]: '12px',
+        backgroundColor: '#EEEBE4',
+        color: '#0A0A0A',
+      }}
+    >
       <Navbar />
-      {/* Header — premium, mobile-first */}
-      <header className="relative overflow-hidden hero-gradient px-5 pt-20 pb-10 sm:pt-24 sm:pb-12">
-        {/* Subtle decorative element */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
+      <ReportFlowIndicator
+        steps={[
+          { id: "flow-din-ersattning", label: "Din ersättning & marknadsspann" },
+          { id: "flow-situation", label: "Vad det betyder för dig" },
+          { id: "flow-stod", label: "Få stöd i din förhandling" },
+          { id: "flow-regional", label: "Villkoren på andra orter" },
+          { id: "flow-negotiation", label: "Din förhandlingspotential" },
+          { id: "flow-fakturor", label: "Har du tagit betalt för allt?" },
+          { id: "flow-market", label: "Marknadsintelligens" },
+          { id: "flow-method", label: "Beräkningsmetod" },
+        ]}
+      />
+      {/* Header — cream light theme */}
+      <header
+        className="relative overflow-hidden px-5 pt-20 pb-10 sm:pt-24 sm:pb-12"
+        style={{ backgroundColor: '#EEEBE4', color: '#0A0A0A' }}
+      >
         <div className="max-w-lg mx-auto space-y-4 relative z-10">
-          {/* Logo removed — already shown in Navbar */}
-          <p className="text-[10px] uppercase tracking-[0.2em] font-medium opacity-70">
+          <p className="text-[10px] uppercase tracking-[0.2em] font-medium" style={{ color: '#6B7280' }}>
             Ersättningsanalys
           </p>
-          <h1 className="text-2xl sm:text-3xl font-bold leading-tight tracking-tight drop-shadow-sm">
+          <h1 className="leading-tight" style={{ fontFamily: 'Georgia, serif', fontSize: '28px', fontWeight: 700, color: '#0A0A0A' }}>
             {report.occupation}
           </h1>
-          <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-sm opacity-80">
+          <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1" style={{ fontSize: '13px', color: '#6B7280' }}>
             <span className="whitespace-nowrap">{report.kommun}</span>
             {report.user_zone && (
-              <span className="whitespace-nowrap text-xs px-1.5 py-0.5 rounded-md bg-foreground/10">
+              <span
+                className="whitespace-nowrap px-1.5 py-0.5 rounded-md"
+                style={{ backgroundColor: '#FFFFFF', border: '1px solid #E0DBD3', color: '#0A0A0A', fontSize: '13px' }}
+              >
                 {report.user_zone}
               </span>
             )}
-            <span className="w-1 h-1 rounded-full bg-current opacity-40 mx-0.5" />
+            <span className="w-1 h-1 rounded-full mx-0.5" style={{ backgroundColor: '#3D3491' }} />
             <span className="whitespace-nowrap">Konsultuppdrag</span>
-            <span className="w-1 h-1 rounded-full bg-current opacity-40 mx-0.5" />
+            <span className="w-1 h-1 rounded-full mx-0.5" style={{ backgroundColor: '#3D3491' }} />
             <span className="whitespace-nowrap">{isEmployee ? "Anställd" : "Eget bolag"}</span>
           </div>
         </div>

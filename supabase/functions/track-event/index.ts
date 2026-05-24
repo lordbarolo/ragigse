@@ -67,6 +67,20 @@ const ALLOWED_EVENTS = new Set([
   "fakturakontroll_uploaded",
   "fakturakontroll_confirmed",
   "fakturakontroll_completed",
+  "intyg_dashboard_viewed",
+  "intyg_create_opened",
+  "intyg_ai_extract_run",
+  "intyg_create_submitted",
+  "intyg_link_copied",
+  "intyg_sign_page_viewed",
+  "intyg_sign_confirmed",
+  "assignment_feedback_shown",
+  "assignment_feedback_snoozed",
+  "assignment_feedback_submitted",
+  "survey_prefill_failed",
+  "hero_cta_clicked",
+  "survey_mounted",
+  "price_range_mismatch",
 ]);
 
 serve(async (req) => {
@@ -74,22 +88,88 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  const userAgent = req.headers.get("user-agent") || null;
+  const origin = req.headers.get("origin") || null;
+  const referer = req.headers.get("referer") || null;
+
+  const supabase = createClient(
+    Deno.env.get("SUPABASE_URL")!,
+    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+  );
+
+  const logRejection = async (
+    reason: string,
+    event_name: string | null,
+    lead_id: string | null,
+    metadata: unknown
+  ) => {
+    console.warn("[track-event] rejected", {
+      reason,
+      event_name,
+      lead_id,
+      origin,
+      referer,
+      user_agent: userAgent,
+      client_ip: clientIp,
+    });
+    try {
+      await supabase.from("analytics_event_rejections").insert([{
+        reason,
+        event_name,
+        lead_id: lead_id ? String(lead_id).slice(0, 100) : null,
+        client_ip: clientIp,
+        user_agent: userAgent,
+        origin,
+        referer,
+        metadata: (metadata && typeof metadata === "object") ? metadata as object : null,
+      }]);
+    } catch (e) {
+      console.error("[track-event] failed to log rejection", e);
+    }
+  };
+
   try {
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-    );
-
     // Rate limit: 60 requests/hour per IP
-    const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
     const rl = await checkRateLimit(supabase, "track-event", clientIp, 60);
-    if (!rl.allowed) return rateLimitResponse(rl, corsHeaders);
+    if (!rl.allowed) {
+      await logRejection("rate_limited", null, null, { limit: 60 });
+      return rateLimitResponse(rl, corsHeaders);
+    }
 
-    const { event_name, lead_id, metadata } = await req.json();
-
-    if (!event_name || !ALLOWED_EVENTS.has(event_name)) {
+    let body: any;
+    try {
+      body = await req.json();
+    } catch (e) {
+      await logRejection("invalid_json", null, null, { error: String(e) });
       return new Response(
-        JSON.stringify({ error: "Invalid event_name" }),
+        JSON.stringify({ error: "Invalid JSON body" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const { event_name, lead_id, metadata } = body || {};
+
+    if (!event_name) {
+      await logRejection("missing_event_name", null, lead_id ?? null, metadata);
+      return new Response(
+        JSON.stringify({ error: "Missing event_name" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (typeof event_name !== "string") {
+      await logRejection("invalid_event_name_type", null, lead_id ?? null, { typeof: typeof event_name });
+      return new Response(
+        JSON.stringify({ error: "event_name must be a string" }),
+        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (!ALLOWED_EVENTS.has(event_name)) {
+      await logRejection("unknown_event_name", event_name, lead_id ?? null, metadata);
+      return new Response(
+        JSON.stringify({ error: "Unknown event_name", event_name }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -97,6 +177,10 @@ serve(async (req) => {
     // Validate lead_id format if provided
     const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
     const validLeadId = lead_id && uuidRegex.test(lead_id) ? lead_id : null;
+    if (lead_id && !validLeadId) {
+      // Not fatal — we still record the event, but log the malformed id for visibility.
+      await logRejection("invalid_lead_id_format", event_name, String(lead_id).slice(0, 100), metadata);
+    }
 
     const { error } = await supabase
       .from("analytics_events")
@@ -108,6 +192,7 @@ serve(async (req) => {
 
     if (error) {
       console.error("[track-event] insert error:", error);
+      await logRejection("insert_failed", event_name, validLeadId, { db_error: error.message });
       return new Response(
         JSON.stringify({ error: "Failed to track event" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }

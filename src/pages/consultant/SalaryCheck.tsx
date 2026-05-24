@@ -78,10 +78,44 @@ export default function SalaryCheck() {
   const surveyRef = useRef<HTMLDivElement>(null);
 
   useTimeOnPage("landing");
-  useEffect(() => { trackEvent("landing_viewed"); }, []);
+  useEffect(() => {
+    trackEvent("landing_viewed", {
+      has_yrke_param: !!prefillKey,
+      yrke_slug: prefillKey || null,
+      has_start_param: startSurvey,
+      prefill_resolved: !!prefill,
+      prefill_category: prefill?.category ?? null,
+      prefill_role: prefill?.role ?? null,
+      auto_show_survey: !!prefill || startSurvey,
+      referrer: document.referrer || null,
+    });
+    // Track when ?yrke=… arrives but doesn't resolve to a known specialty,
+    // so we can see broken hero/campaign URLs in PostHog.
+    if (prefillKey && !prefill) {
+      trackEvent("survey_prefill_failed", { yrke: prefillKey });
+    }
+    // If we land already in the survey (prefill or ?start=1), make sure
+    // survey_started fires here — Survey.tsx only auto-fires on a valid
+    // initialCategory, so ?start=1 alone would otherwise be invisible.
+    // Avoid double-fire: Survey.tsx already auto-fires survey_started when
+    // it mounts with a valid initialCategory (i.e. when `prefill` is set).
+    if (showSurvey && !prefill) {
+      trackEvent("survey_started", {
+        source: startSurvey ? "start_param" : "direct",
+        yrke: prefillKey || null,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleStartSurvey = () => {
+    trackEvent("hero_cta_clicked", {
+      cta: "se_villkor",
+      had_prefill: !!prefill,
+      already_showing_survey: showSurvey,
+    });
     setShowSurvey(true);
+    trackEvent("survey_started", { source: "cta_click" });
     setTimeout(() => {
       surveyRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }, 100);

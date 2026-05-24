@@ -230,9 +230,9 @@ export default function Negotiate() {
             <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center mb-5">
               <Lock className="w-6 h-6 text-primary" />
             </div>
-            <h2 className="font-display text-xl font-bold text-foreground tracking-tight text-center">
+            <h1 className="font-display text-xl font-bold text-foreground tracking-tight text-center">
               Löneassistenten
-            </h2>
+            </h1>
             <p className="text-sm text-muted-foreground mt-2 text-center max-w-sm leading-relaxed">
               Få personlig rådgivning baserad på aktuella avtalspriser och marknadsdata för din roll och region. Ange din e-postadress för att komma igång.
             </p>

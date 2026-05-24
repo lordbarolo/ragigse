@@ -60,7 +60,7 @@ function calcRange(customerPrice: number, empType: "foretagare" | "anstalld", ro
 
 const SYSTEM = `Du är CompCares neutrala marknadsanalytiker. Aldrig "topp X%" eller social benchmarking.
 Regler:
-- Svara på svenska, max 4 meningar.
+- Svara på svenska, max 5 meningar.
 - Använd ENDAST de siffror du får (SKR-ramavtal + branschmarginal). Hitta inte på.
 - Föreslå aldrig en ersättning som är LÄGRE än användarens nuvarande timpris.
 - Använd försiktig ton: "marknadens spann ligger på...", "ramavtalet medger...".
@@ -148,7 +148,7 @@ serve(async (req) => {
   const userPrompt = `Marknadsdata för konsulten:
 ${JSON.stringify(facts, null, 2)}
 
-Skriv en neutral marknadskommentar (max 4 meningar) som beskriver:
+Skriv en neutral marknadskommentar (max 5 meningar) som beskriver:
 1) Var ramavtalet ligger.
 2) Förväntat ersättningsspann (${range.hourly_min}–${range.hourly_max} kr/h).
 3) En försiktig observation om förhandlingsutrymme givet det nuvarande timpriset (om angivet).

@@ -549,6 +549,7 @@ export default function FakturakontrollNy() {
                         size="icon"
                         className="h-9 w-9 shrink-0"
                         onClick={() => removeShift(i)}
+                        aria-label="Ta bort pass"
                       >
                         <Trash2 className="w-4 h-4" />
                       </Button>
@@ -679,7 +680,7 @@ export default function FakturakontrollNy() {
             </p>
           </div>
           <Button variant="outline" onClick={() => navigate("/consultant/fakturakontroll")}>
-            Tillbaka till fakturakontroll
+            Tillbaka till faktureringsstöd
           </Button>
         </div>
       )}

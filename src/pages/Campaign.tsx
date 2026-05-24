@@ -226,7 +226,7 @@ export default function Campaign() {
               </span>
             </button>
 
-            {/* Card 3: Fakturakontroll */}
+            {/* Card 3: Faktureringsstöd */}
             <button
               onClick={() => navigate("/consultant/fakturakontroll")}
               className="group text-left border border-border rounded-2xl p-6 bg-card hover:shadow-md transition-all"
@@ -235,7 +235,7 @@ export default function Campaign() {
                 <FileCheck className="w-5 h-5 text-emerald-600" />
               </div>
               <h3 className="font-semibold text-foreground mb-1.5" style={{ fontFamily: "var(--font-display)" }}>
-                Fakturakontroll
+                Faktureringsstöd
               </h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Säkerställ att du inte missat ersättning för OB, jour eller arbetad tid.
@@ -256,7 +256,7 @@ export default function Campaign() {
             Allt för din yrkesekonomi på ett ställe
           </h2>
           <p className="text-sm text-muted-foreground max-w-lg mx-auto leading-relaxed">
-            Ersättningsanalys, förhandlingsunderlag och fakturakontroll – samlat i en plattform
+            Ersättningsanalys, förhandlingsunderlag och faktureringsstöd – samlat i en plattform
             byggd för dig som vårdkonsult. Data hämtas från SKR:s ramavtal 2026
             och avropsdata från 21 regioner.
           </p>

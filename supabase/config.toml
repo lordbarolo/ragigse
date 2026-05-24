@@ -6,6 +6,9 @@ verify_jwt = false
 [functions.confirm-referral]
 verify_jwt = false
 
+[functions.get-public-profile]
+verify_jwt = false
+
 [functions.create-checkout]
 verify_jwt = false
 
@@ -123,6 +126,15 @@ verify_jwt = false
 [functions.verify-rates]
 verify_jwt = false
 
+[functions.verify-constants]
+verify_jwt = false
+
+[functions.rate-mismatch-watchdog]
+verify_jwt = false
+
+[functions.rate-baseline-ack]
+verify_jwt = false
+
 [functions.bankid-auth]
 verify_jwt = false
 
@@ -136,4 +148,19 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.radar-public-api]
+verify_jwt = false
+
+[functions.agent-api-rates]
+verify_jwt = false
+
+[functions.agent-api-market-history]
+verify_jwt = false
+
+[functions.agent-api-user-context]
+verify_jwt = false
+
+[functions.agent-api-admin]
+verify_jwt = false
+
+[functions.agent-api-user-tokens]
 verify_jwt = false

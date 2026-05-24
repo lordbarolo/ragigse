@@ -10,11 +10,11 @@ import { Loader2, UserPlus, FileUp } from "lucide-react";
 
 export function ReferenceDashboard() {
   const { user } = useAuth();
-  const { trustScore, profileStatus, loading, refresh } = useRefProfile(user?.id);
+  const { trustScore, profileStatus, initialLoading, refresh } = useRefProfile(user?.id);
   const [inviteOpen, setInviteOpen] = useState(false);
   const [importOpen, setImportOpen] = useState(false);
 
-  if (loading) {
+  if (initialLoading) {
     return (
       <div className="flex items-center justify-center py-12">
         <Loader2 className="w-5 h-5 animate-spin text-primary" />

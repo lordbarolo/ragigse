@@ -5,13 +5,17 @@ import { useAdminAuth } from "@/hooks/useAdminAuth";
 import SalaryInsights from "@/components/admin/SalaryInsights";
 import ConversionFunnel from "@/components/admin/ConversionFunnel";
 import DailyConversionFunnel from "@/components/admin/DailyConversionFunnel";
+import SurveyStepFunnel from "@/components/admin/SurveyStepFunnel";
+import SurveyPrefillDebug from "@/components/admin/SurveyPrefillDebug";
 import DailyVisitors from "@/components/admin/DailyVisitors";
 import ReferralStats from "@/components/admin/ReferralStats";
 import FeedbackStats from "@/components/admin/FeedbackStats";
 import BugReports from "@/components/admin/BugReports";
 import ChatAnswerReports from "@/components/admin/ChatAnswerReports";
+import EventCoverage from "@/components/admin/EventCoverage";
 import InvoiceReviews from "@/components/admin/InvoiceReviews";
 import RateVerification from "@/components/admin/RateVerification";
+import ConstantsVerification from "@/components/admin/ConstantsVerification";
 import RadarImport from "@/components/admin/RadarImport";
 import RadarApiKeys from "@/components/admin/RadarApiKeys";
 import { useAdminAnalytics } from "@/hooks/useAdminAnalytics";
@@ -340,6 +344,17 @@ export default function Admin() {
         onRefresh={refetchAnalytics}
       />
 
+      {/* Survey Step Funnel - landing → started → step viewed → step completed */}
+      <SurveyStepFunnel
+        data={analyticsData}
+        loading={analyticsLoading}
+        period={analyticsPeriod}
+        onRefresh={refetchAnalytics}
+      />
+
+      {/* Survey prefill debug — initialCategory/slug at mount + failed prefills */}
+      <SurveyPrefillDebug />
+
       <ReferralStats />
 
       {/* Feedback Stats */}
@@ -347,6 +362,9 @@ export default function Admin() {
 
       {/* Rate Verification */}
       <RateVerification />
+
+      {/* Constants Verification */}
+      <ConstantsVerification />
 
       {/* Invoice Reviews */}
       <InvoiceReviews />
@@ -356,6 +374,9 @@ export default function Admin() {
 
       {/* Chat Answer Reports */}
       <ChatAnswerReports />
+
+      {/* PostHog event coverage */}
+      <EventCoverage />
 
       {/* Salary Insights */}
       <SalaryInsights />

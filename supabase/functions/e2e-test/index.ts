@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { requireAdmin } from "../_shared/adminAuth.ts";
+import { computeEmployerCost, ITP1_THRESHOLD_MONTHLY, HOURS_PER_MONTH } from "../_shared/calc.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -230,8 +231,69 @@ serve(async (req) => {
     }
 
     // ──────────────────────────────────────────────
-    // CLEANUP: Remove test data
+    // STEP 8: Validate employer-cost step function for ALL roles
     // ──────────────────────────────────────────────
+    try {
+      const { data: roles, error: rolesErr } = await supabase
+        .from("rates")
+        .select("yrkeskategori")
+        .eq("employment_type", "anstalld");
+      if (rolesErr) throw rolesErr;
+
+      const uniqueRoles = Array.from(new Set((roles ?? []).map((r) => r.yrkeskategori).filter(Boolean)));
+      const failures: Array<{ role: string; reason: string }> = [];
+      const samples: Array<{ role: string; hourly: number; total: number; factor: number; crossesThreshold: boolean }> = [];
+
+      // Test each role at 3 salary points: low (300), mid (500), high (900)
+      const testPoints = [300, 500, 900];
+
+      for (const role of uniqueRoles) {
+        for (const hourly of testPoints) {
+          const b = computeEmployerCost(hourly);
+          const monthly = hourly * HOURS_PER_MONTH;
+
+          // Sanity invariants
+          const expectedAga = hourly * 0.3142;
+          const expectedAfa = hourly * 0.0085;
+          const expectedItpLow = Math.min(monthly, ITP1_THRESHOLD_MONTHLY) * 0.045;
+          const expectedItpHigh = Math.max(0, monthly - ITP1_THRESHOLD_MONTHLY) * 0.30;
+          const expectedItpMonthly = expectedItpLow + expectedItpHigh;
+          const expectedItpHour = expectedItpMonthly / HOURS_PER_MONTH;
+          const expectedSarskild = expectedItpHour * 0.2426;
+          const expectedTotal = hourly + expectedAga + expectedItpHour + expectedSarskild + expectedAfa;
+
+          const close = (a: number, b: number) => Math.abs(a - b) < 0.01;
+          if (!close(b.arbetsgivaravgift_per_h, expectedAga)) failures.push({ role, reason: `AGA mismatch @${hourly}` });
+          if (!close(b.itp1_per_month, expectedItpMonthly)) failures.push({ role, reason: `ITP mismatch @${hourly}` });
+          if (!close(b.afa_tfa_per_h, expectedAfa)) failures.push({ role, reason: `AFA mismatch @${hourly}` });
+          if (!close(b.total_employer_cost_per_h, expectedTotal)) failures.push({ role, reason: `Total mismatch @${hourly}` });
+          if (b.total_factor < 1.30 || b.total_factor > 1.70) failures.push({ role, reason: `Factor out of range @${hourly}: ${b.total_factor}` });
+        }
+        // Capture one sample per role at 500 kr/h
+        const sample = computeEmployerCost(500);
+        samples.push({
+          role,
+          hourly: 500,
+          total: Math.round(sample.total_employer_cost_per_h * 100) / 100,
+          factor: Math.round(sample.total_factor * 10000) / 10000,
+          crossesThreshold: sample.itp1_high_part > 0,
+        });
+      }
+
+      steps.push({
+        name: `8. Employer-cost step function (${uniqueRoles.length} roles × 3 salary points)`,
+        status: failures.length === 0 ? "PASS" : "FAIL",
+        details: failures.length === 0
+          ? `All ${uniqueRoles.length * 3} calculations match invariants. Brytpunkt: ${ITP1_THRESHOLD_MONTHLY} kr/mån.`
+          : `${failures.length} failures: ${failures.slice(0, 5).map((f) => `${f.role}:${f.reason}`).join("; ")}`,
+        after: { samples: samples.slice(0, 10), total_roles: uniqueRoles.length, failures: failures.length },
+      });
+    } catch (e) {
+      steps.push({ name: "8. Employer-cost step function", status: "FAIL", details: String(e) });
+    }
+
+    // ──────────────────────────────────────────────
+    // CLEANUP: Remove test data
     try {
       if (reportId) {
         await supabase.from("reports").delete().eq("id", reportId);

@@ -4,7 +4,7 @@ import { ShieldCheck, FileSearch, MessageSquare, ArrowRight, CheckCircle2 } from
 import { Button } from "@/components/ui/button";
 import CompcareLogo from "@/components/CompcareLogo";
 import ThemeToggle from "@/components/ThemeToggle";
-import HeroRateLookup from "@/components/landing/HeroRateLookup";
+import InlineTerminalSurvey from "@/components/survey/InlineTerminalSurvey";
 import MissionSection from "@/components/landing/MissionSection";
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
@@ -15,7 +15,7 @@ const platformJsonLd = {
   name: "CompCare",
   url: "https://compcare.se",
   applicationCategory: "BusinessApplication",
-  description: "Verifieringsinfrastruktur för vårdens konsulter — löneanalys, fakturakontroll och förhandlingsstöd baserat på SKR:s ramavtal.",
+  description: "Verifieringsinfrastruktur för vårdens konsulter — löneanalys, faktureringsstöd och förhandlingsstöd baserat på SKR:s ramavtal.",
   operatingSystem: "All",
   offers: {
     "@type": "AggregateOffer",
@@ -103,9 +103,9 @@ export default function Index() {
             Baserat på SKR:s ramavtal för 2026 och AI-analyser av bemanningsbranschens marginaler.
           </p>
 
-          <HeroRateLookup />
+          <InlineTerminalSurvey />
         </div>
-        <div className="absolute bottom-0 left-0 right-0 h-[200px] bg-gradient-to-t from-background to-transparent" />
+        <div className="absolute bottom-0 left-1 right-1 h-[200px] bg-gradient-to-t from-background to-transparent" />
       </section>
 
       {/* ── Mission Section (tillfälligt borttagen) ────── */}
@@ -132,6 +132,28 @@ export default function Index() {
             </article>
           ))}
         </div>
+
+        <div className="mt-10 flex flex-col items-center text-center gap-3">
+          <p className="text-sm text-muted-foreground max-w-md">
+            Skapa ett konto för att spara analyser, följa marknadspriser över tid och få tillgång till förhandlingsassistenten.
+          </p>
+          <Link to="/registrera">
+            <Button
+              size="sm"
+              className="gap-2"
+              data-cta="register_section_2"
+              onClick={() =>
+                trackEvent("product_cta_clicked", {
+                  cta: "register_section_2",
+                  section: "forhandlingsanalys",
+                  location: "landing_pillars",
+                })
+              }
+            >
+              Registrera dig kostnadsfritt <ArrowRight className="w-3 h-3" />
+            </Button>
+          </Link>
+        </div>
       </section>
 
       {/* ── Trust indicators ───────────────────────────── */}
@@ -157,7 +179,7 @@ export default function Index() {
           <div className="flex gap-6 text-sm text-muted-foreground">
             <Link to="/vanliga-fragor" className="hover:text-foreground transition-colors">FAQ</Link>
             <Link to="/integritetspolicy" className="hover:text-foreground transition-colors">Integritetspolicy</Link>
-            <Link to="/dokhus-info" className="hover:text-foreground transition-colors">Dokhus</Link>
+            <Link to="/din-data" className="hover:text-foreground transition-colors">Din data</Link>
             <Link to="/referenser-info" className="hover:text-foreground transition-colors">Ref ID</Link>
           </div>
           <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} CompCare</p>

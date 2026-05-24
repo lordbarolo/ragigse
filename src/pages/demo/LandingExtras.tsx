@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import CompcareLogo from "@/components/CompcareLogo";
+import AnthropicScope from "@/components/demo/AnthropicScope";
 
 const STEPS = [
   { num: "1", title: "Skapa ditt konto", desc: "Logga in och ange din roll.\nFå tillgång till verktyg och insikter." },
@@ -10,7 +11,8 @@ const STEPS = [
 
 export default function LandingExtras() {
   return (
-    <div className="w-full bg-[#F2F1F8] text-foreground font-sans">
+    <AnthropicScope>
+    <div className="w-full text-foreground">
       {/* ── Nav ─────────────────────────────── */}
       <nav className="flex items-center justify-between px-6 lg:px-10 h-[60px] bg-white border-b border-border/40">
         <Link to="/"><CompcareLogo variant="wordmark" /></Link>
@@ -67,7 +69,7 @@ export default function LandingExtras() {
                 <table className="w-full border-collapse text-[13px]">
                   <thead>
                     <tr className="bg-[#f5f5f5] border-b border-[#e0e0e0]">
-                      <th className="py-2.5 px-3.5 text-left w-8"><input type="checkbox" className="accent-[#534AB7] w-[13px] h-[13px]" readOnly /></th>
+                      <th className="py-2.5 px-3.5 text-left w-8"><input type="checkbox" className="accent-[#534AB7] w-[13px] h-[13px]" readOnly aria-label="Markera alla rader" /></th>
                       <th className="py-2.5 px-3.5 text-left font-semibold text-[11px] text-[#666] uppercase tracking-[0.05em] whitespace-nowrap">Faktura</th>
                       <th className="py-2.5 px-3.5 text-left font-semibold text-[11px] text-[#666] uppercase tracking-[0.05em] whitespace-nowrap">Fakturerat</th>
                       <th className="py-2.5 px-3.5 text-left font-semibold text-[11px] text-[#666] uppercase tracking-[0.05em] whitespace-nowrap">Arbetat</th>
@@ -85,7 +87,7 @@ export default function LandingExtras() {
                       { nr: "#7", fakt: "44 h", arb: "44 h", diff: "—", belopp: "—", ok: true, checked: false },
                     ].map((row, i) => (
                       <tr key={i} className={`border-b border-[#f0f0f0] last:border-b-0 hover:bg-[#faf9ff] ${row.ok ? "" : "bg-[#fff8f8] hover:bg-[#fff2f2]"}`}>
-                        <td className="py-[11px] px-3.5"><input type="checkbox" className="accent-[#534AB7] w-[13px] h-[13px]" checked={row.checked} readOnly /></td>
+                        <td className="py-[11px] px-3.5"><input type="checkbox" className="accent-[#534AB7] w-[13px] h-[13px]" checked={row.checked} readOnly aria-label={`Markera faktura ${row.nr}`} /></td>
                         <td className="py-[11px] px-3.5 font-semibold text-[#534AB7] whitespace-nowrap">{row.nr}</td>
                         <td className="py-[11px] px-3.5 text-[#1a1a1a] whitespace-nowrap">{row.fakt}</td>
                         <td className="py-[11px] px-3.5 text-[#1a1a1a] whitespace-nowrap">{row.arb}</td>
@@ -134,5 +136,6 @@ export default function LandingExtras() {
         </div>
       </div>
     </div>
+    </AnthropicScope>
   );
 }

@@ -1,5 +1,4 @@
 import posthog from "posthog-js";
-import { getConsent } from "@/lib/cookieConsent";
 
 const POSTHOG_KEY =
   (import.meta.env.VITE_POSTHOG_KEY as string | undefined) ??
@@ -16,26 +15,30 @@ posthog.init(POSTHOG_KEY, {
     (import.meta.env.VITE_POSTHOG_HOST as string | undefined) ??
     "https://eu.i.posthog.com",
   ui_host: "https://eu.posthog.com",
-  opt_out_capturing_by_default: true,
-  capture_pageview: false,
+  // Cookieless / consent-free setup (GDPR + ePrivacy compliant):
+  // - `persistence: "memory"` → no cookies/localStorage, no consent banner required
+  // - `person_profiles: "identified_only"` → no person profile until posthog.identify(leadId)
+  // Trade-off: distinct_id resets per tab/session. Our funnel is session-scoped
+  // and we explicitly identify leads via aliasLead(), so this is acceptable.
+  person_profiles: "identified_only",
+  persistence: "memory",
+  capture_pageview: true,
   capture_pageleave: true,
-  cross_subdomain_cookie: true,
 });
 
-// Mark internal traffic with a super property
-if (
-  window.location.hostname === "localhost" ||
-  window.location.hostname.includes("lovable")
-) {
+// Mark internal traffic with a super property.
+// IMPORTANT: Only dev/preview hosts count as internal — the user's *published*
+// Lovable URL (e.g. preview--compcare-se.lovable.app) is real production
+// traffic and must be tracked. Keep this logic in sync with
+// `isInternalTraffic()` in src/lib/trackEvent.ts.
+const __hostname = window.location.hostname;
+const __isInternal =
+  __hostname === "localhost" ||
+  __hostname === "127.0.0.1" ||
+  __hostname.endsWith(".lovableproject.com") ||
+  __hostname.startsWith("id-preview--");
+if (__isInternal) {
   posthog.register({ is_internal_traffic: true });
-}
-
-// Sync with any existing cookie consent on load
-const existing = getConsent();
-if (existing === "accepted") {
-  posthog.opt_in_capturing();
-} else if (existing === "rejected") {
-  posthog.opt_out_capturing();
 }
 
 if (import.meta.env.DEV) {
@@ -49,9 +52,7 @@ if (__host === "compcare.se" || __host === "www.compcare.se") {
     "[PostHog] active on",
     __host,
     "distinct_id:",
-    posthog.get_distinct_id(),
-    "opted_in:",
-    posthog.has_opted_in_capturing()
+    posthog.get_distinct_id()
   );
 }
 

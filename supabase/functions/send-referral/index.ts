@@ -145,7 +145,6 @@ serve(async (req) => {
 
         if (resendRes.ok) {
           emailSent = true;
-          console.log(`Email sent to ${referee_email}`);
         } else {
           const errBody = await resendRes.text();
           console.error(`Resend error [${resendRes.status}]: ${errBody}`);
@@ -154,8 +153,6 @@ serve(async (req) => {
         console.error("Email send error:", emailErr);
       }
     }
-
-    console.log(`Referral created: ${referrer_email} -> ${referee_email}, link: ${confirmLink}`);
 
     return new Response(
       JSON.stringify({

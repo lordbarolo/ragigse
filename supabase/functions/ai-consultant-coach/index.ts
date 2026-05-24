@@ -61,9 +61,9 @@ Hårda regler:
 - Vid frågor om ersättningsdata, hänvisa till konsultens dashboard ("Förväntad ersättningsnivå").
 - Vid frågor om fakturagranskning: nämn att tjänsten är no-cure-no-pay (25% + moms av tilläggsfakturerat belopp).
 - Vid frågor om referenser: hänvisa till Ref-ID och plingar.
-- Vid frågor om dokument: hänvisa till Dokhus och samarbetsintyg.
+- Vid frågor om dokument: hänvisa till Din data och samarbetsintyg.
 - Aldrig hänvisa till "live" eller "pågående" uppdrag — endast historiska mönster i Uppdragsradar.
-- Använd korta, tydliga svar (max 4-6 meningar). Markdown är OK.`;
+- Använd korta, tydliga svar (max 5 meningar). Markdown är OK.`;
 }
 
 serve(async (req) => {

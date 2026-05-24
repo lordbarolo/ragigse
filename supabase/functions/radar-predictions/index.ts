@@ -102,7 +102,21 @@ async function fetchAll(supabase: any, table: string, select: string, filters: (
     let query = supabase.from(table).select(select).order(orderCol, { ascending: false }).range(offset, offset + PAGE_SIZE - 1);
     query = filters(query);
     const { data, error } = await query;
-    if (error) throw error;
+    if (error) {
+      // Gracefully handle missing tables / schema-cache misses so one missing
+      // source doesn't kill the whole radar response.
+      const msg = String(error?.message || "");
+      if (
+        error?.code === "PGRST205" ||
+        error?.code === "42P01" ||
+        msg.includes("schema cache") ||
+        msg.includes("does not exist")
+      ) {
+        console.warn(`[radar-predictions] Skipping missing table "${table}": ${msg}`);
+        break;
+      }
+      throw error;
+    }
     if (!data || data.length === 0) break;
     allRows = allRows.concat(data);
     if (data.length < PAGE_SIZE) break;

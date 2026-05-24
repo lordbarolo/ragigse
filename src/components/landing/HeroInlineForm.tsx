@@ -21,10 +21,8 @@ export default function HeroInlineForm() {
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return SPECIALITY_OPTIONS.slice(0, 8);
-    return SPECIALITY_OPTIONS.filter(
-      (o) => o.label.toLowerCase().includes(q),
-    ).slice(0, 12);
+    if (!q) return SPECIALITY_OPTIONS;
+    return SPECIALITY_OPTIONS.filter((o) => o.label.toLowerCase().includes(q));
   }, [query]);
 
   const handlePick = (slug: string, label: string) => {
@@ -38,8 +36,8 @@ export default function HeroInlineForm() {
     if (hasQuery && filtered[0]) {
       handlePick(filtered[0].slug, filtered[0].label);
     } else {
-      trackEvent("product_cta_clicked", { cta: "hero_inline_empty", target: "/v1" });
-      navigate("/v1");
+      trackEvent("product_cta_clicked", { cta: "hero_inline_empty", target: "/v1?start=1" });
+      navigate("/v1?start=1");
     }
   };
 
@@ -49,7 +47,7 @@ export default function HeroInlineForm() {
       className="bg-white rounded-2xl shadow-[0_8px_40px_rgba(13,11,42,0.18)] p-3 sm:p-4 flex flex-col sm:flex-row items-stretch gap-2.5 sm:gap-3 max-w-[560px] w-full"
     >
       <div className="relative flex-1">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6B6B85] pointer-events-none" />
         <input
           type="text"
           value={query}
@@ -60,22 +58,26 @@ export default function HeroInlineForm() {
             setQuery(e.target.value);
             setOpen(true);
           }}
-          className="w-full h-11 pl-9 pr-3 text-[15px] text-foreground bg-transparent border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#534AB7]/30 focus:border-[#534AB7]"
+          className="w-full h-11 pl-9 pr-3 text-[15px] text-[#0D0B2A] placeholder:text-[#6B6B85] bg-white border border-[#E2E1EC] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#534AB7]/30 focus:border-[#534AB7]"
           aria-label="Specialitet"
           autoComplete="off"
         />
         {open && filtered.length > 0 && (
-          <div className="absolute z-30 left-0 right-0 mt-1.5 bg-white border border-border rounded-lg shadow-lg max-h-64 overflow-auto">
+          <div
+            onMouseDown={(e) => e.preventDefault()}
+            onTouchStart={(e) => e.stopPropagation()}
+            className="absolute z-30 left-0 right-0 mt-1.5 bg-white border border-[#E2E1EC] rounded-lg shadow-lg max-h-64 overflow-y-auto overscroll-contain [-webkit-overflow-scrolling:touch]"
+          >
             {filtered.map((o) => (
               <button
                 key={o.slug}
                 type="button"
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => handlePick(o.slug, o.label)}
-                className="w-full text-left px-3.5 py-2.5 text-[14px] text-foreground hover:bg-[#F2F1F8] transition-colors border-b border-border/40 last:border-b-0"
+                className="w-full text-left px-3.5 py-2.5 text-[14px] text-[#0D0B2A] hover:bg-[#F2F1F8] transition-colors border-b border-[#E2E1EC]/60 last:border-b-0"
               >
                 {o.label}
-                <span className="ml-2 text-[11px] text-muted-foreground uppercase tracking-wide">
+                <span className="ml-2 text-[11px] text-[#6B6B85] uppercase tracking-wide">
                   {o.category === "lakare" ? "Läkare" : "Sjuksköterska"}
                 </span>
               </button>

@@ -1,43 +1,57 @@
 ## Mål
-Ersätt nuvarande `AgentNetwork` (12 spretiga noder, ständigt pulserande linjer och floatande satelliter) med en lugnare, mer fokuserad agentisk animation till höger i hero — som **rör sig mycket initialt** och sedan **lugnar ner sig** till ett stilla, andande sluttillstånd.
+Skapa en återanvändbar säkerhetsrevisions-mall för CompCare som täcker alla 8 delar (de 5 ursprungliga + 3 CompCare-specifika tillägg som identifierades i förra svaret).
 
-## Designkoncept: "Constellation Settle"
-En central CompCare-nod med **6 satellitnoder** (istället för 12) i en ren cirkulär formation. Animationen har tre faser:
+## Leverabel
+En fil: `security-reports/AUDIT_TEMPLATE.md`
 
-1. **0–1.2s — Boot:** Satelliter flyger in från slumpade positioner utanför viewporten, linjer ritas en efter en från center, datapaket skjuts ut snabbt mot varje nod (stagger).
-2. **1.2–2.5s — Settle:** Noderna studsar mjukt på plats (spring easing), linjerna bleknar in till låg opacitet, ett sista "broadcast"-pulse går ut från center.
-3. **2.5s+ — Idle (lugnt sluttillstånd):** Bara mycket subtila tecken på liv:
-   - Center-noden andas långsamt (8s scale 1.0 → 1.04 → 1.0).
-   - En enda långsam datapuls vandrar från center till en slumpad satellit var ~4s (inte 0.6s som nu).
-   - Halos är statiska/mycket dämpade — ingen konstant pulsering på alla noder samtidigt.
-   - Inga floatande noder. Inga blinkande linjer.
+## Innehåll i mallen
 
-Resultat: imponerande "den vaknar till liv"-känsla första 2.5 sekunderna, sedan en stilla, professionell konstellation som inte stjäl uppmärksamhet från hero-copy och formuläret.
+**Metadata-block** (datum, projekt, granskare, version, tidigare rapport).
 
-## Tekniska ändringar
+**DEL 1 — RLS-policies** (original)
+- Alla tabeller + RLS on/off, SELECT/INSERT/UPDATE/DELETE-policies, cross-user-läsning, anon-läsning, flaggning av `FOR ALL TO public`.
 
-**Fil:** `src/components/landing/AgentNetwork.tsx` (skrivs om)
-- Reducera `NODES` från 12 → 6, jämnt fördelade i en cirkel (radie ~38%).
-- Ta bort `agent-float` och `agent-halo` på alla satelliter (orsaken till "spretigheten").
-- Lägg till `useState` för `phase: 'boot' | 'settle' | 'idle'` styrd av `setTimeout`.
-- Boot-fas: satelliter renderas med `transform: translate(randomX, randomY) scale(0)` och animeras till slutposition via CSS-transition (cubic-bezier spring, 900ms stagger 120ms).
-- Linjer ritas med `stroke-dasharray` + animerad `stroke-dashoffset` (draw-in effekt) under boot.
-- Idle-fas: ett `setInterval` på **4000ms** (inte 600ms) väljer en nod för en mjuk datapuls.
-- Center-nod får långsam `breathe` keyframe (8s).
+**DEL 2 — Storage buckets** (original)
+- Publik/privat, SELECT/INSERT/DELETE-policies, anon upload, cross-user file access.
 
-**Fil:** `src/index.css`
-- Ta bort/ersätt `agent-float` och `agent-halo` keyframes (kvarstår nu som källa till oroligheten).
-- Lägg till nya keyframes:
-  - `agent-boot-in` — scale + translate spring för satelliter.
-  - `agent-line-draw` — stroke-dashoffset från full till 0 (line draw-in).
-  - `agent-breathe` — 8s mycket subtil scale 1 → 1.04 → 1 för center.
-  - `agent-broadcast` — engångs ring-pulse runt center vid övergång boot → idle.
+**DEL 3 — SECURITY DEFINER-funktioner** (original)
+- Namn, syfte, anropare, GRANTs, motivering.
 
-**Fil:** `src/pages/demo/LandingV2.tsx`
-- Ingen layoutändring — komponenten sitter redan korrekt i höger kolumn (rad 207–210).
+**DEL 4 — Exponerade nycklar & secrets** (original + utökning)
+- `service_role` i frontend, hårdkodade nycklar, `.env` i git, **+ `git log -p -S "service_role"` för commit-historik**.
 
-## Vad användaren kommer märka
-- Tydlig "wow"-moment vid sidladdning (första ~2.5s).
-- Lugn, ren konstellation efter det — inga 12 ikoner som svävar och pulserar samtidigt.
-- Center-noden fortsätter andas så det inte ser "fruset" ut.
-- Endast en datapuls åt gången, glesare intervall — fokus stannar på hero-texten.
+**DEL 5 — Edge functions** (original + utökning)
+- Auth, input-validering, anrops-kontroll, känsliga logs, **+ kryssa mot `supabase/config.toml` att `verify_jwt`-flagga matchar avsikt**, **+ verifiera `requireAdmin()` faktiskt anropas i alla `admin-*` functions**.
+
+**DEL 6 — Jämförelse mot tidigare rapport** (original)
+- Nya/åtgärdade/kvarstående fynd, trend.
+
+**DEL 7 — Lovable Cloud-specifika kontroller** (NY)
+- 7.1 **Views** — lista alla i `public`, `security_invoker` on/off, exponerade kolumner, GRANTs till anon/authenticated.
+- 7.2 **RLS-policy-logik** — flagga `USING (col IS NULL OR ...)` på nullable, `USING (true)`, `FOR ALL` utan `WITH CHECK`, `auth.uid()` mot nullable kolumn.
+- 7.3 **Triggers** — alla triggers på `auth.*`, särskilt `handle_new_user` (whitelist för `raw_user_meta_data->>'role'`).
+- 7.4 **pg_cron-jobb** — lista alla, ägare, funktion, privilegier.
+- 7.5 **Realtime-publikationer** — vilka tabeller i `supabase_realtime`.
+- 7.6 **Storage upload-konvention** — verifiera kod uploadar till `{user_id}/...`, inte rotmappen.
+- 7.7 **Client-side auth-bypass** — sök `localStorage`/`sessionStorage` för admin-flags, routes endast skyddade av `ProtectedRoute` utan RLS-motpart.
+- 7.8 **PII på publika token-routes** — `/profil/:id`, `/samarbetsintyg/:id`, `/dela`, `/kampanj/:role`: tokens i Referer/analytics, PostHog PII, JSON-LD whitelist.
+- 7.9 **Rate limiting** — AI-quota multi-account-bypass, BankID-endpoints, `delete-account`.
+- 7.10 **CORS** — `Access-Control-Allow-Origin` per edge function, dokumentera medvetna `*`.
+
+**DEL 8 — Beroenden & supply chain** (NY)
+- `npm audit`, lockfile-integritet, `package.json` overrides, outdated critical deps.
+
+**DEL 9 — Automatiserade verktyg** (NY)
+- Kör parallellt: `supabase--linter` + intern `security--run_security_scan` + denna manuella check. Lista vilka klasser av buggar varje verktyg fångar.
+
+**Rapport-format-block** (original)
+- Sammanfattning, kritiska/allvarliga/måttliga fynd, rekommendationer, filsökväg `security-reports/YYYY-MM-DD-security-audit.md`.
+
+**CompCare-specifika kända safe-zones** (för att slippa falska positiva)
+- `calloff_imports_public` view är medvetet `SECURITY DEFINER` (vår fix).
+- Token-views på `ref_*` är medvetet publika via RPC.
+- Publika edge functions i `config.toml` (komplett lista) — validerar input internt.
+
+## Vad jag INTE gör i denna plan
+- Kör inte revisionen nu (det är en separat task).
+- Ändrar inte den befintliga AUDIT_BRIEF.md (kompletterar med en ny fil).

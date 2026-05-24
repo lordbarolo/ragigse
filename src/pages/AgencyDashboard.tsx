@@ -455,10 +455,10 @@ export default function AgencyDashboard() {
             </div>
           ))}
         </div>
-        <h2 className="text-lg font-bold text-foreground mb-2">Så här funkar Dokhus</h2>
+        <h2 className="text-lg font-bold text-foreground mb-2">Så här funkar Din data</h2>
         <div className="space-y-2 text-sm text-muted-foreground leading-relaxed">
           <p>
-            Dokhus eliminerar risken för dubbelpresentationer hos uppdragsgivare. Istället för att regioner och kommuner ska behöva hantera
+            Din data eliminerar risken för dubbelpresentationer hos uppdragsgivare. Istället för att regioner och kommuner ska behöva hantera
             oklarheter kring vilken byrå som representerar en konsult, skapar ni ett digitalt samarbetsintyg som konsulten signerar.
           </p>
           <p>

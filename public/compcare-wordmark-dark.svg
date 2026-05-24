@@ -1,3 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 60" width="300" height="60">
-  <text x="150" y="44" text-anchor="middle" font-family="Sora, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="42" font-weight="600" letter-spacing="0.5" fill="#FFFFFF">compcare</text>
+<svg viewBox="0 0 280 50" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="11" width="28" height="4" rx="2" fill="#3D3491"/>
+  <rect x="0" y="21" width="20" height="4" rx="2" fill="#3D3491"/>
+  <text y="25" font-size="26" font-weight="400" letter-spacing="0.06em" font-family="Georgia, serif">
+    <tspan x="38" fill="#FFFFFF">comp</tspan><tspan fill="#3D3491">care</tspan>
+  </text>
 </svg>

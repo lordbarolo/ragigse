@@ -6,6 +6,8 @@ import InvoiceEmailDrafter from "@/components/ai/InvoiceEmailDrafter";
 import { Button } from "@/components/ui/button";
 import LandingFooter from "@/components/landing/LandingFooter";
 import { trackEvent } from "@/lib/trackEvent";
+import { SEO } from "@/components/SEO";
+
 
 const STEPS = [
   { num: "1", title: "Skapa ditt konto", desc: "Logga in och ange din roll.\nFå tillgång till verktyg och insikter." },
@@ -32,7 +34,23 @@ export default function Fakturakontroll() {
 
   return (
     <div className="flex flex-col text-foreground">
+      <SEO
+        title="Fakturakontroll för vårdkonsulter — no cure, no pay | CompCare"
+        description="Vi granskar dina fakturor och tidrapporter från senaste två åren. Vid avvikelser hjälper vi dig fakturera om. 25% + moms endast om vi hittar pengar."
+        path="/consultant/fakturakontroll"
+        ogType="product"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Service",
+          serviceType: "Fakturagranskning för vårdkonsulter",
+          provider: { "@type": "Organization", name: "CompCare", url: "https://www.compcare.se" },
+          areaServed: "SE",
+          description: "Granskning av fakturor och tidrapporter mot ramavtal. No cure — no pay: 25% + moms endast av återkrävt belopp.",
+          offers: { "@type": "Offer", priceCurrency: "SEK", priceSpecification: { "@type": "PriceSpecification", description: "25% + moms av återkrävt belopp. Inget återkrävt — ingen kostnad." } },
+        }}
+      />
       {/* Hero — Value prop */}
+
       <section className="px-6 pt-12 pb-4 md:pt-20 md:pb-6">
         <div className="max-w-3xl mx-auto space-y-4">
           <p className="text-xs font-bold uppercase tracking-widest text-primary">Fakturagranskning - Få betalt för all din tid</p>
@@ -126,9 +144,9 @@ export default function Fakturakontroll() {
       <section className="px-6 pt-8 pb-12 md:pt-12 md:pb-16 bg-muted/40">
         <div className="max-w-5xl mx-auto">
           <p className="text-xs font-bold uppercase tracking-widest text-primary mb-2">Så funkar det</p>
-          <h1 className="font-display text-3xl md:text-4xl font-extrabold tracking-tight mb-12">
+          <h2 className="font-display text-3xl md:text-4xl font-extrabold tracking-tight mb-12">
             Fyra steg till full kontroll
-          </h1>
+          </h2>
 
           {/* Step circles + line */}
           <div className="relative flex items-start justify-between">

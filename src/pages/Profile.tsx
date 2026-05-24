@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -13,11 +13,13 @@ import ProfileInsights from "@/components/profile/ProfileInsights";
 import TrustVerification from "@/components/profile/TrustVerification";
 import CompensationView from "@/components/report/CompensationView";
 import DashboardReferences from "@/components/profile/DashboardReferences";
-import DashboardDocuments from "@/components/profile/DashboardDocuments";
+import DashboardDocuments, { type DashboardDocumentsHandle } from "@/components/profile/DashboardDocuments";
+import ProfileAuditLog from "@/components/profile/ProfileAuditLog";
 import DashboardInvoiceCheck from "@/components/profile/DashboardInvoiceCheck";
+import PensionImpactSimulator from "@/components/report/PensionImpactSimulator";
 import AssignmentFeedbackDialog from "@/components/profile/AssignmentFeedbackDialog";
-import AiPricingCoach from "@/components/ai/AiPricingCoach";
-import AiConsultantCoach from "@/components/ai/AiConsultantCoach";
+
+
 import { useAssignmentFeedback } from "@/hooks/useAssignmentFeedback";
 import { trackEvent } from "@/lib/trackEvent";
 
@@ -58,7 +60,31 @@ export default function Profile() {
   });
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<ProfileTab>("overview");
+  const [pendingUploadOpen, setPendingUploadOpen] = useState(false);
+  const docsRef = useRef<DashboardDocumentsHandle>(null);
   const { pending: pendingFeedback, dismiss: dismissFeedback } = useAssignmentFeedback(user);
+
+  const goUpload = () => {
+    if (activeTab !== "creds") {
+      setPendingUploadOpen(true);
+      setActiveTab("creds");
+    } else {
+      docsRef.current?.openUpload();
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === "creds" && pendingUploadOpen) {
+      const id = window.setTimeout(() => {
+        docsRef.current?.openUpload();
+        setPendingUploadOpen(false);
+      }, 100);
+      return () => window.clearTimeout(id);
+    }
+  }, [activeTab, pendingUploadOpen]);
+  const goVerifyIdentity = () => {
+    toast.info("Digital signering är på väg", { description: "Vi öppnar identitetsverifiering inom kort." });
+  };
 
   useEffect(() => {
     if (pendingFeedback) {
@@ -218,36 +244,19 @@ export default function Profile() {
 
       <div className="relative pt-20 pb-12 px-4 max-w-5xl mx-auto space-y-5">
         {/* Top progression bar — replaces old Profilstatus */}
-        <div className="rounded-2xl bg-white border border-slate-200 shadow-sm px-5 py-4">
-          <div className="flex items-center justify-between gap-4 mb-2">
-            <div className="min-w-0">
+        <div className="rounded-2xl bg-white border border-slate-200 shadow-sm px-4 sm:px-5 py-4">
+          <div className="flex items-center justify-between gap-3 mb-3">
+            <div className="min-w-0 flex-1">
               <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-slate-500">Profilstatus</p>
               <p className="text-sm text-slate-900 mt-0.5 truncate">
                 {percent >= 100
                   ? "Din profil är komplett."
-                  : `${completedCount} av ${totalCount} steg klara — komplettera för bättre matchning.`}
+                  : `${completedCount} av ${totalCount} steg klara.`}
               </p>
             </div>
-            <div className="flex items-center gap-3 shrink-0">
-              <span className="text-2xl font-semibold text-slate-900 tabular-nums">{percent}%</span>
-              <Link to="/profil">
-                <Button size="sm" className="gap-1.5 h-9 text-sm font-semibold text-white border-0 bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] hover:from-[#7c3aed] hover:to-[#c026d3] shadow-sm hover:shadow-md transition-all">
-                  <Pencil className="w-3.5 h-3.5" />
-                  Redigera
-                </Button>
-              </Link>
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-9 w-9 border-slate-300 text-slate-700 hover:bg-slate-100"
-                onClick={handleShare}
-                aria-label="Dela profil"
-              >
-                <Share2 className="w-4 h-4" />
-              </Button>
-            </div>
+            <span className="text-2xl font-semibold text-slate-900 tabular-nums shrink-0">{percent}%</span>
           </div>
-          <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden">
+          <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden mb-3">
             <div
               className="h-full rounded-full transition-all duration-700 ease-out"
               style={{
@@ -257,7 +266,47 @@ export default function Profile() {
               }}
             />
           </div>
+          <div className="flex items-center gap-2">
+            <Link to="/profil" className="flex-1 sm:flex-initial">
+              <Button size="sm" className="w-full sm:w-auto gap-1.5 h-9 text-sm font-semibold text-white border-0 bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] hover:from-[#7c3aed] hover:to-[#c026d3] shadow-sm hover:shadow-md transition-all">
+                <Pencil className="w-3.5 h-3.5" />
+                Redigera
+              </Button>
+            </Link>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-9 w-9 border-slate-300 text-slate-700 hover:bg-slate-100 shrink-0"
+              onClick={handleShare}
+              aria-label="Dela profil"
+            >
+              <Share2 className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
+
+        {/* CTA: gör enkäten om den inte är gjord */}
+        {reports.length === 0 && !profile?.specialty_name && (
+          <div className="rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 to-pink-50 p-5 sm:p-6 shadow-sm">
+            <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-violet-700">
+              Kom igång
+            </p>
+            <h1 className="text-lg sm:text-xl font-semibold text-slate-900 mt-1">
+              Gör din löneanalys på 60 sekunder
+            </h1>
+            <p className="text-sm text-slate-600 mt-1 mb-4 max-w-xl">
+              Svara på 6 korta frågor så jämför vi din ersättning mot SKR:s ramavtal och skapar din personliga rapport.
+            </p>
+            <Link to="/">
+              <Button
+                size="sm"
+                className="text-sm font-semibold px-6 py-3 text-white border-0 bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] hover:from-[#7c3aed] hover:to-[#c026d3]"
+              >
+                Starta enkäten
+              </Button>
+            </Link>
+          </div>
+        )}
 
         {/* Tabs */}
         <ProfileTabs active={activeTab} onChange={setActiveTab} />
@@ -345,19 +394,8 @@ export default function Profile() {
                 identityVerified={verification.hasBankid}
                 hospValid={verification.hasValidHosp}
                 ivoValid={verification.hasValidIvo}
-              />
-              <AiPricingCoach
-                role={profile?.specialty_name || null}
-                region={profile?.region_name || null}
-                employmentType={profile?.employment_type || null}
-                currentRate={profile?.current_hourly_rate || null}
-              />
-              <AiConsultantCoach
-                role={profile?.specialty_name || null}
-                region={profile?.region_name || null}
-                employmentType={profile?.employment_type || null}
-                experienceYears={profile?.experience_years || null}
-                currentRate={profile?.current_hourly_rate || null}
+                onUpload={goUpload}
+                onVerifyIdentity={goVerifyIdentity}
               />
               <DashboardInvoiceCheck />
             </div>
@@ -366,42 +404,48 @@ export default function Profile() {
 
         {/* === WORK === */}
         {activeTab === "work" && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
-              <CardHeader>
-                <CardTitle className="text-base flex items-center gap-2">
-                  <FileText className="w-4 h-4 text-primary" />
-                  Mina rapporter
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {reports.length === 0 ? (
-                  <div className="text-center py-6">
-                    <p className="text-muted-foreground text-sm mb-3">Inga rapporter ännu</p>
-                    <Link to="/">
-                      <Button size="sm">
-                        <UserPlus className="w-4 h-4 mr-1" />
-                        Skapa din första analys
-                      </Button>
-                    </Link>
-                  </div>
-                ) : (
-                  <div className="space-y-3">
-                    {reports.map((r) => (
-                      <Link key={r.id} to={`/rapport/${r.id}`} className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors group">
-                        <div>
-                          <p className="font-medium text-foreground group-hover:text-primary transition-colors">{r.occupation || "Analys"}</p>
-                          <p className="text-xs text-muted-foreground">{r.kommun && `${r.kommun} · `}{new Date(r.created_at).toLocaleDateString("sv-SE")}</p>
-                        </div>
-                        <span className="text-xs text-muted-foreground">→</span>
+          <div className="space-y-5">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+              <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
+                <CardHeader>
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <FileText className="w-4 h-4 text-primary" />
+                    Mina rapporter
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {reports.length === 0 ? (
+                    <div className="text-center py-6">
+                      <p className="text-muted-foreground text-sm mb-3">Inga rapporter ännu</p>
+                      <Link to="/">
+                        <Button size="sm">
+                          <UserPlus className="w-4 h-4 mr-1" />
+                          Skapa din första analys
+                        </Button>
                       </Link>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {reports.map((r) => (
+                        <Link key={r.id} to={`/rapport/${r.id}`} className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors group">
+                          <div>
+                            <p className="font-medium text-foreground group-hover:text-primary transition-colors">{r.occupation || "Analys"}</p>
+                            <p className="text-xs text-muted-foreground">{r.kommun && `${r.kommun} · `}{new Date(r.created_at).toLocaleDateString("sv-SE")}</p>
+                          </div>
+                          <span className="text-xs text-muted-foreground">→</span>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
 
-            <DashboardInvoiceCheck />
+              <DashboardInvoiceCheck />
+            </div>
+
+            <PensionImpactSimulator
+              initialSalary={profile?.current_monthly_salary || 55000}
+            />
           </div>
         )}
 
@@ -414,8 +458,11 @@ export default function Profile() {
                 identityVerified={verification.hasBankid}
                 hospValid={verification.hasValidHosp}
                 ivoValid={verification.hasValidIvo}
+                onUpload={goUpload}
+                onVerifyIdentity={goVerifyIdentity}
               />
-              <DashboardDocuments />
+              <DashboardDocuments ref={docsRef} />
+              <ProfileAuditLog />
             </div>
             <div className="space-y-5">
               <DashboardReferences />

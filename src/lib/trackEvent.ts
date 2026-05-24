@@ -71,16 +71,22 @@ type EventName =
   | "intyg_sign_confirmed"
   | "assignment_feedback_shown"
   | "assignment_feedback_snoozed"
-  | "assignment_feedback_submitted";
+  | "assignment_feedback_submitted"
+  | "survey_prefill_failed"
+  | "hero_cta_clicked"
+  | "survey_mounted"
+  | "price_range_mismatch";
 
 function isInternalTraffic(): boolean {
   const host = window.location.hostname;
+  // Dev/preview hosts only. The user's *published* Lovable URL
+  // (preview--compcare-se.lovable.app) is real production traffic.
+  // Keep this in sync with src/lib/posthog.ts.
   return (
     host === "localhost" ||
     host === "127.0.0.1" ||
     host.endsWith(".lovableproject.com") ||
-    host.endsWith(".lovable.app") ||
-    host.includes("id-preview--")
+    host.startsWith("id-preview--")
   );
 }
 

@@ -41,6 +41,147 @@ export type Database = {
         }
         Relationships: []
       }
+      agent_api_keys: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          key_hash: string
+          key_prefix: string
+          last_used_at: string | null
+          name: string
+          notes: string | null
+          rate_limit_daily: number
+          revoked_at: string | null
+          scopes: string[]
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          key_hash: string
+          key_prefix: string
+          last_used_at?: string | null
+          name: string
+          notes?: string | null
+          rate_limit_daily?: number
+          revoked_at?: string | null
+          scopes?: string[]
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          key_hash?: string
+          key_prefix?: string
+          last_used_at?: string | null
+          name?: string
+          notes?: string | null
+          rate_limit_daily?: number
+          revoked_at?: string | null
+          scopes?: string[]
+        }
+        Relationships: []
+      }
+      agent_api_logs: {
+        Row: {
+          api_key_id: string | null
+          created_at: string
+          endpoint: string
+          error_message: string | null
+          id: string
+          ip: string | null
+          latency_ms: number | null
+          method: string
+          params: Json | null
+          response_size_bytes: number | null
+          status_code: number
+          user_agent: string | null
+          user_token_id: string | null
+        }
+        Insert: {
+          api_key_id?: string | null
+          created_at?: string
+          endpoint: string
+          error_message?: string | null
+          id?: string
+          ip?: string | null
+          latency_ms?: number | null
+          method?: string
+          params?: Json | null
+          response_size_bytes?: number | null
+          status_code: number
+          user_agent?: string | null
+          user_token_id?: string | null
+        }
+        Update: {
+          api_key_id?: string | null
+          created_at?: string
+          endpoint?: string
+          error_message?: string | null
+          id?: string
+          ip?: string | null
+          latency_ms?: number | null
+          method?: string
+          params?: Json | null
+          response_size_bytes?: number | null
+          status_code?: number
+          user_agent?: string | null
+          user_token_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_api_logs_api_key_id_fkey"
+            columns: ["api_key_id"]
+            isOneToOne: false
+            referencedRelation: "agent_api_keys"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_api_logs_user_token_id_fkey"
+            columns: ["user_token_id"]
+            isOneToOne: false
+            referencedRelation: "agent_user_tokens"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_user_tokens: {
+        Row: {
+          created_at: string
+          expires_at: string
+          id: string
+          label: string
+          last_used_at: string | null
+          revoked_at: string | null
+          token_hash: string
+          token_prefix: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at: string
+          id?: string
+          label: string
+          last_used_at?: string | null
+          revoked_at?: string | null
+          token_hash: string
+          token_prefix: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          id?: string
+          label?: string
+          last_used_at?: string | null
+          revoked_at?: string | null
+          token_hash?: string
+          token_prefix?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       ai_usage_logs: {
         Row: {
           cost_sek: number
@@ -125,6 +266,45 @@ export type Database = {
         }
         Relationships: []
       }
+      analytics_event_rejections: {
+        Row: {
+          client_ip: string | null
+          created_at: string
+          event_name: string | null
+          id: string
+          lead_id: string | null
+          metadata: Json | null
+          origin: string | null
+          reason: string
+          referer: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          client_ip?: string | null
+          created_at?: string
+          event_name?: string | null
+          id?: string
+          lead_id?: string | null
+          metadata?: Json | null
+          origin?: string | null
+          reason: string
+          referer?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          client_ip?: string | null
+          created_at?: string
+          event_name?: string | null
+          id?: string
+          lead_id?: string | null
+          metadata?: Json | null
+          origin?: string | null
+          reason?: string
+          referer?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       analytics_events: {
         Row: {
           created_at: string
@@ -146,6 +326,27 @@ export type Database = {
           id?: string
           lead_id?: string | null
           metadata?: Json | null
+        }
+        Relationships: []
+      }
+      app_settings: {
+        Row: {
+          key: string
+          updated_at: string
+          updated_by: string | null
+          value: Json
+        }
+        Insert: {
+          key: string
+          updated_at?: string
+          updated_by?: string | null
+          value: Json
+        }
+        Update: {
+          key?: string
+          updated_at?: string
+          updated_by?: string | null
+          value?: Json
         }
         Relationships: []
       }
@@ -965,14 +1166,74 @@ export type Database = {
           },
         ]
       }
+      constants_verification_baseline: {
+        Row: {
+          created_at: string
+          expected_value: Json
+          id: string
+          key: string
+          source_note: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          expected_value: Json
+          id?: string
+          key: string
+          source_note?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          expected_value?: Json
+          id?: string
+          key?: string
+          source_note?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      constants_verification_runs: {
+        Row: {
+          diff_json: Json | null
+          error_message: string | null
+          id: string
+          mismatch_count: number
+          run_at: string
+          status: string
+          total_keys: number
+        }
+        Insert: {
+          diff_json?: Json | null
+          error_message?: string | null
+          id?: string
+          mismatch_count?: number
+          run_at?: string
+          status: string
+          total_keys?: number
+        }
+        Update: {
+          diff_json?: Json | null
+          error_message?: string | null
+          id?: string
+          mismatch_count?: number
+          run_at?: string
+          status?: string
+          total_keys?: number
+        }
+        Relationships: []
+      }
       consultant_documents: {
         Row: {
           consultant_id: string
           document_type: string
           expires_at: string | null
+          extracted_name: string | null
           file_name: string
           file_url: string
           id: string
+          name_check_at: string | null
+          name_check_status: string | null
           notes: string | null
           uploaded_at: string
         }
@@ -980,9 +1241,12 @@ export type Database = {
           consultant_id: string
           document_type: string
           expires_at?: string | null
+          extracted_name?: string | null
           file_name: string
           file_url: string
           id?: string
+          name_check_at?: string | null
+          name_check_status?: string | null
           notes?: string | null
           uploaded_at?: string
         }
@@ -990,9 +1254,12 @@ export type Database = {
           consultant_id?: string
           document_type?: string
           expires_at?: string | null
+          extracted_name?: string | null
           file_name?: string
           file_url?: string
           id?: string
+          name_check_at?: string | null
+          name_check_status?: string | null
           notes?: string | null
           uploaded_at?: string
         }
@@ -1347,6 +1614,80 @@ export type Database = {
           vol_2026_ytd?: number | null
           yoy_ratio?: number | null
           ytd_ratio?: number | null
+        }
+        Relationships: []
+      }
+      document_share_views: {
+        Row: {
+          action: string
+          document_id: string | null
+          id: string
+          ip_address: string | null
+          share_id: string
+          user_agent: string | null
+          viewed_at: string
+        }
+        Insert: {
+          action?: string
+          document_id?: string | null
+          id?: string
+          ip_address?: string | null
+          share_id: string
+          user_agent?: string | null
+          viewed_at?: string
+        }
+        Update: {
+          action?: string
+          document_id?: string | null
+          id?: string
+          ip_address?: string | null
+          share_id?: string
+          user_agent?: string | null
+          viewed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_share_views_share_id_fkey"
+            columns: ["share_id"]
+            isOneToOne: false
+            referencedRelation: "document_shares"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      document_shares: {
+        Row: {
+          created_at: string
+          document_ids: string[]
+          expires_at: string
+          id: string
+          last_viewed_at: string | null
+          recipient_label: string | null
+          token: string
+          user_id: string
+          view_count: number
+        }
+        Insert: {
+          created_at?: string
+          document_ids: string[]
+          expires_at: string
+          id?: string
+          last_viewed_at?: string | null
+          recipient_label?: string | null
+          token: string
+          user_id: string
+          view_count?: number
+        }
+        Update: {
+          created_at?: string
+          document_ids?: string[]
+          expires_at?: string
+          id?: string
+          last_viewed_at?: string | null
+          recipient_label?: string | null
+          token?: string
+          user_id?: string
+          view_count?: number
         }
         Relationships: []
       }
@@ -1945,6 +2286,267 @@ export type Database = {
           },
         ]
       }
+      mp_agent_runs: {
+        Row: {
+          action: string
+          agent_id: string
+          client_ip: string | null
+          created_at: string
+          id: string
+          listing_id: string | null
+          offer_id: string | null
+          request_payload: Json | null
+          response_payload: Json | null
+          status_code: number | null
+          user_agent: string | null
+        }
+        Insert: {
+          action: string
+          agent_id: string
+          client_ip?: string | null
+          created_at?: string
+          id?: string
+          listing_id?: string | null
+          offer_id?: string | null
+          request_payload?: Json | null
+          response_payload?: Json | null
+          status_code?: number | null
+          user_agent?: string | null
+        }
+        Update: {
+          action?: string
+          agent_id?: string
+          client_ip?: string | null
+          created_at?: string
+          id?: string
+          listing_id?: string | null
+          offer_id?: string | null
+          request_payload?: Json | null
+          response_payload?: Json | null
+          status_code?: number | null
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mp_agent_runs_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "mp_listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_agent_runs_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "mp_offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mp_listings: {
+        Row: {
+          available_from: string | null
+          available_to: string | null
+          closed_at: string | null
+          created_at: string
+          currency: string
+          employment_type: string
+          hours_per_week: number | null
+          id: string
+          kommun: string | null
+          metadata: Json
+          price_max_sek: number
+          price_min_sek: number
+          published_at: string | null
+          region: string | null
+          role: string
+          signed_at: string | null
+          specialization: string | null
+          status: Database["public"]["Enums"]["mp_listing_status"]
+          terms_md: string | null
+          updated_at: string
+          user_id: string
+          verified_at_publish: boolean
+        }
+        Insert: {
+          available_from?: string | null
+          available_to?: string | null
+          closed_at?: string | null
+          created_at?: string
+          currency?: string
+          employment_type?: string
+          hours_per_week?: number | null
+          id?: string
+          kommun?: string | null
+          metadata?: Json
+          price_max_sek: number
+          price_min_sek: number
+          published_at?: string | null
+          region?: string | null
+          role: string
+          signed_at?: string | null
+          specialization?: string | null
+          status?: Database["public"]["Enums"]["mp_listing_status"]
+          terms_md?: string | null
+          updated_at?: string
+          user_id: string
+          verified_at_publish?: boolean
+        }
+        Update: {
+          available_from?: string | null
+          available_to?: string | null
+          closed_at?: string | null
+          created_at?: string
+          currency?: string
+          employment_type?: string
+          hours_per_week?: number | null
+          id?: string
+          kommun?: string | null
+          metadata?: Json
+          price_max_sek?: number
+          price_min_sek?: number
+          published_at?: string | null
+          region?: string | null
+          role?: string
+          signed_at?: string | null
+          specialization?: string | null
+          status?: Database["public"]["Enums"]["mp_listing_status"]
+          terms_md?: string | null
+          updated_at?: string
+          user_id?: string
+          verified_at_publish?: boolean
+        }
+        Relationships: []
+      }
+      mp_negotiation_events: {
+        Row: {
+          actor_id: string | null
+          actor_kind: string
+          created_at: string
+          id: string
+          kind: Database["public"]["Enums"]["mp_event_kind"]
+          listing_id: string | null
+          offer_id: string | null
+          payload: Json
+        }
+        Insert: {
+          actor_id?: string | null
+          actor_kind: string
+          created_at?: string
+          id?: string
+          kind: Database["public"]["Enums"]["mp_event_kind"]
+          listing_id?: string | null
+          offer_id?: string | null
+          payload?: Json
+        }
+        Update: {
+          actor_id?: string | null
+          actor_kind?: string
+          created_at?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["mp_event_kind"]
+          listing_id?: string | null
+          offer_id?: string | null
+          payload?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mp_negotiation_events_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "mp_listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_negotiation_events_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "mp_offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mp_offers: {
+        Row: {
+          agent_contact: string | null
+          agent_id: string
+          agent_org: string | null
+          agent_signature: string | null
+          created_at: string
+          end_date: string | null
+          hours_per_week: number | null
+          id: string
+          listing_id: string
+          message_md: string | null
+          metadata: Json
+          offered_price_sek: number
+          parent_offer_id: string | null
+          responded_at: string | null
+          responded_message_md: string | null
+          response_token: string
+          start_date: string | null
+          status: Database["public"]["Enums"]["mp_offer_status"]
+          updated_at: string
+        }
+        Insert: {
+          agent_contact?: string | null
+          agent_id: string
+          agent_org?: string | null
+          agent_signature?: string | null
+          created_at?: string
+          end_date?: string | null
+          hours_per_week?: number | null
+          id?: string
+          listing_id: string
+          message_md?: string | null
+          metadata?: Json
+          offered_price_sek: number
+          parent_offer_id?: string | null
+          responded_at?: string | null
+          responded_message_md?: string | null
+          response_token?: string
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["mp_offer_status"]
+          updated_at?: string
+        }
+        Update: {
+          agent_contact?: string | null
+          agent_id?: string
+          agent_org?: string | null
+          agent_signature?: string | null
+          created_at?: string
+          end_date?: string | null
+          hours_per_week?: number | null
+          id?: string
+          listing_id?: string
+          message_md?: string | null
+          metadata?: Json
+          offered_price_sek?: number
+          parent_offer_id?: string | null
+          responded_at?: string | null
+          responded_message_md?: string | null
+          response_token?: string
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["mp_offer_status"]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mp_offers_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "mp_listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_offers_parent_offer_id_fkey"
+            columns: ["parent_offer_id"]
+            isOneToOne: false
+            referencedRelation: "mp_offers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       offers: {
         Row: {
           accepted: boolean | null
@@ -2371,6 +2973,39 @@ export type Database = {
         }
         Relationships: []
       }
+      profile_audit_log: {
+        Row: {
+          changed_at: string
+          field_name: string
+          id: string
+          new_value: string | null
+          old_value: string | null
+          source: string
+          source_document_id: string | null
+          user_id: string
+        }
+        Insert: {
+          changed_at?: string
+          field_name: string
+          id?: string
+          new_value?: string | null
+          old_value?: string | null
+          source?: string
+          source_document_id?: string | null
+          user_id: string
+        }
+        Update: {
+          changed_at?: string
+          field_name?: string
+          id?: string
+          new_value?: string | null
+          old_value?: string | null
+          source?: string
+          source_document_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           created_at: string
@@ -2660,6 +3295,45 @@ export type Database = {
           location?: string
           predicted_date?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      rate_baseline_acknowledgments: {
+        Row: {
+          acknowledged_by: string
+          created_at: string
+          id: string
+          new_value: number
+          old_value: number | null
+          reason: string
+          typ: string
+          version_id: string
+          yrkeskategori: string
+          zon: string
+        }
+        Insert: {
+          acknowledged_by: string
+          created_at?: string
+          id?: string
+          new_value: number
+          old_value?: number | null
+          reason: string
+          typ: string
+          version_id: string
+          yrkeskategori: string
+          zon: string
+        }
+        Update: {
+          acknowledged_by?: string
+          created_at?: string
+          id?: string
+          new_value?: number
+          old_value?: number | null
+          reason?: string
+          typ?: string
+          version_id?: string
+          yrkeskategori?: string
+          zon?: string
         }
         Relationships: []
       }
@@ -4422,6 +5096,7 @@ export type Database = {
       }
     }
     Functions: {
+      agent_api_count_today: { Args: { _key_id: string }; Returns: number }
       aggregate_calloff_monthly: {
         Args: { _months_back?: number }
         Returns: {
@@ -4455,6 +5130,18 @@ export type Database = {
         Args: { _daily_limit?: number; _user_id: string }
         Returns: Json
       }
+      create_document_share: {
+        Args: {
+          _document_ids: string[]
+          _expires_in_hours: number
+          _recipient_label?: string
+        }
+        Returns: {
+          expires_at: string
+          id: string
+          token: string
+        }[]
+      }
       create_org_with_admin: {
         Args: { _name: string; _org_number?: string; _type?: string }
         Returns: string
@@ -4467,6 +5154,8 @@ export type Database = {
         Args: { payload: Json; queue_name: string }
         Returns: number
       }
+      get_document_share_by_token: { Args: { _token: string }; Returns: Json }
+      get_feature_flag: { Args: { _key: string }; Returns: Json }
       get_referral_by_token: {
         Args: { _token: string }
         Returns: {
@@ -4483,6 +5172,17 @@ export type Database = {
         Args: { _org_id: string; _user_id: string }
         Returns: boolean
       }
+      list_my_document_shares: { Args: never; Returns: Json }
+      log_document_share_view: {
+        Args: {
+          _action?: string
+          _document_id?: string
+          _ip?: string
+          _token: string
+          _user_agent?: string
+        }
+        Returns: undefined
+      }
       move_to_dlq: {
         Args: {
           dlq_name: string
@@ -4492,6 +5192,7 @@ export type Database = {
         }
         Returns: number
       }
+      mp_can_publish: { Args: { _user_id: string }; Returns: boolean }
       read_email_batch: {
         Args: { batch_size: number; queue_name: string; vt: number }
         Returns: {
@@ -4627,6 +5328,25 @@ export type Database = {
         | "cancelled"
         | "expired"
       geography_type: "nation" | "region" | "zone" | "municipality"
+      mp_event_kind:
+        | "listing_created"
+        | "listing_updated"
+        | "listing_published"
+        | "listing_paused"
+        | "listing_closed"
+        | "offer_created"
+        | "offer_countered"
+        | "offer_accepted"
+        | "offer_rejected"
+        | "offer_withdrawn"
+        | "agent_run"
+      mp_listing_status: "draft" | "published" | "paused" | "closed"
+      mp_offer_status:
+        | "pending"
+        | "accepted"
+        | "rejected"
+        | "countered"
+        | "withdrawn"
       ref_app_role:
         | "individual"
         | "reference_giver"
@@ -4772,6 +5492,27 @@ export const Constants = {
         "expired",
       ],
       geography_type: ["nation", "region", "zone", "municipality"],
+      mp_event_kind: [
+        "listing_created",
+        "listing_updated",
+        "listing_published",
+        "listing_paused",
+        "listing_closed",
+        "offer_created",
+        "offer_countered",
+        "offer_accepted",
+        "offer_rejected",
+        "offer_withdrawn",
+        "agent_run",
+      ],
+      mp_listing_status: ["draft", "published", "paused", "closed"],
+      mp_offer_status: [
+        "pending",
+        "accepted",
+        "rejected",
+        "countered",
+        "withdrawn",
+      ],
       ref_app_role: [
         "individual",
         "reference_giver",

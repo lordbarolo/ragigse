@@ -1,8 +1,28 @@
+
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import CompcareLogo from "@/components/CompcareLogo";
 import Navbar from "@/components/Navbar";
+import { SEO } from "@/components/SEO";
+
+const ARTICLE_JSONLD = {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: "Anestesisjuksköterska – marknadsrapport 2026",
+  description:
+    "Aktuella ramavtalspriser, OB-tillägg och rekommenderat konsultarvode för anestesisjuksköterskor i Sverige.",
+  inLanguage: "sv-SE",
+  datePublished: "2026-01-01",
+  dateModified: "2026-01-01",
+  author: { "@type": "Organization", name: "CompCare" },
+  publisher: {
+    "@type": "Organization",
+    name: "CompCare",
+    logo: { "@type": "ImageObject", url: "https://www.compcare.se/compcare-logo.svg" },
+  },
+  mainEntityOfPage: "https://www.compcare.se/rapport/anestesisjukskoterska",
+};
 import {
   Clock,
   Moon,
@@ -46,7 +66,15 @@ export default function AnestesiReport() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Anestesisjuksköterska – timpris & lön 2026 | CompCare"
+        description="Aktuella ramavtalspriser, OB-tillägg och rekommenderat konsultarvode för anestesisjuksköterskor i Sveriges tre priszoner."
+        path="/rapport/anestesisjukskoterska"
+        ogType="article"
+        jsonLd={ARTICLE_JSONLD}
+      />
       <Navbar />
+
 
       {/* Hero header */}
       <header className="relative overflow-hidden hero-gradient px-5 pt-20 pb-10 sm:pt-24 sm:pb-12">
