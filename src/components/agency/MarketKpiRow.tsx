@@ -32,7 +32,7 @@ export default function MarketKpiRow({ topRate, specialtyCount }: KpiRowProps) {
         since.setDate(since.getDate() - 60);
         // SECURITY: read from safe view (excludes raw_data / validation_flags / dedup_hash / source).
         const { data: rows, error } = await supabase
-          .from("calloff_imports_public" as any)
+          .from("calloff_imports_public")
           .select("calloff_date, region, filled")
           .gte("calloff_date", since.toISOString().slice(0, 10))
           .limit(10000);
