@@ -337,7 +337,7 @@ export default function LandingV2() {
               <span className="text-gradient-violet text-white">är värd?</span>
             </h1>
             <p className="text-lg sm:text-xl text-white/75 leading-relaxed mb-2 max-w-[560px]">
-              Se om din konsultersättning är marknadsmässig. Compcare använder AI-analyser av tusentals avtal och upphandlingar för att visa verifierade belopp.
+              Se vad regionen betalar för din roll. Hämtat direkt från offentliga ramavtal, inte från vad andra påstår att de tjänar.
             </p>
             <p className="mt-4 text-[12px] text-white/45">
               Anonymt · Kostnadsfritt · Klart på 60 sekunder
