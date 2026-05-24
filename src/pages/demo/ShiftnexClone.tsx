@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
+import { heroBackgroundStyle } from "@/lib/heroBackground";
 
 /**
  * /demo/shiftnex
@@ -71,8 +72,7 @@ export default function ShiftnexClone() {
       <main
         className="relative min-h-screen w-full overflow-hidden font-sans"
         style={{
-          background:
-            "linear-gradient(180deg, #ffffff 0%, #f7f7fb 60%, #eef0f6 100%)",
+          ...heroBackgroundStyle,
           color: "#0f172a",
         }}
       >
