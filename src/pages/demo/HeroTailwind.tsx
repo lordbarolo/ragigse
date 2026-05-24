@@ -103,6 +103,7 @@ export default function HeroTailwind() {
           </div>
         </div>
       </section>
-    </div>
+      </div>
+    </AnthropicScope>
   );
 }
