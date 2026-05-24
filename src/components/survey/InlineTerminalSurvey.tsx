@@ -313,7 +313,7 @@ export default function InlineTerminalSurvey() {
         </div>
 
         {/* Step content (fixed min-height to avoid jump) */}
-        <div className="relative px-6 py-7 sm:px-8 sm:py-8 font-sans text-white min-h-[280px] overflow-hidden">
+        <div className="relative font-sans text-white min-h-[280px] overflow-hidden">
           <StepTransition stepKey={step} direction={direction}>
             {step === 1 && (
               <Step
