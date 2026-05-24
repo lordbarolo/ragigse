@@ -22,6 +22,13 @@ export default function DemoAnthropic() {
             ["--font-body" as any]:
               '"Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
             backgroundColor: "#0A0A0A",
+            backgroundImage: [
+              "radial-gradient(ellipse 70% 55% at 15% 25%, hsl(196 100% 50% / 0.18) 0%, transparent 55%)",
+              "radial-gradient(ellipse 55% 50% at 85% 20%, hsl(245 58% 60% / 0.14) 0%, transparent 50%)",
+              "radial-gradient(ellipse 50% 60% at 55% 85%, hsl(160 60% 45% / 0.10) 0%, transparent 50%)",
+            ].join(", "),
+            backgroundAttachment: "fixed",
+            backgroundRepeat: "no-repeat",
             minHeight: "100vh",
           } as React.CSSProperties
         }
