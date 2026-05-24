@@ -339,7 +339,7 @@ export default function LandingV2() {
               Vet du vad du<br />
               <span className="text-gradient-violet text-white">är värd?</span>
             </h1>
-            <p className="text-[16px] sm:text-lg text-white/75 leading-relaxed mb-2 max-w-[560px]">
+            <p className="text-lg sm:text-xl text-white/75 leading-relaxed mb-2 max-w-[560px]">
               Se om din konsultersättning är marknadsmässig. Compcare använder AI-analyser av tusentals avtal och upphandlingar för att visa verifierade belopp.
             </p>
             <p className="mt-4 text-[12px] text-white/45">
