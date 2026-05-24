@@ -24,6 +24,8 @@ export default function SearchableSelect({
   onValueChange,
   placeholder = "Välj...",
   className,
+  triggerClassName,
+  placeholderClassName,
 }: SearchableSelectProps) {
   const [open, setOpen] = useState(false);
   const [search, setSearch] = useState("");
