@@ -63,6 +63,7 @@ const SignRepresentation = lazy(() => import("./pages/SignRepresentation"));
 const AgencyLanding = lazy(() => import("./pages/AgencyLanding"));
 const AgencySignup = lazy(() => import("./pages/AgencySignup"));
 const DemoLanding = lazy(() => import("./pages/DemoLanding"));
+const DemoAnthropic = lazy(() => import("./pages/demo/DemoAnthropic"));
 const ReferenceDemo = lazy(() => import("./pages/demo/ReferenceDemo"));
 const LandingV2 = lazy(() => import("./pages/demo/LandingV2"));
 const LandingExtras = lazy(() => import("./pages/demo/LandingExtras"));
@@ -222,7 +223,8 @@ const App = () => (
               <Route path="/dev/theme-preview" element={<ProtectedRoute allowedRoles={["admin"]}><ThemePreview /></ProtectedRoute>} />
               <Route path="/dev/analytics" element={<ProtectedRoute allowedRoles={["admin"]}><AnalyticsDashboard /></ProtectedRoute>} />
               <Route path="/dev/e2e-test" element={import.meta.env.PROD ? <NotFound /> : <E2ETest />} />
-              <Route path="/demo" element={<DemoLanding />} />
+              <Route path="/demo" element={<DemoAnthropic />} />
+              <Route path="/demo/old" element={<DemoLanding />} />
               <Route path="/demo/referenser" element={<ReferenceDemo />} />
               <Route path="/demo/landing-v2" element={<LandingV2 />} />
               <Route path="/demo/shiftnex" element={<ShiftnexClone />} />
