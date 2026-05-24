@@ -271,7 +271,7 @@ export default function LandingV2() {
   }, []);
 
   return (
-    <div className="w-full text-foreground font-sans">
+    <div className="w-full text-foreground font-sans bg-black min-h-screen">
       <SEO
         title="CompCare – Lön & ramavtalspriser för vårdkonsulter"
         description="Jämför ditt erbjudande mot SKR:s ramavtalspriser i 290 kommuner. Gratis löneanalys för sjuksköterskor, barnmorskor och läkare."
