@@ -87,8 +87,11 @@ export default function SearchableSelect({
 
   // Scroll highlighted item into view
   useEffect(() => {
-    if (open && highlightedIndex >=  0 && itemRefs.current[highlightedIndex]) {
-      itemRefs.current[highlightedIndex]?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+    if (open && highlightedIndex >= 0 && itemRefs.current[highlightedIndex]) {
+      const el = itemRefs.current[highlightedIndex];
+      if (el && typeof el.scrollIntoView === "function") {
+        el.scrollIntoView({ block: "nearest", behavior: "smooth" });
+      }
     }
   }, [highlightedIndex, open]);
 
