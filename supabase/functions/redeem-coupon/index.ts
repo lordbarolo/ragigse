@@ -27,6 +27,58 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
+    // SECURITY: require authenticated caller and verify report ownership before redeeming.
+    let authUserId: string | null = null;
+    let authEmail: string | null = null;
+    const authHeader = req.headers.get("Authorization");
+    if (authHeader?.startsWith("Bearer ")) {
+      try {
+        const anonClient = createClient(
+          Deno.env.get("SUPABASE_URL")!,
+          Deno.env.get("SUPABASE_ANON_KEY")!,
+          { global: { headers: { Authorization: authHeader } } }
+        );
+        const { data: { user } } = await anonClient.auth.getUser();
+        if (user) {
+          authUserId = user.id;
+          authEmail = (user.email ?? "").toLowerCase() || null;
+        }
+      } catch (_) {
+        // ignore — handled below
+      }
+    }
+
+    if (!authUserId) {
+      return new Response(
+        JSON.stringify({ error: "Du måste vara inloggad för att lösa in en kupong." }),
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Get the report to find the user's email + ownership
+    const { data: report } = await supabase
+      .from("reports")
+      .select("email, user_id")
+      .eq("id", report_id)
+      .single();
+
+    if (!report) {
+      return new Response(
+        JSON.stringify({ error: "Report not found" }),
+        { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const userEmail = report?.email?.trim().toLowerCase();
+    const ownsByUserId = !!report.user_id && report.user_id === authUserId;
+    const ownsByEmail = !!authEmail && !!userEmail && authEmail === userEmail;
+    if (!ownsByUserId && !ownsByEmail) {
+      return new Response(
+        JSON.stringify({ error: "Du kan bara lösa in kupongen på din egen rapport." }),
+        { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
     // Look up coupon (case-insensitive)
     const normalizedCode = code.trim();
     const { data: coupon, error: couponErr } = await supabase
@@ -55,15 +107,6 @@ serve(async (req) => {
         { status: 410, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
-
-    // Get the report to find the user's email
-    const { data: report } = await supabase
-      .from("reports")
-      .select("email")
-      .eq("id", report_id)
-      .single();
-
-    const userEmail = report?.email?.trim().toLowerCase();
 
     // Check if this email has already used this coupon
     if (userEmail) {

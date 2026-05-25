@@ -225,6 +225,29 @@ Deno.serve(async (req) => {
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
+    // SECURITY: require authentication + ownership of the invoice review
+    let authUserId: string | null = null;
+    const authHeader = req.headers.get("Authorization");
+    if (authHeader?.startsWith("Bearer ")) {
+      try {
+        const anonClient = createClient(
+          SUPABASE_URL,
+          Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+          { global: { headers: { Authorization: authHeader } } },
+        );
+        const { data: { user } } = await anonClient.auth.getUser();
+        authUserId = user?.id ?? null;
+      } catch (_) {
+        authUserId = null;
+      }
+    }
+    if (!authUserId) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const { review_id } = await req.json();
     if (!review_id) throw new Error("review_id is required");
 
@@ -234,6 +257,13 @@ Deno.serve(async (req) => {
       .eq("id", review_id)
       .single();
     if (reviewErr || !review) throw new Error("Review not found: " + reviewErr?.message);
+
+    if ((review as any).user_id !== authUserId) {
+      return new Response(JSON.stringify({ error: "Forbidden" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     await supabase.from("invoice_reviews").update({ status: "analyzing" }).eq("id", review_id);
 
