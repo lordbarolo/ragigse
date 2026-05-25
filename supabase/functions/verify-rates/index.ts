@@ -77,6 +77,8 @@ async function verifyVersion(supabase: ReturnType<typeof createClient>, versionI
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  const authError = await requireCronOrAdmin(req);
+  if (authError) return authError;
 
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL")!,
