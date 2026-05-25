@@ -207,7 +207,7 @@ Ja, efter att rapporten genererats kan du ladda ner en brandad PDF via generate-
 - [För bemanningsföretag](/for-bemanningsforetag): Tjänster och Market Edge för agenter.
 - [Förhandlingsassistent](/consultant/forhandla): Neutral AI-assistent för marknadspriser och förhandling.
 - [Fakturakontroll](/consultant/fakturakontroll): Granska fakturor retroaktivt — no cure, no pay.
-- [Uppdragsradar](/uppdragsradar): Historisk avropsstatistik och prognoser per region/roll.
+
 - [Rapport: Anestesisjuksköterska](/rapport/anestesisjukskoterska): Statisk marknadsrapport för anestesisjuksköterskor.
 - [Din data (samarbetsintyg)](/din-data): Digitalt dokumentvalv för samarbetsintyg.
 - [Eget bolag](/eget-bolag): Guide för konsulter som driver eget.

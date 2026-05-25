@@ -47,7 +47,6 @@ const LANDING_JSONLD = [
 /* ───────────────────── data ───────────────────── */
 const NAV_LINKS: { label: string; href: string; external?: boolean }[] = [
   { label: "Löneanalys", href: "/#analys", external: true },
-  { label: "Uppdragsradar", href: "/uppdragsradar", external: true },
   { label: "Förhandlingsagent", href: "/consultant/forhandla", external: true },
   { label: "FAQ", href: "/vanliga-fragor", external: true },
 ];
@@ -669,7 +668,6 @@ export default function LandingV2() {
               <h4 className="text-xs font-medium uppercase tracking-widest text-black/60 mb-3">Konsult</h4>
               <div className="flex flex-col gap-2 text-[13px] text-black/75">
                 <Link to="/v1?start=1" className="hover:text-black transition-colors">Löneanalys</Link>
-                <Link to="/uppdragsradar" className="hover:text-black transition-colors">Uppdragsradar</Link>
                 <Link to="/consultant/forhandla" className="hover:text-black transition-colors">Förhandlingsagent</Link>
                 <Link to="/consultant/fakturakontroll" className="hover:text-black transition-colors">Fakturagranskning</Link>
               </div>

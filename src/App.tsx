@@ -70,7 +70,7 @@ const LandingExtras = lazy(() => import("./pages/demo/LandingExtras"));
 const ShiftnexClone = lazy(() => import("./pages/demo/ShiftnexClone"));
 const HeroTailwind = lazy(() => import("./pages/demo/HeroTailwind"));
 const Campaign = lazy(() => import("./pages/Campaign"));
-const UppdragsradarV2 = lazy(() => import("./pages/UppdragsradarV2"));
+
 const MarketplaceHome = lazy(() => import("./pages/marketplace/MarketplaceHome"));
 const EgetBolag = lazy(() => import("./pages/EgetBolag"));
 const SharedDocuments = lazy(() => import("./pages/SharedDocuments"));
@@ -210,7 +210,7 @@ const App = () => (
               <Route path="/sign/:token" element={<SignRepresentation />} />
               <Route path="/unsubscribe" element={<Unsubscribe />} />
               <Route path="/kampanj/:role" element={<Campaign />} />
-              <Route path="/uppdragsradar" element={<UppdragsradarV2 />} />
+              <Route path="/uppdragsradar" element={<Navigate to="/" replace />} />
 
               {/* Hidden / protected routes */}
               <Route path="/dela" element={<ProtectedRoute><SharePreview /></ProtectedRoute>} />
