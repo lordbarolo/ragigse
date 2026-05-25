@@ -46,10 +46,31 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
+    // Determine if caller is authenticated and which user
+    let authUserId: string | null = null;
+    let authEmail: string | null = null;
+    const authHeader = req.headers.get("Authorization");
+    if (authHeader?.startsWith("Bearer ")) {
+      try {
+        const anonClient = createClient(
+          Deno.env.get("SUPABASE_URL")!,
+          Deno.env.get("SUPABASE_ANON_KEY")!,
+          { global: { headers: { Authorization: authHeader } } }
+        );
+        const { data: { user } } = await anonClient.auth.getUser();
+        if (user) {
+          authUserId = user.id;
+          authEmail = (user.email ?? "").toLowerCase() || null;
+        }
+      } catch (_) {
+        // ignore — treat as unauthenticated
+      }
+    }
+
     // Fetch lead by id or external_id
     let query = supabase
       .from("leads")
-      .select("id, employment_type, yrke, kommun, experience, salary_type, current_salary, email");
+      .select("id, employment_type, yrke, kommun, experience, salary_type, current_salary, email, user_id");
 
     if (lead_id) {
       query = query.eq("id", lead_id);
@@ -74,18 +95,37 @@ serve(async (req) => {
       );
     }
 
+    // SECURITY: strip PII (email, current_salary) unless the caller owns the lead.
+    // Owner = authenticated user whose id matches lead.user_id OR whose email matches lead.email.
+    const leadEmail = (lead.email ?? "").toLowerCase();
+    const isOwner =
+      !!authUserId &&
+      ((lead as any).user_id === authUserId || (!!authEmail && authEmail === leadEmail));
+
+    const safeLead = isOwner
+      ? lead
+      : {
+          id: lead.id,
+          employment_type: lead.employment_type,
+          yrke: lead.yrke,
+          kommun: lead.kommun,
+          experience: lead.experience,
+          salary_type: lead.salary_type,
+          // Omit email + current_salary for non-owners
+        };
+
     // Fetch the most recent report for this lead — never return full result_json here
     const { data: report } = await supabase
       .from("reports")
       .select("id, ab_variant, status, unlocked_by_referral")
-      .eq("lead_id", lead_id)
+      .eq("lead_id", lead_id ?? lead.id)
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle();
 
     return new Response(
       JSON.stringify({
-        lead,
+        lead: safeLead,
         report_id: report?.id || null,
         ab_variant: report?.ab_variant || "A",
         report_status: report?.status || null,
