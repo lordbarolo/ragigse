@@ -7,6 +7,7 @@
 // Manual: POST { "month": "2026-03" }  (defaults to previous calendar month)
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { requireCronOrAdmin } from "../_shared/cronAuth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
