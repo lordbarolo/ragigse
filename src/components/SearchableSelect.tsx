@@ -146,7 +146,7 @@ export default function SearchableSelect({
         }
         case "Home": {
           e.preventDefault();
-          if (flatList.length > 1) setHighlightedIndex(1);
+          if (flatList.length > 0) setHighlightedIndex(1);
           break;
         }
         case "End": {
