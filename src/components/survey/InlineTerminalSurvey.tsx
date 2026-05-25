@@ -305,7 +305,7 @@ export default function InlineTerminalSurvey() {
 
   return (
     <div data-dark-surface className="relative w-full mx-auto mt-0 md:mt-0 text-left">
-      <div className="rounded-xl border border-[#2D2D2D] bg-[#1A1A1A] p-6 md:p-10 shadow-2xl overflow-hidden">
+      <div className="rounded-xl border border-[#2D2D2D] bg-[#1A1A1A] p-6 md:p-10 shadow-2xl overflow-x-hidden">
         {/* Progress bar */}
         <div className="h-[2px] bg-white/5 -mx-6 -mt-6 mb-6">
           <div
@@ -315,7 +315,7 @@ export default function InlineTerminalSurvey() {
         </div>
 
         {/* Step content (fixed min-height to avoid jump) */}
-        <div className="relative font-sans text-white min-h-[280px] overflow-hidden">
+        <div className="relative font-sans text-white min-h-[280px] overflow-x-hidden">
           <StepTransition stepKey={step} direction={direction}>
             {step === 1 && (
               <Step question="Vad jobbar du som?">
