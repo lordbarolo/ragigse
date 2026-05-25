@@ -46,7 +46,7 @@ const LANDING_JSONLD = [
 
 /* ───────────────────── data ───────────────────── */
 const NAV_LINKS: { label: string; href: string; external?: boolean }[] = [
-  { label: "Löneanalys", href: "/v1?start=1", external: true },
+  { label: "Löneanalys", href: "/#analys", external: true },
   { label: "Uppdragsradar", href: "/uppdragsradar", external: true },
   { label: "Förhandlingsagent", href: "/consultant/forhandla", external: true },
   { label: "FAQ", href: "/vanliga-fragor", external: true },
@@ -323,7 +323,18 @@ export default function LandingV2() {
                   <Link
                     key={l.label}
                     to={l.href}
-                    onClick={() => setMenuOpen(false)}
+                    onClick={(e) => {
+                      setMenuOpen(false);
+                      if (l.href.startsWith("/#")) {
+                        const id = l.href.slice(2);
+                        const el = document.getElementById(id);
+                        if (el) {
+                          e.preventDefault();
+                          el.scrollIntoView({ behavior: "smooth", block: "start" });
+                          history.replaceState(null, "", `/#${id}`);
+                        }
+                      }
+                    }}
                     className="px-4 py-3 text-sm text-black/85 hover:bg-black/5 hover:text-black transition-colors"
                   >
                     {l.label}
@@ -337,7 +348,7 @@ export default function LandingV2() {
       </nav>
 
       {/* ═══════════════════ 1. HERO med inline-form + porträtt ═══════════════════ */}
-      <section data-no-roomy className="relative z-20 overflow-visible px-5 sm:px-6 lg:px-10 bg-black pt-14 md:pt-20 pb-3 md:pb-4">
+      <section id="analys" data-no-roomy className="relative z-20 overflow-visible px-5 sm:px-6 lg:px-10 bg-black pt-14 md:pt-20 pb-3 md:pb-4 scroll-mt-20">
         <div className="relative z-10 max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12 items-center md:items-start">
           {/* Vänster: rubrik och pitch */}
           <div className="flex flex-col items-center md:items-start text-center md:text-left md:w-full">
