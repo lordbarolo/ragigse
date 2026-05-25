@@ -1,57 +1,69 @@
+# Säkerhetsrevision CompCare — 2026-05-25
+
 ## Mål
-Skapa en återanvändbar säkerhetsrevisions-mall för CompCare som täcker alla 8 delar (de 5 ursprungliga + 3 CompCare-specifika tillägg som identifierades i förra svaret).
+Producera `security-reports/2026-05-25-security-audit.md` enligt `AUDIT_TEMPLATE.md` + `AUDIT_BRIEF.md`, samt ZIP:a till `/mnt/documents/security-audit-2026-05-25.zip`. Inga kodändringar.
 
-## Leverabel
-En fil: `security-reports/AUDIT_TEMPLATE.md`
+## Genomförande (i ordning)
 
-## Innehåll i mallen
+**1. Metadata** — läs `package.json` version, datum 2026-05-25, första körning.
 
-**Metadata-block** (datum, projekt, granskare, version, tidigare rapport).
+**2. Automatiserade verktyg (parallellt)**
+- `security--run_security_scan`
+- `supabase--linter`
+- `code--dependency_scan`
 
-**DEL 1 — RLS-policies** (original)
-- Alla tabeller + RLS on/off, SELECT/INSERT/UPDATE/DELETE-policies, cross-user-läsning, anon-läsning, flaggning av `FOR ALL TO public`.
+**3. DEL 1 — RLS per tabell** (via `supabase--read_query`)
+- `pg_tables` med `rowsecurity` för alla `public`-tabeller
+- `pg_policies` — alla policies med `qual`, `with_check`, `roles`, `cmd`
+- Tabeller utan policies (LEFT JOIN)
+- Flagga: `USING (true)`, `FOR ALL` utan `WITH CHECK`, OR-on-nullable, anon-access
 
-**DEL 2 — Storage buckets** (original)
-- Publik/privat, SELECT/INSERT/DELETE-policies, anon upload, cross-user file access.
+**4. DEL 2 — Storage buckets**
+- `storage.buckets` + policies på `storage.objects` för `verifications`, `invoice_reviews`, `imports`
+- `rg "\.storage\.from\(" src/` — verifiera `{user_id}/`-konvention
 
-**DEL 3 — SECURITY DEFINER-funktioner** (original)
-- Namn, syfte, anropare, GRANTs, motivering.
+**5. DEL 3 — SECURITY DEFINER-funktioner**
+- `pg_proc` där `prosecdef=true` i `public`
+- `information_schema.routine_privileges` för anon/authenticated GRANTs
+- Kontrollera `search_path` satt
 
-**DEL 4 — Exponerade nycklar & secrets** (original + utökning)
-- `service_role` i frontend, hårdkodade nycklar, `.env` i git, **+ `git log -p -S "service_role"` för commit-historik**.
+**6. DEL 4 — Secrets**
+- `rg -n "service_role|sk_live|SUPABASE_SERVICE_ROLE" src/ public/`
+- Verifiera `.env` ej i git
+- `rg "console\.log" supabase/functions/` — sök PII/secrets
 
-**DEL 5 — Edge functions** (original + utökning)
-- Auth, input-validering, anrops-kontroll, känsliga logs, **+ kryssa mot `supabase/config.toml` att `verify_jwt`-flagga matchar avsikt**, **+ verifiera `requireAdmin()` faktiskt anropas i alla `admin-*` functions**.
+**7. DEL 5 — Edge functions**
+- Cross-reference `supabase/config.toml` mot `supabase/functions/*`
+- Admin-functions: grep `requireAdmin` tidigt i handler
+- CORS-wildcards inventering
+- `verify_jwt` mismatch
 
-**DEL 6 — Jämförelse mot tidigare rapport** (original)
-- Nya/åtgärdade/kvarstående fynd, trend.
+**8. DEL 7 — Lovable Cloud-specifika kontroller**
+- 7.1 Views: `pg_class` + `reloptions` för `security_invoker`, känsliga kolumnnamn
+- 7.2 RLS-logik: regex på policies för förbjudna mönster
+- 7.3 Triggers på `auth.*`: `information_schema.triggers`
+- 7.4 `cron.job` + senaste runs
+- 7.5 `pg_publication_tables` för realtime
+- 7.6 Storage upload-paths (täckt i DEL 2)
+- 7.7 Client-side bypass: `rg "localStorage.*admin|is_admin\s*="`
+- 7.8 PII på publika token-routes: granska `/profil/:id`, `/samarbetsintyg/:id`, `/dela`, `/kampanj/:role`
+- 7.9 Rate limiting: `ai_usage_logs` senaste 14d
+- 7.10 CORS-inventering (täckt i DEL 5)
 
-**DEL 7 — Lovable Cloud-specifika kontroller** (NY)
-- 7.1 **Views** — lista alla i `public`, `security_invoker` on/off, exponerade kolumner, GRANTs till anon/authenticated.
-- 7.2 **RLS-policy-logik** — flagga `USING (col IS NULL OR ...)` på nullable, `USING (true)`, `FOR ALL` utan `WITH CHECK`, `auth.uid()` mot nullable kolumn.
-- 7.3 **Triggers** — alla triggers på `auth.*`, särskilt `handle_new_user` (whitelist för `raw_user_meta_data->>'role'`).
-- 7.4 **pg_cron-jobb** — lista alla, ägare, funktion, privilegier.
-- 7.5 **Realtime-publikationer** — vilka tabeller i `supabase_realtime`.
-- 7.6 **Storage upload-konvention** — verifiera kod uploadar till `{user_id}/...`, inte rotmappen.
-- 7.7 **Client-side auth-bypass** — sök `localStorage`/`sessionStorage` för admin-flags, routes endast skyddade av `ProtectedRoute` utan RLS-motpart.
-- 7.8 **PII på publika token-routes** — `/profil/:id`, `/samarbetsintyg/:id`, `/dela`, `/kampanj/:role`: tokens i Referer/analytics, PostHog PII, JSON-LD whitelist.
-- 7.9 **Rate limiting** — AI-quota multi-account-bypass, BankID-endpoints, `delete-account`.
-- 7.10 **CORS** — `Access-Control-Allow-Origin` per edge function, dokumentera medvetna `*`.
+**9. DEL 8 — Dependencies** (från `code--dependency_scan`)
 
-**DEL 8 — Beroenden & supply chain** (NY)
-- `npm audit`, lockfile-integritet, `package.json` overrides, outdated critical deps.
+**10. DEL 6 — Diff** = N/A (första körning)
 
-**DEL 9 — Automatiserade verktyg** (NY)
-- Kör parallellt: `supabase--linter` + intern `security--run_security_scan` + denna manuella check. Lista vilka klasser av buggar varje verktyg fångar.
+**11. Skriv rapport** till `security-reports/2026-05-25-security-audit.md` med alla fynd + sammanfattning (GRÖN/GUL/RÖD, KRITISKA/ALLVARLIGA/MÅTTLIGA/REKOMMENDATIONER per fynd: beskrivning, risk, vem, åtgärd, status).
 
-**Rapport-format-block** (original)
-- Sammanfattning, kritiska/allvarliga/måttliga fynd, rekommendationer, filsökväg `security-reports/YYYY-MM-DD-security-audit.md`.
+**12. ZIP** till `/mnt/documents/security-audit-2026-05-25.zip` (rapporten + ev. tool-output-bilagor).
 
-**CompCare-specifika kända safe-zones** (för att slippa falska positiva)
-- `calloff_imports_public` view är medvetet `SECURITY DEFINER` (vår fix).
-- Token-views på `ref_*` är medvetet publika via RPC.
-- Publika edge functions i `config.toml` (komplett lista) — validerar input internt.
+## Scope-respekt
+- Endast säkerhetsgranskning i låsta områden (Fakturakontroll AI-prompts/modeller/regelmotor, compensation-engine) — inga förslag på logik/UX/AI-ändringar.
+- Marketplace-isolation respekteras (`mp_*` granskas endast säkerhetsmässigt).
+- Inga kodändringar görs — endast rapport + ZIP.
 
-## Vad jag INTE gör i denna plan
-- Kör inte revisionen nu (det är en separat task).
-- Ändrar inte den befintliga AUDIT_BRIEF.md (kompletterar med en ny fil).
+## Leverans
+- `security-reports/2026-05-25-security-audit.md`
+- `/mnt/documents/security-audit-2026-05-25.zip` (presentation-artifact)
+- Kort sammanfattning i chatt med status + topp-fynd.
