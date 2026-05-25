@@ -7,6 +7,7 @@
 // Manual: POST { "month": "2026-03" }  (defaults to previous calendar month)
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { requireCronOrAdmin } from "../_shared/cronAuth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -58,6 +59,9 @@ Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
+  const authError = await requireCronOrAdmin(req);
+  if (authError) return authError;
+
 
   const startedAt = Date.now();
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;

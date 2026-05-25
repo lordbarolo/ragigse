@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { requireCronOrAdmin } from "../_shared/cronAuth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -76,6 +77,8 @@ async function verifyVersion(supabase: ReturnType<typeof createClient>, versionI
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
+  const authError = await requireCronOrAdmin(req);
+  if (authError) return authError;
 
   const supabase = createClient(
     Deno.env.get("SUPABASE_URL")!,
