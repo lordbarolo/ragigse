@@ -224,8 +224,9 @@ serve(async (req) => {
       }
     }
 
+    // SECURITY: never return user_id to unauthenticated callers (prevents email->UUID enumeration)
     return new Response(
-      JSON.stringify({ ok: true, user_id: userId }),
+      JSON.stringify({ ok: true }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {
