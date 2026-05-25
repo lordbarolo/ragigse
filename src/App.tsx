@@ -210,7 +210,7 @@ const App = () => (
               <Route path="/sign/:token" element={<SignRepresentation />} />
               <Route path="/unsubscribe" element={<Unsubscribe />} />
               <Route path="/kampanj/:role" element={<Campaign />} />
-              <Route path="/uppdragsradar" element={<UppdragsradarV2 />} />
+              <Route path="/uppdragsradar" element={<Navigate to="/" replace />} />
 
               {/* Hidden / protected routes */}
               <Route path="/dela" element={<ProtectedRoute><SharePreview /></ProtectedRoute>} />
