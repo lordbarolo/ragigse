@@ -46,7 +46,7 @@ const LANDING_JSONLD = [
 
 /* ───────────────────── data ───────────────────── */
 const NAV_LINKS: { label: string; href: string; external?: boolean }[] = [
-  { label: "Löneanalys", href: "/v1?start=1", external: true },
+  { label: "Löneanalys", href: "/#analys", external: true },
   { label: "Uppdragsradar", href: "/uppdragsradar", external: true },
   { label: "Förhandlingsagent", href: "/consultant/forhandla", external: true },
   { label: "FAQ", href: "/vanliga-fragor", external: true },
