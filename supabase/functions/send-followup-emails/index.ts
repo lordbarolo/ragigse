@@ -86,6 +86,9 @@ serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+  const authError = await requireCronOrAdmin(req);
+  if (authError) return authError;
+
 
   try {
     const lovableApiKey = Deno.env.get("LOVABLE_API_KEY");
