@@ -323,7 +323,18 @@ export default function LandingV2() {
                   <Link
                     key={l.label}
                     to={l.href}
-                    onClick={() => setMenuOpen(false)}
+                    onClick={(e) => {
+                      setMenuOpen(false);
+                      if (l.href.startsWith("/#")) {
+                        const id = l.href.slice(2);
+                        const el = document.getElementById(id);
+                        if (el) {
+                          e.preventDefault();
+                          el.scrollIntoView({ behavior: "smooth", block: "start" });
+                          history.replaceState(null, "", `/#${id}`);
+                        }
+                      }
+                    }}
                     className="px-4 py-3 text-sm text-black/85 hover:bg-black/5 hover:text-black transition-colors"
                   >
                     {l.label}
