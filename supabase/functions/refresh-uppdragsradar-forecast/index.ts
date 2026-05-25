@@ -13,6 +13,7 @@
 //   4. VOLUME_SHOCK      — total expected volume deviates >40% vs previous run
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { requireCronOrAdmin } from "../_shared/cronAuth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
