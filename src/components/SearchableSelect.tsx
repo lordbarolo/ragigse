@@ -127,9 +127,7 @@ export default function SearchableSelect({
         }
         case "ArrowUp": {
           e.preventDefault();
-          setHighlightedIndex((prev) => {
-            return Math.max(prev - 1, 1) > 0 ? prev - 1 : 1;
-          });
+          setHighlightedIndex((prev) => Math.max(prev - 1, 0));
           break;
         }
         case "Enter": {
