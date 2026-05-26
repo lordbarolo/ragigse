@@ -286,8 +286,8 @@ VIKTIGT — Du får BARA använda dessa capabilities:
 - compare_roles: Jämför timpris mellan två roller. Kräver: role_a, role_b, geography.
 
 KÄLL-SELEKTION PER ANSTÄLLNINGSFORM
-- Om employment_type är "consultant" (konsult/egenföretagare): använd ENBART lookup_rate. Använd INTE salary_benchmark eller salary_position — dessa är baserade på lönestatistik som inte är relevant för konsulter.
-- Om employment_type är "employed" (anställd): använd salary_benchmark eller salary_position. lookup_rate kan användas som komplement.
+- Om employment_type är "foretagare" (konsult/egenföretagare): använd ENBART lookup_rate. Använd INTE salary_benchmark eller salary_position — dessa är baserade på lönestatistik som inte är relevant för konsulter.
+- Om employment_type är "anstalld": använd lookup_rate som primär källa och räkna via kundpris × konsultandel / 1,42. Använd INTE salary_benchmark eller salary_position för konsultanalys.
 
 FÖRBJUDET SPRÅK OCH JÄMFÖRELSER
 - Använd ALDRIG ordet "benchmark" i något svar eller user_situation.
@@ -300,7 +300,7 @@ Du ska ENBART svara på frågor inom dessa områden:
 3. "Vilket förhandlingsutrymme kan jag argumentera för?"
 4. "Vad säger ramavtalet och avtalsnivåerna?"
 
-Om användaren frågar om kommande uppdrag, tillgänglighet i regioner, eller prognoser för framtida behov: returnera en tom capabilities-array och skriv en missing_info-text som säger "Den typen av frågor besvaras bäst av Uppdragsassistenten som du hittar på uppdragssidan när du är inloggad."
+Om användaren frågar om kommande uppdrag, tillgänglighet i regioner, eller prognoser för framtida behov: returnera en tom capabilities-array och skriv en missing_info-text som säger "Den typen av frågor ligger utanför Löneassistentens nuvarande fokus."
 
 Om användaren frågar om något annat utanför dessa områden (t.ex. arbetsrätt, anställningsvillkor, karriärråd), returnera en tom capabilities-array och skriv en tydlig missing_info-text om att frågan ligger utanför tjänstens fokus.
 
@@ -456,7 +456,7 @@ STRIKTA REGLER:
 - Nämn SKR ramavtal bara när det tillför ny information.
 - Om data saknas, var tydlig med det — gissa aldrig.
 - Svara BARA på frågor om avtalsnivåer, marginaler, rollskillnader och förhandlingsutrymme.
-- Om frågan handlar om kommande uppdrag eller prognoser, hänvisa till Uppdragsassistenten.
+- Om frågan handlar om kommande uppdrag eller prognoser, svara att det ligger utanför Löneassistentens nuvarande fokus.
 - Använd ALDRIG orden "benchmark", "SCB" eller "Medlingsinstitutet" i svaret.
 - Aldrig utropstecken.
 - Svara på svenska.`;
@@ -730,6 +730,11 @@ serve(async (req) => {
           params: { role: context.role },
         });
       }
+    }
+
+    // For consultant compensation, only SKR frame agreement lookups are allowed.
+    if (context?.employment_type === "foretagare" || context?.employment_type === "anstalld") {
+      intent.capabilities = intent.capabilities.filter((cap) => cap.capability !== "salary_benchmark" && cap.capability !== "salary_position");
     }
 
     // Ensure lookup_rate is always included when we have role + geography
