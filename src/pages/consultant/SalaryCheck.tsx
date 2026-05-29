@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { safeJsonLd } from "@/lib/safeJsonLd";
 import { Link, useSearchParams } from "react-router-dom";
 import { FileText, Globe, Lock, ShieldCheck } from "lucide-react";
 import { trackEvent } from "@/lib/trackEvent";

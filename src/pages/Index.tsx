@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { safeJsonLd } from "@/lib/safeJsonLd";
 import { Link } from "react-router-dom";
 import { ShieldCheck, FileSearch, MessageSquare, ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";

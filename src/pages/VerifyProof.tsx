@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { safeJsonLd } from "@/lib/safeJsonLd";
 import { useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { setPageMeta } from "@/lib/setPageMeta";
