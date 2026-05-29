@@ -2335,6 +2335,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "mp_agent_runs_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "mp_listings_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "mp_agent_runs_offer_id_fkey"
             columns: ["offer_id"]
             isOneToOne: false
@@ -2458,6 +2465,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "mp_negotiation_events_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "mp_listings_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "mp_negotiation_events_offer_id_fkey"
             columns: ["offer_id"]
             isOneToOne: false
@@ -2536,6 +2550,13 @@ export type Database = {
             columns: ["listing_id"]
             isOneToOne: false
             referencedRelation: "mp_listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_offers_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "mp_listings_public"
             referencedColumns: ["id"]
           },
           {
@@ -4812,6 +4833,21 @@ export type Database = {
       }
     }
     Views: {
+      app_settings_public: {
+        Row: {
+          key: string | null
+          value: Json | null
+        }
+        Insert: {
+          key?: string | null
+          value?: Json | null
+        }
+        Update: {
+          key?: string | null
+          value?: Json | null
+        }
+        Relationships: []
+      }
       calloff_imports_public: {
         Row: {
           calloff_date: string | null
@@ -4869,6 +4905,69 @@ export type Database = {
           role?: string | null
           specialization?: string | null
           unit?: string | null
+        }
+        Relationships: []
+      }
+      mp_listings_public: {
+        Row: {
+          available_from: string | null
+          available_to: string | null
+          closed_at: string | null
+          created_at: string | null
+          currency: string | null
+          employment_type: string | null
+          hours_per_week: number | null
+          id: string | null
+          kommun: string | null
+          price_max_sek: number | null
+          price_min_sek: number | null
+          published_at: string | null
+          region: string | null
+          role: string | null
+          specialization: string | null
+          status: Database["public"]["Enums"]["mp_listing_status"] | null
+          terms_md: string | null
+          verified_at_publish: boolean | null
+        }
+        Insert: {
+          available_from?: string | null
+          available_to?: string | null
+          closed_at?: string | null
+          created_at?: string | null
+          currency?: string | null
+          employment_type?: string | null
+          hours_per_week?: number | null
+          id?: string | null
+          kommun?: string | null
+          price_max_sek?: number | null
+          price_min_sek?: number | null
+          published_at?: string | null
+          region?: string | null
+          role?: string | null
+          specialization?: string | null
+          status?: Database["public"]["Enums"]["mp_listing_status"] | null
+          terms_md?: string | null
+          verified_at_publish?: boolean | null
+        }
+        Update: {
+          available_from?: string | null
+          available_to?: string | null
+          closed_at?: string | null
+          created_at?: string | null
+          currency?: string | null
+          employment_type?: string | null
+          hours_per_week?: number | null
+          id?: string | null
+          kommun?: string | null
+          price_max_sek?: number | null
+          price_min_sek?: number | null
+          published_at?: string | null
+          region?: string | null
+          role?: string | null
+          specialization?: string | null
+          status?: Database["public"]["Enums"]["mp_listing_status"] | null
+          terms_md?: string | null
+          verified_at_publish?: boolean | null
         }
         Relationships: []
       }
