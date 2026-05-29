@@ -191,7 +191,7 @@ export default function VerifyProof() {
       data-verify-id={applicationId}
       data-verify-status={representation ? "signed" : "references-only"}
     >
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(proofJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(proofJsonLd) }} />
 
       <Button variant="ghost" size="sm" className="mb-6 gap-1.5 text-muted-foreground" asChild>
         <Link to="/"><ArrowLeft className="h-4 w-4" /> Tillbaka</Link>

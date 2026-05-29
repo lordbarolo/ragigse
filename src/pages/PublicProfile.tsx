@@ -217,7 +217,7 @@ export default function PublicProfile() {
     <div className="mx-auto max-w-2xl px-4 py-8">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(profileJsonLd) }}
+        dangerouslySetInnerHTML={{ __html: safeJsonLd(profileJsonLd) }}
       />
       <link
         rel="alternate"
