@@ -10,20 +10,60 @@ if (import.meta.env.DEV && !import.meta.env.VITE_POSTHOG_KEY) {
   );
 }
 
+// Token/UUID redactor for sensitive URL paths (samarbetsintyg, signing,
+// document shares, password reset, ref pings, public profiles…).
+// We never want raw tokens or UUIDs leaving the browser via analytics.
+const SENSITIVE_PATH_PREFIXES = [
+  "/sign",
+  "/samarbetsintyg",
+  "/verify",
+  "/dela",
+  "/dokument",
+  "/intyg",
+  "/profil",
+  "/ping",
+  "/reset-password",
+  "/r/", // referral landing
+];
+const UUID_RE = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;
+const HEX_TOKEN_RE = /[0-9a-f]{24,}/gi;
+
+function redactSensitiveUrl(value: unknown): unknown {
+  if (typeof value !== "string") return value;
+  let out = value;
+  try {
+    // If it's a URL, only operate on pathname+search
+    const url = new URL(out, "https://x.local");
+    const path = url.pathname;
+    const needsRedact = SENSITIVE_PATH_PREFIXES.some((p) => path === p || path.startsWith(p + "/"));
+    if (needsRedact) {
+      url.pathname = path.replace(/\/[^/]+$/, "/[redacted]");
+      url.search = "";
+      out = value.startsWith("/") ? url.pathname : url.toString();
+    }
+  } catch { /* not a URL — fall through */ }
+  out = out.replace(UUID_RE, "[uuid]").replace(HEX_TOKEN_RE, "[token]");
+  return out;
+}
+
 posthog.init(POSTHOG_KEY, {
   api_host:
     (import.meta.env.VITE_POSTHOG_HOST as string | undefined) ??
     "https://eu.i.posthog.com",
   ui_host: "https://eu.posthog.com",
-  // Cookieless / consent-free setup (GDPR + ePrivacy compliant):
-  // - `persistence: "memory"` → no cookies/localStorage, no consent banner required
-  // - `person_profiles: "identified_only"` → no person profile until posthog.identify(leadId)
-  // Trade-off: distinct_id resets per tab/session. Our funnel is session-scoped
-  // and we explicitly identify leads via aliasLead(), so this is acceptable.
   person_profiles: "identified_only",
   persistence: "memory",
   capture_pageview: true,
   capture_pageleave: true,
+  before_send: (event) => {
+    if (!event) return event;
+    const props = event.properties || {};
+    for (const k of ["$current_url", "$pathname", "$referrer", "$initial_current_url", "$initial_pathname", "$initial_referrer"]) {
+      if (k in props) props[k] = redactSensitiveUrl(props[k]);
+    }
+    event.properties = props;
+    return event;
+  },
 });
 
 // Mark internal traffic with a super property.

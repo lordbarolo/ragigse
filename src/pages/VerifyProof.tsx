@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { safeJsonLd } from "@/lib/safeJsonLd";
 import { useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { setPageMeta } from "@/lib/setPageMeta";
@@ -191,7 +192,7 @@ export default function VerifyProof() {
       data-verify-id={applicationId}
       data-verify-status={representation ? "signed" : "references-only"}
     >
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(proofJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(proofJsonLd) }} />
 
       <Button variant="ghost" size="sm" className="mb-6 gap-1.5 text-muted-foreground" asChild>
         <Link to="/"><ArrowLeft className="h-4 w-4" /> Tillbaka</Link>

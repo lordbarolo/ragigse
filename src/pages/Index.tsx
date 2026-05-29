@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { safeJsonLd } from "@/lib/safeJsonLd";
 import { Link } from "react-router-dom";
 import { ShieldCheck, FileSearch, MessageSquare, ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -76,7 +77,7 @@ export default function Index() {
 
   return (
     <div className="min-h-screen bg-background">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(platformJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(platformJsonLd) }} />
 
       {/* ── Nav ────────────────────────────────────────── */}
       <nav className="sticky top-0 z-50 bg-card/80 backdrop-blur-md border-b border-border" role="navigation" aria-label="Huvudnavigation">

@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { safeJsonLd } from "@/lib/safeJsonLd";
 import { Link, useSearchParams } from "react-router-dom";
 import { FileText, Globe, Lock, ShieldCheck } from "lucide-react";
 import { trackEvent } from "@/lib/trackEvent";
@@ -124,8 +125,8 @@ export default function SalaryCheck() {
   if (showSurvey) {
     return (
       <div className="bg-background">
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(faqJsonLd) }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(webAppJsonLd) }} />
         <header className="border-b border-border bg-card/80 backdrop-blur sticky top-0 z-50">
           <div className="max-w-5xl mx-auto flex items-center justify-between px-6 h-14">
             <Link to="/">
@@ -151,8 +152,8 @@ export default function SalaryCheck() {
 
   return (
     <div className="bg-background overflow-x-hidden">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webAppJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(faqJsonLd) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: safeJsonLd(webAppJsonLd) }} />
 
       <header className="border-b border-border bg-card/80 backdrop-blur sticky top-0 z-50">
         <div className="max-w-5xl mx-auto flex items-center justify-between px-6 h-14">
