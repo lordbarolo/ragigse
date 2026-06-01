@@ -15,6 +15,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import ConsultantLayout from "@/layouts/ConsultantLayout";
 
 // Lazy-loaded routes — endast löneanalys-flödet + auth/admin/legal
+const Home = lazy(() => import("./pages/Home"));
 const SalaryCheck = lazy(() => import("./pages/consultant/SalaryCheck"));
 const AnalysisScreen = lazy(() => import("./pages/AnalysisScreen"));
 const Report = lazy(() => import("./pages/Report"));
