@@ -15,7 +15,7 @@ import ProtectedRoute from "@/components/ProtectedRoute";
 import ConsultantLayout from "@/layouts/ConsultantLayout";
 
 // Lazy-loaded routes — endast löneanalys-flödet + auth/admin/legal
-const SalaryCheck = lazy(() => import("./pages/consultant/SalaryCheck"));
+const Home = lazy(() => import("./pages/Home"));
 const AnalysisScreen = lazy(() => import("./pages/AnalysisScreen"));
 const Report = lazy(() => import("./pages/Report"));
 const AnestesiReport = lazy(() => import("./pages/AnestesiReport"));
@@ -84,7 +84,7 @@ const App = () => (
             <main id="main-content" role="main" tabIndex={-1} aria-label="Huvudinnehåll">
             <Routes>
               {/* ── Löneanalys (enda synliga produkten) ── */}
-              <Route path="/" element={<SalaryCheck />} />
+              <Route path="/" element={<Home />} />
               <Route path="/resultat/:leadId" element={<AnalysisScreen />} />
               <Route path="/rapport/anestesisjukskoterska" element={<AnestesiReport />} />
               <Route path="/rapport/:reportId" element={<Report />} />
