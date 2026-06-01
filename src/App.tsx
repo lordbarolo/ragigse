@@ -85,7 +85,8 @@ const App = () => (
             <main id="main-content" role="main" tabIndex={-1} aria-label="Huvudinnehåll">
             <Routes>
               {/* ── Löneanalys (enda synliga produkten) ── */}
-              <Route path="/" element={<SalaryCheck />} />
+              <Route path="/" element={<Home />} />
+              <Route path="/v1" element={<SalaryCheck />} />
               <Route path="/resultat/:leadId" element={<AnalysisScreen />} />
               <Route path="/rapport/anestesisjukskoterska" element={<AnestesiReport />} />
               <Route path="/rapport/:reportId" element={<Report />} />
