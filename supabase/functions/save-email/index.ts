@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { checkRateLimit, rateLimitResponse } from "../_shared/rateLimit.ts";
+import { maskEmail } from "../_shared/maskEmail.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -31,7 +32,7 @@ serve(async (req) => {
     const { lead_id, report_id, email } = body;
 
     // Audit logging
-    console.log(`[AUDIT] save-email | ip=${clientIp} | email=${email} | lead_id=${lead_id || "none"} | report_id=${report_id || "none"}`);
+    console.log(`[AUDIT] save-email | ip=${clientIp} | email=${maskEmail(email)} | lead_id=${lead_id || "none"} | report_id=${report_id || "none"}`);
 
     if (!lead_id || !email) {
       return new Response(
@@ -217,7 +218,7 @@ serve(async (req) => {
               },
             },
           });
-          console.log(`Report email enqueued for ${email}`);
+          console.log(`Report email enqueued for ${maskEmail(email)}`);
         } catch (emailErr) {
           console.error("Failed to enqueue report email:", emailErr);
         }

@@ -202,7 +202,7 @@ serve(async (req) => {
       );
     }
 
-    console.log(`Report created: ${report.id} for ${email}`);
+    console.log(`Report created: ${report.id}`);
 
     // Schedule followup drip emails if we have an email
     if (email && lead_id) {
@@ -220,7 +220,7 @@ serve(async (req) => {
           ...e,
         }))
       );
-      console.log(`Scheduled ${emails.length} followup emails for ${email}`);
+      console.log(`Scheduled ${emails.length} followup emails for lead ${lead_id}`);
     }
 
     return new Response(

@@ -178,10 +178,10 @@ serve(async (req) => {
             .update({ status: "sent", sent_at: new Date().toISOString() })
             .eq("id", email.id);
           sentCount++;
-          console.log(`Sent step ${email.sequence_step} email to ${email.email}`);
+          console.log(`Sent step ${email.sequence_step} email (id=${email.id})`);
         } else {
           const errBody = await resendRes.text();
-          console.error(`Resend error for ${email.email}: ${errBody}`);
+          console.error(`Resend error for followup id=${email.id}: ${errBody}`);
           await supabase
             .from("followup_emails")
             .update({ status: "failed" })
