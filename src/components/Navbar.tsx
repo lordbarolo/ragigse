@@ -4,14 +4,9 @@ import CompcareLogo from "@/components/CompcareLogo";
 import { Button } from "@/components/ui/button";
 import { User, LogIn, LogOut, MessageSquare, Shield, FileSearch, ArrowLeft } from "lucide-react";
 
-const CONSULTANT_LINKS = [
-  { to: "/consultant/forhandla", label: "Marknadsvillkor", icon: MessageSquare },
-  { to: "/consultant/referenser", label: "Referenser", icon: Shield },
-] as const;
+const CONSULTANT_LINKS: ReadonlyArray<{ to: string; label: string; icon: typeof User }> = [];
 
-const AGENCY_LINKS = [
-  { to: "/agency/dashboard", label: "Dashboard", icon: FileSearch },
-] as const;
+const AGENCY_LINKS: ReadonlyArray<{ to: string; label: string; icon: typeof User }> = [];
 
 export default function Navbar() {
   const { user, loading, role, signOut } = useAuth();
