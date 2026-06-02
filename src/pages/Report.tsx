@@ -12,8 +12,10 @@ import Navbar from "@/components/Navbar";
 import ShareButton from "@/components/ShareButton";
 import type { ReportData } from "@/shared/types";
 
-import ConsultantTrackContent from "@/components/report/ConsultantTrackContent";
-import ReportFlowIndicator from "@/components/report/ReportFlowIndicator";
+import ReportFeedback from "@/components/report/ReportFeedback";
+import { Lock } from "lucide-react";
+import { fmt, formatPartialValue } from "@/shared/formatters";
+import { StatBlock } from "@/shared/UIComponents";
 
 
 
@@ -131,18 +133,6 @@ export default function Report() {
       }}
     >
       <Navbar />
-      <ReportFlowIndicator
-        steps={[
-          { id: "flow-din-ersattning", label: "Din ersättning & marknadsspann" },
-          { id: "flow-situation", label: "Vad det betyder för dig" },
-          { id: "flow-stod", label: "Få stöd i din förhandling" },
-          { id: "flow-regional", label: "Villkoren på andra orter" },
-          { id: "flow-negotiation", label: "Din förhandlingspotential" },
-          { id: "flow-fakturor", label: "Har du tagit betalt för allt?" },
-          { id: "flow-market", label: "Marknadsintelligens" },
-          { id: "flow-method", label: "Beräkningsmetod" },
-        ]}
-      />
       {/* Header — cream light theme */}
       <header
         className="relative overflow-hidden px-5 pt-20 pb-10 sm:pt-24 sm:pb-12"
@@ -175,20 +165,44 @@ export default function Report() {
 
       <main className="px-4 py-6 max-w-lg mx-auto space-y-2.5">
 
-        <ConsultantTrackContent
-          r={r}
-          isFullAccess={true}
-          isEmployee={isEmployee}
-          occupation={report.occupation}
-          kommun={report.kommun}
-          zoneComparisons={report.zone_comparisons}
-          userZone={report.user_zone}
-          registerSectionRef={registerSectionRef}
-          leadId={report.lead_id}
-          email={report.email}
-          reportId={report.id}
-          priceHistory={report.price_history}
-        />
+        {(() => {
+          const marketRate = r.market?.rate_customer_sek_per_hour ?? 0;
+          const currentSalary = r.inputs?.current_salary_sek ?? 0;
+          const salaryIsHourly = r.inputs?.salary_type === "hourly";
+          const currentHourly = salaryIsHourly
+            ? currentSalary
+            : (isEmployee ? Math.round(currentSalary / 167) : currentSalary);
+          return (
+            <div className="rounded-2xl border border-border/50 overflow-hidden">
+              <div className="bg-muted/50 p-4 flex items-center gap-3">
+                <Lock className="w-5 h-5 text-muted-foreground" />
+                <p className="font-semibold text-foreground">Marknadsspann — fullständig version</p>
+              </div>
+              <div className="p-5 space-y-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <StatBlock label="Din timersättning" value={`${fmt(currentHourly)} kr`} muted />
+                  <div className="p-3 rounded-lg bg-accent/10 relative overflow-hidden">
+                    <p className="text-hint mb-1">Marknadsspann</p>
+                    <p className="text-base font-semibold text-accent blur-sm select-none">
+                      {formatPartialValue(Math.round(marketRate * 0.6))} kr
+                    </p>
+                  </div>
+                </div>
+                <p className="text-body-sm text-center">
+                  Den fullständiga analysen med exakta siffror och regionala jämförelser finns i den utökade rapporten.
+                </p>
+              </div>
+            </div>
+          );
+        })()}
+
+        {report.lead_id && (
+          <ReportFeedback
+            leadId={report.lead_id}
+            role={report.occupation}
+            zone={report.user_zone}
+          />
+        )}
 
 
 
