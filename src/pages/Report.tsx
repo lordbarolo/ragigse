@@ -133,18 +133,6 @@ export default function Report() {
       }}
     >
       <Navbar />
-      <ReportFlowIndicator
-        steps={[
-          { id: "flow-din-ersattning", label: "Din ersättning & marknadsspann" },
-          { id: "flow-situation", label: "Vad det betyder för dig" },
-          { id: "flow-stod", label: "Få stöd i din förhandling" },
-          { id: "flow-regional", label: "Villkoren på andra orter" },
-          { id: "flow-negotiation", label: "Din förhandlingspotential" },
-          { id: "flow-fakturor", label: "Har du tagit betalt för allt?" },
-          { id: "flow-market", label: "Marknadsintelligens" },
-          { id: "flow-method", label: "Beräkningsmetod" },
-        ]}
-      />
       {/* Header — cream light theme */}
       <header
         className="relative overflow-hidden px-5 pt-20 pb-10 sm:pt-24 sm:pb-12"
