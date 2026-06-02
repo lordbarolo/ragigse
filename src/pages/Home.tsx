@@ -39,7 +39,7 @@ export default function Home() {
 
   return (
     <AnthropicScope>
-      <div className="w-full text-foreground font-sans bg-black min-h-screen">
+      <div className="w-full text-foreground font-sans min-h-screen">
         <SEO
           title="CompCare – Lön & ramavtalspriser för vårdkonsulter"
           description="Jämför ditt erbjudande mot SKR:s ramavtalspriser i 290 kommuner. Gratis löneanalys för sjuksköterskor, barnmorskor och läkare."
