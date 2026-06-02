@@ -83,13 +83,19 @@ export default function Signup() {
     }).catch(() => {});
   };
 
+  const beigeBg = {
+    backgroundColor: "#EEEBE4",
+    backgroundImage: [
+      "radial-gradient(ellipse 70% 55% at 15% 25%, hsl(196 100% 50% / 0.18) 0%, transparent 55%)",
+      "radial-gradient(ellipse 55% 50% at 85% 20%, hsl(245 58% 60% / 0.14) 0%, transparent 50%)",
+      "radial-gradient(ellipse 50% 60% at 55% 85%, hsl(160 60% 45% / 0.10) 0%, transparent 50%)",
+    ].join(", "),
+    backgroundRepeat: "no-repeat" as const,
+  };
+
   if (success) {
     return (
-      <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0d0b2a] via-[#1a1545] via-40% to-[#2a2070]" />
-        <div className="absolute pointer-events-none" style={{ top: '-100px', right: '-100px', width: '1000px', height: '900px', zIndex: 1, background: 'radial-gradient(ellipse at 75% 10%, rgba(110,95,230,0.55) 0%, rgba(90,78,210,0.25) 25%, rgba(70,60,190,0.08) 50%, transparent 70%)' }} />
-        <div className="absolute top-0 right-0 pointer-events-none" style={{ width: '520px', height: '600px', zIndex: 1, background: 'radial-gradient(ellipse at 90% 15%, rgba(140,125,245,0.3) 0%, rgba(110,95,220,0.12) 40%, transparent 65%)' }} />
-        <div className="absolute inset-0 opacity-5" style={{ backgroundImage: "repeating-linear-gradient(0deg,transparent,transparent 39px,#fff 39px,#fff 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,#fff 39px,#fff 40px)" }} />
+      <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden" style={beigeBg}>
         <Card className="relative z-10 w-full max-w-md border-border/50 bg-card/80 backdrop-blur">
           <CardContent className="pt-8 pb-8 text-center space-y-4">
             <CheckCircle2 className="w-12 h-12 text-accent mx-auto" />
@@ -111,17 +117,14 @@ export default function Signup() {
   }
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0d0b2a] via-[#1a1545] via-40% to-[#2a2070]" />
-      <div className="absolute pointer-events-none" style={{ top: '-100px', right: '-100px', width: '1000px', height: '900px', zIndex: 1, background: 'radial-gradient(ellipse at 75% 10%, rgba(110,95,230,0.55) 0%, rgba(90,78,210,0.25) 25%, rgba(70,60,190,0.08) 50%, transparent 70%)' }} />
-      <div className="absolute top-0 right-0 pointer-events-none" style={{ width: '520px', height: '600px', zIndex: 1, background: 'radial-gradient(ellipse at 90% 15%, rgba(140,125,245,0.3) 0%, rgba(110,95,220,0.12) 40%, transparent 65%)' }} />
-      <div className="absolute inset-0 opacity-5" style={{ backgroundImage: "repeating-linear-gradient(0deg,transparent,transparent 39px,#fff 39px,#fff 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,#fff 39px,#fff 40px)" }} />
+    <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden" style={beigeBg}>
       <div className="relative z-10 w-full max-w-md space-y-6">
         <div className="flex justify-center">
           <Link to="/">
-            <CompcareLogo variant="full" inverted />
+            <CompcareLogo variant="full" inverted={false} />
           </Link>
         </div>
+
 
         <Card className="border-border/50 bg-card/80 backdrop-blur">
           <CardHeader className="text-center">

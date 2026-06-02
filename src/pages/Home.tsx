@@ -39,7 +39,7 @@ export default function Home() {
 
   return (
     <AnthropicScope>
-      <div className="w-full text-foreground font-sans bg-black min-h-screen">
+      <div className="w-full text-foreground font-sans min-h-screen">
         <SEO
           title="CompCare – Lön & ramavtalspriser för vårdkonsulter"
           description="Jämför ditt erbjudande mot SKR:s ramavtalspriser i 290 kommuner. Gratis löneanalys för sjuksköterskor, barnmorskor och läkare."
@@ -105,7 +105,7 @@ export default function Home() {
         <section
           id="analys"
           data-no-roomy
-          className="relative z-20 overflow-visible px-5 sm:px-6 lg:px-10 bg-black pt-14 md:pt-20 pb-20 md:pb-28 scroll-mt-20"
+          className="relative z-20 overflow-visible px-5 sm:px-6 lg:px-10 pt-14 md:pt-20 pb-20 md:pb-28 scroll-mt-20"
         >
           <div className="relative z-10 max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12 items-center md:items-start">
             {/* Vänster: rubrik och pitch */}
@@ -119,19 +119,20 @@ export default function Home() {
                 </svg>
                 För läkare &amp; sjuksköterskor
               </div>
-              <h1 className="font-bold leading-[1.05] text-white mb-5 tracking-tight text-[34px] sm:text-5xl md:text-[64px]">
+              <h1 className="font-bold leading-[1.05] text-black mb-5 tracking-tight text-[34px] sm:text-5xl md:text-[64px]">
                 Vet du vad du<br />
-                <span className="text-gradient-violet text-white">är värd?</span>
+                <span className="text-gradient-violet text-black">är värd?</span>
               </h1>
-              <p className="text-lg sm:text-xl text-white/75 leading-relaxed mb-2 max-w-[560px]">
+              <p className="text-lg sm:text-xl text-black/75 leading-relaxed mb-2 max-w-[560px]">
                 Se regionens pris,<br />
                 bolagets marginal.<br />
                 Din ersättning
               </p>
-              <p className="mt-4 text-[12px] text-white/45">
+              <p className="mt-4 text-[12px] text-black/50">
                 Anonymt · Kostnadsfritt · Klart på 60 sekunder
               </p>
             </div>
+
 
             {/* Höger: formulär */}
             <div className="w-full md:max-w-[480px] md:justify-self-end">

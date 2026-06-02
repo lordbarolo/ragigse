@@ -269,7 +269,35 @@ export default function Teaser() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div
+      className="min-h-screen"
+      style={{
+        // Cream / Anthropic-bakgrund — override globala dark-tokens på denna sida
+        ['--background' as any]: '40 18% 91%',
+        ['--foreground' as any]: '0 0% 4%',
+        ['--card' as any]: '0 0% 100%',
+        ['--card-foreground' as any]: '0 0% 4%',
+        ['--popover' as any]: '0 0% 100%',
+        ['--popover-foreground' as any]: '0 0% 4%',
+        ['--muted' as any]: '40 18% 91%',
+        ['--muted-foreground' as any]: '220 9% 46%',
+        ['--secondary' as any]: '40 18% 91%',
+        ['--secondary-foreground' as any]: '0 0% 4%',
+        ['--accent' as any]: '40 18% 91%',
+        ['--accent-foreground' as any]: '0 0% 4%',
+        ['--border' as any]: '35 17% 85%',
+        ['--input' as any]: '35 17% 85%',
+        color: '#0A0A0A',
+        backgroundColor: "#EEEBE4",
+        backgroundImage: [
+          "radial-gradient(ellipse 70% 55% at 15% 25%, hsl(196 100% 50% / 0.18) 0%, transparent 55%)",
+          "radial-gradient(ellipse 55% 50% at 85% 20%, hsl(245 58% 60% / 0.14) 0%, transparent 50%)",
+          "radial-gradient(ellipse 50% 60% at 55% 85%, hsl(160 60% 45% / 0.10) 0%, transparent 50%)",
+        ].join(", "),
+        backgroundRepeat: "no-repeat",
+        backgroundAttachment: "fixed",
+      }}
+    >
       <TeaserHeader kommun={survey.kommun} />
 
       <main className="px-4 py-8 pb-20 max-w-lg mx-auto space-y-6">
