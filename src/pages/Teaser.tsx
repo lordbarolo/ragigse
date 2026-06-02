@@ -272,6 +272,22 @@ export default function Teaser() {
     <div
       className="min-h-screen"
       style={{
+        // Cream / Anthropic-bakgrund — override globala dark-tokens på denna sida
+        ['--background' as any]: '40 18% 91%',
+        ['--foreground' as any]: '0 0% 4%',
+        ['--card' as any]: '0 0% 100%',
+        ['--card-foreground' as any]: '0 0% 4%',
+        ['--popover' as any]: '0 0% 100%',
+        ['--popover-foreground' as any]: '0 0% 4%',
+        ['--muted' as any]: '40 18% 91%',
+        ['--muted-foreground' as any]: '220 9% 46%',
+        ['--secondary' as any]: '40 18% 91%',
+        ['--secondary-foreground' as any]: '0 0% 4%',
+        ['--accent' as any]: '40 18% 91%',
+        ['--accent-foreground' as any]: '0 0% 4%',
+        ['--border' as any]: '35 17% 85%',
+        ['--input' as any]: '35 17% 85%',
+        color: '#0A0A0A',
         backgroundColor: "#EEEBE4",
         backgroundImage: [
           "radial-gradient(ellipse 70% 55% at 15% 25%, hsl(196 100% 50% / 0.18) 0%, transparent 55%)",
