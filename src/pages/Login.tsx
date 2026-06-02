@@ -98,35 +98,25 @@ export default function Login() {
   ];
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden">
-      {/* Make.com-inspirerad djupviolett bakgrund */}
-      <div className="absolute inset-0 bg-[#1a0b3d]" />
-      {/* Spotlight — mjuk violett glow uppe till höger */}
-      <div
-        className="absolute pointer-events-none"
-        style={{
-          top: '-150px', right: '-150px',
-          width: '1100px', height: '1000px',
-          zIndex: 1,
-          background: 'radial-gradient(ellipse at 75% 15%, rgba(168,85,247,0.35) 0%, rgba(139,92,246,0.15) 30%, rgba(91,33,182,0.05) 55%, transparent 75%)',
-        }}
-      />
-      {/* Sekundär glow — magenta nere till vänster (Make-signatur) */}
-      <div
-        className="absolute pointer-events-none"
-        style={{
-          bottom: '-200px', left: '-150px',
-          width: '800px', height: '800px',
-          zIndex: 1,
-          background: 'radial-gradient(ellipse at 25% 80%, rgba(217,70,239,0.20) 0%, rgba(192,38,211,0.08) 40%, transparent 70%)',
-        }}
-      />
+    <div
+      className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden"
+      style={{
+        backgroundColor: "#EEEBE4",
+        backgroundImage: [
+          "radial-gradient(ellipse 70% 55% at 15% 25%, hsl(196 100% 50% / 0.18) 0%, transparent 55%)",
+          "radial-gradient(ellipse 55% 50% at 85% 20%, hsl(245 58% 60% / 0.14) 0%, transparent 50%)",
+          "radial-gradient(ellipse 50% 60% at 55% 85%, hsl(160 60% 45% / 0.10) 0%, transparent 50%)",
+        ].join(", "),
+        backgroundRepeat: "no-repeat",
+      }}
+    >
       <div className="relative z-10 w-full max-w-lg space-y-6">
         <div className="flex justify-center">
           <Link to="/">
-            <CompcareLogo variant="full" inverted />
+            <CompcareLogo variant="full" inverted={false} />
           </Link>
         </div>
+
 
         <Card className="border-border/50 bg-card/80 backdrop-blur">
           <CardHeader className="text-center">
