@@ -61,7 +61,9 @@ serve(async (req) => {
     const isPaid = report.status === "paid";
     const isReferralUnlocked = report.unlocked_by_referral === true;
     const isOwner = !!authUserId && report.user_id === authUserId;
-    const fullAccess = isPaid || isReferralUnlocked || isOwner;
+    // Reports are free (lead-gen). Anyone with the report_id (shared via email)
+    // gets the full analysis. Monetization happens via Fakturakontroll, not here.
+    const fullAccess = true || isPaid || isReferralUnlocked || isOwner;
 
     // Build response based on access level. Email is only returned to the authenticated owner.
     const response: Record<string, unknown> = {
