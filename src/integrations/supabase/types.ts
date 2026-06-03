@@ -4629,6 +4629,30 @@ export type Database = {
         }
         Relationships: []
       }
+      security_audit_runs: {
+        Row: {
+          created_at: string
+          findings: Json
+          id: string
+          status: string
+          summary: Json
+        }
+        Insert: {
+          created_at?: string
+          findings?: Json
+          id?: string
+          status?: string
+          summary?: Json
+        }
+        Update: {
+          created_at?: string
+          findings?: Json
+          id?: string
+          status?: string
+          summary?: Json
+        }
+        Relationships: []
+      }
       specialties: {
         Row: {
           category: string
@@ -5193,6 +5217,13 @@ export type Database = {
           },
         ]
       }
+      security_audit_view: {
+        Row: {
+          check_name: string | null
+          payload: Json | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       agent_api_count_today: { Args: { _key_id: string }; Returns: number }
@@ -5409,6 +5440,13 @@ export type Database = {
       reject_org_membership_request: {
         Args: { _request_id: string }
         Returns: undefined
+      }
+      security_audit_checks: {
+        Args: never
+        Returns: {
+          check_name: string
+          payload: Json
+        }[]
       }
       top_kommuner: {
         Args: { lim?: number }
