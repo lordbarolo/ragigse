@@ -50,6 +50,11 @@ interface VerificationFlags {
 
 export default function Profile() {
   const { user, loading: authLoading, signOut } = useAuth();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const navigate = useNavigate();
   const [reports, setReports] = useState<ReportRow[]>([]);
   const [profile, setProfile] = useState<ProfileData | null>(null);
