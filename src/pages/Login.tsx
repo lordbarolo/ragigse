@@ -118,15 +118,15 @@ export default function Login() {
         </div>
 
 
-        <Card className="border-border/40 !bg-[#F5F2EA]/85 backdrop-blur text-foreground">
+        <Card className="border-border/40 !bg-[#F5F2EA]/85 backdrop-blur text-black">
           <CardHeader className="text-center !bg-transparent">
-            <CardTitle className="text-xl font-semibold text-foreground">Logga in</CardTitle>
-            <CardDescription>Ta del av rapporter och smarta verktyg</CardDescription>
+            <CardTitle className="text-xl font-semibold text-black">Logga in</CardTitle>
+            <CardDescription className="text-black/70">Ta del av rapporter och smarta verktyg</CardDescription>
           </CardHeader>
           <CardContent className="!bg-transparent">
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email">E-post</Label>
+                <Label htmlFor="email" className="text-black">E-post</Label>
                 <Input
                   id="email"
                   type="email"
@@ -134,11 +134,11 @@ export default function Login() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="bg-white/70 text-foreground border-border placeholder:text-muted-foreground"
+                  className="bg-white/70 text-black border-border placeholder:text-black/50"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">Lösenord</Label>
+                <Label htmlFor="password" className="text-black">Lösenord</Label>
                 <Input
                   id="password"
                   type="password"
@@ -146,7 +146,7 @@ export default function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="bg-white/70 text-foreground border-border placeholder:text-muted-foreground"
+                  className="bg-white/70 text-black border-border placeholder:text-black/50"
                 />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
@@ -156,15 +156,15 @@ export default function Login() {
               <button
                 type="button"
                 onClick={handleForgotPassword}
-                className="w-full text-sm text-muted-foreground hover:text-primary transition-colors"
+                className="w-full text-sm text-black/70 hover:text-black transition-colors"
               >
                 Glömt lösenord?
               </button>
             </form>
 
-            <div className="mt-6 text-center text-sm text-muted-foreground">
+            <div className="mt-6 text-center text-sm text-black/70">
               Har du inget konto?{" "}
-              <Link to="/registrera" className="text-primary hover:underline font-medium">
+              <Link to="/registrera" className="text-black hover:underline font-medium">
                 Skapa konto
               </Link>
             </div>
@@ -172,7 +172,7 @@ export default function Login() {
         </Card>
 
         <div className="text-center">
-          <Link to="/" className="text-sm text-muted-foreground hover:text-primary inline-flex items-center gap-1">
+          <Link to="/" className="text-sm text-black/70 hover:text-black inline-flex items-center gap-1">
             <ArrowLeft className="w-3 h-3" /> Tillbaka till startsidan
           </Link>
         </div>
