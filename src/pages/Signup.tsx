@@ -96,8 +96,8 @@ export default function Signup() {
   if (success) {
     return (
       <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden" style={beigeBg}>
-        <Card className="relative z-10 w-full max-w-md border-border/50 bg-card/80 backdrop-blur">
-          <CardContent className="pt-8 pb-8 text-center space-y-4">
+        <Card className="relative z-10 w-full max-w-md border-border/40 !bg-[#F5F2EA]/85 backdrop-blur text-foreground">
+          <CardContent className="!bg-transparent pt-8 pb-8 text-center space-y-4">
             <CheckCircle2 className="w-12 h-12 text-accent mx-auto" />
             <h1 className="text-xl font-semibold text-foreground">Bekräfta din e-post</h1>
             <p className="text-muted-foreground text-sm">
