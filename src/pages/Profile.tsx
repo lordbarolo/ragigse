@@ -394,16 +394,9 @@ export default function Profile() {
 
             {/* Right column (1/3) */}
             <div className="space-y-5">
-              <TrustVerification
-                emailVerified={emailVerified}
-                identityVerified={verification.hasBankid}
-                hospValid={verification.hasValidHosp}
-                ivoValid={verification.hasValidIvo}
-                onUpload={goUpload}
-                onVerifyIdentity={goVerifyIdentity}
-              />
               <DashboardInvoiceCheck />
             </div>
+
           </div>
         )}
 
