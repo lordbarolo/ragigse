@@ -126,14 +126,14 @@ export default function Signup() {
         </div>
 
 
-        <Card className="border-border/50 bg-card/80 backdrop-blur">
-          <CardHeader className="text-center">
+        <Card className="border-border/40 !bg-[#F5F2EA]/85 backdrop-blur text-foreground">
+          <CardHeader className="text-center !bg-transparent">
             <CardTitle className="text-xl font-semibold text-foreground">Skapa konto</CardTitle>
             <CardDescription>
               Få tillgång till dina rapporter och personlig profil direkt
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="!bg-transparent">
             <form onSubmit={handleSignup} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="fullName">Ditt namn</Label>
@@ -144,6 +144,7 @@ export default function Signup() {
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   required
+                  className="bg-white/70 text-foreground border-border placeholder:text-muted-foreground"
                 />
               </div>
               <div className="space-y-2">
@@ -155,6 +156,7 @@ export default function Signup() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  className="bg-white/70 text-foreground border-border placeholder:text-muted-foreground"
                 />
               </div>
               <div className="space-y-2">
@@ -167,6 +169,7 @@ export default function Signup() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={6}
+                  className="bg-white/70 text-foreground border-border placeholder:text-muted-foreground"
                 />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
