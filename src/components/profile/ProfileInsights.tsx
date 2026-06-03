@@ -3,7 +3,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { calculateSalaryRange } from "@/lib/calc";
 import type { EmploymentType } from "@/lib/calc";
 import { TrendingUp, MapPin, Radar } from "lucide-react";
-import AiExplainButton from "@/components/ai/AiExplainButton";
 
 interface ZoneRate {
   zon: string;
@@ -131,15 +130,6 @@ export default function ProfileInsights({ specialtyName, regionName, employmentT
               </div>
             ))}
           </div>
-          <div className="mt-2">
-            <AiExplainButton
-              topic="zone_rates"
-              role={specialtyName}
-              region={regionName}
-              employmentType={employmentType}
-              data={zoneRates}
-            />
-          </div>
         </div>
       )}
 
@@ -171,15 +161,6 @@ export default function ProfileInsights({ specialtyName, regionName, employmentT
               </div>
             ))}
           </div>
-          <div className="mt-2">
-            <AiExplainButton
-              topic="salary_zones"
-              role={specialtyName}
-              region={regionName}
-              employmentType={employmentType}
-              data={salaryZones}
-            />
-          </div>
         </div>
       )}
 
@@ -210,16 +191,6 @@ export default function ProfileInsights({ specialtyName, regionName, employmentT
                 <p className="text-xs text-muted-foreground/70">{a.forecastWindow}</p>
               </div>
             ))}
-          </div>
-          <div className="mt-2">
-            <AiExplainButton
-              topic="upcoming_assignments"
-              role={specialtyName}
-              region={regionName}
-              employmentType={employmentType}
-              data={assignments}
-              label="Förklara mönstret med AI"
-            />
           </div>
         </div>
       )}
