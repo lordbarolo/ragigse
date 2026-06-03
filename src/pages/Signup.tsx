@@ -126,17 +126,17 @@ export default function Signup() {
         </div>
 
 
-        <Card className="border-border/40 !bg-[#F5F2EA]/85 backdrop-blur text-foreground">
+        <Card className="border-border/40 !bg-[#F5F2EA]/85 backdrop-blur text-black">
           <CardHeader className="text-center !bg-transparent">
-            <CardTitle className="text-xl font-semibold text-foreground">Skapa konto</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-xl font-semibold text-black">Skapa konto</CardTitle>
+            <CardDescription className="text-black/70">
               Få tillgång till dina rapporter och personlig profil direkt
             </CardDescription>
           </CardHeader>
           <CardContent className="!bg-transparent">
             <form onSubmit={handleSignup} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="fullName">Ditt namn</Label>
+                <Label htmlFor="fullName" className="text-black">Ditt namn</Label>
                 <Input
                   id="fullName"
                   type="text"
@@ -144,11 +144,11 @@ export default function Signup() {
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   required
-                  className="bg-white/70 text-foreground border-border placeholder:text-muted-foreground"
+                  className="bg-white/70 text-black border-border placeholder:text-black/50"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">E-post</Label>
+                <Label htmlFor="email" className="text-black">E-post</Label>
                 <Input
                   id="email"
                   type="email"
@@ -156,11 +156,11 @@ export default function Signup() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="bg-white/70 text-foreground border-border placeholder:text-muted-foreground"
+                  className="bg-white/70 text-black border-border placeholder:text-black/50"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">Lösenord</Label>
+                <Label htmlFor="password" className="text-black">Lösenord</Label>
                 <Input
                   id="password"
                   type="password"
@@ -169,7 +169,7 @@ export default function Signup() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={6}
-                  className="bg-white/70 text-foreground border-border placeholder:text-muted-foreground"
+                  className="bg-white/70 text-black border-border placeholder:text-black/50"
                 />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
@@ -178,9 +178,9 @@ export default function Signup() {
               </Button>
             </form>
 
-            <div className="mt-4 text-center text-sm text-muted-foreground">
+            <div className="mt-4 text-center text-sm text-black/70">
               Har du redan ett konto?{" "}
-              <Link to="/logga-in" className="text-primary hover:underline font-medium">
+              <Link to="/logga-in" className="text-black hover:underline font-medium">
                 Logga in
               </Link>
             </div>
@@ -188,7 +188,7 @@ export default function Signup() {
         </Card>
 
         <div className="text-center">
-          <Link to="/" className="text-sm text-muted-foreground hover:text-primary inline-flex items-center gap-1">
+          <Link to="/" className="text-sm text-black/70 hover:text-black inline-flex items-center gap-1">
             <ArrowLeft className="w-3 h-3" /> Tillbaka till startsidan
           </Link>
         </div>
