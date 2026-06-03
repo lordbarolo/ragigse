@@ -172,7 +172,7 @@ export default function Signup() {
                   className="bg-white/70 text-black border-border placeholder:text-black/50"
                 />
               </div>
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button type="submit" variant="secondary" className="w-full" disabled={loading}>
                 {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                 Skapa konto
               </Button>
