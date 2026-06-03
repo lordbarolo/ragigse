@@ -50,6 +50,11 @@ interface VerificationFlags {
 
 export default function Profile() {
   const { user, loading: authLoading, signOut } = useAuth();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const navigate = useNavigate();
   const [reports, setReports] = useState<ReportRow[]>([]);
   const [profile, setProfile] = useState<ProfileData | null>(null);
@@ -389,16 +394,9 @@ export default function Profile() {
 
             {/* Right column (1/3) */}
             <div className="space-y-5">
-              <TrustVerification
-                emailVerified={emailVerified}
-                identityVerified={verification.hasBankid}
-                hospValid={verification.hasValidHosp}
-                ivoValid={verification.hasValidIvo}
-                onUpload={goUpload}
-                onVerifyIdentity={goVerifyIdentity}
-              />
               <DashboardInvoiceCheck />
             </div>
+
           </div>
         )}
 
