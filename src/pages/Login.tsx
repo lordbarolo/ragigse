@@ -118,12 +118,12 @@ export default function Login() {
         </div>
 
 
-        <Card className="border-border/50 bg-card/80 backdrop-blur">
-          <CardHeader className="text-center">
+        <Card className="border-border/40 !bg-[#F5F2EA]/85 backdrop-blur text-foreground">
+          <CardHeader className="text-center !bg-transparent">
             <CardTitle className="text-xl font-semibold text-foreground">Logga in</CardTitle>
             <CardDescription>Ta del av rapporter och smarta verktyg</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="!bg-transparent">
             <form onSubmit={handleLogin} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email">E-post</Label>
@@ -134,6 +134,7 @@ export default function Login() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  className="bg-white/70 text-foreground border-border placeholder:text-muted-foreground"
                 />
               </div>
               <div className="space-y-2">
@@ -145,6 +146,7 @@ export default function Login() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  className="bg-white/70 text-foreground border-border placeholder:text-muted-foreground"
                 />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
