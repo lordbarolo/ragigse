@@ -468,20 +468,6 @@ export default function Profile() {
           </div>
         )}
 
-        {/* === NETWORK === */}
-        {activeTab === "network" && (
-          <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
-            <CardContent className="py-12 text-center space-y-3">
-              <div className="w-12 h-12 mx-auto rounded-full bg-muted flex items-center justify-center">
-                <Check className="w-5 h-5 text-muted-foreground" />
-              </div>
-              <p className="text-sm font-medium text-foreground">Nätverket lanseras snart</p>
-              <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-                Snart kan du koppla ihop dig med andra konsulter och referensgivare i ditt nätverk.
-              </p>
-            </CardContent>
-          </Card>
-        )}
 
         {/* === SAVED === */}
         {activeTab === "saved" && (

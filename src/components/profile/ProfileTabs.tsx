@@ -1,6 +1,6 @@
-import { User, Briefcase, ShieldCheck, Users, Bookmark } from "lucide-react";
+import { User, Briefcase, ShieldCheck, Bookmark } from "lucide-react";
 
-export type ProfileTab = "overview" | "work" | "creds" | "network" | "saved";
+export type ProfileTab = "overview" | "work" | "creds" | "saved";
 
 interface Props {
   active: ProfileTab;
@@ -11,7 +11,7 @@ const TABS: { key: ProfileTab; label: string; icon: typeof User; color: string }
   { key: "overview", label: "Översikt", icon: User, color: "text-foreground" },
   { key: "work", label: "Arbete", icon: Briefcase, color: "text-rose-600 dark:text-rose-400" },
   { key: "creds", label: "Verifieringar", icon: ShieldCheck, color: "text-amber-600 dark:text-amber-400" },
-  { key: "network", label: "Nätverk", icon: Users, color: "text-yellow-600 dark:text-yellow-400" },
+  
   { key: "saved", label: "Sparat", icon: Bookmark, color: "text-pink-600 dark:text-pink-400" },
 ];
 
