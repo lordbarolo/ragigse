@@ -35,7 +35,7 @@ export default function Fakturakontroll() {
   return (
     <div className="flex flex-col text-foreground">
       <SEO
-        title="Fakturakontroll för vårdkonsulter — no cure, no pay | CompCare"
+        title="Fakturakontroll för vårdkonsulter | CompCare"
         description="Vi granskar dina fakturor och tidrapporter från senaste två åren. Vid avvikelser hjälper vi dig fakturera om. 25% + moms endast om vi hittar pengar."
         path="/consultant/fakturakontroll"
         ogType="product"
