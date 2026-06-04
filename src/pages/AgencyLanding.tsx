@@ -44,6 +44,22 @@ export default function AgencyLanding() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <SEO
+        title="För bemanningsföretag – samarbetsintyg | CompCare"
+        description="Digitalt samarbetsintyg med säker signering för bemanningsföretag. Eliminera dubbelpresentationer, hantera konsulter och få revisionsspårbara bevis."
+        path="/for-bemanningsforetag"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Service",
+          name: "CompCare för bemanningsföretag",
+          serviceType: "Digitalt samarbetsintyg och konsulthantering",
+          provider: { "@type": "Organization", name: "CompCare", url: "https://www.compcare.se" },
+          areaServed: "SE",
+          audience: { "@type": "BusinessAudience", audienceType: "Bemanningsföretag inom vård" },
+          description:
+            "Säker digital signering, audit trail per organisation och samarbetsintyg som verifierar vem som företräder konsulten.",
+        }}
+      />
       {/* ── Nav ─────────────────────────────────── */}
       <header className="border-b border-border bg-card/80 backdrop-blur sticky top-0 z-50">
         <div className="max-w-5xl mx-auto flex items-center justify-between px-6 h-16">
