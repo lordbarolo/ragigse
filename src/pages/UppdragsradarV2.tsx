@@ -194,6 +194,12 @@ export default function UppdragsradarV2() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Uppdragsradar – Top 25 prognoser | CompCare"
+        description="Top 25 förväntade vårdavrop kommande 30/60/90 dagar baserat på historiska mönster från regioner och kommuner."
+        path="/uppdragsradar"
+        jsonLd={radarJsonLd}
+      />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         {/* Header */}
         <div className="flex items-start gap-3">
