@@ -96,19 +96,32 @@ export default function Signup() {
   if (success) {
     return (
       <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden" style={beigeBg}>
-        <Card className="relative z-10 w-full max-w-md border-border/40 !bg-[#F5F2EA]/85 backdrop-blur text-foreground">
-          <CardContent className="!bg-transparent pt-8 pb-8 text-center space-y-4">
-            <CheckCircle2 className="w-12 h-12 text-accent mx-auto" />
-            <h1 className="text-xl font-semibold text-foreground">Bekräfta din e-post</h1>
-            <p className="text-muted-foreground text-sm">
-              Vi har skickat ett verifieringsmejl till <strong className="text-foreground">{email}</strong>.
-              Klicka på länken i mejlet för att aktivera ditt konto.
-            </p>
-            <p className="text-muted-foreground text-xs">
+        <Card className="relative z-10 w-full max-w-md border-border/40 !bg-[#F5F2EA]/95 backdrop-blur">
+          <CardContent className="!bg-transparent pt-10 pb-8 px-6 text-center space-y-5">
+            <CheckCircle2 className="w-12 h-12 mx-auto" style={{ color: "#1f1147" }} />
+            <h1 className="text-2xl font-semibold tracking-tight" style={{ color: "#1f1147" }}>
+              Bekräfta din e-post
+            </h1>
+            <div className="space-y-3">
+              <p className="text-sm leading-relaxed" style={{ color: "#3a2f5c" }}>
+                Vi har skickat ett verifieringsmejl till
+              </p>
+              <p className="text-sm font-semibold break-all" style={{ color: "#1f1147" }}>
+                {email}
+              </p>
+              <p className="text-sm leading-relaxed" style={{ color: "#3a2f5c" }}>
+                Klicka på länken i mejlet för att aktivera ditt konto.
+              </p>
+            </div>
+            <p className="text-xs pt-2" style={{ color: "#6b5f85" }}>
               Hittar du inte mejlet? Kolla skräpposten.
             </p>
-            <Link to="/logga-in" className="text-primary hover:underline text-sm font-medium">
-              Gå till inloggning
+            <Link
+              to="/logga-in"
+              className="inline-block text-sm font-semibold hover:underline pt-2"
+              style={{ color: "#534AB7" }}
+            >
+              Gå till inloggning →
             </Link>
           </CardContent>
         </Card>
