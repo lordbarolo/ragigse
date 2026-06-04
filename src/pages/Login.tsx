@@ -11,12 +11,18 @@ import CompcareLogo from "@/components/CompcareLogo";
 import { trackEvent } from "@/lib/trackEvent";
 import posthog from "@/lib/posthog";
 
+type RecoveryStatus = "idle" | "sending" | "sent" | "error";
+
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [recoveryStatus, setRecoveryStatus] = useState<RecoveryStatus>("idle");
+  const [recoveryEmail, setRecoveryEmail] = useState("");
+  const [recoveryError, setRecoveryError] = useState<string | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
+
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
