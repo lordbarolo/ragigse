@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, ArrowLeft, FileText, Clock, TrendingUp, MessageSquare, Link2 } from "lucide-react";
+import { Loader2, ArrowLeft, FileText, Clock, TrendingUp, MessageSquare, Link2, MailCheck, AlertTriangle } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 import { trackEvent } from "@/lib/trackEvent";
 import posthog from "@/lib/posthog";
