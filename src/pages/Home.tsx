@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 import InlineTerminalSurvey from "@/components/survey/InlineTerminalSurvey";
 import AnthropicScope from "@/components/demo/AnthropicScope";
@@ -25,13 +24,8 @@ const LANDING_JSONLD = [
   },
 ];
 
-const NAV_LINKS = [
-  { label: "FAQ", href: "/vanliga-fragor" },
-];
-
 export default function Home() {
   useTimeOnPage("landing");
-  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     trackEvent("landing_viewed");
