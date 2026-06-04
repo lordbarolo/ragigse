@@ -102,12 +102,22 @@ Deno.serve(async (req) => {
   })
 
   if (recoveryError) {
+    const code = (recoveryError as { code?: string; status?: number }).code
+    const status = (recoveryError as { code?: string; status?: number }).status
+    // Silently succeed on unknown email to avoid account enumeration.
+    if (code === 'user_not_found' || status === 404) {
+      return new Response(JSON.stringify({ success: true }), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      })
+    }
     console.error('Failed to generate recovery link', recoveryError)
     return new Response(JSON.stringify({ error: 'Failed to process password recovery' }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     })
   }
+
 
   const hashedToken = recoveryLinkData?.properties?.hashed_token
   if (!hashedToken) {
