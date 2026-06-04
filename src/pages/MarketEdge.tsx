@@ -142,6 +142,23 @@ export default function MarketEdge() {
 
   return (
     <div className="space-y-6">
+      <SEO
+        title="Market Intelligence Terminal | CompCare"
+        description="Analytisk terminal för bemanningsföretag: ramavtalspriser, win-probability, zonjämförelser och AI-sammanfattningar per roll och region."
+        path="/agency/market-edge"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          name: "CompCare Market Intelligence Terminal",
+          applicationCategory: "BusinessApplication",
+          operatingSystem: "Web",
+          description:
+            "B2B-terminal med ramavtalsbaserad prisintelligens, win-probability och AI-sammanfattningar för bemanningsföretag inom vård.",
+          provider: { "@type": "Organization", name: "CompCare", url: "https://www.compcare.se" },
+          audience: { "@type": "BusinessAudience", audienceType: "Bemanningsföretag" },
+          offers: { "@type": "Offer", priceCurrency: "SEK", category: "Subscription" },
+        }}
+      />
       {/* Hidden agent context */}
       <div
         id="market-context-provider"
