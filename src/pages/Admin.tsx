@@ -337,6 +337,14 @@ export default function Admin() {
         onRefresh={refetchAnalytics}
       />
 
+      {/* Teaser Funnel - dropoff från enkät till rapport via /resultat */}
+      <TeaserFunnel
+        data={analyticsData}
+        loading={analyticsLoading}
+        period={analyticsPeriod}
+        onRefresh={refetchAnalytics}
+      />
+
       {/* Daily Conversion Funnel - per-day breakdown */}
       <DailyConversionFunnel
         data={analyticsData}
