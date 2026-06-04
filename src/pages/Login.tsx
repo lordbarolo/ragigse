@@ -83,17 +83,33 @@ export default function Login() {
       toast({ title: "Ange din e-postadress först", variant: "destructive" });
       return;
     }
-    setLoading(true);
-    const { error } = await supabase.functions.invoke("send-password-recovery", {
-      body: { email },
-    });
-    setLoading(false);
-    if (error) {
-      toast({ title: "Något gick fel", description: error.message, variant: "destructive" });
-    } else {
-      toast({ title: "Om kontot finns har en återställningslänk skickats", description: "Kolla din inbox" });
+    setRecoveryStatus("sending");
+    setRecoveryError(null);
+    setRecoveryEmail(email);
+    try {
+      const { error } = await supabase.functions.invoke("send-password-recovery", {
+        body: { email },
+      });
+      // Always show "sent" on a successful request — backend tystar `user_not_found`
+      // för att inte avslöja om e-posten finns.
+      if (error) {
+        setRecoveryStatus("error");
+        setRecoveryError(error.message || "Tjänsten är tillfälligt otillgänglig.");
+        return;
+      }
+      setRecoveryStatus("sent");
+    } catch (err) {
+      setRecoveryStatus("error");
+      setRecoveryError(err instanceof Error ? err.message : "Nätverksfel. Försök igen.");
     }
   };
+
+  const resetRecovery = () => {
+    setRecoveryStatus("idle");
+    setRecoveryError(null);
+  };
+
+
 
   const features = [
     { icon: FileText, title: "Dokumentvalvet", desc: "Säker lagring av legitimationer, specialistbevis och tjänstgöringsintyg. Dela tillgång till en miljö du kontrollerar istället för att sprida filer via mail.", badge: "Ingår gratis", badgeColor: "text-green-700 bg-green-100" },
