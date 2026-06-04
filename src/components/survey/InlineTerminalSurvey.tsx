@@ -337,8 +337,8 @@ export default function InlineTerminalSurvey() {
                     disabled={!s.category}
                     className="w-full inline-flex items-center justify-center font-semibold text-base rounded-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                     style={{
-                      backgroundColor: "#3D3491",
-                      color: "#FFFFFF",
+                      backgroundColor: "#EEEBE4",
+                      color: "#1A1A1A",
                       padding: "14px",
                     }}
                   >
