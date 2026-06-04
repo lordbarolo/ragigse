@@ -5,6 +5,7 @@ import { useAdminAuth } from "@/hooks/useAdminAuth";
 import SalaryInsights from "@/components/admin/SalaryInsights";
 import ConversionFunnel from "@/components/admin/ConversionFunnel";
 import DailyConversionFunnel from "@/components/admin/DailyConversionFunnel";
+import TeaserFunnel from "@/components/admin/TeaserFunnel";
 import SurveyStepFunnel from "@/components/admin/SurveyStepFunnel";
 import SurveyPrefillDebug from "@/components/admin/SurveyPrefillDebug";
 import DailyVisitors from "@/components/admin/DailyVisitors";
