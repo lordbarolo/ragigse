@@ -101,7 +101,7 @@ export default function Home() {
 
             {/* Höger: formulär */}
             <div className="w-full md:max-w-[480px] md:justify-self-end">
-              <InlineTerminalSurvey />
+              <InlineTerminalSurvey variant="light" />
             </div>
           </div>
         </section>
