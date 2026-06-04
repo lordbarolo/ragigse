@@ -125,7 +125,7 @@ export default function Home() {
               </h1>
               <p className="text-lg sm:text-xl text-black/75 leading-relaxed mb-2 max-w-[560px]">
                 Se regionens pris,<br />
-                bolagets marginal.<br />
+                bolagets marginal,<br />
                 Din ersättning
               </p>
               <p className="mt-4 text-[12px] text-black/50">
