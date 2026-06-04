@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import SearchableSelect from "@/components/SearchableSelect";
+import { SEO } from "@/components/SEO";
 
 type RoleGroup = "lakare" | "ssk" | "fysio";
 
@@ -90,35 +91,18 @@ export default function UppdragsradarV2() {
   const [specialization, setSpecialization] = useState<string>("__all");
   const [onlyHighConfidence, setOnlyHighConfidence] = useState(false);
 
-  useEffect(() => {
-    document.title = "Uppdragsradar – Top 25 prognoser | CompCare";
-    const desc = "Top 25 förväntade avrop kommande 30/60/90 dagar baserat på historiska mönster.";
-    const meta = document.querySelector('meta[name="description"]');
-    if (meta) meta.setAttribute("content", desc);
-    else {
-      const m = document.createElement("meta");
-      m.name = "description";
-      m.content = desc;
-      document.head.appendChild(m);
-    }
-
-    // JSON-LD Dataset for AI agents and search engines
-    const ldId = "uppdragsradar-jsonld";
-    document.getElementById(ldId)?.remove();
-    const ld = document.createElement("script");
-    ld.type = "application/ld+json";
-    ld.id = ldId;
-    ld.text = JSON.stringify({
+  const radarJsonLd = useMemo(
+    () => ({
       "@context": "https://schema.org",
       "@type": "Dataset",
       name: "CompCare Uppdragsradar",
       description:
         "Prognos för kommande vårduppdrag (avrop) i Sverige baserad på historiska avropsmönster från regioner och kommuner. Visar förväntad volym per kund, region, profession och månad.",
-      url: "https://compcare.se/uppdragsradar",
-      creator: { "@type": "Organization", name: "CompCare", url: "https://compcare.se" },
+      url: "https://www.compcare.se/uppdragsradar",
+      creator: { "@type": "Organization", name: "CompCare", url: "https://www.compcare.se" },
       keywords: ["avrop", "vårduppdrag", "bemanning", "prognos", "ramavtal", "Sverige"],
       isAccessibleForFree: true,
-      license: "https://compcare.se/integritetspolicy",
+      license: "https://www.compcare.se/integritetspolicy",
       distribution: [
         {
           "@type": "DataDownload",
@@ -141,13 +125,9 @@ export default function UppdragsradarV2() {
           "https://ubhhlunhdqbokjvwfebb.supabase.co/functions/v1/radar-public-api/predictions?region={region}&profession={profession}",
         "query-input": ["required name=region", "required name=profession"],
       },
-    });
-    document.head.appendChild(ld);
-
-    return () => {
-      document.getElementById(ldId)?.remove();
-    };
-  }, []);
+    }),
+    [],
+  );
 
   const selectedProfessionCode = useMemo(
     () => (category === "__all" ? null : CATEGORIES.find((c) => c.value === category)?.profession ?? null),
@@ -214,6 +194,12 @@ export default function UppdragsradarV2() {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO
+        title="Uppdragsradar – Top 25 prognoser | CompCare"
+        description="Top 25 förväntade vårdavrop kommande 30/60/90 dagar baserat på historiska mönster från regioner och kommuner."
+        path="/uppdragsradar"
+        jsonLd={radarJsonLd}
+      />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
         {/* Header */}
         <div className="flex items-start gap-3">
