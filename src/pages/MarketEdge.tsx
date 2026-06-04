@@ -9,6 +9,7 @@ import {
   Activity, Brain, TrendingUp, Zap, Target, BarChart3, Info,
 } from "lucide-react";
 import MarketKpiRow from "@/components/agency/MarketKpiRow";
+import { SEO } from "@/components/SEO";
 
 /* ────────── types ────────── */
 interface RateRow {
