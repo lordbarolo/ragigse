@@ -4,6 +4,7 @@ import { ShieldCheck, CheckCircle2, ArrowRight, FileCheck, Users, Lock } from "l
 import { Button } from "@/components/ui/button";
 import CompcareLogo from "@/components/CompcareLogo";
 import ThemeToggle from "@/components/ThemeToggle";
+import { SEO } from "@/components/SEO";
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 
