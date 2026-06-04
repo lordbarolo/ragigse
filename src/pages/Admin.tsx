@@ -5,6 +5,7 @@ import { useAdminAuth } from "@/hooks/useAdminAuth";
 import SalaryInsights from "@/components/admin/SalaryInsights";
 import ConversionFunnel from "@/components/admin/ConversionFunnel";
 import DailyConversionFunnel from "@/components/admin/DailyConversionFunnel";
+import TeaserFunnel from "@/components/admin/TeaserFunnel";
 import SurveyStepFunnel from "@/components/admin/SurveyStepFunnel";
 import SurveyPrefillDebug from "@/components/admin/SurveyPrefillDebug";
 import DailyVisitors from "@/components/admin/DailyVisitors";
@@ -330,6 +331,14 @@ export default function Admin() {
 
       {/* Conversion Funnel - shared analytics data */}
       <ConversionFunnel
+        data={analyticsData}
+        loading={analyticsLoading}
+        period={analyticsPeriod}
+        onRefresh={refetchAnalytics}
+      />
+
+      {/* Teaser Funnel - dropoff från enkät till rapport via /resultat */}
+      <TeaserFunnel
         data={analyticsData}
         loading={analyticsLoading}
         period={analyticsPeriod}
