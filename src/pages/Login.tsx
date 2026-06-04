@@ -141,57 +141,133 @@ export default function Login() {
 
 
         <Card className="border-border/40 !bg-[#F5F2EA]/85 backdrop-blur text-black">
-          <CardHeader className="text-center !bg-transparent">
-            <CardTitle className="text-xl font-semibold text-black">Logga in</CardTitle>
-            <CardDescription className="text-black/70">Ta del av rapporter och smarta verktyg</CardDescription>
-          </CardHeader>
-          <CardContent className="!bg-transparent">
-            <form onSubmit={handleLogin} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="email" className="text-black">E-post</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="din@email.se"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  className="bg-white/70 text-black border-border placeholder:text-black/50"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="password" className="text-black">Lösenord</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="bg-white/70 text-black border-border placeholder:text-black/50"
-                />
-              </div>
-              <Button type="submit" variant="secondary" className="w-full" disabled={loading}>
-                {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                Logga in
-              </Button>
-              <button
-                type="button"
-                onClick={handleForgotPassword}
-                className="w-full text-sm text-black/70 hover:text-black transition-colors"
-              >
-                Glömt lösenord?
-              </button>
-            </form>
+          {recoveryStatus === "sent" || recoveryStatus === "error" ? (
+            <CardContent className="!bg-transparent pt-8 pb-8">
+              {recoveryStatus === "sent" ? (
+                <div className="text-center space-y-4">
+                  <div className="w-12 h-12 mx-auto rounded-full bg-emerald-100 flex items-center justify-center">
+                    <MailCheck className="w-6 h-6 text-emerald-700" aria-hidden="true" />
+                  </div>
+                  <h2 className="text-lg font-semibold text-black">Återställningslänk skickad</h2>
+                  <p className="text-sm text-black/70">
+                    Om <strong className="text-black">{recoveryEmail}</strong> finns hos oss har vi skickat en
+                    återställningslänk dit. Kolla även skräpposten.
+                  </p>
+                  <p className="text-xs text-black/50">
+                    Av säkerhetsskäl bekräftar vi inte om e-postadressen är registrerad.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-2 justify-center pt-2">
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      className="text-sm font-semibold px-6 py-3"
+                      onClick={handleForgotPassword}
+                    >
+                      Skicka igen
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      className="text-sm font-semibold px-6 py-3"
+                      onClick={resetRecovery}
+                    >
+                      Tillbaka till inloggning
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center space-y-4" role="alert">
+                  <div className="w-12 h-12 mx-auto rounded-full bg-amber-100 flex items-center justify-center">
+                    <AlertTriangle className="w-6 h-6 text-amber-700" aria-hidden="true" />
+                  </div>
+                  <h2 className="text-lg font-semibold text-black">Vi kunde inte skicka länken</h2>
+                  <p className="text-sm text-black/70">
+                    {recoveryError ?? "Tjänsten är tillfälligt otillgänglig."} Försök igen om en stund.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-2 justify-center pt-2">
+                    <Button
+                      type="button"
+                      variant="secondary"
+                      className="text-sm font-semibold px-6 py-3"
+                      onClick={handleForgotPassword}
+                    >
+                      Försök igen
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      className="text-sm font-semibold px-6 py-3"
+                      onClick={resetRecovery}
+                    >
+                      Tillbaka till inloggning
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          ) : (
+            <>
+              <CardHeader className="text-center !bg-transparent">
+                <CardTitle className="text-xl font-semibold text-black">Logga in</CardTitle>
+                <CardDescription className="text-black/70">Ta del av rapporter och smarta verktyg</CardDescription>
+              </CardHeader>
+              <CardContent className="!bg-transparent">
+                <form onSubmit={handleLogin} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-black">E-post</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      placeholder="din@email.se"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      className="bg-white/70 text-black border-border placeholder:text-black/50"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="password" className="text-black">Lösenord</Label>
+                    <Input
+                      id="password"
+                      type="password"
+                      placeholder="••••••••"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      required
+                      className="bg-white/70 text-black border-border placeholder:text-black/50"
+                    />
+                  </div>
+                  <Button type="submit" variant="secondary" className="w-full" disabled={loading}>
+                    {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                    Logga in
+                  </Button>
+                  <button
+                    type="button"
+                    onClick={handleForgotPassword}
+                    disabled={recoveryStatus === "sending"}
+                    className="w-full text-sm text-black/70 hover:text-black transition-colors disabled:opacity-60 inline-flex items-center justify-center gap-2"
+                  >
+                    {recoveryStatus === "sending" ? (
+                      <>
+                        <Loader2 className="w-3 h-3 animate-spin" /> Skickar återställningslänk…
+                      </>
+                    ) : (
+                      "Glömt lösenord?"
+                    )}
+                  </button>
+                </form>
 
-            <div className="mt-6 text-center text-sm text-black/70">
-              Har du inget konto?{" "}
-              <Link to="/registrera" className="text-black hover:underline font-medium">
-                Skapa konto
-              </Link>
-            </div>
-          </CardContent>
+                <div className="mt-6 text-center text-sm text-black/70">
+                  Har du inget konto?{" "}
+                  <Link to="/registrera" className="text-black hover:underline font-medium">
+                    Skapa konto
+                  </Link>
+                </div>
+              </CardContent>
+            </>
+          )}
         </Card>
+
 
         <div className="text-center">
           <Link to="/" className="text-sm text-black/70 hover:text-black inline-flex items-center gap-1">
