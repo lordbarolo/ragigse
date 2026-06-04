@@ -63,36 +63,7 @@ export default function Home() {
                 Logga in
               </button>
             </Link>
-            <button
-              type="button"
-              aria-label={menuOpen ? "Stäng meny" : "Öppna meny"}
-              aria-expanded={menuOpen}
-              onClick={() => setMenuOpen((v) => !v)}
-              className="inline-flex items-center justify-center h-9 w-9 rounded-lg border border-black/15 text-black hover:bg-black/5 transition-colors"
-            >
-              {menuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </button>
           </div>
-
-          {menuOpen && (
-            <>
-              <div className="fixed inset-0 bg-black/30 z-40" onClick={() => setMenuOpen(false)} aria-hidden="true" />
-              <div className="absolute top-full right-4 lg:right-10 mt-2 w-72 border border-black/10 rounded-xl shadow-2xl z-50 overflow-hidden bg-white">
-                <div className="flex flex-col py-2">
-                  {NAV_LINKS.map((l) => (
-                    <Link
-                      key={l.label}
-                      to={l.href}
-                      onClick={() => setMenuOpen(false)}
-                      className="px-4 py-3 text-sm text-black/85 hover:bg-black/5 hover:text-black transition-colors"
-                    >
-                      {l.label}
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            </>
-          )}
         </nav>
 
         {/* ── HERO med inline-form ── */}
