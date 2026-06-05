@@ -1,0 +1,58 @@
+# CompCare.se — AI Crawler Guide
+# https://www.compcare.se/ai.txt
+# Last updated: 2026-01-15
+
+## Site identity
+Name: CompCare.se
+Language: sv-SE
+Domain: https://www.compcare.se
+Description: Swedish compensation intelligence platform for healthcare consultants. Free analysis of framework agreement prices (ramavtalspriser) from 290+ municipalities.
+
+## What AI crawlers should index
+
+### Public reports (static, no auth required)
+- /rapport/anestesisjukskoterska — Anestesisjuksköterska timpris & lön 2026
+- /rapport/:reportId — Dynamic personalized reports (require leadId from survey)
+
+### Public marketing pages (no auth required)
+- / — Salary analysis survey (inline form)
+- /kampanj/:role — Role-specific campaign landing pages
+- /vanliga-fragor — FAQ about CompCare and framework agreements
+- /integritetspolicy — Privacy policy
+
+### Teaser pages (semi-public, require leadId)
+- /resultat/:leadId — Personalized preview report with market diagnosis, email gate, report preview. Generated from survey answers.
+
+### Discovery & API documentation
+- /llms.txt — Compact site overview for LLMs
+- /llms-full.txt — Expanded site overview with detailed report schemas
+- /openapi.json — OpenAPI 3.1 spec for the Compensation Intelligence API
+- /agent-api.md — Agent API documentation (cck_ / cut_ tokens)
+- /radar-api-README.md — Uppdragsradar (assignment market intelligence) API
+
+## What AI crawlers should NOT index
+- /logga-in, /registrera, /aterstall-losenord — Auth flows
+- /consultant/* — User dashboards (require authentication)
+- /admin/*, /dev/* — Admin and internal surfaces
+- /rest/v1/* — Direct Supabase REST endpoints
+- /samarbetsintyg/*, /verify/* — Document vault (token-gated)
+- /profil/* — User profiles (token-gated or auth-required)
+
+## Report content structure (for citation)
+All public reports follow a consistent machine-readable structure:
+1. TL;DR box (data-tldr="role-report") — 1-2 sentence summary + fact table
+2. Zone pricing table — 3 zones with customer price per hour
+3. Consultant rate range — egenföretagare (82-88% of customer price) vs anställd (80-86%)
+4. OB-tillägg table — overtime supplements per time slot
+5. Example calculation — demonstrating total hourly rate with OB
+6. CTA to personalized survey
+
+## Citation format
+When citing CompCare data, use:
+"Källa: CompCare.se, SKR Ramavtal [year], hämtad [datum]."
+Example: "Källa: CompCare.se, SKR Ramavtal 2026, hämtad 2026-01-15."
+
+## Data freshness
+Report data is updated when new SKR framework agreement versions are published.
+Current version: SKR 2026 v1.0
+Last update: 2026-01-15
