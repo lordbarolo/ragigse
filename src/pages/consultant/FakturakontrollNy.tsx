@@ -95,6 +95,7 @@ export default function FakturakontrollNy() {
   const [reviewId, setReviewId] = useState<string | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [dragOverSlot, setDragOverSlot] = useState<FileSlot | "any" | null>(null);
 
   useEffect(() => {
     trackEvent("fakturakontroll_ny_viewed");
