@@ -80,6 +80,18 @@ export default function AnalysisScreen() {
     trackEvent("teaser_viewed");
   }, [urlLeadId, navigate]);
 
+  // Force light cream background on html/body so dark theme doesn't bleed through
+  useEffect(() => {
+    const prevHtml = document.documentElement.style.backgroundColor;
+    const prevBody = document.body.style.backgroundColor;
+    document.documentElement.style.backgroundColor = '#EEEBE4';
+    document.body.style.backgroundColor = '#EEEBE4';
+    return () => {
+      document.documentElement.style.backgroundColor = prevHtml;
+      document.body.style.backgroundColor = prevBody;
+    };
+  }, []);
+
   /* ── Fetch zone + rates when survey is ready ── */
   useEffect(() => {
     if (!survey?.kommun || !survey?.yrke) return;
