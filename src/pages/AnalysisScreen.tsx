@@ -80,6 +80,18 @@ export default function AnalysisScreen() {
     trackEvent("teaser_viewed");
   }, [urlLeadId, navigate]);
 
+  // Force light cream background on html/body so dark theme doesn't bleed through
+  useEffect(() => {
+    const prevHtml = document.documentElement.style.backgroundColor;
+    const prevBody = document.body.style.backgroundColor;
+    document.documentElement.style.backgroundColor = '#EEEBE4';
+    document.body.style.backgroundColor = '#EEEBE4';
+    return () => {
+      document.documentElement.style.backgroundColor = prevHtml;
+      document.body.style.backgroundColor = prevBody;
+    };
+  }, []);
+
   /* ── Fetch zone + rates when survey is ready ── */
   useEffect(() => {
     if (!survey?.kommun || !survey?.yrke) return;
@@ -234,7 +246,28 @@ export default function AnalysisScreen() {
     : 0;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div
+      className="min-h-screen"
+      style={{
+        // Cream light theme — override global dark tokens on this page only
+        ['--background' as any]: '40 18% 91%',
+        ['--foreground' as any]: '0 0% 4%',
+        ['--card' as any]: '0 0% 100%',
+        ['--card-foreground' as any]: '0 0% 4%',
+        ['--popover' as any]: '0 0% 100%',
+        ['--popover-foreground' as any]: '0 0% 4%',
+        ['--muted' as any]: '40 18% 91%',
+        ['--muted-foreground' as any]: '220 9% 46%',
+        ['--secondary' as any]: '40 18% 91%',
+        ['--secondary-foreground' as any]: '0 0% 4%',
+        ['--accent' as any]: '40 18% 91%',
+        ['--accent-foreground' as any]: '0 0% 4%',
+        ['--border' as any]: '35 17% 85%',
+        ['--input' as any]: '35 17% 85%',
+        backgroundColor: '#EEEBE4',
+        color: '#0A0A0A',
+      }}
+    >
       <Navbar />
 
       <main className="px-5 pt-20 pb-16 max-w-lg mx-auto">
