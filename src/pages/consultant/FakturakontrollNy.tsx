@@ -220,6 +220,22 @@ export default function FakturakontrollNy() {
 
       trackEvent("fakturakontroll_uploaded");
 
+      // Notify admin that a new invoice review has been uploaded
+      void supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "invoice-admin-notify",
+          recipientEmail: "anders@npf-gruppen.se",
+          idempotencyKey: `invoice-admin-upload-${review.id}`,
+          templateData: {
+            email: user?.email || "Ej inloggad (anonym uppladdning)",
+            name: "Uppladdad via /consultant/fakturakontroll/ny",
+            role: yrkeskategori,
+            region: `Grundpris ${grundpris} SEK/h`,
+            message: `Review-ID: ${review.id}\nTelefon: ${phone.trim()}\nHandskriven tidrapport: ${isHandwritten ? "Ja" : "Nej"}`,
+          },
+        },
+      }).catch((e) => console.error("admin notify failed:", e));
+
       // Trigger extraction + analysis in the background — user is not informed about progress or results.
       // They only see a confirmation that we'll get back within 2 business days.
       const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
