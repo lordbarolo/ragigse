@@ -95,6 +95,7 @@ export default function FakturakontrollNy() {
   const [reviewId, setReviewId] = useState<string | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
+  const [dragOverSlot, setDragOverSlot] = useState<FileSlot | "any" | null>(null);
 
   useEffect(() => {
     trackEvent("fakturakontroll_ny_viewed");
@@ -124,10 +125,43 @@ export default function FakturakontrollNy() {
   const handleDrop = useCallback(
     (slot: FileSlot, e: React.DragEvent) => {
       e.preventDefault();
+      setDragOverSlot(null);
       const file = e.dataTransfer.files[0];
       if (file) handleFileSelect(slot, file);
     },
     [handleFileSelect],
+  );
+
+  // Combined dropzone: distributes dropped PDFs to empty slots in order (faktura → tidrapport)
+  const handleCombinedDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      setDragOverSlot(null);
+      const dropped = Array.from(e.dataTransfer.files).filter(
+        (f) => f.type === "application/pdf",
+      );
+      if (dropped.length === 0) {
+        toast.error("Endast PDF-filer stöds.");
+        return;
+      }
+      setFiles((prev) => {
+        const next = { ...prev };
+        const order: FileSlot[] = ["faktura", "tidrapport"];
+        let i = 0;
+        for (const slot of order) {
+          if (!next[slot] && i < dropped.length) {
+            const f = dropped[i++];
+            if (f.size > 10 * 1024 * 1024) {
+              toast.error(`${f.name} är större än 10 MB.`);
+              continue;
+            }
+            next[slot] = { file: f, name: f.name };
+          }
+        }
+        return next;
+      });
+    },
+    [],
   );
 
   // ── Manual shift helpers ─────────────────────────────────────────────────
@@ -365,52 +399,113 @@ export default function FakturakontrollNy() {
 
           <h2 className="text-sm font-semibold tracking-tight">Ladda upp dina dokument</h2>
 
-          {/* File uploads */}
-          <div className="space-y-3">
-            {(["faktura", "tidrapport"] as FileSlot[]).map((slot) => {
-              const uploaded = files[slot];
-              const meta = FILE_LABELS[slot];
-              return (
-                <label
-                  key={slot}
-                  className={`flex items-center gap-4 p-4 rounded-xl border-2 border-dashed transition-colors cursor-pointer ${
-                    uploaded
-                      ? "border-primary/40 bg-primary/[0.03]"
-                      : "border-border hover:border-primary/30"
-                  }`}
-                  onDragOver={(e) => e.preventDefault()}
-                  onDrop={(e) => handleDrop(slot, e)}
-                >
-                  <input
-                    type="file"
-                    accept="application/pdf"
-                    className="hidden"
-                    onChange={(e) => {
-                      const f = e.target.files?.[0];
-                      if (f) handleFileSelect(slot, f);
-                    }}
-                  />
-                  <div
-                    className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${
-                      uploaded ? "bg-primary/10" : "bg-muted"
+          {/* Combined drag-and-drop zone: drop one or flera PDF:er här så fördelas de automatiskt */}
+          <div
+            onDragOver={(e) => {
+              e.preventDefault();
+              if (dragOverSlot !== "any") setDragOverSlot("any");
+            }}
+            onDragLeave={(e) => {
+              e.preventDefault();
+              setDragOverSlot((s) => (s === "any" ? null : s));
+            }}
+            onDrop={handleCombinedDrop}
+            className={`rounded-xl border-2 border-dashed p-4 transition-colors ${
+              dragOverSlot === "any"
+                ? "border-primary bg-primary/[0.06]"
+                : "border-border/70 bg-muted/30"
+            }`}
+          >
+            <div className="flex items-center gap-3 mb-3 px-1">
+              <Upload className={`w-4 h-4 ${dragOverSlot === "any" ? "text-primary" : "text-muted-foreground"}`} />
+              <p className="text-xs text-muted-foreground">
+                {dragOverSlot === "any"
+                  ? "Släpp filerna här — vi fördelar dem automatiskt"
+                  : "Dra och släpp PDF:erna här, eller klicka på ett fält nedan"}
+              </p>
+            </div>
+
+            {/* File uploads */}
+            <div className="space-y-3">
+              {(["faktura", "tidrapport"] as FileSlot[]).map((slot) => {
+                const uploaded = files[slot];
+                const meta = FILE_LABELS[slot];
+                const isOver = dragOverSlot === slot;
+                return (
+                  <label
+                    key={slot}
+                    className={`flex items-center gap-4 p-4 rounded-xl border-2 border-dashed transition-colors cursor-pointer bg-background ${
+                      isOver
+                        ? "border-primary bg-primary/[0.08] ring-2 ring-primary/20"
+                        : uploaded
+                          ? "border-primary/40 bg-primary/[0.03]"
+                          : "border-border hover:border-primary/30"
                     }`}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (dragOverSlot !== slot) setDragOverSlot(slot);
+                    }}
+                    onDragLeave={(e) => {
+                      e.preventDefault();
+                      setDragOverSlot((s) => (s === slot ? null : s));
+                    }}
+                    onDrop={(e) => {
+                      e.stopPropagation();
+                      handleDrop(slot, e);
+                    }}
                   >
-                    {uploaded ? (
-                      <FileCheck className="w-5 h-5 text-primary" />
-                    ) : (
-                      <Upload className="w-5 h-5 text-muted-foreground" />
+                    <input
+                      type="file"
+                      accept="application/pdf"
+                      className="hidden"
+                      onChange={(e) => {
+                        const f = e.target.files?.[0];
+                        if (f) handleFileSelect(slot, f);
+                      }}
+                    />
+                    <div
+                      className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 ${
+                        uploaded || isOver ? "bg-primary/10" : "bg-muted"
+                      }`}
+                    >
+                      {uploaded ? (
+                        <FileCheck className="w-5 h-5 text-primary" />
+                      ) : (
+                        <Upload className={`w-5 h-5 ${isOver ? "text-primary" : "text-muted-foreground"}`} />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium text-sm">{meta.label}</p>
+                      <p className="text-xs text-muted-foreground truncate">
+                        {uploaded ? uploaded.name : isOver ? "Släpp PDF:en här" : meta.desc}
+                      </p>
+                    </div>
+                    {uploaded && !isOver && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setFiles((prev) => {
+                            const next = { ...prev };
+                            delete next[slot];
+                            return next;
+                          });
+                        }}
+                        className="text-muted-foreground hover:text-destructive p-1 -m-1 shrink-0"
+                        aria-label={`Ta bort ${meta.label.toLowerCase()}`}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
                     )}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-medium text-sm">{meta.label}</p>
-                    <p className="text-xs text-muted-foreground truncate">
-                      {uploaded ? uploaded.name : meta.desc}
-                    </p>
-                  </div>
-                  {uploaded && <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />}
-                </label>
-              );
-            })}
+                    {uploaded && isOver && <CheckCircle2 className="w-5 h-5 text-primary shrink-0" />}
+                  </label>
+                );
+              })}
+            </div>
+            <p className="text-[11px] text-muted-foreground mt-3 px-1">
+              PDF, max 10 MB per fil.
+            </p>
           </div>
 
           {/* Yrkeskategori */}
