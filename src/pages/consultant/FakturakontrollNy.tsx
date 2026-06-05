@@ -125,10 +125,43 @@ export default function FakturakontrollNy() {
   const handleDrop = useCallback(
     (slot: FileSlot, e: React.DragEvent) => {
       e.preventDefault();
+      setDragOverSlot(null);
       const file = e.dataTransfer.files[0];
       if (file) handleFileSelect(slot, file);
     },
     [handleFileSelect],
+  );
+
+  // Combined dropzone: distributes dropped PDFs to empty slots in order (faktura → tidrapport)
+  const handleCombinedDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      setDragOverSlot(null);
+      const dropped = Array.from(e.dataTransfer.files).filter(
+        (f) => f.type === "application/pdf",
+      );
+      if (dropped.length === 0) {
+        toast.error("Endast PDF-filer stöds.");
+        return;
+      }
+      setFiles((prev) => {
+        const next = { ...prev };
+        const order: FileSlot[] = ["faktura", "tidrapport"];
+        let i = 0;
+        for (const slot of order) {
+          if (!next[slot] && i < dropped.length) {
+            const f = dropped[i++];
+            if (f.size > 10 * 1024 * 1024) {
+              toast.error(`${f.name} är större än 10 MB.`);
+              continue;
+            }
+            next[slot] = { file: f, name: f.name };
+          }
+        }
+        return next;
+      });
+    },
+    [],
   );
 
   // ── Manual shift helpers ─────────────────────────────────────────────────
