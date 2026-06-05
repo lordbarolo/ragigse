@@ -5,24 +5,13 @@ import { Separator } from "@/components/ui/separator";
 import CompcareLogo from "@/components/CompcareLogo";
 import Navbar from "@/components/Navbar";
 import { SEO } from "@/components/SEO";
+import TLDRBox from "@/components/report/TLDRBox";
+import { buildRoleReportSchemas } from "@/lib/seo/roleReportSchema";
 
-const ARTICLE_JSONLD = {
-  "@context": "https://schema.org",
-  "@type": "Article",
-  headline: "Anestesisjuksköterska – marknadsrapport 2026",
-  description:
-    "Aktuella ramavtalspriser, OB-tillägg och rekommenderat konsultarvode för anestesisjuksköterskor i Sverige.",
-  inLanguage: "sv-SE",
-  datePublished: "2026-01-01",
-  dateModified: "2026-01-01",
-  author: { "@type": "Organization", name: "CompCare" },
-  publisher: {
-    "@type": "Organization",
-    name: "CompCare",
-    logo: { "@type": "ImageObject", url: "https://www.compcare.se/compcare-logo.svg" },
-  },
-  mainEntityOfPage: "https://www.compcare.se/rapport/anestesisjukskoterska",
-};
+// Single source of truth for the report's freshness stamp.
+// Same value drives the visible TL;DR timestamp AND every JSON-LD schema.
+const LAST_UPDATED = "2026-01-15";
+
 import {
   Clock,
   Moon,
