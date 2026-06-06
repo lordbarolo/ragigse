@@ -676,8 +676,6 @@ function RoleCategoryCards({
   selected: Category;
   onSelect: (v: Category) => void;
 }) {
-  const [showFull, setShowFull] = useState(false);
-
   const cards: { value: Category; label: string }[] = [
     { value: "lakare", label: "Läkare" },
     { value: "ssk", label: "Sjuksköterska" },
@@ -691,9 +689,6 @@ function RoleCategoryCards({
     ? "border-[#534AB7] bg-violet-50"
     : "border-violet-400 bg-violet-500/10";
   const titleColor = isLight ? "text-[#1A1A1A]" : "text-white";
-  const linkColor = isLight
-    ? "text-[#534AB7] hover:text-[#3D3491]"
-    : "text-violet-300 hover:text-violet-200";
 
   return (
     <div className="space-y-3">
@@ -712,37 +707,6 @@ function RoleCategoryCards({
           </button>
         ))}
       </div>
-
-      {!showFull ? (
-        <div className="text-center pt-1">
-          <button
-            type="button"
-            onClick={() => setShowFull(true)}
-            className={`text-sm font-medium underline-offset-4 hover:underline ${linkColor}`}
-          >
-            Annat yrke
-          </button>
-        </div>
-      ) : (
-        <div className="pt-2">
-          <SearchableSelect
-            value={selected}
-            onValueChange={(v) => onSelect(v as Category)}
-            placeholder="Välj yrke..."
-            options={[
-              { value: "lakare", label: "Läkare" },
-              { value: "ssk", label: "Sjuksköterska" },
-              { value: "barnmorska", label: "Barnmorska" },
-            ]}
-            triggerClassName={
-              isLight
-                ? "bg-white border-[#E5E5E5] text-[#1A1A1A] focus:ring-[#534AB7]"
-                : "bg-[#2D2D2D] border-[#3D3D3D] text-[#E5E5E5] focus:ring-[#534AB7]"
-            }
-            placeholderClassName={isLight ? "text-[#9CA3AF]" : "text-[#6B7280]"}
-          />
-        </div>
-      )}
     </div>
   );
 }
