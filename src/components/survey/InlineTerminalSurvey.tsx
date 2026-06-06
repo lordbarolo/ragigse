@@ -666,20 +666,20 @@ function ChoiceCard({
   return (
     <button
       onClick={onClick}
-      className={`group relative text-left rounded-xl border p-4 transition-all overflow-hidden ${
+      className={`group relative text-left rounded-lg border h-14 px-4 transition-all overflow-hidden ${
         active ? activeClasses : inactiveClasses
       }`}
     >
-      <div className="flex items-center gap-3">
+      <div className="flex h-full items-center gap-3">
         <span
-          className={`flex h-9 w-9 items-center justify-center rounded-lg ${
+          className={`flex h-8 w-8 items-center justify-center rounded-md ${
             active ? iconActive : iconInactive
           }`}
         >
           {icon}
         </span>
-        <div>
-          <div className={`text-sm font-semibold ${titleColor}`}>{title}</div>
+        <div className="font-sans">
+          <div className={`text-sm font-semibold leading-tight ${titleColor}`}>{title}</div>
           <div className={`text-[11px] font-mono tracking-wide ${subColor}`}>{sub}</div>
         </div>
       </div>
