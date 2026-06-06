@@ -332,6 +332,9 @@ export default function Teaser() {
           emailProvided={false}
         />
 
+        {/* Förklaring: möjlig ersättning */}
+        <PossibleCompensationInfo variant="teaser" />
+
         {/* Email Gate */}
         {!email && (
           <div className="space-y-5">
