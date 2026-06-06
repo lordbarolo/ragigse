@@ -207,7 +207,7 @@ export default function Profile() {
   const stepBenefits = [
     "Säkerställer att du får viktiga uppdateringar.",
     "Ökar förtroendet och låser upp full rapport.",
-    "Lås upp verifierad status — bemanningsbolag ser verifierade profiler först.",
+    "Lås upp verifierad status — krävs för att se aktuella behov hos 100+ vårdbemanningsföretag.",
     "Krävs för att matchas mot uppdrag.",
     "Krävs för att visa din möjliga ersättning.",
     "Krävs för att visa din möjliga ersättning.",
