@@ -56,8 +56,8 @@ export default function CookieBanner() {
 
   return (
     <div className="fixed bottom-0 inset-x-0 z-[100] safe-area-bottom animate-in slide-in-from-bottom-4 duration-400">
-      <div className="mx-3 mb-3 rounded-2xl border border-foreground/[0.08] bg-card/95 backdrop-blur-xl shadow-[0_-4px_30px_rgba(0,0,0,0.4)] p-4 sm:p-5 max-w-lg sm:mx-auto">
-        <p className="text-sm text-foreground/80 leading-relaxed mb-3">
+      <div className="mx-3 mb-3 rounded-2xl border border-border bg-card shadow-2xl p-4 sm:p-5 max-w-lg sm:mx-auto">
+        <p className="text-sm text-foreground leading-relaxed mb-3">
           Vi använder cookies för att förbättra din upplevelse och analysera 
           hur tjänsten används.{" "}
           <Link
