@@ -378,20 +378,18 @@ export default function InlineTerminalSurvey({
                     <button
                       onClick={handleStartCompare}
                       disabled={!s.category}
-                      className="w-full inline-flex items-center justify-center font-semibold text-base rounded-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                      className="w-full inline-flex items-center justify-center font-sans font-semibold text-base h-14 px-4 rounded-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                       style={
                         isLight
                           ? {
                               backgroundColor: "#3D3491",
                               color: "#FFFFFF",
                               border: "1px solid #3D3491",
-                              padding: "14px",
                             }
                           : {
                               backgroundColor: "#EEEBE4",
                               color: "#1A1A1A",
                               border: "1px solid rgba(0,0,0,0.15)",
-                              padding: "14px",
                             }
                       }
                     >
@@ -497,7 +495,7 @@ export default function InlineTerminalSurvey({
                         }}
                         placeholder={s.employmentType === "foretagare" ? "t.ex. 1100" : "t.ex. 250"}
 
-                        className={`w-full border rounded-lg px-4 py-3 pr-16 text-base transition-colors focus:outline-none focus:ring-2 focus:ring-[#534AB7] ${
+                        className={`w-full h-14 border rounded-lg px-4 pr-16 text-base font-sans transition-colors focus:outline-none focus:ring-2 focus:ring-[#534AB7] ${
                           isLight
                             ? "bg-[#FAFAFA] border-[#E5E5E5] text-[#1A1A1A] placeholder:text-[#9CA3AF] focus:bg-white"
                             : "bg-white/[0.04] border-white/10 text-white placeholder:text-white/30 focus:bg-white/[0.06]"
@@ -514,7 +512,7 @@ export default function InlineTerminalSurvey({
                     <button
                       onClick={submit}
                       disabled={!s.currentSalary || saving}
-                      className={`inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 rounded-lg transition-all ${
+                      className={`w-full inline-flex items-center justify-center gap-2 text-base font-sans font-semibold h-14 px-4 rounded-lg transition-all ${
                         s.currentSalary && !saving
                           ? "bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white shadow-[0_0_30px_-8px_rgba(129,85,255,0.8)] hover:shadow-[0_0_40px_-6px_rgba(255,45,170,0.6)]"
                           : isLight
@@ -668,20 +666,20 @@ function ChoiceCard({
   return (
     <button
       onClick={onClick}
-      className={`group relative text-left rounded-xl border p-4 transition-all overflow-hidden ${
+      className={`group relative text-left rounded-lg border h-14 px-4 transition-all overflow-hidden ${
         active ? activeClasses : inactiveClasses
       }`}
     >
-      <div className="flex items-center gap-3">
+      <div className="flex h-full items-center gap-3">
         <span
-          className={`flex h-9 w-9 items-center justify-center rounded-lg ${
+          className={`flex h-8 w-8 items-center justify-center rounded-md ${
             active ? iconActive : iconInactive
           }`}
         >
           {icon}
         </span>
-        <div>
-          <div className={`text-sm font-semibold ${titleColor}`}>{title}</div>
+        <div className="font-sans">
+          <div className={`text-sm font-semibold leading-tight ${titleColor}`}>{title}</div>
           <div className={`text-[11px] font-mono tracking-wide ${subColor}`}>{sub}</div>
         </div>
       </div>
