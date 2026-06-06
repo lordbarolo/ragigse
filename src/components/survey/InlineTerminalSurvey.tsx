@@ -358,39 +358,26 @@ export default function InlineTerminalSurvey({
             <StepTransition stepKey={step} direction={direction}>
               {step === 1 && (
                 <Step question="Vad jobbar du som?">
-                  <div className="space-y-4">
-                    <SearchableSelect
-                      value={s.category}
-                      onValueChange={(v) => handleCategory(v as Category)}
-                      placeholder="Välj yrke..."
-                      options={[
-                        { value: "lakare", label: "Läkare" },
-                        { value: "ssk", label: "Sjuksköterska" },
-                        { value: "barnmorska", label: "Barnmorska" },
-                      ]}
-                      triggerClassName={
-                        isLight
-                          ? "bg-white border-[#E5E5E5] text-[#1A1A1A] focus:ring-[#534AB7]"
-                          : "bg-[#2D2D2D] border-[#3D3D3D] text-[#E5E5E5] focus:ring-[#534AB7]"
-                      }
-                      placeholderClassName={isLight ? "text-[#9CA3AF]" : "text-[#6B7280]"}
-                    />
-                    <button
-                      onClick={handleStartCompare}
-                      disabled={!s.category}
-                      className={`w-full inline-flex items-center justify-center font-sans font-semibold text-base h-14 px-4 rounded-lg transition-all ${
-                        s.category
-                          ? "bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white shadow-[0_0_30px_-8px_rgba(129,85,255,0.8)] hover:shadow-[0_0_40px_-6px_rgba(255,45,170,0.6)]"
-                          : isLight
-                            ? "bg-[#F5F5F5] text-[#9CA3AF] cursor-not-allowed"
-                            : "bg-white/10 text-white/40 cursor-not-allowed"
-                      }`}
-                    >
-                      Jämför min lön
-                    </button>
-                  </div>
+                  <RoleCategoryCards
+                    isLight={isLight}
+                    selected={s.category}
+                    onSelect={(v) => {
+                      trackStarted();
+                      const isBarnmorska = v === "barnmorska";
+                      setS((p) => ({
+                        ...p,
+                        category: v,
+                        roleValue: isBarnmorska ? "__barnmorska" : "",
+                        yrke: isBarnmorska ? "Barnmorska" : "",
+                      }));
+                      trackStepCompleted(1, v);
+                      setDirection(1);
+                      window.setTimeout(() => setStep(isBarnmorska ? 3 : 2), 200);
+                    }}
+                  />
                 </Step>
               )}
+
 
               {step === 2 && (
                 <Step
