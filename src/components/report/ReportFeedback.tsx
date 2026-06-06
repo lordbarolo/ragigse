@@ -142,11 +142,11 @@ export default function ReportFeedback({ leadId, role, zone }: Props) {
   }
 
   return (
-    <Card className="border-border/50">
+    <Card className="bg-background border-border/60">
       <CardContent className="py-6 space-y-4">
         <div className="flex items-center justify-center gap-2">
-          <MessageSquare className="w-4 h-4 text-muted-foreground" />
-          <p className="text-sm font-medium text-muted-foreground">
+          <MessageSquare className="w-4 h-4 text-foreground/70" />
+          <p className="text-sm font-medium text-foreground">
             Motsvarar rapporten dina förväntningar?
           </p>
         </div>
@@ -159,7 +159,7 @@ export default function ReportFeedback({ leadId, role, zone }: Props) {
             <button
               key={opt.value}
               onClick={() => handleRating(opt.value)}
-              className="px-5 py-2 rounded-full border border-border text-sm font-medium text-muted-foreground hover:border-primary hover:text-foreground transition-colors"
+              className="px-5 py-2 rounded-full border border-border bg-background text-sm font-medium text-foreground hover:border-primary hover:bg-primary/5 transition-colors"
             >
               {opt.label}
             </button>
