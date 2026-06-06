@@ -141,7 +141,12 @@ export default function Report() {
             Ersättningsanalys
           </p>
           <h1 className="leading-tight" style={{ fontFamily: 'Georgia, serif', fontSize: '28px', fontWeight: 700, color: '#0A0A0A' }}>
-            {report.occupation}
+            {(() => {
+              const occ = report.occupation || "";
+              const stripped = occ.replace(/^Specialistläkare\s+/i, "").trim();
+              if (!stripped) return occ;
+              return stripped.charAt(0).toUpperCase() + stripped.slice(1);
+            })()}
           </h1>
           <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1" style={{ fontSize: '13px', color: '#6B7280' }}>
             <span className="whitespace-nowrap">{report.kommun}</span>
