@@ -239,7 +239,7 @@ export default function MarketSearchBox() {
           {/* Status messages */}
           {selectedCategory && (!resolvedYrke || !selectedLocation) && (
             <div className="rounded-xl border border-dashed border-border bg-secondary/20 px-4 py-3 text-sm text-muted-foreground">
-              Välj specialisering och kommun för att se marknadsmässig månadslön direkt.
+              Välj specialisering och kommun för att se möjlig månadsersättning direkt.
             </div>
           )}
 
