@@ -290,6 +290,8 @@ export default function Profile() {
           </div>
         </div>
 
+        <DashboardInvoiceCheck />
+
         {/* CTA: gör enkäten om den inte är gjord */}
         {reports.length === 0 && !profile?.specialty_name && (
           <div className="rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 to-pink-50 p-5 sm:p-6 shadow-sm">
@@ -394,7 +396,6 @@ export default function Profile() {
 
             {/* Right column (1/3) */}
             <div className="space-y-5">
-              <DashboardInvoiceCheck />
             </div>
 
           </div>
@@ -438,7 +439,6 @@ export default function Profile() {
                 </CardContent>
               </Card>
 
-              <DashboardInvoiceCheck />
             </div>
 
             <PensionImpactSimulator
