@@ -8,6 +8,7 @@ interface TrustItem {
   verified: boolean;
   ctaLabel?: string;
   action?: "upload" | "identity";
+  benefitText?: string;
 }
 
 interface Props {
