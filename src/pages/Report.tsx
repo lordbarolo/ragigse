@@ -202,6 +202,27 @@ export default function Report() {
 
 
 
+        {/* Skapa konto-CTA (visas endast för icke-inloggade) */}
+        {!user && (
+          <div className="rounded-2xl border p-5 mt-4" style={{ backgroundColor: '#FFFFFF', borderColor: '#E0DBD3' }}>
+            <h3 className="font-semibold mb-1" style={{ fontFamily: 'Georgia, serif', fontSize: '18px', color: '#0A0A0A' }}>
+              Spara din rapport
+            </h3>
+            <p className="text-sm mb-4" style={{ color: '#6B7280' }}>
+              Skapa ett konto för att spara analysen, följa marknaden och få tillgång till dina verktyg.
+            </p>
+            <Button
+              onClick={() => navigate("/registrera")}
+              className="text-sm font-semibold px-6 py-3 gap-2"
+              style={{ backgroundColor: '#3D3491', color: '#FFFFFF' }}
+            >
+              <UserPlus className="w-4 h-4" />
+              Skapa konto
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </div>
+        )}
+
         {/* Utility actions */}
         <div className="flex gap-3 pt-2">
           {!isFriendCoupon && (
