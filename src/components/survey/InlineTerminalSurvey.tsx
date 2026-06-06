@@ -378,9 +378,9 @@ export default function InlineTerminalSurvey({
                       style={
                         isLight
                           ? {
-                              backgroundColor: "#534AB7",
+                              backgroundColor: "#3D3491",
                               color: "#FFFFFF",
-                              border: "1px solid #534AB7",
+                              border: "1px solid #3D3491",
                               padding: "14px",
                             }
                           : {
