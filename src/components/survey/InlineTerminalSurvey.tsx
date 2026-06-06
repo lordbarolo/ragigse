@@ -56,8 +56,10 @@ const initialState: State = {
 
 export default function InlineTerminalSurvey({
   variant = "dark",
+  onStepChange,
 }: {
   variant?: "dark" | "light";
+  onStepChange?: (step: number) => void;
 }) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -84,12 +86,14 @@ export default function InlineTerminalSurvey({
 
   useEffect(() => {
     stepEntryTime.current = Date.now();
+    onStepChange?.(step);
     trackEvent("survey_step_viewed", {
       step_number: step,
       step_name: STEP_NAMES[step - 1] || `step_${step}`,
       surface: "inline_terminal",
     });
-  }, [step]);
+  }, [step, onStepChange]);
+
 
   const trackStarted = useCallback(() => {
     if (surveyStarted.current) return;
