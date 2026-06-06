@@ -105,7 +105,9 @@ export default function TrustVerification({
 
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-foreground truncate">{item.label}</p>
-                <p className="text-xs text-muted-foreground truncate">{item.description}</p>
+                <p className="text-xs text-muted-foreground truncate">
+                  {item.verified ? item.description : (item.benefitText || item.description)}
+                </p>
               </div>
 
               {item.verified ? (
