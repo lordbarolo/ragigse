@@ -85,7 +85,7 @@ export default function MarketDiagnosisCard({ diffPercent, yrke, kommun, isAbove
       <div className="relative mt-4">
         <div className="flex justify-between text-micro mb-1.5">
           <span>Under</span>
-          <span>Marknadsspann</span>
+          <span>Möjlig ersättning</span>
           <span>Över</span>
         </div>
         <div className="h-2 rounded-full bg-muted overflow-hidden">
