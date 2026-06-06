@@ -51,10 +51,15 @@ posthog.init(POSTHOG_KEY, {
     (import.meta.env.VITE_POSTHOG_HOST as string | undefined) ??
     "https://eu.i.posthog.com",
   ui_host: "https://eu.posthog.com",
-  person_profiles: "identified_only",
-  persistence: "memory",
-  capture_pageview: true,
-  capture_pageleave: true,
+  persistence: "memory",           // Inga cookies eller localStorage
+  autocapture: false,                // Stäng av automatisk event-capture
+  capture_pageview: false,           // Vi hanterar pageviews manuellt
+  capture_pageleave: false,
+  disable_session_recording: true,
+  loaded: (ph) => {
+    // Spåra aldrig IP-adresser
+    ph.register({ $ip: null });
+  },
   before_send: (event) => {
     if (!event) return event;
     const props = event.properties || {};
@@ -94,6 +99,14 @@ if (__host === "compcare.se" || __host === "www.compcare.se") {
     "distinct_id:",
     posthog.get_distinct_id()
   );
+}
+
+export function trackPageview() {
+  posthog.capture("$pageview");
+}
+
+export function trackEvent(event: string, properties?: Record<string, unknown>) {
+  posthog.capture(event, properties);
 }
 
 export default posthog;
