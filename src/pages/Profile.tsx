@@ -195,6 +195,24 @@ export default function Profile() {
     !!profile?.region_name,
     !!(profile?.current_hourly_rate || profile?.current_monthly_salary),
   ];
+  const stepLabels = [
+    "E-post bekräftad",
+    "Identitet verifierad",
+    "HOSP-bevis",
+    "IVO-registrering",
+    "Yrkesroll vald",
+    "Område vald",
+    "Löneuppgift angiven",
+  ];
+  const stepBenefits = [
+    "Säkerställer att du får viktiga uppdateringar.",
+    "Ökar förtroendet och låser upp full rapport.",
+    "Lås upp verifierad status — bemanningsbolag ser verifierade profiler först.",
+    "Krävs för att matchas mot uppdrag.",
+    "Krävs för att visa din möjliga ersättning.",
+    "Krävs för att visa din möjliga ersättning.",
+    "Gör att vi kan ge dig skräddarsydda förhandlingsråd.",
+  ];
   const completedCount = completenessChecks.filter(Boolean).length;
   const totalCount = completenessChecks.length;
 
