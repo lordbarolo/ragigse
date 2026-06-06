@@ -248,27 +248,8 @@ export default function ConsultantTrackContent({
               <div className="flex items-start gap-2">
                 <Handshake className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                 <p className="font-semibold text-foreground text-base leading-snug">
-                  Förhandlingsassistenten gör skillnaden mellan ”ungefär marknadspris” och rätt timpris.
+                  Testa vår förhandlingsassistent för att få argument och tips inför din nästa förhandling.
                 </p>
-              </div>
-              <p className="text-body-sm text-muted-foreground leading-relaxed">
-                Du loggar in och får färdiga formuleringar, jourfaktor-argument och en checklista för vitesklausul — anpassade efter din roll och region. De flesta använder den inför nästa avropssamtal.
-              </p>
-              <p className="font-semibold text-foreground text-sm pt-1">
-                Vi hjälper dig förhandla kring:
-              </p>
-              <div className="grid grid-cols-2 gap-2">
-                {[
-                  { icon: Car, label: "Reseersättning" },
-                  { icon: Clock, label: "Jourfaktor" },
-                  { icon: Home, label: "Betalt boende" },
-                  { icon: FileWarning, label: "Vitesklausul" },
-                ].map(({ icon: Icon, label }) => (
-                  <div key={label} className="flex items-center gap-2 p-2.5 rounded-lg bg-foreground/[0.03]">
-                    <Icon className="w-3.5 h-3.5 text-primary shrink-0" />
-                    <span className="text-[12px] font-medium">{label}</span>
-                  </div>
-                ))}
               </div>
             </div>
             <div className="px-5 py-5">
