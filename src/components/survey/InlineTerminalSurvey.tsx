@@ -343,7 +343,7 @@ export default function InlineTerminalSurvey({
         data-dark-surface={isLight ? undefined : ""}
         className="relative w-full mx-auto mt-0 md:mt-0 text-left"
       >
-        <div className={`${containerBg} ${isLight ? "form-light" : ""} overflow-x-clip`}>
+        <div className={`${containerBg} ${isLight ? "form-light" : ""}`}>
           {/* Progress bar */}
           <div className={`h-[2px] ${progressTrackBg} -mx-6 -mt-6 mb-6`}>
             <div
