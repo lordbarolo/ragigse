@@ -461,9 +461,11 @@ export default function InlineTerminalSurvey({
                 <Step
                   question="Vad har du för ersättning idag?"
                   subtitle={
-                    salaryType === "hourly"
-                      ? "Ange ditt nuvarande timpris (kr/h, exkl. moms)."
-                      : "Ange din nuvarande månadslön (kr/mån, brutto)."
+                    s.employmentType === "foretagare"
+                      ? "Ange ditt fakturapris exkl. moms (kr/h)."
+                      : s.employmentType === "anstalld"
+                      ? "Ange din timlön före skatt (kr/h)."
+                      : "Ange ditt nuvarande timpris (kr/h)."
                   }
                 >
                   <div className="space-y-4">
@@ -477,7 +479,8 @@ export default function InlineTerminalSurvey({
                           const v = e.target.value.replace(/[^\d\s]/g, "");
                           setS((p) => ({ ...p, currentSalary: v }));
                         }}
-                        placeholder={salaryType === "hourly" ? "t.ex. 1100" : "t.ex. 48000"}
+                        placeholder={s.employmentType === "foretagare" ? "t.ex. 1100" : "t.ex. 250"}
+
                         className={`w-full border rounded-lg px-4 py-3 pr-16 text-base transition-colors focus:outline-none ${
                           isLight
                             ? "bg-[#FAFAFA] border-[#E5E5E5] text-[#1A1A1A] placeholder:text-[#9CA3AF] focus:border-violet-400/60 focus:bg-white"
