@@ -20,19 +20,19 @@ function getPosition(diffPercent: number, isAboveThreshold: boolean): Position {
 
 const positionConfig: Record<Position, { label: string; color: string; bgColor: string; icon: typeof TrendingDown }> = {
   under: {
-    label: "Under marknadsspannet",
+    label: "Under möjlig ersättning",
     color: "text-primary",
     bgColor: "bg-primary/10",
     icon: TrendingDown,
   },
   near: {
-    label: "Inom marknadsspannet",
+    label: "Inom möjlig ersättning",
     color: "text-primary",
     bgColor: "bg-primary/10",
     icon: Minus,
   },
   above: {
-    label: "Över marknadsspannet",
+    label: "Över möjlig ersättning",
     color: "text-primary",
     bgColor: "bg-primary/10",
     icon: TrendingUp,
