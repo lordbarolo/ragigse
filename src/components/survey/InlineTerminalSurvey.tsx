@@ -378,20 +378,18 @@ export default function InlineTerminalSurvey({
                     <button
                       onClick={handleStartCompare}
                       disabled={!s.category}
-                      className="w-full inline-flex items-center justify-center font-semibold text-base rounded-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                      className="w-full inline-flex items-center justify-center font-sans font-semibold text-base h-14 px-4 rounded-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed"
                       style={
                         isLight
                           ? {
                               backgroundColor: "#3D3491",
                               color: "#FFFFFF",
                               border: "1px solid #3D3491",
-                              padding: "14px",
                             }
                           : {
                               backgroundColor: "#EEEBE4",
                               color: "#1A1A1A",
                               border: "1px solid rgba(0,0,0,0.15)",
-                              padding: "14px",
                             }
                       }
                     >
