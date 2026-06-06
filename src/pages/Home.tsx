@@ -26,6 +26,10 @@ const LANDING_JSONLD = [
 
 export default function Home() {
   useTimeOnPage("landing");
+  const [surveyStep, setSurveyStep] = useState(1);
+  const heroCollapsed = surveyStep > 1;
+
+
 
   useEffect(() => {
     trackEvent("landing_viewed");
