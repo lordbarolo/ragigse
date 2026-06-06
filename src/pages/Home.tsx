@@ -74,11 +74,19 @@ export default function Home() {
         <section
           id="analys"
           data-no-roomy
-          className="relative z-20 overflow-visible px-5 sm:px-6 lg:px-10 pt-14 md:pt-20 pb-20 md:pb-28 scroll-mt-20"
+          className={`relative z-20 overflow-visible px-5 sm:px-6 lg:px-10 scroll-mt-20 transition-all duration-300 ${
+            heroCollapsed
+              ? "pt-4 pb-6 md:pt-20 md:pb-28"
+              : "pt-14 pb-20 md:pt-20 md:pb-28"
+          }`}
         >
           <div className="relative z-10 max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12 items-center md:items-start">
             {/* Vänster: rubrik och pitch */}
-            <div className="flex flex-col items-center md:items-start text-center md:text-left md:w-full">
+            <div
+              className={`flex flex-col items-center md:items-start text-center md:text-left md:w-full md:!block ${
+                heroCollapsed ? "hidden" : "flex"
+              }`}
+            >
               <div
                 className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-medium rounded-full px-3 py-1 mb-5 uppercase tracking-wider"
                 style={{ backgroundColor: "#E8E4F0", color: "#3D3491", border: "1px solid #3D3491" }}
@@ -102,13 +110,22 @@ export default function Home() {
               </p>
             </div>
 
+            {/* Mobil: tunn kollapsad rad när wizarden startat */}
+            {heroCollapsed && (
+              <div className="md:hidden -mb-2">
+                <p className="text-xs uppercase tracking-wider text-black/60 font-medium">
+                  Vet du vad du <span className="text-[#3D3491] font-semibold">är värd?</span>
+                </p>
+              </div>
+            )}
 
             {/* Höger: formulär */}
             <div className="w-full md:max-w-[480px] md:justify-self-end">
-              <InlineTerminalSurvey variant="light" />
+              <InlineTerminalSurvey variant="light" onStepChange={setSurveyStep} />
             </div>
           </div>
         </section>
+
       </div>
     </AnthropicScope>
   );
