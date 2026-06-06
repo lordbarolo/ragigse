@@ -49,8 +49,8 @@ export default function Home() {
           <div className="flex items-center gap-2 sm:gap-3">
             <Link to="/registrera">
               <button
-                className="text-sm text-white hover:opacity-90 transition-opacity"
-                style={{ backgroundColor: "#3D3491", color: "#FFFFFF", borderRadius: "6px", padding: "8px 16px" }}
+                className="text-sm hover:opacity-90 transition-opacity"
+                style={{ backgroundColor: "transparent", color: "#3D3491", border: "1px solid #3D3491", borderRadius: "6px", padding: "8px 16px" }}
               >
                 Kom igång gratis
               </button>
