@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Loader2, Download, Linkedin } from "lucide-react";
+import { Loader2, Download } from "lucide-react";
 import { trackEvent } from "@/lib/trackEvent";
 import { getCouponCode } from "@/lib/captureParams";
 import CompcareLogo from "@/components/CompcareLogo";
@@ -225,20 +225,6 @@ export default function Report() {
               <Download className="w-4 h-4" /> PDF
             </Button>
           )}
-          <Button
-            variant="outline"
-            className="flex-1 gap-2 h-12 rounded-xl border-border/50 hover:border-border"
-            onClick={() => {
-              const shareUrl = `${window.location.origin}/dela?yrke=${encodeURIComponent(report.occupation || "")}`;
-              const text = `Hur stor är egentligen skillnaden mellan konsult och fast tjänst? Se din ersättning mot marknaden.`;
-              window.open(
-                `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}&summary=${encodeURIComponent(text)}`,
-                "_blank", "width=600,height=500"
-              );
-            }}
-          >
-            <Linkedin className="w-4 h-4" /> LinkedIn
-          </Button>
         </div>
 
         {/* Footer */}
