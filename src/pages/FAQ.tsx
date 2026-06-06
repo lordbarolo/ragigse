@@ -25,9 +25,9 @@ const FAQ_ITEMS = [
       "Just nu täcker vi sjuksköterskor, barnmorskor och läkare — samtliga specialiseringar har unik data. Fler yrkesgrupper kommer snart.",
   },
   {
-    question: "Hur ligger min ersättning jämfört med marknaden?",
+    question: "Hur ligger min ersättning jämfört med möjlig ersättning?",
     answer:
-      "CompCare matchar din yrkesroll, arbetsort och erfarenhet mot officiella ramavtalspriser och visar om din ersättning ligger under, på eller över marknadsspannet.",
+      "CompCare matchar din yrkesroll, arbetsort och erfarenhet mot officiella ramavtalspriser och visar om din ersättning ligger under, på eller över möjlig ersättning.",
   },
   {
     question: "Vad är ramavtalspriser och varför är de relevanta?",
