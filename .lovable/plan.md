@@ -1,69 +1,57 @@
-# Säkerhetsrevision CompCare — 2026-05-25
 
 ## Mål
-Producera `security-reports/2026-05-25-security-audit.md` enligt `AUDIT_TEMPLATE.md` + `AUDIT_BRIEF.md`, samt ZIP:a till `/mnt/documents/security-audit-2026-05-25.zip`. Inga kodändringar.
 
-## Genomförande (i ordning)
+Slippa NS-delegering till Loopia. Skicka alla mejl via Resend, som bara kräver CNAME + TXT i Loopias DNS-editor (fungerar utan support).
 
-**1. Metadata** — läs `package.json` version, datum 2026-05-25, första körning.
+## Vad ändras (och vad ändras INTE)
 
-**2. Automatiserade verktyg (parallellt)**
-- `security--run_security_scan`
-- `supabase--linter`
-- `code--dependency_scan`
+**Ändras:**
+- `supabase/functions/send-transactional-email/index.ts` skickar direkt via Resend-gateway istället för att kö-läggas i pgmq → Mailgun.
+- Alla 7 mallar (`welcome`, `report-delivery`, `invoice-confirmation`, `invoice-admin-notify`, `reference-invite`, `representation-invite`) fortsätter fungera oförändrade — de renderas fortfarande via React Email till HTML och skickas till Resend.
 
-**3. DEL 1 — RLS per tabell** (via `supabase--read_query`)
-- `pg_tables` med `rowsecurity` för alla `public`-tabeller
-- `pg_policies` — alla policies med `qual`, `with_check`, `roles`, `cmd`
-- Tabeller utan policies (LEFT JOIN)
-- Flagga: `USING (true)`, `FOR ALL` utan `WITH CHECK`, OR-on-nullable, anon-access
+**Ändras INTE:**
+- Anropssyntax i koden: alla `supabase.functions.invoke('send-transactional-email', { body: { templateName, recipientEmail, templateData } })` fortsätter fungera.
+- `radar-notify` (redan på Resend).
+- `email_send_log`, `suppressed_emails`, `email_unsubscribe_tokens` — behålls och skrivs till som idag (logg, suppression-check, unsubscribe-länkar).
+- Mallar, registry, designspråk.
 
-**4. DEL 2 — Storage buckets**
-- `storage.buckets` + policies på `storage.objects` för `verifications`, `invoice_reviews`, `imports`
-- `rg "\.storage\.from\(" src/` — verifiera `{user_id}/`-konvention
+## DNS-flöde (det du gör själv i Loopia)
 
-**5. DEL 3 — SECURITY DEFINER-funktioner**
-- `pg_proc` där `prosecdef=true` i `public`
-- `information_schema.routine_privileges` för anon/authenticated GRANTs
-- Kontrollera `search_path` satt
+1. Skapa konto/domän i Resend → "Add domain" → t.ex. `send.compcare.se`.
+2. Resend ger dig 3 poster (vanligtvis 1 MX + 2 TXT eller liknande). Alla läggs i Loopias DNS-editor på subdomän — **inga NS-poster**.
+3. När Resend visar "Verified" → klart.
+4. Stäng av Lovable Emails (jag gör det åt dig).
+5. Ta bort de NS-poster för `notify.compcare.se` du försökt lägga in (de behövs inte längre).
 
-**6. DEL 4 — Secrets**
-- `rg -n "service_role|sk_live|SUPABASE_SERVICE_ROLE" src/ public/`
-- Verifiera `.env` ej i git
-- `rg "console\.log" supabase/functions/` — sök PII/secrets
+## Trade-offs
 
-**7. DEL 5 — Edge functions**
-- Cross-reference `supabase/config.toml` mot `supabase/functions/*`
-- Admin-functions: grep `requireAdmin` tidigt i handler
-- CORS-wildcards inventering
-- `verify_jwt` mismatch
+- **Förlorar:** pgmq-kö (retry vid 429/5xx), DLQ, scheduler. Resend SDK gör 1 anrop direkt — om Resend svarar fel loggar vi `failed` i `email_send_log` men retryar inte.
+- **Vinner:** ingen NS-delegering, enklare arkitektur, du äger DNS i Loopia.
+- **Auth-mejl** (lösenordsåterställning, magic links etc.): går tillbaka till Lovables default-mallar när Lovable Emails stängs av. Custom `send-password-recovery` fortsätter fungera (skickar redan via Resend via process-email-queue → måste också byggas om för Resend-direkt). Tas i steg 2 om du vill.
 
-**8. DEL 7 — Lovable Cloud-specifika kontroller**
-- 7.1 Views: `pg_class` + `reloptions` för `security_invoker`, känsliga kolumnnamn
-- 7.2 RLS-logik: regex på policies för förbjudna mönster
-- 7.3 Triggers på `auth.*`: `information_schema.triggers`
-- 7.4 `cron.job` + senaste runs
-- 7.5 `pg_publication_tables` för realtime
-- 7.6 Storage upload-paths (täckt i DEL 2)
-- 7.7 Client-side bypass: `rg "localStorage.*admin|is_admin\s*="`
-- 7.8 PII på publika token-routes: granska `/profil/:id`, `/samarbetsintyg/:id`, `/dela`, `/kampanj/:role`
-- 7.9 Rate limiting: `ai_usage_logs` senaste 14d
-- 7.10 CORS-inventering (täckt i DEL 5)
+## Teknisk implementation (steg 1 — denna runda)
 
-**9. DEL 8 — Dependencies** (från `code--dependency_scan`)
+1. Skriv om `send-transactional-email/index.ts`:
+   - Behåll: CORS, input-validering, suppression-check, unsubscribe-token-hantering, `email_send_log`-rader.
+   - Ta bort: `enqueue_email`-RPC-anropet.
+   - Lägg till: direktanrop till `https://connector-gateway.lovable.dev/resend/emails` med `Authorization: Bearer ${LOVABLE_API_KEY}` + `X-Connection-Api-Key: ${RESEND_API_KEY_1}`.
+   - From-adress läses från ny env-var `RESEND_FROM_DOMAIN` (du sätter t.ex. `send.compcare.se` när Resend verifierat den).
+   - Lägg till unsubscribe-footer i HTML innan sändning (eftersom kö-dispatchern inte längre gör det).
+   - Logga `sent` vid 200, `failed` vid annan status.
+2. Deploya `send-transactional-email`.
+3. Lägg till `RESEND_FROM_DOMAIN` som secret (du fyller i värdet när Resend gett dig domänen).
+4. Stäng av Lovable Emails.
 
-**10. DEL 6 — Diff** = N/A (första körning)
+## Steg 2 (senare, om du vill)
 
-**11. Skriv rapport** till `security-reports/2026-05-25-security-audit.md` med alla fynd + sammanfattning (GRÖN/GUL/RÖD, KRITISKA/ALLVARLIGA/MÅTTLIGA/REKOMMENDATIONER per fynd: beskrivning, risk, vem, åtgärd, status).
+- Bygg om `send-password-recovery` på samma sätt → då är auth-mejl också på Resend.
+- Bygg om `auth-email-hook` så Supabase Auth-mejl (signup-bekräftelse, magic link) också går via Resend istället för Lovables default.
 
-**12. ZIP** till `/mnt/documents/security-audit-2026-05-25.zip` (rapporten + ev. tool-output-bilagor).
+## Rollback
 
-## Scope-respekt
-- Endast säkerhetsgranskning i låsta områden (Fakturakontroll AI-prompts/modeller/regelmotor, compensation-engine) — inga förslag på logik/UX/AI-ändringar.
-- Marketplace-isolation respekteras (`mp_*` granskas endast säkerhetsmässigt).
-- Inga kodändringar görs — endast rapport + ZIP.
+Om något krånglar: aktivera Lovable Emails igen (`toggle_project_emails: true`) och återställ `send-transactional-email` från git.
 
-## Leverans
-- `security-reports/2026-05-25-security-audit.md`
-- `/mnt/documents/security-audit-2026-05-25.zip` (presentation-artifact)
-- Kort sammanfattning i chatt med status + topp-fynd.
+## Bekräfta innan jag kör
+
+- Vilken **subdomän** vill du använda i Resend? Förslag: `send.compcare.se` (ren, ej krockar med `notify.compcare.se` som Lovable hanterat).
+- Ska jag köra **bara steg 1** nu (app-mejl via Resend), och låta auth-mejl ligga kvar på Lovable Emails tills steg 2?
