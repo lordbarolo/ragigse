@@ -37,6 +37,7 @@ export default function TrustVerification({
       verified: identityVerified,
       ctaLabel: "Verifiera",
       action: "identity",
+      benefitText: "Ökar förtroendet och låser upp full rapport.",
     },
     {
       key: "email",
@@ -44,6 +45,7 @@ export default function TrustVerification({
       description: emailVerified ? "Din e-postadress är bekräftad" : "Bekräfta din e-postadress",
       icon: Mail,
       verified: emailVerified,
+      benefitText: "Säkerställer att du får viktiga uppdateringar.",
     },
     {
       key: "hosp",
@@ -53,6 +55,7 @@ export default function TrustVerification({
       verified: hospValid,
       ctaLabel: "Ladda upp",
       action: "upload",
+      benefitText: "Lås upp verifierad status — bemanningsbolag ser verifierade profiler först.",
     },
     {
       key: "ivo",
@@ -62,6 +65,7 @@ export default function TrustVerification({
       verified: ivoValid,
       ctaLabel: "Ladda upp",
       action: "upload",
+      benefitText: "Krävs för att matchas mot uppdrag.",
     },
   ];
 
