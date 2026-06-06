@@ -495,7 +495,7 @@ export default function InlineTerminalSurvey({
                         }}
                         placeholder={s.employmentType === "foretagare" ? "t.ex. 1100" : "t.ex. 250"}
 
-                        className={`w-full border rounded-lg px-4 py-3 pr-16 text-base transition-colors focus:outline-none focus:ring-2 focus:ring-[#534AB7] ${
+                        className={`w-full h-14 border rounded-lg px-4 pr-16 text-base font-sans transition-colors focus:outline-none focus:ring-2 focus:ring-[#534AB7] ${
                           isLight
                             ? "bg-[#FAFAFA] border-[#E5E5E5] text-[#1A1A1A] placeholder:text-[#9CA3AF] focus:bg-white"
                             : "bg-white/[0.04] border-white/10 text-white placeholder:text-white/30 focus:bg-white/[0.06]"
@@ -512,7 +512,7 @@ export default function InlineTerminalSurvey({
                     <button
                       onClick={submit}
                       disabled={!s.currentSalary || saving}
-                      className={`inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 rounded-lg transition-all ${
+                      className={`w-full inline-flex items-center justify-center gap-2 text-base font-sans font-semibold h-14 px-4 rounded-lg transition-all ${
                         s.currentSalary && !saving
                           ? "bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white shadow-[0_0_30px_-8px_rgba(129,85,255,0.8)] hover:shadow-[0_0_40px_-6px_rgba(255,45,170,0.6)]"
                           : isLight
