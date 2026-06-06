@@ -109,4 +109,20 @@ export function trackEvent(event: string, properties?: Record<string, unknown>) 
   posthog.capture(event, properties);
 }
 
+/**
+ * Skicka ett fångat fel till PostHog Error Tracking.
+ * Tål allt (Error, string, unknown) och kraschar aldrig själv.
+ */
+export function captureError(error: unknown, context?: Record<string, unknown>) {
+  try {
+    const err =
+      error instanceof Error
+        ? error
+        : new Error(typeof error === "string" ? error : JSON.stringify(error));
+    posthog.captureException(err, context ?? {});
+  } catch (e) {
+    if (import.meta.env.DEV) console.warn("[captureError] failed", e);
+  }
+}
+
 export default posthog;
