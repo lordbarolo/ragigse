@@ -8,6 +8,7 @@ interface TrustItem {
   verified: boolean;
   ctaLabel?: string;
   action?: "upload" | "identity";
+  benefitText?: string;
 }
 
 interface Props {
@@ -36,6 +37,7 @@ export default function TrustVerification({
       verified: identityVerified,
       ctaLabel: "Verifiera",
       action: "identity",
+      benefitText: "Ökar förtroendet och låser upp full rapport.",
     },
     {
       key: "email",
@@ -43,6 +45,7 @@ export default function TrustVerification({
       description: emailVerified ? "Din e-postadress är bekräftad" : "Bekräfta din e-postadress",
       icon: Mail,
       verified: emailVerified,
+      benefitText: "Säkerställer att du får viktiga uppdateringar.",
     },
     {
       key: "hosp",
@@ -52,6 +55,7 @@ export default function TrustVerification({
       verified: hospValid,
       ctaLabel: "Ladda upp",
       action: "upload",
+      benefitText: "Lås upp verifierad status — bemanningsbolag ser verifierade profiler först.",
     },
     {
       key: "ivo",
@@ -61,6 +65,7 @@ export default function TrustVerification({
       verified: ivoValid,
       ctaLabel: "Ladda upp",
       action: "upload",
+      benefitText: "Krävs för att matchas mot uppdrag.",
     },
   ];
 
@@ -100,7 +105,9 @@ export default function TrustVerification({
 
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-foreground truncate">{item.label}</p>
-                <p className="text-xs text-muted-foreground truncate">{item.description}</p>
+                <p className="text-xs text-muted-foreground truncate">
+                  {item.verified ? item.description : (item.benefitText || item.description)}
+                </p>
               </div>
 
               {item.verified ? (

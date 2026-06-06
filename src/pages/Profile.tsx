@@ -195,6 +195,24 @@ export default function Profile() {
     !!profile?.region_name,
     !!(profile?.current_hourly_rate || profile?.current_monthly_salary),
   ];
+  const stepLabels = [
+    "E-post bekräftad",
+    "Identitet verifierad",
+    "HOSP-bevis",
+    "IVO-registrering",
+    "Yrkesroll vald",
+    "Område vald",
+    "Löneuppgift angiven",
+  ];
+  const stepBenefits = [
+    "Säkerställer att du får viktiga uppdateringar.",
+    "Ökar förtroendet och låser upp full rapport.",
+    "Lås upp verifierad status — bemanningsbolag ser verifierade profiler först.",
+    "Krävs för att matchas mot uppdrag.",
+    "Krävs för att visa din möjliga ersättning.",
+    "Krävs för att visa din möjliga ersättning.",
+    "Gör att vi kan ge dig skräddarsydda förhandlingsråd.",
+  ];
   const completedCount = completenessChecks.filter(Boolean).length;
   const totalCount = completenessChecks.length;
 
@@ -255,7 +273,7 @@ export default function Profile() {
               <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-slate-500">Profilstatus</p>
               <p className="text-sm text-slate-900 mt-0.5 truncate">
                 {percent >= 100
-                  ? "Din profil är komplett."
+                  ? "Komplett profil — du blir synlig för bemanningsbolag."
                   : `${completedCount} av ${totalCount} steg klara.`}
               </p>
             </div>
@@ -271,6 +289,18 @@ export default function Profile() {
               }}
             />
           </div>
+          {percent < 100 && (
+            <div className="space-y-1.5 mb-3">
+              {completenessChecks.map((done, i) =>
+                done ? null : (
+                  <p key={i} className="text-xs text-slate-600 leading-relaxed">
+                    <span className="font-medium text-slate-800">{stepLabels[i]}:</span>{" "}
+                    {stepBenefits[i]}
+                  </p>
+                )
+              )}
+            </div>
+          )}
           <div className="flex items-center gap-2">
             <Link to="/profil" className="flex-1 sm:flex-initial">
               <Button size="sm" className="w-full sm:w-auto gap-1.5 h-9 text-sm font-semibold text-white border-0 bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] hover:from-[#7c3aed] hover:to-[#c026d3] shadow-sm hover:shadow-md transition-all">
