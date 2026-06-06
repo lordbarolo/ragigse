@@ -375,7 +375,7 @@ export default function AnalysisScreen() {
                 : "bg-muted text-muted-foreground cursor-not-allowed"
             }`}
           >
-            {emailSaving ? "Skickar…" : "Visa min rapport"}
+            {emailSaving ? "Skickar…" : "Fortsätt"}
             {!emailSaving && <ArrowRight className="w-4 h-4" />}
           </button>
         </div>
