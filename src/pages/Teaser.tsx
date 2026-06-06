@@ -22,6 +22,7 @@ import EmailGate from "@/components/teaser/EmailGate";
 import EmailHookMessage from "@/components/teaser/EmailHookMessage";
 import ReportPreviewList from "@/components/teaser/ReportPreviewList";
 import MethodologyDisclosure from "@/components/teaser/MethodologyDisclosure";
+import PossibleCompensationInfo from "@/components/PossibleCompensationInfo";
 
 /** Teaser page — orchestrator for the results preview */
 export default function Teaser() {
