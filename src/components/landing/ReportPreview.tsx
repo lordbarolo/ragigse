@@ -3,7 +3,7 @@ import { useState } from "react";
 const FEATURES = [
   { bold: "Regionens kundpris", text: " — vad regionen faktiskt betalar per timme för din roll och zon" },
   { bold: "Realistiskt förhandlingsspann", text: " — vad konsulter i din situation normalt ersätts med" },
-  { bold: "Din position i spannet", text: " — under, i, eller över marknadsspannet med exakt differens" },
+  { bold: "Din position i spannet", text: " — under, i, eller över möjlig ersättning med exakt differens" },
   { bold: "OB-tariffer", text: " — vad som gäller för kväll, natt, helg och storhelg enligt ramavtalet" },
   { bold: "Förhandlingstips", text: " — konkreta formuleringar anpassade till din specifika situation" },
 ];
