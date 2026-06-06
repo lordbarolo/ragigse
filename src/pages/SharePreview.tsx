@@ -36,7 +36,7 @@ export default function SharePreview() {
       <main className="px-4 py-6 max-w-lg mx-auto space-y-5">
         {/* Subtitle */}
         <p className="text-sm text-muted-foreground leading-relaxed">
-          Se hur din ersättning står sig mot marknaden
+          Se hur din ersättning står sig mot möjlig ersättning
         </p>
 
         {/* Data cards */}
