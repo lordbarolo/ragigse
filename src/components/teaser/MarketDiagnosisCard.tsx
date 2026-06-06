@@ -54,20 +54,20 @@ export default function MarketDiagnosisCard({ diffPercent, yrke, kommun, isAbove
 
   const diagnosisText = !emailProvided
     ? position === "above"
-      ? `Din ersättning ligger över marknadsspannet för ${yrke} i din region.`
+      ? `Din ersättning ligger över möjlig ersättning för ${yrke} i din region.`
       : position === "near"
-        ? `Din ersättning ligger inom marknadsspannet för ${yrke} i din region.`
-        : `Din ersättning ligger under marknadsspannet för ${yrke} i din region.`
+        ? `Din ersättning ligger inom möjlig ersättning för ${yrke} i din region.`
+        : `Din ersättning ligger under möjlig ersättning för ${yrke} i din region.`
     : position === "above"
-      ? `Din ersättning ligger över marknadsspannet för ${yrke} i din region.`
+      ? `Din ersättning ligger över möjlig ersättning för ${yrke} i din region.`
       : position === "near"
-        ? `Din ersättning ligger inom marknadsspannet för ${yrke} i din region — se rapporten för fullständig jämförelse.`
-        : `Din ersättning ligger ${diffPercent}% under marknadsspannet för ${yrke} i din region.`;
+        ? `Din ersättning ligger inom möjlig ersättning för ${yrke} i din region — se rapporten för fullständig jämförelse.`
+        : `Din ersättning ligger ${diffPercent}% under möjlig ersättning för ${yrke} i din region.`;
 
   return (
     <div className="rounded-xl border border-border bg-card p-6 card-shadow">
       <p className="text-caption mb-4">
-        Din ersättning mot marknadsspannet
+        Din ersättning mot möjlig ersättning
       </p>
 
       <div className="flex items-center gap-3 mb-4">
