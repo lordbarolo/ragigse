@@ -7,7 +7,7 @@ const FAQ_ITEMS = [
   {
     question: "Hur fungerar CompCare.se?",
     answer:
-      "Du fyller i yrkesroll, arbetsort och erfarenhet. Vi jämför din ersättning med officiella ramavtalspriser som offentliga vårdgivare betalar till bemanningsföretag. Därefter drar vi av en marknadsmässig marginal. Resultatet visar hur din ersättning förhåller sig till marknadsspannet.",
+      "Du fyller i yrkesroll, arbetsort och erfarenhet. Vi jämför din ersättning med möjlig ersättning, dvs. vad kunden betalar enligt ramavtal minus bemanningsbranschens standardmarginal. Resultatet visar hur din ersättning förhåller sig till möjlig ersättning.",
   },
   {
     question: "Vilka data baseras analysen på?",
