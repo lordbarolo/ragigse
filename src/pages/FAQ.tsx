@@ -74,7 +74,7 @@ export default function FAQ() {
     <div className="min-h-screen bg-background">
       <SEO
         title="Vanliga frågor om ersättning för vårdkonsulter | CompCare"
-        description="Svar på vanliga frågor om ersättning, SKR-ramavtalspriser och hur CompCare hjälper dig jämföra din ersättning med marknadsdata."
+        description="Svar på vanliga frågor om ersättning, SKR-ramavtalspriser och hur CompCare hjälper dig jämföra din ersättning mot möjlig ersättning."
         path="/vanliga-fragor"
         jsonLd={faqJsonLd}
       />
