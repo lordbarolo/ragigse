@@ -314,22 +314,24 @@ export default function AnalysisScreen() {
               </p>
             </div>
 
-            {/* Lönekostnad vs kundpris */}
-            <div>
-              <p className="text-[12px] text-foreground/55 mb-1">
-                {comparison.isEmployee ? "Din lönekostnad vs kundpriset" : "Din ersättning vs kundpriset"}
-              </p>
-              <p className="font-display text-[40px] font-extrabold tracking-tight text-[hsl(var(--green))] leading-none">
-                {costPct}%
-              </p>
-              <p className="text-[12px] text-foreground/45 mt-1">av {fmt(comparison.marketRate)} kr/h</p>
-              <div className="mt-3 h-[6px] rounded-full bg-foreground/10 overflow-hidden">
-                <div
-                  className="h-full rounded-full bg-[hsl(var(--green))]"
-                  style={{ width: `${costPct}%` }}
-                />
-              </div>
-            </div>
+            {/* Skillnad mot bemanningsbolagets smärtgräns (recMax) */}
+            {(() => {
+              const diffHourly = Math.max(0, comparison.recMax - comparison.currentHourly);
+              const diffMonthly = diffHourly * 167;
+              return (
+                <div>
+                  <p className="text-[12px] text-foreground/55 mb-1">
+                    Skillnad mellan din ersättning och bemanningsbolagets smärtgräns
+                  </p>
+                  <p className="font-display text-[32px] font-extrabold tracking-tight text-[hsl(var(--green))] leading-none">
+                    {fmt(diffMonthly)} <span className="text-[20px] font-bold">kr/månad</span>
+                  </p>
+                  <p className="text-[13px] text-foreground/45 font-mono mt-2">
+                    {fmt(comparison.recMax)}−{fmt(comparison.currentHourly)} = {fmt(diffHourly)} kr/h · × 167 h
+                  </p>
+                </div>
+              );
+            })()}
 
             {/* Beräkningsantaganden */}
             <div className="pt-6 border-t border-foreground/10">
