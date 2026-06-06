@@ -396,7 +396,6 @@ export default function Profile() {
 
             {/* Right column (1/3) */}
             <div className="space-y-5">
-              <DashboardInvoiceCheck />
             </div>
 
           </div>
@@ -440,7 +439,6 @@ export default function Profile() {
                 </CardContent>
               </Card>
 
-              <DashboardInvoiceCheck />
             </div>
 
             <PensionImpactSimulator
