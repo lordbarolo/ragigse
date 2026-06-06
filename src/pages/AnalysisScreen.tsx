@@ -171,14 +171,6 @@ export default function AnalysisScreen() {
     navigate(`/rapport/${activeReportId}`, { replace: true });
   };
 
-  /* ── Auto-submit for logged-in users ── */
-  const autoSubmitted = useRef(false);
-  useEffect(() => {
-    if (survey && EMAIL_REGEX.test(email.trim()) && !autoSubmitted.current && !emailSaving) {
-      autoSubmitted.current = true;
-      handleEmailSubmit();
-    }
-  }, [survey, email]);
 
   /* ── Sort zones: user's zone first ── */
   const sortedZones = useMemo(() => {
