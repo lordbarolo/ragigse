@@ -353,7 +353,7 @@ export default function InlineTerminalSurvey({
           </div>
 
           {/* Step content (fixed min-height to avoid jump) */}
-          <div className={`relative font-sans ${stepTextColor} min-h-[280px] overflow-x-clip`}>
+          <div className={`relative font-sans ${stepTextColor} min-h-[280px]`}>
 
             <StepTransition stepKey={step} direction={direction}>
               {step === 1 && (
