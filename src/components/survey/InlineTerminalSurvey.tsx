@@ -378,20 +378,13 @@ export default function InlineTerminalSurvey({
                     <button
                       onClick={handleStartCompare}
                       disabled={!s.category}
-                      className="w-full inline-flex items-center justify-center font-sans font-semibold text-base h-14 px-4 rounded-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed"
-                      style={
-                        isLight
-                          ? {
-                              backgroundColor: "#3D3491",
-                              color: "#FFFFFF",
-                              border: "1px solid #3D3491",
-                            }
-                          : {
-                              backgroundColor: "#EEEBE4",
-                              color: "#1A1A1A",
-                              border: "1px solid rgba(0,0,0,0.15)",
-                            }
-                      }
+                      className={`w-full inline-flex items-center justify-center font-sans font-semibold text-base h-14 px-4 rounded-lg transition-all ${
+                        s.category
+                          ? "bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white shadow-[0_0_30px_-8px_rgba(129,85,255,0.8)] hover:shadow-[0_0_40px_-6px_rgba(255,45,170,0.6)]"
+                          : isLight
+                            ? "bg-[#F5F5F5] text-[#9CA3AF] cursor-not-allowed"
+                            : "bg-white/10 text-white/40 cursor-not-allowed"
+                      }`}
                     >
                       Jämför min lön
                     </button>
