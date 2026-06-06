@@ -273,7 +273,7 @@ export default function Profile() {
               <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-slate-500">Profilstatus</p>
               <p className="text-sm text-slate-900 mt-0.5 truncate">
                 {percent >= 100
-                  ? "Komplett profil — du blir synlig för bemanningsbolag."
+                  ? "Komplett profil — du kan nu se aktuella behov hos 100+ vårdbemanningsföretag."
                   : `${completedCount} av ${totalCount} steg klara.`}
               </p>
             </div>
