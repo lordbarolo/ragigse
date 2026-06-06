@@ -171,7 +171,7 @@ export default function Report() {
 
       <ReportFlowIndicator
         steps={[
-          { id: "flow-din-ersattning", label: "Din ersättning & marknadsspann" },
+          { id: "flow-din-ersattning", label: "Din ersättning & möjlig ersättning" },
           { id: "flow-situation", label: "Vad det betyder för dig" },
           { id: "flow-stod", label: "Få stöd i din förhandling" },
           { id: "flow-regional", label: "Villkoren på andra orter" },
