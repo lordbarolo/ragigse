@@ -151,7 +151,7 @@ export default function ReportPreview() {
               {isUnder ? (
                 <>Nämn att du känner till att regionens kundpris är <strong className="text-foreground">770 kr/h</strong>. Be om en grundersättning på minst <strong className="text-foreground">595 kr/h</strong> och säkerställ att OB specificeras separat i avtalet.</>
               ) : (
-                <>Du ligger redan över marknadsspannet. Fokusera på att <strong className="text-foreground">behålla din position</strong> och se till att OB-tilläggen specificeras korrekt i avtalet.</>
+                <>Du ligger redan över möjlig ersättning. Fokusera på att <strong className="text-foreground">behålla din position</strong> och se till att OB-tilläggen specificeras korrekt i avtalet.</>
               )}
             </p>
           </div>
