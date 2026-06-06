@@ -1,4 +1,4 @@
-import { Check, Circle, Shield, Mail, FileCheck, BadgeCheck } from "lucide-react";
+import { Check, Circle, Shield, Mail, FileCheck, BadgeCheck, AlertCircle } from "lucide-react";
 
 interface TrustItem {
   key: string;
