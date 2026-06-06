@@ -21,6 +21,7 @@ import ReportFlowIndicator from "@/components/report/ReportFlowIndicator";
 export default function Report() {
   const { reportId } = useParams<{ reportId: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [report, setReport] = useState<ReportData | null>(null);
   const [loading, setLoading] = useState(true);
 
