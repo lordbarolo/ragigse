@@ -59,7 +59,7 @@ export function buildArticleSchema(input: RoleReportSchemaInput) {
     headline,
     description:
       input.summary ??
-      `Aktuella ramavtalspriser och marknadsmässig ersättning för ${input.roleName} baserat på SKR:s ramavtal 2026.`,
+      `Aktuella ramavtalspriser och möjlig ersättning för ${input.roleName} baserat på SKR:s ramavtal 2026.`,
     inLanguage: "sv-SE",
     url,
     mainEntityOfPage: url,
