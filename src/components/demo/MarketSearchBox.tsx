@@ -148,7 +148,7 @@ export default function MarketSearchBox() {
         });
       } catch {
         if (cancelled) return;
-        setError("Kunde inte hämta marknadsspannet för det valet just nu.");
+        setError("Kunde inte hämta möjlig ersättning för det valet just nu.");
       } finally {
         if (!cancelled) setLoading(false);
       }
