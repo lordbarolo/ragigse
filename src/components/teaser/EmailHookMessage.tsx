@@ -55,7 +55,7 @@ export default function EmailHookMessage({
                 ) : (
                   "din ersättning"
                 )}{" "}
-                ligger <span className={accentClass}>under marknadsspannet</span> för{" "}
+                ligger <span className={accentClass}>under möjlig ersättning</span> för{" "}
                 {roleName} i {kommun}.
               </p>
               <p className="text-sm text-muted-foreground leading-relaxed">
