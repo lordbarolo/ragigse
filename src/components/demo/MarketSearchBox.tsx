@@ -168,7 +168,7 @@ export default function MarketSearchBox() {
       <div className="bg-card border border-border rounded-2xl shadow-xl overflow-hidden">
         <div className="bg-primary px-6 py-4">
           <h1 className="text-primary-foreground font-display text-lg font-bold tracking-tight">
-            Vad är marknadsmässig ersättning?
+            Vad är möjlig ersättning?
           </h1>
           <p className="text-primary-foreground/70 text-xs mt-0.5">
             Baserat på SKR:s ramavtal 2026
