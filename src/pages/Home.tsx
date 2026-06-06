@@ -87,15 +87,6 @@ export default function Home() {
                 heroCollapsed ? "hidden" : "flex"
               }`}
             >
-              <div
-                className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs font-medium rounded-full px-3 py-1 mb-5 uppercase tracking-wider"
-                style={{ backgroundColor: "#E8E4F0", color: "#3D3491", border: "1px solid #3D3491" }}
-              >
-                <svg width="10" height="10" viewBox="0 0 10 10">
-                  <circle cx="5" cy="5" r="4" fill="currentColor" />
-                </svg>
-                För läkare &amp; sjuksköterskor
-              </div>
               <h1 className="font-bold leading-[1.05] text-black mb-5 tracking-tight text-[34px] sm:text-5xl md:text-[64px]">
                 Vet du vad du<br />
                 <span className="text-gradient-violet text-black">är värd?</span>
