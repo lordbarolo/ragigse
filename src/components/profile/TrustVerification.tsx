@@ -55,7 +55,7 @@ export default function TrustVerification({
       verified: hospValid,
       ctaLabel: "Ladda upp",
       action: "upload",
-      benefitText: "Lås upp verifierad status — bemanningsbolag ser verifierade profiler först.",
+      benefitText: "Lås upp verifierad status — krävs för att se aktuella behov hos 100+ vårdbemanningsföretag.",
     },
     {
       key: "ivo",
