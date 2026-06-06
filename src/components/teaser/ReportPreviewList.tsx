@@ -12,7 +12,7 @@ export const CONSULTANT_ITEMS = [
   },
   {
     icon: Target,
-    title: "Skillnad mot marknadsspannet",
+    title: "Skillnad mot möjlig ersättning",
     desc: "",
   },
   {
