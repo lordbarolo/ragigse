@@ -3,7 +3,7 @@ import { useState } from "react";
 const FEATURES = [
   { bold: "Regionens kundpris", text: " — vad regionen faktiskt betalar per timme för din roll och zon" },
   { bold: "Realistiskt förhandlingsspann", text: " — vad konsulter i din situation normalt ersätts med" },
-  { bold: "Din position i spannet", text: " — under, i, eller över marknadsspannet med exakt differens" },
+  { bold: "Din position i spannet", text: " — under, i, eller över möjlig ersättning med exakt differens" },
   { bold: "OB-tariffer", text: " — vad som gäller för kväll, natt, helg och storhelg enligt ramavtalet" },
   { bold: "Förhandlingstips", text: " — konkreta formuleringar anpassade till din specifika situation" },
 ];
@@ -151,7 +151,7 @@ export default function ReportPreview() {
               {isUnder ? (
                 <>Nämn att du känner till att regionens kundpris är <strong className="text-foreground">770 kr/h</strong>. Be om en grundersättning på minst <strong className="text-foreground">595 kr/h</strong> och säkerställ att OB specificeras separat i avtalet.</>
               ) : (
-                <>Du ligger redan över marknadsspannet. Fokusera på att <strong className="text-foreground">behålla din position</strong> och se till att OB-tilläggen specificeras korrekt i avtalet.</>
+                <>Du ligger redan över möjlig ersättning. Fokusera på att <strong className="text-foreground">behålla din position</strong> och se till att OB-tilläggen specificeras korrekt i avtalet.</>
               )}
             </p>
           </div>

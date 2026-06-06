@@ -52,7 +52,7 @@ export default function TeaserHeader({ kommun }: Props) {
             Din marknadsanalys är klar
           </h1>
            <p className="text-body mt-2">
-             Vi har jämfört din ersättning med marknadsdata i {kommun}
+             Vi har jämfört din ersättning med möjlig ersättning i {kommun}
            </p>
         </div>
       </header>

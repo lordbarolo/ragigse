@@ -70,7 +70,7 @@ export default function AnestesiReport() {
       },
       {
         question: "Hur mycket tjänar en anestesisjuksköterska som konsult?",
-        answer: `Som egenföretagare ligger marknadsmässigt arvode på ${fmt(recMinF)}–${fmt(recMaxF)} kr/h i Zon 1. Som anställd konsult ligger spannet på ${fmt(recMinA)}–${fmt(recMaxA)} kr/h.`,
+        answer: `Som egenföretagare ligger möjlig ersättning på ${fmt(recMinF)}–${fmt(recMaxF)} kr/h i Zon 1. Som anställd konsult ligger spannet på ${fmt(recMinA)}–${fmt(recMaxA)} kr/h.`,
       },
       {
         question: "Vad är OB-tillägget för anestesisjuksköterskor?",

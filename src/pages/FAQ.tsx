@@ -7,7 +7,7 @@ const FAQ_ITEMS = [
   {
     question: "Hur fungerar CompCare.se?",
     answer:
-      "Du fyller i yrkesroll, arbetsort och erfarenhet. Vi jämför din ersättning med officiella ramavtalspriser som offentliga vårdgivare betalar till bemanningsföretag. Därefter drar vi av en marknadsmässig marginal. Resultatet visar hur din ersättning förhåller sig till marknadsspannet.",
+      "Du fyller i yrkesroll, arbetsort och erfarenhet. Vi jämför din ersättning med möjlig ersättning, dvs. vad kunden betalar enligt ramavtal minus bemanningsbranschens standardmarginal. Resultatet visar hur din ersättning förhåller sig till möjlig ersättning.",
   },
   {
     question: "Vilka data baseras analysen på?",
@@ -25,9 +25,9 @@ const FAQ_ITEMS = [
       "Just nu täcker vi sjuksköterskor, barnmorskor och läkare — samtliga specialiseringar har unik data. Fler yrkesgrupper kommer snart.",
   },
   {
-    question: "Hur ligger min ersättning jämfört med marknaden?",
+    question: "Hur ligger min ersättning jämfört med möjlig ersättning?",
     answer:
-      "CompCare matchar din yrkesroll, arbetsort och erfarenhet mot officiella ramavtalspriser och visar om din ersättning ligger under, på eller över marknadsspannet.",
+      "CompCare matchar din yrkesroll, arbetsort och erfarenhet mot officiella ramavtalspriser och visar om din ersättning ligger under, på eller över möjlig ersättning.",
   },
   {
     question: "Vad är ramavtalspriser och varför är de relevanta?",
@@ -74,7 +74,7 @@ export default function FAQ() {
     <div className="min-h-screen bg-background">
       <SEO
         title="Vanliga frågor om ersättning för vårdkonsulter | CompCare"
-        description="Svar på vanliga frågor om ersättning, SKR-ramavtalspriser och hur CompCare hjälper dig jämföra din ersättning med marknadsdata."
+        description="Svar på vanliga frågor om ersättning, SKR-ramavtalspriser och hur CompCare hjälper dig jämföra din ersättning mot möjlig ersättning."
         path="/vanliga-fragor"
         jsonLd={faqJsonLd}
       />

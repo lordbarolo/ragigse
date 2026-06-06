@@ -73,7 +73,7 @@ export default function IncomeImpactCard({
           {!isAtOrAboveCeiling && potentialYearly > 0 && (
             <div className="mt-3 pt-3 border-t border-foreground/[0.06]">
               <p className="text-hint leading-relaxed">
-                Förhandlingspotential upp till övre marknadsspann:{" "}
+                Förhandlingspotential upp till övre möjlig ersättning:{" "}
                 <span className="font-semibold text-foreground">
                   {fmt(potentialYearly)} kr/år
                 </span>

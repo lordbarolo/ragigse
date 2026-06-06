@@ -11,7 +11,7 @@ const STEPS = [
   },
   {
     title: "Få din rapport",
-    desc: "Se din position i marknadsspannet, vad ramavtalspriset är för din roll, och konkreta förhandlingstips anpassade till din situation.",
+    desc: "Se din position mot möjlig ersättning, vad ramavtalspriset är för din roll, och konkreta förhandlingstips anpassade till din situation.",
     detail: { label: "", text: "Rapporten skickas till din mail. Ingen annan ser den." },
   },
 ];

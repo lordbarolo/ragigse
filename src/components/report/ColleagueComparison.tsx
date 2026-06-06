@@ -39,7 +39,7 @@ export default function ColleagueComparison({ occupation, percentilePosition }: 
         <div className="p-4 pt-0">
           <ShareButton
             title="CompCare.se – Ersättningsanalys"
-            text={`Hur stor är egentligen skillnaden mellan konsult och fast tjänst? Se din ersättning mot marknaden.`}
+            text={`Hur stor är egentligen skillnaden mellan konsult och fast tjänst? Se din ersättning mot möjlig ersättning.`}
             url={`${window.location.origin}/dela?yrke=${encodeURIComponent(occupation)}`}
             className="w-full"
             label="Skicka till en kollega — se vem som tjänar mer"

@@ -15,6 +15,7 @@ import type { ReportData } from "@/shared/types";
 
 import ConsultantTrackContent from "@/components/report/ConsultantTrackContent";
 import ReportFlowIndicator from "@/components/report/ReportFlowIndicator";
+import PossibleCompensationInfo from "@/components/PossibleCompensationInfo";
 
 
 
@@ -170,7 +171,7 @@ export default function Report() {
 
       <ReportFlowIndicator
         steps={[
-          { id: "flow-din-ersattning", label: "Din ersättning & marknadsspann" },
+          { id: "flow-din-ersattning", label: "Din ersättning & möjlig ersättning" },
           { id: "flow-situation", label: "Vad det betyder för dig" },
           { id: "flow-stod", label: "Få stöd i din förhandling" },
           { id: "flow-regional", label: "Villkoren på andra orter" },
@@ -182,6 +183,9 @@ export default function Report() {
       />
 
       <main className="px-4 py-6 max-w-lg mx-auto space-y-2.5">
+
+        {/* Förklaring: möjlig ersättning */}
+        <PossibleCompensationInfo variant="report" />
 
         <ConsultantTrackContent
           r={r}
