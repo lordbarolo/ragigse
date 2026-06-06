@@ -171,14 +171,6 @@ export default function AnalysisScreen() {
     navigate(`/rapport/${activeReportId}`, { replace: true });
   };
 
-  /* ── Auto-submit for logged-in users ── */
-  const autoSubmitted = useRef(false);
-  useEffect(() => {
-    if (survey && EMAIL_REGEX.test(email.trim()) && !autoSubmitted.current && !emailSaving) {
-      autoSubmitted.current = true;
-      handleEmailSubmit();
-    }
-  }, [survey, email]);
 
   /* ── Sort zones: user's zone first ── */
   const sortedZones = useMemo(() => {
@@ -383,7 +375,7 @@ export default function AnalysisScreen() {
                 : "bg-muted text-muted-foreground cursor-not-allowed"
             }`}
           >
-            {emailSaving ? "Skickar…" : "Visa min rapport"}
+            {emailSaving ? "Skickar…" : "Fortsätt"}
             {!emailSaving && <ArrowRight className="w-4 h-4" />}
           </button>
         </div>
