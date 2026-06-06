@@ -184,6 +184,9 @@ export default function Report() {
 
       <main className="px-4 py-6 max-w-lg mx-auto space-y-2.5">
 
+        {/* Förklaring: möjlig ersättning */}
+        <PossibleCompensationInfo variant="report" />
+
         <ConsultantTrackContent
           r={r}
           isFullAccess={true}
