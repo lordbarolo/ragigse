@@ -415,6 +415,12 @@ export default function InlineTerminalSurvey({
                     onValueChange={handleRole}
                     placeholder={s.category === "lakare" ? "Välj specialisering…" : "Välj roll…"}
                     options={s.category === "lakare" ? doctorRoleOptions : nurseRoleOptions}
+                    triggerClassName={
+                      isLight
+                        ? "bg-white border-[#E5E5E5] text-[#1A1A1A] focus:ring-[#534AB7]"
+                        : "bg-[#2D2D2D] border-[#3D3D3D] text-[#E5E5E5] focus:ring-[#534AB7]"
+                    }
+                    placeholderClassName={isLight ? "text-[#9CA3AF]" : "text-[#6B7280]"}
                   />
                 </Step>
               )}
