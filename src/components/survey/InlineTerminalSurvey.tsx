@@ -370,8 +370,8 @@ export default function InlineTerminalSurvey({
                       ]}
                       triggerClassName={
                         isLight
-                          ? "bg-white border-[#E5E5E5] text-[#1A1A1A] !focus:ring-[#534AB7]"
-                          : "bg-[#2D2D2D] border-[#3D3D3D] text-[#E5E5E5] !focus:ring-[#534AB7]"
+                          ? "bg-white border-[#E5E5E5] text-[#1A1A1A] focus:ring-[#534AB7]"
+                          : "bg-[#2D2D2D] border-[#3D3D3D] text-[#E5E5E5] focus:ring-[#534AB7]"
                       }
                       placeholderClassName={isLight ? "text-[#9CA3AF]" : "text-[#6B7280]"}
                     />
@@ -415,6 +415,12 @@ export default function InlineTerminalSurvey({
                     onValueChange={handleRole}
                     placeholder={s.category === "lakare" ? "Välj specialisering…" : "Välj roll…"}
                     options={s.category === "lakare" ? doctorRoleOptions : nurseRoleOptions}
+                    triggerClassName={
+                      isLight
+                        ? "bg-white border-[#E5E5E5] text-[#1A1A1A] focus:ring-[#534AB7]"
+                        : "bg-[#2D2D2D] border-[#3D3D3D] text-[#E5E5E5] focus:ring-[#534AB7]"
+                    }
+                    placeholderClassName={isLight ? "text-[#9CA3AF]" : "text-[#6B7280]"}
                   />
                 </Step>
               )}
@@ -457,6 +463,12 @@ export default function InlineTerminalSurvey({
                       label: k.kommun,
                       group: k.region,
                     }))}
+                    triggerClassName={
+                      isLight
+                        ? "bg-white border-[#E5E5E5] text-[#1A1A1A] focus:ring-[#534AB7]"
+                        : "bg-[#2D2D2D] border-[#3D3D3D] text-[#E5E5E5] focus:ring-[#534AB7]"
+                    }
+                    placeholderClassName={isLight ? "text-[#9CA3AF]" : "text-[#6B7280]"}
                   />
                 </Step>
               )}
@@ -485,10 +497,10 @@ export default function InlineTerminalSurvey({
                         }}
                         placeholder={s.employmentType === "foretagare" ? "t.ex. 1100" : "t.ex. 250"}
 
-                        className={`w-full border rounded-lg px-4 py-3 pr-16 text-base transition-colors focus:outline-none ${
+                        className={`w-full border rounded-lg px-4 py-3 pr-16 text-base transition-colors focus:outline-none focus:ring-2 focus:ring-[#534AB7] ${
                           isLight
-                            ? "bg-[#FAFAFA] border-[#E5E5E5] text-[#1A1A1A] placeholder:text-[#9CA3AF] focus:border-violet-400/60 focus:bg-white"
-                            : "bg-white/[0.04] border-white/10 text-white placeholder:text-white/30 focus:border-violet-400/60 focus:bg-white/[0.06]"
+                            ? "bg-[#FAFAFA] border-[#E5E5E5] text-[#1A1A1A] placeholder:text-[#9CA3AF] focus:bg-white"
+                            : "bg-white/[0.04] border-white/10 text-white placeholder:text-white/30 focus:bg-white/[0.06]"
                         }`}
                       />
                       <span
