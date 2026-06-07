@@ -138,20 +138,20 @@ export default function ConsultantTrackContent({
                 </div>
                 <div className="flex justify-between mt-2" style={{ fontSize: '12px', color: '#6B7280' }}>
                   <span>{fmt(currentHourly)} kr/h (din nivå)</span>
-                  <span>{fmt(rec.recommended_hourly_max)} kr/h (marknad)</span>
+                  <span>{fmt(rec.recommended_hourly_max)} kr/h (möjlig ersättning)</span>
                 </div>
               </div>
             )}
 
-            {/* Marknadsspann row */}
+            {/* Möjlig ersättning row */}
             <div className="flex items-center justify-between p-3.5 border-t border-foreground/[0.05]">
               <div>
-                <p className="text-micro font-semibold tracking-[0.8px] uppercase mb-1">Marknadsspann</p>
+                <p className="text-micro font-semibold tracking-[0.8px] uppercase mb-1">Möjlig ersättning</p>
                 <p className={`${monoClass} text-[22px] font-medium tracking-tight text-primary/[0.7]`}>{fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h</p>
                 <p className={`${monoClass} text-micro mt-0.5`}>{fmt(rec.recommended_monthly_min)}–{fmt(rec.recommended_monthly_max)} kr/mån</p>
               </div>
               <span className="text-micro font-semibold tracking-[0.5px] bg-primary/[0.08] text-primary/[0.8] border border-primary/[0.2] rounded-full px-2.5 py-1 whitespace-nowrap">
-                Marknad
+                Möjlig ersättning
               </span>
             </div>
 
