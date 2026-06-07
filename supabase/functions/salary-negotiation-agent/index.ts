@@ -474,7 +474,7 @@ const ADVICE_TOOL = {
       properties: {
         advice: {
           type: "string",
-          description: "Huvudsvar i vanlig text, max 2 meningar. Inga punktlistor, ingen markdown.",
+          description: "Huvudsvar i vanlig text, MAX 5 meningar totalt (inklusive ev. kostnadsreservation och avslutande motfråga). Inga punktlistor, ingen markdown.",
         },
         followup: {
           type: "string",
@@ -538,10 +538,10 @@ function validateAdvice(
     advice = advice.replace(pattern, "marknadens snitt");
   }
 
-  // 2. Enforce max sentence count (2 for advice body)
+  // 2. Enforce hard max sentence count (5 total — incl. disclaimer & followup)
   const sentences = dedupeSentences(splitSentences(advice));
-  if (sentences.length > 2) {
-    advice = sentences.slice(0, 2).join(" ");
+  if (sentences.length > 5) {
+    advice = sentences.slice(0, 5).join(" ");
   }
 
   // 3. Add disclaimer if amounts are mentioned
@@ -552,6 +552,12 @@ function validateAdvice(
   // 4. Append followup question
   if (followup && !advice.includes(followup)) {
     advice = advice.replace(/\.?\s*$/, ". ") + followup;
+  }
+
+  // 4b. Final hard cap — max 5 sentences after disclaimer + followup
+  const finalSentencesCapped = dedupeSentences(splitSentences(advice));
+  if (finalSentencesCapped.length > 5) {
+    advice = finalSentencesCapped.slice(0, 5).join(" ");
   }
 
   // 5. Dedupe against last assistant message
