@@ -320,6 +320,25 @@ export default function Profile() {
           </div>
         </div>
 
+        {/* Förhandlingsassistenten — överst */}
+        <div className="rounded-2xl bg-white border border-slate-200 shadow-sm p-5">
+          <h2 className="text-base font-semibold text-slate-900">
+            Förhandlingsassistenten
+          </h2>
+          <p className="text-sm text-slate-600 mt-1.5 mb-4">
+            Få argument och tips inför din nästa förhandling, baserat på ramavtal och din situation.
+          </p>
+          <Link to="/logga-in">
+            <Button
+              size="sm"
+              className="text-sm font-semibold px-6 py-3 gap-2 text-white border-0 bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] hover:from-[#7c3aed] hover:to-[#c026d3]"
+            >
+              Öppna förhandlingsassistenten
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </Link>
+        </div>
+
         <DashboardInvoiceCheck />
 
         {/* CTA: gör enkäten om den inte är gjord */}
