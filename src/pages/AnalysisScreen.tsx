@@ -302,7 +302,7 @@ export default function AnalysisScreen() {
 
             {/* Rekommenderad ersättning */}
             <div>
-              <p className="text-[12px] text-foreground/55 mb-1">Beräknat ersättningsspann</p>
+              <p className="text-[12px] text-foreground/55 mb-1">Möjlig ersättning</p>
               <p className="font-display text-[32px] font-extrabold tracking-tight text-[hsl(var(--green))]">
                 {fmt(comparison.recMin)}–{fmt(comparison.recMax)} <span className="text-[20px] font-bold">kr/h</span>
               </p>
@@ -335,7 +335,7 @@ export default function AnalysisScreen() {
                     {fmt(comparison.recMax)}−{fmt(comparison.currentHourly)} = {fmt(diffHourly)} kr/h · × 167 h
                   </p>
                   <p className="text-[12px] text-foreground/40 mt-2 leading-relaxed">
-                    {fmt(comparison.recMax)} kr/h är övre gränsen i ersättningsspannet — bemanningsbolagets "smärtgräns". {fmt(comparison.currentHourly)} kr/h är din nuvarande timersättning. 167 är antalet arbetstimmar per månad.
+                    {fmt(comparison.recMax)} kr/h är övre gränsen för möjlig ersättning — bemanningsbolagets "smärtgräns". {fmt(comparison.currentHourly)} kr/h är din nuvarande timersättning. 167 är antalet arbetstimmar per månad.
                   </p>
                 </div>
               );
