@@ -238,51 +238,19 @@ export default function ConsultantTrackContent({
       {/* ═══════════════════════════════════════════════════════════════
           3. ACTION HUB — Verktygen (flyttad före regional jämförelse)
           ═══════════════════════════════════════════════════════════════ */}
-      {isConsultantFullAccess && (
-        <div id="flow-stod" ref={registerSectionRef?.("action_hub")} className="scroll-mt-24 pt-6 space-y-4">
+      {/* 3a. Förhandlingsassistenten — flyttad till toppen av rapporten */}
+
+      {/* 3b. Fakturagranskning */}
+      {isConsultantFullAccess && leadId && email && (
+        <div id="flow-fakturor" className="scroll-mt-24 pt-6 space-y-4">
           <SectionLabel>Agera på resultatet</SectionLabel>
-
-          {/* 3a. Förhandlingsassistenten */}
-          <div className="rounded-[18px] bg-card border border-foreground/[0.07] overflow-hidden card-shadow">
-            <div className="pt-6 px-5 space-y-4">
-              <div className="flex items-start gap-2">
-                <Handshake className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <p className="font-semibold text-foreground text-base leading-snug">
-                  Testa vår förhandlingsassistent för att få argument och tips inför din nästa förhandling.
-                </p>
-              </div>
-            </div>
-            <div className="px-5 py-5">
-              <Link
-                to="/logga-in"
-                className="flex items-center justify-center gap-2 w-full"
-                style={{
-                  backgroundColor: '#3D3491',
-                  color: '#FFFFFF',
-                  padding: '16px 24px',
-                  fontSize: '16px',
-                  fontWeight: 600,
-                  borderRadius: '8px',
-                }}
-              >
-                <LogIn className="w-4 h-4" />
-                Öppna förhandlingsassistenten
-              </Link>
-            </div>
-          </div>
-
-          {/* 3b. Fakturagranskning */}
-          {leadId && email && (
-            <div id="flow-fakturor" className="scroll-mt-24">
-              <InvoiceReviewCTA
-                leadId={leadId}
-                email={email}
-                role={occupation}
-                zone={userZone}
-                reportId={reportId}
-              />
-            </div>
-          )}
+          <InvoiceReviewCTA
+            leadId={leadId}
+            email={email}
+            role={occupation}
+            zone={userZone}
+            reportId={reportId}
+          />
         </div>
       )}
 
