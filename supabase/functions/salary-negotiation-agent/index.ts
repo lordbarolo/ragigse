@@ -554,6 +554,12 @@ function validateAdvice(
     advice = advice.replace(/\.?\s*$/, ". ") + followup;
   }
 
+  // 4b. Final hard cap — max 5 sentences after disclaimer + followup
+  const finalSentencesCapped = dedupeSentences(splitSentences(advice));
+  if (finalSentencesCapped.length > 5) {
+    advice = finalSentencesCapped.slice(0, 5).join(" ");
+  }
+
   // 5. Dedupe against last assistant message
   const lastAssistant = [...history].reverse().find((h) => h.role === "assistant");
   if (lastAssistant) {
