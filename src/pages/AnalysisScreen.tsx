@@ -274,7 +274,12 @@ export default function AnalysisScreen() {
         {/* ── Role + location ── */}
         <div className="mb-8 pb-6 border-b border-foreground/10">
           <h1 className="font-display text-[34px] sm:text-[38px] font-extrabold tracking-tight text-foreground leading-[1.05] mb-2">
-            {survey.yrke}
+            {(() => {
+              const occ = survey.yrke || "";
+              const stripped = occ.replace(/^Specialistläkare\s+/i, "").trim();
+              if (!stripped) return occ;
+              return stripped.charAt(0).toUpperCase() + stripped.slice(1);
+            })()}
           </h1>
           <p className="text-[14px] text-foreground/55">
             {survey.kommun}{userRegion && <> · {userRegion}</>} · {employmentLabel}
