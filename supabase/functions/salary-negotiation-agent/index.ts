@@ -538,10 +538,10 @@ function validateAdvice(
     advice = advice.replace(pattern, "marknadens snitt");
   }
 
-  // 2. Enforce max sentence count (2 for advice body)
+  // 2. Enforce hard max sentence count (5 total — incl. disclaimer & followup)
   const sentences = dedupeSentences(splitSentences(advice));
-  if (sentences.length > 2) {
-    advice = sentences.slice(0, 2).join(" ");
+  if (sentences.length > 5) {
+    advice = sentences.slice(0, 5).join(" ");
   }
 
   // 3. Add disclaimer if amounts are mentioned
