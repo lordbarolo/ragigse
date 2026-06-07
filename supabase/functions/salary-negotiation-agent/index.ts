@@ -474,7 +474,7 @@ const ADVICE_TOOL = {
       properties: {
         advice: {
           type: "string",
-          description: "Huvudsvar i vanlig text, max 2 meningar. Inga punktlistor, ingen markdown.",
+          description: "Huvudsvar i vanlig text, MAX 5 meningar totalt (inklusive ev. kostnadsreservation och avslutande motfråga). Inga punktlistor, ingen markdown.",
         },
         followup: {
           type: "string",
