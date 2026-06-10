@@ -76,11 +76,11 @@ export default function Home() {
           data-no-roomy
           className={`relative z-20 overflow-visible px-5 sm:px-6 lg:px-10 scroll-mt-20 transition-all duration-300 ${
             heroCollapsed
-              ? "pt-4 pb-6 md:pt-20 md:pb-28"
-              : "pt-14 pb-20 md:pt-20 md:pb-28"
+              ? "pt-4 pb-6 md:pt-14 md:pb-20"
+              : "pt-14 pb-20 md:pt-16 md:pb-20"
           }`}
         >
-          <div className="relative z-10 max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-12 items-center md:items-start">
+          <div className="relative z-10 max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
             {/* Vänster: rubrik och pitch */}
             <div
               className={`flex flex-col items-center md:items-start text-center md:text-left md:w-full md:!block ${
@@ -91,10 +91,8 @@ export default function Home() {
                 Vet du vad du<br />
                 <span className="text-gradient-violet text-black">är värd?</span>
               </h1>
-              <p className="font-sans text-lg sm:text-xl text-black/75 leading-relaxed mb-2 max-w-[560px]">
-                Se regionens pris,<br />
-                bolagets marginal,<br />
-                din ersättning
+              <p className="font-sans text-lg sm:text-xl text-black/75 leading-relaxed mb-2 max-w-[460px]">
+                Se regionens pris, bolagets marginal och din ersättning.
               </p>
               <p className="mt-4 text-[12px] text-black/50">
                 Anonymt · Kostnadsfritt · Klart på 60 sekunder
