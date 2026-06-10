@@ -5441,6 +5441,13 @@ export type Database = {
         Args: { _request_id: string }
         Returns: undefined
       }
+      search_staffing_agencies: {
+        Args: { query: string }
+        Returns: {
+          id: string
+          name: string
+        }[]
+      }
       security_audit_checks: {
         Args: never
         Returns: {
