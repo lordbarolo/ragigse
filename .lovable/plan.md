@@ -1,57 +1,47 @@
 
 ## Mål
+Långa specialitetsnamn i specialitets-dropdownen (hero-formuläret på /) ska rymmas på en rad i mobil. Lösning: korta visningsetiketter + ellipsis-fallback. Sökning och resolved role (det som skickas vidare till survey) lämnas oförändrade så ingen affärslogik påverkas.
 
-Slippa NS-delegering till Loopia. Skicka alla mejl via Resend, som bara kräver CNAME + TXT i Loopias DNS-editor (fungerar utan support).
+## Omfattning
+- Endast presentation. Inga ändringar i `resolvedRole`, slugs, prefill-mappning eller backend.
+- Gäller listan som byggs i `src/lib/specialitySlugs.ts` och renderas av `SearchableSelect` i hero-formuläret.
 
-## Vad ändras (och vad ändras INTE)
+## Förkortningsregler (visningsnamn)
+Mappning från fullt namn → kort etikett. Sökning matchar fortfarande fullt namn.
 
-**Ändras:**
-- `supabase/functions/send-transactional-email/index.ts` skickar direkt via Resend-gateway istället för att kö-läggas i pgmq → Mailgun.
-- Alla 7 mallar (`welcome`, `report-delivery`, `invoice-confirmation`, `invoice-admin-notify`, `reference-invite`, `representation-invite`) fortsätter fungera oförändrade — de renderas fortfarande via React Email till HTML och skickas till Resend.
+Läkare (utdrag, samma princip för alla 63):
+- "Specialistläkare barn- och ungdomsneurologi med habilitering" → "Barnneurologi & habilitering"
+- "Specialistläkare barn- och ungdomshematologi och onkologi" → "Barnhematologi & onkologi"
+- "Specialistläkare barn- och ungdomskardiologi" → "Barnkardiologi"
+- "Specialistläkare barn- och ungdomskirurgi" → "Barnkirurgi"
+- "Specialistläkare barn- och ungdomsmedicin" → "Barnmedicin"
+- "Specialistläkare barn- och ungdomspsykiatri" → "Barn- & ungdomspsykiatri"
+- "Specialistläkare barn- och ungdomsallergologi" → "Barnallergologi"
+- "Specialistläkare klinisk immunologi och transfusionsmedicin" → "Klinisk immunologi"
+- "Specialistläkare medicinsk gastroenterologi och hepatologi" → "Gastroenterologi & hepatologi"
+- "Specialistläkare arbets- och miljömedicin" → "Arbets- & miljömedicin"
+- "Specialistläkare obstetrik och gynekologi" → "Obstetrik & gynekologi"
+- "Specialistläkare hud- och könssjukdomar" → "Hud & kön"
+- "Specialistläkare öron-, näs- och halssjukdomar" → "ÖNH"
+- "Specialistläkare hörsel- och balansrubbningar" → "Hörsel & balans"
+- "Specialistläkare röst- och talrubbningar" → "Röst & tal"
+- Övriga "Specialistläkare X" → "X" med versal initial (t.ex. "Anestesi och intensivvård" → "Anestesi & IVA", "Klinisk neurofysiologi" → "Klinisk neurofysiologi").
 
-**Ändras INTE:**
-- Anropssyntax i koden: alla `supabase.functions.invoke('send-transactional-email', { body: { templateName, recipientEmail, templateData } })` fortsätter fungera.
-- `radar-notify` (redan på Resend).
-- `email_send_log`, `suppressed_emails`, `email_unsubscribe_tokens` — behålls och skrivs till som idag (logg, suppression-check, unsubscribe-länkar).
-- Mallar, registry, designspråk.
+Generella regler för resten:
+- Strippa prefixet "Specialistläkare " i visningen.
+- Ersätt " och " med " & ".
+- "barn- och ungdoms" → "barn-" eller släpp "ungdoms" där det är otydligt — se mappning ovan för redan kända kollisioner.
+- Kapa kvarvarande långa namn med CSS `truncate` + `title={fullName}` som säkerhet.
 
-## DNS-flöde (det du gör själv i Loopia)
+Sjuksköterskor: nuvarande etiketter är redan korta (t.ex. "IVA-sjuksköterska"), behåller dem.
 
-1. Skapa konto/domän i Resend → "Add domain" → t.ex. `send.compcare.se`.
-2. Resend ger dig 3 poster (vanligtvis 1 MX + 2 TXT eller liknande). Alla läggs i Loopias DNS-editor på subdomän — **inga NS-poster**.
-3. När Resend visar "Verified" → klart.
-4. Stäng av Lovable Emails (jag gör det åt dig).
-5. Ta bort de NS-poster för `notify.compcare.se` du försökt lägga in (de behövs inte längre).
+## Tekniska steg
+1. Lägg till `displayLabel` i `SpecialityOption` (`src/lib/specialitySlugs.ts`) och fyll i enligt mappningen ovan. `label` (fullt namn) behålls för sökmatchning.
+2. I `SearchableSelect` (eller call-site i `HeroInlineForm`): rendera `displayLabel ?? label` och lägg `truncate` + `title={label}` på raden så att även icke-mappade namn håller sig på en rad med ellipsis.
+3. Säkerställ att sökmotorn i `SearchableSelect` matchar mot `label` (fullt namn) så att "transfusion" fortfarande hittar "Klinisk immunologi".
+4. Ingen ändring i `PREFILL_MAP`/Survey — slug och `resolvedRole` är oförändrade.
 
-## Trade-offs
-
-- **Förlorar:** pgmq-kö (retry vid 429/5xx), DLQ, scheduler. Resend SDK gör 1 anrop direkt — om Resend svarar fel loggar vi `failed` i `email_send_log` men retryar inte.
-- **Vinner:** ingen NS-delegering, enklare arkitektur, du äger DNS i Loopia.
-- **Auth-mejl** (lösenordsåterställning, magic links etc.): går tillbaka till Lovables default-mallar när Lovable Emails stängs av. Custom `send-password-recovery` fortsätter fungera (skickar redan via Resend via process-email-queue → måste också byggas om för Resend-direkt). Tas i steg 2 om du vill.
-
-## Teknisk implementation (steg 1 — denna runda)
-
-1. Skriv om `send-transactional-email/index.ts`:
-   - Behåll: CORS, input-validering, suppression-check, unsubscribe-token-hantering, `email_send_log`-rader.
-   - Ta bort: `enqueue_email`-RPC-anropet.
-   - Lägg till: direktanrop till `https://connector-gateway.lovable.dev/resend/emails` med `Authorization: Bearer ${LOVABLE_API_KEY}` + `X-Connection-Api-Key: ${RESEND_API_KEY_1}`.
-   - From-adress läses från ny env-var `RESEND_FROM_DOMAIN` (du sätter t.ex. `send.compcare.se` när Resend verifierat den).
-   - Lägg till unsubscribe-footer i HTML innan sändning (eftersom kö-dispatchern inte längre gör det).
-   - Logga `sent` vid 200, `failed` vid annan status.
-2. Deploya `send-transactional-email`.
-3. Lägg till `RESEND_FROM_DOMAIN` som secret (du fyller i värdet när Resend gett dig domänen).
-4. Stäng av Lovable Emails.
-
-## Steg 2 (senare, om du vill)
-
-- Bygg om `send-password-recovery` på samma sätt → då är auth-mejl också på Resend.
-- Bygg om `auth-email-hook` så Supabase Auth-mejl (signup-bekräftelse, magic link) också går via Resend istället för Lovables default.
-
-## Rollback
-
-Om något krånglar: aktivera Lovable Emails igen (`toggle_project_emails: true`) och återställ `send-transactional-email` från git.
-
-## Bekräfta innan jag kör
-
-- Vilken **subdomän** vill du använda i Resend? Förslag: `send.compcare.se` (ren, ej krockar med `notify.compcare.se` som Lovable hanterat).
-- Ska jag köra **bara steg 1** nu (app-mejl via Resend), och låta auth-mejl ligga kvar på Lovable Emails tills steg 2?
+## Verifiering
+- Mobil 393px: ingen rad bryts i dropdownen för de tio längsta namnen.
+- Sök på "transfusion", "habilitering", "gastro" returnerar rätt rad.
+- Vald specialitet skickar samma `?yrke=…`-slug som idag och Survey resolvar samma roll.
