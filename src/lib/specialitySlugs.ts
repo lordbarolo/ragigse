@@ -6,10 +6,41 @@ export type SpecialityCategory = "lakare" | "ssk";
 
 export interface SpecialityOption {
   slug: string;
-  label: string;
+  label: string; // fullt namn — används för sökning
+  displayLabel: string; // kort namn — visas i UI (en rad på mobil)
   category: SpecialityCategory;
   resolvedRole: string; // matches Survey's resolvedYrke output
 }
+
+// Mappning fullt namn → kort visningsetikett. Sökning matchar fortfarande fullt namn.
+const DISPLAY_LABEL_OVERRIDES: Record<string, string> = {
+  "Specialistläkare anestesi och intensivvård": "Anestesi & IVA",
+  "Specialistläkare arbets- och miljömedicin": "Arbets- & miljömedicin",
+  "Specialistläkare barn- och ungdomsallergologi": "Barnallergologi",
+  "Specialistläkare barn- och ungdomshematologi och onkologi": "Barnhematologi & onkologi",
+  "Specialistläkare barn- och ungdomskardiologi": "Barnkardiologi",
+  "Specialistläkare barn- och ungdomskirurgi": "Barnkirurgi",
+  "Specialistläkare barn- och ungdomsmedicin": "Barnmedicin",
+  "Specialistläkare barn- och ungdomsneurologi med habilitering": "Barnneurologi & habilitering",
+  "Specialistläkare barn- och ungdomspsykiatri": "Barn- & ungdomspsykiatri",
+  "Specialistläkare endokrinologi och diabetologi": "Endokrinologi & diabetes",
+  "Specialistläkare gynekologisk onkologi": "Gyn. onkologi",
+  "Specialistläkare hud- och könssjukdomar": "Hud & kön",
+  "Specialistläkare hörsel- och balansrubbningar": "Hörsel & balans",
+  "Specialistläkare klinisk immunologi och transfusionsmedicin": "Klinisk immunologi",
+  "Specialistläkare medicinsk gastroenterologi och hepatologi": "Gastroenterologi & hepatologi",
+  "Specialistläkare obstetrik och gynekologi": "Obstetrik & gynekologi",
+  "Specialistläkare röst- och talrubbningar": "Röst & tal",
+  "Specialistläkare öron-, näs- och halssjukdomar": "ÖNH",
+};
+
+const shortenDoctorLabel = (fullLabel: string, rawSpecialty: string): string => {
+  if (DISPLAY_LABEL_OVERRIDES[fullLabel]) return DISPLAY_LABEL_OVERRIDES[fullLabel];
+  // Default: strippa "Specialistläkare " och ersätt " och " med " & "
+  const stripped = rawSpecialty.replace(/\s+och\s+/g, " & ");
+  return stripped.charAt(0).toUpperCase() + stripped.slice(1);
+};
+
 
 const slugify = (s: string): string =>
   s
