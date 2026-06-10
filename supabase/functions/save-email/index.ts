@@ -46,10 +46,57 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
+    // SECURITY: prevent lead-email takeover. A save-email call may only set the
+    // email on a lead that does NOT yet have one (or already has the same email).
+    // If a lead already has an email or is linked to an auth user, the caller
+    // must be authenticated AS that user.
+    const { data: existingLead, error: leadFetchError } = await supabase
+      .from("leads")
+      .select("id, email, user_id")
+      .eq("id", lead_id)
+      .maybeSingle();
+
+    if (leadFetchError || !existingLead) {
+      return new Response(
+        JSON.stringify({ error: "Lead not found" }),
+        { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const normalizedEmail = String(email).toLowerCase().trim();
+    const existingEmail = existingLead.email ? String(existingLead.email).toLowerCase().trim() : null;
+    const leadHasOwner = !!existingLead.user_id || (!!existingEmail && existingEmail !== normalizedEmail);
+
+    if (leadHasOwner) {
+      // Require the caller to be authenticated and to own this lead.
+      const authHeader = req.headers.get("Authorization");
+      let callerUserId: string | null = null;
+      let callerEmail: string | null = null;
+      if (authHeader?.startsWith("Bearer ")) {
+        const anonClient = createClient(
+          Deno.env.get("SUPABASE_URL")!,
+          Deno.env.get("SUPABASE_ANON_KEY")!,
+          { global: { headers: { Authorization: authHeader } } }
+        );
+        const { data: userData } = await anonClient.auth.getUser();
+        callerUserId = userData?.user?.id ?? null;
+        callerEmail = userData?.user?.email?.toLowerCase() ?? null;
+      }
+      const ownsByUserId = !!callerUserId && existingLead.user_id === callerUserId;
+      const ownsByEmail = !!callerEmail && !!existingEmail && callerEmail === existingEmail;
+      if (!ownsByUserId && !ownsByEmail) {
+        console.warn(`[SECURITY] save-email takeover attempt blocked | lead_id=${lead_id} | ip=${clientIp}`);
+        return new Response(
+          JSON.stringify({ error: "Forbidden" }),
+          { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+    }
+
     // 1. Update lead with email (existing behavior)
     const { error: leadError } = await supabase
       .from("leads")
-      .update({ email })
+      .update({ email: normalizedEmail })
       .eq("id", lead_id);
 
     if (leadError) {
