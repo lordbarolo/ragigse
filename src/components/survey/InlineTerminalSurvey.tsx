@@ -329,8 +329,8 @@ export default function InlineTerminalSurvey({
   const isLight = variant === "light";
 
   const containerBg = isLight
-    ? "rounded-xl border border-[#E5E5E5] bg-white p-6 md:p-10 shadow-xl"
-    : "rounded-xl border border-[#2D2D2D] bg-[#1A1A1A] p-6 md:p-10 shadow-2xl";
+    ? "rounded-xl border border-[#E5E5E5] bg-white p-6 md:p-8 shadow-xl"
+    : "rounded-xl border border-[#2D2D2D] bg-[#1A1A1A] p-6 md:p-8 shadow-2xl";
   const progressTrackBg = isLight ? "bg-black/5" : "bg-white/5";
   const stepTextColor = isLight ? "text-[#1A1A1A]" : "text-white";
   const backBtnColor = isLight
@@ -353,7 +353,7 @@ export default function InlineTerminalSurvey({
           </div>
 
           {/* Step content (fixed min-height to avoid jump) */}
-          <div className={`relative font-sans ${stepTextColor} min-h-[280px]`}>
+          <div className={`relative font-sans ${stepTextColor} min-h-[240px]`}>
 
             <StepTransition stepKey={step} direction={direction}>
               {step === 1 && (
