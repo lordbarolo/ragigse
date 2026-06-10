@@ -72,16 +72,18 @@ export default function HeroInlineForm() {
               <button
                 key={o.slug}
                 type="button"
+                title={o.label}
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => handlePick(o.slug, o.label)}
-                className="w-full text-left px-3.5 py-2.5 text-[14px] text-[#0D0B2A] hover:bg-[#F2F1F8] transition-colors border-b border-[#E2E1EC]/60 last:border-b-0"
+                className="w-full text-left px-3.5 py-2.5 text-[14px] text-[#0D0B2A] hover:bg-[#F2F1F8] transition-colors border-b border-[#E2E1EC]/60 last:border-b-0 flex items-center gap-2"
               >
-                {o.label}
-                <span className="ml-2 text-[11px] text-[#6B6B85] uppercase tracking-wide">
+                <span className="truncate flex-1 min-w-0">{o.displayLabel}</span>
+                <span className="shrink-0 text-[11px] text-[#6B6B85] uppercase tracking-wide">
                   {o.category === "lakare" ? "Läkare" : "Sjuksköterska"}
                 </span>
               </button>
             ))}
+
           </div>
         )}
       </div>
