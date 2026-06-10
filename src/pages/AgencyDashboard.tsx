@@ -120,14 +120,10 @@ function AgencyOnboarding({ userId, onComplete }: { userId: string; onComplete: 
     setSearching(true);
     try {
       const { data, error } = await supabase
-        .from("organizations")
-        .select("id, name")
-        .eq("type", "staffing_agency")
-        .ilike("name", `%${searchQuery.trim()}%`)
-        .limit(10);
+        .rpc("search_staffing_agencies", { query: searchQuery.trim() });
 
       if (error) throw error;
-      setSearchResults(data || []);
+      setSearchResults((data as Array<{ id: string; name: string }> | null) || []);
     } catch {
       toast.error("Kunde inte söka");
     } finally {
