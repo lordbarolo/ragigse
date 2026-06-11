@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import CompcareLogo from "@/components/CompcareLogo";
 import InlineTerminalSurvey from "@/components/survey/InlineTerminalSurvey";
+import RoleCarousel from "@/components/landing/RoleCarousel";
 import AnthropicScope from "@/components/demo/AnthropicScope";
 import { SEO } from "@/components/SEO";
 import { trackEvent } from "@/lib/trackEvent";
@@ -103,6 +104,10 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        <RoleCarousel />
+
+
 
       </div>
     </AnthropicScope>
