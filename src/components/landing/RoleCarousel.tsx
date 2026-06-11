@@ -62,10 +62,7 @@ function RoleCard({ card }: { card: Card }) {
         {card.short}
       </div>
       <div className="mt-3 flex items-baseline gap-1">
-        <span
-          className="text-2xl font-bold text-[#534AB7]"
-          style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-        >
+        <span className="font-editorial text-2xl font-bold text-[#534AB7]">
           {fmt(card.price)}
         </span>
         <span className="text-xs text-black/50">kr/h</span>
@@ -90,10 +87,7 @@ export default function RoleCarousel() {
             <p className="text-[11px] font-mono uppercase tracking-wider text-black/45 mb-1">
               SKR ramavtal 2026 · Kundpris per zon
             </p>
-            <h2
-              className="text-xl md:text-2xl font-bold text-black"
-              style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-            >
+            <h2 className="font-editorial text-xl md:text-2xl font-bold text-black">
               Vad regionerna faktiskt betalar
             </h2>
           </div>
