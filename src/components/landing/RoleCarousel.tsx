@@ -58,11 +58,16 @@ function RoleCard({ card }: { card: Card }) {
         </span>
         <span className="text-[10px] text-black/35">{card.zoneHint}</span>
       </div>
-      <div className="text-sm font-semibold text-black leading-snug min-h-[40px]">
+      <div className="text-sm font-semibold text-black leading-snug min-h-[40px] font-sans">
         {card.short}
       </div>
       <div className="mt-3 flex items-baseline gap-1">
-        <span className="text-2xl font-bold text-[#534AB7] tracking-tight">{fmt(card.price)}</span>
+        <span
+          className="text-2xl font-bold text-[#534AB7]"
+          style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
+        >
+          {fmt(card.price)}
+        </span>
         <span className="text-xs text-black/50">kr/h</span>
       </div>
       <div className="mt-1 text-[10px] text-black/40">Kundpris · SKR 2026</div>
@@ -85,7 +90,10 @@ export default function RoleCarousel() {
             <p className="text-[11px] font-mono uppercase tracking-wider text-black/45 mb-1">
               SKR ramavtal 2026 · Kundpris per zon
             </p>
-            <h2 className="text-xl md:text-2xl font-bold text-black tracking-tight">
+            <h2
+              className="text-xl md:text-2xl font-bold text-black"
+              style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
+            >
               Vad regionerna faktiskt betalar
             </h2>
           </div>
