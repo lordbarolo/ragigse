@@ -551,10 +551,9 @@ function Step({
     <div className="space-y-5">
       <div className="space-y-1.5">
         <h2
-          className={`text-xl sm:text-2xl font-semibold ${
+          className={`font-editorial text-xl sm:text-2xl font-semibold ${
             isLight ? "text-[#1A1A1A]" : "text-white"
           }`}
-          style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
         >
           {question}
         </h2>
