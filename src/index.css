@@ -175,6 +175,11 @@
 }
 
 @layer utilities {
+  .font-editorial {
+    font-family: Georgia, 'Times New Roman', serif !important;
+    letter-spacing: 0;
+  }
+
   .hero-dark {
     background-color: hsl(var(--hero-bg));
     color: hsl(var(--hero-fg));
