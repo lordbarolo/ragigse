@@ -375,6 +375,13 @@ export default function InlineTerminalSurvey({
                       window.setTimeout(() => setStep(isBarnmorska ? 3 : 2), 200);
                     }}
                   />
+                  <p
+                    className={`mt-4 text-[11px] text-center ${
+                      isLight ? "text-[#9CA3AF]" : "text-white/40"
+                    }`}
+                  >
+                    Anonymt · Kostnadsfritt · Klart på 60 sekunder
+                  </p>
                 </Step>
               )}
 
