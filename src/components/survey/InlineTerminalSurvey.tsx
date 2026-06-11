@@ -375,6 +375,13 @@ export default function InlineTerminalSurvey({
                       window.setTimeout(() => setStep(isBarnmorska ? 3 : 2), 200);
                     }}
                   />
+                  <p
+                    className={`mt-4 text-[11px] text-center ${
+                      isLight ? "text-[#9CA3AF]" : "text-white/40"
+                    }`}
+                  >
+                    Anonymt · Kostnadsfritt · Klart på 60 sekunder
+                  </p>
                 </Step>
               )}
 
@@ -682,6 +689,14 @@ function RoleCategoryCards({
     { value: "barnmorska", label: "Barnmorska" },
   ];
 
+  const [showOther, setShowOther] = useState(false);
+  const [otherRole, setOtherRole] = useState("");
+  const [otherEmail, setOtherEmail] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [done, setDone] = useState(false);
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(otherEmail.trim());
+  const canSubmit = otherRole.trim().length > 1 && emailValid && !submitting;
+
   const inactive = isLight
     ? "border-[#E5E5E5] bg-white hover:border-[#534AB7]/40 hover:bg-[#FAFAFA]"
     : "border-white/10 bg-white/[0.03] hover:border-violet-400/40 hover:bg-white/[0.06]";
@@ -689,6 +704,33 @@ function RoleCategoryCards({
     ? "border-[#534AB7] bg-violet-50"
     : "border-violet-400 bg-violet-500/10";
   const titleColor = isLight ? "text-[#1A1A1A]" : "text-white";
+  const mutedTitle = isLight ? "text-[#6B7280]" : "text-white/60";
+  const inputClass = isLight
+    ? "w-full h-11 border border-[#E5E5E5] bg-[#FAFAFA] text-[#1A1A1A] placeholder:text-[#9CA3AF] rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#534AB7] focus:bg-white"
+    : "w-full h-11 border border-white/10 bg-white/[0.04] text-white placeholder:text-white/30 rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#534AB7]";
+
+  const submitOther = async () => {
+    if (!canSubmit) return;
+    setSubmitting(true);
+    try {
+      await supabase.from("leads").insert({
+        email: otherEmail.trim().toLowerCase(),
+        employment_type: "okand",
+        yrke: `Annan: ${otherRole.trim()}`,
+        source: "other_role_request",
+      });
+      trackEvent("other_role_requested", {
+        role: otherRole.trim(),
+        surface: "inline_terminal",
+      });
+      setDone(true);
+    } catch (err) {
+      console.error("[other-role] insert failed", err);
+      setDone(true);
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   return (
     <div className="space-y-3">
@@ -706,6 +748,68 @@ function RoleCategoryCards({
             </span>
           </button>
         ))}
+
+        {!showOther ? (
+          <button
+            onClick={() => setShowOther(true)}
+            className={`w-full text-left rounded-lg border border-dashed px-5 py-3 transition-all ${
+              isLight
+                ? "border-[#D4D4D4] bg-transparent hover:border-[#534AB7]/40 hover:bg-[#FAFAFA]"
+                : "border-white/15 hover:border-violet-400/40 hover:bg-white/[0.04]"
+            }`}
+          >
+            <span className={`font-sans text-sm font-medium ${mutedTitle}`}>
+              + Annan yrkesgrupp
+            </span>
+          </button>
+        ) : (
+          <div
+            className={`rounded-lg border px-4 py-4 space-y-3 ${
+              isLight ? "border-[#E5E5E5] bg-[#FAFAFA]" : "border-white/10 bg-white/[0.04]"
+            }`}
+          >
+            {done ? (
+              <p className={`text-sm ${titleColor}`}>
+                Tack! Vi hör av oss när vi har data för din roll.
+              </p>
+            ) : (
+              <>
+                <p className={`text-xs leading-relaxed ${mutedTitle}`}>
+                  Vi släpper nya yrkesgrupper löpande. Säg vilken roll du jobbar i — vi hör av oss när vi har marknadsdata för den.
+                </p>
+                <input
+                  type="text"
+                  placeholder="Din roll (t.ex. fysioterapeut)"
+                  value={otherRole}
+                  onChange={(e) => setOtherRole(e.target.value)}
+                  className={inputClass}
+                />
+                <input
+                  type="email"
+                  inputMode="email"
+                  autoComplete="email"
+                  placeholder="namn@exempel.se"
+                  value={otherEmail}
+                  onChange={(e) => setOtherEmail(e.target.value)}
+                  className={inputClass}
+                />
+                <button
+                  onClick={submitOther}
+                  disabled={!canSubmit}
+                  className={`w-full h-11 rounded-lg text-sm font-semibold transition-all ${
+                    canSubmit
+                      ? "bg-gradient-to-r from-violet-500 to-fuchsia-500 text-white"
+                      : isLight
+                      ? "bg-[#F5F5F5] text-[#9CA3AF] cursor-not-allowed"
+                      : "bg-white/10 text-white/40 cursor-not-allowed"
+                  }`}
+                >
+                  {submitting ? "Skickar…" : "Meddela mig"}
+                </button>
+              </>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
