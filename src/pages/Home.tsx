@@ -51,14 +51,6 @@ export default function Home() {
             <CompcareLogo variant="full" inverted={false} />
           </Link>
           <div className="flex items-center gap-2 sm:gap-3">
-            <Link to="/registrera">
-              <button
-                className="text-sm hover:opacity-90 transition-opacity"
-                style={{ backgroundColor: "transparent", color: "#3D3491", border: "1px solid #3D3491", borderRadius: "6px", padding: "8px 16px" }}
-              >
-                Kom igång gratis
-              </button>
-            </Link>
             <Link to="/logga-in">
               <button
                 className="text-sm text-black hover:bg-black/5 transition-colors"
@@ -93,9 +85,6 @@ export default function Home() {
               </h1>
               <p className="font-sans text-lg sm:text-xl text-black/75 leading-relaxed mb-2 max-w-[460px]">
                 Se regionens pris, bolagets marginal och din ersättning.
-              </p>
-              <p className="mt-4 text-[12px] text-black/50">
-                Anonymt · Kostnadsfritt · Klart på 60 sekunder
               </p>
             </div>
 
