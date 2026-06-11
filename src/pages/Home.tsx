@@ -80,17 +80,11 @@ export default function Home() {
                 heroCollapsed ? "hidden" : "flex"
               }`}
             >
-              <h1
-                className="font-bold leading-[1.05] text-black mb-5 text-[34px] sm:text-5xl md:text-[64px]"
-                style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-              >
+              <h1 className="font-editorial font-bold leading-[1.05] text-black mb-5 text-[34px] sm:text-5xl md:text-[64px]">
                 Vet du vad du<br />
                 <span className="text-gradient-violet text-black">är värd?</span>
               </h1>
-              <p
-                className="text-lg sm:text-xl text-black/75 leading-relaxed mb-2 max-w-[460px]"
-                style={{ fontFamily: "Georgia, 'Times New Roman', serif" }}
-              >
+              <p className="font-editorial text-lg sm:text-xl text-black/75 leading-relaxed mb-2 max-w-[460px]">
                 Se regionens pris, bolagets marginal och din ersättning.
               </p>
             </div>
