@@ -105,11 +105,11 @@ export default function RoleCarousel() {
               SKR ramavtal 2026 · Konsultersättning per zon
             </p>
             <h2 className="font-editorial text-xl md:text-2xl font-bold text-black">
-              Vad regionerna faktiskt betalar
+              Vad konsulten faktiskt får
             </h2>
           </div>
           <p className="text-sm text-black/55 max-w-[380px]">
-            Exempel från 15 av de mest sökta rollerna. Din egen analys visar samma siffror för din kommun och roll.
+            Exempel från 15 av de mest sökta rollerna — kundpris minus typisk bemanningsmarginal (12% läkare · 17% sjuksköterskor).
           </p>
         </div>
       </div>
