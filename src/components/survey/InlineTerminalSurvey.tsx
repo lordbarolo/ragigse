@@ -375,8 +375,8 @@ export default function InlineTerminalSurvey({
                       window.setTimeout(() => setStep(isBarnmorska ? 3 : 2), 200);
                     }}
                   />
-                  <p
-                    className={`mt-4 text-[11px] text-center ${
+                    <p
+                      className={`mt-4 text-[11px] text-center font-sans ${
                       isLight ? "text-[#9CA3AF]" : "text-white/40"
                     }`}
                   >
@@ -551,7 +551,7 @@ function Step({
     <div className="space-y-5">
       <div className="space-y-1.5">
         <h2
-          className={`text-xl sm:text-2xl font-semibold tracking-tight ${
+          className={`font-editorial text-xl sm:text-2xl font-semibold ${
             isLight ? "text-[#1A1A1A]" : "text-white"
           }`}
         >
@@ -559,7 +559,7 @@ function Step({
         </h2>
         {subtitle && (
           <div
-            className={`text-sm leading-relaxed ${
+            className={`text-sm leading-relaxed font-sans ${
               isLight ? "text-[#6B7280]" : "text-white/50"
             }`}
           >
