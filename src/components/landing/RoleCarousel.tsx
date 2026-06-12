@@ -136,10 +136,8 @@ export default function RoleCarousel() {
           to   { transform: translateX(-50%); }
         }
         .animate-marquee {
-          /* Speed: ~3.5s for a card to cross a 1200px viewport (≈343 px/s).
-             Total loop = 2× 45 cards (~240px + 12px gap) ≈ 22 680px,
-             half-loop = 11 340px → 11 340 / 343 ≈ 33s. */
-          animation: marquee 33s linear infinite;
+          /* Snabbare svep: ~1.4s/kort över 1200px viewport. */
+          animation: marquee 14s linear infinite;
         }
         .animate-marquee:hover {
           animation-play-state: paused;
