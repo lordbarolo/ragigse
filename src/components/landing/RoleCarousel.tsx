@@ -123,7 +123,7 @@ export default function RoleCarousel() {
             "linear-gradient(to right, transparent, black 6%, black 94%, transparent)",
         }}
       >
-        <div className="flex gap-3 animate-marquee whitespace-nowrap will-change-transform">
+        <div className="flex w-max gap-3 animate-marquee whitespace-nowrap will-change-transform">
           {loop.map((c, i) => (
             <RoleCard key={`${c.role}-${c.zoneLabel}-${i}`} card={c} />
           ))}
@@ -136,8 +136,9 @@ export default function RoleCarousel() {
           to   { transform: translateX(-50%); }
         }
         .animate-marquee {
-          /* Snabbare svep: ~1.4s/kort över 1200px viewport. */
-          animation: marquee 14s linear infinite;
+          /* Spåret är ~11 300px brett (45 kort). 20s ⇒ ~565 px/s,
+             vilket ger max ~3s i bild per kort även på breda skärmar. */
+          animation: marquee 20s linear infinite;
         }
         .animate-marquee:hover {
           animation-play-state: paused;
