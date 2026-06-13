@@ -40,7 +40,8 @@ interface Card {
   short: string;
   zoneLabel: string;
   zoneHint: string;
-  consultantRate: number;
+  consultantRate: number;   // företagare (kundpris – marginal)
+  employeeRate: number;   // löntagare bruttolön/h
   marginPct: number;
 }
 
