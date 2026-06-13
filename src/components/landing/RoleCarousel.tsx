@@ -117,8 +117,14 @@ function RoleCard({ card }: { card: Card }) {
 }
 
 export default function RoleCarousel() {
-  // Duplicate cards so the infinite marquee loops seamlessly
-  const loop = [...CARDS, ...CARDS];
+  // Shuffle so cards appear in random order, but never two cards with the
+  // same role back-to-back. Duplicate for seamless marquee, also avoiding
+  // a same-role collision at the loop seam.
+  const shuffled = shuffleNoAdjacentRole(CARDS);
+  const loop =
+    shuffled.length > 1 && shuffled[0].role === shuffled[shuffled.length - 1].role
+      ? [...shuffled, ...rotateUntilDifferent(shuffled, shuffled[shuffled.length - 1].role)]
+      : [...shuffled, ...shuffled];
 
   return (
     <section
