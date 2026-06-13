@@ -49,16 +49,22 @@ function roundTo5(n: number) {
   return Math.round(n / 5) * 5;
 }
 
+const EMPLOYER_FACTOR = 1.42;
+
 const CARDS: Card[] = ROLES.flatMap((r) => {
   const margin = MARGIN[r.kind];
-  return r.prices.map((p, i) => ({
-    role: r.name,
-    short: r.short,
-    zoneLabel: ZONE_LABELS[i],
-    zoneHint: ZONE_HINTS[i],
-    consultantRate: roundTo5(p * (1 - margin)),
-    marginPct: Math.round(margin * 100),
-  }));
+  return r.prices.map((p, i) => {
+    const consultantRate = roundTo5(p * (1 - margin));
+    return {
+      role: r.name,
+      short: r.short,
+      zoneLabel: ZONE_LABELS[i],
+      zoneHint: ZONE_HINTS[i],
+      consultantRate,
+      employeeRate: roundTo5(consultantRate / EMPLOYER_FACTOR),
+      marginPct: Math.round(margin * 100),
+    };
+  });
 });
 
 function fmt(n: number) {
