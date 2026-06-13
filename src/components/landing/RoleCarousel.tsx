@@ -40,7 +40,8 @@ interface Card {
   short: string;
   zoneLabel: string;
   zoneHint: string;
-  consultantRate: number;
+  consultantRate: number;   // företagare (kundpris – marginal)
+  employeeRate: number;   // löntagare bruttolön/h
   marginPct: number;
 }
 
@@ -48,16 +49,22 @@ function roundTo5(n: number) {
   return Math.round(n / 5) * 5;
 }
 
+const EMPLOYER_FACTOR = 1.42;
+
 const CARDS: Card[] = ROLES.flatMap((r) => {
   const margin = MARGIN[r.kind];
-  return r.prices.map((p, i) => ({
-    role: r.name,
-    short: r.short,
-    zoneLabel: ZONE_LABELS[i],
-    zoneHint: ZONE_HINTS[i],
-    consultantRate: roundTo5(p * (1 - margin)),
-    marginPct: Math.round(margin * 100),
-  }));
+  return r.prices.map((p, i) => {
+    const consultantRate = roundTo5(p * (1 - margin));
+    return {
+      role: r.name,
+      short: r.short,
+      zoneLabel: ZONE_LABELS[i],
+      zoneHint: ZONE_HINTS[i],
+      consultantRate,
+      employeeRate: roundTo5(consultantRate / EMPLOYER_FACTOR),
+      marginPct: Math.round(margin * 100),
+    };
+  });
 });
 
 function fmt(n: number) {
@@ -67,23 +74,43 @@ function fmt(n: number) {
 function RoleCard({ card }: { card: Card }) {
   return (
     <div className="shrink-0 w-[220px] md:w-[240px] rounded-xl border border-black/10 bg-white p-4 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_6px_20px_rgba(83,74,183,0.12)] hover:border-[#534AB7]/30 transition-all">
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex items-center justify-between mb-2">
         <span className="text-[10px] font-mono uppercase tracking-wider text-black/45">
           {card.zoneLabel}
         </span>
         <span className="text-[10px] text-black/35">{card.zoneHint}</span>
       </div>
-      <div className="text-sm font-semibold text-black leading-snug min-h-[40px] font-sans">
+      <div className="text-sm font-semibold text-black leading-snug min-h-[36px] font-sans">
         {card.short}
       </div>
-      <div className="mt-3 flex items-baseline gap-1">
-        <span className="font-editorial text-2xl font-bold text-[#534AB7]">
-          {fmt(card.consultantRate)}
+
+      {/* Företagare */}
+      <div className="mt-3">
+        <span className="text-[10px] font-medium uppercase tracking-wider text-[#534AB7]/80">
+          Företagare
         </span>
-        <span className="text-xs text-black/50">kr/h</span>
+        <div className="flex items-baseline gap-1">
+          <span className="font-editorial text-2xl font-bold text-[#534AB7]">
+            {fmt(card.consultantRate)}
+          </span>
+          <span className="text-xs text-black/50">kr/h</span>
+        </div>
       </div>
-      <div className="mt-1 text-[10px] text-black/40">
-        Konsultersättning · efter {card.marginPct}% marginal
+
+      {/* Löntagare */}
+      <div className="mt-2 pt-2 border-t border-black/[0.06]">
+        <span className="text-[10px] font-medium uppercase tracking-wider text-black/40">
+          Löntagare
+        </span>
+        <div className="flex items-baseline gap-1">
+          <span className="font-editorial text-xl font-bold text-black/80">
+            {fmt(card.employeeRate)}
+          </span>
+          <span className="text-xs text-black/40">kr/h</span>
+        </div>
+        <div className="text-[10px] text-black/30 mt-0.5">
+          Bruttolön · efter {card.marginPct}% marginal
+        </div>
       </div>
     </div>
   );
