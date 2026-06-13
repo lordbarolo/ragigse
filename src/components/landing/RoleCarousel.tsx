@@ -136,9 +136,8 @@ export default function RoleCarousel() {
           to   { transform: translateX(-50%); }
         }
         .animate-marquee {
-          /* Spåret är ~11 300px brett (45 kort). 20s ⇒ ~565 px/s,
-             vilket ger max ~3s i bild per kort även på breda skärmar. */
-          animation: marquee 20s linear infinite;
+          /* 45 unika kort × 3s per kort = 135s för ett helt varv. */
+          animation: marquee 135s linear infinite;
         }
         .animate-marquee:hover {
           animation-play-state: paused;
