@@ -109,8 +109,18 @@ function rotateUntilDifferent(cards: Card[], prevRole: string): Card[] {
 }
 
 function RoleCard({ card }: { card: Card }) {
+  const handleClick = () => {
+    const el = document.getElementById("analys");
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   return (
-    <div className="shrink-0 w-[220px] md:w-[240px] rounded-xl border border-black/10 bg-white p-4 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_6px_20px_rgba(83,74,183,0.12)] hover:border-[#534AB7]/30 transition-all">
+    <div
+      onClick={handleClick}
+      className="shrink-0 w-[220px] md:w-[240px] rounded-xl border border-black/10 bg-white p-4 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_6px_20px_rgba(83,74,183,0.12)] hover:border-[#534AB7]/30 transition-all cursor-pointer"
+    >
       <div className="flex items-center justify-between mb-2">
         <span className="text-[10px] font-mono uppercase tracking-wider text-black/45">
           {card.zoneLabel}
