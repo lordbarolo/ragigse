@@ -71,6 +71,43 @@ function fmt(n: number) {
   return n.toLocaleString("sv-SE");
 }
 
+/**
+ * Fisher–Yates shuffle, then a greedy pass that swaps any element which
+ * would otherwise sit next to another card with the same `role`. Falls back
+ * to the shuffled order if no valid swap exists (extremely unlikely with
+ * 45 cards × 15 roles).
+ */
+function shuffleNoAdjacentRole(cards: Card[]): Card[] {
+  const arr = [...cards];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  for (let i = 1; i < arr.length; i++) {
+    if (arr[i].role !== arr[i - 1].role) continue;
+    for (let k = i + 1; k < arr.length; k++) {
+      if (arr[k].role !== arr[i - 1].role && (i + 1 >= arr.length || arr[k].role !== arr[i + 1].role)) {
+        [arr[i], arr[k]] = [arr[k], arr[i]];
+        break;
+      }
+    }
+  }
+  return arr;
+}
+
+/**
+ * Returns a copy of the list rotated by the smallest offset so that the
+ * first element has a different role than `prevRole`.
+ */
+function rotateUntilDifferent(cards: Card[], prevRole: string): Card[] {
+  for (let i = 0; i < cards.length; i++) {
+    if (cards[i].role !== prevRole) {
+      return [...cards.slice(i), ...cards.slice(0, i)];
+    }
+  }
+  return [...cards];
+}
+
 function RoleCard({ card }: { card: Card }) {
   return (
     <div className="shrink-0 w-[220px] md:w-[240px] rounded-xl border border-black/10 bg-white p-4 shadow-[0_2px_8px_rgba(0,0,0,0.04)] hover:shadow-[0_6px_20px_rgba(83,74,183,0.12)] hover:border-[#534AB7]/30 transition-all">
