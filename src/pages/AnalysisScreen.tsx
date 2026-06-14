@@ -326,13 +326,10 @@ export default function AnalysisScreen() {
               return (
                 <div>
                   <p className="text-[12px] text-foreground/55 mb-1">
-                    Skillnad mellan din ersättning och bemanningsbolagets smärtgräns
+                    Möjlig ökning per månad
                   </p>
                   <p className="font-display text-[32px] font-extrabold tracking-tight text-[hsl(var(--green))] leading-none">
                     {fmt(diffMonthly)} <span className="text-[20px] font-bold">kr/månad</span>
-                  </p>
-                  <p className="text-[13px] text-foreground/45 font-mono mt-2">
-                    {fmt(comparison.recMax)}−{fmt(comparison.currentHourly)} = {fmt(diffHourly)} kr/h · × 167 h
                   </p>
                 </div>
               );
