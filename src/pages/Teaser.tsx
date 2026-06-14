@@ -23,6 +23,7 @@ import EmailHookMessage from "@/components/teaser/EmailHookMessage";
 import ReportPreviewList from "@/components/teaser/ReportPreviewList";
 import MethodologyDisclosure from "@/components/teaser/MethodologyDisclosure";
 import PossibleCompensationInfo from "@/components/PossibleCompensationInfo";
+import { SEO } from "@/components/SEO";
 
 /** Teaser page — orchestrator for the results preview */
 export default function Teaser() {
@@ -269,7 +270,12 @@ export default function Teaser() {
     );
   }
 
+  const teaserTitle = `${survey.yrke || "Vårdkonsult"} – din löneanalys`.slice(0, 60);
+  const teaserDesc = `Jämför din ersättning som ${survey.yrke || "vårdkonsult"} i ${survey.kommun || "Sverige"} mot SKR-ramavtalet.`.slice(0, 160);
+
   return (
+    <>
+      <SEO title={teaserTitle} description={teaserDesc} path={`/resultat/${urlLeadId ?? leadId}`} />
     <div
       className="min-h-screen"
       style={{
