@@ -142,7 +142,7 @@ export default function Report() {
         color: '#0A0A0A',
       }}
     >
-      <Navbar />
+      <div data-pdf-hide><Navbar /></div>
       {/* Header — cream light theme */}
       <header
         className="relative overflow-hidden px-5 pt-20 pb-10 sm:pt-24 sm:pb-12"
