@@ -334,9 +334,6 @@ export default function AnalysisScreen() {
                   <p className="text-[13px] text-foreground/45 font-mono mt-2">
                     {fmt(comparison.recMax)}−{fmt(comparison.currentHourly)} = {fmt(diffHourly)} kr/h · × 167 h
                   </p>
-                  <p className="text-[12px] text-foreground/40 mt-2 leading-relaxed">
-                    {fmt(comparison.recMax)} kr/h är övre gränsen för möjlig ersättning — bemanningsbolagets "smärtgräns". {fmt(comparison.currentHourly)} kr/h är din nuvarande timersättning. 167 är antalet arbetstimmar per månad.
-                  </p>
                 </div>
               );
             })()}
