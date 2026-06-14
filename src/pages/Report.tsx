@@ -26,6 +26,8 @@ export default function Report() {
   const { user } = useAuth();
   const [report, setReport] = useState<ReportData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [exportingPdf, setExportingPdf] = useState(false);
+  const printableRef = useRef<HTMLDivElement | null>(null);
 
   const reportViewedRef = useRef(false);
 
