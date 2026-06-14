@@ -16,6 +16,7 @@ import type { ReportData } from "@/shared/types";
 import ConsultantTrackContent from "@/components/report/ConsultantTrackContent";
 import ReportFlowIndicator from "@/components/report/ReportFlowIndicator";
 import PossibleCompensationInfo from "@/components/PossibleCompensationInfo";
+import { SEO } from "@/components/SEO";
 
 
 
@@ -109,7 +110,12 @@ export default function Report() {
   const isEmployee = report.employment_type === "anstalld";
   const isFriendCoupon = getCouponCode()?.toLowerCase() === "vänner500";
 
+  const seoTitle = `${report.occupation || "Vårdkonsult"} – lön & ramavtal ${report.kommun || ""}`.trim().slice(0, 60);
+  const seoDesc = `Rapport för ${report.occupation || "vårdkonsult"} i ${report.kommun || "Sverige"}: jämför din ersättning mot SKR-ramavtalet. Anonymt och kostnadsfritt.`.slice(0, 160);
+
   return (
+    <>
+      <SEO title={seoTitle} description={seoDesc} path={`/rapport/${reportId}`} ogType="article" />
     <div
       className="min-h-screen"
       style={{
@@ -297,5 +303,6 @@ export default function Report() {
         </div>
       </main>
     </div>
+    </>
   );
 }
