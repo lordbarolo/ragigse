@@ -39,12 +39,6 @@ export default function Hero() {
         </h1>
 
         <p
-          className="text-foreground/75 font-medium leading-snug max-w-[580px] mx-auto text-base md:text-lg mt-3"
-        >
-          En sjuksköterska som förhandlar sin konsultersättning utifrån senaste regionslön kan gå miste om 20 000–30 000 kr per månad.
-        </p>
-
-        <p
           className="text-foreground/55 font-light leading-relaxed max-w-[520px] mx-auto text-xl md:text-[22px] mt-3"
         >
           Gör löneanalysen och ta del av marknadens faktiska villkor. Baserat på över 20 000 offentliga avtal från 290 kommuner och 21 regioner.
