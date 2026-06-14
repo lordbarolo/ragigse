@@ -363,5 +363,6 @@ export default function Teaser() {
         <MethodologyDisclosure variant="teaser" />
       </main>
     </div>
+    </>
   );
 }

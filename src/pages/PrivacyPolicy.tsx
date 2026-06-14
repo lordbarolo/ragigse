@@ -265,6 +265,7 @@ const PrivacyPolicy = () => {
         <p>© 2026 CompCare.se</p>
       </footer>
     </div>
+    </>
   );
 };
 
