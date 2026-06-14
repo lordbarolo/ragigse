@@ -319,21 +319,6 @@ export default function AnalysisScreen() {
               </p>
             </div>
 
-            {/* Skillnad mot bemanningsbolagets smärtgräns (recMax) */}
-            {(() => {
-              const diffHourly = Math.max(0, comparison.recMax - comparison.currentHourly);
-              const diffMonthly = diffHourly * 167;
-              return (
-                <div>
-                  <p className="text-[12px] text-foreground/55 mb-1">
-                    Möjlig ökning per månad
-                  </p>
-                  <p className="font-display text-[32px] font-extrabold tracking-tight text-[hsl(var(--green))] leading-none">
-                    {fmt(diffMonthly)} <span className="text-[20px] font-bold">kr/månad</span>
-                  </p>
-                </div>
-              );
-            })()}
 
             {/* Beräkningsantaganden */}
             <div className="pt-6 border-t border-foreground/10">
