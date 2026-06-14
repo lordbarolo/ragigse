@@ -303,5 +303,6 @@ export default function Report() {
         </div>
       </main>
     </div>
+    </>
   );
 }
