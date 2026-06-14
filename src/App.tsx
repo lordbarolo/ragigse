@@ -19,6 +19,7 @@ const Home = lazy(() => import("./pages/Home"));
 const AnalysisScreen = lazy(() => import("./pages/AnalysisScreen"));
 const Report = lazy(() => import("./pages/Report"));
 const AnestesiReport = lazy(() => import("./pages/AnestesiReport"));
+const BollnasAllmanspecialistReport = lazy(() => import("./pages/BollnasAllmanspecialistReport"));
 const Campaign = lazy(() => import("./pages/Campaign"));
 
 const Admin = lazy(() => import("./pages/Admin"));
@@ -85,6 +86,8 @@ const App = () => (
               <Route path="/" element={<Home />} />
               <Route path="/resultat/:leadId" element={<AnalysisScreen />} />
               <Route path="/rapport/anestesisjukskoterska" element={<AnestesiReport />} />
+              <Route path="/Bollnas/lakare-alm" element={<BollnasAllmanspecialistReport />} />
+              <Route path="/bollnas/lakare-alm" element={<BollnasAllmanspecialistReport />} />
               <Route path="/rapport/:reportId" element={<Report />} />
               <Route path="/kampanj/:role" element={<Campaign />} />
 
