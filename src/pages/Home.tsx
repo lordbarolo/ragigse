@@ -87,9 +87,6 @@ export default function Home() {
               <p className="font-editorial text-lg sm:text-xl text-black/75 leading-relaxed mb-2 max-w-[460px]">
                 Se regionens pris, bolagets marginal och din ersättning.
               </p>
-              <p className="text-black/65 font-medium leading-snug max-w-[460px] text-sm sm:text-base mt-3">
-                En sjuksköterska som förhandlar sin konsultersättning utifrån senaste regionslön kan gå miste om 20 000–30 000 kr per månad.
-              </p>
             </div>
 
             {/* Mobil: tunn kollapsad rad när wizarden startat */}
