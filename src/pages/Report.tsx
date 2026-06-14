@@ -239,7 +239,7 @@ export default function Report() {
 
         {/* Skapa konto-CTA (visas endast för icke-inloggade) */}
         {!user && (
-          <div className="rounded-2xl border p-5 mt-4" style={{ backgroundColor: '#FFFFFF', borderColor: '#E0DBD3' }}>
+          <div data-pdf-hide className="rounded-2xl border p-5 mt-4" style={{ backgroundColor: '#FFFFFF', borderColor: '#E0DBD3' }}>
             <h3 className="font-semibold mb-1" style={{ fontFamily: 'Georgia, serif', fontSize: '18px', color: '#0A0A0A' }}>
               Spara din rapport
             </h3>
