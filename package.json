@@ -47,6 +47,8 @@
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",
     "framer-motion": "^12.38.0",
+    "html2canvas-pro": "^2.0.4",
+    "jspdf": "^4.2.1",
     "lucide-react": "0.462.0",
     "posthog-js": "^1.359.1",
     "react": "^18.3.1",
