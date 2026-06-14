@@ -259,33 +259,73 @@ export default function Report() {
         )}
 
         {/* Utility actions */}
-        <div className="flex gap-3 pt-2">
+        <div className="flex gap-3 pt-2" data-pdf-hide>
           {!isFriendCoupon && (
-            <Button variant="outline" className="flex-1 gap-2 h-12 rounded-xl border-border/50 hover:border-border" onClick={async () => {
-              try {
-                const { data, error } = await supabase.functions.invoke("generate-pdf", {
-                  body: { report_id: report.id },
-                });
-                if (error || !data?.pdf_base64) {
+            <Button
+              variant="outline"
+              disabled={exportingPdf}
+              className="flex-1 gap-2 h-12 rounded-xl border-border/50 hover:border-border"
+              onClick={async () => {
+                if (!printableRef.current || exportingPdf) return;
+                setExportingPdf(true);
+                try {
+                  const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
+                    import("html2canvas-pro"),
+                    import("jspdf"),
+                  ]);
+
+                  const node = printableRef.current;
+                  const hidden = node.querySelectorAll<HTMLElement>("[data-pdf-hide]");
+                  hidden.forEach((el) => (el.style.visibility = "hidden"));
+
+                  // Wait a tick for any pending layout / images
+                  await new Promise((r) => setTimeout(r, 50));
+
+                  const canvas = await html2canvas(node, {
+                    backgroundColor: "#EEEBE4",
+                    scale: 2,
+                    useCORS: true,
+                    logging: false,
+                    windowWidth: node.scrollWidth,
+                  });
+
+                  hidden.forEach((el) => (el.style.visibility = ""));
+
+                  const pdf = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
+                  const pageW = pdf.internal.pageSize.getWidth();
+                  const pageH = pdf.internal.pageSize.getHeight();
+                  const imgW = pageW;
+                  const imgH = (canvas.height * imgW) / canvas.width;
+
+                  let heightLeft = imgH;
+                  let position = 0;
+                  const imgData = canvas.toDataURL("image/jpeg", 0.92);
+
+                  pdf.addImage(imgData, "JPEG", 0, position, imgW, imgH, undefined, "FAST");
+                  heightLeft -= pageH;
+                  while (heightLeft > 0) {
+                    position = heightLeft - imgH;
+                    pdf.addPage();
+                    pdf.addImage(imgData, "JPEG", 0, position, imgW, imgH, undefined, "FAST");
+                    heightLeft -= pageH;
+                  }
+
+                  const safeOcc = (report.occupation || "rapport").replace(/[^a-z0-9åäö]+/gi, "_");
+                  pdf.save(`CompCare_${safeOcc}.pdf`);
+                  trackEvent("pdf_downloaded", { report_id: report.id });
+                } catch (e) {
+                  console.error("PDF export failed", e);
                   window.print();
-                  return;
+                } finally {
+                  setExportingPdf(false);
                 }
-                const byteChars = atob(data.pdf_base64);
-                const byteArray = new Uint8Array(byteChars.length);
-                for (let i = 0; i < byteChars.length; i++) byteArray[i] = byteChars.charCodeAt(i);
-                const blob = new Blob([byteArray], { type: "application/pdf" });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = data.filename || "CompCare_Rapport.pdf";
-                a.click();
-                URL.revokeObjectURL(url);
-                trackEvent("pdf_downloaded", { report_id: report.id });
-              } catch {
-                window.print();
-              }
-            }}>
-              <Download className="w-4 h-4" /> PDF
+              }}
+            >
+              {exportingPdf ? (
+                <><Loader2 className="w-4 h-4 animate-spin" /> Genererar PDF…</>
+              ) : (
+                <><Download className="w-4 h-4" /> PDF</>
+              )}
             </Button>
           )}
         </div>
