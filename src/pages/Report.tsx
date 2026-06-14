@@ -119,6 +119,7 @@ export default function Report() {
     <>
       <SEO title={seoTitle} description={seoDesc} path={`/rapport/${reportId}`} ogType="article" />
     <div
+      ref={printableRef}
       className="min-h-screen"
       style={{
         // Light "cream" report theme — overrides global tokens only on this page
