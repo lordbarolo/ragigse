@@ -4,9 +4,9 @@ import { Separator } from "@/components/ui/separator";
 import CompcareLogo from "@/components/CompcareLogo";
 import Navbar from "@/components/Navbar";
 import { SEO } from "@/components/SEO";
-import TLDRBox from "@/components/report/TLDRBox";
 import { buildRoleReportSchemas } from "@/lib/seo/roleReportSchema";
 import { ArrowRight, MapPin, BarChart3, Info, TrendingUp } from "lucide-react";
+import { useEffect } from "react";
 
 const LAST_UPDATED = "2026-01-15";
 const fmt = (n: number) => n.toLocaleString("sv-SE", { maximumFractionDigits: 0 });
@@ -18,7 +18,6 @@ const ZONES = [
   { zone: "Zon 3", rate: 1787, desc: "Glesbygd / svårrekryterade — Bollnäs" },
 ];
 
-// Specialistläkare: konsultandel av kundpris
 const SHARE_MIN_FORETAGARE = 0.85;
 const SHARE_MAX_FORETAGARE = 0.90;
 const SHARE_MIN_ANSTALLD = 0.83;
@@ -35,12 +34,22 @@ export default function BollnasAllmanspecialistReport() {
   const recMinA = Math.round(USER_ZON_RATE * SHARE_MIN_ANSTALLD);
   const recMaxA = Math.round(USER_ZON_RATE * SHARE_MAX_ANSTALLD);
 
-  // Säkerhetsregel: aldrig föreslå under nuvarande ersättning
   const safeMinF = Math.max(recMinF, USER_RATE);
   const safeMinA = Math.max(recMinA, USER_RATE);
 
   const gap = Math.max(0, recMinF - USER_RATE);
   const annualUpside = gap * 167 * 12;
+
+  useEffect(() => {
+    const prevHtml = document.documentElement.style.backgroundColor;
+    const prevBody = document.body.style.backgroundColor;
+    document.documentElement.style.backgroundColor = '#EEEBE4';
+    document.body.style.backgroundColor = '#EEEBE4';
+    return () => {
+      document.documentElement.style.backgroundColor = prevHtml;
+      document.body.style.backgroundColor = prevBody;
+    };
+  }, []);
 
   const roleSchemas = buildRoleReportSchemas({
     roleName: "Specialistläkare allmänmedicin",
@@ -62,13 +71,13 @@ export default function BollnasAllmanspecialistReport() {
       },
       {
         question: "Är 1 240 kr/h bra för en allmänspecialist i Bollnäs?",
-        answer: `1 240 kr/h motsvarar cirka ${Math.round((USER_RATE / USER_ZON_RATE) * 100)}% av Zon 3-priset (${fmt(USER_ZON_RATE)} kr/h). Marknadsmässigt spann för eget bolag är ${fmt(recMinF)}–${fmt(recMaxF)} kr/h — det finns utrymme att förhandla upp mot ramavtalet.`,
+        answer: `1 240 kr/h motsvarar cirka ${Math.round((USER_RATE / USER_ZON_RATE) * 100)}% av Zon 3-priset (${fmt(USER_ZON_RATE)} kr/h). Marknadsmässigt spann för eget bolag är ${fmt(recMinF)}–${fmt(recMaxF)} kr/h.`,
       },
     ],
   });
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
       <SEO
         title="Allmänspecialist Bollnäs – timpris & konsultarvode 2026"
         description="Ramavtalspriser, möjlig konsultersättning och förhandlingsspann för specialistläkare i allmänmedicin i Bollnäs (Zon 3). Källa: SKR ramavtal 2026."
@@ -76,130 +85,136 @@ export default function BollnasAllmanspecialistReport() {
         ogType="article"
         jsonLd={roleSchemas}
       />
-      <Navbar />
+      <div
+        className="min-h-screen"
+        style={{
+          ['--background' as any]: '40 18% 91%',
+          ['--foreground' as any]: '0 0% 4%',
+          ['--card' as any]: '0 0% 100%',
+          ['--card-foreground' as any]: '0 0% 4%',
+          ['--muted' as any]: '40 18% 91%',
+          ['--muted-foreground' as any]: '220 9% 46%',
+          ['--border' as any]: '35 17% 85%',
+          ['--radius' as any]: '12px',
+          backgroundColor: '#EEEBE4',
+          color: '#0A0A0A',
+        }}
+      >
+        <Navbar />
 
-      {/* Hero */}
-      <header className="relative overflow-hidden hero-gradient px-5 pt-20 pb-10 sm:pt-24 sm:pb-12">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/3" />
-        <div className="max-w-lg mx-auto space-y-4 relative z-10">
-          <p className="text-[10px] uppercase tracking-[0.2em] font-medium opacity-70">
-            Marknadsrapport 2026
-          </p>
-          <h1 className="text-2xl sm:text-3xl font-bold leading-tight tracking-tight">
-            Allmänspecialist · {USER_KOMMUN}
-          </h1>
-          <div className="flex items-center gap-2 text-sm opacity-80 flex-wrap">
-            <span>Specialistläkare allmänmedicin</span>
-            <span className="w-1 h-1 rounded-full bg-current opacity-40" />
-            <span>{USER_ZON_LABEL}</span>
-            <span className="w-1 h-1 rounded-full bg-current opacity-40" />
-            <span>SKR Ramavtal 2026</span>
+        {/* Hero — cream light theme */}
+        <header
+          className="relative overflow-hidden px-5 pt-20 pb-10 sm:pt-24 sm:pb-12"
+          style={{ backgroundColor: '#EEEBE4', color: '#0A0A0A' }}
+        >
+          <div className="max-w-lg mx-auto space-y-4 relative z-10">
+            <p className="text-[10px] uppercase tracking-[0.2em] font-medium" style={{ color: '#6B7280' }}>
+              Marknadsrapport 2026
+            </p>
+            <h1 className="leading-tight" style={{ fontFamily: 'Georgia, serif', fontSize: '28px', fontWeight: 700, color: '#0A0A0A' }}>
+              Allmänspecialist · {USER_KOMMUN}
+            </h1>
+            <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1" style={{ fontSize: '13px', color: '#6B7280' }}>
+              <span className="whitespace-nowrap">Specialistläkare allmänmedicin</span>
+              <span
+                className="whitespace-nowrap px-1.5 py-0.5 rounded-md"
+                style={{ backgroundColor: '#FFFFFF', border: '1px solid #E0DBD3', color: '#0A0A0A', fontSize: '13px' }}
+              >
+                {USER_ZON_LABEL}
+              </span>
+              <span className="w-1 h-1 rounded-full mx-0.5" style={{ backgroundColor: '#3D3491' }} />
+              <span className="whitespace-nowrap">SKR Ramavtal 2026</span>
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
 
-      <main className="px-4 py-6 max-w-lg mx-auto space-y-6">
-        <TLDRBox
-          summary={`I ${USER_KOMMUN} (${USER_ZON_LABEL}) är kundpriset enligt SKR ${fmt(USER_ZON_RATE)} kr/h för specialistläkare allmänmedicin. Med din nuvarande ersättning ${fmt(USER_RATE)} kr/h finns ett marknadsmässigt utrymme upp mot ${fmt(recMinF)}–${fmt(recMaxF)} kr/h (eget bolag).`}
-          facts={[
-            { label: "Din ersättning", value: `${fmt(USER_RATE)} kr/h` },
-            { label: `Kundpris ${USER_ZON_LABEL}`, value: `${fmt(USER_ZON_RATE)} kr/h` },
-            { label: "Möjlig ersättning (eget bolag)", value: `${fmt(safeMinF)}–${fmt(recMaxF)} kr/h` },
-          ]}
-          lastUpdated={LAST_UPDATED}
-          source="SKR Ramavtal 2026"
-        />
+        <main className="px-4 py-6 max-w-lg mx-auto space-y-2.5">
 
-        {/* Din situation */}
-        <section>
-          <div className="mb-3">
-            <span className="text-[10px] font-semibold tracking-[1.4px] uppercase text-muted-foreground">
+          {/* Din situation */}
+          <section className="rounded-2xl border p-5 space-y-4" style={{ backgroundColor: '#FFFFFF', borderColor: '#E0DBD3' }}>
+            <p className="text-[10px] font-semibold tracking-[1.4px] uppercase" style={{ color: '#6B7280' }}>
               Din situation
-            </span>
-          </div>
-          <div className="rounded-2xl bg-gradient-to-b from-primary/[0.08] to-primary/[0.02] border border-primary/20 p-5 space-y-4">
+            </p>
             <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                <TrendingUp className="w-5 h-5 text-primary" />
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: '#3D34911A' }}>
+                <TrendingUp className="w-5 h-5" style={{ color: '#3D3491' }} />
               </div>
               <div className="space-y-1">
-                <p className="text-sm text-muted-foreground">Din nuvarande ersättning (eget bolag)</p>
-                <p className="text-2xl font-bold text-foreground">{fmt(USER_RATE)} kr/h</p>
-                <p className="text-[12px] text-muted-foreground">
+                <p className="text-sm" style={{ color: '#6B7280' }}>Din nuvarande ersättning (eget bolag)</p>
+                <p className="font-bold" style={{ fontFamily: 'Georgia, serif', fontSize: '24px', color: '#0A0A0A' }}>{fmt(USER_RATE)} kr/h</p>
+                <p className="text-[12px]" style={{ color: '#6B7280' }}>
                   Motsvarar cirka {Math.round((USER_RATE / USER_ZON_RATE) * 100)}% av kundpriset i {USER_ZON_LABEL} ({fmt(USER_ZON_RATE)} kr/h).
                 </p>
               </div>
             </div>
             {gap > 0 && (
-              <div className="rounded-lg bg-background/60 border border-foreground/10 p-3.5 text-sm">
-                <p className="text-foreground">
+              <div className="rounded-lg p-3.5 text-sm" style={{ backgroundColor: '#EEEBE4', border: '1px solid #E0DBD3' }}>
+                <p style={{ color: '#0A0A0A' }}>
                   Marknadsmässigt undre spann är <span className="font-semibold">{fmt(recMinF)} kr/h</span> — en skillnad på{" "}
-                  <span className="font-semibold text-primary">+{fmt(gap)} kr/h</span>.
+                  <span className="font-semibold" style={{ color: '#3D3491' }}>+{fmt(gap)} kr/h</span>.
                 </p>
-                <p className="text-[12px] text-muted-foreground mt-1">
-                  På årsbasis ({fmt(167)} h/mån × 12 mån): ca <span className="font-semibold">+{fmt(annualUpside)} kr</span> brutto till bolaget.
+                <p className="text-[12px] mt-1" style={{ color: '#6B7280' }}>
+                  På årsbasis (167 h/mån × 12 mån): ca <span className="font-semibold">+{fmt(annualUpside)} kr</span> brutto till bolaget.
                 </p>
               </div>
             )}
-          </div>
-        </section>
+          </section>
 
-        {/* Kundpris per zon */}
-        <section>
-          <div className="mb-3">
-            <span className="text-[10px] font-semibold tracking-[1.4px] uppercase text-muted-foreground">
-              Kundpris per zon — specialistläkare allmänmedicin
-            </span>
-          </div>
-          <div className="rounded-[18px] bg-foreground/[0.035] border border-foreground/[0.07] overflow-hidden">
-            {ZONES.map((z, i) => {
-              const isUser = z.zone === USER_ZON_LABEL;
-              return (
-                <div
-                  key={z.zone}
-                  className={`flex items-center justify-between p-3.5 ${i > 0 ? "border-t border-foreground/[0.05]" : ""} ${isUser ? "bg-primary/[0.05]" : ""}`}
-                >
-                  <div className="flex items-center gap-3">
-                    <MapPin className={`w-4 h-4 shrink-0 ${isUser ? "text-primary" : "text-primary/60"}`} />
-                    <div>
-                      <p className="text-sm font-semibold text-foreground">
-                        {z.zone}
-                        {isUser && <span className="ml-2 text-[10px] font-semibold uppercase tracking-wider text-primary">Din zon</span>}
-                      </p>
-                      <p className="text-[11px] text-muted-foreground">{z.desc}</p>
+          {/* Kundpris per zon */}
+          <section className="rounded-2xl border overflow-hidden" style={{ backgroundColor: '#FFFFFF', borderColor: '#E0DBD3' }}>
+            <div className="px-5 pt-5">
+              <p className="text-[10px] font-semibold tracking-[1.4px] uppercase" style={{ color: '#6B7280' }}>
+                Kundpris per zon — specialistläkare allmänmedicin
+              </p>
+            </div>
+            <div className="mt-3">
+              {ZONES.map((z, i) => {
+                const isUser = z.zone === USER_ZON_LABEL;
+                return (
+                  <div
+                    key={z.zone}
+                    className="flex items-center justify-between p-3.5 px-5"
+                    style={{ borderTop: i > 0 ? '1px solid #E0DBD3' : 'none', backgroundColor: isUser ? '#3D34910A' : 'transparent' }}
+                  >
+                    <div className="flex items-center gap-3">
+                      <MapPin className="w-4 h-4 shrink-0" style={{ color: isUser ? '#3D3491' : '#6B7280' }} />
+                      <div>
+                        <p className="text-sm font-semibold" style={{ color: '#0A0A0A' }}>
+                          {z.zone}
+                          {isUser && <span className="ml-2 text-[10px] font-semibold uppercase tracking-wider" style={{ color: '#3D3491' }}>Din zon</span>}
+                        </p>
+                        <p className="text-[11px]" style={{ color: '#6B7280' }}>{z.desc}</p>
+                      </div>
                     </div>
+                    <span className="text-lg font-bold tracking-tight" style={{ fontFamily: 'Georgia, serif', color: isUser ? '#3D3491' : '#0A0A0A' }}>
+                      {fmt(z.rate)} <span className="text-xs font-normal" style={{ color: '#6B7280' }}>kr/h</span>
+                    </span>
                   </div>
-                  <span className={`font-[var(--font-mono)] text-lg font-bold tracking-tight ${isUser ? "text-primary" : "text-foreground"}`}>
-                    {fmt(z.rate)} <span className="text-xs font-normal text-muted-foreground">kr/h</span>
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-          <p className="text-[11px] text-muted-foreground/70 mt-2 flex items-start gap-1.5">
-            <Info className="w-3 h-3 mt-0.5 shrink-0" />
-            Kundpris = vad regionen betalar bemanningsföretaget per arbetad timme. Grundpris exkl. OB/jour.
-          </p>
-        </section>
+                );
+              })}
+            </div>
+            <div className="px-5 py-3 flex items-start gap-1.5" style={{ borderTop: '1px solid #E0DBD3' }}>
+              <Info className="w-3 h-3 mt-0.5 shrink-0" style={{ color: '#6B7280' }} />
+              <p className="text-[11px]" style={{ color: '#6B7280' }}>
+                Kundpris = vad regionen betalar bemanningsföretaget per arbetad timme. Grundpris exkl. OB/jour.
+              </p>
+            </div>
+          </section>
 
-        {/* Möjlig konsultersättning */}
-        <section>
-          <div className="mb-3">
-            <span className="text-[10px] font-semibold tracking-[1.4px] uppercase text-muted-foreground">
+          {/* Möjlig konsultersättning */}
+          <section className="rounded-2xl border p-5" style={{ backgroundColor: '#FFFFFF', borderColor: '#E0DBD3' }}>
+            <p className="text-[10px] font-semibold tracking-[1.4px] uppercase mb-3" style={{ color: '#6B7280' }}>
               Möjlig konsultersättning · {USER_ZON_LABEL}
-            </span>
-          </div>
-          <div className="relative rounded-2xl bg-gradient-to-b from-foreground/[0.06] to-foreground/[0.02] border border-foreground/10 p-5 overflow-hidden">
-            <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent" />
+            </p>
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                <BarChart3 className="w-5 h-5 text-primary" />
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#3D34911A' }}>
+                <BarChart3 className="w-5 h-5" style={{ color: '#3D3491' }} />
               </div>
               <div>
-                <p className="text-lg font-bold text-foreground">
+                <p className="font-bold" style={{ fontFamily: 'Georgia, serif', fontSize: '18px', color: '#0A0A0A' }}>
                   {fmt(safeMinF)}–{fmt(recMaxF)} kr/h
                 </p>
-                <p className="text-[11px] text-muted-foreground">Marknadsmässigt spann (eget bolag)</p>
+                <p className="text-[11px]" style={{ color: '#6B7280' }}>Marknadsmässigt spann (eget bolag)</p>
               </div>
             </div>
 
@@ -208,96 +223,90 @@ export default function BollnasAllmanspecialistReport() {
                 { label: "Egenföretagare", share: "85–90%", range: `${fmt(safeMinF)}–${fmt(recMaxF)} kr/h` },
                 { label: "Anställd via bemanning", share: "83–88%", range: `${fmt(safeMinA)}–${fmt(recMaxA)} kr/h` },
               ].map((row) => (
-                <div key={row.label} className="flex items-center justify-between rounded-lg bg-foreground/[0.03] border border-foreground/[0.06] px-3.5 py-2.5">
+                <div key={row.label} className="flex items-center justify-between rounded-lg px-3.5 py-2.5" style={{ backgroundColor: '#EEEBE4', border: '1px solid #E0DBD3' }}>
                   <div>
-                    <p className="text-sm font-medium text-foreground">{row.label}</p>
-                    <p className="text-[11px] text-muted-foreground">Andel av kundpris: {row.share}</p>
+                    <p className="text-sm font-medium" style={{ color: '#0A0A0A' }}>{row.label}</p>
+                    <p className="text-[11px]" style={{ color: '#6B7280' }}>Andel av kundpris: {row.share}</p>
                   </div>
-                  <span className="font-[var(--font-mono)] text-sm font-bold text-primary">{row.range}</span>
+                  <span className="text-sm font-bold" style={{ fontFamily: 'Georgia, serif', color: '#3D3491' }}>{row.range}</span>
                 </div>
               ))}
             </div>
-            <p className="text-[11px] text-muted-foreground/70 mt-4 flex items-start gap-1.5">
+            <p className="text-[11px] mt-4 flex items-start gap-1.5" style={{ color: '#6B7280' }}>
               <Info className="w-3 h-3 mt-0.5 shrink-0" />
               Bemanningsföretagets marginal är typiskt 10–15% av kundpriset (täcker administration, risk, försäkring).
             </p>
-          </div>
-        </section>
+          </section>
 
-        {/* Förhandlingsobservationer */}
-        <section>
-          <div className="mb-3">
-            <span className="text-[10px] font-semibold tracking-[1.4px] uppercase text-muted-foreground">
+          {/* Förhandlingsobservationer */}
+          <section className="rounded-2xl border p-5 space-y-3 text-sm" style={{ backgroundColor: '#FFFFFF', borderColor: '#E0DBD3' }}>
+            <p className="text-[10px] font-semibold tracking-[1.4px] uppercase" style={{ color: '#6B7280' }}>
               Förhandlingsobservationer
-            </span>
-          </div>
-          <div className="rounded-2xl border border-foreground/10 bg-background p-5 space-y-3 text-sm">
-            <p>
-              <span className="font-semibold text-foreground">Undre spann:</span>{" "}
-              <span className="text-muted-foreground">{fmt(safeMinF)} kr/h — säker utgångspunkt baserat på SKR Zon 3.</span>
             </p>
             <p>
-              <span className="font-semibold text-foreground">Median:</span>{" "}
-              <span className="text-muted-foreground">{fmt(Math.round((safeMinF + recMaxF) / 2))} kr/h — typisk nivå för konsulter med dokumenterad erfarenhet.</span>
+              <span className="font-semibold" style={{ color: '#0A0A0A' }}>Undre spann:</span>{" "}
+              <span style={{ color: '#6B7280' }}>{fmt(safeMinF)} kr/h — säker utgångspunkt baserat på SKR Zon 3.</span>
             </p>
             <p>
-              <span className="font-semibold text-foreground">Övre spann:</span>{" "}
-              <span className="text-muted-foreground">{fmt(recMaxF)} kr/h — uppnås vid brist, jourtillgänglighet eller etablerad relation med beställaren.</span>
+              <span className="font-semibold" style={{ color: '#0A0A0A' }}>Median:</span>{" "}
+              <span style={{ color: '#6B7280' }}>{fmt(Math.round((safeMinF + recMaxF) / 2))} kr/h — typisk nivå för konsulter med dokumenterad erfarenhet.</span>
             </p>
-          </div>
-        </section>
+            <p>
+              <span className="font-semibold" style={{ color: '#0A0A0A' }}>Övre spann:</span>{" "}
+              <span style={{ color: '#6B7280' }}>{fmt(recMaxF)} kr/h — uppnås vid brist, jourtillgänglighet eller etablerad relation med beställaren.</span>
+            </p>
+          </section>
 
-        {/* Metod */}
-        <section>
-          <div className="mb-3">
-            <span className="text-[10px] font-semibold tracking-[1.4px] uppercase text-muted-foreground">
+          {/* Metod */}
+          <section className="rounded-2xl border p-5 space-y-2 text-[12px] leading-relaxed" style={{ backgroundColor: '#FFFFFF', borderColor: '#E0DBD3', color: '#6B7280' }}>
+            <p className="text-[10px] font-semibold tracking-[1.4px] uppercase" style={{ color: '#6B7280' }}>
               Beräkningsmetod
-            </span>
-          </div>
-          <div className="rounded-[18px] bg-foreground/[0.035] border border-foreground/[0.07] p-4 text-[12px] text-muted-foreground leading-relaxed space-y-2">
-            <p>
-              <span className="font-semibold text-foreground">Källa:</span> SKR ramavtal vårdbemanning 2026, kategori Specialistläkare allmänmedicin.
             </p>
             <p>
-              <span className="font-semibold text-foreground">Zonindelning:</span> Bollnäs ingår i Region Gävleborg och klassas som Zon 3 (glesbygd/svårrekryterad).
+              <span className="font-semibold" style={{ color: '#0A0A0A' }}>Källa:</span> SKR ramavtal vårdbemanning 2026, kategori Specialistläkare allmänmedicin.
             </p>
             <p>
-              <span className="font-semibold text-foreground">Marginalmodell:</span> Specialistläkare 10–15% bemanningsmarginal → konsultandel 85–90% (eget bolag) respektive 83–88% (anställd konsult).
+              <span className="font-semibold" style={{ color: '#0A0A0A' }}>Zonindelning:</span> Bollnäs ingår i Region Gävleborg och klassas som Zon 3 (glesbygd/svårrekryterad).
             </p>
             <p>
-              <span className="font-semibold text-foreground">OB & jour:</span> Hanteras separat ovanpå grundpriset enligt SKR-tariff och påverkar inte basanalysen.
+              <span className="font-semibold" style={{ color: '#0A0A0A' }}>Marginalmodell:</span> Specialistläkare 10–15% bemanningsmarginal → konsultandel 85–90% (eget bolag) respektive 83–88% (anställd konsult).
             </p>
-          </div>
-        </section>
+            <p>
+              <span className="font-semibold" style={{ color: '#0A0A0A' }}>OB & jour:</span> Hanteras separat ovanpå grundpriset enligt SKR-tariff och påverkar inte basanalysen.
+            </p>
+          </section>
 
-        {/* CTA */}
-        <section className="rounded-2xl bg-gradient-to-b from-primary/[0.08] to-primary/[0.02] border border-primary/20 p-5 text-center space-y-3">
-          <h2 className="text-lg font-bold text-foreground">Vill du ha en personlig analys?</h2>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            Svara på några snabba frågor och få en egen rapport baserad på din specialitet, zon och anställningsform.
-          </p>
-          <Link to="/?yrke=Specialistläkare%20allmänmedicin&kommun=Bollnäs">
-            <Button className="text-sm font-semibold px-6 py-3 gap-2 mt-2">
+          {/* CTA */}
+          <section className="rounded-2xl border p-5 text-center space-y-3" style={{ backgroundColor: '#FFFFFF', borderColor: '#E0DBD3' }}>
+            <h2 className="font-bold" style={{ fontFamily: 'Georgia, serif', fontSize: '18px', color: '#0A0A0A' }}>Vill du ha en personlig analys?</h2>
+            <p className="text-sm leading-relaxed" style={{ color: '#6B7280' }}>
+              Svara på några snabba frågor och få en egen rapport baserad på din specialitet, zon och anställningsform.
+            </p>
+            <Link
+              to="/?yrke=Specialistläkare%20allmänmedicin&kommun=Bollnäs"
+              className="inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 rounded-lg mt-2"
+              style={{ backgroundColor: '#3D3491', color: '#FFFFFF' }}
+            >
               Skapa din rapport <ArrowRight className="w-4 h-4" />
-            </Button>
-          </Link>
-        </section>
+            </Link>
+          </section>
 
-        {/* Footer */}
-        <div className="pt-4">
-          <Separator className="mb-6 opacity-30" />
-          <div className="text-center space-y-3 pb-8">
-            <CompcareLogo variant="wordmark" className="mx-auto opacity-40 !h-5" />
-            <p className="text-[11px] text-muted-foreground/60 leading-relaxed max-w-xs mx-auto">
-              Denna rapport baseras på gällande avtal från SKR och är avsedd som vägledning.
-              Faktisk ersättning kan variera beroende på arbetsgivare, uppdrag och individuella avtal.
-            </p>
-            <p className="text-[10px] text-muted-foreground/40">
-              © {new Date().getFullYear()} CompCare.se
-            </p>
+          {/* Footer */}
+          <div className="pt-4">
+            <Separator className="mb-6 opacity-30" />
+            <div className="text-center space-y-3 pb-8">
+              <CompcareLogo variant="wordmark" className="mx-auto opacity-40 !h-5" />
+              <p className="text-[11px] leading-relaxed max-w-xs mx-auto" style={{ color: '#6B7280' }}>
+                Denna rapport baseras på gällande avtal från SKR och är avsedd som vägledning.
+                Faktisk ersättning kan variera beroende på arbetsgivare, uppdrag och individuella avtal.
+              </p>
+              <p className="text-[10px]" style={{ color: '#9CA3AF' }}>
+                © {new Date().getFullYear()} CompCare.se
+              </p>
+            </div>
           </div>
-        </div>
-      </main>
-    </div>
+        </main>
+      </div>
+    </>
   );
 }
