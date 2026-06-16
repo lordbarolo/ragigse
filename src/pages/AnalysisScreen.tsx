@@ -85,6 +85,14 @@ export default function AnalysisScreen() {
     trackEvent("analysis_started");
     trackEvent("product_page_viewed", { product: "loneanalys" });
     trackEvent("teaser_viewed");
+    // Trigger PostHog /decide/ call to verify reverse proxy works end-to-end
+    import("@/lib/posthog").then(({ default: posthog }) => {
+      try {
+        posthog.isFeatureEnabled?.("teaser-proxy-probe");
+      } catch {
+        // noop
+      }
+    });
   }, [urlLeadId, navigate]);
 
   // Force light cream background on html/body so dark theme doesn't bleed through
