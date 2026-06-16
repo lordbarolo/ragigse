@@ -296,7 +296,7 @@ export default function AnalysisScreen() {
               return stripped.charAt(0).toUpperCase() + stripped.slice(1);
             })()}
           </h1>
-          <p className="text-[14px] text-foreground/55">
+          <p className="text-[14px] text-[#6B6B6B]">
             {survey.kommun}{userRegion && <> · {userRegion}</>} · {employmentLabel}
           </p>
         </div>
@@ -309,7 +309,7 @@ export default function AnalysisScreen() {
           <div className="space-y-7">
             {/* Möjlig ersättning */}
             <div>
-              <p className="text-[12px] text-foreground/55 mb-1">Möjlig ersättning</p>
+              <p className="text-[12px] text-[#6B6B6B] mb-1">Möjlig ersättning</p>
               <p className="font-display text-[32px] font-extrabold tracking-tight text-[hsl(var(--green))]">
                 {fmt(comparison.recMin)}–{fmt(comparison.recMax)} <span className="text-[20px] font-bold">kr/h</span>
               </p>
@@ -318,7 +318,7 @@ export default function AnalysisScreen() {
                 const dMax = comparison.recMax - comparison.currentHourly;
                 if (dMin > 0) {
                   return (
-                    <p className="text-[15px] font-semibold text-[hsl(var(--primary))] mt-0.5 flex items-center gap-1">
+                    <p className="text-[15px] font-semibold text-[hsl(var(--green))] mt-0.5 flex items-center gap-1">
                       <ChevronUp className="w-4 h-4 text-[hsl(var(--green))]" />
                       +{fmt(dMin)}–{fmt(dMax)} kr/h mer än du tjänar idag
                     </p>
@@ -326,14 +326,14 @@ export default function AnalysisScreen() {
                 }
                 return null;
               })()}
-              <p className="text-[13px] text-muted-foreground font-mono mt-1">
+              <p className="text-[13px] text-[#6B6B6B] font-mono mt-1">
                 {fmt(comparison.recMonthlyMin)}–{fmt(comparison.recMonthlyMax)} kr/mån
               </p>
             </div>
 
             {/* Din nuvarande ersättning */}
             <div>
-              <p className="text-[12px] text-foreground/55 mb-1">Din nuvarande ersättning</p>
+              <p className="text-[12px] text-[#6B6B6B] mb-1">Din nuvarande ersättning</p>
               <p className="font-display text-[32px] font-extrabold tracking-tight text-foreground">
                 {fmt(comparison.currentHourly)} <span className="text-[20px] font-bold">kr/h</span>
               </p>
@@ -341,11 +341,11 @@ export default function AnalysisScreen() {
 
             {/* Ramavtalspris */}
             <div>
-              <p className="text-[12px] text-foreground/55 mb-1">Ramavtalspris (kundpris)</p>
+              <p className="text-[12px] text-[#6B6B6B] mb-1">Ramavtalspris (kundpris)</p>
               <p className="font-display text-[32px] font-extrabold tracking-tight text-foreground">
                 {fmt(comparison.marketRate)} <span className="text-[20px] font-bold">kr/h</span>
               </p>
-              <p className="text-[12px] font-normal text-foreground/45 mt-1">
+              <p className="text-[12px] font-normal text-[#6B6B6B] mt-1">
                 Det här är vad regionen betalar bemanningsbolaget.
               </p>
             </div>
