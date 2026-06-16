@@ -292,15 +292,7 @@ export default function AnalysisScreen() {
           </div>
         ) : (
           <div className="space-y-7">
-            {/* Ramavtalspris */}
-            <div>
-              <p className="text-[12px] text-foreground/55 mb-1">Ramavtalspris (kundpris)</p>
-              <p className="font-display text-[32px] font-extrabold tracking-tight text-foreground">
-                {fmt(comparison.marketRate)} <span className="text-[20px] font-bold">kr/h</span>
-              </p>
-            </div>
-
-            {/* Rekommenderad ersättning */}
+            {/* Möjlig ersättning */}
             <div>
               <p className="text-[12px] text-foreground/55 mb-1">Möjlig ersättning</p>
               <p className="font-display text-[32px] font-extrabold tracking-tight text-[hsl(var(--green))]">
@@ -316,6 +308,14 @@ export default function AnalysisScreen() {
               <p className="text-[12px] text-foreground/55 mb-1">Din nuvarande ersättning</p>
               <p className="font-display text-[32px] font-extrabold tracking-tight text-foreground">
                 {fmt(comparison.currentHourly)} <span className="text-[20px] font-bold">kr/h</span>
+              </p>
+            </div>
+
+            {/* Ramavtalspris */}
+            <div>
+              <p className="text-[12px] text-foreground/55 mb-1">Ramavtalspris (kundpris)</p>
+              <p className="font-display text-[32px] font-extrabold tracking-tight text-foreground">
+                {fmt(comparison.marketRate)} <span className="text-[20px] font-bold">kr/h</span>
               </p>
             </div>
 
