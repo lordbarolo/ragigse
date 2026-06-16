@@ -365,36 +365,49 @@ export default function AnalysisScreen() {
           <button
             disabled={!validEmail || emailSaving}
             onClick={handleEmailSubmit}
-            className={`w-full font-display font-semibold text-sm py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-all ${
+            className={`relative w-full font-display font-bold text-base py-4 px-6 rounded-xl flex items-center justify-center gap-2 transition-all bg-gradient-to-r from-[#8155FF] via-[#9333ea] to-[#ec4899] text-white shadow-[0_10px_40px_-8px_rgba(129,85,255,0.6)] overflow-hidden ${
               validEmail && !emailSaving
-                ? "bg-gradient-to-r from-[#8155FF] to-[#a855f7] text-white shadow-[0_8px_32px_-6px_rgba(129,85,255,0.45)] hover:shadow-[0_12px_40px_-6px_rgba(129,85,255,0.55)] hover:-translate-y-0.5 active:scale-[0.98]"
-                : "bg-muted text-muted-foreground cursor-not-allowed"
+                ? "hover:shadow-[0_16px_50px_-8px_rgba(236,72,153,0.6)] hover:-translate-y-0.5 active:scale-[0.98] animate-pulse-soft"
+                : "opacity-70 cursor-not-allowed"
             }`}
           >
-            {emailSaving ? "Skickar…" : "Fortsätt"}
-            {!emailSaving && <ArrowRight className="w-4 h-4" />}
+            <span className="relative z-10 flex items-center gap-2">
+              {emailSaving ? "Skickar…" : "Lås upp rapporten gratis"}
+              {!emailSaving && <ArrowRight className="w-5 h-5" />}
+            </span>
+            {validEmail && !emailSaving && (
+              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
+            )}
           </button>
+          <p className="text-center text-[12px] text-foreground/45">
+            Inga kort. Ingen spam. Klart på 60 sek.
+          </p>
         </div>
 
         {/* Negotiation assistant teaser */}
-        <div className="mt-8 rounded-2xl border border-border/60 bg-white/80 backdrop-blur-sm p-5 space-y-3 shadow-sm">
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 rounded-xl bg-primary/10">
-              <MessageSquare className="w-4 h-4 text-primary" />
+        <div className="mt-8 relative rounded-2xl p-[1.5px] bg-gradient-to-br from-[#8155FF] via-[#9333ea] to-[#ec4899] shadow-[0_12px_40px_-12px_rgba(129,85,255,0.4)]">
+          <div className="rounded-2xl bg-white p-5 space-y-3">
+            <div className="flex items-center gap-2.5">
+              <div className="p-2 rounded-xl bg-gradient-to-br from-[#8155FF]/15 to-[#ec4899]/15">
+                <MessageSquare className="w-4 h-4 text-[#8155FF]" />
+              </div>
+              <h3 className="text-[15px] font-bold text-foreground">Löneassistenten</h3>
+              <span className="ml-auto text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-gradient-to-r from-[#8155FF] to-[#ec4899] text-white">
+                AI
+              </span>
             </div>
-            <h3 className="text-[15px] font-bold text-foreground">Löneassistenten</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Få konkreta förhandlingsråd baserade på din roll och region. Ställ frågor om din ersättning,
+              bemanningsföretagets marginal och vad som är rimligt att begära.
+            </p>
+            <a
+              href="/forhandla"
+              className="inline-flex items-center gap-1.5 text-sm font-bold text-[#8155FF] hover:text-[#ec4899] transition-colors"
+            >
+              Prova Löneassistenten
+              <ArrowRight className="w-4 h-4" />
+            </a>
           </div>
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            Få konkreta förhandlingsråd baserade på din roll och region. Ställ frågor om din ersättning,
-            bemanningsföretagets marginal och vad som är rimligt att begära.
-          </p>
-          <a
-            href="/forhandla"
-            className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
-          >
-            Prova Löneassistenten
-            <ArrowRight className="w-4 h-4" />
-          </a>
         </div>
       </main>
     </div>
