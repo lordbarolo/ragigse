@@ -333,6 +333,8 @@ export default function AnalysisScreen() {
           </div>
         )}
 
+        <NegotiationAssistantTeaser />
+
         {/* ── Email gate (unlock full report) ── */}
         <div className="mt-10 pt-6 border-t border-foreground/10 space-y-3">
           <div>
