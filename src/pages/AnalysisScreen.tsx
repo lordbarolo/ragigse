@@ -299,6 +299,18 @@ export default function AnalysisScreen() {
               <p className="font-display text-[32px] font-extrabold tracking-tight text-[hsl(var(--green))]">
                 {fmt(comparison.recMin)}–{fmt(comparison.recMax)} <span className="text-[20px] font-bold">kr/h</span>
               </p>
+              {(() => {
+                const dMin = comparison.recMin - comparison.currentHourly;
+                const dMax = comparison.recMax - comparison.currentHourly;
+                if (dMin > 0) {
+                  return (
+                    <p className="text-[14px] font-semibold text-[hsl(var(--green))] mt-0.5">
+                      +{fmt(dMin)}–{fmt(dMax)} kr/h mer än du tjänar idag
+                    </p>
+                  );
+                }
+                return null;
+              })()}
               <p className="text-[13px] text-foreground/45 font-mono mt-1">
                 {fmt(comparison.recMonthlyMin)}–{fmt(comparison.recMonthlyMax)} kr/mån
               </p>
