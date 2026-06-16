@@ -296,7 +296,7 @@ export default function AnalysisScreen() {
               return stripped.charAt(0).toUpperCase() + stripped.slice(1);
             })()}
           </h1>
-          <p className="text-[14px] text-foreground/55">
+          <p className="text-[14px] text-[#6B6B6B]">
             {survey.kommun}{userRegion && <> · {userRegion}</>} · {employmentLabel}
           </p>
         </div>
