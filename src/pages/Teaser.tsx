@@ -23,6 +23,7 @@ import EmailHookMessage from "@/components/teaser/EmailHookMessage";
 import ReportPreviewList from "@/components/teaser/ReportPreviewList";
 import MethodologyDisclosure from "@/components/teaser/MethodologyDisclosure";
 import PossibleCompensationInfo from "@/components/PossibleCompensationInfo";
+import NegotiationAssistantTeaser from "@/components/teaser/NegotiationAssistantTeaser";
 import { SEO } from "@/components/SEO";
 
 /** Teaser page — orchestrator for the results preview */
