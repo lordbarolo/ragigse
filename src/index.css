@@ -418,3 +418,11 @@
       linear-gradient(180deg, #1a0833 0%, #0d001a 50%, #07000f 100%);
   }
 }
+@keyframes shimmer {
+  100% { transform: translateX(200%); }
+}
+@keyframes pulse-soft {
+  0%, 100% { box-shadow: 0 10px 40px -8px rgba(129,85,255,0.6); }
+  50% { box-shadow: 0 14px 50px -8px rgba(236,72,153,0.65); }
+}
+.animate-pulse-soft { animation: pulse-soft 2.5s ease-in-out infinite; }
