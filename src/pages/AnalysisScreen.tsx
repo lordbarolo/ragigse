@@ -329,6 +329,12 @@ export default function AnalysisScreen() {
               <p className="text-[13px] text-[#6B6B6B] font-mono mt-1">
                 {fmt(comparison.recMonthlyMin)}–{fmt(comparison.recMonthlyMax)} kr/mån
               </p>
+              <button
+                onClick={() => document.getElementById("email-gate")?.scrollIntoView({ behavior: "smooth" })}
+                className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold px-6 py-3 rounded-xl bg-foreground text-[#EEEBE4] hover:bg-foreground/90 transition-colors"
+              >
+                Visa hur du förhandlar dit <ArrowRight className="w-4 h-4" />
+              </button>
             </div>
 
             {/* Din nuvarande ersättning */}
@@ -376,7 +382,7 @@ export default function AnalysisScreen() {
         </div>
 
         {/* ── Email gate (unlock full report) ── */}
-        <div className="mt-10 pt-6 border-t border-foreground/10 space-y-3">
+        <div id="email-gate" className="mt-10 pt-6 border-t border-foreground/10 space-y-3">
           <div>
             <h2 className="font-display text-[16px] font-bold tracking-tight text-foreground mb-1">
               Lås upp hela rapporten
