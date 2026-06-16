@@ -5,6 +5,7 @@ import { trackEvent } from "@/lib/trackEvent";
 import { toast } from "sonner";
 import type { SurveyData } from "@/components/Survey";
 import { Mail, ArrowRight, Zap } from "lucide-react";
+import NegotiationAssistantTeaser from "@/components/teaser/NegotiationAssistantTeaser";
 import { fetchLead, leadToSurvey, createReport, saveEmail } from "@/services/leadService";
 import Navbar from "@/components/Navbar";
 import CompcareLogo from "@/components/CompcareLogo";
@@ -331,6 +332,8 @@ export default function AnalysisScreen() {
             </div>
           </div>
         )}
+
+        <NegotiationAssistantTeaser />
 
         {/* ── Email gate (unlock full report) ── */}
         <div className="mt-10 pt-6 border-t border-foreground/10 space-y-3">

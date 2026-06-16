@@ -1,4 +1,4 @@
-import { MessageSquare, ArrowRight } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 
 export default function NegotiationAssistantTeaser() {
   return (
@@ -10,16 +10,9 @@ export default function NegotiationAssistantTeaser() {
         <h3 className="text-[15px] font-bold text-foreground">Löneassistenten</h3>
       </div>
       <p className="text-sm text-muted-foreground leading-relaxed">
-        Få konkreta förhandlingsråd baserade på din roll och region. Ställ frågor om din ersättning,
-        bemanningsföretagets marginal och vad som är rimligt att begära.
+        I din fulla rapport ingår konkreta förhandlingsråd baserade på din roll och region. Du kan
+        ställa frågor om din ersättning, bemanningsföretagets marginal och vad som är rimligt att begära.
       </p>
-      <a
-        href="/forhandla"
-        className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
-      >
-        Prova Löneassistenten
-        <ArrowRight className="w-4 h-4" />
-      </a>
     </div>
   );
 }
