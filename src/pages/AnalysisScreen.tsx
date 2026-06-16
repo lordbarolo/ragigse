@@ -392,8 +392,7 @@ export default function AnalysisScreen() {
             }`}
           >
             <span className="relative z-10 flex items-center gap-2">
-              {emailSaving ? "Skickar…" : "Lås upp rapporten gratis"}
-              {!emailSaving && <ArrowRight className="w-5 h-5" />}
+              {emailSaving ? "Skickar…" : "Få din gratis rapport →"}
             </span>
             {validEmail && !emailSaving && (
               <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
