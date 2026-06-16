@@ -355,18 +355,46 @@ export default function AnalysisScreen() {
               className="w-full bg-background/60 border-[1.5px] border-foreground/[0.12] rounded-xl text-foreground font-body text-[16px] py-3.5 pl-11 pr-4 outline-none transition-all focus:border-primary placeholder:text-foreground/35"
             />
           </div>
+          {validEmail && !emailSaving && (
+            <div className="flex items-center justify-center gap-1.5 text-xs font-semibold text-primary">
+              <Zap className="w-3.5 h-3.5" />
+              Kostnadsfritt — klart på 60 sekunder
+            </div>
+          )}
+
           <button
             disabled={!validEmail || emailSaving}
             onClick={handleEmailSubmit}
             className={`w-full font-display font-semibold text-sm py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-all ${
               validEmail && !emailSaving
-                ? "bg-primary text-primary-foreground hover:opacity-90"
+                ? "bg-gradient-to-r from-[#8155FF] to-[#a855f7] text-white shadow-[0_8px_32px_-6px_rgba(129,85,255,0.45)] hover:shadow-[0_12px_40px_-6px_rgba(129,85,255,0.55)] hover:-translate-y-0.5 active:scale-[0.98]"
                 : "bg-muted text-muted-foreground cursor-not-allowed"
             }`}
           >
             {emailSaving ? "Skickar…" : "Fortsätt"}
             {!emailSaving && <ArrowRight className="w-4 h-4" />}
           </button>
+        </div>
+
+        {/* Negotiation assistant teaser */}
+        <div className="mt-8 rounded-2xl border border-border/60 bg-white/80 backdrop-blur-sm p-5 space-y-3 shadow-sm">
+          <div className="flex items-center gap-2.5">
+            <div className="p-2 rounded-xl bg-primary/10">
+              <MessageSquare className="w-4 h-4 text-primary" />
+            </div>
+            <h3 className="text-[15px] font-bold text-foreground">Löneassistenten</h3>
+          </div>
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Få konkreta förhandlingsråd baserade på din roll och region. Ställ frågor om din ersättning,
+            bemanningsföretagets marginal och vad som är rimligt att begära.
+          </p>
+          <a
+            href="/forhandla"
+            className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:text-primary/80 transition-colors"
+          >
+            Prova Löneassistenten
+            <ArrowRight className="w-4 h-4" />
+          </a>
         </div>
       </main>
     </div>
