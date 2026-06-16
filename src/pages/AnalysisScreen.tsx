@@ -382,8 +382,6 @@ export default function AnalysisScreen() {
           <p className="text-center text-[12px] text-foreground/45">
             Inga kort. Ingen spam. Klart på 60 sek.
           </p>
- into the report. E-post krävs bara för att låsa upp innehållet.
-          </p>
         </div>
       </main>
     </div>
