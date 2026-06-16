@@ -46,10 +46,18 @@ function redactSensitiveUrl(value: unknown): unknown {
   return out;
 }
 
+// Reverse-proxy via vår egen Edge Function så adblockers inte blockerar anropen.
+// Klienten skickar till `<supabase>/functions/v1/ph-proxy/*` och funktionen
+// forwardar vidare till eu.i.posthog.com / eu-assets.i.posthog.com.
+const __SUPABASE_URL = (import.meta.env.VITE_SUPABASE_URL as string | undefined) ?? "";
+const __DEFAULT_PH_HOST = __SUPABASE_URL
+  ? `${__SUPABASE_URL.replace(/\/$/, "")}/functions/v1/ph-proxy`
+  : "https://eu.i.posthog.com";
+
 posthog.init(POSTHOG_KEY, {
   api_host:
     (import.meta.env.VITE_POSTHOG_HOST as string | undefined) ??
-    "https://eu.i.posthog.com",
+    __DEFAULT_PH_HOST,
   ui_host: "https://eu.posthog.com",
   persistence: "memory",           // Inga cookies eller localStorage
   autocapture: false,                // Stäng av automatisk event-capture

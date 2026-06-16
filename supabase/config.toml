@@ -164,3 +164,6 @@ verify_jwt = false
 
 [functions.agent-api-user-tokens]
 verify_jwt = false
+
+[functions.ph-proxy]
+verify_jwt = false
