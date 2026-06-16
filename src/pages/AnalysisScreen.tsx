@@ -333,8 +333,6 @@ export default function AnalysisScreen() {
           </div>
         )}
 
-        <NegotiationAssistantTeaser />
-
         {/* ── Email gate (unlock full report) ── */}
         <div className="mt-10 pt-6 border-t border-foreground/10 space-y-3">
           <div>
@@ -386,6 +384,11 @@ export default function AnalysisScreen() {
             Inga kort. Ingen spam. Klart på 60 sek.
           </p>
         </div>
+
+        <div className="mt-6">
+          <NegotiationAssistantTeaser />
+        </div>
+
       </main>
     </div>
   );
