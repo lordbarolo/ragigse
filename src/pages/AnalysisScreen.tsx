@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/trackEvent";
 import { toast } from "sonner";
 import type { SurveyData } from "@/components/Survey";
-import { Mail, ArrowRight, Zap } from "lucide-react";
+import { Mail, ArrowRight, Zap, ChevronUp } from "lucide-react";
 import NegotiationAssistantTeaser from "@/components/teaser/NegotiationAssistantTeaser";
 import { fetchLead, leadToSurvey, createReport, saveEmail } from "@/services/leadService";
 import Navbar from "@/components/Navbar";
@@ -310,7 +310,8 @@ export default function AnalysisScreen() {
                 const dMax = comparison.recMax - comparison.currentHourly;
                 if (dMin > 0) {
                   return (
-                    <p className="text-[14px] font-semibold text-[hsl(var(--green))] mt-0.5">
+                    <p className="text-[15px] font-semibold text-[hsl(var(--primary))] mt-0.5 flex items-center gap-1">
+                      <ChevronUp className="w-4 h-4 text-[hsl(var(--green))]" />
                       +{fmt(dMin)}–{fmt(dMax)} kr/h mer än du tjänar idag
                     </p>
                   );
