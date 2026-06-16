@@ -341,11 +341,11 @@ export default function AnalysisScreen() {
 
             {/* Ramavtalspris */}
             <div>
-              <p className="text-[12px] text-foreground/55 mb-1">Ramavtalspris (kundpris)</p>
+              <p className="text-[12px] text-[#6B6B6B] mb-1">Ramavtalspris (kundpris)</p>
               <p className="font-display text-[32px] font-extrabold tracking-tight text-foreground">
                 {fmt(comparison.marketRate)} <span className="text-[20px] font-bold">kr/h</span>
               </p>
-              <p className="text-[12px] font-normal text-foreground/45 mt-1">
+              <p className="text-[12px] font-normal text-[#6B6B6B] mt-1">
                 Det här är vad regionen betalar bemanningsbolaget.
               </p>
             </div>
