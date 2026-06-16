@@ -360,6 +360,9 @@ export default function Teaser() {
           <ReportPreviewList yrke={survey.yrke} />
         </div>
 
+        {/* Negotiation assistant teaser */}
+        <NegotiationAssistantTeaser />
+
         {/* Methodology — kollapsbar list längst ner */}
         <MethodologyDisclosure variant="teaser" />
       </main>
