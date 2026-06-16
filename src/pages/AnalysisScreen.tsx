@@ -382,7 +382,7 @@ export default function AnalysisScreen() {
         </div>
 
         {/* ── Email gate (unlock full report) ── */}
-        <div className="mt-10 pt-6 border-t border-foreground/10 space-y-3">
+        <div id="email-gate" className="mt-10 pt-6 border-t border-foreground/10 space-y-3">
           <div>
             <h2 className="font-display text-[16px] font-bold tracking-tight text-foreground mb-1">
               Lås upp hela rapporten
