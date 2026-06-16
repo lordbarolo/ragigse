@@ -333,7 +333,7 @@ export default function AnalysisScreen() {
 
             {/* Din nuvarande ersättning */}
             <div>
-              <p className="text-[12px] text-foreground/55 mb-1">Din nuvarande ersättning</p>
+              <p className="text-[12px] text-[#6B6B6B] mb-1">Din nuvarande ersättning</p>
               <p className="font-display text-[32px] font-extrabold tracking-tight text-foreground">
                 {fmt(comparison.currentHourly)} <span className="text-[20px] font-bold">kr/h</span>
               </p>
