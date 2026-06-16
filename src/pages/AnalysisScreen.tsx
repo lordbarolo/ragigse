@@ -309,7 +309,7 @@ export default function AnalysisScreen() {
           <div className="space-y-7">
             {/* Möjlig ersättning */}
             <div>
-              <p className="text-[12px] text-foreground/55 mb-1">Möjlig ersättning</p>
+              <p className="text-[12px] text-[#6B6B6B] mb-1">Möjlig ersättning</p>
               <p className="font-display text-[32px] font-extrabold tracking-tight text-[hsl(var(--green))]">
                 {fmt(comparison.recMin)}–{fmt(comparison.recMax)} <span className="text-[20px] font-bold">kr/h</span>
               </p>
