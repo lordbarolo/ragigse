@@ -9,6 +9,12 @@ import NegotiationAssistantTeaser from "@/components/teaser/NegotiationAssistant
 import { fetchLead, leadToSurvey, createReport, saveEmail } from "@/services/leadService";
 import Navbar from "@/components/Navbar";
 import CompcareLogo from "@/components/CompcareLogo";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const fmt = (n: number) => n.toLocaleString("sv-SE");
@@ -338,12 +344,20 @@ export default function AnalysisScreen() {
 
             {/* Beräkningsantaganden */}
             <div className="pt-6 border-t border-foreground/10">
-              <p className="text-[12px] text-foreground/55 font-semibold mb-3">Beräkningsantaganden</p>
-              <ul className="space-y-1.5 text-[13px] text-foreground/50 leading-relaxed pl-4">
-                <li>· Bemanningsbolagets marginal: {marginText}</li>
-                {comparison.isEmployee && <li>· Arbetsgivaravgifter: faktor {employerFactor}</li>}
-                <li>· Arbetsmånad: 167 timmar</li>
-              </ul>
+              <Accordion type="single" collapsible className="w-full">
+                <AccordionItem value="calculations" className="border-b-0">
+                  <AccordionTrigger className="text-[12px] text-foreground/55 font-semibold py-2 hover:no-underline">
+                    Hur beräknas detta?
+                  </AccordionTrigger>
+                  <AccordionContent>
+                    <ul className="space-y-1.5 text-[13px] text-foreground/50 leading-relaxed pl-4 pb-0">
+                      <li>· Bemanningsbolagets marginal: {marginText}</li>
+                      {comparison.isEmployee && <li>· Arbetsgivaravgifter: faktor {employerFactor}</li>}
+                      <li>· Arbetsmånad: 167 timmar</li>
+                    </ul>
+                  </AccordionContent>
+                </AccordionItem>
+              </Accordion>
             </div>
           </div>
         )}
