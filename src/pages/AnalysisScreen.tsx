@@ -345,6 +345,10 @@ export default function AnalysisScreen() {
           </div>
         )}
 
+        <div className="mt-6">
+          <NegotiationAssistantTeaser />
+        </div>
+
         {/* ── Email gate (unlock full report) ── */}
         <div className="mt-10 pt-6 border-t border-foreground/10 space-y-3">
           <div>
@@ -395,10 +399,6 @@ export default function AnalysisScreen() {
           <p className="text-center text-[12px] text-foreground/45">
             Inga kort. Ingen spam. Klart på 60 sek.
           </p>
-        </div>
-
-        <div className="mt-6">
-          <NegotiationAssistantTeaser />
         </div>
 
       </main>
