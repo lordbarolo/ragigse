@@ -352,7 +352,7 @@ export default function AnalysisScreen() {
 
 
             {/* Beräkningsantaganden */}
-            <div className="pt-6 border-t border-foreground/10">
+            <div className="pt-6 pb-6 border-t border-b border-foreground/10">
               <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="calculations" className="border-b-0">
                   <AccordionTrigger className="text-[12px] text-foreground/55 font-semibold py-2 hover:no-underline">
