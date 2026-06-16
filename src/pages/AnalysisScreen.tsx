@@ -310,7 +310,8 @@ export default function AnalysisScreen() {
                 const dMax = comparison.recMax - comparison.currentHourly;
                 if (dMin > 0) {
                   return (
-                    <p className="text-[14px] font-semibold text-[hsl(var(--green))] mt-0.5">
+                    <p className="text-[15px] font-semibold text-[hsl(var(--primary))] mt-0.5 flex items-center gap-1">
+                      <ChevronUp className="w-4 h-4 text-[hsl(var(--green))]" />
                       +{fmt(dMin)}–{fmt(dMax)} kr/h mer än du tjänar idag
                     </p>
                   );
