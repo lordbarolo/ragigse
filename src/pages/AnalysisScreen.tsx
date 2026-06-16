@@ -5,6 +5,7 @@ import { trackEvent } from "@/lib/trackEvent";
 import { toast } from "sonner";
 import type { SurveyData } from "@/components/Survey";
 import { Mail, ArrowRight, Zap } from "lucide-react";
+import NegotiationAssistantTeaser from "@/components/teaser/NegotiationAssistantTeaser";
 import { fetchLead, leadToSurvey, createReport, saveEmail } from "@/services/leadService";
 import Navbar from "@/components/Navbar";
 import CompcareLogo from "@/components/CompcareLogo";
