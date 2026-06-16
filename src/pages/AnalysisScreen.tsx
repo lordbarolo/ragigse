@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/trackEvent";
 import { toast } from "sonner";
 import type { SurveyData } from "@/components/Survey";
-import { Mail, ArrowRight, Zap, MessageSquare } from "lucide-react";
+import { Mail, ArrowRight, Zap } from "lucide-react";
 import { fetchLead, leadToSurvey, createReport, saveEmail } from "@/services/leadService";
 import Navbar from "@/components/Navbar";
 import CompcareLogo from "@/components/CompcareLogo";
@@ -339,7 +339,7 @@ export default function AnalysisScreen() {
               Lås upp hela rapporten
             </h2>
             <p className="text-[13px] text-foreground/50 leading-relaxed">
-              Förhandlingsspann, alla zoner och metod — skickas till din e-post.
+              Förhandlingsspann, alla zoner, metod — plus AI-assistans för din nästa löneförhandling. Skickas till din e-post.
             </p>
           </div>
           <div className="relative flex items-center">
@@ -382,32 +382,6 @@ export default function AnalysisScreen() {
           <p className="text-center text-[12px] text-foreground/45">
             Inga kort. Ingen spam. Klart på 60 sek.
           </p>
-        </div>
-
-        {/* Negotiation assistant teaser */}
-        <div className="mt-8 relative rounded-2xl p-[1.5px] bg-gradient-to-br from-[#8155FF] via-[#9333ea] to-[#ec4899] shadow-[0_12px_40px_-12px_rgba(129,85,255,0.4)]">
-          <div className="rounded-2xl bg-white p-5 space-y-3">
-            <div className="flex items-center gap-2.5">
-              <div className="p-2 rounded-xl bg-gradient-to-br from-[#8155FF]/15 to-[#ec4899]/15">
-                <MessageSquare className="w-4 h-4 text-[#8155FF]" />
-              </div>
-              <h3 className="text-[15px] font-bold text-foreground">Löneassistenten</h3>
-              <span className="ml-auto text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-gradient-to-r from-[#8155FF] to-[#ec4899] text-white">
-                AI
-              </span>
-            </div>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Få konkreta förhandlingsråd baserade på din roll och region. Ställ frågor om din ersättning,
-              bemanningsföretagets marginal och vad som är rimligt att begära.
-            </p>
-            <a
-              href="/forhandla"
-              className="inline-flex items-center gap-1.5 text-sm font-bold text-[#8155FF] hover:text-[#ec4899] transition-colors"
-            >
-              Prova Löneassistenten
-              <ArrowRight className="w-4 h-4" />
-            </a>
-          </div>
         </div>
       </main>
     </div>
