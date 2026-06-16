@@ -326,7 +326,7 @@ export default function AnalysisScreen() {
                 }
                 return null;
               })()}
-              <p className="text-[13px] text-foreground/45 font-mono mt-1">
+              <p className="text-[13px] text-muted-foreground font-mono mt-1">
                 {fmt(comparison.recMonthlyMin)}–{fmt(comparison.recMonthlyMax)} kr/mån
               </p>
             </div>
