@@ -1,4 +1,5 @@
 import posthog from "posthog-js";
+import { getConsent } from "@/lib/cookieConsent";
 
 const POSTHOG_KEY =
   (import.meta.env.VITE_POSTHOG_KEY as string | undefined) ??
@@ -59,7 +60,8 @@ posthog.init(POSTHOG_KEY, {
     (import.meta.env.VITE_POSTHOG_HOST as string | undefined) ??
     __DEFAULT_PH_HOST,
   ui_host: "https://eu.posthog.com",
-  persistence: "memory",           // Inga cookies eller localStorage
+  persistence: "memory",           // Default tills användaren accepterar cookies
+  opt_out_capturing_by_default: true, // Consent-gated: vänta på accept
   autocapture: false,                // Stäng av automatisk event-capture
   capture_pageview: false,           // Vi hanterar pageviews manuellt
   capture_pageleave: false,
@@ -107,6 +109,29 @@ if (__host === "compcare.se" || __host === "www.compcare.se") {
     "distinct_id:",
     posthog.get_distinct_id()
   );
+}
+
+/**
+ * Aktivera eller stäng av PostHog-persistens baserat på cookie-samtycke.
+ * Vid accept uppgraderas lagringen till localStorage+cookie så distinct_id
+ * återanvänds mellan sessioner. Vid avslag återställs memory + opt-out.
+ */
+export function applyAnalyticsConsent(accepted: boolean) {
+  try {
+    if (accepted) {
+      posthog.set_config({ persistence: "localStorage+cookie" });
+      posthog.opt_in_capturing();
+    } else {
+      posthog.opt_out_capturing();
+      posthog.set_config({ persistence: "memory" });
+    }
+  } catch {
+    /* swallow */
+  }
+}
+
+if (getConsent() === "accepted") {
+  applyAnalyticsConsent(true);
 }
 
 export function trackPageview() {

@@ -15,10 +15,26 @@ import { resolve } from "node:path";
 
 const SRC = readFileSync(resolve(__dirname, "./posthog.ts"), "utf8");
 
-describe("posthog config — cookieless guard", () => {
-  it("använder memory-persistence (inga cookies, ingen localStorage)", () => {
+describe("posthog config — consent-gated guard", () => {
+  it("startar med memory-persistence (uppgraderas först efter samtycke)", () => {
     expect(SRC).toMatch(/persistence:\s*["']memory["']/);
-    expect(SRC).not.toMatch(/persistence:\s*["'](localStorage|cookie|localStorage\+cookie)["']/);
+  });
+
+  it("är opt-out by default tills användaren accepterar", () => {
+    expect(SRC).toMatch(/opt_out_capturing_by_default:\s*true/);
+  });
+
+  it("uppgraderar persistens till localStorage+cookie vid samtycke", () => {
+    expect(SRC).toMatch(/persistence:\s*["']localStorage\+cookie["']/);
+  });
+
+  it("exporterar applyAnalyticsConsent som consent-toggle", () => {
+    expect(SRC).toMatch(/export\s+function\s+applyAnalyticsConsent\s*\(/);
+    expect(SRC).toMatch(/opt_in_capturing\(\)/);
+  });
+
+  it("återtillämpar sparat samtycke vid sidladdning", () => {
+    expect(SRC).toMatch(/getConsent\(\)\s*===\s*["']accepted["']/);
   });
 
   it("har autocapture avstängd", () => {
