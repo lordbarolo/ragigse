@@ -228,9 +228,10 @@ serve(async (req) => {
 
 
     return new Response(
-      JSON.stringify({ ok: true, debug_hash: visitor_day_hash ? visitor_day_hash.slice(0,8) : null, debug_ip: clientIp }),
+      JSON.stringify({ ok: true }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
+
 
   } catch (err: any) {
     console.error("[track-event] error:", err);
