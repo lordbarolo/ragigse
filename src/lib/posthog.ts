@@ -2,7 +2,7 @@ import posthog from "posthog-js";
 
 const POSTHOG_KEY =
   (import.meta.env.VITE_POSTHOG_KEY as string | undefined) ??
-  "phc_AFPm7q5MQPFhR8cNu3LiRapyRaanNZNKWN2hzZrRkDoY";
+  "phc_JD12v8i6S6QUMbiNAcxOcrm7lVX4iQTWCyBgOf6zuYG";
 
 if (import.meta.env.DEV && !import.meta.env.VITE_POSTHOG_KEY) {
   console.warn(
