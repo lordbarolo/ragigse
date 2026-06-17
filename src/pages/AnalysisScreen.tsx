@@ -388,7 +388,7 @@ export default function AnalysisScreen() {
               Lås upp hela rapporten
             </h2>
             <p className="text-[13px] text-foreground/50 leading-relaxed">
-              Förhandlingsspann, alla zoner, metod — plus AI-assistans för din nästa löneförhandling. Skickas till din e-post.
+              Förhandlingsspann, alla zoner, AI-assistans för din nästa löneförhandling. Visas direkt.
             </p>
           </div>
           <div className="relative flex items-center">
