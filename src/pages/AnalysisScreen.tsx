@@ -432,7 +432,7 @@ export default function AnalysisScreen() {
                         </div>
                       </div>
 
-                      <div className="mt-6">
+                      <div className="mt-6 lg:hidden">
                         <NegotiationAssistantTeaser />
                       </div>
 
