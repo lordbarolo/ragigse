@@ -312,6 +312,7 @@ export type Database = {
           id: string
           lead_id: string | null
           metadata: Json | null
+          visitor_day_hash: string | null
         }
         Insert: {
           created_at?: string
@@ -319,6 +320,7 @@ export type Database = {
           id?: string
           lead_id?: string | null
           metadata?: Json | null
+          visitor_day_hash?: string | null
         }
         Update: {
           created_at?: string
@@ -326,6 +328,7 @@ export type Database = {
           id?: string
           lead_id?: string | null
           metadata?: Json | null
+          visitor_day_hash?: string | null
         }
         Relationships: []
       }
