@@ -187,16 +187,17 @@ serve(async (req) => {
     // inget cookie-samtycke (ingen cookie sätts, ingen PII lagras).
     let visitor_day_hash: string | null = null;
     try {
-      const { data: saltRow } = await supabase
+      const { data: saltRow, error: saltErr } = await supabase
         .from("app_settings")
         .select("value")
         .eq("key", "visitor_hash_salt")
         .maybeSingle();
-      const salt = typeof saltRow?.value === "string"
-        ? saltRow.value
-        : (saltRow?.value as { toString?: () => string } | null)?.toString?.() ?? "";
+      if (saltErr) console.warn("[track-event] salt fetch error", saltErr);
+      const rawSalt = saltRow?.value;
+      const salt = typeof rawSalt === "string" ? rawSalt : (rawSalt == null ? "" : String(rawSalt));
+      console.log("[track-event] hash inputs", { has_salt: !!salt, salt_len: salt.length, ip: clientIp });
       if (salt && clientIp && clientIp !== "unknown") {
-        const day = new Date().toISOString().slice(0, 10); // YYYY-MM-DD UTC
+        const day = new Date().toISOString().slice(0, 10);
         const raw = `${salt}|${clientIp}|${userAgent ?? ""}|${day}`;
         const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(raw));
         visitor_day_hash = Array.from(new Uint8Array(buf))
@@ -206,6 +207,7 @@ serve(async (req) => {
     } catch (e) {
       console.warn("[track-event] visitor_day_hash failed", e);
     }
+
 
     const { error } = await supabase
       .from("analytics_events")
