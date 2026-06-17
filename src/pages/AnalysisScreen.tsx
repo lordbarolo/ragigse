@@ -277,162 +277,189 @@ export default function AnalysisScreen() {
     >
       <Navbar />
 
-      <main className="px-5 pt-20 pb-16 max-w-lg mx-auto">
-        {/* ── Header ── */}
-        <div className="mb-8">
-          <CompcareLogo variant="full" className="!h-7 mb-3" />
-          <p className="text-[13px] text-foreground/55 font-medium tracking-wide">
-            Ersättningsanalys
-          </p>
-        </div>
+      <main className="px-5 pt-20 pb-16 mx-auto max-w-lg lg:max-w-5xl">
+        {(() => {
+          const emailGate = (
+            <div id="email-gate" className="space-y-3">
+              <div>
+                <h2 className="font-display text-[16px] font-bold tracking-tight text-foreground mb-1">
+                  Lås upp hela rapporten
+                </h2>
+                <p className="text-[13px] text-foreground/50 leading-relaxed">
+                  Förhandlingsspann, alla zoner, metod — plus AI-assistans för din nästa löneförhandling.
+                </p>
+              </div>
+              <div className="relative flex items-center">
+                <Mail className="absolute left-4 w-4 h-4 text-foreground/30 pointer-events-none" />
+                <input
+                  type="email"
+                  inputMode="email"
+                  autoComplete="email"
+                  placeholder="namn@exempel.se"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter" && validEmail && !emailSaving) handleEmailSubmit(); }}
+                  className="w-full bg-background/60 border-[1.5px] border-foreground/[0.12] rounded-xl text-foreground font-body text-[16px] py-3.5 pl-11 pr-4 outline-none transition-all focus:border-primary placeholder:text-foreground/35"
+                />
+              </div>
+              {validEmail && !emailSaving && (
+                <div className="flex items-center justify-center gap-1.5 text-xs font-semibold text-primary">
+                  <Zap className="w-3.5 h-3.5" />
+                  Kostnadsfritt — klart på 60 sekunder
+                </div>
+              )}
 
-        {/* ── Role + location ── */}
-        <div className="mb-8 pb-6 border-b border-foreground/10">
-          <h1 className="font-display text-[34px] sm:text-[38px] font-extrabold tracking-tight text-foreground leading-[1.05] mb-2">
-            {(() => {
-              const occ = survey.yrke || "";
-              const stripped = occ.replace(/^Specialistläkare\s+/i, "").trim();
-              if (!stripped) return occ;
-              return stripped.charAt(0).toUpperCase() + stripped.slice(1);
-            })()}
-          </h1>
-          <p className="text-[14px] text-[#6B6B6B]">
-            {survey.kommun}{userRegion && <> · {userRegion}</>} · {employmentLabel}
-          </p>
-        </div>
-
-        {loadingRates || !comparison ? (
-          <div className="flex items-center justify-center py-16">
-            <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-          </div>
-        ) : (
-          <div className="space-y-7">
-            {/* Möjlig ersättning */}
-            <div>
-              <p className="text-[12px] text-[#6B6B6B] mb-1">Möjlig ersättning</p>
-              <p className="font-display text-[32px] font-extrabold tracking-tight text-[hsl(var(--green))]">
-                {fmt(comparison.recMin)}–{fmt(comparison.recMax)} <span className="text-[20px] font-bold">kr/h</span>
-              </p>
-              {(() => {
-                const dMin = comparison.recMin - comparison.currentHourly;
-                const dMax = comparison.recMax - comparison.currentHourly;
-                if (dMin > 0) {
-                  return (
-                    <p className="text-[15px] font-semibold text-foreground mt-0.5 flex items-center gap-1">
-                      <ChevronUp className="w-4 h-4 text-foreground" />
-                      +{fmt(dMin)}–{fmt(dMax)} kr/h mer än du tjänar idag
-                    </p>
-                  );
-                }
-                return null;
-              })()}
-              <p className="text-[13px] text-[#6B6B6B] font-mono mt-1">
-                {fmt(comparison.recMonthlyMin)}–{fmt(comparison.recMonthlyMax)} kr/mån
-              </p>
               <button
-                onClick={() => document.getElementById("email-gate")?.scrollIntoView({ behavior: "smooth" })}
-                className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold px-6 py-3 rounded-xl bg-foreground text-[#EEEBE4] hover:bg-foreground/90 transition-colors"
+                disabled={!validEmail || emailSaving}
+                onClick={handleEmailSubmit}
+                className={`relative w-full font-display font-bold text-base py-4 px-6 rounded-xl flex items-center justify-center gap-2 transition-all bg-gradient-to-r from-[#8155FF] via-[#9333ea] to-[#ec4899] text-white shadow-[0_10px_40px_-8px_rgba(129,85,255,0.6)] overflow-hidden ${
+                  validEmail && !emailSaving
+                    ? "hover:shadow-[0_16px_50px_-8px_rgba(236,72,153,0.6)] hover:-translate-y-0.5 active:scale-[0.98] animate-pulse-soft"
+                    : "opacity-70 cursor-not-allowed"
+                }`}
               >
-                Visa hur du förhandlar dit <ArrowRight className="w-4 h-4" />
+                <span className="relative z-10 flex items-center gap-2">
+                  {emailSaving ? "Skickar…" : "Få din gratis rapport →"}
+                </span>
+                {validEmail && !emailSaving && (
+                  <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
+                )}
               </button>
-            </div>
-
-            {/* Din nuvarande ersättning */}
-            <div>
-              <p className="text-[12px] text-[#6B6B6B] mb-1">Din nuvarande ersättning</p>
-              <p className="font-display text-[32px] font-extrabold tracking-tight text-foreground">
-                {fmt(comparison.currentHourly)} <span className="text-[20px] font-bold">kr/h</span>
+              <p className="text-center text-[12px] text-foreground/45">
+                Inga kort. Ingen spam. Klart på 60 sek.
               </p>
             </div>
+          );
 
-            {/* Ramavtalspris */}
-            <div>
-              <p className="text-[12px] text-[#6B6B6B] mb-1">Ramavtalspris (kundpris)</p>
-              <p className="font-display text-[32px] font-extrabold tracking-tight text-foreground">
-                {fmt(comparison.marketRate)} <span className="text-[20px] font-bold">kr/h</span>
-              </p>
-              <p className="text-[12px] font-normal text-[#6B6B6B] mt-1">
-                Det här är vad regionen betalar bemanningsbolaget.
-              </p>
-            </div>
+          return (
+            <>
+              {/* ── Top section: 2-col on desktop ── */}
+              <div className="lg:grid lg:grid-cols-[1.35fr_1fr] lg:gap-10 lg:items-start">
+                {/* LEFT */}
+                <div>
+                  <div className="mb-8">
+                    <CompcareLogo variant="full" className="!h-7 mb-3" />
+                    <p className="text-[13px] text-foreground/55 font-medium tracking-wide">
+                      Ersättningsanalys
+                    </p>
+                  </div>
 
+                  <div className="mb-8 pb-6 border-b border-foreground/10 lg:border-b-0 lg:pb-0 lg:mb-6">
+                    <h1 className="font-display text-[34px] sm:text-[38px] font-extrabold tracking-tight text-foreground leading-[1.05] mb-2">
+                      {(() => {
+                        const occ = survey.yrke || "";
+                        const stripped = occ.replace(/^Specialistläkare\s+/i, "").trim();
+                        if (!stripped) return occ;
+                        return stripped.charAt(0).toUpperCase() + stripped.slice(1);
+                      })()}
+                    </h1>
+                    <p className="text-[14px] text-[#6B6B6B]">
+                      {survey.kommun}{userRegion && <> · {userRegion}</>} · {employmentLabel}
+                    </p>
+                  </div>
 
-            {/* Beräkningsantaganden */}
-            <div className="pt-6 pb-6 border-t border-b border-foreground/10">
-              <Accordion type="single" collapsible className="w-full">
-                <AccordionItem value="calculations" className="border-b-0">
-                  <AccordionTrigger className="text-[12px] text-foreground/55 font-semibold py-2 hover:no-underline">
-                    Hur beräknas detta?
-                  </AccordionTrigger>
-                  <AccordionContent>
-                    <ul className="space-y-1.5 text-[13px] text-foreground/50 leading-relaxed pl-4 pb-0">
-                      <li>· Bemanningsbolagets marginal: {marginText}</li>
-                      {comparison.isEmployee && <li>· Arbetsgivaravgifter: faktor {employerFactor}</li>}
-                      <li>· Arbetsmånad: 167 timmar</li>
-                    </ul>
-                  </AccordionContent>
-                </AccordionItem>
-              </Accordion>
-            </div>
-          </div>
-        )}
+                  {loadingRates || !comparison ? (
+                    <div className="flex items-center justify-center py-16">
+                      <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-[12px] text-[#6B6B6B] mb-1">Möjlig ersättning</p>
+                      <p className="font-display text-[32px] font-extrabold tracking-tight text-[hsl(var(--green))]">
+                        {fmt(comparison.recMin)}–{fmt(comparison.recMax)} <span className="text-[20px] font-bold">kr/h</span>
+                      </p>
+                      {(() => {
+                        const dMin = comparison.recMin - comparison.currentHourly;
+                        const dMax = comparison.recMax - comparison.currentHourly;
+                        if (dMin > 0) {
+                          return (
+                            <p className="text-[15px] font-semibold text-foreground mt-0.5 flex items-center gap-1">
+                              <ChevronUp className="w-4 h-4 text-foreground" />
+                              +{fmt(dMin)}–{fmt(dMax)} kr/h mer än du tjänar idag
+                            </p>
+                          );
+                        }
+                        return null;
+                      })()}
+                      <p className="text-[13px] text-[#6B6B6B] font-mono mt-1">
+                        {fmt(comparison.recMonthlyMin)}–{fmt(comparison.recMonthlyMax)} kr/mån
+                      </p>
+                      <button
+                        onClick={() => document.getElementById("email-gate")?.scrollIntoView({ behavior: "smooth" })}
+                        className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold px-6 py-3 rounded-xl bg-foreground text-[#EEEBE4] hover:bg-foreground/90 transition-colors lg:hidden"
+                      >
+                        Visa hur du förhandlar dit <ArrowRight className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
+                </div>
 
-        <div className="mt-6">
-          <NegotiationAssistantTeaser />
-        </div>
+                {/* RIGHT (desktop only) */}
+                <aside className="hidden lg:block lg:sticky lg:top-24">
+                  <div className="bg-white/70 rounded-2xl p-6 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.08)] border border-foreground/[0.06]">
+                    {emailGate}
+                  </div>
+                </aside>
+              </div>
 
-        {/* ── Email gate (unlock full report) ── */}
-        <div id="email-gate" className="mt-10 pt-6 border-t border-foreground/10 space-y-3">
-          <div>
-            <h2 className="font-display text-[16px] font-bold tracking-tight text-foreground mb-1">
-              Lås upp hela rapporten
-            </h2>
-            <p className="text-[13px] text-foreground/50 leading-relaxed">
-              Förhandlingsspann, alla zoner, AI-assistans för din nästa löneförhandling. Visas direkt.
-            </p>
-          </div>
-          <div className="relative flex items-center">
-            <Mail className="absolute left-4 w-4 h-4 text-foreground/30 pointer-events-none" />
-            <input
-              type="email"
-              inputMode="email"
-              autoComplete="email"
-              placeholder="namn@exempel.se"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter" && validEmail && !emailSaving) handleEmailSubmit(); }}
-              className="w-full bg-background/60 border-[1.5px] border-foreground/[0.12] rounded-xl text-foreground font-body text-[16px] py-3.5 pl-11 pr-4 outline-none transition-all focus:border-primary placeholder:text-foreground/35"
-            />
-          </div>
-          {validEmail && !emailSaving && (
-            <div className="flex items-center justify-center gap-1.5 text-xs font-semibold text-primary">
-              <Zap className="w-3.5 h-3.5" />
-              Kostnadsfritt — klart på 60 sekunder
-            </div>
-          )}
+              {/* ── Divider + rest (full width, mobile-style max-w-lg) ── */}
+              {!loadingRates && comparison && (
+                <div className="mx-auto max-w-lg lg:mt-10 lg:pt-8 lg:border-t lg:border-foreground/10">
+                  <div className="space-y-7 mt-7 lg:mt-0">
+                    {/* Din nuvarande ersättning */}
+                    <div>
+                      <p className="text-[12px] text-[#6B6B6B] mb-1">Din nuvarande ersättning</p>
+                      <p className="font-display text-[32px] font-extrabold tracking-tight text-foreground">
+                        {fmt(comparison.currentHourly)} <span className="text-[20px] font-bold">kr/h</span>
+                      </p>
+                    </div>
 
-          <button
-            disabled={!validEmail || emailSaving}
-            onClick={handleEmailSubmit}
-            className={`relative w-full font-display font-bold text-base py-4 px-6 rounded-xl flex items-center justify-center gap-2 transition-all bg-gradient-to-r from-[#8155FF] via-[#9333ea] to-[#ec4899] text-white shadow-[0_10px_40px_-8px_rgba(129,85,255,0.6)] overflow-hidden ${
-              validEmail && !emailSaving
-                ? "hover:shadow-[0_16px_50px_-8px_rgba(236,72,153,0.6)] hover:-translate-y-0.5 active:scale-[0.98] animate-pulse-soft"
-                : "opacity-70 cursor-not-allowed"
-            }`}
-          >
-            <span className="relative z-10 flex items-center gap-2">
-              {emailSaving ? "Skickar…" : "Få din gratis rapport →"}
-            </span>
-            {validEmail && !emailSaving && (
-              <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
-            )}
-          </button>
-          <p className="text-center text-[12px] text-foreground/45">
-            Inga kort. Ingen spam. Klart på 60 sek.
-          </p>
-        </div>
+                    {/* Ramavtalspris */}
+                    <div>
+                      <p className="text-[12px] text-[#6B6B6B] mb-1">Ramavtalspris (kundpris)</p>
+                      <p className="font-display text-[32px] font-extrabold tracking-tight text-foreground">
+                        {fmt(comparison.marketRate)} <span className="text-[20px] font-bold">kr/h</span>
+                      </p>
+                      <p className="text-[12px] font-normal text-[#6B6B6B] mt-1">
+                        Det här är vad regionen betalar bemanningsbolaget.
+                      </p>
+                    </div>
+
+                    {/* Beräkningsantaganden */}
+                    <div className="pt-6 pb-6 border-t border-b border-foreground/10">
+                      <Accordion type="single" collapsible className="w-full">
+                        <AccordionItem value="calculations" className="border-b-0">
+                          <AccordionTrigger className="text-[12px] text-foreground/55 font-semibold py-2 hover:no-underline">
+                            Hur beräknas detta?
+                          </AccordionTrigger>
+                          <AccordionContent>
+                            <ul className="space-y-1.5 text-[13px] text-foreground/50 leading-relaxed pl-4 pb-0">
+                              <li>· Bemanningsbolagets marginal: {marginText}</li>
+                              {comparison.isEmployee && <li>· Arbetsgivaravgifter: faktor {employerFactor}</li>}
+                              <li>· Arbetsmånad: 167 timmar</li>
+                            </ul>
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
+                    </div>
+                  </div>
+
+                  <div className="mt-6">
+                    <NegotiationAssistantTeaser />
+                  </div>
+
+                  {/* Mobile-only email gate (desktop has it in the sticky right column) */}
+                  <div className="mt-10 pt-6 border-t border-foreground/10 lg:hidden">
+                    {emailGate}
+                  </div>
+                </div>
+              )}
+            </>
+          );
+        })()}
 
       </main>
     </div>
   );
 }
+
