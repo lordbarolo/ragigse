@@ -445,9 +445,12 @@ export default function AnalysisScreen() {
                 </div>
 
                 {/* RIGHT (desktop only) */}
-                <aside className="hidden lg:block lg:sticky lg:top-24">
+                <aside className="hidden lg:block lg:sticky lg:top-24 space-y-5">
                   <div className="bg-white/70 rounded-2xl p-6 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.08)] border border-foreground/[0.06]">
                     {emailGate}
+                  </div>
+                  <div>
+                    <NegotiationAssistantTeaser />
                   </div>
                 </aside>
               </div>
