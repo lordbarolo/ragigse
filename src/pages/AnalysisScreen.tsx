@@ -333,7 +333,7 @@ export default function AnalysisScreen() {
 
           return (
             <>
-              {/* ── Top section: 2-col on desktop ── */}
+              {/* ── Full page: 2-col on desktop ── */}
               <div className="lg:grid lg:grid-cols-[1.35fr_1fr] lg:gap-10 lg:items-start">
                 {/* LEFT */}
                 <div>
@@ -363,34 +363,84 @@ export default function AnalysisScreen() {
                       <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
                     </div>
                   ) : (
-                    <div>
-                      <p className="text-[12px] text-[#6B6B6B] mb-1">Möjlig ersättning</p>
-                      <p className="font-display text-[32px] font-extrabold tracking-tight text-[hsl(var(--green))]">
-                        {fmt(comparison.recMin)}–{fmt(comparison.recMax)} <span className="text-[20px] font-bold">kr/h</span>
-                      </p>
-                      {(() => {
-                        const dMin = comparison.recMin - comparison.currentHourly;
-                        const dMax = comparison.recMax - comparison.currentHourly;
-                        if (dMin > 0) {
-                          return (
-                            <p className="text-[15px] font-semibold text-foreground mt-0.5 flex items-center gap-1">
-                              <ChevronUp className="w-4 h-4 text-foreground" />
-                              +{fmt(dMin)}–{fmt(dMax)} kr/h mer än du tjänar idag
-                            </p>
-                          );
-                        }
-                        return null;
-                      })()}
-                      <p className="text-[13px] text-[#6B6B6B] font-mono mt-1">
-                        {fmt(comparison.recMonthlyMin)}–{fmt(comparison.recMonthlyMax)} kr/mån
-                      </p>
-                      <button
-                        onClick={() => document.getElementById("email-gate")?.scrollIntoView({ behavior: "smooth" })}
-                        className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold px-6 py-3 rounded-xl bg-foreground text-[#EEEBE4] hover:bg-foreground/90 transition-colors lg:hidden"
-                      >
-                        Visa hur du förhandlar dit <ArrowRight className="w-4 h-4" />
-                      </button>
-                    </div>
+                    <>
+                      <div>
+                        <p className="text-[12px] text-[#6B6B6B] mb-1">Möjlig ersättning</p>
+                        <p className="font-display text-[32px] font-extrabold tracking-tight text-[hsl(var(--green))]">
+                          {fmt(comparison.recMin)}–{fmt(comparison.recMax)} <span className="text-[20px] font-bold">kr/h</span>
+                        </p>
+                        {(() => {
+                          const dMin = comparison.recMin - comparison.currentHourly;
+                          const dMax = comparison.recMax - comparison.currentHourly;
+                          if (dMin > 0) {
+                            return (
+                              <p className="text-[15px] font-semibold text-foreground mt-0.5 flex items-center gap-1">
+                                <ChevronUp className="w-4 h-4 text-foreground" />
+                                +{fmt(dMin)}–{fmt(dMax)} kr/h mer än du tjänar idag
+                              </p>
+                            );
+                          }
+                          return null;
+                        })()}
+                        <p className="text-[13px] text-[#6B6B6B] font-mono mt-1">
+                          {fmt(comparison.recMonthlyMin)}–{fmt(comparison.recMonthlyMax)} kr/mån
+                        </p>
+                        <button
+                          onClick={() => document.getElementById("email-gate")?.scrollIntoView({ behavior: "smooth" })}
+                          className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold px-6 py-3 rounded-xl bg-foreground text-[#EEEBE4] hover:bg-foreground/90 transition-colors lg:hidden"
+                        >
+                          Visa hur du förhandlar dit <ArrowRight className="w-4 h-4" />
+                        </button>
+                      </div>
+
+                      <div className="mt-10 pt-8 border-t border-foreground/10 space-y-7">
+                        {/* Din nuvarande ersättning */}
+                        <div>
+                          <p className="text-[12px] text-[#6B6B6B] mb-1">Din nuvarande ersättning</p>
+                          <p className="font-display text-[32px] font-extrabold tracking-tight text-foreground">
+                            {fmt(comparison.currentHourly)} <span className="text-[20px] font-bold">kr/h</span>
+                          </p>
+                        </div>
+
+                        {/* Ramavtalspris */}
+                        <div>
+                          <p className="text-[12px] text-[#6B6B6B] mb-1">Ramavtalspris (kundpris)</p>
+                          <p className="font-display text-[32px] font-extrabold tracking-tight text-foreground">
+                            {fmt(comparison.marketRate)} <span className="text-[20px] font-bold">kr/h</span>
+                          </p>
+                          <p className="text-[12px] font-normal text-[#6B6B6B] mt-1">
+                            Det här är vad regionen betalar bemanningsbolaget.
+                          </p>
+                        </div>
+
+                        {/* Beräkningsantaganden */}
+                        <div className="pt-6 pb-6 border-t border-b border-foreground/10">
+                          <Accordion type="single" collapsible className="w-full">
+                            <AccordionItem value="calculations" className="border-b-0">
+                              <AccordionTrigger className="text-[12px] text-foreground/55 font-semibold py-2 hover:no-underline">
+                                Hur beräknas detta?
+                              </AccordionTrigger>
+                              <AccordionContent>
+                                <ul className="space-y-1.5 text-[13px] text-foreground/50 leading-relaxed pl-4 pb-0">
+                                  <li>· Bemanningsbolagets marginal: {marginText}</li>
+                                  {comparison.isEmployee && <li>· Arbetsgivaravgifter: faktor {employerFactor}</li>}
+                                  <li>· Arbetsmånad: 167 timmar</li>
+                                </ul>
+                              </AccordionContent>
+                            </AccordionItem>
+                          </Accordion>
+                        </div>
+                      </div>
+
+                      <div className="mt-6">
+                        <NegotiationAssistantTeaser />
+                      </div>
+
+                      {/* Mobile-only email gate (desktop has it in the sticky right column) */}
+                      <div className="mt-10 pt-6 border-t border-foreground/10 lg:hidden">
+                        {emailGate}
+                      </div>
+                    </>
                   )}
                 </div>
 
@@ -401,59 +451,6 @@ export default function AnalysisScreen() {
                   </div>
                 </aside>
               </div>
-
-              {/* ── Divider + rest (full width, mobile-style max-w-lg) ── */}
-              {!loadingRates && comparison && (
-                <div className="mx-auto max-w-lg lg:mt-10 lg:pt-8 lg:border-t lg:border-foreground/10">
-                  <div className="space-y-7 mt-7 lg:mt-0">
-                    {/* Din nuvarande ersättning */}
-                    <div>
-                      <p className="text-[12px] text-[#6B6B6B] mb-1">Din nuvarande ersättning</p>
-                      <p className="font-display text-[32px] font-extrabold tracking-tight text-foreground">
-                        {fmt(comparison.currentHourly)} <span className="text-[20px] font-bold">kr/h</span>
-                      </p>
-                    </div>
-
-                    {/* Ramavtalspris */}
-                    <div>
-                      <p className="text-[12px] text-[#6B6B6B] mb-1">Ramavtalspris (kundpris)</p>
-                      <p className="font-display text-[32px] font-extrabold tracking-tight text-foreground">
-                        {fmt(comparison.marketRate)} <span className="text-[20px] font-bold">kr/h</span>
-                      </p>
-                      <p className="text-[12px] font-normal text-[#6B6B6B] mt-1">
-                        Det här är vad regionen betalar bemanningsbolaget.
-                      </p>
-                    </div>
-
-                    {/* Beräkningsantaganden */}
-                    <div className="pt-6 pb-6 border-t border-b border-foreground/10">
-                      <Accordion type="single" collapsible className="w-full">
-                        <AccordionItem value="calculations" className="border-b-0">
-                          <AccordionTrigger className="text-[12px] text-foreground/55 font-semibold py-2 hover:no-underline">
-                            Hur beräknas detta?
-                          </AccordionTrigger>
-                          <AccordionContent>
-                            <ul className="space-y-1.5 text-[13px] text-foreground/50 leading-relaxed pl-4 pb-0">
-                              <li>· Bemanningsbolagets marginal: {marginText}</li>
-                              {comparison.isEmployee && <li>· Arbetsgivaravgifter: faktor {employerFactor}</li>}
-                              <li>· Arbetsmånad: 167 timmar</li>
-                            </ul>
-                          </AccordionContent>
-                        </AccordionItem>
-                      </Accordion>
-                    </div>
-                  </div>
-
-                  <div className="mt-6">
-                    <NegotiationAssistantTeaser />
-                  </div>
-
-                  {/* Mobile-only email gate (desktop has it in the sticky right column) */}
-                  <div className="mt-10 pt-6 border-t border-foreground/10 lg:hidden">
-                    {emailGate}
-                  </div>
-                </div>
-              )}
             </>
           );
         })()}
