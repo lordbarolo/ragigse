@@ -182,12 +182,39 @@ serve(async (req) => {
       await logRejection("invalid_lead_id_format", event_name, String(lead_id).slice(0, 100), metadata);
     }
 
+    // Anonymous daily visitor hash: sha256(salt + ip + ua + YYYY-MM-DD).
+    // Roterar varje dygn → kan inte spåra individer över tid och kräver
+    // inget cookie-samtycke (ingen cookie sätts, ingen PII lagras).
+    let visitor_day_hash: string | null = null;
+    try {
+      const { data: saltRow } = await supabase
+        .from("app_settings")
+        .select("value")
+        .eq("key", "visitor_hash_salt")
+        .maybeSingle();
+      const rawSalt = saltRow?.value;
+      const salt = typeof rawSalt === "string" ? rawSalt : (rawSalt == null ? "" : String(rawSalt));
+      if (salt && clientIp && clientIp !== "unknown") {
+        const day = new Date().toISOString().slice(0, 10);
+        const raw = `${salt}|${clientIp}|${userAgent ?? ""}|${day}`;
+        const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(raw));
+        visitor_day_hash = Array.from(new Uint8Array(buf))
+          .map((b) => b.toString(16).padStart(2, "0"))
+          .join("");
+      }
+    } catch (e) {
+      console.warn("[track-event] visitor_day_hash failed", e);
+    }
+
+
+
     const { error } = await supabase
       .from("analytics_events")
       .insert([{
         event_name,
         lead_id: validLeadId,
         metadata: metadata || null,
+        visitor_day_hash,
       }]);
 
     if (error) {
@@ -199,10 +226,13 @@ serve(async (req) => {
       );
     }
 
+
     return new Response(
       JSON.stringify({ ok: true }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
+
+
   } catch (err: any) {
     console.error("[track-event] error:", err);
     return new Response(

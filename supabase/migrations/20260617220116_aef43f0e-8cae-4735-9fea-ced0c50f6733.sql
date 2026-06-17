@@ -1,0 +1,2 @@
+ALTER TABLE public.analytics_events ADD COLUMN IF NOT EXISTS visitor_day_hash text;
+CREATE INDEX IF NOT EXISTS idx_analytics_events_visitor_day_hash ON public.analytics_events (created_at, visitor_day_hash) WHERE visitor_day_hash IS NOT NULL;
