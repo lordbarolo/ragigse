@@ -56,22 +56,29 @@ export function resetIdentity() {
 }
 
 /**
- * Fires `signup_confirmed` exactly once per user when we first detect their
- * email-confirmed session. Dedup'd via localStorage so refresh/relogin won't
- * double-count. This is the TRUE signup completion event (vs `signup_initiated`
- * which fires on form submit before email click).
+ * Closes the signup loop. Fires two dedup'd events the first time we detect
+ * an email-confirmed session:
+ *   - `signup_confirmed`: email link clicked (closes initiated → confirmed)
+ *   - `signup_completed`: user is now actively in the product (separate key
+ *     so we can later gate this on real onboarding completion).
+ * Both dedup'd via localStorage so refresh/relogin won't double-count.
  */
 function maybeFireSignupConfirmed(user: { id: string; email_confirmed_at?: string | null; app_metadata?: Record<string, unknown>; user_metadata?: Record<string, unknown> }) {
   try {
     if (!user.email_confirmed_at) return;
-    const key = `signup_confirmed:${user.id}`;
-    if (localStorage.getItem(key)) return;
-    localStorage.setItem(key, "1");
+    const role = (user.user_metadata?.role as string) || "individual";
 
-    // Lazy-import to avoid circular deps with trackEvent.ts
     import("@/lib/trackEvent").then(({ trackEvent }) => {
-      const role = (user.user_metadata?.role as string) || "individual";
-      trackEvent("signup_confirmed", { method: "email", role });
+      const confirmedKey = `signup_confirmed:${user.id}`;
+      if (!localStorage.getItem(confirmedKey)) {
+        localStorage.setItem(confirmedKey, "1");
+        trackEvent("signup_confirmed", { method: "email", role });
+      }
+      const completedKey = `signup_completed:${user.id}`;
+      if (!localStorage.getItem(completedKey)) {
+        localStorage.setItem(completedKey, "1");
+        trackEvent("signup_completed", { method: "email", role });
+      }
     }).catch(() => { /* silent */ });
   } catch {
     /* silent */

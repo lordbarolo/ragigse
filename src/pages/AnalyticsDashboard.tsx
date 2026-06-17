@@ -6,32 +6,39 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Loader2, RefreshCw, BarChart3, Users, TrendingUp, DollarSign, CalendarIcon, Download } from "lucide-react";
+import { Loader2, RefreshCw, BarChart3, Users, TrendingUp, UserPlus, CalendarIcon, Download } from "lucide-react";
 import { format, subDays } from "date-fns";
 import { cn } from "@/lib/utils";
 
 interface FunnelStep {
   step: string;
-  count: number;
+  unique: number;
+  raw: number;
   rate: number;
+  dropoff: number;
 }
 
 interface AnalyticsData {
-  funnels: Record<string, FunnelStep[]>;
-  conversionRates: Record<string, { sessions: number; conversions: number; rate: string }>;
-  referralEvents: Record<string, { sent: number; confirmed: number }>;
-  revenueByVariant: Record<string, number>;
-  timeSeries: Array<{ date: string; events: Record<string, number> }>;
-  totalEvents: number;
+  funnel: FunnelStep[];
+  kpis: {
+    unique_visitors: number;
+    unique_signups: number;
+    overall_rate: string;
+    total_events: number;
+  };
+  referralEvents: { sent: number; confirmed: number };
+  timeSeries: Array<{ date: string; unique_visitors: number; events: Record<string, number> }>;
 }
 
 const STEP_LABELS: Record<string, string> = {
-  landing_viewed: "Landningssida",
-  survey_started: "Enkät startad",
-  survey_completed: "Enkät klar",
-  teaser_viewed: "Resultat visad",
-  checkout_started: "Checkout startad",
-  payment_verified: "Betalning verifierad",
+  landing_viewed: "Besökt startsidan",
+  survey_started: "Påbörjat enkät",
+  survey_completed: "Slutfört enkät",
+  email_collected: "Lämnat e-post",
+  report_viewed: "Sett rapport",
+  signup_initiated: "Påbörjat signup",
+  signup_confirmed: "Bekräftat e-post",
+  signup_completed: "Aktivt konto",
 };
 
 export default function AnalyticsDashboard() {
@@ -103,46 +110,33 @@ export default function AnalyticsDashboard() {
     if (!data) return;
     const rows: string[][] = [];
 
-    // Funnel data
-    rows.push(["--- Funnel ---"]);
-    rows.push(["Variant", "Step", "Count", "Rate %"]);
-    for (const v of ["A", "B"]) {
-      for (const s of data.funnels[v] || []) {
-        rows.push([v, s.step, String(s.count), String(s.rate)]);
-      }
+    rows.push(["--- Funnel (unika besökare) ---"]);
+    rows.push(["Step", "Unique", "Raw events", "Step rate %", "Dropoff"]);
+    for (const s of data.funnel) {
+      rows.push([s.step, String(s.unique), String(s.raw), String(s.rate), String(s.dropoff)]);
     }
 
-    // Conversion rates
     rows.push([]);
-    rows.push(["--- Conversion Rates ---"]);
-    rows.push(["Variant", "Sessions", "Conversions", "Rate"]);
-    for (const v of ["A", "B"]) {
-      const cr = data.conversionRates[v];
-      if (cr) rows.push([v, String(cr.sessions), String(cr.conversions), cr.rate]);
-    }
+    rows.push(["--- KPIs ---"]);
+    rows.push(["Unique visitors", String(data.kpis.unique_visitors)]);
+    rows.push(["Unique signups", String(data.kpis.unique_signups)]);
+    rows.push(["Overall conversion", data.kpis.overall_rate]);
+    rows.push(["Total events", String(data.kpis.total_events)]);
 
-    // Referrals
     rows.push([]);
-    rows.push(["--- Referrals ---"]);
-    rows.push(["Variant", "Sent", "Confirmed"]);
-    for (const v of ["A", "B"]) {
-      const r = data.referralEvents[v];
-      if (r) rows.push([v, String(r.sent), String(r.confirmed)]);
-    }
-
-    // Time series
-    rows.push([]);
-    rows.push(["--- Daily Activity ---"]);
-    rows.push(["Date", "Landing", "Survey", "Teaser", "Checkout", "Paid", "Referral"]);
+    rows.push(["--- Daily ---"]);
+    rows.push(["Date", "Unique visitors", "Landing", "Survey started", "Survey done", "Email", "Report", "Signup init", "Signup confirmed"]);
     for (const day of data.timeSeries) {
       rows.push([
         day.date,
+        String(day.unique_visitors),
         String(day.events.landing_viewed || 0),
+        String(day.events.survey_started || 0),
         String(day.events.survey_completed || 0),
-        String(day.events.teaser_viewed || 0),
-        String(day.events.checkout_started || 0),
-        String(day.events.payment_verified || 0),
-        String(day.events.referral_sent || 0),
+        String(day.events.email_collected || 0),
+        String(day.events.report_viewed || 0),
+        String(day.events.signup_initiated || 0),
+        String(day.events.signup_confirmed || 0),
       ]);
     }
 
@@ -161,17 +155,14 @@ export default function AnalyticsDashboard() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-foreground">📊 Analytics Dashboard</h1>
-          <p className="text-sm text-muted-foreground">Funnelspårning & A/B-jämförelse</p>
+          <p className="text-sm text-muted-foreground">
+            Unika besökare via cookieless dagshash · full funnel inkl. signup-loop
+          </p>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
-          {/* Date range pickers */}
           <DatePicker label="Från" date={dateFrom} onSelect={(d) => d && setDateFrom(d)} />
           <DatePicker label="Till" date={dateTo} onSelect={(d) => d && setDateTo(d)} />
-          <Button
-            onClick={() => setAutoRefresh((v) => !v)}
-            variant={autoRefresh ? "default" : "outline"}
-            size="sm"
-          >
+          <Button onClick={() => setAutoRefresh((v) => !v)} variant={autoRefresh ? "default" : "outline"} size="sm">
             {autoRefresh ? "Auto ✓" : "Auto ✗"}
           </Button>
           <Button onClick={exportCSV} disabled={!data} variant="outline" size="sm">
@@ -195,104 +186,55 @@ export default function AnalyticsDashboard() {
 
       {data && (
         <>
-          {/* KPI Cards */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <KPICard
+              icon={<Users className="w-5 h-5" />}
+              label="Unika besökare"
+              value={String(data.kpis.unique_visitors)}
+              sub="Cookieless dagshash"
+            />
+            <KPICard
+              icon={<UserPlus className="w-5 h-5" />}
+              label="Bekräftade konton"
+              value={String(data.kpis.unique_signups)}
+            />
+            <KPICard
+              icon={<TrendingUp className="w-5 h-5" />}
+              label="Övergrip. konv."
+              value={data.kpis.overall_rate}
+              sub="besök → konto"
+            />
             <KPICard
               icon={<BarChart3 className="w-5 h-5" />}
               label="Totala events"
-              value={String(data.totalEvents)}
-            />
-            <KPICard
-              icon={<TrendingUp className="w-5 h-5" />}
-              label="Conv. rate A"
-              value={data.conversionRates.A?.rate || "0%"}
-              sub={`${data.conversionRates.A?.conversions || 0} / ${data.conversionRates.A?.sessions || 0}`}
-            />
-            <KPICard
-              icon={<TrendingUp className="w-5 h-5" />}
-              label="Conv. rate B"
-              value={data.conversionRates.B?.rate || "0%"}
-              sub={`${data.conversionRates.B?.conversions || 0} / ${data.conversionRates.B?.sessions || 0}`}
-            />
-            <KPICard
-              icon={<DollarSign className="w-5 h-5" />}
-              label="Betalningar"
-              value={String((data.revenueByVariant.A || 0) + (data.revenueByVariant.B || 0))}
-              sub={`A: ${data.revenueByVariant.A || 0} · B: ${data.revenueByVariant.B || 0}`}
+              value={String(data.kpis.total_events)}
             />
           </div>
 
-          {/* Funnel Comparison */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {["A", "B"].map((variant) => (
-              <Card key={variant} className="card-shadow">
-                <CardHeader className="pb-2">
-                  <CardTitle className="text-lg flex items-center gap-2">
-                    <span className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-sm font-bold ${
-                      variant === "A" ? "bg-primary/10 text-primary" : "bg-accent/10 text-accent"
-                    }`}>
-                      {variant}
-                    </span>
-                    Funnel — Variant {variant}
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  {(data.funnels[variant] || []).map((step, i) => (
-                    <FunnelBar
-                      key={step.step}
-                      label={STEP_LABELS[step.step] || step.step}
-                      count={step.count}
-                      rate={step.rate}
-                      maxCount={data.funnels[variant]?.[0]?.count || 1}
-                      isFirst={i === 0}
-                      variant={variant}
-                    />
-                  ))}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-
-          {/* Referral Comparison */}
           <Card className="card-shadow">
             <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Users className="w-5 h-5" />
-                Referral-användning per variant
-              </CardTitle>
+              <CardTitle className="text-lg">Funnel — unika besökare per steg</CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 gap-6">
-                {["A", "B"].map((v) => (
-                  <div key={v} className="space-y-2">
-                    <p className="font-semibold text-foreground">Variant {v}</p>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Skickade</span>
-                      <span className="font-mono text-foreground">{data.referralEvents[v]?.sent || 0}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Bekräftade</span>
-                      <span className="font-mono text-foreground">{data.referralEvents[v]?.confirmed || 0}</span>
-                    </div>
-                    <div className="flex justify-between text-sm">
-                      <span className="text-muted-foreground">Konvertering</span>
-                      <span className="font-mono font-semibold text-foreground">
-                        {data.referralEvents[v]?.sent
-                          ? ((data.referralEvents[v].confirmed / data.referralEvents[v].sent) * 100).toFixed(0) + "%"
-                          : "—"}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
+            <CardContent className="space-y-3">
+              {data.funnel.map((step, i) => (
+                <FunnelBar
+                  key={step.step}
+                  label={STEP_LABELS[step.step] || step.step}
+                  unique={step.unique}
+                  raw={step.raw}
+                  rate={step.rate}
+                  dropoff={step.dropoff}
+                  maxCount={data.funnel[0]?.unique || 1}
+                  isFirst={i === 0}
+                />
+              ))}
             </CardContent>
           </Card>
 
-          {/* Time Series (last 30 days) */}
           {data.timeSeries.length > 0 && (
             <Card className="card-shadow">
               <CardHeader>
-                <CardTitle className="text-lg">Daglig aktivitet (senaste 30 dagarna)</CardTitle>
+                <CardTitle className="text-lg">Daglig aktivitet</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="overflow-x-auto">
@@ -300,24 +242,26 @@ export default function AnalyticsDashboard() {
                     <thead>
                       <tr className="border-b">
                         <th className="text-left py-2 pr-4 text-muted-foreground">Datum</th>
-                        <th className="text-right py-2 px-2 text-muted-foreground">Landing</th>
-                        <th className="text-right py-2 px-2 text-muted-foreground">Enkät</th>
-                        <th className="text-right py-2 px-2 text-muted-foreground">Resultat</th>
-                        <th className="text-right py-2 px-2 text-muted-foreground">Checkout</th>
-                        <th className="text-right py-2 px-2 text-muted-foreground">Betalt</th>
-                        <th className="text-right py-2 px-2 text-muted-foreground">Referral</th>
+                        <th className="text-right py-2 px-2 text-muted-foreground">Unika</th>
+                        <th className="text-right py-2 px-2 text-muted-foreground">Enkät start</th>
+                        <th className="text-right py-2 px-2 text-muted-foreground">Enkät klar</th>
+                        <th className="text-right py-2 px-2 text-muted-foreground">E-post</th>
+                        <th className="text-right py-2 px-2 text-muted-foreground">Rapport</th>
+                        <th className="text-right py-2 px-2 text-muted-foreground">Signup init</th>
+                        <th className="text-right py-2 px-2 text-muted-foreground">Konto klart</th>
                       </tr>
                     </thead>
                     <tbody>
                       {data.timeSeries.map((day) => (
                         <tr key={day.date} className="border-b border-border/50">
                           <td className="py-1.5 pr-4 text-foreground">{day.date}</td>
-                          <td className="text-right py-1.5 px-2">{day.events.landing_viewed || 0}</td>
+                          <td className="text-right py-1.5 px-2 font-semibold">{day.unique_visitors}</td>
+                          <td className="text-right py-1.5 px-2">{day.events.survey_started || 0}</td>
                           <td className="text-right py-1.5 px-2">{day.events.survey_completed || 0}</td>
-                          <td className="text-right py-1.5 px-2">{day.events.teaser_viewed || 0}</td>
-                          <td className="text-right py-1.5 px-2">{day.events.checkout_started || 0}</td>
-                          <td className="text-right py-1.5 px-2">{day.events.payment_verified || 0}</td>
-                          <td className="text-right py-1.5 px-2">{day.events.referral_sent || 0}</td>
+                          <td className="text-right py-1.5 px-2">{day.events.email_collected || 0}</td>
+                          <td className="text-right py-1.5 px-2">{day.events.report_viewed || 0}</td>
+                          <td className="text-right py-1.5 px-2">{day.events.signup_initiated || 0}</td>
+                          <td className="text-right py-1.5 px-2">{day.events.signup_confirmed || 0}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -335,8 +279,6 @@ export default function AnalyticsDashboard() {
     </div>
   );
 }
-
-/* ── Sub-components ─────────────────────────────────── */
 
 function DatePicker({ label, date, onSelect }: { label: string; date: Date; onSelect: (d: Date | undefined) => void }) {
   return (
@@ -377,37 +319,29 @@ function KPICard({ icon, label, value, sub }: { icon: React.ReactNode; label: st
 }
 
 function FunnelBar({
-  label,
-  count,
-  rate,
-  maxCount,
-  isFirst,
-  variant,
+  label, unique, raw, rate, dropoff, maxCount, isFirst,
 }: {
-  label: string;
-  count: number;
-  rate: number;
-  maxCount: number;
-  isFirst: boolean;
-  variant: string;
+  label: string; unique: number; raw: number; rate: number; dropoff: number; maxCount: number; isFirst: boolean;
 }) {
-  const width = maxCount > 0 ? Math.max((count / maxCount) * 100, 2) : 2;
-  const barColor = variant === "A" ? "bg-primary" : "bg-accent";
-
+  const width = maxCount > 0 ? Math.max((unique / maxCount) * 100, 2) : 2;
   return (
     <div>
       <div className="flex justify-between text-xs mb-1">
         <span className="text-muted-foreground">{label}</span>
         <span className="text-foreground font-mono">
-          {count}
-          {!isFirst && <span className="text-muted-foreground ml-1">({rate}%)</span>}
+          {unique}
+          <span className="text-muted-foreground ml-1">unika</span>
+          {raw !== unique && <span className="text-muted-foreground ml-1">· {raw} events</span>}
+          {!isFirst && (
+            <span className="ml-2">
+              <span className="text-foreground">{rate}%</span>
+              {dropoff > 0 && <span className="text-destructive ml-1">−{dropoff}</span>}
+            </span>
+          )}
         </span>
       </div>
       <div className="h-5 bg-secondary rounded-full overflow-hidden">
-        <div
-          className={`h-full rounded-full transition-all duration-500 ${barColor}`}
-          style={{ width: `${width}%` }}
-        />
+        <div className="h-full rounded-full transition-all duration-500 bg-primary" style={{ width: `${width}%` }} />
       </div>
     </div>
   );
