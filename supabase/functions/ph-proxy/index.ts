@@ -22,14 +22,32 @@ Deno.serve(async (req) => {
     const fwdHeaders = new Headers()
     for (const [k, v] of req.headers) {
       const lk = k.toLowerCase()
-      if (lk === 'host' || lk === 'authorization' || lk === 'apikey' || lk.startsWith('x-forwarded')) continue
+      // Drop host-specific + hop-by-hop + length/encoding (fetch recomputes them
+      // from the buffered body; stale values cause PostHog to read 0 bytes and
+      // respond "request missing data payload").
+      if (
+        lk === 'host' ||
+        lk === 'authorization' ||
+        lk === 'apikey' ||
+        lk === 'content-length' ||
+        lk === 'content-encoding' ||
+        lk === 'accept-encoding' ||
+        lk === 'connection' ||
+        lk === 'transfer-encoding' ||
+        lk.startsWith('x-forwarded') ||
+        lk.startsWith('cf-') ||
+        lk.startsWith('sb-')
+      ) continue
       fwdHeaders.set(k, v)
     }
+
+    const hasBody = req.method !== 'GET' && req.method !== 'HEAD'
+    const bodyBuf = hasBody ? await req.arrayBuffer() : undefined
 
     const init: RequestInit = {
       method: req.method,
       headers: fwdHeaders,
-      body: req.method === 'GET' || req.method === 'HEAD' ? undefined : await req.arrayBuffer(),
+      body: bodyBuf && bodyBuf.byteLength > 0 ? bodyBuf : undefined,
     }
 
     const resp = await fetch(target, init)
