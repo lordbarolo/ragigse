@@ -83,26 +83,45 @@ export default function Signup() {
     }).catch(() => {});
   };
 
+  const beigeBg = {
+    backgroundColor: "#EEEBE4",
+    backgroundImage: [
+      "radial-gradient(ellipse 70% 55% at 15% 25%, hsl(196 100% 50% / 0.18) 0%, transparent 55%)",
+      "radial-gradient(ellipse 55% 50% at 85% 20%, hsl(245 58% 60% / 0.14) 0%, transparent 50%)",
+      "radial-gradient(ellipse 50% 60% at 55% 85%, hsl(160 60% 45% / 0.10) 0%, transparent 50%)",
+    ].join(", "),
+    backgroundRepeat: "no-repeat" as const,
+  };
+
   if (success) {
     return (
-      <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0d0b2a] via-[#1a1545] via-40% to-[#2a2070]" />
-        <div className="absolute pointer-events-none" style={{ top: '-100px', right: '-100px', width: '1000px', height: '900px', zIndex: 1, background: 'radial-gradient(ellipse at 75% 10%, rgba(110,95,230,0.55) 0%, rgba(90,78,210,0.25) 25%, rgba(70,60,190,0.08) 50%, transparent 70%)' }} />
-        <div className="absolute top-0 right-0 pointer-events-none" style={{ width: '520px', height: '600px', zIndex: 1, background: 'radial-gradient(ellipse at 90% 15%, rgba(140,125,245,0.3) 0%, rgba(110,95,220,0.12) 40%, transparent 65%)' }} />
-        <div className="absolute inset-0 opacity-5" style={{ backgroundImage: "repeating-linear-gradient(0deg,transparent,transparent 39px,#fff 39px,#fff 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,#fff 39px,#fff 40px)" }} />
-        <Card className="relative z-10 w-full max-w-md border-border/50 bg-card/80 backdrop-blur">
-          <CardContent className="pt-8 pb-8 text-center space-y-4">
-            <CheckCircle2 className="w-12 h-12 text-accent mx-auto" />
-            <h1 className="text-xl font-semibold text-foreground">Bekräfta din e-post</h1>
-            <p className="text-muted-foreground text-sm">
-              Vi har skickat ett verifieringsmejl till <strong className="text-foreground">{email}</strong>.
-              Klicka på länken i mejlet för att aktivera ditt konto.
-            </p>
-            <p className="text-muted-foreground text-xs">
+      <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden" style={beigeBg}>
+        <Card className="relative z-10 w-full max-w-md border-border/40 !bg-[#F5F2EA]/95 backdrop-blur">
+          <CardContent className="!bg-transparent pt-10 pb-8 px-6 text-center space-y-5">
+            <CheckCircle2 className="w-12 h-12 mx-auto" style={{ color: "#1f1147" }} />
+            <h1 className="text-2xl font-semibold tracking-tight" style={{ color: "#1f1147" }}>
+              Bekräfta din e-post
+            </h1>
+            <div className="space-y-3">
+              <p className="text-sm leading-relaxed" style={{ color: "#3a2f5c" }}>
+                Vi har skickat ett verifieringsmejl till
+              </p>
+              <p className="text-sm font-semibold break-all" style={{ color: "#1f1147" }}>
+                {email}
+              </p>
+              <p className="text-sm leading-relaxed" style={{ color: "#3a2f5c" }}>
+                Klicka på länken i mejlet för att aktivera ditt konto.
+              </p>
+            </div>
+            <p className="text-xs pt-2" style={{ color: "#6b5f85" }}>
               Hittar du inte mejlet? Kolla skräpposten.
             </p>
-            <Link to="/logga-in" className="text-primary hover:underline text-sm font-medium">
-              Gå till inloggning
+            <Link
+              to="/logga-in"
+              className="inline-block text-sm font-semibold hover:underline pt-2"
+              style={{ color: "#534AB7" }}
+            >
+              Gå till inloggning →
             </Link>
           </CardContent>
         </Card>
@@ -111,29 +130,28 @@ export default function Signup() {
   }
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0d0b2a] via-[#1a1545] via-40% to-[#2a2070]" />
-      <div className="absolute pointer-events-none" style={{ top: '-100px', right: '-100px', width: '1000px', height: '900px', zIndex: 1, background: 'radial-gradient(ellipse at 75% 10%, rgba(110,95,230,0.55) 0%, rgba(90,78,210,0.25) 25%, rgba(70,60,190,0.08) 50%, transparent 70%)' }} />
-      <div className="absolute top-0 right-0 pointer-events-none" style={{ width: '520px', height: '600px', zIndex: 1, background: 'radial-gradient(ellipse at 90% 15%, rgba(140,125,245,0.3) 0%, rgba(110,95,220,0.12) 40%, transparent 65%)' }} />
-      <div className="absolute inset-0 opacity-5" style={{ backgroundImage: "repeating-linear-gradient(0deg,transparent,transparent 39px,#fff 39px,#fff 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,#fff 39px,#fff 40px)" }} />
-      <div className="relative z-10 w-full max-w-md space-y-6">
-        <div className="flex justify-center">
-          <Link to="/">
-            <CompcareLogo variant="full" inverted />
-          </Link>
-        </div>
+    <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden" style={beigeBg}>
 
-        <Card className="border-border/50 bg-card/80 backdrop-blur">
-          <CardHeader className="text-center">
-            <CardTitle className="text-xl font-semibold text-foreground">Skapa konto</CardTitle>
-            <CardDescription>
+      <header className="absolute top-0 left-0 right-0 z-20 flex items-center px-4 md:px-6 lg:px-8 h-14 md:h-16">
+        <Link to="/" aria-label="CompCare startsida">
+          <CompcareLogo variant="full" inverted={false} />
+        </Link>
+      </header>
+      <div className="relative z-10 w-full max-w-md space-y-6">
+
+
+
+        <Card className="border-border/40 !bg-[#F5F2EA]/85 backdrop-blur text-black">
+          <CardHeader className="text-center !bg-transparent">
+            <CardTitle className="text-xl font-semibold text-black">Skapa konto</CardTitle>
+            <CardDescription className="text-black/70">
               Få tillgång till dina rapporter och personlig profil direkt
             </CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="!bg-transparent">
             <form onSubmit={handleSignup} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="fullName">Ditt namn</Label>
+                <Label htmlFor="fullName" className="text-black">Ditt namn</Label>
                 <Input
                   id="fullName"
                   type="text"
@@ -141,10 +159,11 @@ export default function Signup() {
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   required
+                  className="bg-white/70 text-black border-border placeholder:text-black/50"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">E-post</Label>
+                <Label htmlFor="email" className="text-black">E-post</Label>
                 <Input
                   id="email"
                   type="email"
@@ -152,10 +171,11 @@ export default function Signup() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  className="bg-white/70 text-black border-border placeholder:text-black/50"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">Lösenord</Label>
+                <Label htmlFor="password" className="text-black">Lösenord</Label>
                 <Input
                   id="password"
                   type="password"
@@ -164,17 +184,18 @@ export default function Signup() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={6}
+                  className="bg-white/70 text-black border-border placeholder:text-black/50"
                 />
               </div>
-              <Button type="submit" className="w-full" disabled={loading}>
+              <Button type="submit" variant="secondary" className="w-full" disabled={loading}>
                 {loading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                 Skapa konto
               </Button>
             </form>
 
-            <div className="mt-4 text-center text-sm text-muted-foreground">
+            <div className="mt-4 text-center text-sm text-black/70">
               Har du redan ett konto?{" "}
-              <Link to="/logga-in" className="text-primary hover:underline font-medium">
+              <Link to="/logga-in" className="text-black hover:underline font-medium">
                 Logga in
               </Link>
             </div>
@@ -182,7 +203,7 @@ export default function Signup() {
         </Card>
 
         <div className="text-center">
-          <Link to="/" className="text-sm text-muted-foreground hover:text-primary inline-flex items-center gap-1">
+          <Link to="/" className="text-sm text-black/70 hover:text-black inline-flex items-center gap-1">
             <ArrowLeft className="w-3 h-3" /> Tillbaka till startsidan
           </Link>
         </div>

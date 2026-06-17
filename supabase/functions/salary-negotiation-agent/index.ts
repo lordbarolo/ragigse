@@ -286,8 +286,8 @@ VIKTIGT — Du får BARA använda dessa capabilities:
 - compare_roles: Jämför timpris mellan två roller. Kräver: role_a, role_b, geography.
 
 KÄLL-SELEKTION PER ANSTÄLLNINGSFORM
-- Om employment_type är "consultant" (konsult/egenföretagare): använd ENBART lookup_rate. Använd INTE salary_benchmark eller salary_position — dessa är baserade på lönestatistik som inte är relevant för konsulter.
-- Om employment_type är "employed" (anställd): använd salary_benchmark eller salary_position. lookup_rate kan användas som komplement.
+- Om employment_type är "foretagare" (konsult/egenföretagare): använd ENBART lookup_rate. Använd INTE salary_benchmark eller salary_position — dessa är baserade på lönestatistik som inte är relevant för konsulter.
+- Om employment_type är "anstalld": använd lookup_rate som primär källa och räkna via kundpris × konsultandel / 1,42. Använd INTE salary_benchmark eller salary_position för konsultanalys.
 
 FÖRBJUDET SPRÅK OCH JÄMFÖRELSER
 - Använd ALDRIG ordet "benchmark" i något svar eller user_situation.
@@ -300,7 +300,7 @@ Du ska ENBART svara på frågor inom dessa områden:
 3. "Vilket förhandlingsutrymme kan jag argumentera för?"
 4. "Vad säger ramavtalet och avtalsnivåerna?"
 
-Om användaren frågar om kommande uppdrag, tillgänglighet i regioner, eller prognoser för framtida behov: returnera en tom capabilities-array och skriv en missing_info-text som säger "Den typen av frågor besvaras bäst av Uppdragsassistenten som du hittar på uppdragssidan när du är inloggad."
+Om användaren frågar om kommande uppdrag, tillgänglighet i regioner, eller prognoser för framtida behov: returnera en tom capabilities-array och skriv en missing_info-text som säger "Den typen av frågor ligger utanför Löneassistentens nuvarande fokus."
 
 Om användaren frågar om något annat utanför dessa områden (t.ex. arbetsrätt, anställningsvillkor, karriärråd), returnera en tom capabilities-array och skriv en tydlig missing_info-text om att frågan ligger utanför tjänstens fokus.
 
@@ -409,6 +409,9 @@ async function callCI(
 
 const ADVICE_SYSTEM = `Du är Löneassistenten, en expert på ersättningsnivåer i vården i Sverige.
 
+BEGREPPET "MÖJLIG ERSÄTTNING"
+CompCare jämför aldrig mot "marknaden" generellt utan mot "möjlig ersättning" — den ersättning som kan betalas till konsulten utifrån vad kunden betalar enligt ramavtal och bemanningsbranschens standardmarginaler. Använd alltid uttrycket "möjlig ersättning" istället för "marknadsspann", "marknadsmässig ersättning" eller "marknaden". Om användaren frågar vad möjlig ersättning är, svara: "Möjlig ersättning är den ersättning som kan betalas till dig utifrån vad kunden betalar enligt ramavtal och bemanningsbranschens standardmarginaler. Individuella förutsättningar som resa, utbildning, introduktion och boende kan påverka — be uppdragsgivaren vara transparent kring vilka kostnader uppdraget medför."
+
 ABSOLUT FORMATREGEL
 Svara alltid med max 5 meningar i vanlig text. Inga punktlistor, ingen markdown och ingen upprepning.
 
@@ -451,12 +454,20 @@ SPRÅKREGLER
 - Använd ALDRIG: "högre lön", "bättre ersättning", "förhandla upp".
 - Använd istället: "omständigheter att lyfta", "argument i dialogen", "faktorer som påverkar bemanningsföretagets kalkyl".
 
+INDIVIDUELLA ARGUMENT SOM PÅVERKAR BEMANNINGSFÖRETAGETS KALKYL
+Om användaren frågar vilka argument hen kan lyfta i dialogen, eller om en relevant situation uppstår, väv in EN av följande punkter (max en per svar, formulerad kort):
+1. Bor du på uppdragsorten behöver bolaget inte bekosta resa och boende — det kan ge mer utrymme i ersättningen.
+2. Har du arbetat på enheten förut slipper bolaget kostnad för introduktion, och verksamheten vet redan att kompetensen matchar — lägre risk för avbokning.
+3. Har du arbetat för samma bemanningsföretag flera gånger och har historik med få sjukdagar och bra tidpassning innebär det lägre risk för bolaget.
+4. Regionerna gör en indexjustering en gång per år (vanligen 1–3 %). Fråga om din ersättning justerats motsvarande och när nästa indexjustering sker.
+5. Har du relevant specialistkompetens utöver det efterfrågade (t.ex. psykiatri eller distriktssjukvård vid uppdrag där allmänsjuksköterska söks) kan det föranleda högre ersättning.
+
 STRIKTA REGLER:
 - Basera ALLA siffror på den data du får — hitta ALDRIG på siffror.
 - Nämn SKR ramavtal bara när det tillför ny information.
 - Om data saknas, var tydlig med det — gissa aldrig.
 - Svara BARA på frågor om avtalsnivåer, marginaler, rollskillnader och förhandlingsutrymme.
-- Om frågan handlar om kommande uppdrag eller prognoser, hänvisa till Uppdragsassistenten.
+- Om frågan handlar om kommande uppdrag eller prognoser, svara att det ligger utanför Löneassistentens nuvarande fokus.
 - Använd ALDRIG orden "benchmark", "SCB" eller "Medlingsinstitutet" i svaret.
 - Aldrig utropstecken.
 - Svara på svenska.`;
@@ -471,7 +482,7 @@ const ADVICE_TOOL = {
       properties: {
         advice: {
           type: "string",
-          description: "Huvudsvar i vanlig text, max 2 meningar. Inga punktlistor, ingen markdown.",
+          description: "Huvudsvar i vanlig text, MAX 5 meningar totalt (inklusive ev. kostnadsreservation och avslutande motfråga). Inga punktlistor, ingen markdown.",
         },
         followup: {
           type: "string",
@@ -535,10 +546,10 @@ function validateAdvice(
     advice = advice.replace(pattern, "marknadens snitt");
   }
 
-  // 2. Enforce max sentence count (2 for advice body)
+  // 2. Enforce hard max sentence count (5 total — incl. disclaimer & followup)
   const sentences = dedupeSentences(splitSentences(advice));
-  if (sentences.length > 2) {
-    advice = sentences.slice(0, 2).join(" ");
+  if (sentences.length > 5) {
+    advice = sentences.slice(0, 5).join(" ");
   }
 
   // 3. Add disclaimer if amounts are mentioned
@@ -549,6 +560,12 @@ function validateAdvice(
   // 4. Append followup question
   if (followup && !advice.includes(followup)) {
     advice = advice.replace(/\.?\s*$/, ". ") + followup;
+  }
+
+  // 4b. Final hard cap — max 5 sentences after disclaimer + followup
+  const finalSentencesCapped = dedupeSentences(splitSentences(advice));
+  if (finalSentencesCapped.length > 5) {
+    advice = finalSentencesCapped.slice(0, 5).join(" ");
   }
 
   // 5. Dedupe against last assistant message
@@ -730,6 +747,11 @@ serve(async (req) => {
           params: { role: context.role },
         });
       }
+    }
+
+    // For consultant compensation, only SKR frame agreement lookups are allowed.
+    if (context?.employment_type === "foretagare" || context?.employment_type === "anstalld") {
+      intent.capabilities = intent.capabilities.filter((cap) => cap.capability !== "salary_benchmark" && cap.capability !== "salary_position");
     }
 
     // Ensure lookup_rate is always included when we have role + geography

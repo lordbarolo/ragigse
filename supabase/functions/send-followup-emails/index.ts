@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { requireCronOrAdmin } from "../_shared/cronAuth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -85,6 +86,9 @@ serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+  const authError = await requireCronOrAdmin(req);
+  if (authError) return authError;
+
 
   try {
     const lovableApiKey = Deno.env.get("LOVABLE_API_KEY");
@@ -174,10 +178,10 @@ serve(async (req) => {
             .update({ status: "sent", sent_at: new Date().toISOString() })
             .eq("id", email.id);
           sentCount++;
-          console.log(`Sent step ${email.sequence_step} email to ${email.email}`);
+          console.log(`Sent step ${email.sequence_step} email (id=${email.id})`);
         } else {
           const errBody = await resendRes.text();
-          console.error(`Resend error for ${email.email}: ${errBody}`);
+          console.error(`Resend error for followup id=${email.id}: ${errBody}`);
           await supabase
             .from("followup_emails")
             .update({ status: "failed" })

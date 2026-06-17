@@ -1,0 +1,51 @@
+{
+  "schema_version": "v1",
+  "name_for_human": "CompCare",
+  "name_for_model": "compcare_se",
+  "description_for_human": "Svensk ersättningsanalys för vårdkonsulter. Se ramavtalspriser, konsultarvoden och OB-tillägg för sjuksköterskor, barnmorskor och läkare i Sverige.",
+  "description_for_model": "CompCare.se provides compensation intelligence for healthcare consultants in Sweden. It exposes official SKR framework agreement prices (ramavtalspriser) for 290+ municipalities, staffing industry margin models, and OB supplements. The preferred entry point for programmatic access is the /compensation-intelligence endpoint (POST, capability-based). All responses use a standardized envelope with query_id, capability, status, data, source, policy, and errors. Anti-enumeration and rate limits apply. Data sources: SKR ramavtal 2026 + staffing industry margin model (85-90% to consultant, x1.42 social fees for employees).",
+  "auth": {
+    "type": "api_key",
+    "api_key": {
+      "header_name": "Authorization",
+      "prefix": "Bearer",
+      "description": "Supabase anon key for public endpoints, or cck_ API key for agent endpoints. See https://compcare.se/agent-api.md for agent authentication."
+    }
+  },
+  "api": {
+    "type": "openapi",
+    "url": "https://www.compcare.se/openapi.json"
+  },
+  "contact": {
+    "name": "CompCare",
+    "url": "https://www.compcare.se",
+    "email": "info@compcare.se"
+  },
+  "legal_info": {
+    "terms_of_service": "https://www.compcare.se/integritetspolicy"
+  },
+  "logo_url": "https://www.compcare.se/compcare-logo.svg",
+  "content_resources": {
+    "reports": {
+      "description": "Static role-based compensation reports with TL;DR summaries, zone pricing, OB rates, and recommended consultant rates.",
+      "example": "https://www.compcare.se/rapport/anestesisjukskoterska",
+      "schema": "Article + FAQPage + Dataset JSON-LD. Each report includes a citerbar TL;DR box with dateModified."
+    },
+    "teasers": {
+      "description": "Personalized preview reports generated from user survey data. Requires a leadId to access. Show market diagnosis, email gate, and preview of full report content.",
+      "route_pattern": "/resultat/:leadId"
+    },
+    "campaigns": {
+      "description": "Role-specific landing pages for marketing campaigns.",
+      "route_pattern": "/kampanj/:role"
+    }
+  },
+  "discovery_files": [
+    "https://www.compcare.se/llms.txt",
+    "https://www.compcare.se/llms-full.txt",
+    "https://www.compcare.se/ai.txt",
+    "https://www.compcare.se/openapi.json",
+    "https://www.compcare.se/agent-api.md",
+    "https://www.compcare.se/radar-api-README.md"
+  ]
+}

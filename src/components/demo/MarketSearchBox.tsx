@@ -148,7 +148,7 @@ export default function MarketSearchBox() {
         });
       } catch {
         if (cancelled) return;
-        setError("Kunde inte hämta marknadsspannet för det valet just nu.");
+        setError("Kunde inte hämta möjlig ersättning för det valet just nu.");
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -168,7 +168,7 @@ export default function MarketSearchBox() {
       <div className="bg-card border border-border rounded-2xl shadow-xl overflow-hidden">
         <div className="bg-primary px-6 py-4">
           <h1 className="text-primary-foreground font-display text-lg font-bold tracking-tight">
-            Vad är marknadsmässig ersättning?
+            Vad är möjlig ersättning?
           </h1>
           <p className="text-primary-foreground/70 text-xs mt-0.5">
             Baserat på SKR:s ramavtal 2026
@@ -239,7 +239,7 @@ export default function MarketSearchBox() {
           {/* Status messages */}
           {selectedCategory && (!resolvedYrke || !selectedLocation) && (
             <div className="rounded-xl border border-dashed border-border bg-secondary/20 px-4 py-3 text-sm text-muted-foreground">
-              Välj specialisering och kommun för att se marknadsmässig månadslön direkt.
+              Välj specialisering och kommun för att se möjlig månadsersättning direkt.
             </div>
           )}
 

@@ -4,10 +4,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/trackEvent";
 import { toast } from "sonner";
 import type { SurveyData } from "@/components/Survey";
-import { Mail, ArrowRight } from "lucide-react";
+import { Mail, ArrowRight, Zap, ChevronUp } from "lucide-react";
+import NegotiationAssistantTeaser from "@/components/teaser/NegotiationAssistantTeaser";
 import { fetchLead, leadToSurvey, createReport, saveEmail } from "@/services/leadService";
 import Navbar from "@/components/Navbar";
 import CompcareLogo from "@/components/CompcareLogo";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "@/components/ui/accordion";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const fmt = (n: number) => n.toLocaleString("sv-SE");
@@ -78,7 +85,27 @@ export default function AnalysisScreen() {
     trackEvent("analysis_started");
     trackEvent("product_page_viewed", { product: "loneanalys" });
     trackEvent("teaser_viewed");
+    // Trigger PostHog /decide/ call to verify reverse proxy works end-to-end
+    import("@/lib/posthog").then(({ default: posthog }) => {
+      try {
+        posthog.isFeatureEnabled?.("teaser-proxy-probe");
+      } catch {
+        // noop
+      }
+    });
   }, [urlLeadId, navigate]);
+
+  // Force light cream background on html/body so dark theme doesn't bleed through
+  useEffect(() => {
+    const prevHtml = document.documentElement.style.backgroundColor;
+    const prevBody = document.body.style.backgroundColor;
+    document.documentElement.style.backgroundColor = '#EEEBE4';
+    document.body.style.backgroundColor = '#EEEBE4';
+    return () => {
+      document.documentElement.style.backgroundColor = prevHtml;
+      document.body.style.backgroundColor = prevBody;
+    };
+  }, []);
 
   /* ── Fetch zone + rates when survey is ready ── */
   useEffect(() => {
@@ -159,14 +186,6 @@ export default function AnalysisScreen() {
     navigate(`/rapport/${activeReportId}`, { replace: true });
   };
 
-  /* ── Auto-submit for logged-in users ── */
-  const autoSubmitted = useRef(false);
-  useEffect(() => {
-    if (survey && EMAIL_REGEX.test(email.trim()) && !autoSubmitted.current && !emailSaving) {
-      autoSubmitted.current = true;
-      handleEmailSubmit();
-    }
-  }, [survey, email]);
 
   /* ── Sort zones: user's zone first ── */
   const sortedZones = useMemo(() => {
@@ -234,127 +253,213 @@ export default function AnalysisScreen() {
     : 0;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div
+      className="min-h-screen"
+      style={{
+        // Cream light theme — override global dark tokens on this page only
+        ['--background' as any]: '40 18% 91%',
+        ['--foreground' as any]: '0 0% 4%',
+        ['--card' as any]: '0 0% 100%',
+        ['--card-foreground' as any]: '0 0% 4%',
+        ['--popover' as any]: '0 0% 100%',
+        ['--popover-foreground' as any]: '0 0% 4%',
+        ['--muted' as any]: '40 18% 91%',
+        ['--muted-foreground' as any]: '220 9% 46%',
+        ['--secondary' as any]: '40 18% 91%',
+        ['--secondary-foreground' as any]: '0 0% 4%',
+        ['--accent' as any]: '40 18% 91%',
+        ['--accent-foreground' as any]: '0 0% 4%',
+        ['--border' as any]: '35 17% 85%',
+        ['--input' as any]: '35 17% 85%',
+        backgroundColor: '#EEEBE4',
+        color: '#0A0A0A',
+      }}
+    >
       <Navbar />
 
-      <main className="px-5 pt-20 pb-16 max-w-lg mx-auto">
-        {/* ── Header ── */}
-        <div className="mb-8">
-          <CompcareLogo variant="full" className="!h-7 mb-3" />
-          <p className="text-[13px] text-foreground/55 font-medium tracking-wide">
-            Ersättningsanalys
-          </p>
-        </div>
-
-        {/* ── Role + location ── */}
-        <div className="mb-8 pb-6 border-b border-foreground/10">
-          <h1 className="font-display text-[34px] sm:text-[38px] font-extrabold tracking-tight text-foreground leading-[1.05] mb-2">
-            {survey.yrke}
-          </h1>
-          <p className="text-[14px] text-foreground/55">
-            {survey.kommun}{userRegion && <> · {userRegion}</>} · {employmentLabel}
-          </p>
-        </div>
-
-        {loadingRates || !comparison ? (
-          <div className="flex items-center justify-center py-16">
-            <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-          </div>
-        ) : (
-          <div className="space-y-7">
-            {/* Ramavtalspris */}
-            <div>
-              <p className="text-[12px] text-foreground/55 mb-1">Ramavtalspris (kundpris)</p>
-              <p className="font-display text-[32px] font-extrabold tracking-tight text-foreground">
-                {fmt(comparison.marketRate)} <span className="text-[20px] font-bold">kr/h</span>
-              </p>
-            </div>
-
-            {/* Rekommenderad ersättning */}
-            <div>
-              <p className="text-[12px] text-foreground/55 mb-1">Beräknat ersättningsspann</p>
-              <p className="font-display text-[32px] font-extrabold tracking-tight text-[hsl(var(--green))]">
-                {fmt(comparison.recMin)}–{fmt(comparison.recMax)} <span className="text-[20px] font-bold">kr/h</span>
-              </p>
-              <p className="text-[13px] text-foreground/45 font-mono mt-1">
-                {fmt(comparison.recMonthlyMin)}–{fmt(comparison.recMonthlyMax)} kr/mån
-              </p>
-            </div>
-
-            {/* Din nuvarande ersättning */}
-            <div>
-              <p className="text-[12px] text-foreground/55 mb-1">Din nuvarande ersättning</p>
-              <p className="font-display text-[32px] font-extrabold tracking-tight text-foreground">
-                {fmt(comparison.currentHourly)} <span className="text-[20px] font-bold">kr/h</span>
-              </p>
-            </div>
-
-            {/* Lönekostnad vs kundpris */}
-            <div>
-              <p className="text-[12px] text-foreground/55 mb-1">
-                {comparison.isEmployee ? "Din lönekostnad vs kundpriset" : "Din ersättning vs kundpriset"}
-              </p>
-              <p className="font-display text-[40px] font-extrabold tracking-tight text-[hsl(var(--green))] leading-none">
-                {costPct}%
-              </p>
-              <p className="text-[12px] text-foreground/45 mt-1">av {fmt(comparison.marketRate)} kr/h</p>
-              <div className="mt-3 h-[6px] rounded-full bg-foreground/10 overflow-hidden">
-                <div
-                  className="h-full rounded-full bg-[hsl(var(--green))]"
-                  style={{ width: `${costPct}%` }}
+      <main className="px-5 pt-20 pb-16 mx-auto max-w-lg lg:max-w-5xl">
+        {(() => {
+          const emailGate = (
+            <div id="email-gate" className="space-y-3">
+              <div>
+                <h2 className="font-display text-[16px] font-bold tracking-tight text-foreground mb-1">
+                  Lås upp hela rapporten
+                </h2>
+                <p className="text-[13px] text-foreground/50 leading-relaxed">
+                  Förhandlingsspann, alla zoner, metod — plus AI-assistans för din nästa löneförhandling.
+                </p>
+              </div>
+              <div className="relative flex items-center">
+                <Mail className="absolute left-4 w-4 h-4 text-foreground/30 pointer-events-none" />
+                <input
+                  type="email"
+                  inputMode="email"
+                  autoComplete="email"
+                  placeholder="namn@exempel.se"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter" && validEmail && !emailSaving) handleEmailSubmit(); }}
+                  className="w-full bg-background/60 border-[1.5px] border-foreground/[0.12] rounded-xl text-foreground font-body text-[16px] py-3.5 pl-11 pr-4 outline-none transition-all focus:border-primary placeholder:text-foreground/35"
                 />
               </div>
-            </div>
+              {validEmail && !emailSaving && (
+                <div className="flex items-center justify-center gap-1.5 text-xs font-semibold text-primary">
+                  <Zap className="w-3.5 h-3.5" />
+                  Kostnadsfritt — klart på 60 sekunder
+                </div>
+              )}
 
-            {/* Beräkningsantaganden */}
-            <div className="pt-6 border-t border-foreground/10">
-              <p className="text-[12px] text-foreground/55 font-semibold mb-3">Beräkningsantaganden</p>
-              <ul className="space-y-1.5 text-[13px] text-foreground/50 leading-relaxed pl-4">
-                <li>· Bemanningsbolagets marginal: {marginText}</li>
-                {comparison.isEmployee && <li>· Arbetsgivaravgifter: faktor {employerFactor}</li>}
-                <li>· Arbetsmånad: 167 timmar</li>
-              </ul>
+              <button
+                disabled={!validEmail || emailSaving}
+                onClick={handleEmailSubmit}
+                className={`relative w-full font-display font-bold text-base py-4 px-6 rounded-xl flex items-center justify-center gap-2 transition-all bg-gradient-to-r from-[#8155FF] via-[#9333ea] to-[#ec4899] text-white shadow-[0_10px_40px_-8px_rgba(129,85,255,0.6)] overflow-hidden ${
+                  validEmail && !emailSaving
+                    ? "hover:shadow-[0_16px_50px_-8px_rgba(236,72,153,0.6)] hover:-translate-y-0.5 active:scale-[0.98] animate-pulse-soft"
+                    : "opacity-70 cursor-not-allowed"
+                }`}
+              >
+                <span className="relative z-10 flex items-center gap-2">
+                  {emailSaving ? "Skickar…" : "Få din gratis rapport →"}
+                </span>
+                {validEmail && !emailSaving && (
+                  <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
+                )}
+              </button>
+              <p className="text-center text-[12px] text-foreground/45">
+                Inga kort. Ingen spam. Klart på 60 sek.
+              </p>
             </div>
-          </div>
-        )}
+          );
 
-        {/* ── Email gate (unlock full report) ── */}
-        <div className="mt-10 pt-6 border-t border-foreground/10 space-y-3">
-          <div>
-            <h2 className="font-display text-[16px] font-bold tracking-tight text-foreground mb-1">
-              Lås upp hela rapporten
-            </h2>
-            <p className="text-[13px] text-foreground/50 leading-relaxed">
-              Förhandlingsspann, alla zoner och metod — skickas till din e-post.
-            </p>
-          </div>
-          <div className="relative flex items-center">
-            <Mail className="absolute left-4 w-4 h-4 text-foreground/30 pointer-events-none" />
-            <input
-              type="email"
-              inputMode="email"
-              autoComplete="email"
-              placeholder="namn@exempel.se"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              onKeyDown={(e) => { if (e.key === "Enter" && validEmail && !emailSaving) handleEmailSubmit(); }}
-              className="w-full bg-background/60 border-[1.5px] border-foreground/[0.12] rounded-xl text-foreground font-body text-[16px] py-3.5 pl-11 pr-4 outline-none transition-all focus:border-primary placeholder:text-foreground/35"
-            />
-          </div>
-          <button
-            disabled={!validEmail || emailSaving}
-            onClick={handleEmailSubmit}
-            className={`w-full font-display font-semibold text-sm py-3 px-6 rounded-xl flex items-center justify-center gap-2 transition-all ${
-              validEmail && !emailSaving
-                ? "bg-primary text-primary-foreground hover:opacity-90"
-                : "bg-muted text-muted-foreground cursor-not-allowed"
-            }`}
-          >
-            {emailSaving ? "Skickar…" : "Visa min rapport"}
-            {!emailSaving && <ArrowRight className="w-4 h-4" />}
-          </button>
-        </div>
+          return (
+            <>
+              {/* ── Full page: 2-col on desktop ── */}
+              <div className="lg:grid lg:grid-cols-[1.35fr_1fr] lg:gap-10 lg:items-start">
+                {/* LEFT */}
+                <div>
+                  <div className="mb-8">
+                    <CompcareLogo variant="full" className="!h-7 mb-3" />
+                    <p className="text-[13px] text-foreground/55 font-medium tracking-wide">
+                      Ersättningsanalys
+                    </p>
+                  </div>
+
+                  <div className="mb-8 pb-6 border-b border-foreground/10 lg:border-b-0 lg:pb-0 lg:mb-6">
+                    <h1 className="font-display text-[34px] sm:text-[38px] font-extrabold tracking-tight text-foreground leading-[1.05] mb-2">
+                      {(() => {
+                        const occ = survey.yrke || "";
+                        const stripped = occ.replace(/^Specialistläkare\s+/i, "").trim();
+                        if (!stripped) return occ;
+                        return stripped.charAt(0).toUpperCase() + stripped.slice(1);
+                      })()}
+                    </h1>
+                    <p className="text-[14px] text-[#6B6B6B]">
+                      {survey.kommun}{userRegion && <> · {userRegion}</>} · {employmentLabel}
+                    </p>
+                  </div>
+
+                  {loadingRates || !comparison ? (
+                    <div className="flex items-center justify-center py-16">
+                      <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                    </div>
+                  ) : (
+                    <>
+                      <div>
+                        <p className="text-[12px] text-[#6B6B6B] mb-1">Möjlig ersättning</p>
+                        <p className="font-display text-[32px] font-extrabold tracking-tight text-[hsl(var(--green))]">
+                          {fmt(comparison.recMin)}–{fmt(comparison.recMax)} <span className="text-[20px] font-bold">kr/h</span>
+                        </p>
+                        {(() => {
+                          const dMin = comparison.recMin - comparison.currentHourly;
+                          const dMax = comparison.recMax - comparison.currentHourly;
+                          if (dMin > 0) {
+                            return (
+                              <p className="text-[15px] font-semibold text-foreground mt-0.5 flex items-center gap-1">
+                                <ChevronUp className="w-4 h-4 text-foreground" />
+                                +{fmt(dMin)}–{fmt(dMax)} kr/h mer än du tjänar idag
+                              </p>
+                            );
+                          }
+                          return null;
+                        })()}
+                        <p className="text-[13px] text-[#6B6B6B] font-mono mt-1">
+                          {fmt(comparison.recMonthlyMin)}–{fmt(comparison.recMonthlyMax)} kr/mån
+                        </p>
+                        <button
+                          onClick={() => document.getElementById("email-gate")?.scrollIntoView({ behavior: "smooth" })}
+                          className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold px-6 py-3 rounded-xl bg-foreground text-[#EEEBE4] hover:bg-foreground/90 transition-colors lg:hidden"
+                        >
+                          Visa hur du förhandlar dit <ArrowRight className="w-4 h-4" />
+                        </button>
+                      </div>
+
+                      <div className="mt-10 pt-8 border-t border-foreground/10 space-y-7">
+                        {/* Din nuvarande ersättning */}
+                        <div>
+                          <p className="text-[12px] text-[#6B6B6B] mb-1">Din nuvarande ersättning</p>
+                          <p className="font-display text-[32px] font-extrabold tracking-tight text-foreground">
+                            {fmt(comparison.currentHourly)} <span className="text-[20px] font-bold">kr/h</span>
+                          </p>
+                        </div>
+
+                        {/* Ramavtalspris */}
+                        <div>
+                          <p className="text-[12px] text-[#6B6B6B] mb-1">Ramavtalspris (kundpris)</p>
+                          <p className="font-display text-[32px] font-extrabold tracking-tight text-foreground">
+                            {fmt(comparison.marketRate)} <span className="text-[20px] font-bold">kr/h</span>
+                          </p>
+                          <p className="text-[12px] font-normal text-[#6B6B6B] mt-1">
+                            Det här är vad regionen betalar bemanningsbolaget.
+                          </p>
+                        </div>
+
+                        {/* Beräkningsantaganden */}
+                        <div className="pt-6 pb-6 border-t border-b border-foreground/10">
+                          <Accordion type="single" collapsible className="w-full">
+                            <AccordionItem value="calculations" className="border-b-0">
+                              <AccordionTrigger className="text-[12px] text-foreground/55 font-semibold py-2 hover:no-underline">
+                                Hur beräknas detta?
+                              </AccordionTrigger>
+                              <AccordionContent>
+                                <ul className="space-y-1.5 text-[13px] text-foreground/50 leading-relaxed pl-4 pb-0">
+                                  <li>· Bemanningsbolagets marginal: {marginText}</li>
+                                  {comparison.isEmployee && <li>· Arbetsgivaravgifter: faktor {employerFactor}</li>}
+                                  <li>· Arbetsmånad: 167 timmar</li>
+                                </ul>
+                              </AccordionContent>
+                            </AccordionItem>
+                          </Accordion>
+                        </div>
+                      </div>
+
+                      <div className="mt-6 lg:hidden">
+                        <NegotiationAssistantTeaser />
+                      </div>
+
+                      {/* Mobile-only email gate (desktop has it in the sticky right column) */}
+                      <div className="mt-10 pt-6 border-t border-foreground/10 lg:hidden">
+                        {emailGate}
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {/* RIGHT (desktop only) */}
+                <aside className="hidden lg:block lg:sticky lg:top-24 space-y-5">
+                  <div className="bg-white/70 rounded-2xl p-6 shadow-[0_4px_24px_-8px_rgba(0,0,0,0.08)] border border-foreground/[0.06]">
+                    {emailGate}
+                  </div>
+                  <div>
+                    <NegotiationAssistantTeaser />
+                  </div>
+                </aside>
+              </div>
+            </>
+          );
+        })()}
+
       </main>
     </div>
   );
 }
+

@@ -1,4 +1,5 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { checkRateLimit, rateLimitResponse } from "../_shared/rateLimit.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -30,6 +31,14 @@ Deno.serve(async (req) => {
   const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
   const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
+  // Per-IP rate limit (5/hour) to prevent abuse / brute-force on stolen tokens.
+  const clientIp = req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+  const ipRl = await checkRateLimit(supabase, "delete-account", clientIp, 5, 60);
+  if (!ipRl.allowed) {
+    console.warn(`[RATE_LIMIT] delete-account blocked | ip=${clientIp}`);
+    return rateLimitResponse(ipRl, corsHeaders);
+  }
+
   const token = authHeader.replace("Bearer ", "");
   const { data: { user }, error: authError } = await supabase.auth.getUser(token);
 
@@ -41,6 +50,13 @@ Deno.serve(async (req) => {
   }
 
   const userId = user.id;
+
+  // Per-user rate limit (3/hour) — defense against repeated attempts with valid token.
+  const userRl = await checkRateLimit(supabase, "delete-account:user", userId, 3, 60);
+  if (!userRl.allowed) {
+    console.warn(`[RATE_LIMIT] delete-account blocked | user=${userId}`);
+    return rateLimitResponse(userRl, corsHeaders);
+  }
 
   try {
     // 1. Anonymize leads

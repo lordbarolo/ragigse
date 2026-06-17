@@ -1,79 +1,40 @@
 import { Suspense, useEffect, useRef } from "react";
 import { lazyWithRetry as lazy } from "@/lib/lazyWithRetry";
-import posthog from "@/lib/posthog";
+import { trackPageview } from "@/lib/posthog";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate, useLocation, useParams } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import CookieBanner from "@/components/CookieBanner";
-import FloatingProfileButton from "@/components/FloatingProfileButton";
-import Index from "./pages/Index";
 import ProtectedRoute from "@/components/ProtectedRoute";
 
 // Layouts
 import ConsultantLayout from "@/layouts/ConsultantLayout";
-import AgencyLayout from "@/layouts/AgencyLayout";
-import PublicVerifyLayout from "@/layouts/PublicVerifyLayout";
 
-// Lazy-loaded routes
-const SalaryCheck = lazy(() => import("./pages/consultant/SalaryCheck"));
-const MarketEdge = lazy(() => import("./pages/MarketEdge"));
+// Lazy-loaded routes — endast löneanalys-flödet + auth/admin/legal
+const Home = lazy(() => import("./pages/Home"));
 const AnalysisScreen = lazy(() => import("./pages/AnalysisScreen"));
-const Teaser = lazy(() => import("./pages/Teaser"));
-const ReferralLanding = lazy(() => import("./pages/ReferralLanding"));
 const Report = lazy(() => import("./pages/Report"));
 const AnestesiReport = lazy(() => import("./pages/AnestesiReport"));
+const BollnasAllmanspecialistReport = lazy(() => import("./pages/BollnasAllmanspecialistReport"));
+const Campaign = lazy(() => import("./pages/Campaign"));
 
-
-const E2ETest = lazy(() => import("./pages/E2ETest"));
-const AnalyticsDashboard = lazy(() => import("./pages/AnalyticsDashboard"));
 const Admin = lazy(() => import("./pages/Admin"));
+const AnalyticsDashboard = lazy(() => import("./pages/AnalyticsDashboard"));
+const AgentApiKeys = lazy(() => import("./pages/admin/AgentApiKeys"));
+
 const FAQ = lazy(() => import("./pages/FAQ"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
-const ThemePreview = lazy(() => import("./pages/ThemePreview"));
-const SharePreview = lazy(() => import("./pages/SharePreview"));
+const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 const NotFound = lazy(() => import("./pages/NotFound"));
+
 const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Profile = lazy(() => import("./pages/Profile"));
-// const Radar = lazy(() => import("./pages/Radar"));
-const Negotiate = lazy(() => import("./pages/Negotiate"));
-const Referenser = lazy(() => import("./pages/Referenser"));
-const ReferenceForm = lazy(() => import("./pages/ReferenceForm"));
-const PingResponse = lazy(() => import("./pages/PingResponse"));
-const PublicProfile = lazy(() => import("./pages/PublicProfile"));
-const VerifyProof = lazy(() => import("./pages/VerifyProof"));
-const Fakturakontroll = lazy(() => import("./pages/Fakturakontroll"));
-const FakturakontrollNy = lazy(() => import("./pages/consultant/FakturakontrollNy"));
-const AgentAccess = lazy(() => import("./pages/consultant/AgentAccess"));
-const AgentApiKeys = lazy(() => import("./pages/admin/AgentApiKeys"));
-const ReferenserInfo = lazy(() => import("./pages/ReferenserInfo"));
-const VerifyInfo = lazy(() => import("./pages/VerifyInfo"));
-
-const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
-const Academy = lazy(() => import("./pages/Academy"));
-const CompensationPreview = lazy(() => import("./pages/CompensationPreview"));
-const AgencyDashboard = lazy(() => import("./pages/AgencyDashboard"));
-const AgencyIntyg = lazy(() => import("./pages/agency/Intyg"));
-const SignRepresentation = lazy(() => import("./pages/SignRepresentation"));
-const AgencyLanding = lazy(() => import("./pages/AgencyLanding"));
-const AgencySignup = lazy(() => import("./pages/AgencySignup"));
-const DemoLanding = lazy(() => import("./pages/DemoLanding"));
-const DemoAnthropic = lazy(() => import("./pages/demo/DemoAnthropic"));
-const ReferenceDemo = lazy(() => import("./pages/demo/ReferenceDemo"));
-const LandingV2 = lazy(() => import("./pages/demo/LandingV2"));
-const LandingExtras = lazy(() => import("./pages/demo/LandingExtras"));
-const ShiftnexClone = lazy(() => import("./pages/demo/ShiftnexClone"));
-const HeroTailwind = lazy(() => import("./pages/demo/HeroTailwind"));
-const Campaign = lazy(() => import("./pages/Campaign"));
-const UppdragsradarV2 = lazy(() => import("./pages/UppdragsradarV2"));
-const MarketplaceHome = lazy(() => import("./pages/marketplace/MarketplaceHome"));
-const EgetBolag = lazy(() => import("./pages/EgetBolag"));
-const SharedDocuments = lazy(() => import("./pages/SharedDocuments"));
 
 const queryClient = new QueryClient();
 
@@ -89,40 +50,19 @@ function ScrollToTop() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-
-    // Move focus to the main landmark on route change so keyboard/screen-reader
-    // users land on the new page content instead of staying inside stale UI.
-    // Skip the very first mount so we don't steal focus from initial form fields.
     if (!isFirstRender.current) {
       const main = document.getElementById("main-content");
-      if (main) {
-        main.focus({ preventScroll: true });
-      }
+      if (main) main.focus({ preventScroll: true });
     } else {
       isFirstRender.current = false;
     }
-
-    if (typeof window.gtag === 'function') {
-      window.gtag('config', 'G-8TKTZH3KZZ', { page_path: pathname });
+    if (typeof window.gtag === "function") {
+      window.gtag("config", "G-8TKTZH3KZZ", { page_path: pathname });
     }
-    if (posthog.has_opted_in_capturing()) {
-      posthog.capture('$pageview');
-    }
+    trackPageview();
   }, [pathname]);
 
   return null;
-}
-
-function RedirectWithParams({ to }: { to: string }) {
-  const location = useLocation();
-  return <Navigate to={`${to}${location.search}`} replace />;
-}
-
-function LegacyVerifyRedirect() {
-  const { applicationId } = useParams();
-  // Defensive: route requires :applicationId, but fall back to /din-data if it ever arrives empty
-  if (!applicationId) return <Navigate to="/din-data" replace />;
-  return <Navigate to={`/samarbetsintyg/${applicationId}`} replace />;
 }
 
 const App = () => (
@@ -142,111 +82,82 @@ const App = () => (
           <Suspense fallback={<Loading />}>
             <main id="main-content" role="main" tabIndex={-1} aria-label="Huvudinnehåll">
             <Routes>
-              {/* ── Landing — LandingV2 inramad i Anthropic-typografi (svart bg, Georgia rubriker, generöst whitespace) ── */}
-              <Route path="/" element={<DemoAnthropic />} />
-              <Route path="/b2b" element={<Index />} />
-              <Route path="/demo/landing-extras" element={<LandingExtras />} />
-              <Route path="/v1" element={<SalaryCheck />} />
+              {/* ── Löneanalys (enda synliga produkten) ── */}
+              <Route path="/" element={<Home />} />
+              <Route path="/resultat/:leadId" element={<AnalysisScreen />} />
+              <Route path="/rapport/anestesisjukskoterska" element={<AnestesiReport />} />
+              <Route path="/Bollnas/lakare-alm" element={<BollnasAllmanspecialistReport />} />
+              <Route path="/bollnas/lakare-alm" element={<BollnasAllmanspecialistReport />} />
+              <Route path="/rapport/:reportId" element={<Report />} />
+              <Route path="/kampanj/:role" element={<Campaign />} />
 
-              {/* ── Auth (no layout) ──────────────── */}
+              {/* ── Auth ── */}
               <Route path="/logga-in" element={<Login />} />
               <Route path="/registrera" element={<Signup />} />
               <Route path="/aterstall-losenord" element={<ResetPassword />} />
-              <Route path="/for-bemanningsforetag" element={<AgencyLanding />} />
-              <Route path="/registrera/bemanning" element={<AgencySignup />} />
+              <Route path="/unsubscribe" element={<Unsubscribe />} />
 
-              {/* ── Consultant Layout ─────────────── */}
+              {/* ── Profil (inloggad) ── */}
               <Route element={<ConsultantLayout />}>
-                <Route path="/consultant/forhandla" element={<Negotiate />} />
-                <Route path="/consultant/fakturakontroll" element={<Fakturakontroll />} />
-                <Route path="/consultant/fakturakontroll/ny" element={<ProtectedRoute><FakturakontrollNy /></ProtectedRoute>} />
-                <Route path="/consultant/ersattning" element={<CompensationPreview />} />
-
-                {/* Protected — require login */}
                 <Route path="/consultant/profil" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-                <Route path="/consultant/referenser" element={<ProtectedRoute allowedRoles={["admin"]}><Referenser /></ProtectedRoute>} />
-
-                {/* Hidden until polished — require login */}
-                <Route path="/consultant/salary-check" element={<Navigate to="/" replace />} />
-                {/* <Route path="/consultant/radar" element={<ProtectedRoute><Radar /></ProtectedRoute>} /> */}
-                <Route path="/consultant/academy" element={<ProtectedRoute><Academy /></ProtectedRoute>} />
-                <Route path="/consultant/agent-access" element={<ProtectedRoute><AgentAccess /></ProtectedRoute>} />
               </Route>
 
-              {/* ── Agency Layout ─────────────────── */}
-              <Route element={<ProtectedRoute allowedRoles={["agency", "admin"]}><AgencyLayout /></ProtectedRoute>}>
-                <Route path="/agency/dashboard" element={<AgencyDashboard />} />
-                <Route path="/agency/market-edge" element={<MarketEdge />} />
-                <Route path="/agency/intyg" element={<AgencyIntyg />} />
-                {/* Future: /agency/settings */}
-              </Route>
-
-              {/* ── Public Din data Layout ──────────── */}
-              <Route element={<PublicVerifyLayout />}>
-                <Route path="/samarbetsintyg/:applicationId" element={<VerifyProof />} />
-                {/* Legacy: old /verify/:id → /samarbetsintyg/:id */}
-                <Route path="/verify/:applicationId" element={<LegacyVerifyRedirect />} />
-                {/* Legacy: /verify (root) → /din-data */}
-                <Route path="/verify" element={<Navigate to="/din-data" replace />} />
-                <Route path="/profil/:id" element={<PublicProfile />} />
-                {/* Canonical: /din-data (Din data info page) */}
-                <Route path="/din-data" element={<VerifyInfo />} />
-                {/* Legacy: /dokhus-info → /din-data */}
-                <Route path="/dokhus-info" element={<Navigate to="/din-data" replace />} />
-                {/* Legacy: /verify-info → /din-data */}
-                <Route path="/verify-info" element={<Navigate to="/din-data" replace />} />
-              </Route>
-
-              {/* ── Public routes (no layout) ────── */}
-              <Route path="/resultat/:leadId" element={<AnalysisScreen />} />
-              
-              <Route path="/rapport/anestesisjukskoterska" element={<AnestesiReport />} />
-              <Route path="/rapport/:reportId" element={<Report />} />
-              
+              {/* ── Legal ── */}
               <Route path="/vanliga-fragor" element={<FAQ />} />
               <Route path="/integritetspolicy" element={<PrivacyPolicy />} />
-              <Route path="/referens/:token" element={<ReferenceForm />} />
-              <Route path="/ping/:token" element={<PingResponse />} />
-              <Route path="/sign/:token" element={<SignRepresentation />} />
-              <Route path="/unsubscribe" element={<Unsubscribe />} />
-              <Route path="/kampanj/:role" element={<Campaign />} />
-              <Route path="/uppdragsradar" element={<UppdragsradarV2 />} />
 
-              {/* Hidden / protected routes */}
-              <Route path="/dela" element={<ProtectedRoute><SharePreview /></ProtectedRoute>} />
-              <Route path="/referenser-info" element={<ProtectedRoute><ReferenserInfo /></ProtectedRoute>} />
-              <Route path="/eget-bolag" element={<EgetBolag />} />
-              <Route path="/delade-dokument/:token" element={<SharedDocuments />} />
+              {/* ── Admin ── */}
               <Route path="/admin" element={<ProtectedRoute allowedRoles={["admin"]}><Admin /></ProtectedRoute>} />
               <Route path="/admin/agent-api-keys" element={<ProtectedRoute allowedRoles={["admin"]}><AgentApiKeys /></ProtectedRoute>} />
-              <Route path="/marketplace" element={<ProtectedRoute><MarketplaceHome /></ProtectedRoute>} />
-              <Route path="/dev/theme-preview" element={<ProtectedRoute allowedRoles={["admin"]}><ThemePreview /></ProtectedRoute>} />
               <Route path="/dev/analytics" element={<ProtectedRoute allowedRoles={["admin"]}><AnalyticsDashboard /></ProtectedRoute>} />
-              <Route path="/dev/e2e-test" element={import.meta.env.PROD ? <NotFound /> : <E2ETest />} />
-              <Route path="/demo" element={<DemoAnthropic />} />
-              <Route path="/demo/old" element={<DemoLanding />} />
-              <Route path="/demo/referenser" element={<ReferenceDemo />} />
-              <Route path="/demo/landing-v2" element={<LandingV2 />} />
-              <Route path="/demo/shiftnex" element={<ShiftnexClone />} />
-              <Route path="/demo/hero-tailwind" element={<HeroTailwind />} />
-              <Route path="/dev/demo" element={<Navigate to="/demo" replace />} />
 
-              {/* ── Backwards-compat redirects ───── */}
+              {/* ── Backwards-compat / gömda produktrouter → tillbaka till löneanalysen ── */}
               <Route path="/index" element={<Navigate to="/" replace />} />
+              <Route path="/v1" element={<Navigate to="/" replace />} />
+              <Route path="/b2b" element={<Navigate to="/" replace />} />
               <Route path="/profil" element={<Navigate to="/consultant/profil" replace />} />
-              {/* <Route path="/radar" element={<Navigate to="/consultant/radar" replace />} /> */}
-              <Route path="/forhandla" element={<RedirectWithParams to="/consultant/forhandla" />} />
-              <Route path="/referenser" element={<Navigate to="/consultant/referenser" replace />} />
-              <Route path="/fakturakontroll" element={<Navigate to="/consultant/fakturakontroll" replace />} />
-              <Route path="/academy" element={<Navigate to="/consultant/academy" replace />} />
+              <Route path="/consultant/salary-check" element={<Navigate to="/" replace />} />
+              <Route path="/consultant/forhandla" element={<Navigate to="/" replace />} />
+              <Route path="/consultant/fakturakontroll/*" element={<Navigate to="/" replace />} />
+              <Route path="/consultant/ersattning" element={<Navigate to="/" replace />} />
+              <Route path="/consultant/referenser" element={<Navigate to="/" replace />} />
+              <Route path="/consultant/academy" element={<Navigate to="/" replace />} />
+              <Route path="/consultant/agent-access" element={<Navigate to="/" replace />} />
+              <Route path="/forhandla" element={<Navigate to="/" replace />} />
+              <Route path="/fakturakontroll" element={<Navigate to="/" replace />} />
+              <Route path="/referenser" element={<Navigate to="/" replace />} />
+              <Route path="/academy" element={<Navigate to="/" replace />} />
+              <Route path="/marketplace" element={<Navigate to="/" replace />} />
+              <Route path="/eget-bolag" element={<Navigate to="/" replace />} />
+              <Route path="/uppdragsradar" element={<Navigate to="/" replace />} />
+              <Route path="/for-bemanningsforetag" element={<Navigate to="/" replace />} />
+              <Route path="/registrera/bemanning" element={<Navigate to="/" replace />} />
+              <Route path="/agency/*" element={<Navigate to="/" replace />} />
+              <Route path="/din-data" element={<Navigate to="/" replace />} />
+              <Route path="/dokhus-info" element={<Navigate to="/" replace />} />
+              <Route path="/verify-info" element={<Navigate to="/" replace />} />
+              <Route path="/verify" element={<Navigate to="/" replace />} />
+              <Route path="/verify/:applicationId" element={<Navigate to="/" replace />} />
+              <Route path="/samarbetsintyg/:applicationId" element={<Navigate to="/" replace />} />
+              <Route path="/profil/:id" element={<Navigate to="/" replace />} />
+              <Route path="/referens/:token" element={<Navigate to="/" replace />} />
+              <Route path="/ping/:token" element={<Navigate to="/" replace />} />
+              <Route path="/sign/:token" element={<Navigate to="/" replace />} />
+              <Route path="/delade-dokument/:token" element={<Navigate to="/" replace />} />
+              <Route path="/dela" element={<Navigate to="/" replace />} />
+              <Route path="/referenser-info" element={<Navigate to="/" replace />} />
+              <Route path="/demo" element={<Navigate to="/" replace />} />
+              <Route path="/demo/*" element={<Navigate to="/" replace />} />
+              <Route path="/dev/demo" element={<Navigate to="/" replace />} />
+              <Route path="/dev/theme-preview" element={<Navigate to="/" replace />} />
+              <Route path="/dev/e2e-test" element={<Navigate to="/" replace />} />
 
-              {/* ── Catch-all ─────────────────────── */}
+              {/* ── Catch-all ── */}
               <Route path="*" element={<NotFound />} />
             </Routes>
             </main>
           </Suspense>
           <CookieBanner />
-          <FloatingProfileButton />
         </BrowserRouter>
       </TooltipProvider>
     </QueryClientProvider>

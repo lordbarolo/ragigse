@@ -202,7 +202,7 @@ serve(async (req) => {
       );
     }
 
-    console.log(`Report created: ${report.id} for ${email}`);
+    console.log(`Report created: ${report.id}`);
 
     // Schedule followup drip emails if we have an email
     if (email && lead_id) {
@@ -220,7 +220,7 @@ serve(async (req) => {
           ...e,
         }))
       );
-      console.log(`Scheduled ${emails.length} followup emails for ${email}`);
+      console.log(`Scheduled ${emails.length} followup emails for lead ${lead_id}`);
     }
 
     return new Response(
@@ -229,7 +229,7 @@ serve(async (req) => {
     );
   } catch (error) {
     console.error("Create report error:", error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

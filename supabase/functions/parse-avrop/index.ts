@@ -102,8 +102,14 @@ Deno.serve(async (req) => {
       return jsonResponse({ error: "AI gateway not configured" }, 500);
     }
 
-    // Per-user daily AI quota
+    // Require authenticated user — prevents anonymous AI usage and anonymous
+    // writes to avrop_intelligence (the agencyId at line ~195 is read from
+    // the same request below).
     const userId = await getAuthUserId(req);
+    if (!userId) {
+      return jsonResponse({ error: "unauthorized", message: "Du måste vara inloggad." }, 401);
+    }
+    // Per-user daily AI quota
     const aiRl = await checkAiRateLimit(userId);
     if (!aiRl.allowed) {
       return new Response(JSON.stringify({

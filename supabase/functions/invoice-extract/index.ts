@@ -461,8 +461,14 @@ Deno.serve(async (req) => {
     const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
     const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 
-    // Per-user daily AI quota
+    // SECURITY: require authenticated caller; rate-limit AI usage per user.
     const userId = await getAuthUserId(req);
+    if (!userId) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     const aiRl = await checkAiRateLimit(userId);
     if (!aiRl.allowed) return aiRateLimitResponse(aiRl, corsHeaders);
 
@@ -474,13 +480,20 @@ Deno.serve(async (req) => {
       return (h || 0) + (m || 0) / 60;
     }
 
-    // 1. Get review
+    // 1. Get review (must be owned by the authenticated user)
     const { data: review, error: reviewErr } = await supabase
       .from("invoice_reviews")
       .select("*")
       .eq("id", review_id)
       .single();
     if (reviewErr || !review) throw new Error("Review not found: " + reviewErr?.message);
+
+    if ((review as any).user_id !== userId) {
+      return new Response(JSON.stringify({ error: "Forbidden" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
 
     await supabase.from("invoice_reviews").update({ status: "extracting" }).eq("id", review_id);
 

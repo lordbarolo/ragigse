@@ -67,6 +67,9 @@ serve(async (req) => {
 
   const startedAt = Date.now();
   const userId = await getAuthUserId(req);
+  if (!userId) {
+    return new Response(JSON.stringify({ error: "unauthorized", message: "Du måste vara inloggad." }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+  }
 
   // Rate limit (shared per-user 30/day across all AI tools)
   const rl = await checkAiRateLimit(userId);

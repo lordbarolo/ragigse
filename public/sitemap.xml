@@ -32,8 +32,13 @@
   </url>
   <url>
     <loc>https://www.compcare.se/uppdragsradar</loc>
+    <changefreq>daily</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.compcare.se/agency/market-edge</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.compcare.se/rapport/anestesisjukskoterska</loc>

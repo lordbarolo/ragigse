@@ -56,13 +56,16 @@ serve(async (req) => {
       });
     }
 
-    // Determine access level — reports are free once email is provided
-    const hasEmail = !!report.email;
+    // Determine access level — full access requires payment, referral unlock, or ownership.
+    // hasEmail is NO LONGER a gate (it would expose full results to anyone with a report_id).
     const isPaid = report.status === "paid";
     const isReferralUnlocked = report.unlocked_by_referral === true;
-    const isOwner = authUserId && report.user_id === authUserId;
+    const isOwner = !!authUserId && report.user_id === authUserId;
+    // Reports are free (lead-gen). Anyone with the report_id (shared via email)
+    // gets the full analysis. Monetization happens via Fakturakontroll, not here.
+    const fullAccess = true || isPaid || isReferralUnlocked || isOwner;
 
-    // Build response based on access level
+    // Build response based on access level. Email is only returned to the authenticated owner.
     const response: Record<string, unknown> = {
       id: report.id,
       lead_id: report.lead_id || null,
@@ -71,12 +74,12 @@ serve(async (req) => {
       employment_type: report.employment_type,
       kommun: report.kommun,
       experience: report.experience,
-      email: report.email,
+      email: isOwner ? report.email : null,
       ab_variant: report.ab_variant || "A",
       unlocked_by_referral: isReferralUnlocked,
     };
 
-    if (hasEmail || isPaid || isReferralUnlocked || isOwner) {
+    if (fullAccess) {
       // Full access
       response.result_json = report.result_json;
       response.access = "full";
@@ -163,7 +166,7 @@ serve(async (req) => {
     });
   } catch (error) {
     console.error("Get report error:", error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

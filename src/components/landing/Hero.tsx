@@ -39,7 +39,7 @@ export default function Hero() {
         </h1>
 
         <p
-          className="text-foreground/55 font-light leading-relaxed max-w-[520px] mx-auto text-xl md:text-[22px]"
+          className="text-foreground/55 font-light leading-relaxed max-w-[520px] mx-auto text-xl md:text-[22px] mt-3"
         >
           Gör löneanalysen och ta del av marknadens faktiska villkor. Baserat på över 20 000 offentliga avtal från 290 kommuner och 21 regioner.
         </p>

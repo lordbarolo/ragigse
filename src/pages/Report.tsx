@@ -3,7 +3,8 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Loader2, Download, Linkedin } from "lucide-react";
+import { Loader2, Download, UserPlus, ArrowRight } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 import { trackEvent } from "@/lib/trackEvent";
 import { getCouponCode } from "@/lib/captureParams";
 import CompcareLogo from "@/components/CompcareLogo";
@@ -14,14 +15,19 @@ import type { ReportData } from "@/shared/types";
 
 import ConsultantTrackContent from "@/components/report/ConsultantTrackContent";
 import ReportFlowIndicator from "@/components/report/ReportFlowIndicator";
+import PossibleCompensationInfo from "@/components/PossibleCompensationInfo";
+import { SEO } from "@/components/SEO";
 
 
 
 export default function Report() {
   const { reportId } = useParams<{ reportId: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [report, setReport] = useState<ReportData | null>(null);
   const [loading, setLoading] = useState(true);
+  const [exportingPdf, setExportingPdf] = useState(false);
+  const printableRef = useRef<HTMLDivElement | null>(null);
 
   const reportViewedRef = useRef(false);
 
@@ -106,8 +112,14 @@ export default function Report() {
   const isEmployee = report.employment_type === "anstalld";
   const isFriendCoupon = getCouponCode()?.toLowerCase() === "vänner500";
 
+  const seoTitle = `${report.occupation || "Vårdkonsult"} – lön & ramavtal ${report.kommun || ""}`.trim().slice(0, 60);
+  const seoDesc = `Rapport för ${report.occupation || "vårdkonsult"} i ${report.kommun || "Sverige"}: jämför din ersättning mot SKR-ramavtalet. Anonymt och kostnadsfritt.`.slice(0, 160);
+
   return (
+    <>
+      <SEO title={seoTitle} description={seoDesc} path={`/rapport/${reportId}`} ogType="article" />
     <div
+      ref={printableRef}
       className="min-h-screen"
       style={{
         // Light "cream" report theme — overrides global tokens only on this page
@@ -130,19 +142,7 @@ export default function Report() {
         color: '#0A0A0A',
       }}
     >
-      <Navbar />
-      <ReportFlowIndicator
-        steps={[
-          { id: "flow-din-ersattning", label: "Din ersättning & marknadsspann" },
-          { id: "flow-situation", label: "Vad det betyder för dig" },
-          { id: "flow-stod", label: "Få stöd i din förhandling" },
-          { id: "flow-regional", label: "Villkoren på andra orter" },
-          { id: "flow-negotiation", label: "Din förhandlingspotential" },
-          { id: "flow-fakturor", label: "Har du tagit betalt för allt?" },
-          { id: "flow-market", label: "Marknadsintelligens" },
-          { id: "flow-method", label: "Beräkningsmetod" },
-        ]}
-      />
+      <div data-pdf-hide><Navbar /></div>
       {/* Header — cream light theme */}
       <header
         className="relative overflow-hidden px-5 pt-20 pb-10 sm:pt-24 sm:pb-12"
@@ -153,7 +153,12 @@ export default function Report() {
             Ersättningsanalys
           </p>
           <h1 className="leading-tight" style={{ fontFamily: 'Georgia, serif', fontSize: '28px', fontWeight: 700, color: '#0A0A0A' }}>
-            {report.occupation}
+            {(() => {
+              const occ = report.occupation || "";
+              const stripped = occ.replace(/^Specialistläkare\s+/i, "").trim();
+              if (!stripped) return occ;
+              return stripped.charAt(0).toUpperCase() + stripped.slice(1);
+            })()}
           </h1>
           <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1" style={{ fontSize: '13px', color: '#6B7280' }}>
             <span className="whitespace-nowrap">{report.kommun}</span>
@@ -173,7 +178,45 @@ export default function Report() {
         </div>
       </header>
 
+      <ReportFlowIndicator
+        steps={[
+          { id: "flow-din-ersattning", label: "Din ersättning & möjlig ersättning" },
+          { id: "flow-situation", label: "Vad det betyder för dig" },
+          { id: "flow-stod", label: "Få stöd i din förhandling" },
+          { id: "flow-regional", label: "Villkoren på andra orter" },
+          { id: "flow-negotiation", label: "Din förhandlingspotential" },
+          { id: "flow-fakturor", label: "Har du tagit betalt för allt?" },
+          { id: "flow-market", label: "Marknadsintelligens" },
+          { id: "flow-method", label: "Beräkningsmetod" },
+        ]}
+      />
+
       <main className="px-4 py-6 max-w-lg mx-auto space-y-2.5">
+
+        {/* Förhandlingsassistenten — flyttad till toppen */}
+        <div className="rounded-2xl border overflow-hidden" style={{ backgroundColor: '#FFFFFF', borderColor: '#E0DBD3' }}>
+          <div className="pt-5 px-5">
+            <p className="font-semibold leading-snug" style={{ fontFamily: 'Georgia, serif', fontSize: '18px', color: '#0A0A0A' }}>
+              Förhandlingsassistenten
+            </p>
+            <p className="text-sm mt-1.5" style={{ color: '#6B7280' }}>
+              Få argument och tips inför din nästa förhandling, baserat på ramavtal och din situation.
+            </p>
+          </div>
+          <div className="px-5 py-5">
+            <Link
+              to="/logga-in"
+              className="inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 rounded-lg"
+              style={{ backgroundColor: '#3D3491', color: '#FFFFFF' }}
+            >
+              Öppna förhandlingsassistenten
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+
+        {/* Förklaring: möjlig ersättning */}
+        <PossibleCompensationInfo variant="report" />
 
         <ConsultantTrackContent
           r={r}
@@ -193,50 +236,98 @@ export default function Report() {
 
 
 
+
+        {/* Skapa konto-CTA (visas endast för icke-inloggade) */}
+        {!user && (
+          <div data-pdf-hide className="rounded-2xl border p-5 mt-4" style={{ backgroundColor: '#FFFFFF', borderColor: '#E0DBD3' }}>
+            <h3 className="font-semibold mb-1" style={{ fontFamily: 'Georgia, serif', fontSize: '18px', color: '#0A0A0A' }}>
+              Spara din rapport
+            </h3>
+            <p className="text-sm mb-4" style={{ color: '#6B7280' }}>
+              Skapa ett konto för att spara analysen, följa marknaden och få tillgång till dina verktyg.
+            </p>
+            <Button
+              onClick={() => navigate("/registrera")}
+              className="text-sm font-semibold px-6 py-3 gap-2"
+              style={{ backgroundColor: '#3D3491', color: '#FFFFFF' }}
+            >
+              <UserPlus className="w-4 h-4" />
+              Skapa konto
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </div>
+        )}
+
         {/* Utility actions */}
-        <div className="flex gap-3 pt-2">
+        <div className="flex gap-3 pt-2" data-pdf-hide>
           {!isFriendCoupon && (
-            <Button variant="outline" className="flex-1 gap-2 h-12 rounded-xl border-border/50 hover:border-border" onClick={async () => {
-              try {
-                const { data, error } = await supabase.functions.invoke("generate-pdf", {
-                  body: { report_id: report.id },
-                });
-                if (error || !data?.pdf_base64) {
+            <Button
+              variant="outline"
+              disabled={exportingPdf}
+              className="flex-1 gap-2 h-12 rounded-xl border-border/50 hover:border-border"
+              onClick={async () => {
+                if (!printableRef.current || exportingPdf) return;
+                setExportingPdf(true);
+                try {
+                  const [{ default: html2canvas }, { default: jsPDF }] = await Promise.all([
+                    import("html2canvas-pro"),
+                    import("jspdf"),
+                  ]);
+
+                  const node = printableRef.current;
+                  const hidden = node.querySelectorAll<HTMLElement>("[data-pdf-hide]");
+                  hidden.forEach((el) => (el.style.visibility = "hidden"));
+
+                  // Wait a tick for any pending layout / images
+                  await new Promise((r) => setTimeout(r, 50));
+
+                  const canvas = await html2canvas(node, {
+                    backgroundColor: "#EEEBE4",
+                    scale: 2,
+                    useCORS: true,
+                    logging: false,
+                    windowWidth: node.scrollWidth,
+                  });
+
+                  hidden.forEach((el) => (el.style.visibility = ""));
+
+                  const pdf = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
+                  const pageW = pdf.internal.pageSize.getWidth();
+                  const pageH = pdf.internal.pageSize.getHeight();
+                  const imgW = pageW;
+                  const imgH = (canvas.height * imgW) / canvas.width;
+
+                  let heightLeft = imgH;
+                  let position = 0;
+                  const imgData = canvas.toDataURL("image/jpeg", 0.92);
+
+                  pdf.addImage(imgData, "JPEG", 0, position, imgW, imgH, undefined, "FAST");
+                  heightLeft -= pageH;
+                  while (heightLeft > 0) {
+                    position = heightLeft - imgH;
+                    pdf.addPage();
+                    pdf.addImage(imgData, "JPEG", 0, position, imgW, imgH, undefined, "FAST");
+                    heightLeft -= pageH;
+                  }
+
+                  const safeOcc = (report.occupation || "rapport").replace(/[^a-z0-9åäö]+/gi, "_");
+                  pdf.save(`CompCare_${safeOcc}.pdf`);
+                  trackEvent("pdf_downloaded", { report_id: report.id });
+                } catch (e) {
+                  console.error("PDF export failed", e);
                   window.print();
-                  return;
+                } finally {
+                  setExportingPdf(false);
                 }
-                const byteChars = atob(data.pdf_base64);
-                const byteArray = new Uint8Array(byteChars.length);
-                for (let i = 0; i < byteChars.length; i++) byteArray[i] = byteChars.charCodeAt(i);
-                const blob = new Blob([byteArray], { type: "application/pdf" });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = data.filename || "CompCare_Rapport.pdf";
-                a.click();
-                URL.revokeObjectURL(url);
-                trackEvent("pdf_downloaded", { report_id: report.id });
-              } catch {
-                window.print();
-              }
-            }}>
-              <Download className="w-4 h-4" /> PDF
+              }}
+            >
+              {exportingPdf ? (
+                <><Loader2 className="w-4 h-4 animate-spin" /> Genererar PDF…</>
+              ) : (
+                <><Download className="w-4 h-4" /> PDF</>
+              )}
             </Button>
           )}
-          <Button
-            variant="outline"
-            className="flex-1 gap-2 h-12 rounded-xl border-border/50 hover:border-border"
-            onClick={() => {
-              const shareUrl = `${window.location.origin}/dela?yrke=${encodeURIComponent(report.occupation || "")}`;
-              const text = `Hur stor är egentligen skillnaden mellan konsult och fast tjänst? Se din ersättning mot marknaden.`;
-              window.open(
-                `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}&summary=${encodeURIComponent(text)}`,
-                "_blank", "width=600,height=500"
-              );
-            }}
-          >
-            <Linkedin className="w-4 h-4" /> LinkedIn
-          </Button>
         </div>
 
         {/* Footer */}
@@ -255,5 +346,6 @@ export default function Report() {
         </div>
       </main>
     </div>
+    </>
   );
 }

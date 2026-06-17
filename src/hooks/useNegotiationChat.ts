@@ -23,6 +23,51 @@ export interface NegotiationContext {
   experience_years?: number;
 }
 
+const ROLE_PATTERNS: Array<[RegExp, string]> = [
+  [/\bDSK\b|distriktssj[uö]k/i, "Distriktssjuksköterska"],
+  [/röntgensj[uö]k|\brtg\b/i, "Röntgensjuksköterska"],
+  [/barnmorsk/i, "Barnmorska"],
+  [/\bssk\b|sjukskötersk/i, "Sjuksköterska"],
+  [/specialistl[aä]k/i, "Specialistläkare"],
+  [/\bst[-\s]?l[aä]k/i, "ST-läkare"],
+  [/leg(?:\.|itimerad)?\s*l[aä]k/i, "Legitimerad läkare"],
+];
+
+function inferContextFromMessage(input: string, current: NegotiationContext): NegotiationContext {
+  const updates: NegotiationContext = {};
+
+  for (const [pattern, role] of ROLE_PATTERNS) {
+    if (pattern.test(input)) {
+      updates.role = role;
+      break;
+    }
+  }
+
+  const rateMatch = input.match(/(\d[\d\s]{2,5})\s*(?:kr\s*\/?\s*h|kr\/h|kronor\s*(?:i|per)?\s*tim)/i);
+  if (rateMatch) {
+    const parsedRate = Number(rateMatch[1].replace(/\s/g, ""));
+    if (Number.isFinite(parsedRate) && parsedRate > 0) updates.current_rate = parsedRate;
+  }
+
+  const salaryMatch = input.match(/(\d[\d\s]{3,6})\s*(?:kr)?\s*(?:\/\s*mån|per\s*månad|i\s*månad|månadslön)/i);
+  if (salaryMatch && !updates.current_rate) {
+    const parsedSalary = Number(salaryMatch[1].replace(/\s/g, ""));
+    if (Number.isFinite(parsedSalary) && parsedSalary > 0) updates.current_salary = parsedSalary;
+  }
+
+  const zoneMatch = input.match(/\bzon\s*([123])\b/i);
+  if (zoneMatch) updates.geography = `Zon ${zoneMatch[1]}`;
+  else {
+    const placeMatch = input.match(/(?:uppdrag\s+i|arbetar\s+i|jobbar\s+i|i|inom|för)\s+([A-ZÅÄÖ][A-Za-zÅÄÖåäö-]{2,})(?:\s+kommun)?\b/);
+    if (placeMatch && !/^(jag|min|mitt|zon)$/i.test(placeMatch[1])) updates.geography = placeMatch[1];
+  }
+
+  if (/\b(egen\s*(?:företag|bolag)|företagare|f-skatt|konsult)\b/i.test(input)) updates.employment_type = "foretagare";
+  if (/\b(anställd|a-skatt|månadslön)\b/i.test(input)) updates.employment_type = "anstalld";
+
+  return { ...current, ...updates };
+}
+
 export function useNegotiationChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -36,10 +81,16 @@ export function useNegotiationChat() {
     const trimmed = input.trim();
     if (!trimmed || isLoading) return;
 
+    const requestContext = inferContextFromMessage(trimmed, context);
+    const hasRequestContext = Object.values(requestContext).some((value) => value !== undefined && value !== "");
+    if (JSON.stringify(requestContext) !== JSON.stringify(context)) {
+      setContext(requestContext);
+    }
+
     // Track first message as session start
     if (!hasStarted.current) {
       hasStarted.current = true;
-      trackEvent("negotiation_started", { has_context: Object.keys(context).length > 0 });
+      trackEvent("negotiation_started", { has_context: hasRequestContext });
     }
 
     trackEvent("negotiation_message_sent");
@@ -59,7 +110,7 @@ export function useNegotiationChat() {
       const { data, error } = await supabase.functions.invoke("salary-negotiation-agent", {
         body: {
           message: trimmed,
-          context: Object.keys(context).length > 0 ? context : undefined,
+          context: hasRequestContext ? requestContext : undefined,
           history,
         },
       });

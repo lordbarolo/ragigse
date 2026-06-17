@@ -3,12 +3,22 @@ import { renderAsync } from 'npm:@react-email/components@0.0.22'
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { TEMPLATES } from '../_shared/transactional-email-templates/registry.ts'
 
-// Configuration baked in at scaffold time — do NOT change these manually.
-// To update, re-run the email domain setup flow.
-const SITE_NAME = "CompCare"
-// Resend verified domain — mail.compcare.se (not root compcare.se)
-const SENDER_DOMAIN = "mail.compcare.se"
-const FROM_DOMAIN = "mail.compcare.se"
+// Sends app emails DIRECTLY via Resend gateway.
+// No pgmq queue, no NS-delegation — just CNAME/TXT on the from-domain in DNS.
+//
+// Required env:
+//  - LOVABLE_API_KEY        (auto-provisioned)
+//  - RESEND_API_KEY_1       (connector key, managed by Resend connector)
+//  - SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY
+// Optional env:
+//  - RESEND_FROM_DOMAIN     (default: "mail.compcare.se" — already verified)
+//  - RESEND_FROM_NAME       (default: "CompCare")
+//  - APP_BASE_URL           (default: "https://compcare.se" — used in unsubscribe links)
+
+const SITE_NAME = Deno.env.get('RESEND_FROM_NAME') || 'CompCare'
+const FROM_DOMAIN = Deno.env.get('RESEND_FROM_DOMAIN') || 'mail.compcare.se'
+const APP_BASE_URL = Deno.env.get('APP_BASE_URL') || 'https://compcare.se'
+const GATEWAY_URL = 'https://connector-gateway.lovable.dev/resend'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -16,7 +26,6 @@ const corsHeaders = {
     'authorization, x-client-info, apikey, content-type',
 }
 
-// Generate a cryptographically random 32-byte hex token
 function generateToken(): string {
   const bytes = new Uint8Array(32)
   crypto.getRandomValues(bytes)
@@ -25,31 +34,50 @@ function generateToken(): string {
     .join('')
 }
 
-// Auth note: this function uses verify_jwt = true in config.toml, so Supabase's
-// gateway validates the caller's JWT (anon or service_role) before the request
-// reaches this code. No in-function auth check is needed.
+function appendUnsubscribeFooter(html: string, unsubscribeUrl: string): string {
+  const footer = `
+    <div style="margin-top:32px;padding:16px 24px;border-top:1px solid #e5e5e5;font-family:Inter,Arial,sans-serif;font-size:12px;color:#888;text-align:center;">
+      Du får detta mejl från ${SITE_NAME}.
+      <a href="${unsubscribeUrl}" style="color:#888;text-decoration:underline;">Avregistrera</a>
+    </div>
+  `
+  if (html.includes('</body>')) {
+    return html.replace('</body>', `${footer}</body>`)
+  }
+  return html + footer
+}
+
+function appendUnsubscribeText(text: string, unsubscribeUrl: string): string {
+  return `${text}\n\n---\nAvregistrera: ${unsubscribeUrl}`
+}
 
 Deno.serve(async (req) => {
-  // Handle CORS preflight
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders })
   }
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL')
   const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+  const lovableApiKey = Deno.env.get('LOVABLE_API_KEY')
+  const resendKey = Deno.env.get('RESEND_API_KEY_1') || Deno.env.get('RESEND_API_KEY')
 
   if (!supabaseUrl || !supabaseServiceKey) {
-    console.error('Missing required environment variables')
+    console.error('Missing Supabase env vars')
     return new Response(
       JSON.stringify({ error: 'Server configuration error' }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
 
-  // Parse request body
+  if (!lovableApiKey || !resendKey) {
+    console.error('Missing Resend gateway credentials')
+    return new Response(
+      JSON.stringify({ error: 'Email service not configured' }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+  }
+
+  // Parse request
   let templateName: string
   let recipientEmail: string
   let idempotencyKey: string
@@ -67,235 +95,143 @@ Deno.serve(async (req) => {
   } catch {
     return new Response(
       JSON.stringify({ error: 'Invalid JSON in request body' }),
-      {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
+      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
 
   if (!templateName) {
     return new Response(
       JSON.stringify({ error: 'templateName is required' }),
-      {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
+      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
 
-  // 1. Look up template from registry (early — needed to resolve recipient)
   const template = TEMPLATES[templateName]
-
   if (!template) {
-    console.error('Template not found in registry', { templateName })
+    console.error('Template not found', { templateName })
     return new Response(
       JSON.stringify({
         error: `Template '${templateName}' not found. Available: ${Object.keys(TEMPLATES).join(', ')}`,
       }),
-      {
-        status: 404,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
+      { status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
 
-  // Resolve effective recipient: template-level `to` takes precedence over
-  // the caller-provided recipientEmail. This allows notification templates
-  // to always send to a fixed address (e.g., site owner from env var).
   const effectiveRecipient = template.to || recipientEmail
-
   if (!effectiveRecipient) {
     return new Response(
       JSON.stringify({
         error: 'recipientEmail is required (unless the template defines a fixed recipient)',
       }),
-      {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
+      { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
 
-  // Create Supabase client with service role (bypasses RLS)
   const supabase = createClient(supabaseUrl, supabaseServiceKey)
+  const normalizedEmail = effectiveRecipient.toLowerCase()
 
-  // 2. Check suppression list (fail-closed: if we can't verify, don't send)
+  // 1. Suppression check (fail-closed)
   const { data: suppressed, error: suppressionError } = await supabase
     .from('suppressed_emails')
     .select('id')
-    .eq('email', effectiveRecipient.toLowerCase())
+    .eq('email', normalizedEmail)
     .maybeSingle()
 
   if (suppressionError) {
-    console.error('Suppression check failed — refusing to send', {
-      error: suppressionError,
-      effectiveRecipient,
-    })
+    console.error('Suppression check failed', { error: suppressionError })
     return new Response(
       JSON.stringify({ error: 'Failed to verify suppression status' }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
 
   if (suppressed) {
-    // Log the suppressed attempt
     await supabase.from('email_send_log').insert({
       message_id: messageId,
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'suppressed',
     })
-
-    console.log('Email suppressed', { effectiveRecipient, templateName })
     return new Response(
       JSON.stringify({ success: false, reason: 'email_suppressed' }),
-      {
-        status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
+      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
 
-  // 3. Get or create unsubscribe token (one token per email address)
-  const normalizedEmail = effectiveRecipient.toLowerCase()
+  // 2. Get or create unsubscribe token
   let unsubscribeToken: string
-
-  // Check for existing token for this email
-  const { data: existingToken, error: tokenLookupError } = await supabase
+  const { data: existingToken } = await supabase
     .from('email_unsubscribe_tokens')
     .select('token, used_at')
     .eq('email', normalizedEmail)
     .maybeSingle()
 
-  if (tokenLookupError) {
-    console.error('Token lookup failed', {
-      error: tokenLookupError,
-      email: normalizedEmail,
-    })
-    await supabase.from('email_send_log').insert({
-      message_id: messageId,
-      template_name: templateName,
-      recipient_email: effectiveRecipient,
-      status: 'failed',
-      error_message: 'Failed to look up unsubscribe token',
-    })
-    return new Response(
-      JSON.stringify({ error: 'Failed to prepare email' }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
-    )
-  }
-
   if (existingToken && !existingToken.used_at) {
-    // Reuse existing unused token
     unsubscribeToken = existingToken.token
   } else if (!existingToken) {
-    // Create new token — upsert handles concurrent inserts gracefully
     unsubscribeToken = generateToken()
-    const { error: tokenError } = await supabase
+    await supabase
       .from('email_unsubscribe_tokens')
       .upsert(
         { token: unsubscribeToken, email: normalizedEmail },
         { onConflict: 'email', ignoreDuplicates: true }
       )
-
-    if (tokenError) {
-      console.error('Failed to create unsubscribe token', {
-        error: tokenError,
-      })
-      await supabase.from('email_send_log').insert({
-        message_id: messageId,
-        template_name: templateName,
-        recipient_email: effectiveRecipient,
-        status: 'failed',
-        error_message: 'Failed to create unsubscribe token',
-      })
-      return new Response(
-        JSON.stringify({ error: 'Failed to prepare email' }),
-        {
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      )
-    }
-
-    // If another request raced us, our upsert was silently ignored.
-    // Re-read to get the actual stored token.
-    const { data: storedToken, error: reReadError } = await supabase
+    const { data: storedToken } = await supabase
       .from('email_unsubscribe_tokens')
       .select('token')
       .eq('email', normalizedEmail)
       .maybeSingle()
-
-    if (reReadError || !storedToken) {
-      console.error('Failed to read back unsubscribe token after upsert', {
-        error: reReadError,
-        email: normalizedEmail,
-      })
-      await supabase.from('email_send_log').insert({
-        message_id: messageId,
-        template_name: templateName,
-        recipient_email: effectiveRecipient,
-        status: 'failed',
-        error_message: 'Failed to confirm unsubscribe token storage',
-      })
-      return new Response(
-        JSON.stringify({ error: 'Failed to prepare email' }),
-        {
-          status: 500,
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        }
-      )
-    }
-    unsubscribeToken = storedToken.token
+    unsubscribeToken = storedToken?.token || unsubscribeToken
   } else {
-    // Token exists but is already used — email should have been caught by suppression check above.
-    // This is a safety fallback; log and skip sending.
-    console.warn('Unsubscribe token already used but email not suppressed', {
-      email: normalizedEmail,
-    })
+    // Used token but email not in suppression — safety fallback
     await supabase.from('email_send_log').insert({
       message_id: messageId,
       template_name: templateName,
       recipient_email: effectiveRecipient,
       status: 'suppressed',
-      error_message:
-        'Unsubscribe token used but email missing from suppressed list',
+      error_message: 'Unsubscribe token used but email not suppressed',
     })
     return new Response(
       JSON.stringify({ success: false, reason: 'email_suppressed' }),
-      {
-        status: 200,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
+      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     )
   }
 
-  // 4. Render React Email template to HTML and plain text
-  const html = await renderAsync(
-    React.createElement(template.component, templateData)
-  )
-  const plainText = await renderAsync(
-    React.createElement(template.component, templateData),
-    { plainText: true }
-  )
+  const unsubscribeUrl = `${APP_BASE_URL}/avregistrera?token=${unsubscribeToken}`
 
-  // Resolve subject — supports static string or dynamic function
+  // 3. Render template
+  let htmlBody: string
+  let textBody: string
+  try {
+    htmlBody = await renderAsync(React.createElement(template.component, templateData))
+    textBody = await renderAsync(
+      React.createElement(template.component, templateData),
+      { plainText: true }
+    )
+  } catch (err) {
+    console.error('Template render failed', { templateName, error: err })
+    await supabase.from('email_send_log').insert({
+      message_id: messageId,
+      template_name: templateName,
+      recipient_email: effectiveRecipient,
+      status: 'failed',
+      error_message: 'Template render failed',
+    })
+    return new Response(
+      JSON.stringify({ error: 'Template render failed' }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+  }
+
+  const html = appendUnsubscribeFooter(htmlBody, unsubscribeUrl)
+  const text = appendUnsubscribeText(textBody, unsubscribeUrl)
+
   const resolvedSubject =
     typeof template.subject === 'function'
       ? template.subject(templateData)
       : template.subject
 
-  // 5. Enqueue the pre-rendered email for async processing by the dispatcher.
-  // The dispatcher (process-email-queue) handles sending, retries, and rate-limit backoff.
-
-  // Log pending BEFORE enqueue so we have a record even if enqueue crashes
+  // 4. Log pending BEFORE send
   await supabase.from('email_send_log').insert({
     message_id: messageId,
     template_name: templateName,
@@ -303,52 +239,86 @@ Deno.serve(async (req) => {
     status: 'pending',
   })
 
-  const { error: enqueueError } = await supabase.rpc('enqueue_email', {
-    queue_name: 'transactional_emails',
-    payload: {
-      message_id: messageId,
-      to: effectiveRecipient,
-      from: `${SITE_NAME} <noreply@${FROM_DOMAIN}>`,
-      sender_domain: SENDER_DOMAIN,
-      subject: resolvedSubject,
-      html,
-      text: plainText,
-      purpose: 'transactional',
-      label: templateName,
-      idempotency_key: idempotencyKey,
-      unsubscribe_token: unsubscribeToken,
-      queued_at: new Date().toISOString(),
-    },
-  })
+  // 5. Send via Resend gateway
+  const fromAddress = `${SITE_NAME} <noreply@${FROM_DOMAIN}>`
 
-  if (enqueueError) {
-    console.error('Failed to enqueue email', {
-      error: enqueueError,
-      templateName,
-      effectiveRecipient,
+  try {
+    const resp = await fetch(`${GATEWAY_URL}/emails`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${lovableApiKey}`,
+        'X-Connection-Api-Key': resendKey,
+        'Idempotency-Key': idempotencyKey,
+      },
+      body: JSON.stringify({
+        from: fromAddress,
+        to: [effectiveRecipient],
+        subject: resolvedSubject,
+        html,
+        text,
+        headers: {
+          'List-Unsubscribe': `<${unsubscribeUrl}>`,
+          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+        },
+        tags: [{ name: 'template', value: templateName.replace(/[^a-zA-Z0-9_-]/g, '_') }],
+      }),
     })
+
+    const respText = await resp.text()
+
+    if (!resp.ok) {
+      console.error('Resend send failed', {
+        status: resp.status,
+        body: respText,
+        templateName,
+        message_id: messageId,
+      })
+      await supabase.from('email_send_log').insert({
+        message_id: messageId,
+        template_name: templateName,
+        recipient_email: effectiveRecipient,
+        status: 'failed',
+        error_message: `Resend ${resp.status}: ${respText.slice(0, 500)}`,
+      })
+      return new Response(
+        JSON.stringify({ error: 'Failed to send email', details: respText.slice(0, 200) }),
+        { status: 502, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
+    let providerId: string | null = null
+    try {
+      const parsed = JSON.parse(respText)
+      providerId = parsed?.id || null
+    } catch { /* ignore */ }
 
     await supabase.from('email_send_log').insert({
       message_id: messageId,
       template_name: templateName,
       recipient_email: effectiveRecipient,
+      status: 'sent',
+      metadata: providerId ? { resend_id: providerId } : null,
+    })
+
+    console.log('Email sent via Resend', { templateName, message_id: messageId, resend_id: providerId })
+
+    return new Response(
+      JSON.stringify({ success: true, message_id: messageId, resend_id: providerId }),
+      { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
+  } catch (err) {
+    console.error('Resend gateway error', { error: err, templateName, message_id: messageId })
+    await supabase.from('email_send_log').insert({
+      message_id: messageId,
+      template_name: templateName,
+      recipient_email: effectiveRecipient,
       status: 'failed',
-      error_message: 'Failed to enqueue email',
+      error_message: `Gateway error: ${(err as Error).message}`,
     })
-
-    return new Response(JSON.stringify({ error: 'Failed to enqueue email' }), {
-      status: 500,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    })
+    return new Response(
+      JSON.stringify({ error: 'Email gateway error' }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    )
   }
-
-  console.log('Transactional email enqueued', { templateName, effectiveRecipient })
-
-  return new Response(
-    JSON.stringify({ success: true, queued: true }),
-    {
-      status: 200,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    }
-  )
 })

@@ -1,4 +1,5 @@
 import { Helmet } from "react-helmet-async";
+import { safeJsonLd } from "@/lib/safeJsonLd";
 
 interface SEOProps {
   title: string;
@@ -25,7 +26,7 @@ export function SEO({ title, description, path, ogType = "website", jsonLd }: SE
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       {lds.map((ld, i) => (
-        <script key={i} type="application/ld+json">{JSON.stringify(ld)}</script>
+        <script key={i} type="application/ld+json">{safeJsonLd(ld)}</script>
       ))}
     </Helmet>
   );

@@ -5,24 +5,13 @@ import { Separator } from "@/components/ui/separator";
 import CompcareLogo from "@/components/CompcareLogo";
 import Navbar from "@/components/Navbar";
 import { SEO } from "@/components/SEO";
+import TLDRBox from "@/components/report/TLDRBox";
+import { buildRoleReportSchemas } from "@/lib/seo/roleReportSchema";
 
-const ARTICLE_JSONLD = {
-  "@context": "https://schema.org",
-  "@type": "Article",
-  headline: "Anestesisjuksköterska – marknadsrapport 2026",
-  description:
-    "Aktuella ramavtalspriser, OB-tillägg och rekommenderat konsultarvode för anestesisjuksköterskor i Sverige.",
-  inLanguage: "sv-SE",
-  datePublished: "2026-01-01",
-  dateModified: "2026-01-01",
-  author: { "@type": "Organization", name: "CompCare" },
-  publisher: {
-    "@type": "Organization",
-    name: "CompCare",
-    logo: { "@type": "ImageObject", url: "https://www.compcare.se/compcare-logo.svg" },
-  },
-  mainEntityOfPage: "https://www.compcare.se/rapport/anestesisjukskoterska",
-};
+// Single source of truth for the report's freshness stamp.
+// Same value drives the visible TL;DR timestamp AND every JSON-LD schema.
+const LAST_UPDATED = "2026-01-15";
+
 import {
   Clock,
   Moon,
@@ -59,10 +48,37 @@ const SHARE_MAX_ANSTALLD = 0.86;
 
 export default function AnestesiReport() {
   const zone1Rate = 770;
+  const zone3Rate = 880;
   const recMinF = Math.round(zone1Rate * SHARE_MIN_FORETAGARE);
   const recMaxF = Math.round(zone1Rate * SHARE_MAX_FORETAGARE);
   const recMinA = Math.round(zone1Rate * SHARE_MIN_ANSTALLD);
   const recMaxA = Math.round(zone1Rate * SHARE_MAX_ANSTALLD);
+
+  const roleSchemas = buildRoleReportSchemas({
+    roleName: "Anestesisjuksköterska",
+    roleSlug: "anestesisjukskoterska",
+    dateModified: LAST_UPDATED,
+    summary:
+      `Ramavtalspriset för anestesisjuksköterskor är ${fmt(zone1Rate)}–${fmt(zone3Rate)} kr/h beroende på zon. ` +
+      `Marknadsmässigt konsultarvode (egenföretagare) ligger på ${fmt(recMinF)}–${fmt(recMaxF)} kr/h enligt SKR:s ramavtal 2026.`,
+    rateRange: { min: zone1Rate, median: 824, max: zone3Rate, unit: "SEK/h" },
+    skrSources: ["https://skr.se/ramavtal/vardbemanning"],
+    faq: [
+      {
+        question: "Vad är timpriset för en anestesisjuksköterska 2026?",
+        answer: `Ramavtalspriset enligt SKR är ${fmt(zone1Rate)} kr/h i storstad (Zon 1), 824 kr/h i mellanstora regioner (Zon 2) och ${fmt(zone3Rate)} kr/h i glesbygd (Zon 3).`,
+      },
+      {
+        question: "Hur mycket tjänar en anestesisjuksköterska som konsult?",
+        answer: `Som egenföretagare ligger möjlig ersättning på ${fmt(recMinF)}–${fmt(recMaxF)} kr/h i Zon 1. Som anställd konsult ligger spannet på ${fmt(recMinA)}–${fmt(recMaxA)} kr/h.`,
+      },
+      {
+        question: "Vad är OB-tillägget för anestesisjuksköterskor?",
+        answer:
+          "OB-tilläggen följer SKR:s ramavtal: vardagkväll 37 kr/h, vardagnatt 82 kr/h, helgdag/helgkväll 96 kr/h, helgnatt 109 kr/h, storhelg 184–222 kr/h.",
+      },
+    ],
+  });
 
   return (
     <div className="min-h-screen bg-background">
@@ -71,7 +87,7 @@ export default function AnestesiReport() {
         description="Aktuella ramavtalspriser, OB-tillägg och rekommenderat konsultarvode för anestesisjuksköterskor i Sveriges tre priszoner."
         path="/rapport/anestesisjukskoterska"
         ogType="article"
-        jsonLd={ARTICLE_JSONLD}
+        jsonLd={roleSchemas}
       />
       <Navbar />
 
@@ -95,6 +111,18 @@ export default function AnestesiReport() {
       </header>
 
       <main className="px-4 py-6 max-w-lg mx-auto space-y-6">
+        {/* ── TL;DR — citerbar sammanfattning för människor & AI-agenter ── */}
+        <TLDRBox
+          summary={`Ramavtalspriset för anestesisjuksköterskor ligger på ${fmt(zone1Rate)}–${fmt(zone3Rate)} kr/h beroende på zon. Marknadsmässigt konsultarvode (egenföretagare) är ${fmt(recMinF)}–${fmt(recMaxF)} kr/h i storstad enligt SKR:s ramavtal 2026.`}
+          facts={[
+            { label: "Kundpris", value: `${fmt(zone1Rate)}–${fmt(zone3Rate)} kr/h` },
+            { label: "Konsult (eget bolag)", value: `${fmt(recMinF)}–${fmt(recMaxF)} kr/h` },
+            { label: "Konsult (anställd)", value: `${fmt(recMinA)}–${fmt(recMaxA)} kr/h` },
+          ]}
+          lastUpdated={LAST_UPDATED}
+          source="SKR Ramavtal 2026"
+        />
+
         {/* ── Kundpris per zon ── */}
         <section>
           <div className="mb-3">

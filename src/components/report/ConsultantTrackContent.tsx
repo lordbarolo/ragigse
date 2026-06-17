@@ -138,20 +138,20 @@ export default function ConsultantTrackContent({
                 </div>
                 <div className="flex justify-between mt-2" style={{ fontSize: '12px', color: '#6B7280' }}>
                   <span>{fmt(currentHourly)} kr/h (din nivå)</span>
-                  <span>{fmt(rec.recommended_hourly_max)} kr/h (marknad)</span>
+                  <span>{fmt(rec.recommended_hourly_max)} kr/h (möjlig ersättning)</span>
                 </div>
               </div>
             )}
 
-            {/* Marknadsspann row */}
+            {/* Möjlig ersättning row */}
             <div className="flex items-center justify-between p-3.5 border-t border-foreground/[0.05]">
               <div>
-                <p className="text-micro font-semibold tracking-[0.8px] uppercase mb-1">Marknadsspann</p>
+                <p className="text-micro font-semibold tracking-[0.8px] uppercase mb-1">Möjlig ersättning</p>
                 <p className={`${monoClass} text-[22px] font-medium tracking-tight text-primary/[0.7]`}>{fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h</p>
                 <p className={`${monoClass} text-micro mt-0.5`}>{fmt(rec.recommended_monthly_min)}–{fmt(rec.recommended_monthly_max)} kr/mån</p>
               </div>
               <span className="text-micro font-semibold tracking-[0.5px] bg-primary/[0.08] text-primary/[0.8] border border-primary/[0.2] rounded-full px-2.5 py-1 whitespace-nowrap">
-                Marknad
+                Möjlig ersättning
               </span>
             </div>
 
@@ -191,7 +191,7 @@ export default function ConsultantTrackContent({
             <li className="flex items-start gap-3">
               <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
               <span className="text-body-sm leading-relaxed">
-                Beräknat marknadsspann för konsulter är {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h.
+                Möjlig ersättning för konsulter är {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h.
               </span>
             </li>
             <li className="flex items-start gap-3">
@@ -238,70 +238,19 @@ export default function ConsultantTrackContent({
       {/* ═══════════════════════════════════════════════════════════════
           3. ACTION HUB — Verktygen (flyttad före regional jämförelse)
           ═══════════════════════════════════════════════════════════════ */}
-      {isConsultantFullAccess && (
-        <div id="flow-stod" ref={registerSectionRef?.("action_hub")} className="scroll-mt-24 pt-6 space-y-4">
+      {/* 3a. Förhandlingsassistenten — flyttad till toppen av rapporten */}
+
+      {/* 3b. Fakturagranskning */}
+      {isConsultantFullAccess && leadId && email && (
+        <div id="flow-fakturor" className="scroll-mt-24 pt-6 space-y-4">
           <SectionLabel>Agera på resultatet</SectionLabel>
-
-          {/* 3a. Förhandlingsassistenten */}
-          <div className="rounded-[18px] bg-card border border-foreground/[0.07] overflow-hidden card-shadow">
-            <div className="pt-6 px-5 space-y-4">
-              <div className="flex items-start gap-2">
-                <Handshake className="w-5 h-5 text-primary shrink-0 mt-0.5" />
-                <p className="font-semibold text-foreground text-base leading-snug">
-                  Förhandlingsassistenten gör skillnaden mellan ”ungefär marknadspris” och rätt timpris.
-                </p>
-              </div>
-              <p className="text-body-sm text-muted-foreground leading-relaxed">
-                Du loggar in och får färdiga formuleringar, jourfaktor-argument och en checklista för vitesklausul — anpassade efter din roll och region. De flesta använder den inför nästa avropssamtal.
-              </p>
-              <p className="font-semibold text-foreground text-sm pt-1">
-                Vi hjälper dig förhandla kring:
-              </p>
-              <div className="grid grid-cols-2 gap-2">
-                {[
-                  { icon: Car, label: "Reseersättning" },
-                  { icon: Clock, label: "Jourfaktor" },
-                  { icon: Home, label: "Betalt boende" },
-                  { icon: FileWarning, label: "Vitesklausul" },
-                ].map(({ icon: Icon, label }) => (
-                  <div key={label} className="flex items-center gap-2 p-2.5 rounded-lg bg-foreground/[0.03]">
-                    <Icon className="w-3.5 h-3.5 text-primary shrink-0" />
-                    <span className="text-[12px] font-medium">{label}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="px-5 py-5">
-              <Link
-                to="/logga-in"
-                className="flex items-center justify-center gap-2 w-full"
-                style={{
-                  backgroundColor: '#3D3491',
-                  color: '#FFFFFF',
-                  padding: '16px 24px',
-                  fontSize: '16px',
-                  fontWeight: 600,
-                  borderRadius: '8px',
-                }}
-              >
-                <LogIn className="w-4 h-4" />
-                Öppna förhandlingsassistenten
-              </Link>
-            </div>
-          </div>
-
-          {/* 3b. Fakturagranskning */}
-          {leadId && email && (
-            <div id="flow-fakturor" className="scroll-mt-24">
-              <InvoiceReviewCTA
-                leadId={leadId}
-                email={email}
-                role={occupation}
-                zone={userZone}
-                reportId={reportId}
-              />
-            </div>
-          )}
+          <InvoiceReviewCTA
+            leadId={leadId}
+            email={email}
+            role={occupation}
+            zone={userZone}
+            reportId={reportId}
+          />
         </div>
       )}
 
@@ -373,94 +322,8 @@ export default function ConsultantTrackContent({
         </div>
       )}
 
-      {/* ═══════════════════════════════════════════════════════════════
-          5. DEEP DIVE — Negotiation Range (Undre / Median / Övre)
-          ═══════════════════════════════════════════════════════════════ */}
-      {isConsultantFullAccess && rec ? (
-        (() => {
-          const realisticH = rec.recommended_hourly_min;
-          const recommendedH = Math.round((rec.recommended_hourly_min + rec.recommended_hourly_max) / 2);
-          const ambitiousH = Math.round(rec.recommended_hourly_max * 1.05);
-          const hpm = rec.hours_per_month || 167;
-          const realisticM = realisticH * hpm;
-          const recommendedM = recommendedH * hpm;
-          const ambitiousM = ambitiousH * hpm;
+      {/* Section 5 (Förhandlingsspann) borttagen per produktbeslut. */}
 
-          // Dölj hela rutan om användaren redan ligger i eller över övre spann —
-          // då saknar förhandlingsförslagen relevans (de skulle visa lägre nivåer än nuvarande).
-          if (currentHourly >= ambitiousH) return null;
-
-          return (
-            <div id="flow-negotiation" ref={registerSectionRef?.("negotiation_range")} className="scroll-mt-24 pt-4">
-              <SectionLabel>Förhandlingsspann · {userZone || "Din zon"}</SectionLabel>
-              <div className="grid grid-cols-3 gap-1.5">
-                <div className="rounded-[14px] bg-foreground/[0.035] border border-foreground/[0.07] p-3 text-center">
-                  <span className="text-micro font-bold tracking-[0.8px] uppercase block mb-1.5">Undre spann</span>
-                  <span className={`${monoClass} text-[19px] font-medium text-foreground/[0.8] tracking-tight leading-none block mb-0.5`}>{fmt(realisticH)}</span>
-                  <span className="text-micro block mb-1">kr/h</span>
-                  <span className={`${monoClass} text-micro block`}>{fmt(realisticM)} kr/mån</span>
-                </div>
-                <div className="rounded-[14px] bg-primary/[0.08] border border-primary/[0.3] p-3 text-center">
-                  <span className="text-micro font-bold tracking-[0.8px] uppercase text-primary block mb-1.5">Median</span>
-                  <span className={`${monoClass} text-[19px] font-medium text-primary tracking-tight leading-none block mb-0.5`}>{fmt(recommendedH)}</span>
-                  <span className="text-micro block mb-1">kr/h</span>
-                  <span className={`${monoClass} text-micro text-primary/[0.5] block`}>{fmt(recommendedM)} kr/mån</span>
-                </div>
-                <div className="rounded-[14px] bg-foreground/[0.035] border border-foreground/[0.07] p-3 text-center">
-                  <span className="text-micro font-bold tracking-[0.8px] uppercase block mb-1.5">Övre spann</span>
-                  <span className={`${monoClass} text-[19px] font-medium text-foreground/[0.8] tracking-tight leading-none block mb-0.5`}>{fmt(ambitiousH)}</span>
-                  <span className="text-micro block mb-1">kr/h</span>
-                  <span className={`${monoClass} text-micro block`}>{fmt(ambitiousM)} kr/mån</span>
-                </div>
-              </div>
-              <div className="flex items-center justify-center gap-1.5 pt-1.5">
-                <p className="text-micro text-center leading-relaxed">
-                  Baserat på ramavtalspris och branschens marginaler i {userZone || "din zon"}.
-                </p>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <button
-                      type="button"
-                      aria-label="Visa beräkningsmetod"
-                      className="text-muted-foreground/60 hover:text-primary transition-colors shrink-0"
-                    >
-                      <Info className="w-3.5 h-3.5" />
-                    </button>
-                  </PopoverTrigger>
-                  <PopoverContent side="top" className="w-72 text-xs leading-relaxed">
-                    <p className="font-semibold text-foreground mb-1.5">Så beräknar vi spannet</p>
-                    <p className="text-muted-foreground">
-                      Vi utgår från regionens kundpris (SKR:s ramavtal, zon-differentierat för {userZone || "din zon"}) och drar av en branschmarginal{" "}
-                      på 15–20 % (10–15 % för specialistläkare). Samma marginal gäller både anställda och egenföretagare.
-                    </p>
-                  </PopoverContent>
-                </Popover>
-              </div>
-            </div>
-          );
-        })()
-      ) : !isConsultantFullAccess ? (
-        <div className="rounded-2xl border border-border/50 overflow-hidden">
-          <div className="bg-muted/50 p-4 flex items-center gap-3">
-            <Lock className="w-5 h-5 text-muted-foreground" />
-            <p className="font-semibold text-foreground">Marknadsspann — fullständig version</p>
-          </div>
-          <div className="p-5 space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <StatBlock label="Din timersättning" value={`${fmt(currentHourly)} kr`} muted />
-              <div className="p-3 rounded-lg bg-accent/10 relative overflow-hidden">
-                <p className="text-hint mb-1">Marknadsspann</p>
-                <p className="text-base font-semibold text-accent blur-sm select-none">
-                  {formatPartialValue(Math.round(marketRate * 0.6))} kr
-                </p>
-              </div>
-            </div>
-            <p className="text-body-sm text-center">
-              Den fullständiga analysen med exakta siffror och regionala jämförelser finns i den utökade rapporten.
-            </p>
-          </div>
-        </div>
-      ) : null}
 
       {/* ═══════════════════════════════════════════════════════════════
           6. MARKET INTELLIGENCE — Senaste avtalsändringar & noteringar

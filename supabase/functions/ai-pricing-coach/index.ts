@@ -74,6 +74,9 @@ serve(async (req) => {
 
   const startedAt = Date.now();
   const userId = await getAuthUserId(req);
+  if (!userId) {
+    return new Response(JSON.stringify({ error: "unauthorized", message: "Du måste vara inloggad." }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+  }
 
   const rl = await checkAiRateLimit(userId);
   if (!rl.allowed) {

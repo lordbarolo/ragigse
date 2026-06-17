@@ -22,6 +22,9 @@ import EmailGate from "@/components/teaser/EmailGate";
 import EmailHookMessage from "@/components/teaser/EmailHookMessage";
 import ReportPreviewList from "@/components/teaser/ReportPreviewList";
 import MethodologyDisclosure from "@/components/teaser/MethodologyDisclosure";
+import PossibleCompensationInfo from "@/components/PossibleCompensationInfo";
+import NegotiationAssistantTeaser from "@/components/teaser/NegotiationAssistantTeaser";
+import { SEO } from "@/components/SEO";
 
 /** Teaser page — orchestrator for the results preview */
 export default function Teaser() {
@@ -268,8 +271,41 @@ export default function Teaser() {
     );
   }
 
+  const teaserTitle = `${survey.yrke || "Vårdkonsult"} – din löneanalys`.slice(0, 60);
+  const teaserDesc = `Jämför din ersättning som ${survey.yrke || "vårdkonsult"} i ${survey.kommun || "Sverige"} mot SKR-ramavtalet.`.slice(0, 160);
+
   return (
-    <div className="min-h-screen bg-background">
+    <>
+      <SEO title={teaserTitle} description={teaserDesc} path={`/resultat/${urlLeadId ?? leadId}`} />
+    <div
+      className="min-h-screen"
+      style={{
+        // Cream / Anthropic-bakgrund — override globala dark-tokens på denna sida
+        ['--background' as any]: '40 18% 91%',
+        ['--foreground' as any]: '0 0% 4%',
+        ['--card' as any]: '0 0% 100%',
+        ['--card-foreground' as any]: '0 0% 4%',
+        ['--popover' as any]: '0 0% 100%',
+        ['--popover-foreground' as any]: '0 0% 4%',
+        ['--muted' as any]: '40 18% 91%',
+        ['--muted-foreground' as any]: '220 9% 46%',
+        ['--secondary' as any]: '40 18% 91%',
+        ['--secondary-foreground' as any]: '0 0% 4%',
+        ['--accent' as any]: '40 18% 91%',
+        ['--accent-foreground' as any]: '0 0% 4%',
+        ['--border' as any]: '35 17% 85%',
+        ['--input' as any]: '35 17% 85%',
+        color: '#0A0A0A',
+        backgroundColor: "#EEEBE4",
+        backgroundImage: [
+          "radial-gradient(ellipse 70% 55% at 15% 25%, hsl(196 100% 50% / 0.18) 0%, transparent 55%)",
+          "radial-gradient(ellipse 55% 50% at 85% 20%, hsl(245 58% 60% / 0.14) 0%, transparent 50%)",
+          "radial-gradient(ellipse 50% 60% at 55% 85%, hsl(160 60% 45% / 0.10) 0%, transparent 50%)",
+        ].join(", "),
+        backgroundRepeat: "no-repeat",
+        backgroundAttachment: "fixed",
+      }}
+    >
       <TeaserHeader kommun={survey.kommun} />
 
       <main className="px-4 py-8 pb-20 max-w-lg mx-auto space-y-6">
@@ -303,6 +339,9 @@ export default function Teaser() {
           emailProvided={false}
         />
 
+        {/* Förklaring: möjlig ersättning */}
+        <PossibleCompensationInfo variant="teaser" />
+
         {/* Email Gate */}
         {!email && (
           <div className="space-y-5">
@@ -321,9 +360,13 @@ export default function Teaser() {
           <ReportPreviewList yrke={survey.yrke} />
         </div>
 
+        {/* Negotiation assistant teaser */}
+        <NegotiationAssistantTeaser />
+
         {/* Methodology — kollapsbar list längst ner */}
         <MethodologyDisclosure variant="teaser" />
       </main>
     </div>
+    </>
   );
 }
