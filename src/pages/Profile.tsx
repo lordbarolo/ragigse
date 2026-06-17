@@ -434,7 +434,104 @@ export default function Profile() {
             </CardContent>
           </Card>
         )}
+
+        {/* Profilstatus + verktyg — flyttade under tabs */}
+        <div className="rounded-2xl bg-white border border-slate-200 shadow-sm px-4 sm:px-5 py-4">
+          <div className="flex items-center justify-between gap-3 mb-3">
+            <div className="min-w-0 flex-1">
+              <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-slate-500">Profilstatus</p>
+              <p className="text-sm text-slate-900 mt-0.5 truncate">
+                {percent >= 100
+                  ? "Komplett profil — du kan nu se aktuella behov hos 100+ vårdbemanningsföretag."
+                  : `${completedCount} av ${totalCount} steg klara.`}
+              </p>
+            </div>
+            <span className="text-2xl font-semibold text-slate-900 tabular-nums shrink-0">{percent}%</span>
+          </div>
+          <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden mb-3">
+            <div
+              className="h-full rounded-full transition-all duration-700 ease-out"
+              style={{
+                width: `${percent}%`,
+                background:
+                  "linear-gradient(90deg, hsl(256 90% 60%) 0%, hsl(280 85% 65%) 50%, hsl(330 90% 70%) 100%)",
+              }}
+            />
+          </div>
+          {percent < 100 && (
+            <div className="space-y-1.5 mb-3">
+              {completenessChecks.map((done, i) =>
+                done ? null : (
+                  <p key={i} className="text-xs text-slate-600 leading-relaxed">
+                    <span className="font-medium text-slate-800">{stepLabels[i]}:</span>{" "}
+                    {stepBenefits[i]}
+                  </p>
+                )
+              )}
+            </div>
+          )}
+          <div className="flex items-center gap-2">
+            <Link to="/profil" className="flex-1 sm:flex-initial">
+              <Button size="sm" className="w-full sm:w-auto gap-1.5 h-9 text-sm font-semibold text-white border-0 bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] hover:from-[#7c3aed] hover:to-[#c026d3] shadow-sm hover:shadow-md transition-all">
+                <Pencil className="w-3.5 h-3.5" />
+                Redigera
+              </Button>
+            </Link>
+            <Button
+              variant="outline"
+              size="icon"
+              className="h-9 w-9 border-slate-300 text-slate-700 hover:bg-slate-100 shrink-0"
+              onClick={handleShare}
+              aria-label="Dela profil"
+            >
+              <Share2 className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+
+        <div className="rounded-2xl bg-white border border-slate-200 shadow-sm p-5">
+          <h2 className="text-base font-semibold text-slate-900">
+            Förhandlingsassistenten
+          </h2>
+          <p className="text-sm text-slate-600 mt-1.5 mb-4">
+            Få argument och tips inför din nästa förhandling, baserat på ramavtal och din situation.
+          </p>
+          <Link to="/logga-in">
+            <Button
+              size="sm"
+              className="text-sm font-semibold px-6 py-3 gap-2 text-white border-0 bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] hover:from-[#7c3aed] hover:to-[#c026d3]"
+            >
+              Öppna förhandlingsassistenten
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </Link>
+        </div>
+
+        <DashboardInvoiceCheck />
+
+        {reports.length === 0 && !profile?.specialty_name && (
+          <div className="rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 to-pink-50 p-5 sm:p-6 shadow-sm">
+            <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-violet-700">
+              Kom igång
+            </p>
+            <h1 className="text-lg sm:text-xl font-semibold text-slate-900 mt-1">
+              Gör din löneanalys på 60 sekunder
+            </h1>
+            <p className="text-sm text-slate-600 mt-1 mb-4 max-w-xl">
+              Svara på 6 korta frågor så jämför vi din ersättning mot SKR:s ramavtal och skapar din personliga rapport.
+            </p>
+            <Link to="/">
+              <Button
+                size="sm"
+                className="text-sm font-semibold px-6 py-3 text-white border-0 bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] hover:from-[#7c3aed] hover:to-[#c026d3]"
+              >
+                Starta enkäten
+              </Button>
+            </Link>
+          </div>
+        )}
       </div>
+
 
       {pendingFeedback && (
         <AssignmentFeedbackDialog pending={pendingFeedback} onClose={dismissFeedback} />
