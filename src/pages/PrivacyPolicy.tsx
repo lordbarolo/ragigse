@@ -69,7 +69,7 @@ const PrivacyPolicy = () => {
           <div>
             <h2 className="text-xl font-semibold text-foreground">1. Personuppgiftsansvarig</h2>
             <p className="text-sm text-muted-foreground leading-relaxed mt-2">
-              CompCare drivs av Piemonte Invest AB (org.nr 559264-3836) med säte i Stockholm. Vi är personuppgiftsansvariga för behandlingen av dina personuppgifter när du använder compcare.se.
+              Vi är personuppgiftsansvariga för behandlingen av dina personuppgifter när du använder compcare.se.
             </p>
             <p className="text-sm text-muted-foreground mt-2">Kontakt: <a href="mailto:info@compcare.se" className="text-primary hover:underline">info@compcare.se</a></p>
           </div>
