@@ -35,6 +35,7 @@ const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Profile = lazy(() => import("./pages/Profile"));
+const Negotiate = lazy(() => import("./pages/Negotiate"));
 
 const queryClient = new QueryClient();
 
