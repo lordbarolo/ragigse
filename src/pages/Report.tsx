@@ -224,20 +224,43 @@ export default function Report() {
         {/* Förklaring: möjlig ersättning */}
         <PossibleCompensationInfo variant="report" />
 
-        <ConsultantTrackContent
-          r={r}
-          isFullAccess={true}
-          isEmployee={isEmployee}
-          occupation={report.occupation}
-          kommun={report.kommun}
-          zoneComparisons={report.zone_comparisons}
-          userZone={report.user_zone}
-          registerSectionRef={registerSectionRef}
-          leadId={report.lead_id}
-          email={report.email}
-          reportId={report.id}
-          priceHistory={report.price_history}
-        />
+        {hasFullAccess ? (
+          <ConsultantTrackContent
+            r={r}
+            isFullAccess={true}
+            isEmployee={isEmployee}
+            occupation={report.occupation}
+            kommun={report.kommun}
+            zoneComparisons={report.zone_comparisons}
+            userZone={report.user_zone}
+            registerSectionRef={registerSectionRef}
+            leadId={report.lead_id}
+            email={report.email}
+            reportId={report.id}
+            priceHistory={report.price_history}
+          />
+        ) : (
+          <div
+            className="rounded-2xl border p-5 mt-2"
+            style={{ backgroundColor: '#FFFFFF', borderColor: '#E0DBD3' }}
+          >
+            <h3 className="font-semibold mb-1" style={{ fontFamily: 'Georgia, serif', fontSize: '18px', color: '#0A0A0A' }}>
+              Logga in för att se din analys
+            </h3>
+            <p className="text-sm mb-4" style={{ color: '#6B7280' }}>
+              Denna rapport innehåller personuppgifter och visas endast för rapportens ägare.
+              Logga in med den e-post du angav när rapporten skapades.
+            </p>
+            <Link
+              to={`/logga-in?redirect=${encodeURIComponent(`/rapport/${reportId}`)}`}
+              className="inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 rounded-lg"
+              style={{ backgroundColor: '#3D3491', color: '#FFFFFF' }}
+            >
+              Logga in
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        )}
 
 
 
