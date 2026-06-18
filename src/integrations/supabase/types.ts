@@ -5325,6 +5325,7 @@ export type Database = {
       }
       get_document_share_by_token: { Args: { _token: string }; Returns: Json }
       get_feature_flag: { Args: { _key: string }; Returns: Json }
+      get_health_check_cron_token: { Args: never; Returns: string }
       get_referral_by_token: {
         Args: { _token: string }
         Returns: {
