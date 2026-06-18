@@ -289,12 +289,12 @@ export default function Report() {
         )}
 
         {/* Utility actions */}
-        <div className="flex gap-3 pt-2" data-pdf-hide style={{ display: hasFullAccess ? undefined : 'none' }}>
+        <div className="flex gap-3 pt-2 justify-center" data-pdf-hide style={{ display: hasFullAccess ? undefined : 'none' }}>
           {!isFriendCoupon && (
             <Button
               variant="outline"
               disabled={exportingPdf}
-              className="flex-1 gap-2 h-12 rounded-xl border-border/50 hover:border-border"
+              className="gap-2 h-12 rounded-xl border-border/50 hover:border-border"
               onClick={async () => {
                 if (!printableRef.current || exportingPdf) return;
                 setExportingPdf(true);
