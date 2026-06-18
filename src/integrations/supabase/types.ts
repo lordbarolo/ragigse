@@ -4704,6 +4704,42 @@ export type Database = {
         }
         Relationships: []
       }
+      system_health_log: {
+        Row: {
+          alert_id: string | null
+          alert_sent_at: string | null
+          check_name: string
+          created_at: string
+          details: Json | null
+          duration_ms: number | null
+          error_message: string | null
+          id: string
+          status: string
+        }
+        Insert: {
+          alert_id?: string | null
+          alert_sent_at?: string | null
+          check_name: string
+          created_at?: string
+          details?: Json | null
+          duration_ms?: number | null
+          error_message?: string | null
+          id?: string
+          status: string
+        }
+        Update: {
+          alert_id?: string | null
+          alert_sent_at?: string | null
+          check_name?: string
+          created_at?: string
+          details?: Json | null
+          duration_ms?: number | null
+          error_message?: string | null
+          id?: string
+          status?: string
+        }
+        Relationships: []
+      }
       uppdrag_notifications: {
         Row: {
           created_at: string
