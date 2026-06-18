@@ -3667,6 +3667,13 @@ export type Database = {
             referencedRelation: "ref_profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "ref_pings_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       ref_profile_views: {
@@ -3703,10 +3710,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "ref_profile_views_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "ref_profile_views_viewer_id_fkey"
             columns: ["viewer_id"]
             isOneToOne: false
             referencedRelation: "ref_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ref_profile_views_viewer_id_fkey"
+            columns: ["viewer_id"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -3975,10 +3996,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "ref_references_giver_id_fkey"
+            columns: ["giver_id"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "ref_references_individual_id_fkey"
             columns: ["individual_id"]
             isOneToOne: false
             referencedRelation: "ref_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ref_references_individual_id_fkey"
+            columns: ["individual_id"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -4219,6 +4254,13 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "ref_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ref_verifications_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -5129,6 +5171,81 @@ export type Database = {
             referencedRelation: "ref_profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "ref_pings_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ref_profiles_public: {
+        Row: {
+          bankid_verified: boolean | null
+          bio: string | null
+          created_at: string | null
+          full_name: string | null
+          id: string | null
+          linkedin_url: string | null
+          profile_status: string | null
+          role_type: string | null
+          score_breakdown: Json | null
+          score_updated_at: string | null
+          specialty: string | null
+          status_checklist: Json | null
+          status_updated_at: string | null
+          trust_score: number | null
+          trust_tier: string | null
+          updated_at: string | null
+          years_licensed: number | null
+        }
+        Insert: {
+          bankid_verified?: boolean | null
+          bio?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id?: string | null
+          linkedin_url?: string | null
+          profile_status?: string | null
+          role_type?: string | null
+          score_breakdown?: Json | null
+          score_updated_at?: string | null
+          specialty?: string | null
+          status_checklist?: Json | null
+          status_updated_at?: string | null
+          trust_score?: number | null
+          trust_tier?: string | null
+          updated_at?: string | null
+          years_licensed?: number | null
+        }
+        Update: {
+          bankid_verified?: boolean | null
+          bio?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id?: string | null
+          linkedin_url?: string | null
+          profile_status?: string | null
+          role_type?: string | null
+          score_breakdown?: Json | null
+          score_updated_at?: string | null
+          specialty?: string | null
+          status_checklist?: Json | null
+          status_updated_at?: string | null
+          trust_score?: number | null
+          trust_tier?: string | null
+          updated_at?: string | null
+          years_licensed?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ref_profiles_role_type_fkey"
+            columns: ["role_type"]
+            isOneToOne: false
+            referencedRelation: "ref_role_profiles"
+            referencedColumns: ["id"]
+          },
         ]
       }
       ref_references_safe: {
@@ -5219,10 +5336,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "ref_references_giver_id_fkey"
+            columns: ["giver_id"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "ref_references_individual_id_fkey"
             columns: ["individual_id"]
             isOneToOne: false
             referencedRelation: "ref_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ref_references_individual_id_fkey"
+            columns: ["individual_id"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles_public"
             referencedColumns: ["id"]
           },
         ]
