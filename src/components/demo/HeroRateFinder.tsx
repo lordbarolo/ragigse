@@ -399,7 +399,7 @@ export default function HeroRateFinder({ prefillKey }: Props) {
           {loading ? (
             <Loader2 className="w-5 h-5 animate-spin inline-block text-white/60" />
           ) : showPlaceholder ? (
-            <span className="text-white/40 text-[18px]">Data ej tillgänglig</span>
+            <span className="text-white/70 text-[18px]">Data ej tillgänglig</span>
           ) : (
             <>
               {fmt(animatedTimpris)}
@@ -415,14 +415,14 @@ export default function HeroRateFinder({ prefillKey }: Props) {
       {/* ── Flow arrow ─────────────────────────── */}
       <div className="h-2 flex items-center justify-center relative -my-2">
         <div className="absolute left-1/2 top-0 bottom-0 w-px bg-white/15" />
-        <div className="w-[22px] h-[22px] rounded-full bg-white/[0.07] border border-white/15 flex items-center justify-center text-[10px] text-white/40 z-10 relative">↓</div>
+        <div className="w-[22px] h-[22px] rounded-full bg-white/[0.07] border border-white/15 flex items-center justify-center text-[10px] text-white/60 z-10 relative">↓</div>
       </div>
 
       {/* ── Result card 2: Marginal ────────────── */}
       <div className="bg-white/[0.07] border border-white/[0.13] rounded-[14px] px-5 py-4">
         <div className="text-[11px] text-white/70 uppercase tracking-wider mb-1 font-medium">BRANSCHENS GENOMSNITTSMARGINAL</div>
         <div className="text-[26px] font-medium text-white mb-0.5 tabular-nums">
-          {showPlaceholder ? <span className="text-white/40 text-[18px]">—</span> : display.marginText}
+          {showPlaceholder ? <span className="text-white/70 text-[18px]">—</span> : display.marginText}
         </div>
         {!showPlaceholder && (
           <span className="inline-block bg-amber-500/20 text-amber-200 text-[11px] font-semibold tabular-nums px-2 py-0.5 rounded">
