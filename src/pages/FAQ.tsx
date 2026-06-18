@@ -17,7 +17,7 @@ const FAQ_ITEMS = [
   {
     question: "Kostar det något att använda CompCare?",
     answer:
-      "Den grundläggande jämförelsen är helt gratis. För en detaljerad rapport kan du välja att uppgradera.",
+      "Nej, sidan har inga funktioner som kräver betalning.",
   },
   {
     question: "Vilka yrkesgrupper stöds?",
