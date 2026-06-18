@@ -446,7 +446,7 @@ export default function Profile() {
 
         {/* === CREDS (verifications + documents + references) === */}
         {activeTab === "creds" && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
             <div className="space-y-5">
               <TrustVerification
                 emailVerified={emailVerified}
@@ -456,11 +456,10 @@ export default function Profile() {
                 onUpload={goUpload}
                 onVerifyIdentity={goVerifyIdentity}
               />
-              <DashboardDocuments ref={docsRef} />
               <ProfileAuditLog />
             </div>
             <div className="space-y-5">
-              {/* DashboardReferences dolt — referens-funktionen är avvecklad och routen redirectar till /. */}
+              <DashboardDocuments ref={docsRef} />
             </div>
           </div>
         )}
