@@ -1,7 +1,7 @@
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Lock, ArrowRight, FileCheck, MessageSquare, BarChart3 } from "lucide-react";
+import { Lock, ArrowRight, MessageSquare, BarChart3 } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 import { SEO } from "@/components/SEO";
 
@@ -191,7 +191,7 @@ export default function Campaign() {
             Tre frågor. Ett svar.
           </h2>
 
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2">
             {/* Card 1: Ersättningsanalys — open */}
             <button
               onClick={() => navigate("/")}
@@ -233,24 +233,6 @@ export default function Campaign() {
               </span>
             </button>
 
-            {/* Card 3: Faktureringsstöd */}
-            <button
-              onClick={() => navigate("/consultant/fakturakontroll")}
-              className="group text-left border border-border rounded-2xl p-6 bg-card hover:shadow-md transition-all"
-            >
-              <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center mb-4">
-                <FileCheck className="w-5 h-5 text-emerald-600" />
-              </div>
-              <h3 className="font-semibold text-foreground mb-1.5" style={{ fontFamily: "var(--font-display)" }}>
-                Faktureringsstöd
-              </h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Säkerställ att du inte missat ersättning för OB, jour eller arbetad tid.
-              </p>
-              <span className="inline-flex items-center gap-1 mt-4 text-sm font-medium text-primary group-hover:gap-2 transition-all">
-                Kontrollera <ArrowRight className="w-4 h-4" />
-              </span>
-            </button>
           </div>
         </section>
 
