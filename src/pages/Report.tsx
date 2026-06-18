@@ -288,7 +288,7 @@ export default function Report() {
         )}
 
         {/* Utility actions */}
-        <div className="flex gap-3 pt-2" data-pdf-hide>
+        <div className="flex gap-3 pt-2" data-pdf-hide style={{ display: hasFullAccess ? undefined : 'none' }}>
           {!isFriendCoupon && (
             <Button
               variant="outline"
