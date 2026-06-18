@@ -64,35 +64,19 @@ Deno.serve(async (req) => {
 
     const docs = ((data as any).documents || []) as Array<{ id: string; file_name: string; document_type: string; uploaded_at: string }>;
     const expiresAt = (data as any).expires_at as string;
-    const ttl = Math.max(60, Math.min(60 * 60 * 24, Math.floor((new Date(expiresAt).getTime() - Date.now()) / 1000)));
 
-    // Look up storage paths server-side (file_url is never returned to the client).
-    const docIds = docs.map((d) => d.id);
-    const { data: paths } = await supabase
-      .from("consultant_documents")
-      .select("id,file_url")
-      .in("id", docIds);
-    const pathMap = new Map<string, string>((paths || []).map((p: any) => [p.id, p.file_url]));
+    // Build URLs that route through the watermarking download endpoint.
+    // The raw signed storage URL is intentionally never exposed to the recipient.
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const downloadBase = `${supabaseUrl}/functions/v1/download-shared-document`;
+    const withUrls = docs.map((d) => ({
+      id: d.id,
+      file_name: d.file_name,
+      document_type: d.document_type,
+      uploaded_at: d.uploaded_at,
+      signed_url: `${downloadBase}?token=${encodeURIComponent(token)}&document_id=${encodeURIComponent(d.id)}`,
+    }));
 
-    const withUrls = await Promise.all(
-      docs.map(async (d) => {
-        const path = pathMap.get(d.id);
-        let signedUrl: string | null = null;
-        if (path) {
-          const { data: signed } = await supabase.storage
-            .from("verifications")
-            .createSignedUrl(path, ttl);
-          signedUrl = signed?.signedUrl ?? null;
-        }
-        return {
-          id: d.id,
-          file_name: d.file_name,
-          document_type: d.document_type,
-          uploaded_at: d.uploaded_at,
-          signed_url: signedUrl,
-        };
-      }),
-    );
 
     return new Response(
       JSON.stringify({
