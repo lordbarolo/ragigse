@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { trackCta } from "@/lib/trackCta";
 
 interface ServiceCardsProps {
   onStartAnalysis: () => void;
