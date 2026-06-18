@@ -7,6 +7,7 @@ import type { SurveyData } from "@/components/Survey";
 import { Mail, ArrowRight, Zap, ChevronUp } from "lucide-react";
 import NegotiationAssistantTeaser from "@/components/teaser/NegotiationAssistantTeaser";
 import { fetchLead, leadToSurvey, createReport, saveEmail } from "@/services/leadService";
+import { identifyLeadWithEmail } from "@/lib/identify";
 import Navbar from "@/components/Navbar";
 import CompcareLogo from "@/components/CompcareLogo";
 import {
