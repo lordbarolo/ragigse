@@ -415,8 +415,10 @@ export default function Profile() {
                   </Link>
                 </CardContent>
               </Card>
+            </div>
           </div>
         )}
+
 
 
         {/* === CREDS (verifications + documents + references) === */}
