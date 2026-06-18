@@ -1,5 +1,9 @@
 project_id = "ubhhlunhdqbokjvwfebb"
 
+[functions.admin-set-bucket-limits]
+verify_jwt = false
+
+
 [functions.send-referral]
 verify_jwt = false
 
