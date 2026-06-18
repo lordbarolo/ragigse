@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { safeJsonLd } from "@/lib/safeJsonLd";
 import { Link } from "react-router-dom";
-import { ShieldCheck, FileSearch, MessageSquare, ArrowRight, CheckCircle2 } from "lucide-react";
+import { ShieldCheck, MessageSquare, ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CompcareLogo from "@/components/CompcareLogo";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -105,7 +105,7 @@ export default function Index() {
 
       {/* ── Three Pillars ──────────────────────────────── */}
       <section className="max-w-6xl mx-auto px-6 pt-4 relative z-20 pb-12" aria-label="Tjänster">
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 gap-6">
           {PILLARS.map((pillar) => (
             <article
               key={pillar.dataService}
