@@ -25,6 +25,7 @@ const Campaign = lazy(() => import("./pages/Campaign"));
 const Admin = lazy(() => import("./pages/Admin"));
 const AnalyticsDashboard = lazy(() => import("./pages/AnalyticsDashboard"));
 const AgentApiKeys = lazy(() => import("./pages/admin/AgentApiKeys"));
+const AdminHealth = lazy(() => import("./pages/admin/Health"));
 
 const FAQ = lazy(() => import("./pages/FAQ"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
@@ -110,6 +111,7 @@ const App = () => (
               {/* ── Admin ── */}
               <Route path="/admin" element={<ProtectedRoute allowedRoles={["admin"]}><Admin /></ProtectedRoute>} />
               <Route path="/admin/agent-api-keys" element={<ProtectedRoute allowedRoles={["admin"]}><AgentApiKeys /></ProtectedRoute>} />
+              <Route path="/admin/health" element={<ProtectedRoute allowedRoles={["admin"]}><AdminHealth /></ProtectedRoute>} />
               <Route path="/dev/analytics" element={<ProtectedRoute allowedRoles={["admin"]}><AnalyticsDashboard /></ProtectedRoute>} />
 
               {/* ── Backwards-compat / gömda produktrouter → tillbaka till löneanalysen ── */}
