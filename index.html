@@ -50,34 +50,7 @@
     <!-- Robots -->
     <meta name="robots" content="index, follow" />
 
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8TKTZH3KZZ"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      // Redact tokens/UUIDs and sensitive path segments before GA sees the URL.
-      (function () {
-        var SENSITIVE = ['/sign','/samarbetsintyg','/verify','/dela','/dokument','/intyg','/profil','/ping','/reset-password','/r/'];
-        function redact(path) {
-          if (!path) return path;
-          for (var i = 0; i < SENSITIVE.length; i++) {
-            var p = SENSITIVE[i];
-            if (path === p || path.indexOf(p + '/') === 0) {
-              path = path.replace(/\/[^/]+$/, '/[redacted]');
-              break;
-            }
-          }
-          return path
-            .replace(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi, '[uuid]')
-            .replace(/[0-9a-f]{24,}/gi, '[token]');
-        }
-        gtag('config', 'G-8TKTZH3KZZ', {
-          page_path: redact(window.location.pathname),
-          anonymize_ip: true
-        });
-      })();
-    </script>
+    <!-- Analytics: PostHog (consent-gated, EU-baserad) — laddas i appen. Ingen tracking i <head>. -->
   </head>
 
   <body>

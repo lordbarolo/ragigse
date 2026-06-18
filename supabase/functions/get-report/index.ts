@@ -57,13 +57,12 @@ serve(async (req) => {
     }
 
     // Determine access level — full access requires payment, referral unlock, or ownership.
-    // hasEmail is NO LONGER a gate (it would expose full results to anyone with a report_id).
+    // Rapporter innehåller personuppgifter (lön, region, yrke) och får INTE vara öppna
+    // för alla med UUID. Endast ägare, betald, eller referral-unlocked får fullt innehåll.
     const isPaid = report.status === "paid";
     const isReferralUnlocked = report.unlocked_by_referral === true;
     const isOwner = !!authUserId && report.user_id === authUserId;
-    // Reports are free (lead-gen). Anyone with the report_id (shared via email)
-    // gets the full analysis. Monetization happens via Fakturakontroll, not here.
-    const fullAccess = true || isPaid || isReferralUnlocked || isOwner;
+    const fullAccess = isPaid || isReferralUnlocked || isOwner;
 
     // Build response based on access level. Email is only returned to the authenticated owner.
     const response: Record<string, unknown> = {

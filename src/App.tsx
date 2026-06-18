@@ -58,9 +58,7 @@ function ScrollToTop() {
     } else {
       isFirstRender.current = false;
     }
-    if (typeof window.gtag === "function") {
-      window.gtag("config", "G-8TKTZH3KZZ", { page_path: pathname });
-    }
+    // GA4 borttaget — PostHog hanterar pageviews via trackPageview().
     trackPageview();
   }, [pathname]);
 
