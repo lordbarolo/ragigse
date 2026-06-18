@@ -490,12 +490,12 @@ export default function InlineTerminalSurvey({
                         className={`w-full h-14 border rounded-lg px-4 pr-16 text-base font-sans transition-colors focus:outline-none focus:ring-2 focus:ring-[#534AB7] ${
                           isLight
                             ? "bg-[#FAFAFA] border-[#E5E5E5] text-[#1A1A1A] placeholder:text-[#9CA3AF] focus:bg-white"
-                            : "bg-white/[0.04] border-white/10 text-white placeholder:text-white/30 focus:bg-white/[0.06]"
+                            : "bg-white/[0.04] border-white/10 text-white placeholder:text-white/50 focus:bg-white/[0.06]"
                         }`}
                       />
                       <span
                         className={`absolute right-4 top-1/2 -translate-y-1/2 text-[12px] font-mono pointer-events-none ${
-                          isLight ? "text-[#9CA3AF]" : "text-white/40"
+                          isLight ? "text-[#9CA3AF]" : "text-white/70"
                         }`}
                       >
                         {salaryUnit}
@@ -653,7 +653,7 @@ function ChoiceCard({
     : "bg-violet-500/20 text-violet-200";
 
   const titleColor = isLight ? "text-[#1A1A1A]" : "text-white";
-  const subColor = isLight ? "text-[#9CA3AF]" : "text-white/40";
+  const subColor = isLight ? "text-[#9CA3AF]" : "text-white/70";
 
   return (
     <button
