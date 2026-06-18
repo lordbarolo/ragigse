@@ -364,7 +364,7 @@ export default function Profile() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
               <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
                 <CardHeader>
-                  <CardTitle className="text-base flex items-center gap-2">
+                  <CardTitle className="text-base flex items-center gap-2 text-slate-900">
                     <FileText className="w-4 h-4 text-primary" />
                     Mina rapporter
                   </CardTitle>
