@@ -43,7 +43,7 @@ export default function PensionImpactSimulator({
     {
       label: "Kollektivavtalad tjänstepension",
       amount: scenarios.tiered.pensionContribution,
-      note: "Träder i kraft på årslön som överstiger 7,5 IBB",
+      note: "Träder i kraft på årslön som överstiger 625 500 kr",
     },
   ];
 
@@ -55,7 +55,7 @@ export default function PensionImpactSimulator({
           Pensionssimulator
         </h3>
         <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-          Dra i reglaget för att se pensionsbeloppet vid olika avsättningsnivåer.
+          Dra i reglaget för att se pensionsbeloppet vid olika lönenivåer.
         </p>
       </div>
 
@@ -87,9 +87,6 @@ export default function PensionImpactSimulator({
         />
         <div className="flex justify-between text-[10px] text-muted-foreground mt-1.5 tabular-nums">
           <span>{fmt(MIN_SALARY)}</span>
-          <span className="opacity-60">
-            brytpunkt {fmt(PENSION_THRESHOLD_MONTHLY)}
-          </span>
           <span>{fmt(MAX_SALARY)}</span>
         </div>
       </div>
