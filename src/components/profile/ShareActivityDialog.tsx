@@ -112,10 +112,14 @@ export default function ShareActivityDialog({ open, onOpenChange }: Props) {
               const isOpen = expanded.has(s.id);
               return (
                 <li key={s.id} className="bg-white">
-                  <button
+                  <div
+                    role="button"
+                    tabIndex={0}
                     onClick={() => toggle(s.id)}
-                    className="w-full text-left px-4 py-3 hover:bg-slate-50 flex items-center gap-3"
+                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(s.id); } }}
+                    className="w-full text-left px-4 py-3 hover:bg-slate-50 flex items-center gap-3 cursor-pointer"
                   >
+
                     {isOpen ? (
                       <ChevronDown className="w-4 h-4 text-slate-400 shrink-0" />
                     ) : (
