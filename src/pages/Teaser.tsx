@@ -14,6 +14,7 @@ import { useTeaserData } from "@/hooks/useTeaserData";
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 import { fetchLead, leadToSurvey, createReport, saveEmail } from "@/services/leadService";
+import { identifyLeadWithEmail } from "@/lib/identify";
 
 import TeaserHeader from "@/components/teaser/TeaserHeader";
 import OccupationInfo from "@/components/teaser/OccupationInfo";
