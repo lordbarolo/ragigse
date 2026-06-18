@@ -81,6 +81,8 @@ const ALLOWED_EVENTS = new Set([
   "hero_cta_clicked",
   "survey_mounted",
   "price_range_mismatch",
+  "other_role_requested",
+  "cta_clicked",
 ]);
 
 serve(async (req) => {
