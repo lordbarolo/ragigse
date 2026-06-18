@@ -70,7 +70,7 @@ serve(async (req) => {
     // Fetch lead by id or external_id
     let query = supabase
       .from("leads")
-      .select("id, employment_type, yrke, kommun, experience, salary_type, current_salary, email, user_id");
+      .select("id, employment_type, yrke, kommun, experience, salary_type, current_salary, email");
 
     if (lead_id) {
       query = query.eq("id", lead_id);
@@ -96,11 +96,9 @@ serve(async (req) => {
     }
 
     // SECURITY: strip PII (email, current_salary) unless the caller owns the lead.
-    // Owner = authenticated user whose id matches lead.user_id OR whose email matches lead.email.
+    // Leads are linked by email in this flow, so ownership is verified server-side by auth email.
     const leadEmail = (lead.email ?? "").toLowerCase();
-    const isOwner =
-      !!authUserId &&
-      ((lead as any).user_id === authUserId || (!!authEmail && authEmail === leadEmail));
+    const isOwner = !!authUserId && !!authEmail && authEmail === leadEmail;
 
     const safeLead = isOwner
       ? lead
