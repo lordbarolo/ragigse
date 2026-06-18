@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Check } from "lucide-react";
+import { Check, ShieldCheck } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 import InlineTerminalSurvey from "@/components/survey/InlineTerminalSurvey";
 import RoleCarousel from "@/components/landing/RoleCarousel";
@@ -112,13 +112,33 @@ export default function Home() {
             {/* Höger: formulär */}
             <div className="w-full md:max-w-[480px] md:justify-self-end">
               <InlineTerminalSurvey variant="light" onStepChange={setSurveyStep} />
+              <p className="mt-3 text-[11px] text-black/55 leading-relaxed flex items-start gap-1.5">
+                <ShieldCheck className="w-3 h-3 mt-0.5 shrink-0 text-[#3D3491]" />
+                <span>
+                  Anonymt · Data lagras inom EU · Vi delar aldrig dina uppgifter. Se{" "}
+                  <Link to="/integritetspolicy" className="underline">integritetspolicyn</Link>.
+                </span>
+              </p>
             </div>
           </div>
         </section>
 
         <RoleCarousel />
 
-
+        {/* ── Footer ──────────────────────────── */}
+        <footer className="mt-16 border-t border-black/10 px-5 py-8 text-xs text-black/55">
+          <div className="max-w-6xl mx-auto flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
+            <div>
+              <p className="font-medium text-black/75">Piemonte Invest AB</p>
+              <p>Org.nr 559264-3836 · Stockholm, Sverige</p>
+            </div>
+            <nav className="flex flex-wrap gap-x-5 gap-y-2">
+              <a href="mailto:info@compcare.se" className="hover:text-black underline-offset-4 hover:underline">info@compcare.se</a>
+              <Link to="/integritetspolicy" className="hover:text-black underline-offset-4 hover:underline">Integritetspolicy</Link>
+              <Link to="/vanliga-fragor" className="hover:text-black underline-offset-4 hover:underline">Vanliga frågor</Link>
+            </nav>
+          </div>
+        </footer>
 
       </div>
     </AnthropicScope>

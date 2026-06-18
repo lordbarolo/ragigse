@@ -6,39 +6,9 @@
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://www.compcare.se/b2b</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.compcare.se/v1</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
     <loc>https://www.compcare.se/vanliga-fragor</loc>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://www.compcare.se/consultant/forhandla</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://www.compcare.se/consultant/fakturakontroll</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://www.compcare.se/uppdragsradar</loc>
-    <changefreq>daily</changefreq>
-    <priority>0.8</priority>
-  </url>
-  <url>
-    <loc>https://www.compcare.se/agency/market-edge</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.6</priority>
   </url>
   <url>
     <loc>https://www.compcare.se/rapport/anestesisjukskoterska</loc>
@@ -46,19 +16,9 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.compcare.se/din-data</loc>
+    <loc>https://www.compcare.se/bollnas/lakare-alm</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://www.compcare.se/for-bemanningsforetag</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  <url>
-    <loc>https://www.compcare.se/eget-bolag</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.5</priority>
   </url>
   <url>
     <loc>https://www.compcare.se/logga-in</loc>
@@ -71,13 +31,8 @@
     <priority>0.4</priority>
   </url>
   <url>
-    <loc>https://www.compcare.se/registrera/bemanning</loc>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
     <loc>https://www.compcare.se/integritetspolicy</loc>
-    <changefreq>yearly</changefreq>
+    <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>
 </urlset>

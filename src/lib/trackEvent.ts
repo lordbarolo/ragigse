@@ -116,23 +116,19 @@ export function trackEvent(
     ...(utm ? { utm } : {}),
   };
 
+  // Consent gate — skicka inget till PostHog eller backend om användaren inte accepterat.
+  // PostHog är opt-out-by-default (src/lib/posthog.ts), men vi gat­ar även serverside-loggen
+  // mot samma samtycke för att hålla GDPR-läget konsekvent.
+  let consentAccepted = false;
+  try {
+    consentAccepted = typeof window !== "undefined" &&
+      window.localStorage?.getItem("cookie-consent") === "accepted";
+  } catch { /* localStorage kan vara blockerad i privat läge */ }
+
+  if (!consentAccepted) return;
+
   // Send to PostHog (silent fail)
   try { posthog.capture(eventName, enrichedMetadata); } catch { /* silent */ }
-
-  // Mirror to GA4 as custom event (silent fail). GA4-event names måste vara
-  // [a-zA-Z0-9_] och max 40 tecken; våra event-namn använder redan snake_case.
-  try {
-    if (typeof window !== "undefined" && typeof window.gtag === "function") {
-      const gaName = eventName.replace(/[^a-zA-Z0-9_]/g, "_").slice(0, 40);
-      // Flatten utm-objekt så GA4 kan plocka upp source/medium/campaign
-      const { utm, ...rest } = enrichedMetadata as Record<string, unknown> & { utm?: Record<string, unknown> };
-      const gaProps: Record<string, unknown> = { ...rest };
-      if (utm && typeof utm === "object") {
-        for (const [k, v] of Object.entries(utm)) gaProps[`utm_${k}`] = v;
-      }
-      window.gtag("event", gaName, gaProps);
-    }
-  } catch { /* silent */ }
 
   // Fire-and-forget via edge function — don't block UI
   supabase.functions

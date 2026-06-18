@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/trackEvent";
 import { toast } from "sonner";
@@ -41,6 +42,7 @@ export default function AnalysisScreen() {
   const [reportId, setReportId] = useState("");
   const [email, setEmail] = useState("");
   const [emailSaving, setEmailSaving] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const [userZone, setUserZone] = useState<string | null>(null);
   const [userRegion, setUserRegion] = useState<string | null>(null);
@@ -73,8 +75,14 @@ export default function AnalysisScreen() {
         }
         sessionStorage.setItem("leadId", rid);
         sessionStorage.setItem("surveyData", JSON.stringify(surveyData));
-      }).catch(() => {
-        navigate("/");
+      }).catch((err) => {
+        console.error("[AnalysisScreen] fetchLead failed", err);
+        try {
+          import("@/lib/posthog").then(({ default: posthog }) => {
+            posthog.capture?.("analysis_error", { phase: "fetch_lead", message: String(err?.message ?? err) });
+          });
+        } catch { /* silent */ }
+        setLoadError("Vi kunde inte hämta din analys just nu.");
       });
     }
 
@@ -153,7 +161,14 @@ export default function AnalysisScreen() {
         setReportId(rid);
         sessionStorage.setItem("reportId", rid);
       })
-      .catch(() => {});
+      .catch((err) => {
+        console.error("[AnalysisScreen] createReport failed", err);
+        try {
+          import("@/lib/posthog").then(({ default: posthog }) => {
+            posthog.capture?.("analysis_error", { phase: "create_report", message: String(err?.message ?? err) });
+          });
+        } catch { /* silent */ }
+      });
   }, [leadId, survey, reportId]);
 
   /* ── Email submit ── */
@@ -248,6 +263,41 @@ export default function AnalysisScreen() {
 
   const validEmail = EMAIL_REGEX.test(email.trim());
 
+  // Felstate — backend kunde inte hämta lead/rapport. Visa ett vänligt fel istället för tom sida.
+  if (loadError) {
+    return (
+      <>
+        <Helmet>
+          <meta name="robots" content="noindex, nofollow" />
+        </Helmet>
+        <div className="min-h-screen flex items-center justify-center px-5" style={{ backgroundColor: "#EEEBE4" }}>
+          <div className="max-w-md text-center space-y-4">
+            <CompcareLogo variant="full" className="!h-7 mx-auto mb-2" />
+            <h1 className="font-display text-2xl font-bold text-foreground">Något gick fel</h1>
+            <p className="text-sm text-foreground/70 leading-relaxed">
+              {loadError} Försök igen om en stund eller kontakta oss på{" "}
+              <a href="mailto:info@compcare.se" className="underline">info@compcare.se</a>.
+            </p>
+            <div className="flex gap-2 justify-center pt-2">
+              <button
+                onClick={() => { setLoadError(null); window.location.reload(); }}
+                className="text-sm font-semibold px-6 py-3 rounded-xl bg-foreground text-[#EEEBE4] hover:bg-foreground/90"
+              >
+                Försök igen
+              </button>
+              <button
+                onClick={() => navigate("/")}
+                className="text-sm font-semibold px-6 py-3 rounded-xl border border-foreground/20 text-foreground hover:bg-foreground/5"
+              >
+                Tillbaka till start
+              </button>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
   if (!survey) return null;
 
   const employmentLabel = survey.employmentType === "anstalld" ? "Anställd" : "Egenföretagare";
@@ -259,6 +309,11 @@ export default function AnalysisScreen() {
     : 0;
 
   return (
+    <>
+      <Helmet>
+        {/* /resultat/:leadId innehåller personuppgifter — får inte indexeras. */}
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
     <div
       className="min-h-screen"
       style={{
@@ -466,6 +521,7 @@ export default function AnalysisScreen() {
 
       </main>
     </div>
+    </>
   );
 }
 

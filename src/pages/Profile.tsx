@@ -5,14 +5,14 @@ import { useAuth } from "@/hooks/useAuth";
 import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, MapPin, Briefcase, Clock, UserPlus, Check, Mail, Users, User, Share2, Pencil, ArrowRight, MessageSquare } from "lucide-react";
+import { FileText, MapPin, Briefcase, Clock, UserPlus, Check, Mail, Users, User, Share2, ArrowRight, MessageSquare } from "lucide-react";
 import { ProfilePageSkeleton } from "@/components/ui/page-skeleton";
 import { toast } from "sonner";
 import ProfileTabs, { type ProfileTab } from "@/components/profile/ProfileTabs";
 import ProfileInsights from "@/components/profile/ProfileInsights";
 import TrustVerification from "@/components/profile/TrustVerification";
 import CompensationView from "@/components/report/CompensationView";
-import DashboardReferences from "@/components/profile/DashboardReferences";
+
 import DashboardDocuments, { type DashboardDocumentsHandle } from "@/components/profile/DashboardDocuments";
 import ProfileAuditLog from "@/components/profile/ProfileAuditLog";
 
@@ -437,7 +437,7 @@ export default function Profile() {
               <ProfileAuditLog />
             </div>
             <div className="space-y-5">
-              <DashboardReferences />
+              {/* DashboardReferences dolt — referens-funktionen är avvecklad och routen redirectar till /. */}
             </div>
           </div>
         )}
@@ -494,12 +494,7 @@ export default function Profile() {
             </div>
           )}
           <div className="flex items-center gap-2">
-            <Link to="/profil" className="flex-1 sm:flex-initial">
-              <Button size="sm" className="w-full sm:w-auto gap-1.5 h-9 text-sm font-semibold text-white border-0 bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] hover:from-[#7c3aed] hover:to-[#c026d3] shadow-sm hover:shadow-md transition-all">
-                <Pencil className="w-3.5 h-3.5" />
-                Redigera
-              </Button>
-            </Link>
+            {/* "Redigera" dold — länken pekade på /profil vilket är samma sida (no-op-loop). */}
             <Button
               variant="outline"
               size="icon"
@@ -512,23 +507,9 @@ export default function Profile() {
           </div>
         </div>
 
-        <div className="rounded-2xl bg-white border border-slate-200 shadow-sm p-5">
-          <h2 className="text-base font-semibold text-slate-900">
-            Förhandlingsassistenten
-          </h2>
-          <p className="text-sm text-slate-600 mt-1.5 mb-4">
-            Få argument och tips inför din nästa förhandling, baserat på ramavtal och din situation.
-          </p>
-          <Link to="/logga-in">
-            <Button
-              size="sm"
-              className="text-sm font-semibold px-6 py-3 gap-2 text-white border-0 bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] hover:from-[#7c3aed] hover:to-[#c026d3]"
-            >
-              Öppna förhandlingsassistenten
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-          </Link>
-        </div>
+        {/* Förhandlingsassistenten dold — funktionen är inte live; CTA pekade till /logga-in. */}
+
+        
 
         
 

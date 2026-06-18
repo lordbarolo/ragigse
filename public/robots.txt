@@ -1,6 +1,8 @@
 User-agent: *
 Allow: /
-Allow: /teaser
+Disallow: /admin
+Disallow: /admin/
+Disallow: /resultat/
 Disallow: /dev/
 Disallow: /rest/v1/
 
@@ -15,23 +17,36 @@ User-agent: GPTBot
 Allow: /
 Allow: /llms.txt
 Allow: /openapi.json
-Allow: /teaser
+Disallow: /admin
+Disallow: /resultat/
 Disallow: /rest/v1/
 
 User-agent: Google-Extended
 Allow: /
+Disallow: /admin
+Disallow: /resultat/
 
 User-agent: Claude-Web
 Allow: /
+Disallow: /admin
+Disallow: /resultat/
 
 User-agent: Applebot-Extended
 Allow: /
+Disallow: /admin
+Disallow: /resultat/
 
 User-agent: PerplexityBot
 Allow: /
+Disallow: /admin
+Disallow: /resultat/
 
 User-agent: Bytespider
 Allow: /
+Disallow: /admin
+Disallow: /resultat/
 
 User-agent: CCBot
 Allow: /
+Disallow: /admin
+Disallow: /resultat/
