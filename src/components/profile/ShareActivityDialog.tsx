@@ -160,7 +160,8 @@ export default function ShareActivityDialog({ open, onOpenChange }: Props) {
                             <Ban className="w-3 h-3" />
                           )}
                           Återkalla
-                        </button>
+                  </div>
+
                       )}
                     </div>
                   </button>
