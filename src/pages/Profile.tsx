@@ -15,7 +15,7 @@ import CompensationView from "@/components/report/CompensationView";
 import DashboardReferences from "@/components/profile/DashboardReferences";
 import DashboardDocuments, { type DashboardDocumentsHandle } from "@/components/profile/DashboardDocuments";
 import ProfileAuditLog from "@/components/profile/ProfileAuditLog";
-import DashboardInvoiceCheck from "@/components/profile/DashboardInvoiceCheck";
+
 import PensionImpactSimulator from "@/components/report/PensionImpactSimulator";
 import AssignmentFeedbackDialog from "@/components/profile/AssignmentFeedbackDialog";
 
@@ -530,7 +530,7 @@ export default function Profile() {
           </Link>
         </div>
 
-        <DashboardInvoiceCheck />
+        
 
         {reports.length === 0 && !profile?.specialty_name && (
           <div className="rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 to-pink-50 p-5 sm:p-6 shadow-sm">

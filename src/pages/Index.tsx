@@ -42,15 +42,6 @@ const PILLARS = [
     dataService: "salary-analysis",
   },
   {
-    question: "Fakturerar jag rätt?",
-    title: "Fakturagranskning - Få betalt för all din tid",
-    description: "AI-assistenten granskar dina fakturor retroaktivt för att se om du missat att fakturera för redan arbetad tid. Finns det avvikelser hittar vi det.",
-    icon: FileSearch,
-    cta: "Granska fakturor",
-    href: "/fakturakontroll",
-    dataService: "invoice-audit",
-  },
-  {
     question: "Förhandlar jag rätt?",
     title: "Förhandlingsassistent",
     description: "Ställ frågor om marknadspriser, avtalsvillkor och förhandlingsstrategier. Löneassistenten ger dig bra underlag inför ditt nästa konsultuppdrag.",
