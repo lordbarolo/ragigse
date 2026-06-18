@@ -23,25 +23,70 @@ export interface NegotiationContext {
   experience_years?: number;
 }
 
-const ROLE_PATTERNS: Array<[RegExp, string]> = [
-  [/\bDSK\b|distriktssj[uö]k/i, "Distriktssjuksköterska"],
-  [/röntgensj[uö]k|\brtg\b/i, "Röntgensjuksköterska"],
-  [/barnmorsk/i, "Barnmorska"],
-  [/\bssk\b|sjukskötersk/i, "Sjuksköterska"],
-  [/specialistl[aä]k/i, "Specialistläkare"],
-  [/\bst[-\s]?l[aä]k/i, "ST-läkare"],
-  [/leg(?:\.|itimerad)?\s*l[aä]k/i, "Legitimerad läkare"],
+/**
+ * Patterns are matched top-to-bottom; FIRST match wins.
+ * Therefore ALL specific subspecialties MUST come before generic fallbacks.
+ * The pattern can either be a fixed label OR a function that returns the
+ * canonical role name (used to preserve subspecialty text from the input).
+ *
+ * The canonical role names below match `yrkeskategori` in the `rates` table —
+ * see also `role_aliases` and the report's `occupation` field — so the
+ * negotiation agent uses the SAME price source as the report.
+ */
+type RoleRule = [RegExp, string | ((m: RegExpMatchArray) => string)];
+
+const ROLE_PATTERNS: RoleRule[] = [
+  // ── Specialistsjuksköterska <subspec> (capture the subspecialty word) ──
+  // Highest-paid subspecialties FIRST so they win over generic 'sjukskötersk'.
+  [/anestesisj[uö]kskötersk\w*/i, "Specialistsjuksköterska anestesi"],
+  [/intensivvårdssj[uö]kskötersk\w*/i, "Specialistsjuksköterska intensivvård"],
+  [/operationssj[uö]kskötersk\w*/i, "Specialistsjuksköterska operationssjukvård"],
+  [/ambulanssj[uö]kskötersk\w*/i, "Specialistsjuksköterska ambulanssjukvård"],
+  [/akutsj[uö]kskötersk\w*/i, "Specialistsjuksköterska akutsjukvård"],
+  [/barnsj[uö]kskötersk\w*/i, "Specialistsjuksköterska barn och ungdom"],
+  [/psykiatrisj[uö]kskötersk\w*/i, "Specialistsjuksköterska psykiatrisk vård"],
+  [/geriatriksj[uö]kskötersk\w*/i, "Specialistsjuksköterska vård av äldre"],
+  // "Specialistsjuksköterska <X>" → preserve X
+  [
+    /specialistsj[uö]kskötersk\w*\s+([a-zåäö][a-zåäöA-ZÅÄÖ\s-]{2,40})/i,
+    (m) => `Specialistsjuksköterska ${m[1].trim().toLowerCase()}`,
+  ],
+  [/specialistsj[uö]kskötersk\w*/i, "Specialistsjuksköterska"],
+  [/\bDSK\b|distriktssj[uö]k\w*/i, "Distriktssjuksköterska"],
+  [/röntgensj[uö]k\w*|\brtg\b/i, "Röntgensjuksköterska"],
+  [/barnmorsk\w*/i, "Barnmorska"],
+  [/\bssk\b|^sjukskötersk\w*$|\bsjukskötersk\w*\b(?!.*specialist)/i, "Sjuksköterska"],
+
+  // ── Läkare ──
+  [/\bst[-\s]?l[aä]k\w*/i, "ST-läkare"],
+  // "Specialistläkare <X>" → preserve X
+  [
+    /specialistl[aä]kare?\s+([a-zåäö][a-zåäöA-ZÅÄÖ\s-]{2,60})/i,
+    (m) => `Specialistläkare ${m[1].trim().toLowerCase()}`,
+  ],
+  [/specialistl[aä]k\w*/i, "Specialistläkare"],
+  [/leg(?:\.|itimerad)?\s*l[aä]k\w*/i, "Legitimerad läkare"],
 ];
 
 function inferContextFromMessage(input: string, current: NegotiationContext): NegotiationContext {
   const updates: NegotiationContext = {};
 
-  for (const [pattern, role] of ROLE_PATTERNS) {
-    if (pattern.test(input)) {
-      updates.role = role;
+  for (const rule of ROLE_PATTERNS) {
+    const [pattern, value] = rule;
+    const match = input.match(pattern);
+    if (match) {
+      const inferred = typeof value === "function" ? value(match) : value;
+      // Guard: never DOWNGRADE an existing context.role to a less specific name.
+      // A role with more words (e.g. "Specialistsjuksköterska intensivvård") is
+      // more specific than the generic "Sjuksköterska" and must be preserved.
+      if (current.role && current.role.length >= inferred.length && current.role.toLowerCase().includes(inferred.toLowerCase().split(" ")[0])) {
+        break;
+      }
+      updates.role = inferred;
       break;
     }
   }
+
 
   const rateMatch = input.match(/(\d[\d\s]{2,5})\s*(?:kr\s*\/?\s*h|kr\/h|kronor\s*(?:i|per)?\s*tim)/i);
   if (rateMatch) {
