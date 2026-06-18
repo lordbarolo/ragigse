@@ -340,7 +340,7 @@ export default function InlineTerminalSurvey({
   const stepTextColor = isLight ? "text-[#1A1A1A]" : "text-white";
   const backBtnColor = isLight
     ? "text-[#9CA3AF] hover:text-[#4B5563]"
-    : "text-white/40 hover:text-white/80";
+    : "text-white/70 hover:text-white";
 
   return (
     <SurveyThemeContext.Provider value={variant}>
@@ -382,11 +382,11 @@ export default function InlineTerminalSurvey({
                   />
                     <p
                       className={`mt-4 text-[11px] text-center font-sans ${
-                      isLight ? "text-[#9CA3AF]" : "text-white/40"
+                      isLight ? "text-[#9CA3AF]" : "text-white/70"
                     }`}
-                  >
-                    Anonymt · Kostnadsfritt · Klart på 60 sekunder
-                  </p>
+                    >
+                      Anonymt · Kostnadsfritt · Klart på 60 sekunder
+                    </p>
                 </Step>
               )}
 
