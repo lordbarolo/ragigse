@@ -157,8 +157,8 @@ export default function Teaser() {
 
   const handleEmailSubmit = async (emailValue: string) => {
     setEmailSaving(true);
+    let activeReportId = reportId;
     try {
-      let activeReportId = reportId;
       if (!activeReportId && leadId && survey) {
         const result = await createReport({ leadId, email: emailValue, survey, track: "consultant" });
         activeReportId = result.reportId;
