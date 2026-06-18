@@ -12,7 +12,7 @@ import ProfileTabs, { type ProfileTab } from "@/components/profile/ProfileTabs";
 import ProfileInsights from "@/components/profile/ProfileInsights";
 import TrustVerification from "@/components/profile/TrustVerification";
 import CompensationView from "@/components/report/CompensationView";
-import DashboardReferences from "@/components/profile/DashboardReferences";
+
 import DashboardDocuments, { type DashboardDocumentsHandle } from "@/components/profile/DashboardDocuments";
 import ProfileAuditLog from "@/components/profile/ProfileAuditLog";
 
