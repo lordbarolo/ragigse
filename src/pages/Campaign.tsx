@@ -1,7 +1,7 @@
 import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Lock, ArrowRight, FileCheck, MessageSquare, BarChart3 } from "lucide-react";
+import { Lock, ArrowRight, MessageSquare, BarChart3 } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 import { SEO } from "@/components/SEO";
 
@@ -191,7 +191,7 @@ export default function Campaign() {
             Tre frågor. Ett svar.
           </h2>
 
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2">
             {/* Card 1: Ersättningsanalys — open */}
             <button
               onClick={() => navigate("/")}
