@@ -75,6 +75,8 @@ export const ALLOWED_EVENTS = [
   "price_range_mismatch",
   "other_role_requested",
   "cta_clicked",
+  "rage_click",
+  "dead_click",
 ] as const;
 
 export type AllowedEventName = (typeof ALLOWED_EVENTS)[number];
