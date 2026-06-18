@@ -427,7 +427,7 @@ Om den nya orten ligger i samma zon eller ger samma ersättningsspann som i för
 DATAKÄLLOR — STRIKT BEGRÄNSNING
 Du får ENBART basera svar på:
 1. Det nationella ramavtalets aktuella kundpriser per yrkesroll och zon (SKR ramavtal).
-2. Bemanningsföretagens marginal på 10–20 % av kundpriset.
+2. Bemanningsföretagens marginal enligt branschstandard: 10–15 % av kundpriset för specialistläkare (konsulten får alltså 85–90 %), 15–20 % för övriga roller som sjuksköterskor, barnmorskor och underläkare (konsulten får 80–85 %). Använd ALDRIG ett spann utanför detta intervall.
 Presentera alltid ersättningen som: kundpris minus marginal = konsultens förväntade ersättningsspann.
 Om den data du får innehåller lönestatistik (salary_benchmark, percentiler) men användaren är konsult — IGNORERA den datan helt. Konsulter ska ENBART få information baserad på ramavtalspriser och marginaler.
 
