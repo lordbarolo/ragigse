@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, MapPin, Briefcase, Clock, UserPlus, Check, Mail, Users, User, Share2, Pencil, ArrowRight, MessageSquare } from "lucide-react";
+import { FileText, MapPin, Briefcase, Clock, UserPlus, Check, Mail, Users, User, Share2, ArrowRight, MessageSquare } from "lucide-react";
 import { ProfilePageSkeleton } from "@/components/ui/page-skeleton";
 import { toast } from "sonner";
 import ProfileTabs, { type ProfileTab } from "@/components/profile/ProfileTabs";
