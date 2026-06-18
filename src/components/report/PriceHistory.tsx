@@ -62,7 +62,7 @@ export default function PriceHistory({ changes, userZone, occupation }: Props) {
               </div>
             ) : (
               <div className="w-7 h-7 rounded-full bg-foreground/[0.08] flex items-center justify-center">
-                <Minus className="w-3.5 h-3.5 text-foreground/40" />
+                <Minus className="w-3.5 h-3.5 text-muted-foreground" />
               </div>
             )}
             <span className="text-[10px] font-semibold tracking-[0.8px] uppercase text-foreground/[0.28]">
@@ -70,7 +70,7 @@ export default function PriceHistory({ changes, userZone, occupation }: Props) {
             </span>
           </div>
           <span className={`${monoClass} text-xs font-medium px-2 py-0.5 rounded-full ${
-            isIncrease ? "text-accent bg-accent/[0.12]" : isDecrease ? "text-destructive bg-destructive/[0.12]" : "text-foreground/40 bg-foreground/[0.06]"
+            isIncrease ? "text-accent bg-accent/[0.12]" : isDecrease ? "text-destructive bg-destructive/[0.12]" : "text-muted-foreground bg-foreground/[0.06]"
           }`}>
             {isIncrease ? "+" : ""}{latest.diff_pct.toFixed(1)}%
           </span>

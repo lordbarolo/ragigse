@@ -54,7 +54,7 @@ export default function BugReportButton() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="text-[13px] text-foreground/35 no-underline hover:text-foreground transition-colors flex items-center gap-1">
+        <button className="text-[13px] text-muted-foreground no-underline hover:text-foreground transition-colors flex items-center gap-1">
           <Bug className="w-3 h-3" />
           Rapportera fel
         </button>

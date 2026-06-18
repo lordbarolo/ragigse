@@ -11,21 +11,21 @@ export default function LandingFooter() {
         <Link
           to="/vanliga-fragor"
           onClick={() => trackCta("landing_footer", "Om CompCare", "/vanliga-fragor")}
-          className="text-sm md:text-[13px] text-foreground/35 no-underline hover:text-foreground transition-colors"
+          className="text-sm md:text-[13px] text-muted-foreground no-underline hover:text-foreground transition-colors"
         >
           Om CompCare
         </Link>
         <Link
           to="/vanliga-fragor"
           onClick={() => trackCta("landing_footer", "Datakällor", "/vanliga-fragor")}
-          className="text-sm md:text-[13px] text-foreground/35 no-underline hover:text-foreground transition-colors"
+          className="text-sm md:text-[13px] text-muted-foreground no-underline hover:text-foreground transition-colors"
         >
           Datakällor
         </Link>
         <Link
           to="/integritetspolicy"
           onClick={() => trackCta("landing_footer", "Integritetspolicy", "/integritetspolicy")}
-          className="text-sm md:text-[13px] text-foreground/35 no-underline hover:text-foreground transition-colors"
+          className="text-sm md:text-[13px] text-muted-foreground no-underline hover:text-foreground transition-colors"
         >
           Integritetspolicy
         </Link>

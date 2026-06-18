@@ -47,7 +47,7 @@ export default function ReportPreview() {
               className={`font-display text-xs font-semibold px-4 py-1.5 rounded-full border transition-all cursor-pointer ${
                 isUnder
                   ? "bg-primary/10 border-primary/30 text-primary"
-                  : "bg-transparent border-foreground/[0.12] text-foreground/35"
+                  : "bg-transparent border-foreground/[0.12] text-muted-foreground"
               }`}
             >
               Under marknad
@@ -57,7 +57,7 @@ export default function ReportPreview() {
               className={`font-display text-xs font-semibold px-4 py-1.5 rounded-full border transition-all cursor-pointer ${
                 !isUnder
                   ? "bg-primary/10 border-primary/30 text-primary"
-                  : "bg-transparent border-foreground/[0.12] text-foreground/35"
+                  : "bg-transparent border-foreground/[0.12] text-muted-foreground"
               }`}
             >
               Över marknad
@@ -69,7 +69,7 @@ export default function ReportPreview() {
         <div className="bg-[hsl(var(--dark-2))] border border-foreground/[0.12] rounded-[20px] overflow-hidden shadow-[0_32px_80px_rgba(0,0,0,0.45),0_0_0_1px_rgba(255,255,255,0.04)] lg:[transform:perspective(1200px)_rotateY(-3deg)_rotateX(1.5deg)] lg:hover:[transform:perspective(1200px)_rotateY(0deg)_rotateX(0deg)] transition-transform duration-500">
           {/* Header */}
           <div className="bg-[hsl(var(--dark-3))] border-b border-foreground/[0.07] px-5 py-3.5 flex items-center justify-between gap-3">
-            <span className="text-xs text-foreground/35 font-display font-medium">Anestesisjuksköterska · Zon 1 · Egenföretagare</span>
+            <span className="text-xs text-muted-foreground font-display font-medium">Anestesisjuksköterska · Zon 1 · Egenföretagare</span>
             {isUnder ? (
               <span className="font-display text-[11px] font-bold px-3 py-1 rounded-full tracking-wide bg-[hsl(var(--amber))]/[0.12] text-[hsl(var(--amber))] border border-[hsl(var(--amber))]/20">
                 Under marknad
@@ -93,7 +93,7 @@ export default function ReportPreview() {
                   <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: m.dot }} />
                   <div className="text-[13px] text-foreground/65">
                     {m.label}
-                    <small className="block text-[11px] text-foreground/35 mt-px">{m.sub}</small>
+                    <small className="block text-[11px] text-muted-foreground mt-px">{m.sub}</small>
                   </div>
                 </div>
                 <span className={`font-display text-base font-bold tracking-[-0.02em] ${m.highlight && !isUnder ? "text-[hsl(var(--green))]" : ""}`}>
@@ -105,7 +105,7 @@ export default function ReportPreview() {
 
           {/* Bar */}
           <div className="px-5 pt-5">
-            <div className="text-[11px] text-foreground/35 font-display font-medium tracking-wider uppercase mb-2.5">Förhandlingsspann</div>
+            <div className="text-[11px] text-muted-foreground font-display font-medium tracking-wider uppercase mb-2.5">Förhandlingsspann</div>
             <div className="h-2.5 bg-foreground/[0.06] rounded-full relative">
               <div className="absolute h-full bg-gradient-to-r from-primary/30 to-primary/70 rounded-full" style={{ left: "18%", right: "14%" }} />
               <div
@@ -120,7 +120,7 @@ export default function ReportPreview() {
                 }}
               />
             </div>
-            <div className="flex justify-between mt-2 text-[10px] text-foreground/35 font-display">
+            <div className="flex justify-between mt-2 text-[10px] text-muted-foreground font-display">
               <span>Lägre</span>
               <span>Realistiskt</span>
               <span>Rekommenderat</span>
@@ -144,7 +144,7 @@ export default function ReportPreview() {
 
           {/* Tip */}
           <div className="mx-5 mt-4 mb-5 bg-foreground/[0.03] border border-foreground/[0.07] rounded-lg p-3.5">
-            <div className="text-[10px] font-display font-semibold tracking-[0.1em] uppercase text-foreground/35 mb-1.5">
+            <div className="text-[10px] font-display font-semibold tracking-[0.1em] uppercase text-muted-foreground mb-1.5">
               Förhandlingstips
             </div>
             <p className="text-[13px] text-foreground/65 leading-snug">
