@@ -6,9 +6,11 @@ import App from "./App.tsx";
 import "./index.css";
 import { captureParams } from "./lib/captureParams";
 import { initAuthIdentitySync } from "./lib/identify";
+import { initRageDeadClickTracking } from "./lib/rageDeadClick";
 
 captureParams();
 initAuthIdentitySync();
+initRageDeadClickTracking();
 
 // Global felhantering — fångar krascher som inte når någon try/catch
 // eller React Error Boundary, och rapporterar dem till PostHog.

@@ -83,6 +83,8 @@ const ALLOWED_EVENTS = new Set([
   "price_range_mismatch",
   "other_role_requested",
   "cta_clicked",
+  "rage_click",
+  "dead_click",
 ]);
 
 serve(async (req) => {
