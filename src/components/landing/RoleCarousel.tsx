@@ -155,9 +155,6 @@ function RoleCard({ card }: { card: Card }) {
           </span>
           <span className="text-xs text-black/40">kr/h</span>
         </div>
-        <div className="text-[10px] text-black/30 mt-0.5">
-          Bruttolön · efter {card.marginPct}% marginal
-        </div>
       </div>
     </div>
   );
