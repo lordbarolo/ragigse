@@ -364,12 +364,12 @@ export default function Report() {
         <div className="pt-4">
           <Separator className="mb-6 opacity-30" />
           <div className="text-center space-y-3 pb-8">
-            <CompcareLogo variant="wordmark" className="mx-auto opacity-40 !h-5" />
+            <CompcareLogo variant="wordmark" className="mx-auto !h-5" />
             <p className="text-[11px] text-muted-foreground leading-relaxed max-w-xs mx-auto">
               Denna rapport baseras på gällande avtal från SKR och är avsedd som vägledning.
               Faktisk ersättning kan variera beroende på arbetsgivare, uppdrag och individuella avtal.
             </p>
-            <p className="text-[10px] text-muted-foreground/40">
+            <p className="text-[10px] text-muted-foreground">
               © {new Date().getFullYear()} CompCare.se
             </p>
           </div>
