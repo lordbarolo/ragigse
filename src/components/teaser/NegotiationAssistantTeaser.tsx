@@ -7,10 +7,10 @@ export default function NegotiationAssistantTeaser() {
         <div className="p-2 rounded-xl bg-primary/10">
           <MessageSquare className="w-4 h-4 text-primary" />
         </div>
-        <h3 className="text-[15px] font-bold text-foreground">Löneassistenten</h3>
+        <h3 className="text-[15px] font-bold text-foreground">Förhandlingsassistenten</h3>
       </div>
       <p className="text-sm text-muted-foreground leading-relaxed">
-        I din fulla rapport ingår konkreta förhandlingsråd baserade på din roll och region. Du kan
+        Skapa kostnadsfritt konto och få konkreta förhandlingsråd utifrån roll och region. Du kan
         ställa frågor om din ersättning, bemanningsföretagets marginal och vad som är rimligt att begära.
       </p>
     </div>
