@@ -115,7 +115,7 @@ export default function Home() {
               <p className="mt-3 text-[11px] text-black/55 leading-relaxed flex items-start gap-1.5">
                 <ShieldCheck className="w-3 h-3 mt-0.5 shrink-0 text-[#3D3491]" />
                 <span>
-                  Anonymt · Data lagras inom EU · Vi delar aldrig dina uppgifter. Se{" "}
+                  Data lagras inom EU · Vi delar aldrig dina uppgifter. Se{" "}
                   <Link to="/integritetspolicy" className="underline">integritetspolicyn</Link>.
                 </span>
               </p>
