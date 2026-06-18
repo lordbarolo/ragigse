@@ -15,6 +15,7 @@ import { template as invoiceConfirmation } from './invoice-confirmation.tsx'
 import { template as invoiceAdminNotify } from './invoice-admin-notify.tsx'
 import { template as referenceInvite } from './reference-invite.tsx'
 import { template as representationInvite } from './representation-invite.tsx'
+import { template as documentShareInvite } from './document-share-invite.tsx'
 
 export const TEMPLATES: Record<string, TemplateEntry> = {
   'welcome': welcome,
@@ -23,4 +24,5 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'invoice-admin-notify': invoiceAdminNotify,
   'reference-invite': referenceInvite,
   'representation-invite': representationInvite,
+  'document-share-invite': documentShareInvite,
 }

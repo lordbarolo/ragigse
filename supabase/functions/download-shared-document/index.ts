@@ -119,8 +119,9 @@ Deno.serve(async (req) => {
     }
     const share = shareData as {
       expired: boolean;
-      expires_at: string;
+      expires_at: string | null;
       recipient_label: string | null;
+      recipient_email: string | null;
       owner_name: string;
       documents: Array<{ id: string; file_name: string; document_type: string }>;
     };
@@ -180,7 +181,11 @@ Deno.serve(async (req) => {
     let contentType = fileBlob.type || "application/octet-stream";
 
     if (isPdf) {
-      const recipient = share.recipient_label?.trim() || "Mottagare";
+      // Prefer recipient_email for watermark (the magic-link recipient)
+      const recipient =
+        share.recipient_email?.trim() ||
+        share.recipient_label?.trim() ||
+        "Mottagare";
       const ts = new Date().toLocaleString("sv-SE", { timeZone: "Europe/Stockholm" });
       const watermark = `Delat med ${recipient}`;
       const footer = `CompCare · Delat med ${recipient} · ${ts}${ip ? ` · IP ${ip}` : ""} · Endast för avtalad mottagare`;

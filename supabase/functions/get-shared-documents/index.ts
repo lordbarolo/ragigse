@@ -82,6 +82,7 @@ Deno.serve(async (req) => {
       JSON.stringify({
         owner_name: (data as any).owner_name,
         recipient_label: (data as any).recipient_label,
+        recipient_email: (data as any).recipient_email,
         expires_at: expiresAt,
         documents: withUrls,
       }),
