@@ -13,6 +13,7 @@ import {
 import { toast } from "sonner";
 import { trackEvent } from "@/lib/trackEvent";
 import { aliasLead } from "@/lib/identify";
+import { startAbandonWatcher } from "@/lib/surveyAbandon";
 import {
   DOCTOR_SPECIALTIES as TOP_DOCTOR_SPECIALTIES,
   NURSE_SPECIALIZATIONS as TOP_NURSE_SPECIALIZATIONS,
