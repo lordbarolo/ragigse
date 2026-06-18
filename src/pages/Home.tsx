@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Check } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 import InlineTerminalSurvey from "@/components/survey/InlineTerminalSurvey";
 import RoleCarousel from "@/components/landing/RoleCarousel";
@@ -84,9 +85,19 @@ export default function Home() {
                 Vet du vad du<br />
                 <span className="text-gradient-violet text-black">är värd?</span>
               </h1>
-              <p className="font-editorial text-lg sm:text-xl text-black/75 leading-relaxed mb-2 max-w-[460px]">
-                Se regionens pris, bolagets marginal och din ersättning.
+              <p className="font-editorial text-lg sm:text-xl text-black/75 leading-relaxed max-w-[460px]">
+                Se vad regionen betalar, vad marknaden kan ge och vad du kan tjäna.
               </p>
+              <ul className="mt-6 space-y-2 max-w-[460px]">
+                <li className="flex items-start gap-2 text-base text-[#6B6B6B]">
+                  <Check className="w-5 h-5 shrink-0 mt-0.5" style={{ color: "hsl(160,80%,50%)" }} />
+                  <span>Baserat på SKR:s offentliga ramavtalspriser</span>
+                </li>
+                <li className="flex items-start gap-2 text-base text-[#6B6B6B]">
+                  <Check className="w-5 h-5 shrink-0 mt-0.5" style={{ color: "hsl(160,80%,50%)" }} />
+                  <span>Branschens standardmarginaler — ca 12 % läkare, 17 % sjuksköterskor</span>
+                </li>
+              </ul>
             </div>
 
             {/* Mobil: tunn kollapsad rad när wizarden startat */}
