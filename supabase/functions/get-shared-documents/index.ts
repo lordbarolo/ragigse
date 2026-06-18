@@ -1,13 +1,27 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-  "Content-Type": "application/json",
-};
+const ALLOWED_ORIGINS = new Set([
+  "https://compcare.se",
+  "https://www.compcare.se",
+  "https://compcare-se.lovable.app",
+]);
+
+function buildCors(req: Request) {
+  const origin = req.headers.get("origin") || "";
+  const allow = ALLOWED_ORIGINS.has(origin) || /\.lovable\.app$/.test(new URL(origin || "https://x").hostname)
+    ? origin
+    : "https://compcare.se";
+  return {
+    "Access-Control-Allow-Origin": allow,
+    "Vary": "Origin",
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Content-Type": "application/json",
+  };
+}
 
 Deno.serve(async (req) => {
+  const corsHeaders = buildCors(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -48,21 +62,34 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ expired: true }), { status: 410, headers: corsHeaders });
     }
 
-    const docs = ((data as any).documents || []) as Array<{ id: string; file_name: string; document_type: string; file_url: string; uploaded_at: string }>;
+    const docs = ((data as any).documents || []) as Array<{ id: string; file_name: string; document_type: string; uploaded_at: string }>;
     const expiresAt = (data as any).expires_at as string;
     const ttl = Math.max(60, Math.min(60 * 60 * 24, Math.floor((new Date(expiresAt).getTime() - Date.now()) / 1000)));
 
+    // Look up storage paths server-side (file_url is never returned to the client).
+    const docIds = docs.map((d) => d.id);
+    const { data: paths } = await supabase
+      .from("consultant_documents")
+      .select("id,file_url")
+      .in("id", docIds);
+    const pathMap = new Map<string, string>((paths || []).map((p: any) => [p.id, p.file_url]));
+
     const withUrls = await Promise.all(
       docs.map(async (d) => {
-        const { data: signed } = await supabase.storage
-          .from("verifications")
-          .createSignedUrl(d.file_url, ttl);
+        const path = pathMap.get(d.id);
+        let signedUrl: string | null = null;
+        if (path) {
+          const { data: signed } = await supabase.storage
+            .from("verifications")
+            .createSignedUrl(path, ttl);
+          signedUrl = signed?.signedUrl ?? null;
+        }
         return {
           id: d.id,
           file_name: d.file_name,
           document_type: d.document_type,
           uploaded_at: d.uploaded_at,
-          signed_url: signed?.signedUrl ?? null,
+          signed_url: signedUrl,
         };
       }),
     );
