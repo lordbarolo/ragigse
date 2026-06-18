@@ -235,24 +235,6 @@ export default function ConsultantTrackContent({
         </div>
       )}
 
-      {/* ═══════════════════════════════════════════════════════════════
-          3. ACTION HUB — Verktygen (flyttad före regional jämförelse)
-          ═══════════════════════════════════════════════════════════════ */}
-      {/* 3a. Förhandlingsassistenten — flyttad till toppen av rapporten */}
-
-      {/* 3b. Fakturagranskning */}
-      {isConsultantFullAccess && leadId && email && (
-        <div id="flow-fakturor" className="scroll-mt-24 pt-6 space-y-4">
-          <SectionLabel>Agera på resultatet</SectionLabel>
-          <InvoiceReviewCTA
-            leadId={leadId}
-            email={email}
-            role={occupation}
-            zone={userZone}
-            reportId={reportId}
-          />
-        </div>
-      )}
 
       {/* ═══════════════════════════════════════════════════════════════
           4. REGIONAL COMPARISON — Skapar kontext för lönen
