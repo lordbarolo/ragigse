@@ -5363,6 +5363,13 @@ export type Database = {
         Returns: number
       }
       mp_can_publish: { Args: { _user_id: string }; Returns: boolean }
+      pg_columns_for_public: {
+        Args: never
+        Returns: {
+          column_name: string
+          table_name: string
+        }[]
+      }
       read_email_batch: {
         Args: { batch_size: number; queue_name: string; vt: number }
         Returns: {
