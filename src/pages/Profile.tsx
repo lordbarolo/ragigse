@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, MapPin, Briefcase, Clock, UserPlus, Check, Mail, Users, User, Share2, Pencil, ArrowRight } from "lucide-react";
+import { FileText, MapPin, Briefcase, Clock, UserPlus, Check, Mail, Users, User, Share2, Pencil, ArrowRight, MessageSquare } from "lucide-react";
 import { ProfilePageSkeleton } from "@/components/ui/page-skeleton";
 import { toast } from "sonner";
 import ProfileTabs, { type ProfileTab } from "@/components/profile/ProfileTabs";
@@ -390,6 +390,25 @@ export default function Profile() {
                 </CardContent>
               </Card>
 
+              <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
+                <CardHeader>
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <MessageSquare className="w-4 h-4 text-primary" />
+                    Löneassistenten
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Neutralt förhandlingsstöd baserat på SKR-ramavtal. Få konkreta formuleringar och marknadsobservationer för din nästa förhandling.
+                  </p>
+                  <Link to="/consultant/forhandla">
+                    <Button size="sm" className="text-sm font-semibold px-6 py-3">
+                      Öppna Löneassistenten
+                      <ArrowRight className="w-4 h-4 ml-1.5" />
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
             </div>
 
             <PensionImpactSimulator
