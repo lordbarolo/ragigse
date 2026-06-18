@@ -51,19 +51,29 @@ export default function Navbar() {
         {!loading && (
           user ? (
             <>
-              <Link to={role === "agency" ? "/agency" : "/consultant/profil"} aria-label="Min profil">
+              <Link
+                to={role === "agency" ? "/agency" : "/consultant/profil"}
+                aria-label="Min profil"
+                onClick={() => trackCta("app_navbar", "Min profil", role === "agency" ? "/agency" : "/consultant/profil")}
+              >
                 <Button variant="ghost" size="sm" className="gap-2 text-slate-600 hover:text-slate-900 hover:bg-slate-200/60">
                   <User className="w-4 h-4" />
                   <span className="hidden sm:inline">Min profil</span>
                 </Button>
               </Link>
-              <Button variant="ghost" size="sm" className="gap-2 text-slate-600 hover:text-slate-900 hover:bg-slate-200/60" onClick={signOut} aria-label="Logga ut">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="gap-2 text-slate-600 hover:text-slate-900 hover:bg-slate-200/60"
+                onClick={() => { trackCta("app_navbar", "Logga ut", "sign_out"); signOut(); }}
+                aria-label="Logga ut"
+              >
                 <LogOut className="w-4 h-4" />
                 <span className="hidden sm:inline">Logga ut</span>
               </Button>
             </>
           ) : (
-            <Link to="/logga-in" aria-label="Logga in">
+            <Link to="/logga-in" aria-label="Logga in" onClick={() => trackCta("app_navbar", "Logga in", "/logga-in")}>
               <Button variant="ghost" size="sm" className="gap-2 text-slate-600 hover:text-slate-900 hover:bg-slate-200/60">
                 <LogIn className="w-4 h-4" />
                 <span className="hidden sm:inline">Logga in</span>
