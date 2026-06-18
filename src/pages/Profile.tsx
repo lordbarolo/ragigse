@@ -398,7 +398,7 @@ export default function Profile() {
 
               <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
                 <CardHeader>
-                  <CardTitle className="text-base flex items-center gap-2">
+                  <CardTitle className="text-base flex items-center gap-2 text-slate-900">
                     <MessageSquare className="w-4 h-4 text-primary" />
                     Löneassistenten
                   </CardTitle>
