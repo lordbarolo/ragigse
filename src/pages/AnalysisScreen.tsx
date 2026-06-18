@@ -161,7 +161,14 @@ export default function AnalysisScreen() {
         setReportId(rid);
         sessionStorage.setItem("reportId", rid);
       })
-      .catch(() => {});
+      .catch((err) => {
+        console.error("[AnalysisScreen] createReport failed", err);
+        try {
+          import("@/lib/posthog").then(({ default: posthog }) => {
+            posthog.capture?.("analysis_error", { phase: "create_report", message: String(err?.message ?? err) });
+          });
+        } catch { /* silent */ }
+      });
   }, [leadId, survey, reportId]);
 
   /* ── Email submit ── */
