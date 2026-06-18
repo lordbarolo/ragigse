@@ -88,11 +88,14 @@ export default function InlineTerminalSurvey({
   useEffect(() => {
     stepEntryTime.current = Date.now();
     onStepChange?.(step);
+    const stepName = STEP_NAMES[step - 1] || `step_${step}`;
     trackEvent("survey_step_viewed", {
       step_number: step,
-      step_name: STEP_NAMES[step - 1] || `step_${step}`,
+      step_name: stepName,
       surface: "inline_terminal",
     });
+    const stop = startAbandonWatcher({ step, stepName, surface: "inline_terminal" });
+    return stop;
   }, [step, onStepChange]);
 
 
@@ -104,11 +107,12 @@ export default function InlineTerminalSurvey({
   }, []);
 
   const trackStepCompleted = useCallback((n: number, ans?: string | number) => {
-    const dt = Math.round((Date.now() - stepEntryTime.current) / 1000);
+    const dtMs = Date.now() - stepEntryTime.current;
     trackEvent("survey_step_completed", {
       step_number: n,
       step_name: STEP_NAMES[n - 1] || `step_${n}`,
-      time_on_step_seconds: dt,
+      time_on_step_seconds: Math.round(dtMs / 1000),
+      time_on_step_ms: dtMs,
       step_answer: ans ?? null,
       surface: "inline_terminal",
     });
