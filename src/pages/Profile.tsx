@@ -253,6 +253,7 @@ export default function Profile() {
         .profile-light .bg-secondary\\/50 { background: rgb(248 250 252) !important; }
         .profile-light .hover\\:bg-secondary:hover { background: rgb(241 245 249) !important; }
         .profile-light .divide-border > * + * { border-color: rgb(226 232 240) !important; }
+        .profile-light [data-slot="card"], .profile-light h1, .profile-light h2, .profile-light h3 { color: rgb(15 23 42); }
       `}</style>
       {/* Subtle glow gradients matching landing page section 2 */}
       <div
