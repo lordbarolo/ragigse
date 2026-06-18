@@ -390,6 +390,25 @@ export default function Profile() {
                 </CardContent>
               </Card>
 
+              <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
+                <CardHeader>
+                  <CardTitle className="text-base flex items-center gap-2">
+                    <MessageSquare className="w-4 h-4 text-primary" />
+                    Löneassistenten
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Neutralt förhandlingsstöd baserat på SKR-ramavtal. Få konkreta formuleringar och marknadsobservationer för din nästa förhandling.
+                  </p>
+                  <Link to="/consultant/forhandla">
+                    <Button size="sm" className="text-sm font-semibold px-6 py-3">
+                      Öppna Löneassistenten
+                      <ArrowRight className="w-4 h-4 ml-1.5" />
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
             </div>
 
             <PensionImpactSimulator
