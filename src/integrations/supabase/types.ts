@@ -4704,6 +4704,42 @@ export type Database = {
         }
         Relationships: []
       }
+      system_health_log: {
+        Row: {
+          alert_id: string | null
+          alert_sent_at: string | null
+          check_name: string
+          created_at: string
+          details: Json | null
+          duration_ms: number | null
+          error_message: string | null
+          id: string
+          status: string
+        }
+        Insert: {
+          alert_id?: string | null
+          alert_sent_at?: string | null
+          check_name: string
+          created_at?: string
+          details?: Json | null
+          duration_ms?: number | null
+          error_message?: string | null
+          id?: string
+          status: string
+        }
+        Update: {
+          alert_id?: string | null
+          alert_sent_at?: string | null
+          check_name?: string
+          created_at?: string
+          details?: Json | null
+          duration_ms?: number | null
+          error_message?: string | null
+          id?: string
+          status?: string
+        }
+        Relationships: []
+      }
       uppdrag_notifications: {
         Row: {
           created_at: string
@@ -5289,6 +5325,7 @@ export type Database = {
       }
       get_document_share_by_token: { Args: { _token: string }; Returns: Json }
       get_feature_flag: { Args: { _key: string }; Returns: Json }
+      get_health_check_cron_token: { Args: never; Returns: string }
       get_referral_by_token: {
         Args: { _token: string }
         Returns: {
@@ -5326,6 +5363,13 @@ export type Database = {
         Returns: number
       }
       mp_can_publish: { Args: { _user_id: string }; Returns: boolean }
+      pg_columns_for_public: {
+        Args: never
+        Returns: {
+          column_name: string
+          table_name: string
+        }[]
+      }
       read_email_batch: {
         Args: { batch_size: number; queue_name: string; vt: number }
         Returns: {
