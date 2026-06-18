@@ -11,7 +11,14 @@ export function identifyUser(
   properties?: Record<string, string | number | boolean | null | undefined>
 ) {
   try {
-    posthog.identify(userId, properties);
+    // If we already aliased an anonymous session to a leadId, stitch the
+    // user.id onto that same person so the funnel (anon → lead → user) stays
+    // a single PostHog person instead of fragmenting into two.
+    const leadId = sessionStorage.getItem("leadId");
+    if (leadId && leadId !== userId) {
+      try { posthog.alias(userId, leadId); } catch { /* silent */ }
+    }
+    posthog.identify(userId, { ...(properties || {}), lead_id: leadId ?? undefined });
   } catch {
     /* silent */
   }
