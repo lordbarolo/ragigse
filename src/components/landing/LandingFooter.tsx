@@ -31,7 +31,7 @@ export default function LandingFooter() {
         </Link>
         <BugReportButton />
       </div>
-      <span className="text-xs md:text-[11px] text-foreground/15">© 2026 Compcare</span>
+      <span className="text-xs md:text-[11px] text-foreground/15">© 2026</span>
     </footer>
   );
 }

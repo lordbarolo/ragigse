@@ -174,7 +174,7 @@ export default function Index() {
             <Link to="/din-data" className="hover:text-foreground transition-colors">Din data</Link>
             <Link to="/referenser-info" className="hover:text-foreground transition-colors">Ref ID</Link>
           </div>
-          <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} CompCare</p>
+          <p className="text-xs text-muted-foreground">© {new Date().getFullYear()}</p>
         </div>
       </footer>
     </div>
