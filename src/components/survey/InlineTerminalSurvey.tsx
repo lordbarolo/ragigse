@@ -385,7 +385,7 @@ export default function InlineTerminalSurvey({
                       isLight ? "text-[#9CA3AF]" : "text-white/70"
                     }`}
                     >
-                      Anonymt · Kostnadsfritt · Klart på 60 sekunder
+                      Kostnadsfritt · Klart på 60 sekunder
                     </p>
                 </Step>
               )}
