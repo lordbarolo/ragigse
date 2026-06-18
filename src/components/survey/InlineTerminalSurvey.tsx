@@ -15,6 +15,7 @@ import { useLocations } from "@/hooks/useCalculator";
 import { usePricingEngine } from "@/hooks/usePricingEngine";
 import { trackEvent } from "@/lib/trackEvent";
 import { aliasLead } from "@/lib/identify";
+import { startAbandonWatcher } from "@/lib/surveyAbandon";
 import {
   DOCTOR_SPECIALTIES,
   NURSE_SPECIALIZATIONS,
