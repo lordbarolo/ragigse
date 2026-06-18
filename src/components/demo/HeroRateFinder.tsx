@@ -434,7 +434,7 @@ export default function HeroRateFinder({ prefillKey }: Props) {
 
       <div className="h-2 flex items-center justify-center relative -my-2">
         <div className="absolute left-1/2 top-0 bottom-0 w-px bg-white/15" />
-        <div className="w-[22px] h-[22px] rounded-full bg-white/[0.07] border border-white/15 flex items-center justify-center text-[10px] text-white/40 z-10 relative">↓</div>
+        <div className="w-[22px] h-[22px] rounded-full bg-white/[0.07] border border-white/15 flex items-center justify-center text-[10px] text-white/60 z-10 relative">↓</div>
       </div>
 
       {/* ── Result card 3: Konsultlön (highlighted) ── */}
@@ -446,7 +446,7 @@ export default function HeroRateFinder({ prefillKey }: Props) {
           {loading ? (
             <Loader2 className="w-5 h-5 animate-spin inline-block text-white/60" />
           ) : showPlaceholder ? (
-            <span className="text-white/40 text-[18px]">Data ej tillgänglig</span>
+            <span className="text-white/70 text-[18px]">Data ej tillgänglig</span>
           ) : (
             <>
               {fmt(animatedHourly)}
@@ -483,7 +483,7 @@ export default function HeroRateFinder({ prefillKey }: Props) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="din@email.se"
-              className="w-full px-3 py-2.5 bg-white/10 border border-white/25 rounded-lg text-white text-[13px] placeholder:text-white/40 outline-none focus:border-white/50 transition-colors"
+              className="w-full px-3 py-2.5 bg-white/10 border border-white/25 rounded-lg text-white text-[13px] placeholder:text-white/60 outline-none focus:border-white/50 transition-colors"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && emailValid && !submittingLead) handleSubmitLead();
               }}
