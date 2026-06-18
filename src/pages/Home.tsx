@@ -139,7 +139,7 @@ export default function Home() {
         <footer className="mt-16 border-t border-black/10 px-5 py-8 text-xs text-black/55">
           <div className="max-w-6xl mx-auto flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
             <div>
-              <p className="font-medium text-black/75">Org.nr 559264-3836 · Stockholm, Sverige</p>
+              <p className="font-medium text-black/75"></p>
             </div>
             <nav className="flex flex-wrap gap-x-5 gap-y-2">
               <a href="mailto:info@compcare.se" className="hover:text-black underline-offset-4 hover:underline">info@compcare.se</a>
