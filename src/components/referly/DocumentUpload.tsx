@@ -17,7 +17,9 @@ interface UploadedDoc {
   file_name: string;
   document_type: string;
   uploaded_at: string;
+  file_url: string;
 }
+
 
 const DOC_TYPES = [
   { value: "cv", label: "CV" },
@@ -60,7 +62,7 @@ export function DocumentUpload() {
     }
     const { data } = await supabase
       .from("consultant_documents")
-      .select("id, file_name, document_type, uploaded_at")
+      .select("id, file_name, document_type, uploaded_at, file_url")
       .eq("consultant_id", cpId)
       .order("uploaded_at", { ascending: false });
     setDocuments(data || []);
@@ -136,6 +138,11 @@ export function DocumentUpload() {
   const handleDelete = async (doc: UploadedDoc) => {
     if (!user) return;
     try {
+      // Remove the storage object first so the file doesn't outlive the DB row.
+      // RLS on storage.objects + namespaced path ensures only the owner can do this.
+      if (doc.file_url) {
+        await supabase.storage.from("verifications").remove([doc.file_url]);
+      }
       await supabase.from("consultant_documents").delete().eq("id", doc.id);
       toast.success("Dokument borttaget");
       loadDocuments();
@@ -143,6 +150,7 @@ export function DocumentUpload() {
       toast.error("Kunde inte ta bort dokumentet");
     }
   };
+
 
   const typeLabel = (t: string) => DOC_TYPES.find((d) => d.value === t)?.label || t;
 
