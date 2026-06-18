@@ -25,6 +25,7 @@ const Campaign = lazy(() => import("./pages/Campaign"));
 const Admin = lazy(() => import("./pages/Admin"));
 const AnalyticsDashboard = lazy(() => import("./pages/AnalyticsDashboard"));
 const AgentApiKeys = lazy(() => import("./pages/admin/AgentApiKeys"));
+const AdminHealth = lazy(() => import("./pages/admin/Health"));
 
 const FAQ = lazy(() => import("./pages/FAQ"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
