@@ -302,6 +302,11 @@ export default function AnalysisScreen() {
     : 0;
 
   return (
+    <>
+      <Helmet>
+        {/* /resultat/:leadId innehåller personuppgifter — får inte indexeras. */}
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
     <div
       className="min-h-screen"
       style={{
