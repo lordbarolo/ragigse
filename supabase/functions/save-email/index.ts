@@ -48,15 +48,16 @@ serve(async (req) => {
 
     // SECURITY: prevent lead-email takeover. A save-email call may only set the
     // email on a lead that does NOT yet have one (or already has the same email).
-    // If a lead already has an email or is linked to an auth user, the caller
-    // must be authenticated AS that user.
+    // If the lead already has a *different* email, require the caller to be
+    // authenticated as that email.
     const { data: existingLead, error: leadFetchError } = await supabase
       .from("leads")
-      .select("id, email, user_id")
+      .select("id, email")
       .eq("id", lead_id)
       .maybeSingle();
 
     if (leadFetchError || !existingLead) {
+      console.error("Lead lookup failed:", leadFetchError);
       return new Response(
         JSON.stringify({ error: "Lead not found" }),
         { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
@@ -65,12 +66,11 @@ serve(async (req) => {
 
     const normalizedEmail = String(email).toLowerCase().trim();
     const existingEmail = existingLead.email ? String(existingLead.email).toLowerCase().trim() : null;
-    const leadHasOwner = !!existingLead.user_id || (!!existingEmail && existingEmail !== normalizedEmail);
+    const leadHasDifferentEmail = !!existingEmail && existingEmail !== normalizedEmail;
 
-    if (leadHasOwner) {
-      // Require the caller to be authenticated and to own this lead.
+    if (leadHasDifferentEmail) {
+      // Require the caller to be authenticated as the existing lead email.
       const authHeader = req.headers.get("Authorization");
-      let callerUserId: string | null = null;
       let callerEmail: string | null = null;
       if (authHeader?.startsWith("Bearer ")) {
         const anonClient = createClient(
@@ -79,12 +79,10 @@ serve(async (req) => {
           { global: { headers: { Authorization: authHeader } } }
         );
         const { data: userData } = await anonClient.auth.getUser();
-        callerUserId = userData?.user?.id ?? null;
         callerEmail = userData?.user?.email?.toLowerCase() ?? null;
       }
-      const ownsByUserId = !!callerUserId && existingLead.user_id === callerUserId;
-      const ownsByEmail = !!callerEmail && !!existingEmail && callerEmail === existingEmail;
-      if (!ownsByUserId && !ownsByEmail) {
+      const ownsByEmail = !!callerEmail && callerEmail === existingEmail;
+      if (!ownsByEmail) {
         console.warn(`[SECURITY] save-email takeover attempt blocked | lead_id=${lead_id} | ip=${clientIp}`);
         return new Response(
           JSON.stringify({ error: "Forbidden" }),
