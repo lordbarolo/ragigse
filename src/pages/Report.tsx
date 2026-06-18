@@ -64,8 +64,9 @@ export default function Report() {
       setLoading(true);
       try {
         const { data: { session } } = await supabase.auth.getSession();
+        const reportAccessToken = sessionStorage.getItem(`reportAccess:${reportId}`);
         const { data, error } = await supabase.functions.invoke("get-report", {
-          body: { report_id: reportId },
+          body: { report_id: reportId, access_token: reportAccessToken || undefined },
           headers: session?.access_token
             ? { Authorization: `Bearer ${session.access_token}` }
             : undefined,

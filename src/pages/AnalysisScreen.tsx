@@ -176,8 +176,20 @@ export default function AnalysisScreen() {
     const emailValue = email.trim().toLowerCase();
     if (!EMAIL_REGEX.test(emailValue)) return;
     setEmailSaving(true);
+    let activeReportId = reportId;
     try {
-      await saveEmail({ leadId, reportId, email: emailValue });
+      if (!activeReportId && leadId && survey) {
+        const result = await createReport({ leadId, email: emailValue, survey, track: "consultant" });
+        activeReportId = result.reportId;
+        setReportId(activeReportId);
+        sessionStorage.setItem("reportId", activeReportId);
+      }
+      if (!activeReportId) { toast.error("Kunde inte skapa rapport, försök igen."); setEmailSaving(false); return; }
+
+      const { reportAccessToken } = await saveEmail({ leadId, reportId: activeReportId, email: emailValue });
+      if (reportAccessToken) {
+        sessionStorage.setItem(`reportAccess:${activeReportId}`, reportAccessToken);
+      }
       if (survey) { sessionStorage.setItem("surveyData", JSON.stringify({ ...survey, email: emailValue })); }
       trackEvent("email_collected", { source: "analysis_screen" });
       identifyLeadWithEmail(leadId, emailValue, {
@@ -190,17 +202,6 @@ export default function AnalysisScreen() {
       setEmailSaving(false);
       return;
     }
-
-    let activeReportId = reportId;
-    if (!activeReportId && leadId && survey) {
-      try {
-        const result = await createReport({ leadId, email: emailValue, survey, track: "consultant" });
-        activeReportId = result.reportId;
-        setReportId(activeReportId);
-        sessionStorage.setItem("reportId", activeReportId);
-      } catch {}
-    }
-    if (!activeReportId) { toast.error("Kunde inte skapa rapport, försök igen."); setEmailSaving(false); return; }
     setEmailSaving(false);
     trackEvent("analysis_completed");
     trackEvent("free_report_unlocked", { source: "email_gate" });

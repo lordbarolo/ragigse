@@ -3,6 +3,25 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { checkRateLimit, rateLimitResponse } from "../_shared/rateLimit.ts";
 import { maskEmail } from "../_shared/maskEmail.ts";
 
+const encoder = new TextEncoder();
+
+async function createReportAccessToken(reportId: string, email: string): Promise<string> {
+  const expiresAt = Date.now() + 60 * 60 * 1000;
+  const payload = { report_id: reportId, email: email.toLowerCase().trim(), exp: expiresAt };
+  const payloadRaw = JSON.stringify(payload);
+  const key = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  const signature = await crypto.subtle.sign("HMAC", key, encoder.encode(payloadRaw));
+  const payloadPart = btoa(payloadRaw).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  const signaturePart = btoa(String.fromCharCode(...new Uint8Array(signature))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  return `${payloadPart}.${signaturePart}`;
+}
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -271,8 +290,10 @@ serve(async (req) => {
     }
 
     // SECURITY: never return user_id to unauthenticated callers (prevents email->UUID enumeration)
+    const accessToken = report_id ? await createReportAccessToken(report_id, normalizedEmail) : null;
+
     return new Response(
-      JSON.stringify({ ok: true }),
+      JSON.stringify({ ok: true, report_access_token: accessToken }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {

@@ -157,8 +157,25 @@ export default function Teaser() {
 
   const handleEmailSubmit = async (emailValue: string) => {
     setEmailSaving(true);
+    let activeReportId = reportId;
     try {
-      await saveEmail({ leadId, reportId, email: emailValue });
+      if (!activeReportId && leadId && survey) {
+        const result = await createReport({ leadId, email: emailValue, survey, track: "consultant" });
+        activeReportId = result.reportId;
+        setReportId(activeReportId);
+        sessionStorage.setItem("reportId", activeReportId);
+      }
+
+      if (!activeReportId) {
+        toast({ title: "Kunde inte skapa rapport, försök igen", variant: "destructive" });
+        setEmailSaving(false);
+        return;
+      }
+
+      const { reportAccessToken } = await saveEmail({ leadId, reportId: activeReportId, email: emailValue });
+      if (reportAccessToken) {
+        sessionStorage.setItem(`reportAccess:${activeReportId}`, reportAccessToken);
+      }
 
       setEmail(emailValue);
       if (survey) {
@@ -173,25 +190,6 @@ export default function Teaser() {
       });
     } catch {
       toast({ title: "Kunde inte spara e-post, försök igen", variant: "destructive" });
-      setEmailSaving(false);
-      return;
-    }
-
-    // Ensure we have a reportId
-    let activeReportId = reportId;
-    if (!activeReportId && leadId && survey) {
-      try {
-        const result = await createReport({ leadId, email: emailValue, survey, track: "consultant" });
-        activeReportId = result.reportId;
-        setReportId(activeReportId);
-        sessionStorage.setItem("reportId", activeReportId);
-      } catch {
-        // Fall through
-      }
-    }
-
-    if (!activeReportId) {
-      toast({ title: "Kunde inte skapa rapport, försök igen", variant: "destructive" });
       setEmailSaving(false);
       return;
     }
