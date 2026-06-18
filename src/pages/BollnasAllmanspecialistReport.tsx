@@ -296,7 +296,7 @@ export default function BollnasAllmanspecialistReport() {
             <Separator className="mb-6 opacity-30" />
             <div className="text-center space-y-3 pb-8">
               <CompcareLogo variant="wordmark" className="mx-auto opacity-40 !h-5" />
-              <p className="text-[11px] leading-relaxed max-w-xs mx-auto" style={{ color: '#6B7280' }}>
+              <p className="text-[11px] text-muted-foreground leading-relaxed max-w-xs mx-auto">
                 Denna rapport baseras på gällande avtal från SKR och är avsedd som vägledning.
                 Faktisk ersättning kan variera beroende på arbetsgivare, uppdrag och individuella avtal.
               </p>
