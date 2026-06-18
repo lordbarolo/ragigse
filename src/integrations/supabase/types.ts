@@ -1694,6 +1694,36 @@ export type Database = {
         }
         Relationships: []
       }
+      edge_function_errors: {
+        Row: {
+          context: Json | null
+          created_at: string
+          error_message: string
+          function_name: string
+          id: string
+          request_id: string | null
+          stack: string | null
+        }
+        Insert: {
+          context?: Json | null
+          created_at?: string
+          error_message: string
+          function_name: string
+          id?: string
+          request_id?: string | null
+          stack?: string | null
+        }
+        Update: {
+          context?: Json | null
+          created_at?: string
+          error_message?: string
+          function_name?: string
+          id?: string
+          request_id?: string | null
+          stack?: string | null
+        }
+        Relationships: []
+      }
       email_send_log: {
         Row: {
           created_at: string
@@ -5352,6 +5382,16 @@ export type Database = {
           _user_agent?: string
         }
         Returns: undefined
+      }
+      log_edge_error: {
+        Args: {
+          _context?: Json
+          _error_message: string
+          _function_name: string
+          _request_id?: string
+          _stack?: string
+        }
+        Returns: string
       }
       move_to_dlq: {
         Args: {
