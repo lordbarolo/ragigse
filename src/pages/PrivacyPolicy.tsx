@@ -186,21 +186,9 @@ const PrivacyPolicy = () => {
           <div>
             <h2 className="text-xl font-semibold text-foreground">11. Kontakt</h2>
             <p className="text-sm text-muted-foreground leading-relaxed mt-2">Har du frågor om hur vi hanterar dina uppgifter?</p>
-            <ul className="text-sm text-muted-foreground leading-relaxed mt-2 space-y-1 list-none pl-0">
-              <li>E-post: <a href="mailto:info@compcare.se" className="text-primary hover:underline">info@compcare.se</a></li>
-              <li>Ansvarigt bolag: Piemonte Invest AB (org.nr 559264-3836)</li>
-              <li>Adress: Stockholm, Sverige</li>
-            </ul>
-          </div>
-
-          <div>
-            <h2 className="text-xl font-semibold text-foreground">11. Kontakt</h2>
-            <p className="text-sm text-muted-foreground leading-relaxed mt-2">Har du frågor om hur vi hanterar dina uppgifter?</p>
-            <ul className="text-sm text-muted-foreground leading-relaxed mt-2 space-y-1 list-none pl-0">
-              <li>E-post: <a href="mailto:info@compcare.se" className="text-primary hover:underline">info@compcare.se</a></li>
-              <li>Ansvarigt bolag: Piemonte Invest AB</li>
-              <li>Adress: Stockholm, Sverige</li>
-            </ul>
+            <p className="text-sm text-muted-foreground mt-2">
+              E-post: <a href="mailto:info@compcare.se" className="text-primary hover:underline">info@compcare.se</a>
+            </p>
           </div>
 
           {user && (
