@@ -23,7 +23,7 @@ import { SEO } from "@/components/SEO";
 export default function Report() {
   const { reportId } = useParams<{ reportId: string }>();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [report, setReport] = useState<ReportData | null>(null);
   const [loading, setLoading] = useState(true);
   const [exportingPdf, setExportingPdf] = useState(false);
@@ -58,19 +58,24 @@ export default function Report() {
 
   useEffect(() => {
     if (!reportId) { navigate("/"); return; }
+    // Wait for auth init so owner detection works in get-report
+    if (authLoading) return;
     const fetchReport = async () => {
+      setLoading(true);
       try {
         const { data: { session } } = await supabase.auth.getSession();
-
         const { data, error } = await supabase.functions.invoke("get-report", {
           body: { report_id: reportId },
+          headers: session?.access_token
+            ? { Authorization: `Bearer ${session.access_token}` }
+            : undefined,
         });
         if (error || !data || data.error) { setReport(null); }
         else { setReport(data as ReportData); }
       } catch { setReport(null); } finally { setLoading(false); }
     };
     fetchReport();
-  }, [reportId, navigate]);
+  }, [reportId, navigate, authLoading, user?.id]);
 
   useEffect(() => {
     const prevHtml = document.documentElement.style.backgroundColor;
