@@ -363,7 +363,7 @@ export default function Profile() {
                       Neutralt förhandlingsstöd baserat på SKR-ramavtal. Få konkreta formuleringar och marknadsobservationer för din nästa förhandling.
                     </p>
                     <Link to="/consultant/forhandla">
-                      <Button size="sm" className="text-sm font-semibold px-6 py-3">
+                      <Button size="sm" className="text-sm font-semibold px-6 py-3 bg-gradient-to-br from-[#0d0b2a] via-[#1a1545] via-40% to-[#2a2070] text-white border-0 hover:opacity-90">
                         Öppna Löneassistenten
                         <ArrowRight className="w-4 h-4 ml-1.5" />
                       </Button>
