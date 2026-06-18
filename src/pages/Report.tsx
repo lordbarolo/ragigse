@@ -23,7 +23,7 @@ import { SEO } from "@/components/SEO";
 export default function Report() {
   const { reportId } = useParams<{ reportId: string }>();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const [report, setReport] = useState<ReportData | null>(null);
   const [loading, setLoading] = useState(true);
   const [exportingPdf, setExportingPdf] = useState(false);
@@ -58,19 +58,24 @@ export default function Report() {
 
   useEffect(() => {
     if (!reportId) { navigate("/"); return; }
+    // Wait for auth init so owner detection works in get-report
+    if (authLoading) return;
     const fetchReport = async () => {
+      setLoading(true);
       try {
         const { data: { session } } = await supabase.auth.getSession();
-
         const { data, error } = await supabase.functions.invoke("get-report", {
           body: { report_id: reportId },
+          headers: session?.access_token
+            ? { Authorization: `Bearer ${session.access_token}` }
+            : undefined,
         });
         if (error || !data || data.error) { setReport(null); }
         else { setReport(data as ReportData); }
       } catch { setReport(null); } finally { setLoading(false); }
     };
     fetchReport();
-  }, [reportId, navigate]);
+  }, [reportId, navigate, authLoading, user?.id]);
 
   useEffect(() => {
     const prevHtml = document.documentElement.style.backgroundColor;
@@ -109,6 +114,7 @@ export default function Report() {
   }
 
   const r = report.result_json;
+  const hasFullAccess = !!r;
   const isEmployee = report.employment_type === "anstalld";
   const isFriendCoupon = getCouponCode()?.toLowerCase() === "vänner500";
 
@@ -218,20 +224,43 @@ export default function Report() {
         {/* Förklaring: möjlig ersättning */}
         <PossibleCompensationInfo variant="report" />
 
-        <ConsultantTrackContent
-          r={r}
-          isFullAccess={true}
-          isEmployee={isEmployee}
-          occupation={report.occupation}
-          kommun={report.kommun}
-          zoneComparisons={report.zone_comparisons}
-          userZone={report.user_zone}
-          registerSectionRef={registerSectionRef}
-          leadId={report.lead_id}
-          email={report.email}
-          reportId={report.id}
-          priceHistory={report.price_history}
-        />
+        {hasFullAccess ? (
+          <ConsultantTrackContent
+            r={r}
+            isFullAccess={true}
+            isEmployee={isEmployee}
+            occupation={report.occupation}
+            kommun={report.kommun}
+            zoneComparisons={report.zone_comparisons}
+            userZone={report.user_zone}
+            registerSectionRef={registerSectionRef}
+            leadId={report.lead_id}
+            email={report.email}
+            reportId={report.id}
+            priceHistory={report.price_history}
+          />
+        ) : (
+          <div
+            className="rounded-2xl border p-5 mt-2"
+            style={{ backgroundColor: '#FFFFFF', borderColor: '#E0DBD3' }}
+          >
+            <h3 className="font-semibold mb-1" style={{ fontFamily: 'Georgia, serif', fontSize: '18px', color: '#0A0A0A' }}>
+              Logga in för att se din analys
+            </h3>
+            <p className="text-sm mb-4" style={{ color: '#6B7280' }}>
+              Denna rapport innehåller personuppgifter och visas endast för rapportens ägare.
+              Logga in med den e-post du angav när rapporten skapades.
+            </p>
+            <Link
+              to={`/logga-in?redirect=${encodeURIComponent(`/rapport/${reportId}`)}`}
+              className="inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 rounded-lg"
+              style={{ backgroundColor: '#3D3491', color: '#FFFFFF' }}
+            >
+              Logga in
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        )}
 
 
 
@@ -259,7 +288,7 @@ export default function Report() {
         )}
 
         {/* Utility actions */}
-        <div className="flex gap-3 pt-2" data-pdf-hide>
+        <div className="flex gap-3 pt-2" data-pdf-hide style={{ display: hasFullAccess ? undefined : 'none' }}>
           {!isFriendCoupon && (
             <Button
               variant="outline"
