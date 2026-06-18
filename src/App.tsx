@@ -118,7 +118,7 @@ const App = () => (
               <Route path="/b2b" element={<Navigate to="/" replace />} />
               <Route path="/profil" element={<Navigate to="/consultant/profil" replace />} />
               <Route path="/consultant/salary-check" element={<Navigate to="/" replace />} />
-              <Route path="/consultant/forhandla" element={<Navigate to="/" replace />} />
+              <Route path="/consultant/forhandla" element={<ProtectedRoute><Negotiate /></ProtectedRoute>} />
               <Route path="/consultant/fakturakontroll/*" element={<Navigate to="/" replace />} />
               <Route path="/consultant/ersattning" element={<Navigate to="/" replace />} />
               <Route path="/consultant/referenser" element={<Navigate to="/" replace />} />
