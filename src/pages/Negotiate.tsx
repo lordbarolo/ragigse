@@ -49,11 +49,14 @@ export default function Negotiate() {
     trackEvent("product_page_viewed", { product: "forhandlingscoachen" });
   }, []);
 
-  // Load profile data for authenticated users
+  // Load profile data for authenticated users; fall back to latest report when
+  // consultant_profiles is empty (the report carries the full sub-specialty).
   useEffect(() => {
     if (!user || profileLoaded) return;
 
     const loadProfile = async () => {
+      const updates: Record<string, unknown> = {};
+
       const { data } = await supabase
         .from("consultant_profiles")
         .select("specialty_id, region_id, employment_type, current_hourly_rate, current_monthly_salary, experience_years, salary_type")
@@ -61,9 +64,6 @@ export default function Negotiate() {
         .maybeSingle();
 
       if (data) {
-        const updates: Record<string, unknown> = {};
-
-        // Resolve specialty name
         if (data.specialty_id) {
           const { data: spec } = await supabase
             .from("specialties")
@@ -73,7 +73,6 @@ export default function Negotiate() {
           if (spec?.name) updates.role = spec.name;
         }
 
-        // Resolve region/kommun
         if (data.region_id) {
           const { data: region } = await supabase
             .from("regions")
@@ -87,16 +86,42 @@ export default function Negotiate() {
         if (data.current_hourly_rate) updates.current_rate = data.current_hourly_rate;
         if (data.current_monthly_salary) updates.current_salary = data.current_monthly_salary;
         if (data.experience_years) updates.experience_years = data.experience_years;
+      }
 
-        if (Object.keys(updates).length > 0) {
-          updateContext(updates);
+      // Fallback to the user's latest report — same `occupation` (full sub-specialty)
+      // and `kommun` that the price-engine used. This guarantees the negotiation
+      // agent looks up the SAME `rates` row as the report.
+      if (!updates.role || !updates.geography) {
+        const { data: latestReport } = await supabase
+          .from("reports")
+          .select("occupation, kommun, employment_type, result_json, created_at")
+          .eq("user_id", user.id)
+          .order("created_at", { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        if (latestReport) {
+          if (!updates.role && latestReport.occupation) updates.role = latestReport.occupation;
+          if (!updates.geography && latestReport.kommun) updates.geography = latestReport.kommun;
+          if (!updates.employment_type && latestReport.employment_type) updates.employment_type = latestReport.employment_type;
+
+          const inputs = (latestReport.result_json as { inputs?: { current_salary_sek?: number; salary_type?: string } } | null)?.inputs;
+          if (inputs?.current_salary_sek && !updates.current_rate && !updates.current_salary) {
+            if (inputs.salary_type === "hourly") updates.current_rate = inputs.current_salary_sek;
+            else updates.current_salary = inputs.current_salary_sek;
+          }
         }
+      }
+
+      if (Object.keys(updates).length > 0) {
+        updateContext(updates);
       }
       setProfileLoaded(true);
     };
 
     loadProfile();
   }, [user, profileLoaded, updateContext]);
+
 
   // Pre-fill context from URL params
   useEffect(() => {
