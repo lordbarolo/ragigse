@@ -1,6 +1,35 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
+const encoder = new TextEncoder();
+
+function decodeBase64Url(value: string): string {
+  const base64 = value.replace(/-/g, "+").replace(/_/g, "/");
+  const padded = base64.padEnd(Math.ceil(base64.length / 4) * 4, "=");
+  return atob(padded);
+}
+
+async function verifyReportAccessToken(token: string, reportId: string): Promise<string | null> {
+  const [payloadPart, signaturePart] = token.split(".");
+  if (!payloadPart || !signaturePart) return null;
+
+  const payloadRaw = decodeBase64Url(payloadPart);
+  const key = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["verify"]
+  );
+  const signatureRaw = Uint8Array.from(decodeBase64Url(signaturePart), (c) => c.charCodeAt(0));
+  const valid = await crypto.subtle.verify("HMAC", key, signatureRaw, encoder.encode(payloadRaw));
+  if (!valid) return null;
+
+  const payload = JSON.parse(payloadRaw) as { report_id?: string; email?: string; exp?: number };
+  if (payload.report_id !== reportId || !payload.email || !payload.exp || payload.exp < Date.now()) return null;
+  return payload.email.toLowerCase().trim();
+}
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
@@ -13,7 +42,7 @@ serve(async (req) => {
   }
 
   try {
-    const { report_id } = await req.json();
+    const { report_id, access_token } = await req.json();
 
     if (!report_id) {
       return new Response(JSON.stringify({ error: "Missing report_id" }), {
@@ -62,7 +91,17 @@ serve(async (req) => {
     const isPaid = report.status === "paid";
     const isReferralUnlocked = report.unlocked_by_referral === true;
     const isOwner = !!authUserId && report.user_id === authUserId;
-    const fullAccess = isPaid || isReferralUnlocked || isOwner;
+    let isTokenUnlocked = false;
+    if (typeof access_token === "string" && access_token.length > 0) {
+      try {
+        const tokenEmail = await verifyReportAccessToken(access_token, report_id);
+        const reportEmail = report.email ? String(report.email).toLowerCase().trim() : null;
+        isTokenUnlocked = !!tokenEmail && !!reportEmail && tokenEmail === reportEmail;
+      } catch (tokenError) {
+        console.warn("Invalid report access token", tokenError);
+      }
+    }
+    const fullAccess = isPaid || isReferralUnlocked || isOwner || isTokenUnlocked;
 
     // Build response based on access level. Email is only returned to the authenticated owner.
     const response: Record<string, unknown> = {
@@ -73,7 +112,7 @@ serve(async (req) => {
       employment_type: report.employment_type,
       kommun: report.kommun,
       experience: report.experience,
-      email: isOwner ? report.email : null,
+      email: isOwner || isTokenUnlocked ? report.email : null,
       ab_variant: report.ab_variant || "A",
       unlocked_by_referral: isReferralUnlocked,
     };
