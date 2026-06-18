@@ -41,6 +41,7 @@ export default function AnalysisScreen() {
   const [reportId, setReportId] = useState("");
   const [email, setEmail] = useState("");
   const [emailSaving, setEmailSaving] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const [userZone, setUserZone] = useState<string | null>(null);
   const [userRegion, setUserRegion] = useState<string | null>(null);
@@ -73,8 +74,14 @@ export default function AnalysisScreen() {
         }
         sessionStorage.setItem("leadId", rid);
         sessionStorage.setItem("surveyData", JSON.stringify(surveyData));
-      }).catch(() => {
-        navigate("/");
+      }).catch((err) => {
+        console.error("[AnalysisScreen] fetchLead failed", err);
+        try {
+          import("@/lib/posthog").then(({ default: posthog }) => {
+            posthog.capture?.("analysis_error", { phase: "fetch_lead", message: String(err?.message ?? err) });
+          });
+        } catch { /* silent */ }
+        setLoadError("Vi kunde inte hämta din analys just nu.");
       });
     }
 
