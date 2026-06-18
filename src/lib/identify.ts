@@ -11,7 +11,14 @@ export function identifyUser(
   properties?: Record<string, string | number | boolean | null | undefined>
 ) {
   try {
-    posthog.identify(userId, properties);
+    // If we already aliased an anonymous session to a leadId, stitch the
+    // user.id onto that same person so the funnel (anon → lead → user) stays
+    // a single PostHog person instead of fragmenting into two.
+    const leadId = sessionStorage.getItem("leadId");
+    if (leadId && leadId !== userId) {
+      try { posthog.alias(userId, leadId); } catch { /* silent */ }
+    }
+    posthog.identify(userId, { ...(properties || {}), lead_id: leadId ?? undefined });
   } catch {
     /* silent */
   }
@@ -42,6 +49,30 @@ export function aliasLead(
     } else {
       posthog.setPersonProperties({ lead_id: leadId });
     }
+  } catch {
+    /* silent */
+  }
+}
+
+/**
+ * Attaches email + optional metadata to the current PostHog person
+ * (which should already be a lead via aliasLead). Does NOT change distinct_id —
+ * we keep lead_id as the stable identifier so the full anonymous → lead → user
+ * funnel stays stitched together.
+ */
+export function identifyLeadWithEmail(
+  leadId: string,
+  email: string,
+  extra?: Record<string, string | number | boolean | null | undefined>
+) {
+  try {
+    posthog.identify(leadId, {
+      email,
+      lead_id: leadId,
+      email_collected_at: new Date().toISOString(),
+      ...(extra || {}),
+    });
+    posthog.register({ email });
   } catch {
     /* silent */
   }

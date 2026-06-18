@@ -7,6 +7,7 @@ import type { SurveyData } from "@/components/Survey";
 import { Mail, ArrowRight, Zap, ChevronUp } from "lucide-react";
 import NegotiationAssistantTeaser from "@/components/teaser/NegotiationAssistantTeaser";
 import { fetchLead, leadToSurvey, createReport, saveEmail } from "@/services/leadService";
+import { identifyLeadWithEmail } from "@/lib/identify";
 import Navbar from "@/components/Navbar";
 import CompcareLogo from "@/components/CompcareLogo";
 import {
@@ -164,6 +165,11 @@ export default function AnalysisScreen() {
       await saveEmail({ leadId, reportId, email: emailValue });
       if (survey) { sessionStorage.setItem("surveyData", JSON.stringify({ ...survey, email: emailValue })); }
       trackEvent("email_collected", { source: "analysis_screen" });
+      identifyLeadWithEmail(leadId, emailValue, {
+        yrke: survey?.yrke ?? null,
+        kommun: survey?.kommun ?? null,
+        employment_type: survey?.employmentType ?? null,
+      });
     } catch {
       toast.error("Kunde inte spara e-post, försök igen.");
       setEmailSaving(false);
