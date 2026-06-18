@@ -79,7 +79,8 @@ type EventName =
   | "other_role_requested"
   | "cta_clicked"
   | "rage_click"
-  | "dead_click";
+  | "dead_click"
+  | "survey_abandoned";
 
 function isInternalTraffic(): boolean {
   const host = window.location.hostname;

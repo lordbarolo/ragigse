@@ -85,6 +85,7 @@ const ALLOWED_EVENTS = new Set([
   "cta_clicked",
   "rage_click",
   "dead_click",
+  "survey_abandoned",
 ]);
 
 serve(async (req) => {

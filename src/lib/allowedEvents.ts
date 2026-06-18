@@ -77,6 +77,7 @@ export const ALLOWED_EVENTS = [
   "cta_clicked",
   "rage_click",
   "dead_click",
+  "survey_abandoned",
 ] as const;
 
 export type AllowedEventName = (typeof ALLOWED_EVENTS)[number];
