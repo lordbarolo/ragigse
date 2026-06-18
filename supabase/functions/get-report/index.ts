@@ -85,12 +85,13 @@ serve(async (req) => {
       });
     }
 
-    // Determine access level — full access requires payment, referral unlock, or ownership.
-    // Rapporter innehåller personuppgifter (lön, region, yrke) och får INTE vara öppna
-    // för alla med UUID. Endast ägare, betald, eller referral-unlocked får fullt innehåll.
+    // Determine access level — the free report is unlocked once an email has been saved.
+    // Do not require account ownership here: report delivery links and the email gate must
+    // open the same full report across tabs/devices without forcing a login.
     const isPaid = report.status === "paid";
     const isReferralUnlocked = report.unlocked_by_referral === true;
     const isOwner = !!authUserId && report.user_id === authUserId;
+    const isEmailUnlocked = !!report.email;
     let isTokenUnlocked = false;
     if (typeof access_token === "string" && access_token.length > 0) {
       try {
@@ -101,7 +102,7 @@ serve(async (req) => {
         console.warn("Invalid report access token", tokenError);
       }
     }
-    const fullAccess = isPaid || isReferralUnlocked || isOwner || isTokenUnlocked;
+    const fullAccess = isPaid || isReferralUnlocked || isOwner || isEmailUnlocked || isTokenUnlocked;
 
     // Build response based on access level. Email is only returned to the authenticated owner.
     const response: Record<string, unknown> = {
@@ -112,7 +113,7 @@ serve(async (req) => {
       employment_type: report.employment_type,
       kommun: report.kommun,
       experience: report.experience,
-      email: isOwner || isTokenUnlocked ? report.email : null,
+      email: fullAccess ? report.email : null,
       ab_variant: report.ab_variant || "A",
       unlocked_by_referral: isReferralUnlocked,
     };
