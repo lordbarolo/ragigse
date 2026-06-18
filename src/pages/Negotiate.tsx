@@ -277,7 +277,7 @@ export default function Negotiate() {
               <Button
                 onClick={handleEmailGate}
                 disabled={gateLoading}
-                className="w-full"
+                className="w-full text-sm font-semibold px-6 py-3 bg-gradient-to-br from-[#0d0b2a] via-[#1a1545] via-40% to-[#2a2070] text-white border-0 hover:opacity-90"
               >
                 {gateLoading ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
