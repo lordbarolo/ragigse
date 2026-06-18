@@ -166,6 +166,11 @@ export default function Teaser() {
         sessionStorage.setItem("surveyData", JSON.stringify(updated));
       }
       trackEvent("email_collected", { source: "teaser" });
+      identifyLeadWithEmail(leadId, emailValue, {
+        yrke: survey?.yrke ?? null,
+        kommun: survey?.kommun ?? null,
+        employment_type: survey?.employmentType ?? null,
+      });
     } catch {
       toast({ title: "Kunde inte spara e-post, försök igen", variant: "destructive" });
       setEmailSaving(false);
