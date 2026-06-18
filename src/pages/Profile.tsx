@@ -333,6 +333,12 @@ export default function Profile() {
                 employmentType={profile?.employment_type || null}
               />
 
+              {/* Pensionssimulator */}
+              <PensionImpactSimulator
+                initialSalary={profile?.current_monthly_salary || 55000}
+              />
+
+
               {/* Insights */}
               <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
                 <CardContent className="pt-6">
@@ -409,13 +415,9 @@ export default function Profile() {
                   </Link>
                 </CardContent>
               </Card>
-            </div>
-
-            <PensionImpactSimulator
-              initialSalary={profile?.current_monthly_salary || 55000}
-            />
           </div>
         )}
+
 
         {/* === CREDS (verifications + documents + references) === */}
         {activeTab === "creds" && (
