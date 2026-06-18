@@ -138,18 +138,22 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
 
   useEffect(() => {
     stepEntryTime.current = Date.now();
+    const stepName = STEP_NAMES[step - 1] || `step_${step}`;
     trackEvent("survey_step_viewed", {
       step_number: step,
-      step_name: STEP_NAMES[step - 1] || `step_${step}`,
+      step_name: stepName,
     });
+    const stop = startAbandonWatcher({ step, stepName });
+    return stop;
   }, [step]);
 
   const trackStepCompleted = useCallback((stepNum: number, stepAnswer?: string | number) => {
-    const timeOnStep = Math.round((Date.now() - stepEntryTime.current) / 1000);
+    const timeOnStepMs = Date.now() - stepEntryTime.current;
     trackEvent("survey_step_completed", {
       step_number: stepNum,
       step_name: STEP_NAMES[stepNum - 1] || `step_${stepNum}`,
-      time_on_step_seconds: timeOnStep,
+      time_on_step_seconds: Math.round(timeOnStepMs / 1000),
+      time_on_step_ms: timeOnStepMs,
       step_answer: stepAnswer ?? null,
     });
   }, []);
