@@ -514,6 +514,7 @@ export default function AnalysisScreen() {
 
       </main>
     </div>
+    </>
   );
 }
 
