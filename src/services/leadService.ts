@@ -71,9 +71,10 @@ export async function saveEmail(params: {
   leadId: string;
   reportId: string;
   email: string;
-}): Promise<void> {
-  const { error } = await supabase.functions.invoke("save-email", {
+}): Promise<{ reportAccessToken: string | null }> {
+  const { data, error } = await supabase.functions.invoke("save-email", {
     body: { lead_id: params.leadId, report_id: params.reportId, email: params.email },
   });
   if (error) throw error;
+  return { reportAccessToken: data?.report_access_token || null };
 }
