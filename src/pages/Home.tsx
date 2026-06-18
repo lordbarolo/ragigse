@@ -88,7 +88,7 @@ export default function Home() {
               <p className="font-editorial text-lg sm:text-xl text-black/75 leading-relaxed max-w-[460px]">
                 Se vad regionen betalar, vad marknaden kan ge och vad du kan tjäna.
               </p>
-              <ul className="mt-6 space-y-2 max-w-[460px]">
+              <ul className="mt-6 space-y-2 max-w-[460px] hidden lg:block">
                 <li className="flex items-start gap-2 text-base text-[#6B6B6B]">
                   <Check className="w-5 h-5 shrink-0 mt-0.5" style={{ color: "hsl(160,80%,50%)" }} />
                   <span>Baserat på SKR:s offentliga ramavtalspriser</span>
