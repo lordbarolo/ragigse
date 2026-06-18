@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Check } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 import InlineTerminalSurvey from "@/components/survey/InlineTerminalSurvey";
 import RoleCarousel from "@/components/landing/RoleCarousel";
