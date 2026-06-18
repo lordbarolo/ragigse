@@ -266,98 +266,120 @@ export default function Profile() {
 
       <Navbar />
 
-      <div className="relative pt-20 pb-12 px-4 max-w-5xl mx-auto space-y-5">
+      <div className="relative pt-20 pb-12 px-4 max-w-7xl mx-auto space-y-5">
         {/* Tabs (flyttad överst) */}
         <ProfileTabs active={activeTab} onChange={setActiveTab} />
 
         {/* === OVERVIEW === */}
         {activeTab === "overview" && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-            {/* Left column (2/3) */}
-            <div className="lg:col-span-2 space-y-5">
-              {/* Personliga uppgifter (header + identity merged) */}
-              <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
-                <CardHeader>
-                  <CardTitle className="text-base flex items-center gap-2 text-slate-900">
-                    <User className="w-4 h-4 text-primary" />
-                    Personliga uppgifter
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {/* Identity row: avatar + name + email */}
-                  <div className="flex items-center gap-3 pb-3 mb-3 border-b border-slate-200">
-                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <span className="text-base font-semibold text-primary">{initials}</span>
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-sm font-semibold text-slate-900 truncate">{displayName}</p>
-                      <p className="text-xs text-slate-500 truncate inline-flex items-center gap-1.5">
-                        <Mail className="w-3 h-3" /> {user?.email || "–"}
-                      </p>
-                    </div>
+          <div className="space-y-5">
+            {/* Personliga uppgifter — full width on top */}
+            <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2 text-slate-900">
+                  <User className="w-4 h-4 text-primary" />
+                  Personliga uppgifter
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {/* Identity row: avatar + name + email */}
+                <div className="flex items-center gap-3 pb-3 mb-3 border-b border-slate-200">
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                    <span className="text-base font-semibold text-primary">{initials}</span>
                   </div>
-
-                  {/* Meta details */}
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center gap-2 text-slate-600">
-                      <Briefcase className="w-4 h-4" /> {profile?.specialty_name || "–"}
-                    </div>
-                    <div className="flex items-center gap-2 text-slate-600">
-                      <MapPin className="w-4 h-4" /> {profile?.region_name || "–"}
-                    </div>
-                    <div className="flex items-center gap-2 text-slate-600">
-                      <Users className="w-4 h-4" /> 0 kopplingar
-                    </div>
-                    {profile?.experience_years != null && (
-                      <div className="flex items-center gap-2 text-slate-600">
-                        <Clock className="w-4 h-4" /> {profile.experience_years} års erfarenhet
-                      </div>
-                    )}
-                    {profile && (
-                      <div className="flex items-center gap-2 text-slate-600">
-                        <FileText className="w-4 h-4" /> {employmentLabel(profile.employment_type)}
-                        {profile.salary_type === "hourly" && profile.current_hourly_rate
-                          ? ` · ${formatSalary(profile.current_hourly_rate)} kr/h`
-                          : profile.current_monthly_salary
-                            ? ` · ${formatSalary(profile.current_monthly_salary)} kr/mån`
-                            : ""}
-                      </div>
-                    )}
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-slate-900 truncate">{displayName}</p>
+                    <p className="text-xs text-slate-500 truncate inline-flex items-center gap-1.5">
+                      <Mail className="w-3 h-3" /> {user?.email || "–"}
+                    </p>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
 
-              {/* Compensation view */}
-              <CompensationView
-                role={profile?.specialty_name || null}
-                location={profile?.region_name || null}
-                employmentType={profile?.employment_type || null}
-              />
+                {/* Meta details */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                  <div className="flex items-center gap-2 text-slate-600">
+                    <Briefcase className="w-4 h-4" /> {profile?.specialty_name || "–"}
+                  </div>
+                  <div className="flex items-center gap-2 text-slate-600">
+                    <MapPin className="w-4 h-4" /> {profile?.region_name || "–"}
+                  </div>
+                  <div className="flex items-center gap-2 text-slate-600">
+                    <Users className="w-4 h-4" /> 0 kopplingar
+                  </div>
+                  {profile?.experience_years != null && (
+                    <div className="flex items-center gap-2 text-slate-600">
+                      <Clock className="w-4 h-4" /> {profile.experience_years} års erfarenhet
+                    </div>
+                  )}
+                  {profile && (
+                    <div className="flex items-center gap-2 text-slate-600">
+                      <FileText className="w-4 h-4" /> {employmentLabel(profile.employment_type)}
+                      {profile.salary_type === "hourly" && profile.current_hourly_rate
+                        ? ` · ${formatSalary(profile.current_hourly_rate)} kr/h`
+                        : profile.current_monthly_salary
+                          ? ` · ${formatSalary(profile.current_monthly_salary)} kr/mån`
+                          : ""}
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
 
-              {/* Pensionssimulator */}
-              <PensionImpactSimulator
-                initialSalary={profile?.current_monthly_salary || 55000}
-              />
+            {/* Two-column grid on desktop, single column on mobile */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+              {/* Left column */}
+              <div className="space-y-5">
+                {/* Compensation view */}
+                <CompensationView
+                  role={profile?.specialty_name || null}
+                  location={profile?.region_name || null}
+                  employmentType={profile?.employment_type || null}
+                />
 
+                {/* Insights */}
+                <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
+                  <CardContent className="pt-6">
+                    <ProfileInsights
+                      specialtyName={profile?.specialty_name || null}
+                      regionName={profile?.region_name || null}
+                      employmentType={profile?.employment_type || null}
+                    />
+                  </CardContent>
+                </Card>
+              </div>
 
-              {/* Insights */}
-              <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
-                <CardContent className="pt-6">
-                  <ProfileInsights
-                    specialtyName={profile?.specialty_name || null}
-                    regionName={profile?.region_name || null}
-                    employmentType={profile?.employment_type || null}
-                  />
-                </CardContent>
-              </Card>
+              {/* Right column */}
+              <div className="space-y-5">
+                {/* Löneassistenten */}
+                <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
+                  <CardHeader>
+                    <CardTitle className="text-base flex items-center gap-2 text-slate-900">
+                      <MessageSquare className="w-4 h-4 text-primary" />
+                      Löneassistenten
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-slate-600 mb-4">
+                      Neutralt förhandlingsstöd baserat på SKR-ramavtal. Få konkreta formuleringar och marknadsobservationer för din nästa förhandling.
+                    </p>
+                    <Link to="/consultant/forhandla">
+                      <Button size="sm" className="text-sm font-semibold px-6 py-3">
+                        Öppna Löneassistenten
+                        <ArrowRight className="w-4 h-4 ml-1.5" />
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+
+                {/* Pensionssimulator */}
+                <PensionImpactSimulator
+                  initialSalary={profile?.current_monthly_salary || 55000}
+                />
+              </div>
             </div>
-
-            {/* Right column (1/3) */}
-            <div className="space-y-5">
-            </div>
-
           </div>
         )}
+
 
         {/* === WORK === */}
         {activeTab === "work" && (
