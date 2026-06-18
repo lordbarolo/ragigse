@@ -1665,9 +1665,10 @@ export type Database = {
         Row: {
           created_at: string
           document_ids: string[]
-          expires_at: string
+          expires_at: string | null
           id: string
           last_viewed_at: string | null
+          recipient_email: string | null
           recipient_label: string | null
           token: string
           user_id: string
@@ -1676,9 +1677,10 @@ export type Database = {
         Insert: {
           created_at?: string
           document_ids: string[]
-          expires_at: string
+          expires_at?: string | null
           id?: string
           last_viewed_at?: string | null
+          recipient_email?: string | null
           recipient_label?: string | null
           token: string
           user_id: string
@@ -1687,9 +1689,10 @@ export type Database = {
         Update: {
           created_at?: string
           document_ids?: string[]
-          expires_at?: string
+          expires_at?: string | null
           id?: string
           last_viewed_at?: string | null
+          recipient_email?: string | null
           recipient_label?: string | null
           token?: string
           user_id?: string
@@ -5332,18 +5335,32 @@ export type Database = {
         Args: { _daily_limit?: number; _user_id: string }
         Returns: Json
       }
-      create_document_share: {
-        Args: {
-          _document_ids: string[]
-          _expires_in_hours: number
-          _recipient_label?: string
-        }
-        Returns: {
-          expires_at: string
-          id: string
-          token: string
-        }[]
-      }
+      create_document_share:
+        | {
+            Args: {
+              _document_ids: string[]
+              _expires_in_hours: number
+              _recipient_label?: string
+            }
+            Returns: {
+              expires_at: string
+              id: string
+              token: string
+            }[]
+          }
+        | {
+            Args: {
+              _document_ids: string[]
+              _expires_in_hours: number
+              _recipient_email?: string
+              _recipient_label?: string
+            }
+            Returns: {
+              expires_at: string
+              id: string
+              token: string
+            }[]
+          }
       create_org_with_admin: {
         Args: { _name: string; _org_number?: string; _type?: string }
         Returns: string
