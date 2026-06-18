@@ -35,7 +35,7 @@ export default function BottomCTA() {
             Hur fungerar det?
           </a>
         </div>
-        <p className="mt-5 text-sm md:text-xs text-foreground/35">Ingen registrering krävs · Dina uppgifter lagras inte</p>
+        <p className="mt-5 text-sm md:text-xs text-muted-foreground">Ingen registrering krävs · Dina uppgifter lagras inte</p>
       </div>
     </section>
   );

@@ -296,7 +296,7 @@ export default function AnalysisScreen() {
                 </p>
               </div>
               <div className="relative flex items-center">
-                <Mail className="absolute left-4 w-4 h-4 text-foreground/30 pointer-events-none" />
+                <Mail className="absolute left-4 w-4 h-4 text-muted-foreground pointer-events-none" />
                 <input
                   type="email"
                   inputMode="email"
@@ -305,7 +305,7 @@ export default function AnalysisScreen() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   onKeyDown={(e) => { if (e.key === "Enter" && validEmail && !emailSaving) handleEmailSubmit(); }}
-                  className="w-full bg-background/60 border-[1.5px] border-foreground/[0.12] rounded-xl text-foreground font-body text-[16px] py-3.5 pl-11 pr-4 outline-none transition-all focus:border-primary placeholder:text-foreground/35"
+                  className="w-full bg-background/60 border-[1.5px] border-foreground/[0.12] rounded-xl text-foreground font-body text-[16px] py-3.5 pl-11 pr-4 outline-none transition-all focus:border-primary placeholder:text-muted-foreground"
                 />
               </div>
               {validEmail && !emailSaving && (

@@ -340,7 +340,7 @@ export default function InlineTerminalSurvey({
   const stepTextColor = isLight ? "text-[#1A1A1A]" : "text-white";
   const backBtnColor = isLight
     ? "text-[#9CA3AF] hover:text-[#4B5563]"
-    : "text-white/40 hover:text-white/80";
+    : "text-white/70 hover:text-white";
 
   return (
     <SurveyThemeContext.Provider value={variant}>
@@ -382,11 +382,11 @@ export default function InlineTerminalSurvey({
                   />
                     <p
                       className={`mt-4 text-[11px] text-center font-sans ${
-                      isLight ? "text-[#9CA3AF]" : "text-white/40"
+                      isLight ? "text-[#9CA3AF]" : "text-white/70"
                     }`}
-                  >
-                    Anonymt · Kostnadsfritt · Klart på 60 sekunder
-                  </p>
+                    >
+                      Anonymt · Kostnadsfritt · Klart på 60 sekunder
+                    </p>
                 </Step>
               )}
 
@@ -490,12 +490,12 @@ export default function InlineTerminalSurvey({
                         className={`w-full h-14 border rounded-lg px-4 pr-16 text-base font-sans transition-colors focus:outline-none focus:ring-2 focus:ring-[#534AB7] ${
                           isLight
                             ? "bg-[#FAFAFA] border-[#E5E5E5] text-[#1A1A1A] placeholder:text-[#9CA3AF] focus:bg-white"
-                            : "bg-white/[0.04] border-white/10 text-white placeholder:text-white/30 focus:bg-white/[0.06]"
+                            : "bg-white/[0.04] border-white/10 text-white placeholder:text-white/50 focus:bg-white/[0.06]"
                         }`}
                       />
                       <span
                         className={`absolute right-4 top-1/2 -translate-y-1/2 text-[12px] font-mono pointer-events-none ${
-                          isLight ? "text-[#9CA3AF]" : "text-white/40"
+                          isLight ? "text-[#9CA3AF]" : "text-white/70"
                         }`}
                       >
                         {salaryUnit}
@@ -653,7 +653,7 @@ function ChoiceCard({
     : "bg-violet-500/20 text-violet-200";
 
   const titleColor = isLight ? "text-[#1A1A1A]" : "text-white";
-  const subColor = isLight ? "text-[#9CA3AF]" : "text-white/40";
+  const subColor = isLight ? "text-[#9CA3AF]" : "text-white/70";
 
   return (
     <button
@@ -712,7 +712,7 @@ function RoleCategoryCards({
   const mutedTitle = isLight ? "text-[#6B7280]" : "text-white/60";
   const inputClass = isLight
     ? "w-full h-11 border border-[#E5E5E5] bg-[#FAFAFA] text-[#1A1A1A] placeholder:text-[#9CA3AF] rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#534AB7] focus:bg-white"
-    : "w-full h-11 border border-white/10 bg-white/[0.04] text-white placeholder:text-white/30 rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#534AB7]";
+    : "w-full h-11 border border-white/10 bg-white/[0.04] text-white placeholder:text-white/50 rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#534AB7]";
 
   const submitOther = async () => {
     if (!canSubmit) return;
