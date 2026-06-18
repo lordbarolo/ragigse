@@ -712,7 +712,7 @@ function RoleCategoryCards({
   const mutedTitle = isLight ? "text-[#6B7280]" : "text-white/60";
   const inputClass = isLight
     ? "w-full h-11 border border-[#E5E5E5] bg-[#FAFAFA] text-[#1A1A1A] placeholder:text-[#9CA3AF] rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#534AB7] focus:bg-white"
-    : "w-full h-11 border border-white/10 bg-white/[0.04] text-white placeholder:text-white/30 rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#534AB7]";
+    : "w-full h-11 border border-white/10 bg-white/[0.04] text-white placeholder:text-white/50 rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#534AB7]";
 
   const submitOther = async () => {
     if (!canSubmit) return;
