@@ -214,8 +214,23 @@ async function sendAlertEmail(failures: CheckResult[], alertId: string): Promise
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
-  const guard = await requireCronOrAdmin(req);
-  if (guard) return guard;
+  // Accept either a cron-token (from pg_cron via Vault) or an admin user / service role.
+  const cronToken = req.headers.get("x-cron-token");
+  if (cronToken) {
+    const supabaseAdmin = createClient(SUPABASE_URL, SERVICE_KEY);
+    const { data } = await supabaseAdmin
+      .rpc("get_health_check_cron_token")
+      .single<string>();
+    if (!data || cronToken !== data) {
+      return new Response(JSON.stringify({ error: "Invalid cron token" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+  } else {
+    const guard = await requireCronOrAdmin(req);
+    if (guard) return guard;
+  }
 
   const supabase = createClient(SUPABASE_URL, SERVICE_KEY);
   const checks: CheckResult[] = [];
