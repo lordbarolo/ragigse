@@ -93,7 +93,7 @@ async function checkSaveEmail(): Promise<CheckResult> {
 // 2. get-report: bogus id -> expect 4xx
 async function checkGetReport(): Promise<CheckResult> {
   const { result, ms } = await timed(async () => {
-    return fetch(`${SUPABASE_URL}/functions/v1/get-report`, {
+    return fetchWithRetry(() => fetch(`${SUPABASE_URL}/functions/v1/get-report`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -101,7 +101,7 @@ async function checkGetReport(): Promise<CheckResult> {
         Authorization: `Bearer ${ANON_KEY}`,
       },
       body: JSON.stringify({ report_id: "00000000-0000-0000-0000-000000000000" }),
-    });
+    }));
   });
   const txt = await result.text().catch(() => "");
   if (result.status >= 500) {
