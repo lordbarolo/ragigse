@@ -263,22 +263,39 @@ Deno.serve(async (req) => {
   const alertId = `hc_${Date.now().toString(36)}`;
   let alertSentAt: string | null = null;
 
-  // De-dup: only send email if no alert with same failing checks in last 60 min
+  // Gate 1: require 2-in-a-row failures per check before alerting (filters transient blips).
+  // Gate 2: de-dup — skip if same check already alerted within last 60 min.
   if (failures.length > 0) {
-    const sinceMs = new Date(Date.now() - 60 * 60 * 1000).toISOString();
-    const { data: recent } = await supabase
+    // Look up previous (most recent) status per failing check
+    const { data: prevRows } = await supabase
       .from("system_health_log")
-      .select("check_name, alert_sent_at")
-      .gte("created_at", sinceMs)
-      .not("alert_sent_at", "is", null);
-    const recentNames = new Set((recent ?? []).map((r: any) => r.check_name));
-    const newFailures = failures.filter((f) => !recentNames.has(f.name));
-    if (newFailures.length > 0) {
-      const mail = await sendAlertEmail(newFailures, alertId);
-      if (mail.ok) alertSentAt = new Date().toISOString();
-      else console.error("[health-check] email send failed:", mail.error);
+      .select("check_name, status, created_at")
+      .in("check_name", failures.map((f) => f.name))
+      .order("created_at", { ascending: false })
+      .limit(failures.length * 5);
+    const prevStatusByName = new Map<string, string>();
+    for (const r of (prevRows ?? []) as any[]) {
+      if (!prevStatusByName.has(r.check_name)) prevStatusByName.set(r.check_name, r.status);
+    }
+    const confirmedFailures = failures.filter((f) => prevStatusByName.get(f.name) && prevStatusByName.get(f.name) !== "ok");
+    if (confirmedFailures.length === 0) {
+      console.log("[health-check] suppressed alert (first failure, awaiting confirmation)");
     } else {
-      console.log("[health-check] suppressed alert (already sent within 60 min)");
+      const sinceMs = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+      const { data: recent } = await supabase
+        .from("system_health_log")
+        .select("check_name, alert_sent_at")
+        .gte("created_at", sinceMs)
+        .not("alert_sent_at", "is", null);
+      const recentNames = new Set((recent ?? []).map((r: any) => r.check_name));
+      const newFailures = confirmedFailures.filter((f) => !recentNames.has(f.name));
+      if (newFailures.length > 0) {
+        const mail = await sendAlertEmail(newFailures, alertId);
+        if (mail.ok) alertSentAt = new Date().toISOString();
+        else console.error("[health-check] email send failed:", mail.error);
+      } else {
+        console.log("[health-check] suppressed alert (already sent within 60 min)");
+      }
     }
   }
 
