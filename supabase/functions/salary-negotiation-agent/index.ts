@@ -620,6 +620,11 @@ async function synthesiseAdvice(
     ? `\nSenaste konversation:\n${formatHistoryForPrompt(history)}`
     : "";
 
+  const isShortConfirmation = /^\s*(ja|japp|jo|jepp|nej|nope|stämmer|precis|absolut|ok|okej)[\s.!?]*$/i.test(message.trim());
+  const shortConfirmationNotice = isShortConfirmation
+    ? `\n\nVIKTIGT: Användarens meddelande är en kort bekräftelse på din egen följdfråga. Föregående svar har redan presenterat zon, kundpris, ersättningsspann och nuvarande ersättning — upprepa INTE dessa siffror eller samma argument. Ge ETT nytt argument eller en ny vinkel som inte fanns i föregående svar, och avsluta med en NY motfråga.`
+    : "";
+
   const userPrompt = `Användarens fråga: "${message}"
 
 Situation: ${situation}${contextStr}${historyStr}
@@ -627,6 +632,7 @@ Situation: ${situation}${contextStr}${historyStr}
 Marknadsdata:
 ${dataContext || "Ingen data tillgänglig."}
 ${failedCaps ? `\nMisslyckade datahämtningar: ${failedCaps}` : ""}
+${shortConfirmationNotice}
 
 Ge råd baserat på ovanstående data. Fråga INTE efter information som redan finns i profilen ovan.`;
 
