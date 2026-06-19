@@ -1,4 +1,4 @@
-import { ArrowLeftRight, Coins, FileText } from "lucide-react";
+import { Coins, MapPin, FileText } from "lucide-react";
 
 interface Props {
   onSelect: (prompt: string) => void;
@@ -6,19 +6,19 @@ interface Props {
 
 const PROMPTS = [
   {
-    Icon: ArrowLeftRight,
-    label: "Jämför roller",
-    prompt: "Hur skiljer sig ersättningen mellan olika roller i min zon?",
-  },
-  {
     Icon: Coins,
     label: "Förhandling",
     prompt: "Vilket förhandlingsutrymme har jag baserat på marknadsdata?",
   },
   {
+    Icon: MapPin,
+    label: "Annan ort",
+    prompt: "Hur ser ersättningen ut om jag jobbar i en annan ort?",
+  },
+  {
     Icon: FileText,
-    label: "Avtalsnivåer",
-    prompt: "Vad säger ramavtalet för min yrkesroll?",
+    label: "Avtalsnivå",
+    prompt: "Vad är kundpriset enligt ramavtalet för min roll och zon?",
   },
 ];
 
