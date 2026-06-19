@@ -209,8 +209,8 @@ export default function Negotiate() {
   }
 
   return (
-    <div className="min-h-[100dvh] bg-secondary/30 flex flex-col">
-      <div className="w-full bg-background flex flex-col overflow-hidden h-[100dvh]">
+    <div className="h-[100dvh] bg-secondary/30 flex flex-col overflow-hidden">
+      <div className="w-full bg-background flex flex-col overflow-hidden flex-1 min-h-0">
         {/* Header */}
         <nav className="flex items-center justify-between px-4 h-[52px] flex-shrink-0 border-b border-border/50">
           <div className="flex items-center gap-3">
