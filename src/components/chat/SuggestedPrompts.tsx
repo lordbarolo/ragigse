@@ -50,7 +50,7 @@ export default function SuggestedPrompts({ onSelect }: Props) {
       </div>
 
       <p className="text-[11px] text-foreground/60 text-center">
-        Alla svar grundas i CI-motorn · Inga påhittade siffror
+        Alla svar grundas i assistenten · Inga påhittade siffror
       </p>
     </div>
   );
