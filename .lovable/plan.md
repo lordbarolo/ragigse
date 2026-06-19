@@ -1,51 +1,42 @@
-## Diagnos
+## Punkt 2 — `calloff_imports` safe-view
 
-För rapport `c631b173-…` är `status='preview'`, `unlocked_by_referral=false`, ägare `b3ccb369-…`. Edge-funktionen `get-report` returnerar då **utan** `result_json` (teaser-läge — korrekt PII-skydd).
+### Nuläge
+- `calloff_imports` har en RLS-policy `"Public reads only explicitly shared partner calloffs"` som ger **alla (anon + authenticated)** SELECT på rader där `partner_share_data = true`. Det exponerar alla 21 kolumner direkt, inklusive interna fält: `partner_source`, `raw_data`, `validation_flags`, `dedup_hash`, `partner_share_data`.
+- Vyn `calloff_imports_public` (`security_invoker=on`) finns men inkluderar fortfarande `partner_source` + `partner_share_data` och förlitar sig på basens RLS för åtkomst.
 
-Men `Report.tsx` hanterar inte teaser-läget:
+### Användning (kontrollerad)
+- **Klient (anon/authenticated):** endast `src/components/agency/MarketKpiRow.tsx` läser `calloff_imports_public` (kolumner: `calloff_date, region, filled`).
+- **Edge functions:** läser bas-tabellen via `service_role` (radar-public-api, uppdragsradar-chat, radar-predictions, refresh-uppdragsradar-forecast, get-avrop-predictions, backtest-uppdragsradar-accuracy, agent-api-market-history). Påverkas inte.
+- **Admin-listor:** `monthly-security-audit` allowlist innehåller `calloff_imports_public` — inget att ändra.
 
-```ts
-const r = report.result_json;          // undefined
-<ConsultantTrackContent r={r} ... />   // r.market → TypeError → komponenten kraschar
+### Åtgärd (en migration)
+
+```text
+1. DROP POLICY "Public reads only explicitly shared partner calloffs"
+   ON public.calloff_imports;
+   → Bas-tabellen blir endast åtkomlig för service_role.
+
+2. DROP VIEW IF EXISTS public.calloff_imports_public;
+   CREATE VIEW public.calloff_imports_public AS
+   SELECT
+     id, imported_at, calloff_date,
+     customer, customer_type, region, role, specialization, level,
+     duration_weeks, unit,
+     price_min, price_median, price_max,
+     filled
+   FROM public.calloff_imports
+   WHERE partner_source IS NULL OR partner_share_data = true;
+   → Definer-vy (utan security_invoker) som filtrerar rader och
+     döljer partner_source, partner_share_data, raw_data,
+     validation_flags, dedup_hash.
+
+3. GRANT SELECT ON public.calloff_imports_public TO anon, authenticated;
 ```
 
-Resultat: header + Förhandlingsassistent-kort + "Vad är möjlig ersättning?"-kortet renderas, sen kastas resten bort när `ConsultantTrackContent` läser `r.market`. Det är exakt vad skärmdumpen visar.
+### Verifiering
+- Kör `supabase--linter` + `security--run_security_scan` efter migration.
+- Smoke-test: `MarketKpiRow` på `/agency` ska fortsatt visa KPI-rad (samma kolumner används).
+- Markera scanner-fyndet `calloff_imports_public_anonymous_reads_partner_source` som fixat med förklaring.
 
-Två separata problem ligger bakom att det inträffar för dig som inloggad ägare:
-
-1. **Ingen teaser-fallback** i `Report.tsx`. Även för icke-ägare ska sidan visa något vettigt, inte krascha.
-2. **Ägar-detektering misslyckas troligen i edge-funktionen.** `supabase.functions.invoke("get-report", { body })` skickar JWT automatiskt, men i nuvarande kod hämtas session först (rad 63) utan att användas. Om sessionen inte är klar när `useEffect` körs (race med auth-init) får funktionen ingen Authorization-header → `authUserId = null` → `fullAccess = false` → teaser även för ägaren. Detta matchar vårt kända mönster (se Lovable Stack Overflow-noten om auth-race + `enabled`).
-
-## Plan
-
-### 1. `src/pages/Report.tsx` — vänta på auth + skicka header explicit
-- Importera `useAuthReady` (eller motsvarande) — om den inte finns, vänta på `supabase.auth.getSession()` resolver innan fetch:en startar.
-- Skicka Authorization explicit till edge-funktionen:
-  ```ts
-  const { data: { session } } = await supabase.auth.getSession();
-  const { data, error } = await supabase.functions.invoke("get-report", {
-    body: { report_id: reportId },
-    headers: session?.access_token
-      ? { Authorization: `Bearer ${session.access_token}` }
-      : undefined,
-  });
-  ```
-- Re-fetch när `user?.id` ändras (lägg till i dependency-arrayen) så att en sen inloggning triggar omhämtning.
-
-### 2. `src/pages/Report.tsx` — teaser-fallback (skydd mot framtida krascher)
-När `report.result_json` saknas (icke-ägare, ej betalt, ej referral-unlocked):
-- Rendera header + Förhandlingsassistent-kortet + `PossibleCompensationInfo` som idag.
-- **Hoppa över** `ConsultantTrackContent` och utility-actions.
-- Visa istället ett tydligt "Logga in för att se din analys"-kort (med CTA till `/logga-in?redirect=/rapport/:id`) — neutral copy, inga värdeladdade ord.
-
-### 3. Verifiering
-- Bygg-output går grönt.
-- Öppna `/rapport/c631b173-…` inloggad som ägaren → full rapport.
-- Öppna samma URL utloggad → header + teaser-CTA, ingen tom sida.
-- Edge-loggar visas inga fel.
-
-## Tekniska detaljer
-
-- Ingen DB/RLS-ändring; endast frontend + möjligen Authorization-header.
-- Edge-funktionens behörighetslogik (paid / referral / owner) lämnas oförändrad — den är korrekt enligt project-knowledge.
-- Inga texter på `/resultat`/teaser bryter mot neutralitets-/SCB-/peer-comparison-reglerna.
+### Bakåtkompatibilitet
+Klient-frågan i `MarketKpiRow.tsx` använder bara `calloff_date, region, filled` → påverkas inte. Inga edge functions läser via anon-rollen.
