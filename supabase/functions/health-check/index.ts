@@ -37,6 +37,20 @@ async function timed<T>(fn: () => Promise<T>): Promise<{ result: T; ms: number }
   return { result, ms: Date.now() - t0 };
 }
 
+// Retry an HTTP probe once after 2s if first attempt returns 5xx or throws.
+// Filters out transient edge-runtime blips (e.g. SUPABASE_EDGE_RUNTIME_SERVICE_DEGRADED).
+async function fetchWithRetry(doFetch: () => Promise<Response>): Promise<Response> {
+  try {
+    const r = await doFetch();
+    if (r.status < 500) return r;
+    await r.body?.cancel().catch(() => {});
+  } catch (_) {
+    // fall through to retry
+  }
+  await new Promise((res) => setTimeout(res, 2000));
+  return doFetch();
+}
+
 // 1. save-email: should NOT 500. Bogus lead_id -> expect 400/404.
 async function checkSaveEmail(): Promise<CheckResult> {
   const { result, ms } = await timed(async () => {
