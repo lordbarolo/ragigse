@@ -308,7 +308,7 @@ export default function Negotiate() {
             )}
 
             {/* Messages area */}
-            <div ref={scrollRef} className={`overflow-y-auto px-4 ${hasMessages ? "flex-1" : "flex-shrink-0"}`}>
+            <div ref={scrollRef} className={`overflow-y-auto overflow-x-hidden px-4 min-h-0 ${hasMessages ? "flex-1" : "flex-shrink-0"}`}>
               {!hasMessages ? (
                 <SuggestedPrompts onSelect={send} />
               ) : (
@@ -332,7 +332,7 @@ export default function Negotiate() {
             </div>
 
             {/* Input */}
-            <div className="flex-shrink-0 px-4 pb-4 pt-2">
+            <div className="flex-shrink-0 px-4 pt-2 pb-[max(1rem,env(safe-area-inset-bottom))]">
               <ChatInput onSend={send} isLoading={isLoading} expanded={!hasMessages} />
             </div>
           </>
