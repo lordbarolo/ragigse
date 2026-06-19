@@ -15,8 +15,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { toast } from "sonner";
 
-const PAGE_TITLE = "Förhandla din ersättning — CompCare";
-const PAGE_DESC = "AI-driven förhandlingsassistent som ger dig konkreta råd baserade på aktuell marknadsdata för din roll och region.";
+const PAGE_TITLE = "Lönekoll — CompCare";
+const PAGE_DESC = "AI-driven lönekoll som ger dig konkreta råd baserade på aktuell marknadsdata för din roll och region.";
 
 export default function Negotiate() {
   const { messages, isLoading, context, send, updateContext, clearChat } = useNegotiationChat();
@@ -222,7 +222,7 @@ export default function Negotiate() {
             </Link>
             <div>
               <span className="font-display font-bold text-foreground text-sm tracking-tight">
-                Löneassistenten
+                Lönekoll
               </span>
               <span className="text-[10px] text-muted-foreground ml-2 font-medium">
                 powered by CI
@@ -256,7 +256,7 @@ export default function Negotiate() {
               <Lock className="w-6 h-6 text-primary" />
             </div>
             <h1 className="font-display text-xl font-bold text-foreground tracking-tight text-center">
-              Löneassistenten
+              Lönekoll
             </h1>
             <p className="text-sm text-muted-foreground mt-2 text-center max-w-sm leading-relaxed">
               Få personlig rådgivning baserad på aktuella avtalspriser och marknadsdata för din roll och region. Ange din e-postadress för att komma igång.
@@ -282,7 +282,7 @@ export default function Negotiate() {
                 {gateLoading ? (
                   <Loader2 className="w-4 h-4 animate-spin" />
                 ) : (
-                  "Öppna Löneassistenten"
+                  "Öppna Lönekoll"
                 )}
               </Button>
             </div>
@@ -332,7 +332,7 @@ export default function Negotiate() {
             </div>
 
             {/* Input */}
-            <div className={`flex-shrink-0 px-4 pb-4 pt-2 ${!hasMessages ? "flex-1 flex flex-col justify-end" : ""}`}>
+            <div className="flex-shrink-0 px-4 pb-4 pt-2">
               <ChatInput onSend={send} isLoading={isLoading} expanded={!hasMessages} />
             </div>
           </>
