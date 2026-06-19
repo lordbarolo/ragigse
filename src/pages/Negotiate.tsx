@@ -209,10 +209,10 @@ export default function Negotiate() {
   }
 
   return (
-    <div className="min-h-[100dvh] bg-secondary/30 flex flex-col items-center p-4 pt-8">
-      <div className="w-full max-w-[720px] bg-background border border-border rounded-2xl shadow-xl flex flex-col overflow-hidden" style={{ height: "min(85vh, 800px)" }}>
+    <div className="min-h-[100dvh] bg-secondary/30 flex flex-col">
+      <div className="w-full bg-background flex flex-col overflow-hidden h-[80dvh]">
         {/* Header */}
-        <nav className="flex items-center justify-between px-4 h-[52px] flex-shrink-0 border-b border-border/50 rounded-t-2xl">
+        <nav className="flex items-center justify-between px-4 h-[52px] flex-shrink-0 border-b border-border/50">
           <div className="flex items-center gap-3">
             <Link
               to="/"
