@@ -54,7 +54,7 @@ async function fetchWithRetry(doFetch: () => Promise<Response>): Promise<Respons
 // 1. save-email: should NOT 500. Bogus lead_id -> expect 400/404.
 async function checkSaveEmail(): Promise<CheckResult> {
   const { result, ms } = await timed(async () => {
-    return fetch(`${SUPABASE_URL}/functions/v1/save-email`, {
+    return fetchWithRetry(() => fetch(`${SUPABASE_URL}/functions/v1/save-email`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -65,7 +65,7 @@ async function checkSaveEmail(): Promise<CheckResult> {
         lead_id: "00000000-0000-0000-0000-000000000000",
         email: "healthcheck@compcare.se",
       }),
-    });
+    }));
   });
   const txt = await result.text().catch(() => "");
   if (result.status >= 500) {
