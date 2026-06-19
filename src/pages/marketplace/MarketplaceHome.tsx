@@ -90,7 +90,7 @@ export default function MarketplaceHome() {
           terms_md: (l as any).terms_md ?? "",
         });
         const { data: o } = await supabase
-          .from("mp_offers" as any)
+          .from("mp_offers_for_listing_owner" as any)
           .select("id,listing_id,agent_id,agent_org,offered_price_sek,start_date,end_date,hours_per_week,message_md,status,created_at")
           .eq("listing_id", (l as any).id)
           .order("created_at", { ascending: false });

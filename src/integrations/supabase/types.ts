@@ -2387,6 +2387,13 @@ export type Database = {
             referencedRelation: "mp_offers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "mp_agent_runs_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "mp_offers_for_listing_owner"
+            referencedColumns: ["id"]
+          },
         ]
       }
       mp_listings: {
@@ -2517,6 +2524,13 @@ export type Database = {
             referencedRelation: "mp_offers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "mp_negotiation_events_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "mp_offers_for_listing_owner"
+            referencedColumns: ["id"]
+          },
         ]
       }
       mp_offers: {
@@ -2603,6 +2617,13 @@ export type Database = {
             columns: ["parent_offer_id"]
             isOneToOne: false
             referencedRelation: "mp_offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_offers_parent_offer_id_fkey"
+            columns: ["parent_offer_id"]
+            isOneToOne: false
+            referencedRelation: "mp_offers_for_listing_owner"
             referencedColumns: ["id"]
           },
         ]
@@ -5105,6 +5126,95 @@ export type Database = {
           verified_at_publish?: boolean | null
         }
         Relationships: []
+      }
+      mp_offers_for_listing_owner: {
+        Row: {
+          agent_id: string | null
+          agent_org: string | null
+          agent_signature: string | null
+          created_at: string | null
+          end_date: string | null
+          hours_per_week: number | null
+          id: string | null
+          listing_id: string | null
+          message_md: string | null
+          metadata: Json | null
+          offered_price_sek: number | null
+          parent_offer_id: string | null
+          responded_at: string | null
+          responded_message_md: string | null
+          start_date: string | null
+          status: Database["public"]["Enums"]["mp_offer_status"] | null
+          updated_at: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          agent_org?: string | null
+          agent_signature?: string | null
+          created_at?: string | null
+          end_date?: string | null
+          hours_per_week?: number | null
+          id?: string | null
+          listing_id?: string | null
+          message_md?: string | null
+          metadata?: Json | null
+          offered_price_sek?: number | null
+          parent_offer_id?: string | null
+          responded_at?: string | null
+          responded_message_md?: string | null
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["mp_offer_status"] | null
+          updated_at?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          agent_org?: string | null
+          agent_signature?: string | null
+          created_at?: string | null
+          end_date?: string | null
+          hours_per_week?: number | null
+          id?: string | null
+          listing_id?: string | null
+          message_md?: string | null
+          metadata?: Json | null
+          offered_price_sek?: number | null
+          parent_offer_id?: string | null
+          responded_at?: string | null
+          responded_message_md?: string | null
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["mp_offer_status"] | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mp_offers_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "mp_listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_offers_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "mp_listings_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_offers_parent_offer_id_fkey"
+            columns: ["parent_offer_id"]
+            isOneToOne: false
+            referencedRelation: "mp_offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_offers_parent_offer_id_fkey"
+            columns: ["parent_offer_id"]
+            isOneToOne: false
+            referencedRelation: "mp_offers_for_listing_owner"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       ref_pings_safe: {
         Row: {
