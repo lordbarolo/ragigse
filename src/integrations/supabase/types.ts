@@ -4999,8 +4999,6 @@ export type Database = {
           id: string | null
           imported_at: string | null
           level: string | null
-          partner_share_data: boolean | null
-          partner_source: string | null
           price_max: number | null
           price_median: number | null
           price_min: number | null
@@ -5018,8 +5016,6 @@ export type Database = {
           id?: string | null
           imported_at?: string | null
           level?: string | null
-          partner_share_data?: boolean | null
-          partner_source?: string | null
           price_max?: number | null
           price_median?: number | null
           price_min?: number | null
@@ -5037,8 +5033,6 @@ export type Database = {
           id?: string | null
           imported_at?: string | null
           level?: string | null
-          partner_share_data?: boolean | null
-          partner_source?: string | null
           price_max?: number | null
           price_median?: number | null
           price_min?: number | null
