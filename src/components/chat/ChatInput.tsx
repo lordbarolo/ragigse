@@ -12,8 +12,8 @@ export default function ChatInput({ onSend, isLoading, placeholder, expanded }: 
   const [value, setValue] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const minHeight = expanded ? 120 : undefined;
-  const maxHeight = expanded ? 240 : 120;
+  const minHeight = expanded ? 44 : undefined;
+  const maxHeight = expanded ? 120 : 120;
 
   // Auto-resize textarea
   useEffect(() => {
@@ -38,18 +38,18 @@ export default function ChatInput({ onSend, isLoading, placeholder, expanded }: 
   };
 
   return (
-    <div className={`flex ${expanded ? "flex-1 flex-col" : "items-end"} gap-2 bg-card border border-border rounded-2xl ${expanded ? "p-4" : "p-2"} shadow-lg`}>
+    <div className="flex items-end gap-2 bg-card border border-border rounded-2xl p-2 shadow-lg">
       <textarea
         ref={textareaRef}
         value={value}
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={handleKeyDown}
-        placeholder={placeholder ?? "Skriv din fråga här — t.ex. 'Vad är marknadspriset för en sjuksköterska i Zon 2?'"}
+        placeholder={placeholder ?? "Skriv din fråga…"}
         rows={1}
         disabled={isLoading}
-        className={`flex-1 bg-transparent text-foreground resize-none outline-none placeholder:text-muted-foreground/50 px-1 py-1 ${expanded ? "text-base leading-relaxed" : "text-sm max-h-[120px]"}`}
+        className="flex-1 bg-transparent text-foreground resize-none outline-none placeholder:text-foreground/55 px-2 py-2 text-sm max-h-[120px]"
       />
-      <div className={`flex ${expanded ? "justify-end" : ""}`}>
+      <div className="flex">
         <button
           onClick={handleSubmit}
           disabled={!value.trim() || isLoading}
