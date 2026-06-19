@@ -225,7 +225,7 @@ export default function Negotiate() {
                 Lönekoll
               </span>
               <span className="text-[10px] text-muted-foreground ml-2 font-medium">
-                powered by CI
+                powered by assistenten
               </span>
             </div>
           </div>
