@@ -323,6 +323,10 @@ export default function Admin() {
       {/* Lönekoll: indexering av SKR-avtal */}
       <LonekollAvtalIngest />
 
+      {/* Lönekoll: tracking & health */}
+      <LonekollHealth />
+
+
       {/* Uppdragsradar API-nycklar */}
       <RadarApiKeys />
 
