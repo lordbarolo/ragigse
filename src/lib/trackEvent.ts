@@ -121,16 +121,12 @@ export function trackEvent(
     ...(utm ? { utm } : {}),
   };
 
-  // Consent gate — skicka inget till PostHog eller backend om användaren inte accepterat.
-  // PostHog är opt-out-by-default (src/lib/posthog.ts), men vi gat­ar även serverside-loggen
-  // mot samma samtycke för att hålla GDPR-läget konsekvent.
-  let consentAccepted = false;
+  // Cookie-fri analytics: PostHog kör persistence:"memory" (inga cookies/localStorage).
+  // Det är GDPR-säkert att fånga anonyma events utan samtycke. Vid avslag respekterar
+  // vi det dock explicit och skickar ingenting.
   try {
-    consentAccepted = typeof window !== "undefined" &&
-      window.localStorage?.getItem("cookie-consent") === "accepted";
-  } catch { /* localStorage kan vara blockerad i privat läge */ }
-
-  if (!consentAccepted) return;
+    if (window.localStorage?.getItem("compcare_cookie_consent") === "rejected") return;
+  } catch { /* localStorage kan vara blockerad — fortsätt ändå, vi spårar cookieless */ }
 
   // Send to PostHog (silent fail)
   try { posthog.capture(eventName, enrichedMetadata); } catch { /* silent */ }
