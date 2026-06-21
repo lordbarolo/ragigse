@@ -10,8 +10,7 @@ export default function NegotiationAssistantTeaser() {
         <h3 className="text-[15px] font-bold text-foreground">Förhandlingsassistenten</h3>
       </div>
       <p className="text-sm text-muted-foreground leading-relaxed">
-        Skapa kostnadsfritt konto och få konkreta förhandlingsråd utifrån roll och region. Du kan
-        ställa frågor om din ersättning, bemanningsföretagets marginal och vad som är rimligt att begära.
+        Skapa kostnadsfritt konto och få konkreta förhandlingsråd utifrån roll och region. Du kan ställa frågor till vår AI-chat och få svar som direkt påverkar dina avtal och uppdrag.
       </p>
     </div>
   );
