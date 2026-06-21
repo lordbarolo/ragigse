@@ -256,7 +256,7 @@ export default function DemoLanding() {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-center gap-1.5 text-[10px] text-muted-foreground/60 pt-2">
+                <div className="flex items-center justify-center gap-1.5 text-[10px] text-muted-foreground pt-2">
                   <Shield className="w-3 h-3" />
                   <span>Dina uppgifter delas aldrig med tredje part</span>
                 </div>

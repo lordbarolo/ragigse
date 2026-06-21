@@ -241,10 +241,10 @@ export default function Negotiate() {
                 {gateLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Öppna Lönekoll"}
               </Button>
             </div>
-            <p className="text-[10px] text-muted-foreground/50 mt-4 text-center">
+            <p className="text-[10px] text-muted-foreground mt-4 text-center">
               Helt anonymt · Vi delar aldrig din adress
             </p>
-            <p className="text-[11px] text-muted-foreground/60 mt-3 text-center">
+            <p className="text-[11px] text-muted-foreground mt-3 text-center">
               Har du redan ett konto?{" "}
               <Link to="/logga-in" className="text-primary hover:underline font-medium">
                 Logga in →

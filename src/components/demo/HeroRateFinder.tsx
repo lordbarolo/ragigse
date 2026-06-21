@@ -316,7 +316,7 @@ export default function HeroRateFinder({ prefillKey }: Props) {
       <div className="bg-white/[0.07] border border-white/[0.13] rounded-[14px] px-4 py-4 backdrop-blur-sm">
         {!selectedCategory ? (
           <>
-            <div className="text-[10px] text-white/50 uppercase tracking-wider mb-2.5">Välj din roll — se ditt pris</div>
+            <div className="text-[10px] text-white/80 uppercase tracking-wider mb-2.5">Välj din roll — se ditt pris</div>
             <div className="grid grid-cols-2 gap-2">
               {CATEGORIES.map((cat) => (
                 <button
@@ -360,7 +360,7 @@ export default function HeroRateFinder({ prefillKey }: Props) {
               />
             </div>
             <div>
-              <div className="text-[10px] text-white/50 uppercase tracking-wider mb-1.5">Anställningsform</div>
+              <div className="text-[10px] text-white/80 uppercase tracking-wider mb-1.5">Anställningsform</div>
               <div className="grid grid-cols-2 gap-1.5">
                 <button
                   type="button"
@@ -403,7 +403,7 @@ export default function HeroRateFinder({ prefillKey }: Props) {
           ) : (
             <>
               {fmt(animatedTimpris)}
-              <span className="text-[16px] text-white/50"> kr/tim</span>
+              <span className="text-[16px] text-white/75"> kr/tim</span>
             </>
           )}
         </div>
@@ -450,7 +450,7 @@ export default function HeroRateFinder({ prefillKey }: Props) {
           ) : (
             <>
               {fmt(animatedHourly)}
-              <span className="text-[16px] text-white/50"> kr/tim</span>
+              <span className="text-[16px] text-white/75"> kr/tim</span>
             </>
           )}
         </div>

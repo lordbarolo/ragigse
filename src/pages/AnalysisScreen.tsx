@@ -387,7 +387,7 @@ export default function AnalysisScreen() {
                   <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/25 to-transparent -translate-x-full animate-[shimmer_2s_infinite]" />
                 )}
               </button>
-              <p className="text-center text-[12px] text-foreground/45">
+              <p className="text-center text-[12px] text-muted-foreground">
                 Inga kort. Ingen spam. Klart på 60 sek.
               </p>
             </div>
