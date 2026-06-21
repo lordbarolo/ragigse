@@ -58,6 +58,9 @@ export default function Report() {
 
   useEffect(() => {
     if (!reportId) { navigate("/"); return; }
+    // Guard against literal route placeholders or malformed ids
+    const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(reportId);
+    if (!isUuid) { navigate("/"); return; }
     // Wait for auth init so owner detection works in get-report
     if (authLoading) return;
     const fetchReport = async () => {
