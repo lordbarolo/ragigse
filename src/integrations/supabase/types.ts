@@ -2231,6 +2231,36 @@ export type Database = {
         }
         Relationships: []
       }
+      lonekoll_avtal_chunks: {
+        Row: {
+          content: string
+          created_at: string
+          embedding: string
+          id: string
+          metadata: Json
+          section: string | null
+          source_doc: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          embedding: string
+          id?: string
+          metadata?: Json
+          section?: string | null
+          source_doc: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          embedding?: string
+          id?: string
+          metadata?: Json
+          section?: string | null
+          source_doc?: string
+        }
+        Relationships: []
+      }
       margin_models: {
         Row: {
           created_at: string
@@ -5774,6 +5804,16 @@ export type Database = {
           _stack?: string
         }
         Returns: string
+      }
+      match_lonekoll_chunks: {
+        Args: { match_count?: number; query_embedding: string }
+        Returns: {
+          content: string
+          id: string
+          section: string
+          similarity: number
+          source_doc: string
+        }[]
       }
       move_to_dlq: {
         Args: {
