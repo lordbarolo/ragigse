@@ -67,11 +67,11 @@ Deno.serve(async (req) => {
     }
   }
 
-  // Latest missing-question reports from chat_answer_reports (source = 'lonekoll')
+  // Latest reports from chat_answer_reports (filter to lonekoll via page_url or context_json)
   const { data: chatReports } = await supabase
     .from("chat_answer_reports")
-    .select("id, created_at, reason, metadata")
-    .eq("source", "lonekoll")
+    .select("id, created_at, message_content, context_json, user_email, page_url, status")
+    .or("page_url.ilike.%forhandla%,context_json->>source.eq.lonekoll")
     .order("created_at", { ascending: false })
     .limit(20);
 
