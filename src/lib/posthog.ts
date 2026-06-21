@@ -60,8 +60,8 @@ posthog.init(POSTHOG_KEY, {
     (import.meta.env.VITE_POSTHOG_HOST as string | undefined) ??
     __DEFAULT_PH_HOST,
   ui_host: "https://eu.posthog.com",
-  persistence: "memory",           // Default tills användaren accepterar cookies
-  opt_out_capturing_by_default: true, // Consent-gated: vänta på accept
+  persistence: "memory",           // Cookie-fri som default — inga cookies/localStorage
+  opt_out_capturing_by_default: false, // Memory-läget är GDPR-säkert utan samtycke
   autocapture: false,                // Stäng av automatisk event-capture
   capture_pageview: false,           // Vi hanterar pageviews manuellt
   capture_pageleave: false,
