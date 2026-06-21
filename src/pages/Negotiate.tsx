@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 import { LONEKOLL_TOPICS, type LonekollTopic, type LonekollQuestion } from "@/data/lonekollQuestions";
+import InlineTerminalSurvey from "@/components/survey/InlineTerminalSurvey";
 
 const PAGE_TITLE = "Lönekoll — CompCare";
 const PAGE_DESC = "Få snabba svar på dina förhandlingsfrågor — baserat på SKR-ramavtalet och din roll.";
