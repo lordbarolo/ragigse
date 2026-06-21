@@ -99,7 +99,7 @@ export default function SharePreview() {
         {/* Footer */}
         <div className="pt-6 text-center space-y-3 pb-8">
           <CompcareLogo variant="wordmark" className="mx-auto opacity-40 !h-5" />
-          <p className="text-[10px] text-muted-foreground/40">
+          <p className="text-[10px] text-muted-foreground">
             © {new Date().getFullYear()} CompCare.se
           </p>
         </div>

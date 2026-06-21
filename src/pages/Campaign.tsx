@@ -177,7 +177,7 @@ export default function Campaign() {
               </tbody>
             </table>
           </div>
-          <p className="text-xs text-muted-foreground/60 mt-2.5 text-center">
+          <p className="text-xs text-muted-foreground mt-2.5 text-center">
             Källa: SKR ramavtal 2026. Priserna avser vad regionen betalar bemanningsföretaget.
           </p>
         </section>
@@ -228,7 +228,7 @@ export default function Campaign() {
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Få personlig rådgivning baserad på din specifika erfarenhet.
               </p>
-              <span className="inline-flex items-center gap-1 mt-4 text-sm text-muted-foreground/60">
+              <span className="inline-flex items-center gap-1 mt-4 text-sm text-muted-foreground">
                 Kräver säker inloggning
               </span>
             </button>
@@ -260,14 +260,14 @@ export default function Campaign() {
             Se rapporten för din roll
             <ArrowRight className="w-5 h-5" />
           </button>
-          <p className="text-xs text-muted-foreground/50 mt-3">
+          <p className="text-xs text-muted-foreground mt-3">
             Inga påhittade siffror – bara granskad marknadsdata
           </p>
         </section>
 
         {/* ── Footer ──────────────────────────── */}
         <footer className="pt-10 border-t border-border text-center">
-          <p className="text-xs text-muted-foreground/50">
+          <p className="text-xs text-muted-foreground">
             © {new Date().getFullYear()} CompCare · <a href="/integritetspolicy" className="underline hover:text-muted-foreground">Integritetspolicy</a>
           </p>
         </footer>

@@ -1,83 +1,135 @@
 
-# Lönekoll v2 — Meny → underfrågor + indexerat SKR-avtal (regions-agnostiskt)
+# Mål
 
-Ersätter den fria chatten på `/forhandla` med en låst meny av förprogrammerade frågor. Topic 2 (Avtalsinnehåll) använder RAG mot indexerade SKR-chunks. Eftersom alla regioners ramavtal är identiska används chunks som generell källa — **ingen region-gate**.
+Du ska kunna låta Claude (via Supabase MCP) äga en backend-spegel av CompCare i ditt egna Supabase-konto, utan att produktionen rörs. Lovable används som frontend-verktyg mot båda miljöerna. Inget DNS-byte, ingen migration av riktig kunddata, ingen risk för produktion.
 
----
+# Arkitektur efter setup
 
-## 1. Databasen — RAG-index för SKR-avtalet
+```text
+                 ┌──────────────────────────────┐
+                 │  PROD (orörd)                │
+                 │  compcare.se                 │
+                 │  Lovable-projekt (detta)     │
+                 │  ├─ Frontend (Lovable agent) │
+                 │  └─ Backend = Lovable Cloud  │
+                 │     (ref ubhhlunhdqbokjvwfebb)│
+                 └──────────────────────────────┘
+                              ▲
+                              │ manuell promotion
+                              │ (migrations + edge fn)
+                              │
+                 ┌──────────────────────────────┐
+                 │  STAGING (nytt)              │
+                 │  staging.compcare.se (valfritt)│
+                 │  Nytt Lovable-projekt        │
+                 │  ├─ Frontend (Lovable agent) │
+                 │  └─ Backend = ditt Supabase  │
+                 │     (Claude äger via MCP)    │
+                 └──────────────────────────────┘
+```
 
-**Migration:**
-- `create extension if not exists vector`
-- Tabell `lonekoll_avtal_chunks`:
-  - `id`, `source_doc text` (filnamn), `section text` (t.ex. "Bilaga 4 §3.2"), `content text`, `embedding vector(3072)`, `metadata jsonb`, `created_at`.
-  - RLS on, inga policies → bara `service_role` (edge functions). Ingen `anon`/`authenticated` grant.
-  - HNSW-index för cosine.
-- SQL-funktion `match_lonekoll_chunks(query_embedding, match_count)` (SECURITY DEFINER) → topp-N relevanta chunks.
+Claude jobbar fritt mot staging-Supabase. Lovable-agenten jobbar mot båda projekten (frontend) men rör bara prod-backend om du explicit ber om det.
 
-## 2. Storage + ingestion
+# Steg
 
-- Privat bucket `lonekoll_avtal` för PDF:erna.
-- Edge function `lonekoll-ingest-avtal` (admin-only):
-  1. Hämta varje PDF från bucket
-  2. Extrahera text per sida
-  3. Chunka ~1000 tecken med ~150 överlapp
-  4. Embedda via Lovable AI Gateway (`google/gemini-embedding-001`)
-  5. Upserta till `lonekoll_avtal_chunks`
-- Trigras manuellt från admin-knapp efter uppladdning.
+## 1. Förbered ditt Supabase
+- Skapa nytt projekt i EU-region (Frankfurt eller Stockholm för GDPR-paritet).
+- Slå på extensions: `pgvector`, `pg_cron`, `pg_net`, `pgmq`, `vault`.
+- Generera Personal Access Token för MCP. Spara även `service_role` och DB-lösen lokalt.
 
-## 3. Edge function `lonekoll-answer`
+## 2. Skapa nytt Lovable-projekt för staging
+- Klona detta repo till nytt Lovable-projekt via "Remix" eller GitHub-import.
+- I det nya projektet: **välj inte Lovable Cloud**. Koppla istället ditt egna Supabase under Connectors → Supabase. Då slipper vi cloud-låsningen och dina nycklar styr.
 
-Input: `{ topicId: 1|2|3|4, questionId: string }` — context (roll, region, anställningsform, ersättning) **läses server-side** från `consultant_profiles` + senaste `report` (inte från klient → kan inte manipuleras).
+## 3. Rekonstruera schemat
+Alla migrationer ligger redan versionerade i `supabase/migrations/`. Kör dem mot ditt nya projekt i kronologisk ordning. Två sätt:
+- a) Lokalt med Supabase CLI: `supabase link` + `supabase db push`.
+- b) Eller låt Claude via MCP läsa migrationsfilerna och köra dem i ordning.
 
-- **Topic 1 Ersättningsnivåer** → dynamiskt från `rates`-tabellen + marginalmodellen. Mest deterministiskt, ofta 0 AI-anrop.
-- **Topic 2 Avtalsinnehåll** → embedda frågetext, hämta topp-5 chunks, skicka till Gemini 3 Flash med strikt prompt: *"Svara endast utifrån de bifogade avtalsutdragen. Citera § / bilaga. Om svaret inte finns: säg det."*
-- **Topic 3 Förhandling** → `rates` + neutrala spannobservationer (Undre/Median/Övre) + existerande argumentregler. Aldrig under nuvarande ersättning.
-- **Topic 4 Företag vs anställd / AB-konsult** → statisk + dynamisk beräkning (timpris × 167 × marginal vs månadslön × 1.42).
+Validera efter run:
+- ~70 tabeller (se listan i `<supabase-tables>`).
+- Alla `ref_*`, `mp_*`, `ai_*`, `radar_*`, `invoice_*`-domäner finns.
+- 50+ DB-functions och triggers (särskilt `handle_new_user`, `mp_listings_enforce_publish_gate`, `ref_calculate_*`, `aggregate_calloff_monthly`).
+- RLS aktivt + GRANTs på alla public-tabeller.
 
-Rate limit: befintlig 30/dag via `check_ai_rate_limit`. Loggar till `ai_usage_logs`.
+## 4. Seed-data (anonymiserad)
+Vi flyttar **ingen riktig PII**. Istället:
+- Exportera CSV per icke-känslig referenstabell från Cloud-projektet: `roles`, `role_aliases`, `specialties`, `geographies`, `geography_aliases`, `regions`, `zones`, `locations`, `contract_versions`, `contract_version_rates`, `margin_models`, `ref_role_profiles`, `ref_verified_domains`, `price_nuggets`, `benchmark_rates`, `salary_benchmarks`.
+- Importera till staging-Supabase via Table editor eller `\copy`.
+- Generera syntetiska rader för `leads`, `consultant_profiles`, `ref_profiles`, `calloff_imports` (≤100 st var) så Claude har realistisk data att jobba mot utan att GDPR-data lämnar prod.
 
-## 4. Frontend — `/forhandla` (Negotiate.tsx)
+## 5. Edge functions
+- Hela `supabase/functions/`-trädet följer med Git-import.
+- Sätt om alla secrets i nya projektet (se §6).
+- Deploya: `supabase functions deploy --project-ref <nytt>` eller via Lovable-agenten i det nya projektet.
 
-Tar bort fri-text-input. Ersätter med:
-- **Meny-vy** (default): 4 topic-kort med ikon + titel + kort beskrivning.
-- **Underfråge-vy**: när topic vald, visar 3–4 förprogrammerade frågor som chips.
-- **Svar-vy**: AI-svaret + "← Tillbaka till frågor" / "← Tillbaka till menyn".
-- **Kontextbar** kvar (roll, region, anställningsform, nuvarande ersättning) — editerbar innan fråga klickas.
-- **"Saknar du din fråga?"**-länk längst ned → öppnar befintlig report-dialog kategoriserad som `missing_question`.
-- Tar bort `ChatInput` och `useNegotiationChat`-användning (filen kvar för bakåtkompat). Ny hook `useLonekollAnswer`.
+## 6. Secrets som måste sättas i staging
+Minst dessa (vi listar de viktigaste — full lista hämtas via `fetch_secrets` mot prod när vi är där):
+- `LOVABLE_API_KEY` (nytt — auto i nya Lovable-projektet)
+- `RESEND_API_KEY`, `RESEND_FROM_EMAIL`
+- `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` (test-keys, inte live)
+- `POSTHOG_PROJECT_API_KEY`, `POSTHOG_PERSONAL_API_KEY`
+- `MAILERLITE_API_KEY`
+- `HEALTH_CHECK_CRON_TOKEN` (nytt slumpgenererat — läggs i Vault)
+- BankID-cert/keys → använd **BankID test-miljö**, aldrig prod-certet.
 
-## 5. Förprogrammerade frågor
+## 7. Koppla Supabase MCP till Claude
+- Installera `@supabase/mcp-server-supabase` i Claude Desktop/Code config:
+  ```json
+  {
+    "mcpServers": {
+      "supabase-staging": {
+        "command": "npx",
+        "args": ["-y", "@supabase/mcp-server-supabase@latest",
+                 "--access-token", "<din PAT>",
+                 "--project-ref", "<staging ref>",
+                 "--read-only=false"]
+      }
+    }
+  }
+  ```
+- Verifiera: be Claude lista tabeller och köra en `select count(*) from roles;`.
 
-Lagras i `src/data/lonekollQuestions.ts` (typad konstant, lätt att utöka). Utkastet jag skickade tidigare låses in:
+## 8. pg_cron-jobb i staging
+Sätt upp samma scheman som prod men med suffix `_staging` så de inte krockar visuellt:
+- `refresh-uppdragsradar-forecast` söndag 03:00
+- `redact_avrop_intelligence_pii` dagligen
+- `radar_pipeline_watchdog` måndag 09:00
 
-**Topic 1 (Ersättningsnivåer):** Vad är spannet för min roll/zon? Närliggande orter med högre ersättning? Vilka kostnader sänker timpriset (resa/boende/intro/vite)? Hur jämförs min roll mot närliggande roller?
+## 9. Promotion-flöde (staging → prod)
+När Claude byggt något i staging:
+1. Claude exporterar SQL-diffen som migrationsfil till `supabase/migrations/` i staging-repo.
+2. Du copy-pastar filen in i prod-repo (eller cherry-pickar via Git).
+3. Lovable-agenten i prod-projektet kör migrationen via `supabase--migration`-verktyget med din approval.
+4. Edge function-ändringar synkas på samma sätt: kopiera filer mellan repona, agenten redeployar i prod.
 
-**Topic 2 (Avtalsinnehåll):** Vilket pris gäller per roll/zon? Vilka krav ställs på vendor (HOSP/CV/referenser)? Hur regleras OB/jour? Vad gäller för vitesansvar?
+Detta håller Cloud-projektets integritet (RLS, security memory, audit-loggar) intakt och du har full kontroll över vad som når produktion.
 
-**Topic 3 (Förhandling):** Vilket spann är realistiskt att begära? Vilka argument stärker min position? Hur hanterar jag motbud? När bör jag tacka nej?
+## 10. Verifiering innan vi säger "klart"
+- Claude listar tabeller via MCP → matchar prod-listan.
+- Claude kör `select public.aggregate_calloff_monthly(36)` → returnerar rader.
+- Test-användare kan registrera sig + signing-flödet (test-BankID) går igenom.
+- En triggad edge function (t.ex. `send-password-recovery`) levererar mail via Resend.
+- pg_cron-jobben loggar `last_run_at` i `system_health_log`.
 
-**Topic 4 (Företag vs anställd / AB-konsult):** Vad lönar sig — AB eller anställd? Vilket vitesansvar har jag som företagare? Vilka försäkringar behöver jag hos privat vårdgivare? Vad blir nettoskillnaden konkret?
+# Tidsuppskattning
 
-## 6. Säkerhet
+- Steg 1–2: ~1 timme.
+- Steg 3–4: ~3–5 timmar (mest validering).
+- Steg 5–6: ~2 timmar.
+- Steg 7–8: ~1 timme.
+- Total kalendertid: **1 arbetsvecka** för en bekväm setup med marginal för felsökning.
 
-- `lonekoll_avtal_chunks`: RLS on, inga policies → service_role only.
-- Edge function validerar JWT, läser context server-side.
-- `LOVABLE_API_KEY` aldrig på klient.
-- Säkerhets-skan körs efter migration.
+# Vad som inte ingår
 
-## 7. Leveransordning
+- Ingen kopiering av riktig användardata.
+- Ingen DNS-ändring för compcare.se.
+- Ingen frånkoppling av Lovable Cloud (är inte möjligt).
+- Inget byte av BankID-prod-cert till staging.
 
-1. Migration (tabell + extension + match-funktion + GRANT)
-2. Storage bucket
-3. Edge function `lonekoll-ingest-avtal` + admin-trigger
-4. Edge function `lonekoll-answer`
-5. Frontend-omskrivning av `Negotiate.tsx` + komponenter + frågedata
-6. Säkerhets-skan + manuell test (alla 4 topics)
+# Vad jag behöver av dig för att börja
 
----
+1. Bekräfta att du är ok med att skapa nytt Lovable-projekt (kostar separat workspace-slot).
+2. Säg till när ditt egna Supabase-projekt är skapat — då kan vi börja med steg 3 (schema-port).
 
-## Frågor till dig innan jag börjar
-
-1. **PDF:erna** — finns de 6 SKR-dokumenten kvar att skicka in, eller vill du att jag bygger admin-uppladdaren först så du laddar upp via UI?
-2. **OK att köra hela steg 1–6 i en sittning?** (Det blir många filer och en migration som du behöver godkänna.)
+När du approvar planen kan jag direkt börja förbereda en SQL-bundle av alla migrations i körbar ordning, så Claude/du har en enda fil att köra mot nya databasen.
