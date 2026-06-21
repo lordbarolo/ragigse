@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ArrowLeft, Lock, Mail, Loader2, Flag, ChevronRight } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useLonekollAnswer } from "@/hooks/useLonekollAnswer";
@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 import { LONEKOLL_TOPICS, type LonekollTopic, type LonekollQuestion } from "@/data/lonekollQuestions";
+import InlineTerminalSurvey from "@/components/survey/InlineTerminalSurvey";
 
 const PAGE_TITLE = "Lönekoll — CompCare";
 const PAGE_DESC = "Få snabba svar på dina förhandlingsfrågor — baserat på SKR-ramavtalet och din roll.";
@@ -36,6 +37,7 @@ export default function Negotiate() {
   const [missingQuestionOpen, setMissingQuestionOpen] = useState(false);
   const [missingQuestionText, setMissingQuestionText] = useState("");
 
+  const navigate = useNavigate();
   const answerScrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -334,6 +336,17 @@ export default function Negotiate() {
                     <div className="prose prose-sm max-w-none text-foreground prose-headings:font-display prose-headings:text-foreground prose-strong:text-foreground prose-ul:my-2 prose-p:my-2">
                       <ReactMarkdown>{answer}</ReactMarkdown>
                     </div>
+                  </div>
+                )}
+
+                {answer && !answerLoading && answer.includes("Komplettera i din profil eller gör en lönekoll först.") && (
+                  <div className="mt-6">
+                    <p className="text-xs text-muted-foreground mb-3">
+                      Fyll i uppgifterna nedan så kan vi ge dig ett personligt svar:
+                    </p>
+                    <InlineTerminalSurvey
+                      onComplete={(leadId) => navigate(`/resultat/${leadId}`)}
+                    />
                   </div>
                 )}
 

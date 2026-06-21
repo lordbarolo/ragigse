@@ -58,9 +58,11 @@ const initialState: State = {
 export default function InlineTerminalSurvey({
   variant = "dark",
   onStepChange,
+  onComplete,
 }: {
   variant?: "dark" | "light";
   onStepChange?: (step: number) => void;
+  onComplete?: (leadId: string) => void;
 }) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -280,7 +282,11 @@ export default function InlineTerminalSurvey({
         report_id: sessionStorage.getItem("reportId") || null,
         surface: "inline_terminal",
       });
-      navigate(`/resultat/${leadId}${couponParam}`);
+      if (onComplete) {
+        onComplete(leadId);
+      } else {
+        navigate(`/resultat/${leadId}${couponParam}`);
+      }
     };
 
     try {
