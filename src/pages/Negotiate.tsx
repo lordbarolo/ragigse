@@ -339,6 +339,17 @@ export default function Negotiate() {
                   </div>
                 )}
 
+                {answer && !answerLoading && answer.includes("Komplettera i din profil eller gör en lönekoll först.") && (
+                  <div className="mt-6">
+                    <p className="text-xs text-muted-foreground mb-3">
+                      Fyll i uppgifterna nedan så kan vi ge dig ett personligt svar:
+                    </p>
+                    <InlineTerminalSurvey
+                      onComplete={(leadId) => navigate(`/resultat/${leadId}`)}
+                    />
+                  </div>
+                )}
+
                 <div className="flex flex-col gap-2 mt-5">
                   <Button
                     variant="outline"
