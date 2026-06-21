@@ -282,7 +282,11 @@ export default function InlineTerminalSurvey({
         report_id: sessionStorage.getItem("reportId") || null,
         surface: "inline_terminal",
       });
-      navigate(`/resultat/${leadId}${couponParam}`);
+      if (onComplete) {
+        onComplete(leadId);
+      } else {
+        navigate(`/resultat/${leadId}${couponParam}`);
+      }
     };
 
     try {
