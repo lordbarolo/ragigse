@@ -93,6 +93,8 @@ const __isInternal =
   __hostname.endsWith(".lovableproject.com") ||
   __hostname.startsWith("id-preview--");
 posthog.register({ is_internal_traffic: __isInternal });
+// build-marker:COMPCARE_BUILD_20260621_A — used to verify deploy pipeline picked up latest source
+(window as unknown as { __COMPCARE_BUILD__?: string }).__COMPCARE_BUILD__ = "COMPCARE_BUILD_20260621_A";
 
 if (import.meta.env.DEV) {
   console.log("PostHog loaded:", posthog.get_distinct_id());
