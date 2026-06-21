@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { MessageSquare, Copy, Check } from "lucide-react";
+import { MessageCircle, PiggyBank, FileText, Sparkles, Copy, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/trackEvent";
 
-type Rating = "yes" | "partial" | "no";
+type Value = "negotiation" | "pension" | "salary_report" | "chat";
 
 interface Props {
   leadId: string;
@@ -14,9 +13,14 @@ interface Props {
   zone?: string;
 }
 
+const options: { value: Value; label: string; icon: React.ReactNode }[] = [
+  { value: "negotiation", label: "Förhandlingstips", icon: <MessageCircle className="w-5 h-5" /> },
+  { value: "pension", label: "Pensionssimulatorn", icon: <PiggyBank className="w-5 h-5" /> },
+  { value: "salary_report", label: "Lönerapporten", icon: <FileText className="w-5 h-5" /> },
+  { value: "chat", label: "Chattfunktionen", icon: <Sparkles className="w-5 h-5" /> },
+];
+
 export default function ReportFeedback({ leadId, role, zone }: Props) {
-  const [rating, setRating] = useState<Rating | null>(null);
-  const [comment, setComment] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [alreadyFeedback, setAlreadyFeedback] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -41,35 +45,18 @@ export default function ReportFeedback({ leadId, role, zone }: Props) {
     );
   }
 
-  const handleRating = async (value: Rating) => {
-    setRating(value);
-    trackEvent("report_feedback", { rating: value, role: role || "", zone: zone || "" });
-
-    if (value === "yes") {
-      await supabase.from("report_feedback").insert({
-        lead_id: leadId,
-        rating: value,
-        role: role || null,
-        zone: zone || null,
-      });
-      setSubmitted(true);
-    }
-  };
-
-  const handleCommentSubmit = async () => {
-    if (!rating || comment.trim().length < 5) return;
+  const handleSelect = async (value: Value) => {
+    if (sending) return;
     setSending(true);
+    trackEvent("report_feedback", { value, role: role || "", zone: zone || "" });
+
     await supabase.from("report_feedback").insert({
       lead_id: leadId,
-      rating,
-      comment: comment.trim(),
+      rating: value,
       role: role || null,
       zone: zone || null,
     });
-    trackEvent("report_feedback_comment", {
-      rating,
-      comment_length: comment.trim().length,
-    });
+
     setSending(false);
     setSubmitted(true);
   };
@@ -80,7 +67,7 @@ export default function ReportFeedback({ leadId, role, zone }: Props) {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  if (submitted && rating === "yes") {
+  if (submitted) {
     return (
       <Card className="border-border/50">
         <CardContent className="py-6 space-y-4 text-center">
@@ -101,67 +88,22 @@ export default function ReportFeedback({ leadId, role, zone }: Props) {
     );
   }
 
-  if (submitted) {
-    return (
-      <Card className="border-border/50">
-        <CardContent className="py-5 text-center">
-          <p className="text-sm text-muted-foreground">Tack, det hjälper oss bli bättre 🙏</p>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  if (rating === "partial" || rating === "no") {
-    return (
-      <Card className="border-border/50">
-        <CardContent className="py-6 space-y-4">
-          <p className="text-sm text-muted-foreground text-center">
-            Tack för din feedback. Vad saknade du?
-          </p>
-          <Textarea
-            value={comment}
-            onChange={(e) => setComment(e.target.value.slice(0, 500))}
-            placeholder="Berätta kort…"
-            rows={3}
-            maxLength={500}
-            className="resize-none text-sm"
-          />
-          <div className="flex justify-between items-center">
-            <span className="text-xs text-muted-foreground">{comment.length}/500</span>
-            <Button
-              size="sm"
-              disabled={comment.trim().length < 5 || sending}
-              onClick={handleCommentSubmit}
-            >
-              {sending ? "Skickar…" : "Skicka"}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  }
-
   return (
     <Card className="bg-background border-border/60">
       <CardContent className="py-6 space-y-4">
-        <div className="flex items-center justify-center gap-2">
-          <MessageSquare className="w-4 h-4 text-foreground/70" />
-          <p className="text-sm font-medium text-foreground">
-            Motsvarar rapporten dina förväntningar?
-          </p>
-        </div>
-        <div className="flex justify-center gap-3">
-          {([
-            { value: "yes" as Rating, label: "Ja" },
-            { value: "partial" as Rating, label: "Delvis" },
-            { value: "no" as Rating, label: "Nej" },
-          ]).map((opt) => (
+        <p className="text-sm font-medium text-foreground text-center">
+          Vilken del av rapporten var mest värdefull för dig?
+        </p>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          {options.map((opt) => (
             <button
               key={opt.value}
-              onClick={() => handleRating(opt.value)}
-              className="px-5 py-2 rounded-full border border-border bg-background text-sm font-medium text-foreground hover:border-primary hover:bg-primary/5 transition-colors"
+              disabled={sending}
+              onClick={() => handleSelect(opt.value)}
+              className="flex flex-col items-center gap-2 rounded-xl border border-border bg-background p-4 text-sm font-medium text-foreground hover:border-primary hover:bg-primary/5 transition-colors disabled:opacity-50"
             >
-              {opt.label}
+              {opt.icon}
+              <span>{opt.label}</span>
             </button>
           ))}
         </div>
