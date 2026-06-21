@@ -78,6 +78,11 @@ export const ALLOWED_EVENTS = [
   "rage_click",
   "dead_click",
   "survey_abandoned",
+  "lonekoll_email_gate_completed",
+  "lonekoll_topic_selected",
+  "lonekoll_question_selected",
+  "lonekoll_answer_reported",
+  "lonekoll_missing_question_reported",
 ] as const;
 
 export type AllowedEventName = (typeof ALLOWED_EVENTS)[number];

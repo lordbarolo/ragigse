@@ -18,6 +18,7 @@ import InvoiceReviews from "@/components/admin/InvoiceReviews";
 import RateVerification from "@/components/admin/RateVerification";
 import ConstantsVerification from "@/components/admin/ConstantsVerification";
 import RadarImport from "@/components/admin/RadarImport";
+import LonekollAvtalIngest from "@/components/admin/LonekollAvtalIngest";
 import RadarApiKeys from "@/components/admin/RadarApiKeys";
 import { useAdminAnalytics } from "@/hooks/useAdminAnalytics";
 import { Button } from "@/components/ui/button";
@@ -317,6 +318,9 @@ export default function Admin() {
 
       {/* Uppdragsradar import */}
       <RadarImport />
+
+      {/* Lönekoll: indexering av SKR-avtal */}
+      <LonekollAvtalIngest />
 
       {/* Uppdragsradar API-nycklar */}
       <RadarApiKeys />
