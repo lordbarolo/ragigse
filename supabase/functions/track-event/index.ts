@@ -86,6 +86,11 @@ const ALLOWED_EVENTS = new Set([
   "rage_click",
   "dead_click",
   "survey_abandoned",
+  "lonekoll_email_gate_completed",
+  "lonekoll_topic_selected",
+  "lonekoll_question_selected",
+  "lonekoll_answer_reported",
+  "lonekoll_missing_question_reported",
 ]);
 
 serve(async (req) => {
