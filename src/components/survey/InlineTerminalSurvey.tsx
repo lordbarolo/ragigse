@@ -58,9 +58,11 @@ const initialState: State = {
 export default function InlineTerminalSurvey({
   variant = "dark",
   onStepChange,
+  onComplete,
 }: {
   variant?: "dark" | "light";
   onStepChange?: (step: number) => void;
+  onComplete?: (leadId: string) => void;
 }) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
