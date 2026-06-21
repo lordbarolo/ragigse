@@ -92,9 +92,7 @@ const __isInternal =
   __hostname === "127.0.0.1" ||
   __hostname.endsWith(".lovableproject.com") ||
   __hostname.startsWith("id-preview--");
-if (__isInternal) {
-  posthog.register({ is_internal_traffic: true });
-}
+posthog.register({ is_internal_traffic: __isInternal });
 
 if (import.meta.env.DEV) {
   console.log("PostHog loaded:", posthog.get_distinct_id());

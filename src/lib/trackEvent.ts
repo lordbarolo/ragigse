@@ -115,6 +115,8 @@ export function trackEvent(
 
   const enrichedMetadata: Record<string, unknown> = {
     ...(metadata ?? {}),
+    hostname: window.location.hostname,
+    is_internal_traffic: isInternalTraffic(),
     ...(reportId ? { report_id: reportId } : {}),
     ...(abVariant ? { ab_variant: abVariant } : {}),
     ...(couponCode ? { coupon_code: couponCode } : {}),
