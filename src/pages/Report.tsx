@@ -203,28 +203,6 @@ export default function Report() {
 
       <main className="px-4 py-6 max-w-lg mx-auto space-y-2.5">
 
-        {/* Förhandlingsassistenten — flyttad till toppen */}
-        <div className="rounded-2xl border overflow-hidden" style={{ backgroundColor: '#FFFFFF', borderColor: '#E0DBD3' }}>
-          <div className="pt-5 px-5">
-            <p className="font-semibold leading-snug" style={{ fontFamily: 'Georgia, serif', fontSize: '18px', color: '#0A0A0A' }}>
-              Förhandlingsassistenten
-            </p>
-            <p className="text-sm mt-1.5" style={{ color: '#6B7280' }}>
-              Få argument och tips inför din nästa förhandling, baserat på ramavtal och din situation.
-            </p>
-          </div>
-          <div className="px-5 py-5">
-            <Link
-              to="/logga-in"
-              className="inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 rounded-lg"
-              style={{ backgroundColor: '#3D3491', color: '#FFFFFF' }}
-            >
-              Öppna förhandlingsassistenten
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-        </div>
-
         {/* Förklaring: möjlig ersättning */}
         <PossibleCompensationInfo variant="report" />
 
@@ -265,6 +243,28 @@ export default function Report() {
             </Link>
           </div>
         )}
+
+        {/* Förhandlingsassistenten */}
+        <div className="rounded-2xl border overflow-hidden" style={{ backgroundColor: '#FFFFFF', borderColor: '#E0DBD3' }}>
+          <div className="pt-5 px-5">
+            <p className="font-semibold leading-snug" style={{ fontFamily: 'Georgia, serif', fontSize: '18px', color: '#0A0A0A' }}>
+              Förhandlingsassistenten
+            </p>
+            <p className="text-sm mt-1.5" style={{ color: '#6B7280' }}>
+              Få argument och tips inför din nästa förhandling, baserat på ramavtal och din situation.
+            </p>
+          </div>
+          <div className="px-5 py-5">
+            <Link
+              to="/logga-in"
+              className="inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 rounded-lg"
+              style={{ backgroundColor: '#3D3491', color: '#FFFFFF' }}
+            >
+              Öppna förhandlingsassistenten
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
 
 
 
