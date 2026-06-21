@@ -319,6 +319,9 @@ export default function Admin() {
       {/* Uppdragsradar import */}
       <RadarImport />
 
+      {/* Lönekoll: indexering av SKR-avtal */}
+      <LonekollAvtalIngest />
+
       {/* Uppdragsradar API-nycklar */}
       <RadarApiKeys />
 
