@@ -37,6 +37,7 @@ export default function Negotiate() {
   const [missingQuestionOpen, setMissingQuestionOpen] = useState(false);
   const [missingQuestionText, setMissingQuestionText] = useState("");
 
+  const navigate = useNavigate();
   const answerScrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
