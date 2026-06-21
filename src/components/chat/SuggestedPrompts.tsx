@@ -1,4 +1,4 @@
-
+import { Coins, MapPin, FileText } from "lucide-react";
 
 interface Props {
   onSelect: (prompt: string) => void;
@@ -6,52 +6,52 @@ interface Props {
 
 const PROMPTS = [
   {
-    emoji: "🔄",
-    label: "Jämför roller",
-    prompt: "Hur skiljer sig ersättningen mellan olika roller i min zon?",
-  },
-  {
-    emoji: "💰",
-    label: "Förhandlingsutrymme",
+    Icon: Coins,
+    label: "Förhandling",
     prompt: "Vilket förhandlingsutrymme har jag baserat på marknadsdata?",
   },
   {
-    emoji: "📋",
-    label: "Avtalsnivåer",
-    prompt: "Vad säger ramavtalet för min yrkesroll?",
+    Icon: MapPin,
+    label: "Annan ort",
+    prompt: "Hur ser ersättningen ut om jag jobbar i en annan ort?",
+  },
+  {
+    Icon: FileText,
+    label: "Avtalsnivå",
+    prompt: "Vad är kundpriset enligt ramavtalet för min roll och zon?",
   },
 ];
 
 export default function SuggestedPrompts({ onSelect }: Props) {
   return (
-    <div className="flex flex-col items-center gap-4 py-8">
-      <div className="text-center mb-2">
-        <h2 className="font-display text-lg font-bold text-foreground tracking-tight">
-          Löneassistenten
-        </h2>
-        <p className="text-sm text-muted-foreground mt-1">
-          Ställ valfri fråga om din ersättning — alla svar baseras på officiella datakällor.
-        </p>
-      </div>
-
-      <p className="text-xs text-muted-foreground/70 mb-1">Föreslagna ämnen</p>
-      <div className="grid grid-cols-3 gap-2 w-full max-w-md">
-        {PROMPTS.map((p) => (
-          <button
-            key={p.label}
-            onClick={() => onSelect(p.prompt)}
-            className="flex flex-col items-start gap-1 p-3 rounded-xl bg-card border border-dashed border-border text-left transition-all hover:border-primary/30 hover:bg-card/80 hover:-translate-y-0.5"
-          >
-            <span className="text-base">{p.emoji}</span>
-            <span className="text-xs font-medium text-foreground/80">{p.label}</span>
-          </button>
-        ))}
-      </div>
-
-      <p className="text-[10px] text-muted-foreground/50 mt-2">
-        Alla svar grundas i CI-motorn · Inga påhittade siffror
+    <div className="flex flex-col items-center gap-5 pt-3 pb-4">
+      <p className="text-sm text-foreground/80 text-center max-w-sm leading-relaxed">
+        Ställ valfri fråga om din ersättning — alla svar baseras på officiella datakällor.
       </p>
 
+      <div className="w-full">
+        <p className="text-xs font-medium text-foreground/70 mb-2 text-center">
+          Föreslagna ämnen
+        </p>
+        <div className="grid grid-cols-3 gap-2 w-full">
+          {PROMPTS.map(({ Icon, label, prompt }) => (
+            <button
+              key={label}
+              onClick={() => onSelect(prompt)}
+              className="group flex flex-col items-center justify-start gap-2 px-2 py-3 rounded-xl bg-card/70 border border-border/60 text-center transition-all hover:bg-card hover:border-primary/40 hover:-translate-y-0.5 active:translate-y-0 active:bg-primary/10 active:border-primary/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+            >
+              <Icon className="w-4 h-4 text-foreground/80 group-hover:text-primary transition-colors" />
+              <span className="text-[11px] sm:text-xs font-medium text-foreground leading-tight break-words">
+                {label}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <p className="text-[11px] text-foreground/60 text-center">
+        Alla svar grundas i assistenten · Inga påhittade siffror
+      </p>
     </div>
   );
 }

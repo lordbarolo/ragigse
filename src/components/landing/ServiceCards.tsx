@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { trackCta } from "@/lib/trackCta";
 
 interface ServiceCardsProps {
   onStartAnalysis: () => void;
@@ -95,7 +96,10 @@ export default function ServiceCards({ onStartAnalysis }: ServiceCardsProps) {
                   <h3 className="text-lg font-semibold text-foreground mb-2">{s.title}</h3>
                   <p className="text-sm text-muted-foreground leading-relaxed flex-1 mb-5">{s.desc}</p>
                   <button
-                    onClick={() => s.link ? navigate(s.link) : onStartAnalysis()}
+                    onClick={() => {
+                      trackCta("service_cards_mobile", s.cta, s.link ?? "start_analysis", { title: s.title });
+                      s.link ? navigate(s.link) : onStartAnalysis();
+                    }}
                     className="inline-flex items-center gap-1.5 text-sm font-medium text-primary hover:text-primary/80 transition-colors cursor-pointer bg-transparent w-fit"
                   >
                     {s.cta} <span aria-hidden>→</span>
@@ -132,7 +136,10 @@ export default function ServiceCards({ onStartAnalysis }: ServiceCardsProps) {
               <h3 className="text-base font-medium text-foreground mb-3">{s.title}</h3>
               <p className="text-sm text-muted-foreground leading-relaxed flex-1 mb-6">{s.desc}</p>
               <button
-                onClick={() => s.link ? navigate(s.link) : onStartAnalysis()}
+                onClick={() => {
+                  trackCta("service_cards_desktop", s.cta, s.link ?? "start_analysis", { title: s.title });
+                  s.link ? navigate(s.link) : onStartAnalysis();
+                }}
                 className="inline-flex items-center gap-1.5 text-sm font-medium text-foreground border-b border-border pb-px w-fit hover:border-foreground transition-colors cursor-pointer bg-transparent"
               >
                 {s.cta} <span aria-hidden>→</span>

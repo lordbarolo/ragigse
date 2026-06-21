@@ -17,7 +17,7 @@ const FAQ_ITEMS = [
   {
     question: "Kostar det något att använda CompCare?",
     answer:
-      "Den grundläggande jämförelsen är helt gratis. För en detaljerad rapport kan du välja att uppgradera.",
+      "Nej, sidan har inga funktioner som kräver betalning.",
   },
   {
     question: "Vilka yrkesgrupper stöds?",
@@ -83,7 +83,7 @@ export default function FAQ() {
       {/* Header */}
       <header className="hero-gradient py-10 px-5 text-center sm:py-14">
         <div className="max-w-3xl mx-auto space-y-3">
-          <h1 className="text-3xl sm:text-4xl text-primary-foreground leading-tight">
+          <h1 className="text-[1.6rem] sm:text-4xl text-primary-foreground leading-tight text-balance">
             Vanliga frågor om ersättning
           </h1>
           <p className="text-base sm:text-lg text-primary-foreground/85 font-body max-w-2xl mx-auto">

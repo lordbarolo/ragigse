@@ -1,0 +1,1 @@
+ALTER VIEW public.calloff_imports_public SET (security_invoker = on);

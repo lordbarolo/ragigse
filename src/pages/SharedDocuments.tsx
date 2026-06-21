@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Loader2, FileText, ShieldCheck, Clock, Download, AlertTriangle } from "lucide-react";
+import { Loader2, FileText, ShieldCheck, Download, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface SharedDoc {
@@ -14,7 +14,8 @@ interface SharedDoc {
 interface SharePayload {
   owner_name: string;
   recipient_label: string | null;
-  expires_at: string;
+  recipient_email: string | null;
+  expires_at: string | null;
   documents: SharedDoc[];
 }
 
@@ -67,8 +68,8 @@ export default function SharedDocuments() {
 
   if (expired) {
     return (
-      <CenterCard icon={<AlertTriangle className="w-6 h-6 text-amber-500" />} title="Länken har gått ut">
-        Be ägaren att skapa en ny delningslänk om du fortfarande behöver tillgång till dokumenten.
+      <CenterCard icon={<AlertTriangle className="w-6 h-6 text-amber-500" />} title="Länken är inte längre aktiv">
+        Ägaren har återkallat länken. Be om en ny om du fortfarande behöver tillgång.
       </CenterCard>
     );
   }
@@ -81,7 +82,7 @@ export default function SharedDocuments() {
     );
   }
 
-  const expires = new Date(data.expires_at);
+  const recipient = data.recipient_email || data.recipient_label;
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -95,13 +96,12 @@ export default function SharedDocuments() {
               <h1 className="text-base font-semibold text-slate-900 truncate">
                 Delade dokument{data.owner_name ? ` från ${data.owner_name}` : ""}
               </h1>
-              <p className="text-xs text-slate-500 mt-0.5 inline-flex items-center gap-1.5">
-                <Clock className="w-3 h-3" />
-                Giltig till {expires.toLocaleString("sv-SE", { dateStyle: "medium", timeStyle: "short" })}
-              </p>
-              {data.recipient_label && (
-                <p className="text-xs text-slate-500 mt-0.5">För: {data.recipient_label}</p>
+              {recipient && (
+                <p className="text-xs text-slate-500 mt-0.5">För: {recipient}</p>
               )}
+              <p className="text-[11px] text-slate-400 mt-1">
+                Nedladdade PDF:er märks med mottagarens e-postadress på varje sida.
+              </p>
             </div>
           </div>
 
@@ -121,7 +121,6 @@ export default function SharedDocuments() {
                     variant="outline"
                     className="gap-1.5 text-sm font-semibold"
                     onClick={() => {
-                      // Logga öppnande (fire-and-forget)
                       fetch(`${ENDPOINT}?token=${encodeURIComponent(token!)}&action=download&document_id=${d.id}`, {
                         headers: { apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string },
                         keepalive: true,
@@ -130,7 +129,7 @@ export default function SharedDocuments() {
                     }}
                   >
                     <Download className="w-3.5 h-3.5" />
-                    Öppna
+                    Ladda ner
                   </Button>
                 ) : (
                   <span className="text-xs text-rose-500">Otillgänglig</span>
@@ -140,7 +139,7 @@ export default function SharedDocuments() {
           </ul>
         </div>
         <p className="text-[11px] text-slate-400 mt-4 text-center">
-          Tillgång registreras. Länken slutar fungera efter utgångsdatumet.
+          Åtkomst registreras. Ägaren kan när som helst återkalla länken.
         </p>
       </div>
     </div>

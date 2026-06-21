@@ -19,7 +19,7 @@ const faqJsonLd = {
   mainEntity: [
     { "@type": "Question", name: "Hur fungerar CompCare.se?", acceptedAnswer: { "@type": "Answer", text: "Du fyller i din yrkesroll, arbetsort och erfarenhet. Vi jämför din ersättning med ramavtalspriser från SKR och bemanningsbranschens standardmarginaler — samma data som regioner och bemanningsföretag använder." } },
     { "@type": "Question", name: "Vilka data baseras analysen på?", acceptedAnswer: { "@type": "Answer", text: "Analysen baseras enbart på SKR:s officiella ramavtalspriser för 2026 och bemanningsbranschens standardmarginaler. Vi använder ingen offentlig lönestatistik eftersom syftet är att visa vad du kan tjäna i ett konsultuppdrag." } },
-    { "@type": "Question", name: "Kostar det något att använda CompCare?", acceptedAnswer: { "@type": "Answer", text: "Den grundläggande jämförelsen av din konsultersättning är helt gratis. För en detaljerad rapport med förhandlingstips kan du välja att uppgradera." } },
+    { "@type": "Question", name: "Kostar det något att använda CompCare?", acceptedAnswer: { "@type": "Answer", text: "Nej, sidan har inga funktioner som kräver betalning." } },
     { "@type": "Question", name: "Vilka yrkesgrupper stöds?", acceptedAnswer: { "@type": "Answer", text: "Just nu fokuserar vi på konsulterande sjuksköterskor, barnmorskor och läkare. Samtliga specialiseringar har unik data." } },
   ],
 };

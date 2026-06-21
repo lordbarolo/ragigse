@@ -312,6 +312,7 @@ export type Database = {
           id: string
           lead_id: string | null
           metadata: Json | null
+          visitor_day_hash: string | null
         }
         Insert: {
           created_at?: string
@@ -319,6 +320,7 @@ export type Database = {
           id?: string
           lead_id?: string | null
           metadata?: Json | null
+          visitor_day_hash?: string | null
         }
         Update: {
           created_at?: string
@@ -326,23 +328,27 @@ export type Database = {
           id?: string
           lead_id?: string | null
           metadata?: Json | null
+          visitor_day_hash?: string | null
         }
         Relationships: []
       }
       app_settings: {
         Row: {
+          is_public: boolean
           key: string
           updated_at: string
           updated_by: string | null
           value: Json
         }
         Insert: {
+          is_public?: boolean
           key: string
           updated_at?: string
           updated_by?: string | null
           value: Json
         }
         Update: {
+          is_public?: boolean
           key?: string
           updated_at?: string
           updated_by?: string | null
@@ -1659,9 +1665,10 @@ export type Database = {
         Row: {
           created_at: string
           document_ids: string[]
-          expires_at: string
+          expires_at: string | null
           id: string
           last_viewed_at: string | null
+          recipient_email: string | null
           recipient_label: string | null
           token: string
           user_id: string
@@ -1670,9 +1677,10 @@ export type Database = {
         Insert: {
           created_at?: string
           document_ids: string[]
-          expires_at: string
+          expires_at?: string | null
           id?: string
           last_viewed_at?: string | null
+          recipient_email?: string | null
           recipient_label?: string | null
           token: string
           user_id: string
@@ -1681,13 +1689,44 @@ export type Database = {
         Update: {
           created_at?: string
           document_ids?: string[]
-          expires_at?: string
+          expires_at?: string | null
           id?: string
           last_viewed_at?: string | null
+          recipient_email?: string | null
           recipient_label?: string | null
           token?: string
           user_id?: string
           view_count?: number
+        }
+        Relationships: []
+      }
+      edge_function_errors: {
+        Row: {
+          context: Json | null
+          created_at: string
+          error_message: string
+          function_name: string
+          id: string
+          request_id: string | null
+          stack: string | null
+        }
+        Insert: {
+          context?: Json | null
+          created_at?: string
+          error_message: string
+          function_name: string
+          id?: string
+          request_id?: string | null
+          stack?: string | null
+        }
+        Update: {
+          context?: Json | null
+          created_at?: string
+          error_message?: string
+          function_name?: string
+          id?: string
+          request_id?: string | null
+          stack?: string | null
         }
         Relationships: []
       }
@@ -2192,6 +2231,36 @@ export type Database = {
         }
         Relationships: []
       }
+      lonekoll_avtal_chunks: {
+        Row: {
+          content: string
+          created_at: string
+          embedding: string
+          id: string
+          metadata: Json
+          section: string | null
+          source_doc: string
+        }
+        Insert: {
+          content: string
+          created_at?: string
+          embedding: string
+          id?: string
+          metadata?: Json
+          section?: string | null
+          source_doc: string
+        }
+        Update: {
+          content?: string
+          created_at?: string
+          embedding?: string
+          id?: string
+          metadata?: Json
+          section?: string | null
+          source_doc?: string
+        }
+        Relationships: []
+      }
       margin_models: {
         Row: {
           created_at: string
@@ -2348,6 +2417,20 @@ export type Database = {
             referencedRelation: "mp_offers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "mp_agent_runs_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "mp_offers_for_listing_owner"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_agent_runs_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "mp_offers_safe"
+            referencedColumns: ["id"]
+          },
         ]
       }
       mp_listings: {
@@ -2478,6 +2561,20 @@ export type Database = {
             referencedRelation: "mp_offers"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "mp_negotiation_events_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "mp_offers_for_listing_owner"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_negotiation_events_offer_id_fkey"
+            columns: ["offer_id"]
+            isOneToOne: false
+            referencedRelation: "mp_offers_safe"
+            referencedColumns: ["id"]
+          },
         ]
       }
       mp_offers: {
@@ -2564,6 +2661,20 @@ export type Database = {
             columns: ["parent_offer_id"]
             isOneToOne: false
             referencedRelation: "mp_offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_offers_parent_offer_id_fkey"
+            columns: ["parent_offer_id"]
+            isOneToOne: false
+            referencedRelation: "mp_offers_for_listing_owner"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_offers_parent_offer_id_fkey"
+            columns: ["parent_offer_id"]
+            isOneToOne: false
+            referencedRelation: "mp_offers_safe"
             referencedColumns: ["id"]
           },
         ]
@@ -3628,6 +3739,13 @@ export type Database = {
             referencedRelation: "ref_profiles"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "ref_pings_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       ref_profile_views: {
@@ -3664,10 +3782,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "ref_profile_views_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "ref_profile_views_viewer_id_fkey"
             columns: ["viewer_id"]
             isOneToOne: false
             referencedRelation: "ref_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ref_profile_views_viewer_id_fkey"
+            columns: ["viewer_id"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -3936,10 +4068,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "ref_references_giver_id_fkey"
+            columns: ["giver_id"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "ref_references_individual_id_fkey"
             columns: ["individual_id"]
             isOneToOne: false
             referencedRelation: "ref_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ref_references_individual_id_fkey"
+            columns: ["individual_id"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -4180,6 +4326,13 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "ref_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ref_verifications_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -4701,6 +4854,42 @@ export type Database = {
         }
         Relationships: []
       }
+      system_health_log: {
+        Row: {
+          alert_id: string | null
+          alert_sent_at: string | null
+          check_name: string
+          created_at: string
+          details: Json | null
+          duration_ms: number | null
+          error_message: string | null
+          id: string
+          status: string
+        }
+        Insert: {
+          alert_id?: string | null
+          alert_sent_at?: string | null
+          check_name: string
+          created_at?: string
+          details?: Json | null
+          duration_ms?: number | null
+          error_message?: string | null
+          id?: string
+          status: string
+        }
+        Update: {
+          alert_id?: string | null
+          alert_sent_at?: string | null
+          check_name?: string
+          created_at?: string
+          details?: Json | null
+          duration_ms?: number | null
+          error_message?: string | null
+          id?: string
+          status?: string
+        }
+        Relationships: []
+      }
       uppdrag_notifications: {
         Row: {
           created_at: string
@@ -4882,8 +5071,6 @@ export type Database = {
           id: string | null
           imported_at: string | null
           level: string | null
-          partner_share_data: boolean | null
-          partner_source: string | null
           price_max: number | null
           price_median: number | null
           price_min: number | null
@@ -4901,8 +5088,6 @@ export type Database = {
           id?: string | null
           imported_at?: string | null
           level?: string | null
-          partner_share_data?: boolean | null
-          partner_source?: string | null
           price_max?: number | null
           price_median?: number | null
           price_min?: number | null
@@ -4920,8 +5105,6 @@ export type Database = {
           id?: string | null
           imported_at?: string | null
           level?: string | null
-          partner_share_data?: boolean | null
-          partner_source?: string | null
           price_max?: number | null
           price_median?: number | null
           price_min?: number | null
@@ -4995,6 +5178,201 @@ export type Database = {
         }
         Relationships: []
       }
+      mp_offers_for_listing_owner: {
+        Row: {
+          agent_id: string | null
+          agent_org: string | null
+          agent_signature: string | null
+          created_at: string | null
+          end_date: string | null
+          hours_per_week: number | null
+          id: string | null
+          listing_id: string | null
+          message_md: string | null
+          metadata: Json | null
+          offered_price_sek: number | null
+          parent_offer_id: string | null
+          responded_at: string | null
+          responded_message_md: string | null
+          start_date: string | null
+          status: Database["public"]["Enums"]["mp_offer_status"] | null
+          updated_at: string | null
+        }
+        Insert: {
+          agent_id?: string | null
+          agent_org?: string | null
+          agent_signature?: string | null
+          created_at?: string | null
+          end_date?: string | null
+          hours_per_week?: number | null
+          id?: string | null
+          listing_id?: string | null
+          message_md?: string | null
+          metadata?: Json | null
+          offered_price_sek?: number | null
+          parent_offer_id?: string | null
+          responded_at?: string | null
+          responded_message_md?: string | null
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["mp_offer_status"] | null
+          updated_at?: string | null
+        }
+        Update: {
+          agent_id?: string | null
+          agent_org?: string | null
+          agent_signature?: string | null
+          created_at?: string | null
+          end_date?: string | null
+          hours_per_week?: number | null
+          id?: string | null
+          listing_id?: string | null
+          message_md?: string | null
+          metadata?: Json | null
+          offered_price_sek?: number | null
+          parent_offer_id?: string | null
+          responded_at?: string | null
+          responded_message_md?: string | null
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["mp_offer_status"] | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mp_offers_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "mp_listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_offers_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "mp_listings_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_offers_parent_offer_id_fkey"
+            columns: ["parent_offer_id"]
+            isOneToOne: false
+            referencedRelation: "mp_offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_offers_parent_offer_id_fkey"
+            columns: ["parent_offer_id"]
+            isOneToOne: false
+            referencedRelation: "mp_offers_for_listing_owner"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_offers_parent_offer_id_fkey"
+            columns: ["parent_offer_id"]
+            isOneToOne: false
+            referencedRelation: "mp_offers_safe"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      mp_offers_safe: {
+        Row: {
+          agent_contact: string | null
+          agent_id: string | null
+          agent_org: string | null
+          agent_signature: string | null
+          created_at: string | null
+          end_date: string | null
+          hours_per_week: number | null
+          id: string | null
+          listing_id: string | null
+          message_md: string | null
+          metadata: Json | null
+          offered_price_sek: number | null
+          parent_offer_id: string | null
+          responded_at: string | null
+          responded_message_md: string | null
+          start_date: string | null
+          status: Database["public"]["Enums"]["mp_offer_status"] | null
+          updated_at: string | null
+        }
+        Insert: {
+          agent_contact?: string | null
+          agent_id?: string | null
+          agent_org?: string | null
+          agent_signature?: string | null
+          created_at?: string | null
+          end_date?: string | null
+          hours_per_week?: number | null
+          id?: string | null
+          listing_id?: string | null
+          message_md?: string | null
+          metadata?: Json | null
+          offered_price_sek?: number | null
+          parent_offer_id?: string | null
+          responded_at?: string | null
+          responded_message_md?: string | null
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["mp_offer_status"] | null
+          updated_at?: string | null
+        }
+        Update: {
+          agent_contact?: string | null
+          agent_id?: string | null
+          agent_org?: string | null
+          agent_signature?: string | null
+          created_at?: string | null
+          end_date?: string | null
+          hours_per_week?: number | null
+          id?: string | null
+          listing_id?: string | null
+          message_md?: string | null
+          metadata?: Json | null
+          offered_price_sek?: number | null
+          parent_offer_id?: string | null
+          responded_at?: string | null
+          responded_message_md?: string | null
+          start_date?: string | null
+          status?: Database["public"]["Enums"]["mp_offer_status"] | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "mp_offers_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "mp_listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_offers_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "mp_listings_public"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_offers_parent_offer_id_fkey"
+            columns: ["parent_offer_id"]
+            isOneToOne: false
+            referencedRelation: "mp_offers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_offers_parent_offer_id_fkey"
+            columns: ["parent_offer_id"]
+            isOneToOne: false
+            referencedRelation: "mp_offers_for_listing_owner"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "mp_offers_parent_offer_id_fkey"
+            columns: ["parent_offer_id"]
+            isOneToOne: false
+            referencedRelation: "mp_offers_safe"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ref_pings_safe: {
         Row: {
           confirmed_until: string | null
@@ -5052,6 +5430,81 @@ export type Database = {
             columns: ["requested_by"]
             isOneToOne: false
             referencedRelation: "ref_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ref_pings_requested_by_fkey"
+            columns: ["requested_by"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles_public"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      ref_profiles_public: {
+        Row: {
+          bankid_verified: boolean | null
+          bio: string | null
+          created_at: string | null
+          full_name: string | null
+          id: string | null
+          linkedin_url: string | null
+          profile_status: string | null
+          role_type: string | null
+          score_breakdown: Json | null
+          score_updated_at: string | null
+          specialty: string | null
+          status_checklist: Json | null
+          status_updated_at: string | null
+          trust_score: number | null
+          trust_tier: string | null
+          updated_at: string | null
+          years_licensed: number | null
+        }
+        Insert: {
+          bankid_verified?: boolean | null
+          bio?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id?: string | null
+          linkedin_url?: string | null
+          profile_status?: string | null
+          role_type?: string | null
+          score_breakdown?: Json | null
+          score_updated_at?: string | null
+          specialty?: string | null
+          status_checklist?: Json | null
+          status_updated_at?: string | null
+          trust_score?: number | null
+          trust_tier?: string | null
+          updated_at?: string | null
+          years_licensed?: number | null
+        }
+        Update: {
+          bankid_verified?: boolean | null
+          bio?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id?: string | null
+          linkedin_url?: string | null
+          profile_status?: string | null
+          role_type?: string | null
+          score_breakdown?: Json | null
+          score_updated_at?: string | null
+          specialty?: string | null
+          status_checklist?: Json | null
+          status_updated_at?: string | null
+          trust_score?: number | null
+          trust_tier?: string | null
+          updated_at?: string | null
+          years_licensed?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ref_profiles_role_type_fkey"
+            columns: ["role_type"]
+            isOneToOne: false
+            referencedRelation: "ref_role_profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -5144,10 +5597,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "ref_references_giver_id_fkey"
+            columns: ["giver_id"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "ref_references_individual_id_fkey"
             columns: ["individual_id"]
             isOneToOne: false
             referencedRelation: "ref_profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ref_references_individual_id_fkey"
+            columns: ["individual_id"]
+            isOneToOne: false
+            referencedRelation: "ref_profiles_public"
             referencedColumns: ["id"]
           },
         ]
@@ -5260,18 +5727,32 @@ export type Database = {
         Args: { _daily_limit?: number; _user_id: string }
         Returns: Json
       }
-      create_document_share: {
-        Args: {
-          _document_ids: string[]
-          _expires_in_hours: number
-          _recipient_label?: string
-        }
-        Returns: {
-          expires_at: string
-          id: string
-          token: string
-        }[]
-      }
+      create_document_share:
+        | {
+            Args: {
+              _document_ids: string[]
+              _expires_in_hours: number
+              _recipient_label?: string
+            }
+            Returns: {
+              expires_at: string
+              id: string
+              token: string
+            }[]
+          }
+        | {
+            Args: {
+              _document_ids: string[]
+              _expires_in_hours: number
+              _recipient_email?: string
+              _recipient_label?: string
+            }
+            Returns: {
+              expires_at: string
+              id: string
+              token: string
+            }[]
+          }
       create_org_with_admin: {
         Args: { _name: string; _org_number?: string; _type?: string }
         Returns: string
@@ -5286,6 +5767,7 @@ export type Database = {
       }
       get_document_share_by_token: { Args: { _token: string }; Returns: Json }
       get_feature_flag: { Args: { _key: string }; Returns: Json }
+      get_health_check_cron_token: { Args: never; Returns: string }
       get_referral_by_token: {
         Args: { _token: string }
         Returns: {
@@ -5313,6 +5795,26 @@ export type Database = {
         }
         Returns: undefined
       }
+      log_edge_error: {
+        Args: {
+          _context?: Json
+          _error_message: string
+          _function_name: string
+          _request_id?: string
+          _stack?: string
+        }
+        Returns: string
+      }
+      match_lonekoll_chunks: {
+        Args: { match_count?: number; query_embedding: string }
+        Returns: {
+          content: string
+          id: string
+          section: string
+          similarity: number
+          source_doc: string
+        }[]
+      }
       move_to_dlq: {
         Args: {
           dlq_name: string
@@ -5323,6 +5825,13 @@ export type Database = {
         Returns: number
       }
       mp_can_publish: { Args: { _user_id: string }; Returns: boolean }
+      pg_columns_for_public: {
+        Args: never
+        Returns: {
+          column_name: string
+          table_name: string
+        }[]
+      }
       read_email_batch: {
         Args: { batch_size: number; queue_name: string; vt: number }
         Returns: {
@@ -5441,6 +5950,7 @@ export type Database = {
         Args: { _request_id: string }
         Returns: undefined
       }
+      revoke_document_share: { Args: { _id: string }; Returns: undefined }
       search_staffing_agencies: {
         Args: { query: string }
         Returns: {

@@ -14,6 +14,7 @@ import { useTeaserData } from "@/hooks/useTeaserData";
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 import { fetchLead, leadToSurvey, createReport, saveEmail } from "@/services/leadService";
+import { identifyLeadWithEmail } from "@/lib/identify";
 
 import TeaserHeader from "@/components/teaser/TeaserHeader";
 import OccupationInfo from "@/components/teaser/OccupationInfo";
@@ -156,8 +157,25 @@ export default function Teaser() {
 
   const handleEmailSubmit = async (emailValue: string) => {
     setEmailSaving(true);
+    let activeReportId = reportId;
     try {
-      await saveEmail({ leadId, reportId, email: emailValue });
+      if (!activeReportId && leadId && survey) {
+        const result = await createReport({ leadId, email: emailValue, survey, track: "consultant" });
+        activeReportId = result.reportId;
+        setReportId(activeReportId);
+        sessionStorage.setItem("reportId", activeReportId);
+      }
+
+      if (!activeReportId) {
+        toast({ title: "Kunde inte skapa rapport, försök igen", variant: "destructive" });
+        setEmailSaving(false);
+        return;
+      }
+
+      const { reportAccessToken } = await saveEmail({ leadId, reportId: activeReportId, email: emailValue });
+      if (reportAccessToken) {
+        sessionStorage.setItem(`reportAccess:${activeReportId}`, reportAccessToken);
+      }
 
       setEmail(emailValue);
       if (survey) {
@@ -165,27 +183,13 @@ export default function Teaser() {
         sessionStorage.setItem("surveyData", JSON.stringify(updated));
       }
       trackEvent("email_collected", { source: "teaser" });
+      identifyLeadWithEmail(leadId, emailValue, {
+        yrke: survey?.yrke ?? null,
+        kommun: survey?.kommun ?? null,
+        employment_type: survey?.employmentType ?? null,
+      });
     } catch {
       toast({ title: "Kunde inte spara e-post, försök igen", variant: "destructive" });
-      setEmailSaving(false);
-      return;
-    }
-
-    // Ensure we have a reportId
-    let activeReportId = reportId;
-    if (!activeReportId && leadId && survey) {
-      try {
-        const result = await createReport({ leadId, email: emailValue, survey, track: "consultant" });
-        activeReportId = result.reportId;
-        setReportId(activeReportId);
-        sessionStorage.setItem("reportId", activeReportId);
-      } catch {
-        // Fall through
-      }
-    }
-
-    if (!activeReportId) {
-      toast({ title: "Kunde inte skapa rapport, försök igen", variant: "destructive" });
       setEmailSaving(false);
       return;
     }

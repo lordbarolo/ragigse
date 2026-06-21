@@ -39,7 +39,11 @@ describe("trackEvent — cookieless mode", () => {
     expect(captureMock).toHaveBeenCalledTimes(1);
     expect(captureMock).toHaveBeenCalledWith(
       "hero_cta_clicked",
-      expect.objectContaining({ source: "hero" })
+      expect.objectContaining({
+        source: "hero",
+        hostname: "compcare.se",
+        is_internal_traffic: false,
+      })
     );
 
     expect(invokeMock).toHaveBeenCalledTimes(1);

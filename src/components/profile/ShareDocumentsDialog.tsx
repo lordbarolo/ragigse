@@ -1,12 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
-import { Loader2, Link2, Check, FileText, Copy, Mail, MessageSquare } from "lucide-react";
+import { Loader2, Send, Check, FileText, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Dialog,
   DialogContent,
@@ -14,13 +15,6 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 
 interface DocRow {
   id: string;
@@ -34,14 +28,6 @@ interface Props {
   onOpenChange: (open: boolean) => void;
 }
 
-const EXPIRY_OPTIONS = [
-  { value: "24", label: "24 timmar" },
-  { value: "72", label: "3 dagar" },
-  { value: "168", label: "7 dagar" },
-  { value: "720", label: "30 dagar" },
-  { value: "2160", label: "90 dagar" },
-];
-
 const DOC_TYPE_LABELS: Record<string, string> = {
   cv: "CV",
   certificate: "Certifikat / Intyg",
@@ -52,23 +38,28 @@ const DOC_TYPE_LABELS: Record<string, string> = {
   other: "Övrigt",
 };
 
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export default function ShareDocumentsDialog({ open, onOpenChange }: Props) {
   const { user } = useAuth();
   const [docs, setDocs] = useState<DocRow[]>([]);
   const [loading, setLoading] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [expiry, setExpiry] = useState("168");
-  const [recipient, setRecipient] = useState("");
+  const [recipientEmail, setRecipientEmail] = useState("");
+  const [personalMessage, setPersonalMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [shareUrl, setShareUrl] = useState<string | null>(null);
+  const [sentTo, setSentTo] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     if (!open || !user) return;
     setShareUrl(null);
+    setSentTo(null);
     setCopied(false);
     setSelected(new Set());
-    setRecipient("");
+    setRecipientEmail("");
+    setPersonalMessage("");
     setLoading(true);
     (async () => {
       const { data: cp } = await supabase
@@ -97,22 +88,49 @@ export default function ShareDocumentsDialog({ open, onOpenChange }: Props) {
     });
   };
 
-  const canSubmit = selected.size > 0 && !submitting;
+  const emailValid = EMAIL_REGEX.test(recipientEmail.trim());
+  const canSubmit = selected.size > 0 && emailValid && !submitting;
 
-  const handleCreate = async () => {
+  const handleCreateAndSend = async () => {
     if (!canSubmit) return;
     setSubmitting(true);
     try {
+      const email = recipientEmail.trim().toLowerCase();
       const { data, error } = await supabase.rpc("create_document_share", {
         _document_ids: Array.from(selected),
-        _expires_in_hours: Number(expiry),
-        _recipient_label: recipient.trim() || null,
+        _expires_in_hours: 0, // 0 = no expiry
+        _recipient_label: email,
+        _recipient_email: email,
       });
       if (error) throw error;
       const row = Array.isArray(data) ? data[0] : data;
       const token = (row as any)?.token;
       if (!token) throw new Error("Ingen token returnerades");
       const url = `${window.location.origin}/delade-dokument/${token}`;
+
+      // Send invite email via existing transactional pipeline
+      const { error: mailErr } = await supabase.functions.invoke("send-transactional-email", {
+        body: {
+          templateName: "document-share-invite",
+          recipientEmail: email,
+          idempotencyKey: `doc-share-${(row as any)?.id}`,
+          templateData: {
+            ownerName: user?.user_metadata?.full_name || user?.email || "En kollega",
+            documentCount: selected.size,
+            inviteUrl: url,
+            personalMessage: personalMessage.trim() || undefined,
+          },
+        },
+      });
+      if (mailErr) {
+        console.error("mail error", mailErr);
+        toast.warning("Länken är skapad men mejlet kunde inte skickas", {
+          description: "Du kan kopiera länken och skicka den manuellt.",
+        });
+      } else {
+        toast.success(`Länk skickad till ${email}`);
+        setSentTo(email);
+      }
       setShareUrl(url);
     } catch (err: any) {
       console.error(err);
@@ -131,29 +149,29 @@ export default function ShareDocumentsDialog({ open, onOpenChange }: Props) {
     });
   };
 
-  const expiryLabel = useMemo(
-    () => EXPIRY_OPTIONS.find((e) => e.value === expiry)?.label,
-    [expiry],
-  );
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-lg bg-white">
         <DialogHeader>
-          <DialogTitle>Dela dokument via länk</DialogTitle>
+          <DialogTitle>Dela dokument via e-post</DialogTitle>
           <DialogDescription>
-            Skapa en säker länk till valda dokument. Du bestämmer hur länge den ska fungera och kan skicka den direkt via e-post eller SMS — eller kopiera och dela själv.
+            Vi mejlar en personlig länk till mottagaren. När de öppnat länken kan de ladda
+            ner dokumenten — varje sida märks med deras e-postadress.
           </DialogDescription>
         </DialogHeader>
 
         {shareUrl ? (
           <div className="space-y-4">
             <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3 text-sm text-emerald-800">
-              Klar! Länken fungerar i {expiryLabel?.toLowerCase()}. Skicka den till mottagaren via e-post, SMS eller valfri chatt.
+              {sentTo
+                ? <>Klart! Mejl skickat till <strong>{sentTo}</strong> med en personlig länk.</>
+                : <>Länk skapad. Skicka den manuellt till mottagaren.</>}
             </div>
 
             <div>
-              <Label className="text-xs font-medium text-slate-700 mb-1 block">Länk</Label>
+              <Label className="text-xs font-medium text-slate-700 mb-1 block">
+                Länk (för säkerhets skull)
+              </Label>
               <div className="flex gap-2">
                 <Input value={shareUrl} readOnly className="text-xs bg-white text-slate-900" />
                 <Button onClick={handleCopy} variant="outline" className="text-sm font-semibold px-4 py-3 gap-1.5">
@@ -161,28 +179,10 @@ export default function ShareDocumentsDialog({ open, onOpenChange }: Props) {
                   {copied ? "Kopierad" : "Kopiera"}
                 </Button>
               </div>
+              <p className="text-[11px] text-slate-500 mt-1">
+                Länken har ingen utgångstid. Du kan återkalla den när som helst under "Aktivitet".
+              </p>
             </div>
-
-            <div className="grid grid-cols-2 gap-2">
-              <a
-                href={`mailto:?subject=${encodeURIComponent(`Dokument från ${recipient ? recipient : "CompCare"}`)}&body=${encodeURIComponent(`Hej,\n\nHär är en säker länk till mina dokument (giltig i ${expiryLabel?.toLowerCase()}):\n\n${shareUrl}\n\nVänliga hälsningar`)}`}
-                className="inline-flex items-center justify-center gap-1.5 rounded-md border border-slate-200 bg-white text-slate-900 hover:bg-slate-50 text-sm font-semibold px-4 py-3"
-              >
-                <Mail className="w-4 h-4" />
-                Skicka via e-post
-              </a>
-              <a
-                href={`sms:?&body=${encodeURIComponent(`Länk till mina dokument (giltig i ${expiryLabel?.toLowerCase()}): ${shareUrl}`)}`}
-                className="inline-flex items-center justify-center gap-1.5 rounded-md border border-slate-200 bg-white text-slate-900 hover:bg-slate-50 text-sm font-semibold px-4 py-3"
-              >
-                <MessageSquare className="w-4 h-4" />
-                Skicka via SMS
-              </a>
-            </div>
-
-            <p className="text-[11px] text-slate-500">
-              E-post och SMS öppnas i din egen app med länken förifylld — du ser och kan redigera innan du skickar.
-            </p>
 
             <Button
               variant="outline"
@@ -204,7 +204,7 @@ export default function ShareDocumentsDialog({ open, onOpenChange }: Props) {
           <div className="space-y-4">
             <div>
               <Label className="text-xs font-medium text-slate-700 mb-2 block">Dokument att dela</Label>
-              <ul className="max-h-56 overflow-y-auto rounded-lg border border-slate-200 divide-y divide-slate-100">
+              <ul className="max-h-48 overflow-y-auto rounded-lg border border-slate-200 divide-y divide-slate-100">
                 {docs.map((d) => (
                   <li key={d.id} className="flex items-center gap-3 px-3 py-2">
                     <Checkbox
@@ -224,39 +224,44 @@ export default function ShareDocumentsDialog({ open, onOpenChange }: Props) {
               </ul>
             </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label className="text-xs font-medium text-slate-700 mb-1 block">Giltig i</Label>
-                <Select value={expiry} onValueChange={setExpiry}>
-                  <SelectTrigger className="bg-white text-slate-900"><SelectValue /></SelectTrigger>
-                  <SelectContent className="bg-white">
-                    {EXPIRY_OPTIONS.map((o) => (
-                      <SelectItem key={o.value} value={o.value}>{o.label}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label className="text-xs font-medium text-slate-700 mb-1 block">Etikett (valfritt)</Label>
-                <Input
-                  placeholder="t.ex. Region Skåne"
-                  value={recipient}
-                  onChange={(e) => setRecipient(e.target.value)}
-                  className="bg-white text-slate-900 placeholder:text-slate-400"
-                />
-                <p className="text-[11px] text-slate-500 mt-1">
-                  Bara för dig — så du i efterhand ser vem länken skapades för. Inget mail skickas härifrån.
-                </p>
-              </div>
+            <div>
+              <Label htmlFor="recipient-email" className="text-xs font-medium text-slate-700 mb-1 block">
+                Mottagarens e-post
+              </Label>
+              <Input
+                id="recipient-email"
+                type="email"
+                placeholder="namn@bemanningsbolag.se"
+                value={recipientEmail}
+                onChange={(e) => setRecipientEmail(e.target.value)}
+                className="bg-white text-slate-900 placeholder:text-slate-400"
+              />
+              <p className="text-[11px] text-slate-500 mt-1">
+                E-postadressen syns som watermark på varje sida av nedladdade PDF:er.
+              </p>
+            </div>
+
+            <div>
+              <Label htmlFor="personal-message" className="text-xs font-medium text-slate-700 mb-1 block">
+                Personligt meddelande (valfritt)
+              </Label>
+              <Textarea
+                id="personal-message"
+                placeholder="Hej! Här är mina handlingar inför uppdraget."
+                value={personalMessage}
+                onChange={(e) => setPersonalMessage(e.target.value)}
+                rows={2}
+                className="bg-white text-slate-900 placeholder:text-slate-400 resize-none"
+              />
             </div>
 
             <Button
-              onClick={handleCreate}
+              onClick={handleCreateAndSend}
               disabled={!canSubmit}
-              className="w-full text-sm font-semibold px-6 py-3 gap-1.5 text-white border-0 bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] hover:from-[#7c3aed] hover:to-[#c026d3]"
+              className="text-sm font-semibold px-6 py-3 gap-1.5 text-white border-0 bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] hover:from-[#7c3aed] hover:to-[#c026d3]"
             >
-              {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Link2 className="w-4 h-4" />}
-              Skapa delningslänk
+              {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+              Skicka länk via e-post
             </Button>
           </div>
         )}

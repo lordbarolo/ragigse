@@ -13,7 +13,6 @@ serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // Admin auth check
   const authResult = await requireAdmin(req);
   if (authResult instanceof Response) return authResult;
 
@@ -23,7 +22,6 @@ serve(async (req) => {
   );
 
   try {
-    // Parse optional date filters from body
     let fromDate: string | null = null;
     let toDate: string | null = null;
     try {
@@ -32,98 +30,95 @@ serve(async (req) => {
       toDate = body?.to || null;
     } catch { /* no body */ }
 
-    // Fetch analytics events with optional date filter
     let query = supabase
       .from("analytics_events")
-      .select("event_name, metadata, created_at")
+      .select("event_name, metadata, created_at, visitor_day_hash")
       .order("created_at", { ascending: false })
-      .limit(50000);
+      .limit(100000);
 
     if (fromDate) query = query.gte("created_at", `${fromDate}T00:00:00Z`);
     if (toDate) query = query.lte("created_at", `${toDate}T23:59:59Z`);
 
     const { data: events, error } = await query;
-
     if (error) throw error;
 
-    // Define funnel steps matching current user flow
+    // Funnel with explicit signup-loop steps
     const funnelSteps = [
       "landing_viewed",
       "survey_started",
       "survey_completed",
-      "analysis_started",
       "email_collected",
-      "analysis_completed",
       "report_viewed",
+      "signup_initiated",
+      "signup_confirmed",
+      "signup_completed",
     ];
 
-    // Aggregate combined counts
-    const combinedCounts: Record<string, number> = {};
-
-    // Daily event counts for time series
-    const dailyCounts: Record<string, Record<string, number>> = {};
-
-    // Referral tracking
+    // Aggregate: distinct visitor_day_hash per step (true unique), and raw counts.
+    const uniqueSets: Record<string, Set<string>> = {};
+    const rawCounts: Record<string, number> = {};
+    const dailyVisitors: Record<string, Set<string>> = {};
+    const dailyEvents: Record<string, Record<string, number>> = {};
     const referralEvents = { sent: 0, confirmed: 0 };
 
-    for (const event of events || []) {
-      // Funnel counts
-      combinedCounts[event.event_name] = (combinedCounts[event.event_name] || 0) + 1;
+    for (const e of events || []) {
+      const name = e.event_name as string;
+      const hash = (e.visitor_day_hash as string | null) || `legacy:${e.created_at}`;
+      const day = (e.created_at as string).slice(0, 10);
 
-      // Referral counts
-      if (event.event_name === "referral_sent") {
-        referralEvents.sent++;
-      } else if (event.event_name === "referral_confirmed") {
-        referralEvents.confirmed++;
+      rawCounts[name] = (rawCounts[name] || 0) + 1;
+      if (!uniqueSets[name]) uniqueSets[name] = new Set();
+      uniqueSets[name].add(hash);
+
+      if (!dailyEvents[day]) dailyEvents[day] = {};
+      dailyEvents[day][name] = (dailyEvents[day][name] || 0) + 1;
+
+      if (!dailyVisitors[day]) dailyVisitors[day] = new Set();
+      if (name === "landing_viewed" || name === "page_view" || name === "page_viewed") {
+        dailyVisitors[day].add(hash);
       }
 
-      // Daily breakdown
-      const day = event.created_at.slice(0, 10);
-      if (!dailyCounts[day]) dailyCounts[day] = {};
-      dailyCounts[day][event.event_name] = (dailyCounts[day][event.event_name] || 0) + 1;
+      if (name === "referral_sent") referralEvents.sent++;
+      else if (name === "referral_confirmed") referralEvents.confirmed++;
     }
 
-    // Build funnel
     const funnel = funnelSteps.map((step, i) => {
-      const count = combinedCounts[step] || 0;
-      const prevCount = i === 0 ? count : (combinedCounts[funnelSteps[i - 1]] || 0);
-      const rate = prevCount > 0 ? Math.round((count / prevCount) * 100) : 0;
-      return { step, count, rate: i === 0 ? 100 : rate };
+      const unique = uniqueSets[step]?.size || 0;
+      const raw = rawCounts[step] || 0;
+      const prevUnique = i === 0 ? unique : (uniqueSets[funnelSteps[i - 1]]?.size || 0);
+      const rate = prevUnique > 0 ? Math.round((unique / prevUnique) * 100) : 0;
+      const dropoff = i === 0 ? 0 : Math.max(0, prevUnique - unique);
+      return { step, unique, raw, rate: i === 0 ? 100 : rate, dropoff };
     });
 
-    const funnels: Record<string, Array<{ step: string; count: number; rate: number }>> = {
-      all: funnel,
-    };
+    const uniqueLanding = uniqueSets["landing_viewed"]?.size || 0;
+    const uniqueSignups = uniqueSets["signup_confirmed"]?.size || 0;
+    const overallRate = uniqueLanding > 0
+      ? ((uniqueSignups / uniqueLanding) * 100).toFixed(1) + "%"
+      : "0%";
 
-    // Conversion rates
-    const sessions = combinedCounts["landing_viewed"] || 0;
-    const conversions = combinedCounts["email_collected"] || 0;
-    const conversionRates: Record<string, { sessions: number; conversions: number; rate: string }> = {
-      all: {
-        sessions,
-        conversions,
-        rate: sessions > 0 ? (conversions / sessions * 100).toFixed(1) + "%" : "0%",
-      },
-    };
-
-    // Sort daily counts
-    const sortedDays = Object.keys(dailyCounts).sort();
+    const sortedDays = Object.keys(dailyEvents).sort();
     const timeSeries = sortedDays.map((day) => ({
       date: day,
-      events: dailyCounts[day],
+      unique_visitors: dailyVisitors[day]?.size || 0,
+      events: dailyEvents[day],
     }));
 
     return new Response(
       JSON.stringify({
-        funnels,
-        conversionRates,
+        funnel,
+        kpis: {
+          unique_visitors: uniqueLanding,
+          unique_signups: uniqueSignups,
+          overall_rate: overallRate,
+          total_events: (events || []).length,
+        },
         referralEvents,
         timeSeries,
-        totalEvents: (events || []).length,
       }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
-  } catch (error) {
+  } catch (error: any) {
     return new Response(
       JSON.stringify({ error: error.message }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }

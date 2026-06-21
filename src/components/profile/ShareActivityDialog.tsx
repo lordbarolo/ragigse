@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Eye, Clock, Link2, ChevronDown, ChevronRight } from "lucide-react";
+import { Loader2, Eye, Clock, Link2, ChevronDown, ChevronRight, Ban } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
+
 import {
   Dialog,
   DialogContent,
@@ -49,16 +51,19 @@ export default function ShareActivityDialog({ open, onOpenChange }: Props) {
   const [shares, setShares] = useState<ShareRow[]>([]);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
+  const [revoking, setRevoking] = useState<string | null>(null);
+
+  const load = async () => {
+    setLoading(true);
+    const { data, error } = await supabase.rpc("list_my_document_shares");
+    if (error) console.error(error);
+    setShares((data as unknown as ShareRow[]) || []);
+    setLoading(false);
+  };
 
   useEffect(() => {
     if (!open) return;
-    setLoading(true);
-    (async () => {
-      const { data, error } = await supabase.rpc("list_my_document_shares");
-      if (error) console.error(error);
-      setShares((data as unknown as ShareRow[]) || []);
-      setLoading(false);
-    })();
+    load();
   }, [open]);
 
   const toggle = (id: string) =>
@@ -67,6 +72,21 @@ export default function ShareActivityDialog({ open, onOpenChange }: Props) {
       n.has(id) ? n.delete(id) : n.add(id);
       return n;
     });
+
+  const revoke = async (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!confirm("Återkalla denna delningslänk? Den slutar fungera direkt och kan inte återställas.")) return;
+    setRevoking(id);
+    const { error } = await supabase.rpc("revoke_document_share", { _id: id });
+    setRevoking(null);
+    if (error) {
+      toast({ title: "Kunde inte återkalla", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Länken är återkallad" });
+    await load();
+  };
+
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -92,10 +112,14 @@ export default function ShareActivityDialog({ open, onOpenChange }: Props) {
               const isOpen = expanded.has(s.id);
               return (
                 <li key={s.id} className="bg-white">
-                  <button
+                  <div
+                    role="button"
+                    tabIndex={0}
                     onClick={() => toggle(s.id)}
-                    className="w-full text-left px-4 py-3 hover:bg-slate-50 flex items-center gap-3"
+                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggle(s.id); } }}
+                    className="w-full text-left px-4 py-3 hover:bg-slate-50 flex items-center gap-3 cursor-pointer"
                   >
+
                     {isOpen ? (
                       <ChevronDown className="w-4 h-4 text-slate-400 shrink-0" />
                     ) : (
@@ -118,11 +142,30 @@ export default function ShareActivityDialog({ open, onOpenChange }: Props) {
                         )}
                       </p>
                     </div>
-                    <div className="flex items-center gap-1 text-xs text-slate-600 shrink-0">
-                      <Eye className="w-3.5 h-3.5" />
-                      {s.view_count}
+                    <div className="flex items-center gap-2 text-xs text-slate-600 shrink-0">
+                      <span className="inline-flex items-center gap-1">
+                        <Eye className="w-3.5 h-3.5" />
+                        {s.view_count}
+                      </span>
+                      {!s.expired && (
+                        <button
+                          onClick={(e) => revoke(s.id, e)}
+                          disabled={revoking === s.id}
+                          className="inline-flex items-center gap-1 rounded-md border border-rose-200 text-rose-600 px-2 py-1 hover:bg-rose-50 disabled:opacity-50"
+                          title="Återkalla länken"
+                        >
+                          {revoking === s.id ? (
+                            <Loader2 className="w-3 h-3 animate-spin" />
+                          ) : (
+                            <Ban className="w-3 h-3" />
+                          )}
+                          Återkalla
+                        </button>
+                      )}
                     </div>
-                  </button>
+                  </div>
+
+
 
                   {isOpen && (
                     <div className="px-4 pb-3 pt-0">

@@ -5,17 +5,17 @@ import { useAuth } from "@/hooks/useAuth";
 import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, MapPin, Briefcase, Clock, UserPlus, Check, Mail, Users, User, Share2, Pencil, ArrowRight } from "lucide-react";
+import { FileText, MapPin, Briefcase, Clock, UserPlus, Check, Mail, Users, User, Share2, ArrowRight, MessageSquare } from "lucide-react";
 import { ProfilePageSkeleton } from "@/components/ui/page-skeleton";
 import { toast } from "sonner";
 import ProfileTabs, { type ProfileTab } from "@/components/profile/ProfileTabs";
 import ProfileInsights from "@/components/profile/ProfileInsights";
 import TrustVerification from "@/components/profile/TrustVerification";
 import CompensationView from "@/components/report/CompensationView";
-import DashboardReferences from "@/components/profile/DashboardReferences";
+
 import DashboardDocuments, { type DashboardDocumentsHandle } from "@/components/profile/DashboardDocuments";
 import ProfileAuditLog from "@/components/profile/ProfileAuditLog";
-import DashboardInvoiceCheck from "@/components/profile/DashboardInvoiceCheck";
+
 import PensionImpactSimulator from "@/components/report/PensionImpactSimulator";
 import AssignmentFeedbackDialog from "@/components/profile/AssignmentFeedbackDialog";
 
@@ -253,6 +253,7 @@ export default function Profile() {
         .profile-light .bg-secondary\\/50 { background: rgb(248 250 252) !important; }
         .profile-light .hover\\:bg-secondary:hover { background: rgb(241 245 249) !important; }
         .profile-light .divide-border > * + * { border-color: rgb(226 232 240) !important; }
+        .profile-light [data-slot="card"], .profile-light h1, .profile-light h2, .profile-light h3 { color: rgb(15 23 42); }
       `}</style>
       {/* Subtle glow gradients matching landing page section 2 */}
       <div
@@ -265,92 +266,120 @@ export default function Profile() {
 
       <Navbar />
 
-      <div className="relative pt-20 pb-12 px-4 max-w-5xl mx-auto space-y-5">
+      <div className="relative pt-20 pb-12 px-4 max-w-7xl mx-auto space-y-5">
         {/* Tabs (flyttad överst) */}
         <ProfileTabs active={activeTab} onChange={setActiveTab} />
 
         {/* === OVERVIEW === */}
         {activeTab === "overview" && (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
-            {/* Left column (2/3) */}
-            <div className="lg:col-span-2 space-y-5">
-              {/* Personliga uppgifter (header + identity merged) */}
-              <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
-                <CardHeader>
-                  <CardTitle className="text-base flex items-center gap-2 text-slate-900">
-                    <User className="w-4 h-4 text-primary" />
-                    Personliga uppgifter
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {/* Identity row: avatar + name + email */}
-                  <div className="flex items-center gap-3 pb-3 mb-3 border-b border-slate-200">
-                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                      <span className="text-base font-semibold text-primary">{initials}</span>
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-sm font-semibold text-slate-900 truncate">{displayName}</p>
-                      <p className="text-xs text-slate-500 truncate inline-flex items-center gap-1.5">
-                        <Mail className="w-3 h-3" /> {user?.email || "–"}
-                      </p>
-                    </div>
+          <div className="space-y-5">
+            {/* Personliga uppgifter — full width on top */}
+            <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2 text-slate-900">
+                  <User className="w-4 h-4 text-primary" />
+                  Personliga uppgifter
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                {/* Identity row: avatar + name + email */}
+                <div className="flex items-center gap-3 pb-3 mb-3 border-b border-slate-200">
+                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                    <span className="text-base font-semibold text-primary">{initials}</span>
                   </div>
-
-                  {/* Meta details */}
-                  <div className="space-y-2 text-sm">
-                    <div className="flex items-center gap-2 text-slate-600">
-                      <Briefcase className="w-4 h-4" /> {profile?.specialty_name || "–"}
-                    </div>
-                    <div className="flex items-center gap-2 text-slate-600">
-                      <MapPin className="w-4 h-4" /> {profile?.region_name || "–"}
-                    </div>
-                    <div className="flex items-center gap-2 text-slate-600">
-                      <Users className="w-4 h-4" /> 0 kopplingar
-                    </div>
-                    {profile?.experience_years != null && (
-                      <div className="flex items-center gap-2 text-slate-600">
-                        <Clock className="w-4 h-4" /> {profile.experience_years} års erfarenhet
-                      </div>
-                    )}
-                    {profile && (
-                      <div className="flex items-center gap-2 text-slate-600">
-                        <FileText className="w-4 h-4" /> {employmentLabel(profile.employment_type)}
-                        {profile.salary_type === "hourly" && profile.current_hourly_rate
-                          ? ` · ${formatSalary(profile.current_hourly_rate)} kr/h`
-                          : profile.current_monthly_salary
-                            ? ` · ${formatSalary(profile.current_monthly_salary)} kr/mån`
-                            : ""}
-                      </div>
-                    )}
+                  <div className="min-w-0">
+                    <p className="text-sm font-semibold text-slate-900 truncate">{displayName}</p>
+                    <p className="text-xs text-slate-500 truncate inline-flex items-center gap-1.5">
+                      <Mail className="w-3 h-3" /> {user?.email || "–"}
+                    </p>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
 
-              {/* Compensation view */}
-              <CompensationView
-                role={profile?.specialty_name || null}
-                location={profile?.region_name || null}
-                employmentType={profile?.employment_type || null}
-              />
+                {/* Meta details */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                  <div className="flex items-center gap-2 text-slate-600">
+                    <Briefcase className="w-4 h-4" /> {profile?.specialty_name || "–"}
+                  </div>
+                  <div className="flex items-center gap-2 text-slate-600">
+                    <MapPin className="w-4 h-4" /> {profile?.region_name || "–"}
+                  </div>
+                  <div className="flex items-center gap-2 text-slate-600">
+                    <Users className="w-4 h-4" /> 0 kopplingar
+                  </div>
+                  {profile?.experience_years != null && (
+                    <div className="flex items-center gap-2 text-slate-600">
+                      <Clock className="w-4 h-4" /> {profile.experience_years} års erfarenhet
+                    </div>
+                  )}
+                  {profile && (
+                    <div className="flex items-center gap-2 text-slate-600">
+                      <FileText className="w-4 h-4" /> {employmentLabel(profile.employment_type)}
+                      {profile.salary_type === "hourly" && profile.current_hourly_rate
+                        ? ` · ${formatSalary(profile.current_hourly_rate)} kr/h`
+                        : profile.current_monthly_salary
+                          ? ` · ${formatSalary(profile.current_monthly_salary)} kr/mån`
+                          : ""}
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
 
-              {/* Insights */}
-              <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
-                <CardContent className="pt-6">
-                  <ProfileInsights
-                    specialtyName={profile?.specialty_name || null}
-                    regionName={profile?.region_name || null}
-                    employmentType={profile?.employment_type || null}
-                  />
-                </CardContent>
-              </Card>
+            {/* Two-column grid on desktop, single column on mobile */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+              {/* Left column */}
+              <div className="space-y-5">
+                {/* Compensation view */}
+                <CompensationView
+                  role={profile?.specialty_name || null}
+                  location={profile?.region_name || null}
+                  employmentType={profile?.employment_type || null}
+                />
+
+                {/* Insights */}
+                <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
+                  <CardContent className="pt-6">
+                    <ProfileInsights
+                      specialtyName={profile?.specialty_name || null}
+                      regionName={profile?.region_name || null}
+                      employmentType={profile?.employment_type || null}
+                    />
+                  </CardContent>
+                </Card>
+              </div>
+
+              {/* Right column */}
+              <div className="space-y-5">
+                {/* Löneassistenten */}
+                <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
+                  <CardHeader>
+                    <CardTitle className="text-base flex items-center gap-2 text-slate-900">
+                      <MessageSquare className="w-4 h-4 text-primary" />
+                      Löneassistenten
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-slate-600 mb-4">
+                      Objektivt förhandlingsstöd baserat på SKR-ramavtal. Få konkreta formuleringar och marknadsobservationer för din nästa förhandling.
+                    </p>
+                    <Link to="/consultant/forhandla">
+                      <Button size="sm" className="text-sm font-semibold px-6 py-3 bg-gradient-to-br from-[#0d0b2a] via-[#1a1545] via-40% to-[#2a2070] text-white border-0 hover:opacity-90">
+                        Öppna Löneassistenten
+                        <ArrowRight className="w-4 h-4 ml-1.5" />
+                      </Button>
+                    </Link>
+                  </CardContent>
+                </Card>
+
+                {/* Pensionssimulator */}
+                <PensionImpactSimulator
+                  initialSalary={profile?.current_monthly_salary || 55000}
+                />
+              </div>
             </div>
-
-            {/* Right column (1/3) */}
-            <div className="space-y-5">
-            </div>
-
           </div>
         )}
+
 
         {/* === WORK === */}
         {activeTab === "work" && (
@@ -358,7 +387,7 @@ export default function Profile() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
               <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
                 <CardHeader>
-                  <CardTitle className="text-base flex items-center gap-2">
+                  <CardTitle className="text-base flex items-center gap-2 text-slate-900">
                     <FileText className="w-4 h-4 text-primary" />
                     Mina rapporter
                   </CardTitle>
@@ -390,17 +419,34 @@ export default function Profile() {
                 </CardContent>
               </Card>
 
+              <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
+                <CardHeader>
+                  <CardTitle className="text-base flex items-center gap-2 text-slate-900">
+                    <MessageSquare className="w-4 h-4 text-primary" />
+                    Löneassistenten
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Objektivt förhandlingsstöd baserat på SKR-ramavtal. Få konkreta formuleringar och marknadsobservationer för din nästa förhandling.
+                  </p>
+                  <Link to="/consultant/forhandla">
+                    <Button size="sm" className="text-sm font-semibold px-6 py-3 bg-gradient-to-br from-[#0d0b2a] via-[#1a1545] via-40% to-[#2a2070] text-white border-0 hover:opacity-90">
+                      Öppna Löneassistenten
+                      <ArrowRight className="w-4 h-4 ml-1.5" />
+                    </Button>
+                  </Link>
+                </CardContent>
+              </Card>
             </div>
-
-            <PensionImpactSimulator
-              initialSalary={profile?.current_monthly_salary || 55000}
-            />
           </div>
         )}
 
+
+
         {/* === CREDS (verifications + documents + references) === */}
         {activeTab === "creds" && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
             <div className="space-y-5">
               <TrustVerification
                 emailVerified={emailVerified}
@@ -410,11 +456,10 @@ export default function Profile() {
                 onUpload={goUpload}
                 onVerifyIdentity={goVerifyIdentity}
               />
-              <DashboardDocuments ref={docsRef} />
               <ProfileAuditLog />
             </div>
             <div className="space-y-5">
-              <DashboardReferences />
+              <DashboardDocuments ref={docsRef} />
             </div>
           </div>
         )}
@@ -471,12 +516,7 @@ export default function Profile() {
             </div>
           )}
           <div className="flex items-center gap-2">
-            <Link to="/profil" className="flex-1 sm:flex-initial">
-              <Button size="sm" className="w-full sm:w-auto gap-1.5 h-9 text-sm font-semibold text-white border-0 bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] hover:from-[#7c3aed] hover:to-[#c026d3] shadow-sm hover:shadow-md transition-all">
-                <Pencil className="w-3.5 h-3.5" />
-                Redigera
-              </Button>
-            </Link>
+            {/* "Redigera" dold — länken pekade på /profil vilket är samma sida (no-op-loop). */}
             <Button
               variant="outline"
               size="icon"
@@ -489,25 +529,11 @@ export default function Profile() {
           </div>
         </div>
 
-        <div className="rounded-2xl bg-white border border-slate-200 shadow-sm p-5">
-          <h2 className="text-base font-semibold text-slate-900">
-            Förhandlingsassistenten
-          </h2>
-          <p className="text-sm text-slate-600 mt-1.5 mb-4">
-            Få argument och tips inför din nästa förhandling, baserat på ramavtal och din situation.
-          </p>
-          <Link to="/logga-in">
-            <Button
-              size="sm"
-              className="text-sm font-semibold px-6 py-3 gap-2 text-white border-0 bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] hover:from-[#7c3aed] hover:to-[#c026d3]"
-            >
-              Öppna förhandlingsassistenten
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-          </Link>
-        </div>
+        {/* Förhandlingsassistenten dold — funktionen är inte live; CTA pekade till /logga-in. */}
 
-        <DashboardInvoiceCheck />
+        
+
+        
 
         {reports.length === 0 && !profile?.specialty_name && (
           <div className="rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 to-pink-50 p-5 sm:p-6 shadow-sm">

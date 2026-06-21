@@ -50,7 +50,7 @@ export default function Steps() {
               <h3 className="font-display text-lg md:text-[17px] font-bold tracking-[-0.02em] mb-2.5">{s.title}</h3>
               <p className="text-base md:text-sm text-foreground/65 leading-relaxed">{s.desc}</p>
               {s.detail && (
-                <div className="mt-4 p-3 bg-foreground/[0.03] border border-foreground/[0.07] rounded-lg text-sm md:text-xs text-foreground/35 font-display font-medium">
+                <div className="mt-4 p-3 bg-foreground/[0.03] border border-foreground/[0.07] rounded-lg text-sm md:text-xs text-muted-foreground font-display font-medium">
                   {s.detail.label && <strong className="text-primary font-semibold">{s.detail.label} </strong>}
                   {s.detail.text}
                 </div>

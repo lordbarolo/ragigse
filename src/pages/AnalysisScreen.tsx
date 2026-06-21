@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef, useMemo } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { Helmet } from "react-helmet-async";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/trackEvent";
 import { toast } from "sonner";
@@ -7,6 +8,7 @@ import type { SurveyData } from "@/components/Survey";
 import { Mail, ArrowRight, Zap, ChevronUp } from "lucide-react";
 import NegotiationAssistantTeaser from "@/components/teaser/NegotiationAssistantTeaser";
 import { fetchLead, leadToSurvey, createReport, saveEmail } from "@/services/leadService";
+import { identifyLeadWithEmail } from "@/lib/identify";
 import Navbar from "@/components/Navbar";
 import CompcareLogo from "@/components/CompcareLogo";
 import {
@@ -40,6 +42,7 @@ export default function AnalysisScreen() {
   const [reportId, setReportId] = useState("");
   const [email, setEmail] = useState("");
   const [emailSaving, setEmailSaving] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const [userZone, setUserZone] = useState<string | null>(null);
   const [userRegion, setUserRegion] = useState<string | null>(null);
@@ -72,8 +75,14 @@ export default function AnalysisScreen() {
         }
         sessionStorage.setItem("leadId", rid);
         sessionStorage.setItem("surveyData", JSON.stringify(surveyData));
-      }).catch(() => {
-        navigate("/");
+      }).catch((err) => {
+        console.error("[AnalysisScreen] fetchLead failed", err);
+        try {
+          import("@/lib/posthog").then(({ default: posthog }) => {
+            posthog.capture?.("analysis_error", { phase: "fetch_lead", message: String(err?.message ?? err) });
+          });
+        } catch { /* silent */ }
+        setLoadError("Vi kunde inte hämta din analys just nu.");
       });
     }
 
@@ -152,7 +161,14 @@ export default function AnalysisScreen() {
         setReportId(rid);
         sessionStorage.setItem("reportId", rid);
       })
-      .catch(() => {});
+      .catch((err) => {
+        console.error("[AnalysisScreen] createReport failed", err);
+        try {
+          import("@/lib/posthog").then(({ default: posthog }) => {
+            posthog.capture?.("analysis_error", { phase: "create_report", message: String(err?.message ?? err) });
+          });
+        } catch { /* silent */ }
+      });
   }, [leadId, survey, reportId]);
 
   /* ── Email submit ── */
@@ -160,26 +176,32 @@ export default function AnalysisScreen() {
     const emailValue = email.trim().toLowerCase();
     if (!EMAIL_REGEX.test(emailValue)) return;
     setEmailSaving(true);
+    let activeReportId = reportId;
     try {
-      await saveEmail({ leadId, reportId, email: emailValue });
+      if (!activeReportId && leadId && survey) {
+        const result = await createReport({ leadId, email: emailValue, survey, track: "consultant" });
+        activeReportId = result.reportId;
+        setReportId(activeReportId);
+        sessionStorage.setItem("reportId", activeReportId);
+      }
+      if (!activeReportId) { toast.error("Kunde inte skapa rapport, försök igen."); setEmailSaving(false); return; }
+
+      const { reportAccessToken } = await saveEmail({ leadId, reportId: activeReportId, email: emailValue });
+      if (reportAccessToken) {
+        sessionStorage.setItem(`reportAccess:${activeReportId}`, reportAccessToken);
+      }
       if (survey) { sessionStorage.setItem("surveyData", JSON.stringify({ ...survey, email: emailValue })); }
       trackEvent("email_collected", { source: "analysis_screen" });
+      identifyLeadWithEmail(leadId, emailValue, {
+        yrke: survey?.yrke ?? null,
+        kommun: survey?.kommun ?? null,
+        employment_type: survey?.employmentType ?? null,
+      });
     } catch {
       toast.error("Kunde inte spara e-post, försök igen.");
       setEmailSaving(false);
       return;
     }
-
-    let activeReportId = reportId;
-    if (!activeReportId && leadId && survey) {
-      try {
-        const result = await createReport({ leadId, email: emailValue, survey, track: "consultant" });
-        activeReportId = result.reportId;
-        setReportId(activeReportId);
-        sessionStorage.setItem("reportId", activeReportId);
-      } catch {}
-    }
-    if (!activeReportId) { toast.error("Kunde inte skapa rapport, försök igen."); setEmailSaving(false); return; }
     setEmailSaving(false);
     trackEvent("analysis_completed");
     trackEvent("free_report_unlocked", { source: "email_gate" });
@@ -242,6 +264,41 @@ export default function AnalysisScreen() {
 
   const validEmail = EMAIL_REGEX.test(email.trim());
 
+  // Felstate — backend kunde inte hämta lead/rapport. Visa ett vänligt fel istället för tom sida.
+  if (loadError) {
+    return (
+      <>
+        <Helmet>
+          <meta name="robots" content="noindex, nofollow" />
+        </Helmet>
+        <div className="min-h-screen flex items-center justify-center px-5" style={{ backgroundColor: "#EEEBE4" }}>
+          <div className="max-w-md text-center space-y-4">
+            <CompcareLogo variant="full" className="!h-7 mx-auto mb-2" />
+            <h1 className="font-display text-2xl font-bold text-foreground">Något gick fel</h1>
+            <p className="text-sm text-foreground/70 leading-relaxed">
+              {loadError} Försök igen om en stund eller kontakta oss på{" "}
+              <a href="mailto:info@compcare.se" className="underline">info@compcare.se</a>.
+            </p>
+            <div className="flex gap-2 justify-center pt-2">
+              <button
+                onClick={() => { setLoadError(null); window.location.reload(); }}
+                className="text-sm font-semibold px-6 py-3 rounded-xl bg-foreground text-[#EEEBE4] hover:bg-foreground/90"
+              >
+                Försök igen
+              </button>
+              <button
+                onClick={() => navigate("/")}
+                className="text-sm font-semibold px-6 py-3 rounded-xl border border-foreground/20 text-foreground hover:bg-foreground/5"
+              >
+                Tillbaka till start
+              </button>
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+
   if (!survey) return null;
 
   const employmentLabel = survey.employmentType === "anstalld" ? "Anställd" : "Egenföretagare";
@@ -253,6 +310,11 @@ export default function AnalysisScreen() {
     : 0;
 
   return (
+    <>
+      <Helmet>
+        {/* /resultat/:leadId innehåller personuppgifter — får inte indexeras. */}
+        <meta name="robots" content="noindex, nofollow" />
+      </Helmet>
     <div
       className="min-h-screen"
       style={{
@@ -290,7 +352,7 @@ export default function AnalysisScreen() {
                 </p>
               </div>
               <div className="relative flex items-center">
-                <Mail className="absolute left-4 w-4 h-4 text-foreground/30 pointer-events-none" />
+                <Mail className="absolute left-4 w-4 h-4 text-muted-foreground pointer-events-none" />
                 <input
                   type="email"
                   inputMode="email"
@@ -299,7 +361,7 @@ export default function AnalysisScreen() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   onKeyDown={(e) => { if (e.key === "Enter" && validEmail && !emailSaving) handleEmailSubmit(); }}
-                  className="w-full bg-background/60 border-[1.5px] border-foreground/[0.12] rounded-xl text-foreground font-body text-[16px] py-3.5 pl-11 pr-4 outline-none transition-all focus:border-primary placeholder:text-foreground/35"
+                  className="w-full bg-background/60 border-[1.5px] border-foreground/[0.12] rounded-xl text-foreground font-body text-[16px] py-3.5 pl-11 pr-4 outline-none transition-all focus:border-primary placeholder:text-muted-foreground"
                 />
               </div>
               {validEmail && !emailSaving && (
@@ -460,6 +522,7 @@ export default function AnalysisScreen() {
 
       </main>
     </div>
+    </>
   );
 }
 

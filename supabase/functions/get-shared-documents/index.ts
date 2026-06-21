@@ -1,13 +1,27 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
-  "Content-Type": "application/json",
-};
+const ALLOWED_ORIGINS = new Set([
+  "https://compcare.se",
+  "https://www.compcare.se",
+  "https://compcare-se.lovable.app",
+]);
+
+function buildCors(req: Request) {
+  const origin = req.headers.get("origin") || "";
+  const allow = ALLOWED_ORIGINS.has(origin) || /\.lovable\.app$/.test(new URL(origin || "https://x").hostname)
+    ? origin
+    : "https://compcare.se";
+  return {
+    "Access-Control-Allow-Origin": allow,
+    "Vary": "Origin",
+    "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+    "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+    "Content-Type": "application/json",
+  };
+}
 
 Deno.serve(async (req) => {
+  const corsHeaders = buildCors(req);
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
@@ -48,29 +62,27 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ expired: true }), { status: 410, headers: corsHeaders });
     }
 
-    const docs = ((data as any).documents || []) as Array<{ id: string; file_name: string; document_type: string; file_url: string; uploaded_at: string }>;
+    const docs = ((data as any).documents || []) as Array<{ id: string; file_name: string; document_type: string; uploaded_at: string }>;
     const expiresAt = (data as any).expires_at as string;
-    const ttl = Math.max(60, Math.min(60 * 60 * 24, Math.floor((new Date(expiresAt).getTime() - Date.now()) / 1000)));
 
-    const withUrls = await Promise.all(
-      docs.map(async (d) => {
-        const { data: signed } = await supabase.storage
-          .from("verifications")
-          .createSignedUrl(d.file_url, ttl);
-        return {
-          id: d.id,
-          file_name: d.file_name,
-          document_type: d.document_type,
-          uploaded_at: d.uploaded_at,
-          signed_url: signed?.signedUrl ?? null,
-        };
-      }),
-    );
+    // Build URLs that route through the watermarking download endpoint.
+    // The raw signed storage URL is intentionally never exposed to the recipient.
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const downloadBase = `${supabaseUrl}/functions/v1/download-shared-document`;
+    const withUrls = docs.map((d) => ({
+      id: d.id,
+      file_name: d.file_name,
+      document_type: d.document_type,
+      uploaded_at: d.uploaded_at,
+      signed_url: `${downloadBase}?token=${encodeURIComponent(token)}&document_id=${encodeURIComponent(d.id)}`,
+    }));
+
 
     return new Response(
       JSON.stringify({
         owner_name: (data as any).owner_name,
         recipient_label: (data as any).recipient_label,
+        recipient_email: (data as any).recipient_email,
         expires_at: expiresAt,
         documents: withUrls,
       }),

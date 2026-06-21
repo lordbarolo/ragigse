@@ -160,10 +160,10 @@
      "Ersättningsanalys") så de bryts snyggt på smala viewports (390px) istället
      för att spilla över containern. Påverkar inte desktop visuellt. */
   h1, h2, h3, h4 {
-    overflow-wrap: anywhere;
-    word-break: break-word;
-    hyphens: auto;
-    -webkit-hyphens: auto;
+    overflow-wrap: normal;
+    word-break: keep-all;
+    hyphens: manual;
+    -webkit-hyphens: manual;
   }
 
   /* Section eyebrow / label letter-spacing */

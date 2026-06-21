@@ -76,7 +76,7 @@ function MissionCard({ icon, iconBg, count, suffix, subtitle, body, cta, href, p
           {icon}
         </div>
 
-        <p className="text-[11px] tracking-[0.2em] font-semibold text-white/40 mb-3">ANSLUT</p>
+        <p className="text-[11px] tracking-[0.2em] font-semibold text-white/70 mb-3">ANSLUT</p>
         <h3 className={`text-6xl md:text-7xl font-bold tracking-tight leading-none mb-3 ${accentColors.titleGradient}`}>
           <Counter to={count} suffix={suffix} play={play} />
         </h3>
@@ -166,7 +166,7 @@ export default function MissionSection() {
           whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
           transition={{ delay: 0.8, duration: 0.6 }}
-          className="text-center text-xs tracking-wider text-white/40 mt-12"
+          className="text-center text-xs tracking-wider text-white/70 mt-12"
         >
           ↓ eller scrolla för att utforska båda ↓
         </motion.p>

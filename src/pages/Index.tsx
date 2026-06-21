@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { safeJsonLd } from "@/lib/safeJsonLd";
 import { Link } from "react-router-dom";
-import { ShieldCheck, FileSearch, MessageSquare, ArrowRight, CheckCircle2 } from "lucide-react";
+import { ShieldCheck, MessageSquare, ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import CompcareLogo from "@/components/CompcareLogo";
 import ThemeToggle from "@/components/ThemeToggle";
@@ -40,15 +40,6 @@ const PILLARS = [
     cta: "Analysera din lön",
     href: "/consultant/salary-check",
     dataService: "salary-analysis",
-  },
-  {
-    question: "Fakturerar jag rätt?",
-    title: "Fakturagranskning - Få betalt för all din tid",
-    description: "AI-assistenten granskar dina fakturor retroaktivt för att se om du missat att fakturera för redan arbetad tid. Finns det avvikelser hittar vi det.",
-    icon: FileSearch,
-    cta: "Granska fakturor",
-    href: "/fakturakontroll",
-    dataService: "invoice-audit",
   },
   {
     question: "Förhandlar jag rätt?",
@@ -114,7 +105,7 @@ export default function Index() {
 
       {/* ── Three Pillars ──────────────────────────────── */}
       <section className="max-w-6xl mx-auto px-6 pt-4 relative z-20 pb-12" aria-label="Tjänster">
-        <div className="grid md:grid-cols-3 gap-6">
+        <div className="grid md:grid-cols-2 gap-6">
           {PILLARS.map((pillar) => (
             <article
               key={pillar.dataService}
@@ -183,7 +174,7 @@ export default function Index() {
             <Link to="/din-data" className="hover:text-foreground transition-colors">Din data</Link>
             <Link to="/referenser-info" className="hover:text-foreground transition-colors">Ref ID</Link>
           </div>
-          <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} CompCare</p>
+          <p className="text-xs text-muted-foreground">© {new Date().getFullYear()}</p>
         </div>
       </footer>
     </div>

@@ -15,6 +15,7 @@ import { useLocations } from "@/hooks/useCalculator";
 import { usePricingEngine } from "@/hooks/usePricingEngine";
 import { trackEvent } from "@/lib/trackEvent";
 import { aliasLead } from "@/lib/identify";
+import { startAbandonWatcher } from "@/lib/surveyAbandon";
 import {
   DOCTOR_SPECIALTIES,
   NURSE_SPECIALIZATIONS,
@@ -57,9 +58,11 @@ const initialState: State = {
 export default function InlineTerminalSurvey({
   variant = "dark",
   onStepChange,
+  onComplete,
 }: {
   variant?: "dark" | "light";
   onStepChange?: (step: number) => void;
+  onComplete?: (leadId: string) => void;
 }) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -87,11 +90,14 @@ export default function InlineTerminalSurvey({
   useEffect(() => {
     stepEntryTime.current = Date.now();
     onStepChange?.(step);
+    const stepName = STEP_NAMES[step - 1] || `step_${step}`;
     trackEvent("survey_step_viewed", {
       step_number: step,
-      step_name: STEP_NAMES[step - 1] || `step_${step}`,
+      step_name: stepName,
       surface: "inline_terminal",
     });
+    const stop = startAbandonWatcher({ step, stepName, surface: "inline_terminal" });
+    return stop;
   }, [step, onStepChange]);
 
 
@@ -103,11 +109,12 @@ export default function InlineTerminalSurvey({
   }, []);
 
   const trackStepCompleted = useCallback((n: number, ans?: string | number) => {
-    const dt = Math.round((Date.now() - stepEntryTime.current) / 1000);
+    const dtMs = Date.now() - stepEntryTime.current;
     trackEvent("survey_step_completed", {
       step_number: n,
       step_name: STEP_NAMES[n - 1] || `step_${n}`,
-      time_on_step_seconds: dt,
+      time_on_step_seconds: Math.round(dtMs / 1000),
+      time_on_step_ms: dtMs,
       step_answer: ans ?? null,
       surface: "inline_terminal",
     });
@@ -275,7 +282,11 @@ export default function InlineTerminalSurvey({
         report_id: sessionStorage.getItem("reportId") || null,
         surface: "inline_terminal",
       });
-      navigate(`/resultat/${leadId}${couponParam}`);
+      if (onComplete) {
+        onComplete(leadId);
+      } else {
+        navigate(`/resultat/${leadId}${couponParam}`);
+      }
     };
 
     try {
@@ -335,7 +346,7 @@ export default function InlineTerminalSurvey({
   const stepTextColor = isLight ? "text-[#1A1A1A]" : "text-white";
   const backBtnColor = isLight
     ? "text-[#9CA3AF] hover:text-[#4B5563]"
-    : "text-white/40 hover:text-white/80";
+    : "text-white/70 hover:text-white";
 
   return (
     <SurveyThemeContext.Provider value={variant}>
@@ -377,11 +388,11 @@ export default function InlineTerminalSurvey({
                   />
                     <p
                       className={`mt-4 text-[11px] text-center font-sans ${
-                      isLight ? "text-[#9CA3AF]" : "text-white/40"
+                      isLight ? "text-[#9CA3AF]" : "text-white/70"
                     }`}
-                  >
-                    Anonymt · Kostnadsfritt · Klart på 60 sekunder
-                  </p>
+                    >
+                      Kostnadsfritt · Klart på 60 sekunder
+                    </p>
                 </Step>
               )}
 
@@ -485,12 +496,12 @@ export default function InlineTerminalSurvey({
                         className={`w-full h-14 border rounded-lg px-4 pr-16 text-base font-sans transition-colors focus:outline-none focus:ring-2 focus:ring-[#534AB7] ${
                           isLight
                             ? "bg-[#FAFAFA] border-[#E5E5E5] text-[#1A1A1A] placeholder:text-[#9CA3AF] focus:bg-white"
-                            : "bg-white/[0.04] border-white/10 text-white placeholder:text-white/30 focus:bg-white/[0.06]"
+                            : "bg-white/[0.04] border-white/10 text-white placeholder:text-white/50 focus:bg-white/[0.06]"
                         }`}
                       />
                       <span
                         className={`absolute right-4 top-1/2 -translate-y-1/2 text-[12px] font-mono pointer-events-none ${
-                          isLight ? "text-[#9CA3AF]" : "text-white/40"
+                          isLight ? "text-[#9CA3AF]" : "text-white/70"
                         }`}
                       >
                         {salaryUnit}
@@ -648,7 +659,7 @@ function ChoiceCard({
     : "bg-violet-500/20 text-violet-200";
 
   const titleColor = isLight ? "text-[#1A1A1A]" : "text-white";
-  const subColor = isLight ? "text-[#9CA3AF]" : "text-white/40";
+  const subColor = isLight ? "text-[#9CA3AF]" : "text-white/70";
 
   return (
     <button
@@ -707,7 +718,7 @@ function RoleCategoryCards({
   const mutedTitle = isLight ? "text-[#6B7280]" : "text-white/60";
   const inputClass = isLight
     ? "w-full h-11 border border-[#E5E5E5] bg-[#FAFAFA] text-[#1A1A1A] placeholder:text-[#9CA3AF] rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#534AB7] focus:bg-white"
-    : "w-full h-11 border border-white/10 bg-white/[0.04] text-white placeholder:text-white/30 rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#534AB7]";
+    : "w-full h-11 border border-white/10 bg-white/[0.04] text-white placeholder:text-white/50 rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#534AB7]";
 
   const submitOther = async () => {
     if (!canSubmit) return;

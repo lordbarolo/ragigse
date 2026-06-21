@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { Check, ShieldCheck } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 import InlineTerminalSurvey from "@/components/survey/InlineTerminalSurvey";
 import RoleCarousel from "@/components/landing/RoleCarousel";
@@ -84,9 +85,19 @@ export default function Home() {
                 Vet du vad du<br />
                 <span className="text-gradient-violet text-black">är värd?</span>
               </h1>
-              <p className="font-editorial text-lg sm:text-xl text-black/75 leading-relaxed mb-2 max-w-[460px]">
-                Se regionens pris, bolagets marginal och din ersättning.
+              <p className="font-editorial text-lg sm:text-xl text-black/75 leading-relaxed max-w-[460px]">
+                Se vad regionen betalar, vad marknaden kan ge och vad du kan tjäna.
               </p>
+              <ul className="mt-6 space-y-2 max-w-[460px] hidden lg:block">
+                <li className="flex items-start gap-2 text-base text-[#6B6B6B]">
+                  <Check className="w-5 h-5 shrink-0 mt-0.5" style={{ color: "hsl(160,80%,50%)" }} />
+                  <span>Baserat på SKR:s offentliga ramavtalspriser</span>
+                </li>
+                <li className="flex items-start gap-2 text-base text-[#6B6B6B]">
+                  <Check className="w-5 h-5 shrink-0 mt-0.5" style={{ color: "hsl(160,80%,50%)" }} />
+                  <span>Branschens standardmarginaler — ca 12 % läkare, 17 % sjuksköterskor</span>
+                </li>
+              </ul>
             </div>
 
             {/* Mobil: tunn kollapsad rad när wizarden startat */}
@@ -101,13 +112,42 @@ export default function Home() {
             {/* Höger: formulär */}
             <div className="w-full md:max-w-[480px] md:justify-self-end">
               <InlineTerminalSurvey variant="light" onStepChange={setSurveyStep} />
+              <p className="mt-3 text-[11px] text-black/55 leading-relaxed flex items-start gap-1.5">
+                <ShieldCheck className="w-3 h-3 mt-0.5 shrink-0 text-[#3D3491]" />
+                <span>
+                  Data lagras inom EU · Vi delar aldrig dina uppgifter. Se{" "}
+                  <Link to="/integritetspolicy" className="underline">integritetspolicyn</Link>.
+                </span>
+              </p>
+              <ul className="mt-6 space-y-2 max-w-[460px] lg:hidden">
+                <li className="flex items-start gap-2 text-base text-[#6B6B6B]">
+                  <Check className="w-5 h-5 shrink-0 mt-0.5" style={{ color: "hsl(160,80%,50%)" }} />
+                  <span>Baserat på SKR:s offentliga ramavtalspriser</span>
+                </li>
+                <li className="flex items-start gap-2 text-base text-[#6B6B6B]">
+                  <Check className="w-5 h-5 shrink-0 mt-0.5" style={{ color: "hsl(160,80%,50%)" }} />
+                  <span>Branschens standardmarginaler — ca 12 % läkare, 17 % sjuksköterskor</span>
+                </li>
+              </ul>
             </div>
           </div>
         </section>
 
         <RoleCarousel />
 
-
+        {/* ── Footer ──────────────────────────── */}
+        <footer className="mt-16 border-t border-black/10 px-5 py-8 text-xs text-black/55">
+          <div className="max-w-6xl mx-auto flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
+            <div>
+              <p className="font-medium text-black/75"></p>
+            </div>
+            <nav className="flex flex-wrap gap-x-5 gap-y-2">
+              <a href="mailto:info@compcare.se" className="hover:text-black underline-offset-4 hover:underline">info@compcare.se</a>
+              <Link to="/integritetspolicy" className="hover:text-black underline-offset-4 hover:underline">Integritetspolicy</Link>
+              <Link to="/vanliga-fragor" className="hover:text-black underline-offset-4 hover:underline">Vanliga frågor</Link>
+            </nav>
+          </div>
+        </footer>
 
       </div>
     </AnthropicScope>

@@ -76,7 +76,16 @@ type EventName =
   | "hero_cta_clicked"
   | "survey_mounted"
   | "price_range_mismatch"
-  | "other_role_requested";
+  | "other_role_requested"
+  | "cta_clicked"
+  | "rage_click"
+  | "dead_click"
+  | "survey_abandoned"
+  | "lonekoll_email_gate_completed"
+  | "lonekoll_topic_selected"
+  | "lonekoll_question_selected"
+  | "lonekoll_answer_reported"
+  | "lonekoll_missing_question_reported";
 
 function isInternalTraffic(): boolean {
   const host = window.location.hostname;
@@ -106,29 +115,23 @@ export function trackEvent(
 
   const enrichedMetadata: Record<string, unknown> = {
     ...(metadata ?? {}),
+    hostname: window.location.hostname,
+    is_internal_traffic: isInternalTraffic(),
     ...(reportId ? { report_id: reportId } : {}),
     ...(abVariant ? { ab_variant: abVariant } : {}),
     ...(couponCode ? { coupon_code: couponCode } : {}),
     ...(utm ? { utm } : {}),
   };
 
+  // Cookie-fri analytics: PostHog kör persistence:"memory" (inga cookies/localStorage).
+  // Det är GDPR-säkert att fånga anonyma events utan samtycke. Vid avslag respekterar
+  // vi det dock explicit och skickar ingenting.
+  try {
+    if (window.localStorage?.getItem("compcare_cookie_consent") === "rejected") return;
+  } catch { /* localStorage kan vara blockerad — fortsätt ändå, vi spårar cookieless */ }
+
   // Send to PostHog (silent fail)
   try { posthog.capture(eventName, enrichedMetadata); } catch { /* silent */ }
-
-  // Mirror to GA4 as custom event (silent fail). GA4-event names måste vara
-  // [a-zA-Z0-9_] och max 40 tecken; våra event-namn använder redan snake_case.
-  try {
-    if (typeof window !== "undefined" && typeof window.gtag === "function") {
-      const gaName = eventName.replace(/[^a-zA-Z0-9_]/g, "_").slice(0, 40);
-      // Flatten utm-objekt så GA4 kan plocka upp source/medium/campaign
-      const { utm, ...rest } = enrichedMetadata as Record<string, unknown> & { utm?: Record<string, unknown> };
-      const gaProps: Record<string, unknown> = { ...rest };
-      if (utm && typeof utm === "object") {
-        for (const [k, v] of Object.entries(utm)) gaProps[`utm_${k}`] = v;
-      }
-      window.gtag("event", gaName, gaProps);
-    }
-  } catch { /* silent */ }
 
   // Fire-and-forget via edge function — don't block UI
   supabase.functions

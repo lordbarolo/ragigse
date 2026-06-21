@@ -25,6 +25,7 @@ const Campaign = lazy(() => import("./pages/Campaign"));
 const Admin = lazy(() => import("./pages/Admin"));
 const AnalyticsDashboard = lazy(() => import("./pages/AnalyticsDashboard"));
 const AgentApiKeys = lazy(() => import("./pages/admin/AgentApiKeys"));
+const AdminHealth = lazy(() => import("./pages/admin/Health"));
 
 const FAQ = lazy(() => import("./pages/FAQ"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
@@ -35,6 +36,7 @@ const Login = lazy(() => import("./pages/Login"));
 const Signup = lazy(() => import("./pages/Signup"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Profile = lazy(() => import("./pages/Profile"));
+const Negotiate = lazy(() => import("./pages/Negotiate"));
 
 const queryClient = new QueryClient();
 
@@ -56,9 +58,7 @@ function ScrollToTop() {
     } else {
       isFirstRender.current = false;
     }
-    if (typeof window.gtag === "function") {
-      window.gtag("config", "G-8TKTZH3KZZ", { page_path: pathname });
-    }
+    // GA4 borttaget — PostHog hanterar pageviews via trackPageview().
     trackPageview();
   }, [pathname]);
 
@@ -109,6 +109,7 @@ const App = () => (
               {/* ── Admin ── */}
               <Route path="/admin" element={<ProtectedRoute allowedRoles={["admin"]}><Admin /></ProtectedRoute>} />
               <Route path="/admin/agent-api-keys" element={<ProtectedRoute allowedRoles={["admin"]}><AgentApiKeys /></ProtectedRoute>} />
+              <Route path="/admin/health" element={<ProtectedRoute allowedRoles={["admin"]}><AdminHealth /></ProtectedRoute>} />
               <Route path="/dev/analytics" element={<ProtectedRoute allowedRoles={["admin"]}><AnalyticsDashboard /></ProtectedRoute>} />
 
               {/* ── Backwards-compat / gömda produktrouter → tillbaka till löneanalysen ── */}
@@ -117,7 +118,7 @@ const App = () => (
               <Route path="/b2b" element={<Navigate to="/" replace />} />
               <Route path="/profil" element={<Navigate to="/consultant/profil" replace />} />
               <Route path="/consultant/salary-check" element={<Navigate to="/" replace />} />
-              <Route path="/consultant/forhandla" element={<Navigate to="/" replace />} />
+              <Route path="/consultant/forhandla" element={<ProtectedRoute><Negotiate /></ProtectedRoute>} />
               <Route path="/consultant/fakturakontroll/*" element={<Navigate to="/" replace />} />
               <Route path="/consultant/ersattning" element={<Navigate to="/" replace />} />
               <Route path="/consultant/referenser" element={<Navigate to="/" replace />} />
