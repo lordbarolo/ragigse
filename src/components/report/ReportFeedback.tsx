@@ -91,7 +91,7 @@ export default function ReportFeedback({ leadId, role, zone }: Props) {
   return (
     <Card className="bg-background border-border/60">
       <CardContent className="py-6 space-y-4">
-        <p className="text-sm font-medium text-foreground text-center">
+        <p className="text-xs sm:text-sm font-medium text-foreground text-center whitespace-nowrap">
           Vilken del av rapporten var mest värdefull för dig?
         </p>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
