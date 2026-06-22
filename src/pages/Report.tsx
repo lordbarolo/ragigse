@@ -174,8 +174,8 @@ export default function Report() {
             <span className="whitespace-nowrap">{report.kommun}</span>
             {report.user_zone && (
               <span
-                className="whitespace-nowrap px-1.5 py-0.5 rounded-md"
-                style={{ backgroundColor: '#FFFFFF', border: '1px solid #E0DBD3', color: '#0A0A0A', fontSize: '13px' }}
+                className="whitespace-nowrap px-1 py-0 rounded"
+                style={{ backgroundColor: '#FFFFFF', border: '1px solid #E0DBD3', color: '#0A0A0A', fontSize: '11px' }}
               >
                 {report.user_zone}
               </span>
