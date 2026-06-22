@@ -208,15 +208,15 @@ export default function Report() {
 
         {/* Förhandlingsassistenten */}
         <div className="rounded-2xl border overflow-hidden" style={{ backgroundColor: '#FFFFFF', borderColor: '#E0DBD3' }}>
-          <div className="pt-5 px-5">
-            <p className="font-semibold leading-snug" style={{ fontFamily: 'Georgia, serif', fontSize: '18px', color: '#0A0A0A' }}>
+          <div className="pt-3.5 px-4 sm:pt-5 sm:px-5">
+            <p className="font-semibold leading-snug text-[16px] sm:text-[18px]" style={{ fontFamily: 'Georgia, serif', color: '#0A0A0A' }}>
               Förhandlingsassistenten
             </p>
-            <p className="text-sm mt-1.5" style={{ color: '#6B7280' }}>
+            <p className="text-[13px] sm:text-sm mt-1 leading-snug" style={{ color: '#6B7280' }}>
               Få argument och tips inför din nästa förhandling, baserat på ramavtal och din situation.
             </p>
           </div>
-          <div className="px-5 py-5">
+          <div className="px-4 py-3.5 sm:px-5 sm:py-5">
             <Link
               to="/logga-in"
               className="inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 rounded-lg"
