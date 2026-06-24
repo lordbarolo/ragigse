@@ -257,7 +257,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
     { value: "__rontgen", label: "Röntgensjuksköterska", group: "" },
     ...TOP_NURSE_SPECIALIZATIONS
       .map((s) => ({ value: s, label: s, group: "Vidareutbildning (VUB)" })),
-    { value: "__ovrig", label: "Övrig VUB", group: "Vidareutbildning (VUB)" },
+    { value: "__saknas", label: "Min specialitet saknas i listan", group: "Vidareutbildning (VUB)" },
   ], []);
 
   const progress = ((step - 1) / TOTAL_STEPS) * 100;
