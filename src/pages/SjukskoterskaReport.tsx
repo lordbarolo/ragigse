@@ -177,12 +177,12 @@ export default function SjukskoterskaReport() {
               Sammanfattning
             </p>
             <p style={{ fontFamily: "Georgia, serif", fontSize: "17px", lineHeight: 1.5, color: ink }}>
-              Kundpriset för en legitimerad sjuksköterska är{" "}
+              Kundpriset för en leg. sjuksköterska är{" "}
               <span style={{ color: violet, fontWeight: 700 }}>
-                {fmt(lowZone)}–{fmt(highZone)}\u00a0kr/h
+                {fmt(lowZone)}–{fmt(highZone)}kr/h
               </span>{" "}
-              beroende på zon. Konsultandelen ligger typiskt på{" "}
-              <span style={{ fontWeight: 600 }}>80–85 %</span> av kundpriset för egenföretagare.
+              beroende på zon. En företagande sjuksköterska får behålla ca{" "}
+              <span style={{ fontWeight: 600 }}>80-85%%</span> av kundpriset.
             </p>
             <p className="text-[12px]" style={{ color: sub }}>
               Senast uppdaterad {LAST_UPDATED} · Källa: SKR Ramavtal vårdbemanning 2026
