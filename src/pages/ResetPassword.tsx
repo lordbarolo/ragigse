@@ -145,6 +145,13 @@ export default function ResetPassword() {
   };
 
   return (
+    <>
+    <SEO
+      title="Återställ lösenord – CompCare"
+      description="Återställ ditt CompCare-lösenord via länken vi skickade till din e-post."
+      path="/aterstall-losenord"
+      noindex
+    />
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-6">
         <div className="flex justify-center">
