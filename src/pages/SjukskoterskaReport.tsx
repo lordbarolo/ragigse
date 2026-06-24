@@ -182,7 +182,7 @@ export default function SjukskoterskaReport() {
                 {fmt(lowZone)}–{fmt(highZone)}kr/h
               </span>{" "}
               beroende på zon. En företagande sjuksköterska får behålla ca{" "}
-              <span style={{ fontWeight: 600 }}>80-85%%</span> av kundpriset.
+              <span style={{ fontWeight: 600 }}>80-85%</span> av ovanstående belopp.
             </p>
             <p className="text-[12px]" style={{ color: sub }}>
               Senast uppdaterad {LAST_UPDATED} · Källa: SKR Ramavtal vårdbemanning 2026
