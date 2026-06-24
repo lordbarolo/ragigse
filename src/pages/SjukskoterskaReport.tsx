@@ -224,9 +224,9 @@ export default function SjukskoterskaReport() {
                     className="text-lg font-bold tracking-tight"
                     style={{ fontFamily: "Georgia, serif", color: ink }}
                   >
-                    {fmt(z.rate)}{" "}
+                    {fmt(z.rate)}
                     <span className="text-xs font-normal" style={{ color: sub }}>
-                      kr/h
+                      {"\u00a0"}kr/h
                     </span>
                   </span>
                 </div>
