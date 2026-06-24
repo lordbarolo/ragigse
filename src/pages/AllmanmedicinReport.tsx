@@ -344,7 +344,7 @@ export default function AllmanmedicinReport() {
                 Undre spann:
               </span>{" "}
               <span style={{ color: sub }}>
-                {fmt(recMinF)} kr/h — utgångspunkt baserat på SKR Zon 2 och lägre konsultandel.
+                {fmt(recMinF)} kr/h — utgångspunkt baserat på SKR Zon 2 för en konsult med begränsad tillgänglighet och erfarenhet.
               </span>
             </p>
             <p>
@@ -361,8 +361,7 @@ export default function AllmanmedicinReport() {
                 Övre spann:
               </span>{" "}
               <span style={{ color: sub }}>
-                {fmt(recMaxF)} kr/h — uppnås vid jourtillgänglighet, brist eller etablerad
-                relation med beställaren.
+                {fmt(recMaxF)} kr/h — Konsulter med god tillgänglighet och etablerad relation med beställande vårdgivare. Som ej behöver få betald resa, boende eller utbildning.  
               </span>
             </p>
           </section>
