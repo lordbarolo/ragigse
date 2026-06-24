@@ -272,7 +272,7 @@ export default function AllmanmedicinReport() {
                 },
                 {
                   label: "Anställd via bemanning",
-                  share: "Bruttolön (efter sociala avgifter och tjänstepension)",
+                  share: "Bruttolön efter sociala avgifter och tjänstepension",
                   range: `${fmt(recMinA)}–${fmt(recMaxA)} kr/h`,
                 },
               ].map((row) => (
@@ -303,8 +303,7 @@ export default function AllmanmedicinReport() {
               style={{ color: sub }}
             >
               <Info className="w-3 h-3 mt-0.5 shrink-0" />
-              Bemanningsföretagets marginal är typiskt 10–15 % av kundpriset och täcker
-              administration, försäkring och risk.
+              Bemanningsföretagets marginal kan exempelvis täcka administration, försäkring, resor, boende, introduktion, utbildning och SITHS-kort.
             </p>
           </section>
 
