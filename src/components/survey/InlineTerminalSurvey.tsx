@@ -165,7 +165,7 @@ export default function InlineTerminalSurvey({
       { value: "__allman", label: "Allmänsjuksköterska", group: "" },
       { value: "__rontgen", label: "Röntgensjuksköterska", group: "" },
       ...NURSE_SPECIALIZATIONS.map((x) => ({ value: x, label: x, group: "Vidareutbildning (VUB)" })),
-      { value: "__ovrig", label: "Övrig VUB", group: "Vidareutbildning (VUB)" },
+      { value: "__saknas", label: "Min specialitet saknas i listan", group: "Vidareutbildning (VUB)" },
     ],
     [],
   );
