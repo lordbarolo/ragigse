@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
+import { SEO } from "@/components/SEO";
 
 export default function ResetPassword() {
   const [password, setPassword] = useState("");

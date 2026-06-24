@@ -5,6 +5,7 @@ import { Loader2, CheckCircle2, XCircle, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import CompcareLogo from "@/components/CompcareLogo";
+import { SEO } from "@/components/SEO";
 
 type Status = "loading" | "valid" | "already" | "invalid" | "confirming" | "done" | "error";
 

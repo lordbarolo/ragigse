@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, ArrowLeft, CheckCircle2 } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
+import { SEO } from "@/components/SEO";
 import { trackEvent } from "@/lib/trackEvent";
 
 export default function Signup() {
