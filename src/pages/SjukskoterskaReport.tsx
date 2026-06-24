@@ -267,7 +267,7 @@ export default function SjukskoterskaReport() {
                   className="font-bold"
                   style={{ fontFamily: "Georgia, serif", fontSize: "18px", color: ink }}
                 >
-                  {fmt(recMinF)}–{fmt(recMaxF)}\u00a0kr/h
+                  {fmt(recMinF)}–{fmt(recMaxF)} kr/h
                 </p>
                 <p className="text-[11px]" style={{ color: sub }}>
                   Marknadsmässigt spann (eget bolag, Zon 2)
