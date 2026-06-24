@@ -267,7 +267,7 @@ export default function AllmanmedicinReport() {
               {[
                 {
                   label: "Egenföretagare",
-                  share: "Andel av kundpris: 85–90 %",
+                  share: "Efter bemanningsbolagets marginal på 10–15 %",
                   range: `${fmt(recMinF)}–${fmt(recMaxF)} kr/h`,
                 },
                 {
