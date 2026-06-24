@@ -179,7 +179,7 @@ export default function SjukskoterskaReport() {
             <p style={{ fontFamily: "Georgia, serif", fontSize: "17px", lineHeight: 1.5, color: ink }}>
               Kundpriset för en legitimerad sjuksköterska är{" "}
               <span style={{ color: violet, fontWeight: 700 }}>
-                {fmt(lowZone)}–{fmt(highZone)} kr/h
+                {fmt(lowZone)}–{fmt(highZone)}\u00a0kr/h
               </span>{" "}
               beroende på zon. Konsultandelen ligger typiskt på{" "}
               <span style={{ fontWeight: 600 }}>80–85 %</span> av kundpriset för egenföretagare.
