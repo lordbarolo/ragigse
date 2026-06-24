@@ -93,6 +93,14 @@ export default function Signup() {
     ].join(", "),
     backgroundRepeat: "no-repeat" as const,
   };
+  const seo = (
+    <SEO
+      title="Skapa konto – CompCare"
+      description="Skapa ett gratis CompCare-konto för att spara dina rapporter och få notiser om nya analyser."
+      path="/registrera"
+      noindex
+    />
+  );
 
   if (success) {
     return (
