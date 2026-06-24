@@ -1,135 +1,61 @@
+## Nulägesbild (faktiskt resultat av audit)
 
-# Mål
+De fyra sidor du nämner använder redan `<SEO />`:
 
-Du ska kunna låta Claude (via Supabase MCP) äga en backend-spegel av CompCare i ditt egna Supabase-konto, utan att produktionen rörs. Lovable används som frontend-verktyg mot båda miljöerna. Inget DNS-byte, ingen migration av riktig kunddata, ingen risk för produktion.
+| Route | Komponent | Status |
+|---|---|---|
+| `/` (Hero) | `Home.tsx` | ✅ `<SEO …>` |
+| `/vanliga-fragor` | `FAQ.tsx` | ✅ `<SEO …>` |
+| `/kampanj/:role` | `Campaign.tsx` | ✅ `<SEO …>` |
+| `/rapport/:reportId` | `Report.tsx` | ✅ `<SEO title={seoTitle} description={seoDesc} path={…} ogType="article" />` |
 
-# Arkitektur efter setup
+Rapportsidorna med fast slug (`/rapport/anestesisjukskoterska`, `/rapport/lakare-allmanmedicin`, `/rapport/sjukskoterska`, `/rapport/legitimerad-sjukskoterska`, `…/leg-sjukskoterska`, `…/allmansjukskoterska`, `…/leg-ssk`, `…/ssk`, `/Bollnas/lakare-alm`, `/bollnas/lakare-alm`) har också `<SEO />` med JSON-LD.
 
-```text
-                 ┌──────────────────────────────┐
-                 │  PROD (orörd)                │
-                 │  compcare.se                 │
-                 │  Lovable-projekt (detta)     │
-                 │  ├─ Frontend (Lovable agent) │
-                 │  └─ Backend = Lovable Cloud  │
-                 │     (ref ubhhlunhdqbokjvwfebb)│
-                 └──────────────────────────────┘
-                              ▲
-                              │ manuell promotion
-                              │ (migrations + edge fn)
-                              │
-                 ┌──────────────────────────────┐
-                 │  STAGING (nytt)              │
-                 │  staging.compcare.se (valfritt)│
-                 │  Nytt Lovable-projekt        │
-                 │  ├─ Frontend (Lovable agent) │
-                 │  └─ Backend = ditt Supabase  │
-                 │     (Claude äger via MCP)    │
-                 └──────────────────────────────┘
-```
+`/resultat/:leadId` använder medvetet `<Helmet>` med `noindex, nofollow` — den får inte indexeras (innehåller PII), så det är korrekt och rörs inte.
 
-Claude jobbar fritt mot staging-Supabase. Lovable-agenten jobbar mot båda projekten (frontend) men rör bara prod-backend om du explicit ber om det.
+Det innebär att den **faktiska** luckan finns på auth-/utility-sidorna, inte på de sidor SEO-raden pekar ut. Scannerns träff verkar vara stale efter att Home/FAQ/Campaign/Report fick `<SEO />`.
 
-# Steg
+## Sidor som faktiskt saknar per-route head
 
-## 1. Förbered ditt Supabase
-- Skapa nytt projekt i EU-region (Frankfurt eller Stockholm för GDPR-paritet).
-- Slå på extensions: `pgvector`, `pg_cron`, `pg_net`, `pgmq`, `vault`.
-- Generera Personal Access Token för MCP. Spara även `service_role` och DB-lösen lokalt.
+| Route | Komponent | Avsedd åtgärd |
+|---|---|---|
+| `/logga-in` | `Login.tsx` | `<SEO>` + `noindex` (auth) |
+| `/registrera` | `Signup.tsx` | `<SEO>` + `noindex` (auth) |
+| `/aterstall-losenord` | `ResetPassword.tsx` | `<SEO>` + `noindex` (auth) |
+| `/unsubscribe` | `Unsubscribe.tsx` | `<SEO>` + `noindex` (utility) |
+| `*` (catch-all) | `NotFound.tsx` | `<SEO>` + `noindex` (404) |
 
-## 2. Skapa nytt Lovable-projekt för staging
-- Klona detta repo till nytt Lovable-projekt via "Remix" eller GitHub-import.
-- I det nya projektet: **välj inte Lovable Cloud**. Koppla istället ditt egna Supabase under Connectors → Supabase. Då slipper vi cloud-låsningen och dina nycklar styr.
+Övriga publika routes (`/integritetspolicy`, alla `/rapport/*`) har redan korrekt SEO.
 
-## 3. Rekonstruera schemat
-Alla migrationer ligger redan versionerade i `supabase/migrations/`. Kör dem mot ditt nya projekt i kronologisk ordning. Två sätt:
-- a) Lokalt med Supabase CLI: `supabase link` + `supabase db push`.
-- b) Eller låt Claude via MCP läsa migrationsfilerna och köra dem i ordning.
+## Implementation
 
-Validera efter run:
-- ~70 tabeller (se listan i `<supabase-tables>`).
-- Alla `ref_*`, `mp_*`, `ai_*`, `radar_*`, `invoice_*`-domäner finns.
-- 50+ DB-functions och triggers (särskilt `handle_new_user`, `mp_listings_enforce_publish_gate`, `ref_calculate_*`, `aggregate_calloff_monthly`).
-- RLS aktivt + GRANTs på alla public-tabeller.
+1. **Lägg till `noindex`-stöd i `src/components/SEO.tsx`**
+   - Ny optional prop `noindex?: boolean` som lägger till `<meta name="robots" content="noindex, nofollow" />` när true.
+   - För `noindex`-sidor: behåll `title`/`description` (bra UX i webbläsarflikar och delningar internt) men inkludera ingen JSON-LD och inget self-canonical (alt. behåll canonical — vi behåller, eftersom canonical inte överstyr noindex).
 
-## 4. Seed-data (anonymiserad)
-Vi flyttar **ingen riktig PII**. Istället:
-- Exportera CSV per icke-känslig referenstabell från Cloud-projektet: `roles`, `role_aliases`, `specialties`, `geographies`, `geography_aliases`, `regions`, `zones`, `locations`, `contract_versions`, `contract_version_rates`, `margin_models`, `ref_role_profiles`, `ref_verified_domains`, `price_nuggets`, `benchmark_rates`, `salary_benchmarks`.
-- Importera till staging-Supabase via Table editor eller `\copy`.
-- Generera syntetiska rader för `leads`, `consultant_profiles`, `ref_profiles`, `calloff_imports` (≤100 st var) så Claude har realistisk data att jobba mot utan att GDPR-data lämnar prod.
+2. **Lägg till `<SEO />` på de fem saknade sidorna** med passande svenska titlar/beskrivningar:
+   - Login: "Logga in – CompCare" / kort utility-beskrivning
+   - Signup: "Skapa konto – CompCare"
+   - ResetPassword: "Återställ lösenord – CompCare"
+   - Unsubscribe: "Avregistrera utskick – CompCare"
+   - NotFound: "Sidan kunde inte hittas – CompCare"
+   - Alla får `noindex`.
 
-## 5. Edge functions
-- Hela `supabase/functions/`-trädet följer med Git-import.
-- Sätt om alla secrets i nya projektet (se §6).
-- Deploya: `supabase functions deploy --project-ref <nytt>` eller via Lovable-agenten i det nya projektet.
+3. **Konsekvenskontroll**
+   - Sökning efter andra publika routes som råkat slinka förbi (t.ex. ev. saknade /rapport-aliaser) — inget hittades utöver ovan.
+   - `AnalysisScreen.tsx` lämnas oförändrad (redan korrekt noindex via Helmet).
 
-## 6. Secrets som måste sättas i staging
-Minst dessa (vi listar de viktigaste — full lista hämtas via `fetch_secrets` mot prod när vi är där):
-- `LOVABLE_API_KEY` (nytt — auto i nya Lovable-projektet)
-- `RESEND_API_KEY`, `RESEND_FROM_EMAIL`
-- `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` (test-keys, inte live)
-- `POSTHOG_PROJECT_API_KEY`, `POSTHOG_PERSONAL_API_KEY`
-- `MAILERLITE_API_KEY`
-- `HEALTH_CHECK_CRON_TOKEN` (nytt slumpgenererat — läggs i Vault)
-- BankID-cert/keys → använd **BankID test-miljö**, aldrig prod-certet.
+4. **Verifiering**
+   - Kör `seo--trigger_scan` när ändringarna är klara så att stale findings på Home/FAQ/Campaign/Report markeras passing igen, och de nya auth-/404-sidornas noindex bekräftas.
+   - Markera ev. kvarvarande stale findings som `fixed` med kort förklaring.
 
-## 7. Koppla Supabase MCP till Claude
-- Installera `@supabase/mcp-server-supabase` i Claude Desktop/Code config:
-  ```json
-  {
-    "mcpServers": {
-      "supabase-staging": {
-        "command": "npx",
-        "args": ["-y", "@supabase/mcp-server-supabase@latest",
-                 "--access-token", "<din PAT>",
-                 "--project-ref", "<staging ref>",
-                 "--read-only=false"]
-      }
-    }
-  }
-  ```
-- Verifiera: be Claude lista tabeller och köra en `select count(*) from roles;`.
+## Teknisk anmärkning
 
-## 8. pg_cron-jobb i staging
-Sätt upp samma scheman som prod men med suffix `_staging` så de inte krockar visuellt:
-- `refresh-uppdragsradar-forecast` söndag 03:00
-- `redact_avrop_intelligence_pii` dagligen
-- `radar_pipeline_watchdog` måndag 09:00
+Inget behov av ny route-konfiguration, ny dependency eller ändrad arkitektur. `react-helmet-async`-providern är redan monterad globalt (används av både `SEO.tsx` och `AnalysisScreen`). Ändringarna är additiva och berör endast 5 sidkomponenter + ett valfritt prop i `SEO.tsx`.
 
-## 9. Promotion-flöde (staging → prod)
-När Claude byggt något i staging:
-1. Claude exporterar SQL-diffen som migrationsfil till `supabase/migrations/` i staging-repo.
-2. Du copy-pastar filen in i prod-repo (eller cherry-pickar via Git).
-3. Lovable-agenten i prod-projektet kör migrationen via `supabase--migration`-verktyget med din approval.
-4. Edge function-ändringar synkas på samma sätt: kopiera filer mellan repona, agenten redeployar i prod.
+## Utanför scope
 
-Detta håller Cloud-projektets integritet (RLS, security memory, audit-loggar) intakt och du har full kontroll över vad som når produktion.
-
-## 10. Verifiering innan vi säger "klart"
-- Claude listar tabeller via MCP → matchar prod-listan.
-- Claude kör `select public.aggregate_calloff_monthly(36)` → returnerar rader.
-- Test-användare kan registrera sig + signing-flödet (test-BankID) går igenom.
-- En triggad edge function (t.ex. `send-password-recovery`) levererar mail via Resend.
-- pg_cron-jobben loggar `last_run_at` i `system_health_log`.
-
-# Tidsuppskattning
-
-- Steg 1–2: ~1 timme.
-- Steg 3–4: ~3–5 timmar (mest validering).
-- Steg 5–6: ~2 timmar.
-- Steg 7–8: ~1 timme.
-- Total kalendertid: **1 arbetsvecka** för en bekväm setup med marginal för felsökning.
-
-# Vad som inte ingår
-
-- Ingen kopiering av riktig användardata.
-- Ingen DNS-ändring för compcare.se.
-- Ingen frånkoppling av Lovable Cloud (är inte möjligt).
-- Inget byte av BankID-prod-cert till staging.
-
-# Vad jag behöver av dig för att börja
-
-1. Bekräfta att du är ok med att skapa nytt Lovable-projekt (kostar separat workspace-slot).
-2. Säg till när ditt egna Supabase-projekt är skapat — då kan vi börja med steg 3 (schema-port).
-
-När du approvar planen kan jag direkt börja förbereda en SQL-bundle av alla migrations i körbar ordning, så Claude/du har en enda fil att köra mot nya databasen.
+- Ingen ändring av `index.html` (sitewide fallback är fortfarande korrekt).
+- Ingen ändring av sitemap/robots.txt.
+- Inga visuella ändringar på sidorna.
+- Inga ändringar på inloggade routes (`/consultant/*`, `/admin/*`) — de ligger redan bakom auth och behöver ingen public SEO.
