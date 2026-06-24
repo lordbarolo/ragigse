@@ -280,12 +280,12 @@ export default function SjukskoterskaReport() {
                 {
                   label: "Egenföretagare",
                   share: "Efter bemanningsbolagets marginal på 15–20 %",
-                  range: `${fmt(recMinF)}–${fmt(recMaxF)} kr/h`,
+                  range: `${fmt(recMinF)}–${fmt(recMaxF)}\u00a0kr/h`,
                 },
                 {
                   label: "Anställd via bemanning",
                   share: "Bruttolön efter sociala avgifter och tjänstepension",
-                  range: `${fmt(recMinA)}–${fmt(recMaxA)} kr/h`,
+                  range: `${fmt(recMinA)}–${fmt(recMaxA)}\u00a0kr/h`,
                 },
               ].map((row) => (
                 <div
