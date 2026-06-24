@@ -96,7 +96,7 @@ export default function SjukskoterskaReport() {
     roleSlug: "sjukskoterska",
     dateModified: LAST_UPDATED,
     summary:
-      `Ramavtalspriset för en legitimerad sjuksköterska (grundutbildning) är ${fmt(lowZone)}–${fmt(highZone)} kr/h beroende på zon enligt SKR:s ramavtal vårdbemanning 2026. ` +
+      `Ramavtalspriset för en legitimerad sjuksköterska (grundutbildning) är ${fmt(lowZone)}–${fmt(highZone)}\u00a0kr/h beroende på zon enligt SKR:s ramavtal vårdbemanning 2026. ` +
       `Konsultandelen ligger typiskt på 80–85 % av kundpriset för egenföretagare och 78–83 % för anställda konsulter.`,
     rateRange: { min: lowZone, median: refRate, max: highZone, unit: "SEK/h" },
     skrSources: ["https://skr.se/ramavtal/vardbemanning"],
