@@ -272,7 +272,7 @@ export default function AllmanmedicinReport() {
                 },
                 {
                   label: "Anställd via bemanning",
-                  share: "83–88 %",
+                  share: "Bruttolön / timme (efter arbetsgivaravgifter ~31,42 %)",
                   range: `${fmt(recMinA)}–${fmt(recMaxA)} kr/h`,
                 },
               ].map((row) => (
