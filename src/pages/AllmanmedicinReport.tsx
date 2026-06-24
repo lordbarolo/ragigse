@@ -514,8 +514,8 @@ export default function AllmanmedicinReport() {
                     Faktureringshjälp
                   </p>
                   <p className="text-sm mt-1" style={{ color: sub }}>
-                    Kontrollera att OB, jour och grundpris stämmer mot ramavtalet. Ingen
-                    träff – ingen kostnad.
+                    Låt vår AI-assistent kontrollera att du fakturerat för alla
+                    timmar du jobbat.
                   </p>
                 </div>
                 <ArrowRight className="w-4 h-4 mt-2 shrink-0" style={{ color: violet }} />
