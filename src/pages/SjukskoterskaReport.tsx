@@ -30,9 +30,9 @@ const fmt = (n: number) => n.toLocaleString("sv-SE", { maximumFractionDigits: 0 
 
 // SKR ramavtal vårdbemanning 2026 — Sjuksköterska grundutbildning (dagtid)
 const ZONES = [
-  { zone: "Zon 1", rate: 617, desc: "Storstadsregioner (t.ex. Stockholm, Göteborg, Malmö)" },
-  { zone: "Zon 2", rate: 659, desc: "Mellanstora regioner" },
-  { zone: "Zon 3", rate: 704, desc: "Glesbygd / svårrekryterade områden" },
+  { zone: "Zon 1", rate: 616, desc: "Storstadsregioner (t.ex. Stockholm, Göteborg, Malmö)" },
+  { zone: "Zon 2", rate: 660, desc: "Mellanstora regioner" },
+  { zone: "Zon 3", rate: 715, desc: "Glesbygd / svårrekryterade områden" },
 ];
 
 // Övriga roller (ej specialistläkare): bemanningsmarginal 15–20 %
@@ -46,7 +46,7 @@ const EMPLOYER_FACTOR = 1.42;
 const FAQ = [
   {
     question: "Vad är ramavtalspriset för en legitimerad sjuksköterska 2026?",
-    answer: `Enligt SKR:s ramavtal vårdbemanning 2026 är kundpriset ${fmt(ZONES[0].rate)} kr/h i Zon 1 (storstad), ${fmt(ZONES[1].rate)} kr/h i Zon 2 (mellanstora regioner) och ${fmt(ZONES[2].rate)} kr/h i Zon 3 (glesbygd) för en sjuksköterska med grundutbildning på dagtid.`,
+    answer: `Enligt SKR:s ramavtal vårdbemanning 2026 är kundpriset ${fmt(ZONES[0].rate)}\u00a0kr/h i Zon 1 (storstad), ${fmt(ZONES[1].rate)}\u00a0kr/h i Zon 2 (mellanstora regioner) och ${fmt(ZONES[2].rate)}\u00a0kr/h i Zon 3 (glesbygd) för en sjuksköterska med grundutbildning på dagtid.`,
   },
   {
     question: "Hur stor del av kundpriset går till konsulten?",
@@ -96,7 +96,7 @@ export default function SjukskoterskaReport() {
     roleSlug: "sjukskoterska",
     dateModified: LAST_UPDATED,
     summary:
-      `Ramavtalspriset för en legitimerad sjuksköterska (grundutbildning) är ${fmt(lowZone)}–${fmt(highZone)} kr/h beroende på zon enligt SKR:s ramavtal vårdbemanning 2026. ` +
+      `Ramavtalspriset för en legitimerad sjuksköterska (grundutbildning) är ${fmt(lowZone)}–${fmt(highZone)}\u00a0kr/h beroende på zon enligt SKR:s ramavtal vårdbemanning 2026. ` +
       `Konsultandelen ligger typiskt på 80–85 % av kundpriset för egenföretagare och 78–83 % för anställda konsulter.`,
     rateRange: { min: lowZone, median: refRate, max: highZone, unit: "SEK/h" },
     skrSources: ["https://skr.se/ramavtal/vardbemanning"],
@@ -179,7 +179,7 @@ export default function SjukskoterskaReport() {
             <p style={{ fontFamily: "Georgia, serif", fontSize: "17px", lineHeight: 1.5, color: ink }}>
               Kundpriset för en legitimerad sjuksköterska är{" "}
               <span style={{ color: violet, fontWeight: 700 }}>
-                {fmt(lowZone)}–{fmt(highZone)} kr/h
+                {fmt(lowZone)}–{fmt(highZone)}\u00a0kr/h
               </span>{" "}
               beroende på zon. Konsultandelen ligger typiskt på{" "}
               <span style={{ fontWeight: 600 }}>80–85 %</span> av kundpriset för egenföretagare.
@@ -224,9 +224,9 @@ export default function SjukskoterskaReport() {
                     className="text-lg font-bold tracking-tight"
                     style={{ fontFamily: "Georgia, serif", color: ink }}
                   >
-                    {fmt(z.rate)}{" "}
+                    {fmt(z.rate)}
                     <span className="text-xs font-normal" style={{ color: sub }}>
-                      kr/h
+                      {"\u00a0"}kr/h
                     </span>
                   </span>
                 </div>
@@ -267,7 +267,7 @@ export default function SjukskoterskaReport() {
                   className="font-bold"
                   style={{ fontFamily: "Georgia, serif", fontSize: "18px", color: ink }}
                 >
-                  {fmt(recMinF)}–{fmt(recMaxF)} kr/h
+                  {fmt(recMinF)}–{fmt(recMaxF)}\u00a0kr/h
                 </p>
                 <p className="text-[11px]" style={{ color: sub }}>
                   Marknadsmässigt spann (eget bolag, Zon 2)
@@ -280,12 +280,12 @@ export default function SjukskoterskaReport() {
                 {
                   label: "Egenföretagare",
                   share: "Efter bemanningsbolagets marginal på 15–20 %",
-                  range: `${fmt(recMinF)}–${fmt(recMaxF)} kr/h`,
+                  range: `${fmt(recMinF)}–${fmt(recMaxF)}\u00a0kr/h`,
                 },
                 {
                   label: "Anställd via bemanning",
                   share: "Bruttolön efter sociala avgifter och tjänstepension",
-                  range: `${fmt(recMinA)}–${fmt(recMaxA)} kr/h`,
+                  range: `${fmt(recMinA)}–${fmt(recMaxA)}\u00a0kr/h`,
                 },
               ].map((row) => (
                 <div
@@ -356,7 +356,7 @@ export default function SjukskoterskaReport() {
                 Undre spann:
               </span>{" "}
               <span style={{ color: sub }}>
-                {fmt(recMinF)} kr/h — utgångspunkt baserat på SKR Zon 2 för en konsult med begränsad tillgänglighet och erfarenhet.
+                {fmt(recMinF)}\u00a0kr/h — utgångspunkt baserat på SKR Zon 2 för en konsult med begränsad tillgänglighet och erfarenhet.
               </span>
             </p>
             <p>
@@ -364,7 +364,7 @@ export default function SjukskoterskaReport() {
                 Median:
               </span>{" "}
               <span style={{ color: sub }}>
-                {fmt(Math.round((recMinF + recMaxF) / 2))} kr/h — typisk nivå för konsulter med
+                {fmt(Math.round((recMinF + recMaxF) / 2))}\u00a0kr/h — typisk nivå för konsulter med
                 dokumenterad erfarenhet.
               </span>
             </p>
@@ -373,7 +373,7 @@ export default function SjukskoterskaReport() {
                 Övre spann:
               </span>{" "}
               <span style={{ color: sub }}>
-                {fmt(recMaxF)} kr/h — Konsulter med god tillgänglighet och etablerad relation med beställande vårdgivare. Som ej behöver få betald resa, boende eller utbildning.
+                {fmt(recMaxF)}\u00a0kr/h — Konsulter med god tillgänglighet och etablerad relation med beställande vårdgivare. Som ej behöver få betald resa, boende eller utbildning.
               </span>
             </p>
           </section>
