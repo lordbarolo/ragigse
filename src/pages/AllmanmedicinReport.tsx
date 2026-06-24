@@ -69,8 +69,8 @@ export default function AllmanmedicinReport() {
   const refRate = ZONES[1].rate;
   const recMinF = Math.round(refRate * SHARE_MIN_FORETAGARE);
   const recMaxF = Math.round(refRate * SHARE_MAX_FORETAGARE);
-  const recMinA = Math.round(refRate * SHARE_MIN_ANSTALLD);
-  const recMaxA = Math.round(refRate * SHARE_MAX_ANSTALLD);
+  const recMinA = Math.round((refRate * SHARE_MIN_ANSTALLD) / EMPLOYER_FACTOR);
+  const recMaxA = Math.round((refRate * SHARE_MAX_ANSTALLD) / EMPLOYER_FACTOR);
 
   useEffect(() => {
     const prevHtml = document.documentElement.style.backgroundColor;
