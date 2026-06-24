@@ -46,12 +46,16 @@ const ROLE_PATTERNS: RoleRule[] = [
   [/barnsj[uö]kskötersk\w*/i, "Specialistsjuksköterska barn och ungdom"],
   [/psykiatrisj[uö]kskötersk\w*/i, "Specialistsjuksköterska psykiatrisk vård"],
   [/geriatriksj[uö]kskötersk\w*/i, "Specialistsjuksköterska vård av äldre"],
-  // "Specialistsjuksköterska <X>" → preserve X
+  // "Specialistsjuksköterska <X>" → preserve X (REQUIRED — generic match below
+  // would otherwise leak a price-less role into context).
   [
     /specialistsj[uö]kskötersk\w*\s+([a-zåäö][a-zåäöA-ZÅÄÖ\s-]{2,40})/i,
     (m) => `Specialistsjuksköterska ${m[1].trim().toLowerCase()}`,
   ],
-  [/specialistsj[uö]kskötersk\w*/i, "Specialistsjuksköterska"],
+  // NOTE: intentionally NO fallback to bare "Specialistsjuksköterska". SKR
+  // 2026 binds each subspecialty 1:1 to a price (see src/data/skrPrices2026.ts).
+  // If the user writes only "specialistsjuksköterska" the agent must ask for
+  // the subspecialty rather than guess a generic price.
   [/\bDSK\b|distriktssj[uö]k\w*/i, "Distriktssjuksköterska"],
   [/röntgensj[uö]k\w*|\brtg\b/i, "Röntgensjuksköterska"],
   [/barnmorsk\w*/i, "Barnmorska"],
