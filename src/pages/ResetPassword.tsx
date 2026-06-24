@@ -205,5 +205,6 @@ export default function ResetPassword() {
         </Card>
       </div>
     </div>
+    </>
   );
 }

@@ -63,6 +63,13 @@ export default function Unsubscribe() {
   };
 
   return (
+    <>
+    <SEO
+      title="Avregistrera utskick – CompCare"
+      description="Avregistrera dig från CompCares e-postutskick."
+      path="/unsubscribe"
+      noindex
+    />
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-6">
         <div className="flex justify-center">
