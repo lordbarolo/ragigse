@@ -7,17 +7,19 @@ interface SEOProps {
   path: string;
   ogType?: "website" | "article" | "product";
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
+  noindex?: boolean;
 }
 
 const BASE = "https://www.compcare.se";
 
-export function SEO({ title, description, path, ogType = "website", jsonLd }: SEOProps) {
+export function SEO({ title, description, path, ogType = "website", jsonLd, noindex = false }: SEOProps) {
   const url = `${BASE}${path}`;
-  const lds = jsonLd ? (Array.isArray(jsonLd) ? jsonLd : [jsonLd]) : [];
+  const lds = noindex || !jsonLd ? [] : Array.isArray(jsonLd) ? jsonLd : [jsonLd];
   return (
     <Helmet>
       <title>{title}</title>
       <meta name="description" content={description} />
+      {noindex && <meta name="robots" content="noindex, nofollow" />}
       <link rel="canonical" href={url} />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={description} />
@@ -31,3 +33,4 @@ export function SEO({ title, description, path, ogType = "website", jsonLd }: SE
     </Helmet>
   );
 }
+
