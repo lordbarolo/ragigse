@@ -267,12 +267,12 @@ export default function AllmanmedicinReport() {
               {[
                 {
                   label: "Egenföretagare",
-                  share: "85–90 %",
+                  share: "Andel av kundpris: 85–90 %",
                   range: `${fmt(recMinF)}–${fmt(recMaxF)} kr/h`,
                 },
                 {
                   label: "Anställd via bemanning",
-                  share: "Bruttolön / timme (efter arbetsgivaravgifter ~31,42 %)",
+                  share: "Bruttolön (efter sociala avgifter och tjänstepension)",
                   range: `${fmt(recMinA)}–${fmt(recMaxA)} kr/h`,
                 },
               ].map((row) => (
@@ -286,7 +286,7 @@ export default function AllmanmedicinReport() {
                       {row.label}
                     </p>
                     <p className="text-[11px]" style={{ color: sub }}>
-                      Andel av kundpris: {row.share}
+                      {row.share}
                     </p>
                   </div>
                   <span
