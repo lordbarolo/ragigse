@@ -37,6 +37,8 @@ const SHARE_MIN_FORETAGARE = 0.85;
 const SHARE_MAX_FORETAGARE = 0.90;
 const SHARE_MIN_ANSTALLD = 0.83;
 const SHARE_MAX_ANSTALLD = 0.88;
+// Arbetsgivaravgifter ~31,42 % — bruttolön = total konsultkostnad / 1,42
+const EMPLOYER_FACTOR = 1.42;
 
 const FAQ = [
   {
@@ -45,7 +47,7 @@ const FAQ = [
   },
   {
     question: "Hur stor del av kundpriset går till konsulten?",
-    answer: `För specialistläkare är bemanningsföretagets marginal typiskt 10–15 % av kundpriset. Som egenföretagare ligger konsultandelen därför på 85–90 % av kundpriset, och som anställd konsult på 83–88 %.`,
+    answer: `För specialistläkare är bemanningsföretagets marginal typiskt 10–15 % av kundpriset. Som egenföretagare ligger konsultandelen därför på 85–90 % av kundpriset. För anställd via bemanning utgör konsultkostnaden 83–88 % av kundpriset, och av det betalar bolaget först arbetsgivaravgifter (~31,42 %) innan bruttolön betalas ut till konsulten.`,
   },
   {
     question: "Vilken region tillhör vilken zon?",
@@ -67,8 +69,8 @@ export default function AllmanmedicinReport() {
   const refRate = ZONES[1].rate;
   const recMinF = Math.round(refRate * SHARE_MIN_FORETAGARE);
   const recMaxF = Math.round(refRate * SHARE_MAX_FORETAGARE);
-  const recMinA = Math.round(refRate * SHARE_MIN_ANSTALLD);
-  const recMaxA = Math.round(refRate * SHARE_MAX_ANSTALLD);
+  const recMinA = Math.round((refRate * SHARE_MIN_ANSTALLD) / EMPLOYER_FACTOR);
+  const recMaxA = Math.round((refRate * SHARE_MAX_ANSTALLD) / EMPLOYER_FACTOR);
 
   useEffect(() => {
     const prevHtml = document.documentElement.style.backgroundColor;
@@ -270,7 +272,7 @@ export default function AllmanmedicinReport() {
                 },
                 {
                   label: "Anställd via bemanning",
-                  share: "83–88 %",
+                  share: "Bruttolön / timme (efter arbetsgivaravgifter ~31,42 %)",
                   range: `${fmt(recMinA)}–${fmt(recMaxA)} kr/h`,
                 },
               ].map((row) => (
