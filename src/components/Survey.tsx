@@ -180,7 +180,9 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
       if (roleDropdownValue === "__allman") return "Sjuksköterska";
       if (roleDropdownValue === "__barnmorska") return "Barnmorska";
       if (roleDropdownValue === "__rontgen") return "Röntgensjuksköterska";
-      if (roleDropdownValue === "__ovrig") return "Specialistsjuksköterska";
+      // "Min specialitet saknas" — block progress, never fall back to a generic
+      // "Specialistsjuksköterska" price. UI prompts user to contact us instead.
+      if (roleDropdownValue === "__saknas") return "";
       return nurseValueMap[roleDropdownValue] || roleDropdownValue;
     }
     return "";
