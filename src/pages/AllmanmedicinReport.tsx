@@ -290,7 +290,7 @@ export default function AllmanmedicinReport() {
                     </p>
                   </div>
                   <span
-                    className="text-sm font-bold"
+                    className="text-sm font-bold whitespace-nowrap pl-3"
                     style={{ fontFamily: "Georgia, serif", color: violet }}
                   >
                     {row.range}
