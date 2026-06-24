@@ -485,7 +485,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
       if (roleDropdownValue === "__allman") return "Allmänsjuksköterska";
       if (roleDropdownValue === "__barnmorska") return "Barnmorska";
       if (roleDropdownValue === "__rontgen") return "Röntgensjuksköterska";
-      if (roleDropdownValue === "__ovrig") return "Specialistsjuksköterska";
+      if (roleDropdownValue === "__saknas") return "Specialitet saknas — kontakta oss";
       return roleDropdownValue;
     }
     return "";
