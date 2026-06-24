@@ -37,6 +37,8 @@ const SHARE_MIN_FORETAGARE = 0.85;
 const SHARE_MAX_FORETAGARE = 0.90;
 const SHARE_MIN_ANSTALLD = 0.83;
 const SHARE_MAX_ANSTALLD = 0.88;
+// Arbetsgivaravgifter ~31,42 % — bruttolön = total konsultkostnad / 1,42
+const EMPLOYER_FACTOR = 1.42;
 
 const FAQ = [
   {
