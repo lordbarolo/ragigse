@@ -47,7 +47,7 @@ const FAQ = [
   },
   {
     question: "Hur stor del av kundpriset går till konsulten?",
-    answer: `För specialistläkare är bemanningsföretagets marginal typiskt 10–15 % av kundpriset. Som egenföretagare ligger konsultandelen därför på 85–90 % av kundpriset, och som anställd konsult på 83–88 %.`,
+    answer: `För specialistläkare är bemanningsföretagets marginal typiskt 10–15 % av kundpriset. Som egenföretagare ligger konsultandelen därför på 85–90 % av kundpriset. För anställd via bemanning utgör konsultkostnaden 83–88 % av kundpriset, och av det betalar bolaget först arbetsgivaravgifter (~31,42 %) innan bruttolön betalas ut till konsulten.`,
   },
   {
     question: "Vilken region tillhör vilken zon?",
