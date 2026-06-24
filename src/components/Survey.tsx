@@ -591,6 +591,16 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                   placeholder={occupationCategory === "lakare" ? "Välj specialisering..." : "Välj din roll..."}
                   options={occupationCategory === "lakare" ? doctorRoleOptions : nurseRoleOptions}
                 />
+                {occupationCategory === "ssk" && roleDropdownValue === "__saknas" && (
+                  <div className="mt-3 rounded-xl border border-amber-300/60 bg-amber-50 p-3 text-xs text-amber-900">
+                    <p className="font-semibold mb-1">Pris saknas för din specialitet</p>
+                    <p>
+                      Vi visar bara priser för roller som finns i SKR:s ramavtal 2026. Mejla{" "}
+                      <a href="mailto:hej@compcare.se" className="underline">hej@compcare.se</a>{" "}
+                      så hjälper vi dig manuellt — vi gissar aldrig på ett generiskt specialistpris.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </StepWrapper>
