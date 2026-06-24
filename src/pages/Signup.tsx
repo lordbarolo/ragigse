@@ -104,6 +104,8 @@ export default function Signup() {
 
   if (success) {
     return (
+      <>
+      {seo}
       <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden" style={beigeBg}>
         <Card className="relative z-10 w-full max-w-md border-border/40 !bg-[#F5F2EA]/95 backdrop-blur">
           <CardContent className="!bg-transparent pt-10 pb-8 px-6 text-center space-y-5">
