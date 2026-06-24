@@ -30,9 +30,9 @@ const fmt = (n: number) => n.toLocaleString("sv-SE", { maximumFractionDigits: 0 
 
 // SKR ramavtal vårdbemanning 2026 — Sjuksköterska grundutbildning (dagtid)
 const ZONES = [
-  { zone: "Zon 1", rate: 700, desc: "Storstadsregioner (t.ex. Stockholm, Göteborg, Malmö)" },
-  { zone: "Zon 2", rate: 749, desc: "Mellanstora regioner" },
-  { zone: "Zon 3", rate: 800, desc: "Glesbygd / svårrekryterade områden" },
+  { zone: "Zon 1", rate: 617, desc: "Storstadsregioner (t.ex. Stockholm, Göteborg, Malmö)" },
+  { zone: "Zon 2", rate: 659, desc: "Mellanstora regioner" },
+  { zone: "Zon 3", rate: 704, desc: "Glesbygd / svårrekryterade områden" },
 ];
 
 // Övriga roller (ej specialistläkare): bemanningsmarginal 15–20 %
