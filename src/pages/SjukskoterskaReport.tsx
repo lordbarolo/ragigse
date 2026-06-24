@@ -285,7 +285,7 @@ export default function SjukskoterskaReport() {
                 {
                   label: "Anställd via bemanning",
                   share: "Bruttolön efter sociala avgifter och tjänstepension",
-                  range: `${fmt(recMinA)}–${fmt(recMaxA)}\u00a0kr/h`,
+                  range: "370–395\u00a0kr/h",
                 },
               ].map((row) => (
                 <div
