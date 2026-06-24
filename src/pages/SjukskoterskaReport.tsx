@@ -356,7 +356,7 @@ export default function SjukskoterskaReport() {
                 Undre spann:
               </span>{" "}
               <span style={{ color: sub }}>
-                {fmt(recMinF)} kr/h — utgångspunkt baserat på SKR Zon 2 för en konsult med begränsad tillgänglighet och erfarenhet.
+                {fmt(recMinF)}\u00a0kr/h — utgångspunkt baserat på SKR Zon 2 för en konsult med begränsad tillgänglighet och erfarenhet.
               </span>
             </p>
             <p>
@@ -364,7 +364,7 @@ export default function SjukskoterskaReport() {
                 Median:
               </span>{" "}
               <span style={{ color: sub }}>
-                {fmt(Math.round((recMinF + recMaxF) / 2))} kr/h — typisk nivå för konsulter med
+                {fmt(Math.round((recMinF + recMaxF) / 2))}\u00a0kr/h — typisk nivå för konsulter med
                 dokumenterad erfarenhet.
               </span>
             </p>
@@ -373,7 +373,7 @@ export default function SjukskoterskaReport() {
                 Övre spann:
               </span>{" "}
               <span style={{ color: sub }}>
-                {fmt(recMaxF)} kr/h — Konsulter med god tillgänglighet och etablerad relation med beställande vårdgivare. Som ej behöver få betald resa, boende eller utbildning.
+                {fmt(recMaxF)}\u00a0kr/h — Konsulter med god tillgänglighet och etablerad relation med beställande vårdgivare. Som ej behöver få betald resa, boende eller utbildning.
               </span>
             </p>
           </section>
