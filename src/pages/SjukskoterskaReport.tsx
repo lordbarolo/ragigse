@@ -46,7 +46,7 @@ const EMPLOYER_FACTOR = 1.42;
 const FAQ = [
   {
     question: "Vad är ramavtalspriset för en legitimerad sjuksköterska 2026?",
-    answer: `Enligt SKR:s ramavtal vårdbemanning 2026 är kundpriset ${fmt(ZONES[0].rate)} kr/h i Zon 1 (storstad), ${fmt(ZONES[1].rate)} kr/h i Zon 2 (mellanstora regioner) och ${fmt(ZONES[2].rate)} kr/h i Zon 3 (glesbygd) för en sjuksköterska med grundutbildning på dagtid.`,
+    answer: `Enligt SKR:s ramavtal vårdbemanning 2026 är kundpriset ${fmt(ZONES[0].rate)}\u00a0kr/h i Zon 1 (storstad), ${fmt(ZONES[1].rate)}\u00a0kr/h i Zon 2 (mellanstora regioner) och ${fmt(ZONES[2].rate)}\u00a0kr/h i Zon 3 (glesbygd) för en sjuksköterska med grundutbildning på dagtid.`,
   },
   {
     question: "Hur stor del av kundpriset går till konsulten?",
