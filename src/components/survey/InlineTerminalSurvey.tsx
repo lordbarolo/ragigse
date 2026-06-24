@@ -131,7 +131,9 @@ export default function InlineTerminalSurvey({
     if (s.category === "ssk") {
       if (s.roleValue === "__allman") return "Sjuksköterska";
       if (s.roleValue === "__rontgen") return "Röntgensjuksköterska";
-      if (s.roleValue === "__ovrig") return "Specialistsjuksköterska";
+      // "Min specialitet saknas" — block resolution; UI must surface contact CTA.
+      // Never fall back to a generic "Specialistsjuksköterska" price.
+      if (s.roleValue === "__saknas") return "";
       return nurseValueMap[s.roleValue] || s.roleValue;
     }
     if (s.category === "barnmorska") return "Barnmorska";
