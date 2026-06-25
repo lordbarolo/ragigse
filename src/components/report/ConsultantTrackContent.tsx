@@ -376,16 +376,17 @@ export default function ConsultantTrackContent({
               <div className="space-y-3 text-body-sm">
                 <CalcRow label="Ramavtalspris (vad regionen betalar)" value={`${fmt(marketRate)} kr/h`} />
                 <CalcRow label={`Bemanningsbolagets marginal (${marginLabel})`} value={`−${fmt(Math.round(marketRate * (1 - shareMax)))}–${fmt(Math.round(marketRate * (1 - shareMin)))} kr/h`} />
-                <CalcRow label="Ersättningsutrymme efter marginal" value={`${fmt(afterMarginMin)}–${fmt(afterMarginMax)} kr/h`} />
                 {isEmployee ? (
-                  <CalcRow
-                    label="÷ 1,38 (arbetsgivaravg. + pension + särskild löneskatt + AFA)"
-                    value={`= ${fmt(Math.round(afterMarginMin / 1.38))}–${fmt(Math.round(afterMarginMax / 1.38))} kr/h brutto`}
-                  />
+                  <>
+                    <CalcRow label="Ersättningsutrymme efter marginal" value={`${fmt(afterMarginMin)}–${fmt(afterMarginMax)} kr/h`} />
+                    <CalcRow
+                      label="÷ 1,38 (arbetsgivaravg. + pension + särskild löneskatt + AFA)"
+                      value={`= ${fmt(Math.round(afterMarginMin / 1.38))}–${fmt(Math.round(afterMarginMax / 1.38))} kr/h brutto`}
+                    />
+                  </>
                 ) : (
                   <p className="text-hint pt-1">
-                    Som egenföretagare bör du fakturera {Math.round(shareMin * 100)}–{Math.round(shareMax * 100)}% av kundpriset, dvs{" "}
-                    {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h.
+                    Som egenföretagare bör du fakturera {Math.round(shareMin * 100)}–{Math.round(shareMax * 100)} % av kundpriset.
                   </p>
                 )}
               </div>
