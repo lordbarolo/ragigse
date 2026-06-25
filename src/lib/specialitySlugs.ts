@@ -16,12 +16,8 @@ export interface SpecialityOption {
 const DISPLAY_LABEL_OVERRIDES: Record<string, string> = {
   "Specialistläkare anestesi och intensivvård": "Anestesi & IVA",
   "Specialistläkare arbets- och miljömedicin": "Arbets- & miljömedicin",
-  "Specialistläkare barn- och ungdomsallergologi": "Barnallergologi",
-  "Specialistläkare barn- och ungdomshematologi och onkologi": "Barnhematologi & onkologi",
-  "Specialistläkare barn- och ungdomskardiologi": "Barnkardiologi",
   "Specialistläkare barn- och ungdomskirurgi": "Barnkirurgi",
   "Specialistläkare barn- och ungdomsmedicin": "Barnmedicin",
-  "Specialistläkare barn- och ungdomsneurologi": "Barnneurologi",
   "Specialistläkare barn- och ungdomspsykiatri": "Barn- & ungdomspsykiatri",
   "Specialistläkare endokrinologi och diabetologi": "Endokrinologi & diabetes",
   "Specialistläkare gynekologisk onkologi": "Gyn. onkologi",
@@ -59,10 +55,9 @@ const DOCTOR_GENERIC: Array<[string, string]> = [
 
 const DOCTOR_SPECIALTIES = [
   "Akutsjukvård", "Allergologi", "Allmänmedicin", "Anestesi och intensivvård",
-  "Arbetsmedicin", "Arbets- och miljömedicin", "Barn- och ungdomsallergologi",
-  "Barn- och ungdomshematologi och onkologi", "Barn- och ungdomskardiologi",
+  "Arbetsmedicin", "Arbets- och miljömedicin",
   "Barn- och ungdomskirurgi", "Barn- och ungdomsmedicin",
-  "Barn- och ungdomsneurologi", "Barn- och ungdomspsykiatri",
+  "Barn- och ungdomspsykiatri",
   "Beroendemedicin", "Endokrinologi och diabetologi", "Geriatrik",
   "Gynekologisk onkologi", "Handkirurgi", "Hematologi", "Hud- och könssjukdomar",
   "Hörsel- och balansrubbningar", "Infektionssjukdomar", "Internmedicin",
