@@ -288,9 +288,11 @@ export default function ConsultantTrackContent({
                         style={{ width: `${barWidth}%` }}
                       />
                     </div>
-                    <p className={`${monoClass} text-micro`}>
-                      Konsultersättning: {fmt(recHourlyLow)}–{fmt(recHourlyHigh)} kr/h
-                    </p>
+                    {!isUserZone && (
+                      <p className={`${monoClass} text-micro`}>
+                        Konsultersättning: {fmt(recHourlyLow)}–{fmt(recHourlyHigh)} kr/h
+                      </p>
+                    )}
                   </div>
                 );
               })}
