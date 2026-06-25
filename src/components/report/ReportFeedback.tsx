@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MessageCircle, PiggyBank, FileText, Sparkles, Copy, Check } from "lucide-react";
+import { ThumbsUp, ThumbsDown, Copy, Check } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/trackEvent";
 
-type Value = "negotiation" | "pension" | "salary_report" | "chat";
+type Value = "yes" | "no";
 
 interface Props {
   leadId: string;
@@ -13,18 +13,11 @@ interface Props {
   zone?: string;
 }
 
-const options: { value: Value; label: string; icon: React.ReactNode }[] = [
-  { value: "negotiation", label: "Förhandlingstips", icon: <MessageCircle className="w-5 h-5" /> },
-  { value: "pension", label: "Pensionssimulatorn", icon: <PiggyBank className="w-5 h-5" /> },
-  { value: "salary_report", label: "Lönerapporten", icon: <FileText className="w-5 h-5" /> },
-  { value: "chat", label: "Chattfunktionen", icon: <Sparkles className="w-5 h-5" /> },
-];
-
 export default function ReportFeedback({ leadId, role, zone }: Props) {
   const [submitted, setSubmitted] = useState(false);
   const [alreadyFeedback, setAlreadyFeedback] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [sending, setSending] = useState(false);
+  const [sending, setSending] = useState<Value | null>(null);
 
   useEffect(() => {
     if (!leadId) return;
@@ -47,7 +40,7 @@ export default function ReportFeedback({ leadId, role, zone }: Props) {
 
   const handleSelect = async (value: Value) => {
     if (sending) return;
-    setSending(true);
+    setSending(value);
     trackEvent("report_feedback", { value, role: role || "", zone: zone || "" });
 
     await supabase.from("report_feedback").insert({
@@ -57,7 +50,7 @@ export default function ReportFeedback({ leadId, role, zone }: Props) {
       zone: zone || null,
     });
 
-    setSending(false);
+    setSending(null);
     setSubmitted(true);
   };
 
@@ -91,21 +84,28 @@ export default function ReportFeedback({ leadId, role, zone }: Props) {
   return (
     <Card className="bg-background border-border/60">
       <CardContent className="py-6 space-y-4">
-        <p className="text-xs sm:text-sm font-medium text-foreground text-center whitespace-nowrap">
-          Vilken del av rapporten var mest värdefull för dig?
+        <p className="text-sm font-medium text-foreground text-center">
+          Gillar du rapporten?
         </p>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          {options.map((opt) => (
-            <button
-              key={opt.value}
-              disabled={sending}
-              onClick={() => handleSelect(opt.value)}
-              className="flex flex-col items-center gap-2 rounded-xl border border-border bg-background p-4 text-sm font-medium text-foreground hover:border-primary hover:bg-primary/5 transition-colors disabled:opacity-50"
-            >
-              {opt.icon}
-              <span>{opt.label}</span>
-            </button>
-          ))}
+        <div className="flex items-center justify-center gap-4">
+          <button
+            type="button"
+            aria-label="Tumme upp"
+            disabled={!!sending}
+            onClick={() => handleSelect("yes")}
+            className="flex items-center justify-center w-14 h-14 rounded-full border border-border bg-background text-foreground hover:border-primary hover:bg-primary/5 hover:text-primary transition-colors disabled:opacity-50"
+          >
+            <ThumbsUp className="w-6 h-6" />
+          </button>
+          <button
+            type="button"
+            aria-label="Tumme ner"
+            disabled={!!sending}
+            onClick={() => handleSelect("no")}
+            className="flex items-center justify-center w-14 h-14 rounded-full border border-border bg-background text-foreground hover:border-primary hover:bg-primary/5 hover:text-primary transition-colors disabled:opacity-50"
+          >
+            <ThumbsDown className="w-6 h-6" />
+          </button>
         </div>
       </CardContent>
     </Card>
