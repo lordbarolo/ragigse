@@ -3,6 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { ThumbsUp, ThumbsDown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/trackEvent";
+import { toast } from "sonner";
 
 type Value = "yes" | "no";
 
