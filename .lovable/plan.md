@@ -1,101 +1,80 @@
-# Plan: Exakt roll → exakt SKR 2026-pris (ingen generisk "Specialistsjuksköterska")
 
-## Utgångsläge (verifierat mot DB)
+# Plan: Faktor 1,42 → 1,38 + riskmarginal-copy
 
-Tabellen `contract_version_rates` (version `v1.7`, effective 2026‑01‑01) innehåller redan rätt prisrader. Stämmer med din spec:
+## Bakgrund
+1,42 är idag en schablon för arbetsgivarkostnad (sociala avgifter + ITP1 + särskild löneskatt + AFA + buffert).
+Strikt verklig nivå enligt `supabase/functions/_shared/calc.ts` ≈ 37,86 %.
+Vi kompromissar på **1,38** (≈ 31,42 % AG-avg + 4,5 % ITP1 + 1,09 % löneskatt + 0,85 % AFA = 37,86 % — avrundat upp till 38 %).
 
-**Grupp HÖG — 770 / 824 / 880 kr/h (endast dessa fem roller):**
-- Specialistsjuksköterska anestesi
-- Specialistsjuksköterska intensivvård
-- Specialistsjuksköterska operationssjukvård
-- Distriktssjuksköterska
-- Barnmorska
+## Steg 1 — Inventera alla förekomster
+20 filer innehåller `1.42`. De delas i tre grupper:
 
-**Grupp MELLAN — 715 / 770 / 824 kr/h:** alla övriga "Specialistsjuksköterska …" + Skolsköterska.
+**A. Beräkningskonstant (måste ändras):**
+- `src/lib/calc.ts`
+- `supabase/functions/_shared/calc.ts`
+- `supabase/functions/compensation-intelligence/index.ts`
+- `supabase/functions/ai-pricing-coach/index.ts`
+- `supabase/functions/generate-pdf/index.ts`
+- `supabase/functions/verify-constants/index.ts`
+- `src/lib/priceRangeGuard.ts` (+ `.test.ts` — uppdatera asserts)
 
-**Grupp BAS — 616 / 660 / 715 kr/h:** Sjuksköterska (grund), Röntgensjuksköterska.
+**B. Visad copy / UI-text (måste uppdateras parallellt):**
+- `src/pages/SjukskoterskaReport.tsx`
+- `src/pages/AllmanmedicinReport.tsx`
+- `src/pages/AnalysisScreen.tsx`
+- `src/pages/demo/LandingV2.tsx`
+- `src/components/report/ConsultantTrackContent.tsx`
+- `src/components/report/PersonalInsights.tsx`
+- `src/components/landing/RoleCarousel.tsx`
+- `src/components/demo/MarketSearchBox.tsx`
+- `src/components/demo/HeroRateFinder.tsx`
 
-Problemet är inte data — det är att rapport-/kampanj-/AI-ytor använder hårdkodade siffror och att Survey kan resolva en roll till en generisk `"Specialistsjuksköterska"`-sträng som inte finns som prisrad. Det öppnar för att fel grupp visas.
+**C. AI-agent-discovery (måste uppdateras för konsistens):**
+- `public/llms.txt`, `public/llms-full.txt`, `public/ai-plugin.json`, `public/openapi.json`
 
-## Mål
+**D. Historiska migrations:**
+- `supabase/migrations/2026021…` och `2026051…` — **rörs ej** (historik).
 
-1. **Generiska "Specialistsjuksköterska" elimineras** som upplösbar roll. Survey kräver explicit subspecialitet.
-2. **Alla pris-ytor** (rapport, kampanj, AI-coach, fakturakontroll, gauge) läser pris via **en enda lookup** med exakt rollmatchning mot `contract_version_rates`.
-3. **Okänd roll → "Pris saknas — kontakta oss"** (inget spann, ingen fallback‑gissning).
-4. **Test/CI-guard** som bryter bygget om en roll i UI saknar prisrad i v1.7.
+## Steg 2 — Inför en central konstant
+För att slippa magic numbers framöver:
+- Lägg `EMPLOYER_FACTOR = 1.38` i `src/lib/calc.ts` och `supabase/functions/_shared/calc.ts`.
+- Alla andra filer i grupp A importerar konstanten istället för att hårdkoda `1.42`.
+- Edge functions kan inte importera från `src/`, så `_shared/calc.ts` blir sanningen för backend; frontend speglar med samma värde + en kommentar `// Synk med supabase/functions/_shared/calc.ts`.
 
-## Arkitektur
+## Steg 3 — Uppdatera tester
+- `src/lib/priceRangeGuard.test.ts`: byt förväntade värden från `× 1.42` till `× 1.38`.
+- Verifiera build + tester innan UI-copy uppdateras.
 
-Sanningskälla = DB (`contract_version_rates` v1.7 / v1.6). TS-fallback för SSR/offline och för bygg-tids‑guards.
+## Steg 4 — Uppdatera UI-copy parallellt med marginal-budskap
+I varje fil i grupp B byts:
+- siffran `1,42` → `1,38`
+- texten "× 1,42 sociala avgifter" → "× 1,38 sociala avgifter (31,42 % arbetsgivaravgift + 4,5 % ITP1 + 1,09 % särskild löneskatt + 0,85 % AFA)"
 
-```text
-contract_version_rates  ──► useContractRate(role, zone)  ──► UI
-       ▲                              │
-       │                              ├── DB hit (primär)
-       │                              └── TS fallback (src/data/skrPrices2026.ts)
-       │
-src/data/skrPrices2026.ts  ◄── speglas av migration, verifieras av guard-test
-```
+**Ny mening (efter beslut idag) — läggs in i rapport- och resultatkomponenter där marginalen kommenteras:**
 
-## Förändringar
+> "Marginalen kan i vissa fall vara lägre — t.ex. när bemannings­bolaget tar betalningsrisk, garanterar timmar eller bär kostnad för outnyttjad kapacitet."
 
-### 1. `src/data/skrPrices2026.ts` (ny)
-Typed lookup-tabell, en rad per kanonisk roll:
-```ts
-export type PriceGroup = "bas" | "mellan" | "hog";
-export interface RolePrice { role: string; group: PriceGroup; zone1: number; zone2: number; zone3: number; contractVersion: "v1.6" | "v1.7"; }
-export const SKR_2026_NURSE_PRICES: RolePrice[] = [/* exakt spegling av DB */];
-export const PRICE_BY_ROLE: Record<string, RolePrice>;
-```
-Ingen "Specialistsjuksköterska" utan suffix.
+Konkret placering:
+- `SjukskoterskaReport.tsx` — under "Möjlig konsultersättning"-kortet (samma block där 528–561 kr/h visas).
+- `AllmanmedicinReport.tsx` — motsvarande spann-block.
+- `ConsultantTrackContent.tsx` — bredvid marginalförklaringen (85–92 %).
 
-### 2. `src/hooks/useContractRate.ts` (ny)
-- Slår upp roll i `contract_version_rates` via supabase, cachas med react-query.
-- Fallback till `PRICE_BY_ROLE` om DB‑anrop fallerar.
-- Returnerar `{ status: "ok", zone1, zone2, zone3, group } | { status: "missing", role }`.
+## Steg 5 — Uppdatera agent-discovery
+- `public/llms.txt`, `llms-full.txt`, `ai-plugin.json`, `openapi.json`: `×1,42` → `×1,38`.
+- I `llms-full.txt` rad 63–64: skriv om exempelräkningen med 1,38.
 
-### 3. Rapportsidor (`SjukskoterskaReport`, `AnestesiReport`, ev. ny `BarnmorskaReport`, `DistriktReport`, `OperationReport`, `IntensivvardReport`)
-- Ta bort hårdkodade `ZONES`-arrayer.
-- Använd `useContractRate(role)`. Vid `status: "missing"` rendera `<PriceMissingCard role={...} />` istället för spann/gauge.
-- Konsolidera "ANESTESI-mall" till EN rapportkomponent som tar roll som prop. Routern `/rapport/:slug` mappar slug → kanonisk roll via `specialitySlugs.ts`.
+## Steg 6 — Uppdatera memories
+- `mem://logic/margin-models` — byt `employer_factor 1.42` → `1.38`.
+- `mem://index.md` Core: byt "Anställda × 1,42 / 167h" → "× 1,38 / 167h".
 
-### 4. `src/components/Survey.tsx` + `src/lib/specialitySlugs.ts`
-- **Ta bort** `__ovrig → "Specialistsjuksköterska"` i Survey (rad 181–183, 484–486). Ersätt med dropdown som kräver subspecialitet, plus alternativet "Min specialitet saknas" → leder till "Pris saknas, kontakta oss".
-- `NURSE_SPECIALIZATION_MAP` får kommentar och en compile-time check att varje `resolvedRole` finns som nyckel i `PRICE_BY_ROLE`.
+## Steg 7 — Verifiering
+1. `tsgo` — typecheck.
+2. `bunx vitest run` — alla guard-tester gröna.
+3. Playwright snapshot på `/rapport/anestesisjukskoterska` — bekräfta nytt spann och nytt margintext-block.
+4. `rg "1\.42|1,42"` — ska bara matcha historiska migrations + ev. icke-relevanta strängar.
 
-### 5. `src/hooks/useNegotiationChat.ts` + AI-coach‑prompt
-- Sista regex‑fallbacken `/specialistsj.../ → "Specialistsjuksköterska"` (rad 54) tas bort. Ersätts med "okänd subspecialitet → be användaren välja en av N kända".
-- AI-prompten får uttrycklig regel: använd ALDRIG ett generiskt specialistpris; om subspecialitet inte är känd → svara "Jag behöver veta din subspecialitet för att hämta rätt SKR-pris" + lista de fem höga vs övriga.
+## Risk-sammanfattning (från förra svaret)
+Rekommenderad bruttolön ökar ~3 %, vilket vi medvetet accepterar nu eftersom (a) 1,42 var för konservativt, (b) ny copy förklarar att verkliga marginaler ändå kan variera när byrån tar risk. Fakturakontrollens beräkning påverkas men eftersom no-cure-no-pay räknas på återvunnet belopp, inte på faktor, är intäktsrisken försumbar.
 
-### 6. `Campaign.tsx` + `/kampanj/:role`
-- Bygger kampanj-URL från `PRICE_BY_ROLE`-nycklarna. Slug som inte finns → 404 (inte fallback till generiskt spann).
-
-### 7. Fakturakontroll
-- `invoice-audit` edge function: vid roll‑detektion krävs exakt match mot `PRICE_BY_ROLE`. Saknas roll → status `needs_role_clarification`, ingen audit körs.
-
-### 8. Guard-test (`src/__tests__/skrPrices2026.spec.ts`)
-- Hämtar alla rader från `contract_version_rates` v1.7 vid CI och diff:ar mot `SKR_2026_NURSE_PRICES`. Bryter bygget vid drift.
-- Verifierar att varje `resolvedRole` i `specialitySlugs.ts` finns i `PRICE_BY_ROLE`.
-- Verifierar att strängen `"Specialistsjuksköterska"` inte förekommer som värde någonstans i `src/` utanför `skrPrices2026.ts` (whitelist), via en `rg`-baserad test.
-
-### 9. Memory-uppdatering
-- Uppdatera `mem://logic/role-based-contract-resolution` och `mem://data/standardized-role-definitions` med regeln: **"Generisk 'Specialistsjuksköterska' är förbjuden som upplöst roll. Alla priser bindes 1:1 mot exakt roll via `PRICE_BY_ROLE`."**
-
-## Vad detta INTE rör
-
-- Inga DB-migrationer behövs — priserna är redan korrekta i `contract_version_rates` v1.7.
-- Inga ändringar i läkarpriser/v1.6.
-- Marginalmodeller, OB-tillägg, jourpriser oförändrade.
-
-## Acceptanskriterier
-
-1. Sökning `rg '"Specialistsjuksköterska"' src/` ger 0 träffar utanför `skrPrices2026.ts` + Campaign-display-strängar.
-2. Survey kan inte längre lämna roll = generisk specialistsjuksköterska.
-3. Rapport för okänd roll renderar "Pris saknas — kontakta oss", inte ett gissat spann.
-4. Guard-testet failar om någon lägger till en roll i UI utan motsvarande prisrad.
-5. Anestesi/IVA/Operation/Distrikt/Barnmorska visar 770/824/880; alla övriga specialister visar 715/770/824; grund + röntgen visar 616/660/715. Verifierat på 3 rapport-routes via Playwright‑screenshot.
-
-## Risker
-
-- Survey‑UX ändras (ingen "övrig"-eskap). Mitigering: tydligt alternativ "Min specialitet saknas → kontakta oss".
-- Befintliga leads/profiler i DB kan ha `role = "Specialistsjuksköterska"`. Plan: vid läsning behandlas som "missing" och användaren promptas att precisera vid nästa rapport-render. (Ingen massuppdatering av historik.)
+## Leverans
+Allt i steg 1–6 i en sammanhängande ändring. Inga andra refaktorer.
