@@ -189,14 +189,19 @@ function RoleCard({ card }: { card: Card }) {
 }
 
 export default function RoleCarousel() {
-  // Shuffle so cards appear in random order, but never two cards with the
-  // same role back-to-back. Duplicate for seamless marquee, also avoiding
-  // a same-role collision at the loop seam.
-  const shuffled = shuffleNoAdjacentRole(CARDS);
-  const loop =
-    shuffled.length > 1 && shuffled[0].role === shuffled[shuffled.length - 1].role
-      ? [...shuffled, ...rotateUntilDifferent(shuffled, shuffled[shuffled.length - 1].role)]
-      : [...shuffled, ...shuffled];
+  // Varva läkare/sjuksköterska och undvik att två intilliggande kort
+  // börjar på samma bokstav. Duplicera för sömlös marquee — rotera andra
+  // halvan om sömmen krockar.
+  const shuffled = buildAlternating(CARDS);
+  const last = shuffled[shuffled.length - 1];
+  const first = shuffled[0];
+  const seamCollides =
+    shuffled.length > 1 &&
+    (last.kind === first.kind || firstLetter(last.short) === firstLetter(first.short));
+  const loop = seamCollides
+    ? [...shuffled, ...rotateUntilDifferent(shuffled, last)]
+    : [...shuffled, ...shuffled];
+
 
   return (
     <section
