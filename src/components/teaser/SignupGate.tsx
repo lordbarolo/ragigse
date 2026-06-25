@@ -92,7 +92,7 @@ export default function SignupGate({ onAuthenticated, loading }: Props) {
           });
           return;
         }
-        trackEvent("login_completed", { method: "email", source: "teaser_gate" });
+        trackEvent("login_succeeded", { method: "email", source: "teaser_gate" });
         onAuthenticated(normalizedEmail);
         return;
       }
