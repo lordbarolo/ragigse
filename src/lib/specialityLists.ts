@@ -22,7 +22,7 @@ export const DOCTOR_SPECIALTIES = [
   "Barn- och ungdomskardiologi",
   "Barn- och ungdomskirurgi",
   "Barn- och ungdomsmedicin",
-  "Barn- och ungdomsneurologi med habilitering",
+  "Barn- och ungdomsneurologi",
   "Barn- och ungdomspsykiatri",
   "Beroendemedicin",
   "Endokrinologi och diabetologi",
