@@ -19,7 +19,7 @@ import { identifyLeadWithEmail } from "@/lib/identify";
 import TeaserHeader from "@/components/teaser/TeaserHeader";
 import OccupationInfo from "@/components/teaser/OccupationInfo";
 import MarketDiagnosisCard from "@/components/teaser/MarketDiagnosisCard";
-import EmailGate from "@/components/teaser/EmailGate";
+import SignupGate from "@/components/teaser/SignupGate";
 import EmailHookMessage from "@/components/teaser/EmailHookMessage";
 import ReportPreviewList from "@/components/teaser/ReportPreviewList";
 import MethodologyDisclosure from "@/components/teaser/MethodologyDisclosure";
