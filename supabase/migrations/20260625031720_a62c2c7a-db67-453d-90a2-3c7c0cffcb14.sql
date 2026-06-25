@@ -1,0 +1,1 @@
+UPDATE public.margin_models SET employer_factor = 1.38 WHERE name = 'default' AND employer_factor <> 1.38;
