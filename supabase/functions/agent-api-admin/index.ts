@@ -52,7 +52,7 @@ serve(async (req) => {
       .from("agent_api_keys")
       .select("id, name, key_prefix, scopes, rate_limit_daily, created_at, last_used_at, revoked_at, notes")
       .order("created_at", { ascending: false });
-    if (error) return jsonResponse({ error: error.message }, 500);
+    if (error) return jsonResponse({ error: "internal_error" }, 500);
     return jsonResponse({ keys: data });
   }
 
@@ -82,7 +82,7 @@ serve(async (req) => {
       })
       .select("id")
       .single();
-    if (error) return jsonResponse({ error: error.message }, 500);
+    if (error) return jsonResponse({ error: "internal_error" }, 500);
     return jsonResponse({ id: data.id, token, key_prefix: prefix });
   }
 
@@ -91,7 +91,7 @@ serve(async (req) => {
     const id = String(body.id || "");
     if (!id) return jsonResponse({ error: "id_required" }, 400);
     const { error } = await sb.from("agent_api_keys").update({ revoked_at: new Date().toISOString() }).eq("id", id);
-    if (error) return jsonResponse({ error: error.message }, 500);
+    if (error) return jsonResponse({ error: "internal_error" }, 500);
     return jsonResponse({ ok: true });
   }
 

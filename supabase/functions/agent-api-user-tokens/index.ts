@@ -41,7 +41,7 @@ serve(async (req) => {
       .select("id, label, token_prefix, expires_at, created_at, last_used_at, revoked_at")
       .eq("user_id", userId)
       .order("created_at", { ascending: false });
-    if (error) return jsonResponse({ error: error.message }, 500);
+    if (error) return jsonResponse({ error: "internal_error" }, 500);
     return jsonResponse({ tokens: data });
   }
 
@@ -61,7 +61,7 @@ serve(async (req) => {
       .insert({ user_id: userId, label, token_prefix: prefix, token_hash: hash, expires_at: expiresAt })
       .select("id, expires_at")
       .single();
-    if (error) return jsonResponse({ error: error.message }, 500);
+    if (error) return jsonResponse({ error: "internal_error" }, 500);
     return jsonResponse({ id: data.id, token, token_prefix: prefix, expires_at: data.expires_at });
   }
 
@@ -74,7 +74,7 @@ serve(async (req) => {
       .update({ revoked_at: new Date().toISOString() })
       .eq("id", id)
       .eq("user_id", userId);
-    if (error) return jsonResponse({ error: error.message }, 500);
+    if (error) return jsonResponse({ error: "internal_error" }, 500);
     return jsonResponse({ ok: true });
   }
 
