@@ -1,5 +1,5 @@
 import { useState, useMemo, useRef, useEffect, useCallback } from "react";
-import { Check, ChevronDown, Search } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface Option {
@@ -28,7 +28,7 @@ export default function SearchableSelect({
   placeholderClassName,
 }: SearchableSelectProps) {
   const [open, setOpen] = useState(false);
-  const [search, setSearch] = useState("");
+  const [query, setQuery] = useState("");
   const [flipUp, setFlipUp] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -36,13 +36,18 @@ export default function SearchableSelect({
   const listboxRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
-  const flatOptions = useMemo(() => {
-    if (!search) return options;
-    const q = search.toLowerCase();
-    return options.filter((o) => o.label.toLowerCase().includes(q));
-  }, [options, search]);
+  const selectedLabel = options.find((o) => o.value === value)?.label ?? "";
 
-  // Group filtered options
+  // While the dropdown is open, the input shows the user's query (free text).
+  // When closed, it shows the currently selected label.
+  const inputValue = open ? query : selectedLabel;
+
+  const flatOptions = useMemo(() => {
+    if (!open || !query) return options;
+    const q = query.toLowerCase();
+    return options.filter((o) => o.label.toLowerCase().includes(q));
+  }, [options, query, open]);
+
   const grouped = useMemo(() => {
     const groups = new Map<string, Option[]>();
     for (const opt of flatOptions) {
@@ -56,36 +61,38 @@ export default function SearchableSelect({
     return groups;
   }, [flatOptions]);
 
-  // Build flat list for keyboard navigation
   const flatList = useMemo(() => {
     const list: Option[] = [];
-    for (const [, items] of grouped) {
-      list.push(...items);
-    }
+    for (const [, items] of grouped) list.push(...items);
     return list;
   }, [grouped]);
 
-  const selectedLabel = options.find((o) => o.value === value)?.label;
-
   useEffect(() => {
     if (open) {
-      // Determine if we should flip upward
       if (containerRef.current) {
         const rect = containerRef.current.getBoundingClientRect();
         const spaceBelow = window.innerHeight - rect.bottom;
-        setFlipUp(spaceBelow < 200);
+        setFlipUp(spaceBelow < 240);
       }
-      // Highlight selected option or first option
       const selectedIdx = flatList.findIndex((o) => o.value === value);
       setHighlightedIndex(selectedIdx >= 0 ? selectedIdx : flatList.length > 0 ? 0 : -1);
-      setTimeout(() => inputRef.current?.focus(), 50);
     } else {
-      setSearch("");
+      setQuery("");
       setHighlightedIndex(-1);
     }
-  }, [open, flatList, value]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
-  // Scroll highlighted item into view
+  // Keep highlight in range when filtering
+  useEffect(() => {
+    if (!open) return;
+    if (flatList.length === 0) {
+      setHighlightedIndex(-1);
+    } else if (highlightedIndex >= flatList.length) {
+      setHighlightedIndex(0);
+    }
+  }, [flatList, open, highlightedIndex]);
+
   useEffect(() => {
     if (open && highlightedIndex >= 0 && itemRefs.current[highlightedIndex]) {
       const el = itemRefs.current[highlightedIndex];
@@ -108,7 +115,7 @@ export default function SearchableSelect({
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (!open) {
-        if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "Enter" || e.key === " ") {
+        if (e.key === "ArrowDown" || e.key === "ArrowUp" || e.key === "Enter") {
           e.preventDefault();
           setOpen(true);
         }
@@ -116,44 +123,36 @@ export default function SearchableSelect({
       }
 
       switch (e.key) {
-        case "ArrowDown": {
+        case "ArrowDown":
           e.preventDefault();
-          setHighlightedIndex((prev) => {
-            const next = prev < flatList.length - 1 ? prev + 1 : -1; // -1 cycles to top if wrapping desired
-            // Actually let's not wrap, just clamp
-            return Math.min(prev + 1, flatList.length - 1);
-          });
+          setHighlightedIndex((prev) => Math.min(prev + 1, flatList.length - 1));
           break;
-        }
-        case "ArrowUp": {
+        case "ArrowUp":
           e.preventDefault();
           setHighlightedIndex((prev) => Math.max(prev - 1, 0));
           break;
-        }
-        case "Enter": {
+        case "Enter":
           e.preventDefault();
           if (highlightedIndex >= 0 && highlightedIndex < flatList.length) {
             const opt = flatList[highlightedIndex];
             onValueChange(opt.value);
             setOpen(false);
+            inputRef.current?.blur();
           }
           break;
-        }
-        case "Escape": {
+        case "Escape":
           e.preventDefault();
           setOpen(false);
+          inputRef.current?.blur();
           break;
-        }
-        case "Home": {
+        case "Home":
           e.preventDefault();
-          if (flatList.length > 0) setHighlightedIndex(1);
+          if (flatList.length > 0) setHighlightedIndex(0);
           break;
-        }
-        case "End": {
+        case "End":
           e.preventDefault();
           if (flatList.length > 0) setHighlightedIndex(flatList.length - 1);
           break;
-        }
         default:
           break;
       }
@@ -169,9 +168,14 @@ export default function SearchableSelect({
       role="option"
       aria-selected={value === opt.value}
       tabIndex={-1}
+      onMouseDown={(e) => {
+        // Prevent input blur before click registers
+        e.preventDefault();
+      }}
       onClick={() => {
         onValueChange(opt.value);
         setOpen(false);
+        inputRef.current?.blur();
       }}
       onMouseEnter={() => setHighlightedIndex(flatIdx)}
       className={cn(
@@ -191,28 +195,59 @@ export default function SearchableSelect({
 
   return (
     <div ref={containerRef} className={cn("relative", className)}>
-      <button
-        type="button"
-        aria-haspopup="listbox"
-        aria-expanded={open}
-        onClick={() => setOpen(!open)}
-        onKeyDown={handleKeyDown}
+      <div
         className={cn(
-          "flex h-14 w-full items-center justify-between rounded-md border border-primary/30 bg-background px-3 py-2 text-base shadow-[var(--input-glow)] ring-offset-background transition-shadow focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+          "relative flex h-14 w-full items-center rounded-md border border-primary/30 bg-background pr-3 text-base shadow-[var(--input-glow)] ring-offset-background transition-shadow focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
           triggerClassName
         )}
       >
-        <span className={cn("truncate", !selectedLabel && (placeholderClassName || "text-muted-foreground"))}>
-          {selectedLabel || placeholder}
-        </span>
-        <ChevronDown
-          className={cn("h-4 w-4 opacity-50 shrink-0 transition-transform", open && "rotate-180")}
+        <input
+          ref={inputRef}
+          type="text"
+          role="combobox"
+          aria-expanded={open}
+          aria-autocomplete="list"
+          aria-controls="searchable-select-listbox"
+          value={inputValue}
+          placeholder={placeholder}
+          onFocus={() => {
+            if (!open) setOpen(true);
+          }}
+          onClick={() => {
+            if (!open) setOpen(true);
+          }}
+          onChange={(e) => {
+            if (!open) setOpen(true);
+            setQuery(e.target.value);
+            setHighlightedIndex(0);
+          }}
+          onKeyDown={handleKeyDown}
+          className={cn(
+            "flex-1 h-full bg-transparent px-3 text-base outline-none placeholder:text-muted-foreground",
+            placeholderClassName && `placeholder:${placeholderClassName}`
+          )}
         />
-      </button>
+        <button
+          type="button"
+          tabIndex={-1}
+          aria-label={open ? "Stäng" : "Öppna"}
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => {
+            setOpen((o) => !o);
+            inputRef.current?.focus();
+          }}
+          className="flex items-center justify-center"
+        >
+          <ChevronDown
+            className={cn("h-4 w-4 opacity-50 shrink-0 transition-transform", open && "rotate-180")}
+          />
+        </button>
+      </div>
 
       {open && (
         <div
           ref={listboxRef}
+          id="searchable-select-listbox"
           role="listbox"
           aria-label={placeholder}
           className={cn(
@@ -220,20 +255,6 @@ export default function SearchableSelect({
             flipUp ? "bottom-full mb-1" : "top-full mt-1"
           )}
         >
-          <div className="flex items-center border-b px-3 py-2">
-            <Search className="h-4 w-4 text-muted-foreground mr-2 shrink-0" />
-            <input
-              ref={inputRef}
-              value={search}
-              onChange={(e) => {
-                setSearch(e.target.value);
-                setHighlightedIndex(flatList.length > 0 ? 0 : -1);
-              }}
-              onKeyDown={handleKeyDown}
-              placeholder="Sök..."
-              className="w-full bg-transparent text-sm outline-none placeholder:text-muted-foreground"
-            />
-          </div>
           <div className="max-h-[40vh] overflow-y-auto p-1">
             {flatList.length === 0 ? (
               <p className="py-4 text-center text-sm text-muted-foreground">Inga resultat</p>
