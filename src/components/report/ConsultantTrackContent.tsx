@@ -191,12 +191,6 @@ export default function ConsultantTrackContent({
             <li className="flex items-start gap-3">
               <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
               <span className="text-body-sm leading-relaxed">
-                Möjlig ersättning för konsulter framgår av kortet ovan — den utgår från ramavtalspriset och bemanningsbolagets marginal.
-              </span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
-              <span className="text-body-sm leading-relaxed">
                 Använd vår smarta assistent för mer information om hur du kan påverka din ersättning vid behov.
               </span>
             </li>
