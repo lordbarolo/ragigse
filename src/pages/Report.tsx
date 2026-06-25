@@ -15,7 +15,7 @@ import type { ReportData } from "@/shared/types";
 
 import ConsultantTrackContent from "@/components/report/ConsultantTrackContent";
 import ReportFlowIndicator from "@/components/report/ReportFlowIndicator";
-import PossibleCompensationInfo from "@/components/PossibleCompensationInfo";
+
 import { SEO } from "@/components/SEO";
 
 
@@ -203,8 +203,7 @@ export default function Report() {
 
       <main className="px-4 py-6 max-w-lg mx-auto space-y-2.5">
 
-        {/* Förklaring: möjlig ersättning */}
-        <PossibleCompensationInfo variant="report" />
+        {/* Definition av "möjlig ersättning" ligger i "Vad det här betyder för dig" + Metod-collapsiblen — undvik dubblett. */}
 
         {/* Förhandlingsassistenten */}
         <div className="rounded-2xl border overflow-hidden" style={{ backgroundColor: '#FFFFFF', borderColor: '#E0DBD3' }}>

@@ -191,12 +191,6 @@ export default function ConsultantTrackContent({
             <li className="flex items-start gap-3">
               <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
               <span className="text-body-sm leading-relaxed">
-                Möjlig ersättning för konsulter är {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h.
-              </span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
-              <span className="text-body-sm leading-relaxed">
                 Använd vår smarta assistent för mer information om hur du kan påverka din ersättning vid behov.
               </span>
             </li>
@@ -294,9 +288,11 @@ export default function ConsultantTrackContent({
                         style={{ width: `${barWidth}%` }}
                       />
                     </div>
-                    <p className={`${monoClass} text-micro`}>
-                      Konsultersättning: {fmt(recHourlyLow)}–{fmt(recHourlyHigh)} kr/h
-                    </p>
+                    {!isUserZone && (
+                      <p className={`${monoClass} text-micro`}>
+                        Konsultersättning: {fmt(recHourlyLow)}–{fmt(recHourlyHigh)} kr/h
+                      </p>
+                    )}
                   </div>
                 );
               })}
@@ -380,16 +376,17 @@ export default function ConsultantTrackContent({
               <div className="space-y-3 text-body-sm">
                 <CalcRow label="Ramavtalspris (vad regionen betalar)" value={`${fmt(marketRate)} kr/h`} />
                 <CalcRow label={`Bemanningsbolagets marginal (${marginLabel})`} value={`−${fmt(Math.round(marketRate * (1 - shareMax)))}–${fmt(Math.round(marketRate * (1 - shareMin)))} kr/h`} />
-                <CalcRow label="Ersättningsutrymme efter marginal" value={`${fmt(afterMarginMin)}–${fmt(afterMarginMax)} kr/h`} />
                 {isEmployee ? (
-                  <CalcRow
-                    label="÷ 1,38 (arbetsgivaravg. + pension + särskild löneskatt + AFA)"
-                    value={`= ${fmt(Math.round(afterMarginMin / 1.38))}–${fmt(Math.round(afterMarginMax / 1.38))} kr/h brutto`}
-                  />
+                  <>
+                    <CalcRow label="Ersättningsutrymme efter marginal" value={`${fmt(afterMarginMin)}–${fmt(afterMarginMax)} kr/h`} />
+                    <CalcRow
+                      label="÷ 1,38 (arbetsgivaravg. + pension + särskild löneskatt + AFA)"
+                      value={`= ${fmt(Math.round(afterMarginMin / 1.38))}–${fmt(Math.round(afterMarginMax / 1.38))} kr/h brutto`}
+                    />
+                  </>
                 ) : (
                   <p className="text-hint pt-1">
-                    Som egenföretagare bör du fakturera {Math.round(shareMin * 100)}–{Math.round(shareMax * 100)}% av kundpriset, dvs{" "}
-                    {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h.
+                    Som egenföretagare bör du fakturera {Math.round(shareMin * 100)}–{Math.round(shareMax * 100)} % av kundpriset.
                   </p>
                 )}
               </div>
@@ -409,8 +406,8 @@ export default function ConsultantTrackContent({
                 </div>
                 <ul className="space-y-2 text-hint leading-relaxed">
                   <li>
-                    <span className="font-semibold text-foreground">Bemanningsbolagets marginal ({marginLabel}):</span>{" "}
-                    Vi räknar med att bolaget behåller {marginLabel} av timpriset. {isEmployee ? "Detta är en vanlig nivå vid ramavtalsuppdrag." : `Spannet beror på om bemanningsföretaget bär vitesrisken (högre marginal) eller inte (lägre marginal).`} Marginalen kan i vissa fall vara lägre — t.ex. när bemanningsbolaget tar betalningsrisk, garanterar timmar eller bär kostnad för outnyttjad kapacitet.
+                    <span className="font-semibold text-foreground">Bemanningsbolagets marginal:</span>{" "}
+                    Bolaget behåller normalt {marginLabel} av timpriset. {isEmployee ? "Detta är en vanlig nivå vid ramavtalsuppdrag." : `Spannet beror på om bemanningsföretaget bär vitesrisken (högre marginal) eller inte (lägre marginal).`} Marginalen kan i vissa fall vara lägre — t.ex. när bemanningsbolaget tar betalningsrisk, garanterar timmar eller bär kostnad för outnyttjad kapacitet.
                   </li>
                   {isEmployee && (
                     <li>
@@ -423,9 +420,6 @@ export default function ConsultantTrackContent({
                     Vi baserar månadsberäkningen på ett snitt om 167 arbetstimmar.
                   </li>
                 </ul>
-                <p className="text-caption pt-1">
-                  {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h baseras på {marginLabel} marginal.
-                </p>
               </div>
               <div className="p-4 rounded-xl bg-foreground/[0.02] border border-border/30 space-y-2">
                 <div className="flex items-center gap-2">
