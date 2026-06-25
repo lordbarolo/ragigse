@@ -208,6 +208,15 @@ export default function Teaser() {
     navigate(`/rapport/${activeReportId}`);
   };
 
+  // After Google OAuth returns and survey/lead are loaded, auto-unlock.
+  useEffect(() => {
+    if (!pendingAutoUnlockEmail || !leadId || !survey || emailSaving) return;
+    const target = pendingAutoUnlockEmail;
+    setPendingAutoUnlockEmail(null);
+    handleEmailSubmit(target);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingAutoUnlockEmail, leadId, survey]);
+
   // ── Compute email hook tier & props ──
   const emailHookProps = useMemo(() => {
     const kommun = survey?.kommun || "";
