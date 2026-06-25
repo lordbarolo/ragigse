@@ -43,6 +43,7 @@ export default function ReportFeedback({ leadId, role, zone }: Props) {
       zone: zone || null,
     });
 
+    toast.success(value === "yes" ? "Tack för din feedback 🙏" : "Tack — vi noterar din feedback");
     setSending(null);
   };
 
