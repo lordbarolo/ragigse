@@ -350,6 +350,7 @@ export default function Teaser() {
           userHourly={userHourly}
           rangeLow={result.low}
           rangeHigh={result.high}
+          consultantShareMax={pricingResult?.consultant_share_max ?? 0.85}
           yrke={survey.yrke}
           kommun={survey.kommun}
         />
