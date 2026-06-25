@@ -217,7 +217,8 @@ export default function Report() {
           </div>
           <div className="px-4 py-3.5 sm:px-5 sm:py-5">
             <Link
-              to="/logga-in"
+              to="/logga-in?redirect=%2Fconsultant%2Fforhandla&intent=negotiate"
+
               className="inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 rounded-lg"
               style={{ backgroundColor: '#3D3491', color: '#FFFFFF' }}
             >
