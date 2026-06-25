@@ -346,14 +346,17 @@ export default function Teaser() {
         {/* Förklaring: möjlig ersättning */}
         <PossibleCompensationInfo variant="teaser" />
 
-        {/* Email Gate */}
+        {/* Account Gate — required to unlock the full report */}
         {!email && (
           <div className="space-y-5">
             <h2 className="text-xl font-bold text-foreground leading-snug">
-              Rapporten är klar — vart skickar vi den?
+              Skapa konto för att låsa upp rapporten
             </h2>
-            <EmailGate
-              onEmailSubmit={handleEmailSubmit}
+            <p className="text-sm text-muted-foreground -mt-3">
+              Snabbast med Google – annars e-post och lösenord. Kontot är gratis och sparar dina analyser.
+            </p>
+            <SignupGate
+              onAuthenticated={handleEmailSubmit}
               loading={emailSaving}
             />
           </div>
