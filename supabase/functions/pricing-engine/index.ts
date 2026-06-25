@@ -64,15 +64,16 @@ serve(async (req) => {
       );
     }
 
-    // Map CI response back to legacy pricing-engine format
+    // Map CI response back to legacy pricing-engine format.
+    // CI returns nested role/geography objects + amount — flatten them here.
     const d = ciData.data;
     const result = {
-      occupation: d.occupation,
-      kommun: d.kommun,
-      zon: d.zon,
-      region: d.region,
+      occupation: d.role?.name ?? d.occupation ?? occupation,
+      kommun: d.geography?.name ?? d.kommun ?? kommun,
+      zon: d.geography?.zone ?? d.zon ?? "",
+      region: d.geography?.region ?? d.region ?? "",
       employment_type: d.employment_type,
-      rate_customer_sek_per_hour: d.rate_customer_sek_per_hour,
+      rate_customer_sek_per_hour: d.amount ?? d.rate_customer_sek_per_hour ?? 0,
       consultant_share_min: d.consultant_share_min,
       consultant_share_max: d.consultant_share_max,
       employee_factor: d.employee_factor,
