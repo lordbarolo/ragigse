@@ -29,13 +29,13 @@ describe("priceRangeGuard.validateRange", () => {
   });
 
   it("ok for anstalld after employer_factor reverse-transform", () => {
-    // foretagare-equiv = 1200-1275, anstalld lön = ÷1.42 ≈ 845-898
+    // foretagare-equiv = 1200-1275, anstalld lön = ÷1.38 ≈ 870-924
     const r = validateRange({
       role: "Sjuksköterska",
       timpris_kund: 1500,
       employmentType: "anstalld",
-      hourly_min: Math.round(1200 / 1.42),
-      hourly_max: Math.round(1275 / 1.42),
+      hourly_min: Math.round(1200 / 1.38),
+      hourly_max: Math.round(1275 / 1.38),
     });
     expect(r.ok).toBe(true);
     expect(r.min_deviation_pct).toBeLessThan(RANGE_TOLERANCE * 100);

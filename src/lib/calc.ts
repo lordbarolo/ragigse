@@ -11,7 +11,7 @@
  *     undersköterska, biomedicinsk analytiker, etc.): bemanning behåller 15–20%
  *     → konsult får 80–85% av kundpriset
  *
- * För anställda (`anstalld`) divideras share-beloppet med employer_factor (≈1.42)
+ * För anställda (`anstalld`) divideras share-beloppet med employer_factor (≈1.38)
  * för att konvertera bemanningens kostnad till konsultens timlön.
  */
 
@@ -30,7 +30,10 @@ export const SHARE_MIN = STANDARD_SHARE_MIN;
 export const SHARE_MAX = STANDARD_SHARE_MAX;
 export const SHARE_MID = (STANDARD_SHARE_MIN + STANDARD_SHARE_MAX) / 2;
 
-export const EMPLOYER_FACTOR = 1.42;
+// Total arbetsgivarkostnad / bruttolön ≈ 1.38
+//   = 1 + 31,42 % arbetsgivaravgift + 4,5 % ITP1 + 1,09 % särskild löneskatt + 0,85 % AFA
+// (Tidigare schablon var 1,42; ändrad 2026-06 efter att step-funktionen visat ~1,3786.)
+export const EMPLOYER_FACTOR = 1.38;
 export const HOURS_PER_MONTH = 167;
 
 // ── Employer cost step function (ITP 1, 1979+) ───────────────────────────────

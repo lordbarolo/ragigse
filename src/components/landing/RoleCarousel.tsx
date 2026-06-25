@@ -49,7 +49,7 @@ function roundTo5(n: number) {
   return Math.round(n / 5) * 5;
 }
 
-const EMPLOYER_FACTOR = 1.42;
+const EMPLOYER_FACTOR = 1.38;
 
 const CARDS: Card[] = ROLES.flatMap((r) => {
   const margin = MARGIN[r.kind];

@@ -231,12 +231,12 @@ export default function AnalysisScreen() {
     // SKR-marginalmodell: läkare 10–15% (konsultandel 85–90%), övriga 15–20% (80–85%)
     const shareMin = isDoctor ? 0.85 : 0.80;
     const shareMax = isDoctor ? 0.90 : 0.85;
-    const employerFactor = 1.42;
+    const employerFactor = 1.38;
     const marketRate = userZoneRate;
 
     // Rec range från ramavtal — alltid uttryckt i SAMMA storhet som "Din nuvarande ersättning":
     //  - företagare/konsult: kr/h fakturerat (= kundpris × andel)
-    //  - anställd: nettolön kr/h (= kundpris × andel ÷ 1,42)  ← guard så vi aldrig
+    //  - anställd: nettolön kr/h (= kundpris × andel ÷ 1,38)  ← guard så vi aldrig
     //    visar lönekostnad bredvid nettolön (jfr bild 1 & 2 där 493–524 var fel skala).
     const scale = isEmployee ? employerFactor : 1;
     const recMin = Math.round((marketRate * shareMin) / scale);
@@ -304,7 +304,7 @@ export default function AnalysisScreen() {
   const employmentLabel = survey.employmentType === "anstalld" ? "Anställd" : "Egenföretagare";
   const isDoctor = (survey.yrke || "").toLowerCase().includes("läkare");
   const marginText = isDoctor ? "10–15%" : "15–20%";
-  const employerFactor = comparison?.isEmployee ? 1.42 : 1.0;
+  const employerFactor = comparison?.isEmployee ? 1.38 : 1.0;
   const costPct = comparison && comparison.marketRate
     ? Math.min(100, Math.round((comparison.costToCompare / comparison.marketRate) * 100))
     : 0;

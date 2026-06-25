@@ -11,7 +11,7 @@ CompCare.se är en **gratis ersättningsanalys för vårdkonsulter i Sverige**. 
 Plattformens enda källor för ersättningsberäkningar är:
 
 1. **SKR:s ramavtalspriser** (kundpriset som regioner faktiskt betalar)
-2. **Bemanningsbranschens marginalmodell** (85–90 % av kundpriset till konsulten, ×1,42 sociala avgifter för anställda)
+2. **Bemanningsbranschens marginalmodell** (85–90 % av kundpriset till konsulten, ×1,38 sociala avgifter för anställda)
 
 Vi använder **inte** SCB- eller Medlingsinstitutets lönestatistik – syftet med plattformen är att visa vad man kan få i ett konsultuppdrag, inte vad fast anställda tjänar.
 
@@ -40,7 +40,7 @@ Vi använder **inte** SCB- eller Medlingsinstitutets lönestatistik – syftet m
 ## Datakällor
 
 - **Ramavtalspriser**: Officiella upphandlade priser från SKR (Sveriges Kommuner och Regioner), avtalsversion SKR 2026 v1.0
-- **Marginalmodell**: Bemanningsbranschens praxis (85–90 % konsultens andel av kundpriset, ×1,42 sociala avgifter för anställda, 167 timmar/månad)
+- **Marginalmodell**: Bemanningsbranschens praxis (85–90 % konsultens andel av kundpriset, ×1,38 sociala avgifter för anställda, 167 timmar/månad)
 - **Täckning**: 290+ vårdgivare, alla Sveriges kommuner, 4 priszoner
 - **Yrkeskategorier**: 20+ sjuksköterske-specialiseringar, barnmorskor, läkare (64 specialiseringar)
 - **Uppdateringsfrekvens**: Data uppdateras löpande när nya avtalsversioner publiceras
@@ -60,8 +60,8 @@ Kundpriset (vad regionen betalar bemanningsföretaget) delas enligt branschpraxi
 ### Anställd via bemanningsföretag (anstalld)
 - Andel till konsulten: **80–86 %** av kundpriset
 - Bemanningsföretagets marginal: 14–20 %
-- Sociala avgifter (arbetsgivaravgifter): ×1,42 på lönekostnaden
-- Exempel: Kundpris 770 kr/h → Bruttolön 616–662 kr/h → Nettolön efter arbetsgivaravgifter beräknas som (brutto × 0,7056) / 1,42
+- Sociala avgifter (arbetsgivaravgifter): ×1,38 på lönekostnaden
+- Exempel: Kundpris 770 kr/h → Bruttolön 633–680 kr/h → Nettolön efter arbetsgivaravgifter beräknas som (brutto × 0,7056) / 1,38
 
 ### Priszoner
 - **Zon 1**: Storstadsregioner (Stockholm, Göteborg, Malmö) — lägst kundpris

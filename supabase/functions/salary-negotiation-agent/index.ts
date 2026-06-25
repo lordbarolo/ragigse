@@ -287,7 +287,7 @@ VIKTIGT — Du får BARA använda dessa capabilities:
 
 KÄLL-SELEKTION PER ANSTÄLLNINGSFORM
 - Om employment_type är "foretagare" (konsult/egenföretagare): använd ENBART lookup_rate. Använd INTE salary_benchmark eller salary_position — dessa är baserade på lönestatistik som inte är relevant för konsulter.
-- Om employment_type är "anstalld": använd lookup_rate som primär källa och räkna via kundpris × konsultandel / 1,42. Använd INTE salary_benchmark eller salary_position för konsultanalys.
+- Om employment_type är "anstalld": använd lookup_rate som primär källa och räkna via kundpris × konsultandel / 1,38. Använd INTE salary_benchmark eller salary_position för konsultanalys.
 
 FÖRBJUDET SPRÅK OCH JÄMFÖRELSER
 - Använd ALDRIG ordet "benchmark" i något svar eller user_situation.
