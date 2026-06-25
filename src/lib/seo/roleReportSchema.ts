@@ -11,8 +11,11 @@
  * - Inga PII, inga peer-jämförelser, ingen SCB.
  */
 
+import { organizationSchema } from "./organizationSchema";
+
 const BASE_URL = "https://www.compcare.se";
 const ORG_REF = { "@id": `${BASE_URL}/#organization` };
+
 
 export interface RoleReportSchemaInput {
   /** Visningsnamn för rollen, t.ex. "Anestesisjuksköterska". */
@@ -149,8 +152,13 @@ export function buildFaqSchema(input: RoleReportSchemaInput) {
  */
 export function buildRoleReportSchemas(input: RoleReportSchemaInput) {
   return [
+    // Include the Organization node so author/publisher/creator @id refs resolve
+    // on every report page (not only on the homepage). Prevents broken-internal-
+    // reference findings in structured-data validators.
+    organizationSchema,
     buildArticleSchema(input),
     buildDatasetSchema(input),
     buildFaqSchema(input),
   ].filter(Boolean) as Record<string, unknown>[];
 }
+
