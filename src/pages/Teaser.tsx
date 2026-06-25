@@ -350,17 +350,14 @@ export default function Teaser() {
           }}
         />
 
-        {/* Market position — top of page */}
+        {/* 3-läges-diagnos: under / inom / över möjlig ersättning */}
         <MarketDiagnosisCard
-          diffPercent={diffPercent}
+          userHourly={userHourly}
+          rangeLow={result.low}
+          rangeHigh={result.high}
           yrke={survey.yrke}
           kommun={survey.kommun}
-          isAboveThreshold={isAboveThreshold}
-          emailProvided={false}
         />
-
-        {/* Förklaring: möjlig ersättning */}
-        <PossibleCompensationInfo variant="teaser" />
 
         {/* Account Gate — required to unlock the full report */}
         {!email && (
@@ -377,17 +374,6 @@ export default function Teaser() {
             />
           </div>
         )}
-
-        {/* What's in the report */}
-        <div className="rounded-xl bg-foreground/[0.02] p-5">
-          <ReportPreviewList yrke={survey.yrke} />
-        </div>
-
-        {/* Negotiation assistant teaser */}
-        <NegotiationAssistantTeaser />
-
-        {/* Methodology — kollapsbar list längst ner */}
-        <MethodologyDisclosure variant="teaser" />
       </main>
     </div>
     </>
