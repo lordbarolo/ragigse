@@ -420,9 +420,6 @@ export default function ConsultantTrackContent({
                     Vi baserar månadsberäkningen på ett snitt om 167 arbetstimmar.
                   </li>
                 </ul>
-                <p className="text-caption pt-1">
-                  {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h baseras på {marginLabel} marginal.
-                </p>
               </div>
               <div className="p-4 rounded-xl bg-foreground/[0.02] border border-border/30 space-y-2">
                 <div className="flex items-center gap-2">
