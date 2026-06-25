@@ -1,14 +1,23 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth, type AppRole } from "@/hooks/useAuth";
 import { Loader2 } from "lucide-react";
+import { buildAuthQuery } from "@/lib/authIntent";
 
 interface ProtectedRouteProps {
   children?: React.ReactNode;
   allowedRoles?: AppRole[];
 }
 
+// Map protected paths → intent label used by /logga-in & /registrera so the
+// auth view explains *why* the user is there instead of feeling like a dead-end.
+function inferIntent(pathname: string): string | null {
+  if (pathname.startsWith("/consultant/forhandla")) return "negotiate";
+  return null;
+}
+
 export default function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
   const { user, loading, role } = useAuth();
+  const location = useLocation();
 
   if (loading) {
     return (
@@ -19,7 +28,12 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
   }
 
   if (!user) {
-    return <Navigate to="/logga-in" replace />;
+    const redirectPath = `${location.pathname}${location.search}`;
+    const intent = inferIntent(location.pathname);
+    const query = intent
+      ? buildAuthQuery(redirectPath, intent)
+      : `?redirect=${encodeURIComponent(redirectPath)}`;
+    return <Navigate to={`/logga-in${query}`} replace />;
   }
 
   if (allowedRoles && role && !allowedRoles.includes(role)) {
@@ -30,3 +44,4 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
   // If children are provided, render them; otherwise render Outlet for layout usage
   return <>{children || <Outlet />}</>;
 }
+
