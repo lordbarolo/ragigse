@@ -191,7 +191,7 @@ export default function ConsultantTrackContent({
             <li className="flex items-start gap-3">
               <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
               <span className="text-body-sm leading-relaxed">
-                Möjlig ersättning för konsulter är {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h.
+                Möjlig ersättning för konsulter framgår av kortet ovan — den utgår från ramavtalspriset och bemanningsbolagets marginal.
               </span>
             </li>
             <li className="flex items-start gap-3">
