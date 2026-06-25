@@ -38,6 +38,7 @@ const ZONE_HINTS = ["Storstad", "Mellanort", "Glesbygd"] as const;
 interface Card {
   role: string;
   short: string;
+  kind: RoleKind;
   zoneLabel: string;
   zoneHint: string;
   consultantRate: number;   // företagare (kundpris – marginal)
@@ -58,6 +59,7 @@ const CARDS: Card[] = ROLES.flatMap((r) => {
     return {
       role: r.name,
       short: r.short,
+      kind: r.kind,
       zoneLabel: ZONE_LABELS[i],
       zoneHint: ZONE_HINTS[i],
       consultantRate,
@@ -71,42 +73,68 @@ function fmt(n: number) {
   return n.toLocaleString("sv-SE");
 }
 
-/**
- * Fisher–Yates shuffle, then a greedy pass that swaps any element which
- * would otherwise sit next to another card with the same `role`. Falls back
- * to the shuffled order if no valid swap exists (extremely unlikely with
- * 45 cards × 15 roles).
- */
-function shuffleNoAdjacentRole(cards: Card[]): Card[] {
-  const arr = [...cards];
-  for (let i = arr.length - 1; i > 0; i--) {
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [arr[i], arr[j]] = [arr[j], arr[i]];
+    [a[i], a[j]] = [a[j], a[i]];
   }
-  for (let i = 1; i < arr.length; i++) {
-    if (arr[i].role !== arr[i - 1].role) continue;
-    for (let k = i + 1; k < arr.length; k++) {
-      if (arr[k].role !== arr[i - 1].role && (i + 1 >= arr.length || arr[k].role !== arr[i + 1].role)) {
-        [arr[i], arr[k]] = [arr[k], arr[i]];
-        break;
-      }
-    }
+  return a;
+}
+
+const firstLetter = (s: string) => s.trim()[0]?.toLowerCase() ?? "";
+
+/**
+ * Bygger en sekvens som varvar läkare/sjuksköterska och undviker att två
+ * intilliggande kort börjar på samma bokstav. Greedy: vid varje position
+ * väljs den första kandidaten i motsatt grupp som inte krockar bokstavligt;
+ * faller tillbaka till samma grupp om motsatt grupp är tom.
+ */
+function buildAlternating(cards: Card[]): Card[] {
+  const lakare = shuffle(cards.filter((c) => c.kind === "lakare"));
+  const ssk = shuffle(cards.filter((c) => c.kind === "ssk"));
+  const pools: Record<RoleKind, Card[]> = { lakare, ssk };
+  const result: Card[] = [];
+  // Starta med den större gruppen så alternationen blir så jämn som möjligt.
+  let next: RoleKind = ssk.length >= lakare.length ? "ssk" : "lakare";
+
+  while (pools.lakare.length + pools.ssk.length > 0) {
+    const primary = pools[next];
+    const other = pools[next === "lakare" ? "ssk" : "lakare"];
+    const prevLetter = result.length ? firstLetter(result[result.length - 1].short) : "";
+
+    const pickFrom = (pool: Card[]): Card | null => {
+      const idx = pool.findIndex((c) => firstLetter(c.short) !== prevLetter);
+      if (idx === -1) return null;
+      return pool.splice(idx, 1)[0];
+    };
+
+    let picked = primary.length ? pickFrom(primary) : null;
+    if (!picked) picked = other.length ? pickFrom(other) : null;
+    // Sista utvägen: ta vad som finns även om bokstaven krockar.
+    if (!picked) picked = (primary.length ? primary : other).shift() ?? null;
+    if (!picked) break;
+
+    result.push(picked);
+    next = picked.kind === "lakare" ? "ssk" : "lakare";
   }
-  return arr;
+  return result;
 }
 
 /**
  * Returns a copy of the list rotated by the smallest offset so that the
- * first element has a different role than `prevRole`.
+ * first element has a different role/kind/letter than the previous tail.
  */
-function rotateUntilDifferent(cards: Card[], prevRole: string): Card[] {
+function rotateUntilDifferent(cards: Card[], prev: Card): Card[] {
+  const prevLetter = firstLetter(prev.short);
   for (let i = 0; i < cards.length; i++) {
-    if (cards[i].role !== prevRole) {
+    if (cards[i].kind !== prev.kind && firstLetter(cards[i].short) !== prevLetter) {
       return [...cards.slice(i), ...cards.slice(0, i)];
     }
   }
   return [...cards];
 }
+
 
 function RoleCard({ card }: { card: Card }) {
   const handleClick = () => {
@@ -161,14 +189,19 @@ function RoleCard({ card }: { card: Card }) {
 }
 
 export default function RoleCarousel() {
-  // Shuffle so cards appear in random order, but never two cards with the
-  // same role back-to-back. Duplicate for seamless marquee, also avoiding
-  // a same-role collision at the loop seam.
-  const shuffled = shuffleNoAdjacentRole(CARDS);
-  const loop =
-    shuffled.length > 1 && shuffled[0].role === shuffled[shuffled.length - 1].role
-      ? [...shuffled, ...rotateUntilDifferent(shuffled, shuffled[shuffled.length - 1].role)]
-      : [...shuffled, ...shuffled];
+  // Varva läkare/sjuksköterska och undvik att två intilliggande kort
+  // börjar på samma bokstav. Duplicera för sömlös marquee — rotera andra
+  // halvan om sömmen krockar.
+  const shuffled = buildAlternating(CARDS);
+  const last = shuffled[shuffled.length - 1];
+  const first = shuffled[0];
+  const seamCollides =
+    shuffled.length > 1 &&
+    (last.kind === first.kind || firstLetter(last.short) === firstLetter(first.short));
+  const loop = seamCollides
+    ? [...shuffled, ...rotateUntilDifferent(shuffled, last)]
+    : [...shuffled, ...shuffled];
+
 
   return (
     <section
