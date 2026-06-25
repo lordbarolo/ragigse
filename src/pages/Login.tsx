@@ -90,10 +90,11 @@ export default function Login() {
     trackEvent("login_succeeded", { role: userRole });
 
     if (userRole === "agency") {
-      navigate("/agency/dashboard");
+      navigate(redirectTo ?? "/agency/dashboard");
       return;
     }
-    navigate("/profil");
+    navigate(redirectTo ?? "/profil");
+
   };
 
   const handleForgotPassword = async () => {
@@ -232,10 +233,21 @@ export default function Login() {
             </CardContent>
           ) : (
             <>
-              <CardHeader className="text-center !bg-transparent">
-                <CardTitle className="text-xl font-semibold text-black">Logga in</CardTitle>
-                <CardDescription className="text-black/70">Ta del av rapporter och smarta verktyg</CardDescription>
+              <CardHeader className="text-center !bg-transparent space-y-2">
+                {intentCopy && (
+                  <div className="mx-auto inline-flex items-center gap-1.5 rounded-full bg-[#3D3491]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#3D3491]">
+                    <Sparkles className="w-3 h-3" aria-hidden="true" />
+                    {intentCopy.eyebrow}
+                  </div>
+                )}
+                <CardTitle className="text-xl font-semibold text-black">
+                  {intentCopy?.title ?? "Logga in"}
+                </CardTitle>
+                <CardDescription className="text-black/70">
+                  {intentCopy?.description ?? "Ta del av rapporter och smarta verktyg"}
+                </CardDescription>
               </CardHeader>
+
               <CardContent className="!bg-transparent">
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div className="space-y-2">
