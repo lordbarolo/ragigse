@@ -42,13 +42,20 @@ export default function Teaser() {
   const [email, setEmail] = useState("");
   const [emailSaving, setEmailSaving] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
+  const [pendingAutoUnlockEmail, setPendingAutoUnlockEmail] = useState<string | null>(null);
 
-  // Check if user is already authenticated — pre-fill email so EmailGate auto-skips
+  // Check if user is already authenticated. If they just returned from Google
+  // OAuth (autoUnlock flag set in SignupGate), queue an auto-unlock so the
+  // teaser proceeds straight to the report instead of asking again.
   useEffect(() => {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user?.email) {
         setEmail(session.user.email);
+        if (sessionStorage.getItem("compcare:autoUnlock") === "1") {
+          sessionStorage.removeItem("compcare:autoUnlock");
+          setPendingAutoUnlockEmail(session.user.email);
+        }
       }
       setAuthChecked(true);
     };
