@@ -442,7 +442,6 @@ export default function ConsultantTrackContent({
             <ul className="space-y-2.5">
               {[
                 "Regioner upphandlar bemanning genom ramavtal där ett kundpris fastställs.",
-                "Bemanningsföretaget ansvarar för rekrytering, administration och risk i uppdraget.",
                 "Konsultens ersättning är normalt en andel av detta pris.",
                 "CompCare analyserar ramavtal och historiska uppdrag för att visa hur ersättningen i genomsnitt fördelas.",
               ].map((text, i) => (
