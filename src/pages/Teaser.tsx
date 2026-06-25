@@ -19,7 +19,7 @@ import { identifyLeadWithEmail } from "@/lib/identify";
 import TeaserHeader from "@/components/teaser/TeaserHeader";
 import OccupationInfo from "@/components/teaser/OccupationInfo";
 import MarketDiagnosisCard from "@/components/teaser/MarketDiagnosisCard";
-import EmailGate from "@/components/teaser/EmailGate";
+import SignupGate from "@/components/teaser/SignupGate";
 import EmailHookMessage from "@/components/teaser/EmailHookMessage";
 import ReportPreviewList from "@/components/teaser/ReportPreviewList";
 import MethodologyDisclosure from "@/components/teaser/MethodologyDisclosure";
@@ -42,13 +42,20 @@ export default function Teaser() {
   const [email, setEmail] = useState("");
   const [emailSaving, setEmailSaving] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
+  const [pendingAutoUnlockEmail, setPendingAutoUnlockEmail] = useState<string | null>(null);
 
-  // Check if user is already authenticated — pre-fill email so EmailGate auto-skips
+  // Check if user is already authenticated. If they just returned from Google
+  // OAuth (autoUnlock flag set in SignupGate), queue an auto-unlock so the
+  // teaser proceeds straight to the report instead of asking again.
   useEffect(() => {
     const checkAuth = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session?.user?.email) {
         setEmail(session.user.email);
+        if (sessionStorage.getItem("compcare:autoUnlock") === "1") {
+          sessionStorage.removeItem("compcare:autoUnlock");
+          setPendingAutoUnlockEmail(session.user.email);
+        }
       }
       setAuthChecked(true);
     };
@@ -201,6 +208,15 @@ export default function Teaser() {
     navigate(`/rapport/${activeReportId}`);
   };
 
+  // After Google OAuth returns and survey/lead are loaded, auto-unlock.
+  useEffect(() => {
+    if (!pendingAutoUnlockEmail || !leadId || !survey || emailSaving) return;
+    const target = pendingAutoUnlockEmail;
+    setPendingAutoUnlockEmail(null);
+    handleEmailSubmit(target);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingAutoUnlockEmail, leadId, survey]);
+
   // ── Compute email hook tier & props ──
   const emailHookProps = useMemo(() => {
     const kommun = survey?.kommun || "";
@@ -346,14 +362,17 @@ export default function Teaser() {
         {/* Förklaring: möjlig ersättning */}
         <PossibleCompensationInfo variant="teaser" />
 
-        {/* Email Gate */}
+        {/* Account Gate — required to unlock the full report */}
         {!email && (
           <div className="space-y-5">
             <h2 className="text-xl font-bold text-foreground leading-snug">
-              Rapporten är klar — vart skickar vi den?
+              Skapa konto för att låsa upp rapporten
             </h2>
-            <EmailGate
-              onEmailSubmit={handleEmailSubmit}
+            <p className="text-sm text-muted-foreground -mt-3">
+              Snabbast med Google – annars e-post och lösenord. Kontot är gratis och sparar dina analyser.
+            </p>
+            <SignupGate
+              onAuthenticated={handleEmailSubmit}
               loading={emailSaving}
             />
           </div>
