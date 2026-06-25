@@ -236,7 +236,7 @@ export default function Signup() {
 
             <div className="mt-4 text-center text-sm text-black/70">
               Har du redan ett konto?{" "}
-              <Link to="/logga-in" className="text-black hover:underline font-medium">
+              <Link to={loginHref} className="text-black hover:underline font-medium">
                 Logga in
               </Link>
             </div>

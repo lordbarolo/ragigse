@@ -133,7 +133,7 @@ const App = () => (
               <Route path="/consultant/referenser" element={<Navigate to="/" replace />} />
               <Route path="/consultant/academy" element={<Navigate to="/" replace />} />
               <Route path="/consultant/agent-access" element={<Navigate to="/" replace />} />
-              <Route path="/forhandla" element={<Navigate to="/" replace />} />
+              <Route path="/forhandla" element={<Navigate to="/consultant/forhandla" replace />} />
               <Route path="/fakturakontroll" element={<Navigate to="/" replace />} />
               <Route path="/referenser" element={<Navigate to="/" replace />} />
               <Route path="/academy" element={<Navigate to="/" replace />} />
