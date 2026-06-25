@@ -12,6 +12,13 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Libre+Baskerville:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" media="print" onload="this.media='all'" />
     <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Libre+Baskerville:wght@400;700&family=JetBrains+Mono:wght@400;500;700&display=swap" /></noscript>
 
+    <!-- Perf: warm up the TLS/DNS for backend + analytics so first POST/GET after hydration starts faster. -->
+    <link rel="preconnect" href="https://ubhhlunhdqbokjvwfebb.supabase.co" crossorigin />
+    <link rel="preconnect" href="https://eu.i.posthog.com" crossorigin />
+    <link rel="dns-prefetch" href="https://eu-assets.i.posthog.com" />
+
+
+
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
