@@ -1,15 +1,16 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useMemo, useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, ArrowLeft, CheckCircle2 } from "lucide-react";
+import { Loader2, ArrowLeft, CheckCircle2, Sparkles } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 import { SEO } from "@/components/SEO";
 import { trackEvent } from "@/lib/trackEvent";
+import { getSignupIntentCopy, sanitizeRedirect } from "@/lib/authIntent";
 
 export default function Signup() {
   const [email, setEmail] = useState("");
@@ -19,6 +20,22 @@ export default function Signup() {
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const location = useLocation();
+
+  const { intentCopy, loginHref } = useMemo(() => {
+    const params = new URLSearchParams(location.search);
+    const redirectTo = sanitizeRedirect(params.get("redirect"));
+    const intent = params.get("intent");
+    const intentCopy = getSignupIntentCopy(intent);
+    const loginParams = new URLSearchParams();
+    if (redirectTo) loginParams.set("redirect", redirectTo);
+    if (intent) loginParams.set("intent", intent);
+    const loginHref = loginParams.toString()
+      ? `/logga-in?${loginParams.toString()}`
+      : "/logga-in";
+    return { intentCopy, loginHref };
+  }, [location.search]);
+
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
