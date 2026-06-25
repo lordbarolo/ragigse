@@ -75,7 +75,7 @@ export default function Signup() {
           description: "Logga in med din e-post och ditt lösenord istället.",
           variant: "destructive",
         });
-        navigate("/logga-in");
+        navigate(loginHref);
         return;
       }
 
@@ -145,7 +145,8 @@ export default function Signup() {
               Hittar du inte mejlet? Kolla skräpposten.
             </p>
             <Link
-              to="/logga-in"
+              to={loginHref}
+
               className="inline-block text-sm font-semibold hover:underline pt-2"
               style={{ color: "#534AB7" }}
             >
@@ -173,12 +174,21 @@ export default function Signup() {
 
 
         <Card className="border-border/40 !bg-[#F5F2EA]/85 backdrop-blur text-black">
-          <CardHeader className="text-center !bg-transparent">
-            <CardTitle className="text-xl font-semibold text-black">Skapa konto</CardTitle>
+          <CardHeader className="text-center !bg-transparent space-y-2">
+            {intentCopy && (
+              <div className="mx-auto inline-flex items-center gap-1.5 rounded-full bg-[#3D3491]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#3D3491]">
+                <Sparkles className="w-3 h-3" aria-hidden="true" />
+                {intentCopy.eyebrow}
+              </div>
+            )}
+            <CardTitle className="text-xl font-semibold text-black">
+              {intentCopy?.title ?? "Skapa konto"}
+            </CardTitle>
             <CardDescription className="text-black/70">
-              Få tillgång till dina rapporter och personlig profil direkt
+              {intentCopy?.description ?? "Få tillgång till dina rapporter och personlig profil direkt"}
             </CardDescription>
           </CardHeader>
+
           <CardContent className="!bg-transparent">
             <form onSubmit={handleSignup} className="space-y-4">
               <div className="space-y-2">
