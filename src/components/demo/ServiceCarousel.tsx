@@ -39,7 +39,7 @@ const SERVICES = [
   {
     title: "Fakturerar du rätt?",
     desc: "Säkerställ att du inte missar tillägg, OB eller jourersättning.",
-    cta: "Läs mer",
+    cta: "Granska din faktura",
     iconBg: "bg-emerald-500/10",
     icon: (
       <svg width="24" height="24" viewBox="0 0 20 20" fill="none">
