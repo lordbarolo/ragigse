@@ -1,80 +1,34 @@
+## Vad jag förstått
 
-# Plan: Faktor 1,42 → 1,38 + riskmarginal-copy
+Idag består `SearchableSelect` av **två fält**:
 
-## Bakgrund
-1,42 är idag en schablon för arbetsgivarkostnad (sociala avgifter + ITP1 + särskild löneskatt + AFA + buffert).
-Strikt verklig nivå enligt `supabase/functions/_shared/calc.ts` ≈ 37,86 %.
-Vi kompromissar på **1,38** (≈ 31,42 % AG-avg + 4,5 % ITP1 + 1,09 % löneskatt + 0,85 % AFA = 37,86 % — avrundat upp till 38 %).
+1. En **trigger-knapp** (visar "Sök kommun…" som placeholder eller vald kommun)
+2. När man klickar öppnas en dropdown med ett **separat sökfält** ("Sök…") där användaren skriver
 
-## Steg 1 — Inventera alla förekomster
-20 filer innehåller `1.42`. De delas i tre grupper:
+Du vill ha **ett enda fält**: själva "Sök kommun…"-rutan ska vara det fält användaren skriver i. Listan under filtreras direkt från det fältet — ingen extra "Sök…"-ruta ska dyka upp.
 
-**A. Beräkningskonstant (måste ändras):**
-- `src/lib/calc.ts`
-- `supabase/functions/_shared/calc.ts`
-- `supabase/functions/compensation-intelligence/index.ts`
-- `supabase/functions/ai-pricing-coach/index.ts`
-- `supabase/functions/generate-pdf/index.ts`
-- `supabase/functions/verify-constants/index.ts`
-- `src/lib/priceRangeGuard.ts` (+ `.test.ts` — uppdatera asserts)
+## Vad jag bygger
 
-**B. Visad copy / UI-text (måste uppdateras parallellt):**
-- `src/pages/SjukskoterskaReport.tsx`
-- `src/pages/AllmanmedicinReport.tsx`
-- `src/pages/AnalysisScreen.tsx`
-- `src/pages/demo/LandingV2.tsx`
-- `src/components/report/ConsultantTrackContent.tsx`
-- `src/components/report/PersonalInsights.tsx`
-- `src/components/landing/RoleCarousel.tsx`
-- `src/components/demo/MarketSearchBox.tsx`
-- `src/components/demo/HeroRateFinder.tsx`
+Refaktor i `src/components/SearchableSelect.tsx` — ingen annan fil ändras (Survey, MarketSearchBox, HeroRateLookup etc. fortsätter använda samma API: `value`, `onValueChange`, `placeholder`, `options`).
 
-**C. AI-agent-discovery (måste uppdateras för konsistens):**
-- `public/llms.txt`, `public/llms-full.txt`, `public/ai-plugin.json`, `public/openapi.json`
+Beteende efter ändringen:
+- Trigger är ett `<input>` istället för `<button>`. Visar vald kommun när stängd, placeholder ("Sök kommun…") när tom.
+- **Klick eller fokus** → öppnar dropdown och rensar inputvärdet så användaren kan börja skriva direkt; chevron-pilen finns kvar till höger.
+- **Skrivning** filtrerar listan i realtid (samma logik som idag, bara att källan blir trigger-inputen istället för den nestade söken).
+- **Enter / klick på rad** väljer kommun, stänger dropdown, inputvärdet blir vald kommun.
+- **Escape / klick utanför** stänger dropdown och återställer inputvärdet till tidigare val.
+- Den separata `<input>`-raden inne i dropdownen (med förstoringsglas + "Sök…") **tas bort**.
+- Keyboard-nav (↑/↓/Home/End/Enter/Esc), gruppheaders (region), flipUp, scroll-into-view och ARIA (`role="combobox"`, `aria-expanded`, `aria-controls`, listbox) behålls.
+- Visuell styling (höjd, border, glow, `triggerClassName`, `placeholderClassName`) oförändrad — utseendet på det yttre fältet ändras inte.
 
-**D. Historiska migrations:**
-- `supabase/migrations/2026021…` och `2026051…` — **rörs ej** (historik).
+## Vad jag INTE rör
 
-## Steg 2 — Inför en central konstant
-För att slippa magic numbers framöver:
-- Lägg `EMPLOYER_FACTOR = 1.38` i `src/lib/calc.ts` och `supabase/functions/_shared/calc.ts`.
-- Alla andra filer i grupp A importerar konstanten istället för att hårdkoda `1.42`.
-- Edge functions kan inte importera från `src/`, så `_shared/calc.ts` blir sanningen för backend; frontend speglar med samma värde + en kommentar `// Synk med supabase/functions/_shared/calc.ts`.
+- Survey-steget, copy ("Sök kommun…"), färger, höjd, layout runt fältet.
+- Andra användare av `SearchableSelect` (roll-väljare, marknadsfilter etc.) — de får samma förbättring automatiskt, men API:t är identiskt.
 
-## Steg 3 — Uppdatera tester
-- `src/lib/priceRangeGuard.test.ts`: byt förväntade värden från `× 1.42` till `× 1.38`.
-- Verifiera build + tester innan UI-copy uppdateras.
+## Verifiering
 
-## Steg 4 — Uppdatera UI-copy parallellt med marginal-budskap
-I varje fil i grupp B byts:
-- siffran `1,42` → `1,38`
-- texten "× 1,42 sociala avgifter" → "× 1,38 sociala avgifter (31,42 % arbetsgivaravgift + 4,5 % ITP1 + 1,09 % särskild löneskatt + 0,85 % AFA)"
+- Mobil Playwright-screenshot av `/` survey-steg "På vilken ort ska du arbeta?" före/efter, för att bekräfta att bara ett fält syns och att man kan skriva direkt i "Sök kommun…".
+- Snabbtest av tangentbordsnav.
 
-**Ny mening (efter beslut idag) — läggs in i rapport- och resultatkomponenter där marginalen kommenteras:**
-
-> "Marginalen kan i vissa fall vara lägre — t.ex. när bemannings­bolaget tar betalningsrisk, garanterar timmar eller bär kostnad för outnyttjad kapacitet."
-
-Konkret placering:
-- `SjukskoterskaReport.tsx` — under "Möjlig konsultersättning"-kortet (samma block där 528–561 kr/h visas).
-- `AllmanmedicinReport.tsx` — motsvarande spann-block.
-- `ConsultantTrackContent.tsx` — bredvid marginalförklaringen (85–92 %).
-
-## Steg 5 — Uppdatera agent-discovery
-- `public/llms.txt`, `llms-full.txt`, `ai-plugin.json`, `openapi.json`: `×1,42` → `×1,38`.
-- I `llms-full.txt` rad 63–64: skriv om exempelräkningen med 1,38.
-
-## Steg 6 — Uppdatera memories
-- `mem://logic/margin-models` — byt `employer_factor 1.42` → `1.38`.
-- `mem://index.md` Core: byt "Anställda × 1,42 / 167h" → "× 1,38 / 167h".
-
-## Steg 7 — Verifiering
-1. `tsgo` — typecheck.
-2. `bunx vitest run` — alla guard-tester gröna.
-3. Playwright snapshot på `/rapport/anestesisjukskoterska` — bekräfta nytt spann och nytt margintext-block.
-4. `rg "1\.42|1,42"` — ska bara matcha historiska migrations + ev. icke-relevanta strängar.
-
-## Risk-sammanfattning (från förra svaret)
-Rekommenderad bruttolön ökar ~3 %, vilket vi medvetet accepterar nu eftersom (a) 1,42 var för konservativt, (b) ny copy förklarar att verkliga marginaler ändå kan variera när byrån tar risk. Fakturakontrollens beräkning påverkas men eftersom no-cure-no-pay räknas på återvunnet belopp, inte på faktor, är intäktsrisken försumbar.
-
-## Leverans
-Allt i steg 1–6 i en sammanhängande ändring. Inga andra refaktorer.
+Säg till så implementerar jag.
