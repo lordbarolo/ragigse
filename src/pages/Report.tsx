@@ -15,7 +15,7 @@ import type { ReportData } from "@/shared/types";
 
 import ConsultantTrackContent from "@/components/report/ConsultantTrackContent";
 import ReportFlowIndicator from "@/components/report/ReportFlowIndicator";
-import PossibleCompensationInfo from "@/components/PossibleCompensationInfo";
+
 import { SEO } from "@/components/SEO";
 
 
