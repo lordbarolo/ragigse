@@ -1,16 +1,17 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useMemo, useState } from "react";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, ArrowLeft, FileText, Clock, TrendingUp, MessageSquare, Link2, MailCheck, AlertTriangle } from "lucide-react";
+import { Loader2, ArrowLeft, FileText, Clock, TrendingUp, MessageSquare, Link2, MailCheck, AlertTriangle, Sparkles } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 import { SEO } from "@/components/SEO";
 import { trackEvent } from "@/lib/trackEvent";
 import posthog from "@/lib/posthog";
+import { getAuthIntentCopy, sanitizeRedirect } from "@/lib/authIntent";
 
 type RecoveryStatus = "idle" | "sending" | "sent" | "error";
 
@@ -23,6 +24,22 @@ export default function Login() {
   const [recoveryError, setRecoveryError] = useState<string | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const location = useLocation();
+
+  const { redirectTo, intentCopy, signupHref } = useMemo(() => {
+    const params = new URLSearchParams(location.search);
+    const redirectTo = sanitizeRedirect(params.get("redirect"));
+    const intent = params.get("intent");
+    const intentCopy = getAuthIntentCopy(intent);
+    const signupParams = new URLSearchParams();
+    if (redirectTo) signupParams.set("redirect", redirectTo);
+    if (intent) signupParams.set("intent", intent);
+    const signupHref = signupParams.toString()
+      ? `/registrera?${signupParams.toString()}`
+      : "/registrera";
+    return { redirectTo, intentCopy, signupHref };
+  }, [location.search]);
+
 
 
   const handleLogin = async (e: React.FormEvent) => {
