@@ -156,7 +156,7 @@ serve(async (req) => {
       const currentHourly = inputs.salary_type === "hourly"
         ? inputs.current_salary_sek
         : Math.round(inputs.current_salary_sek / 167);
-      const employerFactor = rec.employee_factor || 1.42;
+      const employerFactor = rec.employee_factor || 1.38;
       const costToCompare = isEmployee ? Math.round(currentHourly * employerFactor) : currentHourly;
       const sharePercent = Math.round((costToCompare / market.rate_customer_sek_per_hour) * 100);
 

@@ -47,11 +47,11 @@ function calcRange(customerPrice: number, empType: "foretagare" | "anstalld", ro
   // Role-based margin (matches _shared/calc.ts):
   //  - Specialistläkare: bemanning behåller 10–15% → konsult 85–90%
   //  - Övriga roller: bemanning behåller 15–20% → konsult 80–85%
-  // Anställda divideras med employer_factor 1.42 för att få timlön.
+  // Anställda divideras med employer_factor 1.38 för att få timlön.
   const isSpec = isSpecialistDoctor(role);
   const shareMin = isSpec ? 0.85 : 0.80;
   const shareMax = isSpec ? 0.90 : 0.85;
-  const factor = empType === "anstalld" ? 1.42 : 1;
+  const factor = empType === "anstalld" ? 1.38 : 1;
   return {
     hourly_min: Math.round((customerPrice * shareMin) / factor),
     hourly_max: Math.round((customerPrice * shareMax) / factor),

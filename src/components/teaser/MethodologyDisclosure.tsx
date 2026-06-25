@@ -51,7 +51,7 @@ export default function MethodologyDisclosure({
           <h4 className="font-semibold text-foreground">Anställd – stegfunktion</h4>
           <p>
             För anställda räknar vi arbetsgivarkostnaden post för post i stället
-            för en schablon × 1,42:
+            för en schablon × 1,38:
           </p>
           <ul className="list-disc pl-5 space-y-1">
             <li>Bruttolön (semesterersättning inkluderad)</li>

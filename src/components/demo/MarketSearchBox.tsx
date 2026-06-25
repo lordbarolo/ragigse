@@ -11,7 +11,7 @@ import {
 } from "@/lib/specialityLists";
 import { getMarginShares } from "@/lib/calc";
 
-const DEFAULT_EMPLOYER_FACTOR = 1.42;
+const DEFAULT_EMPLOYER_FACTOR = 1.38;
 const DEFAULT_HOURS_PER_MONTH = 167;
 
 const CATEGORIES: { value: RoleGroup; label: string }[] = [
