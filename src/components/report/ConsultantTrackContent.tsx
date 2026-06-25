@@ -415,7 +415,7 @@ export default function ConsultantTrackContent({
                   {isEmployee && (
                     <li>
                       <span className="font-semibold text-foreground">Arbetsgivaravgifter & omkostnader (faktor 1,38):</span>{" "}
-                      Täcker lagstadgade arbetsgivaravgifter (31,42 %), tjänstepension ITP 1 (4,5 % under brytpunkten), särskild löneskatt på pension (1,09 %) och AFA/TFA-försäkringar (0,85 %).
+                      Täcker lagstadgade arbetsgivaravgifter (31,42 %), tjänstepension ITP 1 (4,5 % under brytpunkten), särskild löneskatt på pension (1,09 %) och AFA/TFA-försäkringar (0,85 %). Vi utgår från att bruttolönen ligger under brytpunkten 7,5 IBB (≈ 52 750 kr/mån). Över den nivån hoppar ITP 1 till 30 % och faktorn blir högre.
                     </li>
                   )}
                   <li>
