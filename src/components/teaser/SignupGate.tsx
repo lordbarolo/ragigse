@@ -37,6 +37,7 @@ export default function SignupGate({ onAuthenticated, loading }: Props) {
       // Mark intent so that when the user returns from Google OAuth, the teaser
       // auto-unlocks the report instead of just sitting there.
       sessionStorage.setItem("compcare:autoUnlock", "1");
+      sessionStorage.setItem("compcare:justSignedUp", "google");
       trackEvent("signup_initiated", { method: "google", source: "teaser_gate" });
       const result = await lovable.auth.signInWithOAuth("google", {
         redirect_uri: window.location.href,
