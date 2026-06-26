@@ -96,6 +96,7 @@ const App = () => (
               <Route path="/rapport/allmansjukskoterska" element={<SjukskoterskaReport />} />
               <Route path="/rapport/leg-ssk" element={<SjukskoterskaReport />} />
               <Route path="/rapport/ssk" element={<SjukskoterskaReport />} />
+              <Route path="/rapport/lakare-:lakareSlug" element={<LakareSpecialtyReportRoute />} />
               <Route path="/Bollnas/lakare-alm" element={<BollnasAllmanspecialistReport />} />
               <Route path="/bollnas/lakare-alm" element={<BollnasAllmanspecialistReport />} />
               <Route path="/rapport/:reportId" element={<Report />} />
