@@ -48,7 +48,7 @@ export const DOCTOR_SPECIALTY_REPORTS: DoctorSpecialtyConfig[] = [
     metaTitle: "BUP-läkare – timpris & ersättning 2026",
     metaDescription:
       "SKR-ramavtalspriser per zon och möjlig konsultersättning för specialistläkare i barn- och ungdomspsykiatri (BUP) 2026.",
-    zone1: 1457, zone2: 1678, zone3: 1678,
+    zone1: 1457, zone2: 1678, zone3: 1953,
   },
   {
     slug: "lakare-dermatolog",
