@@ -22,6 +22,7 @@ const AnestesiReport = lazy(() => import("./pages/AnestesiReport"));
 const BollnasAllmanspecialistReport = lazy(() => import("./pages/BollnasAllmanspecialistReport"));
 const AllmanmedicinReport = lazy(() => import("./pages/AllmanmedicinReport"));
 const SjukskoterskaReport = lazy(() => import("./pages/SjukskoterskaReport"));
+const LakareSpecialtyReport = lazy(() => import("./pages/LakareSpecialtyReport"));
 const Campaign = lazy(() => import("./pages/Campaign"));
 
 const Admin = lazy(() => import("./pages/Admin"));
