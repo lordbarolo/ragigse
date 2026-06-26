@@ -1,4 +1,4 @@
-import { Link, useParams, Navigate } from "react-router-dom";
+import { Link, useLocation, Navigate } from "react-router-dom";
 import { useEffect } from "react";
 import { Separator } from "@/components/ui/separator";
 import CompcareLogo from "@/components/CompcareLogo";
