@@ -22,6 +22,10 @@ export default function SignupGate({ onAuthenticated, loading }: Props) {
   const [submitting, setSubmitting] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
+  useEffect(() => {
+    trackEvent("signup_gate_viewed", { source: "teaser_gate" });
+  }, []);
+
   const validEmail = EMAIL_REGEX.test(email.trim());
   const validPassword = password.length >= 6;
   const canSubmit = validEmail && validPassword && !submitting && !loading;
