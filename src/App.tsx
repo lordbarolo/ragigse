@@ -23,6 +23,7 @@ const BollnasAllmanspecialistReport = lazy(() => import("./pages/BollnasAllmansp
 const AllmanmedicinReport = lazy(() => import("./pages/AllmanmedicinReport"));
 const SjukskoterskaReport = lazy(() => import("./pages/SjukskoterskaReport"));
 const LakareSpecialtyReport = lazy(() => import("./pages/LakareSpecialtyReport"));
+import { DOCTOR_SPECIALTY_REPORTS } from "@/data/doctorSpecialtyReports";
 const Campaign = lazy(() => import("./pages/Campaign"));
 
 const Admin = lazy(() => import("./pages/Admin"));
