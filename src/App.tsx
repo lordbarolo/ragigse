@@ -22,6 +22,8 @@ const AnestesiReport = lazy(() => import("./pages/AnestesiReport"));
 const BollnasAllmanspecialistReport = lazy(() => import("./pages/BollnasAllmanspecialistReport"));
 const AllmanmedicinReport = lazy(() => import("./pages/AllmanmedicinReport"));
 const SjukskoterskaReport = lazy(() => import("./pages/SjukskoterskaReport"));
+const LakareSpecialtyReport = lazy(() => import("./pages/LakareSpecialtyReport"));
+import { DOCTOR_SPECIALTY_REPORTS } from "@/data/doctorSpecialtyReports";
 const Campaign = lazy(() => import("./pages/Campaign"));
 
 const Admin = lazy(() => import("./pages/Admin"));
@@ -95,6 +97,9 @@ const App = () => (
               <Route path="/rapport/allmansjukskoterska" element={<SjukskoterskaReport />} />
               <Route path="/rapport/leg-ssk" element={<SjukskoterskaReport />} />
               <Route path="/rapport/ssk" element={<SjukskoterskaReport />} />
+              {DOCTOR_SPECIALTY_REPORTS.map((r) => (
+                <Route key={r.slug} path={`/rapport/${r.slug}`} element={<LakareSpecialtyReport />} />
+              ))}
               <Route path="/Bollnas/lakare-alm" element={<BollnasAllmanspecialistReport />} />
               <Route path="/bollnas/lakare-alm" element={<BollnasAllmanspecialistReport />} />
               <Route path="/rapport/:reportId" element={<Report />} />

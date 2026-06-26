@@ -56,6 +56,71 @@
     <priority>0.8</priority>
   </url>
   <url>
+    <loc>https://www.compcare.se/rapport/lakare-anestesi</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.compcare.se/rapport/lakare-barn-och-ungdomsmedicin</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.compcare.se/rapport/lakare-bup</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.compcare.se/rapport/lakare-dermatolog</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.compcare.se/rapport/lakare-kardiolog</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.compcare.se/rapport/lakare-internmedicin</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.compcare.se/rapport/lakare-hematologi</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.compcare.se/rapport/lakare-njurmedicin</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.compcare.se/rapport/lakare-neurologi</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.compcare.se/rapport/lakare-onh</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.compcare.se/rapport/lakare-psykiatri</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.compcare.se/rapport/lakare-radiologi</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://www.compcare.se/rapport/lakare-ogon</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
     <loc>https://www.compcare.se/bollnas/lakare-alm</loc>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
