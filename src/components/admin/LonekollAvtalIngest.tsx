@@ -22,8 +22,20 @@ export default function LonekollAvtalIngest() {
     setUploading(true);
     let ok = 0;
     let fail = 0;
+    const sanitize = (name: string) => {
+      const dot = name.lastIndexOf(".");
+      const base = dot > 0 ? name.slice(0, dot) : name;
+      const ext = dot > 0 ? name.slice(dot) : "";
+      const safeBase = base
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "") // strip diacritics (å→a, ö→o, é→e)
+        .replace(/[^a-zA-Z0-9._-]+/g, "_")                // replace anything else (spaces, etc.)
+        .replace(/_+/g, "_")
+        .replace(/^_+|_+$/g, "");
+      return (safeBase || "file") + ext.toLowerCase();
+    };
     for (const f of files) {
-      const { error } = await supabase.storage.from("lonekoll_avtal").upload(f.name, f, { upsert: true });
+      const key = sanitize(f.name);
+      const { error } = await supabase.storage.from("lonekoll_avtal").upload(key, f, { upsert: true, contentType: f.type || "application/pdf" });
       if (error) {
         console.error(error);
         fail++;
