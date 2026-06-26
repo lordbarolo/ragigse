@@ -55,7 +55,8 @@ function makeFaq(cfg: DoctorSpecialtyConfig) {
 }
 
 export default function LakareSpecialtyReport() {
-  const { slug } = useParams<{ slug: string }>();
+  const location = useLocation();
+  const slug = location.pathname.replace(/^\/rapport\//, "").replace(/\/$/, "");
   const cfg = slug ? DOCTOR_SPECIALTY_BY_SLUG[slug] : undefined;
 
   useEffect(() => {
