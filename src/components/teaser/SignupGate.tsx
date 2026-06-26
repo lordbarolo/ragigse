@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { ArrowRight, Mail, Lock, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -22,6 +22,10 @@ export default function SignupGate({ onAuthenticated, loading }: Props) {
   const [submitting, setSubmitting] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
+  useEffect(() => {
+    trackEvent("signup_gate_viewed", { source: "teaser_gate" });
+  }, []);
+
   const validEmail = EMAIL_REGEX.test(email.trim());
   const validPassword = password.length >= 6;
   const canSubmit = validEmail && validPassword && !submitting && !loading;
@@ -33,6 +37,7 @@ export default function SignupGate({ onAuthenticated, loading }: Props) {
       // Mark intent so that when the user returns from Google OAuth, the teaser
       // auto-unlocks the report instead of just sitting there.
       sessionStorage.setItem("compcare:autoUnlock", "1");
+      sessionStorage.setItem("compcare:justSignedUp", "google");
       trackEvent("signup_initiated", { method: "google", source: "teaser_gate" });
       const result = await lovable.auth.signInWithOAuth("google", {
         redirect_uri: window.location.href,
@@ -101,6 +106,7 @@ export default function SignupGate({ onAuthenticated, loading }: Props) {
       return;
     }
 
+    sessionStorage.setItem("compcare:justSignedUp", "email");
     trackEvent("signup_initiated", { method: "email", source: "teaser_gate" });
     // Even without email verification, the gate continues so the user gets
     // their report. They can verify the email link later to keep the account.

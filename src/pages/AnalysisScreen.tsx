@@ -195,6 +195,13 @@ export default function AnalysisScreen() {
     setEmailSaving(false);
     trackEvent("analysis_completed");
     trackEvent("free_report_unlocked", { source: "signup_gate" });
+    // Distinguish actual new-account creation from existing-account sign-in.
+    // SignupGate sets this flag only on a successful Supabase signUp call.
+    const justSignedUp = sessionStorage.getItem("compcare:justSignedUp");
+    if (justSignedUp) {
+      sessionStorage.removeItem("compcare:justSignedUp");
+      trackEvent("signup_completed", { source: "teaser_gate", method: justSignedUp });
+    }
     navigate(`/rapport/${activeReportId}`, { replace: true });
   };
 
