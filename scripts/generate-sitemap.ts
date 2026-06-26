@@ -31,7 +31,21 @@ const REPORT_SLUGS = [
   "leg-sjukskoterska",
   "allmansjukskoterska",
   "leg-ssk",
-  "ssk"
+  "ssk",
+  // Specialistläkar-rapporter (src/data/doctorSpecialtyReports.ts)
+  "lakare-anestesi",
+  "lakare-barn-och-ungdomsmedicin",
+  "lakare-bup",
+  "lakare-dermatolog",
+  "lakare-kardiolog",
+  "lakare-internmedicin",
+  "lakare-hematologi",
+  "lakare-njurmedicin",
+  "lakare-neurologi",
+  "lakare-onh",
+  "lakare-psykiatri",
+  "lakare-radiologi",
+  "lakare-ogon",
 ];
 
 const entries: SitemapEntry[] = [
