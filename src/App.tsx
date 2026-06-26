@@ -96,7 +96,9 @@ const App = () => (
               <Route path="/rapport/allmansjukskoterska" element={<SjukskoterskaReport />} />
               <Route path="/rapport/leg-ssk" element={<SjukskoterskaReport />} />
               <Route path="/rapport/ssk" element={<SjukskoterskaReport />} />
-              <Route path="/rapport/lakare-:lakareSlug" element={<LakareSpecialtyReportRoute />} />
+              {DOCTOR_SPECIALTY_REPORTS.map((r) => (
+                <Route key={r.slug} path={`/rapport/${r.slug}`} element={<LakareSpecialtyReport />} />
+              ))}
               <Route path="/Bollnas/lakare-alm" element={<BollnasAllmanspecialistReport />} />
               <Route path="/bollnas/lakare-alm" element={<BollnasAllmanspecialistReport />} />
               <Route path="/rapport/:reportId" element={<Report />} />
