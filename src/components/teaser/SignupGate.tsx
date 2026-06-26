@@ -106,6 +106,7 @@ export default function SignupGate({ onAuthenticated, loading }: Props) {
       return;
     }
 
+    sessionStorage.setItem("compcare:justSignedUp", "email");
     trackEvent("signup_initiated", { method: "email", source: "teaser_gate" });
     // Even without email verification, the gate continues so the user gets
     // their report. They can verify the email link later to keep the account.
