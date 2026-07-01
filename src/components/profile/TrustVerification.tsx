@@ -35,8 +35,9 @@ export default function TrustVerification({
       description: identityVerified ? "Bekräftad via digital signering" : "Verifiera din identitet för att öka förtroendet",
       icon: Shield,
       verified: identityVerified,
-      ctaLabel: "Verifiera",
-      action: "identity",
+      // CTA hidden until identity verification flow is live.
+      ctaLabel: onVerifyIdentity ? "Verifiera" : undefined,
+      action: onVerifyIdentity ? "identity" : undefined,
       benefitText: "Ökar förtroendet och låser upp full rapport.",
     },
     {
