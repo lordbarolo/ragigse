@@ -196,11 +196,29 @@ export default function AnalysisScreen() {
     trackEvent("analysis_completed");
     trackEvent("free_report_unlocked", { source: "signup_gate" });
     // Distinguish actual new-account creation from existing-account sign-in.
-    // SignupGate sets this flag only on a successful Supabase signUp call.
+    // SignupGate sets this flag before initiating email signup or Google OAuth,
+    // but for Google we must verify the returned user is truly new (created_at
+    // within the last few minutes and ≈ last_sign_in_at) to avoid marking
+    // returning Google users as fresh signups.
     const justSignedUp = sessionStorage.getItem("compcare:justSignedUp");
     if (justSignedUp) {
       sessionStorage.removeItem("compcare:justSignedUp");
-      trackEvent("signup_completed", { source: "teaser_gate", method: justSignedUp });
+      let isNew = justSignedUp === "email";
+      if (justSignedUp === "google") {
+        try {
+          const { data: { user: authUser } } = await supabase.auth.getUser();
+          const created = authUser?.created_at ? new Date(authUser.created_at).getTime() : 0;
+          const lastSignIn = authUser?.last_sign_in_at ? new Date(authUser.last_sign_in_at).getTime() : 0;
+          const ageMs = Date.now() - created;
+          // New account: created less than 10 min ago AND first sign-in ≈ creation.
+          isNew = created > 0 && ageMs < 10 * 60 * 1000 && Math.abs(lastSignIn - created) < 60 * 1000;
+        } catch {
+          isNew = false;
+        }
+      }
+      if (isNew) {
+        trackEvent("signup_completed", { source: "teaser_gate", method: justSignedUp });
+      }
     }
     navigate(`/rapport/${activeReportId}`, { replace: true });
   };
