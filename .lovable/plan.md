@@ -1,63 +1,104 @@
-# Säkerhetsfix – plan
+# Patch-lista — Överlämning CompCare → ny staging-backend
 
-## 1. Raw error leakage i 500-svar (`raw_error_500_leak`)
-Ersätt `error.message` i HTTP 500-body med generisk text i samtliga edge functions. Behåll full server-side logging via `console.error`.
+Konkreta diffar att föra in i överlämningsdokumentet. Varje punkt = ersätt/lägg till avsnitt i doc:n.
 
-Filer som ändras:
-- `supabase/functions/admin-data/index.ts`
-- `supabase/functions/admin-review-action/index.ts`
-- `supabase/functions/redeem-coupon/index.ts`
-- `supabase/functions/delete-account/index.ts`
-- `supabase/functions/agent-api-admin/index.ts` (flera catch-block)
-- `supabase/functions/agent-api-user-tokens/index.ts` (flera catch-block)
-- `supabase/functions/get-avrop-predictions/index.ts`
+---
 
-Mönster:
-```ts
-} catch (err) {
-  console.error("[fn-name]", err);
-  return new Response(
-    JSON.stringify({ error: "Internal server error" }),
-    { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-  );
-}
-```
-Behåll 4xx-svar med beskrivande meddelanden (validering, auth) – endast 5xx generaliseras.
+## PATCH 1 — Sakfel: siffror
 
-## 2. Auth-gate på Uppdragsradar-endpoints (`avrop_radar_no_auth`)
-Lägg till JWT-validering överst i båda funktioner innan någon DB-query körs.
+**Ersätt:** "88 edge functions och 107 tabeller"
+**Med:**
+> Antal edge functions och publika tabeller ska verifieras mot HEAD innan baseline-bundle byggs. Kommandon:
+> - Edge functions: `ls supabase/functions | grep -v '^_' | wc -l`
+> - Publika tabeller: `supabase--read_query` mot `information_schema.tables WHERE table_schema='public'`
+> Använd de verifierade siffrorna i bundle-manifestet, inte estimat.
 
-Filer som ändras:
-- `supabase/functions/get-avrop-predictions/index.ts`
-- `supabase/functions/uppdragsradar-chat/index.ts` (innan SSE-stream startas)
+---
 
-Mönster:
-```ts
-const authHeader = req.headers.get("Authorization");
-if (!authHeader) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: ... });
-const anon = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { global: { headers: { Authorization: authHeader }}});
-const { data: { user }, error } = await anon.auth.getUser();
-if (error || !user) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: ... });
-```
-Service-role-klienten behålls för själva DB-läsningen (RLS säger deny-all, vilket är ok eftersom vi nu auth-gatar i kod).
+## PATCH 2 — Sakfel: dataexport
 
-Påverkan på frontend: `Uppdragsradar.tsx`/`UppdragsradarV2.tsx` och `ReijdarChat.tsx` skickar redan Authorization-header för inloggade användare. ReijdarChat har redan en auth-gate i UI som blockerar utloggade – så regression-risken är låg, men jag verifierar att samtliga anrop skickar `session.access_token`.
+**Ersätt:** all text som beskriver `pg_dump` / direkt Postgres-anslutning för att flytta data prod → staging.
+**Med:**
+> Prod körs på Lovable Cloud utan extern Postgres-PAT eller `db.password`. Dataflytt sker via:
+> 1. `supabase--read_query` + JSON-export för referens-tabeller (`role_aliases`, `contract_version_rates`, `skr_prices_*`, `margin_models`, `ref_pings`-schema).
+> 2. Migrations under `supabase/migrations/` som seed:ar staging (inga user-rows kopieras).
+> 3. Ingen PII, inga `auth.users`-rader, inga `verifications`/`invoice_reviews`-blobbar flyttas.
+> `SUPABASE_SERVICE_ROLE_KEY` och DB-password är oåtkomliga på Lovable Cloud — får ej efterfrågas.
 
-## 3. Dependency-uppdateringar
-Kör `bun add` med pinned versioner:
-- `posthog-js` → senaste 1.x (åtgärdar critical protobufjs RCE + high/medium DoS-kedja)
-- `@supabase/supabase-js` → senaste 2.x (åtgärdar `ws` DoS/memory disclosure)
-- `react-router-dom` → senaste 6.x patch (åtgärdar open redirect / XSS)
-- `jspdf` → senaste 4.x (åtgärdar DOMPurify-kedja) – medium, tas med på köpet
+---
 
-Verifiering: `bun run build` + smoke-test av /resultat, /uppdragsradar, /rapport efter uppgradering. PostHog-spårning verifieras enligt `posthog-daily-check`.
+## PATCH 3 — Sakfel: baseline måste inkludera triggers/secrets/PGMQ
 
-## Tekniska detaljer
-- Inga DB-migrations behövs.
-- Inga miljövariabler/secrets behövs.
-- Inga UI-ändringar (utöver att utloggade som anropar radar-endpoints direkt nu får 401 istället för data – avsiktligt).
-- Efter implementation: markera de fyra findings som `mark_as_fixed` via security-tooling.
+**Lägg till nytt underavsnitt "Baseline-bundle måste innehålla":**
+> - `handle_new_user`-triggern **med korrekt roll-seed** (`ref_user_roles`, default `individual`, ingen self-serve `admin`).
+> - PGMQ-köer: `email_outbox` + `process-email-queue`-cron.
+> - Vault-secrets referenser (namn, ej värden): `LOVABLE_API_KEY`, `RESEND_API_KEY_1`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `POSTHOG_API_KEY`, `BANKID_*`.
+> - `pg_cron`-jobb enligt AUDIT_BRIEF §5 (refresh-uppdragsradar-forecast, pipeline-health-watchdog, posthog-health-check, send-followup-emails, process-email-queue).
+> - `app_settings.marketplace_enabled = false` som default.
 
-## Out of scope
-- Medium-fynd `vulnerable_dependencies_medium` adresseras delvis automatiskt via posthog/jspdf-uppgraderingen ovan. Övriga medium-fynd lämnas orörda om de inte försvinner naturligt – kan tas i separat omgång.
-- RLS-policys på `calloff_imports` / `uppdragsradar_predictions` ändras INTE; vi behåller service-role-pattern med auth-gate i kod (mindre invasivt, samma effekt).
+---
+
+## PATCH 4 — Arbetsmodell: GitHub Sync-konflikt
+
+**Lägg till avsnitt "GitHub-sync och branch-strategi":**
+> Lovable syncar mot default branch. Under Cursor-arbetet:
+> - Antingen: sätt default branch till `staging` i GitHub och pausa Lovable-editing i det tidsfönstret, ELLER
+> - Kör alla Cursor-ändringar på `cursor/*`-branches och rebasas ovanpå `main` innan merge; **inga direktcommits på `main` från Cursor** medan Lovable är aktiv.
+> - PR-checklista: kör `tsgo` + `bunx vitest run` + `supabase--linter` innan merge.
+
+---
+
+## PATCH 5 — Hårda regler: RLS
+
+**Ersätt / komplettera säkerhetsavsnittet:**
+> - **Förbjudet:** RLS-policyer på formen `USING (col IS NULL OR shared_flag = true)` (OR-on-nullable). Använd safe-view-mönster + strikt base-policy (se `mem://constraints/rls-or-on-nullable`).
+> - **Varje `CREATE TABLE public.*` MÅSTE följas av `GRANT`** i samma migration (`authenticated` + `service_role`; `anon` endast om policy tillåter). Migrations utan GRANT avvisas i review.
+> - Roller ligger **enbart** i `ref_user_roles` (inte `user_roles`) — bekräfta namnet i alla nya edge functions (`requireAdmin`, `has_role`).
+> - `search_path = public` på alla nya SECURITY DEFINER-funktioner.
+
+---
+
+## PATCH 6 — Namngivning: `ref_user_roles`
+
+**Global find/replace i doc:n:** `user_roles` → `ref_user_roles` överallt där tabellen refereras (behåll `has_role`-funktionsnamnet). Motivering: HEAD använder `ref_user_roles`; en generisk `user_roles`-referens i doc:n leder Claude Code fel.
+
+---
+
+## PATCH 7 — Öppen fråga: AI Gateway på staging
+
+**Lägg till beslutspunkt:**
+> Lovable AI Gateway (`https://ai.gateway.lovable.dev`) fungerar endast för projekt kopplade till Lovable Cloud. Standalone staging måste välja:
+> - **A)** Peka staging-edge-functions på **prod-gatewayen** via delad `LOVABLE_API_KEY` (enklast, delar quota).
+> - **B)** Byt till **direkta providernycklar** (Google AI Studio, Anthropic) i staging — kräver ny secret-hantering + omskrivning av `ai_usage_logs`-kostnadsberäkning.
+> **Kräver användarens beslut innan Cursor börjar arbeta i staging.**
+
+---
+
+## PATCH 8 — Email-provider-lås (saknas i doc:n)
+
+**Lägg till constraint-block:**
+> Email är hårdlåst till **Resend** via `mail.compcare.se` (`RESEND_API_KEY_1` via connector-gateway). Staging får:
+> - Använda samma Resend-domän med `RESEND_FROM_DOMAIN=staging.compcare.se` **efter** verifiering, ELLER
+> - Använda Resend sandbox-adress `onboarding@resend.dev`.
+> Lovable Emails / `email_domain--*`-tools får **inte** aktiveras. Se `mem://constraints/email-provider-lock`.
+
+---
+
+## PATCH 9 — Fakturakontroll & BankID scope-lås (saknas)
+
+**Lägg till:**
+> - **Fakturakontroll:** AI-modell (`google/gemini-2.5-flash`), PASS1/PASS2-prompts, `compareTidrapportPasses`, confidence-trösklar och regelmotor A1–A8 får **ej ändras** utan explicit admingodkännande. Se `mem://security/invoice-check-change-control`.
+> - **BankID:** Skarp signering endast i `/samarbetsintyg/:id` + `bankid-auth`/`bankid-collect`. Termen "BankID" får inte synas i UI utanför detta flöde — använd "Digital signering".
+
+---
+
+## PATCH 10 — Marketplace-isolation (saknas)
+
+**Lägg till:**
+> All marketplace-/agent-negotiation-utveckling isoleras i `mp_*`-tabeller, `marketplace-*` edge functions, `/marketplace`-routes, `src/(pages|components|hooks)/marketplace/*`. Dubbel feature-gate: `VITE_FEATURE_MARKETPLACE` + `app_settings.marketplace_enabled` (default OFF). Ingen refaktor av v1.0-kod utan explicit direktiv.
+
+---
+
+## Leverans
+
+Efter godkännande skriver jag om detta som en unified diff mot befintlig doc-text (om du delar den), eller lämnar patch-listan som fristående appendix som du klistrar in själv.
