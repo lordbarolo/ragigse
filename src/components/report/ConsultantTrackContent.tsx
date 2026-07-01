@@ -92,8 +92,8 @@ export default function ConsultantTrackContent({
   const recommendedMax = rec ? rec.recommended_hourly_max : Math.round(marketRate * shareMax);
   const isAboveThreshold = recommendedMax > 0 && currentHourly >= recommendedMax;
 
-  // For employees, the comparable cost is gross salary × employer factor (1.42)
-  const employerFactor = rec?.employee_factor ?? 1.42;
+  // For employees, the comparable cost is gross salary × employer factor (1.38)
+  const employerFactor = rec?.employee_factor ?? 1.38;
   const costToCompare = isEmployee ? Math.round(currentHourly * employerFactor) : currentHourly;
   const sharePercent = marketRate > 0 ? Math.round((costToCompare / marketRate) * 100) : 0;
 
@@ -191,12 +191,6 @@ export default function ConsultantTrackContent({
             <li className="flex items-start gap-3">
               <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
               <span className="text-body-sm leading-relaxed">
-                Möjlig ersättning för konsulter är {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h.
-              </span>
-            </li>
-            <li className="flex items-start gap-3">
-              <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
-              <span className="text-body-sm leading-relaxed">
                 Använd vår smarta assistent för mer information om hur du kan påverka din ersättning vid behov.
               </span>
             </li>
@@ -252,10 +246,10 @@ export default function ConsultantTrackContent({
                 const isUserZone = zc.zon === userZone;
                 const zoneRate = zc.timpris_kund;
                 const recHourlyLow = isEmployee
-                  ? Math.round((zoneRate * shareMin) / 1.42)
+                  ? Math.round((zoneRate * shareMin) / 1.38)
                   : Math.round(zoneRate * shareMin);
                 const recHourlyHigh = isEmployee
-                  ? Math.round((zoneRate * shareMax) / 1.42)
+                  ? Math.round((zoneRate * shareMax) / 1.38)
                   : Math.round(zoneRate * shareMax);
                 const maxRate = Math.max(...zoneComparisons.map((z) => z.timpris_kund));
                 const barWidth = Math.round((zoneRate / maxRate) * 100);
@@ -294,9 +288,11 @@ export default function ConsultantTrackContent({
                         style={{ width: `${barWidth}%` }}
                       />
                     </div>
-                    <p className={`${monoClass} text-micro`}>
-                      Konsultersättning: {fmt(recHourlyLow)}–{fmt(recHourlyHigh)} kr/h
-                    </p>
+                    {!isUserZone && (
+                      <p className={`${monoClass} text-micro`}>
+                        Konsultersättning: {fmt(recHourlyLow)}–{fmt(recHourlyHigh)} kr/h
+                      </p>
+                    )}
                   </div>
                 );
               })}
@@ -380,16 +376,17 @@ export default function ConsultantTrackContent({
               <div className="space-y-3 text-body-sm">
                 <CalcRow label="Ramavtalspris (vad regionen betalar)" value={`${fmt(marketRate)} kr/h`} />
                 <CalcRow label={`Bemanningsbolagets marginal (${marginLabel})`} value={`−${fmt(Math.round(marketRate * (1 - shareMax)))}–${fmt(Math.round(marketRate * (1 - shareMin)))} kr/h`} />
-                <CalcRow label="Ersättningsutrymme efter marginal" value={`${fmt(afterMarginMin)}–${fmt(afterMarginMax)} kr/h`} />
                 {isEmployee ? (
-                  <CalcRow
-                    label="÷ 1,42 (arbetsgivaravg. + semester + pension)"
-                    value={`= ${fmt(Math.round(afterMarginMin / 1.42))}–${fmt(Math.round(afterMarginMax / 1.42))} kr/h brutto`}
-                  />
+                  <>
+                    <CalcRow label="Ersättningsutrymme efter marginal" value={`${fmt(afterMarginMin)}–${fmt(afterMarginMax)} kr/h`} />
+                    <CalcRow
+                      label="÷ 1,38 (arbetsgivaravg. + pension + särskild löneskatt + AFA)"
+                      value={`= ${fmt(Math.round(afterMarginMin / 1.38))}–${fmt(Math.round(afterMarginMax / 1.38))} kr/h brutto`}
+                    />
+                  </>
                 ) : (
                   <p className="text-hint pt-1">
-                    Som egenföretagare bör du fakturera {Math.round(shareMin * 100)}–{Math.round(shareMax * 100)}% av kundpriset, dvs{" "}
-                    {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h.
+                    Som egenföretagare bör du fakturera {Math.round(shareMin * 100)}–{Math.round(shareMax * 100)} % av kundpriset.
                   </p>
                 )}
               </div>
@@ -409,13 +406,13 @@ export default function ConsultantTrackContent({
                 </div>
                 <ul className="space-y-2 text-hint leading-relaxed">
                   <li>
-                    <span className="font-semibold text-foreground">Bemanningsbolagets marginal ({marginLabel}):</span>{" "}
-                    Vi räknar med att bolaget behåller {marginLabel} av timpriset. {isEmployee ? "Detta är en vanlig nivå vid ramavtalsuppdrag." : `Spannet beror på om bemanningsföretaget bär vitesrisken (högre marginal) eller inte (lägre marginal).`}
+                    <span className="font-semibold text-foreground">Bemanningsbolagets marginal:</span>{" "}
+                    Bolaget behåller normalt {marginLabel} av timpriset. {isEmployee ? "Detta är en vanlig nivå vid ramavtalsuppdrag." : `Spannet beror på om bemanningsföretaget bär vitesrisken (högre marginal) eller inte (lägre marginal).`} Marginalen kan i vissa fall vara lägre — t.ex. när bemanningsbolaget tar betalningsrisk, garanterar timmar eller bär kostnad för outnyttjad kapacitet.
                   </li>
                   {isEmployee && (
                     <li>
-                      <span className="font-semibold text-foreground">Arbetsgivaravgifter & omkostnader (faktor 1,42):</span>{" "}
-                      Täcker lagstadgade arbetsgivaravgifter (31,42%), tjänstepension, sjukförsäkring och semesterersättning.
+                      <span className="font-semibold text-foreground">Arbetsgivaravgifter & omkostnader (faktor 1,38):</span>{" "}
+                      Täcker lagstadgade arbetsgivaravgifter (31,42 %), tjänstepension ITP 1 (4,5 % under brytpunkten), särskild löneskatt på pension (1,09 %) och AFA/TFA-försäkringar (0,85 %). Vi utgår från att bruttolönen ligger under brytpunkten 7,5 IBB (≈ 52 750 kr/mån). Över den nivån hoppar ITP 1 till 30 % och faktorn blir högre.
                     </li>
                   )}
                   <li>
@@ -423,9 +420,6 @@ export default function ConsultantTrackContent({
                     Vi baserar månadsberäkningen på ett snitt om 167 arbetstimmar.
                   </li>
                 </ul>
-                <p className="text-caption pt-1">
-                  {fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h baseras på {marginLabel} marginal.
-                </p>
               </div>
               <div className="p-4 rounded-xl bg-foreground/[0.02] border border-border/30 space-y-2">
                 <div className="flex items-center gap-2">
@@ -448,7 +442,6 @@ export default function ConsultantTrackContent({
             <ul className="space-y-2.5">
               {[
                 "Regioner upphandlar bemanning genom ramavtal där ett kundpris fastställs.",
-                "Bemanningsföretaget ansvarar för rekrytering, administration och risk i uppdraget.",
                 "Konsultens ersättning är normalt en andel av detta pris.",
                 "CompCare analyserar ramavtal och historiska uppdrag för att visa hur ersättningen i genomsnitt fördelas.",
               ].map((text, i) => (

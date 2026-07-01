@@ -22,6 +22,8 @@ import AssignmentFeedbackDialog from "@/components/profile/AssignmentFeedbackDia
 
 import { useAssignmentFeedback } from "@/hooks/useAssignmentFeedback";
 import { trackEvent } from "@/lib/trackEvent";
+import { SEO } from "@/components/SEO";
+
 
 interface ReportRow {
   id: string;
@@ -231,6 +233,13 @@ export default function Profile() {
 
   return (
     <div className="profile-light relative min-h-screen bg-[#F7F5FB] overflow-hidden">
+      <SEO
+        title="Min profil – CompCare"
+        description="Hantera dina rapporter, dokument och kontoinställningar på CompCare."
+        path="/consultant/profil"
+        noindex
+      />
+
       {/* Scoped overrides: force all cards in profile to light theme */}
       <style>{`
         .profile-light [class*="rounded-2xl"][class*="bg-[hsl(260"],
@@ -454,7 +463,7 @@ export default function Profile() {
                 hospValid={verification.hasValidHosp}
                 ivoValid={verification.hasValidIvo}
                 onUpload={goUpload}
-                onVerifyIdentity={goVerifyIdentity}
+                /* onVerifyIdentity dold — funktionen är inte live än (visade bara "kommer snart"-toast). */
               />
               <ProfileAuditLog />
             </div>
@@ -515,18 +524,8 @@ export default function Profile() {
               )}
             </div>
           )}
-          <div className="flex items-center gap-2">
-            {/* "Redigera" dold — länken pekade på /profil vilket är samma sida (no-op-loop). */}
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-9 w-9 border-slate-300 text-slate-700 hover:bg-slate-100 shrink-0"
-              onClick={handleShare}
-              aria-label="Dela profil"
-            >
-              <Share2 className="w-4 h-4" />
-            </Button>
-          </div>
+          {/* "Redigera" dold — länken pekade på /profil vilket är samma sida (no-op-loop). */}
+          {/* "Dela profil" dold — /profil/:id-routen är inaktiverad så länken blir bruten. */}
         </div>
 
         {/* Förhandlingsassistenten dold — funktionen är inte live; CTA pekade till /logga-in. */}

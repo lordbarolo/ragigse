@@ -1,15 +1,17 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useMemo, useState } from "react";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, ArrowLeft, FileText, Clock, TrendingUp, MessageSquare, Link2, MailCheck, AlertTriangle } from "lucide-react";
+import { Loader2, ArrowLeft, FileText, Clock, TrendingUp, MessageSquare, Link2, MailCheck, AlertTriangle, Sparkles } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
+import { SEO } from "@/components/SEO";
 import { trackEvent } from "@/lib/trackEvent";
 import posthog from "@/lib/posthog";
+import { getAuthIntentCopy, sanitizeRedirect } from "@/lib/authIntent";
 
 type RecoveryStatus = "idle" | "sending" | "sent" | "error";
 
@@ -22,6 +24,22 @@ export default function Login() {
   const [recoveryError, setRecoveryError] = useState<string | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const location = useLocation();
+
+  const { redirectTo, intentCopy, signupHref } = useMemo(() => {
+    const params = new URLSearchParams(location.search);
+    const redirectTo = sanitizeRedirect(params.get("redirect"));
+    const intent = params.get("intent");
+    const intentCopy = getAuthIntentCopy(intent);
+    const signupParams = new URLSearchParams();
+    if (redirectTo) signupParams.set("redirect", redirectTo);
+    if (intent) signupParams.set("intent", intent);
+    const signupHref = signupParams.toString()
+      ? `/registrera?${signupParams.toString()}`
+      : "/registrera";
+    return { redirectTo, intentCopy, signupHref };
+  }, [location.search]);
+
 
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -72,10 +90,11 @@ export default function Login() {
     trackEvent("login_succeeded", { role: userRole });
 
     if (userRole === "agency") {
-      navigate("/agency/dashboard");
+      navigate(redirectTo ?? "/agency/dashboard");
       return;
     }
-    navigate("/profil");
+    navigate(redirectTo ?? "/profil");
+
   };
 
   const handleForgotPassword = async () => {
@@ -120,6 +139,13 @@ export default function Login() {
   ];
 
   return (
+    <>
+      <SEO
+        title="Logga in – CompCare"
+        description="Logga in på ditt CompCare-konto för att se din rapport och hantera dina inställningar."
+        path="/logga-in"
+        noindex
+      />
     <div
       className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden"
       style={{
@@ -207,10 +233,21 @@ export default function Login() {
             </CardContent>
           ) : (
             <>
-              <CardHeader className="text-center !bg-transparent">
-                <CardTitle className="text-xl font-semibold text-black">Logga in</CardTitle>
-                <CardDescription className="text-black/70">Ta del av rapporter och smarta verktyg</CardDescription>
+              <CardHeader className="text-center !bg-transparent space-y-2">
+                {intentCopy && (
+                  <div className="mx-auto inline-flex items-center gap-1.5 rounded-full bg-[#3D3491]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#3D3491]">
+                    <Sparkles className="w-3 h-3" aria-hidden="true" />
+                    {intentCopy.eyebrow}
+                  </div>
+                )}
+                <CardTitle className="text-xl font-semibold text-black">
+                  {intentCopy?.title ?? "Logga in"}
+                </CardTitle>
+                <CardDescription className="text-black/70">
+                  {intentCopy?.description ?? "Ta del av rapporter och smarta verktyg"}
+                </CardDescription>
               </CardHeader>
+
               <CardContent className="!bg-transparent">
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div className="space-y-2">
@@ -259,7 +296,7 @@ export default function Login() {
 
                 <div className="mt-6 text-center text-sm text-black/70">
                   Har du inget konto?{" "}
-                  <Link to="/registrera" className="text-black hover:underline font-medium">
+                  <Link to={signupHref} className="text-black hover:underline font-medium">
                     Skapa konto
                   </Link>
                 </div>
@@ -276,5 +313,6 @@ export default function Login() {
         </div>
       </div>
     </div>
+    </>
   );
 }

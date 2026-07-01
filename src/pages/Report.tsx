@@ -15,7 +15,7 @@ import type { ReportData } from "@/shared/types";
 
 import ConsultantTrackContent from "@/components/report/ConsultantTrackContent";
 import ReportFlowIndicator from "@/components/report/ReportFlowIndicator";
-import PossibleCompensationInfo from "@/components/PossibleCompensationInfo";
+
 import { SEO } from "@/components/SEO";
 
 
@@ -174,8 +174,8 @@ export default function Report() {
             <span className="whitespace-nowrap">{report.kommun}</span>
             {report.user_zone && (
               <span
-                className="whitespace-nowrap px-1.5 py-0.5 rounded-md"
-                style={{ backgroundColor: '#FFFFFF', border: '1px solid #E0DBD3', color: '#0A0A0A', fontSize: '13px' }}
+                className="whitespace-nowrap px-1 py-0 rounded"
+                style={{ backgroundColor: '#FFFFFF', border: '1px solid #E0DBD3', color: '#0A0A0A', fontSize: '11px' }}
               >
                 {report.user_zone}
               </span>
@@ -203,8 +203,30 @@ export default function Report() {
 
       <main className="px-4 py-6 max-w-lg mx-auto space-y-2.5">
 
-        {/* Förklaring: möjlig ersättning */}
-        <PossibleCompensationInfo variant="report" />
+        {/* Definition av "möjlig ersättning" ligger i "Vad det här betyder för dig" + Metod-collapsiblen — undvik dubblett. */}
+
+        {/* Förhandlingsassistenten */}
+        <div className="rounded-2xl border overflow-hidden" style={{ backgroundColor: '#FFFFFF', borderColor: '#E0DBD3' }}>
+          <div className="pt-3.5 px-4 sm:pt-5 sm:px-5">
+            <p className="font-semibold leading-snug text-[16px] sm:text-[18px]" style={{ fontFamily: 'Georgia, serif', color: '#0A0A0A' }}>
+              Förhandlingsassistenten
+            </p>
+            <p className="text-[13px] sm:text-sm mt-1 leading-snug" style={{ color: '#6B7280' }}>
+              Få argument och tips inför din nästa förhandling, baserat på ramavtal och din situation.
+            </p>
+          </div>
+          <div className="px-4 py-3.5 sm:px-5 sm:py-5">
+            <Link
+              to="/logga-in?redirect=%2Fconsultant%2Fforhandla&intent=negotiate"
+
+              className="inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 rounded-lg"
+              style={{ backgroundColor: '#3D3491', color: '#FFFFFF' }}
+            >
+              Öppna förhandlingsassistenten
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
 
         {hasFullAccess ? (
           <ConsultantTrackContent
@@ -243,28 +265,6 @@ export default function Report() {
             </Link>
           </div>
         )}
-
-        {/* Förhandlingsassistenten */}
-        <div className="rounded-2xl border overflow-hidden" style={{ backgroundColor: '#FFFFFF', borderColor: '#E0DBD3' }}>
-          <div className="pt-5 px-5">
-            <p className="font-semibold leading-snug" style={{ fontFamily: 'Georgia, serif', fontSize: '18px', color: '#0A0A0A' }}>
-              Förhandlingsassistenten
-            </p>
-            <p className="text-sm mt-1.5" style={{ color: '#6B7280' }}>
-              Få argument och tips inför din nästa förhandling, baserat på ramavtal och din situation.
-            </p>
-          </div>
-          <div className="px-5 py-5">
-            <Link
-              to="/logga-in"
-              className="inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 rounded-lg"
-              style={{ backgroundColor: '#3D3491', color: '#FFFFFF' }}
-            >
-              Öppna förhandlingsassistenten
-              <ArrowRight className="w-4 h-4" />
-            </Link>
-          </div>
-        </div>
 
 
 

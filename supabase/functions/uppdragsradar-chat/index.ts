@@ -97,6 +97,15 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  // Auth gate: require valid JWT before any DB/AI calls
+  const userId = await getAuthUserId(req);
+  if (!userId) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
   try {
     const { messages, roll } = await req.json();
 
@@ -127,7 +136,6 @@ Deno.serve(async (req) => {
     const rl = await checkRateLimit(supabase, "uppdragsradar-chat", clientIp, 20, 60);
     if (!rl.allowed) return rateLimitResponse(rl, corsHeaders);
 
-    const userId = await getAuthUserId(req);
     const aiRl = await checkAiRateLimit(userId);
     if (!aiRl.allowed) return aiRateLimitResponse(aiRl, corsHeaders);
 
@@ -407,7 +415,7 @@ DATAREGLER
     });
   } catch (e) {
     console.error("chat error:", e);
-    return new Response(JSON.stringify({ error: (e as Error).message }), {
+    return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   }

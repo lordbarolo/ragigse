@@ -13,6 +13,8 @@ import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 import { LONEKOLL_TOPICS, type LonekollTopic, type LonekollQuestion } from "@/data/lonekollQuestions";
 import InlineTerminalSurvey from "@/components/survey/InlineTerminalSurvey";
+import { SEO } from "@/components/SEO";
+
 
 const PAGE_TITLE = "Lönekoll — CompCare";
 const PAGE_DESC = "Få snabba svar på dina förhandlingsfrågor — baserat på SKR-ramavtalet och din roll.";
@@ -169,7 +171,14 @@ export default function Negotiate() {
 
   return (
     <div className="h-[100dvh] bg-secondary/30 flex flex-col overflow-hidden">
+      <SEO
+        title="Löneassistenten – CompCare"
+        description="AI-driven förhandlingsassistent med marknadsdata för vårdkonsulter."
+        path="/consultant/forhandla"
+        noindex
+      />
       <div className="w-full bg-background flex flex-col overflow-hidden flex-1 min-h-0">
+
         {/* Header */}
         <nav className="flex items-center justify-between px-4 h-[52px] flex-shrink-0 border-b border-border/50">
           <div className="flex items-center gap-3">

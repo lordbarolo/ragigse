@@ -23,7 +23,7 @@ export default function PersonalInsights({
   const rec = r.recommendation;
   if (!rec || marketRate <= 0 || currentHourly <= 0) return null;
 
-  const employerFactor = 1.42;
+  const employerFactor = 1.38;
   const costToCompare = isEmployee ? Math.round(currentHourly * employerFactor) : currentHourly;
   const shareOfCustomerPrice = Math.round((costToCompare / marketRate) * 100);
 
@@ -52,7 +52,7 @@ export default function PersonalInsights({
   insights.push({
     icon: BarChart3,
     text: isEmployee
-      ? `Din lönekostnad (brutto × 1,42) motsvarar ${shareOfCustomerPrice} % av kundpriset.`
+      ? `Din lönekostnad (brutto × 1,38) motsvarar ${shareOfCustomerPrice} % av kundpriset.`
       : `Din ersättning motsvarar ${shareOfCustomerPrice} % av kundpriset.`,
   });
 

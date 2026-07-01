@@ -8,7 +8,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { supabase } from "@/integrations/supabase/client";
-import { calculateSalaryRange } from "@/lib/calc";
+import { calculateSalaryRange, getMarginShares, EMPLOYER_FACTOR, HOURS_PER_MONTH } from "@/lib/calc";
 import type { EmploymentType } from "@/lib/calc";
 import PriceRangeGuard from "@/components/PriceRangeGuard";
 
@@ -56,9 +56,15 @@ export default function CompensationView({ role, location, employmentType }: Com
       if (rate) {
         setInvoiceRate(rate.timpris_kund);
 
-        // 3. Calculate salary range
+        // 3. Calculate salary range — använd role-specifik marginal (specialistläkare 10–15%, övriga 15–20%)
         const empType: EmploymentType = employmentType === "foretagare" ? "foretagare" : "anstalld";
-        const range = calculateSalaryRange(rate.timpris_kund, empType);
+        const shares = getMarginShares(role);
+        const range = calculateSalaryRange(rate.timpris_kund, empType, {
+          share_min: shares.share_min,
+          share_max: shares.share_max,
+          employer_factor: EMPLOYER_FACTOR,
+          hours_per_month: HOURS_PER_MONTH,
+        });
         setSalaryRange({ hourlyMin: range.hourly_min, hourlyMax: range.hourly_max });
       }
 

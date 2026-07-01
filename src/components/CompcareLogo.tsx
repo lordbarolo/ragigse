@@ -38,17 +38,19 @@ const CompcareLogo = forwardRef<HTMLSpanElement, CompcareLogoProps>(
         : "/compcare-logo-light.svg";
     };
 
+    const altText = "CompCare – lönekoll för vårdkonsulter";
+
     if (typeof inverted === "boolean") {
       const src = fileFor(inverted ? "dark" : "light");
       return (
         <span
           ref={ref}
           className={`inline-flex items-center ${sizeClass} ${className}`}
-          aria-label="CompCare"
+          aria-label={altText}
           role="img"
           {...rest}
         >
-          <img src={src} alt="CompCare" className="h-full w-auto select-none" draggable={false} />
+          <img src={src} alt={altText} className="h-full w-auto select-none" draggable={false} />
         </span>
       );
     }
@@ -59,11 +61,11 @@ const CompcareLogo = forwardRef<HTMLSpanElement, CompcareLogoProps>(
         <span
           ref={ref}
           className={`inline-flex items-center ${sizeClass} ${className}`}
-          aria-label="CompCare"
+          aria-label={altText}
           role="img"
           {...rest}
         >
-          <img src="/compcare-icon.svg" alt="CompCare" className="h-full w-auto select-none" draggable={false} />
+          <img src="/compcare-icon.svg" alt={altText} className="h-full w-auto select-none" draggable={false} />
         </span>
       );
     }
@@ -72,19 +74,19 @@ const CompcareLogo = forwardRef<HTMLSpanElement, CompcareLogoProps>(
       <span
         ref={ref}
         className={`inline-flex items-center ${sizeClass} ${className}`}
-        aria-label="CompCare"
+        aria-label={altText}
         role="img"
         {...rest}
       >
         <img
           src={fileFor("light")}
-          alt="CompCare"
+          alt={altText}
           className="h-full w-auto select-none block dark:hidden"
           draggable={false}
         />
         <img
           src={fileFor("dark")}
-          alt="CompCare"
+          alt={altText}
           className="h-full w-auto select-none hidden dark:block"
           draggable={false}
           aria-hidden="true"

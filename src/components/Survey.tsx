@@ -180,7 +180,9 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
       if (roleDropdownValue === "__allman") return "Sjuksköterska";
       if (roleDropdownValue === "__barnmorska") return "Barnmorska";
       if (roleDropdownValue === "__rontgen") return "Röntgensjuksköterska";
-      if (roleDropdownValue === "__ovrig") return "Specialistsjuksköterska";
+      // "Min specialitet saknas" — block progress, never fall back to a generic
+      // "Specialistsjuksköterska" price. UI prompts user to contact us instead.
+      if (roleDropdownValue === "__saknas") return "";
       return nurseValueMap[roleDropdownValue] || roleDropdownValue;
     }
     return "";
@@ -255,7 +257,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
     { value: "__rontgen", label: "Röntgensjuksköterska", group: "" },
     ...TOP_NURSE_SPECIALIZATIONS
       .map((s) => ({ value: s, label: s, group: "Vidareutbildning (VUB)" })),
-    { value: "__ovrig", label: "Övrig VUB", group: "Vidareutbildning (VUB)" },
+    { value: "__saknas", label: "Min specialitet saknas i listan", group: "Vidareutbildning (VUB)" },
   ], []);
 
   const progress = ((step - 1) / TOTAL_STEPS) * 100;
@@ -483,7 +485,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
       if (roleDropdownValue === "__allman") return "Allmänsjuksköterska";
       if (roleDropdownValue === "__barnmorska") return "Barnmorska";
       if (roleDropdownValue === "__rontgen") return "Röntgensjuksköterska";
-      if (roleDropdownValue === "__ovrig") return "Specialistsjuksköterska";
+      if (roleDropdownValue === "__saknas") return "Specialitet saknas — kontakta oss";
       return roleDropdownValue;
     }
     return "";
@@ -589,6 +591,16 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                   placeholder={occupationCategory === "lakare" ? "Välj specialisering..." : "Välj din roll..."}
                   options={occupationCategory === "lakare" ? doctorRoleOptions : nurseRoleOptions}
                 />
+                {occupationCategory === "ssk" && roleDropdownValue === "__saknas" && (
+                  <div className="mt-3 rounded-xl border border-amber-300/60 bg-amber-50 p-3 text-xs text-amber-900">
+                    <p className="font-semibold mb-1">Pris saknas för din specialitet</p>
+                    <p>
+                      Vi visar bara priser för roller som finns i SKR:s ramavtal 2026. Mejla{" "}
+                      <a href="mailto:hej@compcare.se" className="underline">hej@compcare.se</a>{" "}
+                      så hjälper vi dig manuellt — vi gissar aldrig på ett generiskt specialistpris.
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
           </StepWrapper>

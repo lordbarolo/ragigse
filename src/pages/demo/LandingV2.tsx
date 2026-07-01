@@ -58,7 +58,7 @@ const DATA_STATS = [
 ];
 
 // Snitt-bruttolön/mån för anställd konsult, baserat på SKR-ramavtal 2026
-// (timpris kund) × konsultandel / 1,42 (arbetsgivaravgift+pension) × 167h.
+// (timpris kund) × konsultandel / 1,38 (arbetsgivaravgift+pension) × 167h.
 // Konsultandel = 0,825 för sjuksköterskor/barnmorskor, 0,875 för läkare.
 // Alla värden härledda från rates-tabellen (contract 2026), avrundat till
 // närmaste 1 000 kr/mån. Källa: SKR Personaluthyrning 2026.
@@ -197,7 +197,7 @@ export default function LandingV2() {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // ── Price range guard for the rolling ticker under the hero ──
-  // Validates each ticker entry against SKR rates × marginalspann / 1,42 × 167h.
+  // Validates each ticker entry against SKR rates × marginalspann / 1,38 × 167h.
   // Mismatches are hidden and logged to PostHog as `price_range_mismatch`
   // (surface = "landing.ticker"), same invariant used by report views.
   const { data: ratesData } = useRates();

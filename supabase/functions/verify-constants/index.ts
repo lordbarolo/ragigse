@@ -12,7 +12,7 @@ const LIVE_CONSTANTS: Record<string, unknown> = {
   "margin.specialist.share_max": 0.90,
   "margin.standard.share_min": 0.80,
   "margin.standard.share_max": 0.85,
-  "employer.factor": 1.42,
+  "employer.factor": 1.38,
   "hours.per_month": 167,
   "ob.sjukskoterska.factor": 1.3142,
 };

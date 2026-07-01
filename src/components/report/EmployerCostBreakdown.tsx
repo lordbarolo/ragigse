@@ -128,7 +128,7 @@ export default function EmployerCostBreakdown({
 
         <p className="text-xs text-muted-foreground">
           Faktor: × {breakdown.total_factor.toLocaleString("sv-SE", { maximumFractionDigits: 4 })}
-          {" "}(jämfört med tidigare schablon × 1,42).
+          {" "}(jämfört med tidigare schablon × 1,38).
         </p>
 
         {/* Förklaring av varje kostnadspost — full transparens */}

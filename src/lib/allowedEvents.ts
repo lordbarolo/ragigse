@@ -26,6 +26,7 @@ export const ALLOWED_EVENTS = [
   "income_impact_shown",
   "email_gate_viewed",
   "email_submitted",
+  "signup_gate_viewed",
   "analysis_started",
   "analysis_email_pause",
   "analysis_completed",

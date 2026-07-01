@@ -74,7 +74,7 @@ export default function Home() {
               : "pt-14 pb-20 md:pt-16 md:pb-20"
           }`}
         >
-          <div className="relative z-10 max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-16 items-center">
+          <div className="relative z-10 max-w-[1200px] mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1.1fr_0.9fr] gap-10 md:gap-16 lg:gap-14 items-center">
             {/* Vänster: rubrik och pitch */}
             <div
               className={`flex flex-col items-center md:items-start text-center md:text-left md:w-full md:!block ${
@@ -110,7 +110,7 @@ export default function Home() {
             )}
 
             {/* Höger: formulär */}
-            <div className="w-full md:max-w-[480px] md:justify-self-end">
+            <div className="w-full md:max-w-[480px] md:justify-self-end lg:max-w-none lg:justify-self-stretch">
               <InlineTerminalSurvey variant="light" onStepChange={setSurveyStep} />
               <p className="mt-3 text-[11px] text-black/55 leading-relaxed flex items-start gap-1.5">
                 <ShieldCheck className="w-3 h-3 mt-0.5 shrink-0 text-[#3D3491]" />

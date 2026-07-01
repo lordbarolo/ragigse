@@ -20,6 +20,10 @@ const AnalysisScreen = lazy(() => import("./pages/AnalysisScreen"));
 const Report = lazy(() => import("./pages/Report"));
 const AnestesiReport = lazy(() => import("./pages/AnestesiReport"));
 const BollnasAllmanspecialistReport = lazy(() => import("./pages/BollnasAllmanspecialistReport"));
+const AllmanmedicinReport = lazy(() => import("./pages/AllmanmedicinReport"));
+const SjukskoterskaReport = lazy(() => import("./pages/SjukskoterskaReport"));
+const LakareSpecialtyReport = lazy(() => import("./pages/LakareSpecialtyReport"));
+import { DOCTOR_SPECIALTY_REPORTS } from "@/data/doctorSpecialtyReports";
 const Campaign = lazy(() => import("./pages/Campaign"));
 
 const Admin = lazy(() => import("./pages/Admin"));
@@ -86,6 +90,16 @@ const App = () => (
               <Route path="/" element={<Home />} />
               <Route path="/resultat/:leadId" element={<AnalysisScreen />} />
               <Route path="/rapport/anestesisjukskoterska" element={<AnestesiReport />} />
+              <Route path="/rapport/lakare-allmanmedicin" element={<AllmanmedicinReport />} />
+              <Route path="/rapport/sjukskoterska" element={<SjukskoterskaReport />} />
+              <Route path="/rapport/legitimerad-sjukskoterska" element={<SjukskoterskaReport />} />
+              <Route path="/rapport/leg-sjukskoterska" element={<SjukskoterskaReport />} />
+              <Route path="/rapport/allmansjukskoterska" element={<SjukskoterskaReport />} />
+              <Route path="/rapport/leg-ssk" element={<SjukskoterskaReport />} />
+              <Route path="/rapport/ssk" element={<SjukskoterskaReport />} />
+              {DOCTOR_SPECIALTY_REPORTS.map((r) => (
+                <Route key={r.slug} path={`/rapport/${r.slug}`} element={<LakareSpecialtyReport />} />
+              ))}
               <Route path="/Bollnas/lakare-alm" element={<BollnasAllmanspecialistReport />} />
               <Route path="/bollnas/lakare-alm" element={<BollnasAllmanspecialistReport />} />
               <Route path="/rapport/:reportId" element={<Report />} />
@@ -124,7 +138,7 @@ const App = () => (
               <Route path="/consultant/referenser" element={<Navigate to="/" replace />} />
               <Route path="/consultant/academy" element={<Navigate to="/" replace />} />
               <Route path="/consultant/agent-access" element={<Navigate to="/" replace />} />
-              <Route path="/forhandla" element={<Navigate to="/" replace />} />
+              <Route path="/forhandla" element={<Navigate to="/consultant/forhandla" replace />} />
               <Route path="/fakturakontroll" element={<Navigate to="/" replace />} />
               <Route path="/referenser" element={<Navigate to="/" replace />} />
               <Route path="/academy" element={<Navigate to="/" replace />} />
