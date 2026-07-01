@@ -463,7 +463,7 @@ export default function Profile() {
                 hospValid={verification.hasValidHosp}
                 ivoValid={verification.hasValidIvo}
                 onUpload={goUpload}
-                onVerifyIdentity={goVerifyIdentity}
+                /* onVerifyIdentity dold — funktionen är inte live än (visade bara "kommer snart"-toast). */
               />
               <ProfileAuditLog />
             </div>
