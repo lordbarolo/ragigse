@@ -6,6 +6,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { z } from "https://esm.sh/zod@3.23.8";
 import { logAiUsage, extractTokensFromResponse, checkAiRateLimit, aiRateLimitResponse } from "../_shared/ai-usage-logger.ts";
+import { getAiGatewayUrl, getAiGatewayKey, getAiModel } from "../_shared/ai-transport.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -143,7 +144,7 @@ serve(async (req) => {
     currentRate: body.currentRate ?? null,
   };
 
-  const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+  const LOVABLE_API_KEY = getAiGatewayKey();
   if (!LOVABLE_API_KEY) {
     return new Response(JSON.stringify({ error: "missing_api_key" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
@@ -157,9 +158,9 @@ Skriv en neutral marknadskommentar (max 5 meningar) som beskriver:
 3) En försiktig observation om förhandlingsutrymme givet det nuvarande timpriset (om angivet).
 Ange inga procent, inga peer-jämförelser, ingen "push"-ton.`;
 
-  const model = "google/gemini-3-flash-preview";
+  const model = getAiModel("google/gemini-3-flash-preview");
   try {
-    const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    const resp = await fetch(getAiGatewayUrl(), {
       method: "POST",
       headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
       body: JSON.stringify({
