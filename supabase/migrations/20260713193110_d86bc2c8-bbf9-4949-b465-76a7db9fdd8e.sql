@@ -1,0 +1,2 @@
+COMMENT ON TABLE public.calloff_imports IS 'Historiska avrop från offentliga källor (Avropsplatsen samt data begärd ut från respektive region). Endast historik – aldrig framtida/live-avrop.';
+COMMENT ON COLUMN public.calloff_imports.source IS 'Källa för avropet, t.ex. avropsplatsen | region_utlamning | manual';
