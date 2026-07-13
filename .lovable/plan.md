@@ -1,63 +1,40 @@
-# Säkerhetsfix – plan
+# Plan: Bemlo-källa får aldrig nämnas
 
-## 1. Raw error leakage i 500-svar (`raw_error_500_leak`)
-Ersätt `error.message` i HTTP 500-body med generisk text i samtliga edge functions. Behåll full server-side logging via `console.error`.
+## Nuläge
+En sökning i hela repot ger **endast två träffar** på "bemlo", båda är SQL-kommentarer i migrationen `supabase/migrations/20260318001114_...sql` (rad 2 och 6, i `source text` kolumn-kommentaren). Inget i UI, edge functions, publika docs (`llms.txt`, `openapi.json`, `agent-api.md`, `radar-api-README.md`), tests eller memories nämner Bemlo. Ingen aktiv import finns.
 
-Filer som ändras:
-- `supabase/functions/admin-data/index.ts`
-- `supabase/functions/admin-review-action/index.ts`
-- `supabase/functions/redeem-coupon/index.ts`
-- `supabase/functions/delete-account/index.ts`
-- `supabase/functions/agent-api-admin/index.ts` (flera catch-block)
-- `supabase/functions/agent-api-user-tokens/index.ts` (flera catch-block)
-- `supabase/functions/get-avrop-predictions/index.ts`
+## Vad som ska göras
 
-Mönster:
-```ts
-} catch (err) {
-  console.error("[fn-name]", err);
-  return new Response(
-    JSON.stringify({ error: "Internal server error" }),
-    { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-  );
-}
-```
-Behåll 4xx-svar med beskrivande meddelanden (validering, auth) – endast 5xx generaliseras.
+### 1. Städa bort Bemlo ur SQL-kommentarerna
+Migrationen är redan körd, så vi kan inte redigera den historiskt utan risk. Istället läggs en ny migration som skriver om `COMMENT ON TABLE` / `COMMENT ON COLUMN` för `calloff_imports`:
 
-## 2. Auth-gate på Uppdragsradar-endpoints (`avrop_radar_no_auth`)
-Lägg till JWT-validering överst i båda funktioner innan någon DB-query körs.
+- `COMMENT ON TABLE public.calloff_imports IS 'Historiska avrop från offentliga källor (avropsplatsen samt data begärd ut från regionerna). Aldrig framtida/live-avrop.'`
+- `COMMENT ON COLUMN public.calloff_imports.source IS 'Källa, t.ex. avropsplatsen | region_utlamning | manual'`
 
-Filer som ändras:
-- `supabase/functions/get-avrop-predictions/index.ts`
-- `supabase/functions/uppdragsradar-chat/index.ts` (innan SSE-stream startas)
+Ingen data eller schema ändras – bara kommentarerna. Migrationsfilen från 2026-03-18 lämnas orörd (historiskt korrekt).
 
-Mönster:
-```ts
-const authHeader = req.headers.get("Authorization");
-if (!authHeader) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: ... });
-const anon = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { global: { headers: { Authorization: authHeader }}});
-const { data: { user }, error } = await anon.auth.getUser();
-if (error || !user) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: ... });
-```
-Service-role-klienten behålls för själva DB-läsningen (RLS säger deny-all, vilket är ok eftersom vi nu auth-gatar i kod).
+### 2. Lås källformuleringen i memory
+Ny constraint-memory `mem://constraints/no-bemlo-source` med regeln:
 
-Påverkan på frontend: `Uppdragsradar.tsx`/`UppdragsradarV2.tsx` och `ReijdarChat.tsx` skickar redan Authorization-header för inloggade användare. ReijdarChat har redan en auth-gate i UI som blockerar utloggade – så regression-risken är låg, men jag verifierar att samtliga anrop skickar `session.access_token`.
+- Bemlo (eller andra tredjepartsaggregatorer) får **aldrig** nämnas som källa i UI, copy, edge functions, docs, kommentarer eller AI-prompts.
+- Godkänd formulering för avropsdata utanför Avropsplatsen: **"offentlig data begärd ut från respektive region"** (eller kortform "regionutlämning").
+- Gäller även om vi återinför en import senare – importens interna kodnamn får inte läcka till användare.
 
-## 3. Dependency-uppdateringar
-Kör `bun add` med pinned versioner:
-- `posthog-js` → senaste 1.x (åtgärdar critical protobufjs RCE + high/medium DoS-kedja)
-- `@supabase/supabase-js` → senaste 2.x (åtgärdar `ws` DoS/memory disclosure)
-- `react-router-dom` → senaste 6.x patch (åtgärdar open redirect / XSS)
-- `jspdf` → senaste 4.x (åtgärdar DOMPurify-kedja) – medium, tas med på köpet
+Indexet uppdateras med raden.
 
-Verifiering: `bun run build` + smoke-test av /resultat, /uppdragsradar, /rapport efter uppgradering. PostHog-spårning verifieras enligt `posthog-daily-check`.
+### 3. Förberedelse för ev. återinförd import (ingen kod nu)
+Om vi senare bygger en ny import ska den:
+- Ligga i egen edge function med generiskt namn (t.ex. `radar-region-ingest`), inte `bemlo-*`.
+- Skriva `source = 'region_utlamning'` (eller region-specifikt som `region_vgr_utlamning`) i `calloff_imports`.
+- Ha admin-UI som beskriver källan som "Offentlig data begärd ut från regionen".
+- Denna del byggs först när du säger till – ingår inte i det här draget.
 
-## Tekniska detaljer
-- Inga DB-migrations behövs.
-- Inga miljövariabler/secrets behövs.
-- Inga UI-ändringar (utöver att utloggade som anropar radar-endpoints direkt nu får 401 istället för data – avsiktligt).
-- Efter implementation: markera de fyra findings som `mark_as_fixed` via security-tooling.
+## Teknisk detalj
+- **Ny migration**: 1 fil, endast `COMMENT ON` för tabell + kolumn. Ingen `ALTER TABLE`, inga policies, inga grants (kräver ej eftersom vi bara ändrar metadata).
+- **Memory**: 1 ny fil `.lovable/memory/constraints/no-bemlo-source.md` + index-uppdatering.
+- **Ingen frontend-kod ändras** eftersom inga UI-strängar innehåller Bemlo idag.
 
-## Out of scope
-- Medium-fynd `vulnerable_dependencies_medium` adresseras delvis automatiskt via posthog/jspdf-uppgraderingen ovan. Övriga medium-fynd lämnas orörda om de inte försvinner naturligt – kan tas i separat omgång.
-- RLS-policys på `calloff_imports` / `uppdragsradar_predictions` ändras INTE; vi behåller service-role-pattern med auth-gate i kod (mindre invasivt, samma effekt).
+## Utanför scope
+- Faktisk återinförd import (görs på separat begäran).
+- Ändring av `radar-import` eller `calloff_imports`-schemat.
+- Retroaktiv redigering av den gamla migrationsfilen.
