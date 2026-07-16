@@ -6,7 +6,10 @@ export interface Option {
   value: string;
   label: string;
   group?: string;
+  /** Extra sökord som matchar filtret men inte visas i UI. */
+  keywords?: string[];
 }
+
 
 interface SearchableSelectProps {
   options: Option[];
