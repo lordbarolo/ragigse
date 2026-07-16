@@ -48,8 +48,13 @@ export default function SearchableSelect({
   const flatOptions = useMemo(() => {
     if (!open || !query) return options;
     const q = query.toLowerCase();
-    return options.filter((o) => o.label.toLowerCase().includes(q));
+    return options.filter((o) => {
+      if (o.label.toLowerCase().includes(q)) return true;
+      if (o.keywords?.some((k) => k.toLowerCase().includes(q))) return true;
+      return false;
+    });
   }, [options, query, open]);
+
 
   const grouped = useMemo(() => {
     const groups = new Map<string, Option[]>();
