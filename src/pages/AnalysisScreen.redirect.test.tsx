@@ -18,15 +18,25 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { HelmetProvider } from "react-helmet-async";
 
 // ── Hoisted mocks ────────────────────────────────────────────────────────────
-const navigateMock = vi.fn();
-const getSessionMock = vi.fn();
-const getUserMock = vi.fn();
-const fromMock = vi.fn();
-const invokeMock = vi.fn();
-
-const fetchLeadMock = vi.fn();
-const createReportMock = vi.fn();
-const saveEmailMock = vi.fn();
+const {
+  navigateMock,
+  getSessionMock,
+  getUserMock,
+  fromMock,
+  invokeMock,
+  fetchLeadMock,
+  createReportMock,
+  saveEmailMock,
+} = vi.hoisted(() => ({
+  navigateMock: vi.fn(),
+  getSessionMock: vi.fn(),
+  getUserMock: vi.fn(),
+  fromMock: vi.fn(),
+  invokeMock: vi.fn(),
+  fetchLeadMock: vi.fn(),
+  createReportMock: vi.fn(),
+  saveEmailMock: vi.fn(),
+}));
 
 vi.mock("react-router-dom", async () => {
   const actual = await vi.importActual<typeof import("react-router-dom")>("react-router-dom");
