@@ -55,7 +55,7 @@ export default function PensionImpactSimulator({
           Pensionssimulator
         </h3>
         <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-          Dra i reglaget för att se pensionsbeloppet vid olika lönenivåer.
+          Enligt det nationella avtalet för vårdbemanning ska bemanningsföretag betala tjänstepension enligt kollektivavtal. För sjuksköterskor gäller 4,5 % av bruttolönen upp till 7,5 inkomstbasbelopp (625 500 kr/år, 2026), och 30 % på lönedelen därutöver. Dra i reglaget för att se hur din pension påverkas vid olika lönenivåer.
         </p>
       </div>
 
