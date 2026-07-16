@@ -111,13 +111,20 @@ function renderAt(path = `/resultat/${LEAD_ID}`) {
 }
 
 function mockRatesQuery() {
-  // supabase.from("locations")/.from("rates") chainable
-  const chain = {
-    select: () => chain,
-    eq: () => chain,
-    limit: () => Promise.resolve({ data: [], error: null }),
-  } as Record<string, unknown>;
-  fromMock.mockReturnValue(chain);
+  fromMock.mockImplementation((table: string) => {
+    const rows =
+      table === "locations"
+        ? [{ zon: "Zone1", region: "Stockholm" }]
+        : table === "rates"
+          ? [{ timpris_kund: 900 }]
+          : [];
+    const chain: Record<string, unknown> = {
+      select: () => chain,
+      eq: () => chain,
+      limit: () => Promise.resolve({ data: rows, error: null }),
+    };
+    return chain;
+  });
 }
 
 beforeEach(() => {
