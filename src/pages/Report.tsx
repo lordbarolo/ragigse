@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Loader2, Download, UserPlus, ArrowRight } from "lucide-react";
+import { Loader2, Download, UserPlus, ArrowRight, User } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { trackEvent } from "@/lib/trackEvent";
 import { getCouponCode } from "@/lib/captureParams";
