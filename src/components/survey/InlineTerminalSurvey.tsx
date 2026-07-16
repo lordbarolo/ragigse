@@ -35,6 +35,30 @@ type EmploymentType = "" | "anstalld" | "foretagare";
 const TOTAL_STEPS = 5;
 const STEP_NAMES = ["yrkeskategori", "specialisering", "anstallningsform", "kommun", "ersattning"];
 
+// Extra sökord per specialistsjuksköterska så användare hittar rätt även om de
+// söker på det medicinska området (t.ex. "intensivvård" → IVA-sjuksköterska).
+const NURSE_SEARCH_KEYWORDS: Record<string, string[]> = {
+  "IVA-sjuksköterska": ["intensivvård", "intensiv", "iva"],
+  "Anestesisjuksköterska": ["anestesi", "narkos"],
+  "Operationssjuksköterska": ["operation", "op"],
+  "Ambulanssjuksköterska": ["ambulans", "prehospital"],
+  "Barnsjuksköterska": ["barn", "pediatrik"],
+  "Akutsjuksköterska": ["akut", "akutsjukvård"],
+  "Hjärtsjuksköterska": ["hjärta", "kardiologi"],
+  "Distriktssjuksköterska": ["distrikt", "primärvård"],
+  "Kirurgsjuksköterska": ["kirurgi"],
+  "Palliativsjuksköterska": ["palliativ", "hospice"],
+  "Geriatriksjuksköterska": ["geriatrik", "äldrevård", "äldre"],
+  "Medicinsjuksköterska": ["medicin", "internmedicin"],
+  "Onkologisjuksköterska": ["onkologi", "cancer"],
+  "Infektionssjuksköterska": ["infektion"],
+  "Diabetessjuksköterska": ["diabetes"],
+  "Ögonsjuksköterska": ["ögon", "oftalmologi"],
+  "Företagshälsosjuksköterska": ["företagshälsa", "företagshälsovård"],
+  "Psykiatrisjuksköterska": ["psykiatri", "psyk"],
+  "Skolsköterska": ["skola", "elevhälsa"],
+};
+
 interface State {
   category: Category;
   roleValue: string;
