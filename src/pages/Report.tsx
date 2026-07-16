@@ -363,6 +363,21 @@ export default function Report() {
           )}
         </div>
 
+        {/* Profile CTA (logged-in users) */}
+        {user && (
+          <div data-pdf-hide className="pt-2 pb-2">
+            <Link
+              to="/consultant/profil"
+              className="inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 rounded-lg w-full sm:w-auto"
+              style={{ backgroundColor: '#3D3491', color: '#FFFFFF' }}
+            >
+              <User className="w-4 h-4" />
+              Gå till din profil
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        )}
+
         {/* Footer */}
         <div className="pt-4">
           <Separator className="mb-6 opacity-30" />
