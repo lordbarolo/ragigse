@@ -164,11 +164,17 @@ export default function InlineTerminalSurvey({
     () => [
       { value: "__allman", label: "Allmänsjuksköterska", group: "" },
       { value: "__rontgen", label: "Röntgensjuksköterska", group: "" },
-      ...NURSE_SPECIALIZATIONS.map((x) => ({ value: x, label: x, group: "Vidareutbildning (VUB)" })),
+      ...NURSE_SPECIALIZATIONS.map((x) => ({
+        value: x,
+        label: x,
+        group: "Vidareutbildning (VUB)",
+        keywords: NURSE_SEARCH_KEYWORDS[x],
+      })),
       { value: "__saknas", label: "Min specialitet saknas i listan", group: "Vidareutbildning (VUB)" },
     ],
     [],
   );
+
 
   const allKommuner = useMemo(() => {
     if (!locations) return [];
