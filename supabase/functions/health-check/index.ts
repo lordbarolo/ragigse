@@ -125,7 +125,11 @@ async function checkGetReport(): Promise<CheckResult> {
   return { name: "get-report", status: "ok", duration_ms: ms, details: { http_status: result.status } };
 }
 
-// 3. leads-with-email conversion last 24h: warn if <30%
+// 3. lead-conversion last 24h: warn if <30%.
+// Post-SignupGate: a lead is "converted" if it has an email OR a downstream
+// report was generated (implies the user progressed through the teaser/signup).
+// Email is often captured on the auth user instead of the lead row after the
+// MailGate → SignupGate migration, so email-only would false-positive.
 async function checkConversion(supabase: ReturnType<typeof createClient>): Promise<CheckResult> {
   const t0 = Date.now();
   const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
@@ -137,25 +141,42 @@ async function checkConversion(supabase: ReturnType<typeof createClient>): Promi
     .from("leads")
     .select("id", { count: "exact", head: true })
     .gte("created_at", since)
-    .not("email", "is", null);
+    .not("email", "is", null)
+    .neq("email", "");
+  // Leads that generated at least one report in the window — treated as converted
+  // even if lead.email is null (signup-gate path stores email on auth.users).
+  const { data: reportRows } = await supabase
+    .from("reports")
+    .select("lead_id, leads!inner(created_at)")
+    .gte("leads.created_at", since);
+  const convertedLeadIds = new Set<string>((reportRows ?? []).map((r: { lead_id: string }) => r.lead_id));
+  const { data: emailedIds } = await supabase
+    .from("leads")
+    .select("id")
+    .gte("created_at", since)
+    .not("email", "is", null)
+    .neq("email", "");
+  for (const row of emailedIds ?? []) convertedLeadIds.add((row as { id: string }).id);
+  const converted = convertedLeadIds.size;
   const ms = Date.now() - t0;
-  const ratio = total && total > 0 ? (withEmail ?? 0) / total : 1;
+  const ratio = total && total > 0 ? converted / total : 1;
   if ((total ?? 0) >= 10 && ratio < 0.3) {
     return {
       name: "lead-email-conversion-24h",
       status: "warn",
-      error_message: `Endast ${Math.round(ratio * 100)}% av leads har email (${withEmail}/${total}) — under 30% tröskel`,
-      details: { total, with_email: withEmail, ratio },
+      error_message: `Endast ${Math.round(ratio * 100)}% av leads konverterade (${converted}/${total}, varav ${withEmail ?? 0} med email) — under 30% tröskel`,
+      details: { total, converted, with_email: withEmail, ratio },
       duration_ms: ms,
     };
   }
   return {
     name: "lead-email-conversion-24h",
     status: "ok",
-    details: { total, with_email: withEmail, ratio },
+    details: { total, converted, with_email: withEmail, ratio },
     duration_ms: ms,
   };
 }
+
 
 function escapeHtml(s: string): string {
   return s.replace(/[&<>"']/g, (c) => ({
