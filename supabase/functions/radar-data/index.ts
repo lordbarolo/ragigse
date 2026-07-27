@@ -1,10 +1,8 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+import {
+  corsHeadersUser as corsHeaders,
+  enforceUserRateLimit,
+  requireUserAuth,
+} from "../_shared/auth.ts";
 
 // Anti-scrape limits
 const MAX_ROWS_PER_REQUEST = 25;
@@ -14,9 +12,6 @@ const ALLOWED_ENDPOINTS = new Set(["predictions", "regions", "specializations"])
 const ALLOWED_HORIZONS = new Set([30, 60, 90]);
 const ALLOWED_PROFESSIONS = new Set(["DOCTOR", "NURSE", "PHYSIOTHERAPIST"]);
 const ALLOWED_CONFIDENCES = new Set(["low", "med", "high"]);
-
-// Bot/scraper user-agent blacklist (basic; defence-in-depth)
-const SUSPICIOUS_UA = /(curl|wget|python-requests|scrapy|httpx|axios\/|node-fetch|bot|spider|crawler)/i;
 
 function monthsAhead(days: number): string[] {
   const out: string[] = [];
@@ -31,53 +26,12 @@ function monthsAhead(days: number): string[] {
   return out;
 }
 
-function clientIp(req: Request): string | null {
-  return (
-    req.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
-    req.headers.get("cf-connecting-ip") ??
-    req.headers.get("x-real-ip") ??
-    null
-  );
-}
-
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
-  const ip = clientIp(req);
-  const ua = req.headers.get("user-agent") ?? "";
-
-  // Block obvious scrapers via UA (defence-in-depth; not a primary control)
-  if (SUSPICIOUS_UA.test(ua)) {
-    return new Response(JSON.stringify({ error: "Forbidden" }), {
-      status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  }
-
-  // Require Authorization header (no anon access at all)
-  const authHeader = req.headers.get("Authorization");
-  if (!authHeader?.startsWith("Bearer ")) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  }
-
-  // Validate JWT and get user
-  const userClient = createClient(
-    Deno.env.get("SUPABASE_URL")!,
-    Deno.env.get("SUPABASE_ANON_KEY")!,
-    { global: { headers: { Authorization: authHeader } } },
-  );
-  const { data: { user }, error: userErr } = await userClient.auth.getUser();
-  if (userErr || !user) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  }
-
-  const service = createClient(
-    Deno.env.get("SUPABASE_URL")!,
-    Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-  );
+  const auth = await requireUserAuth(req, { corsHeaders });
+  if (!auth.ok) return auth.response;
+  const { user, service, ip, ua } = auth.ctx;
 
   let endpoint = "";
   let filtersForLog: Record<string, unknown> = {};
