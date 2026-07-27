@@ -215,11 +215,7 @@ Deno.serve(async (req) => {
     );
   }
 
-  const apiKey =
-    req.headers.get("x-api-key") ??
-    req.headers.get("authorization")?.replace(/^Bearer\s+/i, "") ??
-    url.searchParams.get("api_key") ??
-    "";
+  const apiKey = extractApiKey(req, url);
 
   const service = createClient(
     Deno.env.get("SUPABASE_URL")!,
@@ -234,21 +230,11 @@ Deno.serve(async (req) => {
     return errorEnvelope(endpoint, "UNKNOWN_ENDPOINT", `Unknown endpoint. Available: ${[...ALLOWED_ENDPOINTS].join(", ")}`, 404);
   }
 
-  // Verify key
-  const keyHash = await sha256Hex(apiKey);
-  const { data: keyRow } = await service
-    .from("radar_api_keys")
-    .select("id, name, scopes, rate_limit_per_hour, rate_limit_per_day, max_rows_per_request, is_active, revoked_at, can_write, write_per_hour, write_per_day, max_write_rows_per_request, share_data, partner_source")
-    .eq("key_hash", keyHash)
-    .maybeSingle();
-
-  if (!keyRow || !keyRow.is_active || keyRow.revoked_at) {
-    return errorEnvelope(endpoint, "INVALID_API_KEY", "Invalid or revoked API key", 401);
-  }
-
-  if (!keyRow.scopes.includes(endpoint)) {
-    return errorEnvelope(endpoint, "SCOPE_DENIED", `API key lacks scope: ${endpoint}`, 403);
-  }
+  const authRes = await authenticateApiKey(service, apiKey, endpoint, (code, message, status, meta) =>
+    errorEnvelope(endpoint, code, message, status, meta),
+  );
+  if (!authRes.ok) return authRes.response;
+  const keyRow = authRes.keyRow;
 
   const isWrite = req.method === "POST";
 
@@ -264,45 +250,12 @@ Deno.serve(async (req) => {
     return errorEnvelope(endpoint, "MISSING_PARTNER_SOURCE", "API key must have partner_source set to write data. Contact CompCare admin.", 403);
   }
 
-  // Rate limit check (read OR write)
-  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
-  const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-
-  const statusFilter = isWrite ? ["write_success", "write_partial"] : ["success"];
-
-  const [{ count: hourCount }, { count: dayCount }] = await Promise.all([
-    service.from("radar_api_log").select("id", { count: "exact", head: true })
-      .eq("api_key_id", keyRow.id).gte("created_at", oneHourAgo)
-      .in("status", isWrite ? statusFilter : ["success", "rate_limited_hour", "rate_limited_day", "error"]),
-    service.from("radar_api_log").select("id", { count: "exact", head: true })
-      .eq("api_key_id", keyRow.id).gte("created_at", oneDayAgo)
-      .in("status", isWrite ? statusFilter : ["success", "rate_limited_hour", "rate_limited_day", "error"]),
-  ]);
-
-  const hourLimit = isWrite ? keyRow.write_per_hour : keyRow.rate_limit_per_hour;
-  const dayLimit = isWrite ? keyRow.write_per_day : keyRow.rate_limit_per_day;
-
-  if ((hourCount ?? 0) >= hourLimit) {
-    await service.from("radar_api_log").insert({
-      api_key_id: keyRow.id, endpoint, query_params: { method: req.method },
-      row_count: 0, status: "rate_limited_hour", client_ip: ip, user_agent: ua,
-    });
-    return errorEnvelope(endpoint, "RATE_LIMITED_HOUR", `Hourly rate limit exceeded (${hourLimit})`, 429, {
-      consumer: keyRow.name,
-      rate_limit: { per_hour: hourLimit, per_day: dayLimit },
-    });
-  }
-
-  if ((dayCount ?? 0) >= dayLimit) {
-    await service.from("radar_api_log").insert({
-      api_key_id: keyRow.id, endpoint, query_params: { method: req.method },
-      row_count: 0, status: "rate_limited_day", client_ip: ip, user_agent: ua,
-    });
-    return errorEnvelope(endpoint, "RATE_LIMITED_DAY", `Daily rate limit exceeded (${dayLimit})`, 429, {
-      consumer: keyRow.name,
-      rate_limit: { per_hour: hourLimit, per_day: dayLimit },
-    });
-  }
+  const rlRes = await enforceApiKeyRateLimit(service, keyRow, {
+    endpoint, isWrite, ip, ua, method: req.method,
+    envelopeError: (code, message, status, meta) => errorEnvelope(endpoint, code, message, status, meta),
+  });
+  if (!rlRes.ok) return rlRes.response;
+  const { hourCount, dayCount, hourLimit, dayLimit } = rlRes;
 
   // ===== POST flow =====
   if (isWrite) {
