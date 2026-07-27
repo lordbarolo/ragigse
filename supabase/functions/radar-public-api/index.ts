@@ -1,11 +1,12 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-api-key, x-client-info, apikey, content-type",
-  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-};
+import {
+  authenticateApiKey,
+  clientIp,
+  corsHeadersPublicApi as corsHeaders,
+  enforceApiKeyRateLimit,
+  extractApiKey,
+  sha256Hex,
+} from "../_shared/auth.ts";
 
 const ALLOWED_ENDPOINTS = new Set([
   "predictions",
@@ -16,22 +17,6 @@ const ALLOWED_ENDPOINTS = new Set([
 // Endpoints som stöder POST (write)
 const WRITE_ENDPOINTS = new Set(["calloff_imports"]);
 
-async function sha256Hex(input: string): Promise<string> {
-  const buf = new TextEncoder().encode(input);
-  const hash = await crypto.subtle.digest("SHA-256", buf);
-  return Array.from(new Uint8Array(hash))
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
-}
-
-function clientIp(req: Request): string | null {
-  return (
-    req.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
-    req.headers.get("cf-connecting-ip") ??
-    req.headers.get("x-real-ip") ??
-    null
-  );
-}
 
 const API_VERSION = "1.1.0";
 
