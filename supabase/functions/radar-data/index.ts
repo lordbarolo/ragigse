@@ -47,25 +47,10 @@ Deno.serve(async (req) => {
     }
 
     // --- Rate limit (per user, all endpoints combined) ---
-    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
-    const { count: recentCount } = await service
-      .from("radar_access_log")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", user.id)
-      .gte("created_at", oneHourAgo);
-
-    if ((recentCount ?? 0) >= RATE_LIMIT_PER_HOUR) {
-      // Log the rate-limit hit too (so we can detect attack patterns)
-      await service.from("radar_access_log").insert({
-        user_id: user.id, endpoint, filters: { rate_limited: true },
-        row_count: 0, client_ip: ip, user_agent: ua.slice(0, 200), status: "rate_limited",
-      });
-      return new Response(JSON.stringify({
-        error: `Rate limit exceeded: max ${RATE_LIMIT_PER_HOUR} requests per hour`,
-      }), {
-        status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
+    const rl = await enforceUserRateLimit(service, user, endpoint, {
+      ip, ua, limitPerHour: RATE_LIMIT_PER_HOUR, corsHeaders,
+    });
+    if (rl) return rl;
 
     let rows: unknown[] = [];
 
