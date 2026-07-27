@@ -129,6 +129,10 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
+  const auth = await requireUserAuth(req, { corsHeaders });
+  if (!auth.ok) return auth.response;
+  const { user, service: supabase, ip, ua } = auth.ctx;
+
   try {
     const url = new URL(req.url);
     const competenceFilter = url.searchParams.get("competence") || "";
@@ -137,10 +141,12 @@ Deno.serve(async (req) => {
     const page = parseInt(url.searchParams.get("page") || "0");
     const pageSize = parseInt(url.searchParams.get("pageSize") || "20");
 
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
-    );
+    const rl = await enforceUserRateLimit(supabase, user, "radar-predictions", {
+      ip, ua, limitPerHour: 30, corsHeaders,
+      filters: { competence: competenceFilter, location: locationFilter, buyer: buyerFilter },
+    });
+    if (rl) return rl;
+
 
     const applyFilters = (competenceCol: string, locationCol: string, buyerCol: string, hasCustType: boolean) => (q: any) => {
       if (competenceFilter) q = q.eq(competenceCol, competenceFilter);
