@@ -115,8 +115,8 @@ serve(async (req) => {
     //   1. report.status === "paid"                          (isPaid)
     //   2. report.unlocked_by_referral === true              (isReferralUnlocked)
     //   3. authenticated caller and report.user_id === auth.sub  (isOwner)
-    //   4. report.email is set (email gate completed)         (isEmailUnlocked)
-    //   5. valid signed access_token whose email matches      (isTokenUnlocked)
+    //   4. valid signed access_token whose email matches      (isTokenUnlocked)
+    // NOTE: `!!report.email` is intentionally NOT a grant — see get-report.
     let authUserId: string | null = null;
     const authHeader = req.headers.get("Authorization");
     if (authHeader?.startsWith("Bearer ")) {
@@ -146,7 +146,6 @@ serve(async (req) => {
     const isPaid = report.status === "paid";
     const isReferralUnlocked = report.unlocked_by_referral === true;
     const isOwner = !!authUserId && report.user_id === authUserId;
-    const isEmailUnlocked = !!report.email;
     let isTokenUnlocked = false;
     if (typeof access_token === "string" && access_token.length > 0) {
       try {
@@ -157,7 +156,7 @@ serve(async (req) => {
         console.warn("Invalid report access token", tokenError);
       }
     }
-    const fullAccess = isPaid || isReferralUnlocked || isOwner || isEmailUnlocked || isTokenUnlocked;
+    const fullAccess = isPaid || isReferralUnlocked || isOwner || isTokenUnlocked;
 
     if (!fullAccess) {
       return new Response(JSON.stringify({ error: "Access denied" }), {
