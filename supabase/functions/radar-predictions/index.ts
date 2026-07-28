@@ -409,17 +409,40 @@ Deno.serve(async (req) => {
     const total = predictions.length;
     const paged = predictions.slice(page * pageSize, (page + 1) * pageSize);
 
-    const filters = {
-      competences: [...new Set(unified.map(r => r.competence))].sort(),
-      locations: [...new Set(unified.map(r => r.location))].sort(),
-      buyers: [...new Set(unified.map(r => r.buyer))].sort(),
-    };
+    // Log successful access
+    await service.from("radar_access_log").insert({
+      user_id: user.id,
+      endpoint: "radar-predictions",
+      filters: {
+        competence: competenceFilter, location: locationFilter, buyer: buyerFilter,
+        page, pageSize,
+      },
+      row_count: paged.length,
+      client_ip: ip,
+      user_agent: ua.slice(0, 200),
+      status: "success",
+    }).then(() => {}, () => {});
 
-    return new Response(JSON.stringify({ predictions: paged, total, filters }), {
+    // NOTE: previously we returned a `filters` object built from the full
+    // unified dataset (every buyer/location/competence). That was a full
+    // customer-register dump and has been removed. If the frontend needs
+    // facets, build a dedicated endpoint following radar-data's
+    // regions/specializations pattern.
+    return new Response(JSON.stringify({ predictions: paged, total }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
-    console.error("[radar-predictions] error:", err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("[radar-predictions] error:", msg);
+    await service.from("radar_access_log").insert({
+      user_id: user.id,
+      endpoint: "radar-predictions",
+      filters: { competence: competenceFilter, location: locationFilter, buyer: buyerFilter },
+      row_count: 0,
+      client_ip: ip,
+      user_agent: ua.slice(0, 200),
+      status: "error",
+    }).then(() => {}, () => {});
     return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
