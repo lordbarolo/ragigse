@@ -92,13 +92,25 @@ function deduplicatePeriods(rows: UnifiedRow[]): MergedPeriod[] {
   return allMerged;
 }
 
-/** Paginated fetch — fetches all rows from a Supabase query in 1000-row batches */
+/** Absolute safety cap on how many rows a single request may ingest. */
+const MAX_TOTAL_ROWS = 100_000;
+
+/** Paginated fetch — fetches rows from a Supabase query in 1000-row batches,
+ *  capped at MAX_TOTAL_ROWS to prevent unbounded resource use. */
 async function fetchAll(supabase: any, table: string, select: string, filters: (q: any) => any, orderCol: string) {
   const PAGE_SIZE = 1000;
   let allRows: any[] = [];
   let offset = 0;
   while (true) {
-    let query = supabase.from(table).select(select).order(orderCol, { ascending: false }).range(offset, offset + PAGE_SIZE - 1);
+    if (allRows.length >= MAX_TOTAL_ROWS) {
+      console.warn(
+        `[radar-predictions] MAX_TOTAL_ROWS (${MAX_TOTAL_ROWS}) hit for "${table}" — truncating result set`,
+      );
+      break;
+    }
+    const remaining = MAX_TOTAL_ROWS - allRows.length;
+    const batchSize = Math.min(PAGE_SIZE, remaining);
+    let query = supabase.from(table).select(select).order(orderCol, { ascending: false }).range(offset, offset + batchSize - 1);
     query = filters(query);
     const { data, error } = await query;
     if (error) {
@@ -118,8 +130,8 @@ async function fetchAll(supabase: any, table: string, select: string, filters: (
     }
     if (!data || data.length === 0) break;
     allRows = allRows.concat(data);
-    if (data.length < PAGE_SIZE) break;
-    offset += PAGE_SIZE;
+    if (data.length < batchSize) break;
+    offset += batchSize;
   }
   return allRows;
 }
@@ -131,15 +143,35 @@ Deno.serve(async (req) => {
 
   const auth = await requireUserAuth(req, { corsHeaders });
   if (!auth.ok) return auth.response;
-  const { user, service: supabase, ip, ua } = auth.ctx;
+  const { user, service, ip, ua } = auth.ctx;
+  const supabase = service;
+
+  // Hoisted so the catch block can log the same filter context on failure
+  const url = new URL(req.url);
+  const competenceFilter = url.searchParams.get("competence") || "";
+  const locationFilter = url.searchParams.get("location") || "";
+  const buyerFilter = url.searchParams.get("buyer") || "";
 
   try {
-    const url = new URL(req.url);
-    const competenceFilter = url.searchParams.get("competence") || "";
-    const locationFilter = url.searchParams.get("location") || "";
-    const buyerFilter = url.searchParams.get("buyer") || "";
-    const page = parseInt(url.searchParams.get("page") || "0");
-    const pageSize = parseInt(url.searchParams.get("pageSize") || "20");
+    // --- Strict input validation ---
+    const rawPage = url.searchParams.get("page");
+    const rawPageSize = url.searchParams.get("pageSize");
+    const parsedPage = rawPage === null ? 0 : Number(rawPage);
+    const parsedPageSize = rawPageSize === null ? 20 : Number(rawPageSize);
+    if (!Number.isInteger(parsedPage) || parsedPage < 0) {
+      return new Response(JSON.stringify({ error: "Invalid page" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    if (!Number.isInteger(parsedPageSize) || parsedPageSize < 1) {
+      return new Response(JSON.stringify({ error: "Invalid pageSize" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const page = parsedPage;
+    const pageSize = Math.min(parsedPageSize, 25); // clamp 1..25
 
     const rl = await enforceUserRateLimit(supabase, user, "radar-predictions", {
       ip, ua, limitPerHour: 30, corsHeaders,
@@ -380,17 +412,40 @@ Deno.serve(async (req) => {
     const total = predictions.length;
     const paged = predictions.slice(page * pageSize, (page + 1) * pageSize);
 
-    const filters = {
-      competences: [...new Set(unified.map(r => r.competence))].sort(),
-      locations: [...new Set(unified.map(r => r.location))].sort(),
-      buyers: [...new Set(unified.map(r => r.buyer))].sort(),
-    };
+    // Log successful access
+    await service.from("radar_access_log").insert({
+      user_id: user.id,
+      endpoint: "radar-predictions",
+      filters: {
+        competence: competenceFilter, location: locationFilter, buyer: buyerFilter,
+        page, pageSize,
+      },
+      row_count: paged.length,
+      client_ip: ip,
+      user_agent: ua.slice(0, 200),
+      status: "success",
+    }).then(() => {}, () => {});
 
-    return new Response(JSON.stringify({ predictions: paged, total, filters }), {
+    // NOTE: previously we returned a `filters` object built from the full
+    // unified dataset (every buyer/location/competence). That was a full
+    // customer-register dump and has been removed. If the frontend needs
+    // facets, build a dedicated endpoint following radar-data's
+    // regions/specializations pattern.
+    return new Response(JSON.stringify({ predictions: paged, total }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err) {
-    console.error("[radar-predictions] error:", err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("[radar-predictions] error:", msg);
+    await service.from("radar_access_log").insert({
+      user_id: user.id,
+      endpoint: "radar-predictions",
+      filters: { competence: competenceFilter, location: locationFilter, buyer: buyerFilter },
+      row_count: 0,
+      client_ip: ip,
+      user_agent: ua.slice(0, 200),
+      status: "error",
+    }).then(() => {}, () => {});
     return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
