@@ -144,7 +144,7 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.radar-data]
-verify_jwt = false
+verify_jwt = true
 
 [functions.radar-import]
 verify_jwt = false
