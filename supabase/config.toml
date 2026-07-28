@@ -68,8 +68,7 @@ verify_jwt = false
 [functions.stripe-webhook]
 verify_jwt = false
 
-[functions.send-referral-legacy-placeholder]
-verify_jwt = true
+
 
 [functions.radar-predictions]
 verify_jwt = true
