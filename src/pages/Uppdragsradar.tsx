@@ -10,6 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import SearchableSelect from "@/components/SearchableSelect";
 import ReactMarkdown from "react-markdown";
+import { supabase } from "@/integrations/supabase/client";
 
 interface RegionPrediction {
   region_namn: string;
