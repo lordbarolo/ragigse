@@ -33,18 +33,8 @@ type ChatMsg = { role: "user" | "assistant"; content: string };
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/uppdragsradar-chat`;
 
 async function fetchPredictions(roll: string): Promise<PredictionsResponse> {
-  const { data, error } = await supabase.functions.invoke("get-avrop-predictions", {
-    method: "GET",
-    // supabase-js appends query string via body for GET when passed as searchParams
-    body: undefined,
-    headers: {},
-    // Custom query via URL — invoke doesn't take query params, so pass via URL suffix:
-  } as any);
-  // supabase-js .invoke doesn't support query params directly for GET, so fall
-  // back to a JWT-authenticated fetch using the current session token.
-  if (data || error) {
-    // unreachable branch — real request below
-  }
+  // JWT is required (verify_jwt=true). Pull the current session token and
+  // send it as Authorization; roll goes on the query string as before.
   const { data: session } = await supabase.auth.getSession();
   const token = session.session?.access_token;
   if (!token) throw new Error("Ingen aktiv session");
