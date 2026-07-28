@@ -143,13 +143,16 @@ Deno.serve(async (req) => {
 
   const auth = await requireUserAuth(req, { corsHeaders });
   if (!auth.ok) return auth.response;
-  const { user, service: supabase, ip, ua } = auth.ctx;
+  const { user, service, ip, ua } = auth.ctx;
+  const supabase = service;
+
+  // Hoisted so the catch block can log the same filter context on failure
+  const url = new URL(req.url);
+  const competenceFilter = url.searchParams.get("competence") || "";
+  const locationFilter = url.searchParams.get("location") || "";
+  const buyerFilter = url.searchParams.get("buyer") || "";
 
   try {
-    const url = new URL(req.url);
-    const competenceFilter = url.searchParams.get("competence") || "";
-    const locationFilter = url.searchParams.get("location") || "";
-    const buyerFilter = url.searchParams.get("buyer") || "";
     // --- Strict input validation ---
     const rawPage = url.searchParams.get("page");
     const rawPageSize = url.searchParams.get("pageSize");
