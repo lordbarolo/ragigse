@@ -3,7 +3,7 @@ project_id = "ubhhlunhdqbokjvwfebb"
 
 
 [functions.send-referral]
-verify_jwt = false
+verify_jwt = true
 
 [functions.confirm-referral]
 verify_jwt = false
@@ -68,8 +68,7 @@ verify_jwt = false
 [functions.stripe-webhook]
 verify_jwt = false
 
-[functions.send-referral]
-verify_jwt = false
+
 
 [functions.radar-predictions]
 verify_jwt = true
