@@ -35,9 +35,22 @@ async function verifyReportAccessToken(token: string, reportId: string): Promise
   return payload.email.toLowerCase().trim();
 }
 
+function clientIp(req: Request): string | null {
+  return (
+    req.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
+    req.headers.get("cf-connecting-ip") ??
+    req.headers.get("x-real-ip") ??
+    null
+  );
+}
+
 function fmt(v: number): string {
   return v.toLocaleString("sv-SE");
 }
+
+// Rate limit: at most this many generate-pdf attempts per (IP, report_id) per hour.
+// Blocks anonymous report_id enumeration without blocking a legitimate paying user.
+const RATE_LIMIT_PER_HOUR = 20;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -58,8 +71,52 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
-    // Same access model as get-report: JWT owner, paid, referral unlock,
-    // email-gated report, or signed access token.
+    // ---- Rate limit: key on client IP + report_id ------------------------
+    // Anonymous callers have no user_id, so the shared user-keyed limiter in
+    // _shared/auth.ts does not apply here. We instead cap attempts per
+    // (IP, report_id) per hour via rate_limit_log to stop enumeration.
+    const ip = clientIp(req);
+    const endpointKey = `generate-pdf:${report_id}`;
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+
+    if (ip) {
+      const { count: recentCount } = await supabase
+        .from("rate_limit_log")
+        .select("id", { count: "exact", head: true })
+        .eq("endpoint", endpointKey)
+        .eq("client_ip", ip)
+        .gte("created_at", oneHourAgo);
+
+      if ((recentCount ?? 0) >= RATE_LIMIT_PER_HOUR) {
+        return new Response(
+          JSON.stringify({
+            error: `Rate limit exceeded: max ${RATE_LIMIT_PER_HOUR} requests per hour`,
+          }),
+          {
+            status: 429,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
+    }
+
+    // Log the attempt (best-effort; do not fail request if logging fails).
+    try {
+      await supabase.from("rate_limit_log").insert({
+        endpoint: endpointKey,
+        client_ip: ip,
+      });
+    } catch (_logErr) {
+      // Non-fatal.
+    }
+
+    // ---- Access decision: mirror get-report exactly ----------------------
+    // Conditions (any one grants fullAccess):
+    //   1. report.status === "paid"                          (isPaid)
+    //   2. report.unlocked_by_referral === true              (isReferralUnlocked)
+    //   3. authenticated caller and report.user_id === auth.sub  (isOwner)
+    //   4. report.email is set (email gate completed)         (isEmailUnlocked)
+    //   5. valid signed access_token whose email matches      (isTokenUnlocked)
     let authUserId: string | null = null;
     const authHeader = req.headers.get("Authorization");
     if (authHeader?.startsWith("Bearer ")) {
