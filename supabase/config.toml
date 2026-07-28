@@ -72,13 +72,13 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.radar-predictions]
-verify_jwt = false
+verify_jwt = true
 
 [functions.get-avrop-predictions]
-verify_jwt = false
+verify_jwt = true
 
 [functions.uppdragsradar-chat]
-verify_jwt = false
+verify_jwt = true
 
 [functions.delete-account]
 verify_jwt = false
