@@ -1,10 +1,13 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import {
+  corsHeadersUser as corsHeaders,
+  enforceUserRateLimit,
+  requireUserAuth,
+} from "../_shared/auth.ts";
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
-};
+// Absolute row cap on any single query into calloff_imports so a malformed /
+// unfiltered request can never pull the entire register.
+const MAX_TOTAL_ROWS = 100_000;
+const RATE_LIMIT_PER_HOUR = 30;
 
 interface UnifiedRow {
   customer: string;
@@ -25,7 +28,6 @@ interface RegionPrediction {
   dagar_kvar: number;
   senaste_kund: string;
   medianpris: number | null;
-  // Nya fält från förberäknade prognoser
   expected_calloffs?: number;
   confidence?: "low" | "med" | "high";
   is_seasonal_peak?: boolean;
@@ -59,10 +61,6 @@ async function fetchAllRoles(supabase: any): Promise<string[]> {
   return [...roles].sort();
 }
 
-/**
- * Mappa fri-text roll (calloff_imports.role, t.ex. "Läkare", "Specialistläkare Allmänmedicin")
- * till profession-ENUM som används i uppdragsradar_predictions ("DOCTOR" | "NURSE" | "PHYSIOTHERAPIST").
- */
 function mapRoleToProfession(roll: string): string | null {
   if (!roll) return null;
   const r = roll.toLowerCase();
@@ -82,7 +80,14 @@ async function fetchRegionContext(
     .from("calloff_imports")
     .select("customer, region, calloff_date, price_median")
     .eq("role", roll)
-    .order("calloff_date", { ascending: false });
+    .order("calloff_date", { ascending: false })
+    .limit(MAX_TOTAL_ROWS);
+
+  if ((data?.length ?? 0) >= MAX_TOTAL_ROWS) {
+    console.warn(
+      `[get-avrop-predictions] MAX_TOTAL_ROWS (${MAX_TOTAL_ROWS}) hit for role "${roll}" — truncating`,
+    );
+  }
 
   const map = new Map<string, { lastDate: string; lastCustomer: string; medianPrice: number | null; histCount: number }>();
   const pricesByRegion = new Map<string, number[]>();
@@ -119,48 +124,38 @@ Deno.serve(async (req) => {
     return new Response(null, { headers: corsHeaders });
   }
 
-  // Auth gate: require valid JWT before touching any data
-  const authHeader = req.headers.get("Authorization");
-  if (!authHeader?.startsWith("Bearer ")) {
-    return new Response(JSON.stringify({ error: "Unauthorized" }), {
-      status: 401,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
-  }
-  {
-    const anon = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_ANON_KEY")!,
-      { global: { headers: { Authorization: authHeader } } },
-    );
-    const { data: { user }, error: authErr } = await anon.auth.getUser();
-    if (authErr || !user) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-      });
-    }
-  }
+  const auth = await requireUserAuth(req, { corsHeaders });
+  if (!auth.ok) return auth.response;
+  const { user, service: supabase, ip, ua } = auth.ctx;
+
+  const url = new URL(req.url);
+  const roll = (url.searchParams.get("roll") || "").slice(0, 200);
+
+  const rl = await enforceUserRateLimit(supabase, user, "get-avrop-predictions", {
+    ip, ua, limitPerHour: RATE_LIMIT_PER_HOUR, corsHeaders,
+    filters: { roll },
+  });
+  if (rl) return rl;
 
   try {
-    const url = new URL(req.url);
-    const roll = url.searchParams.get("roll") || "";
-
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
-    );
-
     // Endast roll-listning
     if (!roll || roll === "__all_roles__") {
       const roller = await fetchAllRoles(supabase);
+      await supabase.from("radar_access_log").insert({
+        user_id: user.id,
+        endpoint: "get-avrop-predictions",
+        filters: { roll: roll || null, mode: "roles_only" },
+        row_count: roller.length,
+        client_ip: ip,
+        user_agent: ua.slice(0, 200),
+        status: "success",
+      }).then(() => {}, () => {});
       return new Response(JSON.stringify({ predictions: [], roller }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     // 1. Hämta förberäknade prognoser för rollen från senaste forecast_run
-    //    Filtrera på månad >= innevarande månad och endast med/high confidence
     const today = new Date();
     const currentYM = `${today.getUTCFullYear()}-${String(today.getUTCMonth() + 1).padStart(2, "0")}`;
 
@@ -171,7 +166,6 @@ Deno.serve(async (req) => {
       .limit(1);
 
     const runId = latestRun?.[0]?.forecast_run_id;
-
     const profession = mapRoleToProfession(roll);
 
     let forecasts: ForecastRow[] = [];
@@ -185,7 +179,8 @@ Deno.serve(async (req) => {
         .eq("profession", profession)
         .gte("month", currentYM)
         .in("confidence", ["med", "high"])
-        .order("month", { ascending: true });
+        .order("month", { ascending: true })
+        .limit(MAX_TOTAL_ROWS);
       forecasts = (data || []) as ForecastRow[];
     }
 
@@ -193,8 +188,6 @@ Deno.serve(async (req) => {
     if (forecasts.length > 0) {
       const ctxMap = await fetchRegionContext(supabase, roll);
 
-      // Aggregera per region: summera expected_calloffs över alla framtida månader,
-      // välj kunden med högst volym som "topp-kund" för regionen
       const regionAgg = new Map<string, {
         totalExpected: number;
         topCustomer: string;
@@ -246,18 +239,14 @@ Deno.serve(async (req) => {
 
       for (const [region, agg] of regionAgg) {
         const ctx = ctxMap.get(region);
-
-        // Beräkna snitt-dagar mellan avrop ur prognosen:
-        // 6 månader (180 dagar) / total förväntad volym = dagar mellan avrop
         const avgInterval = agg.totalExpected > 0
           ? Math.max(1, Math.round(180 / agg.totalExpected))
           : 30;
 
-        // Predikterat nästa datum: senaste kända + avgInterval (eller idag + avgInterval om ingen historik)
         const baseDate = ctx?.lastDate ? new Date(ctx.lastDate) : today;
         const predictedNextMs = Math.max(
           baseDate.getTime() + avgInterval * 86400 * 1000,
-          todayMs, // aldrig i dåtid
+          todayMs,
         );
         const predictedNext = new Date(predictedNextMs);
         const daysLeft = Math.max(
@@ -283,9 +272,18 @@ Deno.serve(async (req) => {
       }
 
       predictions.sort((a, b) => a.dagar_kvar - b.dagar_kvar);
-
       const roller = await fetchAllRoles(supabase);
       const generatedAt = forecasts[0]?.generated_at ?? null;
+
+      await supabase.from("radar_access_log").insert({
+        user_id: user.id,
+        endpoint: "get-avrop-predictions",
+        filters: { roll, source: "precomputed" },
+        row_count: predictions.length,
+        client_ip: ip,
+        user_agent: ua.slice(0, 200),
+        status: "success",
+      }).then(() => {}, () => {});
 
       return new Response(
         JSON.stringify({
@@ -306,7 +304,14 @@ Deno.serve(async (req) => {
       .from("calloff_imports")
       .select("customer, role, specialization, calloff_date, region, filled, price_median")
       .eq("role", roll)
-      .order("calloff_date", { ascending: false });
+      .order("calloff_date", { ascending: false })
+      .limit(MAX_TOTAL_ROWS);
+
+    if ((rawRows?.length ?? 0) >= MAX_TOTAL_ROWS) {
+      console.warn(
+        `[get-avrop-predictions] MAX_TOTAL_ROWS (${MAX_TOTAL_ROWS}) hit for fallback path, role "${roll}"`,
+      );
+    }
 
     const allRows: UnifiedRow[] = (rawRows || [])
       .map((r: any) => ({
@@ -331,10 +336,8 @@ Deno.serve(async (req) => {
 
     for (const [regionNamn, reqs] of groups) {
       if (reqs.length < 3) continue;
-
       reqs.sort(
-        (a, b) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
       );
 
       const intervals: number[] = [];
@@ -374,12 +377,32 @@ Deno.serve(async (req) => {
     predictions.sort((a, b) => a.dagar_kvar - b.dagar_kvar);
     const roller = await fetchAllRoles(supabase);
 
+    await supabase.from("radar_access_log").insert({
+      user_id: user.id,
+      endpoint: "get-avrop-predictions",
+      filters: { roll, source: "realtime_fallback" },
+      row_count: predictions.length,
+      client_ip: ip,
+      user_agent: ua.slice(0, 200),
+      status: "success",
+    }).then(() => {}, () => {});
+
     return new Response(
       JSON.stringify({ predictions, roller, source: "realtime_fallback" }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (err) {
-    console.error("[get-avrop-predictions] error:", err);
+    const msg = err instanceof Error ? err.message : String(err);
+    console.error("[get-avrop-predictions] error:", msg);
+    await supabase.from("radar_access_log").insert({
+      user_id: user.id,
+      endpoint: "get-avrop-predictions",
+      filters: { roll },
+      row_count: 0,
+      client_ip: ip,
+      user_agent: ua.slice(0, 200),
+      status: "error",
+    }).then(() => {}, () => {});
     return new Response(JSON.stringify({ error: "Internal server error" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
