@@ -150,8 +150,25 @@ Deno.serve(async (req) => {
     const competenceFilter = url.searchParams.get("competence") || "";
     const locationFilter = url.searchParams.get("location") || "";
     const buyerFilter = url.searchParams.get("buyer") || "";
-    const page = parseInt(url.searchParams.get("page") || "0");
-    const pageSize = parseInt(url.searchParams.get("pageSize") || "20");
+    // --- Strict input validation ---
+    const rawPage = url.searchParams.get("page");
+    const rawPageSize = url.searchParams.get("pageSize");
+    const parsedPage = rawPage === null ? 0 : Number(rawPage);
+    const parsedPageSize = rawPageSize === null ? 20 : Number(rawPageSize);
+    if (!Number.isInteger(parsedPage) || parsedPage < 0) {
+      return new Response(JSON.stringify({ error: "Invalid page" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    if (!Number.isInteger(parsedPageSize) || parsedPageSize < 1) {
+      return new Response(JSON.stringify({ error: "Invalid pageSize" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const page = parsedPage;
+    const pageSize = Math.min(parsedPageSize, 25); // clamp 1..25
 
     const rl = await enforceUserRateLimit(supabase, user, "radar-predictions", {
       ip, ua, limitPerHour: 30, corsHeaders,
