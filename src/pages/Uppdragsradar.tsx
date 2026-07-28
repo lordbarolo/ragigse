@@ -92,16 +92,24 @@ export default function Uppdragsradar() {
   const { data: rolesData } = useQuery({
     queryKey: ["uppdragsradar-roles"],
     queryFn: async () => {
+      const { data: session } = await supabase.auth.getSession();
+      const token = session.session?.access_token;
+      if (!token) return { roller: [] };
       const projectId = import.meta.env.VITE_SUPABASE_PROJECT_ID;
-      // Fetch with a dummy that returns empty predictions but all roles
       const res = await fetch(
         `https://${projectId}.supabase.co/functions/v1/get-avrop-predictions?roll=__all_roles__`,
-        { headers: { apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY } }
+        {
+          headers: {
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       if (!res.ok) return { roller: [] };
       const json = await res.json();
       return { roller: json.roller || [] };
     },
+    enabled: !!user,
     staleTime: 300_000,
   });
 
