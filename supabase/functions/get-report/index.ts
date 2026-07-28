@@ -85,13 +85,13 @@ serve(async (req) => {
       });
     }
 
-    // Determine access level — the free report is unlocked once an email has been saved.
-    // Do not require account ownership here: report delivery links and the email gate must
-    // open the same full report across tabs/devices without forcing a login.
+    // Determine access level. `report_id` alone is not a capability — access requires
+    // one of: paid, referral-unlocked, authenticated owner, or a valid signed access
+    // token issued by save-email at signup time. Previously `!!report.email` granted
+    // access, which short-circuited any future paywall (anyone with the URL got in).
     const isPaid = report.status === "paid";
     const isReferralUnlocked = report.unlocked_by_referral === true;
     const isOwner = !!authUserId && report.user_id === authUserId;
-    const isEmailUnlocked = !!report.email;
     let isTokenUnlocked = false;
     if (typeof access_token === "string" && access_token.length > 0) {
       try {
@@ -102,7 +102,7 @@ serve(async (req) => {
         console.warn("Invalid report access token", tokenError);
       }
     }
-    const fullAccess = isPaid || isReferralUnlocked || isOwner || isEmailUnlocked || isTokenUnlocked;
+    const fullAccess = isPaid || isReferralUnlocked || isOwner || isTokenUnlocked;
 
     // Build response based on access level. Email is only returned to the authenticated owner.
     const response: Record<string, unknown> = {
