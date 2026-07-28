@@ -92,13 +92,25 @@ function deduplicatePeriods(rows: UnifiedRow[]): MergedPeriod[] {
   return allMerged;
 }
 
-/** Paginated fetch — fetches all rows from a Supabase query in 1000-row batches */
+/** Absolute safety cap on how many rows a single request may ingest. */
+const MAX_TOTAL_ROWS = 100_000;
+
+/** Paginated fetch — fetches rows from a Supabase query in 1000-row batches,
+ *  capped at MAX_TOTAL_ROWS to prevent unbounded resource use. */
 async function fetchAll(supabase: any, table: string, select: string, filters: (q: any) => any, orderCol: string) {
   const PAGE_SIZE = 1000;
   let allRows: any[] = [];
   let offset = 0;
   while (true) {
-    let query = supabase.from(table).select(select).order(orderCol, { ascending: false }).range(offset, offset + PAGE_SIZE - 1);
+    if (allRows.length >= MAX_TOTAL_ROWS) {
+      console.warn(
+        `[radar-predictions] MAX_TOTAL_ROWS (${MAX_TOTAL_ROWS}) hit for "${table}" — truncating result set`,
+      );
+      break;
+    }
+    const remaining = MAX_TOTAL_ROWS - allRows.length;
+    const batchSize = Math.min(PAGE_SIZE, remaining);
+    let query = supabase.from(table).select(select).order(orderCol, { ascending: false }).range(offset, offset + batchSize - 1);
     query = filters(query);
     const { data, error } = await query;
     if (error) {
@@ -118,8 +130,8 @@ async function fetchAll(supabase: any, table: string, select: string, filters: (
     }
     if (!data || data.length === 0) break;
     allRows = allRows.concat(data);
-    if (data.length < PAGE_SIZE) break;
-    offset += PAGE_SIZE;
+    if (data.length < batchSize) break;
+    offset += batchSize;
   }
   return allRows;
 }
