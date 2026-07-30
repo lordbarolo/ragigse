@@ -4,6 +4,7 @@ import { Check, ShieldCheck } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 import InlineTerminalSurvey from "@/components/survey/InlineTerminalSurvey";
 import RoleCarousel from "@/components/landing/RoleCarousel";
+import SiteFooter from "@/components/landing/SiteFooter";
 import AnthropicScope from "@/components/demo/AnthropicScope";
 import { SEO } from "@/components/SEO";
 import { trackEvent } from "@/lib/trackEvent";
