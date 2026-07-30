@@ -38,10 +38,8 @@ verify_jwt = false
 [functions.get-lead]
 verify_jwt = false
 
-[functions.redeem-coupon]
-verify_jwt = false
-
 [functions.save-email]
+
 verify_jwt = false
 
 [functions.validate-coupon]
