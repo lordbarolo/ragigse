@@ -135,19 +135,8 @@ export default function Home() {
 
         <RoleCarousel />
 
-        {/* ── Footer ──────────────────────────── */}
-        <footer className="mt-16 border-t border-black/10 px-5 py-8 text-xs text-black/55">
-          <div className="max-w-6xl mx-auto flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
-            <div>
-              <p className="font-medium text-black/75"></p>
-            </div>
-            <nav className="flex flex-wrap gap-x-5 gap-y-2">
-              <a href="mailto:info@compcare.se" className="hover:text-black underline-offset-4 hover:underline">info@compcare.se</a>
-              <Link to="/integritetspolicy" className="hover:text-black underline-offset-4 hover:underline">Integritetspolicy</Link>
-              <Link to="/vanliga-fragor" className="hover:text-black underline-offset-4 hover:underline">Vanliga frågor</Link>
-            </nav>
-          </div>
-        </footer>
+        <SiteFooter />
+
 
       </div>
     </AnthropicScope>
