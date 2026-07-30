@@ -80,14 +80,11 @@ Deno.serve(async (req) => {
 
     if (cpRows && cpRows.length > 0) {
       const cpIds = cpRows.map((r: any) => r.id);
-      await supabase.from("consultant_documents").delete().in("consultant_id", cpIds);
       await supabase.from("consultant_references").delete().in("consultant_id", cpIds);
       await supabase.from("consultant_profiles").delete().eq("user_id", userId);
     }
 
     // 4. Delete ref system data
-    await supabase.from("ref_references").delete().eq("individual_id", userId);
-    await supabase.from("ref_verifications").delete().eq("profile_id", userId);
     await supabase.from("ref_profiles").delete().eq("id", userId);
 
     // 5. Delete profiles

@@ -1122,56 +1122,6 @@ export type Database = {
         }
         Relationships: []
       }
-      consultant_documents: {
-        Row: {
-          consultant_id: string
-          document_type: string
-          expires_at: string | null
-          file_name: string
-          file_url: string
-          id: string
-          notes: string | null
-          uploaded_at: string
-          verified: boolean
-          verified_at: string | null
-          verified_by: string | null
-        }
-        Insert: {
-          consultant_id: string
-          document_type: string
-          expires_at?: string | null
-          file_name: string
-          file_url: string
-          id?: string
-          notes?: string | null
-          uploaded_at?: string
-          verified?: boolean
-          verified_at?: string | null
-          verified_by?: string | null
-        }
-        Update: {
-          consultant_id?: string
-          document_type?: string
-          expires_at?: string | null
-          file_name?: string
-          file_url?: string
-          id?: string
-          notes?: string | null
-          uploaded_at?: string
-          verified?: boolean
-          verified_at?: string | null
-          verified_by?: string | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "consultant_documents_consultant_id_fkey"
-            columns: ["consultant_id"]
-            isOneToOne: false
-            referencedRelation: "consultant_profiles"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       consultant_profiles: {
         Row: {
           care_setting: string | null
@@ -1429,83 +1379,6 @@ export type Database = {
           vol_2026_ytd?: number | null
           yoy_ratio?: number | null
           ytd_ratio?: number | null
-        }
-        Relationships: []
-      }
-      document_share_views: {
-        Row: {
-          action: string
-          document_id: string | null
-          id: string
-          ip_address: string | null
-          share_id: string
-          user_agent: string | null
-          viewed_at: string
-        }
-        Insert: {
-          action?: string
-          document_id?: string | null
-          id?: string
-          ip_address?: string | null
-          share_id: string
-          user_agent?: string | null
-          viewed_at?: string
-        }
-        Update: {
-          action?: string
-          document_id?: string | null
-          id?: string
-          ip_address?: string | null
-          share_id?: string
-          user_agent?: string | null
-          viewed_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "document_share_views_share_id_fkey"
-            columns: ["share_id"]
-            isOneToOne: false
-            referencedRelation: "document_shares"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      document_shares: {
-        Row: {
-          created_at: string
-          document_ids: string[]
-          expires_at: string | null
-          id: string
-          last_viewed_at: string | null
-          recipient_email: string | null
-          recipient_label: string | null
-          token: string
-          user_id: string
-          view_count: number
-        }
-        Insert: {
-          created_at?: string
-          document_ids: string[]
-          expires_at?: string | null
-          id?: string
-          last_viewed_at?: string | null
-          recipient_email?: string | null
-          recipient_label?: string | null
-          token: string
-          user_id: string
-          view_count?: number
-        }
-        Update: {
-          created_at?: string
-          document_ids?: string[]
-          expires_at?: string | null
-          id?: string
-          last_viewed_at?: string | null
-          recipient_email?: string | null
-          recipient_label?: string | null
-          token?: string
-          user_id?: string
-          view_count?: number
         }
         Relationships: []
       }
@@ -3996,17 +3869,6 @@ export type Database = {
         Args: { _org_id: string; _user_id: string }
         Returns: boolean
       }
-      list_my_document_shares: { Args: never; Returns: Json }
-      log_document_share_view: {
-        Args: {
-          _action?: string
-          _document_id?: string
-          _ip?: string
-          _token: string
-          _user_agent?: string
-        }
-        Returns: undefined
-      }
       log_edge_error: {
         Args: {
           _context?: Json
@@ -4162,7 +4024,6 @@ export type Database = {
         Args: { _request_id: string }
         Returns: undefined
       }
-      revoke_document_share: { Args: { _id: string }; Returns: undefined }
       search_staffing_agencies: {
         Args: { query: string }
         Returns: {
