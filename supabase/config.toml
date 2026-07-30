@@ -38,10 +38,8 @@ verify_jwt = false
 [functions.get-lead]
 verify_jwt = false
 
-[functions.redeem-coupon]
-verify_jwt = false
-
 [functions.save-email]
+
 verify_jwt = false
 
 [functions.validate-coupon]
@@ -82,10 +80,8 @@ verify_jwt = true
 [functions.delete-account]
 verify_jwt = false
 
-[functions.radar-notify]
-verify_jwt = false
-
 [functions.compensation-intelligence]
+
 verify_jwt = false
 
 [functions.ci-capabilities]

@@ -167,3 +167,48 @@ Ej i Fas 3: DB-schema, `ui/`-primitiver, kod under 2E.
 ## Nästa steg — Fas 2
 
 Svara med `behåll` / `radera` / `senare` per grupp i avsnitt 2 och 3. Jag ställer följdfrågor på de tvetydiga punkterna (särskilt 2E och redirect-strategin) innan något raderas.
+
+---
+
+# Fas 3–5 — Genomfört 2026-07-28
+
+**Beslut:** arkivera i `src/_archive/` · ta bort alla redirects · utred prislogik först · frontend + bekräftat döda edge functions.
+
+## Fas 3.1 — Frontend
+- **114 filer** flyttade till `src/_archive/` (struktur bevarad, exkluderad från typecheck och bundling).
+- Behållna trots orphan-status: `skrPrices2026.ts`, `useContractRate.ts`, `featureFlags.ts`, `specialitySlugs.ts`, `swedishRegions.ts`, `colors.ts`, `setPageMeta.ts`, `useTheme.ts`, `ThemeToggle.tsx`, `use-mobile.tsx` samt alla `components/ui/`-primitiver.
+- **33 redirect-routes borttagna** ur `App.tsx`. `/consultant/forhandla` behölls som riktig route.
+- `src/test/h1-overflow.test.tsx` pekar nu på `Home` + `FAQ`.
+
+## Fas 3.2 — Backend
+Kontrollerat mot `cron.job`, `public/openapi.json`, `public/llms*.txt` och `_shared/`.
+
+**Raderade (11):** `get-verify-data` `get-shared-documents` `download-shared-document` `invoice-analyzer` `ai-consultant-coach` `marketplace-agent-negotiate` `marketplace-listing-public` `marketplace-listing-upsert` `marketplace-offer-respond` `redeem-coupon` `radar-notify` — även borttagna från live-miljön och `config.toml`.
+
+**Behållna trots noll kodreferenser:** `ci-*` (4), `compensation-intelligence`, `generate-pdf`, `get-public-profile` (publikt agent-API) · `bankid-auth`, `bankid-collect` (scope-låst produktbeslut) · `process-email-queue`, `handle-email-suppression`, `preview-transactional-email`, `posthog-health-check`, `stripe-webhook`, `validate-coupon` (infrastruktur) · 12 cron-drivna functions.
+
+**DB-schema orört.** Ingen migration kördes.
+
+## Fas 3.3 / 4 / 5 — Dokument och namn
+- `AUDIT_BRIEF.md`, `security-audit-prompt.md`, `security-reports/` → `docs/archive/`.
+- `TERMINOLOGY.md` skapad — enda sanningen för namn.
+- `mem://index.md` reducerad från 72 poster till 13; arkiverade spår samlade i `mem://archive/retired-modules`.
+- `README.md` omskriven. `.lovable/plan.md` innehåller nu bara pågående arbete.
+- `public/llms.txt` rensad från döda URL:er. `public/sitemap.xml` regenererad (52 poster, inga döda länkar).
+
+## Utredning: prislogiken (punkt 2E)
+`skrPrices2026.ts` och `useContractRate.ts` importeras **inte av någon fil**. Priserna hämtas i dag från `contract_version_rates` via `pricing-engine` och direkta queries, plus hårdkodade värden i rapportsidorna. Modulerna är alltså en typad fallback som ingen använder. **Filerna behölls orörda.** Beslut kvarstår: koppla rapportsidorna till `useContractRate` för att garantera 1:1-bindningen roll→pris i kod, eller ta bort fallbacken.
+
+## Verifiering
+- Typecheck: rent.
+- Tester: 48/55 gröna. 7 fel (`RoleDropdown`, `posthog.cookieless`, `index.css`-regexen) är **pre-existerande** och orörda av konsolideringen.
+- Röktest: `/`, `/logga-in`, `/rapport/sjukskoterska`, `/rapport/lakare-allmanmedicin`, `/vanliga-fragor`, `/kampanj/sjukskoterska` → 200 med korrekt H1. `/consultant/profil` → redirect till inlogg. Inga nya konsolfel.
+
+## Resultat
+| | Före | Efter |
+|---|---|---|
+| Aktiva TS/TSX-filer i `src` | 300 | 186 |
+| Routes i `App.tsx` | 62 | 29 |
+| Edge functions | 92 | 81 |
+| Memory-poster i index | 72 | 13 |
+| Markdown i repo-roten | 4 spridda | 3 med tydlig roll |

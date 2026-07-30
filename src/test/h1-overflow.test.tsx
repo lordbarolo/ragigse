@@ -19,10 +19,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HelmetProvider } from "react-helmet-async";
 import React from "react";
 
-import Index from "@/pages/Index";
+import Home from "@/pages/Home";
 import FAQ from "@/pages/FAQ";
-import ReferenserInfo from "@/pages/ReferenserInfo";
-import VerifyInfo from "@/pages/VerifyInfo";
+
 
 const VIEWPORT_WIDTH = 390;
 const LONG_WORD_THRESHOLD = 16;
@@ -70,11 +69,10 @@ function findLongWords(text: string): string[] {
 }
 
 const PAGES: Array<{ name: string; el: React.ReactElement }> = [
-  { name: "/", el: <Index /> },
+  { name: "/", el: <Home /> },
   { name: "/vanliga-fragor", el: <FAQ /> },
-  { name: "/referenser-info", el: <ReferenserInfo /> },
-  { name: "/din-data", el: <VerifyInfo /> },
 ];
+
 
 describe("H1 overflow @ 390px (svenska compound words)", () => {
   beforeAll(() => {
