@@ -27,10 +27,12 @@ const LAST_UPDATED = "2026-01-15";
 const fmt = (n: number) => n.toLocaleString("sv-SE", { maximumFractionDigits: 0 });
 
 // SKR ramavtal vårdbemanning 2026 — Specialistläkare allmänmedicin
-const ZONES = [
-  { zone: "Zon 1", rate: 1238, desc: "Storstadsregioner (t.ex. Stockholm, Göteborg, Malmö)" },
-  { zone: "Zon 2", rate: 1513, desc: "Mellanstora regioner" },
-  { zone: "Zon 3", rate: 1787, desc: "Glesbygd / svårrekryterade områden" },
+// Priserna hämtas live ur contract_version_rates (v1.6); värdena nedan är fallback.
+const ZONE_FALLBACK = { zone1: 1238, zone2: 1513, zone3: 1787 };
+const ZONE_META = [
+  { zone: "Zon 1", desc: "Storstadsregioner (t.ex. Stockholm, Göteborg, Malmö)" },
+  { zone: "Zon 2", desc: "Mellanstora regioner" },
+  { zone: "Zon 3", desc: "Glesbygd / svårrekryterade områden" },
 ];
 
 const SHARE_MIN_FORETAGARE = 0.85;
@@ -40,11 +42,12 @@ const SHARE_MAX_ANSTALLD = 0.88;
 // Arbetsgivaravgifter ~31,42 % + ITP1 4,5 % + särskild löneskatt + AFA — bruttolön = total konsultkostnad / 1,38
 const EMPLOYER_FACTOR = 1.38;
 
-const FAQ = [
+const makeFaq = (zones: { zone: string; rate: number; desc: string }[]) => [
   {
     question: "Vad är ramavtalspriset för en specialistläkare i allmänmedicin 2026?",
-    answer: `Enligt SKR:s ramavtal vårdbemanning 2026 är kundpriset ${fmt(ZONES[0].rate)} kr/h i Zon 1 (storstad), ${fmt(ZONES[1].rate)} kr/h i Zon 2 (mellanstora regioner) och ${fmt(ZONES[2].rate)} kr/h i Zon 3 (glesbygd).`,
+    answer: `Enligt SKR:s ramavtal vårdbemanning 2026 är kundpriset ${fmt(zones[0].rate)} kr/h i Zon 1 (storstad), ${fmt(zones[1].rate)} kr/h i Zon 2 (mellanstora regioner) och ${fmt(zones[2].rate)} kr/h i Zon 3 (glesbygd).`,
   },
+
   {
     question: "Hur stor del av kundpriset går till konsulten?",
     answer: `För specialistläkare är bemanningsföretagets marginal typiskt 10–15 % av kundpriset. Som egenföretagare ligger konsultandelen därför på 85–90 % av kundpriset. För anställd via bemanning utgör konsultkostnaden 83–88 % av kundpriset, och av det betalar bolaget först arbetsgivaravgifter (~31,42 %) innan bruttolön betalas ut till konsulten. Marginalen kan i vissa fall vara lägre — t.ex. när bemanningsbolaget tar betalningsrisk, garanterar timmar eller bär kostnad för outnyttjad kapacitet.`,
