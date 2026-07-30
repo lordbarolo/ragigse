@@ -1122,6 +1122,56 @@ export type Database = {
         }
         Relationships: []
       }
+      consultant_documents: {
+        Row: {
+          consultant_id: string
+          document_type: string
+          expires_at: string | null
+          file_name: string
+          file_url: string
+          id: string
+          notes: string | null
+          uploaded_at: string
+          verified: boolean
+          verified_at: string | null
+          verified_by: string | null
+        }
+        Insert: {
+          consultant_id: string
+          document_type: string
+          expires_at?: string | null
+          file_name: string
+          file_url: string
+          id?: string
+          notes?: string | null
+          uploaded_at?: string
+          verified?: boolean
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Update: {
+          consultant_id?: string
+          document_type?: string
+          expires_at?: string | null
+          file_name?: string
+          file_url?: string
+          id?: string
+          notes?: string | null
+          uploaded_at?: string
+          verified?: boolean
+          verified_at?: string | null
+          verified_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultant_documents_consultant_id_fkey"
+            columns: ["consultant_id"]
+            isOneToOne: false
+            referencedRelation: "consultant_profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       consultant_profiles: {
         Row: {
           care_setting: string | null
@@ -1379,6 +1429,83 @@ export type Database = {
           vol_2026_ytd?: number | null
           yoy_ratio?: number | null
           ytd_ratio?: number | null
+        }
+        Relationships: []
+      }
+      document_share_views: {
+        Row: {
+          action: string
+          document_id: string | null
+          id: string
+          ip_address: string | null
+          share_id: string
+          user_agent: string | null
+          viewed_at: string
+        }
+        Insert: {
+          action?: string
+          document_id?: string | null
+          id?: string
+          ip_address?: string | null
+          share_id: string
+          user_agent?: string | null
+          viewed_at?: string
+        }
+        Update: {
+          action?: string
+          document_id?: string | null
+          id?: string
+          ip_address?: string | null
+          share_id?: string
+          user_agent?: string | null
+          viewed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "document_share_views_share_id_fkey"
+            columns: ["share_id"]
+            isOneToOne: false
+            referencedRelation: "document_shares"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      document_shares: {
+        Row: {
+          created_at: string
+          document_ids: string[]
+          expires_at: string | null
+          id: string
+          last_viewed_at: string | null
+          recipient_email: string | null
+          recipient_label: string | null
+          token: string
+          user_id: string
+          view_count: number
+        }
+        Insert: {
+          created_at?: string
+          document_ids: string[]
+          expires_at?: string | null
+          id?: string
+          last_viewed_at?: string | null
+          recipient_email?: string | null
+          recipient_label?: string | null
+          token: string
+          user_id: string
+          view_count?: number
+        }
+        Update: {
+          created_at?: string
+          document_ids?: string[]
+          expires_at?: string | null
+          id?: string
+          last_viewed_at?: string | null
+          recipient_email?: string | null
+          recipient_label?: string | null
+          token?: string
+          user_id?: string
+          view_count?: number
         }
         Relationships: []
       }
@@ -2963,6 +3090,75 @@ export type Database = {
           typ?: string
           yrkeskategori?: string
           zon?: string
+        }
+        Relationships: []
+      }
+      ref_profiles: {
+        Row: {
+          bankid_verified: boolean
+          bio: string | null
+          created_at: string
+          email: string
+          full_name: string
+          id: string
+          license_number: string | null
+          linkedin_url: string | null
+          phone: string | null
+          profile_status: string | null
+          role_type: string | null
+          score_breakdown: Json | null
+          score_updated_at: string | null
+          specialty: string | null
+          status_checklist: Json | null
+          status_updated_at: string | null
+          trust_score: number | null
+          trust_tier: string | null
+          updated_at: string
+          years_licensed: number | null
+        }
+        Insert: {
+          bankid_verified?: boolean
+          bio?: string | null
+          created_at?: string
+          email: string
+          full_name: string
+          id: string
+          license_number?: string | null
+          linkedin_url?: string | null
+          phone?: string | null
+          profile_status?: string | null
+          role_type?: string | null
+          score_breakdown?: Json | null
+          score_updated_at?: string | null
+          specialty?: string | null
+          status_checklist?: Json | null
+          status_updated_at?: string | null
+          trust_score?: number | null
+          trust_tier?: string | null
+          updated_at?: string
+          years_licensed?: number | null
+        }
+        Update: {
+          bankid_verified?: boolean
+          bio?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string
+          id?: string
+          license_number?: string | null
+          linkedin_url?: string | null
+          phone?: string | null
+          profile_status?: string | null
+          role_type?: string | null
+          score_breakdown?: Json | null
+          score_updated_at?: string | null
+          specialty?: string | null
+          status_checklist?: Json | null
+          status_updated_at?: string | null
+          trust_score?: number | null
+          trust_tier?: string | null
+          updated_at?: string
+          years_licensed?: number | null
         }
         Relationships: []
       }
