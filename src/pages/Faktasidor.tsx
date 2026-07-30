@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Search, MapPin, Info } from "lucide-react";
+import { Search, MapPin, Info, Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import AnthropicScope from "@/components/demo/AnthropicScope";
 import CompcareLogo from "@/components/CompcareLogo";
@@ -139,6 +139,60 @@ export default function Faktasidor() {
   }, [roles, roleQuery, group]);
 
   const activeZone = (selectedKommun?.zon as Zone) ?? null;
+
+  /** Exporterar de synliga rollerna som CSV med semikolon + BOM (öppnas direkt i Excel). */
+  function exportToExcel() {
+    const head = [
+      "Roll",
+      "Yrkesgrupp",
+      "Zon 1 kundpris (kr/h)",
+      "Zon 2 kundpris (kr/h)",
+      "Zon 3 kundpris (kr/h)",
+      "Zon 1 ersättning (kr/h)",
+      "Zon 2 ersättning (kr/h)",
+      "Zon 3 ersättning (kr/h)",
+    ];
+    const cell = (v: string | number) => `"${String(v).replace(/"/g, '""')}"`;
+    const lines = [head.map(cell).join(";")];
+
+    for (const r of visibleRoles) {
+      const { min, max } = shareRange(r.group);
+      const span = (z: Zone) => {
+        const p = r.prices[z];
+        if (!p) return "";
+        return `${Math.round(p * min)}–${Math.round(p * max)}`;
+      };
+      lines.push(
+        [
+          cell(r.role),
+          cell(r.group),
+          cell(r.prices["Zon 1"] ?? ""),
+          cell(r.prices["Zon 2"] ?? ""),
+          cell(r.prices["Zon 3"] ?? ""),
+          cell(span("Zon 1")),
+          cell(span("Zon 2")),
+          cell(span("Zon 3")),
+        ].join(";"),
+      );
+    }
+    lines.push("");
+    lines.push(
+      cell(
+        "Källa: SKR ramavtal vårdbemanning 2026. Kundpris exkl. OB och jour. Ersättning = kundpris × branschmarginal (läkare 85–90 %, sjuksköterskor 80–85 %).",
+      ),
+    );
+
+    const blob = new Blob(["\uFEFF" + lines.join("\r\n")], {
+      type: "text/csv;charset=utf-8;",
+    });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "compcare-ramavtalspriser-2026.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+    trackEvent("faktasidor_export_clicked");
+  }
 
   const zoneCounts = useMemo(() => {
     const counts: Record<string, number> = {};
@@ -296,9 +350,20 @@ export default function Faktasidor() {
 
             {!loading && !error && (
               <>
-                <p className="mt-4 text-xs text-black/50">
-                  Visar {visibleRoles.length} av {roles.length} roller.
-                </p>
+                <div className="mt-4 flex items-center justify-between gap-3 flex-wrap">
+                  <p className="text-xs text-black/50">
+                    Visar {visibleRoles.length} av {roles.length} roller.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={exportToExcel}
+                    className="inline-flex items-center gap-2 text-sm font-semibold rounded-lg border border-black/15 px-4 py-2 text-black/80 hover:bg-black/5 transition-colors"
+                  >
+                    <Download className="w-4 h-4" aria-hidden />
+                    Exportera till Excel
+                  </button>
+                </div>
+
 
                 <div className="mt-3 overflow-x-auto rounded-xl border border-black/10 bg-white/60">
                   <table className="w-full min-w-[640px] text-sm">
