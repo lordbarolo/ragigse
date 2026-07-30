@@ -30,8 +30,6 @@ const ROLE_MAP: Record<string, string> = {
   foretagshalsa: "Specialistsjuksköterska företagshälsovård",
   skola: "Skolsköterska",
   lakare: "Legitimerad läkare",
-  "specialist-a": "Specialistläkare Grupp A",
-  "specialist-b": "Specialistläkare Grupp B",
 };
 
 /* Short display label for the role */
