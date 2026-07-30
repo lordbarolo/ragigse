@@ -25,11 +25,14 @@ import {
 
 const fmt = (n: number) => n.toLocaleString("sv-SE", { maximumFractionDigits: 0 });
 
-const ZONES = [
-  { zone: "Zon 1", rate: 770, desc: "Storstadsregioner" },
-  { zone: "Zon 2", rate: 824, desc: "Mellanstora regioner" },
-  { zone: "Zon 3", rate: 880, desc: "Glesbygd / svårrekryterade" },
+// Priserna hämtas live ur contract_version_rates (v1.7); värdena nedan är fallback.
+const ZONE_FALLBACK = { zone1: 770, zone2: 824, zone3: 880 };
+const ZONE_META = [
+  { zone: "Zon 1", desc: "Storstadsregioner" },
+  { zone: "Zon 2", desc: "Mellanstora regioner" },
+  { zone: "Zon 3", desc: "Glesbygd / svårrekryterade" },
 ];
+
 
 const OB_RATES = [
   { typ: "Vardagkväll", tid: "Mån–Tor 19–22", rate: 37, icon: Clock },
