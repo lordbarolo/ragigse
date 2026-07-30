@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
@@ -13,7 +13,7 @@ import ProfileInsights from "@/components/profile/ProfileInsights";
 import TrustVerification from "@/components/profile/TrustVerification";
 import CompensationView from "@/components/report/CompensationView";
 
-import DashboardDocuments, { type DashboardDocumentsHandle } from "@/components/profile/DashboardDocuments";
+
 import ProfileAuditLog from "@/components/profile/ProfileAuditLog";
 
 import PensionImpactSimulator from "@/components/report/PensionImpactSimulator";
@@ -67,28 +67,8 @@ export default function Profile() {
   });
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<ProfileTab>("overview");
-  const [pendingUploadOpen, setPendingUploadOpen] = useState(false);
-  const docsRef = useRef<DashboardDocumentsHandle>(null);
   const { pending: pendingFeedback, dismiss: dismissFeedback } = useAssignmentFeedback(user);
 
-  const goUpload = () => {
-    if (activeTab !== "creds") {
-      setPendingUploadOpen(true);
-      setActiveTab("creds");
-    } else {
-      docsRef.current?.openUpload();
-    }
-  };
-
-  useEffect(() => {
-    if (activeTab === "creds" && pendingUploadOpen) {
-      const id = window.setTimeout(() => {
-        docsRef.current?.openUpload();
-        setPendingUploadOpen(false);
-      }, 100);
-      return () => window.clearTimeout(id);
-    }
-  }, [activeTab, pendingUploadOpen]);
   const goVerifyIdentity = () => {
     toast.info("Digital signering är på väg", { description: "Vi öppnar identitetsverifiering inom kort." });
   };
