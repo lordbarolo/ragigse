@@ -16,6 +16,8 @@ import {
   Calculator,
 } from "lucide-react";
 import { useEffect } from "react";
+import { useCatalogZoneRates } from "@/hooks/useCatalogZoneRates";
+
 
 /**
  * Rollrapport — Legitimerad sjuksköterska (grundutbildning, nationell)
