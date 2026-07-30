@@ -13,6 +13,8 @@ import {
   DOCTOR_SPECIALTY_BY_SLUG,
   type DoctorSpecialtyConfig,
 } from "@/data/doctorSpecialtyReports";
+import { useCatalogZoneRates } from "@/hooks/useCatalogZoneRates";
+
 
 /**
  * Generisk specialistläkar-rapport.
