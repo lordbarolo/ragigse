@@ -50,8 +50,14 @@ const SHARE_MIN_ANSTALLD = 0.80;
 const SHARE_MAX_ANSTALLD = 0.86;
 
 export default function AnestesiReport() {
-  const zone1Rate = 770;
-  const zone3Rate = 880;
+  const rates = useCatalogZoneRates("Specialistsjuksköterska anestesi", "v1.7", ZONE_FALLBACK);
+  const ZONES = ZONE_META.map((meta, i) => ({
+    ...meta,
+    rate: [rates.zone1, rates.zone2, rates.zone3][i],
+  }));
+  const zone1Rate = rates.zone1;
+  const zone3Rate = rates.zone3;
+
   const recMinF = Math.round(zone1Rate * SHARE_MIN_FORETAGARE);
   const recMaxF = Math.round(zone1Rate * SHARE_MAX_FORETAGARE);
   const recMinA = Math.round(zone1Rate * SHARE_MIN_ANSTALLD);
