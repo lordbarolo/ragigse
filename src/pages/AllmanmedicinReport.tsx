@@ -65,11 +65,19 @@ const makeFaq = (zones: { zone: string; rate: number; desc: string }[]) => [
 ];
 
 export default function AllmanmedicinReport() {
+  const rates = useCatalogZoneRates("Specialistläkare Allmänmedicin", "v1.6", ZONE_FALLBACK);
+  const ZONES = ZONE_META.map((meta, i) => ({
+    ...meta,
+    rate: [rates.zone1, rates.zone2, rates.zone3][i],
+  }));
+  const FAQ = makeFaq(ZONES);
+
   const lowZone = ZONES[0].rate;
   const highZone = ZONES[2].rate;
 
   // Spann baserat på Zon 2 (median) som referens för "marknadsmässigt"
   const refRate = ZONES[1].rate;
+
   const recMinF = Math.round(refRate * SHARE_MIN_FORETAGARE);
   const recMaxF = Math.round(refRate * SHARE_MAX_FORETAGARE);
   const recMinA = Math.round((refRate * SHARE_MIN_ANSTALLD) / EMPLOYER_FACTOR);
