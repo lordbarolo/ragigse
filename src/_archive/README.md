@@ -12,3 +12,8 @@ Arkiverad kod från konsolideringen 2026-07-28 (Fas 3).
 Arkiverade spår: Referly/Ref-ID, Dokhus/Verify, Uppdragsradar, Agency/B2B,
 Marketplace, Fakturakontroll, Academy, Eget bolag, AI-chatt, demo-/experimentsidor
 samt oanvända landing- och teaser-komponenter.
+
+## Vilande spår med återställningsguide
+
+- **Ref-ID / Referly** → `src/_archive/ref-id/RESTORE.md` (schema-SQL + steg
+  för att återuppta spåret utan att bygga om från grunden).
