@@ -32,12 +32,13 @@ const SHARE_MIN_ANSTALLD = 0.83;
 const SHARE_MAX_ANSTALLD = 0.88;
 const EMPLOYER_FACTOR = 1.38;
 
-function makeFaq(cfg: DoctorSpecialtyConfig) {
+function makeFaq(cfg: DoctorSpecialtyConfig, rates: { zone1: number; zone2: number; zone3: number }) {
   return [
     {
       question: `Vad är ramavtalspriset för ${cfg.skrCategory.toLowerCase()} 2026?`,
-      answer: `Enligt SKR:s ramavtal vårdbemanning 2026 är kundpriset ${fmt(cfg.zone1)} kr/h i Zon 1 (storstad), ${fmt(cfg.zone2)} kr/h i Zon 2 (mellanstora regioner) och ${fmt(cfg.zone3)} kr/h i Zon 3 (glesbygd).`,
+      answer: `Enligt SKR:s ramavtal vårdbemanning 2026 är kundpriset ${fmt(rates.zone1)} kr/h i Zon 1 (storstad), ${fmt(rates.zone2)} kr/h i Zon 2 (mellanstora regioner) och ${fmt(rates.zone3)} kr/h i Zon 3 (glesbygd).`,
     },
+
     {
       question: "Hur stor del av kundpriset går till konsulten?",
       answer:
