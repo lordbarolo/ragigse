@@ -82,10 +82,8 @@ verify_jwt = true
 [functions.delete-account]
 verify_jwt = false
 
-[functions.radar-notify]
-verify_jwt = false
-
 [functions.compensation-intelligence]
+
 verify_jwt = false
 
 [functions.ci-capabilities]
