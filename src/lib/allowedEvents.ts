@@ -2,6 +2,7 @@
 // Must mirror ALLOWED_EVENTS in supabase/functions/track-event/index.ts.
 export const ALLOWED_EVENTS = [
   "landing_viewed",
+  "faktasidor_viewed",
   "survey_started",
   "survey_step_completed",
   "survey_completed",

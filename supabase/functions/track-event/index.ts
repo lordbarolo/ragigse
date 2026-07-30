@@ -10,6 +10,7 @@ const corsHeaders = {
 
 const ALLOWED_EVENTS = new Set([
   "landing_viewed",
+  "faktasidor_viewed",
   "survey_started",
   "survey_step_completed",
   "survey_completed",
