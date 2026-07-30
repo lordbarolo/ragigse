@@ -52,6 +52,7 @@ const entries: SitemapEntry[] = [
   // Core pages
   { path: "/", changefreq: "weekly", priority: "1.0" },
   { path: "/vanliga-fragor", changefreq: "monthly", priority: "0.5" },
+  { path: "/faktasidor", changefreq: "monthly", priority: "0.8" },
   { path: "/integritetspolicy", changefreq: "yearly", priority: "0.3" },
   
   // Static reports
