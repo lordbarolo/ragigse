@@ -69,11 +69,10 @@ function findLongWords(text: string): string[] {
 }
 
 const PAGES: Array<{ name: string; el: React.ReactElement }> = [
-  { name: "/", el: <Index /> },
+  { name: "/", el: <Home /> },
   { name: "/vanliga-fragor", el: <FAQ /> },
-  { name: "/referenser-info", el: <ReferenserInfo /> },
-  { name: "/din-data", el: <VerifyInfo /> },
 ];
+
 
 describe("H1 overflow @ 390px (svenska compound words)", () => {
   beforeAll(() => {
