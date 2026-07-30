@@ -7,15 +7,18 @@ import { SEO } from "@/components/SEO";
 import { buildRoleReportSchemas } from "@/lib/seo/roleReportSchema";
 import { ArrowRight, MapPin, BarChart3, Info, TrendingUp } from "lucide-react";
 import { useEffect } from "react";
+import { useCatalogZoneRates } from "@/hooks/useCatalogZoneRates";
 
 const LAST_UPDATED = "2026-01-15";
 const fmt = (n: number) => n.toLocaleString("sv-SE", { maximumFractionDigits: 0 });
 
 // Allmänspecialist (Specialistläkare allmänmedicin) — SKR ramavtal 2026
-const ZONES = [
-  { zone: "Zon 1", rate: 1238, desc: "Storstadsregioner" },
-  { zone: "Zon 2", rate: 1513, desc: "Mellanstora regioner" },
-  { zone: "Zon 3", rate: 1787, desc: "Glesbygd / svårrekryterade — Bollnäs" },
+// Priserna hämtas live ur contract_version_rates (v1.6); värdena nedan är fallback.
+const ZONE_FALLBACK = { zone1: 1238, zone2: 1513, zone3: 1787 };
+const ZONE_META = [
+  { zone: "Zon 1", desc: "Storstadsregioner" },
+  { zone: "Zon 2", desc: "Mellanstora regioner" },
+  { zone: "Zon 3", desc: "Glesbygd / svårrekryterade — Bollnäs" },
 ];
 
 const SHARE_MIN_FORETAGARE = 0.85;
@@ -26,13 +29,20 @@ const SHARE_MAX_ANSTALLD = 0.88;
 const USER_RATE = 1240;
 const USER_KOMMUN = "Bollnäs";
 const USER_ZON_LABEL = "Zon 3";
-const USER_ZON_RATE = 1787;
 
 export default function BollnasAllmanspecialistReport() {
+  const rates = useCatalogZoneRates("Specialistläkare Allmänmedicin", "v1.6", ZONE_FALLBACK);
+  const ZONES = ZONE_META.map((meta, i) => ({
+    ...meta,
+    rate: [rates.zone1, rates.zone2, rates.zone3][i],
+  }));
+  const USER_ZON_RATE = rates.zone3;
+
   const recMinF = Math.round(USER_ZON_RATE * SHARE_MIN_FORETAGARE);
   const recMaxF = Math.round(USER_ZON_RATE * SHARE_MAX_FORETAGARE);
   const recMinA = Math.round(USER_ZON_RATE * SHARE_MIN_ANSTALLD);
   const recMaxA = Math.round(USER_ZON_RATE * SHARE_MAX_ANSTALLD);
+
 
   const safeMinF = Math.max(recMinF, USER_RATE);
   const safeMinA = Math.max(recMinA, USER_RATE);
