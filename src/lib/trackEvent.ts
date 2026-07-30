@@ -6,6 +6,7 @@ import { getUtmParams, getCouponCode } from "@/lib/captureParams";
 type EventName =
   | "landing_viewed"
   | "faktasidor_viewed"
+  | "faktasidor_export_clicked"
   | "survey_started"
   | "survey_step_completed"
   | "survey_completed"
