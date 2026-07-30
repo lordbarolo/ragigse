@@ -1,73 +1,49 @@
-# Welcome to your Lovable project
+# CompCare
 
-## Project info
+**Detta projekt är löneanalys-flödet.** Allt annat är arkiverat.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+Svensk ersättningsintelligens för vårdkonsulter: en användare svarar på en kort
+enkät och ser inom 60 sekunder vad regionen betalar enligt SKR:s ramavtal och
+vad hen rimligen kan behålla.
 
-## How can I edit this code?
+## Aktiv yta
 
-There are several ways of editing your application.
+| Route | Vad |
+|---|---|
+| `/` | Landningssida med inline-enkät |
+| `/resultat/:leadId` | Teaser + kontogate |
+| `/rapport/:reportId` | Personlig rapport |
+| `/rapport/<roll>` | Statiska SEO-rapporter (sjuksköterska, 13 läkarspecialiteter m.fl.) |
+| `/kampanj/:role` | Kampanjlandningssidor |
+| `/consultant/profil` | Inloggad profil |
+| `/consultant/forhandla` | Löneassistenten |
+| `/logga-in`, `/registrera`, `/aterstall-losenord` | Auth |
+| `/vanliga-fragor`, `/integritetspolicy` | Legal |
+| `/admin/*`, `/dev/analytics` | Intern admin |
 
-**Use Lovable**
+## Läs detta först
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+| Fil | Innehåll |
+|---|---|
+| `TERMINOLOGY.md` | **Enda sanningen för namn.** Vad saker heter och vad de aldrig får heta. |
+| `CONSOLIDATION.md` | Inventering + vad som arkiverades 2026-07-28 och varför. |
+| `src/_archive/README.md` | Hur arkiverad kod återställs. |
+| `.lovable/plan.md` | Endast pågående arbete. Ingen historik. |
+| `LAUNCH_SNAPSHOT.md` | v1.0-referens. |
+| `docs/archive/` | Gamla briefs och säkerhetsrapporter. |
 
-Changes made via Lovable will be committed automatically to this repo.
+## Teknik
 
-**Use your preferred IDE**
+React 18 + Vite + TypeScript + Tailwind (HSL-tokens, aldrig hårdkodade färger),
+shadcn/ui. Backend på Lovable Cloud (Postgres + RLS, edge functions i Deno,
+pg_cron). AI via Lovable AI Gateway. PostHog för anonym analytics.
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## Utveckling
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```bash
+npm install
+npm run dev        # http://localhost:8080
+npx vitest run     # tester
 ```
 
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+`src/_archive/` är exkluderat från typecheck och bundlas inte.
