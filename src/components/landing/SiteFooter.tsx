@@ -60,7 +60,7 @@ export default function SiteFooter() {
               {specialtyLinks.map((r) => (
                 <li key={r.slug}>
                   <Link to={`/rapport/${r.slug}`} className="hover:text-black underline-offset-4 hover:underline">
-                    {r.shortLabel ?? r.title}
+                    {r.title}
                   </Link>
                 </li>
               ))}
