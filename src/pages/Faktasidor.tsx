@@ -296,9 +296,20 @@ export default function Faktasidor() {
 
             {!loading && !error && (
               <>
-                <p className="mt-4 text-xs text-black/50">
-                  Visar {visibleRoles.length} av {roles.length} roller.
-                </p>
+                <div className="mt-4 flex items-center justify-between gap-3 flex-wrap">
+                  <p className="text-xs text-black/50">
+                    Visar {visibleRoles.length} av {roles.length} roller.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={exportToExcel}
+                    className="inline-flex items-center gap-2 text-sm font-semibold rounded-lg border border-black/15 px-4 py-2 text-black/80 hover:bg-black/5 transition-colors"
+                  >
+                    <Download className="w-4 h-4" aria-hidden />
+                    Exportera till Excel
+                  </button>
+                </div>
+
 
                 <div className="mt-3 overflow-x-auto rounded-xl border border-black/10 bg-white/60">
                   <table className="w-full min-w-[640px] text-sm">
