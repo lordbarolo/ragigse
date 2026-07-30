@@ -7,6 +7,7 @@ import CompcareLogo from "@/components/CompcareLogo";
 import SiteFooter from "@/components/landing/SiteFooter";
 import { SEO } from "@/components/SEO";
 import { trackEvent } from "@/lib/trackEvent";
+import { filterPublicRoles } from "@/lib/roleVisibility";
 
 type Zone = "Zon 1" | "Zon 2" | "Zon 3";
 
@@ -108,7 +109,11 @@ export default function Faktasidor() {
         byRole.set(r.yrkeskategori, entry);
       }
 
-      setRoles([...byRole.values()].sort((a, b) => a.role.localeCompare(b.role, "sv")));
+      setRoles(
+        filterPublicRoles([...byRole.values()], (r) => r.role).sort((a, b) =>
+          a.role.localeCompare(b.role, "sv"),
+        ),
+      );
       setLocations((locRes.data ?? []) as LocationRow[]);
       setLoading(false);
     })();

@@ -246,16 +246,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://www.compcare.se/kampanj/specialist-a</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
-    <loc>https://www.compcare.se/kampanj/specialist-b</loc>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  <url>
     <loc>https://www.compcare.se/llms.txt</loc>
     <changefreq>monthly</changefreq>
     <priority>0.4</priority>
