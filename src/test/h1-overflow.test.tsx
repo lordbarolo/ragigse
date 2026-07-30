@@ -19,10 +19,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HelmetProvider } from "react-helmet-async";
 import React from "react";
 
-import Index from "@/pages/Index";
+import Home from "@/pages/Home";
 import FAQ from "@/pages/FAQ";
-import ReferenserInfo from "@/pages/ReferenserInfo";
-import VerifyInfo from "@/pages/VerifyInfo";
+
 
 const VIEWPORT_WIDTH = 390;
 const LONG_WORD_THRESHOLD = 16;
