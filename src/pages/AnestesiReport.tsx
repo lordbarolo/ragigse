@@ -7,6 +7,8 @@ import Navbar from "@/components/Navbar";
 import { SEO } from "@/components/SEO";
 import TLDRBox from "@/components/report/TLDRBox";
 import { buildRoleReportSchemas } from "@/lib/seo/roleReportSchema";
+import { useCatalogZoneRates } from "@/hooks/useCatalogZoneRates";
+
 
 // Single source of truth for the report's freshness stamp.
 // Same value drives the visible TL;DR timestamp AND every JSON-LD schema.
