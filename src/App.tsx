@@ -119,6 +119,7 @@ const App = () => (
 
               {/* ── Legal ── */}
               <Route path="/vanliga-fragor" element={<FAQ />} />
+              <Route path="/faktasidor" element={<Faktasidor />} />
               <Route path="/integritetspolicy" element={<PrivacyPolicy />} />
 
               {/* ── Admin ── */}
