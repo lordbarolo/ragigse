@@ -202,17 +202,13 @@ Ja, efter att rapporten genererats kan du ladda ner en brandad PDF via generate-
 ## Pages
 
 - [Startsida](/): Snabb löneanalys för vårdkonsulter baserad på SKR:s ramavtal.
-- [Löneanalys](/v1): Steg-för-steg-uppslag av timpris och spann för din roll och ort.
-- [B2B / för bemanningsföretag](/b2b): CompCare för bemanningsföretag och regioner.
-- [För bemanningsföretag](/for-bemanningsforetag): Tjänster och Market Edge för agenter.
-- [Förhandlingsassistent](/consultant/forhandla): Neutral AI-assistent för marknadspriser och förhandling.
-- [Fakturakontroll](/consultant/fakturakontroll): Granska fakturor retroaktivt — no cure, no pay.
-
+- [Löneassistenten](/consultant/forhandla): Neutral assistent för marknadspriser och förhandling.
+- [Rapport: Sjuksköterska](/rapport/sjukskoterska): Statisk marknadsrapport för legitimerade sjuksköterskor.
 - [Rapport: Anestesisjuksköterska](/rapport/anestesisjukskoterska): Statisk marknadsrapport för anestesisjuksköterskor.
-- [Din data (samarbetsintyg)](/din-data): Digitalt dokumentvalv för samarbetsintyg.
-- [Eget bolag](/eget-bolag): Guide för konsulter som driver eget.
+- [Rapport: Allmänmedicin](/rapport/lakare-allmanmedicin): Statisk marknadsrapport för specialistläkare i allmänmedicin.
 - [FAQ](/vanliga-fragor): Vanliga frågor om CompCare och ramavtalspriser.
 - [Integritetspolicy](/integritetspolicy): GDPR och datahantering.
+
 
 ## Kontakt
 
