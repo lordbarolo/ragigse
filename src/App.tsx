@@ -32,6 +32,7 @@ const AgentApiKeys = lazy(() => import("./pages/admin/AgentApiKeys"));
 const AdminHealth = lazy(() => import("./pages/admin/Health"));
 
 const FAQ = lazy(() => import("./pages/FAQ"));
+const Faktasidor = lazy(() => import("./pages/Faktasidor"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 const NotFound = lazy(() => import("./pages/NotFound"));
