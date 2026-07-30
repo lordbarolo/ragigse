@@ -433,7 +433,7 @@ export default function Profile() {
 
 
 
-        {/* === CREDS (verifications + documents + references) === */}
+        {/* === CREDS (verifieringar) === */}
         {activeTab === "creds" && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
             <div className="space-y-5">
@@ -442,13 +442,11 @@ export default function Profile() {
                 identityVerified={verification.hasBankid}
                 hospValid={verification.hasValidHosp}
                 ivoValid={verification.hasValidIvo}
-                onUpload={goUpload}
                 /* onVerifyIdentity dold — funktionen är inte live än (visade bara "kommer snart"-toast). */
               />
-              <ProfileAuditLog />
             </div>
             <div className="space-y-5">
-              <DashboardDocuments ref={docsRef} />
+              <ProfileAuditLog />
             </div>
           </div>
         )}
