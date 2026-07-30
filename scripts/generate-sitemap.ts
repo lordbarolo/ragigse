@@ -19,7 +19,7 @@ const CAMPAIGN_ROLES = [
   "barnmorska", "sjukskoterska", "distriktsskoterska", "rontgen", 
   "psykiatri", "onkologi", "kirurgi", "medicin", "palliativ", "barn", 
   "hjart", "aldre", "diabetes", "infektion", "ogon", "foretagshalsa", 
-  "skola", "lakare", "specialist-a", "specialist-b"
+  "skola", "lakare"
 ];
 
 // Static report routes from src/App.tsx
