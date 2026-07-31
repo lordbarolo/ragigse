@@ -106,6 +106,56 @@ Deno.serve(async (req) => {
       });
     }
 
+    // ── Statiska kunskapssvar för de fasta frågorna ──
+    if (key === "erfarenhet") {
+      return json({
+        answer:
+          "Kravet sätts i avropet, inte i ramavtalet. I regionernas avropsunderlag är två års yrkeserfarenhet inom " +
+          "aktuellt område ett vanligt minimikrav för sjuksköterskor, och specialistbevis plus erfarenhet av " +
+          "motsvarande verksamhet för läkare.\n\n" +
+          "Erfarenhet påverkar inte kundpriset — priset styrs av roll och zon i ramavtalet.",
+        source: "Regionernas avropsunderlag, SKR:s ramavtal",
+      });
+    }
+
+    if (key === "termin10") {
+      return json({
+        answer:
+          "Ramavtalet prissätter legitimerad personal. Underläkare före legitimation avropas i egna kategorier och " +
+          "förutsätter att du uppfyller Socialstyrelsens krav för att arbeta som underläkare, samt att vårdgivaren " +
+          "godkänner det i avropet.\n\n" +
+          "Det avgörs alltså av det enskilda avropet och din lärosätesregistrering — inte av ramavtalspriset.",
+        source: "SKR:s ramavtal, Socialstyrelsens regelverk",
+      });
+    }
+
+    if (key === "patientforsakring") {
+      return json({
+        answer:
+          "Vid uppdrag inom region eller kommun omfattas patienten av vårdgivarens patientförsäkring enligt " +
+          "patientskadelagen — den följer verksamheten, inte konsulten.\n\n" +
+          "Som eget bolag reglerar avtalet med bemanningsbolaget eller vårdgivaren vilka försäkringar du själv ska " +
+          "hålla, vanligen ansvars- och företagsförsäkring. Kontrollera skrivningen i ditt avtal innan uppdraget.",
+        source: "Patientskadelagen, avtalspraxis i avropen",
+      });
+    }
+
+    // ── Avrop: sjuksköterskor i Gävleborg (historiskt underlag) ──
+    if (key === "avrop_gavle") {
+      const { count } = await supabase
+        .from("calloff_imports")
+        .select("id", { count: "exact", head: true })
+        .ilike("region", "%Gävleborg%")
+        .ilike("role", "%sjuksköterska%");
+
+      return json({
+        answer:
+          `I det historiska underlaget finns ${count ?? 0} publicerade avrop av sjuksköterskor i Gävleborg.\n\n` +
+          "Underlaget är historiskt och avser publicerade avrop. CompCare visar inte pågående eller framtida uppdrag.",
+        source: "Publicerade avrop, historiskt underlag",
+      });
+    }
+
     // ── Avrop senaste 30 dagarna (historiska, publicerade) ──
     if (key === "avrop") {
       const since = new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString().slice(0, 10);
@@ -138,12 +188,22 @@ Deno.serve(async (req) => {
       });
     }
 
+    // ── Fasta prisfrågor med förutbestämd roll/ort ──
+    const FIXED: Record<string, { role: string; zone: string; place: string; mode: "pris" | "fakturera" | "jamfor"; amount?: number }> = {
+      ssk_stockholm: { role: "Sjuksköterska", zone: "Zon 1", place: "Stockholm", mode: "pris" },
+      allmanlakare_torsby: { role: "Specialistläkare Allmänmedicin", zone: "Zon 3", place: "Torsby", mode: "fakturera" },
+      lon_malmo: { role: "Sjuksköterska", zone: "Zon 1", place: "Malmö", mode: "jamfor", amount: 390 },
+    };
+
+    const fixed = FIXED[key];
+    const isCatalogKey = key === "pris" || key === "fakturera" || key === "zoner";
+
     // ── Prisfrågor: kräver roll (+ zon för pris/fakturering) ──
-    if (key === "pris" || key === "fakturera" || key === "zoner") {
-      const role = body.role;
+    if (fixed || isCatalogKey) {
+      const role = fixed?.role ?? body.role;
       if (!role) return json({ need: "role" });
       if (GROUP_LABEL.test(role)) return json({ error: "Ogiltig roll" }, 400);
-      if (key !== "zoner" && !body.zone) return json({ need: "zone", role });
+      if (!fixed && key !== "zoner" && !body.zone) return json({ need: "zone", role });
 
       const { data, error } = await supabase
         .from("contract_version_rates")
@@ -179,14 +239,29 @@ Deno.serve(async (req) => {
         });
       }
 
-      const zone = body.zone!;
+      const zone = fixed?.zone ?? body.zone!;
       const price = byZone[zone];
       if (price == null) return json({ answer: `Jag hittar inget pris för ${role} i ${zone}.` });
+      const where = fixed ? `${fixed.place} (${zone})` : zone;
 
-      if (key === "pris") {
+      if (fixed?.mode === "jamfor") {
+        const salaryLo = (price * lo) / 1.38;
+        const salaryHi = (price * hi) / 1.38;
         return json({
           answer:
-            `Regionen betalar ${kr(price)} för ${role} i ${zone} enligt ramavtal ${version}.\n\n` +
+            `Kundpriset för ${role} i ${where} är ${kr(price)} enligt ramavtal ${version}.\n\n` +
+            `Efter bemanningsbolagets standardmarginal och omräkning till lön (faktor 1,38 för arbetsgivaravgifter ` +
+            `och avtalspension) motsvarar det ungefär ${kr(salaryLo)}–${kr(salaryHi)}.\n\n` +
+            `${fixed.amount} kr/timme ligger ${fixed.amount! < salaryLo ? "under" : fixed.amount! > salaryHi ? "över" : "inom"} det spannet. ` +
+            `Vi anger inte om en nivå är bra — bara hur den förhåller sig till ramavtalet.`,
+          source: `SKR-ramavtal ${version} + branschens standardmarginaler`,
+        });
+      }
+
+      if (key === "pris" || fixed?.mode === "pris") {
+        return json({
+          answer:
+            `Regionen betalar ${kr(price)} för ${role} i ${where} enligt ramavtal ${version}.\n\n` +
             `Det är kundpriset — bemanningsbolagets marginal dras innan din ersättning.`,
           source: `SKR-ramavtal ${version}`,
         });
@@ -194,7 +269,7 @@ Deno.serve(async (req) => {
 
       return json({
         answer:
-          `${role} i ${zone}: kundpris ${kr(price)} enligt ramavtal ${version}.\n\n` +
+          `${role} i ${where}: kundpris ${kr(price)} enligt ramavtal ${version}.\n\n` +
           `Efter bemanningsbolagets standardmarginal landar din fakturering normalt på ` +
           `${kr(price * lo)}–${kr(price * hi)} (${Math.round(lo * 100)}–${Math.round(hi * 100)} % av kundpriset).\n\n` +
           `Som anställd motsvarar det ungefär ${kr((price * lo) / 1.38)}–${kr((price * hi) / 1.38)} i lön, ` +
@@ -204,6 +279,7 @@ Deno.serve(async (req) => {
     }
 
     return json({ error: "Okänd fråga" }, 400);
+
   } catch (e) {
     console.error("[home-assistant]", e);
     return json({ error: "Något gick fel. Försök igen." }, 500);
