@@ -1,22 +1,59 @@
-# Pågående arbete
+# Chattassistent på startsidan
 
-Endast aktuellt arbete. Historik hör hemma i `CONSOLIDATION.md` eller `docs/archive/`.
+Ersätter hero-formuläret med en chattruta i exakt samma yta. Inget annat på sidan ändras.
 
-## Klart 2026-07-28 — Konsolidering Fas 1–5
+## 1. Chattrutan (startsidan, utloggad)
 
-- Fas 1: `CONSOLIDATION.md` — inventering av 300 filer, 62 routes, 92 edge functions.
-- Fas 2: beslut — arkivera i `src/_archive/`, ta bort alla redirects, utred prislogik, radera bekräftat döda functions.
-- Fas 3: 114 filer arkiverade, 33 redirect-routes borttagna, 11 edge functions raderade, dokument arkiverade till `docs/archive/`.
-- Fas 4: `TERMINOLOGY.md` skapad, `mem://index.md` reducerad från 72 till 13 poster.
-- Fas 5: `README.md` omskriven, denna fil tömd.
+Ny komponent `src/components/chat/HomeAssistantChat.tsx` som renderas där `InlineTerminalSurvey` ligger idag i `src/pages/Home.tsx` — samma bredd/höjd/kortstil.
 
-## Öppna punkter
+Innehåll:
+- Kort assistenthälsning.
+- Lista med förvalda frågor (klickbara). Fritextfältet syns men är låst med texten "Logga in för att ställa egna frågor".
+- Klick på en fråga → svar streamas/visas i rutan, sedan en diskret rad: "Logga in för att ställa egna frågor".
 
-1. **Prislogik (från Fas 2).** `src/data/skrPrices2026.ts` och `src/hooks/useContractRate.ts`
-   importeras inte av någon fil. Priserna kommer i dag från `contract_version_rates`
-   via `pricing-engine`/direkta queries samt hårdkodade värden i rapportsidorna.
-   Beslut kvarstår: koppla rapportsidorna till `useContractRate` eller ta bort fallbacken.
-2. **Borttagna redirects.** Gamla publika URL:er (`/verify/:id`, `/b2b`, `/din-data` m.fl.)
-   ger nu 404. Uppdatera `public/sitemap.xml` och `public/llms.txt` om de refererar dem.
-3. **DB-schema.** Tabeller för arkiverade spår (`ref_*`, `verifications`, `invoice_*`, `mp_*`)
-   är orörda och innehåller produktionsdata. Städning är ett separat, senare beslut.
+Fasta frågor (v1):
+1. Vad betalar Stockholm för en leg. sjuksköterska?
+2. Vad kan jag tjäna som allmänläkare i Torsby?
+3. Hur lång erfarenhet behöver jag för att jobba med bemanning?
+4. Kan jag ta konsultvikariat under termin 10 på läkarprogrammet?
+5. Behöver jag patientförsäkring som företagande läkare?
+6. Hur ofta avropar Gävle sjukhus sjuksköterskor till akuten?
+7. Är 390 kr/timme bra lön i Malmö?
+
+Svaren är korta (2–4 meningar), i den neutrala tonen, och hämtas backend-side:
+- Prisfrågor (1, 2, 7): SKR-pris för roll+zon ur `contract_version_rates` × branschmarginal (85–90 % läkare, 80–85 % övriga) — samma modell som resten av appen.
+- Avtals-/regelfrågor (3, 4, 5): svar ur indexerade avtalschunks (samma RAG som `lonekoll-answer`), med källhänvisning till avtalsbilagan.
+- Avropsfrågan (6): historik ur `calloff_imports`, alltid transparent formulerat ("Utifrån tillgänglig avropsdata 2022–2025 ser jag X avrop…"), aldrig som live-data.
+
+## 2. Konto först, sedan enkät
+
+Flödet blir: utloggad chatt → Logga in / Skapa konto → magic link/Google → obligatorisk enkät → fri chatt.
+
+- `/logga-in` och `/registrera` byggs om till enbart **Google** och **magic link** (e-postlänk). Lösenordsfälten tas bort; `/aterstall-losenord` blir överflödig och tas bort ur navigationen.
+- Efter bekräftad inloggning skickas användaren till `/onboarding` om enkäten inte är besvarad. Alla skyddade sidor (inkl. fri chatt) gate:as tills profilen har roll, ort, kontraktsform och ersättning.
+
+## 3. Enkäten med statisk förklaringstext
+
+Enkäten återanvänder befintlig `InlineTerminalSurvey`-logik (roll → specialisering → kontraktsform → ort → ersättning), men visas nu efter inloggning.
+
+På **varje** steg visas samma statiska text, alltid synlig:
+
+> Roll, ort, kontraktsform och ersättning behövs för att visa information om dina villkor i förhållande till den övriga marknaden. Inga uppgifter delas.
+
+Svaren sparas på användarens profil och används som kontext för chatten.
+
+## 4. Inloggad chatt
+
+Samma chattkomponent, men fritextfältet är upplåst. Frågorna besvaras med användarens sparade kontext (roll/ort/kontraktsform/ersättning) — kontexten läses server-side, aldrig från klienten.
+
+## Tekniska detaljer
+
+- Ny edge function `home-assistant` (publik, rate-limitad per IP) för de fasta frågorna: fast fråge-ID in, färdigt svar ut. Inga prompts på klienten.
+- Fri chatt går via en autentiserad function som återanvänder kontext- och RAG-logiken i `lonekoll-answer` samt `ai-usage-logs`-loggning och 30-anrop/dygn-gränsen.
+- Magic link via `supabase.auth.signInWithOtp` med `emailRedirectTo` = `window.location.origin`; Google via `lovable.auth.signInWithOAuth` (samma redirect-regel).
+- Google-provider aktiveras i samma steg så första inloggningen fungerar.
+- Enkätsvaren skrivs till användarens profil med RLS scopad till `auth.uid()`; grants ses över i samma migration.
+- Tracking: befintliga survey-events behålls, nya events för `home_chat_question_clicked` och `home_chat_login_prompt_shown` läggs till i `allowedEvents`.
+
+## Utanför scope
+Ingen ändring av startsidans layout, hero-text, RoleCarousel, footer eller övriga sidor.
