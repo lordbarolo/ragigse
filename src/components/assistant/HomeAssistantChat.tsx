@@ -81,6 +81,7 @@ export default function HomeAssistantChat() {
 
       if (data?.need === "role") {
         setPending({ key });
+        setRoleFilter("");
         setNeeds("role");
         push({ role: "assistant", text: "Vilken roll gäller det?" });
         return;
