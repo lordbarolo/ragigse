@@ -96,7 +96,7 @@ export default function Home() {
                 </li>
                 <li className="flex items-start gap-2 text-base text-[#6B6B6B]">
                   <Check className="w-5 h-5 shrink-0 mt-0.5" style={{ color: "hsl(160,80%,50%)" }} />
-                  <span>Branschens standardmarginaler — ca 12 % läkare, 17 % sjuksköterskor</span>
+                  <span>Addera kunskap till din magkänsla</span>
                 </li>
               </ul>
             </div>
@@ -127,7 +127,7 @@ export default function Home() {
                 </li>
                 <li className="flex items-start gap-2 text-base text-[#6B6B6B]">
                   <Check className="w-5 h-5 shrink-0 mt-0.5" style={{ color: "hsl(160,80%,50%)" }} />
-                  <span>Branschens standardmarginaler — ca 12 % läkare, 17 % sjuksköterskor</span>
+                  <span>Addera kunskap till din magkänsla</span>
                 </li>
               </ul>
             </div>
