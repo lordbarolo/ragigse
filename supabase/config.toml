@@ -164,3 +164,6 @@ verify_jwt = false
 
 [functions.ph-proxy]
 verify_jwt = false
+
+[functions.home-assistant]
+verify_jwt = false
