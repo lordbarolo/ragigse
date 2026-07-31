@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Check, ShieldCheck } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
@@ -16,8 +15,7 @@ import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 export default function DevAssistent() {
   useTimeOnPage("dev_assistent");
 
-  useEffect(() => {
-  }, []);
+
 
   return (
     <AnthropicScope>
