@@ -47,7 +47,12 @@ export default function HomeAssistantChat() {
   const [pending, setPending] = useState<{ key: PresetKey; role?: string } | null>(null);
   const [needs, setNeeds] = useState<"role" | "zone" | null>(null);
   const [input, setInput] = useState("");
+  const [roleFilter, setRoleFilter] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  const q = roleFilter.trim().toLowerCase();
+  const filteredRoles = (q ? roles.filter((r) => r.toLowerCase().includes(q)) : roles).slice(0, 12);
+
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
