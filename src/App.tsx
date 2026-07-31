@@ -123,6 +123,7 @@ const App = () => (
               <Route path="/vanliga-fragor" element={<FAQ />} />
               <Route path="/faktasidor" element={<Faktasidor />} />
               <Route path="/dev_assistent" element={<DevAssistent />} />
+              <Route path="/dev_31" element={<Dev31 />} />
               <Route path="/integritetspolicy" element={<PrivacyPolicy />} />
 
               {/* ── Admin ── */}
