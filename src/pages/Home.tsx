@@ -83,12 +83,11 @@ export default function Home() {
               }`}
             >
               <h1 className="font-editorial font-bold leading-[1.12] text-black mb-5 text-[34px] sm:text-5xl md:text-[62px]">
-                Ai för konsulter inom sjukvård.<br />
-                <span className="text-gradient-violet text-black">Sätt din agent i arbete.&nbsp;</span>
+                Har du rätt lön?<br />
+                <span className="text-gradient-violet text-black">Vill du veta?</span>
               </h1>
               <p className="font-editorial text-lg sm:text-xl text-black/75 leading-relaxed max-w-[460px] whitespace-pre-wrap">
-                Din personliga Ai-agent berättar vad regionen betalar och vad du du kan fakturera. Den hanterar riskfördelning och riskläser ditt avtal och gör dig uppmärksam på ansvarsfördelning och riskersom kan för justering av ansvarsfördelning eller förmåner som saknas. Vill du veta om du verkligen fick med alla timmarna på förra årets jourpass? Din agent Är du säker på att du fakturerat för alla timmar du jobbat senaste året?Deoch informerar om snedvriden ansvarsfördelning eller Pålitlig löneanalys inför nästa förhandling. Agentkontroll av risker i ditt konsultavtal.
-                Ai-analys av inbetalningar utifrån tidrapporter&nbsp;
+                Kunskap från AI-baserad marknadsanalys och offentliga ramavtal. Kostnadsfritt och tillgängligt för alla.
               </p>
               <ul className="mt-6 space-y-2 max-w-[460px] hidden lg:block">
                 <li className="flex items-start gap-2 text-base text-[#6B6B6B]">

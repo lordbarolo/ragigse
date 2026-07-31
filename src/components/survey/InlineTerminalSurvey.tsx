@@ -423,7 +423,7 @@ export default function InlineTerminalSurvey({
                       isLight ? "text-[#9CA3AF]" : "text-white/70"
                     }`}
                     >
-                      Kostnadsfritt · Klart på 60 sekunder
+                      Redovisad data avser villkor för bemanningspersonal inom SKR:s nationella avtal
                     </p>
                 </Step>
               )}
