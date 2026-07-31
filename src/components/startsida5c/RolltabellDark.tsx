@@ -88,7 +88,7 @@ export default function RolltabellDark({ rows, isLoading }: Props) {
 
         <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-[12px]" style={{ color: "#666b7e" }}>
           <span>Högst ersättning markerad. Fullständig lista med alla roller efter inloggning.</span>
-          <Link to="/v1?start=1" style={{ color: "#8b8bf6" }} className="hover:underline">
+          <Link to="/faktasidor" style={{ color: "#8b8bf6" }} className="hover:underline">
             Jämför alla roller →
           </Link>
         </div>
