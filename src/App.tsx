@@ -34,6 +34,7 @@ const AdminHealth = lazy(() => import("./pages/admin/Health"));
 const FAQ = lazy(() => import("./pages/FAQ"));
 const Faktasidor = lazy(() => import("./pages/Faktasidor"));
 const DevAssistent = lazy(() => import("./pages/DevAssistent"));
+const Dev31 = lazy(() => import("./pages/Dev31"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -122,6 +123,7 @@ const App = () => (
               <Route path="/vanliga-fragor" element={<FAQ />} />
               <Route path="/faktasidor" element={<Faktasidor />} />
               <Route path="/dev_assistent" element={<DevAssistent />} />
+              <Route path="/dev_31" element={<Dev31 />} />
               <Route path="/integritetspolicy" element={<PrivacyPolicy />} />
 
               {/* ── Admin ── */}
