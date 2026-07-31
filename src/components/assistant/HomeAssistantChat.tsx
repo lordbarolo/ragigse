@@ -139,18 +139,31 @@ export default function HomeAssistantChat() {
 
         {/* Följdval */}
         {!loading && needs === "role" && (
-          <div className="flex flex-wrap gap-1.5 pt-1">
-            {roles.slice(0, 40).map((r) => (
-              <button
-                key={r}
-                onClick={() => onRolePick(r)}
-                className="text-xs rounded-full border border-black/15 px-3 py-1.5 text-black/75 hover:bg-black/5 transition-colors"
-              >
-                {r}
-              </button>
-            ))}
+          <div className="pt-1 space-y-2">
+            <input
+              autoFocus
+              value={roleFilter}
+              onChange={(e) => setRoleFilter(e.target.value)}
+              placeholder="Sök roll, t.ex. anestesi…"
+              className="w-full rounded-lg border border-black/15 px-3 py-2 text-sm outline-none focus:border-[#3D3491]/60 placeholder:text-black/40"
+            />
+            <div className="flex flex-wrap gap-1.5">
+              {filteredRoles.length === 0 && (
+                <span className="text-xs text-black/50">Ingen roll matchar sökningen.</span>
+              )}
+              {filteredRoles.map((r) => (
+                <button
+                  key={r}
+                  onClick={() => onRolePick(r)}
+                  className="text-xs rounded-full border border-black/15 px-3 py-1.5 text-black/75 hover:bg-black/5 transition-colors"
+                >
+                  {r}
+                </button>
+              ))}
+            </div>
           </div>
         )}
+
         {!loading && needs === "zone" && (
           <div className="flex flex-wrap gap-1.5 pt-1">
             {ZONES.map((z) => (
