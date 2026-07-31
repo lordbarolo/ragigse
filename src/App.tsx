@@ -34,6 +34,7 @@ const AdminHealth = lazy(() => import("./pages/admin/Health"));
 const FAQ = lazy(() => import("./pages/FAQ"));
 const Faktasidor = lazy(() => import("./pages/Faktasidor"));
 const DevAssistent = lazy(() => import("./pages/DevAssistent"));
+const Dev31 = lazy(() => import("./pages/Dev31"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 const NotFound = lazy(() => import("./pages/NotFound"));
