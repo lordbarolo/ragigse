@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { ArrowUp, Lock, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { filterPublicRoles } from "@/lib/roleVisibility";
 
 type Msg = {
   id: string;
@@ -12,19 +11,24 @@ type Msg = {
   source?: string;
 };
 
-type PresetKey = "pris" | "fakturera" | "zoner" | "avrop" | "ramavtal" | "anstallningsform" | "uppgifter";
+type PresetKey =
+  | "ssk_stockholm"
+  | "allmanlakare_torsby"
+  | "erfarenhet"
+  | "termin10"
+  | "patientforsakring"
+  | "avrop_gavle"
+  | "lon_malmo";
 
 const PRESETS: { key: PresetKey; label: string }[] = [
-  { key: "pris", label: "Vad betalar regionen för min roll?" },
-  { key: "fakturera", label: "Vad kan jag fakturera efter bolagets marginal?" },
-  { key: "zoner", label: "Hur skiljer sig priset mellan zonerna?" },
-  { key: "avrop", label: "Vilka avrop har publicerats senaste 30 dagarna?" },
-  { key: "ramavtal", label: "Vad ingår i SKR:s ramavtal — och vad ingår inte?" },
-  { key: "anstallningsform", label: "Hur påverkar anställningsform min ersättning?" },
-  { key: "uppgifter", label: "Vilka uppgifter behöver ni om mig?" },
+  { key: "ssk_stockholm", label: "Vad betalar Stockholm för en leg. sjuksköterska?" },
+  { key: "allmanlakare_torsby", label: "Vad kan jag tjäna som allmänläkare i Torsby?" },
+  { key: "erfarenhet", label: "Hur lång erfarenhet behöver jag för att jobba med bemanning?" },
+  { key: "termin10", label: "Kan jag ta konsultvikariat under termin 10 på läkarprogrammet?" },
+  { key: "patientforsakring", label: "Behöver jag patientförsäkring som företagande läkare?" },
+  { key: "avrop_gavle", label: "Hur ofta avropar Gävle sjukhus sjuksköterskor till akuten?" },
+  { key: "lon_malmo", label: "Är 390 kr/timme bra lön i Malmö?" },
 ];
-
-const ZONES = ["Zon 1", "Zon 2", "Zon 3"];
 
 let idc = 0;
 const nid = () => `m${++idc}`;
@@ -43,55 +47,24 @@ export default function HomeAssistantChat() {
     },
   ]);
   const [loading, setLoading] = useState(false);
-  const [roles, setRoles] = useState<string[]>([]);
-  const [pending, setPending] = useState<{ key: PresetKey; role?: string } | null>(null);
-  const [needs, setNeeds] = useState<"role" | "zone" | null>(null);
   const [input, setInput] = useState("");
-  const [roleFilter, setRoleFilter] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  const q = roleFilter.trim().toLowerCase();
-  const filteredRoles = (q ? roles.filter((r) => r.toLowerCase().includes(q)) : roles).slice(0, 12);
-
+  const started = messages.some((m) => m.role === "user");
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages, needs, loading]);
-
-  useEffect(() => {
-    supabase.functions
-      .invoke("home-assistant", { body: { action: "roles" } })
-      .then(({ data }) => {
-        const list: string[] = data?.roles ?? [];
-        setRoles(filterPublicRoles(list, (r) => r));
-      })
-      .catch(() => setRoles([]));
-  }, []);
+  }, [messages, loading]);
 
   const push = (m: Omit<Msg, "id">) => setMessages((prev) => [...prev, { ...m, id: nid() }]);
 
-  async function ask(key: PresetKey, role?: string, zone?: string) {
+  async function ask(key: PresetKey) {
     setLoading(true);
-    setNeeds(null);
     try {
       const { data, error } = await supabase.functions.invoke("home-assistant", {
-        body: { action: "answer", key, role, zone },
+        body: { action: "answer", key },
       });
       if (error) throw error;
-
-      if (data?.need === "role") {
-        setPending({ key });
-        setRoleFilter("");
-        setNeeds("role");
-        push({ role: "assistant", text: "Vilken roll gäller det?" });
-        return;
-      }
-      if (data?.need === "zone") {
-        setPending({ key, role });
-        setNeeds("zone");
-        push({ role: "assistant", text: "Vilken zon utförs uppdraget i?" });
-        return;
-      }
       push({ role: "assistant", text: data?.answer ?? data?.error ?? "Inget svar.", source: data?.source });
     } catch {
       push({ role: "assistant", text: "Något gick fel. Försök igen om en stund." });
@@ -102,24 +75,13 @@ export default function HomeAssistantChat() {
 
   function onPreset(p: { key: PresetKey; label: string }) {
     push({ role: "user", text: p.label });
-    setPending(null);
     ask(p.key);
   }
 
-  function onRolePick(role: string) {
-    push({ role: "user", text: role });
-    ask(pending!.key, role);
-  }
-
-  function onZonePick(zone: string) {
-    push({ role: "user", text: zone });
-    ask(pending!.key, pending!.role, zone);
-  }
-
   return (
-    <div className="w-full rounded-2xl border border-black/10 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.06)] overflow-hidden flex flex-col h-[520px]">
+    <div className="w-full rounded-2xl border border-black/10 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.06)] overflow-hidden flex flex-col h-[560px]">
       {/* Transkript */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 sm:px-5 py-4 space-y-3">
+      <div ref={scrollRef} className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-5 py-4 space-y-3">
         {messages.map((m) => (
           <div key={m.id} className={m.role === "user" ? "flex justify-end" : ""}>
             {m.role === "user" ? (
@@ -142,67 +104,28 @@ export default function HomeAssistantChat() {
             <Loader2 className="w-3.5 h-3.5 animate-spin" /> Tänker…
           </div>
         )}
-
-        {/* Följdval */}
-        {!loading && needs === "role" && (
-          <div className="pt-1 space-y-2">
-            <input
-              autoFocus
-              value={roleFilter}
-              onChange={(e) => setRoleFilter(e.target.value)}
-              placeholder="Sök roll, t.ex. anestesi…"
-              className="w-full rounded-lg border border-black/15 px-3 py-2 text-sm outline-none focus:border-[#3D3491]/60 placeholder:text-black/40"
-            />
-            <div className="flex flex-wrap gap-1.5">
-              {filteredRoles.length === 0 && (
-                <span className="text-xs text-black/50">Ingen roll matchar sökningen.</span>
-              )}
-              {filteredRoles.map((r) => (
-                <button
-                  key={r}
-                  onClick={() => onRolePick(r)}
-                  className="text-xs rounded-full border border-black/15 px-3 py-1.5 text-black/75 hover:bg-black/5 transition-colors"
-                >
-                  {r}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {!loading && needs === "zone" && (
-          <div className="flex flex-wrap gap-1.5 pt-1">
-            {ZONES.map((z) => (
-              <button
-                key={z}
-                onClick={() => onZonePick(z)}
-                className="text-xs rounded-full border border-black/15 px-3 py-1.5 text-black/75 hover:bg-black/5 transition-colors"
-              >
-                {z}
-              </button>
-            ))}
-          </div>
-        )}
       </div>
 
-      {/* Fördefinierade frågor */}
-      {!needs && (
-        <div className="px-4 sm:px-5 pb-2 flex flex-wrap gap-1.5 border-t border-black/5 pt-3">
-          {PRESETS.map((p) => (
-            <button
-              key={p.key}
-              disabled={loading}
-              onClick={() => onPreset(p)}
-              className="text-xs rounded-full border border-black/15 px-3 py-1.5 text-black/75 hover:bg-black/5 transition-colors disabled:opacity-50"
-            >
-              {p.label}
-            </button>
-          ))}
-        </div>
-      )}
+      {/* Fördefinierade frågor — kompakt lista när samtalet startat */}
+      <div
+        className={`shrink-0 px-4 sm:px-5 pb-2 pt-3 border-t border-black/5 flex flex-wrap gap-1.5 overflow-y-auto ${
+          started ? "max-h-[76px]" : ""
+        }`}
+      >
+        {PRESETS.map((p) => (
+          <button
+            key={p.key}
+            disabled={loading}
+            onClick={() => onPreset(p)}
+            className="text-xs rounded-full border border-black/15 px-3 py-1.5 text-black/75 hover:bg-black/5 transition-colors disabled:opacity-50"
+          >
+            {p.label}
+          </button>
+        ))}
+      </div>
 
       {/* Fritext — låst utan konto */}
-      <div className="px-4 sm:px-5 py-3 border-t border-black/10 bg-black/[0.02]">
+      <div className="shrink-0 px-4 sm:px-5 py-3 border-t border-black/10 bg-black/[0.02]">
         {user ? (
           <form
             onSubmit={(e) => {
