@@ -125,6 +125,7 @@ const App = () => (
               <Route path="/faktasidor" element={<Faktasidor />} />
               <Route path="/dev_assistent" element={<DevAssistent />} />
               <Route path="/dev_31" element={<Dev31 />} />
+              <Route path="/demo/startsida-5c" element={<Startsida5c />} />
               <Route path="/integritetspolicy" element={<PrivacyPolicy />} />
 
               {/* ── Admin ── */}
