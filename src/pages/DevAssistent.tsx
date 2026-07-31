@@ -17,8 +17,6 @@ export default function DevAssistent() {
   useTimeOnPage("dev_assistent");
 
   useEffect(() => {
-    document.documentElement.setAttribute("data-noindex", "true");
-    return () => document.documentElement.removeAttribute("data-noindex");
   }, []);
 
   return (
