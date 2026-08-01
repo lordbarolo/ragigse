@@ -158,4 +158,11 @@ export function captureError(error: unknown, context?: Record<string, unknown>) 
   }
 }
 
+// Exponera instansen globalt så att `window.posthog` går att verifiera i
+// browser-konsolen (och användas av externa verktyg). Detta är samma
+// initierade instans som appen använder — ingen andra init, ingen
+// head-snippet, cookie-fri konfiguration bevaras.
+(window as unknown as { posthog?: typeof posthog }).posthog = posthog;
+
 export default posthog;
+
