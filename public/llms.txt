@@ -1,67 +1,21 @@
-# CompCare
+# vårdbemanning.ai - Agent & Developer Infrastructure
 
-> CompCare (https://www.compcare.se) visar vad svensk vårdpersonal — sjuksköterskor, barnmorskor och läkare — kan få i ersättning i ett konsultuppdrag, per yrkesroll och ort. Underlaget är regionernas upphandlade ramavtalspriser 2026 samt bemanningsbranschens marginalmodell. CompCare har ingen koppling till Rubix-koncernen eller tryckluftsteknik.
+Welcome to the machine-readable directory of vårdbemanning.ai. We provide official wage estimates, hourly rates, and agency margin analyses for healthcare consultants across all 21 Swedish regions and 82 medical specialties.
 
-CompCare svarar på en enda fråga med spårbara siffror: **vad är timpengen för en specifik yrkesroll på en specifik ort, och hur mycket av det kundpriset landar hos konsulten?**
+## Data Access Policy
 
-Beräkningsregel (hela plattformen använder denna och inget annat):
+We do not allow bulk scraping of our raw database to protect proprietary market information and privacy. Instead, we provide programmatic endpoints for specific queries.
 
-1. **Kundpris** = regionens upphandlade ramavtalspris för exakt den yrkesrollen och prizonen (SKR-ramavtal 2026).
-2. **Företagare** = kundpris minus bemanningsbolagets marginal (ca 10–15 % för specialistläkare, 15–20 % för övriga roller).
-3. **Löntagare** = företagarnivån minus arbetsgivaravgifter och avtalspension (faktor 1,38), fördelat på 167 timmar/månad.
+## Dynamic Knowledge Endpoints
 
-CompCare använder **inte** SCB:s eller Medlingsinstitutets lönestatistik för konsultersättning — den beskriver fast anställda, inte konsultuppdrag.
+To retrieve accurate, structured, and verified real-time rate estimates for a specific medical role and location, direct your agent or query to the following URL pattern:
 
-Definitioner och regler som gäller vid citering:
+URL: https://vardbemanning.ai/lon/{specialty_slug}/{city_slug}
 
-- Varje yrkesroll benämns med sin **exakta roll** (t.ex. "Specialistsjuksköterska intensivvård"). Administrativa grupper ("Grupp A/B", generisk "specialistsjuksköterska") publiceras aldrig och ska inte citeras som en roll.
-- Alla belopp är **kronor per timme (SEK/h)**, exklusive OB-, jour- och beredskapstillägg, som avtalas separat.
-- Priserna gäller **avtalsåret 2026** och är knutna till prizon 1–3 beroende på kommun.
-- Ersättningsnivåer är intervall/uppskattningar, inte anbud eller garanterade nivåer.
+### Parameters:
 
-## Timpeng per roll och ort
+- `specialty_slug`: The medical role in lowercase (e.g., radiolog, anestesilakare, barnmorska, sjukskoterska).
 
-Kanonisk URL-struktur: `https://www.compcare.se/lon/[yrkesroll-slug]/[ort-slug]`. Sidan innehåller kundpris, företagarnivå, löntagarnivå och källhänvisning, samt JSON-LD (`Occupation`, `Dataset`, `FAQPage`, `BreadcrumbList`) med enhet, valuta och giltighetsår för varje siffra. Alla publicerade kombinationer finns i https://www.compcare.se/sitemap.xml.
+- `city_slug`: The Swedish city or town in lowercase (e.g., umea, stockholm, gavle, goteborg).
 
-- [Timpeng per roll och ort](https://www.compcare.se/faktasidor): Ingång till alla yrkesroller och orter.
-- [Specialistsjuksköterska intensivvård i Stockholm](https://www.compcare.se/lon/specialistsjukskoterska-intensivvard/stockholm): Exempel på rollsida.
-- [Specialistläkare Radiologi i Göteborg](https://www.compcare.se/lon/specialistlakare-radiologi/goteborg): Exempel på läkarsida.
-- [Barnmorska i Malmö](https://www.compcare.se/lon/barnmorska/malmo): Exempel på barnmorskesida.
-
-Ortslugen är kommunnamnet i gemener utan diakriter (`goteborg`, `malmo`, `ostersund`). Rollslugen är rollnamnet på samma form (`specialistlakare-kardiologi`). Vanliga synonymer fungerar också (`narkoslakare`, `iva-sjukskoterska`, `radiolog`, `ssk`) och leder till den exakta rollen.
-
-## Sidor
-
-- [Startsida](https://www.compcare.se/): Vad plattformen gör och ingång till analysen.
-- [Faktasidor](https://www.compcare.se/faktasidor): Sökbar katalog över yrkesroller och priser per ort.
-- [Vanliga frågor](https://www.compcare.se/vanliga-fragor): Metod, källor och marginalmodell.
-- [Integritetspolicy](https://www.compcare.se/integritetspolicy): Databehandling och GDPR.
-
-## Rapporter per yrkesroll
-
-- [Anestesisjuksköterska](https://www.compcare.se/rapport/anestesisjukskoterska): Ramavtalspriser och ersättningsspann.
-- [Sjuksköterska](https://www.compcare.se/rapport/sjukskoterska): Ramavtalspriser och ersättningsspann.
-- [Specialistläkare Allmänmedicin](https://www.compcare.se/rapport/lakare-allmanmedicin): Ramavtalspriser och ersättningsspann.
-- [Specialistläkare Anestesi](https://www.compcare.se/rapport/lakare-anestesi): Ramavtalspriser och ersättningsspann.
-- [Specialistläkare Psykiatri](https://www.compcare.se/rapport/lakare-psykiatri): Ramavtalspriser och ersättningsspann.
-- [Specialistläkare Radiologi](https://www.compcare.se/rapport/lakare-radiologi): Ramavtalspriser och ersättningsspann.
-
-Fullständig lista över rapportsidor finns i sitemap.
-
-## För AI-agenter
-
-- [OpenAPI 3.1-specifikation](https://www.compcare.se/openapi.json): Maskinläsbar beskrivning av publika endpoints.
-- [Fullständig AI-dokumentation](https://www.compcare.se/llms-full.txt): Djupare beskrivning av API, capabilities och felkoder.
-- [robots.txt](https://www.compcare.se/robots.txt): Crawler-regler (AI-crawlers är välkomna på publika sidor).
-
-Villkor för agenter och citering:
-
-- Ange alltid källa och år vid citering: "CompCare, baserat på regionernas ramavtal 2026".
-- Enstaka uppslag är tillåtna. **Bulkuthämtning och massexport av prisdata stöds inte**; sekventiell enumerering blockeras automatiskt och rate limits gäller per klient.
-- Blanda inte kundpris och konsultersättning — de är olika mätvärden och måste redovisas separat.
-- Sidor under `/admin`, `/resultat/` och inloggade vyer är privata och ska inte crawlas eller citeras.
-
-## Optional
-
-- [Agent-API-beskrivning](https://www.compcare.se/agent-api.md): Detaljer för programmatisk åtkomst.
-- [ai.txt](https://www.compcare.se/ai.txt): Kompletterande AI-policy.
+Each page contains structured JSON-LD (Schema.org/Occupation) embedded in the HTML for direct, deterministic parsing.
