@@ -57,7 +57,74 @@
     <!-- Robots -->
     <meta name="robots" content="index, follow" />
 
-    <!-- Analytics: PostHog (consent-gated, EU-baserad) — laddas i appen. Ingen tracking i <head>. -->
+    <!--
+      Analytics: PostHog (EU-baserad, cookie-fri som default).
+      Laddas via head-snippet på ALLA sidor. Konfigurationen är identisk med
+      den tidigare app-initieringen: memory-persistence (inga cookies/localStorage
+      innan samtycke), autocapture av, manuella pageviews, ingen session recording,
+      $ip null och redaktion av tokens/UUID:er i URL:er. Trafiken går via vår
+      egen ph-proxy (Edge Function) så adblockers inte blockerar anropen.
+      Uppgradering till localStorage+cookie sker först via applyAnalyticsConsent()
+      i src/lib/posthog.ts när användaren accepterar cookies.
+    -->
+    <script>
+      !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+
+      (function () {
+        // Redaktion: tokens/UUID:er får aldrig lämna browsern via analytics.
+        var SENSITIVE = ["/sign","/samarbetsintyg","/verify","/dela","/dokument","/intyg","/profil","/ping","/reset-password","/r/"];
+        var UUID_RE = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi;
+        var HEX_RE = /[0-9a-f]{24,}/gi;
+        function redact(value) {
+          if (typeof value !== "string") return value;
+          var out = value;
+          try {
+            var url = new URL(out, "https://x.local");
+            var path = url.pathname;
+            var hit = SENSITIVE.some(function (p) { return path === p || path.indexOf(p + "/") === 0; });
+            if (hit) {
+              url.pathname = path.replace(/\/[^/]+$/, "/[redacted]");
+              url.search = "";
+              out = value.charAt(0) === "/" ? url.pathname : url.toString();
+            }
+          } catch (e) { /* not a URL */ }
+          return out.replace(UUID_RE, "[uuid]").replace(HEX_RE, "[token]");
+        }
+
+        var h = window.location.hostname;
+        var isInternal =
+          h === "localhost" ||
+          h === "127.0.0.1" ||
+          h.slice(-20) === ".lovableproject.com" ||
+          h.indexOf("id-preview--") === 0;
+
+        window.posthog.init("phc_AFPm7q5MQPFhR8cNu3LiRapyRaanNZNKWN2hzZrRkDoY", {
+          api_host: "https://ubhhlunhdqbokjvwfebb.supabase.co/functions/v1/ph-proxy",
+          ui_host: "https://eu.posthog.com",
+          persistence: "memory",
+          opt_out_capturing_by_default: false,
+          autocapture: false,
+          capture_pageview: false,
+          capture_pageleave: false,
+          disable_session_recording: true,
+          loaded: function (ph) {
+            ph.register({ $ip: null, is_internal_traffic: isInternal });
+          },
+          before_send: function (event) {
+            if (!event) return event;
+            var props = event.properties || {};
+            var keys = ["$current_url","$pathname","$referrer","$initial_current_url","$initial_pathname","$initial_referrer"];
+            for (var i = 0; i < keys.length; i++) {
+              if (keys[i] in props) props[keys[i]] = redact(props[keys[i]]);
+            }
+            event.properties = props;
+            return event;
+          }
+        });
+        window.posthog.register({ $ip: null, is_internal_traffic: isInternal });
+      })();
+    </script>
+
 
     <!-- Leadsy.ai visitor identification pixel -->
     <script id="vtag-ai-js" async src="https://r2.leadsy.ai/tag.js" data-pid="2rrd2pKYIeTK5z2C" data-version="062024"></script>
