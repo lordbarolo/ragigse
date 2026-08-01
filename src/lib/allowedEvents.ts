@@ -4,6 +4,9 @@ export const ALLOWED_EVENTS = [
   "landing_viewed",
   "faktasidor_viewed",
   "faktasidor_export_clicked",
+  "faktasidor_role_selected",
+  "faktasidor_signup_cta_clicked",
+
   "survey_started",
   "survey_step_completed",
   "survey_completed",
