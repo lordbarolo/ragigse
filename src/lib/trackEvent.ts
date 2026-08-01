@@ -86,7 +86,13 @@ type EventName =
   | "lonekoll_topic_selected"
   | "lonekoll_question_selected"
   | "lonekoll_answer_reported"
-  | "lonekoll_missing_question_reported";
+  | "lonekoll_missing_question_reported"
+  | "home_chat_shown"
+  | "home_chat_question_clicked"
+  | "home_chat_answer_shown"
+  | "home_chat_answer_failed"
+  | "home_chat_login_prompt_shown"
+  | "home_chat_signup_from_chat";
 
 function isInternalTraffic(): boolean {
   const host = window.location.hostname;

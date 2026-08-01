@@ -18,6 +18,8 @@ export default {
         display: ['"Inter"', 'sans-serif'],
         body: ['"Inter"', 'sans-serif'],
         mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+        grotesk: ['"Space Grotesk"', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        plex: ['"IBM Plex Mono"', 'ui-monospace', 'monospace'],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -98,12 +100,33 @@ export default {
           "0%": { transform: "translateX(0)" },
           "100%": { transform: "translateX(-50%)" },
         },
+        "cc-fade-up": {
+          from: { opacity: "0", transform: "translateY(16px)" },
+          to: { opacity: "1", transform: "none" },
+        },
+        "cc-glow-pulse": {
+          "0%, 100%": { opacity: "0.5" },
+          "50%": { opacity: "0.95" },
+        },
+        "cc-kenburns": {
+          from: { transform: "scale(1.02) translateX(0)" },
+          to: { transform: "scale(1.12) translateX(-1.5%)" },
+        },
+        "cc-caret": {
+          "0%, 49%": { opacity: "1" },
+          "50%, 100%": { opacity: "0" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "slide-in-right": "slide-in-right 3s cubic-bezier(0.16, 1, 0.3, 1) forwards",
         marquee: "marquee 20s linear infinite",
+        "cc-fade-up": "cc-fade-up 0.7s ease both",
+        "cc-glow-pulse": "cc-glow-pulse 6s ease-in-out infinite",
+        "cc-dot-pulse": "cc-glow-pulse 2s ease-in-out infinite",
+        "cc-kenburns": "cc-kenburns 22s ease-in-out infinite alternate",
+        "cc-caret": "cc-caret 1.1s step-end infinite",
       },
     },
   },

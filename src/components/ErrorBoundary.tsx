@@ -3,6 +3,12 @@ import { captureError } from "@/lib/posthog";
 
 interface Props {
   children: ReactNode;
+  /**
+   * Lokal fallback för sektionsnivå. Utan denna renderas helskärmsvarianten,
+   * vilket bara är rätt för den globala boundaryn i App.tsx — en sektion som
+   * kraschar ska inte blanka hela sidan.
+   */
+  fallback?: ReactNode;
 }
 
 interface State {
@@ -34,6 +40,9 @@ class ErrorBoundary extends Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
+      if (this.props.fallback !== undefined) {
+        return <>{this.props.fallback}</>;
+      }
       return (
         <div className="min-h-screen flex items-center justify-center bg-background px-4">
           <div className="text-center max-w-md space-y-4">
