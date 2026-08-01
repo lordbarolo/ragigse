@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 
 const LINKS = [
   { to: "/faktasidor", label: "Faktasidor" },

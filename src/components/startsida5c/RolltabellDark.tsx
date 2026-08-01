@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import { basePrices, computeRate5c, ZONES_5C, kr, type RateRow } from "./rate5c";
 
 interface Props {

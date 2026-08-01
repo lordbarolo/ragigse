@@ -1,5 +1,5 @@
 
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import CompcareLogo from "@/components/CompcareLogo";
@@ -110,7 +110,7 @@ export default function AnestesiReport() {
           <p className="text-[10px] uppercase tracking-[0.2em] font-medium opacity-70">
             Marknadsrapport 2026
           </p>
-          <h1 className="text-2xl sm:text-3xl font-bold leading-tight tracking-tight drop-shadow-sm">
+          <h1 className="text-2xl sm:text-3xl font-bold leading-tight tracking-tight drop-shadow-xs">
             Anestesisjuksköterska
           </h1>
           <div className="flex items-center gap-2 text-sm opacity-80">

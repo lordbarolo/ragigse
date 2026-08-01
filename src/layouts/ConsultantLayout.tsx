@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet } from "@/lib/router-compat";
 import Navbar from "@/components/Navbar";
 import BottomNav from "@/components/radar/BottomNav";
 

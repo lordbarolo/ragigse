@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import { Separator } from "@/components/ui/separator";
 import CompcareLogo from "@/components/CompcareLogo";
 import Navbar from "@/components/Navbar";
@@ -452,7 +452,7 @@ export default function AllmanmedicinReport() {
 
             <Link
               to="/?yrke=allmanmedicin"
-              className="block rounded-2xl border p-5 transition hover:shadow-sm"
+              className="block rounded-2xl border p-5 transition hover:shadow-xs"
               style={{ backgroundColor: card, borderColor: border }}
             >
               <div className="flex items-start gap-3">
@@ -480,7 +480,7 @@ export default function AllmanmedicinReport() {
 
             <Link
               to="/?yrke=allmanmedicin&fokus=lonekoll"
-              className="block rounded-2xl border p-5 transition hover:shadow-sm"
+              className="block rounded-2xl border p-5 transition hover:shadow-xs"
               style={{ backgroundColor: card, borderColor: border }}
             >
               <div className="flex items-start gap-3">
@@ -507,7 +507,7 @@ export default function AllmanmedicinReport() {
 
             <Link
               to="/?yrke=allmanmedicin&fokus=faktura"
-              className="block rounded-2xl border p-5 transition hover:shadow-sm"
+              className="block rounded-2xl border p-5 transition hover:shadow-xs"
               style={{ backgroundColor: card, borderColor: border }}
             >
               <div className="flex items-start gap-3">
