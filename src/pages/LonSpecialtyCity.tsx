@@ -191,7 +191,7 @@ export default function LonSpecialtyCity() {
           <>
             <p className="mt-5 text-[15.5px] leading-relaxed" style={{ color: "#a8adbd" }}>
               Enligt regionernas gällande ramavtal för 2026 ligger det faktiska kundpriset för en{" "}
-              {data.specialty_name} i {data.location_name} på {kr(data.client_rate)} kr/h. Efter
+              {data.specialty_name} i {cityLabel} på {kr(data.client_rate)} kr/h. Efter
               bemanningsbolagets typiska marginal kan du som konsult förvänta dig följande ersättningsspann.
             </p>
 
