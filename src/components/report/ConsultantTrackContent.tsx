@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import InvoiceReviewCTA from "./InvoiceReviewCTA";
 import PriceHistory from "./PriceHistory";
 import PriceNuggets from "./PriceNuggets";

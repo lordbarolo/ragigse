@@ -7,7 +7,7 @@ import {
   createContext,
   useContext,
 } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "@/lib/router-compat";
 import { ArrowLeft, ArrowRight, Briefcase, Building2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import SearchableSelect, { type Option } from "@/components/SearchableSelect";

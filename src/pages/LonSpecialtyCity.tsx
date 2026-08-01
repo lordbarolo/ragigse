@@ -4,7 +4,7 @@
  * anropar RPC:n `lookup_rate` (SKR:s ramavtal 2026). Ingen prislogik i klienten.
  */
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "@/lib/router-compat";
 import { supabase } from "@/integrations/supabase/client";
 import { SEO } from "@/components/SEO";
 import SearchableSelect from "@/components/SearchableSelect";

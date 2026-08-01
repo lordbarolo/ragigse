@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import { Search, MapPin, Info, Download, Lock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import AnthropicScope from "@/components/demo/AnthropicScope";

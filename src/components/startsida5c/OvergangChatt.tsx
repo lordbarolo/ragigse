@@ -1,5 +1,5 @@
-import { useNavigate } from "react-router-dom";
-import { Link } from "react-router-dom";
+import { useNavigate } from "@/lib/router-compat";
+import { Link } from "@/lib/router-compat";
 import { marginText5c } from "./rate5c";
 
 const PRESETS = [
