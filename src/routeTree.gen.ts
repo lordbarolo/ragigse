@@ -27,6 +27,7 @@ import { Route as ConsultantLayoutRouteImport } from './routes/consultant/_layou
 import { Route as ConsultantForhandlaRouteImport } from './routes/consultant/forhandla'
 import { Route as DemoStartsida5cRouteImport } from './routes/demo/startsida-5c'
 import { Route as DevAnalyticsRouteImport } from './routes/dev/analytics'
+import { Route as DevLlmsCheckRouteImport } from './routes/dev/llms-check'
 import { Route as KampanjRoleRouteImport } from './routes/kampanj/$role'
 import { Route as RapportReportIdRouteImport } from './routes/rapport/$reportId'
 import { Route as RapportAllmansjukskoterskaRouteImport } from './routes/rapport/allmansjukskoterska'
@@ -131,6 +132,11 @@ const DevAnalyticsRoute = DevAnalyticsRouteImport.update({
   path: '/dev/analytics',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DevLlmsCheckRoute = DevLlmsCheckRouteImport.update({
+  id: '/dev/llms-check',
+  path: '/dev/llms-check',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const KampanjRoleRoute = KampanjRoleRouteImport.update({
   id: '/kampanj/$role',
   path: '/kampanj/$role',
@@ -219,6 +225,7 @@ export interface FileRoutesByFullPath {
   '/consultant/forhandla': typeof ConsultantForhandlaRoute
   '/demo/startsida-5c': typeof DemoStartsida5cRoute
   '/dev/analytics': typeof DevAnalyticsRoute
+  '/dev/llms-check': typeof DevLlmsCheckRoute
   '/kampanj/$role': typeof KampanjRoleRoute
   '/rapport/$reportId': typeof RapportReportIdRoute
   '/rapport/allmansjukskoterska': typeof RapportAllmansjukskoterskaRoute
@@ -252,6 +259,7 @@ export interface FileRoutesByTo {
   '/consultant/forhandla': typeof ConsultantForhandlaRoute
   '/demo/startsida-5c': typeof DemoStartsida5cRoute
   '/dev/analytics': typeof DevAnalyticsRoute
+  '/dev/llms-check': typeof DevLlmsCheckRoute
   '/kampanj/$role': typeof KampanjRoleRoute
   '/rapport/$reportId': typeof RapportReportIdRoute
   '/rapport/allmansjukskoterska': typeof RapportAllmansjukskoterskaRoute
@@ -286,6 +294,7 @@ export interface FileRoutesById {
   '/consultant/forhandla': typeof ConsultantForhandlaRoute
   '/demo/startsida-5c': typeof DemoStartsida5cRoute
   '/dev/analytics': typeof DevAnalyticsRoute
+  '/dev/llms-check': typeof DevLlmsCheckRoute
   '/kampanj/$role': typeof KampanjRoleRoute
   '/rapport/$reportId': typeof RapportReportIdRoute
   '/rapport/allmansjukskoterska': typeof RapportAllmansjukskoterskaRoute
@@ -321,6 +330,7 @@ export interface FileRouteTypes {
     | '/consultant/forhandla'
     | '/demo/startsida-5c'
     | '/dev/analytics'
+    | '/dev/llms-check'
     | '/kampanj/$role'
     | '/rapport/$reportId'
     | '/rapport/allmansjukskoterska'
@@ -354,6 +364,7 @@ export interface FileRouteTypes {
     | '/consultant/forhandla'
     | '/demo/startsida-5c'
     | '/dev/analytics'
+    | '/dev/llms-check'
     | '/kampanj/$role'
     | '/rapport/$reportId'
     | '/rapport/allmansjukskoterska'
@@ -387,6 +398,7 @@ export interface FileRouteTypes {
     | '/consultant/forhandla'
     | '/demo/startsida-5c'
     | '/dev/analytics'
+    | '/dev/llms-check'
     | '/kampanj/$role'
     | '/rapport/$reportId'
     | '/rapport/allmansjukskoterska'
@@ -421,6 +433,7 @@ export interface RootRouteChildren {
   ConsultantForhandlaRoute: typeof ConsultantForhandlaRoute
   DemoStartsida5cRoute: typeof DemoStartsida5cRoute
   DevAnalyticsRoute: typeof DevAnalyticsRoute
+  DevLlmsCheckRoute: typeof DevLlmsCheckRoute
   KampanjRoleRoute: typeof KampanjRoleRoute
   RapportReportIdRoute: typeof RapportReportIdRoute
   RapportAllmansjukskoterskaRoute: typeof RapportAllmansjukskoterskaRoute
@@ -564,6 +577,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DevAnalyticsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dev/llms-check': {
+      id: '/dev/llms-check'
+      path: '/dev/llms-check'
+      fullPath: '/dev/llms-check'
+      preLoaderRoute: typeof DevLlmsCheckRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/kampanj/$role': {
       id: '/kampanj/$role'
       path: '/kampanj/$role'
@@ -687,6 +707,7 @@ const rootRouteChildren: RootRouteChildren = {
   ConsultantForhandlaRoute: ConsultantForhandlaRoute,
   DemoStartsida5cRoute: DemoStartsida5cRoute,
   DevAnalyticsRoute: DevAnalyticsRoute,
+  DevLlmsCheckRoute: DevLlmsCheckRoute,
   KampanjRoleRoute: KampanjRoleRoute,
   RapportReportIdRoute: RapportReportIdRoute,
   RapportAllmansjukskoterskaRoute: RapportAllmansjukskoterskaRoute,
@@ -704,3 +725,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
