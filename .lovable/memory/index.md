@@ -15,6 +15,8 @@
 
 ## Memories
 - [No group role labels](mem://constraints/no-group-role-labels) — Roller benämns aldrig utåt som grupp (Grupp A/B) — endast specifik roll
+- [Gating av prisdata](mem://constraints/price-data-gating) — Inga öppna exakta priser/formler. Utloggad = maskerad indikation + kontokrav. Agenter → /llms.txt + /openapi.json
+
 - [Retired modules](mem://archive/retired-modules) — Arkiverade spår, raderade edge functions, öppen fråga om skrPrices2026
 - [Security change protocol](mem://security/change-protocol) — Obligatorisk säkerhetsanalys efter varje ändring
 - [PostHog daily check](mem://tech/posthog-daily-check) — Daglig tracking-verifiering
