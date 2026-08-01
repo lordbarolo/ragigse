@@ -188,19 +188,27 @@ function RoleCard({ card }: { card: Card }) {
   );
 }
 
-export default function RoleCarousel() {
-  // Varva läkare/sjuksköterska och undvik att två intilliggande kort
-  // börjar på samma bokstav. Duplicera för sömlös marquee — rotera andra
-  // halvan om sömmen krockar.
-  const shuffled = buildAlternating(CARDS);
+function buildLoop(randomize: boolean): Card[] {
+  const shuffled = randomize ? buildAlternating(CARDS) : buildAlternating2Stable(CARDS);
   const last = shuffled[shuffled.length - 1];
   const first = shuffled[0];
   const seamCollides =
     shuffled.length > 1 &&
     (last.kind === first.kind || firstLetter(last.short) === firstLetter(first.short));
-  const loop = seamCollides
+  return seamCollides
     ? [...shuffled, ...rotateUntilDifferent(shuffled, last)]
     : [...shuffled, ...shuffled];
+}
+
+export default function RoleCarousel() {
+  // SSR renderar en deterministisk ordning (undviker hydration mismatch);
+  // slumpordningen sätts efter mount.
+  const [loop, setLoop] = useState<Card[]>(() => buildLoop(false));
+  useEffect(() => {
+    setLoop(buildLoop(true));
+  }, []);
+
+
 
 
   return (
