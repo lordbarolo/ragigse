@@ -15,6 +15,7 @@
 
 ## Memories
 - [No group role labels](mem://constraints/no-group-role-labels) — Roller benämns aldrig utåt som grupp (Grupp A/B) — endast specifik roll
+- [Rate slug aliases](mem://features/rate-slug-aliases) — lookup_rate faller tillbaka på rate_slug_aliases (synonym → exakt roll). role_aliases duger inte (SSYK-grupper).
 - [Gating av prisdata](mem://constraints/price-data-gating) — Inga öppna exakta priser/formler. Utloggad = maskerad indikation + kontokrav. Agenter → /llms.txt + /openapi.json
 
 - [Retired modules](mem://archive/retired-modules) — Arkiverade spår, raderade edge functions, öppen fråga om skrPrices2026
