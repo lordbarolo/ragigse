@@ -3807,6 +3807,7 @@ export type Database = {
         Args: { _request_id: string }
         Returns: undefined
       }
+      cc_slugify: { Args: { _input: string }; Returns: string }
       check_ai_rate_limit: {
         Args: { _daily_limit?: number; _user_id: string }
         Returns: Json
@@ -3878,6 +3879,17 @@ export type Database = {
           _stack?: string
         }
         Returns: string
+      }
+      lookup_rate: {
+        Args: { location_slug: string; specialty_slug: string }
+        Returns: {
+          client_rate: number
+          contractor_rate: number
+          employee_rate: number
+          location_name: string
+          source: string
+          specialty_name: string
+        }[]
       }
       match_lonekoll_chunks: {
         Args: { match_count?: number; query_embedding: string }
