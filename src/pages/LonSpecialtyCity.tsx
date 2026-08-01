@@ -99,23 +99,113 @@ export default function LonSpecialtyCity() {
   const specialtyLabel = data?.specialty_name ?? titleCase(specialty);
   const cityLabel = data?.location_name ? dedupePlace(data.location_name) : titleCase(city);
 
+  // JSON-LD: @graph med Occupation (maskinläsbara spann), FAQPage och BreadcrumbList.
+  // Optimerat för LLM:er/agenter — varje siffra har enhet, valuta, giltighet och källa.
   const jsonLd = useMemo(() => {
     if (!data) return undefined;
+    const place = dedupePlace(data.location_name);
+    const url = `https://www.compcare.se/lon/${specialty}/${city}`;
+    const money = (value: number) => ({
+      "@type": "MonetaryAmount",
+      currency: "SEK",
+      value: { "@type": "QuantitativeValue", value, unitText: "HOUR" },
+    });
+
     return {
       "@context": "https://schema.org",
-      "@type": "FAQPage",
-      mainEntity: [
+      "@graph": [
         {
-          "@type": "Question",
-          name: `Vad är timpengen för ${data.specialty_name} i ${dedupePlace(data.location_name)} 2026?`,
-          acceptedAnswer: {
-            "@type": "Answer",
-            text: `Enligt regionernas ramavtal 2026 är kundpriset ${data.client_rate} kr/h. Som företagare kan ersättningen ligga omkring ${data.contractor_rate} kr/h och som löntagare omkring ${data.employee_rate} kr/h efter bemanningsbolagets marginal. Källa: ${data.source}.`,
-          },
+          "@type": "Occupation",
+          "@id": `${url}#occupation`,
+          name: `${data.specialty_name} (konsultuppdrag) i ${place}`,
+          occupationalCategory: data.specialty_name,
+          occupationLocation: { "@type": "City", name: place, addressCountry: "SE" },
+          estimatedSalary: [
+            {
+              "@type": "MonetaryAmountDistribution",
+              name: "Kundpris enligt regionernas ramavtal 2026",
+              currency: "SEK",
+              unitText: "HOUR",
+              median: data.client_rate,
+            },
+            {
+              "@type": "MonetaryAmountDistribution",
+              name: "Ersättning som företagare (efter bemanningsbolagets marginal)",
+              currency: "SEK",
+              unitText: "HOUR",
+              median: data.contractor_rate,
+            },
+            {
+              "@type": "MonetaryAmountDistribution",
+              name: "Ersättning som löntagare (efter marginal och arbetsgivaravgifter)",
+              currency: "SEK",
+              unitText: "HOUR",
+              median: data.employee_rate,
+            },
+          ],
+          mainEntityOfPage: { "@id": url },
+        },
+        {
+          "@type": "Dataset",
+          "@id": `${url}#dataset`,
+          name: `Ramavtalspris ${data.specialty_name}, ${place}, 2026`,
+          description: `Timpris (kundpris) enligt regionernas ramavtal 2026 för ${data.specialty_name} i ${place}, samt beräknad ersättning för företagare och löntagare efter bemanningsbolagets marginal.`,
+          url,
+          isAccessibleForFree: true,
+          inLanguage: "sv-SE",
+          temporalCoverage: "2026",
+          spatialCoverage: { "@type": "Place", name: place, addressCountry: "SE" },
+          variableMeasured: [
+            { "@type": "PropertyValue", name: "Kundpris", unitText: "SEK/timme", value: data.client_rate },
+            { "@type": "PropertyValue", name: "Företagare", unitText: "SEK/timme", value: data.contractor_rate },
+            { "@type": "PropertyValue", name: "Löntagare", unitText: "SEK/timme", value: data.employee_rate },
+          ],
+          creator: { "@type": "Organization", name: "CompCare", url: "https://www.compcare.se" },
+          citation: data.source,
+        },
+        {
+          "@type": "FAQPage",
+          "@id": `${url}#faq`,
+          mainEntity: [
+            {
+              "@type": "Question",
+              name: `Vad är timpengen för ${data.specialty_name} i ${place} 2026?`,
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: `Enligt regionernas ramavtal 2026 är kundpriset ${data.client_rate} kr/h för ${data.specialty_name} i ${place}. Som företagare kan ersättningen ligga omkring ${data.contractor_rate} kr/h och som löntagare omkring ${data.employee_rate} kr/h efter bemanningsbolagets marginal. Källa: ${data.source}.`,
+              },
+            },
+            {
+              "@type": "Question",
+              name: `Varför skiljer sig kundpriset från min ersättning som ${data.specialty_name}?`,
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: `Kundpriset (${data.client_rate} kr/h) är vad regionen betalar bemanningsbolaget. Bolaget behåller en marginal för administration, garanterade timmar och betalningsrisk. Kvar till konsulten blir omkring ${data.contractor_rate} kr/h som företagare. Som löntagare tas dessutom arbetsgivaravgifter och avtalspension bort, vilket ger omkring ${data.employee_rate} kr/h.`,
+              },
+            },
+            {
+              "@type": "Question",
+              name: `Vilken källa används för priset i ${place}?`,
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: `${data.source}. CompCare använder enbart regionernas upphandlade ramavtalspriser samt bemanningsbranschens marginalmodell — aldrig SCB- eller Medlingsinstitutets lönestatistik.`,
+              },
+            },
+          ],
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": `${url}#breadcrumbs`,
+          itemListElement: [
+            { "@type": "ListItem", position: 1, name: "CompCare", item: "https://www.compcare.se/" },
+            { "@type": "ListItem", position: 2, name: "Timpeng per roll och ort", item: "https://www.compcare.se/faktasidor" },
+            { "@type": "ListItem", position: 3, name: `${data.specialty_name} i ${place}`, item: url },
+          ],
         },
       ],
     };
-  }, [data]);
+  }, [data, specialty, city]);
+
 
   const roleSelectOptions = useMemo(
     () => (options?.roles ?? []).map((r) => ({ value: r.slug, label: r.name })),
