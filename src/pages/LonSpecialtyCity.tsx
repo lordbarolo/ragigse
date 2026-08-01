@@ -107,7 +107,7 @@ export default function LonSpecialtyCity() {
       mainEntity: [
         {
           "@type": "Question",
-          name: `Vad är timpengen för ${data.specialty_name} i ${data.location_name} 2026?`,
+          name: `Vad är timpengen för ${data.specialty_name} i ${dedupePlace(data.location_name)} 2026?`,
           acceptedAnswer: {
             "@type": "Answer",
             text: `Enligt regionernas ramavtal 2026 är kundpriset ${data.client_rate} kr/h. Som företagare kan ersättningen ligga omkring ${data.contractor_rate} kr/h och som löntagare omkring ${data.employee_rate} kr/h efter bemanningsbolagets marginal. Källa: ${data.source}.`,
