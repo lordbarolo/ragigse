@@ -97,7 +97,7 @@ export default function LonSpecialtyCity() {
   }, [state, options]);
 
   const specialtyLabel = data?.specialty_name ?? titleCase(specialty);
-  const cityLabel = data?.location_name ?? titleCase(city);
+  const cityLabel = data?.location_name ? dedupePlace(data.location_name) : titleCase(city);
 
   const jsonLd = useMemo(() => {
     if (!data) return undefined;
