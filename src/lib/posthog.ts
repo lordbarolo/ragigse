@@ -21,7 +21,9 @@ type PostHogLike = {
     props?: Record<string, unknown>,
     propsOnce?: Record<string, unknown>
   ) => void;
+  isFeatureEnabled?: (key: string) => boolean | undefined;
   reset: (resetDeviceId?: boolean) => void;
+
   set_config: (config: Record<string, unknown>) => void;
   opt_in_capturing: () => void;
   opt_out_capturing: () => void;
