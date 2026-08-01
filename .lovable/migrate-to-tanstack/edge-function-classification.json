@@ -1,0 +1,14 @@
+{
+  "total": 78,
+  "migrated": 0,
+  "left": 78,
+  "rationale": "Project memory enforces a hard scope-lock and backend-first security architecture (requireAdmin/service_role logic strictly in edge functions). All 78 functions stay on Supabase: 14 are public API/agent endpoints with documented external URLs (openapi.json, llms.txt, agent-api.md), 11 are pg_cron targets, 3 are webhook receivers, 26 are internal-only, 24 unknown/no call site. Migrating any would change documented URLs or security surface beyond the user's SSR request.",
+  "functions": {
+    "public_api_agent_endpoints": ["agent-api-market-history","agent-api-rates","agent-api-user-context","ci-capabilities","ci-geographies","ci-metrics","ci-roles","compensation-intelligence","generate-pdf","get-public-profile","public-lon-lookup","radar-public-api"],
+    "webhook_receivers": ["auth-email-hook","handle-email-suppression","stripe-webhook"],
+    "cron_targets": ["backtest-uppdragsradar-accuracy","conversion-monitor","edge-error-monitor","health-check","lonekoll-monitor","monthly-security-audit","pipeline-health-watchdog","rate-mismatch-watchdog","refresh-uppdragsradar-forecast","send-followup-emails"],
+    "custom_response": ["ph-proxy"],
+    "internal_only": ["admin-data","admin-review-action","agent-api-admin","analytics-dashboard","create-report","delete-account","feedback-stats","get-lead","get-report","handle-email-unsubscribe","home-assistant","import-contract","lonekoll-answer","lonekoll-health","lonekoll-ingest-avtal","pricing-engine","radar-import","rate-baseline-ack","run-price-diff","salary-insights","save-email","send-audit-confirmation","send-password-recovery","send-transactional-email","track-event","verify-constants","verify-rates"],
+    "unknown_no_call_site": ["admin-survey-prefill-debug","agent-api-user-tokens","ai-explain-insight","ai-invoice-to-email","ai-pricing-coach","analytics-event-coverage","bankid-auth","bankid-collect","check-feedback","confirm-referral","e2e-test","get-avrop-predictions","invoice-extract","parse-avrop","posthog-health-check","preview-transactional-email","process-email-queue","radar-data","radar-predictions","reference-vault","representation-request","salary-negotiation-agent","send-referral","uppdragsradar-chat","validate-coupon"]
+  }
+}
