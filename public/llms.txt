@@ -19,3 +19,11 @@ URL: https://vardbemanning.ai/lon/{specialty_slug}/{city_slug}
 - `city_slug`: The Swedish city or town in lowercase (e.g., umea, stockholm, gavle, goteborg).
 
 Each page contains structured JSON-LD (Schema.org/Occupation) embedded in the HTML for direct, deterministic parsing.
+
+## Machine-readable slug index
+
+To enumerate every valid endpoint without guessing, fetch:
+
+URL: https://www.compcare.se/agent-index.json
+
+It lists all valid `specialty_slug` values (with their full role names), all valid `city_slug` values, accepted synonym slugs, URL patterns and counts. Group-level slugs are intentionally invalid.

@@ -50,3 +50,6 @@ User-agent: CCBot
 Allow: /
 Disallow: /admin
 Disallow: /resultat/
+
+# Machine-readable index of all valid specialty/city slugs for agents
+# https://www.compcare.se/agent-index.json
