@@ -105,12 +105,6 @@ export default function LonSpecialtyCity() {
     if (!data) return undefined;
     const place = dedupePlace(data.location_name);
     const url = `https://www.compcare.se/lon/${specialty}/${city}`;
-    const money = (value: number) => ({
-      "@type": "MonetaryAmount",
-      currency: "SEK",
-      value: { "@type": "QuantitativeValue", value, unitText: "HOUR" },
-    });
-
     return {
       "@context": "https://schema.org",
       "@graph": [
