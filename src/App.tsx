@@ -33,6 +33,7 @@ const AdminHealth = lazy(() => import("./pages/admin/Health"));
 
 const FAQ = lazy(() => import("./pages/FAQ"));
 const Faktasidor = lazy(() => import("./pages/Faktasidor"));
+const LonSpecialtyCity = lazy(() => import("./pages/LonSpecialtyCity"));
 const DevAssistent = lazy(() => import("./pages/DevAssistent"));
 const Dev31 = lazy(() => import("./pages/Dev31"));
 const Startsida5c = lazy(() => import("./pages/demo/Startsida5c"));
