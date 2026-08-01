@@ -111,17 +111,12 @@ export default function LonSpecialtyCity() {
         {
           "@type": "Occupation",
           "@id": `${url}#occupation`,
-          name: `${data.specialty_name} (konsultuppdrag) i ${place}`,
+          name: data.specialty_name,
           occupationalCategory: data.specialty_name,
+          description: `Konsultuppdrag som ${data.specialty_name} i ${place}. Kundpris enligt regionernas ramavtal 2026: ${data.client_rate} kr/h.`,
           occupationLocation: { "@type": "City", name: place, addressCountry: "SE" },
+          // Primär siffra för agenter: konsultens ersättning som företagare (contractor_rate).
           estimatedSalary: [
-            {
-              "@type": "MonetaryAmountDistribution",
-              name: "Kundpris enligt regionernas ramavtal 2026",
-              currency: "SEK",
-              unitText: "HOUR",
-              median: data.client_rate,
-            },
             {
               "@type": "MonetaryAmountDistribution",
               name: "Ersättning som företagare (efter bemanningsbolagets marginal)",
@@ -131,14 +126,27 @@ export default function LonSpecialtyCity() {
             },
             {
               "@type": "MonetaryAmountDistribution",
+              name: "Kundpris enligt regionernas ramavtal 2026",
+              currency: "SEK",
+              unitText: "HOUR",
+              median: data.client_rate,
+            },
+            {
+              "@type": "MonetaryAmountDistribution",
               name: "Ersättning som löntagare (efter marginal och arbetsgivaravgifter)",
               currency: "SEK",
               unitText: "HOUR",
               median: data.employee_rate,
             },
           ],
+          provider: {
+            "@type": "Organization",
+            name: "vårdbemanning.ai",
+            url: "https://vardbemanning.ai",
+          },
           mainEntityOfPage: { "@id": url },
         },
+
         {
           "@type": "Dataset",
           "@id": `${url}#dataset`,
