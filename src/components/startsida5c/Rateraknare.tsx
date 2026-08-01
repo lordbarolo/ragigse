@@ -74,7 +74,7 @@ export default function Rateraknare({ rows, isLoading }: Props) {
               value={zone}
               onChange={(e) => setZone(e.target.value)}
               aria-label="Zon"
-              className="h-full w-full bg-transparent px-3 text-[14.5px] outline-none"
+              className="h-full w-full bg-transparent px-3 text-[14.5px] outline-hidden"
               style={{ color: "#eef0f4" }}
             >
               {ZONES_5C.map((z) => (
@@ -145,7 +145,7 @@ export default function Rateraknare({ rows, isLoading }: Props) {
         <input
           name="q"
           placeholder="Fråga assistenten om detaljerna…"
-          className="h-9 flex-1 bg-transparent text-[14px] outline-none"
+          className="h-9 flex-1 bg-transparent text-[14px] outline-hidden"
           style={{ color: "#eef0f4" }}
         />
         <span aria-hidden className="inline-block h-[15px] w-[1.5px] caret5c" style={{ background: "#8b8bf6" }} />

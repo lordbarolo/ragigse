@@ -144,7 +144,7 @@ export default function HomeAssistantChat() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ställ din egen fråga…"
-              className="flex-1 bg-transparent text-sm outline-none placeholder:text-black/40"
+              className="flex-1 bg-transparent text-sm outline-hidden placeholder:text-black/40"
             />
             <button
               type="submit"

@@ -128,7 +128,7 @@ export default function OvergangChatt() {
               <input
                 name="q"
                 placeholder="Ställ din egen fråga..."
-                className="h-9 flex-1 bg-transparent text-[14px] outline-none"
+                className="h-9 flex-1 bg-transparent text-[14px] outline-hidden"
                 style={{ color: "#eef0f4" }}
               />
               <span aria-hidden className="inline-block h-[15px] w-[1.5px] caret5c" style={{ background: "#8b8bf6" }} />
