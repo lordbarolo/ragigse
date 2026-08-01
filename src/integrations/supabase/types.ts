@@ -2848,6 +2848,30 @@ export type Database = {
         }
         Relationships: []
       }
+      rate_slug_aliases: {
+        Row: {
+          alias_slug: string
+          created_at: string
+          id: string
+          updated_at: string
+          yrkeskategori: string
+        }
+        Insert: {
+          alias_slug: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          yrkeskategori: string
+        }
+        Update: {
+          alias_slug?: string
+          created_at?: string
+          id?: string
+          updated_at?: string
+          yrkeskategori?: string
+        }
+        Relationships: []
+      }
       rate_verification_baseline: {
         Row: {
           created_at: string
