@@ -37,6 +37,10 @@ const titleCase = (slug: string) =>
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(" ");
 
+/** "Stockholm, Stockholm" → "Stockholm" */
+const dedupePlace = (name: string) =>
+  Array.from(new Set(name.split(",").map((p) => p.trim()).filter(Boolean))).join(", ");
+
 export default function LonSpecialtyCity() {
   const { specialty = "", city = "" } = useParams();
   const navigate = useNavigate();
