@@ -119,7 +119,7 @@ export default function Negotiate() {
         page_url: window.location.href,
       }]);
       if (error) throw error;
-      trackEvent("lonekoll_answer_reported", { topic_id: activeTopic?.id, question_id: activeQuestion?.id });
+      trackEvent("lonekoll_answer_reported", { topic_id: activeTopic?.id ?? null, question_id: activeQuestion?.id ?? null });
       toast.success("Tack! Vi har tagit emot din rapportering.");
       setReportText("");
       setReportOpen(false);
