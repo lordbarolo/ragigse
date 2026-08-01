@@ -124,6 +124,7 @@ const App = () => (
               {/* ── Legal ── */}
               <Route path="/vanliga-fragor" element={<FAQ />} />
               <Route path="/faktasidor" element={<Faktasidor />} />
+              <Route path="/lon/:specialty/:city" element={<LonSpecialtyCity />} />
               <Route path="/dev_assistent" element={<DevAssistent />} />
               <Route path="/dev_31" element={<Dev31 />} />
               <Route path="/demo/startsida-5c" element={<Startsida5c />} />
