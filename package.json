@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev",
-    "predev": "bunx tsx scripts/generate-sitemap.ts",
-    "prebuild": "bunx tsx scripts/generate-sitemap.ts",
+    "predev": "bunx tsx scripts/generate-sitemap.ts && bunx tsx scripts/generate-agent-index.ts",
+    "prebuild": "bunx tsx scripts/generate-sitemap.ts && bunx tsx scripts/generate-agent-index.ts",
     "build": "vite build",
     "build:dev": "vite build --mode development",
     "lint": "eslint .",
