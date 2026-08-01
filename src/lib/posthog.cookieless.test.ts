@@ -3,27 +3,67 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 /**
- * Guard test — protects cookieless pageview tracking from being built away.
+ * Guard test — protects cookieless tracking from being built away.
  *
- * Cookieless mode = no cookies, no localStorage. This is core to CompCare's
- * privacy posture (see Privacy Policy 2026). If anyone changes posthog.ts and
- * accidentally re-enables cookies or disables manual pageviews, this test
- * fails in CI and blocks the regression.
+ * PostHog initieras i <head> via snippet i index.html (laddas på ALLA sidor).
+ * Konfigurationen är cookie-fri: memory-persistence, ingen autocapture,
+ * manuella pageviews, ingen session recording, $ip null och URL-redaktion.
+ * Detta är kärnan i CompCares integritetsposition (se Privacy Policy 2026).
  *
- * The matching runtime test lives in `trackEvent.cookieless.test.ts`.
+ * Consent-toggle och pageview-hjälpare bor kvar i src/lib/posthog.ts.
+ * Den matchande runtime-testen ligger i `trackEvent.cookieless.test.ts`.
  */
 
+const HTML = readFileSync(resolve(__dirname, "../../index.html"), "utf8");
 const SRC = readFileSync(resolve(__dirname, "./posthog.ts"), "utf8");
 
-describe("posthog config — consent-gated guard", () => {
+describe("posthog head-snippet — cookie-fri konfiguration", () => {
+  it("initierar PostHog i <head> så tracking laddas på varje sida", () => {
+    expect(HTML).toMatch(/window\.posthog\.init\(/);
+    expect(HTML).toMatch(/phc_/);
+  });
+
+  it("går via vår egen ph-proxy", () => {
+    expect(HTML).toMatch(/api_host:\s*["'][^"']*\/functions\/v1\/ph-proxy["']/);
+  });
+
   it("startar med memory-persistence (uppgraderas först efter samtycke)", () => {
-    expect(SRC).toMatch(/persistence:\s*["']memory["']/);
+    expect(HTML).toMatch(/persistence:\s*["']memory["']/);
   });
 
-  it("är opt-out by default tills användaren accepterar", () => {
-    expect(SRC).toMatch(/opt_out_capturing_by_default:\s*true/);
+  it("capturar direkt i memory-läge (cookie-fritt kräver inget samtycke)", () => {
+    expect(HTML).toMatch(/opt_out_capturing_by_default:\s*false/);
   });
 
+  it("har autocapture avstängd", () => {
+    expect(HTML).toMatch(/autocapture:\s*false/);
+  });
+
+  it("har automatisk pageview-capture avstängd (vi spårar manuellt via trackPageview)", () => {
+    expect(HTML).toMatch(/capture_pageview:\s*false/);
+    expect(HTML).toMatch(/capture_pageleave:\s*false/);
+  });
+
+  it("har session recording avstängt", () => {
+    expect(HTML).toMatch(/disable_session_recording:\s*true/);
+  });
+
+  it("registrerar $ip: null så IP aldrig spåras", () => {
+    expect(HTML).toMatch(/\$ip:\s*null/);
+  });
+
+  it("redigerar bort tokens/UUID:er från URL:er innan de skickas", () => {
+    expect(HTML).toMatch(/before_send/);
+    expect(HTML).toMatch(/\[uuid\]/);
+    expect(HTML).toMatch(/\[token\]/);
+  });
+
+  it("initierar inte PostHog en andra gång i appen", () => {
+    expect(SRC).not.toMatch(/posthog\.init\(/);
+  });
+});
+
+describe("posthog.ts — consent-toggle och hjälpare", () => {
   it("uppgraderar persistens till localStorage+cookie vid samtycke", () => {
     expect(SRC).toMatch(/persistence:\s*["']localStorage\+cookie["']/);
   });
@@ -37,26 +77,9 @@ describe("posthog config — consent-gated guard", () => {
     expect(SRC).toMatch(/getConsent\(\)\s*===\s*["']accepted["']/);
   });
 
-  it("har autocapture avstängd", () => {
-    expect(SRC).toMatch(/autocapture:\s*false/);
-  });
-
-  it("har automatisk pageview-capture avstängd (vi spårar manuellt via trackPageview)", () => {
-    expect(SRC).toMatch(/capture_pageview:\s*false/);
-    expect(SRC).toMatch(/capture_pageleave:\s*false/);
-  });
-
-  it("har session recording avstängt", () => {
-    expect(SRC).toMatch(/disable_session_recording:\s*true/);
-  });
-
   it("exporterar trackPageview för manuell pageview-spårning", () => {
     expect(SRC).toMatch(/export\s+function\s+trackPageview\s*\(/);
     expect(SRC).toMatch(/\.capture\(["']\$pageview["']\)/);
-  });
-
-  it("registrerar $ip: null så IP aldrig spåras", () => {
-    expect(SRC).toMatch(/\$ip:\s*null/);
   });
 });
 

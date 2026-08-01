@@ -13,6 +13,8 @@ import {
   DOCTOR_SPECIALTY_BY_SLUG,
   type DoctorSpecialtyConfig,
 } from "@/data/doctorSpecialtyReports";
+import { useCatalogZoneRates } from "@/hooks/useCatalogZoneRates";
+
 
 /**
  * Generisk specialistläkar-rapport.
@@ -30,12 +32,13 @@ const SHARE_MIN_ANSTALLD = 0.83;
 const SHARE_MAX_ANSTALLD = 0.88;
 const EMPLOYER_FACTOR = 1.38;
 
-function makeFaq(cfg: DoctorSpecialtyConfig) {
+function makeFaq(cfg: DoctorSpecialtyConfig, rates: { zone1: number; zone2: number; zone3: number }) {
   return [
     {
       question: `Vad är ramavtalspriset för ${cfg.skrCategory.toLowerCase()} 2026?`,
-      answer: `Enligt SKR:s ramavtal vårdbemanning 2026 är kundpriset ${fmt(cfg.zone1)} kr/h i Zon 1 (storstad), ${fmt(cfg.zone2)} kr/h i Zon 2 (mellanstora regioner) och ${fmt(cfg.zone3)} kr/h i Zon 3 (glesbygd).`,
+      answer: `Enligt SKR:s ramavtal vårdbemanning 2026 är kundpriset ${fmt(rates.zone1)} kr/h i Zon 1 (storstad), ${fmt(rates.zone2)} kr/h i Zon 2 (mellanstora regioner) och ${fmt(rates.zone3)} kr/h i Zon 3 (glesbygd).`,
     },
+
     {
       question: "Hur stor del av kundpriset går till konsulten?",
       answer:
@@ -59,6 +62,13 @@ export default function LakareSpecialtyReport() {
   const slug = location.pathname.replace(/^\/rapport\//, "").replace(/\/$/, "");
   const cfg = slug ? DOCTOR_SPECIALTY_BY_SLUG[slug] : undefined;
 
+  // Priserna hämtas live ur contract_version_rates (v1.6); config-värdena är fallback.
+  const rates = useCatalogZoneRates(cfg?.skrCategory ?? "", "v1.6", {
+    zone1: cfg?.zone1 ?? 0,
+    zone2: cfg?.zone2 ?? 0,
+    zone3: cfg?.zone3 ?? 0,
+  });
+
   useEffect(() => {
     const prevHtml = document.documentElement.style.backgroundColor;
     const prevBody = document.body.style.backgroundColor;
@@ -73,20 +83,21 @@ export default function LakareSpecialtyReport() {
   if (!cfg) return <Navigate to="/" replace />;
 
   const ZONES = [
-    { zone: "Zon 1", rate: cfg.zone1, desc: "Storstadsregioner (t.ex. Stockholm, Göteborg, Malmö)" },
-    { zone: "Zon 2", rate: cfg.zone2, desc: "Mellanstora regioner" },
-    { zone: "Zon 3", rate: cfg.zone3, desc: "Glesbygd / svårrekryterade områden" },
+    { zone: "Zon 1", rate: rates.zone1, desc: "Storstadsregioner (t.ex. Stockholm, Göteborg, Malmö)" },
+    { zone: "Zon 2", rate: rates.zone2, desc: "Mellanstora regioner" },
+    { zone: "Zon 3", rate: rates.zone3, desc: "Glesbygd / svårrekryterade områden" },
   ];
 
-  const lowZone = cfg.zone1;
-  const highZone = cfg.zone3;
-  const refRate = cfg.zone2;
+  const lowZone = rates.zone1;
+  const highZone = rates.zone3;
+  const refRate = rates.zone2;
   const recMinF = Math.round(refRate * SHARE_MIN_FORETAGARE);
   const recMaxF = Math.round(refRate * SHARE_MAX_FORETAGARE);
   const recMinA = Math.round((refRate * SHARE_MIN_ANSTALLD) / EMPLOYER_FACTOR);
   const recMaxA = Math.round((refRate * SHARE_MAX_ANSTALLD) / EMPLOYER_FACTOR);
 
-  const FAQ = makeFaq(cfg);
+  const FAQ = makeFaq(cfg, rates);
+
 
   const roleSchemas = buildRoleReportSchemas({
     roleName: cfg.skrCategory,

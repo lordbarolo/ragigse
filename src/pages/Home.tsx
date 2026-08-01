@@ -4,6 +4,7 @@ import { Check, ShieldCheck } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 import InlineTerminalSurvey from "@/components/survey/InlineTerminalSurvey";
 import RoleCarousel from "@/components/landing/RoleCarousel";
+import SiteFooter from "@/components/landing/SiteFooter";
 import AnthropicScope from "@/components/demo/AnthropicScope";
 import { SEO } from "@/components/SEO";
 import { trackEvent } from "@/lib/trackEvent";
@@ -82,11 +83,11 @@ export default function Home() {
               }`}
             >
               <h1 className="font-editorial font-bold leading-[1.12] text-black mb-5 text-[34px] sm:text-5xl md:text-[62px]">
-                Vet du vad du<br />
-                <span className="text-gradient-violet text-black">är värd?</span>
+                Har du rätt lön?<br />
+                <span className="text-gradient-violet text-black">Vill du veta?</span>
               </h1>
-              <p className="font-editorial text-lg sm:text-xl text-black/75 leading-relaxed max-w-[460px]">
-                Se vad regionen betalar, vad marknaden kan ge och vad du kan tjäna.
+              <p className="font-editorial text-lg sm:text-xl text-black/75 leading-relaxed max-w-[460px] whitespace-pre-wrap">
+                Kunskap från AI-baserad marknadsanalys och offentliga ramavtal. Kostnadsfritt och tillgängligt för alla.
               </p>
               <ul className="mt-6 space-y-2 max-w-[460px] hidden lg:block">
                 <li className="flex items-start gap-2 text-base text-[#6B6B6B]">
@@ -95,7 +96,7 @@ export default function Home() {
                 </li>
                 <li className="flex items-start gap-2 text-base text-[#6B6B6B]">
                   <Check className="w-5 h-5 shrink-0 mt-0.5" style={{ color: "hsl(160,80%,50%)" }} />
-                  <span>Branschens standardmarginaler — ca 12 % läkare, 17 % sjuksköterskor</span>
+                  <span>Addera kunskap till din magkänsla</span>
                 </li>
               </ul>
             </div>
@@ -126,7 +127,7 @@ export default function Home() {
                 </li>
                 <li className="flex items-start gap-2 text-base text-[#6B6B6B]">
                   <Check className="w-5 h-5 shrink-0 mt-0.5" style={{ color: "hsl(160,80%,50%)" }} />
-                  <span>Branschens standardmarginaler — ca 12 % läkare, 17 % sjuksköterskor</span>
+                  <span>Addera kunskap till din magkänsla</span>
                 </li>
               </ul>
             </div>
@@ -135,19 +136,8 @@ export default function Home() {
 
         <RoleCarousel />
 
-        {/* ── Footer ──────────────────────────── */}
-        <footer className="mt-16 border-t border-black/10 px-5 py-8 text-xs text-black/55">
-          <div className="max-w-6xl mx-auto flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
-            <div>
-              <p className="font-medium text-black/75"></p>
-            </div>
-            <nav className="flex flex-wrap gap-x-5 gap-y-2">
-              <a href="mailto:info@compcare.se" className="hover:text-black underline-offset-4 hover:underline">info@compcare.se</a>
-              <Link to="/integritetspolicy" className="hover:text-black underline-offset-4 hover:underline">Integritetspolicy</Link>
-              <Link to="/vanliga-fragor" className="hover:text-black underline-offset-4 hover:underline">Vanliga frågor</Link>
-            </nav>
-          </div>
-        </footer>
+        <SiteFooter />
+
 
       </div>
     </AnthropicScope>

@@ -71,8 +71,17 @@ export default function AnalysisScreen() {
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (session?.user?.email) {
         setEmail(session.user.email);
+        // Redan inloggad → hoppa direkt till rapporten om vi har ett reportId.
+        const existingReportId = sessionStorage.getItem("reportId");
+        if (existingReportId) {
+          navigate(`/rapport/${existingReportId}`, { replace: true });
+          return;
+        }
         if (sessionStorage.getItem("compcare:autoUnlock") === "1") {
           sessionStorage.removeItem("compcare:autoUnlock");
+          setPendingAutoUnlockEmail(session.user.email);
+        } else {
+          // Ingen reportId ännu — trigga unlock så vi skapar en och skickar vidare.
           setPendingAutoUnlockEmail(session.user.email);
         }
       }

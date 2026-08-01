@@ -6,7 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { Loader2 } from "lucide-react";
 import CookieBanner from "@/components/CookieBanner";
 import ProtectedRoute from "@/components/ProtectedRoute";
@@ -32,6 +32,11 @@ const AgentApiKeys = lazy(() => import("./pages/admin/AgentApiKeys"));
 const AdminHealth = lazy(() => import("./pages/admin/Health"));
 
 const FAQ = lazy(() => import("./pages/FAQ"));
+const Faktasidor = lazy(() => import("./pages/Faktasidor"));
+const LonSpecialtyCity = lazy(() => import("./pages/LonSpecialtyCity"));
+const DevAssistent = lazy(() => import("./pages/DevAssistent"));
+const Dev31 = lazy(() => import("./pages/Dev31"));
+const Startsida5c = lazy(() => import("./pages/demo/Startsida5c"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const Unsubscribe = lazy(() => import("./pages/Unsubscribe"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -118,6 +123,11 @@ const App = () => (
 
               {/* ── Legal ── */}
               <Route path="/vanliga-fragor" element={<FAQ />} />
+              <Route path="/faktasidor" element={<Faktasidor />} />
+              <Route path="/lon/:specialty/:city" element={<LonSpecialtyCity />} />
+              <Route path="/dev_assistent" element={<DevAssistent />} />
+              <Route path="/dev_31" element={<Dev31 />} />
+              <Route path="/demo/startsida-5c" element={<Startsida5c />} />
               <Route path="/integritetspolicy" element={<PrivacyPolicy />} />
 
               {/* ── Admin ── */}
@@ -126,46 +136,9 @@ const App = () => (
               <Route path="/admin/health" element={<ProtectedRoute allowedRoles={["admin"]}><AdminHealth /></ProtectedRoute>} />
               <Route path="/dev/analytics" element={<ProtectedRoute allowedRoles={["admin"]}><AnalyticsDashboard /></ProtectedRoute>} />
 
-              {/* ── Backwards-compat / gömda produktrouter → tillbaka till löneanalysen ── */}
-              <Route path="/index" element={<Navigate to="/" replace />} />
-              <Route path="/v1" element={<Navigate to="/" replace />} />
-              <Route path="/b2b" element={<Navigate to="/" replace />} />
-              <Route path="/profil" element={<Navigate to="/consultant/profil" replace />} />
-              <Route path="/consultant/salary-check" element={<Navigate to="/" replace />} />
+              {/* ── Förhandlingsassistent (inloggad) ── */}
               <Route path="/consultant/forhandla" element={<ProtectedRoute><Negotiate /></ProtectedRoute>} />
-              <Route path="/consultant/fakturakontroll/*" element={<Navigate to="/" replace />} />
-              <Route path="/consultant/ersattning" element={<Navigate to="/" replace />} />
-              <Route path="/consultant/referenser" element={<Navigate to="/" replace />} />
-              <Route path="/consultant/academy" element={<Navigate to="/" replace />} />
-              <Route path="/consultant/agent-access" element={<Navigate to="/" replace />} />
-              <Route path="/forhandla" element={<Navigate to="/consultant/forhandla" replace />} />
-              <Route path="/fakturakontroll" element={<Navigate to="/" replace />} />
-              <Route path="/referenser" element={<Navigate to="/" replace />} />
-              <Route path="/academy" element={<Navigate to="/" replace />} />
-              <Route path="/marketplace" element={<Navigate to="/" replace />} />
-              <Route path="/eget-bolag" element={<Navigate to="/" replace />} />
-              <Route path="/uppdragsradar" element={<Navigate to="/" replace />} />
-              <Route path="/for-bemanningsforetag" element={<Navigate to="/" replace />} />
-              <Route path="/registrera/bemanning" element={<Navigate to="/" replace />} />
-              <Route path="/agency/*" element={<Navigate to="/" replace />} />
-              <Route path="/din-data" element={<Navigate to="/" replace />} />
-              <Route path="/dokhus-info" element={<Navigate to="/" replace />} />
-              <Route path="/verify-info" element={<Navigate to="/" replace />} />
-              <Route path="/verify" element={<Navigate to="/" replace />} />
-              <Route path="/verify/:applicationId" element={<Navigate to="/" replace />} />
-              <Route path="/samarbetsintyg/:applicationId" element={<Navigate to="/" replace />} />
-              <Route path="/profil/:id" element={<Navigate to="/" replace />} />
-              <Route path="/referens/:token" element={<Navigate to="/" replace />} />
-              <Route path="/ping/:token" element={<Navigate to="/" replace />} />
-              <Route path="/sign/:token" element={<Navigate to="/" replace />} />
-              <Route path="/delade-dokument/:token" element={<Navigate to="/" replace />} />
-              <Route path="/dela" element={<Navigate to="/" replace />} />
-              <Route path="/referenser-info" element={<Navigate to="/" replace />} />
-              <Route path="/demo" element={<Navigate to="/" replace />} />
-              <Route path="/demo/*" element={<Navigate to="/" replace />} />
-              <Route path="/dev/demo" element={<Navigate to="/" replace />} />
-              <Route path="/dev/theme-preview" element={<Navigate to="/" replace />} />
-              <Route path="/dev/e2e-test" element={<Navigate to="/" replace />} />
+
 
               {/* ── Catch-all ── */}
               <Route path="*" element={<NotFound />} />

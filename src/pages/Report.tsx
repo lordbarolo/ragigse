@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Loader2, Download, UserPlus, ArrowRight } from "lucide-react";
+import { Loader2, Download, UserPlus, ArrowRight, User } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { trackEvent } from "@/lib/trackEvent";
 import { getCouponCode } from "@/lib/captureParams";
@@ -362,6 +362,21 @@ export default function Report() {
             </Button>
           )}
         </div>
+
+        {/* Profile CTA (logged-in users) */}
+        {user && (
+          <div data-pdf-hide className="pt-2 pb-2">
+            <Link
+              to="/consultant/profil"
+              className="inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 rounded-lg w-full sm:w-auto"
+              style={{ backgroundColor: '#3D3491', color: '#FFFFFF' }}
+            >
+              <User className="w-4 h-4" />
+              Gå till din profil
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        )}
 
         {/* Footer */}
         <div className="pt-4">

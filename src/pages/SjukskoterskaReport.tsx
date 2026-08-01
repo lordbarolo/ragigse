@@ -16,6 +16,8 @@ import {
   Calculator,
 } from "lucide-react";
 import { useEffect } from "react";
+import { useCatalogZoneRates } from "@/hooks/useCatalogZoneRates";
+
 
 /**
  * Rollrapport — Legitimerad sjuksköterska (grundutbildning, nationell)
@@ -29,10 +31,12 @@ const LAST_UPDATED = "2026-01-15";
 const fmt = (n: number) => n.toLocaleString("sv-SE", { maximumFractionDigits: 0 });
 
 // SKR ramavtal vårdbemanning 2026 — Sjuksköterska grundutbildning (dagtid)
-const ZONES = [
-  { zone: "Zon 1", rate: 616, desc: "Storstadsregioner (t.ex. Stockholm, Göteborg, Malmö)" },
-  { zone: "Zon 2", rate: 660, desc: "Mellanstora regioner" },
-  { zone: "Zon 3", rate: 715, desc: "Glesbygd / svårrekryterade områden" },
+// Priserna hämtas live ur contract_version_rates (v1.7); värdena nedan är fallback.
+const ZONE_FALLBACK = { zone1: 616, zone2: 660, zone3: 715 };
+const ZONE_META = [
+  { zone: "Zon 1", desc: "Storstadsregioner (t.ex. Stockholm, Göteborg, Malmö)" },
+  { zone: "Zon 2", desc: "Mellanstora regioner" },
+  { zone: "Zon 3", desc: "Glesbygd / svårrekryterade områden" },
 ];
 
 // Övriga roller (ej specialistläkare): bemanningsmarginal 15–20 %
@@ -43,11 +47,12 @@ const SHARE_MAX_ANSTALLD = 0.83;
 // Arbetsgivaravgifter ~31,42 % + ITP1 4,5 % + särskild löneskatt + AFA — bruttolön = total konsultkostnad / 1,38
 const EMPLOYER_FACTOR = 1.38;
 
-const FAQ = [
+const makeFaq = (zones: { zone: string; rate: number; desc: string }[]) => [
   {
     question: "Vad är ramavtalspriset för en legitimerad sjuksköterska 2026?",
-    answer: `Enligt SKR:s ramavtal vårdbemanning 2026 är kundpriset ${fmt(ZONES[0].rate)}\u00a0kr/h i Zon 1 (storstad), ${fmt(ZONES[1].rate)}\u00a0kr/h i Zon 2 (mellanstora regioner) och ${fmt(ZONES[2].rate)}\u00a0kr/h i Zon 3 (glesbygd) för en sjuksköterska med grundutbildning på dagtid.`,
+    answer: `Enligt SKR:s ramavtal vårdbemanning 2026 är kundpriset ${fmt(zones[0].rate)}\u00a0kr/h i Zon 1 (storstad), ${fmt(zones[1].rate)}\u00a0kr/h i Zon 2 (mellanstora regioner) och ${fmt(zones[2].rate)}\u00a0kr/h i Zon 3 (glesbygd) för en sjuksköterska med grundutbildning på dagtid.`,
   },
+
   {
     question: "Hur stor del av kundpriset går till konsulten?",
     answer: `För sjuksköterskor utan specialistutbildning är bemanningsföretagets marginal typiskt 15–20 % av kundpriset. Som egenföretagare ligger konsultandelen därför på 80–85 % av kundpriset. För anställd via bemanning utgör konsultkostnaden 78–83 % av kundpriset — av det betalar bolaget först arbetsgivaravgifter (~31,42 %) och tjänstepension (4,5 % enligt kollektivavtal) innan bruttolön betalas ut till konsulten. Vi räknar med en total lönekostnad på ca 1,38 × bruttolönen för arbetsgivaren och utgår från att bruttolönen ligger under brytpunkten 7,5 IBB (~52 750 kr/mån) där ITP 1 är 4,5 %. Marginalen kan i vissa fall vara lägre — t.ex. när bemanningsbolaget tar betalningsrisk, garanterar timmar eller bär kostnad för outnyttjad kapacitet.`,
@@ -70,11 +75,19 @@ const FAQ = [
 ];
 
 export default function SjukskoterskaReport() {
+  const rates = useCatalogZoneRates("Sjuksköterska", "v1.7", ZONE_FALLBACK);
+  const ZONES = ZONE_META.map((meta, i) => ({
+    ...meta,
+    rate: [rates.zone1, rates.zone2, rates.zone3][i],
+  }));
+  const FAQ = makeFaq(ZONES);
+
   const lowZone = ZONES[0].rate;
   const highZone = ZONES[2].rate;
 
   // Spann baserat på Zon 2 (median) som referens för "marknadsmässigt"
   const refRate = ZONES[1].rate;
+
   const recMinF = Math.round(refRate * SHARE_MIN_FORETAGARE);
   const recMaxF = Math.round(refRate * SHARE_MAX_FORETAGARE);
   const recMinA = Math.round((refRate * SHARE_MIN_ANSTALLD) / EMPLOYER_FACTOR);

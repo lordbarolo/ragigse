@@ -3,7 +3,7 @@ project_id = "ubhhlunhdqbokjvwfebb"
 
 
 [functions.send-referral]
-verify_jwt = false
+verify_jwt = true
 
 [functions.confirm-referral]
 verify_jwt = false
@@ -38,10 +38,8 @@ verify_jwt = false
 [functions.get-lead]
 verify_jwt = false
 
-[functions.redeem-coupon]
-verify_jwt = false
-
 [functions.save-email]
+
 verify_jwt = false
 
 [functions.validate-coupon]
@@ -68,25 +66,22 @@ verify_jwt = false
 [functions.stripe-webhook]
 verify_jwt = false
 
-[functions.send-referral]
-verify_jwt = false
+
 
 [functions.radar-predictions]
-verify_jwt = false
+verify_jwt = true
 
 [functions.get-avrop-predictions]
-verify_jwt = false
+verify_jwt = true
 
 [functions.uppdragsradar-chat]
-verify_jwt = false
+verify_jwt = true
 
 [functions.delete-account]
 verify_jwt = false
 
-[functions.radar-notify]
-verify_jwt = false
-
 [functions.compensation-intelligence]
+
 verify_jwt = false
 
 [functions.ci-capabilities]
@@ -144,7 +139,7 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.radar-data]
-verify_jwt = false
+verify_jwt = true
 
 [functions.radar-import]
 verify_jwt = false
@@ -168,4 +163,10 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.ph-proxy]
+verify_jwt = false
+
+[functions.home-assistant]
+verify_jwt = false
+
+[functions.public-lon-lookup]
 verify_jwt = false

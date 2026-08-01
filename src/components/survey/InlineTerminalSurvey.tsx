@@ -35,6 +35,30 @@ type EmploymentType = "" | "anstalld" | "foretagare";
 const TOTAL_STEPS = 5;
 const STEP_NAMES = ["yrkeskategori", "specialisering", "anstallningsform", "kommun", "ersattning"];
 
+// Extra sökord per specialistsjuksköterska så användare hittar rätt även om de
+// söker på det medicinska området (t.ex. "intensivvård" → IVA-sjuksköterska).
+const NURSE_SEARCH_KEYWORDS: Record<string, string[]> = {
+  "IVA-sjuksköterska": ["intensivvård", "intensiv", "iva"],
+  "Anestesisjuksköterska": ["anestesi", "narkos"],
+  "Operationssjuksköterska": ["operation", "op"],
+  "Ambulanssjuksköterska": ["ambulans", "prehospital"],
+  "Barnsjuksköterska": ["barn", "pediatrik"],
+  "Akutsjuksköterska": ["akut", "akutsjukvård"],
+  "Hjärtsjuksköterska": ["hjärta", "kardiologi"],
+  "Distriktssjuksköterska": ["distrikt", "primärvård"],
+  "Kirurgsjuksköterska": ["kirurgi"],
+  "Palliativsjuksköterska": ["palliativ", "hospice"],
+  "Geriatriksjuksköterska": ["geriatrik", "äldrevård", "äldre"],
+  "Medicinsjuksköterska": ["medicin", "internmedicin"],
+  "Onkologisjuksköterska": ["onkologi", "cancer"],
+  "Infektionssjuksköterska": ["infektion"],
+  "Diabetessjuksköterska": ["diabetes"],
+  "Ögonsjuksköterska": ["ögon", "oftalmologi"],
+  "Företagshälsosjuksköterska": ["företagshälsa", "företagshälsovård"],
+  "Psykiatrisjuksköterska": ["psykiatri", "psyk"],
+  "Skolsköterska": ["skola", "elevhälsa"],
+};
+
 interface State {
   category: Category;
   roleValue: string;
@@ -164,11 +188,17 @@ export default function InlineTerminalSurvey({
     () => [
       { value: "__allman", label: "Allmänsjuksköterska", group: "" },
       { value: "__rontgen", label: "Röntgensjuksköterska", group: "" },
-      ...NURSE_SPECIALIZATIONS.map((x) => ({ value: x, label: x, group: "Vidareutbildning (VUB)" })),
+      ...NURSE_SPECIALIZATIONS.map((x) => ({
+        value: x,
+        label: x,
+        group: "Vidareutbildning (VUB)",
+        keywords: NURSE_SEARCH_KEYWORDS[x],
+      })),
       { value: "__saknas", label: "Min specialitet saknas i listan", group: "Vidareutbildning (VUB)" },
     ],
     [],
   );
+
 
   const allKommuner = useMemo(() => {
     if (!locations) return [];
@@ -393,7 +423,7 @@ export default function InlineTerminalSurvey({
                       isLight ? "text-[#9CA3AF]" : "text-white/70"
                     }`}
                     >
-                      Kostnadsfritt · Klart på 60 sekunder
+                      Redovisad data avser villkor för bemanningspersonal inom SKR:s nationella avtal
                     </p>
                 </Step>
               )}

@@ -8,9 +8,49 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+const encoder = new TextEncoder();
+
+function decodeBase64Url(value: string): string {
+  const base64 = value.replace(/-/g, "+").replace(/_/g, "/");
+  const padded = base64.padEnd(Math.ceil(base64.length / 4) * 4, "=");
+  return atob(padded);
+}
+
+async function verifyReportAccessToken(token: string, reportId: string): Promise<string | null> {
+  const [payloadPart, signaturePart] = token.split(".");
+  if (!payloadPart || !signaturePart) return null;
+  const payloadRaw = decodeBase64Url(payloadPart);
+  const key = await crypto.subtle.importKey(
+    "raw",
+    encoder.encode(Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["verify"],
+  );
+  const signatureRaw = Uint8Array.from(decodeBase64Url(signaturePart), (c) => c.charCodeAt(0));
+  const valid = await crypto.subtle.verify("HMAC", key, signatureRaw, encoder.encode(payloadRaw));
+  if (!valid) return null;
+  const payload = JSON.parse(payloadRaw) as { report_id?: string; email?: string; exp?: number };
+  if (payload.report_id !== reportId || !payload.email || !payload.exp || payload.exp < Date.now()) return null;
+  return payload.email.toLowerCase().trim();
+}
+
+function clientIp(req: Request): string | null {
+  return (
+    req.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
+    req.headers.get("cf-connecting-ip") ??
+    req.headers.get("x-real-ip") ??
+    null
+  );
+}
+
 function fmt(v: number): string {
   return v.toLocaleString("sv-SE");
 }
+
+// Rate limit: at most this many generate-pdf attempts per (IP, report_id) per hour.
+// Blocks anonymous report_id enumeration without blocking a legitimate paying user.
+const RATE_LIMIT_PER_HOUR = 20;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
@@ -18,7 +58,7 @@ serve(async (req) => {
   }
 
   try {
-    const { report_id } = await req.json();
+    const { report_id, access_token } = await req.json();
     if (!report_id) {
       return new Response(JSON.stringify({ error: "Missing report_id" }), {
         status: 400,
@@ -31,6 +71,65 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
+    // ---- Rate limit: key on client IP + report_id ------------------------
+    // Anonymous callers have no user_id, so the shared user-keyed limiter in
+    // _shared/auth.ts does not apply here. We instead cap attempts per
+    // (IP, report_id) per hour via rate_limit_log to stop enumeration.
+    const ip = clientIp(req);
+    const endpointKey = `generate-pdf:${report_id}`;
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+
+    if (ip) {
+      const { count: recentCount } = await supabase
+        .from("rate_limit_log")
+        .select("id", { count: "exact", head: true })
+        .eq("endpoint", endpointKey)
+        .eq("client_ip", ip)
+        .gte("created_at", oneHourAgo);
+
+      if ((recentCount ?? 0) >= RATE_LIMIT_PER_HOUR) {
+        return new Response(
+          JSON.stringify({
+            error: `Rate limit exceeded: max ${RATE_LIMIT_PER_HOUR} requests per hour`,
+          }),
+          {
+            status: 429,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          },
+        );
+      }
+    }
+
+    // Log the attempt (best-effort; do not fail request if logging fails).
+    try {
+      await supabase.from("rate_limit_log").insert({
+        endpoint: endpointKey,
+        client_ip: ip,
+      });
+    } catch (_logErr) {
+      // Non-fatal.
+    }
+
+    // ---- Access decision: mirror get-report exactly ----------------------
+    // Conditions (any one grants fullAccess):
+    //   1. report.status === "paid"                          (isPaid)
+    //   2. report.unlocked_by_referral === true              (isReferralUnlocked)
+    //   3. authenticated caller and report.user_id === auth.sub  (isOwner)
+    //   4. valid signed access_token whose email matches      (isTokenUnlocked)
+    // NOTE: `!!report.email` is intentionally NOT a grant — see get-report.
+    let authUserId: string | null = null;
+    const authHeader = req.headers.get("Authorization");
+    if (authHeader?.startsWith("Bearer ")) {
+      const anonClient = createClient(
+        Deno.env.get("SUPABASE_URL")!,
+        Deno.env.get("SUPABASE_ANON_KEY")!,
+        { global: { headers: { Authorization: authHeader } } },
+      );
+      const token = authHeader.replace("Bearer ", "");
+      const { data: claimsData } = await anonClient.auth.getClaims(token);
+      if (claimsData?.claims?.sub) authUserId = claimsData.claims.sub as string;
+    }
+
     const { data: report, error } = await supabase
       .from("reports")
       .select("*")
@@ -40,6 +139,28 @@ serve(async (req) => {
     if (error || !report) {
       return new Response(JSON.stringify({ error: "Report not found" }), {
         status: 404,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const isPaid = report.status === "paid";
+    const isReferralUnlocked = report.unlocked_by_referral === true;
+    const isOwner = !!authUserId && report.user_id === authUserId;
+    let isTokenUnlocked = false;
+    if (typeof access_token === "string" && access_token.length > 0) {
+      try {
+        const tokenEmail = await verifyReportAccessToken(access_token, report_id);
+        const reportEmail = report.email ? String(report.email).toLowerCase().trim() : null;
+        isTokenUnlocked = !!tokenEmail && !!reportEmail && tokenEmail === reportEmail;
+      } catch (tokenError) {
+        console.warn("Invalid report access token", tokenError);
+      }
+    }
+    const fullAccess = isPaid || isReferralUnlocked || isOwner || isTokenUnlocked;
+
+    if (!fullAccess) {
+      return new Response(JSON.stringify({ error: "Access denied" }), {
+        status: 403,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
@@ -65,67 +186,46 @@ serve(async (req) => {
     const gray = rgb(0.6, 0.63, 0.7);
     const lightGray = rgb(0.35, 0.38, 0.45);
 
-    // Background
     page.drawRectangle({ x: 0, y: 0, width, height, color: darkBg });
-
-    // Header bar
     page.drawRectangle({
       x: 0, y: height - 100, width, height: 100,
       color: rgb(0.08, 0.1, 0.18),
     });
 
     let y = height - 40;
-
-    // Logo text
-    page.drawText("compcare", {
-      x: 40, y, size: 22, font: fontBold, color: white,
-    });
+    page.drawText("compcare", { x: 40, y, size: 22, font: fontBold, color: white });
     page.drawText(".se", {
       x: 40 + fontBold.widthOfTextAtSize("compcare", 22), y, size: 22, font: fontBold, color: primaryColor,
     });
 
     y -= 25;
-    page.drawText("Ersättningsanalys", {
-      x: 40, y, size: 9, font, color: gray,
-    });
+    page.drawText("Ersättningsanalys", { x: 40, y, size: 9, font, color: gray });
 
-    // Report title
     y = height - 130;
     page.drawText(report.occupation || "Konsultrapport", {
       x: 40, y, size: 20, font: fontBold, color: white,
     });
 
     y -= 22;
-    const subtitle = [
-      report.kommun,
-      isEmployee ? "Anställd" : "Eget bolag",
-    ].filter(Boolean).join(" · ");
-    page.drawText(subtitle, {
-      x: 40, y, size: 10, font, color: gray,
-    });
+    const subtitle = [report.kommun, isEmployee ? "Anställd" : "Eget bolag"]
+      .filter(Boolean).join(" · ");
+    page.drawText(subtitle, { x: 40, y, size: 10, font, color: gray });
 
-    // Divider
     y -= 20;
     page.drawRectangle({ x: 40, y, width: width - 80, height: 0.5, color: lightGray });
 
-    // Market rate
     if (market?.rate_customer_sek_per_hour) {
       y -= 30;
-      page.drawText("Ramavtalspris (kundpris)", {
-        x: 40, y, size: 9, font, color: gray,
-      });
+      page.drawText("Ramavtalspris (kundpris)", { x: 40, y, size: 9, font, color: gray });
       y -= 18;
       page.drawText(`${fmt(market.rate_customer_sek_per_hour)} kr/h`, {
         x: 40, y, size: 16, font: fontBold, color: white,
       });
     }
 
-    // Recommendation
     if (rec) {
       y -= 35;
-      page.drawText("Rekommenderad ersättning", {
-        x: 40, y, size: 9, font, color: gray,
-      });
+      page.drawText("Rekommenderad ersättning", { x: 40, y, size: 9, font, color: gray });
       y -= 18;
       page.drawText(`${fmt(rec.recommended_hourly_min)}–${fmt(rec.recommended_hourly_max)} kr/h`, {
         x: 40, y, size: 16, font: fontBold, color: accentColor,
@@ -136,22 +236,16 @@ serve(async (req) => {
       });
     }
 
-    // Current salary
     if (inputs?.current_salary_sek) {
       y -= 35;
-      page.drawText("Din nuvarande ersättning", {
-        x: 40, y, size: 9, font, color: gray,
-      });
+      page.drawText("Din nuvarande ersättning", { x: 40, y, size: 9, font, color: gray });
       y -= 18;
       const salaryLabel = inputs.salary_type === "hourly"
         ? `${fmt(inputs.current_salary_sek)} kr/h`
         : `${fmt(inputs.current_salary_sek)} kr/mån`;
-      page.drawText(salaryLabel, {
-        x: 40, y, size: 16, font: fontBold, color: white,
-      });
+      page.drawText(salaryLabel, { x: 40, y, size: 16, font: fontBold, color: white });
     }
 
-    // Share of customer price
     if (rec && market?.rate_customer_sek_per_hour && inputs?.current_salary_sek) {
       const currentHourly = inputs.salary_type === "hourly"
         ? inputs.current_salary_sek
@@ -165,15 +259,12 @@ serve(async (req) => {
         x: 40, y, size: 9, font, color: gray,
       });
       y -= 22;
-      page.drawText(`${sharePercent}%`, {
-        x: 40, y, size: 28, font: fontBold, color: accentColor,
-      });
+      page.drawText(`${sharePercent}%`, { x: 40, y, size: 28, font: fontBold, color: accentColor });
       y -= 14;
       page.drawText(`av ${fmt(market.rate_customer_sek_per_hour)} kr/h`, {
         x: 40, y, size: 9, font, color: lightGray,
       });
 
-      // Progress bar
       y -= 18;
       const barWidth = width - 80;
       const barHeight = 6;
@@ -183,12 +274,9 @@ serve(async (req) => {
       });
     }
 
-    // Margin breakdown
     if (rec) {
       y -= 35;
-      page.drawText("Beräkningsantaganden", {
-        x: 40, y, size: 9, font, color: gray,
-      });
+      page.drawText("Beräkningsantaganden", { x: 40, y, size: 9, font, color: gray });
       const assumptions = [
         `Bemanningsbolagets marginal: ${Math.round((1 - rec.consultant_share_max) * 100)}–${Math.round((1 - rec.consultant_share_min) * 100)}%`,
         isEmployee ? `Arbetsgivaravgifter: faktor ${rec.employee_factor}` : "Fakturerar via eget bolag",
@@ -200,7 +288,6 @@ serve(async (req) => {
       }
     }
 
-    // Footer
     y = 60;
     page.drawRectangle({ x: 40, y: y + 10, width: width - 80, height: 0.5, color: lightGray });
     page.drawText("CompCare.se — Ersättningsanalys baserad på ramavtal 2026", {

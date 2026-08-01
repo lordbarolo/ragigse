@@ -7,6 +7,8 @@ import Navbar from "@/components/Navbar";
 import { SEO } from "@/components/SEO";
 import TLDRBox from "@/components/report/TLDRBox";
 import { buildRoleReportSchemas } from "@/lib/seo/roleReportSchema";
+import { useCatalogZoneRates } from "@/hooks/useCatalogZoneRates";
+
 
 // Single source of truth for the report's freshness stamp.
 // Same value drives the visible TL;DR timestamp AND every JSON-LD schema.
@@ -25,11 +27,14 @@ import {
 
 const fmt = (n: number) => n.toLocaleString("sv-SE", { maximumFractionDigits: 0 });
 
-const ZONES = [
-  { zone: "Zon 1", rate: 770, desc: "Storstadsregioner" },
-  { zone: "Zon 2", rate: 824, desc: "Mellanstora regioner" },
-  { zone: "Zon 3", rate: 880, desc: "Glesbygd / svårrekryterade" },
+// Priserna hämtas live ur contract_version_rates (v1.7); värdena nedan är fallback.
+const ZONE_FALLBACK = { zone1: 770, zone2: 824, zone3: 880 };
+const ZONE_META = [
+  { zone: "Zon 1", desc: "Storstadsregioner" },
+  { zone: "Zon 2", desc: "Mellanstora regioner" },
+  { zone: "Zon 3", desc: "Glesbygd / svårrekryterade" },
 ];
+
 
 const OB_RATES = [
   { typ: "Vardagkväll", tid: "Mån–Tor 19–22", rate: 37, icon: Clock },
@@ -47,8 +52,14 @@ const SHARE_MIN_ANSTALLD = 0.80;
 const SHARE_MAX_ANSTALLD = 0.86;
 
 export default function AnestesiReport() {
-  const zone1Rate = 770;
-  const zone3Rate = 880;
+  const rates = useCatalogZoneRates("Specialistsjuksköterska anestesi", "v1.7", ZONE_FALLBACK);
+  const ZONES = ZONE_META.map((meta, i) => ({
+    ...meta,
+    rate: [rates.zone1, rates.zone2, rates.zone3][i],
+  }));
+  const zone1Rate = rates.zone1;
+  const zone3Rate = rates.zone3;
+
   const recMinF = Math.round(zone1Rate * SHARE_MIN_FORETAGARE);
   const recMaxF = Math.round(zone1Rate * SHARE_MAX_FORETAGARE);
   const recMinA = Math.round(zone1Rate * SHARE_MIN_ANSTALLD);
