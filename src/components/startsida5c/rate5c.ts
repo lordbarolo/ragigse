@@ -4,6 +4,8 @@
  * med produktionens marginalmodell i @/lib/calc. Inga hårdkodade priser.
  */
 import { getMarginShares, EMPLOYER_FACTOR } from "@/lib/calc";
+import { filterPublicRoles } from "@/lib/roleVisibility";
+
 
 export interface RateRow {
   yrkeskategori: string;
