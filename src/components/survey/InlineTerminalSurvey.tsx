@@ -559,6 +559,16 @@ export default function InlineTerminalSurvey({
             </StepTransition>
           </div>
 
+          {/* Statisk disclaimer — visas konstant på alla steg */}
+          <p
+            className={`mb-3 text-[11px] leading-relaxed font-sans ${
+              isLight ? "text-[#6B7280]" : "text-white/55"
+            }`}
+          >
+            Roll, ort, kontraktsform och ersättning behövs för att visa information om dina villkor i
+            förhållande till den övriga marknaden. Inga uppgifter delas.
+          </p>
+
           {/* Back link */}
           <div className="flex items-center justify-between pb-3 min-h-[28px]">
             {step > 1 ? (

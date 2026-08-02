@@ -90,7 +90,10 @@ type EventName =
   | "lonekoll_topic_selected"
   | "lonekoll_question_selected"
   | "lonekoll_answer_reported"
-  | "lonekoll_missing_question_reported";
+  | "lonekoll_missing_question_reported"
+  | "home_chat_question_clicked"
+  | "home_chat_login_prompt_shown";
+
 
 function isInternalTraffic(): boolean {
   const host = window.location.hostname;

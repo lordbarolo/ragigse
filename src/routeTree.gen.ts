@@ -16,6 +16,7 @@ import { Route as Dev_assistentRouteImport } from './routes/dev_assistent'
 import { Route as FaktasidorRouteImport } from './routes/faktasidor'
 import { Route as IntegritetspolicyRouteImport } from './routes/integritetspolicy'
 import { Route as LoggaInRouteImport } from './routes/logga-in'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as RegistreraRouteImport } from './routes/registrera'
 import { Route as UnsubscribeRouteImport } from './routes/unsubscribe'
 import { Route as VanligaFragorRouteImport } from './routes/vanliga-fragor'
@@ -76,6 +77,11 @@ const IntegritetspolicyRoute = IntegritetspolicyRouteImport.update({
 const LoggaInRoute = LoggaInRouteImport.update({
   id: '/logga-in',
   path: '/logga-in',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RegistreraRoute = RegistreraRouteImport.update({
@@ -221,6 +227,7 @@ export interface FileRoutesByFullPath {
   '/faktasidor': typeof FaktasidorRoute
   '/integritetspolicy': typeof IntegritetspolicyRoute
   '/logga-in': typeof LoggaInRoute
+  '/onboarding': typeof OnboardingRoute
   '/registrera': typeof RegistreraRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/vanliga-fragor': typeof VanligaFragorRoute
@@ -256,6 +263,7 @@ export interface FileRoutesByTo {
   '/faktasidor': typeof FaktasidorRoute
   '/integritetspolicy': typeof IntegritetspolicyRoute
   '/logga-in': typeof LoggaInRoute
+  '/onboarding': typeof OnboardingRoute
   '/registrera': typeof RegistreraRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/vanliga-fragor': typeof VanligaFragorRoute
@@ -292,6 +300,7 @@ export interface FileRoutesById {
   '/faktasidor': typeof FaktasidorRoute
   '/integritetspolicy': typeof IntegritetspolicyRoute
   '/logga-in': typeof LoggaInRoute
+  '/onboarding': typeof OnboardingRoute
   '/registrera': typeof RegistreraRoute
   '/unsubscribe': typeof UnsubscribeRoute
   '/vanliga-fragor': typeof VanligaFragorRoute
@@ -329,6 +338,7 @@ export interface FileRouteTypes {
     | '/faktasidor'
     | '/integritetspolicy'
     | '/logga-in'
+    | '/onboarding'
     | '/registrera'
     | '/unsubscribe'
     | '/vanliga-fragor'
@@ -364,6 +374,7 @@ export interface FileRouteTypes {
     | '/faktasidor'
     | '/integritetspolicy'
     | '/logga-in'
+    | '/onboarding'
     | '/registrera'
     | '/unsubscribe'
     | '/vanliga-fragor'
@@ -399,6 +410,7 @@ export interface FileRouteTypes {
     | '/faktasidor'
     | '/integritetspolicy'
     | '/logga-in'
+    | '/onboarding'
     | '/registrera'
     | '/unsubscribe'
     | '/vanliga-fragor'
@@ -435,6 +447,7 @@ export interface RootRouteChildren {
   FaktasidorRoute: typeof FaktasidorRoute
   IntegritetspolicyRoute: typeof IntegritetspolicyRoute
   LoggaInRoute: typeof LoggaInRoute
+  OnboardingRoute: typeof OnboardingRoute
   RegistreraRoute: typeof RegistreraRoute
   UnsubscribeRoute: typeof UnsubscribeRoute
   VanligaFragorRoute: typeof VanligaFragorRoute
@@ -511,6 +524,13 @@ declare module '@tanstack/react-router' {
       path: '/logga-in'
       fullPath: '/logga-in'
       preLoaderRoute: typeof LoggaInRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/registrera': {
@@ -717,6 +737,7 @@ const rootRouteChildren: RootRouteChildren = {
   FaktasidorRoute: FaktasidorRoute,
   IntegritetspolicyRoute: IntegritetspolicyRoute,
   LoggaInRoute: LoggaInRoute,
+  OnboardingRoute: OnboardingRoute,
   RegistreraRoute: RegistreraRoute,
   UnsubscribeRoute: UnsubscribeRoute,
   VanligaFragorRoute: VanligaFragorRoute,

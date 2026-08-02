@@ -37,11 +37,11 @@ Disallow: /rest/v1/
 Disallow: /functions/v1/
 Disallow: /api/
 
-Sitemap: https://www.compcare.se/sitemap.xml
+Sitemap: https://vardbemanning.ai/sitemap.xml
 
 # LLMs.txt – AI-optimerad beskrivning av CompCare.se
 # Se https://llmstxt.org för specifikation
-LLMs-Txt: https://www.compcare.se/llms.txt
+LLMs-Txt: https://vardbemanning.ai/llms.txt
 
 # AI crawlers – välkomna till publika sidor och maskinläsbara filer
 User-agent: GPTBot

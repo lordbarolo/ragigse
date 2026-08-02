@@ -20,7 +20,9 @@ export const Route = createFileRoute("/")({
         content: "Ramavtalspriser per roll och zon, och din del av kundpriset som företagare eller löntagare.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://vardbemanning.ai/" },
       { name: "twitter:card", content: "summary_large_image" },
+
     ],
   }),
   component: Startsida5c,

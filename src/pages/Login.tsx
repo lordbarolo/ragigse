@@ -93,7 +93,7 @@ export default function Login() {
       navigate(redirectTo ?? "/agency/dashboard");
       return;
     }
-    navigate(redirectTo ?? "/profil");
+    navigate(redirectTo ? `/onboarding?redirect=${encodeURIComponent(redirectTo)}` : "/onboarding");
 
   };
 

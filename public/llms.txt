@@ -24,6 +24,6 @@ Each page contains structured JSON-LD (Schema.org/Occupation) embedded in the HT
 
 To enumerate every valid endpoint without guessing, fetch:
 
-URL: https://www.compcare.se/agent-index.json
+URL: https://vardbemanning.ai/agent-index.json
 
 It lists all valid `specialty_slug` values (with their full role names), all valid `city_slug` values, accepted synonym slugs, URL patterns and counts. Group-level slugs are intentionally invalid.

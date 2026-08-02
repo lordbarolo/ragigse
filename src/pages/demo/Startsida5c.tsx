@@ -6,28 +6,35 @@ import RolltabellDark from "@/components/startsida5c/RolltabellDark";
 import OvergangChatt from "@/components/startsida5c/OvergangChatt";
 import FotoBand from "@/components/startsida5c/FotoBand";
 import Footer5c from "@/components/startsida5c/Footer5c";
+import { trackEvent } from "@/lib/trackEvent";
 
 const FONT_HREF =
   "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap";
+
+const SITE_URL = "https://vardbemanning.ai";
 
 const LANDING_JSONLD = [
   {
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "CompCare",
-    url: "https://www.compcare.se/",
+    url: `${SITE_URL}/`,
     inLanguage: "sv-SE",
   },
   {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "CompCare",
-    url: "https://www.compcare.se/",
-    logo: "https://www.compcare.se/compcare-logo.svg",
+    url: `${SITE_URL}/`,
+    logo: `${SITE_URL}/compcare-logo.svg`,
   },
 ];
 
 export default function Startsida5c() {
+  useEffect(() => {
+    trackEvent("landing_viewed", { variant: "5c", surface: "startsida" });
+  }, []);
+
   useEffect(() => {
     const id = "startsida5c-fonts";
     if (document.getElementById(id)) return;
@@ -44,6 +51,7 @@ export default function Startsida5c() {
         title="CompCare – Lön & ramavtalspriser för vårdkonsulter"
         description="Se vad regionen betalar för din roll och zon enligt SKR:s ramavtal 2026 — och vad du kan fakturera efter bemanningsbolagets marginal."
         path="/"
+        baseUrl={SITE_URL}
         jsonLd={LANDING_JSONLD}
       />
       <style>{`
