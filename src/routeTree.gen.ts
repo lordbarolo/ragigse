@@ -25,6 +25,7 @@ import { Route as AdminHealthRouteImport } from './routes/admin/health'
 import { Route as BollnasLakareAlmRouteImport } from './routes/bollnas/lakare-alm'
 import { Route as ConsultantLayoutRouteImport } from './routes/consultant/_layout'
 import { Route as ConsultantForhandlaRouteImport } from './routes/consultant/forhandla'
+import { Route as DemoOldHomeRouteImport } from './routes/demo/old-home'
 import { Route as DemoStartsida5cRouteImport } from './routes/demo/startsida-5c'
 import { Route as DevAnalyticsRouteImport } from './routes/dev/analytics'
 import { Route as DevLlmsCheckRouteImport } from './routes/dev/llms-check'
@@ -120,6 +121,11 @@ const ConsultantLayoutRoute = ConsultantLayoutRouteImport.update({
 const ConsultantForhandlaRoute = ConsultantForhandlaRouteImport.update({
   id: '/consultant/forhandla',
   path: '/consultant/forhandla',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoOldHomeRoute = DemoOldHomeRouteImport.update({
+  id: '/demo/old-home',
+  path: '/demo/old-home',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DemoStartsida5cRoute = DemoStartsida5cRouteImport.update({
@@ -223,6 +229,7 @@ export interface FileRoutesByFullPath {
   '/bollnas/lakare-alm': typeof BollnasLakareAlmRoute
   '/consultant': typeof ConsultantLayoutRouteWithChildren
   '/consultant/forhandla': typeof ConsultantForhandlaRoute
+  '/demo/old-home': typeof DemoOldHomeRoute
   '/demo/startsida-5c': typeof DemoStartsida5cRoute
   '/dev/analytics': typeof DevAnalyticsRoute
   '/dev/llms-check': typeof DevLlmsCheckRoute
@@ -257,6 +264,7 @@ export interface FileRoutesByTo {
   '/bollnas/lakare-alm': typeof BollnasLakareAlmRoute
   '/consultant': typeof ConsultantLayoutRouteWithChildren
   '/consultant/forhandla': typeof ConsultantForhandlaRoute
+  '/demo/old-home': typeof DemoOldHomeRoute
   '/demo/startsida-5c': typeof DemoStartsida5cRoute
   '/dev/analytics': typeof DevAnalyticsRoute
   '/dev/llms-check': typeof DevLlmsCheckRoute
@@ -292,6 +300,7 @@ export interface FileRoutesById {
   '/bollnas/lakare-alm': typeof BollnasLakareAlmRoute
   '/consultant/_layout': typeof ConsultantLayoutRouteWithChildren
   '/consultant/forhandla': typeof ConsultantForhandlaRoute
+  '/demo/old-home': typeof DemoOldHomeRoute
   '/demo/startsida-5c': typeof DemoStartsida5cRoute
   '/dev/analytics': typeof DevAnalyticsRoute
   '/dev/llms-check': typeof DevLlmsCheckRoute
@@ -328,6 +337,7 @@ export interface FileRouteTypes {
     | '/bollnas/lakare-alm'
     | '/consultant'
     | '/consultant/forhandla'
+    | '/demo/old-home'
     | '/demo/startsida-5c'
     | '/dev/analytics'
     | '/dev/llms-check'
@@ -362,6 +372,7 @@ export interface FileRouteTypes {
     | '/bollnas/lakare-alm'
     | '/consultant'
     | '/consultant/forhandla'
+    | '/demo/old-home'
     | '/demo/startsida-5c'
     | '/dev/analytics'
     | '/dev/llms-check'
@@ -396,6 +407,7 @@ export interface FileRouteTypes {
     | '/bollnas/lakare-alm'
     | '/consultant/_layout'
     | '/consultant/forhandla'
+    | '/demo/old-home'
     | '/demo/startsida-5c'
     | '/dev/analytics'
     | '/dev/llms-check'
@@ -431,6 +443,7 @@ export interface RootRouteChildren {
   BollnasLakareAlmRoute: typeof BollnasLakareAlmRoute
   ConsultantLayoutRoute: typeof ConsultantLayoutRouteWithChildren
   ConsultantForhandlaRoute: typeof ConsultantForhandlaRoute
+  DemoOldHomeRoute: typeof DemoOldHomeRoute
   DemoStartsida5cRoute: typeof DemoStartsida5cRoute
   DevAnalyticsRoute: typeof DevAnalyticsRoute
   DevLlmsCheckRoute: typeof DevLlmsCheckRoute
@@ -561,6 +574,13 @@ declare module '@tanstack/react-router' {
       path: '/consultant/forhandla'
       fullPath: '/consultant/forhandla'
       preLoaderRoute: typeof ConsultantForhandlaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo/old-home': {
+      id: '/demo/old-home'
+      path: '/demo/old-home'
+      fullPath: '/demo/old-home'
+      preLoaderRoute: typeof DemoOldHomeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/demo/startsida-5c': {
@@ -705,6 +725,7 @@ const rootRouteChildren: RootRouteChildren = {
   BollnasLakareAlmRoute: BollnasLakareAlmRoute,
   ConsultantLayoutRoute: ConsultantLayoutRouteWithChildren,
   ConsultantForhandlaRoute: ConsultantForhandlaRoute,
+  DemoOldHomeRoute: DemoOldHomeRoute,
   DemoStartsida5cRoute: DemoStartsida5cRoute,
   DevAnalyticsRoute: DevAnalyticsRoute,
   DevLlmsCheckRoute: DevLlmsCheckRoute,
@@ -725,13 +746,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

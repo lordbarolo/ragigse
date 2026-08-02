@@ -1,10 +1,6 @@
 import sskFoto from "@/assets/startsida5c-ssk.png";
-import { basePrices, computeRate5c, kr, type RateRow } from "./rate5c";
-
-interface Props {
-  rows: RateRow[];
-  isLoading: boolean;
-}
+import { computeRate5c, kr } from "./rate5c";
+import { useBaseRates5c } from "./useRates5c";
 
 const CARDS: { label: string; yrkeskategori: string; zon: string }[] = [
   { label: "IVA-sjuksköterska", yrkeskategori: "Specialistsjuksköterska intensivvård", zon: "Zon 3" },
@@ -13,8 +9,8 @@ const CARDS: { label: string; yrkeskategori: string; zon: string }[] = [
   { label: "Anestesiläkare", yrkeskategori: "Specialistläkare anestesi och intensivvård", zon: "Zon 2" },
 ];
 
-export default function FotoBand({ rows, isLoading }: Props) {
-  const base = basePrices(rows);
+export default function FotoBand() {
+  const base = useBaseRates5c();
 
   return (
     <section style={{ background: "#f5f5f7", borderBottom: "1px solid #e6e6ea" }}>
@@ -54,19 +50,13 @@ export default function FotoBand({ rows, isLoading }: Props) {
                     {c.label}
                   </div>
                   <div className="mt-1 flex items-baseline gap-1.5" style={{ color: "#191922" }}>
-                    {isLoading ? (
-                      <span className="inline-block h-7 w-20 animate-pulse rounded" style={{ background: "#ebebef" }} />
-                    ) : (
-                      <>
-                        <span className="text-[26px] font-semibold leading-none tabular-nums">
-                          {kr(rate?.foretagareKrH)}
-                        </span>
-                        <span className="text-[12.5px]">kr/h</span>
-                      </>
-                    )}
+                    <span className="text-[26px] font-semibold leading-none tabular-nums">
+                      {kr(rate?.foretagareKrH)}
+                    </span>
+                    <span className="text-[12.5px]">kr/h</span>
                   </div>
                   <div className="mt-1 text-[11.5px]" style={{ color: "#8a8f9e" }}>
-                    {c.zon} · kundpris {isLoading ? "—" : kr(rate?.timpris_kund)} kr/h
+                    {c.zon} · kundpris {kr(rate?.timpris_kund)} kr/h
                   </div>
                 </div>
               );

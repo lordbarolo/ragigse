@@ -155,19 +155,30 @@ export default function HomeAssistantChat() {
             </button>
           </form>
         ) : (
-          <div className="flex items-center justify-between gap-3">
-            <p className="text-xs text-black/55 flex items-center gap-1.5">
-              <Lock className="w-3.5 h-3.5 shrink-0" />
-              Skapa konto för att ställa egna frågor.
-            </p>
-            <Link
-              to="/registrera"
-              className="shrink-0 text-sm font-semibold px-4 py-2 rounded-lg bg-[#3D3491] text-white hover:opacity-90 transition-opacity"
-            >
-              Skapa konto
-            </Link>
+          <div className="space-y-2.5">
+            <input
+              readOnly
+              onFocus={(e) => e.currentTarget.blur()}
+              placeholder="Ställ din egen fråga…"
+              aria-label="Fritext kräver konto"
+              className="w-full cursor-pointer rounded-lg border border-black/10 bg-white px-3 py-2 text-sm text-black/60 outline-hidden placeholder:text-black/40"
+            />
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-xs text-black/55 flex items-start gap-1.5">
+                <Lock className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                Vill du ställa egna frågor till AI-assistenten och få en personlig analys utifrån ditt nuvarande
+                avtal? Logga in med e-post på 10 sekunder.
+              </p>
+              <Link
+                to="/registrera"
+                className="shrink-0 self-start text-sm font-semibold px-4 py-2 rounded-lg bg-[#3D3491] text-white hover:opacity-90 transition-opacity"
+              >
+                Skapa konto
+              </Link>
+            </div>
           </div>
         )}
+
       </div>
     </div>
   );

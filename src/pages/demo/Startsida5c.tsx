@@ -1,16 +1,31 @@
 import { useEffect } from "react";
 import { Link } from "@/lib/router-compat";
 import { SEO } from "@/components/SEO";
-import { useRates } from "@/hooks/useCalculator";
 import Hero from "@/components/startsida5c/Hero";
 import RolltabellDark from "@/components/startsida5c/RolltabellDark";
 import OvergangChatt from "@/components/startsida5c/OvergangChatt";
 import FotoBand from "@/components/startsida5c/FotoBand";
 import Footer5c from "@/components/startsida5c/Footer5c";
-import type { RateRow } from "@/components/startsida5c/rate5c";
 
 const FONT_HREF =
   "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap";
+
+const LANDING_JSONLD = [
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "CompCare",
+    url: "https://www.compcare.se/",
+    inLanguage: "sv-SE",
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "CompCare",
+    url: "https://www.compcare.se/",
+    logo: "https://www.compcare.se/compcare-logo.svg",
+  },
+];
 
 export default function Startsida5c() {
   useEffect(() => {
@@ -23,16 +38,13 @@ export default function Startsida5c() {
     document.head.appendChild(link);
   }, []);
 
-  const { data, isLoading } = useRates();
-  const rows = (data ?? []) as unknown as RateRow[];
-
   return (
     <div style={{ background: "#0e1016", fontFamily: "'Space Grotesk',system-ui,sans-serif", color: "#eef0f4" }}>
       <SEO
-        title="Startsida 5c — intern designtest"
-        description="Intern designtest av startsida 5c. Ej publik."
-        path="/demo/startsida-5c"
-        noindex
+        title="CompCare – Lön & ramavtalspriser för vårdkonsulter"
+        description="Se vad regionen betalar för din roll och zon enligt SKR:s ramavtal 2026 — och vad du kan fakturera efter bemanningsbolagets marginal."
+        path="/"
+        jsonLd={LANDING_JSONLD}
       />
       <style>{`
         @keyframes fadeUp5c { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
@@ -48,7 +60,7 @@ export default function Startsida5c() {
         style={{ borderBottom: "1px solid #22242e" }}
       >
         <Link
-          to="/demo/startsida-5c"
+          to="/"
           className="text-[17px] font-semibold"
           style={{ fontFamily: "'IBM Plex Mono',monospace", letterSpacing: "-0.5px", color: "#eef0f4" }}
         >
@@ -63,10 +75,10 @@ export default function Startsida5c() {
         </Link>
       </header>
 
-      <Hero rows={rows} isLoading={isLoading} />
-      <RolltabellDark rows={rows} isLoading={isLoading} />
+      <Hero />
+      <RolltabellDark />
       <OvergangChatt />
-      <FotoBand rows={rows} isLoading={isLoading} />
+      <FotoBand />
       <Footer5c />
     </div>
   );
