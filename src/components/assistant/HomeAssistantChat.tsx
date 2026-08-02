@@ -3,6 +3,8 @@ import { Link } from "@/lib/router-compat";
 import { ArrowUp, Lock, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useProfileContext } from "@/hooks/useProfileContext";
+import { trackEvent } from "@/lib/trackEvent";
 
 type Msg = {
   id: string;
@@ -39,6 +41,7 @@ const nid = () => `m${++idc}`;
  */
 export default function HomeAssistantChat() {
   const { user } = useAuth();
+  const { context: profile } = useProfileContext(user?.id);
   const [messages, setMessages] = useState<Msg[]>([
     {
       id: nid(),
@@ -73,7 +76,34 @@ export default function HomeAssistantChat() {
     }
   }
 
+  async function askFreeText(question: string) {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("home-assistant", {
+        body: {
+          action: "freetext",
+          question,
+          context: profile
+            ? {
+                role: profile.role,
+                kommun: profile.kommun,
+                employment_type: profile.employmentType,
+                current_hourly_rate: profile.hourlyRate,
+              }
+            : null,
+        },
+      });
+      if (error) throw error;
+      push({ role: "assistant", text: data?.answer ?? data?.error ?? "Inget svar.", source: data?.source });
+    } catch {
+      push({ role: "assistant", text: "Något gick fel. Försök igen om en stund." });
+    } finally {
+      setLoading(false);
+    }
+  }
+
   function onPreset(p: { key: PresetKey; label: string }) {
+    trackEvent("home_chat_question_clicked", { question_key: p.key, is_authenticated: !!user });
     push({ role: "user", text: p.label });
     ask(p.key);
   }
@@ -130,13 +160,11 @@ export default function HomeAssistantChat() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              if (!input.trim()) return;
-              push({ role: "user", text: input.trim() });
-              push({
-                role: "assistant",
-                text: "Fritextsvar kopplas in i nästa steg. Välj en av frågorna ovan så länge.",
-              });
+              const q = input.trim();
+              if (!q) return;
+              push({ role: "user", text: q });
               setInput("");
+              askFreeText(q);
             }}
             className="flex items-center gap-2"
           >
