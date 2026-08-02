@@ -56,6 +56,10 @@ export default function HomeAssistantChat() {
   const started = messages.some((m) => m.role === "user");
 
   useEffect(() => {
+    if (!user) trackEvent("home_chat_login_prompt_shown", { surface: "startsida" });
+  }, [user]);
+
+  useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages, loading]);
 

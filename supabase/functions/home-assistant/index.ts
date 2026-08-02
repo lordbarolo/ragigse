@@ -4,6 +4,7 @@
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { checkRateLimit } from "../_shared/rateLimit.ts";
+import { getAiGatewayKey, getAiGatewayUrl, getAiModel } from "../_shared/ai-transport.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -40,7 +41,19 @@ Deno.serve(async (req) => {
     return json({ error: "För många frågor just nu. Försök igen om en stund." }, 429);
   }
 
-  let body: { action?: string; key?: string; role?: string; zone?: string } = {};
+  let body: {
+    action?: string;
+    key?: string;
+    role?: string;
+    zone?: string;
+    question?: string;
+    context?: {
+      role?: string | null;
+      kommun?: string | null;
+      employment_type?: string | null;
+      current_hourly_rate?: number | null;
+    } | null;
+  } = {};
   try {
     body = await req.json();
   } catch {
@@ -64,6 +77,87 @@ Deno.serve(async (req) => {
         .sort((a, b) => a.localeCompare(b, "sv"));
 
       return json({ roles });
+    }
+
+    // ── Fritext: kräver inloggad session; profilen agerar kontext (RAG) ──
+    if (body.action === "freetext") {
+      const authHeader = req.headers.get("Authorization") ?? "";
+      const token = authHeader.replace(/^Bearer\s+/i, "");
+      const { data: userData } = token
+        ? await supabase.auth.getUser(token)
+        : { data: { user: null } };
+      if (!userData?.user) {
+        return json({ error: "Fritextfrågor kräver inloggning." }, 401);
+      }
+
+      const question = (body.question ?? "").trim().slice(0, 500);
+      if (!question) return json({ error: "Tom fråga" }, 400);
+
+      const ctx = body.context ?? null;
+      let rateContext = "";
+      if (ctx?.role && !GROUP_LABEL.test(ctx.role)) {
+        const { data: rateRows } = await supabase
+          .from("contract_version_rates")
+          .select("zon, timpris_kund, contract_versions!inner(is_active, version_label)")
+          .eq("typ", "Grundpris")
+          .eq("contract_versions.is_active", true)
+          .ilike("yrkeskategori", ctx.role);
+        const rows = (rateRows ?? []) as unknown as {
+          zon: string;
+          timpris_kund: number;
+          contract_versions: { version_label: string };
+        }[];
+        if (rows.length) {
+          rateContext =
+            `Aktiva ramavtalspriser (${rows[0].contract_versions.version_label}) för ${ctx.role}: ` +
+            rows.map((r) => `${r.zon} ${Math.round(Number(r.timpris_kund))} kr/h`).join(", ") +
+            ".";
+        }
+      }
+
+      const [lo, hi] = shareRange(ctx?.role ?? "");
+      const profileContext = ctx
+        ? `Användarens profil: roll ${ctx.role ?? "okänd"}, ort ${ctx.kommun ?? "okänd"}, ` +
+          `kontraktsform ${ctx.employment_type ?? "okänd"}, nuvarande ersättning ` +
+          `${ctx.current_hourly_rate ?? "okänd"} kr/h.`
+        : "Användaren har ingen sparad profil.";
+
+      const key = getAiGatewayKey();
+      if (!key) return json({ error: "Assistenten är inte tillgänglig just nu." }, 503);
+
+      const systemPrompt =
+        "Du är CompCares assistent för svenska vårdkonsulter. Svara neutralt och sakligt på svenska, " +
+        "max tre korta stycken. Utgå endast från SKR:s ramavtal, publicerade historiska avrop och " +
+        "branschens marginalmodeller. Använd aldrig SCB eller lönestatistik för konsultpriser. " +
+        "Nämn aldrig gruppetiketter som 'Grupp A'. Beskriv aldrig en nivå som bra eller dålig — " +
+        "beskriv bara hur den förhåller sig till ramavtalet. Avrop är alltid historiska, aldrig pågående. " +
+        `Marginalintervall för denna roll: konsulten behåller ${Math.round(lo * 100)}–${Math.round(hi * 100)} % ` +
+        "av kundpriset; anställd räknas om med faktor 1,38 och 167 timmar per månad. " +
+        `${profileContext} ${rateContext}`.trim();
+
+      const aiRes = await fetch(getAiGatewayUrl(), {
+        method: "POST",
+        headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: getAiModel(),
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: question },
+          ],
+        }),
+      });
+      if (!aiRes.ok) {
+        console.error("[home-assistant] ai error", aiRes.status, await aiRes.text());
+        return json({ error: "Assistenten kunde inte svara just nu." }, 502);
+      }
+      const aiJson = await aiRes.json();
+      const answer = aiJson?.choices?.[0]?.message?.content?.trim();
+      if (!answer) return json({ error: "Assistenten kunde inte svara just nu." }, 502);
+
+      return json({
+        answer,
+        source: "SKR:s ramavtal, publicerade avrop och din sparade profil",
+      });
     }
 
     if (body.action !== "answer") return json({ error: "Okänd åtgärd" }, 400);
