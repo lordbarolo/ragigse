@@ -14,19 +14,23 @@ interface SEOProps {
   image?: string;
   jsonLd?: Record<string, unknown> | Record<string, unknown>[];
   noindex?: boolean;
+  /** Override the canonical/OG base origin (t.ex. https://vardbemanning.ai). */
+  baseUrl?: string;
 }
 
 const BASE = "https://www.compcare.se";
 
-function resolveImage(image: string | undefined): string | undefined {
+function resolveImage(image: string | undefined, base: string): string | undefined {
   if (!image) return undefined;
   if (image.startsWith("http://") || image.startsWith("https://")) return image;
-  return `${BASE}${image.startsWith("/") ? "" : "/"}${image}`;
+  return `${base}${image.startsWith("/") ? "" : "/"}${image}`;
 }
 
-export function SEO({ title, description, path, ogType = "website", image, jsonLd, noindex = false }: SEOProps) {
-  const url = `${BASE}${path}`;
-  const resolvedImage = resolveImage(image);
+export function SEO({ title, description, path, ogType = "website", image, jsonLd, noindex = false, baseUrl }: SEOProps) {
+  const base = baseUrl ?? BASE;
+  const url = `${base}${path}`;
+  const resolvedImage = resolveImage(image, base);
+
   const lds = noindex || !jsonLd ? [] : Array.isArray(jsonLd) ? jsonLd : [jsonLd];
   return (
     <Helmet>
