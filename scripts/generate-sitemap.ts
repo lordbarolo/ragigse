@@ -5,7 +5,7 @@ import { writeFileSync } from "fs"
 import { resolve } from "path"
 import { ROLE_NAMES, CITY_NAMES, slugify, publishableRoles } from "./seo-roles"
 
-const BASE_URL = "https://www.compcare.se"
+const BASE_URL = "https://vardbemanning.ai"
 
 interface SitemapEntry {
   path: string
