@@ -19,6 +19,7 @@
 
 import { describe, it, expect, beforeAll, vi } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
+import "@testing-library/jest-dom/vitest";
 import userEvent from "@testing-library/user-event";
 import { Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -128,7 +129,7 @@ describe.skipIf(!hasEnv)("E2E: dropdown-etikett → pris och kalkyl", () => {
       expect(roleLabel5c(c.canonical)).toBe(c.label);
 
       // 1. Välj roll via dropdown-etiketten, som en användare.
-      const trigger = screen.getByRole("combobox");
+      const trigger = screen.getAllByRole("combobox")[0];
       await user.click(trigger);
       await user.type(trigger, c.label);
       const option = await screen.findByText(c.label);
