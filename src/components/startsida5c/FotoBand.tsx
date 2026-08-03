@@ -32,12 +32,8 @@ export default function FotoBand() {
           >
             Vi samlar fördelarna med Ai i en enkel chatt. Kostnadsfritt och öppet för alla.
           </h2>
-          <p className="mt-3 max-w-[460px] whitespace-pre-line text-[15px]" style={{ color: "#5a5f6e", lineHeight: 1.6 }}>
-            Personligt stöd i löneförhandling{"\n"}
-            Automatisk notis vid året prisjustering{"\n"}
-            Tips på närliggande orter med bättre villkor{"\n"}
-            Hittar timmar som du missat att fakturera för{"\n"}
-            Visar när dina uppdrag brukar komma, så du kan vara redo
+          <p className="mt-3 max-w-[460px] text-[15px]" style={{ color: "#5a5f6e", lineHeight: 1.6 }}>
+            Vi utvecklar nu en rad verktyg som ska jämna ut kunskapsglappet mellan beställare och konsulter. Vi bygger det konsulten saknar och tar gärna emot tips. Vilket verktyg saknar du?
           </p>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
