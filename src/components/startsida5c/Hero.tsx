@@ -1,7 +1,7 @@
 import Rateraknare from "./Rateraknare";
 import { marginText5c } from "./rate5c";
 
-const CHECKS = ["Inga uppgifter krävs", "Data inom EU", "Uppdateras vid nya avrop"];
+const CHECKS = ["Notis vid prisökning", "AI-stöd för konsultavtal", "Hitta förlorade timmar"];
 
 export default function Hero() {
   const doctorMargin = marginText5c("Specialistläkare anestesi och intensivvård");
