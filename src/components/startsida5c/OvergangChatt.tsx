@@ -1,11 +1,7 @@
 import { Link } from "@/lib/router-compat";
 import HomeAssistantChat from "@/components/assistant/HomeAssistantChat";
-import { marginText5c } from "./rate5c";
 
 export default function OvergangChatt() {
-  const doctorMargin = marginText5c("Specialistläkare psykiatri");
-  const otherMargin = marginText5c("Sjuksköterska");
-
   return (
     <section
       id="assistent"
@@ -57,8 +53,7 @@ export default function OvergangChatt() {
               <span style={{ color: "#6ee7b7" }}>✓</span>Baserat på SKR:s offentliga ramavtalspriser
             </span>
             <span className="flex items-center gap-1.5">
-              <span style={{ color: "#6ee7b7" }}>✓</span>Branschens standardmarginaler — specialistläkare{" "}
-              {doctorMargin}, övriga {otherMargin}
+              <span style={{ color: "#6ee7b7" }}>✓</span>Branschens standardmarginaler och arbetsgivarfaktor
             </span>
           </div>
           <div className="mt-2.5 text-[11.5px]" style={{ color: "#565b6e" }}>

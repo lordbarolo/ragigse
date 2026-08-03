@@ -1,12 +1,8 @@
 import Rateraknare from "./Rateraknare";
-import { marginText5c } from "./rate5c";
 
 const CHECKS = ["Inga uppgifter krävs", "Data inom EU", "Uppdateras vid nya avrop"];
 
 export default function Hero() {
-  const doctorMargin = marginText5c("Specialistläkare anestesi och intensivvård");
-  const otherMargin = marginText5c("Sjuksköterska");
-
   return (
     <section style={{ background: "#0e1016", borderBottom: "1px solid #22242e" }}>
       <div className="mx-auto grid max-w-[1200px] items-center gap-10 px-5 py-14 md:px-12 md:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
@@ -32,7 +28,7 @@ export default function Hero() {
             className="mt-4 max-w-[520px] text-[15.5px]"
             style={{ lineHeight: 1.62, color: "#a3a7b7", animation: "fadeUp5c .55s .16s ease both" }}
           >
-            Kundpris minus typisk marginal — specialistläkare {doctorMargin}, övriga roller {otherMargin}. Samma
+            Kundpris enligt ramavtalet, och vad som återstår efter bemanningsbolagets marginal. Samma
             siffror som regionen ser, per roll och zon.
           </p>
           <ul
