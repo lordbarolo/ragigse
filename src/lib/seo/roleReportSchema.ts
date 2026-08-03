@@ -13,7 +13,9 @@
 
 import { organizationSchema } from "./organizationSchema";
 
-const BASE_URL = "https://www.compcare.se";
+import { SITE_URL } from "@/lib/site";
+
+const BASE_URL = SITE_URL;
 const ORG_REF = { "@id": `${BASE_URL}/#organization` };
 
 

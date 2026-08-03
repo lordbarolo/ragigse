@@ -6,7 +6,7 @@
     "description": "Compensation intelligence API for healthcare professionals in Sweden. Provides consultant market rate lookups based on official framework agreement prices (ramavtalspriser) from 290+ Swedish healthcare providers and the staffing industry's margin model.\n\nThe recommended entry point for AI agents is the unified `/compensation-intelligence` endpoint, which supports entity resolution, policy enforcement, and audit logging.\n\nAll CI responses follow a standardized envelope: `{ query_id, capability, status, data, source, policy, errors }`.\n\nData sources: SKR framework agreements (2026) and the staffing industry's margin model (85–90% of customer price, ×1.38 for employees, 167h/month). Updated continuously as new contract versions are published.\n\nBulk export and enumeration are NOT supported — the API enforces anti-enumeration policies.",
     "contact": {
       "name": "CompCare",
-      "url": "https://compcare.se",
+      "url": "https://vardbemanning.ai",
       "email": "info@compcare.se"
     },
     "license": {
@@ -338,7 +338,7 @@
       "get": {
         "operationId": "getPublicProfile",
         "summary": "Machine-readable public consultant profile",
-        "description": "Returns a schema.org Person object representing a verified consultant's public 'Vault' profile (verified references, documents, credentials, trust score). Mirrors the human-facing page at https://compcare.se/profil/{id}.\n\nIntended for AI agents and automated systems that need structured access to a consultant's verified credentials and references. Each request is logged to ref_access_logs (resource_type='public_profile_api'). Set the optional headers `x-viewer-name` and `x-viewer-org` to identify the calling agent or organization.\n\nNo bulk enumeration is supported — IDs must be obtained from a profile owner who has shared the link.",
+        "description": "Returns a schema.org Person object representing a verified consultant's public 'Vault' profile (verified references, documents, credentials, trust score). Mirrors the human-facing page at https://vardbemanning.ai/profil/{id}.\n\nIntended for AI agents and automated systems that need structured access to a consultant's verified credentials and references. Each request is logged to ref_access_logs (resource_type='public_profile_api'). Set the optional headers `x-viewer-name` and `x-viewer-org` to identify the calling agent or organization.\n\nNo bulk enumeration is supported — IDs must be obtained from a profile owner who has shared the link.",
         "tags": ["Public Profiles"],
         "parameters": [
           {
@@ -784,7 +784,7 @@
             "type": "object",
             "properties": {
               "generated_at": { "type": "string", "format": "date-time" },
-              "source": { "type": "string", "example": "compcare.se" },
+              "source": { "type": "string", "example": "vardbemanning.ai" },
               "api_version": { "type": "string" },
               "canonical_url": { "type": "string", "format": "uri" }
             }
