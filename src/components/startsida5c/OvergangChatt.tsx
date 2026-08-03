@@ -44,8 +44,8 @@ export default function OvergangChatt() {
           </h2>
           <p className="mx-auto mt-4 max-w-[600px] text-[15.5px]" style={{ lineHeight: 1.6, color: "#a3a7b7" }}>
             Fråga assistenten vad regionen betalar för din roll och zon, vad du kan fakturera efter
-            bemanningsbolagets marginal och hur avropen har sett ut historiskt. Svaren bygger på SKR:s ramavtal —
-            inget annat.
+            bemanningsbolagets marginal och hur avropen har sett ut historiskt. Svaren bygger på omfattande
+            Ai-analys av offentliga handlingar och historisk data.
           </p>
 
           <div className="mx-auto mt-9 max-w-[720px] text-left">
