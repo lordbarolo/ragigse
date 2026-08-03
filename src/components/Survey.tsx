@@ -596,7 +596,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                     <p className="font-semibold mb-1">Pris saknas för din specialitet</p>
                     <p>
                       Vi visar bara priser för roller som finns i SKR:s ramavtal 2026. Mejla{" "}
-                      <a href="mailto:hej@compcare.se" className="underline">hej@compcare.se</a>{" "}
+                      <a href="mailto:hej@vardbemanning.ai" className="underline">hej@vardbemanning.ai</a>{" "}
                       så hjälper vi dig manuellt — vi gissar aldrig på ett generiskt specialistpris.
                     </p>
                   </div>

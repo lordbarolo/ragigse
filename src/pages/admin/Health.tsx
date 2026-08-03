@@ -177,7 +177,7 @@ export default function AdminHealth() {
 
         <p className="text-xs text-muted-foreground">
           health-check körs var 15 min. edge-error-monitor körs var 15 min. conversion-monitor körs dagligen 07:00.
-          Fel skickar mail till anders@compcare.se med färdig chat-prompt.
+          Fel skickar mail till anders@vardbemanning.ai med färdig chat-prompt.
         </p>
       </div>
     </div>

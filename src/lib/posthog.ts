@@ -84,7 +84,7 @@ if (import.meta.env.DEV) {
 // Production sanity log — verifies PostHog is active on the live domain
 if (typeof window !== "undefined") {
   const host = window.location.hostname;
-  if (host === "compcare.se" || host === "www.compcare.se") {
+  if (host === "vardbemanning.ai" || host === "www.vardbemanning.ai") {
     console.info("[PostHog] active on", host, "distinct_id:", posthog.get_distinct_id());
   }
 }
