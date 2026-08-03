@@ -85,8 +85,9 @@ export default function Startsida5c() {
 
       <Hero />
       <RolltabellDark />
-      <OvergangChatt />
       <FotoBand />
+      <OvergangChatt />
+
       <Footer5c />
     </div>
   );
