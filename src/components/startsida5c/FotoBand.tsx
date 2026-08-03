@@ -38,6 +38,9 @@ export default function FotoBand() {
             Vi utvecklar nu en rad verktyg som ska jämna ut kunskapsglappet mellan beställare och konsulter. Vi bygger det konsulten saknar och tar gärna emot tips. Vilket verktyg saknar du?
           </p>
 
+          <VerktygsForslagForm />
+
+
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
             {CARDS.map((c) => {
               const rate = computeRate5c(base, c.yrkeskategori, c.zon);
