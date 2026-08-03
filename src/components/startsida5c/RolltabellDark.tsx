@@ -1,6 +1,7 @@
 import { Link } from "@/lib/router-compat";
-import { computeRate5c, ZONES_5C, kr } from "./rate5c";
+import { clientPrice5c, ZONES_5C, kr } from "./rate5c";
 import { useBaseRates5c } from "./useRates5c";
+import { useCompMap5c, useIsSignedIn } from "./useComp5c";
 
 const ROWS: { label: string; yrkeskategori: string }[] = [
   { label: "Anestesiläkare", yrkeskategori: "Specialistläkare anestesi och intensivvård" },
@@ -13,6 +14,10 @@ const ROWS: { label: string; yrkeskategori: string }[] = [
 
 export default function RolltabellDark() {
   const base = useBaseRates5c();
+  const signedIn = useIsSignedIn();
+  const comps = useCompMap5c(
+    ROWS.flatMap((r) => ZONES_5C.map((z) => ({ role: r.yrkeskategori, zone: z.value }))),
+  );
 
   return (
     <section style={{ background: "#0e1016", borderBottom: "1px solid #22242e" }}>
@@ -22,7 +27,7 @@ export default function RolltabellDark() {
             Mest sökta rollerna, alla zoner
           </h2>
           <span className="text-[12px]" style={{ color: "#8c90a0" }}>
-            kr/h som företagare · efter marginal
+            {signedIn ? "kr/h som företagare · efter marginal" : "kr/h kundpris · SKR:s ramavtal 2026"}
           </span>
         </div>
 
@@ -48,15 +53,19 @@ export default function RolltabellDark() {
             </thead>
             <tbody>
               {ROWS.map((r) => {
-                const values = ZONES_5C.map((z) => computeRate5c(base, r.yrkeskategori, z.value));
-                const max = Math.max(...values.map((v) => v?.foretagareKrH ?? -1));
+                const values = ZONES_5C.map((z) =>
+                  signedIn
+                    ? (comps[`${r.yrkeskategori}|${z.value}`] ?? null)
+                    : clientPrice5c(base, r.yrkeskategori, z.value),
+                );
+                const max = Math.max(...values.map((v) => v ?? -1));
                 return (
                   <tr key={r.yrkeskategori}>
                     <td className="py-3.5 text-[14px]" style={{ color: "#eef0f4", borderBottom: "1px solid #22242e" }}>
                       {r.label}
                     </td>
                     {values.map((v, i) => {
-                      const isMax = v != null && v.foretagareKrH === max;
+                      const isMax = v != null && v === max;
                       return (
                         <td
                           key={ZONES_5C[i].value}
@@ -67,7 +76,7 @@ export default function RolltabellDark() {
                             borderBottom: "1px solid #22242e",
                           }}
                         >
-                          {kr(v?.foretagareKrH)}
+                          {kr(v)}
                         </td>
                       );
                     })}
@@ -79,7 +88,11 @@ export default function RolltabellDark() {
         </div>
 
         <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-[12px]" style={{ color: "#666b7e" }}>
-          <span>Högst ersättning markerad. Fullständig lista med alla roller efter inloggning.</span>
+          <span>
+            {signedIn
+              ? "Högst ersättning markerad. Fullständig lista med alla roller finns i faktasidorna."
+              : "Högsta kundpris markerat. Din ersättning som företagare eller löntagare visas efter inloggning."}
+          </span>
           <Link to="/faktasidor" style={{ color: "#8b8bf6" }} className="hover:underline">
             Jämför alla roller →
           </Link>
