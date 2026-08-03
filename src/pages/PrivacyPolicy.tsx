@@ -69,9 +69,9 @@ const PrivacyPolicy = () => {
           <div>
             <h2 className="text-xl font-semibold text-foreground">1. Personuppgiftsansvarig</h2>
             <p className="text-sm text-muted-foreground leading-relaxed mt-2">
-              Vi är personuppgiftsansvariga för behandlingen av dina personuppgifter när du använder compcare.se.
+              Vi är personuppgiftsansvariga för behandlingen av dina personuppgifter när du använder vardbemanning.ai.
             </p>
-            <p className="text-sm text-muted-foreground mt-2">Kontakt: <a href="mailto:info@compcare.se" className="text-primary hover:underline">info@compcare.se</a></p>
+            <p className="text-sm text-muted-foreground mt-2">Kontakt: <a href="mailto:info@vardbemanning.ai" className="text-primary hover:underline">info@vardbemanning.ai</a></p>
           </div>
 
           <div>
@@ -79,7 +79,7 @@ const PrivacyPolicy = () => {
 
             <h3 className="text-base font-medium text-foreground mt-4">2.1 Löneenkäten</h3>
             <p className="text-sm text-muted-foreground leading-relaxed mt-1">
-              När du gör en analys på compcare.se samlar vi in: yrkesroll (ev. specialisering), kommun/region, anställningsform (anställd/egenföretagare), aktuell timersättning eller månadslön, samt e-postadress för att leverera rapporten. Uppgifterna används för att beräkna din marknadsposition mot SKR:s ramavtalspriser.
+              När du gör en analys på vardbemanning.ai samlar vi in: yrkesroll (ev. specialisering), kommun/region, anställningsform (anställd/egenföretagare), aktuell timersättning eller månadslön, samt e-postadress för att leverera rapporten. Uppgifterna används för att beräkna din marknadsposition mot SKR:s ramavtalspriser.
             </p>
 
             <h3 className="text-base font-medium text-foreground mt-4">2.2 Kontouppgifter</h3>
@@ -152,7 +152,7 @@ const PrivacyPolicy = () => {
               <li><strong className="text-foreground">Dataportabilitet</strong> — få dina uppgifter i ett maskinläsbart format.</li>
             </ul>
             <p className="text-sm text-muted-foreground mt-2">
-              Kontakta oss på <a href="mailto:info@compcare.se" className="text-primary hover:underline">info@compcare.se</a> för att utöva dina rättigheter. Vi svarar inom 30 dagar. Du har även rätt att lämna klagomål till Integritetsskyddsmyndigheten (IMY), <a href="https://www.imy.se" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">imy.se</a>.
+              Kontakta oss på <a href="mailto:info@vardbemanning.ai" className="text-primary hover:underline">info@vardbemanning.ai</a> för att utöva dina rättigheter. Vi svarar inom 30 dagar. Du har även rätt att lämna klagomål till Integritetsskyddsmyndigheten (IMY), <a href="https://www.imy.se" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">imy.se</a>.
             </p>
           </div>
 
@@ -187,7 +187,7 @@ const PrivacyPolicy = () => {
             <h2 className="text-xl font-semibold text-foreground">11. Kontakt</h2>
             <p className="text-sm text-muted-foreground leading-relaxed mt-2">Har du frågor om hur vi hanterar dina uppgifter?</p>
             <p className="text-sm text-muted-foreground mt-2">
-              E-post: <a href="mailto:info@compcare.se" className="text-primary hover:underline">info@compcare.se</a>
+              E-post: <a href="mailto:info@vardbemanning.ai" className="text-primary hover:underline">info@vardbemanning.ai</a>
             </p>
           </div>
 
