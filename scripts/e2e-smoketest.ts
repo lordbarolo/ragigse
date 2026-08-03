@@ -1,11 +1,11 @@
 /**
  * E2E smoketest — runs after publish to verify the full lead funnel works end-to-end.
  *
- * Flow (against https://compcare.se):
+ * Flow (against https://vardbemanning.ai):
  *   1. Open landing → assert SalaryCheck visible
  *   2. Fill survey with synthetic data → submit
  *   3. Land on /teaser → click email gate
- *   4. Submit healthcheck+timestamp@compcare.se → expect navigation to /resultat
+ *   4. Submit healthcheck+timestamp@vardbemanning.ai → expect navigation to /resultat
  *   5. Verify report content loaded (price headline visible)
  *
  * Usage (locally or in CI):
@@ -21,7 +21,7 @@
 
 import { chromium, type Browser, type Page } from "npm:playwright@1.47.0";
 
-const BASE_URL = Deno.env.get("SMOKETEST_URL") ?? "https://compcare.se";
+const BASE_URL = Deno.env.get("SMOKETEST_URL") ?? "https://vardbemanning.ai";
 const TIMEOUT_MS = 60_000;
 
 interface Step {
@@ -59,7 +59,7 @@ const steps: Step[] = [
   {
     name: "email-submit",
     fn: async (page) => {
-      const email = `smoketest+${Date.now()}@compcare.se`;
+      const email = `smoketest+${Date.now()}@vardbemanning.ai`;
       const input = page.locator('input[type="email"]').first();
       if (await input.isVisible().catch(() => false)) {
         await input.fill(email);
