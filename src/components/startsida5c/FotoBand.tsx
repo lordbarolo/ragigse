@@ -30,11 +30,14 @@ export default function FotoBand() {
             className="m-0 text-[24px] font-semibold md:text-[30px]"
             style={{ color: "#191922", letterSpacing: "-0.015em", lineHeight: 1.15 }}
           >
-            Samma siffror som bolaget sitter på
+            Vi samlar fördelarna med Ai i en enkel chatt. Kostnadsfritt och öppet för alla.
           </h2>
-          <p className="mt-3 max-w-[460px] text-[15px]" style={{ color: "#5a5f6e", lineHeight: 1.6 }}>
-            Priserna kommer från SKR:s ramavtal 2026 — offentliga och lika för alla. Här är din del av kundpriset
-            som företagare, per roll och zon.
+          <p className="mt-3 max-w-[460px] whitespace-pre-line text-[15px]" style={{ color: "#5a5f6e", lineHeight: 1.6 }}>
+            Personligt stöd i löneförhandling{"\n"}
+            Automatisk notis vid året prisjustering{"\n"}
+            Tips på närliggande orter med bättre villkor{"\n"}
+            Hittar timmar som du missat att fakturera för{"\n"}
+            Visar när dina uppdrag brukar komma, så du kan vara redo
           </p>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
