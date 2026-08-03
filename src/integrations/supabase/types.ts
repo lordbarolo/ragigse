@@ -3567,6 +3567,36 @@ export type Database = {
         }
         Relationships: []
       }
+      tool_suggestions: {
+        Row: {
+          choice: string
+          confirm_token: string
+          confirmed_at: string | null
+          created_at: string
+          email: string
+          id: string
+          own_text: string | null
+        }
+        Insert: {
+          choice: string
+          confirm_token: string
+          confirmed_at?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          own_text?: string | null
+        }
+        Update: {
+          choice?: string
+          confirm_token?: string
+          confirmed_at?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          own_text?: string | null
+        }
+        Relationships: []
+      }
       uppdrag_notifications: {
         Row: {
           created_at: string
