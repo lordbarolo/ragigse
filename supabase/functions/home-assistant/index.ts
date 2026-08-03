@@ -170,11 +170,13 @@ Deno.serve(async (req) => {
         "av kundpriset; anställd räknas om med faktor 1,38 och 167 timmar per månad. " +
         `${profileContext} ${rateContext}`.trim();
 
+      const model = getAiModel();
+      const startedAt = Date.now();
       const aiRes = await fetch(getAiGatewayUrl(), {
         method: "POST",
         headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: getAiModel(),
+          model,
           messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: question },
@@ -182,17 +184,46 @@ Deno.serve(async (req) => {
         }),
       });
       if (!aiRes.ok) {
-        console.error("[home-assistant] ai error", aiRes.status, await aiRes.text());
+        const errText = await aiRes.text();
+        console.error("[home-assistant] ai error", aiRes.status, errText);
+        await logAiUsage({
+          feature: "home-assistant",
+          model,
+          userId,
+          status: "error",
+          durationMs: Date.now() - startedAt,
+          errorMessage: `gateway ${aiRes.status}`,
+        });
         return json({ error: "Assistenten kunde inte svara just nu." }, 502);
       }
       const aiJson = await aiRes.json();
       const answer = aiJson?.choices?.[0]?.message?.content?.trim();
+      const { inputTokens, outputTokens } = extractTokensFromResponse(aiJson);
+      await logAiUsage({
+        feature: "home-assistant",
+        model,
+        userId,
+        inputTokens,
+        outputTokens,
+        durationMs: Date.now() - startedAt,
+        status: answer ? "success" : "error",
+        errorMessage: answer ? undefined : "empty_answer",
+      });
       if (!answer) return json({ error: "Assistenten kunde inte svara just nu." }, 502);
+
+      // Mjuk varning vid 80 % av dygnskvoten
+      const used = (quota.used ?? 0) + 1;
+      const limit = quota.limit ?? null;
+      const warn = limit && !quota.is_admin && used >= Math.floor(limit * 0.8)
+        ? `Du har använt ${used} av ${limit} fritextfrågor i dag.`
+        : undefined;
 
       return json({
         answer,
         source: "SKR:s ramavtal, publicerade avrop och din sparade profil",
+        quota: { used, limit, warning: warn },
       });
+
     }
 
     if (body.action !== "answer") return json({ error: "Okänd åtgärd" }, 400);
