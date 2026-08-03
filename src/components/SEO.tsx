@@ -18,7 +18,7 @@ interface SEOProps {
   baseUrl?: string;
 }
 
-const BASE = "https://www.compcare.se";
+const BASE = "https://vardbemanning.ai";
 
 function resolveImage(image: string | undefined, base: string): string | undefined {
   if (!image) return undefined;

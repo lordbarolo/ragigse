@@ -52,7 +52,7 @@ const FAKTA_JSONLD = [
     "@context": "https://schema.org",
     "@type": "WebPage",
     name: "Ersättningssökning – ramavtalspriser per roll och kommun",
-    url: "https://www.compcare.se/faktasidor",
+    url: "https://vardbemanning.ai/faktasidor",
     inLanguage: "sv-SE",
     description:
       "Sök din yrkesroll och kommun för att få din ersättningsanalys enligt regionernas ramavtal 2026. Exakta nivåer visas efter inloggning.",

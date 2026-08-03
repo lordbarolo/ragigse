@@ -15,15 +15,15 @@ const LANDING_JSONLD = [
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "CompCare",
-    url: "https://www.compcare.se/",
+    url: "https://vardbemanning.ai/",
     inLanguage: "sv-SE",
   },
   {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "CompCare",
-    url: "https://www.compcare.se/",
-    logo: "https://www.compcare.se/compcare-logo.svg",
+    url: "https://vardbemanning.ai/",
+    logo: "https://vardbemanning.ai/compcare-logo.svg",
   },
 ];
 
