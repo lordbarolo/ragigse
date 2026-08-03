@@ -24,8 +24,8 @@ import userEvent from "@testing-library/user-event";
 import { Suspense } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
-import { basePrices, computeRate5c, type RateRow } from "./rate5c";
-import { roleLabel5c } from "./roleLabels5c";
+import { basePrices, computeRate5c, type RateRow } from "@/components/startsida5c/rate5c";
+import { roleLabel5c } from "@/components/startsida5c/roleLabels5c";
 import { calculateSalaryRange, getMarginShares, EMPLOYER_FACTOR } from "@/lib/calc";
 
 /** Maximal tillåten avvikelse mellan modellerna och UI:t (avrundningsfönster). */
@@ -100,7 +100,7 @@ describe.skipIf(!hasEnv)("E2E: dropdown-etikett → pris och kalkyl", () => {
 
   beforeAll(async () => {
     rows = basePrices(await fetchRates());
-    Rateraknare = (await import("./Rateraknare")).default;
+    Rateraknare = (await import("@/components/startsida5c/Rateraknare")).default;
   });
 
   const cases: Array<{ label: string; canonical: string; zone: string; zoneLabel: string }> = [

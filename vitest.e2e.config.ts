@@ -22,6 +22,6 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "jsdom",
-    include: ["src/**/*.e2e.test.{ts,tsx}"],
+    include: ["e2e/**/*.e2e.{ts,tsx}"],
   },
 });
