@@ -1,6 +1,8 @@
 import sskFoto from "@/assets/startsida5c-ssk.png";
 import { computeRate5c, kr } from "./rate5c";
 import { useBaseRates5c } from "./useRates5c";
+import VerktygsForslagForm from "./VerktygsForslagForm";
+
 
 const CARDS: { label: string; yrkeskategori: string; zon: string }[] = [
   { label: "IVA-sjuksköterska", yrkeskategori: "Specialistsjuksköterska intensivvård", zon: "Zon 3" },
