@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import { Link } from "@/lib/router-compat";
-import { SEO } from "@/components/SEO";
 import Hero from "@/components/startsida5c/Hero";
 import RolltabellDark from "@/components/startsida5c/RolltabellDark";
 import OvergangChatt from "@/components/startsida5c/OvergangChatt";
@@ -10,25 +9,6 @@ import { trackEvent } from "@/lib/trackEvent";
 
 const FONT_HREF =
   "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap";
-
-const SITE_URL = "https://vardbemanning.ai";
-
-const LANDING_JSONLD = [
-  {
-    "@context": "https://schema.org",
-    "@type": "WebSite",
-    name: "CompCare",
-    url: `${SITE_URL}/`,
-    inLanguage: "sv-SE",
-  },
-  {
-    "@context": "https://schema.org",
-    "@type": "Organization",
-    name: "CompCare",
-    url: `${SITE_URL}/`,
-    logo: `${SITE_URL}/compcare-logo.svg`,
-  },
-];
 
 export default function Startsida5c() {
   useEffect(() => {
@@ -47,13 +27,6 @@ export default function Startsida5c() {
 
   return (
     <div style={{ background: "#0e1016", fontFamily: "'Space Grotesk',system-ui,sans-serif", color: "#eef0f4" }}>
-      <SEO
-        title="CompCare – Lön & ramavtalspriser för vårdkonsulter"
-        description="Se vad regionen betalar för din roll och zon enligt SKR:s ramavtal 2026 — och vad du kan fakturera efter bemanningsbolagets marginal."
-        path="/"
-        baseUrl={SITE_URL}
-        jsonLd={LANDING_JSONLD}
-      />
       <style>{`
         @keyframes fadeUp5c { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
         @keyframes cursorBlink5c { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
