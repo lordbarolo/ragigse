@@ -3973,60 +3973,6 @@ export type Database = {
         Args: { p_profile_id: string }
         Returns: Json
       }
-      ref_create_ping: {
-        Args: { _reference_id: string; _requester_name: string }
-        Returns: string
-      }
-      ref_get_ping_by_token: {
-        Args: { _token: string }
-        Returns: {
-          competencies: Json
-          confirmed_at: string
-          expires_at: string
-          id: string
-          individual_name: string
-          individual_specialty: string
-          period_end: string
-          period_start: string
-          recommendation_score: number
-          reference_id: string
-          reference_text: string
-          relationship: string
-          requester_name: string
-          responded_at: string
-          response_token: string
-          sent_at: string
-          status: Database["public"]["Enums"]["ref_ping_status"]
-          workplace: string
-        }[]
-      }
-      ref_get_public_profile: { Args: { _profile_id: string }; Returns: Json }
-      ref_get_reference_by_invite_token: {
-        Args: { _token: string }
-        Returns: {
-          competencies: Json
-          confirmed_at: string
-          created_at: string
-          document_name: string
-          document_url: string
-          giver_email: string
-          giver_id: string
-          giver_name: string
-          id: string
-          individual_id: string
-          individual_name: string
-          individual_specialty: string
-          invite_token: string
-          is_verification_only: boolean
-          period_end: string
-          period_start: string
-          recommendation_score: number
-          reference_text: string
-          relationship: string
-          status: Database["public"]["Enums"]["ref_reference_status"]
-          workplace: string
-        }[]
-      }
       ref_get_user_org_id: { Args: { _user_id: string }; Returns: string }
       ref_has_role: {
         Args: {
@@ -4035,39 +3981,8 @@ export type Database = {
         }
         Returns: boolean
       }
-      ref_log_profile_view: {
-        Args: { _fingerprint?: string; _profile_id: string; _referrer?: string }
-        Returns: undefined
-      }
       ref_refresh_attachability: {
         Args: { p_reference_id: string }
-        Returns: undefined
-      }
-      ref_respond_to_ping: {
-        Args: {
-          _status: Database["public"]["Enums"]["ref_ping_status"]
-          _token: string
-        }
-        Returns: undefined
-      }
-      ref_submit_reference: {
-        Args: {
-          _competencies: Json
-          _giver_id: string
-          _giver_name: string
-          _recommendation_score: number
-          _reference_text: string
-          _token: string
-        }
-        Returns: undefined
-      }
-      ref_verify_imported_reference: {
-        Args: {
-          _comment?: string
-          _giver_id: string
-          _giver_name: string
-          _token: string
-        }
         Returns: undefined
       }
       reject_org_membership_request: {
