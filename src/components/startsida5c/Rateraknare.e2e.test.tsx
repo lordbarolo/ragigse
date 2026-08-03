@@ -1,3 +1,4 @@
+// @vitest-environment jsdom
 /**
  * End-to-end-test för rollväljaren på startsidan (Rateraknare).
  *
