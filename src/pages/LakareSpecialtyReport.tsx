@@ -1,4 +1,4 @@
-import { Link, useLocation, Navigate } from "react-router-dom";
+import { Link, useLocation, Navigate } from "@/lib/router-compat";
 import { useEffect } from "react";
 import { Separator } from "@/components/ui/separator";
 import CompcareLogo from "@/components/CompcareLogo";
@@ -303,7 +303,7 @@ export default function LakareSpecialtyReport() {
           <section className="space-y-2.5 pt-2">
             <p className="text-[10px] font-semibold tracking-[1.4px] uppercase px-1" style={{ color: sub }}>Gå vidare med dina egna siffror</p>
 
-            <Link to={`/?yrke=${cfg.prefillSlug}`} className="block rounded-2xl border p-5 transition hover:shadow-sm" style={{ backgroundColor: card, borderColor: border }}>
+            <Link to={`/?yrke=${cfg.prefillSlug}`} className="block rounded-2xl border p-5 transition hover:shadow-xs" style={{ backgroundColor: card, borderColor: border }}>
               <div className="flex items-start gap-3">
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: `${violet}1A` }}>
                   <ClipboardList className="w-5 h-5" style={{ color: violet }} />
@@ -316,7 +316,7 @@ export default function LakareSpecialtyReport() {
               </div>
             </Link>
 
-            <Link to={`/?yrke=${cfg.prefillSlug}&fokus=lonekoll`} className="block rounded-2xl border p-5 transition hover:shadow-sm" style={{ backgroundColor: card, borderColor: border }}>
+            <Link to={`/?yrke=${cfg.prefillSlug}&fokus=lonekoll`} className="block rounded-2xl border p-5 transition hover:shadow-xs" style={{ backgroundColor: card, borderColor: border }}>
               <div className="flex items-start gap-3">
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: `${violet}1A` }}>
                   <FileSearch className="w-5 h-5" style={{ color: violet }} />
@@ -329,7 +329,7 @@ export default function LakareSpecialtyReport() {
               </div>
             </Link>
 
-            <Link to={`/?yrke=${cfg.prefillSlug}&fokus=faktura`} className="block rounded-2xl border p-5 transition hover:shadow-sm" style={{ backgroundColor: card, borderColor: border }}>
+            <Link to={`/?yrke=${cfg.prefillSlug}&fokus=faktura`} className="block rounded-2xl border p-5 transition hover:shadow-xs" style={{ backgroundColor: card, borderColor: border }}>
               <div className="flex items-start gap-3">
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: `${violet}1A` }}>
                   <Calculator className="w-5 h-5" style={{ color: violet }} />

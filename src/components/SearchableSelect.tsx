@@ -187,7 +187,7 @@ export default function SearchableSelect({
       }}
       onMouseEnter={() => setHighlightedIndex(flatIdx)}
       className={cn(
-        "relative flex w-full cursor-default select-none items-center rounded-sm py-2 pl-8 pr-2 text-sm outline-none hover:bg-accent hover:text-accent-foreground",
+        "relative flex w-full cursor-default select-none items-center rounded-xs py-2 pl-8 pr-2 text-sm outline-hidden hover:bg-accent hover:text-accent-foreground",
         value === opt.value && "bg-accent/50",
         highlightedIndex === flatIdx && "bg-accent text-accent-foreground ring-1 ring-inset ring-ring/30"
       )}
@@ -205,7 +205,7 @@ export default function SearchableSelect({
     <div ref={containerRef} className={cn("relative", className)}>
       <div
         className={cn(
-          "relative flex h-14 w-full items-center rounded-md border border-primary/30 bg-background pr-3 text-base shadow-[var(--input-glow)] ring-offset-background transition-shadow focus-within:outline-none focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
+          "relative flex h-14 w-full items-center rounded-md border border-primary/30 bg-background pr-3 text-base shadow-[var(--input-glow)] ring-offset-background transition-shadow focus-within:outline-hidden focus-within:ring-2 focus-within:ring-ring focus-within:ring-offset-2",
           triggerClassName
         )}
       >
@@ -231,7 +231,7 @@ export default function SearchableSelect({
           }}
           onKeyDown={handleKeyDown}
           className={cn(
-            "flex-1 h-full bg-transparent px-3 text-base outline-none placeholder:text-muted-foreground",
+            "flex-1 h-full bg-transparent px-3 text-base outline-hidden placeholder:text-muted-foreground",
             placeholderClassName && `placeholder:${placeholderClassName}`
           )}
         />

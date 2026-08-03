@@ -7,7 +7,7 @@ import {
   createContext,
   useContext,
 } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "@/lib/router-compat";
 import { ArrowLeft, ArrowRight, Briefcase, Building2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import SearchableSelect, { type Option } from "@/components/SearchableSelect";
@@ -525,7 +525,7 @@ export default function InlineTerminalSurvey({
                         }}
                         placeholder={s.employmentType === "foretagare" ? "t.ex. 1100" : "t.ex. 250"}
 
-                        className={`w-full h-14 border rounded-lg px-4 pr-16 text-base font-sans transition-colors focus:outline-none focus:ring-2 focus:ring-[#534AB7] ${
+                        className={`w-full h-14 border rounded-lg px-4 pr-16 text-base font-sans transition-colors focus:outline-hidden focus:ring-2 focus:ring-[#534AB7] ${
                           isLight
                             ? "bg-[#FAFAFA] border-[#E5E5E5] text-[#1A1A1A] placeholder:text-[#9CA3AF] focus:bg-white"
                             : "bg-white/[0.04] border-white/10 text-white placeholder:text-white/50 focus:bg-white/[0.06]"
@@ -558,6 +558,16 @@ export default function InlineTerminalSurvey({
               )}
             </StepTransition>
           </div>
+
+          {/* Statisk disclaimer — visas konstant på alla steg */}
+          <p
+            className={`mb-3 text-[11px] leading-relaxed font-sans ${
+              isLight ? "text-[#6B7280]" : "text-white/55"
+            }`}
+          >
+            Roll, ort, kontraktsform och ersättning behövs för att visa information om dina villkor i
+            förhållande till den övriga marknaden. Inga uppgifter delas.
+          </p>
 
           {/* Back link */}
           <div className="flex items-center justify-between pb-3 min-h-[28px]">
@@ -749,8 +759,8 @@ function RoleCategoryCards({
   const titleColor = isLight ? "text-[#1A1A1A]" : "text-white";
   const mutedTitle = isLight ? "text-[#6B7280]" : "text-white/60";
   const inputClass = isLight
-    ? "w-full h-11 border border-[#E5E5E5] bg-[#FAFAFA] text-[#1A1A1A] placeholder:text-[#9CA3AF] rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#534AB7] focus:bg-white"
-    : "w-full h-11 border border-white/10 bg-white/[0.04] text-white placeholder:text-white/50 rounded-lg px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#534AB7]";
+    ? "w-full h-11 border border-[#E5E5E5] bg-[#FAFAFA] text-[#1A1A1A] placeholder:text-[#9CA3AF] rounded-lg px-3 text-sm focus:outline-hidden focus:ring-2 focus:ring-[#534AB7] focus:bg-white"
+    : "w-full h-11 border border-white/10 bg-white/[0.04] text-white placeholder:text-white/50 rounded-lg px-3 text-sm focus:outline-hidden focus:ring-2 focus:ring-[#534AB7]";
 
   const submitOther = async () => {
     if (!canSubmit) return;

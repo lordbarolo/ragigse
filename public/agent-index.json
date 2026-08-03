@@ -1,0 +1,591 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "name": "CompCare rate endpoint index",
+  "description": "Machine-readable index of all valid specialty_slug and city_slug values. Combine any specialty_slug with any city_slug to form a valid rate page URL. Roles are always addressed as their specific role — administrative group labels are never published.",
+  "version": "2026.1",
+  "generated_at": "2026-08-03",
+  "base_url": "https://vardbemanning.ai",
+  "data_source": "SKR ramavtalspriser 2026 per roll och zon, minus bemanningsföretagets standardmarginal.",
+  "url_patterns": {
+    "rate_page": "https://vardbemanning.ai/lon/{specialty_slug}/{city_slug}",
+    "sitemap": "https://vardbemanning.ai/sitemap.xml",
+    "llms_txt": "https://vardbemanning.ai/llms.txt",
+    "openapi": "https://vardbemanning.ai/openapi.json"
+  },
+  "counts": {
+    "specialties": 88,
+    "cities": 29,
+    "alias_slugs": 91,
+    "rate_pages": 2552
+  },
+  "specialties": [
+    {
+      "name": "Barnmorska",
+      "slug": "barnmorska"
+    },
+    {
+      "name": "Distriktssjuksköterska",
+      "slug": "distriktssjukskoterska"
+    },
+    {
+      "name": "Legitimerad läkare",
+      "slug": "legitimerad-lakare"
+    },
+    {
+      "name": "Röntgensjuksköterska",
+      "slug": "rontgensjukskoterska"
+    },
+    {
+      "name": "Sjuksköterska",
+      "slug": "sjukskoterska"
+    },
+    {
+      "name": "Skolsköterska",
+      "slug": "skolskoterska"
+    },
+    {
+      "name": "Specialistläkare Akutsjukvård",
+      "slug": "specialistlakare-akutsjukvard"
+    },
+    {
+      "name": "Specialistläkare Äldrepsykiatri",
+      "slug": "specialistlakare-aldrepsykiatri"
+    },
+    {
+      "name": "Specialistläkare Allergologi",
+      "slug": "specialistlakare-allergologi"
+    },
+    {
+      "name": "Specialistläkare Allmänmedicin",
+      "slug": "specialistlakare-allmanmedicin"
+    },
+    {
+      "name": "Specialistläkare Anestesi och intensivvård",
+      "slug": "specialistlakare-anestesi-och-intensivvard"
+    },
+    {
+      "name": "Specialistläkare Arbets- och miljömedicin",
+      "slug": "specialistlakare-arbets-och-miljomedicin"
+    },
+    {
+      "name": "Specialistläkare Arbetsmedicin",
+      "slug": "specialistlakare-arbetsmedicin"
+    },
+    {
+      "name": "Specialistläkare Barn- och ungdomsallergologi",
+      "slug": "specialistlakare-barn-och-ungdomsallergologi"
+    },
+    {
+      "name": "Specialistläkare Barn- och ungdomshematologi och onkologi",
+      "slug": "specialistlakare-barn-och-ungdomshematologi-och-onkologi"
+    },
+    {
+      "name": "Specialistläkare Barn- och ungdomskardiologi",
+      "slug": "specialistlakare-barn-och-ungdomskardiologi"
+    },
+    {
+      "name": "Specialistläkare Barn- och ungdomskirurgi",
+      "slug": "specialistlakare-barn-och-ungdomskirurgi"
+    },
+    {
+      "name": "Specialistläkare Barn- och ungdomsmedicin",
+      "slug": "specialistlakare-barn-och-ungdomsmedicin"
+    },
+    {
+      "name": "Specialistläkare Barn- och ungdomsneurologi med habilitering",
+      "slug": "specialistlakare-barn-och-ungdomsneurologi-med-habilitering"
+    },
+    {
+      "name": "Specialistläkare Barn- och ungdomspsykiatri",
+      "slug": "specialistlakare-barn-och-ungdomspsykiatri"
+    },
+    {
+      "name": "Specialistläkare Beroendemedicin",
+      "slug": "specialistlakare-beroendemedicin"
+    },
+    {
+      "name": "Specialistläkare Endokrinologi och diabetologi",
+      "slug": "specialistlakare-endokrinologi-och-diabetologi"
+    },
+    {
+      "name": "Specialistläkare Geriatrik",
+      "slug": "specialistlakare-geriatrik"
+    },
+    {
+      "name": "Specialistläkare Gynekologisk onkologi",
+      "slug": "specialistlakare-gynekologisk-onkologi"
+    },
+    {
+      "name": "Specialistläkare Handkirurgi",
+      "slug": "specialistlakare-handkirurgi"
+    },
+    {
+      "name": "Specialistläkare Hematologi",
+      "slug": "specialistlakare-hematologi"
+    },
+    {
+      "name": "Specialistläkare Hörsel- och balansrubbningar",
+      "slug": "specialistlakare-horsel-och-balansrubbningar"
+    },
+    {
+      "name": "Specialistläkare Hud- och könssjukdomar",
+      "slug": "specialistlakare-hud-och-konssjukdomar"
+    },
+    {
+      "name": "Specialistläkare Immunologi",
+      "slug": "specialistlakare-immunologi"
+    },
+    {
+      "name": "Specialistläkare Infektionssjukdomar",
+      "slug": "specialistlakare-infektionssjukdomar"
+    },
+    {
+      "name": "Specialistläkare Internmedicin",
+      "slug": "specialistlakare-internmedicin"
+    },
+    {
+      "name": "Specialistläkare Kardiologi",
+      "slug": "specialistlakare-kardiologi"
+    },
+    {
+      "name": "Specialistläkare Kärlkirurgi",
+      "slug": "specialistlakare-karlkirurgi"
+    },
+    {
+      "name": "Specialistläkare Kirurgi",
+      "slug": "specialistlakare-kirurgi"
+    },
+    {
+      "name": "Specialistläkare Klinisk farmakologi",
+      "slug": "specialistlakare-klinisk-farmakologi"
+    },
+    {
+      "name": "Specialistläkare Klinisk fysiologi",
+      "slug": "specialistlakare-klinisk-fysiologi"
+    },
+    {
+      "name": "Specialistläkare Klinisk genetik",
+      "slug": "specialistlakare-klinisk-genetik"
+    },
+    {
+      "name": "Specialistläkare Klinisk immunologi och transfusionsmedicin",
+      "slug": "specialistlakare-klinisk-immunologi-och-transfusionsmedicin"
+    },
+    {
+      "name": "Specialistläkare Klinisk kemi",
+      "slug": "specialistlakare-klinisk-kemi"
+    },
+    {
+      "name": "Specialistläkare Klinisk mikrobiologi",
+      "slug": "specialistlakare-klinisk-mikrobiologi"
+    },
+    {
+      "name": "Specialistläkare Klinisk neurofysiologi",
+      "slug": "specialistlakare-klinisk-neurofysiologi"
+    },
+    {
+      "name": "Specialistläkare Klinisk patologi",
+      "slug": "specialistlakare-klinisk-patologi"
+    },
+    {
+      "name": "Specialistläkare Lungsjukdomar",
+      "slug": "specialistlakare-lungsjukdomar"
+    },
+    {
+      "name": "Specialistläkare Medicinsk gastroenterologi och hepatologi",
+      "slug": "specialistlakare-medicinsk-gastroenterologi-och-hepatologi"
+    },
+    {
+      "name": "Specialistläkare Neonatologi",
+      "slug": "specialistlakare-neonatologi"
+    },
+    {
+      "name": "Specialistläkare Neurokirurgi",
+      "slug": "specialistlakare-neurokirurgi"
+    },
+    {
+      "name": "Specialistläkare Neurologi",
+      "slug": "specialistlakare-neurologi"
+    },
+    {
+      "name": "Specialistläkare Neuroradiologi",
+      "slug": "specialistlakare-neuroradiologi"
+    },
+    {
+      "name": "Specialistläkare Njurmedicin",
+      "slug": "specialistlakare-njurmedicin"
+    },
+    {
+      "name": "Specialistläkare Nuklearmedicin",
+      "slug": "specialistlakare-nuklearmedicin"
+    },
+    {
+      "name": "Specialistläkare Obstetrik och gynekologi",
+      "slug": "specialistlakare-obstetrik-och-gynekologi"
+    },
+    {
+      "name": "Specialistläkare Ögonsjukdomar",
+      "slug": "specialistlakare-ogonsjukdomar"
+    },
+    {
+      "name": "Specialistläkare Onkologi",
+      "slug": "specialistlakare-onkologi"
+    },
+    {
+      "name": "Specialistläkare Öron-, näs- och halssjukdomar",
+      "slug": "specialistlakare-oron-nas-och-halssjukdomar"
+    },
+    {
+      "name": "Specialistläkare Ortopedi",
+      "slug": "specialistlakare-ortopedi"
+    },
+    {
+      "name": "Specialistläkare Palliativ medicin",
+      "slug": "specialistlakare-palliativ-medicin"
+    },
+    {
+      "name": "Specialistläkare Plastikkirurgi",
+      "slug": "specialistlakare-plastikkirurgi"
+    },
+    {
+      "name": "Specialistläkare Psykiatri",
+      "slug": "specialistlakare-psykiatri"
+    },
+    {
+      "name": "Specialistläkare Radiologi",
+      "slug": "specialistlakare-radiologi"
+    },
+    {
+      "name": "Specialistläkare Rättsmedicin",
+      "slug": "specialistlakare-rattsmedicin"
+    },
+    {
+      "name": "Specialistläkare Rättspsykiatri",
+      "slug": "specialistlakare-rattspsykiatri"
+    },
+    {
+      "name": "Specialistläkare Rehabiliteringsmedicin",
+      "slug": "specialistlakare-rehabiliteringsmedicin"
+    },
+    {
+      "name": "Specialistläkare Reumatologi",
+      "slug": "specialistlakare-reumatologi"
+    },
+    {
+      "name": "Specialistläkare Röst- och talrubbningar",
+      "slug": "specialistlakare-rost-och-talrubbningar"
+    },
+    {
+      "name": "Specialistläkare Skolhälsovård",
+      "slug": "specialistlakare-skolhalsovard"
+    },
+    {
+      "name": "Specialistläkare Smärtlindring",
+      "slug": "specialistlakare-smartlindring"
+    },
+    {
+      "name": "Specialistläkare Socialmedicin",
+      "slug": "specialistlakare-socialmedicin"
+    },
+    {
+      "name": "Specialistläkare Thoraxkirurgi",
+      "slug": "specialistlakare-thoraxkirurgi"
+    },
+    {
+      "name": "Specialistläkare Urologi",
+      "slug": "specialistlakare-urologi"
+    },
+    {
+      "name": "Specialistläkare Vårdhygien",
+      "slug": "specialistlakare-vardhygien"
+    },
+    {
+      "name": "Specialistsjuksköterska akutsjukvård",
+      "slug": "specialistsjukskoterska-akutsjukvard"
+    },
+    {
+      "name": "Specialistsjuksköterska ambulanssjukvård",
+      "slug": "specialistsjukskoterska-ambulanssjukvard"
+    },
+    {
+      "name": "Specialistsjuksköterska anestesi",
+      "slug": "specialistsjukskoterska-anestesi"
+    },
+    {
+      "name": "Specialistsjuksköterska barn och ungdom",
+      "slug": "specialistsjukskoterska-barn-och-ungdom"
+    },
+    {
+      "name": "Specialistsjuksköterska diabetesvård",
+      "slug": "specialistsjukskoterska-diabetesvard"
+    },
+    {
+      "name": "Specialistsjuksköterska företagshälsovård",
+      "slug": "specialistsjukskoterska-foretagshalsovard"
+    },
+    {
+      "name": "Specialistsjuksköterska hjärtsjukvård",
+      "slug": "specialistsjukskoterska-hjartsjukvard"
+    },
+    {
+      "name": "Specialistsjuksköterska infektionssjukvård",
+      "slug": "specialistsjukskoterska-infektionssjukvard"
+    },
+    {
+      "name": "Specialistsjuksköterska intensivvård",
+      "slug": "specialistsjukskoterska-intensivvard"
+    },
+    {
+      "name": "Specialistsjuksköterska kirurgisk vård",
+      "slug": "specialistsjukskoterska-kirurgisk-vard"
+    },
+    {
+      "name": "Specialistsjuksköterska medicinsk vård",
+      "slug": "specialistsjukskoterska-medicinsk-vard"
+    },
+    {
+      "name": "Specialistsjuksköterska ögonsjukvård",
+      "slug": "specialistsjukskoterska-ogonsjukvard"
+    },
+    {
+      "name": "Specialistsjuksköterska onkologisk vård",
+      "slug": "specialistsjukskoterska-onkologisk-vard"
+    },
+    {
+      "name": "Specialistsjuksköterska operationssjukvård",
+      "slug": "specialistsjukskoterska-operationssjukvard"
+    },
+    {
+      "name": "Specialistsjuksköterska palliativ vård",
+      "slug": "specialistsjukskoterska-palliativ-vard"
+    },
+    {
+      "name": "Specialistsjuksköterska psykiatrisk vård",
+      "slug": "specialistsjukskoterska-psykiatrisk-vard"
+    },
+    {
+      "name": "Specialistsjuksköterska vård av äldre",
+      "slug": "specialistsjukskoterska-vard-av-aldre"
+    },
+    {
+      "name": "ST-läkare",
+      "slug": "st-lakare"
+    }
+  ],
+  "cities": [
+    {
+      "name": "Borås",
+      "slug": "boras"
+    },
+    {
+      "name": "Eskilstuna",
+      "slug": "eskilstuna"
+    },
+    {
+      "name": "Falun",
+      "slug": "falun"
+    },
+    {
+      "name": "Gävle",
+      "slug": "gavle"
+    },
+    {
+      "name": "Göteborg",
+      "slug": "goteborg"
+    },
+    {
+      "name": "Gotland",
+      "slug": "gotland"
+    },
+    {
+      "name": "Halmstad",
+      "slug": "halmstad"
+    },
+    {
+      "name": "Helsingborg",
+      "slug": "helsingborg"
+    },
+    {
+      "name": "Jönköping",
+      "slug": "jonkoping"
+    },
+    {
+      "name": "Kalmar",
+      "slug": "kalmar"
+    },
+    {
+      "name": "Karlstad",
+      "slug": "karlstad"
+    },
+    {
+      "name": "Kristianstad",
+      "slug": "kristianstad"
+    },
+    {
+      "name": "Linköping",
+      "slug": "linkoping"
+    },
+    {
+      "name": "Luleå",
+      "slug": "lulea"
+    },
+    {
+      "name": "Lund",
+      "slug": "lund"
+    },
+    {
+      "name": "Malmö",
+      "slug": "malmo"
+    },
+    {
+      "name": "Norrköping",
+      "slug": "norrkoping"
+    },
+    {
+      "name": "Nyköping",
+      "slug": "nykoping"
+    },
+    {
+      "name": "Örebro",
+      "slug": "orebro"
+    },
+    {
+      "name": "Östersund",
+      "slug": "ostersund"
+    },
+    {
+      "name": "Skellefteå",
+      "slug": "skelleftea"
+    },
+    {
+      "name": "Södertälje",
+      "slug": "sodertalje"
+    },
+    {
+      "name": "Stockholm",
+      "slug": "stockholm"
+    },
+    {
+      "name": "Sundsvall",
+      "slug": "sundsvall"
+    },
+    {
+      "name": "Trollhättan",
+      "slug": "trollhattan"
+    },
+    {
+      "name": "Umeå",
+      "slug": "umea"
+    },
+    {
+      "name": "Uppsala",
+      "slug": "uppsala"
+    },
+    {
+      "name": "Västerås",
+      "slug": "vasteras"
+    },
+    {
+      "name": "Växjö",
+      "slug": "vaxjo"
+    }
+  ],
+  "alias_slugs": [
+    "akutlakare",
+    "akutsjukskoterska",
+    "aldrepsykiater",
+    "aldresjukskoterska",
+    "allergolog",
+    "allmanlakare",
+    "allmansjukskoterska",
+    "ambulanssjukskoterska",
+    "anestesilakare",
+    "anestesiolog",
+    "anestesisjukskoterska",
+    "barnkardiolog",
+    "barnkirurg",
+    "barnlakare",
+    "barnneurolog",
+    "barnpsykiater",
+    "barnsjukskoterska",
+    "beroendelakare",
+    "bup-lakare",
+    "dermatolog",
+    "diabetessjukskoterska",
+    "distriktslakare",
+    "distriktsskoterska",
+    "dsk",
+    "endokrinolog",
+    "foretagshalsosjukskoterska",
+    "foretagsskoterska",
+    "gastroenterolog",
+    "geriatriker",
+    "geriatriksjukskoterska",
+    "grundutbildad-sjukskoterska",
+    "gynekolog",
+    "handkirurg",
+    "hematolog",
+    "hjartlakare",
+    "hjartsjukskoterska",
+    "hudlakare",
+    "huslakare",
+    "infektionslakare",
+    "infektionssjukskoterska",
+    "intensivvardssjukskoterska",
+    "internmedicinare",
+    "iva-sjukskoterska",
+    "kardiolog",
+    "karlkirurg",
+    "kirurg",
+    "kirurgsjukskoterska",
+    "leg-sjukskoterska",
+    "leg-ssk",
+    "legitimerad-sjukskoterska",
+    "lunglakare",
+    "medicinsjukskoterska",
+    "narkoslakare",
+    "narkossjukskoterska",
+    "nefrolog",
+    "neonatolog",
+    "neurokirurg",
+    "neurolog",
+    "neuroradiolog",
+    "njurlakare",
+    "oftalmolog",
+    "ogonlakare",
+    "ogonsjukskoterska",
+    "onh-lakare",
+    "onkolog",
+    "onkologisjukskoterska",
+    "operationssjukskoterska",
+    "oronlakare",
+    "ortoped",
+    "palliativlakare",
+    "palliativsjukskoterska",
+    "patolog",
+    "pediatriker",
+    "plastikkirurg",
+    "psykiater",
+    "psykiatriker",
+    "psykiatrisjukskoterska",
+    "pulmonolog",
+    "radiolog",
+    "rattslakare",
+    "rattspsykiater",
+    "rehablakare",
+    "reumatolog",
+    "rontgenlakare",
+    "rontgensjukskoterska",
+    "skolsjukskoterska",
+    "smartlakare",
+    "socialmedicinare",
+    "ssk",
+    "thoraxkirurg",
+    "urolog"
+  ],
+  "notes": [
+    "alias_slugs are accepted synonyms that resolve to a specific specialty; they are not separate roles.",
+    "Group-level slugs (e.g. specialistsjukskoterska, specialistlakare-grupp-a) are intentionally invalid.",
+    "Each rate page embeds JSON-LD (schema.org/Occupation, Dataset, FAQPage) server-rendered in the first HTML response."
+  ]
+}

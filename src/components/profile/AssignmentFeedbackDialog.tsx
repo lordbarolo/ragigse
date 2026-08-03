@@ -63,9 +63,9 @@ export default function AssignmentFeedbackDialog({ pending, onClose }: Props) {
       patch.deviation_notes = deviationNotes || null;
       patch.invoice_service_interest = invoiceInterest;
     }
-    const { error } = await upsert(patch);
+    const result = await upsert(patch);
     setSubmitting(false);
-    if (error) {
+    if (result?.error) {
       toast.error("Kunde inte spara svaret. Försök igen.");
       return;
     }

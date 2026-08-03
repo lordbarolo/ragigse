@@ -1,52 +1,117 @@
+# robots.txt – CompCare.se
+#
+# Genomsökningsbara sökvägar (statiskt innehåll, fritt att indexera):
+#   /                      startsida
+#   /lon/{specialty}/{city} lönesidor per roll och ort (JSON-LD, SSR)
+#   /rapport/*             statiska rapportsidor per roll
+#   /kampanj/*             kampanjsidor
+#   /faktasidor            prisöversikt
+#   /vanliga-fragor, /integritetspolicy
+#
+# Maskinläsbara filer för agenter:
+#   /llms.txt              beskrivning av datamodell och endpoints
+#   /agent-index.json      alla giltiga specialty_slug och city_slug
+#   /openapi.json          API-schema
+#   /sitemap.xml           alla indexerbara URL:er
+#
+# Endast för API / enskilda queries (INTE för genomsökning eller bulkuttag):
+#   /rest/v1/*             databas-API
+#   /functions/v1/*        edge functions (enskilda queries, rate-limitade)
+#   /api/*                 interna endpoints
+# Bulkuttag av prisdata är inte tillåtet – använd en query per roll/ort.
+#
+# Privat / icke-indexerbart:
+#   /admin*, /dev/*, /resultat/*, /consultant/*
+
 User-agent: *
 Allow: /
+Allow: /llms.txt
+Allow: /agent-index.json
+Allow: /openapi.json
 Disallow: /admin
 Disallow: /admin/
-Disallow: /resultat/
 Disallow: /dev/
+Disallow: /resultat/
+Disallow: /consultant/
 Disallow: /rest/v1/
+Disallow: /functions/v1/
+Disallow: /api/
 
-Sitemap: https://www.compcare.se/sitemap.xml
+Sitemap: https://vardbemanning.ai/sitemap.xml
 
 # LLMs.txt – AI-optimerad beskrivning av CompCare.se
 # Se https://llmstxt.org för specifikation
-LLMs-Txt: https://www.compcare.se/llms.txt
+LLMs-Txt: https://vardbemanning.ai/llms.txt
 
-# AI crawlers – välkomna till publika sidor
+# AI crawlers – välkomna till publika sidor och maskinläsbara filer
 User-agent: GPTBot
 Allow: /
 Allow: /llms.txt
+Allow: /agent-index.json
 Allow: /openapi.json
 Disallow: /admin
 Disallow: /resultat/
+Disallow: /consultant/
 Disallow: /rest/v1/
+Disallow: /functions/v1/
+Disallow: /api/
 
 User-agent: Google-Extended
 Allow: /
+Allow: /llms.txt
+Allow: /agent-index.json
 Disallow: /admin
 Disallow: /resultat/
+Disallow: /consultant/
+Disallow: /rest/v1/
+Disallow: /functions/v1/
 
 User-agent: Claude-Web
 Allow: /
+Allow: /llms.txt
+Allow: /agent-index.json
 Disallow: /admin
 Disallow: /resultat/
+Disallow: /consultant/
+Disallow: /rest/v1/
+Disallow: /functions/v1/
 
 User-agent: Applebot-Extended
 Allow: /
+Allow: /llms.txt
+Allow: /agent-index.json
 Disallow: /admin
 Disallow: /resultat/
+Disallow: /consultant/
+Disallow: /rest/v1/
+Disallow: /functions/v1/
 
 User-agent: PerplexityBot
 Allow: /
+Allow: /llms.txt
+Allow: /agent-index.json
 Disallow: /admin
 Disallow: /resultat/
+Disallow: /consultant/
+Disallow: /rest/v1/
+Disallow: /functions/v1/
 
 User-agent: Bytespider
 Allow: /
+Allow: /llms.txt
+Allow: /agent-index.json
 Disallow: /admin
 Disallow: /resultat/
+Disallow: /consultant/
+Disallow: /rest/v1/
+Disallow: /functions/v1/
 
 User-agent: CCBot
 Allow: /
+Allow: /llms.txt
+Allow: /agent-index.json
 Disallow: /admin
 Disallow: /resultat/
+Disallow: /consultant/
+Disallow: /rest/v1/
+Disallow: /functions/v1/

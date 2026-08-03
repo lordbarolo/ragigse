@@ -1,4 +1,4 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "@/lib/router-compat";
 import { useAuth } from "@/hooks/useAuth";
 import CompcareLogo from "@/components/CompcareLogo";
 import { Button } from "@/components/ui/button";

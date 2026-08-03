@@ -1,10 +1,6 @@
-import { Link } from "react-router-dom";
-import { basePrices, computeRate5c, ZONES_5C, kr, type RateRow } from "./rate5c";
-
-interface Props {
-  rows: RateRow[];
-  isLoading: boolean;
-}
+import { Link } from "@/lib/router-compat";
+import { computeRate5c, ZONES_5C, kr } from "./rate5c";
+import { useBaseRates5c } from "./useRates5c";
 
 const ROWS: { label: string; yrkeskategori: string }[] = [
   { label: "Anestesiläkare", yrkeskategori: "Specialistläkare anestesi och intensivvård" },
@@ -15,8 +11,8 @@ const ROWS: { label: string; yrkeskategori: string }[] = [
   { label: "Leg. sjuksköterska", yrkeskategori: "Sjuksköterska" },
 ];
 
-export default function RolltabellDark({ rows, isLoading }: Props) {
-  const base = basePrices(rows);
+export default function RolltabellDark() {
+  const base = useBaseRates5c();
 
   return (
     <section style={{ background: "#0e1016", borderBottom: "1px solid #22242e" }}>
@@ -71,11 +67,7 @@ export default function RolltabellDark({ rows, isLoading }: Props) {
                             borderBottom: "1px solid #22242e",
                           }}
                         >
-                          {isLoading ? (
-                            <span className="ml-auto inline-block h-4 w-14 animate-pulse rounded" style={{ background: "#1c2030" }} />
-                          ) : (
-                            kr(v?.foretagareKrH)
-                          )}
+                          {kr(v?.foretagareKrH)}
                         </td>
                       );
                     })}

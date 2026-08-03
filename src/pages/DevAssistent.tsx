@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import { Check, ShieldCheck } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 import HomeAssistantChat from "@/components/assistant/HomeAssistantChat";

@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "@/lib/router-compat";
 import CompcareLogo from "@/components/CompcareLogo";
 import { DOCTOR_SPECIALTY_REPORTS } from "@/data/doctorSpecialtyReports";
 
