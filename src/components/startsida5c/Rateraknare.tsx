@@ -1,7 +1,8 @@
 import { useMemo, useState } from "react";
+import { Link } from "@/lib/router-compat";
 import SearchableSelect from "@/components/SearchableSelect";
 import {
-  computeRate5c,
+  clientPrice5c,
   roleOptions5c,
   ZONES_5C,
   DEFAULT_ROLE_5C,
@@ -9,17 +10,21 @@ import {
   kr,
 } from "./rate5c";
 import { useBaseRates5c } from "./useRates5c";
+import { useComp5c, useIsSignedIn } from "./useComp5c";
 
 export default function Rateraknare() {
   const base = useBaseRates5c();
   const [role, setRole] = useState(DEFAULT_ROLE_5C);
   const [zone, setZone] = useState(DEFAULT_ZONE_5C);
+  const signedIn = useIsSignedIn();
+  const comp = useComp5c(role, zone);
 
   const options = useMemo(
     () => roleOptions5c(base).map((r) => ({ value: r, label: r })),
     [base]
   );
-  const rate = useMemo(() => computeRate5c(base, role, zone), [base, role, zone]);
+  const clientRate = useMemo(() => clientPrice5c(base, role, zone), [base, role, zone]);
+
 
   return (
     <div
