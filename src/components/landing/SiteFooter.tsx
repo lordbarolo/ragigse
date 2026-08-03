@@ -89,8 +89,8 @@ export default function SiteFooter() {
                 </Link>
               </li>
               <li>
-                <a href="mailto:info@compcare.se" className="hover:text-black underline-offset-4 hover:underline">
-                  info@compcare.se
+                <a href="mailto:info@vardbemanning.ai" className="hover:text-black underline-offset-4 hover:underline">
+                  info@vardbemanning.ai
                 </a>
               </li>
             </ul>

@@ -25,7 +25,7 @@ beforeEach(() => {
   captureMock.mockClear();
   invokeMock.mockClear();
   Object.defineProperty(window, "location", {
-    value: { hostname: "compcare.se", search: "" },
+    value: { hostname: "vardbemanning.ai", search: "" },
     writable: true,
   });
   sessionStorage.clear();
@@ -41,7 +41,7 @@ describe("trackEvent — cookieless mode", () => {
       "hero_cta_clicked",
       expect.objectContaining({
         source: "hero",
-        hostname: "compcare.se",
+        hostname: "vardbemanning.ai",
         is_internal_traffic: false,
       })
     );

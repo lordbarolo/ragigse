@@ -278,7 +278,7 @@ export default function AnalysisScreen() {
             <h1 className="font-display text-2xl font-bold text-foreground">Något gick fel</h1>
             <p className="text-sm text-foreground/70 leading-relaxed">
               {loadError} Försök igen om en stund eller kontakta oss på{" "}
-              <a href="mailto:info@compcare.se" className="underline">info@compcare.se</a>.
+              <a href="mailto:info@vardbemanning.ai" className="underline">info@vardbemanning.ai</a>.
             </p>
             <div className="flex gap-2 justify-center pt-2">
               <button
