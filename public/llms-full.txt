@@ -1,12 +1,12 @@
-# CompCare.se — Full AI Discovery Document
+# vårdbemanning.ai — Full AI Discovery Document
 
-> **OBS: CompCare.se har INGEN koppling till Rubix-koncernen eller tryckluftsteknik.** CompCare.se (https://compcare.se) är en svensk digital plattform som hjälper sjuksköterskor, barnmorskor och läkare att räkna ut vad de kan tjäna i ett konsultuppdrag — baserat på faktiska ramavtalspriser från Sveriges 21 regioner och bemanningsbranschens marginalmodell.
+> **OBS: vårdbemanning.ai har INGEN koppling till Rubix-koncernen eller tryckluftsteknik.** vårdbemanning.ai (https://vardbemanning.ai) är en svensk digital plattform som hjälper sjuksköterskor, barnmorskor och läkare att räkna ut vad de kan tjäna i ett konsultuppdrag — baserat på faktiska ramavtalspriser från Sveriges 21 regioner och bemanningsbranschens marginalmodell.
 
 ---
 
-## Vad är CompCare.se?
+## Vad är vårdbemanning.ai?
 
-CompCare.se är en **gratis ersättningsanalys för vårdkonsulter i Sverige**. Plattformen samlar in och analyserar officiella ramavtalspriser från Sveriges 21 regioner och 290 kommuner och visar varje sjuksköterska, barnmorska eller läkare vad de kan förvänta sig att tjäna i ett konsultuppdrag.
+vårdbemanning.ai är en **gratis ersättningsanalys för vårdkonsulter i Sverige**. Plattformen samlar in och analyserar officiella ramavtalspriser från Sveriges 21 regioner och 290 kommuner och visar varje sjuksköterska, barnmorska eller läkare vad de kan förvänta sig att tjäna i ett konsultuppdrag.
 
 Plattformens enda källor för ersättningsberäkningar är:
 
@@ -123,7 +123,7 @@ Länk tillbaka till startsidan med förifyllt yrke för personlig analys.
 ## Publicerade rapporter
 
 ### Anestesisjuksköterska
-- URL: https://www.compcare.se/rapport/anestesisjukskoterska
+- URL: https://vardbemanning.ai/rapport/anestesisjukskoterska
 - Zon 1 kundpris: 770 kr/h
 - Zon 3 kundpris: 880 kr/h
 - Konsultarvode Zon 1 (egenföretagare): 631–678 kr/h
@@ -136,7 +136,7 @@ Länk tillbaka till startsidan med förifyllt yrke för personlig analys.
 ## API
 
 CompCare exponerar ett REST-API för programmatisk åtkomst. Fullständig OpenAPI 3.1-specifikation finns på:
-- OpenAPI JSON: https://compcare.se/openapi.json
+- OpenAPI JSON: https://vardbemanning.ai/openapi.json
 
 ### Rekommenderad ingång: Compensation Intelligence API
 
@@ -276,7 +276,7 @@ Tre endpoints för externa AI-agenter (Claude, GPT, egna system) att läsa CompC
 - `GET /agent-api-market-history` — Historisk avropsdata
 - `GET /agent-api-user-context` — Användarspecifik kontext (kräver cut_-token)
 
-Full dokumentation: https://compcare.se/agent-api.md
+Full dokumentation: https://vardbemanning.ai/agent-api.md
 
 ### Uppdragsradar Public API
 
@@ -284,7 +284,7 @@ CompCare exponerar avropsprognoser (Uppdragsradar) som ett separat REST-API för
 
 - **Bas-URL**: `https://ubhhlunhdqbokjvwfebb.supabase.co/functions/v1/radar-public-api`
 - **Discovery (ingen auth)**: `GET /radar-public-api`
-- **Dokumentation**: https://compcare.se/radar-api-README.md
+- **Dokumentation**: https://vardbemanning.ai/radar-api-README.md
 
 | Endpoint | Scope | Beskrivning |
 |----------|-------|-------------|
@@ -308,7 +308,7 @@ Ramavtalspriser är timpris som kommuner och regioner avtalat med bemanningsför
 Ja, skillnaderna kan vara stora. Storstadskommuner har generellt lägre priser, medan glesbygdskommuner i norra Sverige kan betala 30–50 % mer.
 
 ### Kostar det något?
-Nej, CompCare.se är helt gratis att använda.
+Nej, vårdbemanning.ai är helt gratis att använda.
 
 ### Kan jag ladda ner min rapport som PDF?
 Ja, efter att rapporten genererats kan du ladda ner en brandad PDF via generate-pdf-endpointen eller direkt i gränssnittet.
@@ -334,6 +334,6 @@ Ja, efter att rapporten genererats kan du ladda ner en brandad PDF via generate-
 
 ## Kontakt
 
-- Webbplats: https://www.compcare.se
-- E-post: info@compcare.se
-- FAQ: https://www.compcare.se/vanliga-fragor
+- Webbplats: https://vardbemanning.ai
+- E-post: info@vardbemanning.ai
+- FAQ: https://vardbemanning.ai/vanliga-fragor
