@@ -300,13 +300,16 @@ Deno.serve(async (req) => {
       });
     }
 
-    // ── Avrop: sjuksköterskor i Gävleborg (historiskt underlag) ──
+    // ── Avrop: sjuksköterskor i Gävleborg (historiskt underlag, cachat 24 h) ──
     if (key === "avrop_gavle") {
-      const { count } = await supabase
-        .from("calloff_imports")
-        .select("id", { count: "exact", head: true })
-        .ilike("region", "%Gävleborg%")
-        .ilike("role", "%sjuksköterska%");
+      const count = await memo("avrop_gavle", async () => {
+        const { count } = await supabase
+          .from("calloff_imports")
+          .select("id", { count: "exact", head: true })
+          .ilike("region", "%Gävleborg%")
+          .ilike("role", "%sjuksköterska%");
+        return count ?? 0;
+      });
 
       return json({
         answer:
@@ -316,19 +319,23 @@ Deno.serve(async (req) => {
       });
     }
 
-    // ── Avrop senaste 30 dagarna (historiska, publicerade) ──
+    // ── Avrop senaste 30 dagarna (historiska, publicerade, cachat 24 h) ──
     if (key === "avrop") {
       const since = new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString().slice(0, 10);
-      const { count } = await supabase
-        .from("calloff_imports")
-        .select("id", { count: "exact", head: true })
-        .gte("calloff_date", since);
+      const { count, rows } = await memo(`avrop:${since}`, async () => {
+        const { count } = await supabase
+          .from("calloff_imports")
+          .select("id", { count: "exact", head: true })
+          .gte("calloff_date", since);
 
-      const { data: rows } = await supabase
-        .from("calloff_imports")
-        .select("role, region")
-        .gte("calloff_date", since)
-        .limit(1000);
+        const { data } = await supabase
+          .from("calloff_imports")
+          .select("role, region")
+          .gte("calloff_date", since)
+          .limit(1000);
+        return { count: count ?? 0, rows: data ?? [] };
+      });
+
 
       const byRole = new Map<string, number>();
       for (const r of (rows ?? []) as { role: string | null }[]) {
