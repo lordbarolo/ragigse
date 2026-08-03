@@ -15,7 +15,7 @@ export default function OvergangChatt() {
         borderBottom: "1px solid #22242e",
       }}
     >
-      <div className="relative mx-auto max-w-[820px] px-5 pb-16 pt-16 text-center md:px-12 md:pt-20">
+      <div className="relative mx-auto max-w-[820px] px-5 pb-16 pt-10 text-center md:px-12 md:pt-14">
         <div
           aria-hidden
           className="pointer-events-none absolute left-1/2 top-8 -z-0 h-[420px] w-[680px] -translate-x-1/2 rounded-full"
