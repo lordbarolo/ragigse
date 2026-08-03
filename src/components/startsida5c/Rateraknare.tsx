@@ -90,9 +90,27 @@ export default function Rateraknare() {
             Som företagare
           </div>
           <div className="mt-1 flex items-baseline gap-1.5" style={{ color: "#fff" }}>
-            <span className="text-[32px] font-semibold leading-none">{kr(rate?.foretagareKrH)}</span>
-            <span className="text-[13px]">kr/h</span>
+            {signedIn ? (
+              <>
+                <span className="text-[32px] font-semibold leading-none">{kr(comp?.foretagareKrH)}</span>
+                <span className="text-[13px]">kr/h</span>
+              </>
+            ) : (
+              <>
+                <span className="text-[32px] font-semibold leading-none tracking-[0.06em]">••••</span>
+                <span className="text-[13px]">kr/h</span>
+              </>
+            )}
           </div>
+          {!signedIn && (
+            <Link
+              to="/registrera"
+              className="mt-2 inline-block text-[12px] font-semibold underline underline-offset-2"
+              style={{ color: "#fff" }}
+            >
+              Skapa konto för att se
+            </Link>
+          )}
         </div>
 
         <div className="rounded-xl p-4" style={{ background: "#0e1016", border: "1px solid #262a38", borderRadius: 12 }}>
@@ -100,17 +118,38 @@ export default function Rateraknare() {
             Som löntagare
           </div>
           <div className="mt-1 flex items-baseline gap-1.5" style={{ color: "#eef0f4" }}>
-            <span className="text-[32px] font-semibold leading-none">{kr(rate?.lontagareKrH)}</span>
-            <span className="text-[13px]">kr/h</span>
+            {signedIn ? (
+              <>
+                <span className="text-[32px] font-semibold leading-none">{kr(comp?.lontagareKrH)}</span>
+                <span className="text-[13px]">kr/h</span>
+              </>
+            ) : (
+              <>
+                <span className="text-[32px] font-semibold leading-none tracking-[0.06em]">••••</span>
+                <span className="text-[13px]">kr/h</span>
+              </>
+            )}
           </div>
+          {!signedIn && (
+            <Link
+              to="/logga-in"
+              className="mt-2 inline-block text-[12px] font-semibold underline underline-offset-2"
+              style={{ color: "#8b8bf6" }}
+            >
+              Logga in
+            </Link>
+          )}
         </div>
       </div>
 
       <p className="mt-4 text-[12px] leading-relaxed" style={{ color: "#666b7e" }}>
-        {rate
-          ? `Kundpris ${kr(rate.timpris_kund)} kr/h − ${rate.margin_text} marginal. Källa: SKR:s ramavtal 2026.`
-          : "Pris saknas för denna kombination — kontakta oss."}
+        {clientRate == null
+          ? "Pris saknas för denna kombination — kontakta oss."
+          : signedIn
+            ? `Kundpris ${kr(clientRate)} kr/h − ${comp?.margin_text ?? "branschmarginal"} marginal. Källa: SKR:s ramavtal 2026.`
+            : `Kundpris ${kr(clientRate)} kr/h enligt SKR:s ramavtal 2026. Ersättningen beräknas utifrån ramavtalspriset, bemanningsbranschens marginal och arbetsgivarfaktorn.`}
       </p>
+
 
       <form
         onSubmit={(e) => {
