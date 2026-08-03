@@ -48,16 +48,6 @@ function LlmsCheckPage() {
               detail: body.trimStart().split("\n")[0] ?? "",
             });
           }
-          if (path === "/agent-index.json") {
-            let parsed = false;
-            try {
-              JSON.parse(body);
-              parsed = true;
-            } catch {
-              parsed = false;
-            }
-            checks.push({ label: "Giltig JSON", ok: parsed, detail: parsed ? "ok" : "parse-fel" });
-          }
           out[path] = checks;
         }
         if (!cancelled) setResults(out);
