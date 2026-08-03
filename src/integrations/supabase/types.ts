@@ -3866,32 +3866,19 @@ export type Database = {
         Args: { _daily_limit?: number; _user_id: string }
         Returns: Json
       }
-      create_document_share:
-        | {
-            Args: {
-              _document_ids: string[]
-              _expires_in_hours: number
-              _recipient_label?: string
-            }
-            Returns: {
-              expires_at: string
-              id: string
-              token: string
-            }[]
-          }
-        | {
-            Args: {
-              _document_ids: string[]
-              _expires_in_hours: number
-              _recipient_email?: string
-              _recipient_label?: string
-            }
-            Returns: {
-              expires_at: string
-              id: string
-              token: string
-            }[]
-          }
+      create_document_share: {
+        Args: {
+          _document_ids: string[]
+          _expires_in_hours: number
+          _recipient_email?: string
+          _recipient_label?: string
+        }
+        Returns: {
+          expires_at: string
+          id: string
+          token: string
+        }[]
+      }
       create_org_with_admin: {
         Args: { _name: string; _org_number?: string; _type?: string }
         Returns: string
@@ -3915,9 +3902,6 @@ export type Database = {
           created_at: string
           id: string
           lead_id: string
-          referee_email: string
-          referrer_email: string
-          token: string
         }[]
       }
       is_org_admin: {
