@@ -1,6 +1,8 @@
 import sskFoto from "@/assets/startsida5c-ssk.png";
 import { computeRate5c, kr } from "./rate5c";
 import { useBaseRates5c } from "./useRates5c";
+import VerktygsForslagForm from "./VerktygsForslagForm";
+
 
 const CARDS: { label: string; yrkeskategori: string; zon: string }[] = [
   { label: "IVA-sjuksköterska", yrkeskategori: "Specialistsjuksköterska intensivvård", zon: "Zon 3" },
@@ -35,6 +37,9 @@ export default function FotoBand() {
           <p className="mt-3 max-w-[460px] text-[15px]" style={{ color: "#5a5f6e", lineHeight: 1.6 }}>
             Vi utvecklar nu en rad verktyg som ska jämna ut kunskapsglappet mellan beställare och konsulter. Vi bygger det konsulten saknar och tar gärna emot tips. Vilket verktyg saknar du?
           </p>
+
+          <VerktygsForslagForm />
+
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
             {CARDS.map((c) => {
