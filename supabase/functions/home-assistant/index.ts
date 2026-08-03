@@ -109,9 +109,24 @@ Deno.serve(async (req) => {
       if (!userData?.user) {
         return json({ error: "Fritextfrågor kräver inloggning." }, 401);
       }
+      const userId = userData.user.id;
+
+      // ── Regel 1: hårt tak per IP/dygn (stoppar bottar innan de kostar något) ──
+      const ipDay = await checkRateLimit(supabase, "home-assistant-freetext", clientIp, 20, 1440);
+      if (!ipDay.allowed) {
+        return json(
+          { error: "Dagens gräns för fritextfrågor från den här uppkopplingen är nådd." },
+          429,
+        );
+      }
+
+      // ── Regel 3: kvot per inloggad användare (30/dygn, admins undantagna) ──
+      const quota = await checkAiRateLimit(userId, 30);
+      if (!quota.allowed) return aiRateLimitResponse(quota, corsHeaders);
 
       const question = (body.question ?? "").trim().slice(0, 500);
       if (!question) return json({ error: "Tom fråga" }, 400);
+
 
       const ctx = body.context ?? null;
       let rateContext = "";
