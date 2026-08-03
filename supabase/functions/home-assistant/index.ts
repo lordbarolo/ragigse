@@ -372,20 +372,22 @@ Deno.serve(async (req) => {
       if (GROUP_LABEL.test(role)) return json({ error: "Ogiltig roll" }, 400);
       if (!fixed && key !== "zoner" && !body.zone) return json({ need: "zone", role });
 
-      const { data, error } = await supabase
-        .from("contract_version_rates")
-        .select("zon, timpris_kund, contract_versions!inner(is_active, version_label)")
-        .eq("typ", "Grundpris")
-        .eq("contract_versions.is_active", true)
-        .ilike("yrkeskategori", role);
-      if (error) throw error;
-
-      const rows = (data ?? []) as unknown as {
-        zon: string;
-        timpris_kund: number;
-        contract_versions: { version_label: string };
-      }[];
+      const rows = await memo(`rates:${role.toLowerCase()}`, async () => {
+        const { data, error } = await supabase
+          .from("contract_version_rates")
+          .select("zon, timpris_kund, contract_versions!inner(is_active, version_label)")
+          .eq("typ", "Grundpris")
+          .eq("contract_versions.is_active", true)
+          .ilike("yrkeskategori", role);
+        if (error) throw error;
+        return (data ?? []) as unknown as {
+          zon: string;
+          timpris_kund: number;
+          contract_versions: { version_label: string };
+        }[];
+      });
       if (!rows.length) return json({ answer: `Jag hittar inget aktivt ramavtalspris för ${role}.` });
+
 
       const byZone: Record<string, number> = {};
       let version = "";
