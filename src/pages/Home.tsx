@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "@/lib/router-compat";
+import { Link } from "react-router-dom";
 import { Check, ShieldCheck } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 import InlineTerminalSurvey from "@/components/survey/InlineTerminalSurvey";
@@ -15,15 +15,15 @@ const LANDING_JSONLD = [
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: "CompCare",
-    url: "https://vardbemanning.ai/",
+    url: "https://www.compcare.se/",
     inLanguage: "sv-SE",
   },
   {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: "CompCare",
-    url: "https://vardbemanning.ai/",
-    logo: "https://vardbemanning.ai/compcare-logo.svg",
+    url: "https://www.compcare.se/",
+    logo: "https://www.compcare.se/compcare-logo.svg",
   },
 ];
 

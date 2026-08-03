@@ -6,7 +6,6 @@
  *   - Sjuksköterskor:        17% margin (konsult behåller 83%)
  * Pure presentation — no PII, no backend calls.
  */
-import { useEffect, useState } from "react";
 
 type RoleKind = "lakare" | "ssk";
 
@@ -91,10 +90,9 @@ const firstLetter = (s: string) => s.trim()[0]?.toLowerCase() ?? "";
  * väljs den första kandidaten i motsatt grupp som inte krockar bokstavligt;
  * faller tillbaka till samma grupp om motsatt grupp är tom.
  */
-function buildAlternating(cards: Card[], randomize = true): Card[] {
-  const order = <T,>(a: T[]) => (randomize ? shuffle(a) : a);
-  const lakare = order(cards.filter((c) => c.kind === "lakare"));
-  const ssk = order(cards.filter((c) => c.kind === "ssk"));
+function buildAlternating(cards: Card[]): Card[] {
+  const lakare = shuffle(cards.filter((c) => c.kind === "lakare"));
+  const ssk = shuffle(cards.filter((c) => c.kind === "ssk"));
   const pools: Record<RoleKind, Card[]> = { lakare, ssk };
   const result: Card[] = [];
   // Starta med den större gruppen så alternationen blir så jämn som möjligt.
@@ -190,27 +188,19 @@ function RoleCard({ card }: { card: Card }) {
   );
 }
 
-function buildLoop(randomize: boolean): Card[] {
-  const shuffled = randomize ? buildAlternating(CARDS) : buildAlternating(CARDS, false);
+export default function RoleCarousel() {
+  // Varva läkare/sjuksköterska och undvik att två intilliggande kort
+  // börjar på samma bokstav. Duplicera för sömlös marquee — rotera andra
+  // halvan om sömmen krockar.
+  const shuffled = buildAlternating(CARDS);
   const last = shuffled[shuffled.length - 1];
   const first = shuffled[0];
   const seamCollides =
     shuffled.length > 1 &&
     (last.kind === first.kind || firstLetter(last.short) === firstLetter(first.short));
-  return seamCollides
+  const loop = seamCollides
     ? [...shuffled, ...rotateUntilDifferent(shuffled, last)]
     : [...shuffled, ...shuffled];
-}
-
-export default function RoleCarousel() {
-  // SSR renderar en deterministisk ordning (undviker hydration mismatch);
-  // slumpordningen sätts efter mount.
-  const [loop, setLoop] = useState<Card[]>(() => buildLoop(false));
-  useEffect(() => {
-    setLoop(buildLoop(true));
-  }, []);
-
-
 
 
   return (

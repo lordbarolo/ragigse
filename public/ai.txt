@@ -1,11 +1,11 @@
 # CompCare.se — AI Crawler Guide
-# https://vardbemanning.ai/ai.txt
+# https://www.compcare.se/ai.txt
 # Last updated: 2026-01-15
 
 ## Site identity
 Name: CompCare.se
 Language: sv-SE
-Domain: https://vardbemanning.ai
+Domain: https://www.compcare.se
 Description: Swedish compensation intelligence platform for healthcare consultants. Free analysis of framework agreement prices (ramavtalspriser) from 290+ municipalities.
 
 ## What AI crawlers should index

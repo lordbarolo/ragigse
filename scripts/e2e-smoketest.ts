@@ -1,7 +1,7 @@
 /**
  * E2E smoketest — runs after publish to verify the full lead funnel works end-to-end.
  *
- * Flow (against https://vardbemanning.ai):
+ * Flow (against https://compcare.se):
  *   1. Open landing → assert SalaryCheck visible
  *   2. Fill survey with synthetic data → submit
  *   3. Land on /teaser → click email gate
@@ -21,7 +21,7 @@
 
 import { chromium, type Browser, type Page } from "npm:playwright@1.47.0";
 
-const BASE_URL = Deno.env.get("SMOKETEST_URL") ?? "https://vardbemanning.ai";
+const BASE_URL = Deno.env.get("SMOKETEST_URL") ?? "https://compcare.se";
 const TIMEOUT_MS = 60_000;
 
 interface Step {

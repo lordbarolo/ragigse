@@ -1,7 +1,10 @@
 import sskFoto from "@/assets/startsida5c-ssk.png";
-import { clientPrice5c, kr } from "./rate5c";
-import { useBaseRates5c } from "./useRates5c";
-import { useCompMap5c, useIsSignedIn } from "./useComp5c";
+import { basePrices, computeRate5c, kr, type RateRow } from "./rate5c";
+
+interface Props {
+  rows: RateRow[];
+  isLoading: boolean;
+}
 
 const CARDS: { label: string; yrkeskategori: string; zon: string }[] = [
   { label: "IVA-sjuksköterska", yrkeskategori: "Specialistsjuksköterska intensivvård", zon: "Zon 3" },
@@ -10,10 +13,8 @@ const CARDS: { label: string; yrkeskategori: string; zon: string }[] = [
   { label: "Anestesiläkare", yrkeskategori: "Specialistläkare anestesi och intensivvård", zon: "Zon 2" },
 ];
 
-export default function FotoBand() {
-  const base = useBaseRates5c();
-  const signedIn = useIsSignedIn();
-  const comps = useCompMap5c(CARDS.map((c) => ({ role: c.yrkeskategori, zone: c.zon })));
+export default function FotoBand({ rows, isLoading }: Props) {
+  const base = basePrices(rows);
 
   return (
     <section style={{ background: "#f5f5f7", borderBottom: "1px solid #e6e6ea" }}>
@@ -36,14 +37,13 @@ export default function FotoBand() {
             Samma siffror som bolaget sitter på
           </h2>
           <p className="mt-3 max-w-[460px] text-[15px]" style={{ color: "#5a5f6e", lineHeight: 1.6 }}>
-            Priserna kommer från SKR:s ramavtal 2026 — offentliga och lika för alla. Logga in för att se din del
-            av kundpriset som företagare, per roll och zon.
+            Priserna kommer från SKR:s ramavtal 2026 — offentliga och lika för alla. Här är din del av kundpriset
+            som företagare, per roll och zon.
           </p>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
             {CARDS.map((c) => {
-              const clientRate = clientPrice5c(base, c.yrkeskategori, c.zon);
-              const comp = comps[`${c.yrkeskategori}|${c.zon}`] ?? null;
+              const rate = computeRate5c(base, c.yrkeskategori, c.zon);
               return (
                 <div
                   key={`${c.yrkeskategori}-${c.zon}`}
@@ -54,13 +54,19 @@ export default function FotoBand() {
                     {c.label}
                   </div>
                   <div className="mt-1 flex items-baseline gap-1.5" style={{ color: "#191922" }}>
-                    <span className="text-[26px] font-semibold leading-none tabular-nums">
-                      {signedIn ? kr(comp) : kr(clientRate)}
-                    </span>
-                    <span className="text-[12.5px]">kr/h</span>
+                    {isLoading ? (
+                      <span className="inline-block h-7 w-20 animate-pulse rounded" style={{ background: "#ebebef" }} />
+                    ) : (
+                      <>
+                        <span className="text-[26px] font-semibold leading-none tabular-nums">
+                          {kr(rate?.foretagareKrH)}
+                        </span>
+                        <span className="text-[12.5px]">kr/h</span>
+                      </>
+                    )}
                   </div>
                   <div className="mt-1 text-[11.5px]" style={{ color: "#8a8f9e" }}>
-                    {signedIn ? `${c.zon} · kundpris ${kr(clientRate)} kr/h` : `${c.zon} · kundpris enligt ramavtalet`}
+                    {c.zon} · kundpris {isLoading ? "—" : kr(rate?.timpris_kund)} kr/h
                   </div>
                 </div>
               );

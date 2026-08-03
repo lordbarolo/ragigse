@@ -7,8 +7,6 @@ type EventName =
   | "landing_viewed"
   | "faktasidor_viewed"
   | "faktasidor_export_clicked"
-  | "faktasidor_role_selected"
-  | "faktasidor_signup_cta_clicked"
   | "survey_started"
   | "survey_step_completed"
   | "survey_completed"
@@ -90,10 +88,7 @@ type EventName =
   | "lonekoll_topic_selected"
   | "lonekoll_question_selected"
   | "lonekoll_answer_reported"
-  | "lonekoll_missing_question_reported"
-  | "home_chat_question_clicked"
-  | "home_chat_login_prompt_shown";
-
+  | "lonekoll_missing_question_reported";
 
 function isInternalTraffic(): boolean {
   const host = window.location.hostname;

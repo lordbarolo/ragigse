@@ -1,20 +1,18 @@
 import { useEffect } from "react";
-import { Link } from "@/lib/router-compat";
+import { Link } from "react-router-dom";
+import { SEO } from "@/components/SEO";
+import { useRates } from "@/hooks/useCalculator";
 import Hero from "@/components/startsida5c/Hero";
 import RolltabellDark from "@/components/startsida5c/RolltabellDark";
 import OvergangChatt from "@/components/startsida5c/OvergangChatt";
 import FotoBand from "@/components/startsida5c/FotoBand";
 import Footer5c from "@/components/startsida5c/Footer5c";
-import { trackEvent } from "@/lib/trackEvent";
+import type { RateRow } from "@/components/startsida5c/rate5c";
 
 const FONT_HREF =
   "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap";
 
 export default function Startsida5c() {
-  useEffect(() => {
-    trackEvent("landing_viewed", { variant: "5c", surface: "startsida" });
-  }, []);
-
   useEffect(() => {
     const id = "startsida5c-fonts";
     if (document.getElementById(id)) return;
@@ -25,8 +23,17 @@ export default function Startsida5c() {
     document.head.appendChild(link);
   }, []);
 
+  const { data, isLoading } = useRates();
+  const rows = (data ?? []) as unknown as RateRow[];
+
   return (
     <div style={{ background: "#0e1016", fontFamily: "'Space Grotesk',system-ui,sans-serif", color: "#eef0f4" }}>
+      <SEO
+        title="Startsida 5c — intern designtest"
+        description="Intern designtest av startsida 5c. Ej publik."
+        path="/demo/startsida-5c"
+        noindex
+      />
       <style>{`
         @keyframes fadeUp5c { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
         @keyframes cursorBlink5c { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
@@ -41,7 +48,7 @@ export default function Startsida5c() {
         style={{ borderBottom: "1px solid #22242e" }}
       >
         <Link
-          to="/"
+          to="/demo/startsida-5c"
           className="text-[17px] font-semibold"
           style={{ fontFamily: "'IBM Plex Mono',monospace", letterSpacing: "-0.5px", color: "#eef0f4" }}
         >
@@ -56,10 +63,10 @@ export default function Startsida5c() {
         </Link>
       </header>
 
-      <Hero />
-      <RolltabellDark />
+      <Hero rows={rows} isLoading={isLoading} />
+      <RolltabellDark rows={rows} isLoading={isLoading} />
       <OvergangChatt />
-      <FotoBand />
+      <FotoBand rows={rows} isLoading={isLoading} />
       <Footer5c />
     </div>
   );

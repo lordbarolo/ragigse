@@ -3,9 +3,8 @@
 
 import { writeFileSync } from "fs"
 import { resolve } from "path"
-import { ROLE_NAMES, CITY_NAMES, slugify, publishableRoles } from "./seo-roles"
 
-const BASE_URL = "https://vardbemanning.ai"
+const BASE_URL = "https://www.compcare.se"
 
 interface SitemapEntry {
   path: string
@@ -73,26 +72,10 @@ const entries: SitemapEntry[] = [
     priority: "0.7"
   })),
 
-  // Programmatiska SEO-sidor: /lon/[roll]/[ort] (se src/pages/LonSpecialtyCity.tsx)
-  ...lonEntries(),
-
   // AI & Discovery
   { path: "/llms.txt", changefreq: "monthly", priority: "0.4" },
   { path: "/openapi.json", changefreq: "monthly", priority: "0.4" },
 ]
-
-/** Kombinerar publicerbara roller med de största orterna → /lon/[roll]/[ort]. */
-function lonEntries(): SitemapEntry[] {
-  const roles = publishableRoles(ROLE_NAMES).map(slugify)
-  const cities = CITY_NAMES.map(slugify)
-  const out: SitemapEntry[] = []
-  for (const role of roles) {
-    for (const city of cities) {
-      out.push({ path: `/lon/${role}/${city}`, changefreq: "monthly", priority: "0.6" })
-    }
-  }
-  return out
-}
 
 function generateSitemap(entries: SitemapEntry[]) {
   const urls = entries.map((e) =>

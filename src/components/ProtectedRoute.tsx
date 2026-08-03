@@ -1,4 +1,4 @@
-import { Navigate, Outlet, useLocation } from "@/lib/router-compat";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import { useAuth, type AppRole } from "@/hooks/useAuth";
 import { Loader2 } from "lucide-react";
 import { buildAuthQuery } from "@/lib/authIntent";

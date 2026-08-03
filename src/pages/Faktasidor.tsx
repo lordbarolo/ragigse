@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link } from "@/lib/router-compat";
+import { Link } from "react-router-dom";
 import { Search, MapPin, Info, Download, Lock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import AnthropicScope from "@/components/demo/AnthropicScope";
@@ -52,7 +52,7 @@ const FAKTA_JSONLD = [
     "@context": "https://schema.org",
     "@type": "WebPage",
     name: "Ersättningssökning – ramavtalspriser per roll och kommun",
-    url: "https://vardbemanning.ai/faktasidor",
+    url: "https://www.compcare.se/faktasidor",
     inLanguage: "sv-SE",
     description:
       "Sök din yrkesroll och kommun för att få din ersättningsanalys enligt regionernas ramavtal 2026. Exakta nivåer visas efter inloggning.",
@@ -285,7 +285,7 @@ export default function Faktasidor() {
                 }}
                 placeholder="Sök kommun, t.ex. Bollnäs"
                 aria-label="Sök kommun"
-                className="w-full rounded-lg border border-black/15 bg-white/70 pl-9 pr-3 py-2.5 text-sm text-black placeholder:text-black/40 focus:outline-hidden focus:ring-2 focus:ring-[#534AB7]/30 focus:border-[#534AB7]/50"
+                className="w-full rounded-lg border border-black/15 bg-white/70 pl-9 pr-3 py-2.5 text-sm text-black placeholder:text-black/40 focus:outline-none focus:ring-2 focus:ring-[#534AB7]/30 focus:border-[#534AB7]/50"
               />
               {kommunMatches.length > 0 && !selectedKommun && (
                 <ul className="absolute z-20 mt-1 w-full rounded-lg border border-black/10 bg-white shadow-lg overflow-hidden">
@@ -363,7 +363,7 @@ export default function Faktasidor() {
                   role="combobox"
                   aria-expanded={roleMatches.length > 0 && !selectedRole}
                   aria-controls="rollista"
-                  className="w-full rounded-lg border border-black/15 bg-white/70 pl-9 pr-3 py-2.5 text-sm text-black placeholder:text-black/40 focus:outline-hidden focus:ring-2 focus:ring-[#534AB7]/30 focus:border-[#534AB7]/50"
+                  className="w-full rounded-lg border border-black/15 bg-white/70 pl-9 pr-3 py-2.5 text-sm text-black placeholder:text-black/40 focus:outline-none focus:ring-2 focus:ring-[#534AB7]/30 focus:border-[#534AB7]/50"
                 />
                 {!loading && !selectedRole && roleQuery.trim() !== "" && (
                   <ul

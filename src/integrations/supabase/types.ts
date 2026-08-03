@@ -2848,30 +2848,6 @@ export type Database = {
         }
         Relationships: []
       }
-      rate_slug_aliases: {
-        Row: {
-          alias_slug: string
-          created_at: string
-          id: string
-          updated_at: string
-          yrkeskategori: string
-        }
-        Insert: {
-          alias_slug: string
-          created_at?: string
-          id?: string
-          updated_at?: string
-          yrkeskategori: string
-        }
-        Update: {
-          alias_slug?: string
-          created_at?: string
-          id?: string
-          updated_at?: string
-          yrkeskategori?: string
-        }
-        Relationships: []
-      }
       rate_verification_baseline: {
         Row: {
           created_at: string
@@ -3831,7 +3807,6 @@ export type Database = {
         Args: { _request_id: string }
         Returns: undefined
       }
-      cc_slugify: { Args: { _input: string }; Returns: string }
       check_ai_rate_limit: {
         Args: { _daily_limit?: number; _user_id: string }
         Returns: Json
@@ -3903,17 +3878,6 @@ export type Database = {
           _stack?: string
         }
         Returns: string
-      }
-      lookup_rate: {
-        Args: { location_slug: string; specialty_slug: string }
-        Returns: {
-          client_rate: number
-          contractor_rate: number
-          employee_rate: number
-          location_name: string
-          source: string
-          specialty_name: string
-        }[]
       }
       match_lonekoll_chunks: {
         Args: { match_count?: number; query_embedding: string }

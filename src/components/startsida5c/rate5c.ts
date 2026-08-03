@@ -1,12 +1,9 @@
 /**
- * Isolerade hjälpfunktioner för startsidan (5c).
- *
- * VIKTIGT: denna fil får ALDRIG importera marginalmodellen (@/lib/calc).
- * Kundpriset (SKR:s ramavtal) är offentlig data och räknas ut här; all
- * ersättningsberäkning sker server-side i src/lib/rates.server.ts.
+ * Isolerade hjälpfunktioner för /demo/startsida-5c.
+ * Alla siffror räknas fram från tabellen `rates` (typ = "Grundpris")
+ * med produktionens marginalmodell i @/lib/calc. Inga hårdkodade priser.
  */
-import { filterPublicRoles } from "@/lib/roleVisibility";
-
+import { getMarginShares, EMPLOYER_FACTOR } from "@/lib/calc";
 
 export interface RateRow {
   yrkeskategori: string;
@@ -15,8 +12,8 @@ export interface RateRow {
   timpris_kund: number;
 }
 
-/** Ersättningsnivåer — hämtas från servern, bara för inloggade. */
-export interface Comp5c {
+export interface Rate5c {
+  timpris_kund: number;
   foretagareKrH: number;
   lontagareKrH: number;
   margin_text: string;
@@ -39,22 +36,30 @@ export function basePrices(rows: unknown): RateRow[] {
 export function roleOptions5c(rows: RateRow[]): string[] {
   const set = new Set<string>();
   for (const r of rows) if (r.yrkeskategori) set.add(r.yrkeskategori);
-  // Interna administrativa gruppnamn ("… Grupp A") får aldrig exponeras publikt.
-  return filterPublicRoles(Array.from(set), (r) => r).sort((a, b) => a.localeCompare(b, "sv"));
+  return Array.from(set).sort((a, b) => a.localeCompare(b, "sv"));
 }
 
-/** Kundpris enligt ramavtalet — offentligt, får visas för utloggade. */
-export function clientPrice5c(
+export function computeRate5c(
   rows: RateRow[],
   yrkeskategori: string,
   zon: string
-): number | null {
+): Rate5c | null {
   const row = rows.find((r) => r.yrkeskategori === yrkeskategori && r.zon === zon);
-  return typeof row?.timpris_kund === "number" ? row.timpris_kund : null;
+  if (!row || typeof row.timpris_kund !== "number") return null;
+
+  const { share_min, share_max, margin_text } = getMarginShares(yrkeskategori);
+  const shareMid = (share_min + share_max) / 2;
+  const foretagareKrH = Math.round(row.timpris_kund * shareMid);
+  const lontagareKrH = Math.round(foretagareKrH / EMPLOYER_FACTOR);
+
+  return { timpris_kund: row.timpris_kund, foretagareKrH, lontagareKrH, margin_text };
+}
+
+export function marginText5c(yrkeskategori: string): string {
+  return getMarginShares(yrkeskategori).margin_text;
 }
 
 export function kr(value: number | null | undefined): string {
   if (typeof value !== "number" || !Number.isFinite(value)) return "—";
   return value.toLocaleString("sv-SE");
 }
-

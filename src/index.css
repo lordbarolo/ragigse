@@ -1,0 +1,428 @@
+/* Fonts are loaded non-blocking via <link rel="preload"> in index.html */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* ── Deep Space / Agentic UI (default) ─────────────── */
+    --background: 260 60% 4%;          /* #0D001A deep space */
+    --foreground: 250 30% 96%;         /* near-white w/ violet tint */
+
+    --card: 260 40% 9% / 0.55;         /* glass card base (alpha used via utility) */
+    --card-solid: 260 40% 9%;          /* solid fallback */
+    --card-foreground: 250 30% 96%;
+
+    --popover: 260 40% 9%;
+    --popover-foreground: 250 30% 96%;
+
+    --primary: 256 100% 67%;           /* #8155FF violet */
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 260 35% 14%;
+    --secondary-foreground: 250 30% 96%;
+
+    --muted: 260 30% 14%;
+    --muted-foreground: 250 15% 70%;
+
+    --accent: 320 95% 65%;             /* hot pink accent */
+    --accent-foreground: 0 0% 100%;
+
+    --cyan: 190 95% 55%;               /* cyan accent */
+    --glow-violet: 256 100% 67%;
+    --glow-pink: 320 95% 65%;
+    --glow-cyan: 190 95% 55%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 260 30% 18%;             /* subtle violet-tinted border */
+    --input: 260 30% 14%;
+    --ring: 256 100% 67%;
+
+    --radius: 1rem;
+
+    --hero-bg: 260 60% 4%;
+    --hero-fg: 250 30% 96%;
+    --success: 160 80% 50%;
+    --success-foreground: 260 60% 4%;
+    --warning: 36 100% 60%;
+    --warning-foreground: 260 60% 4%;
+    --green: 160 80% 50%;
+    --amber: 36 100% 60%;
+
+    --sidebar-background: 260 50% 6% / 0.6;
+    --sidebar-foreground: 250 20% 80%;
+    --sidebar-primary: 256 100% 67%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 260 35% 14%;
+    --sidebar-accent-foreground: 250 30% 96%;
+    --sidebar-border: 260 30% 18%;
+    --sidebar-ring: 256 100% 67%;
+
+    --font-display: 'Inter', sans-serif;
+    --font-editorial: 'Libre Baskerville', Georgia, 'Times New Roman', serif;
+    --font-body: 'Inter', sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  }
+
+  /* .dark mirrors :root — Deep Space is the only theme */
+  .dark {
+    --background: 260 60% 4%;
+    --foreground: 250 30% 96%;
+    --card: 260 40% 9% / 0.55;
+    --card-solid: 260 40% 9%;
+    --card-foreground: 250 30% 96%;
+    --popover: 260 40% 9%;
+    --popover-foreground: 250 30% 96%;
+    --primary: 256 100% 67%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 260 35% 14%;
+    --secondary-foreground: 250 30% 96%;
+    --muted: 260 30% 14%;
+    --muted-foreground: 250 15% 70%;
+    --accent: 320 95% 65%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 260 30% 18%;
+    --input: 260 30% 14%;
+    --ring: 256 100% 67%;
+    --hero-bg: 260 60% 4%;
+    --hero-fg: 250 30% 96%;
+    --success: 160 80% 50%;
+    --success-foreground: 260 60% 4%;
+    --warning: 36 100% 60%;
+    --warning-foreground: 260 60% 4%;
+    --sidebar-background: 260 50% 6% / 0.6;
+    --sidebar-foreground: 250 20% 80%;
+    --sidebar-primary: 256 100% 67%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 260 35% 14%;
+    --sidebar-accent-foreground: 250 30% 96%;
+    --sidebar-border: 260 30% 18%;
+    --sidebar-ring: 256 100% 67%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html, body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
+  }
+
+  /* Prevent horizontal scroll caused by glow / wide gradients on mobile */
+  html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  /* Global Deep Space glow background — toned down on mobile for readability */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse 80% 40% at 20% 0%, hsl(var(--glow-violet) / 0.14) 0%, transparent 65%),
+      radial-gradient(ellipse 70% 35% at 90% 8%, hsl(var(--glow-pink) / 0.10) 0%, transparent 60%),
+      radial-gradient(ellipse 90% 40% at 50% 100%, hsl(var(--glow-cyan) / 0.06) 0%, transparent 65%),
+      hsl(var(--background));
+  }
+
+  @media (min-width: 768px) {
+    body::before {
+      background:
+        radial-gradient(ellipse 60% 50% at 15% 0%, hsl(var(--glow-violet) / 0.22) 0%, transparent 60%),
+        radial-gradient(ellipse 55% 45% at 90% 10%, hsl(var(--glow-pink) / 0.16) 0%, transparent 55%),
+        radial-gradient(ellipse 70% 50% at 50% 100%, hsl(var(--glow-cyan) / 0.10) 0%, transparent 60%),
+        hsl(var(--background));
+    }
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+
+  h1 { letter-spacing: -0.03em; }
+
+  /* Skyddsnät för långa svenska compound words (t.ex. "Förhandlingsassistent",
+     "Ersättningsanalys") så de bryts snyggt på smala viewports (390px) istället
+     för att spilla över containern. Påverkar inte desktop visuellt. */
+  h1, h2, h3, h4 {
+    overflow-wrap: normal;
+    word-break: keep-all;
+    hyphens: manual;
+    -webkit-hyphens: manual;
+  }
+
+  /* Section eyebrow / label letter-spacing */
+  .eyebrow, [data-eyebrow] {
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+}
+
+@layer utilities {
+  .font-editorial {
+    font-family: var(--font-editorial) !important;
+    letter-spacing: 0;
+  }
+
+  .hero-dark {
+    background-color: hsl(var(--hero-bg));
+    color: hsl(var(--hero-fg));
+  }
+
+  .hero-gradient {
+    background: linear-gradient(135deg, hsl(var(--hero-bg)), hsl(260 50% 10%));
+    color: hsl(var(--hero-fg));
+  }
+
+  .safe-area-bottom {
+    padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
+  }
+
+  /* ── Light form theme (scoped CSS variables) ─────── */
+  .form-light {
+    --background: 0 0% 100%;
+    --foreground: 220 13% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 13% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 13% 12%;
+    --primary: 256 100% 67%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 220 13% 12%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 220 9% 46%;
+    --accent: 260 60% 95%;
+    --accent-foreground: 256 100% 40%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 256 100% 67%;
+  }
+
+  /* ── Glassmorphism ─────────────────────────────────── */
+  .glass {
+    background: hsl(260 40% 9% / 0.65);
+    backdrop-filter: blur(10px) saturate(130%);
+    -webkit-backdrop-filter: blur(10px) saturate(130%);
+    border: 1px solid hsl(var(--border) / 0.6);
+  }
+
+  .glass-strong {
+    background: hsl(260 40% 9% / 0.85);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    border: 1px solid hsl(var(--border) / 0.7);
+  }
+
+  .glass-subtle {
+    background: hsl(260 40% 12% / 0.5);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid hsl(var(--border) / 0.4);
+  }
+
+  @media (min-width: 768px) {
+    .glass {
+      background: hsl(260 40% 9% / 0.5);
+      backdrop-filter: blur(18px) saturate(140%);
+      -webkit-backdrop-filter: blur(18px) saturate(140%);
+    }
+    .glass-strong {
+      background: hsl(260 40% 9% / 0.75);
+      backdrop-filter: blur(24px) saturate(160%);
+      -webkit-backdrop-filter: blur(24px) saturate(160%);
+    }
+    .glass-subtle {
+      background: hsl(260 40% 12% / 0.35);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+  }
+
+  /* Glow on hover for interactive cards */
+  .glow-hover {
+    transition: box-shadow 300ms ease, transform 300ms ease, border-color 300ms ease;
+  }
+  .glow-hover:hover {
+    box-shadow:
+      0 0 0 1px hsl(var(--primary) / 0.4),
+      0 8px 32px -8px hsl(var(--primary) / 0.45),
+      0 0 60px -10px hsl(var(--primary) / 0.3);
+    border-color: hsl(var(--primary) / 0.5);
+  }
+
+  /* Permanent subtle glow for hero CTAs / featured cards */
+  .glow-violet {
+    box-shadow: 0 8px 40px -8px hsl(var(--glow-violet) / 0.5);
+  }
+  .glow-pink {
+    box-shadow: 0 8px 40px -8px hsl(var(--glow-pink) / 0.4);
+  }
+  .glow-cyan {
+    box-shadow: 0 8px 40px -8px hsl(var(--glow-cyan) / 0.4);
+  }
+
+  /* Text gradients */
+  .text-gradient-violet {
+    background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+
+  /* ── Agentic loading states ────────────────────────── */
+  @keyframes agentic-pulse {
+    0%, 100% {
+      box-shadow:
+        0 0 0 1px hsl(var(--primary) / 0.35),
+        0 0 24px -4px hsl(var(--primary) / 0.35),
+        0 0 60px -10px hsl(var(--primary) / 0.25);
+    }
+    50% {
+      box-shadow:
+        0 0 0 1px hsl(var(--accent) / 0.5),
+        0 0 36px -4px hsl(var(--accent) / 0.55),
+        0 0 80px -10px hsl(var(--accent) / 0.4);
+    }
+  }
+
+  @keyframes agentic-shimmer-sweep {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(200%); }
+  }
+
+  @keyframes agentic-dot {
+    0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+    40% { transform: scale(1); opacity: 1; }
+  }
+
+  .agentic-loading {
+    position: relative;
+    overflow: hidden;
+    animation: agentic-pulse 2.4s ease-in-out infinite;
+  }
+
+  .agentic-shimmer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(
+      100deg,
+      transparent 0%,
+      hsl(var(--primary) / 0.08) 40%,
+      hsl(var(--accent) / 0.18) 50%,
+      hsl(var(--primary) / 0.08) 60%,
+      transparent 100%
+    );
+    transform: translateX(-100%);
+    animation: agentic-shimmer-sweep 2.2s ease-in-out infinite;
+    border-radius: inherit;
+  }
+
+  .btn-loading-glow {
+    animation: agentic-pulse 1.8s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  .agentic-dot {
+    animation: agentic-dot 1.4s ease-in-out infinite both;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@layer utilities {
+  /* ─── Constellation Settle: agent network ─── */
+
+  /* Boot: satelliter studsar in från slumpad offset till sin slutposition */
+  @keyframes agent-boot-in {
+    0%   { transform: translate(-50%, -50%) scale(0.2); opacity: 0; }
+    60%  { transform: translate(-50%, -50%) scale(1.08); opacity: 1; }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  }
+  .agent-boot-in {
+    animation: agent-boot-in 900ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  /* Linjer ritas in från center mot satellit */
+  @keyframes agent-line-draw {
+    0%   { stroke-dashoffset: 100; opacity: 0; }
+    40%  { opacity: 1; }
+    100% { stroke-dashoffset: 0;   opacity: 0.55; }
+  }
+  .agent-line-draw {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+    animation: agent-line-draw 1100ms ease-out both;
+  }
+
+  /* Center-noden andas mycket långsamt i idle */
+  @keyframes agent-breathe {
+    0%, 100% { transform: scale(1);    opacity: 0.9; }
+    50%      { transform: scale(1.04); opacity: 1; }
+  }
+  .agent-breathe { animation: agent-breathe 8s ease-in-out infinite; }
+
+  /* Engångs broadcast-ring vid övergång boot → idle */
+  @keyframes agent-broadcast {
+    0%   { transform: translate(-50%, -50%) scale(0.6); opacity: 0.7; }
+    100% { transform: translate(-50%, -50%) scale(3.2); opacity: 0; }
+  }
+  .agent-broadcast {
+    animation: agent-broadcast 1400ms ease-out forwards;
+  }
+
+  /* Lugn idle-puls längs en enskild linje */
+  @keyframes agent-line-flash {
+    0%   { opacity: 0; }
+    30%  { opacity: 0.9; }
+    100% { opacity: 0; }
+  }
+  .agent-line-flash { animation: agent-line-flash 1.6s ease-out forwards; }
+
+  .agent-packet { filter: drop-shadow(0 0 1.5px hsl(320 95% 75%)); }
+
+  /* Smooth, krispig hero-bakgrund (utan rutnät) */
+  .hero-smooth-bg {
+    background: linear-gradient(180deg, #160a2e 0%, #0d001a 55%, #07000f 100%);
+  }
+  .hero-make-bg {
+    background:
+      radial-gradient(ellipse 90% 70% at 80% 40%, hsl(280 80% 35% / 0.55) 0%, transparent 60%),
+      radial-gradient(ellipse 70% 60% at 20% 80%, hsl(256 90% 25% / 0.5) 0%, transparent 65%),
+      radial-gradient(ellipse 100% 80% at 50% 0%, hsl(270 70% 20% / 0.6) 0%, transparent 70%),
+      linear-gradient(180deg, #1a0833 0%, #0d001a 50%, #07000f 100%);
+  }
+}
+@keyframes shimmer {
+  100% { transform: translateX(200%); }
+}
+@keyframes pulse-soft {
+  0%, 100% { box-shadow: 0 10px 40px -8px rgba(129,85,255,0.6); }
+  50% { box-shadow: 0 14px 50px -8px rgba(236,72,153,0.65); }
+}
+.animate-pulse-soft { animation: pulse-soft 2.5s ease-in-out infinite; }

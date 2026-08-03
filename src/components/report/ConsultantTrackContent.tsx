@@ -1,4 +1,4 @@
-import { Link } from "@/lib/router-compat";
+import { Link } from "react-router-dom";
 import InvoiceReviewCTA from "./InvoiceReviewCTA";
 import PriceHistory from "./PriceHistory";
 import PriceNuggets from "./PriceNuggets";
@@ -282,9 +282,9 @@ export default function ConsultantTrackContent({
                         {fmt(zoneRate)} kr/h
                       </span>
                     </div>
-                    <div className="h-[3px] bg-foreground/[0.06] rounded-xs overflow-hidden mb-1.5">
+                    <div className="h-[3px] bg-foreground/[0.06] rounded-sm overflow-hidden mb-1.5">
                       <div
-                        className={`h-full rounded-xs ${isUserZone ? 'bg-primary' : 'bg-foreground/[0.15]'}`}
+                        className={`h-full rounded-sm ${isUserZone ? 'bg-primary' : 'bg-foreground/[0.15]'}`}
                         style={{ width: `${barWidth}%` }}
                       />
                     </div>
