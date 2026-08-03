@@ -11,11 +11,12 @@ export default function OvergangChatt() {
       id="assistent"
       className="scroll-mt-16"
       style={{
-        background: "linear-gradient(180deg,#0e1016 0%,#141726 45%,#1b1f33 100%)",
-        borderBottom: "1px solid #22242e",
+        background:
+          "linear-gradient(180deg,#0e1016 0%,#141726 30%,#1f2338 50%,#3b4058 66%,#7b8095 80%,#c3c6d0 91%,#f5f5f7 100%)",
       }}
     >
-      <div className="relative mx-auto max-w-[820px] px-5 pb-16 pt-10 text-center md:px-12 md:pt-14">
+      <div className="relative mx-auto max-w-[820px] px-5 pb-32 pt-10 text-center md:px-12 md:pb-40 md:pt-14">
+
         <div
           aria-hidden
           className="pointer-events-none absolute left-1/2 top-8 -z-0 h-[420px] w-[680px] -translate-x-1/2 rounded-full"
@@ -52,7 +53,7 @@ export default function OvergangChatt() {
             <HomeAssistantChat />
           </div>
 
-          <div className="mt-2.5 text-[11.5px]" style={{ color: "#565b6e" }}>
+          <div className="mt-2.5 text-[11.5px]" style={{ color: "#aeb3c2" }}>
             Data lagras inom EU · Vi delar aldrig dina uppgifter. Se{" "}
             <Link to="/integritetspolicy" className="underline">
               integritetspolicyn
