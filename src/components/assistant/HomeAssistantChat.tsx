@@ -46,7 +46,7 @@ export default function HomeAssistantChat() {
     {
       id: nid(),
       role: "assistant",
-      text: "Hej! Jag är din CompCare-assistent. Välj en fråga så svarar jag utifrån SKR:s ramavtal och publicerade avrop.",
+      text: "Hej! Jag är din CompCare-assistent. Välj en fråga så svarar jag, eller logga in för att ställa din egen fråga.",
     },
   ]);
   const [loading, setLoading] = useState(false);
