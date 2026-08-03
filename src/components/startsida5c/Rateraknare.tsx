@@ -9,6 +9,8 @@ import {
   kr,
 } from "./rate5c";
 import { useBaseRates5c } from "./useRates5c";
+import { roleLabel5c } from "./roleLabels5c";
+
 
 export default function Rateraknare() {
   const base = useBaseRates5c();
