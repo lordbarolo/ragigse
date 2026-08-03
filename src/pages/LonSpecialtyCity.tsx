@@ -104,7 +104,7 @@ export default function LonSpecialtyCity() {
   const jsonLd = useMemo(() => {
     if (!data) return undefined;
     const place = dedupePlace(data.location_name);
-    const url = `https://www.compcare.se/lon/${specialty}/${city}`;
+    const url = `https://vardbemanning.ai/lon/${specialty}/${city}`;
     return {
       "@context": "https://schema.org",
       "@graph": [
@@ -162,7 +162,7 @@ export default function LonSpecialtyCity() {
             { "@type": "PropertyValue", name: "Företagare", unitText: "SEK/timme", value: data.contractor_rate },
             { "@type": "PropertyValue", name: "Löntagare", unitText: "SEK/timme", value: data.employee_rate },
           ],
-          creator: { "@type": "Organization", name: "CompCare", url: "https://www.compcare.se" },
+          creator: { "@type": "Organization", name: "CompCare", url: "https://vardbemanning.ai" },
           citation: data.source,
         },
         {
@@ -199,8 +199,8 @@ export default function LonSpecialtyCity() {
           "@type": "BreadcrumbList",
           "@id": `${url}#breadcrumbs`,
           itemListElement: [
-            { "@type": "ListItem", position: 1, name: "CompCare", item: "https://www.compcare.se/" },
-            { "@type": "ListItem", position: 2, name: "Timpeng per roll och ort", item: "https://www.compcare.se/faktasidor" },
+            { "@type": "ListItem", position: 1, name: "CompCare", item: "https://vardbemanning.ai/" },
+            { "@type": "ListItem", position: 2, name: "Timpeng per roll och ort", item: "https://vardbemanning.ai/faktasidor" },
             { "@type": "ListItem", position: 3, name: `${data.specialty_name} i ${place}`, item: url },
           ],
         },
