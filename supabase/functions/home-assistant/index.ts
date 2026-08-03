@@ -1,10 +1,17 @@
 // home-assistant — publika, fördefinierade frågor för startsidans assistent.
-// Endast deterministiska svar ur SKR-katalogen (contract_version_rates) och
-// historiska avrop (calloff_imports). Ingen fritext, ingen AI, ingen PII.
+// Presetfrågor: deterministiska svar ur SKR-katalogen (contract_version_rates) och
+// historiska avrop (calloff_imports) — ingen AI, cachade 24 h.
+// Fritext: kräver inloggning, taket är 20/IP/dygn och 30 anrop/användare/dygn.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { checkRateLimit } from "../_shared/rateLimit.ts";
 import { getAiGatewayKey, getAiGatewayUrl, getAiModel } from "../_shared/ai-transport.ts";
+import {
+  aiRateLimitResponse,
+  checkAiRateLimit,
+  extractTokensFromResponse,
+  logAiUsage,
+} from "../_shared/ai-usage-logger.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -12,6 +19,18 @@ const corsHeaders = {
 };
 
 const GROUP_LABEL = /\bgrupp\s*[a-zA-Z0-9]+\b/i;
+
+// ── Regel 2: presetfrågor kostar noll — deras DB-uppslag cachas 24 h per isolat ──
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+const presetCache = new Map<string, { at: number; value: unknown }>();
+
+async function memo<T>(cacheKey: string, fn: () => Promise<T>): Promise<T> {
+  const hit = presetCache.get(cacheKey);
+  if (hit && Date.now() - hit.at < CACHE_TTL_MS) return hit.value as T;
+  const value = await fn();
+  presetCache.set(cacheKey, { at: Date.now(), value });
+  return value;
+}
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -26,6 +45,7 @@ function shareRange(role: string): [number, number] {
 }
 
 const kr = (n: number) => `${Math.round(n).toLocaleString("sv-SE")} kr/h`;
+
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
@@ -89,9 +109,24 @@ Deno.serve(async (req) => {
       if (!userData?.user) {
         return json({ error: "Fritextfrågor kräver inloggning." }, 401);
       }
+      const userId = userData.user.id;
+
+      // ── Regel 1: hårt tak per IP/dygn (stoppar bottar innan de kostar något) ──
+      const ipDay = await checkRateLimit(supabase, "home-assistant-freetext", clientIp, 20, 1440);
+      if (!ipDay.allowed) {
+        return json(
+          { error: "Dagens gräns för fritextfrågor från den här uppkopplingen är nådd." },
+          429,
+        );
+      }
+
+      // ── Regel 3: kvot per inloggad användare (30/dygn, admins undantagna) ──
+      const quota = await checkAiRateLimit(userId, 30);
+      if (!quota.allowed) return aiRateLimitResponse(quota, corsHeaders);
 
       const question = (body.question ?? "").trim().slice(0, 500);
       if (!question) return json({ error: "Tom fråga" }, 400);
+
 
       const ctx = body.context ?? null;
       let rateContext = "";
@@ -135,11 +170,13 @@ Deno.serve(async (req) => {
         "av kundpriset; anställd räknas om med faktor 1,38 och 167 timmar per månad. " +
         `${profileContext} ${rateContext}`.trim();
 
+      const model = getAiModel();
+      const startedAt = Date.now();
       const aiRes = await fetch(getAiGatewayUrl(), {
         method: "POST",
         headers: { Authorization: `Bearer ${key}`, "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: getAiModel(),
+          model,
           messages: [
             { role: "system", content: systemPrompt },
             { role: "user", content: question },
@@ -147,17 +184,46 @@ Deno.serve(async (req) => {
         }),
       });
       if (!aiRes.ok) {
-        console.error("[home-assistant] ai error", aiRes.status, await aiRes.text());
+        const errText = await aiRes.text();
+        console.error("[home-assistant] ai error", aiRes.status, errText);
+        await logAiUsage({
+          feature: "home-assistant",
+          model,
+          userId,
+          status: "error",
+          durationMs: Date.now() - startedAt,
+          errorMessage: `gateway ${aiRes.status}`,
+        });
         return json({ error: "Assistenten kunde inte svara just nu." }, 502);
       }
       const aiJson = await aiRes.json();
       const answer = aiJson?.choices?.[0]?.message?.content?.trim();
+      const { inputTokens, outputTokens } = extractTokensFromResponse(aiJson);
+      await logAiUsage({
+        feature: "home-assistant",
+        model,
+        userId,
+        inputTokens,
+        outputTokens,
+        durationMs: Date.now() - startedAt,
+        status: answer ? "success" : "error",
+        errorMessage: answer ? undefined : "empty_answer",
+      });
       if (!answer) return json({ error: "Assistenten kunde inte svara just nu." }, 502);
+
+      // Mjuk varning vid 80 % av dygnskvoten
+      const used = (quota.used ?? 0) + 1;
+      const limit = quota.limit ?? null;
+      const warn = limit && !quota.is_admin && used >= Math.floor(limit * 0.8)
+        ? `Du har använt ${used} av ${limit} fritextfrågor i dag.`
+        : undefined;
 
       return json({
         answer,
         source: "SKR:s ramavtal, publicerade avrop och din sparade profil",
+        quota: { used, limit, warning: warn },
       });
+
     }
 
     if (body.action !== "answer") return json({ error: "Okänd åtgärd" }, 400);
@@ -234,13 +300,16 @@ Deno.serve(async (req) => {
       });
     }
 
-    // ── Avrop: sjuksköterskor i Gävleborg (historiskt underlag) ──
+    // ── Avrop: sjuksköterskor i Gävleborg (historiskt underlag, cachat 24 h) ──
     if (key === "avrop_gavle") {
-      const { count } = await supabase
-        .from("calloff_imports")
-        .select("id", { count: "exact", head: true })
-        .ilike("region", "%Gävleborg%")
-        .ilike("role", "%sjuksköterska%");
+      const count = await memo("avrop_gavle", async () => {
+        const { count } = await supabase
+          .from("calloff_imports")
+          .select("id", { count: "exact", head: true })
+          .ilike("region", "%Gävleborg%")
+          .ilike("role", "%sjuksköterska%");
+        return count ?? 0;
+      });
 
       return json({
         answer:
@@ -250,19 +319,23 @@ Deno.serve(async (req) => {
       });
     }
 
-    // ── Avrop senaste 30 dagarna (historiska, publicerade) ──
+    // ── Avrop senaste 30 dagarna (historiska, publicerade, cachat 24 h) ──
     if (key === "avrop") {
       const since = new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString().slice(0, 10);
-      const { count } = await supabase
-        .from("calloff_imports")
-        .select("id", { count: "exact", head: true })
-        .gte("calloff_date", since);
+      const { count, rows } = await memo(`avrop:${since}`, async () => {
+        const { count } = await supabase
+          .from("calloff_imports")
+          .select("id", { count: "exact", head: true })
+          .gte("calloff_date", since);
 
-      const { data: rows } = await supabase
-        .from("calloff_imports")
-        .select("role, region")
-        .gte("calloff_date", since)
-        .limit(1000);
+        const { data } = await supabase
+          .from("calloff_imports")
+          .select("role, region")
+          .gte("calloff_date", since)
+          .limit(1000);
+        return { count: count ?? 0, rows: data ?? [] };
+      });
+
 
       const byRole = new Map<string, number>();
       for (const r of (rows ?? []) as { role: string | null }[]) {
@@ -299,20 +372,22 @@ Deno.serve(async (req) => {
       if (GROUP_LABEL.test(role)) return json({ error: "Ogiltig roll" }, 400);
       if (!fixed && key !== "zoner" && !body.zone) return json({ need: "zone", role });
 
-      const { data, error } = await supabase
-        .from("contract_version_rates")
-        .select("zon, timpris_kund, contract_versions!inner(is_active, version_label)")
-        .eq("typ", "Grundpris")
-        .eq("contract_versions.is_active", true)
-        .ilike("yrkeskategori", role);
-      if (error) throw error;
-
-      const rows = (data ?? []) as unknown as {
-        zon: string;
-        timpris_kund: number;
-        contract_versions: { version_label: string };
-      }[];
+      const rows = await memo(`rates:${role.toLowerCase()}`, async () => {
+        const { data, error } = await supabase
+          .from("contract_version_rates")
+          .select("zon, timpris_kund, contract_versions!inner(is_active, version_label)")
+          .eq("typ", "Grundpris")
+          .eq("contract_versions.is_active", true)
+          .ilike("yrkeskategori", role);
+        if (error) throw error;
+        return (data ?? []) as unknown as {
+          zon: string;
+          timpris_kund: number;
+          contract_versions: { version_label: string };
+        }[];
+      });
       if (!rows.length) return json({ answer: `Jag hittar inget aktivt ramavtalspris för ${role}.` });
+
 
       const byZone: Record<string, number> = {};
       let version = "";

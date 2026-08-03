@@ -8,20 +8,22 @@ export const Route = createFileRoute("/")({
   },
   head: () => ({
     meta: [
-      { title: "CompCare – Lön & ramavtalspriser för vårdkonsulter" },
+      { title: "Fakturerar du rätt? AI-koll för vårdkonsulter | CompCare" },
       {
         name: "description",
         content:
-          "Se vad regionen betalar för din roll och zon enligt SKR:s ramavtal 2026 — och vad du kan fakturera efter bemanningsbolagets marginal.",
+          "Hitta timmar du missat att fakturera, få notis vid årets prisjustering och stöd i löneförhandlingen. Baserat på offentliga ramavtal.",
       },
-      { property: "og:title", content: "CompCare – Lön & ramavtalspriser för vårdkonsulter" },
+      { property: "og:title", content: "Fakturerar du rätt? AI-koll för vårdkonsulter | CompCare" },
       {
         property: "og:description",
-        content: "Ramavtalspriser per roll och zon, och din del av kundpriset som företagare eller löntagare.",
+        content:
+          "Hitta timmar du missat att fakturera, få notis vid årets prisjustering och stöd i löneförhandlingen. Baserat på offentliga ramavtal.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://vardbemanning.ai/" },
       { name: "twitter:card", content: "summary_large_image" },
+
 
     ],
   }),
