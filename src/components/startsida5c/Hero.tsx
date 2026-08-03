@@ -15,7 +15,7 @@ export default function Hero() {
             className="mb-4 text-[11px] uppercase tracking-[0.14em]"
             style={{ color: "#7c7ff2", fontFamily: "'IBM Plex Mono',monospace", animation: "fadeUp5c .55s ease both" }}
           >
-            SKR ramavtal 2026 · Offentliga priser
+            AI FÖR VÅRDKONSULTER
           </div>
           <h1
             className="m-0 text-[34px] font-semibold sm:text-[42px] lg:text-[50px]"
@@ -26,14 +26,15 @@ export default function Hero() {
               animation: "fadeUp5c .55s .08s ease both",
             }}
           >
-            AI för dig som jobbar som konsult inom vården
+            Se vad regionen betalar,{"\n"}
+            vad marknaden behåller{"\n"}
+            och vad du kan fakturera.
           </h1>
           <p
             className="mt-4 max-w-[520px] text-[15.5px]"
             style={{ lineHeight: 1.62, color: "#a3a7b7", animation: "fadeUp5c .55s .16s ease both" }}
           >
-            Kundpris minus typisk marginal — specialistläkare {doctorMargin}, övriga roller {otherMargin}. Samma
-            siffror som regionen ser, per roll och zon.
+            Information baserad på regionernas offentliga ramavtal och branschens vanliga marginaler.&nbsp; Uppdaterad data för 21 regioner och 290 kommuner.&nbsp; Samtliga kompetenser inom svensk sjukvård.
           </p>
           <ul
             className="mt-6 flex list-none flex-wrap gap-x-6 gap-y-2 p-0 text-[12.5px]"
