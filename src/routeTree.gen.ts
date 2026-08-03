@@ -37,6 +37,7 @@ import { Route as RapportLegitimeradSjukskoterskaRouteImport } from './routes/ra
 import { Route as RapportSjukskoterskaRouteImport } from './routes/rapport/sjukskoterska'
 import { Route as RapportSskRouteImport } from './routes/rapport/ssk'
 import { Route as ResultatLeadIdRouteImport } from './routes/resultat/$leadId'
+import { Route as ApiPublicBekraftaForslagRouteImport } from './routes/api/public/bekrafta-forslag'
 import { Route as ConsultantLayoutProfilRouteImport } from './routes/consultant/_layout/profil'
 import { Route as LonSpecialtyCityRouteImport } from './routes/lon/$specialty/$city'
 
@@ -184,6 +185,12 @@ const ResultatLeadIdRoute = ResultatLeadIdRouteImport.update({
   path: '/resultat/$leadId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicBekraftaForslagRoute =
+  ApiPublicBekraftaForslagRouteImport.update({
+    id: '/api/public/bekrafta-forslag',
+    path: '/api/public/bekrafta-forslag',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ConsultantLayoutProfilRoute = ConsultantLayoutProfilRouteImport.update({
   id: '/profil',
   path: '/profil',
@@ -224,6 +231,7 @@ export interface FileRoutesByFullPath {
   '/rapport/ssk': typeof RapportSskRoute
   '/resultat/$leadId': typeof ResultatLeadIdRoute
   '/admin/': typeof AdminIndexRoute
+  '/api/public/bekrafta-forslag': typeof ApiPublicBekraftaForslagRoute
   '/consultant/profil': typeof ConsultantLayoutProfilRoute
   '/lon/$specialty/$city': typeof LonSpecialtyCityRoute
 }
@@ -256,6 +264,7 @@ export interface FileRoutesByTo {
   '/rapport/ssk': typeof RapportSskRoute
   '/resultat/$leadId': typeof ResultatLeadIdRoute
   '/admin': typeof AdminIndexRoute
+  '/api/public/bekrafta-forslag': typeof ApiPublicBekraftaForslagRoute
   '/consultant/profil': typeof ConsultantLayoutProfilRoute
   '/lon/$specialty/$city': typeof LonSpecialtyCityRoute
 }
@@ -289,6 +298,7 @@ export interface FileRoutesById {
   '/rapport/ssk': typeof RapportSskRoute
   '/resultat/$leadId': typeof ResultatLeadIdRoute
   '/admin/': typeof AdminIndexRoute
+  '/api/public/bekrafta-forslag': typeof ApiPublicBekraftaForslagRoute
   '/consultant/_layout/profil': typeof ConsultantLayoutProfilRoute
   '/lon/$specialty/$city': typeof LonSpecialtyCityRoute
 }
@@ -323,6 +333,7 @@ export interface FileRouteTypes {
     | '/rapport/ssk'
     | '/resultat/$leadId'
     | '/admin/'
+    | '/api/public/bekrafta-forslag'
     | '/consultant/profil'
     | '/lon/$specialty/$city'
   fileRoutesByTo: FileRoutesByTo
@@ -355,6 +366,7 @@ export interface FileRouteTypes {
     | '/rapport/ssk'
     | '/resultat/$leadId'
     | '/admin'
+    | '/api/public/bekrafta-forslag'
     | '/consultant/profil'
     | '/lon/$specialty/$city'
   id:
@@ -387,6 +399,7 @@ export interface FileRouteTypes {
     | '/rapport/ssk'
     | '/resultat/$leadId'
     | '/admin/'
+    | '/api/public/bekrafta-forslag'
     | '/consultant/_layout/profil'
     | '/lon/$specialty/$city'
   fileRoutesById: FileRoutesById
@@ -420,6 +433,7 @@ export interface RootRouteChildren {
   RapportSskRoute: typeof RapportSskRoute
   ResultatLeadIdRoute: typeof ResultatLeadIdRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  ApiPublicBekraftaForslagRoute: typeof ApiPublicBekraftaForslagRoute
   LonSpecialtyCityRoute: typeof LonSpecialtyCityRoute
 }
 
@@ -621,6 +635,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResultatLeadIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/bekrafta-forslag': {
+      id: '/api/public/bekrafta-forslag'
+      path: '/api/public/bekrafta-forslag'
+      fullPath: '/api/public/bekrafta-forslag'
+      preLoaderRoute: typeof ApiPublicBekraftaForslagRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/consultant/_layout/profil': {
       id: '/consultant/_layout/profil'
       path: '/profil'
@@ -678,6 +699,7 @@ const rootRouteChildren: RootRouteChildren = {
   RapportSskRoute: RapportSskRoute,
   ResultatLeadIdRoute: ResultatLeadIdRoute,
   AdminIndexRoute: AdminIndexRoute,
+  ApiPublicBekraftaForslagRoute: ApiPublicBekraftaForslagRoute,
   LonSpecialtyCityRoute: LonSpecialtyCityRoute,
 }
 export const routeTree = rootRouteImport
