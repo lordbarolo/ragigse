@@ -1,6 +1,7 @@
 import sskFoto from "@/assets/startsida5c-ssk.png";
-import { computeRate5c, kr } from "./rate5c";
+import { clientPrice5c, kr } from "./rate5c";
 import { useBaseRates5c } from "./useRates5c";
+import { useCompMap5c, useIsSignedIn } from "./useComp5c";
 
 const CARDS: { label: string; yrkeskategori: string; zon: string }[] = [
   { label: "IVA-sjuksköterska", yrkeskategori: "Specialistsjuksköterska intensivvård", zon: "Zon 3" },
@@ -11,6 +12,8 @@ const CARDS: { label: string; yrkeskategori: string; zon: string }[] = [
 
 export default function FotoBand() {
   const base = useBaseRates5c();
+  const signedIn = useIsSignedIn();
+  const comps = useCompMap5c(CARDS.map((c) => ({ role: c.yrkeskategori, zone: c.zon })));
 
   return (
     <section style={{ background: "#f5f5f7", borderBottom: "1px solid #e6e6ea" }}>
@@ -33,13 +36,14 @@ export default function FotoBand() {
             Samma siffror som bolaget sitter på
           </h2>
           <p className="mt-3 max-w-[460px] text-[15px]" style={{ color: "#5a5f6e", lineHeight: 1.6 }}>
-            Priserna kommer från SKR:s ramavtal 2026 — offentliga och lika för alla. Här är din del av kundpriset
-            som företagare, per roll och zon.
+            Priserna kommer från SKR:s ramavtal 2026 — offentliga och lika för alla. Logga in för att se din del
+            av kundpriset som företagare, per roll och zon.
           </p>
 
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
             {CARDS.map((c) => {
-              const rate = computeRate5c(base, c.yrkeskategori, c.zon);
+              const clientRate = clientPrice5c(base, c.yrkeskategori, c.zon);
+              const comp = comps[`${c.yrkeskategori}|${c.zon}`] ?? null;
               return (
                 <div
                   key={`${c.yrkeskategori}-${c.zon}`}
@@ -51,12 +55,12 @@ export default function FotoBand() {
                   </div>
                   <div className="mt-1 flex items-baseline gap-1.5" style={{ color: "#191922" }}>
                     <span className="text-[26px] font-semibold leading-none tabular-nums">
-                      {kr(rate?.foretagareKrH)}
+                      {signedIn ? kr(comp) : kr(clientRate)}
                     </span>
                     <span className="text-[12.5px]">kr/h</span>
                   </div>
                   <div className="mt-1 text-[11.5px]" style={{ color: "#8a8f9e" }}>
-                    {c.zon} · kundpris {kr(rate?.timpris_kund)} kr/h
+                    {signedIn ? `${c.zon} · kundpris ${kr(clientRate)} kr/h` : `${c.zon} · kundpris enligt ramavtalet`}
                   </div>
                 </div>
               );

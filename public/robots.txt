@@ -10,7 +10,6 @@
 #
 # Maskinläsbara filer för agenter:
 #   /llms.txt              beskrivning av datamodell och endpoints
-#   /agent-index.json      alla giltiga specialty_slug och city_slug
 #   /openapi.json          API-schema
 #   /sitemap.xml           alla indexerbara URL:er
 #
@@ -26,7 +25,6 @@
 User-agent: *
 Allow: /
 Allow: /llms.txt
-Allow: /agent-index.json
 Allow: /openapi.json
 Disallow: /admin
 Disallow: /admin/
@@ -47,7 +45,6 @@ LLMs-Txt: https://vardbemanning.ai/llms.txt
 User-agent: GPTBot
 Allow: /
 Allow: /llms.txt
-Allow: /agent-index.json
 Allow: /openapi.json
 Disallow: /admin
 Disallow: /resultat/
@@ -59,7 +56,6 @@ Disallow: /api/
 User-agent: Google-Extended
 Allow: /
 Allow: /llms.txt
-Allow: /agent-index.json
 Disallow: /admin
 Disallow: /resultat/
 Disallow: /consultant/
@@ -69,7 +65,6 @@ Disallow: /functions/v1/
 User-agent: Claude-Web
 Allow: /
 Allow: /llms.txt
-Allow: /agent-index.json
 Disallow: /admin
 Disallow: /resultat/
 Disallow: /consultant/
@@ -79,7 +74,6 @@ Disallow: /functions/v1/
 User-agent: Applebot-Extended
 Allow: /
 Allow: /llms.txt
-Allow: /agent-index.json
 Disallow: /admin
 Disallow: /resultat/
 Disallow: /consultant/
@@ -89,7 +83,6 @@ Disallow: /functions/v1/
 User-agent: PerplexityBot
 Allow: /
 Allow: /llms.txt
-Allow: /agent-index.json
 Disallow: /admin
 Disallow: /resultat/
 Disallow: /consultant/
@@ -99,7 +92,6 @@ Disallow: /functions/v1/
 User-agent: Bytespider
 Allow: /
 Allow: /llms.txt
-Allow: /agent-index.json
 Disallow: /admin
 Disallow: /resultat/
 Disallow: /consultant/
@@ -109,7 +101,6 @@ Disallow: /functions/v1/
 User-agent: CCBot
 Allow: /
 Allow: /llms.txt
-Allow: /agent-index.json
 Disallow: /admin
 Disallow: /resultat/
 Disallow: /consultant/

@@ -9,26 +9,26 @@
     "api_key": {
       "header_name": "Authorization",
       "prefix": "Bearer",
-      "description": "Supabase anon key for public endpoints, or cck_ API key for agent endpoints. See https://compcare.se/agent-api.md for agent authentication."
+      "description": "Supabase anon key for public endpoints, or cck_ API key for agent endpoints. See https://vardbemanning.ai/agent-api.md for agent authentication."
     }
   },
   "api": {
     "type": "openapi",
-    "url": "https://www.compcare.se/openapi.json"
+    "url": "https://vardbemanning.ai/openapi.json"
   },
   "contact": {
     "name": "CompCare",
-    "url": "https://www.compcare.se",
+    "url": "https://vardbemanning.ai",
     "email": "info@compcare.se"
   },
   "legal_info": {
-    "terms_of_service": "https://www.compcare.se/integritetspolicy"
+    "terms_of_service": "https://vardbemanning.ai/integritetspolicy"
   },
-  "logo_url": "https://www.compcare.se/compcare-logo.svg",
+  "logo_url": "https://vardbemanning.ai/compcare-logo.svg",
   "content_resources": {
     "reports": {
       "description": "Static role-based compensation reports with TL;DR summaries, zone pricing, OB rates, and recommended consultant rates.",
-      "example": "https://www.compcare.se/rapport/anestesisjukskoterska",
+      "example": "https://vardbemanning.ai/rapport/anestesisjukskoterska",
       "schema": "Article + FAQPage + Dataset JSON-LD. Each report includes a citerbar TL;DR box with dateModified."
     },
     "teasers": {
@@ -41,11 +41,11 @@
     }
   },
   "discovery_files": [
-    "https://www.compcare.se/llms.txt",
-    "https://www.compcare.se/llms-full.txt",
-    "https://www.compcare.se/ai.txt",
-    "https://www.compcare.se/openapi.json",
-    "https://www.compcare.se/agent-api.md",
-    "https://www.compcare.se/radar-api-README.md"
+    "https://vardbemanning.ai/llms.txt",
+    "https://vardbemanning.ai/llms-full.txt",
+    "https://vardbemanning.ai/ai.txt",
+    "https://vardbemanning.ai/openapi.json",
+    "https://vardbemanning.ai/agent-api.md",
+    "https://vardbemanning.ai/radar-api-README.md"
   ]
 }

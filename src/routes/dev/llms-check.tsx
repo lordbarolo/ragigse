@@ -17,7 +17,7 @@ export const Route = createFileRoute("/dev/llms-check")({
 
 type Check = { label: string; ok: boolean; detail: string };
 
-const FILES = ["/llms.txt", "/agent-index.json", "/robots.txt", "/sitemap.xml"];
+const FILES = ["/llms.txt", "/robots.txt", "/sitemap.xml"];
 
 function LlmsCheckPage() {
   const [results, setResults] = useState<Record<string, Check[]> | null>(null);
@@ -47,16 +47,6 @@ function LlmsCheckPage() {
               ok: /^#\s/.test(body.trimStart()),
               detail: body.trimStart().split("\n")[0] ?? "",
             });
-          }
-          if (path === "/agent-index.json") {
-            let parsed = false;
-            try {
-              JSON.parse(body);
-              parsed = true;
-            } catch {
-              parsed = false;
-            }
-            checks.push({ label: "Giltig JSON", ok: parsed, detail: parsed ? "ok" : "parse-fel" });
           }
           out[path] = checks;
         }

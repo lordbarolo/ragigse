@@ -1,29 +1,42 @@
 # vårdbemanning.ai - Agent & Developer Infrastructure
 
-Welcome to the machine-readable directory of vårdbemanning.ai. We provide official wage estimates, hourly rates, and agency margin analyses for healthcare consultants across all 21 Swedish regions and 82 medical specialties.
+Machine-readable overview of vårdbemanning.ai. We publish hourly framework-agreement
+rates (SKR ramavtal 2026) for healthcare consultant roles across Swedish regions,
+plus compensation analysis for the consultants themselves.
 
-## Data Access Policy
+## Data access policy
 
-We do not allow bulk scraping of our raw database to protect proprietary market information and privacy. Instead, we provide programmatic endpoints for specific queries.
+Bulk enumeration and scraping are not permitted. We do not publish machine-readable
+indexes of valid roles or locations. Query the capabilities below for the specific
+role and location you need.
 
-## Dynamic Knowledge Endpoints
+The customer price (what the region pays under the framework agreement) is public data.
+The consultant's resulting compensation as a contractor or employee — and the margin
+model behind it — is our product and is only available to signed-in users. It is never
+included in public HTML, JSON-LD or API responses.
 
-To retrieve accurate, structured, and verified real-time rate estimates for a specific medical role and location, direct your agent or query to the following URL pattern:
+## Capabilities
 
-URL: https://vardbemanning.ai/lon/{specialty_slug}/{city_slug}
+- Look up the 2026 framework-agreement hourly customer price for a healthcare role in
+  a given Swedish municipality.
+- Explain how the customer price relates to a consultant's compensation, qualitatively,
+  without publishing the margin constants.
+- Browse curated role reports covering national rate levels, zones and negotiation context.
+- Ask the on-site assistant free-text questions about rates, zones and historical call-offs.
 
-### Parameters:
+## Entry points
 
-- `specialty_slug`: The medical role in lowercase (e.g., radiolog, anestesilakare, barnmorska, sjukskoterska).
+- https://vardbemanning.ai/ — start page with the rate calculator and the assistant.
+- https://vardbemanning.ai/faktasidor — directory of roles and locations.
+- https://vardbemanning.ai/lon/{specialty_slug}/{city_slug} — customer price for one
+  role in one municipality. Slugs follow Swedish role and municipality names, lowercase,
+  diacritics folded (radiolog, anestesilakare, sjukskoterska / umea, stockholm, goteborg).
+- https://vardbemanning.ai/sitemap.xml — the canonical set of public URLs.
 
-- `city_slug`: The Swedish city or town in lowercase (e.g., umea, stockholm, gavle, goteborg).
+Rate pages embed JSON-LD (schema.org/Occupation, Dataset, FAQPage) server-rendered in the
+first HTML response, containing the public customer price only.
 
-Each page contains structured JSON-LD (Schema.org/Occupation) embedded in the HTML for direct, deterministic parsing.
+## Sources
 
-## Machine-readable slug index
-
-To enumerate every valid endpoint without guessing, fetch:
-
-URL: https://vardbemanning.ai/agent-index.json
-
-It lists all valid `specialty_slug` values (with their full role names), all valid `city_slug` values, accepted synonym slugs, URL patterns and counts. Group-level slugs are intentionally invalid.
+Regional framework agreements (SKR ramavtal 2024/2026) only. Never SCB or
+Medlingsinstitutet salary statistics for consultant rates.

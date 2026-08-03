@@ -11,7 +11,9 @@
  * - schema.org/WebSite (med potentialAction för SearchAction)
  */
 
-const BASE_URL = "https://www.compcare.se";
+import { SITE_URL } from "@/lib/site";
+
+const BASE_URL = SITE_URL;
 
 export const organizationSchema = {
   "@context": "https://schema.org",
