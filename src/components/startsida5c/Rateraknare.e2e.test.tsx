@@ -139,8 +139,8 @@ describe.skipIf(!hasEnv)("E2E: dropdown-etikett → pris och kalkyl", () => {
       await user.selectOptions(screen.getByLabelText("Zon"), c.zone);
 
       // 3. Läs av vad UI:t visar.
-      const foretagareCard = screen.getByText("Som företagare").closest("div")!;
-      const lontagareCard = screen.getByText("Som löntagare").closest("div")!;
+      const foretagareCard = screen.getByText("Som företagare").parentElement!;
+      const lontagareCard = screen.getByText("Som löntagare").parentElement!;
       const uiForetagare = parseKr(foretagareCard.textContent!.replace("Som företagare", ""));
       const uiLontagare = parseKr(lontagareCard.textContent!.replace("Som löntagare", ""));
 
