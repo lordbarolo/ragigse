@@ -1,31 +1,26 @@
 /**
- * /lon/[specialty]/[city] — programmatic SEO-sida för timpeng per roll och ort.
- * All prisdata kommer från edge-funktionen `public-lon-lookup`, som i sin tur
- * anropar RPC:n `lookup_rate` (SKR:s ramavtal 2026). Ingen prislogik i klienten.
+ * /lon/[specialty]/[city] — programmatisk SEO-sida för timpeng per roll och ort.
+ *
+ * Kundpriset (SKR:s ramavtal 2026) hämtas server-side i route-loadern och är
+ * offentligt. Ersättningen som företagare/löntagare kräver inloggning och
+ * hämtas via en autentiserad server function — den lämnar aldrig servern för
+ * en utloggad besökare, varken renderad, i JSON-LD eller i JS-bundlen.
  */
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate, useParams } from "@/lib/router-compat";
-import { supabase } from "@/integrations/supabase/client";
+import { Link, useNavigate } from "@/lib/router-compat";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { getRouteApi } from "@tanstack/react-router";
+import { getLonCompRate, getLonOptions } from "@/lib/rates.functions";
+import { useAuth } from "@/hooks/useAuth";
+import { SITE_URL } from "@/lib/site";
 import { SEO } from "@/components/SEO";
 import SearchableSelect from "@/components/SearchableSelect";
 
+const routeApi = getRouteApi("/lon/$specialty/$city");
+
 const FONT_HREF =
   "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap";
-
-interface LonData {
-  found: true;
-  specialty_name: string;
-  location_name: string;
-  client_rate: number;
-  contractor_rate: number;
-  employee_rate: number;
-  source: string;
-}
-
-interface Options {
-  roles: { name: string; slug: string }[];
-  cities: { name: string; region: string; slug: string }[];
-}
 
 const kr = (n: number | null | undefined) =>
   typeof n === "number" && Number.isFinite(n) ? n.toLocaleString("sv-SE") : "—";
@@ -42,69 +37,53 @@ const dedupePlace = (name: string) =>
   Array.from(new Set(name.split(",").map((p) => p.trim()).filter(Boolean))).join(", ");
 
 export default function LonSpecialtyCity() {
-  const { specialty = "", city = "" } = useParams();
+  const { specialty, city } = routeApi.useParams();
+  const loaderData = routeApi.useLoaderData();
   const navigate = useNavigate();
-  const [data, setData] = useState<LonData | null>(null);
-  const [state, setState] = useState<"loading" | "ok" | "missing">("loading");
-  const [options, setOptions] = useState<Options | null>(null);
+  const { user } = useAuth();
+  const signedIn = !!user;
+
+  const data = loaderData.found ? loaderData : null;
+  const state: "ok" | "missing" = data ? "ok" : "missing";
+
   const [pickRole, setPickRole] = useState("");
   const [pickCity, setPickCity] = useState("");
 
+  const fetchComp = useServerFn(getLonCompRate);
+  const { data: comp } = useQuery({
+    queryKey: ["lon-comp", specialty, city],
+    queryFn: () => fetchComp({ data: { specialty, city } }),
+    enabled: signedIn && state === "ok",
+    staleTime: 1000 * 60 * 60,
+  });
+
+  const fetchOptions = useServerFn(getLonOptions);
+  const { data: options } = useQuery({
+    queryKey: ["lon-options"],
+    queryFn: () => fetchOptions(),
+    enabled: state === "missing",
+    staleTime: 1000 * 60 * 60,
+  });
+
   useEffect(() => {
     const id = "lon-page-fonts";
-    if (!document.getElementById(id)) {
-      const link = document.createElement("link");
-      link.id = id;
-      link.rel = "stylesheet";
-      link.href = FONT_HREF;
-      document.head.appendChild(link);
-    }
+    if (typeof document === "undefined" || document.getElementById(id)) return;
+    const link = document.createElement("link");
+    link.id = id;
+    link.rel = "stylesheet";
+    link.href = FONT_HREF;
+    document.head.appendChild(link);
   }, []);
-
-  useEffect(() => {
-    let active = true;
-    setState("loading");
-    setData(null);
-    supabase.functions
-      .invoke("public-lon-lookup", { body: { specialty, city } })
-      .then(({ data: res }) => {
-        if (!active) return;
-        if (res && (res as LonData).found) {
-          setData(res as LonData);
-          setState("ok");
-        } else {
-          setState("missing");
-        }
-      })
-      .catch(() => active && setState("missing"));
-    return () => {
-      active = false;
-    };
-  }, [specialty, city]);
-
-  // Hämta valbara roller/orter först när vi behöver fallback-sökrutan.
-  useEffect(() => {
-    if (state !== "missing" || options) return;
-    let active = true;
-    supabase.functions
-      .invoke("public-lon-lookup", { body: { action: "options" } })
-      .then(({ data: res }) => {
-        if (active && res) setOptions(res as Options);
-      });
-    return () => {
-      active = false;
-    };
-  }, [state, options]);
 
   const specialtyLabel = data?.specialty_name ?? titleCase(specialty);
   const cityLabel = data?.location_name ? dedupePlace(data.location_name) : titleCase(city);
 
-  // JSON-LD: @graph med Occupation (maskinläsbara spann), FAQPage och BreadcrumbList.
-  // Optimerat för LLM:er/agenter — varje siffra har enhet, valuta, giltighet och källa.
+  // JSON-LD: @graph med Occupation, Dataset, FAQPage och BreadcrumbList.
+  // Endast kundpris — ersättningsnivåerna är vår produkt och publiceras inte.
   const jsonLd = useMemo(() => {
     if (!data) return undefined;
     const place = dedupePlace(data.location_name);
-    const url = `https://www.compcare.se/lon/${specialty}/${city}`;
+    const url = `${SITE_URL}/lon/${specialty}/${city}`;
     return {
       "@context": "https://schema.org",
       "@graph": [
@@ -115,15 +94,7 @@ export default function LonSpecialtyCity() {
           occupationalCategory: data.specialty_name,
           description: `Konsultuppdrag som ${data.specialty_name} i ${place}. Kundpris enligt regionernas ramavtal 2026: ${data.client_rate} kr/h.`,
           occupationLocation: { "@type": "City", name: place, addressCountry: "SE" },
-          // Primär siffra för agenter: konsultens ersättning som företagare (contractor_rate).
           estimatedSalary: [
-            {
-              "@type": "MonetaryAmountDistribution",
-              name: "Ersättning som företagare (efter bemanningsbolagets marginal)",
-              currency: "SEK",
-              unitText: "HOUR",
-              median: data.contractor_rate,
-            },
             {
               "@type": "MonetaryAmountDistribution",
               name: "Kundpris enligt regionernas ramavtal 2026",
@@ -131,27 +102,19 @@ export default function LonSpecialtyCity() {
               unitText: "HOUR",
               median: data.client_rate,
             },
-            {
-              "@type": "MonetaryAmountDistribution",
-              name: "Ersättning som löntagare (efter marginal och arbetsgivaravgifter)",
-              currency: "SEK",
-              unitText: "HOUR",
-              median: data.employee_rate,
-            },
           ],
           provider: {
             "@type": "Organization",
             name: "vårdbemanning.ai",
-            url: "https://vardbemanning.ai",
+            url: SITE_URL,
           },
           mainEntityOfPage: { "@id": url },
         },
-
         {
           "@type": "Dataset",
           "@id": `${url}#dataset`,
           name: `Ramavtalspris ${data.specialty_name}, ${place}, 2026`,
-          description: `Timpris (kundpris) enligt regionernas ramavtal 2026 för ${data.specialty_name} i ${place}, samt beräknad ersättning för företagare och löntagare efter bemanningsbolagets marginal.`,
+          description: `Timpris (kundpris) enligt regionernas ramavtal 2026 för ${data.specialty_name} i ${place}.`,
           url,
           isAccessibleForFree: true,
           inLanguage: "sv-SE",
@@ -159,10 +122,8 @@ export default function LonSpecialtyCity() {
           spatialCoverage: { "@type": "Place", name: place, addressCountry: "SE" },
           variableMeasured: [
             { "@type": "PropertyValue", name: "Kundpris", unitText: "SEK/timme", value: data.client_rate },
-            { "@type": "PropertyValue", name: "Företagare", unitText: "SEK/timme", value: data.contractor_rate },
-            { "@type": "PropertyValue", name: "Löntagare", unitText: "SEK/timme", value: data.employee_rate },
           ],
-          creator: { "@type": "Organization", name: "CompCare", url: "https://www.compcare.se" },
+          creator: { "@type": "Organization", name: "vårdbemanning.ai", url: SITE_URL },
           citation: data.source,
         },
         {
@@ -171,10 +132,10 @@ export default function LonSpecialtyCity() {
           mainEntity: [
             {
               "@type": "Question",
-              name: `Vad är timpengen för ${data.specialty_name} i ${place} 2026?`,
+              name: `Vad är kundpriset för ${data.specialty_name} i ${place} 2026?`,
               acceptedAnswer: {
                 "@type": "Answer",
-                text: `Enligt regionernas ramavtal 2026 är kundpriset ${data.client_rate} kr/h för ${data.specialty_name} i ${place}. Som företagare kan ersättningen ligga omkring ${data.contractor_rate} kr/h och som löntagare omkring ${data.employee_rate} kr/h efter bemanningsbolagets marginal. Källa: ${data.source}.`,
+                text: `Enligt regionernas ramavtal 2026 är kundpriset ${data.client_rate} kr/h för ${data.specialty_name} i ${place}. Källa: ${data.source}.`,
               },
             },
             {
@@ -182,7 +143,7 @@ export default function LonSpecialtyCity() {
               name: `Varför skiljer sig kundpriset från min ersättning som ${data.specialty_name}?`,
               acceptedAnswer: {
                 "@type": "Answer",
-                text: `Kundpriset (${data.client_rate} kr/h) är vad regionen betalar bemanningsbolaget. Bolaget behåller en marginal för administration, garanterade timmar och betalningsrisk. Kvar till konsulten blir omkring ${data.contractor_rate} kr/h som företagare. Som löntagare tas dessutom arbetsgivaravgifter och avtalspension bort, vilket ger omkring ${data.employee_rate} kr/h.`,
+                text: `Kundpriset (${data.client_rate} kr/h) är vad regionen betalar bemanningsbolaget. Bolaget behåller en marginal för administration, garanterade timmar och betalningsrisk. Som löntagare tas dessutom arbetsgivaravgifter och avtalspension bort. Din beräknade ersättning visas efter inloggning.`,
               },
             },
             {
@@ -190,7 +151,7 @@ export default function LonSpecialtyCity() {
               name: `Vilken källa används för priset i ${place}?`,
               acceptedAnswer: {
                 "@type": "Answer",
-                text: `${data.source}. CompCare använder enbart regionernas upphandlade ramavtalspriser samt bemanningsbranschens marginalmodell — aldrig SCB- eller Medlingsinstitutets lönestatistik.`,
+                text: `${data.source}. Vi använder enbart regionernas upphandlade ramavtalspriser samt bemanningsbranschens marginalmodell — aldrig SCB- eller Medlingsinstitutets lönestatistik.`,
               },
             },
           ],
@@ -199,15 +160,14 @@ export default function LonSpecialtyCity() {
           "@type": "BreadcrumbList",
           "@id": `${url}#breadcrumbs`,
           itemListElement: [
-            { "@type": "ListItem", position: 1, name: "CompCare", item: "https://www.compcare.se/" },
-            { "@type": "ListItem", position: 2, name: "Timpeng per roll och ort", item: "https://www.compcare.se/faktasidor" },
+            { "@type": "ListItem", position: 1, name: "vårdbemanning.ai", item: `${SITE_URL}/` },
+            { "@type": "ListItem", position: 2, name: "Timpeng per roll och ort", item: `${SITE_URL}/faktasidor` },
             { "@type": "ListItem", position: 3, name: `${data.specialty_name} i ${place}`, item: url },
           ],
         },
       ],
     };
   }, [data, specialty, city]);
-
 
   const roleSelectOptions = useMemo(
     () => (options?.roles ?? []).map((r) => ({ value: r.slug, label: r.name })),
@@ -216,6 +176,10 @@ export default function LonSpecialtyCity() {
   const citySelectOptions = useMemo(
     () => (options?.cities ?? []).map((c) => ({ value: c.slug, label: `${c.name} (${c.region})` })),
     [options],
+  );
+
+  const Masked = () => (
+    <span className="text-[34px] font-semibold leading-none tracking-[0.06em]">••••</span>
   );
 
   return (
@@ -230,8 +194,8 @@ export default function LonSpecialtyCity() {
       <SEO
         title={
           state === "ok"
-            ? `Timpeng ${specialtyLabel} i ${cityLabel} 2026 | CompCare`
-            : `Timpeng per roll och ort 2026 | CompCare`
+            ? `Timpeng ${specialtyLabel} i ${cityLabel} 2026 | vårdbemanning.ai`
+            : `Timpeng per roll och ort 2026 | vårdbemanning.ai`
         }
         description={
           state === "ok" && data
@@ -252,7 +216,7 @@ export default function LonSpecialtyCity() {
           className="text-[17px] font-semibold"
           style={{ fontFamily: "'IBM Plex Mono',monospace", letterSpacing: "-0.5px", color: "#eef0f4" }}
         >
-          compcare
+          vårdbemanning.ai
         </Link>
         <Link
           to="/logga-in"
@@ -272,11 +236,9 @@ export default function LonSpecialtyCity() {
         </div>
 
         <h1 className="text-[30px] font-semibold leading-[1.15] md:text-[40px]" style={{ letterSpacing: "-1px" }}>
-          {state === "loading"
-            ? "Hämtar timpeng…"
-            : state === "ok"
-              ? `Timpeng för ${specialtyLabel} i ${cityLabel} (2026)`
-              : "Vi hittade ingen prisuppgift för den kombinationen"}
+          {state === "ok"
+            ? `Timpeng för ${specialtyLabel} i ${cityLabel} (2026)`
+            : "Vi hittade ingen prisuppgift för den kombinationen"}
         </h1>
 
         {state === "ok" && data && (
@@ -284,7 +246,7 @@ export default function LonSpecialtyCity() {
             <p className="mt-5 text-[15.5px] leading-relaxed" style={{ color: "#a8adbd" }}>
               Enligt regionernas gällande ramavtal för 2026 ligger det faktiska kundpriset för en{" "}
               {data.specialty_name} i {cityLabel} på {kr(data.client_rate)} kr/h. Efter
-              bemanningsbolagets typiska marginal kan du som konsult förvänta dig följande ersättningsspann.
+              bemanningsbolagets marginal återstår din ersättning som konsult.
             </p>
 
             <div className="mt-7 grid gap-3 sm:grid-cols-2">
@@ -293,9 +255,22 @@ export default function LonSpecialtyCity() {
                   Som företagare
                 </div>
                 <div className="mt-1 flex items-baseline gap-1.5" style={{ color: "#fff" }}>
-                  <span className="text-[34px] font-semibold leading-none">{kr(data.contractor_rate)}</span>
+                  {signedIn ? (
+                    <span className="text-[34px] font-semibold leading-none">{kr(comp?.foretagareKrH)}</span>
+                  ) : (
+                    <Masked />
+                  )}
                   <span className="text-[13px]">kr/h</span>
                 </div>
+                {!signedIn && (
+                  <Link
+                    to="/registrera"
+                    className="mt-2 inline-block text-[12px] font-semibold underline underline-offset-2"
+                    style={{ color: "#fff" }}
+                  >
+                    Skapa konto för att se
+                  </Link>
+                )}
               </div>
 
               <div className="rounded-xl p-5" style={{ background: "#151823", border: "1px solid #262a38", borderRadius: 12 }}>
@@ -303,15 +278,28 @@ export default function LonSpecialtyCity() {
                   Som löntagare
                 </div>
                 <div className="mt-1 flex items-baseline gap-1.5" style={{ color: "#eef0f4" }}>
-                  <span className="text-[34px] font-semibold leading-none">{kr(data.employee_rate)}</span>
+                  {signedIn ? (
+                    <span className="text-[34px] font-semibold leading-none">{kr(comp?.lontagareKrH)}</span>
+                  ) : (
+                    <Masked />
+                  )}
                   <span className="text-[13px]">kr/h</span>
                 </div>
+                {!signedIn && (
+                  <Link
+                    to="/logga-in"
+                    className="mt-2 inline-block text-[12px] font-semibold underline underline-offset-2"
+                    style={{ color: "#8b8bf6" }}
+                  >
+                    Logga in
+                  </Link>
+                )}
               </div>
             </div>
 
             <p className="mt-4 text-[12px] leading-relaxed" style={{ color: "#666b7e" }}>
-              Kundpris {kr(data.client_rate)} kr/h enligt {data.source}. Löntagarnivån är omräknad med
-              arbetsgivaravgifter och avtalspension.
+              Kundpris {kr(data.client_rate)} kr/h enligt {data.source}. Ersättningen beräknas utifrån
+              ramavtalspriset, bemanningsbranschens marginal och arbetsgivarfaktorn.
             </p>
 
             <div
