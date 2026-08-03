@@ -1,10 +1,17 @@
 // home-assistant — publika, fördefinierade frågor för startsidans assistent.
-// Endast deterministiska svar ur SKR-katalogen (contract_version_rates) och
-// historiska avrop (calloff_imports). Ingen fritext, ingen AI, ingen PII.
+// Presetfrågor: deterministiska svar ur SKR-katalogen (contract_version_rates) och
+// historiska avrop (calloff_imports) — ingen AI, cachade 24 h.
+// Fritext: kräver inloggning, taket är 20/IP/dygn och 30 anrop/användare/dygn.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { checkRateLimit } from "../_shared/rateLimit.ts";
 import { getAiGatewayKey, getAiGatewayUrl, getAiModel } from "../_shared/ai-transport.ts";
+import {
+  aiRateLimitResponse,
+  checkAiRateLimit,
+  extractTokensFromResponse,
+  logAiUsage,
+} from "../_shared/ai-usage-logger.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -12,6 +19,18 @@ const corsHeaders = {
 };
 
 const GROUP_LABEL = /\bgrupp\s*[a-zA-Z0-9]+\b/i;
+
+// ── Regel 2: presetfrågor kostar noll — deras DB-uppslag cachas 24 h per isolat ──
+const CACHE_TTL_MS = 24 * 60 * 60 * 1000;
+const presetCache = new Map<string, { at: number; value: unknown }>();
+
+async function memo<T>(cacheKey: string, fn: () => Promise<T>): Promise<T> {
+  const hit = presetCache.get(cacheKey);
+  if (hit && Date.now() - hit.at < CACHE_TTL_MS) return hit.value as T;
+  const value = await fn();
+  presetCache.set(cacheKey, { at: Date.now(), value });
+  return value;
+}
 
 const json = (body: unknown, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -26,6 +45,7 @@ function shareRange(role: string): [number, number] {
 }
 
 const kr = (n: number) => `${Math.round(n).toLocaleString("sv-SE")} kr/h`;
+
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
