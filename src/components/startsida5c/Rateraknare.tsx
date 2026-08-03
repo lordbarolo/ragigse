@@ -9,6 +9,8 @@ import {
   kr,
 } from "./rate5c";
 import { useBaseRates5c } from "./useRates5c";
+import { roleLabel5c } from "./roleLabels5c";
+
 
 export default function Rateraknare() {
   const base = useBaseRates5c();
@@ -16,9 +18,13 @@ export default function Rateraknare() {
   const [zone, setZone] = useState(DEFAULT_ZONE_5C);
 
   const options = useMemo(
-    () => roleOptions5c(base).map((r) => ({ value: r, label: r })),
+    () =>
+      roleOptions5c(base)
+        .map((r) => ({ value: r, label: roleLabel5c(r) }))
+        .sort((a, b) => a.label.localeCompare(b.label, "sv")),
     [base]
   );
+
   const rate = useMemo(() => computeRate5c(base, role, zone), [base, role, zone]);
 
   return (
