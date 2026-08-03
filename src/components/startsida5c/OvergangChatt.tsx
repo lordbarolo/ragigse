@@ -52,15 +52,6 @@ export default function OvergangChatt() {
             <HomeAssistantChat />
           </div>
 
-          <div className="mt-4 flex flex-wrap justify-center gap-x-6 gap-y-2 text-[12.5px]" style={{ color: "#8c90a0" }}>
-            <span className="flex items-center gap-1.5">
-              <span style={{ color: "#6ee7b7" }}>✓</span>Baserat på SKR:s offentliga ramavtalspriser
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span style={{ color: "#6ee7b7" }}>✓</span>Branschens standardmarginaler — specialistläkare{" "}
-              {doctorMargin}, övriga {otherMargin}
-            </span>
-          </div>
           <div className="mt-2.5 text-[11.5px]" style={{ color: "#565b6e" }}>
             Data lagras inom EU · Vi delar aldrig dina uppgifter. Se{" "}
             <Link to="/integritetspolicy" className="underline">
