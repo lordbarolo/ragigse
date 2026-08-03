@@ -26,7 +26,7 @@ export default function Hero() {
               animation: "fadeUp5c .55s .08s ease both",
             }}
           >
-            Se din timpeng innan du ringer bemannings&shy;bolaget.
+            AI för dig som jobbar som konsult inom vården
           </h1>
           <p
             className="mt-4 max-w-[520px] text-[15.5px]"
