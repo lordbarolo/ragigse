@@ -11,8 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AterstallLosenordRouteImport } from './routes/aterstall-losenord'
-import { Route as Dev_31RouteImport } from './routes/dev_31'
-import { Route as Dev_assistentRouteImport } from './routes/dev_assistent'
 import { Route as FaktasidorRouteImport } from './routes/faktasidor'
 import { Route as IntegritetspolicyRouteImport } from './routes/integritetspolicy'
 import { Route as LoggaInRouteImport } from './routes/logga-in'
@@ -26,8 +24,6 @@ import { Route as AdminHealthRouteImport } from './routes/admin/health'
 import { Route as BollnasLakareAlmRouteImport } from './routes/bollnas/lakare-alm'
 import { Route as ConsultantLayoutRouteImport } from './routes/consultant/_layout'
 import { Route as ConsultantForhandlaRouteImport } from './routes/consultant/forhandla'
-import { Route as DemoOldHomeRouteImport } from './routes/demo/old-home'
-import { Route as DemoStartsida5cRouteImport } from './routes/demo/startsida-5c'
 import { Route as DevAnalyticsRouteImport } from './routes/dev/analytics'
 import { Route as DevLlmsCheckRouteImport } from './routes/dev/llms-check'
 import { Route as KampanjRoleRouteImport } from './routes/kampanj/$role'
@@ -52,16 +48,6 @@ const IndexRoute = IndexRouteImport.update({
 const AterstallLosenordRoute = AterstallLosenordRouteImport.update({
   id: '/aterstall-losenord',
   path: '/aterstall-losenord',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const Dev_31Route = Dev_31RouteImport.update({
-  id: '/dev_31',
-  path: '/dev_31',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const Dev_assistentRoute = Dev_assistentRouteImport.update({
-  id: '/dev_assistent',
-  path: '/dev_assistent',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FaktasidorRoute = FaktasidorRouteImport.update({
@@ -127,16 +113,6 @@ const ConsultantLayoutRoute = ConsultantLayoutRouteImport.update({
 const ConsultantForhandlaRoute = ConsultantForhandlaRouteImport.update({
   id: '/consultant/forhandla',
   path: '/consultant/forhandla',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoOldHomeRoute = DemoOldHomeRouteImport.update({
-  id: '/demo/old-home',
-  path: '/demo/old-home',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DemoStartsida5cRoute = DemoStartsida5cRouteImport.update({
-  id: '/demo/startsida-5c',
-  path: '/demo/startsida-5c',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DevAnalyticsRoute = DevAnalyticsRouteImport.update({
@@ -222,8 +198,6 @@ const LonSpecialtyCityRoute = LonSpecialtyCityRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/aterstall-losenord': typeof AterstallLosenordRoute
-  '/dev_31': typeof Dev_31Route
-  '/dev_assistent': typeof Dev_assistentRoute
   '/faktasidor': typeof FaktasidorRoute
   '/integritetspolicy': typeof IntegritetspolicyRoute
   '/logga-in': typeof LoggaInRoute
@@ -236,8 +210,6 @@ export interface FileRoutesByFullPath {
   '/bollnas/lakare-alm': typeof BollnasLakareAlmRoute
   '/consultant': typeof ConsultantLayoutRouteWithChildren
   '/consultant/forhandla': typeof ConsultantForhandlaRoute
-  '/demo/old-home': typeof DemoOldHomeRoute
-  '/demo/startsida-5c': typeof DemoStartsida5cRoute
   '/dev/analytics': typeof DevAnalyticsRoute
   '/dev/llms-check': typeof DevLlmsCheckRoute
   '/kampanj/$role': typeof KampanjRoleRoute
@@ -258,8 +230,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/aterstall-losenord': typeof AterstallLosenordRoute
-  '/dev_31': typeof Dev_31Route
-  '/dev_assistent': typeof Dev_assistentRoute
   '/faktasidor': typeof FaktasidorRoute
   '/integritetspolicy': typeof IntegritetspolicyRoute
   '/logga-in': typeof LoggaInRoute
@@ -272,8 +242,6 @@ export interface FileRoutesByTo {
   '/bollnas/lakare-alm': typeof BollnasLakareAlmRoute
   '/consultant': typeof ConsultantLayoutRouteWithChildren
   '/consultant/forhandla': typeof ConsultantForhandlaRoute
-  '/demo/old-home': typeof DemoOldHomeRoute
-  '/demo/startsida-5c': typeof DemoStartsida5cRoute
   '/dev/analytics': typeof DevAnalyticsRoute
   '/dev/llms-check': typeof DevLlmsCheckRoute
   '/kampanj/$role': typeof KampanjRoleRoute
@@ -295,8 +263,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/aterstall-losenord': typeof AterstallLosenordRoute
-  '/dev_31': typeof Dev_31Route
-  '/dev_assistent': typeof Dev_assistentRoute
   '/faktasidor': typeof FaktasidorRoute
   '/integritetspolicy': typeof IntegritetspolicyRoute
   '/logga-in': typeof LoggaInRoute
@@ -309,8 +275,6 @@ export interface FileRoutesById {
   '/bollnas/lakare-alm': typeof BollnasLakareAlmRoute
   '/consultant/_layout': typeof ConsultantLayoutRouteWithChildren
   '/consultant/forhandla': typeof ConsultantForhandlaRoute
-  '/demo/old-home': typeof DemoOldHomeRoute
-  '/demo/startsida-5c': typeof DemoStartsida5cRoute
   '/dev/analytics': typeof DevAnalyticsRoute
   '/dev/llms-check': typeof DevLlmsCheckRoute
   '/kampanj/$role': typeof KampanjRoleRoute
@@ -333,8 +297,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/aterstall-losenord'
-    | '/dev_31'
-    | '/dev_assistent'
     | '/faktasidor'
     | '/integritetspolicy'
     | '/logga-in'
@@ -347,8 +309,6 @@ export interface FileRouteTypes {
     | '/bollnas/lakare-alm'
     | '/consultant'
     | '/consultant/forhandla'
-    | '/demo/old-home'
-    | '/demo/startsida-5c'
     | '/dev/analytics'
     | '/dev/llms-check'
     | '/kampanj/$role'
@@ -369,8 +329,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/aterstall-losenord'
-    | '/dev_31'
-    | '/dev_assistent'
     | '/faktasidor'
     | '/integritetspolicy'
     | '/logga-in'
@@ -383,8 +341,6 @@ export interface FileRouteTypes {
     | '/bollnas/lakare-alm'
     | '/consultant'
     | '/consultant/forhandla'
-    | '/demo/old-home'
-    | '/demo/startsida-5c'
     | '/dev/analytics'
     | '/dev/llms-check'
     | '/kampanj/$role'
@@ -405,8 +361,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/aterstall-losenord'
-    | '/dev_31'
-    | '/dev_assistent'
     | '/faktasidor'
     | '/integritetspolicy'
     | '/logga-in'
@@ -419,8 +373,6 @@ export interface FileRouteTypes {
     | '/bollnas/lakare-alm'
     | '/consultant/_layout'
     | '/consultant/forhandla'
-    | '/demo/old-home'
-    | '/demo/startsida-5c'
     | '/dev/analytics'
     | '/dev/llms-check'
     | '/kampanj/$role'
@@ -442,8 +394,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AterstallLosenordRoute: typeof AterstallLosenordRoute
-  Dev_31Route: typeof Dev_31Route
-  Dev_assistentRoute: typeof Dev_assistentRoute
   FaktasidorRoute: typeof FaktasidorRoute
   IntegritetspolicyRoute: typeof IntegritetspolicyRoute
   LoggaInRoute: typeof LoggaInRoute
@@ -456,8 +406,6 @@ export interface RootRouteChildren {
   BollnasLakareAlmRoute: typeof BollnasLakareAlmRoute
   ConsultantLayoutRoute: typeof ConsultantLayoutRouteWithChildren
   ConsultantForhandlaRoute: typeof ConsultantForhandlaRoute
-  DemoOldHomeRoute: typeof DemoOldHomeRoute
-  DemoStartsida5cRoute: typeof DemoStartsida5cRoute
   DevAnalyticsRoute: typeof DevAnalyticsRoute
   DevLlmsCheckRoute: typeof DevLlmsCheckRoute
   KampanjRoleRoute: typeof KampanjRoleRoute
@@ -489,20 +437,6 @@ declare module '@tanstack/react-router' {
       path: '/aterstall-losenord'
       fullPath: '/aterstall-losenord'
       preLoaderRoute: typeof AterstallLosenordRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dev_31': {
-      id: '/dev_31'
-      path: '/dev_31'
-      fullPath: '/dev_31'
-      preLoaderRoute: typeof Dev_31RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/dev_assistent': {
-      id: '/dev_assistent'
-      path: '/dev_assistent'
-      fullPath: '/dev_assistent'
-      preLoaderRoute: typeof Dev_assistentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/faktasidor': {
@@ -594,20 +528,6 @@ declare module '@tanstack/react-router' {
       path: '/consultant/forhandla'
       fullPath: '/consultant/forhandla'
       preLoaderRoute: typeof ConsultantForhandlaRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/old-home': {
-      id: '/demo/old-home'
-      path: '/demo/old-home'
-      fullPath: '/demo/old-home'
-      preLoaderRoute: typeof DemoOldHomeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/demo/startsida-5c': {
-      id: '/demo/startsida-5c'
-      path: '/demo/startsida-5c'
-      fullPath: '/demo/startsida-5c'
-      preLoaderRoute: typeof DemoStartsida5cRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dev/analytics': {
@@ -732,8 +652,6 @@ const ConsultantLayoutRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AterstallLosenordRoute: AterstallLosenordRoute,
-  Dev_31Route: Dev_31Route,
-  Dev_assistentRoute: Dev_assistentRoute,
   FaktasidorRoute: FaktasidorRoute,
   IntegritetspolicyRoute: IntegritetspolicyRoute,
   LoggaInRoute: LoggaInRoute,
@@ -746,8 +664,6 @@ const rootRouteChildren: RootRouteChildren = {
   BollnasLakareAlmRoute: BollnasLakareAlmRoute,
   ConsultantLayoutRoute: ConsultantLayoutRouteWithChildren,
   ConsultantForhandlaRoute: ConsultantForhandlaRoute,
-  DemoOldHomeRoute: DemoOldHomeRoute,
-  DemoStartsida5cRoute: DemoStartsida5cRoute,
   DevAnalyticsRoute: DevAnalyticsRoute,
   DevLlmsCheckRoute: DevLlmsCheckRoute,
   KampanjRoleRoute: KampanjRoleRoute,
@@ -767,13 +683,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
