@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { useNavigate, Link, useLocation } from "@/lib/router-compat";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -93,7 +93,7 @@ export default function Login() {
       navigate(redirectTo ?? "/agency/dashboard");
       return;
     }
-    navigate(redirectTo ? `/onboarding?redirect=${encodeURIComponent(redirectTo)}` : "/onboarding");
+    navigate(redirectTo ?? "/profil");
 
   };
 

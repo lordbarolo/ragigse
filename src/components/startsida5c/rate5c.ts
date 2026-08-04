@@ -4,8 +4,6 @@
  * med produktionens marginalmodell i @/lib/calc. Inga hårdkodade priser.
  */
 import { getMarginShares, EMPLOYER_FACTOR } from "@/lib/calc";
-import { filterPublicRoles } from "@/lib/roleVisibility";
-
 
 export interface RateRow {
   yrkeskategori: string;
@@ -38,10 +36,8 @@ export function basePrices(rows: unknown): RateRow[] {
 export function roleOptions5c(rows: RateRow[]): string[] {
   const set = new Set<string>();
   for (const r of rows) if (r.yrkeskategori) set.add(r.yrkeskategori);
-  // Interna administrativa gruppnamn ("… Grupp A") får aldrig exponeras publikt.
-  return filterPublicRoles(Array.from(set), (r) => r).sort((a, b) => a.localeCompare(b, "sv"));
+  return Array.from(set).sort((a, b) => a.localeCompare(b, "sv"));
 }
-
 
 export function computeRate5c(
   rows: RateRow[],

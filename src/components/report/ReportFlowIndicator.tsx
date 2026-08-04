@@ -56,7 +56,7 @@ export default function ReportFlowIndicator({ steps }: Props) {
       <div
         className={`transition-all duration-300 ease-out pl-3 pr-4 py-5 rounded-r-2xl ${
           expanded
-            ? "bg-background/80 backdrop-blur-md border-y border-r border-foreground/[0.06] shadow-xs"
+            ? "bg-background/80 backdrop-blur-md border-y border-r border-foreground/[0.06] shadow-sm"
             : "bg-transparent"
         }`}
       >
@@ -69,7 +69,7 @@ export default function ReportFlowIndicator({ steps }: Props) {
                   type="button"
                   onClick={() => handleClick(step.id)}
                   aria-label={step.label}
-                  className="flex items-center gap-3 group/item focus:outline-hidden"
+                  className="flex items-center gap-3 group/item focus:outline-none"
                 >
                   <span
                     className={`shrink-0 rounded-full transition-all duration-300 ${

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "@/lib/router-compat";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import Navbar from "@/components/Navbar";
@@ -263,7 +263,7 @@ export default function Profile() {
         {activeTab === "overview" && (
           <div className="space-y-5">
             {/* Personliga uppgifter — full width on top */}
-            <Card className="bg-white border-slate-200 shadow-xs backdrop-blur-none">
+            <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
               <CardHeader>
                 <CardTitle className="text-base flex items-center gap-2 text-slate-900">
                   <User className="w-4 h-4 text-primary" />
@@ -326,7 +326,7 @@ export default function Profile() {
                 />
 
                 {/* Insights */}
-                <Card className="bg-white border-slate-200 shadow-xs backdrop-blur-none">
+                <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
                   <CardContent className="pt-6">
                     <ProfileInsights
                       specialtyName={profile?.specialty_name || null}
@@ -340,7 +340,7 @@ export default function Profile() {
               {/* Right column */}
               <div className="space-y-5">
                 {/* Löneassistenten */}
-                <Card className="bg-white border-slate-200 shadow-xs backdrop-blur-none">
+                <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
                   <CardHeader>
                     <CardTitle className="text-base flex items-center gap-2 text-slate-900">
                       <MessageSquare className="w-4 h-4 text-primary" />
@@ -374,7 +374,7 @@ export default function Profile() {
         {activeTab === "work" && (
           <div className="space-y-5">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-              <Card className="bg-white border-slate-200 shadow-xs backdrop-blur-none">
+              <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
                 <CardHeader>
                   <CardTitle className="text-base flex items-center gap-2 text-slate-900">
                     <FileText className="w-4 h-4 text-primary" />
@@ -408,7 +408,7 @@ export default function Profile() {
                 </CardContent>
               </Card>
 
-              <Card className="bg-white border-slate-200 shadow-xs backdrop-blur-none">
+              <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
                 <CardHeader>
                   <CardTitle className="text-base flex items-center gap-2 text-slate-900">
                     <MessageSquare className="w-4 h-4 text-primary" />
@@ -454,7 +454,7 @@ export default function Profile() {
 
         {/* === SAVED === */}
         {activeTab === "saved" && (
-          <Card className="bg-white border-slate-200 shadow-xs backdrop-blur-none">
+          <Card className="bg-white border-slate-200 shadow-sm backdrop-blur-none">
             <CardContent className="py-12 text-center space-y-3">
               <div className="w-12 h-12 mx-auto rounded-full bg-muted flex items-center justify-center">
                 <FileText className="w-5 h-5 text-muted-foreground" />
@@ -468,7 +468,7 @@ export default function Profile() {
         )}
 
         {/* Profilstatus + verktyg — flyttade under tabs */}
-        <div className="rounded-2xl bg-white border border-slate-200 shadow-xs px-4 sm:px-5 py-4">
+        <div className="rounded-2xl bg-white border border-slate-200 shadow-sm px-4 sm:px-5 py-4">
           <div className="flex items-center justify-between gap-3 mb-3">
             <div className="min-w-0 flex-1">
               <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-slate-500">Profilstatus</p>
@@ -513,7 +513,7 @@ export default function Profile() {
         
 
         {reports.length === 0 && !profile?.specialty_name && (
-          <div className="rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 to-pink-50 p-5 sm:p-6 shadow-xs">
+          <div className="rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 to-pink-50 p-5 sm:p-6 shadow-sm">
             <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-violet-700">
               Kom igång
             </p>

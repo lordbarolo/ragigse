@@ -1,4 +1,4 @@
-import { useParams, useSearchParams, useNavigate } from "@/lib/router-compat";
+import { useParams, useSearchParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Lock, ArrowRight, MessageSquare, BarChart3 } from "lucide-react";
@@ -273,7 +273,7 @@ export default function Campaign() {
 
       {/* ── Auth Modal ────────────────────────── */}
       {showAuthModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4" onClick={() => setShowAuthModal(false)}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4" onClick={() => setShowAuthModal(false)}>
           <div
             className="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl text-center space-y-5"
             onClick={(e) => e.stopPropagation()}

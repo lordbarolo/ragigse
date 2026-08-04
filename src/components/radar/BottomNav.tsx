@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "@/lib/router-compat";
+import { useLocation, useNavigate } from "react-router-dom";
 import { MessageSquare, Shield, User } from "lucide-react";
 
 const TABS = [

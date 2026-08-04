@@ -18,7 +18,7 @@ const TABS: { key: ProfileTab; label: string; icon: typeof User; color: string }
 export default function ProfileTabs({ active, onChange }: Props) {
   return (
     <div className="flex justify-center">
-      <div className="inline-flex items-center gap-1 p-1 rounded-full bg-white border border-slate-200 shadow-xs overflow-x-auto max-w-full scrollbar-hide">
+      <div className="inline-flex items-center gap-1 p-1 rounded-full bg-white border border-slate-200 shadow-sm overflow-x-auto max-w-full scrollbar-hide">
         {TABS.map((t) => {
           const Icon = t.icon;
           const isActive = t.key === active;

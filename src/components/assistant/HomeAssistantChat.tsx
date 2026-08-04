@@ -1,10 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "@/lib/router-compat";
+import { Link } from "react-router-dom";
 import { ArrowUp, Lock, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { useProfileContext } from "@/hooks/useProfileContext";
-import { trackEvent } from "@/lib/trackEvent";
 
 type Msg = {
   id: string;
@@ -41,7 +39,6 @@ const nid = () => `m${++idc}`;
  */
 export default function HomeAssistantChat() {
   const { user } = useAuth();
-  const { context: profile } = useProfileContext(user?.id);
   const [messages, setMessages] = useState<Msg[]>([
     {
       id: nid(),
@@ -54,10 +51,6 @@ export default function HomeAssistantChat() {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const started = messages.some((m) => m.role === "user");
-
-  useEffect(() => {
-    if (!user) trackEvent("home_chat_login_prompt_shown", { surface: "startsida" });
-  }, [user]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -80,34 +73,7 @@ export default function HomeAssistantChat() {
     }
   }
 
-  async function askFreeText(question: string) {
-    setLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke("home-assistant", {
-        body: {
-          action: "freetext",
-          question,
-          context: profile
-            ? {
-                role: profile.role,
-                kommun: profile.kommun,
-                employment_type: profile.employmentType,
-                current_hourly_rate: profile.hourlyRate,
-              }
-            : null,
-        },
-      });
-      if (error) throw error;
-      push({ role: "assistant", text: data?.answer ?? data?.error ?? "Inget svar.", source: data?.source });
-    } catch {
-      push({ role: "assistant", text: "Något gick fel. Försök igen om en stund." });
-    } finally {
-      setLoading(false);
-    }
-  }
-
   function onPreset(p: { key: PresetKey; label: string }) {
-    trackEvent("home_chat_question_clicked", { question_key: p.key, is_authenticated: !!user });
     push({ role: "user", text: p.label });
     ask(p.key);
   }
@@ -164,11 +130,13 @@ export default function HomeAssistantChat() {
           <form
             onSubmit={(e) => {
               e.preventDefault();
-              const q = input.trim();
-              if (!q) return;
-              push({ role: "user", text: q });
+              if (!input.trim()) return;
+              push({ role: "user", text: input.trim() });
+              push({
+                role: "assistant",
+                text: "Fritextsvar kopplas in i nästa steg. Välj en av frågorna ovan så länge.",
+              });
               setInput("");
-              askFreeText(q);
             }}
             className="flex items-center gap-2"
           >
@@ -176,7 +144,7 @@ export default function HomeAssistantChat() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ställ din egen fråga…"
-              className="flex-1 bg-transparent text-sm outline-hidden placeholder:text-black/40"
+              className="flex-1 bg-transparent text-sm outline-none placeholder:text-black/40"
             />
             <button
               type="submit"
@@ -187,30 +155,19 @@ export default function HomeAssistantChat() {
             </button>
           </form>
         ) : (
-          <div className="space-y-2.5">
-            <input
-              readOnly
-              onFocus={(e) => e.currentTarget.blur()}
-              placeholder="Ställ din egen fråga…"
-              aria-label="Fritext kräver konto"
-              className="w-full cursor-pointer rounded-lg border border-black/10 bg-white px-3 py-2 text-sm text-black/60 outline-hidden placeholder:text-black/40"
-            />
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-xs text-black/55 flex items-start gap-1.5">
-                <Lock className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                Vill du ställa egna frågor till AI-assistenten och få en personlig analys utifrån ditt nuvarande
-                avtal? Logga in med e-post på 10 sekunder.
-              </p>
-              <Link
-                to="/registrera"
-                className="shrink-0 self-start text-sm font-semibold px-4 py-2 rounded-lg bg-[#3D3491] text-white hover:opacity-90 transition-opacity"
-              >
-                Skapa konto
-              </Link>
-            </div>
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-xs text-black/55 flex items-center gap-1.5">
+              <Lock className="w-3.5 h-3.5 shrink-0" />
+              Skapa konto för att ställa egna frågor.
+            </p>
+            <Link
+              to="/registrera"
+              className="shrink-0 text-sm font-semibold px-4 py-2 rounded-lg bg-[#3D3491] text-white hover:opacity-90 transition-opacity"
+            >
+              Skapa konto
+            </Link>
           </div>
         )}
-
       </div>
     </div>
   );

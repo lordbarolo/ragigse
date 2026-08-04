@@ -91,7 +91,7 @@ export function BarRow({
   const [currentWidth, setCurrentWidth] = useState(animateAndBlurAt != null ? 0 : targetWidth);
   const [isBlurred, setIsBlurred] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
-  const rafRef = useRef<number | undefined>(undefined);
+  const rafRef = useRef<number>();
   const rowRef = useRef<HTMLDivElement>(null);
 
   // Start animation only when element is in upper 2/3 of viewport

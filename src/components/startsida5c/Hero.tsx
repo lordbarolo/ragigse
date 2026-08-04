@@ -1,9 +1,14 @@
 import Rateraknare from "./Rateraknare";
-import { marginText5c } from "./rate5c";
+import { marginText5c, type RateRow } from "./rate5c";
+
+interface Props {
+  rows: RateRow[];
+  isLoading: boolean;
+}
 
 const CHECKS = ["Inga uppgifter krävs", "Data inom EU", "Uppdateras vid nya avrop"];
 
-export default function Hero() {
+export default function Hero({ rows, isLoading }: Props) {
   const doctorMargin = marginText5c("Specialistläkare anestesi och intensivvård");
   const otherMargin = marginText5c("Sjuksköterska");
 
@@ -48,7 +53,7 @@ export default function Hero() {
           </ul>
         </div>
 
-        <Rateraknare />
+        <Rateraknare rows={rows} isLoading={isLoading} />
       </div>
     </section>
   );

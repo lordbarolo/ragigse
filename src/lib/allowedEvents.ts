@@ -89,8 +89,6 @@ export const ALLOWED_EVENTS = [
   "lonekoll_question_selected",
   "lonekoll_answer_reported",
   "lonekoll_missing_question_reported",
-  "home_chat_question_clicked",
-  "home_chat_login_prompt_shown",
 ] as const;
 
 export type AllowedEventName = (typeof ALLOWED_EVENTS)[number];

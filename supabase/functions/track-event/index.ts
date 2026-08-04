@@ -96,8 +96,6 @@ const ALLOWED_EVENTS = new Set([
   "lonekoll_question_selected",
   "lonekoll_answer_reported",
   "lonekoll_missing_question_reported",
-  "home_chat_question_clicked",
-  "home_chat_login_prompt_shown",
 ]);
 
 serve(async (req) => {
