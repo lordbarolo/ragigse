@@ -38,7 +38,7 @@ const CompcareLogo = forwardRef<HTMLSpanElement, CompcareLogoProps>(
         : "/compcare-logo-light.svg";
     };
 
-    const altText = "CompCare – lönekoll för vårdkonsulter";
+    const altText = "vardbemanning.ai – lönekoll för vårdkonsulter";
 
     if (typeof inverted === "boolean") {
       const src = fileFor(inverted ? "dark" : "light");
