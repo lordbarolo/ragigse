@@ -86,15 +86,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1.0" },
       { name: "theme-color", content: "#00D2E6" },
-      { title: "CompCare – Lön & ramavtalspriser för vårdkonsulter" },
+      { title: "vardbemanning.ai – Lön & ramavtalspriser för vårdkonsulter" },
       {
         name: "description",
         content:
           "Jämför ditt erbjudande mot SKR:s ramavtalspriser i 290 kommuner. Gratis löneanalys för sjuksköterskor, barnmorskor och läkare.",
       },
-      { name: "author", content: "CompCare.se" },
+      { name: "author", content: "vardbemanning.ai" },
       { name: "google-site-verification", content: "pxkpIKa72d27kXJKDNy3NyavUthWqbvbZUbD1JHYLs0" },
-      { property: "og:title", content: "CompCare – Lön & ramavtalspriser för vårdkonsulter" },
+      { property: "og:title", content: "vardbemanning.ai – Lön & ramavtalspriser för vårdkonsulter" },
       {
         property: "og:description",
         content: "Jämför din ersättning mot offentliga ramavtalspriser. Anonymt och kostnadsfritt.",
@@ -102,7 +102,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://vardbemanning.ai/" },
       { property: "og:locale", content: "sv_SE" },
-      { property: "og:site_name", content: "CompCare" },
+      { property: "og:site_name", content: "vardbemanning.ai" },
       { property: "og:image", content: "https://vardbemanning.ai/compcare-og.png" },
       { property: "og:image:width", content: "1200" },
       { property: "og:image:height", content: "630" },

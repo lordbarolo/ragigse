@@ -26,7 +26,7 @@ export default function Footer5c() {
           ))}
         </nav>
         <div className="text-[11.5px]" style={{ color: "#8a8f9e" }}>
-          © 2026 CompCare · Data lagras inom EU
+          © 2026 vardbemanning.ai · Data lagras inom EU
         </div>
       </div>
     </footer>

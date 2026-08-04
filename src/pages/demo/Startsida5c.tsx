@@ -17,14 +17,14 @@ const LANDING_JSONLD = [
   {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "CompCare",
+    name: "vardbemanning.ai",
     url: `${SITE_URL}/`,
     inLanguage: "sv-SE",
   },
   {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "CompCare",
+    name: "vardbemanning.ai",
     url: `${SITE_URL}/`,
     logo: `${SITE_URL}/compcare-logo.svg`,
   },
@@ -48,7 +48,7 @@ export default function Startsida5c() {
   return (
     <div style={{ background: "#0e1016", fontFamily: "'Space Grotesk',system-ui,sans-serif", color: "#eef0f4" }}>
       <SEO
-        title="CompCare – Lön & ramavtalspriser för vårdkonsulter"
+        title="vardbemanning.ai – Lön & ramavtalspriser för vårdkonsulter"
         description="Se vad regionen betalar för din roll och zon enligt SKR:s ramavtal 2026 — och vad du kan fakturera efter bemanningsbolagets marginal."
         path="/"
         baseUrl={SITE_URL}
