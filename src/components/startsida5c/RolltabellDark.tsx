@@ -11,15 +11,15 @@ const ROWS: { label: string; yrkeskategori: string }[] = [
   { label: "Leg. sjuksköterska", yrkeskategori: "Sjuksköterska" },
 ];
 
-// Sektionen fejdar från mörkt till ljust ca 30 % ner (raden Geriatriker / Legitimerad läkare),
-// så radernas textfärger följer bakgrunden.
+// Sektionen är mörk hela vägen; fadet till ljust sker först efter innehållet
+// (nedre kanten av sektionen), så alla rader har mörk-tema-färger.
 const ROW_THEME = [
   { label: "#eef0f4", value: "#a3a7b7", accent: "#7c7ff2", border: "#22242e" },
-  { label: "#eef0f4", value: "#a3a7b7", accent: "#7c7ff2", border: "#2b2f42" },
-  { label: "#ffffff", value: "#eceef4", accent: "#ffffff", border: "#5a5f75" },
-  { label: "#2b2e3a", value: "#5f6474", accent: "#4f46e5", border: "#b6b9c3" },
-  { label: "#16181f", value: "#5a5f70", accent: "#4f46e5", border: "#dcdde3" },
-  { label: "#16181f", value: "#5a5f70", accent: "#4f46e5", border: "#dcdde3" },
+  { label: "#eef0f4", value: "#a3a7b7", accent: "#7c7ff2", border: "#22242e" },
+  { label: "#eef0f4", value: "#a3a7b7", accent: "#7c7ff2", border: "#22242e" },
+  { label: "#eef0f4", value: "#a3a7b7", accent: "#7c7ff2", border: "#22242e" },
+  { label: "#eef0f4", value: "#a3a7b7", accent: "#7c7ff2", border: "#22242e" },
+  { label: "#eef0f4", value: "#a3a7b7", accent: "#7c7ff2", border: "#22242e" },
 ];
 
 export default function RolltabellDark() {
@@ -28,9 +28,7 @@ export default function RolltabellDark() {
   return (
     <section
       style={{
-        background:
-          "linear-gradient(180deg,#0e1016 0%,#0e1016 20%,#191d2d 27%,#343950 34%,#6b7083 42%,#a7aab5 52%,#d8d9df 64%,#f0f0f3 78%,#f5f5f7 100%)",
-        borderBottom: "1px solid #e6e6ea",
+        background: "#0e1016",
       }}
     >
       <div className="mx-auto max-w-[1200px] px-5 py-14 md:px-12 md:py-16">
@@ -103,6 +101,16 @@ export default function RolltabellDark() {
           </Link>
         </div>
       </div>
+
+      {/* Övergång mörkt → ljust, efter sektionens innehåll */}
+      <div
+        aria-hidden
+        className="h-24 w-full md:h-32"
+        style={{
+          background:
+            "linear-gradient(180deg,#0e1016 0%,#191d2d 18%,#343950 34%,#6b7083 52%,#a7aab5 68%,#d8d9df 82%,#f5f5f7 100%)",
+        }}
+      />
     </section>
   );
 }
