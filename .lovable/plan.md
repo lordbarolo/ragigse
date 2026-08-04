@@ -1,59 +1,68 @@
-# Chattassistent på startsidan
+# Åtgärdsplan utifrån kodkontrollen 2026-08-04
 
-Ersätter hero-formuläret med en chattruta i exakt samma yta. Inget annat på sidan ändras.
+Jag har verifierat de kritiska fynden mot produktionsdatabasen och koden innan planen skrevs. Bekräftat:
 
-## 1. Chattrutan (startsidan, utloggad)
+- `ref_has_role` har **inte** EXECUTE för `authenticated` eller `anon`, och **29 RLS-policyer** (public + storage) anropar funktionen → frågor kraschar i stället för att filtrera.
+- `ref_get_public_profile` **finns inte** i databasen, men edge-funktionen `get-public-profile` anropar den (`index.ts:58`).
+- `src/routes/index.tsx` blockerar varje sidvisning på `ensureQueryData(ratesQueryOptions)` utan try/catch.
+- `scripts/generate-sitemap.ts` genererar fortfarande `/lon/*`, kampanjsidor, rapport-alias samt `llms.txt`/`openapi.json`.
+- `__root.tsx` kör `HelmetProvider` parallellt med TanStack head.
 
-Ny komponent `src/components/chat/HomeAssistantChat.tsx` som renderas där `InlineTerminalSurvey` ligger idag i `src/pages/Home.tsx` — samma bredd/höjd/kortstil.
+## Steg 1 — P0: återställ RLS för inloggade (akut)
 
-Innehåll:
-- Kort assistenthälsning.
-- Lista med förvalda frågor (klickbara). Fritextfältet syns men är låst med texten "Logga in för att ställa egna frågor".
-- Klick på en fråga → svar streamas/visas i rutan, sedan en diskret rad: "Logga in för att ställa egna frågor".
+- Migration: `GRANT EXECUTE ON FUNCTION public.ref_has_role(uuid, ref_app_role) TO authenticated;` (endast `authenticated`, inte `anon`).
+- Flytta `ref_has_role` från `ALL_DENIED` i `src/security/rpcGrants.test.ts` till en ny lista "tillåten för authenticated, nekad för anon", så testet inte återinför buggen.
+- Verifiera efteråt med en faktisk `SELECT` som inloggad mot `leads`, `tool_suggestions`, `organizations`.
 
-Fasta frågor (v1):
-1. Vad betalar Stockholm för en leg. sjuksköterska?
-2. Vad kan jag tjäna som allmänläkare i Torsby?
-3. Hur lång erfarenhet behöver jag för att jobba med bemanning?
-4. Kan jag ta konsultvikariat under termin 10 på läkarprogrammet?
-5. Behöver jag patientförsäkring som företagande läkare?
-6. Hur ofta avropar Gävle sjukhus sjuksköterskor till akuten?
-7. Är 390 kr/timme bra lön i Malmö?
+## Steg 2 — P0: `get-public-profile`
 
-Svaren är korta (2–4 meningar), i den neutrala tonen, och hämtas backend-side:
-- Prisfrågor (1, 2, 7): SKR-pris för roll+zon ur `contract_version_rates` × branschmarginal (85–90 % läkare, 80–85 % övriga) — samma modell som resten av appen.
-- Avtals-/regelfrågor (3, 4, 5): svar ur indexerade avtalschunks (samma RAG som `lonekoll-answer`), med källhänvisning till avtalsbilagan.
-- Avropsfrågan (6): historik ur `calloff_imports`, alltid transparent formulerat ("Utifrån tillgänglig avropsdata 2022–2025 ser jag X avrop…"), aldrig som live-data.
+Rekommendation: **avpublicera** endpointen (Ref-ID är arkiverat, ingen aktiv publik profilvy finns).
 
-## 2. Konto först, sedan enkät
+- Ta bort edge-funktionen `get-public-profile`.
+- Ta bort endpointen ur `public/openapi.json`, `public/llms-full.txt`, `public/llms.txt`, `public/agent-*`.
 
-Flödet blir: utloggad chatt → Logga in / Skapa konto → magic link/Google → obligatorisk enkät → fri chatt.
+Alternativ om profilvyn ska tillbaka: återskapa RPC:n först — men det görs då som separat uppdrag.
 
-- `/logga-in` och `/registrera` byggs om till enbart **Google** och **magic link** (e-postlänk). Lösenordsfälten tas bort; `/aterstall-losenord` blir överflödig och tas bort ur navigationen.
-- Efter bekräftad inloggning skickas användaren till `/onboarding` om enkäten inte är besvarad. Alla skyddade sidor (inkl. fri chatt) gate:as tills profilen har roll, ort, kontraktsform och ersättning.
+## Steg 3 — P1: robust startsida
 
-## 3. Enkäten med statisk förklaringstext
+- Lägg `try/catch` runt loadern i `src/routes/index.tsx` så sidan renderas utan prisdata vid fel.
+- `Rateraknare`/`useRates5c` visar neutral "prisdata kunde inte hämtas"-status i stället för krasch.
 
-Enkäten återanvänder befintlig `InlineTerminalSurvey`-logik (roll → specialisering → kontraktsform → ort → ersättning), men visas nu efter inloggning.
+## Steg 4 — P1: sitemap-städning (ingen layoutändring)
 
-På **varje** steg visas samma statiska text, alltid synlig:
+Uppdatera `scripts/generate-sitemap.ts` till ~19 URL:er:
 
-> Roll, ort, kontraktsform och ersättning behövs för att visa information om dina villkor i förhållande till den övriga marknaden. Inga uppgifter delas.
+- Ta bort `lonEntries()` (2 552 URL:er) och sätt `noindex` på `/lon/$specialty/$city`.
+- Ta bort `CAMPAIGN_ROLES` ur sitemapen + `noindex` på `/kampanj/$role` (sidorna behålls för utskick).
+- Behåll `/rapport/sjukskoterska`; 301 från de fem alias-slugarna (`legitimerad-sjukskoterska`, `leg-sjukskoterska`, `leg-ssk`, `ssk`, `allmansjukskoterska`).
+- Ta bort `/llms.txt` och `/openapi.json` ur sitemapen (annonseras i robots.txt).
+- `/bollnas/lakare-alm` → `noindex`.
 
-Svaren sparas på användarens profil och används som kontext för chatten.
+Kvar: `/`, `/vanliga-fragor`, `/faktasidor`, `/integritetspolicy`, 3 rapporter + 13 läkarspecialistrapporter.
 
-## 4. Inloggad chatt
+## Steg 5 — P1: domänsynk i mejl
 
-Samma chattkomponent, men fritextfältet är upplåst. Frågorna besvaras med användarens sparade kontext (roll/ort/kontraktsform/ersättning) — kontexten läses server-side, aldrig från klienten.
+- Sätt `APP_BASE_URL`-default till `https://vardbemanning.ai` i `send-transactional-email`, `send-password-recovery`, `save-email`, `send-followup-emails` (länkar i mejl).
+- Avsändardomänen förblir Resend-verifierade `compcare.se` tills `vardbemanning.ai` är verifierad i Resend — separat spår.
 
-## Tekniska detaljer
+## Steg 6 — P2: skydd och städning
 
-- Ny edge function `home-assistant` (publik, rate-limitad per IP) för de fasta frågorna: fast fråge-ID in, färdigt svar ut. Inga prompts på klienten.
-- Fri chatt går via en autentiserad function som återanvänder kontext- och RAG-logiken i `lonekoll-answer` samt `ai-usage-logs`-loggning och 30-anrop/dygn-gränsen.
-- Magic link via `supabase.auth.signInWithOtp` med `emailRedirectTo` = `window.location.origin`; Google via `lovable.auth.signInWithOAuth` (samma redirect-regel).
-- Google-provider aktiveras i samma steg så första inloggningen fungerar.
-- Enkätsvaren skrivs till användarens profil med RLS scopad till `auth.uid()`; grants ses över i samma migration.
-- Tracking: befintliga survey-events behålls, nya events för `home_chat_question_clicked` och `home_chat_login_prompt_shown` läggs till i `allowedEvents`.
+- Rate limit på `submitToolSuggestion` (per IP + per e-post, samma mönster som `home-assistant`) och på `create-report`.
+- Bekräftelseflödet: `/api/public/bekrafta-forslag` → läs `?forslag=` på startsidan och visa kvittens; byt till POST-bekräftelse (klick på sida) så mejlskannrar inte auto-bekräftar.
+- Admin-krav på `parse-avrop`.
+- Ta bort `HelmetProvider` ur `__root.tsx` när inga aktiva sidor använder Helmet (inventeras först).
+- Flytta `src/pages/demo/Startsida5c.tsx` → `src/pages/Startsida.tsx` (ren flytt, ingen designändring).
+- Uppdatera `scripts/e2e-smoketest.ts` till nuvarande startsideflöde.
 
-## Utanför scope
-Ingen ändring av startsidans layout, hero-text, RoleCarousel, footer eller övriga sidor.
+## Steg 7 — P3
+
+Städa oanvända variabler i `OvergangChatt.tsx`, korta ner presetcachen i `home-assistant` till 1 h, samla fonter på rot-nivå.
+
+## Beslut jag behöver från dig
+
+1. `get-public-profile`: avpublicera (mitt förslag) eller återskapa RPC:n?
+2. Steg 7 i rapporten (TanStack SSR vs SPA-revert) ligger utanför denna plan — vill du att jag utreder det separat?
+
+## Teknisk not — dokumentera default privileges-fällan
+
+`ALTER DEFAULT PRIVILEGES ... REVOKE FROM PUBLIC` gäller fortfarande, så varje ny databasfunktion saknar EXECUTE tills den GRANT:as explicit. Regeln skrivs in i projektminnet så alla framtida migrationer inkluderar explicita GRANT-rader (samma princip som tabell-GRANTs).
