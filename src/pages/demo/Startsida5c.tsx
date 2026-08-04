@@ -24,7 +24,7 @@ const LANDING_JSONLD = [
   {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "CompCare",
+    name: "vardbemanning.ai",
     url: `${SITE_URL}/`,
     logo: `${SITE_URL}/compcare-logo.svg`,
   },
