@@ -23,7 +23,7 @@ interface CompcareLogoProps extends HTMLAttributes<HTMLSpanElement> {
 const CompcareLogo = forwardRef<HTMLSpanElement, CompcareLogoProps>(
   ({ variant = "wordmark", className = "", inverted, ...rest }, ref) => {
     const sizeClass =
-      variant === "icon" ? "h-8 w-8" : variant === "full" ? "h-9" : "h-7";
+      variant === "icon" ? "h-8 w-8" : variant === "full" ? "h-5 md:h-6" : "h-5 md:h-6";
 
     const fileFor = (mode: "light" | "dark") => {
       if (variant === "icon") return "/compcare-icon.svg";
@@ -38,7 +38,7 @@ const CompcareLogo = forwardRef<HTMLSpanElement, CompcareLogoProps>(
         : "/compcare-logo-light.svg";
     };
 
-    const altText = "CompCare – lönekoll för vårdkonsulter";
+    const altText = "vardbemanning.ai – lönekoll för vårdkonsulter";
 
     if (typeof inverted === "boolean") {
       const src = fileFor(inverted ? "dark" : "light");
