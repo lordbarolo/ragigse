@@ -67,12 +67,13 @@ export default function Startsida5c() {
         className="flex items-center justify-between px-5 py-4 md:px-12 md:py-5"
         style={{ borderBottom: "1px solid #22242e" }}
       >
-        <Link
-          to="/"
-          className="text-[17px] font-semibold"
-          style={{ fontFamily: "'IBM Plex Mono',monospace", letterSpacing: "-0.5px", color: "#eef0f4" }}
-        >
-          compcare
+        <Link to="/" className="inline-flex items-center" aria-label="vardbemanning.ai">
+          <img
+            src="/compcare-logo-dark.svg"
+            alt="vardbemanning.ai"
+            className="h-6 w-auto select-none md:h-7"
+            draggable={false}
+          />
         </Link>
         <Link
           to="/logga-in"
