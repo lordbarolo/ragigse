@@ -17,7 +17,7 @@ const LANDING_JSONLD = [
   {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "CompCare",
+    name: "vardbemanning.ai",
     url: `${SITE_URL}/`,
     inLanguage: "sv-SE",
   },
