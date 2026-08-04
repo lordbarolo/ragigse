@@ -26,16 +26,16 @@ const CompcareLogo = forwardRef<HTMLSpanElement, CompcareLogoProps>(
       variant === "icon" ? "h-8 w-8" : variant === "full" ? "h-5 md:h-6" : "h-5 md:h-6";
 
     const fileFor = (mode: "light" | "dark") => {
-      if (variant === "icon") return "/compcare-icon.svg";
+      if (variant === "icon") return "/vardbemanning-icon.svg";
       if (variant === "wordmark") {
         return mode === "dark"
-          ? "/compcare-wordmark-dark.svg"
-          : "/compcare-wordmark-light.svg";
+          ? "/vardbemanning-wordmark-dark.svg"
+          : "/vardbemanning-wordmark-light.svg";
       }
       // full
       return mode === "dark"
-        ? "/compcare-logo-dark.svg"
-        : "/compcare-logo-light.svg";
+        ? "/vardbemanning-logo-dark.svg"
+        : "/vardbemanning-logo-light.svg";
     };
 
     const altText = "vardbemanning.ai – lönekoll för vårdkonsulter";
@@ -65,7 +65,7 @@ const CompcareLogo = forwardRef<HTMLSpanElement, CompcareLogoProps>(
           role="img"
           {...rest}
         >
-          <img src="/compcare-icon.svg" alt={altText} className="h-full w-auto select-none" draggable={false} />
+          <img src="/vardbemanning-icon.svg" alt={altText} className="h-full w-auto select-none" draggable={false} />
         </span>
       );
     }
