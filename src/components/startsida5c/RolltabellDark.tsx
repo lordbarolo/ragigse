@@ -11,15 +11,15 @@ const ROWS: { label: string; yrkeskategori: string }[] = [
   { label: "Leg. sjuksköterska", yrkeskategori: "Sjuksköterska" },
 ];
 
-// Sektionen fejdar från mörkt till ljust ca 30 % ner (raden Geriatriker / Legitimerad läkare),
-// så radernas textfärger följer bakgrunden.
+// Sektionen är mörk hela vägen; fadet till ljust sker först efter innehållet
+// (nedre kanten av sektionen), så alla rader har mörk-tema-färger.
 const ROW_THEME = [
   { label: "#eef0f4", value: "#a3a7b7", accent: "#7c7ff2", border: "#22242e" },
-  { label: "#eef0f4", value: "#a3a7b7", accent: "#7c7ff2", border: "#2b2f42" },
-  { label: "#ffffff", value: "#eceef4", accent: "#ffffff", border: "#5a5f75" },
-  { label: "#2b2e3a", value: "#5f6474", accent: "#4f46e5", border: "#b6b9c3" },
-  { label: "#16181f", value: "#5a5f70", accent: "#4f46e5", border: "#dcdde3" },
-  { label: "#16181f", value: "#5a5f70", accent: "#4f46e5", border: "#dcdde3" },
+  { label: "#eef0f4", value: "#a3a7b7", accent: "#7c7ff2", border: "#22242e" },
+  { label: "#eef0f4", value: "#a3a7b7", accent: "#7c7ff2", border: "#22242e" },
+  { label: "#eef0f4", value: "#a3a7b7", accent: "#7c7ff2", border: "#22242e" },
+  { label: "#eef0f4", value: "#a3a7b7", accent: "#7c7ff2", border: "#22242e" },
+  { label: "#eef0f4", value: "#a3a7b7", accent: "#7c7ff2", border: "#22242e" },
 ];
 
 export default function RolltabellDark() {
