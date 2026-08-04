@@ -26,7 +26,7 @@ const LANDING_JSONLD = [
     "@type": "Organization",
     name: "vardbemanning.ai",
     url: `${SITE_URL}/`,
-    logo: `${SITE_URL}/compcare-logo.svg`,
+    logo: `${SITE_URL}/vardbemanning-logo.svg`,
   },
 ];
 
@@ -69,7 +69,7 @@ export default function Startsida5c() {
       >
         <Link to="/" className="inline-flex items-center" aria-label="vardbemanning.ai">
           <img
-            src="/compcare-logo-dark.svg"
+            src="/vardbemanning-logo-dark.svg"
             alt="vardbemanning.ai"
             className="h-6 w-auto select-none md:h-7"
             draggable={false}

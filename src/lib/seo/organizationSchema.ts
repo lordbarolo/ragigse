@@ -22,7 +22,7 @@ export const organizationSchema = {
   url: BASE_URL,
   logo: {
     "@type": "ImageObject",
-    url: `${BASE_URL}/compcare-logo.svg`,
+    url: `${BASE_URL}/vardbemanning-logo.svg`,
     width: 512,
     height: 512,
   },
