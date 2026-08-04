@@ -11,12 +11,12 @@ import { TEMPLATES } from '../_shared/transactional-email-templates/registry.ts'
 //  - RESEND_API_KEY_1       (connector key, managed by Resend connector)
 //  - SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY
 // Optional env:
-//  - RESEND_FROM_DOMAIN     (default: "mail.compcare.se" — already verified)
+//  - RESEND_FROM_DOMAIN     (default: "compcare.se" — verified root domain in Resend)
 //  - RESEND_FROM_NAME       (default: "CompCare")
 //  - APP_BASE_URL           (default: "https://compcare.se" — used in unsubscribe links)
 
 const SITE_NAME = Deno.env.get('RESEND_FROM_NAME') || 'CompCare'
-const FROM_DOMAIN = Deno.env.get('RESEND_FROM_DOMAIN') || 'mail.compcare.se'
+const FROM_DOMAIN = Deno.env.get('RESEND_FROM_DOMAIN') || 'compcare.se'
 const APP_BASE_URL = Deno.env.get('APP_BASE_URL') || 'https://compcare.se'
 const GATEWAY_URL = 'https://connector-gateway.lovable.dev/resend'
 
