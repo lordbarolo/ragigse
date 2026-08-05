@@ -69,7 +69,7 @@ export default function Startsida5c() {
       >
         <Link to="/" className="inline-flex items-center" aria-label="vardbemanning.ai">
           <img
-            src="/vardbemanning-logo-dark-v2.png"
+            src="/vardbemanning-wordmark-dark-v2.png"
             alt="vardbemanning.ai"
             className="h-6 w-auto select-none md:h-7"
             draggable={false}
