@@ -12,7 +12,7 @@ export default function Footer5c() {
     <footer style={{ background: "#f5f5f7" }}>
       <div className="mx-auto flex max-w-[1200px] flex-col gap-4 px-5 py-10 md:flex-row md:items-center md:justify-between md:px-12">
         <img
-          src="/vardbemanning-logo-light-v2.png"
+          src="/vardbemanning-lockup-light.svg"
           alt="vardbemanning.ai"
           className="h-5 w-auto select-none"
           draggable={false}
