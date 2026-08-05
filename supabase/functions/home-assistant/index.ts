@@ -38,7 +38,7 @@ const json = (body: unknown, status = 200) =>
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 
-/** Läkare behåller 85–90 % av kundpriset, övriga roller 80–85 %. */
+/** Intern andelsmodell — får aldrig beskrivas i svar till användaren. */
 function shareRange(role: string): [number, number] {
   const isDoctor = /läkare|lakare/i.test(role);
   return isDoctor ? [0.85, 0.9] : [0.8, 0.85];
@@ -163,11 +163,12 @@ Deno.serve(async (req) => {
       const systemPrompt =
         "Du är vårdbemanning.ai:s assistent för svenska vårdkonsulter. Svara neutralt och sakligt på svenska, " +
         "max tre korta stycken. Utgå endast från SKR:s ramavtal, publicerade historiska avrop och " +
-        "branschens marginalmodeller. Använd aldrig SCB eller lönestatistik för konsultpriser. " +
+        "vårdbemanning.ai:s prismodell. Använd aldrig SCB eller lönestatistik för konsultpriser. " +
         "Nämn aldrig gruppetiketter som 'Grupp A'. Beskriv aldrig en nivå som bra eller dålig — " +
         "beskriv bara hur den förhåller sig till ramavtalet. Avrop är alltid historiska, aldrig pågående. " +
-        `Marginalintervall för denna roll: konsulten behåller ${Math.round(lo * 100)}–${Math.round(hi * 100)} % ` +
-        "av kundpriset; anställd räknas om med faktor 1,38 och 167 timmar per månad. " +
+        "Förklara ALDRIG hur möjlig ersättning beräknas: nämn inga marginaler, procentandelar, " +
+        "omräkningsfaktorer eller antal timmar per månad. Om någon frågar hur siffran räknas fram, " +
+        "svara att beräkningen utgår från regionernas ramavtal och att modellen inte redovisas. " +
         `${profileContext} ${rateContext}`.trim();
 
       const model = getAiModel();
@@ -238,7 +239,7 @@ Deno.serve(async (req) => {
           "I grundpriset ingår ordinarie arbetstid. Utanför grundpriset ligger OB, jour och beredskap, som ersätts " +
           "separat enligt avtalets påslag, samt resor och boende som regleras per avrop.\n\n" +
           "Ramavtalet reglerar inte din ersättning — det reglerar vad regionen betalar bemanningsföretaget. " +
-          "Din del beror på bolagets marginal.",
+          "Din möjliga ersättning visas som ett spann per roll och zon.",
         source: "SKR:s ramavtal för hyrpersonal, offentliga prisbilagor",
       });
     }
@@ -246,13 +247,10 @@ Deno.serve(async (req) => {
     if (key === "anstallningsform") {
       return json({
         answer:
-          "Som egenföretagare fakturerar du kundpriset minus bemanningsbolagets marginal — normalt behåller läkare " +
-          "85–90 % och övriga roller 80–85 % av kundpriset. Marginalen kan vara lägre när bolaget tar betalningsrisk " +
-          "eller garanterar timmar.\n\n" +
-          "Som anställd konsult räknas samma belopp om till lön genom att dela med arbetsgivaravgifter och " +
-          "avtalspension (faktor 1,38) och 167 timmar per månad. Samma kundpris ger därför olika belopp på lönebeskedet " +
+          "Som egenföretagare fakturerar du ett belopp som utgår från kundpriset enligt ramavtalet.\n\n" +
+          "Som anställd konsult visas motsvarande nivå som lön. Samma kundpris ger därför olika belopp " +
           "beroende på anställningsform.",
-        source: "SKR-ramavtal + branschens standardmarginaler",
+        source: "SKR-ramavtal",
       });
     }
 
@@ -419,11 +417,10 @@ Deno.serve(async (req) => {
         return json({
           answer:
             `Kundpriset för ${role} i ${where} är ${kr(price)} enligt ramavtal ${version}.\n\n` +
-            `Efter bemanningsbolagets standardmarginal och omräkning till lön (faktor 1,38 för arbetsgivaravgifter ` +
-            `och avtalspension) motsvarar det ungefär ${kr(salaryLo)}–${kr(salaryHi)}.\n\n` +
+            `Möjlig ersättning som anställd är ungefär ${kr(salaryLo)}–${kr(salaryHi)}.\n\n` +
             `${fixed.amount} kr/timme ligger ${fixed.amount! < salaryLo ? "under" : fixed.amount! > salaryHi ? "över" : "inom"} det spannet. ` +
             `Vi anger inte om en nivå är bra — bara hur den förhåller sig till ramavtalet.`,
-          source: `SKR-ramavtal ${version} + branschens standardmarginaler`,
+          source: `SKR-ramavtal ${version}`,
         });
       }
 
@@ -431,7 +428,7 @@ Deno.serve(async (req) => {
         return json({
           answer:
             `Regionen betalar ${kr(price)} för ${role} i ${where} enligt ramavtal ${version}.\n\n` +
-            `Det är kundpriset — bemanningsbolagets marginal dras innan din ersättning.`,
+            `Det är kundpriset. Din möjliga ersättning visas som ett spann.`,
           source: `SKR-ramavtal ${version}`,
         });
       }
@@ -439,11 +436,9 @@ Deno.serve(async (req) => {
       return json({
         answer:
           `${role} i ${where}: kundpris ${kr(price)} enligt ramavtal ${version}.\n\n` +
-          `Efter bemanningsbolagets standardmarginal landar din fakturering normalt på ` +
-          `${kr(price * lo)}–${kr(price * hi)} (${Math.round(lo * 100)}–${Math.round(hi * 100)} % av kundpriset).\n\n` +
-          `Som anställd motsvarar det ungefär ${kr((price * lo) / 1.38)}–${kr((price * hi) / 1.38)} i lön, ` +
-          `efter arbetsgivaravgifter och avtalspension (faktor 1,38).`,
-        source: `SKR-ramavtal ${version} + branschens standardmarginaler`,
+          `Möjlig ersättning som egenföretagare: ${kr(price * lo)}–${kr(price * hi)}.\n\n` +
+          `Som anställd motsvarar det ungefär ${kr((price * lo) / 1.38)}–${kr((price * hi) / 1.38)} i lön.`,
+        source: `SKR-ramavtal ${version}`,
       });
     }
 
