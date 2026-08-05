@@ -384,8 +384,7 @@ export default function ConsultantTrackContent({
             <ul className="space-y-2.5">
               {[
                 "Regioner upphandlar bemanning genom ramavtal där ett kundpris fastställs.",
-                "Konsultens ersättning är normalt en andel av detta pris.",
-                "vårdbemanning.ai analyserar ramavtal och historiska uppdrag för att visa hur ersättningen i genomsnitt fördelas.",
+                "vårdbemanning.ai analyserar ramavtal och historiska avrop för din roll och zon.",
               ].map((text, i) => (
                 <li key={i} className="flex items-start gap-2.5 text-hint leading-relaxed">
                   <span className="mt-1.5 w-1 h-1 rounded-full bg-muted-foreground/20 shrink-0" />
