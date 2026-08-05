@@ -61,7 +61,7 @@ const CompcareLogo = forwardRef<HTMLSpanElement, CompcareLogoProps>(
           role="img"
           {...rest}
         >
-          <img src="/vardbemanning-icon-v2.png" alt={altText} className="h-full w-auto select-none" draggable={false} />
+          <img src="/vardbemanning-symbol.svg" alt={altText} className="h-full w-auto select-none" draggable={false} />
         </span>
       );
     }
