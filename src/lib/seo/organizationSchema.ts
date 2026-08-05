@@ -39,7 +39,6 @@ export const organizationSchema = {
     "SKR ramavtal vårdbemanning",
     "Timpriser sjuksköterskor",
     "Timpriser läkare",
-    "Bemanningsmarginal vård",
     "Fakturagranskning vårdbemanning",
     "Vårdbemanning Sverige",
   ],

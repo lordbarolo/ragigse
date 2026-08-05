@@ -13,8 +13,8 @@ serve(async (req) => {
 
   const metrics = [
     { key: "amount", label: "Timpris (kr/h)", description: "Ramavtalspris per timme som kunden betalar", capabilities: ["lookup_rate", "compare_roles"], unit: "SEK", unit_type: "per_hour" },
-    { key: "recommended_monthly_min", label: "Rekommenderat månadsarvode (min)", description: "Beräknad lägsta månadsersättning baserat på marginalmodell", capabilities: ["lookup_rate"], unit: "SEK", unit_type: "per_month" },
-    { key: "recommended_monthly_max", label: "Rekommenderat månadsarvode (max)", description: "Beräknad högsta månadsersättning baserat på marginalmodell", capabilities: ["lookup_rate"], unit: "SEK", unit_type: "per_month" },
+    { key: "recommended_monthly_min", label: "Rekommenderat månadsarvode (min)", description: "Lägsta möjliga månadsersättning enligt ramavtal", capabilities: ["lookup_rate"], unit: "SEK", unit_type: "per_month" },
+    { key: "recommended_monthly_max", label: "Rekommenderat månadsarvode (max)", description: "Högsta möjliga månadsersättning enligt ramavtal", capabilities: ["lookup_rate"], unit: "SEK", unit_type: "per_month" },
     { key: "median_salary_base", label: "Medianlön (bas)", description: "Medianlön som används som beräkningsunderlag", capabilities: ["salary_benchmark", "salary_position"], unit: "SEK", unit_type: "per_month" },
     { key: "median_salary", label: "Medianlön", description: "Medianlön för fast anställda (50:e percentilen)", capabilities: ["salary_benchmark", "salary_position"], unit: "SEK", unit_type: "per_month" },
     { key: "p25_salary", label: "P25 — Undre kvartil", description: "25:e percentilen av lönefördelningen", capabilities: ["salary_benchmark", "salary_position"], unit: "SEK", unit_type: "per_month" },

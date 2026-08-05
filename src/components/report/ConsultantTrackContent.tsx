@@ -78,9 +78,6 @@ export default function ConsultantTrackContent({
 
   const shareMin = rec?.consultant_share_min ?? (isEmployee ? 0.85 : 0.85);
   const shareMax = rec?.consultant_share_max ?? (isEmployee ? 0.90 : 0.92);
-  const marginMin = Math.round((1 - shareMax) * 100);
-  const marginMax = Math.round((1 - shareMin) * 100);
-  const marginLabel = `${marginMin}–${marginMax}%`;
   const afterMarginMin = Math.round(marketRate * shareMin);
   const afterMarginMax = Math.round(marketRate * shareMax);
 

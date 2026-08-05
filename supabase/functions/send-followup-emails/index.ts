@@ -31,7 +31,7 @@ function getEmailTemplate(step: number, occupation: string, reportUrl: string): 
             <p>Hej! Du gjorde nyligen en ersättningsanalys för <strong>${occupation}</strong>. Här är tre konkreta tips:</p>
             <ol style="padding-left: 20px;">
               <li style="margin-bottom: 10px;"><strong>Hänvisa till ramavtalet</strong> — Kundpriset är offentligt och ger dig ett starkt förhandlingsunderlag.</li>
-              <li style="margin-bottom: 10px;"><strong>Fråga om marginalen</strong> — Be ditt bemanningsföretag specificera vad som ingår i deras marginal.</li>
+              <li style="margin-bottom: 10px;"><strong>Fråga om kostnaderna</strong> — Be ditt bemanningsföretag specificera vilka kostnader uppdraget medför.</li>
               <li style="margin-bottom: 10px;"><strong>Jämför zoner</strong> — Timpriset varierar mellan zoner. En flytt kan ge betydligt högre ersättning.</li>
             </ol>
             <p style="margin: 20px 0;">
