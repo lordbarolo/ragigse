@@ -68,14 +68,23 @@ const ANON_DENIED: Array<{ fn: string; body: Record<string, unknown> }> = [
   },
 ];
 
+/**
+ * Funktioner som ska ha EXECUTE för `authenticated` men vara nekade för `anon`.
+ * `ref_has_role` anropas av 29 RLS-policyer och måste vara körbar för inloggade,
+ * annars faller policy-utvärderingen med 42501 för legitima frågor.
+ */
+const AUTHENTICATED_ONLY: Array<{ fn: string; body: Record<string, unknown> }> = [
+  { fn: "ref_has_role", body: { _user_id: "00000000-0000-0000-0000-000000000000", _role: "admin" } },
+];
+
 /** Interna helpers som varken anon eller authenticated ska nå via RPC-lagret. */
 const ALL_DENIED: Array<{ fn: string; body: Record<string, unknown> }> = [
-  { fn: "ref_has_role", body: { _user_id: "00000000-0000-0000-0000-000000000000", _role: "admin" } },
   { fn: "ref_get_user_org_id", body: { _user_id: "00000000-0000-0000-0000-000000000000" } },
   { fn: "ref_calculate_trust_score", body: { p_profile_id: "00000000-0000-0000-0000-000000000000" } },
   { fn: "ref_calculate_profile_status", body: { p_profile_id: "00000000-0000-0000-0000-000000000000" } },
   { fn: "ref_refresh_attachability", body: { p_reference_id: "00000000-0000-0000-0000-000000000000" } },
 ];
+
 
 async function callRpc(fn: string, body: Record<string, unknown>, accessToken?: string) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, {
