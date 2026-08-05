@@ -20,7 +20,7 @@ const corsHeaders = {
 
 const GROUP_LABEL = /\bgrupp\s*[a-zA-Z0-9]+\b/i;
 
-// ── Regel 2: presetfrågor kostar noll — deras DB-uppslag cachas 24 h per isolat ──
+// ── Regel 2: presetfrågor kostar noll — deras DB-uppslag cachas 1 h per isolat ──
 const CACHE_TTL_MS = 60 * 60 * 1000; // 1h — färska presetsvar utan onödiga AI-anrop
 const presetCache = new Map<string, { at: number; value: unknown }>();
 
