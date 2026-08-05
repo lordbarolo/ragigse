@@ -8,13 +8,13 @@ export const Route = createFileRoute("/")({
   },
   head: () => ({
     meta: [
-      { title: "Fakturerar du rätt? AI-koll för vårdkonsulter | vardbemanning.ai" },
+      { title: "Fakturerar du rätt? AI-koll för vårdkonsulter | vårdbemanning.ai" },
       {
         name: "description",
         content:
           "Hitta timmar du missat att fakturera, få notis vid årets prisjustering och stöd i löneförhandlingen. Baserat på offentliga ramavtal.",
       },
-      { property: "og:title", content: "Fakturerar du rätt? AI-koll för vårdkonsulter | vardbemanning.ai" },
+      { property: "og:title", content: "Fakturerar du rätt? AI-koll för vårdkonsulter | vårdbemanning.ai" },
       {
         property: "og:description",
         content:
