@@ -65,7 +65,19 @@ for (const dir of SCAN_DIRS) {
       if (line.includes(ALLOW_MARKER)) return;
       const lower = line.toLowerCase();
       for (const rule of DEPRECATED) {
-        if (lower.includes(rule.phrase)) {
+        let idx = lower.indexOf(rule.phrase);
+        let hit = false;
+        while (idx !== -1) {
+          const before = lower[idx - 1] ?? " ";
+          const after = lower[idx + rule.phrase.length] ?? " ";
+          // Hoppa över kodidentifierare (hasBankid, has_bankid) — endast UI-text.
+          if (!/[a-z0-9_]/.test(before) && !/[a-z0-9_]/.test(after)) {
+            hit = true;
+            break;
+          }
+          idx = lower.indexOf(rule.phrase, idx + 1);
+        }
+        if (hit) {
           findings.push(
             `${rel}:${i + 1}  "${rule.phrase}" — ${rule.replacement}\n    ${line.trim()}`,
           );
