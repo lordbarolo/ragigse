@@ -47,7 +47,7 @@ export default function OvergangChatt() {
             style={{ lineHeight: 1.6, color: "#5a5f70" }}
           >
             Fråga assistenten vad regionen betalar för din roll och zon, vad du
-            kan fakturera efter bemanningsbolagets marginal och hur avropen har
+            kan fakturera och hur avropen har
             sett ut historiskt. Svaren bygger på omfattande Ai-analys av
             offentliga handlingar och historisk data.
           </p>

@@ -7,12 +7,12 @@ const FAQ_ITEMS = [
   {
     question: "Hur fungerar vårdbemanning.ai?",
     answer:
-      "Du fyller i yrkesroll, arbetsort och erfarenhet. Vi jämför din ersättning med möjlig ersättning, dvs. vad kunden betalar enligt ramavtal minus bemanningsbranschens standardmarginal. Resultatet visar hur din ersättning förhåller sig till möjlig ersättning.",
+      "Du fyller i yrkesroll, arbetsort och erfarenhet. Vi jämför din ersättning med möjlig ersättning utifrån regionernas officiella ramavtal. Resultatet visar hur din ersättning förhåller sig till möjlig ersättning.",
   },
   {
     question: "Vilka data baseras analysen på?",
     answer:
-      "Analysen baseras på regionernas officiella ramavtalspriser för 2026 och bemanningsbranschens standardmarginaler.",
+      "Analysen baseras på regionernas officiella ramavtalspriser för 2026.",
   },
   {
     question: "Kostar det något att använda vårdbemanning.ai?",
@@ -37,7 +37,7 @@ const FAQ_ITEMS = [
   {
     question: "Vad innehåller vårdbemanning.ai-rapporten?",
     answer:
-      "Rapporten visar ramavtalspriser för din yrkesroll och zon, marknadmässig lön efter marginal, samt hur din ersättning förhåller sig till marknadens percentiler.",
+      "Rapporten visar ramavtalspriser för din yrkesroll och zon samt hur din ersättning förhåller sig till möjlig ersättning.",
   },
   {
     question: "Skiljer sig ersättningarna mellan olika kommuner?",
