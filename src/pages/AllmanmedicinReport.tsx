@@ -420,9 +420,9 @@ export default function AllmanmedicinReport() {
             </p>
             <p>
               <span className="font-semibold" style={{ color: ink }}>
-                Marginalmodell:
+                Redovisning:
               </span>{" "}
-Redovisas som ersättningsspann per zon.
+              Möjlig ersättning visas som ett spann per zon.
             </p>
             <p>
               <span className="font-semibold" style={{ color: ink }}>
