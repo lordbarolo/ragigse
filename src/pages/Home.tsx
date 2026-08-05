@@ -23,7 +23,7 @@ const LANDING_JSONLD = [
     "@type": "Organization",
     name: "vårdbemanning.ai",
     url: "https://vardbemanning.ai/",
-    logo: "https://vardbemanning.ai/vardbemanning-logo.svg",
+    logo: "https://vardbemanning.ai/vardbemanning-logo-light-v2.png",
   },
 ];
 
