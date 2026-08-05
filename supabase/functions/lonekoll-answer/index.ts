@@ -201,7 +201,7 @@ async function answerTopic1(
 
   const margin = await getMarginModel(supabase, ctx.employment_type);
   if (!margin) {
-    return `Vi hittar ingen aktiv marginalmodell för anställningstypen. Försök igen senare.`;
+    return `Vi kan inte visa möjlig ersättning för anställningstypen just nu. Försök igen senare.`;
   }
 
   const lo = rate.timpris_kund * Number(margin.share_min);
@@ -220,7 +220,7 @@ async function answerTopic1(
         `**Aktuellt SKR-ramavtalspris för ${rate.yrkeskategori} i ${ctx.kommun} (${rate.zon}):** ${fmt(rate.timpris_kund)} kr/h kundpris.`,
         ``,
         `**Förväntat spann för ${empType}:** ${fmt(lo)}–${fmt(hi)} kr/h.`,
-        `Motsvarande månadsersättning (167 h): **${fmt(monthlyLo)}–${fmt(monthlyHi)} kr/mån**.`,
+        `Motsvarande månadsersättning: **${fmt(monthlyLo)}–${fmt(monthlyHi)} kr/mån**.`,
         ``,
         `Marginalen (${Math.round((1 - Number(margin.share_max)) * 100)}–${Math.round((1 - Number(margin.share_min)) * 100)}%) täcker bemanningsföretagets administration, rekrytering och risk.`,
       ].join("\n");
@@ -269,7 +269,7 @@ async function answerTopic1(
         `- **Begränsade arbetstider** (svårare att placera dig)`,
         ``,
         `När bemanningsföretaget står för dessa: räkna med 5–15 kr/h lägre nettoersättning till dig.`,
-        `När du står för dem själv: argumentera för full marginal eller reseersättning utöver timpriset.`,
+        `När du står för dem själv: argumentera för reseersättning utöver timpriset.`,
       ].join("\n");
     case "role_comparison":
       return [
@@ -440,9 +440,9 @@ async function answerTopic3(
         `**Hur du hanterar motbud:**`,
         ``,
         `1. **Fråga efter motiveringen:** "Vilka kostnader belastar uppdraget?" (resa, boende, intro, vite)`,
-        `2. **Jämför mot ramavtalets max:** ${fmt(rate.timpris_kund)} kr/h är kundpriset — din andel är förhandlingsbar inom marginalmodellen.`,
+        `2. **Jämför mot ramavtalets max:** ${fmt(rate.timpris_kund)} kr/h är kundpriset — din ersättning är förhandlingsbar.`,
         `3. **Erbjud paket:** Lägre timpris mot längre uppdrag eller fler pass.`,
-        `4. **Be om skriftligt:** Be om bf:s kalkyl (vilka kostnader, vilken marginal). Många säger nej — vilket också är information.`,
+        `4. **Be om skriftligt:** Be om bemanningsbolagets kalkyl över vilka kostnader uppdraget medför. Många säger nej — vilket också är information.`,
         `5. **Ha en walk-away-nivå:** Skriv ner i förväg vilket pris du tackar nej under.`,
       ].join("\n");
     case "walk_away": {
