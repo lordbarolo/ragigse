@@ -119,7 +119,7 @@ export default function LonSpecialtyCity() {
           estimatedSalary: [
             {
               "@type": "MonetaryAmountDistribution",
-              name: "Ersättning som företagare (efter bemanningsbolagets marginal)",
+              name: "Ersättning som företagare",
               currency: "SEK",
               unitText: "HOUR",
               median: data.contractor_rate,
@@ -133,7 +133,7 @@ export default function LonSpecialtyCity() {
             },
             {
               "@type": "MonetaryAmountDistribution",
-              name: "Ersättning som löntagare (efter marginal och arbetsgivaravgifter)",
+              name: "Ersättning som löntagare",
               currency: "SEK",
               unitText: "HOUR",
               median: data.employee_rate,
@@ -151,7 +151,7 @@ export default function LonSpecialtyCity() {
           "@type": "Dataset",
           "@id": `${url}#dataset`,
           name: `Ramavtalspris ${data.specialty_name}, ${place}, 2026`,
-          description: `Timpris (kundpris) enligt regionernas ramavtal 2026 för ${data.specialty_name} i ${place}, samt beräknad ersättning för företagare och löntagare efter bemanningsbolagets marginal.`,
+          description: `Timpris (kundpris) enligt regionernas ramavtal 2026 för ${data.specialty_name} i ${place}, samt möjlig ersättning för företagare och löntagare.`,
           url,
           isAccessibleForFree: true,
           inLanguage: "sv-SE",
@@ -174,7 +174,7 @@ export default function LonSpecialtyCity() {
               name: `Vad är timpengen för ${data.specialty_name} i ${place} 2026?`,
               acceptedAnswer: {
                 "@type": "Answer",
-                text: `Enligt regionernas ramavtal 2026 är kundpriset ${data.client_rate} kr/h för ${data.specialty_name} i ${place}. Som företagare kan ersättningen ligga omkring ${data.contractor_rate} kr/h och som löntagare omkring ${data.employee_rate} kr/h efter bemanningsbolagets marginal. Källa: ${data.source}.`,
+                text: `Enligt regionernas ramavtal 2026 är kundpriset ${data.client_rate} kr/h för ${data.specialty_name} i ${place}. Som företagare kan ersättningen ligga omkring ${data.contractor_rate} kr/h och som löntagare omkring ${data.employee_rate} kr/h. Källa: ${data.source}.`,
               },
             },
             {
@@ -182,7 +182,7 @@ export default function LonSpecialtyCity() {
               name: `Varför skiljer sig kundpriset från min ersättning som ${data.specialty_name}?`,
               acceptedAnswer: {
                 "@type": "Answer",
-                text: `Kundpriset (${data.client_rate} kr/h) är vad regionen betalar bemanningsbolaget. Bolaget behåller en marginal för administration, garanterade timmar och betalningsrisk. Kvar till konsulten blir omkring ${data.contractor_rate} kr/h som företagare. Som löntagare tas dessutom arbetsgivaravgifter och avtalspension bort, vilket ger omkring ${data.employee_rate} kr/h.`,
+                text: `Kundpriset (${data.client_rate} kr/h) är vad regionen betalar bemanningsbolaget. Möjlig ersättning till konsulten är omkring ${data.contractor_rate} kr/h som företagare och omkring ${data.employee_rate} kr/h som löntagare.`,
               },
             },
             {
@@ -190,7 +190,7 @@ export default function LonSpecialtyCity() {
               name: `Vilken källa används för priset i ${place}?`,
               acceptedAnswer: {
                 "@type": "Answer",
-                text: `${data.source}. vårdbemanning.ai använder enbart regionernas upphandlade ramavtalspriser samt bemanningsbranschens marginalmodell — aldrig SCB- eller Medlingsinstitutets lönestatistik.`,
+                text: `${data.source}. vårdbemanning.ai använder enbart regionernas upphandlade ramavtalspriser — aldrig SCB- eller Medlingsinstitutets lönestatistik.`,
               },
             },
           ],
@@ -284,7 +284,7 @@ export default function LonSpecialtyCity() {
             <p className="mt-5 text-[15.5px] leading-relaxed" style={{ color: "#a8adbd" }}>
               Enligt regionernas gällande ramavtal för 2026 ligger det faktiska kundpriset för en{" "}
               {data.specialty_name} i {cityLabel} på {kr(data.client_rate)} kr/h. Efter
-              bemanningsbolagets typiska marginal kan du som konsult förvänta dig följande ersättningsspann.
+              ramavtalet kan du som konsult förvänta dig följande ersättningsspann.
             </p>
 
             <div className="mt-7 grid gap-3 sm:grid-cols-2">
@@ -319,7 +319,7 @@ export default function LonSpecialtyCity() {
               style={{ background: "#151823", border: "1px solid #262a38", borderRadius: 16 }}
             >
               <p className="text-[15px] leading-relaxed" style={{ color: "#c8ccd8" }}>
-                Vill du se exakt marginalanalys, bevaka skift eller få personlig rådgivning?
+                Vill du se din personliga analys, bevaka skift eller få rådgivning?
               </p>
               <Link
                 to="/logga-in"

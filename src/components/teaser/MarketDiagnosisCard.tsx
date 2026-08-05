@@ -107,7 +107,7 @@ export default function MarketDiagnosisCard({
       </div>
 
       <p className="text-hint mt-4 leading-relaxed">
-        Övre spann motsvarar {markerMarginPct} % marginal till bemanningsföretaget. Baserat på SKR-ramavtalspriser i {kommun}.
+        Baserat på SKR-ramavtalspriser i {kommun}.
       </p>
     </div>
   );
