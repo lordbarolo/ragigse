@@ -39,7 +39,7 @@ export default function OvergangChatt() {
                 color: "transparent",
               }}
             >
-              Sätt din agent i arbete.
+              Sätt din assistent i arbete.
             </span>
           </h2>
           <p
