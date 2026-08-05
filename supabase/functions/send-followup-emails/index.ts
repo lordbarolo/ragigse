@@ -2,6 +2,7 @@ import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 import { requireCronOrAdmin } from "../_shared/cronAuth.ts";
+import { fromAddress } from "../_shared/mailFrom.ts";
 
 
 const APP_BASE_URL = Deno.env.get("APP_BASE_URL") || "https://vardbemanning.ai";
@@ -167,7 +168,7 @@ serve(async (req) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            from: "vårdbemanning.ai <noreply@mail.compcare.se>",
+            from: fromAddress(),
             to: [email.email],
             subject: template.subject,
             html: template.html,

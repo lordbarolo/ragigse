@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { fromAddress } from "../_shared/mailFrom.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -166,7 +167,7 @@ serve(async (req) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            from: "vårdbemanning.ai <noreply@mail.compcare.se>",
+            from: fromAddress(),
             to: [referee_email],
             subject: "Din kollega tipsar: Har du rätt ersättning som konsult?",
             html: emailHtml,
