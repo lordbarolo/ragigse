@@ -5,7 +5,7 @@ import {
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
 
-const SITE_NAME = 'CompCare'
+const SITE_NAME = 'vårdbemanning.ai'
 
 interface ReportDeliveryProps {
   occupation?: string
@@ -31,11 +31,11 @@ const ReportDeliveryEmail = ({ occupation, kommun, reportUrl }: ReportDeliveryPr
             förhandlingsstrategier anpassade för dig.
           </Text>
         </Section>
-        <Button style={button} href={reportUrl || 'https://compcare.se'}>
+        <Button style={button} href={reportUrl || 'https://vardbemanning.ai'}>
           Öppna min rapport →
         </Button>
         <Text style={footer}>
-          Rapporten finns alltid tillgänglig via ditt CompCare-konto.
+          Rapporten finns alltid tillgänglig via ditt vårdbemanning.ai-konto.
         </Text>
       </Container>
     </Body>
@@ -47,7 +47,7 @@ export const template = {
   subject: (data: Record<string, any>) =>
     `Din ersättningsanalys — ${data.occupation || 'din roll'}${data.kommun ? `, ${data.kommun}` : ''}`,
   displayName: 'Rapportleverans',
-  previewData: { occupation: 'Specialistsjuksköterska', kommun: 'Stockholm', reportUrl: 'https://compcare.se/rapport/demo' },
+  previewData: { occupation: 'Specialistsjuksköterska', kommun: 'Stockholm', reportUrl: 'https://vardbemanning.ai/rapport/demo' },
 } satisfies TemplateEntry
 
 const main = { backgroundColor: '#ffffff', fontFamily: "'Inter', Arial, sans-serif" }

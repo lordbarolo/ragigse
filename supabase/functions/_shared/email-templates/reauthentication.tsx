@@ -19,10 +19,10 @@ interface ReauthenticationEmailProps {
 export const ReauthenticationEmail = ({ token }: ReauthenticationEmailProps) => (
   <Html lang="sv" dir="ltr">
     <Head />
-    <Preview>Din verifieringskod för CompCare</Preview>
+    <Preview>Din verifieringskod för vårdbemanning.ai</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Text style={logo}>CompCare</Text>
+        <Text style={logo}>vårdbemanning.ai</Text>
         <Heading style={h1}>Bekräfta din identitet</Heading>
         <Text style={text}>Använd koden nedan för att verifiera dig:</Text>
         <Text style={codeStyle}>{token}</Text>

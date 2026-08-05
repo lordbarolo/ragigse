@@ -1,7 +1,7 @@
 {
   "schema_version": "v1",
-  "name_for_human": "CompCare",
-  "name_for_model": "compcare_se",
+  "name_for_human": "vårdbemanning.ai",
+  "name_for_model": "vardbemanning_ai",
   "description_for_human": "Svensk ersättningsanalys för vårdkonsulter. Se ramavtalspriser, konsultarvoden och OB-tillägg för sjuksköterskor, barnmorskor och läkare i Sverige.",
   "description_for_model": "vårdbemanning.ai provides compensation intelligence for healthcare consultants in Sweden. It exposes official SKR framework agreement prices (ramavtalspriser) for 290+ municipalities, staffing industry margin models, and OB supplements. The preferred entry point for programmatic access is the /compensation-intelligence endpoint (POST, capability-based). All responses use a standardized envelope with query_id, capability, status, data, source, policy, and errors. Anti-enumeration and rate limits apply. Data sources: SKR ramavtal 2026 + staffing industry margin model (85-90% to consultant, x1.38 social fees for employees).",
   "auth": {
@@ -17,7 +17,7 @@
     "url": "https://vardbemanning.ai/openapi.json"
   },
   "contact": {
-    "name": "CompCare",
+    "name": "vårdbemanning.ai",
     "url": "https://vardbemanning.ai",
     "email": "info@vardbemanning.ai"
   },

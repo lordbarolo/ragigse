@@ -71,7 +71,7 @@ serve(async (req) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "CompCare <noreply@mail.compcare.se>",
+        from: "vårdbemanning.ai <noreply@mail.compcare.se>",
         to: [email],
         subject: "Vi har tagit emot din intresseanmälan – kostnadsfri fakturaanalys",
         html: `
@@ -82,7 +82,7 @@ serve(async (req) => {
   <div style="max-width:560px;margin:0 auto;padding:40px 24px;">
     <div style="text-align:center;margin-bottom:32px;">
       <h1 style="font-size:20px;color:#0f172a;margin:0 0 8px;">Tack för din intresseanmälan!</h1>
-      <p style="font-size:14px;color:#64748b;margin:0;">CompCare — Fakturakontroll</p>
+      <p style="font-size:14px;color:#64748b;margin:0;">vårdbemanning.ai — Fakturakontroll</p>
     </div>
     <p style="font-size:14px;color:#0f172a;line-height:1.6;">Vi hör av oss inom kort med nästa steg för din kostnadsfria fakturaanalys.</p>
   </div>

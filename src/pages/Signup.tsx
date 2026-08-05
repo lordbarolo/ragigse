@@ -112,8 +112,8 @@ export default function Signup() {
   };
   const seo = (
     <SEO
-      title="Skapa konto – CompCare"
-      description="Skapa ett gratis CompCare-konto för att spara dina rapporter och få notiser om nya analyser."
+      title="Skapa konto – vårdbemanning.ai"
+      description="Skapa ett gratis vårdbemanning.ai-konto för att spara dina rapporter och få notiser om nya analyser."
       path="/registrera"
       noindex
     />
@@ -165,7 +165,7 @@ export default function Signup() {
     <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden" style={beigeBg}>
 
       <header className="absolute top-0 left-0 right-0 z-20 flex items-center px-4 md:px-6 lg:px-8 h-14 md:h-16">
-        <Link to="/" aria-label="CompCare startsida">
+        <Link to="/" aria-label="vårdbemanning.ai startsida">
           <CompcareLogo variant="full" inverted={false} />
         </Link>
       </header>

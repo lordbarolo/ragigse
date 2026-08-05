@@ -214,8 +214,8 @@ export default function Profile() {
   return (
     <div className="profile-light relative min-h-screen bg-[#F7F5FB] overflow-hidden">
       <SEO
-        title="Min profil – CompCare"
-        description="Hantera dina rapporter, dokument och kontoinställningar på CompCare."
+        title="Min profil – vårdbemanning.ai"
+        description="Hantera dina rapporter, dokument och kontoinställningar på vårdbemanning.ai."
         path="/consultant/profil"
         noindex
       />

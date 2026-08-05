@@ -538,7 +538,7 @@ async function answerTopic4(
         `- Använder 3:12-utdelning korrekt`,
         `- Har bokföring + revisor (~10 000–25 000 kr/år)`,
         ``,
-        `Vill du ha en exakt beräkning på din situation: använd CompCares fakturakontroll eller kontakta en redovisningskonsult.`,
+        `Vill du ha en exakt beräkning på din situation: använd vårdbemanning.ai:s fakturakontroll eller kontakta en redovisningskonsult.`,
       ].join("\n");
     default:
       return `Frågan kunde inte hanteras.`;

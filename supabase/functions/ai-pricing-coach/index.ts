@@ -59,7 +59,7 @@ function calcRange(customerPrice: number, empType: "foretagare" | "anstalld", ro
   };
 }
 
-const SYSTEM = `Du är CompCares neutrala marknadsanalytiker. Aldrig "topp X%" eller social benchmarking.
+const SYSTEM = `Du är vårdbemanning.ai:s neutrala marknadsanalytiker. Aldrig "topp X%" eller social benchmarking.
 Regler:
 - Svara på svenska, max 5 meningar.
 - Använd ENDAST de siffror du får (SKR-ramavtal + branschmarginal). Hitta inte på.

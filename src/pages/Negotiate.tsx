@@ -16,7 +16,7 @@ import InlineTerminalSurvey from "@/components/survey/InlineTerminalSurvey";
 import { SEO } from "@/components/SEO";
 
 
-const PAGE_TITLE = "Lönekoll — CompCare";
+const PAGE_TITLE = "Lönekoll — vårdbemanning.ai";
 const PAGE_DESC = "Få snabba svar på dina förhandlingsfrågor — baserat på SKR-ramavtalet och din roll.";
 
 export default function Negotiate() {
@@ -172,7 +172,7 @@ export default function Negotiate() {
   return (
     <div className="h-[100dvh] bg-secondary/30 flex flex-col overflow-hidden">
       <SEO
-        title="Löneassistenten – CompCare"
+        title="Löneassistenten – vårdbemanning.ai"
         description="AI-driven förhandlingsassistent med marknadsdata för vårdkonsulter."
         path="/consultant/forhandla"
         noindex
@@ -270,7 +270,7 @@ export default function Negotiate() {
                     Vad vill du veta?
                   </h1>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Välj ett ämne nedan. Alla svar bygger på SKR-ramavtalet och CompCares marginalmodeller.
+                    Välj ett ämne nedan. Alla svar bygger på SKR-ramavtalet och vårdbemanning.ai:s marginalmodeller.
                   </p>
                 </div>
                 {LONEKOLL_TOPICS.map((topic) => (

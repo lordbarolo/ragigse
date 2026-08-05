@@ -147,8 +147,8 @@ export default function ResetPassword() {
   return (
     <>
     <SEO
-      title="Återställ lösenord – CompCare"
-      description="Återställ ditt CompCare-lösenord via länken vi skickade till din e-post."
+      title="Återställ lösenord – vårdbemanning.ai"
+      description="Återställ ditt vårdbemanning.ai-lösenord via länken vi skickade till din e-post."
       path="/aterstall-losenord"
       noindex
     />

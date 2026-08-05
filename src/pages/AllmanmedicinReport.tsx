@@ -436,7 +436,7 @@ export default function AllmanmedicinReport() {
               <span className="font-semibold" style={{ color: ink }}>
                 Neutralitet:
               </span>{" "}
-              CompCare driver inte upp löner. Vi informerar om publika priser och offentliga
+              vårdbemanning.ai driver inte upp löner. Vi informerar om publika priser och offentliga
               ramavtal.
             </p>
           </section>
@@ -569,7 +569,7 @@ export default function AllmanmedicinReport() {
                 individuella avtal.
               </p>
               <p className="text-[10px] text-muted-foreground">
-                © {new Date().getFullYear()} CompCare.se
+                © {new Date().getFullYear()} vårdbemanning.ai
               </p>
             </div>
           </div>

@@ -1,4 +1,4 @@
-# robots.txt – CompCare.se
+# robots.txt – vårdbemanning.ai
 #
 # Genomsökningsbara sökvägar (statiskt innehåll, fritt att indexera):
 #   /                      startsida
@@ -39,7 +39,7 @@ Disallow: /api/
 
 Sitemap: https://vardbemanning.ai/sitemap.xml
 
-# LLMs.txt – AI-optimerad beskrivning av CompCare.se
+# LLMs.txt – AI-optimerad beskrivning av vårdbemanning.ai
 # Se https://llmstxt.org för specifikation
 LLMs-Txt: https://vardbemanning.ai/llms.txt
 

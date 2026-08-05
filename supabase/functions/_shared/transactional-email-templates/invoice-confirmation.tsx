@@ -5,7 +5,7 @@ import {
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
 
-const SITE_NAME = 'CompCare'
+const SITE_NAME = 'vårdbemanning.ai'
 
 interface InvoiceConfirmationProps {
   name?: string
@@ -14,7 +14,7 @@ interface InvoiceConfirmationProps {
 const InvoiceConfirmationEmail = ({ name }: InvoiceConfirmationProps) => (
   <Html lang="sv" dir="ltr">
     <Head />
-    <Preview>Tack för ditt intresse — CompCare</Preview>
+    <Preview>Tack för ditt intresse — vårdbemanning.ai</Preview>
     <Body style={main}>
       <Container style={container}>
         <Text style={logo}>{SITE_NAME}</Text>

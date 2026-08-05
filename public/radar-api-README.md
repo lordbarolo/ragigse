@@ -1,6 +1,6 @@
 # Uppdragsradar Public API
 
-Externt API för att hämta CompCares Uppdragsradar-data (avropsprediktioner, kundtrender och rådata) **samt skicka in egna avrop**.
+Externt API för att hämta vårdbemanning.ai:s Uppdragsradar-data (avropsprediktioner, kundtrender och rådata) **samt skicka in egna avrop**.
 
 ## Bas-URL
 
@@ -63,7 +63,7 @@ Trender och säsongstoppar per kund.
 
 ### `GET /calloff_imports`
 
-Rådata från importerade avrop. Inkluderar partnerns egna inskickade rader samt alla rader där partnern eller CompCare har märkt datan som delbar.
+Rådata från importerade avrop. Inkluderar partnerns egna inskickade rader samt alla rader där partnern eller vårdbemanning.ai har märkt datan som delbar.
 
 **Query-parametrar:** `region`, `role`, `customer`, `since` (YYYY-MM-DD), `limit`, `offset`
 
@@ -116,7 +116,7 @@ Dubbletter ignoreras tyst och rapporteras i svaret.
 - `share_data=false` (default): partnerns rader är **privata** — endast partnerns egen API-nyckel ser dem.
 - `share_data=true`: partnerns rader ingår i radarns publika aggregat och syns för alla konsumenter, märkta med `partner_source`.
 
-Inställningen styrs av CompCare-admin per nyckel.
+Inställningen styrs av vårdbemanning.ai-admin per nyckel.
 
 #### Exempel:
 ```bash
@@ -172,4 +172,4 @@ curl -X POST \
 
 ## Kontakt
 
-För nya nycklar, höjda quotas eller skrivåtkomst: kontakta CompCare-admin.
+För nya nycklar, höjda quotas eller skrivåtkomst: kontakta vårdbemanning.ai-admin.

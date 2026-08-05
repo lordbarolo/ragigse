@@ -10,10 +10,10 @@ interface CompcareLogoProps extends HTMLAttributes<HTMLSpanElement> {
 }
 
 /**
- * Renders the official CompCare logo using the brand SVG assets.
+ * Renders the official vårdbemanning.ai logo using the brand SVG assets.
  *
  * Variants:
- *  - "wordmark" → ren typografi (compcare) utan ikonstaplar
+ *  - "wordmark" → ren typografi (vardbemanning.ai) utan ikonstaplar
  *  - "full"     → ikonstaplar + text horisontellt
  *  - "icon"     → endast ikonstaplar (kvadratisk)
  *

@@ -1,6 +1,6 @@
 # TERMINOLOGY.md
 
-**Enda sanningen för namn i CompCare.** Vid konflikt mellan denna fil och äldre
+**Enda sanningen för namn i vårdbemanning.ai.** Vid konflikt mellan denna fil och äldre
 dokument, chattar eller kodkommentarer gäller denna fil.
 
 Senast uppdaterad: 2026-07-28 (konsolidering Fas 4)

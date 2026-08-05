@@ -219,7 +219,7 @@ export default function Faktasidor() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "compcare-ramavtalspriser-2026.csv";
+    a.download = "vardbemanning.ai-ramavtalspriser-2026.csv";
     a.click();
     URL.revokeObjectURL(url);
     trackEvent("faktasidor_export_clicked");
@@ -246,7 +246,7 @@ export default function Faktasidor() {
 
         {/* Nav */}
         <nav className="relative flex items-center justify-between px-5 sm:px-6 lg:px-10 h-[60px] border-b border-black/10">
-          <Link to="/" aria-label="CompCare startsida" className="inline-flex items-center text-black">
+          <Link to="/" aria-label="vårdbemanning.ai startsida" className="inline-flex items-center text-black">
             <CompcareLogo variant="full" inverted={false} />
           </Link>
           <Link to="/logga-in">

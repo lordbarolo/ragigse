@@ -85,7 +85,7 @@ OB-tillägg läggs ovanpå grundpriset och är detsamma i alla zoner:
 
 ## Rapportstruktur (maskinläsbar)
 
-Alla publika rapporter på CompCare följer ett identiskt schema för att underlätta AI-citering:
+Alla publika rapporter på vårdbemanning.ai följer ett identiskt schema för att underlätta AI-citering:
 
 ### 1. TL;DR-box (`data-tldr="role-report"`)
 - En kort sammanfattning (1–2 meningar) med roll, prisspann, zon och källhänvisning
@@ -135,7 +135,7 @@ Länk tillbaka till startsidan med förifyllt yrke för personlig analys.
 
 ## API
 
-CompCare exponerar ett REST-API för programmatisk åtkomst. Fullständig OpenAPI 3.1-specifikation finns på:
+vårdbemanning.ai exponerar ett REST-API för programmatisk åtkomst. Fullständig OpenAPI 3.1-specifikation finns på:
 - OpenAPI JSON: https://vardbemanning.ai/openapi.json
 
 ### Rekommenderad ingång: Compensation Intelligence API
@@ -260,7 +260,7 @@ Använd dessa GET-endpoints för att utforska tillgängliga data utan att expone
 
 ### Agent API (server-till-server)
 
-Tre endpoints för externa AI-agenter (Claude, GPT, egna system) att läsa CompCare-data säkert.
+Tre endpoints för externa AI-agenter (Claude, GPT, egna system) att läsa vårdbemanning.ai-data säkert.
 
 **Bas-URL:** `https://ubhhlunhdqbokjvwfebb.supabase.co/functions/v1`
 
@@ -280,7 +280,7 @@ Full dokumentation: https://vardbemanning.ai/agent-api.md
 
 ### Uppdragsradar Public API
 
-CompCare exponerar avropsprognoser (Uppdragsradar) som ett separat REST-API för agenter och tredjepartssystem.
+vårdbemanning.ai exponerar avropsprognoser (Uppdragsradar) som ett separat REST-API för agenter och tredjepartssystem.
 
 - **Bas-URL**: `https://ubhhlunhdqbokjvwfebb.supabase.co/functions/v1/radar-public-api`
 - **Discovery (ingen auth)**: `GET /radar-public-api`
@@ -319,7 +319,7 @@ Ja, efter att rapporten genererats kan du ladda ner en brandad PDF via generate-
 
 - [Startsida](/): Snabb löneanalys för vårdkonsulter baserad på SKR:s ramavtal.
 - [Löneanalys](/v1): Steg-för-steg-uppslag av timpris och spann för din roll och ort.
-- [B2B / för bemanningsföretag](/b2b): CompCare för bemanningsföretag och regioner.
+- [B2B / för bemanningsföretag](/b2b): vårdbemanning.ai för bemanningsföretag och regioner.
 - [För bemanningsföretag](/for-bemanningsforetag): Tjänster och Market Edge för agenter.
 - [Förhandlingsassistent](/consultant/forhandla): Neutral AI-assistent för marknadspriser och förhandling.
 - [Fakturakontroll](/consultant/fakturakontroll): Granska fakturor retroaktivt — no cure, no pay.
@@ -327,7 +327,7 @@ Ja, efter att rapporten genererats kan du ladda ner en brandad PDF via generate-
 - [Rapport: Anestesisjuksköterska](/rapport/anestesisjukskoterska): Statisk marknadsrapport för anestesisjuksköterskor.
 - [Din data (samarbetsintyg)](/din-data): Digitalt dokumentvalv för samarbetsintyg.
 - [Eget bolag](/eget-bolag): Guide för konsulter som driver eget.
-- [FAQ](/vanliga-fragor): Vanliga frågor om CompCare och ramavtalspriser.
+- [FAQ](/vanliga-fragor): Vanliga frågor om vårdbemanning.ai och ramavtalspriser.
 - [Integritetspolicy](/integritetspolicy): GDPR och datahantering.
 
 ---

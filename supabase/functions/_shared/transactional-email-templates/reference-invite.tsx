@@ -5,7 +5,7 @@ import {
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
 
-const SITE_NAME = 'CompCare'
+const SITE_NAME = 'vårdbemanning.ai'
 
 interface ReferenceInviteProps {
   individualName?: string
@@ -40,7 +40,7 @@ const ReferenceInviteEmail = ({
         <Text style={text}>
           {isVerification
             ? `${individualName || 'En person'} ber dig att bekräfta att en tidigare lämnad referenshandling fortfarande gäller.`
-            : `${individualName || 'En person'} har bjudit in dig att lämna en referens via CompCare.`}
+            : `${individualName || 'En person'} har bjudit in dig att lämna en referens via vårdbemanning.ai.`}
         </Text>
         {(workplace || relationship) && (
           <Text style={detailsStyle}>
@@ -82,7 +82,7 @@ export const template = {
     relationship: 'Chef',
     isVerification: false,
     personalMessage: 'Hej! Det vore jättesnällt om du kunde lämna en referens.',
-    inviteUrl: 'https://compcare.se/referens/abc123',
+    inviteUrl: 'https://vardbemanning.ai/referens/abc123',
   },
 } satisfies TemplateEntry
 

@@ -185,7 +185,7 @@ function escapeHtml(s: string): string {
 }
 
 function buildAlertHtml(failures: CheckResult[], alertId: string): { subject: string; html: string } {
-  const subject = `🚨 CompCare health-alert (${failures.length}): ${failures.map((f) => f.name).join(", ")}`;
+  const subject = `🚨 vårdbemanning.ai health-alert (${failures.length}): ${failures.map((f) => f.name).join(", ")}`;
   const chatPrompt = `Fixa health-alert ${alertId}: ${failures
     .map((f) => `${f.name} → ${f.error_message ?? "fail"}`)
     .join(" | ")}. Loggar i system_health_log.alert_id='${alertId}'.`;
@@ -199,7 +199,7 @@ function buildAlertHtml(failures: CheckResult[], alertId: string): { subject: st
   `).join("");
 
   const html = `<!doctype html><html><body style="font-family:-apple-system,Segoe UI,sans-serif;max-width:640px;margin:0 auto;padding:24px;color:#111;">
-    <h2 style="margin:0 0 8px;color:#c00;">🚨 CompCare: fel upptäckt</h2>
+    <h2 style="margin:0 0 8px;color:#c00;">🚨 vårdbemanning.ai: fel upptäckt</h2>
     <p style="margin:0 0 16px;color:#555;">Alert-ID: <code>${alertId}</code> · ${new Date().toISOString()}</p>
     <table style="border-collapse:collapse;width:100%;margin-bottom:24px;">
       <thead><tr style="background:#f5f5f5;">
@@ -212,7 +212,7 @@ function buildAlertHtml(failures: CheckResult[], alertId: string): { subject: st
     <h3 style="margin:24px 0 8px;">Klistra in detta i Lovable-chatten för att fixa:</h3>
     <pre style="background:#0f172a;color:#e2e8f0;padding:16px;border-radius:8px;white-space:pre-wrap;word-break:break-word;font-size:13px;line-height:1.5;">${escapeHtml(chatPrompt)}</pre>
     <p style="margin-top:24px;"><a href="${PROJECT_URL}" style="background:#8155FF;color:#fff;padding:10px 18px;border-radius:6px;text-decoration:none;font-weight:600;">Öppna Lovable →</a></p>
-    <p style="margin-top:32px;color:#888;font-size:12px;">CompCare health-check · automatiskt utskick · var 15 min</p>
+    <p style="margin-top:32px;color:#888;font-size:12px;">vårdbemanning.ai health-check · automatiskt utskick · var 15 min</p>
   </body></html>`;
 
   return { subject, html };
@@ -233,7 +233,7 @@ async function sendAlertEmail(failures: CheckResult[], alertId: string): Promise
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "CompCare Health <noreply@mail.compcare.se>",
+      from: "vårdbemanning.ai Health <noreply@mail.compcare.se>",
       to: [ALERT_EMAIL],
       subject,
       html,

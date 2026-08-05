@@ -61,7 +61,7 @@ const hog = (role: string): RolePrice => ({
 /**
  * Endast dessa fem roller har den höga prisnivån (770/824/880).
  * Källa: SKR ramavtal vårdbemanning 2026, prisbilaga sjuksköterskor.
- * Bekräftat av Compcare 2026-01.
+ * Bekräftat av vårdbemanning.ai 2026-01.
  */
 export const HIGH_GROUP_ROLES = [
   "Barnmorska",

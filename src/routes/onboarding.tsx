@@ -4,13 +4,13 @@ import Onboarding from "@/pages/Onboarding";
 export const Route = createFileRoute("/onboarding")({
   head: () => ({
     meta: [
-      { title: "Kom igång – vardbemanning.ai" },
+      { title: "Kom igång – vårdbemanning.ai" },
       {
         name: "description",
         content:
           "Fyll i roll, ort, kontraktsform och ersättning för att se dina villkor i förhållande till marknaden.",
       },
-      { property: "og:title", content: "Kom igång – vardbemanning.ai" },
+      { property: "og:title", content: "Kom igång – vårdbemanning.ai" },
       {
         property: "og:description",
         content: "Roll, ort, kontraktsform och ersättning behövs för att visa dina villkor mot marknaden.",

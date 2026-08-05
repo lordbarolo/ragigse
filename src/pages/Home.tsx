@@ -14,14 +14,14 @@ const LANDING_JSONLD = [
   {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "CompCare",
+    name: "vårdbemanning.ai",
     url: "https://vardbemanning.ai/",
     inLanguage: "sv-SE",
   },
   {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "CompCare",
+    name: "vårdbemanning.ai",
     url: "https://vardbemanning.ai/",
     logo: "https://vardbemanning.ai/vardbemanning-logo.svg",
   },
@@ -42,7 +42,7 @@ export default function Home() {
     <AnthropicScope>
       <div className="w-full text-foreground font-sans min-h-screen">
         <SEO
-          title="CompCare – Lön & ramavtalspriser för vårdkonsulter"
+          title="vårdbemanning.ai – Lön & ramavtalspriser för vårdkonsulter"
           description="Jämför ditt erbjudande mot SKR:s ramavtalspriser i 290 kommuner. Gratis löneanalys för sjuksköterskor, barnmorskor och läkare."
           path="/"
           jsonLd={LANDING_JSONLD}
@@ -50,7 +50,7 @@ export default function Home() {
 
         {/* ── Nav ─────────────────────────────── */}
         <nav className="relative flex items-center justify-between px-5 sm:px-6 lg:px-10 h-[60px] border-b border-black/10 bg-transparent">
-          <Link to="/" aria-label="CompCare startsida" className="inline-flex items-center text-black">
+          <Link to="/" aria-label="vårdbemanning.ai startsida" className="inline-flex items-center text-black">
             <CompcareLogo variant="full" inverted={false} />
           </Link>
           <div className="flex items-center gap-2 sm:gap-3">

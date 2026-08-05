@@ -24,13 +24,13 @@ export const MagicLinkEmail = ({
 }: MagicLinkEmailProps) => (
   <Html lang="sv" dir="ltr">
     <Head />
-    <Preview>Din inloggningslänk för CompCare</Preview>
+    <Preview>Din inloggningslänk för vårdbemanning.ai</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Text style={logo}>CompCare</Text>
+        <Text style={logo}>vårdbemanning.ai</Text>
         <Heading style={h1}>Din inloggningslänk</Heading>
         <Text style={text}>
-          Klicka på knappen nedan för att logga in på CompCare. Länken är giltig en kort stund.
+          Klicka på knappen nedan för att logga in på vårdbemanning.ai. Länken är giltig en kort stund.
         </Text>
         <Button style={button} href={confirmationUrl}>
           Logga in →

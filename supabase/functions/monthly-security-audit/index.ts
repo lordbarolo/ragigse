@@ -108,7 +108,7 @@ Deno.serve(async (req) => {
     await supabase.functions.invoke("send-transactional-email", {
       body: {
         to: ADMIN_EMAIL,
-        subject: `[CompCare] Månatlig säkerhetsaudit — ${summary.error_count} ERR / ${summary.warn_count} WARN`,
+        subject: `[vårdbemanning.ai] Månatlig säkerhetsaudit — ${summary.error_count} ERR / ${summary.warn_count} WARN`,
         html,
       },
     });
@@ -338,7 +338,7 @@ function renderHtml(
       ? "<p><em>Inga.</em></p>"
       : `<ul>${arr.map((f) => `<li><b>[${f.category}]</b> ${escape(f.title)} — <code>${escape(f.detail)}</code></li>`).join("")}</ul>`;
   return `
-    <h2>CompCare — Månatlig säkerhetsaudit</h2>
+    <h2>vårdbemanning.ai — Månatlig säkerhetsaudit</h2>
     <p>Körd: ${summary.finished_at}</p>
     <p>Totalt: <b>${summary.total}</b> findings (${summary.error_count} ERR, ${summary.warn_count} WARN, ${summary.info_count} INFO)</p>
     <h3>Diff mot ${prevDate ?? "föregående körning"}</h3>

@@ -311,7 +311,7 @@ export default function BollnasAllmanspecialistReport() {
                 Faktisk ersättning kan variera beroende på arbetsgivare, uppdrag och individuella avtal.
               </p>
               <p className="text-[10px] text-muted-foreground">
-                © {new Date().getFullYear()} CompCare.se
+                © {new Date().getFullYear()} vårdbemanning.ai
               </p>
             </div>
           </div>

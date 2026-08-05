@@ -48,15 +48,15 @@ const PrivacyPolicy = () => {
   return (
     <>
       <SEO
-        title="Integritetspolicy – CompCare"
-        description="Så hanterar CompCare dina personuppgifter: lagring i EU, anonym analys, dina rättigheter och kontaktinformation."
+        title="Integritetspolicy – vårdbemanning.ai"
+        description="Så hanterar vårdbemanning.ai dina personuppgifter: lagring i EU, anonym analys, dina rättigheter och kontaktinformation."
         path="/integritetspolicy"
       />
     <div className="min-h-screen bg-background">
       <header className="py-8 px-5 border-b border-border">
         <div className="max-w-3xl mx-auto">
           <Link to="/">
-            <img src={logoDark} alt="CompCare" className="h-8 sm:h-10" />
+            <img src={logoDark} alt="vårdbemanning.ai" className="h-8 sm:h-10" />
           </Link>
         </div>
       </header>
@@ -159,7 +159,7 @@ const PrivacyPolicy = () => {
           <div>
             <h2 className="text-xl font-semibold text-foreground">8. Cookies och spårning</h2>
             <p className="text-sm text-muted-foreground leading-relaxed mt-2">
-              CompCare visar en cookie-banner vid första besöket. Du väljer själv om analytiska cookies ska aktiveras. Ditt val sparas i webbläsarens localStorage.
+              vårdbemanning.ai visar en cookie-banner vid första besöket. Du väljer själv om analytiska cookies ska aktiveras. Ditt val sparas i webbläsarens localStorage.
             </p>
             <ul className="text-sm text-muted-foreground leading-relaxed mt-2 space-y-1">
               <li><strong className="text-foreground">Nödvändiga:</strong> Autentiseringstokens (Supabase) för att hålla dig inloggad. Krävs för att tjänsten ska fungera och kräver inte samtycke.</li>
@@ -232,7 +232,7 @@ const PrivacyPolicy = () => {
       </main>
 
       <footer className="bg-background border-t border-border py-10 text-center text-sm text-muted-foreground">
-        <p>© 2026 CompCare.se</p>
+        <p>© 2026 vårdbemanning.ai</p>
       </footer>
     </div>
     </>

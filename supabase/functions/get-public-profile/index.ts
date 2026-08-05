@@ -82,7 +82,7 @@ Deno.serve(async (req) => {
           ? [{
               "@type": "EducationalOccupationalCredential",
               credentialCategory: "Digital identity verification",
-              recognizedBy: { "@type": "Organization", name: "CompCare" },
+              recognizedBy: { "@type": "Organization", name: "vårdbemanning.ai" },
             }]
           : []),
         ...(p.verifications?.ivo
@@ -100,8 +100,8 @@ Deno.serve(async (req) => {
             }]
           : []),
       ],
-      // CompCare-specific data
-      compcare: {
+      // vårdbemanning.ai-specific data
+      vardbemanning: {
         trust_score: p.trust_score,
         trust_tier: p.trust_tier,
         trust_tier_label: TIER_LABEL[p.trust_tier] ?? TIER_LABEL.incomplete,
@@ -131,9 +131,9 @@ Deno.serve(async (req) => {
       })),
       meta: {
         generated_at: new Date().toISOString(),
-        source: "compcare.se",
+        source: "vardbemanning.ai",
         api_version: "1.0",
-        canonical_url: `https://compcare.se/profil/${profileId}`,
+        canonical_url: `https://vardbemanning.ai/profil/${profileId}`,
       },
     };
 
