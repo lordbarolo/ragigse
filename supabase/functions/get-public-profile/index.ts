@@ -101,7 +101,7 @@ Deno.serve(async (req) => {
           : []),
       ],
       // vårdbemanning.ai-specific data
-      vardbemanning.ai: {
+      vardbemanning: {
         trust_score: p.trust_score,
         trust_tier: p.trust_tier,
         trust_tier_label: TIER_LABEL[p.trust_tier] ?? TIER_LABEL.incomplete,

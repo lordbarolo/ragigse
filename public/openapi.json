@@ -736,7 +736,7 @@
               }
             }
           },
-          "vardbemanning.ai": {
+          "vardbemanning": {
             "type": "object",
             "description": "vårdbemanning.ai-specific verification metrics",
             "properties": {
