@@ -1,6 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
-import SjukskoterskaReport from "@/pages/SjukskoterskaReport";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/rapport/leg-ssk")({
-  component: SjukskoterskaReport,
+  beforeLoad: () => {
+    throw redirect({ to: "/rapport/sjukskoterska", statusCode: 301 });
+  },
 });

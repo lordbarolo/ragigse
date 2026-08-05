@@ -1,9 +1,11 @@
 // Runs before `vite dev` and `vite build` (predev/prebuild hooks); writes public/sitemap.xml.
-// Sync rules: Keep in sync with src/App.tsx (reports) and src/pages/Campaign.tsx (campaigns).
+// Sync rules: Keep in sync with src/routes/rapport/* och src/data/doctorSpecialtyReports.ts.
+// Medvetet UTANFÖR sitemapen (noindex i sidorna): /lon/[roll]/[ort], /kampanj/[roll],
+// /bollnas/lakare-alm, alias-slugar för sjuksköterskerapporten, /llms.txt, /openapi.json
+// (de senare annonseras i robots.txt).
 
 import { writeFileSync } from "fs"
 import { resolve } from "path"
-import { ROLE_NAMES, CITY_NAMES, slugify, publishableRoles } from "./seo-roles"
 
 const BASE_URL = "https://vardbemanning.ai"
 
@@ -14,25 +16,11 @@ interface SitemapEntry {
   priority?: string
 }
 
-// Slugs from src/pages/Campaign.tsx ROLE_MAP
-const CAMPAIGN_ROLES = [
-  "anestesi", "intensivvard", "operation", "akutsjukvard", "ambulans", 
-  "barnmorska", "sjukskoterska", "distriktsskoterska", "rontgen", 
-  "psykiatri", "onkologi", "kirurgi", "medicin", "palliativ", "barn", 
-  "hjart", "aldre", "diabetes", "infektion", "ogon", "foretagshalsa", 
-  "skola", "lakare"
-];
-
-// Static report routes from src/App.tsx
+// Kanoniska rapportsidor (alias-slugar 301:ar till /rapport/sjukskoterska)
 const REPORT_SLUGS = [
   "anestesisjukskoterska",
   "lakare-allmanmedicin",
   "sjukskoterska",
-  "legitimerad-sjukskoterska",
-  "leg-sjukskoterska",
-  "allmansjukskoterska",
-  "leg-ssk",
-  "ssk",
   // Specialistläkar-rapporter (src/data/doctorSpecialtyReports.ts)
   "lakare-anestesi",
   "lakare-barn-och-ungdomsmedicin",
@@ -55,44 +43,14 @@ const entries: SitemapEntry[] = [
   { path: "/vanliga-fragor", changefreq: "monthly", priority: "0.5" },
   { path: "/faktasidor", changefreq: "monthly", priority: "0.8" },
   { path: "/integritetspolicy", changefreq: "yearly", priority: "0.3" },
-  
+
   // Static reports
   ...REPORT_SLUGS.map(slug => ({
     path: `/rapport/${slug}`,
     changefreq: "monthly" as const,
     priority: "0.8"
   })),
-  
-  // Specific landing (legacy/partner)
-  { path: "/bollnas/lakare-alm", changefreq: "monthly", priority: "0.6" },
-
-  // Campaigns
-  ...CAMPAIGN_ROLES.map(role => ({
-    path: `/kampanj/${role}`,
-    changefreq: "monthly" as const,
-    priority: "0.7"
-  })),
-
-  // Programmatiska SEO-sidor: /lon/[roll]/[ort] (se src/pages/LonSpecialtyCity.tsx)
-  ...lonEntries(),
-
-  // AI & Discovery
-  { path: "/llms.txt", changefreq: "monthly", priority: "0.4" },
-  { path: "/openapi.json", changefreq: "monthly", priority: "0.4" },
 ]
-
-/** Kombinerar publicerbara roller med de största orterna → /lon/[roll]/[ort]. */
-function lonEntries(): SitemapEntry[] {
-  const roles = publishableRoles(ROLE_NAMES).map(slugify)
-  const cities = CITY_NAMES.map(slugify)
-  const out: SitemapEntry[] = []
-  for (const role of roles) {
-    for (const city of cities) {
-      out.push({ path: `/lon/${role}/${city}`, changefreq: "monthly", priority: "0.6" })
-    }
-  }
-  return out
-}
 
 function generateSitemap(entries: SitemapEntry[]) {
   const urls = entries.map((e) =>

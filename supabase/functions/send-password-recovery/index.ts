@@ -10,6 +10,7 @@ const corsHeaders = {
 }
 
 const SITE_NAME = 'vårdbemanning.ai'
+const APP_BASE_URL = Deno.env.get('APP_BASE_URL') || 'https://vardbemanning.ai'
 const FROM_EMAIL = 'vårdbemanning.ai <noreply@mail.compcare.se>'
 const RESEND_GATEWAY_URL = 'https://connector-gateway.lovable.dev/resend/emails'
 
@@ -92,7 +93,7 @@ Deno.serve(async (req) => {
     })
   }
 
-  const requestOrigin = req.headers.get('origin') || 'https://vardbemanning.ai'
+  const requestOrigin = req.headers.get('origin') || APP_BASE_URL
   const resetUrl = new URL('/aterstall-losenord', requestOrigin)
 
   const { data: recoveryLinkData, error: recoveryError } = await supabase.auth.admin.generateLink({

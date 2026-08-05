@@ -7,6 +7,7 @@ import {
   type EmploymentType,
   type MarginModel,
 } from "../_shared/calc.ts";
+import { checkRateLimit, rateLimitResponse } from "../_shared/rateLimit.ts";
 
 
 const corsHeaders = {
@@ -49,6 +50,12 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_URL")!,
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
+
+    // Rate limit per IP — bromsar massgenerering av rapporter.
+    const rl = await checkRateLimit(supabase, "create-report", clientIp, 20, 60);
+    if (!rl.allowed) {
+      return rateLimitResponse(rl, corsHeaders);
+    }
 
     // Price A/B test: 50/50 split between 49kr and 29kr
     const abVariant = Math.random() < 0.5 ? "price_49" : "price_29";

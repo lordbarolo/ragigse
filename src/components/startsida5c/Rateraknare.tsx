@@ -108,9 +108,11 @@ export default function Rateraknare() {
       </div>
 
       <p className="mt-4 text-[12px] leading-relaxed" style={{ color: "#666b7e" }}>
-        {rate
-          ? `Kundpris ${kr(rate.timpris_kund)} kr/h − ${rate.margin_text} marginal. Källa: SKR:s ramavtal 2026.`
-          : "Pris saknas för denna kombination — kontakta oss."}
+        {base.length === 0
+          ? "Prisdata kunde inte hämtas just nu."
+          : rate
+            ? `Kundpris ${kr(rate.timpris_kund)} kr/h − ${rate.margin_text} marginal. Källa: SKR:s ramavtal 2026.`
+            : "Pris saknas för denna kombination — kontakta oss."}
       </p>
 
       <form

@@ -41,6 +41,11 @@ export default function RolltabellDark() {
           </span>
         </div>
 
+        {base.length === 0 ? (
+          <p className="text-[13px]" style={{ color: "#8c90a0" }}>
+            Prisdata kunde inte hämtas just nu.
+          </p>
+        ) : (
         <div className="-mx-5 overflow-x-auto px-5 md:mx-0 md:px-0">
           <table className="w-full min-w-[620px] border-collapse text-left">
             <thead>
@@ -93,6 +98,7 @@ export default function RolltabellDark() {
             </tbody>
           </table>
         </div>
+        )}
 
         <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-[12px]" style={{ color: "#6b7080" }}>
           <span>Högst ersättning markerad. Fullständig lista med alla roller efter inloggning.</span>

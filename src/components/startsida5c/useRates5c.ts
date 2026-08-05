@@ -10,9 +10,15 @@ import { basePrices, type RateRow } from "./rate5c";
 export const ratesQueryOptions = {
   queryKey: ["rates"] as const,
   queryFn: async () => {
-    const { data, error } = await supabase.from("rates").select("*");
-    if (error) throw error;
-    return data;
+    // Fail-soft: startsidan ska aldrig bli en felsida om prisdata inte kan hämtas.
+    try {
+      const { data, error } = await supabase.from("rates").select("*");
+      if (error) throw error;
+      return data ?? [];
+    } catch (err) {
+      console.error("[rates] kunde inte hämtas", err);
+      return [];
+    }
   },
   staleTime: 1000 * 60 * 60,
 };

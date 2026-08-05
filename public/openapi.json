@@ -334,49 +334,6 @@
         }
       }
     },
-    "/get-public-profile": {
-      "get": {
-        "operationId": "getPublicProfile",
-        "summary": "Machine-readable public consultant profile",
-        "description": "Returns a schema.org Person object representing a verified consultant's public 'Vault' profile (verified references, documents, credentials, trust score). Mirrors the human-facing page at https://vardbemanning.ai/profil/{id}.\n\nIntended for AI agents and automated systems that need structured access to a consultant's verified credentials and references. Each request is logged to ref_access_logs (resource_type='public_profile_api'). Set the optional headers `x-viewer-name` and `x-viewer-org` to identify the calling agent or organization.\n\nNo bulk enumeration is supported — IDs must be obtained from a profile owner who has shared the link.",
-        "tags": ["Public Profiles"],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "query",
-            "required": true,
-            "description": "Profile UUID (matches /profil/{id} on the website)",
-            "schema": { "type": "string", "format": "uuid" }
-          },
-          {
-            "name": "x-viewer-name",
-            "in": "header",
-            "required": false,
-            "description": "Optional viewer/agent identifier (logged for audit)",
-            "schema": { "type": "string" }
-          },
-          {
-            "name": "x-viewer-org",
-            "in": "header",
-            "required": false,
-            "description": "Optional organization the viewer represents (logged for audit)",
-            "schema": { "type": "string" }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Public profile (schema.org Person + vårdbemanning.ai extensions)",
-            "content": {
-              "application/json": {
-                "schema": { "$ref": "#/components/schemas/PublicProfile" }
-              }
-            }
-          },
-          "400": { "description": "Missing or invalid id parameter" },
-          "404": { "description": "Profile not found or not publicly accessible" }
-        }
-      }
-    },
     "/radar-public-api": {
       "get": {
         "operationId": "radarDiscover",
@@ -708,88 +665,6 @@
       "ErrorResponse": {
         "type": "object",
         "properties": { "error": { "type": "string" } }
-      },
-      "PublicProfile": {
-        "type": "object",
-        "description": "schema.org Person extended with vårdbemanning.ai verification data",
-        "properties": {
-          "@context": { "type": "string", "example": "https://schema.org" },
-          "@type": { "type": "string", "example": "Person" },
-          "identifier": { "type": "string", "format": "uuid" },
-          "name": { "type": "string" },
-          "jobTitle": { "type": "string", "nullable": true },
-          "description": { "type": "string", "nullable": true },
-          "hasCredential": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "@type": { "type": "string", "example": "EducationalOccupationalCredential" },
-                "credentialCategory": { "type": "string" },
-                "recognizedBy": {
-                  "type": "object",
-                  "properties": {
-                    "@type": { "type": "string" },
-                    "name": { "type": "string" }
-                  }
-                }
-              }
-            }
-          },
-          "vardbemanning": {
-            "type": "object",
-            "description": "vårdbemanning.ai-specific verification metrics",
-            "properties": {
-              "trust_score": { "type": "integer", "minimum": 0, "maximum": 100 },
-              "trust_tier": { "type": "string", "enum": ["elite", "verified_pro", "basic", "incomplete"] },
-              "trust_tier_label": { "type": "string" },
-              "score_updated_at": { "type": "string", "format": "date-time", "nullable": true },
-              "reference_count": { "type": "integer" },
-              "attachable_reference_count": { "type": "integer" },
-              "avg_recommendation": { "type": "number" },
-              "competencies": { "type": "object", "additionalProperties": { "type": "integer" } },
-              "years_licensed": { "type": "integer", "nullable": true }
-            }
-          },
-          "references": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "relationship": { "type": "string" },
-                "workplace": { "type": "string" },
-                "period_start": { "type": "string" },
-                "period_end": { "type": "string", "nullable": true },
-                "recommendation_score": { "type": "integer" },
-                "competencies": { "type": "array", "items": { "type": "string" } },
-                "verification_level": { "type": "string", "enum": ["email", "domain", "ping_confirmed"] },
-                "last_confirmed_at": { "type": "string", "format": "date-time" },
-                "confirmed_at": { "type": "string", "format": "date-time" }
-              }
-            }
-          },
-          "documents": {
-            "type": "array",
-            "items": {
-              "type": "object",
-              "properties": {
-                "file_name": { "type": "string" },
-                "document_type": { "type": "string" },
-                "document_type_label": { "type": "string" },
-                "uploaded_at": { "type": "string", "format": "date-time" }
-              }
-            }
-          },
-          "meta": {
-            "type": "object",
-            "properties": {
-              "generated_at": { "type": "string", "format": "date-time" },
-              "source": { "type": "string", "example": "vardbemanning.ai" },
-              "api_version": { "type": "string" },
-              "canonical_url": { "type": "string", "format": "uri" }
-            }
-          }
-        }
       }
     },
     "securitySchemes": {
@@ -815,7 +690,6 @@
     { "name": "Benchmarks (Legacy)", "description": "Legacy salary benchmarks (delegates to Compensation Intelligence)" },
     { "name": "Reports", "description": "Full compensation analysis reports and PDF generation" },
     { "name": "Market Intelligence", "description": "Price monitoring and contract version comparisons" },
-    { "name": "Public Profiles", "description": "Machine-readable consultant profiles for AI agents and automated systems" },
     { "name": "Uppdragsradar", "description": "Forecasted call-offs (avrop), customer trends, and raw historical data. Per-consumer API keys with scoped access and configurable rate limits." }
   ]
 }

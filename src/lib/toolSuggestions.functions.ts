@@ -25,8 +25,27 @@ export const submitToolSuggestion = createServerFn({ method: "POST" })
   })
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { checkRateLimit, clientIpFrom } = await import("@/lib/rateLimit.server");
+    const { getRequest } = await import("@tanstack/react-start/server");
 
     const email = data.email.toLowerCase();
+
+    // Rate limit per IP and per e-mail (hashed, never stored in clear text).
+    const clientIp = clientIpFrom(getRequest().headers);
+    const emailDigest = await crypto.subtle.digest(
+      "SHA-256",
+      new TextEncoder().encode(email),
+    );
+    const emailKey = `email:${Array.from(new Uint8Array(emailDigest))
+      .map((b) => b.toString(16).padStart(2, "0"))
+      .join("")}`;
+
+    for (const key of [clientIp, emailKey]) {
+      const rl = await checkRateLimit(supabaseAdmin, "tool-suggestion", key, 5, 60);
+      if (!rl.allowed) {
+        throw new Error("För många förslag just nu. Försök igen om en stund.");
+      }
+    }
     const token = crypto.randomUUID().replace(/-/g, "") + crypto.randomUUID().replace(/-/g, "");
 
     const { error } = await supabaseAdmin.from("tool_suggestions").insert({
