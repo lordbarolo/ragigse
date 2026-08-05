@@ -180,7 +180,7 @@ describe.skipIf(!canAuth)("RPC-grants · authenticated får tillgång där det s
     expect(accessToken, "kunde inte logga in testanvändaren").toBeTruthy();
   });
 
-  for (const { fn, body } of ANON_DENIED) {
+  for (const { fn, body } of [...ANON_DENIED, ...AUTHENTICATED_ONLY]) {
     it(`authenticated når RPC-lagret för ${fn} (inte permission denied)`, async () => {
       const r = await callRpc(fn, body, accessToken);
       expect(
@@ -189,6 +189,7 @@ describe.skipIf(!canAuth)("RPC-grants · authenticated får tillgång där det s
       ).toBe(false);
     });
   }
+
 
   for (const { fn, body } of ALL_DENIED) {
     it(`authenticated blockeras fortfarande från ${fn}`, async () => {
