@@ -68,14 +68,23 @@ const ANON_DENIED: Array<{ fn: string; body: Record<string, unknown> }> = [
   },
 ];
 
+/**
+ * Funktioner som ska ha EXECUTE för `authenticated` men vara nekade för `anon`.
+ * `ref_has_role` anropas av 29 RLS-policyer och måste vara körbar för inloggade,
+ * annars faller policy-utvärderingen med 42501 för legitima frågor.
+ */
+const AUTHENTICATED_ONLY: Array<{ fn: string; body: Record<string, unknown> }> = [
+  { fn: "ref_has_role", body: { _user_id: "00000000-0000-0000-0000-000000000000", _role: "admin" } },
+];
+
 /** Interna helpers som varken anon eller authenticated ska nå via RPC-lagret. */
 const ALL_DENIED: Array<{ fn: string; body: Record<string, unknown> }> = [
-  { fn: "ref_has_role", body: { _user_id: "00000000-0000-0000-0000-000000000000", _role: "admin" } },
   { fn: "ref_get_user_org_id", body: { _user_id: "00000000-0000-0000-0000-000000000000" } },
   { fn: "ref_calculate_trust_score", body: { p_profile_id: "00000000-0000-0000-0000-000000000000" } },
   { fn: "ref_calculate_profile_status", body: { p_profile_id: "00000000-0000-0000-0000-000000000000" } },
   { fn: "ref_refresh_attachability", body: { p_reference_id: "00000000-0000-0000-0000-000000000000" } },
 ];
+
 
 async function callRpc(fn: string, body: Record<string, unknown>, accessToken?: string) {
   const res = await fetch(`${SUPABASE_URL}/rest/v1/rpc/${fn}`, {
@@ -126,6 +135,15 @@ describe.skipIf(!hasEnv)("RPC-grants · interna helpers är stängda för alla A
   }
 });
 
+describe.skipIf(!hasEnv)("RPC-grants · EXECUTE för authenticated, nekad för anon", () => {
+  for (const { fn, body } of AUTHENTICATED_ONLY) {
+    it(`anon blockeras från ${fn}`, async () => {
+      expectBlocked(fn, await callRpc(fn, body));
+    });
+  }
+});
+
+
 describe.skipIf(!hasEnv)("RPC-grants · medvetet publika funktioner fungerar och läcker inget", () => {
   it("get_feature_flag('marketplace_enabled') är läsbar för anon", async () => {
     const r = await callRpc("get_feature_flag", { _key: "marketplace_enabled" });
@@ -162,7 +180,7 @@ describe.skipIf(!canAuth)("RPC-grants · authenticated får tillgång där det s
     expect(accessToken, "kunde inte logga in testanvändaren").toBeTruthy();
   });
 
-  for (const { fn, body } of ANON_DENIED) {
+  for (const { fn, body } of [...ANON_DENIED, ...AUTHENTICATED_ONLY]) {
     it(`authenticated når RPC-lagret för ${fn} (inte permission denied)`, async () => {
       const r = await callRpc(fn, body, accessToken);
       expect(
@@ -171,6 +189,7 @@ describe.skipIf(!canAuth)("RPC-grants · authenticated får tillgång där det s
       ).toBe(false);
     });
   }
+
 
   for (const { fn, body } of ALL_DENIED) {
     it(`authenticated blockeras fortfarande från ${fn}`, async () => {
