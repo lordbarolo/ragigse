@@ -3,6 +3,7 @@ import { renderAsync } from 'npm:@react-email/components@0.0.22'
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { RecoveryEmail } from '../_shared/email-templates/recovery.tsx'
 import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts'
+import { fromAddress } from '../_shared/mailFrom.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -11,7 +12,7 @@ const corsHeaders = {
 
 const SITE_NAME = 'vårdbemanning.ai'
 const APP_BASE_URL = Deno.env.get('APP_BASE_URL') || 'https://vardbemanning.ai'
-const FROM_EMAIL = 'vårdbemanning.ai <noreply@mail.compcare.se>'
+const FROM_EMAIL = fromAddress()
 const RESEND_GATEWAY_URL = 'https://connector-gateway.lovable.dev/resend/emails'
 
 function getClientIp(req: Request): string {

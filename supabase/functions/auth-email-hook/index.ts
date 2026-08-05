@@ -9,6 +9,7 @@ import { MagicLinkEmail } from '../_shared/email-templates/magic-link.tsx'
 import { RecoveryEmail } from '../_shared/email-templates/recovery.tsx'
 import { EmailChangeEmail } from '../_shared/email-templates/email-change.tsx'
 import { ReauthenticationEmail } from '../_shared/email-templates/reauthentication.tsx'
+import { FROM_DOMAIN } from '../_shared/mailFrom.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -37,9 +38,9 @@ const EMAIL_TEMPLATES: Record<string, React.ComponentType<any>> = {
 
 // Configuration
 const SITE_NAME = "vårdbemanning.ai"
-const SENDER_DOMAIN = "mail.compcare.se"
+const SENDER_DOMAIN = FROM_DOMAIN
 const ROOT_DOMAIN = "vardbemanning.ai"
-const FROM_DOMAIN = "mail.compcare.se" // Verified Resend domain
+
 
 // Sample data for preview mode ONLY (not used in actual email sending).
 // URLs are baked in at scaffold time from the project's real data.

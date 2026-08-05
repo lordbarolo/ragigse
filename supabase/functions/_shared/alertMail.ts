@@ -2,6 +2,8 @@
 // chat-prompt to Lovable. Used by health-check, edge-error-monitor and
 // conversion-monitor.
 
+import { fromAddress } from "./mailFrom.ts";
+
 const ALERT_EMAIL = "anders@compcare.se";
 const PROJECT_URL = "https://lovable.dev/projects/f4c1323e-7c72-43ee-978e-fa632a197c62";
 
@@ -61,7 +63,7 @@ export async function sendChatAlert(opts: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "vårdbemanning.ai Health <noreply@mail.compcare.se>",
+      from: fromAddress("Health"),
       to: [opts.to ?? ALERT_EMAIL],
       subject: `🚨 ${opts.subject}`,
       html,

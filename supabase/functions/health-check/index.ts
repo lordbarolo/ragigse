@@ -10,6 +10,7 @@
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { requireCronOrAdmin } from "../_shared/cronAuth.ts";
+import { fromAddress } from "../_shared/mailFrom.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -233,7 +234,7 @@ async function sendAlertEmail(failures: CheckResult[], alertId: string): Promise
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "vårdbemanning.ai Health <noreply@mail.compcare.se>",
+      from: fromAddress("Health"),
       to: [ALERT_EMAIL],
       subject,
       html,
