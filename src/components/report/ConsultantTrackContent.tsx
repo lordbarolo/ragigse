@@ -443,7 +443,7 @@ export default function ConsultantTrackContent({
               {[
                 "Regioner upphandlar bemanning genom ramavtal där ett kundpris fastställs.",
                 "Konsultens ersättning är normalt en andel av detta pris.",
-                "CompCare analyserar ramavtal och historiska uppdrag för att visa hur ersättningen i genomsnitt fördelas.",
+                "vårdbemanning.ai analyserar ramavtal och historiska uppdrag för att visa hur ersättningen i genomsnitt fördelas.",
               ].map((text, i) => (
                 <li key={i} className="flex items-start gap-2.5 text-hint leading-relaxed">
                   <span className="mt-1.5 w-1 h-1 rounded-full bg-muted-foreground/20 shrink-0" />

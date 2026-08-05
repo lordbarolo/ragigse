@@ -193,9 +193,9 @@ serve(async (req) => {
     });
 
     let y = height - 40;
-    page.drawText("compcare", { x: 40, y, size: 22, font: fontBold, color: white });
+    page.drawText("vardbemanning.ai", { x: 40, y, size: 22, font: fontBold, color: white });
     page.drawText(".se", {
-      x: 40 + fontBold.widthOfTextAtSize("compcare", 22), y, size: 22, font: fontBold, color: primaryColor,
+      x: 40 + fontBold.widthOfTextAtSize("vardbemanning.ai", 22), y, size: 22, font: fontBold, color: primaryColor,
     });
 
     y -= 25;
@@ -290,7 +290,7 @@ serve(async (req) => {
 
     y = 60;
     page.drawRectangle({ x: 40, y: y + 10, width: width - 80, height: 0.5, color: lightGray });
-    page.drawText("CompCare.se — Ersättningsanalys baserad på ramavtal 2026", {
+    page.drawText("vårdbemanning.ai — Ersättningsanalys baserad på ramavtal 2026", {
       x: 40, y: y - 8, size: 8, font, color: lightGray,
     });
     page.drawText("Faktisk ersättning kan variera beroende på arbetsgivare, uppdrag och individuella avtal.", {
@@ -301,7 +301,7 @@ serve(async (req) => {
     const base64 = btoa(String.fromCharCode(...pdfBytes));
 
     return new Response(
-      JSON.stringify({ pdf_base64: base64, filename: `CompCare_${report.occupation}_${report.kommun}.pdf` }),
+      JSON.stringify({ pdf_base64: base64, filename: `vårdbemanning.ai_${report.occupation}_${report.kommun}.pdf` }),
       { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (error) {

@@ -71,7 +71,7 @@ serve(async (req) => {
     }
 
     // Build the confirmation link
-    const siteUrl = req.headers.get("origin") || "https://compcare.se";
+    const siteUrl = req.headers.get("origin") || "https://vardbemanning.ai";
     const utmParams = "utm_source=referral&utm_medium=email&utm_campaign=colleague_tip";
     const confirmLink = `${siteUrl}/referral/${referral.token}?${utmParams}`;
     const homepageLink = `${siteUrl}/?${utmParams}`;
@@ -140,7 +140,7 @@ serve(async (req) => {
       const emailHtml = `
         <div style="font-family: 'Inter', Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #1a1a2e; line-height: 1.6;">
           <div style="background: linear-gradient(135deg, #0f1729, #1a2040); padding: 20px 28px; border-radius: 12px 12px 0 0;">
-            <span style="color: #38bdf8; font-weight: 700; font-size: 18px;">compcare</span><span style="color: #fff; font-weight: 700; font-size: 18px;">.se</span>
+            <span style="color: #38bdf8; font-weight: 700; font-size: 18px;">vardbemanning.ai</span><span style="color: #fff; font-weight: 700; font-size: 18px;">.se</span>
           </div>
           <div style="padding: 28px; background: #fff; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
             <h2 style="margin: 0 0 12px; color: #1a1a2e; font-size: 18px;">Din kollega tipsar: kolla din ersättning</h2>
@@ -152,7 +152,7 @@ serve(async (req) => {
                 <a href="${homepageLink}" style="display: inline-block; padding: 14px 32px; background: linear-gradient(135deg, #38bdf8, #0d9488); color: #fff; text-decoration: none; border-radius: 8px; font-weight: 600;">Kolla din ersättning</a>
               </p>
             ` : ""}
-            <p style="color: #888; font-size: 12px; margin-top: 20px;">Hälsningar,<br/>Teamet på CompCare.se</p>
+            <p style="color: #888; font-size: 12px; margin-top: 20px;">Hälsningar,<br/>Teamet på vårdbemanning.ai</p>
           </div>
         </div>
       `;
@@ -166,7 +166,7 @@ serve(async (req) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            from: "CompCare.se <noreply@mail.compcare.se>",
+            from: "vårdbemanning.ai <noreply@mail.compcare.se>",
             to: [referee_email],
             subject: "Din kollega tipsar: Har du rätt ersättning som konsult?",
             html: emailHtml,

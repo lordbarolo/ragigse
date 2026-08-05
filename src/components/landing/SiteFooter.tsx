@@ -17,7 +17,7 @@ export default function SiteFooter() {
         <div className="grid grid-cols-2 gap-x-8 gap-y-10 md:grid-cols-4 lg:grid-cols-[minmax(0,1.2fr)_repeat(3,minmax(0,1fr))]">
           {/* Logotyp */}
           <div className="col-span-2 md:col-span-1">
-            <Link to="/" aria-label="CompCare startsida" className="inline-flex items-center text-black">
+            <Link to="/" aria-label="vårdbemanning.ai startsida" className="inline-flex items-center text-black">
               <CompcareLogo variant="full" inverted={false} />
             </Link>
             <p className="mt-4 max-w-[240px] text-sm leading-relaxed text-black/60">
@@ -72,10 +72,10 @@ export default function SiteFooter() {
             </ul>
           </nav>
 
-          {/* Om CompCare */}
+          {/* Om vårdbemanning.ai */}
           <nav aria-labelledby="footer-om">
             <h2 id="footer-om" className="text-sm font-semibold text-black mb-3">
-              Om CompCare
+              Om vårdbemanning.ai
             </h2>
             <ul className="space-y-2 text-sm text-black/70">
               <li>
@@ -110,7 +110,7 @@ export default function SiteFooter() {
               Faktasidor
             </Link>
           </nav>
-          <p>© {new Date().getFullYear()} CompCare</p>
+          <p>© {new Date().getFullYear()} vårdbemanning.ai</p>
         </div>
       </div>
     </footer>

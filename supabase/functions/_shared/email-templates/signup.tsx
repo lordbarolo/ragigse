@@ -29,11 +29,11 @@ export const SignupEmail = ({
 }: SignupEmailProps) => (
   <Html lang="sv" dir="ltr">
     <Head />
-    <Preview>Bekräfta din e-post för CompCare</Preview>
+    <Preview>Bekräfta din e-post för vårdbemanning.ai</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Text style={logo}>CompCare</Text>
-        <Heading style={h1}>Välkommen till CompCare!</Heading>
+        <Text style={logo}>vårdbemanning.ai</Text>
+        <Heading style={h1}>Välkommen till vårdbemanning.ai!</Heading>
         <Text style={text}>
           Tack för att du registrerade dig. Bekräfta din e-postadress (
           <Link href={`mailto:${recipient}`} style={link}>{recipient}</Link>

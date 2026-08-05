@@ -67,7 +67,7 @@ export default function Onboarding() {
   return (
     <div className="min-h-screen px-4 py-12" style={{ background: "#0e1016" }}>
       <SEO
-        title="Kom igång – CompCare"
+        title="Kom igång – vårdbemanning.ai"
         description="Fyll i roll, ort, kontraktsform och ersättning för att se dina villkor i förhållande till marknaden."
         path="/onboarding"
         noindex

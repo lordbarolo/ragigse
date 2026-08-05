@@ -28,7 +28,7 @@ export default function Navbar() {
           <ArrowLeft className="w-4 h-4 text-slate-600" />
         </button>
       )}
-      <Link to="/" className="flex items-center" aria-label="CompCare startsida">
+      <Link to="/" className="flex items-center" aria-label="vårdbemanning.ai startsida">
         <div className="block md:hidden">
           <CompcareLogo variant="wordmark" inverted={false} />
         </div>

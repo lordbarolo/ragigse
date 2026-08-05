@@ -5,7 +5,7 @@ import {
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
 
-const SITE_NAME = 'CompCare'
+const SITE_NAME = 'vårdbemanning.ai'
 
 interface RepresentationInviteProps {
   agencyName?: string
@@ -114,7 +114,7 @@ export const template = {
     periodStart: '2026-05-04',
     periodEnd: '2026-06-15',
     responseDeadline: '2026-04-28',
-    signingUrl: 'https://compcare.se/sign/abc123',
+    signingUrl: 'https://vardbemanning.ai/sign/abc123',
   },
 } satisfies TemplateEntry
 

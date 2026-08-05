@@ -4,7 +4,7 @@ const NotFound = () => {
   return (
     <>
       <SEO
-        title="Sidan kunde inte hittas – CompCare"
+        title="Sidan kunde inte hittas – vårdbemanning.ai"
         description="Sidan du letar efter finns inte. Gå tillbaka till startsidan för att fortsätta."
         path="/404"
         noindex

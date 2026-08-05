@@ -24,13 +24,13 @@ export const RecoveryEmail = ({
 }: RecoveryEmailProps) => (
   <Html lang="sv" dir="ltr">
     <Head />
-    <Preview>Återställ ditt lösenord för CompCare</Preview>
+    <Preview>Återställ ditt lösenord för vårdbemanning.ai</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Text style={logo}>CompCare</Text>
+        <Text style={logo}>vårdbemanning.ai</Text>
         <Heading style={h1}>Återställ ditt lösenord</Heading>
         <Text style={text}>
-          Vi fick en begäran om att återställa lösenordet för ditt CompCare-konto.
+          Vi fick en begäran om att återställa lösenordet för ditt vårdbemanning.ai-konto.
           Klicka på knappen nedan för att välja ett nytt lösenord.
         </Text>
         <Button style={button} href={confirmationUrl}>

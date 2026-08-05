@@ -1,5 +1,5 @@
 /**
- * Sitewide JSON-LD schemas for CompCare.
+ * Sitewide JSON-LD schemas for vårdbemanning.ai.
  *
  * Used to establish maskinläsbar canonicitet för agenter och AI-verktyg
  * (ChatGPT, Gemini, Claude, Perplexity m.fl.). Statiskt innehåll —
@@ -17,8 +17,8 @@ export const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
   "@id": `${BASE_URL}/#organization`,
-  name: "CompCare",
-  alternateName: "CompCare.se",
+  name: "vårdbemanning.ai",
+  alternateName: "vårdbemanning.ai",
   url: BASE_URL,
   logo: {
     "@type": "ImageObject",
@@ -28,7 +28,7 @@ export const organizationSchema = {
   },
   image: `${BASE_URL}/compcare-og.png`,
   description:
-    "CompCare är en svensk ersättnings- och verifieringsplattform för vårdkonsulter. Jämför löner och timpriser mot SKR:s ramavtal i 290 kommuner.",
+    "vårdbemanning.ai är en svensk ersättnings- och verifieringsplattform för vårdkonsulter. Jämför löner och timpriser mot SKR:s ramavtal i 290 kommuner.",
   foundingDate: "2024",
   areaServed: {
     "@type": "Country",
@@ -60,7 +60,7 @@ export const websiteSchema = {
   "@type": "WebSite",
   "@id": `${BASE_URL}/#website`,
   url: BASE_URL,
-  name: "CompCare",
+  name: "vårdbemanning.ai",
   description:
     "Lön & ramavtalspriser för vårdkonsulter — jämför din ersättning mot SKR:s officiella ramavtal.",
   inLanguage: "sv-SE",

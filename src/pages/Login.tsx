@@ -141,8 +141,8 @@ export default function Login() {
   return (
     <>
       <SEO
-        title="Logga in – CompCare"
-        description="Logga in på ditt CompCare-konto för att se din rapport och hantera dina inställningar."
+        title="Logga in – vårdbemanning.ai"
+        description="Logga in på ditt vårdbemanning.ai-konto för att se din rapport och hantera dina inställningar."
         path="/logga-in"
         noindex
       />

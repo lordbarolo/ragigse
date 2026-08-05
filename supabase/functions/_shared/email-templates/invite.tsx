@@ -26,13 +26,13 @@ export const InviteEmail = ({
 }: InviteEmailProps) => (
   <Html lang="sv" dir="ltr">
     <Head />
-    <Preview>Du har blivit inbjuden till CompCare</Preview>
+    <Preview>Du har blivit inbjuden till vårdbemanning.ai</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Text style={logo}>CompCare</Text>
+        <Text style={logo}>vårdbemanning.ai</Text>
         <Heading style={h1}>Du har blivit inbjuden</Heading>
         <Text style={text}>
-          Du har blivit inbjuden att gå med i CompCare. Klicka på knappen nedan
+          Du har blivit inbjuden att gå med i vårdbemanning.ai. Klicka på knappen nedan
           för att acceptera inbjudan och skapa ditt konto.
         </Text>
         <Button style={button} href={confirmationUrl}>

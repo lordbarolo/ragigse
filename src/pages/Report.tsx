@@ -344,7 +344,7 @@ export default function Report() {
                   }
 
                   const safeOcc = (report.occupation || "rapport").replace(/[^a-z0-9åäö]+/gi, "_");
-                  pdf.save(`CompCare_${safeOcc}.pdf`);
+                  pdf.save(`vårdbemanning.ai_${safeOcc}.pdf`);
                   trackEvent("pdf_downloaded", { report_id: report.id });
                 } catch (e) {
                   console.error("PDF export failed", e);
@@ -388,7 +388,7 @@ export default function Report() {
               Faktisk ersättning kan variera beroende på arbetsgivare, uppdrag och individuella avtal.
             </p>
             <p className="text-[10px] text-muted-foreground">
-              © {new Date().getFullYear()} CompCare.se
+              © {new Date().getFullYear()} vårdbemanning.ai
             </p>
           </div>
         </div>

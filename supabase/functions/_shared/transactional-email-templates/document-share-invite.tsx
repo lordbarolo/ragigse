@@ -5,7 +5,7 @@ import {
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
 
-const SITE_NAME = 'CompCare'
+const SITE_NAME = 'vårdbemanning.ai'
 
 interface DocumentShareInviteProps {
   ownerName?: string
@@ -63,7 +63,7 @@ export const template = {
   previewData: {
     ownerName: 'Anna Svensson',
     documentCount: 3,
-    inviteUrl: 'https://compcare.se/delade-dokument/abc123',
+    inviteUrl: 'https://vardbemanning.ai/delade-dokument/abc123',
     personalMessage: 'Hej! Här är mina handlingar inför uppdraget.',
   },
 } satisfies TemplateEntry

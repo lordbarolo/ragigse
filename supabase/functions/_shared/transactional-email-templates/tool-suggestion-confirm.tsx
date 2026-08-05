@@ -5,7 +5,7 @@ import {
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
 
-const SITE_NAME = 'CompCare'
+const SITE_NAME = 'vårdbemanning.ai'
 
 interface ToolSuggestionConfirmProps {
   confirmUrl: string

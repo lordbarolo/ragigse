@@ -41,7 +41,7 @@ const cities = CITY_NAMES
 
 const index = {
   $schema: "https://json-schema.org/draft/2020-12/schema",
-  name: "CompCare rate endpoint index",
+  name: "vårdbemanning.ai rate endpoint index",
   description:
     "Machine-readable index of all valid specialty_slug and city_slug values. Combine any specialty_slug with any city_slug to form a valid rate page URL. Roles are always addressed as their specific role — administrative group labels are never published.",
   version: "2026.1",

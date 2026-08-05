@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 export const Route = createFileRoute("/dev/llms-check")({
   head: () => ({
     meta: [
-      { title: "llms.txt-verifiering — CompCare" },
+      { title: "llms.txt-verifiering — vårdbemanning.ai" },
       { name: "robots", content: "noindex" },
       {
         name: "description",

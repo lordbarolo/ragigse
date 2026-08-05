@@ -107,7 +107,7 @@ export default function Campaign() {
     <>
       <SEO
         title={`${displayLabel} – ramavtalspriser per zon`.slice(0, 60)}
-        description={`Se aktuella ramavtalspriser för ${displayLabel} i Zon 1–3. Anonymt och kostnadsfritt via CompCare.`.slice(0, 160)}
+        description={`Se aktuella ramavtalspriser för ${displayLabel} i Zon 1–3. Anonymt och kostnadsfritt via vårdbemanning.ai.`.slice(0, 160)}
         path={`/kampanj/${role}`}
       />
     <div className="min-h-[100dvh] bg-white">
@@ -266,7 +266,7 @@ export default function Campaign() {
         {/* ── Footer ──────────────────────────── */}
         <footer className="pt-10 border-t border-border text-center">
           <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} CompCare · <a href="/integritetspolicy" className="underline hover:text-muted-foreground">Integritetspolicy</a>
+            © {new Date().getFullYear()} vårdbemanning.ai · <a href="/integritetspolicy" className="underline hover:text-muted-foreground">Integritetspolicy</a>
           </p>
         </footer>
       </main>

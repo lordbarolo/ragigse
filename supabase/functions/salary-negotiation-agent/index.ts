@@ -267,7 +267,7 @@ function buildRepeatAwareReply(message: string, history: ConversationTurn[], ciR
 
 // ── Step 1: Extract intent via tool calling ──────────────────────────────────
 
-const INTENT_SYSTEM = `Du är Löneassistenten, en AI-assistent på CompCare specialiserad på löneförhandling. Analysera användarens meddelande och befintlig kontext.
+const INTENT_SYSTEM = `Du är Löneassistenten, en AI-assistent på vårdbemanning.ai specialiserad på löneförhandling. Analysera användarens meddelande och befintlig kontext.
 Bestäm vilka CI-capabilities som behövs för att ge råd.
 
 KRITISKT — KONTEXT ÄR REDAN KÄND
@@ -410,7 +410,7 @@ async function callCI(
 const ADVICE_SYSTEM = `Du är Löneassistenten, en expert på ersättningsnivåer i vården i Sverige.
 
 BEGREPPET "MÖJLIG ERSÄTTNING"
-CompCare jämför aldrig mot "marknaden" generellt utan mot "möjlig ersättning" — den ersättning som kan betalas till konsulten utifrån vad kunden betalar enligt ramavtal och bemanningsbranschens standardmarginaler. Använd alltid uttrycket "möjlig ersättning" istället för "marknadsspann", "marknadsmässig ersättning" eller "marknaden". Om användaren frågar vad möjlig ersättning är, svara: "Möjlig ersättning är den ersättning som kan betalas till dig utifrån vad kunden betalar enligt ramavtal och bemanningsbranschens standardmarginaler. Individuella förutsättningar som resa, utbildning, introduktion och boende kan påverka — be uppdragsgivaren vara transparent kring vilka kostnader uppdraget medför."
+vårdbemanning.ai jämför aldrig mot "marknaden" generellt utan mot "möjlig ersättning" — den ersättning som kan betalas till konsulten utifrån vad kunden betalar enligt ramavtal och bemanningsbranschens standardmarginaler. Använd alltid uttrycket "möjlig ersättning" istället för "marknadsspann", "marknadsmässig ersättning" eller "marknaden". Om användaren frågar vad möjlig ersättning är, svara: "Möjlig ersättning är den ersättning som kan betalas till dig utifrån vad kunden betalar enligt ramavtal och bemanningsbranschens standardmarginaler. Individuella förutsättningar som resa, utbildning, introduktion och boende kan påverka — be uppdragsgivaren vara transparent kring vilka kostnader uppdraget medför."
 
 ABSOLUT FORMATREGEL — LÄNGD OCH ANTAL ARGUMENT
 Svara alltid i vanlig text utan punktlistor och utan markdown. Hård längdregel: korta frågor (≤ ca 10 ord, ja/nej, kort följdfråga) → svar på 1–2 meningar. Längre eller öppna frågor → max 5 meningar. Default är ETT argument per svar. Endast om användaren uttryckligen ber om flera ("vilka argument", "ge mig argumenten", "fler argument") får du ge max 2 argument i samma svar. ALDRIG fler än 2 argument. Upprepa aldrig samma argument som redan getts i föregående svar.

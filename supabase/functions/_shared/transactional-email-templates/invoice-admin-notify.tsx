@@ -5,7 +5,7 @@ import {
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
 
-const SITE_NAME = 'CompCare'
+const SITE_NAME = 'vårdbemanning.ai'
 
 interface AdminNotifyProps {
   email?: string
@@ -24,7 +24,7 @@ const InvoiceAdminNotifyEmail = ({ email, name, role, region, message }: AdminNo
         <Text style={logo}>{SITE_NAME}</Text>
         <Heading style={h1}>Ny intresseanmälan — Fakturakontroll</Heading>
         <Text style={text}>
-          Någon har anmält intresse för fakturagranskning via compcare.se.
+          Någon har anmält intresse för fakturagranskning via vardbemanning.ai.
         </Text>
         <Hr style={hr} />
         <Text style={label}>E-post</Text>

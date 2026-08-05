@@ -9,8 +9,8 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-const SITE_NAME = 'CompCare'
-const FROM_EMAIL = 'CompCare <noreply@mail.compcare.se>'
+const SITE_NAME = 'vårdbemanning.ai'
+const FROM_EMAIL = 'vårdbemanning.ai <noreply@mail.compcare.se>'
 const RESEND_GATEWAY_URL = 'https://connector-gateway.lovable.dev/resend/emails'
 
 function getClientIp(req: Request): string {
@@ -92,7 +92,7 @@ Deno.serve(async (req) => {
     })
   }
 
-  const requestOrigin = req.headers.get('origin') || 'https://www.compcare.se'
+  const requestOrigin = req.headers.get('origin') || 'https://vardbemanning.ai'
   const resetUrl = new URL('/aterstall-losenord', requestOrigin)
 
   const { data: recoveryLinkData, error: recoveryError } = await supabase.auth.admin.generateLink({

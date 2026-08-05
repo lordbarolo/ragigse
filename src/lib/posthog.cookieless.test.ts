@@ -8,7 +8,7 @@ import { resolve } from "node:path";
  * PostHog initieras i <head> via snippet i index.html (laddas på ALLA sidor).
  * Konfigurationen är cookie-fri: memory-persistence, ingen autocapture,
  * manuella pageviews, ingen session recording, $ip null och URL-redaktion.
- * Detta är kärnan i CompCares integritetsposition (se Privacy Policy 2026).
+ * Detta är kärnan i vårdbemanning.ai:s integritetsposition (se Privacy Policy 2026).
  *
  * Consent-toggle och pageview-hjälpare bor kvar i src/lib/posthog.ts.
  * Den matchande runtime-testen ligger i `trackEvent.cookieless.test.ts`.

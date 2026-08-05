@@ -162,7 +162,7 @@ export default function LonSpecialtyCity() {
             { "@type": "PropertyValue", name: "Företagare", unitText: "SEK/timme", value: data.contractor_rate },
             { "@type": "PropertyValue", name: "Löntagare", unitText: "SEK/timme", value: data.employee_rate },
           ],
-          creator: { "@type": "Organization", name: "CompCare", url: "https://vardbemanning.ai" },
+          creator: { "@type": "Organization", name: "vårdbemanning.ai", url: "https://vardbemanning.ai" },
           citation: data.source,
         },
         {
@@ -190,7 +190,7 @@ export default function LonSpecialtyCity() {
               name: `Vilken källa används för priset i ${place}?`,
               acceptedAnswer: {
                 "@type": "Answer",
-                text: `${data.source}. CompCare använder enbart regionernas upphandlade ramavtalspriser samt bemanningsbranschens marginalmodell — aldrig SCB- eller Medlingsinstitutets lönestatistik.`,
+                text: `${data.source}. vårdbemanning.ai använder enbart regionernas upphandlade ramavtalspriser samt bemanningsbranschens marginalmodell — aldrig SCB- eller Medlingsinstitutets lönestatistik.`,
               },
             },
           ],
@@ -199,7 +199,7 @@ export default function LonSpecialtyCity() {
           "@type": "BreadcrumbList",
           "@id": `${url}#breadcrumbs`,
           itemListElement: [
-            { "@type": "ListItem", position: 1, name: "CompCare", item: "https://vardbemanning.ai/" },
+            { "@type": "ListItem", position: 1, name: "vårdbemanning.ai", item: "https://vardbemanning.ai/" },
             { "@type": "ListItem", position: 2, name: "Timpeng per roll och ort", item: "https://vardbemanning.ai/faktasidor" },
             { "@type": "ListItem", position: 3, name: `${data.specialty_name} i ${place}`, item: url },
           ],
@@ -230,8 +230,8 @@ export default function LonSpecialtyCity() {
       <SEO
         title={
           state === "ok"
-            ? `Timpeng ${specialtyLabel} i ${cityLabel} 2026 | CompCare`
-            : `Timpeng per roll och ort 2026 | CompCare`
+            ? `Timpeng ${specialtyLabel} i ${cityLabel} 2026 | vårdbemanning.ai`
+            : `Timpeng per roll och ort 2026 | vårdbemanning.ai`
         }
         description={
           state === "ok" && data
@@ -252,7 +252,7 @@ export default function LonSpecialtyCity() {
           className="text-[17px] font-semibold"
           style={{ fontFamily: "'IBM Plex Mono',monospace", letterSpacing: "-0.5px", color: "#eef0f4" }}
         >
-          compcare
+          vardbemanning.ai
         </Link>
         <Link
           to="/logga-in"

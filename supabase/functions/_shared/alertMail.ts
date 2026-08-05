@@ -43,14 +43,14 @@ export async function sendChatAlert(opts: {
   `).join("");
 
   const html = `<!doctype html><html><body style="font-family:-apple-system,Segoe UI,sans-serif;max-width:680px;margin:0 auto;padding:24px;color:#111;">
-    <h2 style="margin:0 0 6px;color:#c00;">🚨 CompCare: ${escapeHtml(opts.subject)}</h2>
+    <h2 style="margin:0 0 6px;color:#c00;">🚨 vårdbemanning.ai: ${escapeHtml(opts.subject)}</h2>
     <p style="margin:0 0 16px;color:#555;font-size:13px;">Alert-ID: <code>${escapeHtml(opts.alertId)}</code> · ${new Date().toISOString()}</p>
     <p style="margin:0 0 12px;">${escapeHtml(opts.intro)}</p>
     ${sectionsHtml}
     <h3 style="margin:24px 0 8px;">Klistra in detta i Lovable-chatten för att fixa:</h3>
     <pre style="background:#0f172a;color:#e2e8f0;padding:16px;border-radius:8px;white-space:pre-wrap;word-break:break-word;font-size:13px;line-height:1.5;">${escapeHtml(opts.chatPrompt)}</pre>
     <p style="margin-top:24px;"><a href="${PROJECT_URL}" style="background:#8155FF;color:#fff;padding:10px 18px;border-radius:6px;text-decoration:none;font-weight:600;">Öppna Lovable →</a></p>
-    <p style="margin-top:32px;color:#888;font-size:12px;">CompCare health · automatiskt utskick</p>
+    <p style="margin-top:32px;color:#888;font-size:12px;">vårdbemanning.ai health · automatiskt utskick</p>
   </body></html>`;
 
   const res = await fetch("https://connector-gateway.lovable.dev/resend/emails", {
@@ -61,7 +61,7 @@ export async function sendChatAlert(opts: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "CompCare Health <noreply@mail.compcare.se>",
+      from: "vårdbemanning.ai Health <noreply@mail.compcare.se>",
       to: [opts.to ?? ALERT_EMAIL],
       subject: `🚨 ${opts.subject}`,
       html,

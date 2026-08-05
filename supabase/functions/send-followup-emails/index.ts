@@ -20,7 +20,7 @@ function getEmailTemplate(step: number, occupation: string, reportUrl: string): 
       html: `
         <div style="font-family: 'Inter', Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #1a1a2e; line-height: 1.6;">
           <div style="background: linear-gradient(135deg, #0f1729, #1a2040); padding: 24px 28px; border-radius: 12px 12px 0 0;">
-            <span style="color: #38bdf8; font-weight: 700; font-size: 18px;">compcare</span><span style="color: #fff; font-weight: 700; font-size: 18px;">.se</span>
+            <span style="color: #38bdf8; font-weight: 700; font-size: 18px;">vardbemanning.ai</span><span style="color: #fff; font-weight: 700; font-size: 18px;">.se</span>
           </div>
           <div style="padding: 28px; background: #fff; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
             <h2 style="margin: 0 0 16px; color: #1a1a2e; font-size: 18px;">3 tips inför din nästa förhandling</h2>
@@ -33,7 +33,7 @@ function getEmailTemplate(step: number, occupation: string, reportUrl: string): 
             <p style="margin: 20px 0;">
               <a href="${reportUrl}" style="display: inline-block; padding: 12px 28px; background: linear-gradient(135deg, #38bdf8, #0d9488); color: #fff; text-decoration: none; border-radius: 8px; font-weight: 600;">Se din rapport igen</a>
             </p>
-            <p style="color: #888; font-size: 13px;">Lycka till!<br/>Teamet på CompCare.se</p>
+            <p style="color: #888; font-size: 13px;">Lycka till!<br/>Teamet på vårdbemanning.ai</p>
           </div>
         </div>
       `,
@@ -43,7 +43,7 @@ function getEmailTemplate(step: number, occupation: string, reportUrl: string): 
       html: `
         <div style="font-family: 'Inter', Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #1a1a2e; line-height: 1.6;">
           <div style="background: linear-gradient(135deg, #0f1729, #1a2040); padding: 24px 28px; border-radius: 12px 12px 0 0;">
-            <span style="color: #38bdf8; font-weight: 700; font-size: 18px;">compcare</span><span style="color: #fff; font-weight: 700; font-size: 18px;">.se</span>
+            <span style="color: #38bdf8; font-weight: 700; font-size: 18px;">vardbemanning.ai</span><span style="color: #fff; font-weight: 700; font-size: 18px;">.se</span>
           </div>
           <div style="padding: 28px; background: #fff; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
             <h2 style="margin: 0 0 16px; color: #1a1a2e; font-size: 18px;">Har du hunnit förhandla?</h2>
@@ -53,7 +53,7 @@ function getEmailTemplate(step: number, occupation: string, reportUrl: string): 
             <p style="margin: 20px 0;">
               <a href="${reportUrl}" style="display: inline-block; padding: 12px 28px; background: linear-gradient(135deg, #38bdf8, #0d9488); color: #fff; text-decoration: none; border-radius: 8px; font-weight: 600;">Öppna din rapport</a>
             </p>
-            <p style="color: #888; font-size: 13px;">Hälsningar,<br/>Teamet på CompCare.se</p>
+            <p style="color: #888; font-size: 13px;">Hälsningar,<br/>Teamet på vårdbemanning.ai</p>
           </div>
         </div>
       `,
@@ -63,16 +63,16 @@ function getEmailTemplate(step: number, occupation: string, reportUrl: string): 
       html: `
         <div style="font-family: 'Inter', Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #1a1a2e; line-height: 1.6;">
           <div style="background: linear-gradient(135deg, #0f1729, #1a2040); padding: 24px 28px; border-radius: 12px 12px 0 0;">
-            <span style="color: #38bdf8; font-weight: 700; font-size: 18px;">compcare</span><span style="color: #fff; font-weight: 700; font-size: 18px;">.se</span>
+            <span style="color: #38bdf8; font-weight: 700; font-size: 18px;">vardbemanning.ai</span><span style="color: #fff; font-weight: 700; font-size: 18px;">.se</span>
           </div>
           <div style="padding: 28px; background: #fff; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 12px 12px;">
             <h2 style="margin: 0 0 16px; color: #1a1a2e; font-size: 18px;">Dags att uppdatera din analys?</h2>
             <p>Det har gått ett par veckor sedan din senaste ersättningsanalys som <strong>${occupation}</strong>.</p>
             <p>Ramavtalspriser uppdateras löpande och nya avtal kan ge dig bättre förhandlingsunderlag. Gör en ny kostnadsfri analys för att se om det finns utrymme att höja din ersättning ytterligare.</p>
             <p style="margin: 20px 0;">
-              <a href="https://compcare.se" style="display: inline-block; padding: 12px 28px; background: linear-gradient(135deg, #38bdf8, #0d9488); color: #fff; text-decoration: none; border-radius: 8px; font-weight: 600;">Gör en ny analys</a>
+              <a href="https://vardbemanning.ai" style="display: inline-block; padding: 12px 28px; background: linear-gradient(135deg, #38bdf8, #0d9488); color: #fff; text-decoration: none; border-radius: 8px; font-weight: 600;">Gör en ny analys</a>
             </p>
-            <p style="color: #888; font-size: 13px;">Hälsningar,<br/>Teamet på CompCare.se</p>
+            <p style="color: #888; font-size: 13px;">Hälsningar,<br/>Teamet på vårdbemanning.ai</p>
           </div>
         </div>
       `,
@@ -143,7 +143,7 @@ serve(async (req) => {
       try {
         // Get report info for context
         let occupation = "konsult";
-        const reportUrl = `https://compcare.se/rapport/${email.report_id}`;
+        const reportUrl = `https://vardbemanning.ai/rapport/${email.report_id}`;
 
         if (email.report_id) {
           const { data: report } = await supabase
@@ -164,7 +164,7 @@ serve(async (req) => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            from: "CompCare.se <noreply@mail.compcare.se>",
+            from: "vårdbemanning.ai <noreply@mail.compcare.se>",
             to: [email.email],
             subject: template.subject,
             html: template.html,

@@ -94,7 +94,7 @@ export default function AnestesiReport() {
   return (
     <div className="min-h-screen bg-background">
       <SEO
-        title="Anestesisjuksköterska – timpris & lön 2026 | CompCare"
+        title="Anestesisjuksköterska – timpris & lön 2026 | vårdbemanning.ai"
         description="Aktuella ramavtalspriser, OB-tillägg och rekommenderat konsultarvode för anestesisjuksköterskor i Sveriges tre priszoner."
         path="/rapport/anestesisjukskoterska"
         ogType="article"
@@ -284,7 +284,7 @@ export default function AnestesiReport() {
               Faktisk ersättning kan variera beroende på arbetsgivare, uppdrag och individuella avtal.
             </p>
             <p className="text-[10px] text-muted-foreground">
-              © {new Date().getFullYear()} CompCare.se
+              © {new Date().getFullYear()} vårdbemanning.ai
             </p>
           </div>
         </div>

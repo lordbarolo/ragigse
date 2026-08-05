@@ -65,8 +65,8 @@ export default function Unsubscribe() {
   return (
     <>
     <SEO
-      title="Avregistrera utskick – CompCare"
-      description="Avregistrera dig från CompCares e-postutskick."
+      title="Avregistrera utskick – vårdbemanning.ai"
+      description="Avregistrera dig från vårdbemanning.ai:s e-postutskick."
       path="/unsubscribe"
       noindex
     />
@@ -91,7 +91,7 @@ export default function Unsubscribe() {
               <>
                 <h1 className="text-xl font-semibold text-foreground">Avsluta prenumeration</h1>
                 <p className="text-muted-foreground text-sm">
-                  Vill du sluta ta emot app-mejl från CompCare? Du kommer fortfarande
+                  Vill du sluta ta emot app-mejl från vårdbemanning.ai? Du kommer fortfarande
                   att kunna använda tjänsten.
                 </p>
                 <Button onClick={handleConfirm} variant="destructive" className="w-full">
@@ -112,7 +112,7 @@ export default function Unsubscribe() {
                 <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto" />
                 <h1 className="text-xl font-semibold text-foreground">Avprenumererad</h1>
                 <p className="text-muted-foreground text-sm">
-                  Du kommer inte längre att ta emot app-mejl från CompCare.
+                  Du kommer inte längre att ta emot app-mejl från vårdbemanning.ai.
                 </p>
               </>
             )}

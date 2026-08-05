@@ -1,6 +1,6 @@
-# CompCare Agent API
+# vårdbemanning.ai Agent API
 
-Tre endpoints för externa AI-agenter (Claude, GPT, egna system) att läsa CompCare-data säkert.
+Tre endpoints för externa AI-agenter (Claude, GPT, egna system) att läsa vårdbemanning.ai-data säkert.
 
 **Bas-URL:** `https://ubhhlunhdqbokjvwfebb.supabase.co/functions/v1`
 

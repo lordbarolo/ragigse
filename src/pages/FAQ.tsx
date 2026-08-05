@@ -5,7 +5,7 @@ import { SEO } from "@/components/SEO";
 
 const FAQ_ITEMS = [
   {
-    question: "Hur fungerar CompCare.se?",
+    question: "Hur fungerar vårdbemanning.ai?",
     answer:
       "Du fyller i yrkesroll, arbetsort och erfarenhet. Vi jämför din ersättning med möjlig ersättning, dvs. vad kunden betalar enligt ramavtal minus bemanningsbranschens standardmarginal. Resultatet visar hur din ersättning förhåller sig till möjlig ersättning.",
   },
@@ -15,7 +15,7 @@ const FAQ_ITEMS = [
       "Analysen baseras på regionernas officiella ramavtalspriser för 2026 och bemanningsbranschens standardmarginaler.",
   },
   {
-    question: "Kostar det något att använda CompCare?",
+    question: "Kostar det något att använda vårdbemanning.ai?",
     answer:
       "Nej, sidan har inga funktioner som kräver betalning.",
   },
@@ -27,7 +27,7 @@ const FAQ_ITEMS = [
   {
     question: "Hur ligger min ersättning jämfört med möjlig ersättning?",
     answer:
-      "CompCare matchar din yrkesroll, arbetsort och erfarenhet mot officiella ramavtalspriser och visar om din ersättning ligger under, på eller över möjlig ersättning.",
+      "vårdbemanning.ai matchar din yrkesroll, arbetsort och erfarenhet mot officiella ramavtalspriser och visar om din ersättning ligger under, på eller över möjlig ersättning.",
   },
   {
     question: "Vad är ramavtalspriser och varför är de relevanta?",
@@ -35,14 +35,14 @@ const FAQ_ITEMS = [
       "Ramavtalspriser är de timpris som offentliga vårdgivare har avtalat med bemanningsföretag. De visar vad som faktiskt betalas för inhyrd personal och fungerar som en referenspunkt för ersättningsnivåer.",
   },
   {
-    question: "Vad innehåller CompCare-rapporten?",
+    question: "Vad innehåller vårdbemanning.ai-rapporten?",
     answer:
       "Rapporten visar ramavtalspriser för din yrkesroll och zon, marknadmässig lön efter marginal, samt hur din ersättning förhåller sig till marknadens percentiler.",
   },
   {
     question: "Skiljer sig ersättningarna mellan olika kommuner?",
     answer:
-      "Ja, skillnaderna kan vara stora. Storstadskommuner har generellt lägre ramavtalspriser tack vare större tillgång på personal, medan glesbygdskommuner kan betala 30–50% mer. CompCare visar data för alla 290 vårdgivare.",
+      "Ja, skillnaderna kan vara stora. Storstadskommuner har generellt lägre ramavtalspriser tack vare större tillgång på personal, medan glesbygdskommuner kan betala 30–50% mer. vårdbemanning.ai visar data för alla 290 vårdgivare.",
   },
   {
     question: "Hur ofta uppdateras datan?",
@@ -73,8 +73,8 @@ export default function FAQ() {
   return (
     <div className="min-h-screen bg-background">
       <SEO
-        title="Vanliga frågor om ersättning för vårdkonsulter | CompCare"
-        description="Svar på vanliga frågor om ersättning, SKR-ramavtalspriser och hur CompCare hjälper dig jämföra din ersättning mot möjlig ersättning."
+        title="Vanliga frågor om ersättning för vårdkonsulter | vårdbemanning.ai"
+        description="Svar på vanliga frågor om ersättning, SKR-ramavtalspriser och hur vårdbemanning.ai hjälper dig jämföra din ersättning mot möjlig ersättning."
         path="/vanliga-fragor"
         jsonLd={faqJsonLd}
       />
@@ -131,7 +131,7 @@ export default function FAQ() {
 
       {/* Footer */}
       <footer className="border-t py-8 text-center text-sm text-muted-foreground">
-        <p>© 2026 CompCare.se · Data från offentliga ramavtal</p>
+        <p>© 2026 vårdbemanning.ai · Data från offentliga ramavtal</p>
       </footer>
     </div>
   );

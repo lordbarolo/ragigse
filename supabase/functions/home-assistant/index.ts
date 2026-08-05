@@ -161,7 +161,7 @@ Deno.serve(async (req) => {
       if (!key) return json({ error: "Assistenten är inte tillgänglig just nu." }, 503);
 
       const systemPrompt =
-        "Du är CompCares assistent för svenska vårdkonsulter. Svara neutralt och sakligt på svenska, " +
+        "Du är vårdbemanning.ai:s assistent för svenska vårdkonsulter. Svara neutralt och sakligt på svenska, " +
         "max tre korta stycken. Utgå endast från SKR:s ramavtal, publicerade historiska avrop och " +
         "branschens marginalmodeller. Använd aldrig SCB eller lönestatistik för konsultpriser. " +
         "Nämn aldrig gruppetiketter som 'Grupp A'. Beskriv aldrig en nivå som bra eller dålig — " +
@@ -262,7 +262,7 @@ Deno.serve(async (req) => {
           "Roll, ort, kontraktsform och ersättning behövs för att visa information om dina villkor i förhållande till " +
           "den övriga marknaden. Inga uppgifter delas.\n\n" +
           "Data lagras inom EU och används endast för din egen analys.",
-        source: "CompCares integritetspolicy",
+        source: "vårdbemanning.ai:s integritetspolicy",
       });
     }
 
@@ -314,7 +314,7 @@ Deno.serve(async (req) => {
       return json({
         answer:
           `I det historiska underlaget finns ${count ?? 0} publicerade avrop av sjuksköterskor i Gävleborg.\n\n` +
-          "Underlaget är historiskt och avser publicerade avrop. CompCare visar inte pågående eller framtida uppdrag.",
+          "Underlaget är historiskt och avser publicerade avrop. vårdbemanning.ai visar inte pågående eller framtida uppdrag.",
         source: "Publicerade avrop, historiskt underlag",
       });
     }
@@ -350,7 +350,7 @@ Deno.serve(async (req) => {
           (top.length
             ? `\n\nVanligast förekommande roller:\n${top.map(([r, n]) => `• ${r} — ${n} st`).join("\n")}`
             : "") +
-          "\n\nUnderlaget är historiskt. CompCare visar inte pågående eller framtida uppdrag.",
+          "\n\nUnderlaget är historiskt. vårdbemanning.ai visar inte pågående eller framtida uppdrag.",
         source: "Publicerade avrop, historiskt underlag",
       });
     }

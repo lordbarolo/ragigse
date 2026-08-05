@@ -296,7 +296,7 @@ export default function LakareSpecialtyReport() {
             <p><span className="font-semibold" style={{ color: ink }}>Källa:</span> SKR:s ramavtal vårdbemanning 2026, kategori {cfg.skrCategory}.</p>
             <p><span className="font-semibold" style={{ color: ink }}>Marginalmodell:</span> Specialistläkare 10–15 % bemanningsmarginal → konsultandel 85–90 % (eget bolag) respektive 83–88 % (anställd konsult).</p>
             <p><span className="font-semibold" style={{ color: ink }}>OB & jour:</span> Hanteras separat ovanpå grundpriset enligt SKR-tariff.</p>
-            <p><span className="font-semibold" style={{ color: ink }}>Neutralitet:</span> CompCare driver inte upp löner. Vi informerar om publika priser och offentliga ramavtal.</p>
+            <p><span className="font-semibold" style={{ color: ink }}>Neutralitet:</span> vårdbemanning.ai driver inte upp löner. Vi informerar om publika priser och offentliga ramavtal.</p>
           </section>
 
           {/* Verktygsteaser */}
@@ -363,7 +363,7 @@ export default function LakareSpecialtyReport() {
               <p className="text-[11px] text-muted-foreground leading-relaxed max-w-xs mx-auto">
                 Rapporten baseras på SKR:s ramavtal vårdbemanning 2026 och är avsedd som vägledning. Faktisk ersättning kan variera beroende på uppdrag, region och individuella avtal.
               </p>
-              <p className="text-[10px] text-muted-foreground">© {new Date().getFullYear()} CompCare.se</p>
+              <p className="text-[10px] text-muted-foreground">© {new Date().getFullYear()} vårdbemanning.ai</p>
             </div>
           </div>
         </main>

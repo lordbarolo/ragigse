@@ -162,14 +162,14 @@ Deno.serve(async (req) => {
       envelope({
         capability: "discover",
         status: "success",
-        source: { name: "CompCare Uppdragsradar", version: API_VERSION, confidence: "high" },
+        source: { name: "vårdbemanning.ai Uppdragsradar", version: API_VERSION, confidence: "high" },
         data: {
           api: "Uppdragsradar Public API",
           version: API_VERSION,
           base_url: `${url.origin}/functions/v1/radar-public-api`,
           authentication: {
             methods: ["X-API-Key header", "Authorization: Bearer", "?api_key= query"],
-            issued_by: "CompCare admin (per consumer)",
+            issued_by: "vårdbemanning.ai admin (per consumer)",
           },
           endpoints: [
             {
@@ -204,11 +204,11 @@ Deno.serve(async (req) => {
             },
           ],
           envelope: {
-            description: "All responses follow CompCare CI envelope",
+            description: "All responses follow vårdbemanning.ai CI envelope",
             fields: ["query_id", "capability", "status", "data", "source", "policy", "errors", "pagination", "meta"],
           },
-          documentation: "https://compcare.se/radar-api-README.md",
-          openapi: "https://compcare.se/openapi.json",
+          documentation: "https://vardbemanning.ai/radar-api-README.md",
+          openapi: "https://vardbemanning.ai/openapi.json",
         },
       }),
       200,
@@ -247,7 +247,7 @@ Deno.serve(async (req) => {
   }
 
   if (isWrite && !keyRow.partner_source) {
-    return errorEnvelope(endpoint, "MISSING_PARTNER_SOURCE", "API key must have partner_source set to write data. Contact CompCare admin.", 403);
+    return errorEnvelope(endpoint, "MISSING_PARTNER_SOURCE", "API key must have partner_source set to write data. Contact vårdbemanning.ai admin.", 403);
   }
 
   const rlRes = await enforceApiKeyRateLimit(service, keyRow, {
@@ -352,7 +352,7 @@ Deno.serve(async (req) => {
       envelope({
         capability: endpoint,
         status,
-        source: { name: "CompCare Uppdragsradar", version: API_VERSION, confidence: "high" },
+        source: { name: "vårdbemanning.ai Uppdragsradar", version: API_VERSION, confidence: "high" },
         data: {
           received: rowsInput.length,
           inserted,
@@ -483,7 +483,7 @@ Deno.serve(async (req) => {
       envelope({
         capability: endpoint,
         status: "success",
-        source: { name: "CompCare Uppdragsradar", version: API_VERSION, confidence: "high" },
+        source: { name: "vårdbemanning.ai Uppdragsradar", version: API_VERSION, confidence: "high" },
         data: rows,
         pagination: { limit, offset, returned: rows.length, total },
         meta: {

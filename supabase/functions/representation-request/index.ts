@@ -6,7 +6,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
-const SITE_URL = Deno.env.get("SITE_URL") || "https://compcare.se";
+const SITE_URL = Deno.env.get("SITE_URL") || "https://vardbemanning.ai";
 
 async function getAuthUserId(req: Request): Promise<string | null> {
   const authHeader = req.headers.get("Authorization");

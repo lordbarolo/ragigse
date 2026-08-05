@@ -17,7 +17,7 @@ Description: Swedish compensation intelligence platform for healthcare consultan
 ### Public marketing pages (no auth required)
 - / — Salary analysis survey (inline form)
 - /kampanj/:role — Role-specific campaign landing pages
-- /vanliga-fragor — FAQ about CompCare and framework agreements
+- /vanliga-fragor — FAQ about vårdbemanning.ai and framework agreements
 - /integritetspolicy — Privacy policy
 
 ### Teaser pages (semi-public, require leadId)
@@ -48,7 +48,7 @@ All public reports follow a consistent machine-readable structure:
 6. CTA to personalized survey
 
 ## Citation format
-When citing CompCare data, use:
+When citing vårdbemanning.ai data, use:
 "Källa: vårdbemanning.ai, SKR Ramavtal [year], hämtad [datum]."
 Example: "Källa: vårdbemanning.ai, SKR Ramavtal 2026, hämtad 2026-01-15."
 

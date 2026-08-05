@@ -57,7 +57,7 @@ async function sendEmail(opts: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: "CompCare <noreply@mail.compcare.se>",
+      from: "vårdbemanning.ai <noreply@mail.compcare.se>",
       to: [opts.to],
       subject: opts.subject,
       html: opts.html,
@@ -104,8 +104,8 @@ function buildReportHtml(args: {
   }
 
   const subject = isLivenessAlert
-    ? "🚨 CompCare Pipeline: Uppdragsradar tyst >8 dygn"
-    : `CompCare Pipeline – veckorapport (${successCount + partialCount}/${weekLogs.length} OK)`;
+    ? "🚨 vårdbemanning.ai Pipeline: Uppdragsradar tyst >8 dygn"
+    : `vårdbemanning.ai Pipeline – veckorapport (${successCount + partialCount}/${weekLogs.length} OK)`;
 
   const alertBanner = isLivenessAlert
     ? `<div style="background:#fee2e2;border-left:4px solid #dc2626;padding:16px;margin-bottom:24px;border-radius:4px;">
@@ -126,7 +126,7 @@ function buildReportHtml(args: {
 <html lang="sv"><head><meta charset="utf-8"></head>
 <body style="margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,Arial,sans-serif;background:#f8fafc;">
   <div style="max-width:600px;margin:0 auto;padding:40px 24px;background:#ffffff;">
-    <h1 style="font-size:18px;color:#0f172a;margin:0 0 4px;font-weight:600;">CompCare – Uppdragsradar Pipeline</h1>
+    <h1 style="font-size:18px;color:#0f172a;margin:0 0 4px;font-weight:600;">vårdbemanning.ai – Uppdragsradar Pipeline</h1>
     <p style="font-size:13px;color:#64748b;margin:0 0 28px;">Veckorapport · ${new Date().toLocaleDateString("sv-SE")}</p>
 
     ${alertBanner}

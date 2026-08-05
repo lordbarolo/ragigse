@@ -12,12 +12,12 @@ import { TEMPLATES } from '../_shared/transactional-email-templates/registry.ts'
 //  - SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY
 // Optional env:
 //  - RESEND_FROM_DOMAIN     (default: "compcare.se" — verified root domain in Resend)
-//  - RESEND_FROM_NAME       (default: "CompCare")
-//  - APP_BASE_URL           (default: "https://compcare.se" — used in unsubscribe links)
+//  - RESEND_FROM_NAME       (default: "vårdbemanning.ai")
+//  - APP_BASE_URL           (default: "https://vardbemanning.ai" — used in unsubscribe links)
 
-const SITE_NAME = Deno.env.get('RESEND_FROM_NAME') || 'CompCare'
-const FROM_DOMAIN = Deno.env.get('RESEND_FROM_DOMAIN') || 'compcare.se'
-const APP_BASE_URL = Deno.env.get('APP_BASE_URL') || 'https://compcare.se'
+const SITE_NAME = Deno.env.get('RESEND_FROM_NAME') || 'vårdbemanning.ai'
+const FROM_DOMAIN = Deno.env.get('RESEND_FROM_DOMAIN') || 'vardbemanning.ai'
+const APP_BASE_URL = Deno.env.get('APP_BASE_URL') || 'https://vardbemanning.ai'
 const GATEWAY_URL = 'https://connector-gateway.lovable.dev/resend'
 
 const corsHeaders = {

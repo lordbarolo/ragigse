@@ -1,4 +1,4 @@
-# LAUNCH SNAPSHOT — CompCare v1.0
+# LAUNCH SNAPSHOT — vårdbemanning.ai v1.0
 
 **Date:** 2026-05-01
 **Version tag:** `v1.0-launch`

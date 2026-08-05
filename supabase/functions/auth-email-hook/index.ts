@@ -36,9 +36,9 @@ const EMAIL_TEMPLATES: Record<string, React.ComponentType<any>> = {
 }
 
 // Configuration
-const SITE_NAME = "CompCare"
+const SITE_NAME = "vårdbemanning.ai"
 const SENDER_DOMAIN = "mail.compcare.se"
-const ROOT_DOMAIN = "compcare.se"
+const ROOT_DOMAIN = "vardbemanning.ai"
 const FROM_DOMAIN = "mail.compcare.se" // Verified Resend domain
 
 // Sample data for preview mode ONLY (not used in actual email sending).
@@ -46,7 +46,7 @@ const FROM_DOMAIN = "mail.compcare.se" // Verified Resend domain
 // The sample email uses a fixed placeholder (RFC 6761 .test TLD) so the Go backend
 // can always find-and-replace it with the actual recipient when sending test emails,
 // even if the project's domain has changed since the template was scaffolded.
-const SAMPLE_PROJECT_URL = "https://compcare.se"
+const SAMPLE_PROJECT_URL = "https://vardbemanning.ai"
 const SAMPLE_EMAIL = "user@example.test"
 const SAMPLE_DATA: Record<string, object> = {
   signup: {

@@ -29,10 +29,10 @@ export const EmailChangeEmail = ({
 }: EmailChangeEmailProps) => (
   <Html lang="sv" dir="ltr">
     <Head />
-    <Preview>Bekräfta din e-poständring för CompCare</Preview>
+    <Preview>Bekräfta din e-poständring för vårdbemanning.ai</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Text style={logo}>CompCare</Text>
+        <Text style={logo}>vårdbemanning.ai</Text>
         <Heading style={h1}>Bekräfta e-poständring</Heading>
         <Text style={text}>
           Du har begärt att ändra din e-postadress från{' '}

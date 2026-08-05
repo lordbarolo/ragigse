@@ -5,7 +5,7 @@ import {
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
 
-const SITE_NAME = 'CompCare'
+const SITE_NAME = 'vårdbemanning.ai'
 
 interface WelcomeProps {
   name?: string
@@ -14,15 +14,15 @@ interface WelcomeProps {
 const WelcomeEmail = ({ name }: WelcomeProps) => (
   <Html lang="sv" dir="ltr">
     <Head />
-    <Preview>Välkommen till CompCare — din ersättningspartner</Preview>
+    <Preview>Välkommen till vårdbemanning.ai — din ersättningspartner</Preview>
     <Body style={main}>
       <Container style={container}>
         <Text style={logo}>{SITE_NAME}</Text>
         <Heading style={h1}>
-          {name ? `Välkommen, ${name}!` : 'Välkommen till CompCare!'}
+          {name ? `Välkommen, ${name}!` : 'Välkommen till vårdbemanning.ai!'}
         </Heading>
         <Text style={text}>
-          Ditt konto är redo. Med CompCare får du tillgång till marknadsdata,
+          Ditt konto är redo. Med vårdbemanning.ai får du tillgång till marknadsdata,
           ersättningsanalyser och förhandlingsverktyg — allt anpassat för
           vårdkonsulter.
         </Text>
@@ -32,7 +32,7 @@ const WelcomeEmail = ({ name }: WelcomeProps) => (
           • Jämför din lön med marknaden{'\n'}
           • Få stöd i din nästa löneförhandling
         </Text>
-        <Button style={button} href="https://compcare.se/profil">
+        <Button style={button} href="https://vardbemanning.ai/profil">
           Gå till min profil →
         </Button>
         <Text style={footer}>
@@ -45,7 +45,7 @@ const WelcomeEmail = ({ name }: WelcomeProps) => (
 
 export const template = {
   component: WelcomeEmail,
-  subject: 'Välkommen till CompCare!',
+  subject: 'Välkommen till vårdbemanning.ai!',
   displayName: 'Välkomstmejl',
   previewData: { name: 'Anna' },
 } satisfies TemplateEntry

@@ -1,11 +1,11 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "CompCare API",
+    "title": "vårdbemanning.ai API",
     "version": "3.2.0",
     "description": "Compensation intelligence API for healthcare professionals in Sweden. Provides consultant market rate lookups based on official framework agreement prices (ramavtalspriser) from 290+ Swedish healthcare providers and the staffing industry's margin model.\n\nThe recommended entry point for AI agents is the unified `/compensation-intelligence` endpoint, which supports entity resolution, policy enforcement, and audit logging.\n\nAll CI responses follow a standardized envelope: `{ query_id, capability, status, data, source, policy, errors }`.\n\nData sources: SKR framework agreements (2026) and the staffing industry's margin model (85–90% of customer price, ×1.38 for employees, 167h/month). Updated continuously as new contract versions are published.\n\nBulk export and enumeration are NOT supported — the API enforces anti-enumeration policies.",
     "contact": {
-      "name": "CompCare",
+      "name": "vårdbemanning.ai",
       "url": "https://vardbemanning.ai",
       "email": "info@vardbemanning.ai"
     },
@@ -365,7 +365,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Public profile (schema.org Person + CompCare extensions)",
+            "description": "Public profile (schema.org Person + vårdbemanning.ai extensions)",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/PublicProfile" }
@@ -381,7 +381,7 @@
       "get": {
         "operationId": "radarDiscover",
         "summary": "Uppdragsradar API discovery",
-        "description": "Returns the available Uppdragsradar endpoints, scopes, and authentication methods. No API key required. Use this to discover what data is exposed before issuing authenticated calls. Response follows the CompCare CI envelope (`query_id`, `capability`, `status`, `data`, `source`, `policy`, `errors`, `meta`).",
+        "description": "Returns the available Uppdragsradar endpoints, scopes, and authentication methods. No API key required. Use this to discover what data is exposed before issuing authenticated calls. Response follows the vårdbemanning.ai CI envelope (`query_id`, `capability`, `status`, `data`, `source`, `policy`, `errors`, `meta`).",
         "tags": ["Uppdragsradar"],
         "responses": {
           "200": {
@@ -711,7 +711,7 @@
       },
       "PublicProfile": {
         "type": "object",
-        "description": "schema.org Person extended with CompCare verification data",
+        "description": "schema.org Person extended with vårdbemanning.ai verification data",
         "properties": {
           "@context": { "type": "string", "example": "https://schema.org" },
           "@type": { "type": "string", "example": "Person" },
@@ -736,9 +736,9 @@
               }
             }
           },
-          "compcare": {
+          "vardbemanning.ai": {
             "type": "object",
-            "description": "CompCare-specific verification metrics",
+            "description": "vårdbemanning.ai-specific verification metrics",
             "properties": {
               "trust_score": { "type": "integer", "minimum": 0, "maximum": 100 },
               "trust_tier": { "type": "string", "enum": ["elite", "verified_pro", "basic", "incomplete"] },
@@ -803,7 +803,7 @@
         "type": "apiKey",
         "in": "header",
         "name": "X-API-Key",
-        "description": "Per-consumer Uppdragsradar API key (issued by CompCare admin). Also accepted as `Authorization: Bearer <key>` or `?api_key=`."
+        "description": "Per-consumer Uppdragsradar API key (issued by vårdbemanning.ai admin). Also accepted as `Authorization: Bearer <key>` or `?api_key=`."
       }
     }
   },
