@@ -101,8 +101,7 @@ export default function AllmanmedicinReport() {
     roleSlug: "lakare-allmanmedicin",
     dateModified: LAST_UPDATED,
     summary:
-      `Ramavtalspriset för specialistläkare i allmänmedicin är ${fmt(lowZone)}–${fmt(highZone)} kr/h beroende på zon enligt SKR:s ramavtal vårdbemanning 2026. ` +
-
+      `Ramavtalspriset för specialistläkare i allmänmedicin är ${fmt(lowZone)}–${fmt(highZone)} kr/h beroende på zon enligt SKR:s ramavtal vårdbemanning 2026. `,
     rateRange: { min: lowZone, median: refRate, max: highZone, unit: "SEK/h" },
     skrSources: ["https://skr.se/ramavtal/vardbemanning"],
     faq: FAQ,

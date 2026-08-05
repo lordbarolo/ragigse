@@ -104,8 +104,7 @@ export default function LakareSpecialtyReport() {
     roleSlug: cfg.slug,
     dateModified: LAST_UPDATED,
     summary:
-      `Ramavtalspriset för ${cfg.skrCategory.toLowerCase()} är ${fmt(lowZone)}–${fmt(highZone)} kr/h beroende på zon enligt SKR:s ramavtal vårdbemanning 2026. ` +
-
+      `Ramavtalspriset för ${cfg.skrCategory.toLowerCase()} är ${fmt(lowZone)}–${fmt(highZone)} kr/h beroende på zon enligt SKR:s ramavtal vårdbemanning 2026. `,
     rateRange: { min: lowZone, median: refRate, max: highZone, unit: "SEK/h" },
     skrSources: ["https://skr.se/ramavtal/vardbemanning"],
     faq: FAQ,
