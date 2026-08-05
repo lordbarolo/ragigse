@@ -42,7 +42,7 @@ function makeFaq(cfg: DoctorSpecialtyConfig, rates: { zone1: number; zone2: numb
     {
       question: "Hur stor del av kundpriset går till konsulten?",
       answer:
-        "För specialistläkare är bemanningsföretagets marginal typiskt 10–15 % av kundpriset. Som egenföretagare ligger konsultandelen därför på 85–90 % av kundpriset. För anställd via bemanning utgör konsultkostnaden 83–88 % av kundpriset, och av det betalar bolaget först arbetsgivaravgifter (~31,42 %) och tjänstepension (~4,5 %) innan bruttolön betalas ut. Marginalen kan i vissa fall vara lägre — t.ex. när bemanningsbolaget tar betalningsrisk, garanterar timmar eller bär kostnad för outnyttjad kapacitet.",
+        "Möjlig ersättning redovisas som ett spann per zon i rapporten, med utgångspunkt i regionernas offentliga ramavtal 2026.",
     },
     {
       question: "Vilken region tillhör vilken zon?",
@@ -105,7 +105,7 @@ export default function LakareSpecialtyReport() {
     dateModified: LAST_UPDATED,
     summary:
       `Ramavtalspriset för ${cfg.skrCategory.toLowerCase()} är ${fmt(lowZone)}–${fmt(highZone)} kr/h beroende på zon enligt SKR:s ramavtal vårdbemanning 2026. ` +
-      `Konsultandelen ligger typiskt på 85–90 % av kundpriset för egenföretagare och 83–88 % för anställda konsulter.`,
+
     rateRange: { min: lowZone, median: refRate, max: highZone, unit: "SEK/h" },
     skrSources: ["https://skr.se/ramavtal/vardbemanning"],
     faq: FAQ,
@@ -169,7 +169,7 @@ export default function LakareSpecialtyReport() {
               Kundpriset för {cfg.skrCategory.toLowerCase()} är{" "}
               <span style={{ color: violet, fontWeight: 700 }}>{fmt(lowZone)}–{fmt(highZone)} kr/h</span>{" "}
               beroende på zon. Konsultandelen ligger typiskt på{" "}
-              <span style={{ fontWeight: 600 }}>85–90 %</span> av kundpriset för egenföretagare.
+              redovisad som ett spann per zon.
             </p>
             <p className="text-[12px]" style={{ color: sub }}>
               Senast uppdaterad {LAST_UPDATED} · Källa: SKR Ramavtal vårdbemanning 2026
@@ -224,7 +224,7 @@ export default function LakareSpecialtyReport() {
 
             <div className="space-y-3">
               {[
-                { label: "Egenföretagare", share: "Efter bemanningsbolagets marginal på 10–15 %", range: `${fmt(recMinF)}–${fmt(recMaxF)} kr/h` },
+                { label: "Egenföretagare", share: "Möjlig ersättning", range: `${fmt(recMinF)}–${fmt(recMaxF)} kr/h` },
                 { label: "Anställd via bemanning", share: "Bruttolön efter sociala avgifter och tjänstepension", range: `${fmt(recMinA)}–${fmt(recMaxA)} kr/h` },
               ].map((row) => (
                 <div key={row.label} className="flex items-center justify-between rounded-lg px-3.5 py-2.5" style={{ backgroundColor: cream, border: `1px solid ${border}` }}>
@@ -240,7 +240,6 @@ export default function LakareSpecialtyReport() {
             </div>
             <p className="text-[11px] mt-4 flex items-start gap-1.5" style={{ color: sub }}>
               <Info className="w-3 h-3 mt-0.5 shrink-0" />
-              Bemanningsföretagets marginal kan exempelvis täcka administration, försäkring, resor, boende, introduktion, utbildning och SITHS-kort.
             </p>
           </section>
 
@@ -294,7 +293,6 @@ export default function LakareSpecialtyReport() {
           <section className="rounded-2xl border p-5 space-y-2 text-[12px] leading-relaxed" style={{ backgroundColor: card, borderColor: border, color: sub }}>
             <p className="text-[10px] font-semibold tracking-[1.4px] uppercase" style={{ color: sub }}>Beräkningsmetod</p>
             <p><span className="font-semibold" style={{ color: ink }}>Källa:</span> SKR:s ramavtal vårdbemanning 2026, kategori {cfg.skrCategory}.</p>
-            <p><span className="font-semibold" style={{ color: ink }}>Marginalmodell:</span> Specialistläkare 10–15 % bemanningsmarginal → konsultandel 85–90 % (eget bolag) respektive 83–88 % (anställd konsult).</p>
             <p><span className="font-semibold" style={{ color: ink }}>OB & jour:</span> Hanteras separat ovanpå grundpriset enligt SKR-tariff.</p>
             <p><span className="font-semibold" style={{ color: ink }}>Neutralitet:</span> vårdbemanning.ai driver inte upp löner. Vi informerar om publika priser och offentliga ramavtal.</p>
           </section>

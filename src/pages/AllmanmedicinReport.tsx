@@ -52,7 +52,7 @@ const makeFaq = (zones: { zone: string; rate: number; desc: string }[]) => [
 
   {
     question: "Hur stor del av kundpriset går till konsulten?",
-    answer: `För specialistläkare är bemanningsföretagets marginal typiskt 10–15 % av kundpriset. Som egenföretagare ligger konsultandelen därför på 85–90 % av kundpriset. För anställd via bemanning utgör konsultkostnaden 83–88 % av kundpriset, och av det betalar bolaget först arbetsgivaravgifter (~31,42 %) innan bruttolön betalas ut till konsulten. Marginalen kan i vissa fall vara lägre — t.ex. när bemanningsbolaget tar betalningsrisk, garanterar timmar eller bär kostnad för outnyttjad kapacitet.`,
+    answer: `Möjlig ersättning redovisas som ett spann per zon i rapporten, med utgångspunkt i regionernas offentliga ramavtal 2026.`,
   },
   {
     question: "Vilken region tillhör vilken zon?",
@@ -102,7 +102,7 @@ export default function AllmanmedicinReport() {
     dateModified: LAST_UPDATED,
     summary:
       `Ramavtalspriset för specialistläkare i allmänmedicin är ${fmt(lowZone)}–${fmt(highZone)} kr/h beroende på zon enligt SKR:s ramavtal vårdbemanning 2026. ` +
-      `Konsultandelen ligger typiskt på 85–90 % av kundpriset för egenföretagare och 83–88 % för anställda konsulter.`,
+
     rateRange: { min: lowZone, median: refRate, max: highZone, unit: "SEK/h" },
     skrSources: ["https://skr.se/ramavtal/vardbemanning"],
     faq: FAQ,
@@ -183,7 +183,7 @@ export default function AllmanmedicinReport() {
                 {fmt(lowZone)}–{fmt(highZone)} kr/h
               </span>{" "}
               beroende på zon. Konsultandelen ligger typiskt på{" "}
-              <span style={{ fontWeight: 600 }}>85–90 %</span> av kundpriset för egenföretagare.
+              redovisad som ett spann per zon.
             </p>
             <p className="text-[12px]" style={{ color: sub }}>
               Senast uppdaterad {LAST_UPDATED} · Källa: SKR Ramavtal vårdbemanning 2026
@@ -280,7 +280,7 @@ export default function AllmanmedicinReport() {
               {[
                 {
                   label: "Egenföretagare",
-                  share: "Efter bemanningsbolagets marginal på 10–15 %",
+                  share: "Möjlig ersättning",
                   range: `${fmt(recMinF)}–${fmt(recMaxF)} kr/h`,
                 },
                 {
@@ -316,7 +316,6 @@ export default function AllmanmedicinReport() {
               style={{ color: sub }}
             >
               <Info className="w-3 h-3 mt-0.5 shrink-0" />
-              Bemanningsföretagets marginal kan exempelvis täcka administration, försäkring, resor, boende, introduktion, utbildning och SITHS-kort.
             </p>
           </section>
 
@@ -423,8 +422,7 @@ export default function AllmanmedicinReport() {
               <span className="font-semibold" style={{ color: ink }}>
                 Marginalmodell:
               </span>{" "}
-              Specialistläkare 10–15 % bemanningsmarginal → konsultandel 85–90 % (eget bolag)
-              respektive 83–88 % (anställd konsult).
+Redovisas som ersättningsspann per zon.
             </p>
             <p>
               <span className="font-semibold" style={{ color: ink }}>

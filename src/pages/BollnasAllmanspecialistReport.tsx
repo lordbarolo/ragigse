@@ -77,7 +77,7 @@ export default function BollnasAllmanspecialistReport() {
       },
       {
         question: "Hur mycket bör en allmänspecialist tjäna som konsult i Bollnäs?",
-        answer: `Som egenföretagare ligger möjlig ersättning på ${fmt(recMinF)}–${fmt(recMaxF)} kr/h (85–90% av kundpris). Som anställd konsult ligger spannet på ${fmt(recMinA)}–${fmt(recMaxA)} kr/h.`,
+        answer: `Som egenföretagare ligger möjlig ersättning på ${fmt(recMinF)}–${fmt(recMaxF)} kr/h. Som anställd konsult ligger spannet på ${fmt(recMinA)}–${fmt(recMaxA)} kr/h.`,
       },
       {
         question: "Är 1 240 kr/h bra för en allmänspecialist i Bollnäs?",
@@ -164,7 +164,7 @@ export default function BollnasAllmanspecialistReport() {
                   <span className="font-semibold" style={{ color: '#3D3491' }}>+{fmt(gap)} kr/h</span>.
                 </p>
                 <p className="text-[12px] mt-1" style={{ color: '#6B7280' }}>
-                  På årsbasis (167 h/mån × 12 mån): ca <span className="font-semibold">+{fmt(annualUpside)} kr</span> brutto till bolaget.
+                  På årsbasis: ca <span className="font-semibold">+{fmt(annualUpside)} kr</span> brutto till bolaget.
                 </p>
               </div>
             )}
@@ -230,8 +230,8 @@ export default function BollnasAllmanspecialistReport() {
 
             <div className="space-y-3">
               {[
-                { label: "Egenföretagare", share: "85–90%", range: `${fmt(safeMinF)}–${fmt(recMaxF)} kr/h` },
-                { label: "Anställd via bemanning", share: "83–88%", range: `${fmt(safeMinA)}–${fmt(recMaxA)} kr/h` },
+                { label: "Egenföretagare", share: "Möjlig ersättning", range: `${fmt(safeMinF)}–${fmt(recMaxF)} kr/h` },
+                { label: "Anställd via bemanning", share: "Bruttolön", range: `${fmt(safeMinA)}–${fmt(recMaxA)} kr/h` },
               ].map((row) => (
                 <div key={row.label} className="flex items-center justify-between rounded-lg px-3.5 py-2.5" style={{ backgroundColor: '#EEEBE4', border: '1px solid #E0DBD3' }}>
                   <div>
@@ -244,7 +244,6 @@ export default function BollnasAllmanspecialistReport() {
             </div>
             <p className="text-[11px] mt-4 flex items-start gap-1.5" style={{ color: '#6B7280' }}>
               <Info className="w-3 h-3 mt-0.5 shrink-0" />
-              Bemanningsföretagets marginal är typiskt 10–15% av kundpriset (täcker administration, risk, försäkring).
             </p>
           </section>
 
@@ -279,7 +278,6 @@ export default function BollnasAllmanspecialistReport() {
               <span className="font-semibold" style={{ color: '#0A0A0A' }}>Zonindelning:</span> Bollnäs ingår i Region Gävleborg och klassas som Zon 3 (glesbygd/svårrekryterad).
             </p>
             <p>
-              <span className="font-semibold" style={{ color: '#0A0A0A' }}>Marginalmodell:</span> Specialistläkare 10–15% bemanningsmarginal → konsultandel 85–90% (eget bolag) respektive 83–88% (anställd konsult).
             </p>
             <p>
               <span className="font-semibold" style={{ color: '#0A0A0A' }}>OB & jour:</span> Hanteras separat ovanpå grundpriset enligt SKR-tariff och påverkar inte basanalysen.
