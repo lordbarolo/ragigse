@@ -317,13 +317,6 @@ export default function SjukskoterskaReport() {
                 </div>
               ))}
             </div>
-            <p
-              className="text-[11px] mt-4 flex items-start gap-1.5"
-              style={{ color: sub }}
-            >
-              <Info className="w-3 h-3 mt-0.5 shrink-0" />
-              Bemanningsföretagets marginal kan exempelvis täcka administration, försäkring, resor, boende, introduktion, utbildning och SITHS-kort.
-            </p>
           </section>
 
           {/* Teaser: Pensionskoll (PensionImpactSimulator) */}
