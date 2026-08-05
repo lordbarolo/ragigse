@@ -36,7 +36,9 @@ import { Route as RapportLegSskRouteImport } from './routes/rapport/leg-ssk'
 import { Route as RapportLegitimeradSjukskoterskaRouteImport } from './routes/rapport/legitimerad-sjukskoterska'
 import { Route as RapportSjukskoterskaRouteImport } from './routes/rapport/sjukskoterska'
 import { Route as RapportSskRouteImport } from './routes/rapport/ssk'
+import { Route as RegionRegionRouteImport } from './routes/region/$region'
 import { Route as ResultatLeadIdRouteImport } from './routes/resultat/$leadId'
+import { Route as TimprisRoleRouteImport } from './routes/timpris/$role'
 import { Route as ApiPublicBekraftaForslagRouteImport } from './routes/api/public/bekrafta-forslag'
 import { Route as ConsultantLayoutProfilRouteImport } from './routes/consultant/_layout/profil'
 import { Route as LonSpecialtyCityRouteImport } from './routes/lon/$specialty/$city'
@@ -180,9 +182,19 @@ const RapportSskRoute = RapportSskRouteImport.update({
   path: '/rapport/ssk',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RegionRegionRoute = RegionRegionRouteImport.update({
+  id: '/region/$region',
+  path: '/region/$region',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResultatLeadIdRoute = ResultatLeadIdRouteImport.update({
   id: '/resultat/$leadId',
   path: '/resultat/$leadId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TimprisRoleRoute = TimprisRoleRouteImport.update({
+  id: '/timpris/$role',
+  path: '/timpris/$role',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiPublicBekraftaForslagRoute =
@@ -229,7 +241,9 @@ export interface FileRoutesByFullPath {
   '/rapport/legitimerad-sjukskoterska': typeof RapportLegitimeradSjukskoterskaRoute
   '/rapport/sjukskoterska': typeof RapportSjukskoterskaRoute
   '/rapport/ssk': typeof RapportSskRoute
+  '/region/$region': typeof RegionRegionRoute
   '/resultat/$leadId': typeof ResultatLeadIdRoute
+  '/timpris/$role': typeof TimprisRoleRoute
   '/admin/': typeof AdminIndexRoute
   '/api/public/bekrafta-forslag': typeof ApiPublicBekraftaForslagRoute
   '/consultant/profil': typeof ConsultantLayoutProfilRoute
@@ -262,7 +276,9 @@ export interface FileRoutesByTo {
   '/rapport/legitimerad-sjukskoterska': typeof RapportLegitimeradSjukskoterskaRoute
   '/rapport/sjukskoterska': typeof RapportSjukskoterskaRoute
   '/rapport/ssk': typeof RapportSskRoute
+  '/region/$region': typeof RegionRegionRoute
   '/resultat/$leadId': typeof ResultatLeadIdRoute
+  '/timpris/$role': typeof TimprisRoleRoute
   '/admin': typeof AdminIndexRoute
   '/api/public/bekrafta-forslag': typeof ApiPublicBekraftaForslagRoute
   '/consultant/profil': typeof ConsultantLayoutProfilRoute
@@ -296,7 +312,9 @@ export interface FileRoutesById {
   '/rapport/legitimerad-sjukskoterska': typeof RapportLegitimeradSjukskoterskaRoute
   '/rapport/sjukskoterska': typeof RapportSjukskoterskaRoute
   '/rapport/ssk': typeof RapportSskRoute
+  '/region/$region': typeof RegionRegionRoute
   '/resultat/$leadId': typeof ResultatLeadIdRoute
+  '/timpris/$role': typeof TimprisRoleRoute
   '/admin/': typeof AdminIndexRoute
   '/api/public/bekrafta-forslag': typeof ApiPublicBekraftaForslagRoute
   '/consultant/_layout/profil': typeof ConsultantLayoutProfilRoute
@@ -331,7 +349,9 @@ export interface FileRouteTypes {
     | '/rapport/legitimerad-sjukskoterska'
     | '/rapport/sjukskoterska'
     | '/rapport/ssk'
+    | '/region/$region'
     | '/resultat/$leadId'
+    | '/timpris/$role'
     | '/admin/'
     | '/api/public/bekrafta-forslag'
     | '/consultant/profil'
@@ -364,7 +384,9 @@ export interface FileRouteTypes {
     | '/rapport/legitimerad-sjukskoterska'
     | '/rapport/sjukskoterska'
     | '/rapport/ssk'
+    | '/region/$region'
     | '/resultat/$leadId'
+    | '/timpris/$role'
     | '/admin'
     | '/api/public/bekrafta-forslag'
     | '/consultant/profil'
@@ -397,7 +419,9 @@ export interface FileRouteTypes {
     | '/rapport/legitimerad-sjukskoterska'
     | '/rapport/sjukskoterska'
     | '/rapport/ssk'
+    | '/region/$region'
     | '/resultat/$leadId'
+    | '/timpris/$role'
     | '/admin/'
     | '/api/public/bekrafta-forslag'
     | '/consultant/_layout/profil'
@@ -431,7 +455,9 @@ export interface RootRouteChildren {
   RapportLegitimeradSjukskoterskaRoute: typeof RapportLegitimeradSjukskoterskaRoute
   RapportSjukskoterskaRoute: typeof RapportSjukskoterskaRoute
   RapportSskRoute: typeof RapportSskRoute
+  RegionRegionRoute: typeof RegionRegionRoute
   ResultatLeadIdRoute: typeof ResultatLeadIdRoute
+  TimprisRoleRoute: typeof TimprisRoleRoute
   AdminIndexRoute: typeof AdminIndexRoute
   ApiPublicBekraftaForslagRoute: typeof ApiPublicBekraftaForslagRoute
   LonSpecialtyCityRoute: typeof LonSpecialtyCityRoute
@@ -628,11 +654,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RapportSskRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/region/$region': {
+      id: '/region/$region'
+      path: '/region/$region'
+      fullPath: '/region/$region'
+      preLoaderRoute: typeof RegionRegionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/resultat/$leadId': {
       id: '/resultat/$leadId'
       path: '/resultat/$leadId'
       fullPath: '/resultat/$leadId'
       preLoaderRoute: typeof ResultatLeadIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/timpris/$role': {
+      id: '/timpris/$role'
+      path: '/timpris/$role'
+      fullPath: '/timpris/$role'
+      preLoaderRoute: typeof TimprisRoleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/public/bekrafta-forslag': {
@@ -697,7 +737,9 @@ const rootRouteChildren: RootRouteChildren = {
   RapportLegitimeradSjukskoterskaRoute: RapportLegitimeradSjukskoterskaRoute,
   RapportSjukskoterskaRoute: RapportSjukskoterskaRoute,
   RapportSskRoute: RapportSskRoute,
+  RegionRegionRoute: RegionRegionRoute,
   ResultatLeadIdRoute: ResultatLeadIdRoute,
+  TimprisRoleRoute: TimprisRoleRoute,
   AdminIndexRoute: AdminIndexRoute,
   ApiPublicBekraftaForslagRoute: ApiPublicBekraftaForslagRoute,
   LonSpecialtyCityRoute: LonSpecialtyCityRoute,
