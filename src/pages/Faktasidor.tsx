@@ -265,8 +265,8 @@ export default function Faktasidor() {
             Vad ger ramavtalet för din roll?
           </h1>
           <p className="mt-4 max-w-[640px] text-lg text-black/70 leading-relaxed">
-            Välj din yrkesroll och din kommun. Analysen bygger på regionernas ramavtal 2026 och branschens
-            marginalmodeller — exakta nivåer visas när du skapat ett konto.
+            Välj din yrkesroll och din kommun. Analysen bygger på regionernas ramavtal 2026 — exakta nivåer visas
+            när du skapat ett konto.
           </p>
 
           {/* Steg 1: kommun */}
@@ -452,9 +452,9 @@ export default function Faktasidor() {
                         ••• kr – ••• kr /h
                       </p>
                       <p className="mt-2 text-sm text-black/60 leading-relaxed">
-                        Vi har räknat fram ramavtalsnivån och marginalspannet för {selectedRole.role} i{" "}
-                        {zoneForResult.toLowerCase()}. Skapa konto med e-post eller Google för att se exakt nivå,
-                        marginal och vad det ger dig per månad.
+                        Vi har räknat fram ersättningsspannet för {selectedRole.role} i{" "}
+                        {zoneForResult.toLowerCase()}. Skapa konto med e-post eller Google för att se exakt nivå
+                        och vad det ger dig per månad.
                       </p>
                     </div>
                     <div className="mt-4 flex flex-wrap gap-3">
@@ -498,9 +498,8 @@ export default function Faktasidor() {
               <Info className="w-3.5 h-3.5 mt-0.5 shrink-0 text-[#534AB7]" aria-hidden />
               <p>
                 Underlaget är regionernas offentliga ramavtal 2026 (kundpris exklusive moms, grundpris — OB, jour och
-                beredskap tillkommer och faktureras separat). Ersättningsspannet räknas fram utifrån branschens
-                marginalmodeller och, för anställda, arbetsgivaravgifter. Hela kalkylen körs i din personliga analys
-                efter inloggning. Bygger du en agent? Se{" "}
+                beredskap tillkommer och faktureras separat). Ersättningsspannet visas i din personliga analys efter
+                inloggning. Bygger du en agent? Se{" "}
                 <a href="/llms.txt" className="underline underline-offset-4 hover:no-underline">
                   /llms.txt
                 </a>{" "}

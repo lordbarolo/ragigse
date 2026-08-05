@@ -49,7 +49,7 @@ export default function Startsida5c() {
     <div style={{ background: "#0e1016", fontFamily: "'Space Grotesk',system-ui,sans-serif", color: "#eef0f4" }}>
       <SEO
         title="vardbemanning.ai – Lön & ramavtalspriser för vårdkonsulter"
-        description="Se vad regionen betalar för din roll och zon enligt SKR:s ramavtal 2026 — och vad du kan fakturera efter bemanningsbolagets marginal."
+        description="Se vad regionen betalar för din roll och zon enligt SKR:s ramavtal 2026 — och vad du kan fakturera."
         path="/"
         baseUrl={SITE_URL}
         jsonLd={LANDING_JSONLD}

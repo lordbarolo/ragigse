@@ -105,7 +105,7 @@ export function buildDatasetSchema(input: RoleReportSchemaInput) {
     "@type": "Dataset",
     "@id": `${url}#dataset`,
     name: `Ramavtalspriser för ${input.roleName}${input.region ? ` — ${input.region}` : ""}`,
-    description: `Strukturerad data över ersättningsnivåer för ${input.roleName} baserat på SKR:s ramavtal 2026 och bemanningsbranschens marginalmodeller.`,
+    description: `Strukturerad data över ersättningsnivåer för ${input.roleName} baserat på SKR:s ramavtal 2026.`,
     url,
     inLanguage: "sv-SE",
     license: "https://creativecommons.org/licenses/by/4.0/",

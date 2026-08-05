@@ -270,7 +270,7 @@ export default function Negotiate() {
                     Vad vill du veta?
                   </h1>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Välj ett ämne nedan. Alla svar bygger på SKR-ramavtalet och vårdbemanning.ai:s marginalmodeller.
+                    Välj ett ämne nedan. Alla svar bygger på SKR-ramavtalet.
                   </p>
                 </div>
                 {LONEKOLL_TOPICS.map((topic) => (

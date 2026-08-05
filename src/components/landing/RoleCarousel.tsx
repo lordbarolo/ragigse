@@ -229,7 +229,7 @@ export default function RoleCarousel() {
             </h2>
           </div>
           <p className="text-sm text-black/55 max-w-[380px]">
-            Exempel från 15 av de mest sökta rollerna — kundpris minus typisk bemanningsmarginal (12% läkare · 17% sjuksköterskor).
+            Exempel från 15 av de mest sökta rollerna — kundpris och möjlig ersättning enligt ramavtal.
           </p>
         </div>
       </div>

@@ -23,11 +23,10 @@ import {
   LogIn,
 } from "lucide-react";
 import { fmt, formatPartialValue } from "@/shared/formatters";
-import { SectionHeading, StatBlock, CalcRow } from "@/shared/UIComponents";
+import { SectionHeading, StatBlock } from "@/shared/UIComponents";
 import type { ResultJson, ZoneComparison } from "@/shared/types";
 import { getNegotiationTips } from "./negotiationData";
 import ReportFeedback from "./ReportFeedback";
-import EmployerCostBreakdown from "./EmployerCostBreakdown";
 
 interface Props {
   r: ResultJson;
@@ -79,9 +78,6 @@ export default function ConsultantTrackContent({
 
   const shareMin = rec?.consultant_share_min ?? (isEmployee ? 0.85 : 0.85);
   const shareMax = rec?.consultant_share_max ?? (isEmployee ? 0.90 : 0.92);
-  const marginMin = Math.round((1 - shareMax) * 100);
-  const marginMax = Math.round((1 - shareMin) * 100);
-  const marginLabel = `${marginMin}–${marginMax}%`;
   const afterMarginMin = Math.round(marketRate * shareMin);
   const afterMarginMax = Math.round(marketRate * shareMax);
 
@@ -362,76 +358,18 @@ export default function ConsultantTrackContent({
           ═══════════════════════════════════════════════════════════════ */}
       {isConsultantFullAccess && rec && (
         <div id="flow-method" className="scroll-mt-24 pt-6 space-y-3">
-          <SectionLabel>Metod & antaganden</SectionLabel>
+          <SectionLabel>Källor</SectionLabel>
 
-          <Collapsible>
-            <CollapsibleTrigger className="w-full flex items-center justify-between p-4 rounded-xl bg-foreground/[0.03] border border-border/30 hover:bg-foreground/[0.05] transition-colors">
-              <div className="flex items-center gap-2">
-                <Info className="w-4 h-4 text-primary" />
-                <span className="text-sm font-semibold text-foreground">Antaganden & Beräkning</span>
-              </div>
-              <ChevronDown className="w-4 h-4 text-muted-foreground transition-transform duration-200 [[data-state=open]>&]:rotate-180" />
-            </CollapsibleTrigger>
-            <CollapsibleContent className="pt-4 space-y-4">
-              <div className="space-y-3 text-body-sm">
-                <CalcRow label="Ramavtalspris (vad regionen betalar)" value={`${fmt(marketRate)} kr/h`} />
-                <CalcRow label={`Bemanningsbolagets marginal (${marginLabel})`} value={`−${fmt(Math.round(marketRate * (1 - shareMax)))}–${fmt(Math.round(marketRate * (1 - shareMin)))} kr/h`} />
-                {isEmployee ? (
-                  <>
-                    <CalcRow label="Ersättningsutrymme efter marginal" value={`${fmt(afterMarginMin)}–${fmt(afterMarginMax)} kr/h`} />
-                    <CalcRow
-                      label="÷ 1,38 (arbetsgivaravg. + pension + särskild löneskatt + AFA)"
-                      value={`= ${fmt(Math.round(afterMarginMin / 1.38))}–${fmt(Math.round(afterMarginMax / 1.38))} kr/h brutto`}
-                    />
-                  </>
-                ) : (
-                  <p className="text-hint pt-1">
-                    Som egenföretagare bör du fakturera {Math.round(shareMin * 100)}–{Math.round(shareMax * 100)} % av kundpriset.
-                  </p>
-                )}
-              </div>
-              {isEmployee && rec && (
-                <EmployerCostBreakdown
-                  hourlySalary={currentHourly}
-                  customerRate={marketRate}
-                  marginShare={{ min: shareMin, max: shareMax }}
-                  marginLabel={marginLabel}
-                />
-              )}
-              <Separator className="opacity-20" />
-              <div className="p-4 rounded-xl bg-foreground/[0.02] border border-border/30 space-y-3">
-                <div className="flex items-center gap-2">
-                  <Info className="w-4 h-4 text-primary shrink-0" />
-                  <p className="font-semibold text-foreground text-sm">Information om beräkningen</p>
-                </div>
-                <ul className="space-y-2 text-hint leading-relaxed">
-                  <li>
-                    <span className="font-semibold text-foreground">Bemanningsbolagets marginal:</span>{" "}
-                    Bolaget behåller normalt {marginLabel} av timpriset. {isEmployee ? "Detta är en vanlig nivå vid ramavtalsuppdrag." : `Spannet beror på om bemanningsföretaget bär vitesrisken (högre marginal) eller inte (lägre marginal).`} Marginalen kan i vissa fall vara lägre — t.ex. när bemanningsbolaget tar betalningsrisk, garanterar timmar eller bär kostnad för outnyttjad kapacitet.
-                  </li>
-                  {isEmployee && (
-                    <li>
-                      <span className="font-semibold text-foreground">Arbetsgivaravgifter & omkostnader (faktor 1,38):</span>{" "}
-                      Täcker lagstadgade arbetsgivaravgifter (31,42 %), tjänstepension ITP 1 (4,5 % under brytpunkten), särskild löneskatt på pension (1,09 %) och AFA/TFA-försäkringar (0,85 %). Vi utgår från att bruttolönen ligger under brytpunkten 7,5 IBB (≈ 52 750 kr/mån). Över den nivån hoppar ITP 1 till 30 % och faktorn blir högre.
-                    </li>
-                  )}
-                  <li>
-                    <span className="font-semibold text-foreground">Arbetsmånad:</span>{" "}
-                    Vi baserar månadsberäkningen på ett snitt om 167 arbetstimmar.
-                  </li>
-                </ul>
-              </div>
-              <div className="p-4 rounded-xl bg-foreground/[0.02] border border-border/30 space-y-2">
-                <div className="flex items-center gap-2">
-                  <Briefcase className="w-4 h-4 text-primary shrink-0" />
-                  <p className="font-semibold text-foreground text-sm">Om marginalen överstiger {isEmployee ? "15%" : marginLabel}</p>
-                </div>
-                <p className="text-hint leading-relaxed">
-                  Vissa bemanningsföretag tar en högre marginal. En del av den kan gå till kostnader som i vissa fall ligger på bemanningsföretaget, t.ex. resa och boende, introduktionskostnad, SITHS-kort samt HLR-utbildning.
-                </p>
-              </div>
-            </CollapsibleContent>
-          </Collapsible>
+          <div className="p-4 rounded-xl bg-foreground/[0.02] border border-border/30 space-y-2">
+            <div className="flex items-center gap-2">
+              <Info className="w-4 h-4 text-primary shrink-0" />
+              <p className="font-semibold text-foreground text-sm">Underlag</p>
+            </div>
+            <p className="text-hint leading-relaxed">
+              Analysen utgår från regionernas offentliga ramavtal 2026 (kundpris exklusive moms, grundpris —
+              OB, jour och beredskap tillkommer och faktureras separat) samt historiska avrop.
+            </p>
+          </div>
 
           {/* Så fungerar analysen */}
           <div className="rounded-xl bg-foreground/[0.02] border border-border/30 p-5 space-y-3">
@@ -442,8 +380,7 @@ export default function ConsultantTrackContent({
             <ul className="space-y-2.5">
               {[
                 "Regioner upphandlar bemanning genom ramavtal där ett kundpris fastställs.",
-                "Konsultens ersättning är normalt en andel av detta pris.",
-                "vårdbemanning.ai analyserar ramavtal och historiska uppdrag för att visa hur ersättningen i genomsnitt fördelas.",
+                "vårdbemanning.ai analyserar ramavtal och historiska avrop för din roll och zon.",
               ].map((text, i) => (
                 <li key={i} className="flex items-start gap-2.5 text-hint leading-relaxed">
                   <span className="mt-1.5 w-1 h-1 rounded-full bg-muted-foreground/20 shrink-0" />

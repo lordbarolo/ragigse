@@ -437,7 +437,7 @@ const SOURCE_RATES: CISource = {
 };
 
 const SOURCE_BENCHMARKS: CISource = {
-  name: "SKR ramavtal + branschmarginal",
+  name: "SKR ramavtal",
   version: "SKR 2026 v1.0",
   confidence: "high",
 };

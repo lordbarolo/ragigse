@@ -91,7 +91,6 @@ export function getNegotiationTips(
     observations.push("Tjänstepension på minst 4,5% ingår i ramavtalets kalkylmodell.");
     observations.push("OB-tillägg regleras av gällande kollektivavtal.");
   } else {
-    observations.push("Faktureringsandelen i branschen ligger normalt på 85–90% av bemanningsföretagets pris mot kund.");
   }
 
   observations.push(

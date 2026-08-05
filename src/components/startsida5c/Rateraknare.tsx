@@ -111,7 +111,7 @@ export default function Rateraknare() {
         {base.length === 0
           ? "Prisdata kunde inte hämtas just nu."
           : rate
-            ? `Kundpris ${kr(rate.timpris_kund)} kr/h − ${rate.margin_text} marginal. Källa: SKR:s ramavtal 2026.`
+            ? `Kundpris ${kr(rate.timpris_kund)} kr/h. Källa: SKR:s ramavtal 2026.`
             : "Pris saknas för denna kombination — kontakta oss."}
       </p>
 

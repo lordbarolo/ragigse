@@ -54,10 +54,6 @@ const makeFaq = (zones: { zone: string; rate: number; desc: string }[]) => [
   },
 
   {
-    question: "Hur stor del av kundpriset går till konsulten?",
-    answer: `För sjuksköterskor utan specialistutbildning är bemanningsföretagets marginal typiskt 15–20 % av kundpriset. Som egenföretagare ligger konsultandelen därför på 80–85 % av kundpriset. För anställd via bemanning utgör konsultkostnaden 78–83 % av kundpriset — av det betalar bolaget först arbetsgivaravgifter (~31,42 %) och tjänstepension (4,5 % enligt kollektivavtal) innan bruttolön betalas ut till konsulten. Vi räknar med en total lönekostnad på ca 1,38 × bruttolönen för arbetsgivaren och utgår från att bruttolönen ligger under brytpunkten 7,5 IBB (~52 750 kr/mån) där ITP 1 är 4,5 %. Marginalen kan i vissa fall vara lägre — t.ex. när bemanningsbolaget tar betalningsrisk, garanterar timmar eller bär kostnad för outnyttjad kapacitet.`,
-  },
-  {
     question: "Vilken region tillhör vilken zon?",
     answer:
       "SKR delar in landet i tre zoner. Zon 1 omfattar storstadsregionerna, Zon 2 mellanstora regioner och Zon 3 glesbygdsregioner där bemanningsbehovet historiskt varit svårare att täcka.",
@@ -109,8 +105,7 @@ export default function SjukskoterskaReport() {
     roleSlug: "sjukskoterska",
     dateModified: LAST_UPDATED,
     summary:
-      `Ramavtalspriset för en legitimerad sjuksköterska (grundutbildning) är ${fmt(lowZone)}–${fmt(highZone)}\u00a0kr/h beroende på zon enligt SKR:s ramavtal vårdbemanning 2026. ` +
-      `Konsultandelen ligger typiskt på 80–85 % av kundpriset för egenföretagare och 78–83 % för anställda konsulter.`,
+      `Ramavtalspriset för en legitimerad sjuksköterska (grundutbildning) är ${fmt(lowZone)}–${fmt(highZone)}\u00a0kr/h beroende på zon enligt SKR:s ramavtal vårdbemanning 2026. `,
     rateRange: { min: lowZone, median: refRate, max: highZone, unit: "SEK/h" },
     skrSources: ["https://skr.se/ramavtal/vardbemanning"],
     faq: FAQ,
@@ -194,8 +189,7 @@ export default function SjukskoterskaReport() {
               <span style={{ color: violet, fontWeight: 700 }}>
                 {fmt(lowZone)}–{fmt(highZone)}kr/h
               </span>{" "}
-              beroende på zon. En företagande sjuksköterska får behålla ca{" "}
-              <span style={{ fontWeight: 600 }}>80-85%</span> av ovanstående belopp.
+              beroende på zon.
             </p>
             <p className="text-[12px]" style={{ color: sub }}>
               Senast uppdaterad {LAST_UPDATED} · Källa: SKR Ramavtal vårdbemanning 2026
@@ -292,12 +286,12 @@ export default function SjukskoterskaReport() {
               {[
                 {
                   label: "Egenföretagare",
-                  share: "Efter bemanningsbolagets marginal på 15–20 %",
+                  share: "Möjlig ersättning",
                   range: `${fmt(recMinF)}–${fmt(recMaxF)}\u00a0kr/h`,
                 },
                 {
                   label: "Anställd via bemanning",
-                  share: "Bruttolön efter sociala avgifter och tjänstepension",
+                  share: "Bruttolön",
                   range: "370–395\u00a0kr/h",
                 },
               ].map((row) => (
@@ -323,13 +317,6 @@ export default function SjukskoterskaReport() {
                 </div>
               ))}
             </div>
-            <p
-              className="text-[11px] mt-4 flex items-start gap-1.5"
-              style={{ color: sub }}
-            >
-              <Info className="w-3 h-3 mt-0.5 shrink-0" />
-              Bemanningsföretagets marginal kan exempelvis täcka administration, försäkring, resor, boende, introduktion, utbildning och SITHS-kort.
-            </p>
           </section>
 
           {/* Teaser: Pensionskoll (PensionImpactSimulator) */}
@@ -430,13 +417,6 @@ export default function SjukskoterskaReport() {
                 Källa:
               </span>{" "}
               SKR:s ramavtal vårdbemanning 2026, kategori Sjuksköterska grundutbildning (dagtid).
-            </p>
-            <p>
-              <span className="font-semibold" style={{ color: ink }}>
-                Marginalmodell:
-              </span>{" "}
-              Sjuksköterska utan vidareutbildning 15–20 % bemanningsmarginal → konsultandel
-              80–85 % (eget bolag) respektive 78–83 % (anställd konsult).
             </p>
             <p>
               <span className="font-semibold" style={{ color: ink }}>

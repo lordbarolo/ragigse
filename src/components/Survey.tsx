@@ -709,7 +709,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                 </button>
               ))}
               <p className="text-hint text-center mt-1 px-2 leading-relaxed">
-                Detta avgör hur vi beräknar bemanningsbolagets marginal och din nettoersättning utifrån regionens kundpris.
+                Detta avgör hur vi visar din möjliga ersättning utifrån regionens kundpris.
               </p>
             </div>
           </StepWrapper>

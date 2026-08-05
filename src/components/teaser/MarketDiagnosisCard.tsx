@@ -35,9 +35,8 @@ export default function MarketDiagnosisCard({
 }: Props) {
   const trackedRef = useRef(false);
 
-  // BF-marginal vid övre spann (vad vi mäter från). Härleds ur share_max så att
-  // alla specialistläkare-subspecialiteter får 10 % och övriga 15 %.
-  const markerMarginPct = Math.max(0, Math.round((1 - consultantShareMax) * 100));
+
+
 
   const position: Position =
     !userHourly || userHourly <= 0 || !rangeLow || !rangeHigh
@@ -107,7 +106,7 @@ export default function MarketDiagnosisCard({
       </div>
 
       <p className="text-hint mt-4 leading-relaxed">
-        Övre spann motsvarar {markerMarginPct} % marginal till bemanningsföretaget. Baserat på SKR-ramavtalspriser i {kommun}.
+        Baserat på SKR-ramavtalspriser i {kommun}.
       </p>
     </div>
   );

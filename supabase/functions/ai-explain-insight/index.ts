@@ -52,7 +52,7 @@ function buildUserPrompt(topic: string, role: string | null | undefined, region:
     case "zone_rates":
       return `${ctx}\n\nDessa är ramavtalspriser (kundpris per timme) per geografisk zon för rollen, hämtade från SKR-ramavtal:\n${dataStr}\n\nFörklara kort vad mönstret betyder och varför priserna skiljer sig mellan zoner.`;
     case "salary_zones":
-      return `${ctx}\n\nDessa är förväntade ersättningsspann per zon för konsulten, baserade på ramavtalspriser och branschmarginal:\n${dataStr}\n\nFörklara kort vad spannen betyder för en konsult i denna roll.`;
+      return `${ctx}\n\nDessa är förväntade ersättningsspann per zon för konsulten, baserade på ramavtalspriser:\n${dataStr}\n\nFörklara kort vad spannen betyder för en konsult i denna roll.`;
     case "upcoming_assignments":
       return `${ctx}\n\nDessa är historiska avropsmönster (INTE pågående uppdrag) som används för att indikera marknadens aktivitet:\n${dataStr}\n\nFörklara kort vad mönstret säger om historisk efterfrågan i regionen. Säg INTE att uppdragen är live.`;
     default:
