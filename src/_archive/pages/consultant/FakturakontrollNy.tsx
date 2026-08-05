@@ -747,7 +747,7 @@ export default function FakturakontrollNy() {
                     </ScrollArea>
                     <div className="pt-2">
                       <a
-                        href="/compcare_granskningsavtal.pdf"
+                        href="/vardbemanning_granskningsavtal.pdf"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline font-medium"

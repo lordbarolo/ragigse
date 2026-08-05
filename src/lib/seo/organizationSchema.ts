@@ -26,7 +26,7 @@ export const organizationSchema = {
     width: 512,
     height: 512,
   },
-  image: `${BASE_URL}/compcare-og.png`,
+  image: `${BASE_URL}/vardbemanning-og.png`,
   description:
     "vårdbemanning.ai är en svensk ersättnings- och verifieringsplattform för vårdkonsulter. Jämför löner och timpriser mot SKR:s ramavtal i 290 kommuner.",
   foundingDate: "2024",
