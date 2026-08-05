@@ -11,6 +11,7 @@
  */
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { checkAiRateLimit, aiRateLimitResponse } from "../_shared/ai-usage-logger.ts";
+import { requireAdmin } from "../_shared/adminAuth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -105,10 +106,10 @@ Deno.serve(async (req) => {
     // Require authenticated user — prevents anonymous AI usage and anonymous
     // writes to avrop_intelligence (the agencyId at line ~195 is read from
     // the same request below).
-    const userId = await getAuthUserId(req);
-    if (!userId) {
-      return jsonResponse({ error: "unauthorized", message: "Du måste vara inloggad." }, 401);
-    }
+    // Admin-only: parse-avrop skriver till avrop_intelligence och kostar AI-anrop.
+    const adminAuth = await requireAdmin(req);
+    if (adminAuth instanceof Response) return adminAuth;
+    const userId = adminAuth.userId;
     // Per-user daily AI quota
     const aiRl = await checkAiRateLimit(userId);
     if (!aiRl.allowed) {

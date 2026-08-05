@@ -3,6 +3,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { checkRateLimit, rateLimitResponse } from "../_shared/rateLimit.ts";
 import { maskEmail } from "../_shared/maskEmail.ts";
 
+const APP_BASE_URL = Deno.env.get("APP_BASE_URL") || "https://vardbemanning.ai";
+
 const encoder = new TextEncoder();
 
 async function createReportAccessToken(reportId: string, email: string): Promise<string> {
@@ -246,8 +248,8 @@ serve(async (req) => {
       // 6. Generate magic link for report email
       const siteUrl = Deno.env.get("SUPABASE_URL")!.replace(".supabase.co", "").replace("https://", "");
       const reportUrl = report_id
-        ? `https://vardbemanning.ai/rapport/${report_id}`
-        : `https://vardbemanning.ai/resultat/${lead_id}`;
+        ? `${APP_BASE_URL}/rapport/${report_id}`
+        : `${APP_BASE_URL}/resultat/${lead_id}`;
 
       const { data: magicLinkData, error: magicErr } = await supabase.auth.admin.generateLink({
         type: "magiclink",
@@ -278,7 +280,7 @@ serve(async (req) => {
               templateData: {
                 occupation: report?.occupation || "din roll",
                 kommun: report?.kommun || "",
-                reportUrl: magicLink || `https://vardbemanning.ai/rapport/${report_id}`,
+                reportUrl: magicLink || `${APP_BASE_URL}/rapport/${report_id}`,
               },
             },
           });

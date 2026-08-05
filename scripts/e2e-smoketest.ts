@@ -1,22 +1,16 @@
 /**
- * E2E smoketest — runs after publish to verify the full lead funnel works end-to-end.
+ * E2E smoketest — verifierar nuvarande startsideflöde efter publicering.
  *
- * Flow (against https://vardbemanning.ai):
- *   1. Open landing → assert SalaryCheck visible
- *   2. Fill survey with synthetic data → submit
- *   3. Land on /teaser → click email gate
- *   4. Submit healthcheck+timestamp@vardbemanning.ai → expect navigation to /resultat
- *   5. Verify report content loaded (price headline visible)
+ * Flow (mot https://vardbemanning.ai):
+ *   1. Öppna startsidan → hero renderas
+ *   2. Rateräknaren visar ett kundpris (eller den godkända fallbacktexten)
+ *   3. Rolltabellen renderar rader (eller fallbacktexten)
+ *   4. Verktygsförslagsformuläret finns på sidan
+ *   5. En rapportsida (/rapport/sjukskoterska) svarar med innehåll
  *
- * Usage (locally or in CI):
+ * Usage:
  *   bunx playwright install chromium  # once
- *   bunx playwright test scripts/e2e-smoketest.ts
- *
- * Or as a one-shot script:
  *   bun run scripts/e2e-smoketest.ts
- *
- * Failures POST to /functions/v1/health-check via a synthetic alert so you
- * still get the mail with chat-prompt.
  */
 
 import { chromium, type Browser, type Page } from "npm:playwright@1.47.0";
@@ -29,51 +23,55 @@ interface Step {
   fn: (page: Page) => Promise<void>;
 }
 
+const FALLBACK_TEXT = "Prisdata kunde inte hämtas just nu.";
+
 const steps: Step[] = [
   {
     name: "landing-loaded",
     fn: async (page) => {
       await page.goto(BASE_URL, { waitUntil: "domcontentloaded", timeout: TIMEOUT_MS });
-      await page.waitForSelector('input, select, button', { timeout: 15_000 });
+      await page.waitForSelector("h1", { timeout: 15_000 });
+      const body = (await page.textContent("body")) ?? "";
+      if (body.length < 500) throw new Error("Startsidan verkar tom");
     },
   },
   {
-    name: "survey-submit",
+    name: "rate-calculator-renders",
     fn: async (page) => {
-      // Heuristic: fill any visible required inputs with sensible defaults.
-      // The survey is a multi-step form rendered inline. We probe step by step.
-      for (let step = 0; step < 8; step++) {
-        const next = page.locator('button:has-text("Nästa"), button:has-text("Fortsätt"), button:has-text("Visa")').first();
-        if (!(await next.isVisible().catch(() => false))) break;
-        await next.click({ timeout: 3000 }).catch(() => {});
-        await page.waitForTimeout(500);
+      // Antingen ett pris i kr/h, eller den godkända fallbacktexten.
+      const body = (await page.textContent("body")) ?? "";
+      const hasPrice = /\d[\d\s]{2,}\s*kr/i.test(body);
+      if (!hasPrice && !body.includes(FALLBACK_TEXT)) {
+        throw new Error("Varken pris eller fallbacktext hittades i rateräknaren");
       }
     },
   },
   {
-    name: "teaser-or-result-visible",
+    name: "role-table-renders",
     fn: async (page) => {
-      await page.waitForURL(/teaser|resultat|rapport/, { timeout: 15_000 });
-    },
-  },
-  {
-    name: "email-submit",
-    fn: async (page) => {
-      const email = `smoketest+${Date.now()}@vardbemanning.ai`;
-      const input = page.locator('input[type="email"]').first();
-      if (await input.isVisible().catch(() => false)) {
-        await input.fill(email);
-        const submit = page.locator('button[type="submit"], button:has-text("Visa")').first();
-        await submit.click({ timeout: 5000 });
+      const rows = await page.locator("table tbody tr").count();
+      const body = (await page.textContent("body")) ?? "";
+      if (rows === 0 && !body.includes(FALLBACK_TEXT)) {
+        throw new Error("Rolltabellen saknar både rader och fallbacktext");
       }
     },
   },
   {
-    name: "report-content",
+    name: "tool-suggestion-form-present",
     fn: async (page) => {
-      await page.waitForURL(/resultat|rapport/, { timeout: 20_000 });
+      const email = page.locator('input[type="email"]').first();
+      await email.waitFor({ state: "attached", timeout: 15_000 });
+    },
+  },
+  {
+    name: "report-page-loads",
+    fn: async (page) => {
+      await page.goto(`${BASE_URL}/rapport/sjukskoterska`, {
+        waitUntil: "domcontentloaded",
+        timeout: TIMEOUT_MS,
+      });
       const body = await page.textContent("body");
-      if (!body || body.length < 500) throw new Error("Report page appears empty");
+      if (!body || body.length < 500) throw new Error("Rapportsidan verkar tom");
     },
   },
 ];

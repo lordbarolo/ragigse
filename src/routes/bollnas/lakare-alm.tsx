@@ -4,5 +4,8 @@ import BollnasAllmanspecialistReport from "@/pages/BollnasAllmanspecialistReport
 // Covers both /bollnas/lakare-alm and /Bollnas/lakare-alm — TanStack Router
 // matches paths case-insensitively by default.
 export const Route = createFileRoute("/bollnas/lakare-alm")({
+  head: () => ({
+    meta: [{ name: "robots", content: "noindex, follow" }],
+  }),
   component: BollnasAllmanspecialistReport,
 });
