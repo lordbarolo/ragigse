@@ -135,6 +135,15 @@ describe.skipIf(!hasEnv)("RPC-grants · interna helpers är stängda för alla A
   }
 });
 
+describe.skipIf(!hasEnv)("RPC-grants · EXECUTE för authenticated, nekad för anon", () => {
+  for (const { fn, body } of AUTHENTICATED_ONLY) {
+    it(`anon blockeras från ${fn}`, async () => {
+      expectBlocked(fn, await callRpc(fn, body));
+    });
+  }
+});
+
+
 describe.skipIf(!hasEnv)("RPC-grants · medvetet publika funktioner fungerar och läcker inget", () => {
   it("get_feature_flag('marketplace_enabled') är läsbar för anon", async () => {
     const r = await callRpc("get_feature_flag", { _key: "marketplace_enabled" });
