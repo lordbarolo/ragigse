@@ -242,7 +242,7 @@ export default function Faktasidor() {
         {/* Nav */}
         <nav className="relative flex items-center justify-between px-5 sm:px-6 lg:px-10 h-[60px] border-b border-white/10">
           <Link to="/" aria-label="vårdbemanning.ai startsida" className="inline-flex items-center text-white">
-            <CompcareLogo variant="full" inverted={false} />
+            <CompcareLogo variant="full" inverted />
           </Link>
           <Link to="/logga-in">
             <button

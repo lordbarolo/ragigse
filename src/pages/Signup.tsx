@@ -181,7 +181,7 @@ export default function Signup() {
 
       <header className="absolute top-0 left-0 right-0 z-20 flex items-center px-4 md:px-6 lg:px-8 h-14 md:h-16">
         <Link to="/" aria-label="vårdbemanning.ai startsida">
-          <CompcareLogo variant="full" inverted={false} />
+          <CompcareLogo variant="full" inverted />
         </Link>
       </header>
       <div className="relative z-10 w-full max-w-md space-y-6">

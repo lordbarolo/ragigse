@@ -175,7 +175,7 @@ export default function Login() {
       <div className="relative z-10 w-full max-w-lg space-y-6">
         <div className="flex justify-center">
           <Link to="/">
-            <CompcareLogo variant="full" inverted={false} />
+            <CompcareLogo variant="full" inverted />
           </Link>
         </div>
 

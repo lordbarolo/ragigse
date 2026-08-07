@@ -30,10 +30,10 @@ export default function Navbar() {
       )}
       <Link to="/" className="flex items-center" aria-label="vårdbemanning.ai startsida">
         <div className="block md:hidden">
-          <CompcareLogo variant="wordmark" inverted={false} />
+          <CompcareLogo variant="wordmark" inverted />
         </div>
         <div className="hidden md:block">
-          <CompcareLogo variant="full" inverted={false} />
+          <CompcareLogo variant="full" inverted />
         </div>
       </Link>
       <div className="flex-1" />

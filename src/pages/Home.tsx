@@ -46,7 +46,7 @@ export default function Home() {
         {/* ── Nav ─────────────────────────────── */}
         <nav className="relative flex items-center justify-between px-5 sm:px-6 lg:px-10 h-[60px] border-b border-black/10 bg-transparent">
           <Link to="/" aria-label="vårdbemanning.ai startsida" className="inline-flex items-center text-black">
-            <CompcareLogo variant="full" inverted={false} />
+            <CompcareLogo variant="full" inverted />
           </Link>
           <div className="flex items-center gap-2 sm:gap-3">
             <Link to="/logga-in">
