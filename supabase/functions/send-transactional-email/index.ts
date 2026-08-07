@@ -130,6 +130,52 @@ Deno.serve(async (req) => {
   const supabase = createClient(supabaseUrl, supabaseServiceKey)
   const normalizedEmail = effectiveRecipient.toLowerCase()
 
+  // 0. Caller gate — this function must never be an open mail relay.
+  const caller = await identifyCaller(req)
+  const ip = clientIp(req)
+  const recipientKey = await emailKey(normalizedEmail)
+
+  if (caller.kind === 'user') {
+    // A signed-in user may only trigger mail to their own address.
+    if (caller.email && caller.email !== normalizedEmail) {
+      return new Response(
+        JSON.stringify({ error: 'Recipient must match the authenticated user' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+    for (const key of [`user:${caller.userId}`, recipientKey]) {
+      const rl = await checkRateLimit(supabase, 'send-transactional-email', key, 10, 60)
+      if (!rl.allowed) return rateLimitResponse(rl, corsHeaders)
+    }
+  } else if (caller.kind === 'anon') {
+    // Unauthenticated callers: only self-service templates, and only for an
+    // address that just created an account (signup confirmation flow).
+    if (!ANON_TEMPLATES.has(templateName)) {
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized' }),
+        { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+    for (const key of [`ip:${ip}`, recipientKey]) {
+      const rl = await checkRateLimit(supabase, 'send-transactional-email:anon', key, 3, 60)
+      if (!rl.allowed) return rateLimitResponse(rl, corsHeaders)
+    }
+    const { data: recent } = await supabase.auth.admin.listUsers({ page: 1, perPage: 200 })
+    const cutoff = Date.now() - 15 * 60 * 1000
+    const matched = recent?.users?.some(
+      (u) =>
+        (u.email ?? '').toLowerCase() === normalizedEmail &&
+        new Date(u.created_at).getTime() >= cutoff
+    )
+    if (!matched) {
+      // Do not reveal whether the address exists.
+      return new Response(
+        JSON.stringify({ success: false, reason: 'not_eligible' }),
+        { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+  }
+
   // 1. Suppression check (fail-closed)
   const { data: suppressed, error: suppressionError } = await supabase
     .from('suppressed_emails')
