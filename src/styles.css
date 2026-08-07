@@ -520,10 +520,21 @@
 
 /* Gemini-liknande svävande frågechips runt skrivrutan */
 @keyframes chip-float {
-  0%, 100% { transform: translate3d(0, 0, 0); }
-  50% { transform: translate3d(0, -9px, 0); }
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  20% { transform: translate3d(12px, -14px, 0) rotate(0.6deg); }
+  40% { transform: translate3d(-8px, -6px, 0) rotate(-0.4deg); }
+  60% { transform: translate3d(-14px, 10px, 0) rotate(0.3deg); }
+  80% { transform: translate3d(6px, 12px, 0) rotate(-0.5deg); }
 }
-.chip-float { animation: chip-float 7s ease-in-out infinite; will-change: transform; }
+@keyframes chip-float-reverse {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  20% { transform: translate3d(-10px, -10px, 0) rotate(-0.5deg); }
+  40% { transform: translate3d(10px, -4px, 0) rotate(0.4deg); }
+  60% { transform: translate3d(14px, 8px, 0) rotate(-0.3deg); }
+  80% { transform: translate3d(-6px, 14px, 0) rotate(0.5deg); }
+}
+.chip-float { animation: chip-float 9s ease-in-out infinite; will-change: transform; }
+.chip-float-reverse { animation: chip-float-reverse 10s ease-in-out infinite; will-change: transform; }
 @media (prefers-reduced-motion: reduce) {
-  .chip-float { animation: none; }
+  .chip-float, .chip-float-reverse { animation: none; }
 }
