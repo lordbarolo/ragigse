@@ -241,9 +241,8 @@ export default function HomeAssistantChat() {
             </div>
           </div>
 
-
-
           {/* Mobil/tablet */}
+
           <div className="md:hidden">
             {composer}
             <div className="mt-5 flex flex-wrap justify-center gap-1.5">
