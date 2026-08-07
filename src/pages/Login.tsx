@@ -13,6 +13,7 @@ import { trackEvent } from "@/lib/trackEvent";
 import posthog from "@/lib/posthog";
 import { getAuthIntentCopy, sanitizeRedirect } from "@/lib/authIntent";
 import { translateAuthError } from "@/lib/authErrors";
+import { isOAuthReturn } from "@/lib/oauthReturn";
 
 type RecoveryStatus = "idle" | "sending" | "sent" | "error";
 
@@ -67,17 +68,27 @@ export default function Login() {
     navigate(redirectTo ? `/onboarding?redirect=${encodeURIComponent(redirectTo)}` : "/onboarding");
   };
 
-  // Returning from Google OAuth lands back on this page with a session set.
+  // Auto-fortsätt ENDAST vid retur från Google OAuth. En kvarliggande session
+  // ska inte skicka bort någon som medvetet öppnar inloggningsformuläret.
   useEffect(() => {
     let cancelled = false;
-    void (async () => {
-      const { data } = await supabase.auth.getSession();
-      if (!cancelled && data.session?.user) {
-        await continueAfterAuth(data.session.user);
+    if (isOAuthReturn()) {
+      void (async () => {
+        const { data } = await supabase.auth.getSession();
+        if (!cancelled && data.session?.user) {
+          await continueAfterAuth(data.session.user);
+        }
+      })();
+    }
+    // Popup-flödet (preview) sätter sessionen utan omdirigering.
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session?.user && !cancelled) {
+        void continueAfterAuth(session.user);
       }
-    })();
+    });
     return () => {
       cancelled = true;
+      sub.subscription.unsubscribe();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
