@@ -1,5 +1,5 @@
+import { Link } from "@/lib/router-compat";
 import sskFoto from "@/assets/startsida5c-ssk.png";
-import BadgeCta from "./BadgeCta";
 
 const TOOLS: { name: string; desc: string }[] = [
   { name: "Löneanalys", desc: "Se ramavtalspriset för din roll och kommun och vad du kan fakturera." },
@@ -60,10 +60,20 @@ export default function FotoBand() {
           </div>
 
           <div className="mt-6 flex flex-wrap items-center gap-3">
-            <BadgeCta to="/registrera">Skapa konto</BadgeCta>
-            <BadgeCta to="/logga-in" variant="ghost">
+            <Link
+              to="/registrera"
+              className="inline-flex items-center rounded-full px-6 py-3 text-sm font-semibold transition-opacity hover:opacity-90"
+              style={{ background: "#ffffff", color: "#0b0c10" }}
+            >
+              Skapa konto
+            </Link>
+            <Link
+              to="/logga-in"
+              className="inline-flex items-center rounded-full px-6 py-3 text-sm font-semibold"
+              style={{ border: "1px solid #2c2d36", color: "#e6e7ea" }}
+            >
               Logga in
-            </BadgeCta>
+            </Link>
           </div>
 
         </div>
