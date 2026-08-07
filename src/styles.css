@@ -517,3 +517,13 @@
   50% { box-shadow: 0 14px 50px -8px rgba(236,72,153,0.65); }
 }
 .animate-pulse-soft { animation: pulse-soft 2.5s ease-in-out infinite; }
+
+/* Gemini-liknande svävande frågechips runt skrivrutan */
+@keyframes chip-float {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -9px, 0); }
+}
+.chip-float { animation: chip-float 7s ease-in-out infinite; will-change: transform; }
+@media (prefers-reduced-motion: reduce) {
+  .chip-float { animation: none; }
+}
