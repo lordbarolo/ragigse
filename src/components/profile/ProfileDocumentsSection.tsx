@@ -1,14 +1,34 @@
 import { useCallback, useEffect, useState } from "react";
-import { Check, FileUp, Loader2, Lock, Unlock } from "lucide-react";
+import { Check, ExternalLink, FileUp, Loader2, Lock, Unlock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import CvAssistantCard from "./CvAssistantCard";
+import RegistryExtractCard from "./RegistryExtractCard";
 
 const DOC_TYPES = [
-  { id: "legitimation", label: "Legitimation", desc: "Socialstyrelsens legitimationsbevis." },
-  { id: "hosp", label: "HOSP-utdrag", desc: "Utdrag ur registret över legitimerad personal." },
-  { id: "ivo", label: "IVO-utdrag", desc: "Utdrag från Inspektionen för vård och omsorg." },
-  { id: "cv", label: "CV", desc: "Aktuellt CV med uppdrag och kompetens." },
-  { id: "forsakring", label: "Försäkringsbevis", desc: "Ansvarsförsäkring för uppdraget." },
+  { id: "legitimation", label: "Legitimation", desc: "Socialstyrelsens legitimationsbevis.", link: null },
+  {
+    id: "hosp",
+    label: "HOSP-utdrag",
+    desc: "Utdrag ur registret över legitimerad personal.",
+    link: {
+      href: "https://legitimation.socialstyrelsen.se/ansok-om-intyg/legitimationskontroll-for-arbete-eller-studier-inom-sverige/",
+      label: "Socialstyrelsen",
+    },
+  },
+  {
+    id: "ivo",
+    label: "IVO-utdrag",
+    desc: "Utdrag från Inspektionen för vård och omsorg.",
+    link: { href: "https://www.ivo.se/kontakt/ta-del-av-handlingar/", label: "IVO" },
+  },
+  { id: "cv", label: "CV", desc: "Aktuellt CV med uppdrag och kompetens.", link: null },
+  {
+    id: "belastningsregister",
+    label: "Utdrag från belastningsregistret",
+    desc: "Begärs hos Polisen — krävs för arbete inom vård och omsorg.",
+    link: { href: "https://polisen.se/tjanster-tillstand/belastningsregistret/", label: "Polisen" },
+  },
 ] as const;
 
 type DocRow = { id: string; doc_type: string; file_name: string; status: string };
@@ -103,6 +123,17 @@ export default function ProfileDocumentsSection({ userId }: Props) {
                       <p className="mt-0.5 truncate text-xs text-white/45">
                         {has ? docs.find((x) => x.doc_type === d.id)?.file_name : d.desc}
                       </p>
+                      {!has && d.link && (
+                        <a
+                          href={d.link.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-1 inline-flex items-center gap-1 text-xs text-white/60 underline decoration-white/25 underline-offset-2 hover:text-white"
+                        >
+                          Begär hos {d.link.label}
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
+                      )}
                     </div>
                     <label className="inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full border border-white/20 px-3.5 py-1.5 text-xs font-medium text-white/85 transition-colors hover:bg-white/10">
                       {uploading === d.id ? (
@@ -152,6 +183,12 @@ export default function ProfileDocumentsSection({ userId }: Props) {
               : `${uploaded.size} av ${DOC_TYPES.length} dokument uppladdade.`}
           </p>
         </div>
+      </div>
+
+      {/* Hjälp med handlingarna */}
+      <div className="mx-auto mt-8 grid w-full max-w-[1200px] gap-4 px-5 lg:mt-12 lg:grid-cols-2 lg:gap-6">
+        <CvAssistantCard />
+        <RegistryExtractCard />
       </div>
     </section>
   );

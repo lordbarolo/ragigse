@@ -29,6 +29,7 @@ export const FUNCTION_GRANTS: Record<string, GrantCategory> = {
   is_org_admin: "authenticated",
   create_document_share: "authenticated",
   list_my_document_shares: "authenticated",
+  get_my_registry_orders: "authenticated",
   revoke_document_share: "authenticated",
   get_document_share_by_token: "authenticated",
   log_document_share_view: "authenticated",
