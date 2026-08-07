@@ -5,12 +5,9 @@ export default function OvergangChatt() {
   return (
     <section
       id="assistent"
-      className="scroll-mt-16"
-      style={{
-        background: "#0b0c10",
-      }}
+      className="scroll-mt-16 bg-background"
     >
-      <div className="relative mx-auto max-w-[820px] px-5 pb-32 pt-10 text-center md:px-12 md:pb-40 md:pt-14">
+      <div className="relative mx-auto max-w-[1160px] px-5 pb-32 pt-10 text-center md:px-10 md:pb-40 md:pt-14">
         <div
           aria-hidden
           className="pointer-events-none absolute left-1/2 top-8 -z-0 h-[420px] w-[680px] -translate-x-1/2 rounded-full"
@@ -52,7 +49,7 @@ export default function OvergangChatt() {
             offentliga handlingar och historisk data.
           </p>
 
-          <div className="mx-auto mt-9 max-w-[720px] text-left">
+          <div className="mx-auto mt-9 w-full text-left">
             <HomeAssistantChat />
           </div>
 
