@@ -15,6 +15,7 @@ import { roleLabel5c } from "./roleLabels5c";
 
 export default function Rateraknare() {
   const base = useBaseRates5c();
+  const navigate = useNavigate();
   const [role, setRole] = useState(DEFAULT_ROLE_5C);
   const [zone, setZone] = useState(DEFAULT_ZONE_5C);
 
