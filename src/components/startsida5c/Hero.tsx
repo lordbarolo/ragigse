@@ -11,6 +11,22 @@ export default function Hero() {
     <section style={{ background: "#0b0c10", borderBottom: "1px solid #22232b" }}>
       <div className="mx-auto grid max-w-[1200px] items-center gap-10 px-5 py-14 md:px-12 md:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
         <div>
+          <a
+            href="/registrera"
+            className="mb-6 inline-flex rounded-full p-[1px] no-underline"
+            style={{
+              background: "linear-gradient(100deg,#4ade80,#22d3ee 35%,#6366f1 70%,#4ade80)",
+              animation: "fadeUp5c .55s ease both",
+            }}
+          >
+            <span
+              className="inline-flex items-center gap-2 rounded-full px-4 py-[7px] text-[13px] font-medium"
+              style={{ background: "#0b0c10", color: "#e8eaef" }}
+            >
+              Sätt din AI-agent i arbete
+              <span style={{ color: "#8a8c94" }}>›</span>
+            </span>
+          </a>
           <div
             className="mb-4 text-[11px] uppercase tracking-[0.14em]"
             style={{ color: "#8a8c94", fontFamily: "'IBM Plex Mono',monospace", animation: "fadeUp5c .55s ease both" }}
