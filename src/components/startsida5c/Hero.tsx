@@ -48,7 +48,8 @@ export default function Hero() {
             className="mt-4 max-w-[520px] text-[15.5px]"
             style={{ lineHeight: 1.62, color: "#9b9da7", animation: "fadeUp5c .55s .16s ease both" }}
           >
-            Information baserad på regionernas offentliga ramavtal.&nbsp; Uppdaterad data för 21 regioner och 290 kommuner.&nbsp; Samtliga kompetenser inom svensk sjukvård.
+            Se uppdaterade villkor för läkare och sjuksköterskor.<br />
+            Transparent löneinformation baserad på regionernas ramavtal och branschens vanliga marginaler.
           </p>
           <ul
             className="mt-6 flex list-none flex-wrap gap-x-6 gap-y-2 p-0 text-[12.5px]"
