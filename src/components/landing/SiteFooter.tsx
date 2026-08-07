@@ -12,38 +12,38 @@ export default function SiteFooter() {
   const specialtyLinks = DOCTOR_SPECIALTY_REPORTS.slice(0, 5);
 
   return (
-    <footer className="mt-16 border-t border-black/10 bg-transparent px-5 sm:px-6 lg:px-10 pt-12 pb-8">
+    <footer className="mt-16 border-t border-white/10 bg-transparent px-5 sm:px-6 lg:px-10 pt-12 pb-8">
       <div className="max-w-[1200px] mx-auto">
         <div className="grid grid-cols-2 gap-x-8 gap-y-10 md:grid-cols-4 lg:grid-cols-[minmax(0,1.2fr)_repeat(3,minmax(0,1fr))]">
           {/* Logotyp */}
           <div className="col-span-2 md:col-span-1">
-            <Link to="/" aria-label="vårdbemanning.ai startsida" className="inline-flex items-center text-black">
-              <CompcareLogo variant="full" inverted={false} />
+            <Link to="/" aria-label="vårdbemanning.ai startsida" className="inline-flex items-center text-white">
+              <CompcareLogo variant="full" inverted />
             </Link>
-            <p className="mt-4 max-w-[240px] text-sm leading-relaxed text-black/60">
+            <p className="mt-4 max-w-[240px] text-sm leading-relaxed text-white/60">
               Ersättningsanalys för vårdkonsulter, baserad på regionernas offentliga ramavtalspriser.
             </p>
           </div>
 
           {/* Fakta och råd */}
           <nav aria-labelledby="footer-fakta">
-            <h2 id="footer-fakta" className="text-sm font-semibold text-black mb-3">
+            <h2 id="footer-fakta" className="text-sm font-semibold text-white mb-3">
               Fakta och råd
             </h2>
-            <ul className="space-y-2 text-sm text-black/70">
+            <ul className="space-y-2 text-sm text-white/70">
               <li>
-                <Link to="/faktasidor" className="hover:text-black underline-offset-4 hover:underline">
+                <Link to="/faktasidor" className="hover:text-white underline-offset-4 hover:underline">
                   Faktasidor
                 </Link>
               </li>
               <li>
-                <Link to="/vanliga-fragor" className="hover:text-black underline-offset-4 hover:underline">
+                <Link to="/vanliga-fragor" className="hover:text-white underline-offset-4 hover:underline">
                   Frågor och svar
                 </Link>
               </li>
               {REPORT_LINKS.map((l) => (
                 <li key={l.to}>
-                  <Link to={l.to} className="hover:text-black underline-offset-4 hover:underline">
+                  <Link to={l.to} className="hover:text-white underline-offset-4 hover:underline">
                     {l.label}
                   </Link>
                 </li>
@@ -53,19 +53,19 @@ export default function SiteFooter() {
 
           {/* Läkarspecialiteter */}
           <nav aria-labelledby="footer-specialiteter">
-            <h2 id="footer-specialiteter" className="text-sm font-semibold text-black mb-3">
+            <h2 id="footer-specialiteter" className="text-sm font-semibold text-white mb-3">
               Läkarspecialiteter
             </h2>
-            <ul className="space-y-2 text-sm text-black/70">
+            <ul className="space-y-2 text-sm text-white/70">
               {specialtyLinks.map((r) => (
                 <li key={r.slug}>
-                  <Link to={`/rapport/${r.slug}`} className="hover:text-black underline-offset-4 hover:underline">
+                  <Link to={`/rapport/${r.slug}`} className="hover:text-white underline-offset-4 hover:underline">
                     {r.title}
                   </Link>
                 </li>
               ))}
               <li>
-                <Link to="/faktasidor" className="hover:text-black underline-offset-4 hover:underline">
+                <Link to="/faktasidor" className="hover:text-white underline-offset-4 hover:underline">
                   Alla priser och roller
                 </Link>
               </li>
@@ -74,22 +74,22 @@ export default function SiteFooter() {
 
           {/* Om vårdbemanning.ai */}
           <nav aria-labelledby="footer-om">
-            <h2 id="footer-om" className="text-sm font-semibold text-black mb-3">
+            <h2 id="footer-om" className="text-sm font-semibold text-white mb-3">
               Om vårdbemanning.ai
             </h2>
-            <ul className="space-y-2 text-sm text-black/70">
+            <ul className="space-y-2 text-sm text-white/70">
               <li>
-                <Link to="/logga-in" className="hover:text-black underline-offset-4 hover:underline">
+                <Link to="/logga-in" className="hover:text-white underline-offset-4 hover:underline">
                   Logga in
                 </Link>
               </li>
               <li>
-                <Link to="/registrera" className="hover:text-black underline-offset-4 hover:underline">
+                <Link to="/registrera" className="hover:text-white underline-offset-4 hover:underline">
                   Skapa konto
                 </Link>
               </li>
               <li>
-                <a href="mailto:info@vardbemanning.ai" className="hover:text-black underline-offset-4 hover:underline">
+                <a href="mailto:info@vardbemanning.ai" className="hover:text-white underline-offset-4 hover:underline">
                   info@vardbemanning.ai
                 </a>
               </li>
@@ -98,15 +98,15 @@ export default function SiteFooter() {
         </div>
 
         {/* Underrad */}
-        <div className="mt-10 border-t border-black/10 pt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between text-xs text-black/55">
+        <div className="mt-10 border-t border-white/10 pt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between text-xs text-white/55">
           <nav className="flex flex-wrap gap-x-4 gap-y-2">
-            <Link to="/integritetspolicy" className="hover:text-black underline-offset-4 hover:underline">
+            <Link to="/integritetspolicy" className="hover:text-white underline-offset-4 hover:underline">
               Integritetspolicy
             </Link>
-            <Link to="/vanliga-fragor" className="hover:text-black underline-offset-4 hover:underline">
+            <Link to="/vanliga-fragor" className="hover:text-white underline-offset-4 hover:underline">
               Vanliga frågor
             </Link>
-            <Link to="/faktasidor" className="hover:text-black underline-offset-4 hover:underline">
+            <Link to="/faktasidor" className="hover:text-white underline-offset-4 hover:underline">
               Faktasidor
             </Link>
           </nav>
