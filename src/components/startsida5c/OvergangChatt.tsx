@@ -26,7 +26,7 @@ export default function OvergangChatt() {
               color: "#ffffff",
             }}
           >
-            Vad tänker du på?.
+            Sätt din assistent i arbete.
             <br />
             <span
               style={{
@@ -36,7 +36,7 @@ export default function OvergangChatt() {
                 color: "transparent",
               }}
             >
-              Sätt din assistent i arbete.
+              Vad tänker du på?
             </span>
           </h2>
 
