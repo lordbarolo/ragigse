@@ -518,24 +518,27 @@
 }
 .animate-pulse-soft { animation: pulse-soft 2.5s ease-in-out infinite; }
 
-/* Begränsad rörelse: varje chip stannar i sin egen gridcell. */
+/* Svävande frågor: tydlig men begränsad rörelse inom egen gridcell. */
 @keyframes chip-float {
   0%   { transform: translate3d(0, 0, 0) rotate(0deg); }
-  25%  { transform: translate3d(3px, -4px, 0) rotate(0.12deg); }
-  50%  { transform: translate3d(-2px, -1px, 0) rotate(-0.08deg); }
-  75%  { transform: translate3d(-3px, 4px, 0) rotate(-0.1deg); }
+  20%  { transform: translate3d(10px, -11px, 0) rotate(0.5deg); }
+  40%  { transform: translate3d(-8px, -6px, 0) rotate(-0.4deg); }
+  60%  { transform: translate3d(6px, 9px, 0) rotate(0.35deg); }
+  80%  { transform: translate3d(-9px, 5px, 0) rotate(-0.3deg); }
   100% { transform: translate3d(0, 0, 0) rotate(0deg); }
 }
 @keyframes chip-float-reverse {
   0%   { transform: translate3d(0, 0, 0) rotate(0deg); }
-  25%  { transform: translate3d(-3px, -4px, 0) rotate(-0.12deg); }
-  50%  { transform: translate3d(2px, 1px, 0) rotate(0.08deg); }
-  75%  { transform: translate3d(3px, 4px, 0) rotate(0.1deg); }
+  20%  { transform: translate3d(-11px, 9px, 0) rotate(-0.5deg); }
+  40%  { transform: translate3d(7px, 6px, 0) rotate(0.4deg); }
+  60%  { transform: translate3d(-6px, -10px, 0) rotate(-0.35deg); }
+  80%  { transform: translate3d(10px, -5px, 0) rotate(0.3deg); }
   100% { transform: translate3d(0, 0, 0) rotate(0deg); }
 }
-.chip-float { animation: chip-float 20s ease-in-out infinite; will-change: transform; backface-visibility: hidden; transform: translate3d(0, 0, 0); }
-.chip-float-reverse { animation: chip-float-reverse 23s ease-in-out infinite; will-change: transform; backface-visibility: hidden; transform: translate3d(0, 0, 0); }
+.chip-float { animation: chip-float 13s ease-in-out infinite; will-change: transform; backface-visibility: hidden; transform: translate3d(0, 0, 0); }
+.chip-float-reverse { animation: chip-float-reverse 15s ease-in-out infinite; will-change: transform; backface-visibility: hidden; transform: translate3d(0, 0, 0); }
 
 @media (prefers-reduced-motion: reduce) {
   .chip-float, .chip-float-reverse { animation: none; }
 }
+
