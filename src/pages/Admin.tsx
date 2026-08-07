@@ -287,7 +287,7 @@ export default function Admin() {
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-wrap gap-2">
-            <Button size="sm" variant="outline" className="gap-1.5 text-xs" onClick={() => navigate("/profil")}>
+            <Button size="sm" variant="outline" className="gap-1.5 text-xs" onClick={() => navigate("/consultant/profil")}>
               <Eye className="w-3.5 h-3.5" /> Profilsida
             </Button>
             <Button size="sm" variant="outline" className="gap-1.5 text-xs" onClick={() => navigate("/referenser")}>
