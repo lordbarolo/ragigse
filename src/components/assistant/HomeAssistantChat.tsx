@@ -1,6 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { Link } from "@/lib/router-compat";
 import { ArrowUp, Lock, Loader2 } from "lucide-react";
+import { Message, MessageContent, MessageResponse } from "@/components/ai-elements/message";
+import {
+  PromptInput,
+  PromptInputFooter,
+  PromptInputSubmit,
+  PromptInputTextarea,
+} from "@/components/ai-elements/prompt-input";
+import { Shimmer } from "@/components/ai-elements/shimmer";
+import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfileContext } from "@/hooks/useProfileContext";
@@ -113,36 +122,38 @@ export default function HomeAssistantChat() {
   }
 
   const chipClass =
-    "chip-float rounded-full bg-white/[0.045] px-3.5 py-2 text-left text-[12.5px] leading-snug text-white/70 backdrop-blur-sm transition-colors hover:bg-white/[0.09] hover:text-white disabled:opacity-40";
+    "h-auto max-w-[230px] whitespace-normal rounded-2xl border border-border/70 bg-secondary/45 px-4 py-2.5 text-left text-[12.5px] font-normal leading-snug text-muted-foreground backdrop-blur-md hover:border-primary/30 hover:bg-secondary/75 hover:text-foreground";
 
   const composer = (
     <div className="mx-auto w-full max-w-[560px]">
       {user ? (
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            const q = input.trim();
+        <PromptInput
+          onSubmit={(message) => {
+            const q = message.text.trim();
             if (!q) return;
             push({ role: "user", text: q });
             setInput("");
             askFreeText(q);
           }}
-          className="flex items-center gap-2 rounded-full bg-white/[0.06] px-4 py-2 backdrop-blur-md"
+          className="rounded-2xl border-border/70 bg-secondary/55 shadow-2xl backdrop-blur-md"
         >
-          <input
+          <PromptInputTextarea
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Fråga assistenten"
-            className="h-9 flex-1 bg-transparent text-sm text-white outline-hidden placeholder:text-white/40"
+            className="min-h-12 py-3.5 text-sm text-foreground placeholder:text-muted-foreground"
           />
-          <button
-            type="submit"
-            aria-label="Skicka"
-            className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-white text-[#0b0c10] transition-opacity hover:opacity-90"
-          >
-            <ArrowUp className="h-4 w-4" />
-          </button>
-        </form>
+          <PromptInputFooter className="justify-end pt-0">
+            <PromptInputSubmit
+              aria-label="Skicka"
+              disabled={!input.trim() || loading}
+              status={loading ? "submitted" : "ready"}
+              className="rounded-xl"
+            >
+              <ArrowUp className="size-4" />
+            </PromptInputSubmit>
+          </PromptInputFooter>
+        </PromptInput>
       ) : (
         <Link
           to="/registrera"
@@ -158,19 +169,6 @@ export default function HomeAssistantChat() {
     </div>
   );
 
-  // Chipsen hålls i två band (topp/botten) med marginal till skrivrutan i mitten,
-  // så att de aldrig kan hamna bakom composern.
-  const positions = [
-    "left-[-2%] top-[0%] w-[220px]",
-    "right-[-2%] top-[-2%] w-[210px]",
-    "left-[-4%] top-[14%] w-[200px]",
-    "right-[-4%] top-[16%] w-[215px]",
-    "left-[-1%] bottom-[10%] w-[205px]",
-    "right-[-1%] bottom-[6%] w-[220px]",
-    "left-1/2 -translate-x-1/2 bottom-[-4%] w-[250px]",
-  ];
-
-
   return (
     <div className="relative w-full">
       {/* Transkript — kantlös, visas när samtalet startat */}
@@ -180,25 +178,17 @@ export default function HomeAssistantChat() {
           className="mb-6 max-h-[340px] space-y-4 overflow-y-auto pr-1"
         >
           {messages.map((m) => (
-            <div key={m.id} className={m.role === "user" ? "flex justify-end" : ""}>
-              {m.role === "user" ? (
-                <div className="max-w-[85%] rounded-2xl bg-white/[0.07] px-3.5 py-2 text-sm text-white">
-                  {m.text}
-                </div>
-              ) : (
-                <div className="max-w-[95%] whitespace-pre-wrap text-sm leading-relaxed text-white/75">
-                  {m.text}
-                  {m.source && (
-                    <span className="mt-1.5 block text-[11px] text-white/40">Källa: {m.source}</span>
-                  )}
-                </div>
-              )}
-            </div>
+            <Message key={m.id} from={m.role}>
+              <MessageContent>
+                <MessageResponse>{m.text}</MessageResponse>
+                {m.source && (
+                  <span className="mt-1.5 block text-[11px] text-muted-foreground">Källa: {m.source}</span>
+                )}
+              </MessageContent>
+            </Message>
           ))}
           {loading && (
-            <div className="flex items-center gap-2 text-sm text-white/45">
-              <Loader2 className="h-3.5 w-3.5 animate-spin" /> Tänker…
-            </div>
+            <Shimmer className="text-sm">Tänker…</Shimmer>
           )}
         </div>
       )}
@@ -208,53 +198,65 @@ export default function HomeAssistantChat() {
           {composer}
           <div className="mt-4 flex flex-wrap justify-center gap-1.5">
             {PRESETS.map((p) => (
-              <button
+              <Button
                 key={p.key}
                 type="button"
+                variant="ghost"
                 disabled={loading}
                 onClick={() => onPreset(p)}
                 className={chipClass}
               >
                 {p.label}
-              </button>
+              </Button>
             ))}
           </div>
         </>
       ) : (
         <>
-          {/* Desktop: frågor svävar runt skrivrutan */}
-          <div className="relative hidden h-[560px] lg:block">
-            {PRESETS.map((p, i) => (
-              <button
-                key={p.key}
-                type="button"
-                disabled={loading}
-                onClick={() => onPreset(p)}
-                style={{ animationDelay: `${(i % 7) * -1.7}s`, animationDuration: `${16 + (i % 5) * 2.5}s` }}
-                className={`absolute ${positions[i] ?? ""} ${i % 2 === 0 ? "chip-float" : "chip-float-reverse"} rounded-full bg-white/[0.045] px-3.5 py-2 text-left text-[12.5px] leading-snug text-white/70 backdrop-blur-sm transition-colors hover:bg-white/[0.09] hover:text-white disabled:opacity-40`}
-              >
-                {p.label}
-              </button>
-            ))}
-            <div className="pointer-events-none absolute left-0 right-0 top-1/2 z-20 -translate-y-1/2 px-[30%] [&_*]:pointer-events-auto">{composer}</div>
+          {/* Desktop: varje fråga rör sig endast inom en egen gridcell. */}
+          <div className="hidden w-full md:block">
+            <div className="grid min-h-[360px] w-full grid-cols-[minmax(0,1fr)_minmax(280px,360px)_minmax(0,1fr)] items-center gap-5 lg:gap-10">
+              <div className="flex min-w-0 flex-col items-end justify-center gap-8 py-5">
+                {[PRESETS[0], PRESETS[2], PRESETS[4]].map((p, i) => p && (
+                  <Button key={p.key} type="button" variant="ghost" disabled={loading} onClick={() => onPreset(p)} style={{ animationDelay: `${i * -2.1}s` }} className={`${chipClass} ${i % 2 === 0 ? "chip-float" : "chip-float-reverse"}`}>
+                    {p.label}
+                  </Button>
+                ))}
+              </div>
+              <div className="relative z-10 w-full">{composer}</div>
+              <div className="flex min-w-0 flex-col items-start justify-center gap-8 py-5">
+                {[PRESETS[1], PRESETS[3], PRESETS[5]].map((p, i) => p && (
+                  <Button key={p.key} type="button" variant="ghost" disabled={loading} onClick={() => onPreset(p)} style={{ animationDelay: `${i * -2.4}s` }} className={`${chipClass} ${i % 2 === 0 ? "chip-float-reverse" : "chip-float"}`}>
+                    {p.label}
+                  </Button>
+                ))}
+              </div>
+            </div>
+            {PRESETS[6] && (
+              <div className="mt-5 flex min-h-12 justify-center px-8">
+                <Button type="button" variant="ghost" disabled={loading} onClick={() => onPreset(PRESETS[6])} className={`${chipClass} chip-float`}>
+                  {PRESETS[6].label}
+                </Button>
+              </div>
+            )}
           </div>
 
 
           {/* Mobil/tablet */}
-          <div className="lg:hidden">
+          <div className="md:hidden">
             {composer}
             <div className="mt-5 flex flex-wrap justify-center gap-1.5">
               {PRESETS.map((p, i) => (
-                <button
+                <Button
                   key={p.key}
                   type="button"
+                  variant="ghost"
                   disabled={loading}
                   onClick={() => onPreset(p)}
-                  style={{ animationDelay: `${(i % 4) * 1.1}s`, animationDuration: `${7 + (i % 3)}s` }}
-                  className={`${i % 2 === 0 ? "chip-float" : "chip-float-reverse"} rounded-full bg-white/[0.045] px-3.5 py-2 text-left text-[12.5px] leading-snug text-white/70 backdrop-blur-sm transition-colors hover:bg-white/[0.09] hover:text-white disabled:opacity-40`}
+                  className={chipClass}
                 >
                   {p.label}
-                </button>
+                </Button>
               ))}
             </div>
           </div>
