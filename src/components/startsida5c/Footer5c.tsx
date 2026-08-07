@@ -9,7 +9,7 @@ const LINKS = [
 
 export default function Footer5c() {
   return (
-    <footer style={{ background: "#e8e9ec" }}>
+    <footer style={{ background: "#0b0c10" }}>
       <div className="mx-auto flex max-w-[1200px] flex-col gap-4 px-5 py-10 md:flex-row md:items-center md:justify-between md:px-12">
         <img
           src="/vardbemanning-lockup-light.svg"
@@ -18,7 +18,7 @@ export default function Footer5c() {
           draggable={false}
         />
 
-        <nav className="flex flex-wrap gap-x-6 gap-y-2 text-[13px]" style={{ color: "#6f7178" }}>
+        <nav className="flex flex-wrap gap-x-6 gap-y-2 text-[13px]" style={{ color: "#a1a3ab" }}>
           {LINKS.map((l) => (
             <Link key={l.to} to={l.to} className="hover:underline">
               {l.label}

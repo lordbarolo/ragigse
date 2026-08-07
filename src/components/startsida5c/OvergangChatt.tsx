@@ -7,7 +7,7 @@ export default function OvergangChatt() {
       id="assistent"
       className="scroll-mt-16"
       style={{
-        background: "#e8e9ec",
+        background: "#0b0c10",
       }}
     >
       <div className="relative mx-auto max-w-[820px] px-5 pb-32 pt-10 text-center md:px-12 md:pb-40 md:pt-14">
@@ -26,7 +26,7 @@ export default function OvergangChatt() {
             style={{
               lineHeight: 1.08,
               letterSpacing: "-0.02em",
-              color: "#0b0c10",
+              color: "#ffffff",
             }}
           >
             Ai för konsulter inom sjukvård.
@@ -44,7 +44,7 @@ export default function OvergangChatt() {
           </h2>
           <p
             className="mx-auto mt-4 max-w-[600px] text-[15.5px]"
-            style={{ lineHeight: 1.6, color: "#6f7178" }}
+            style={{ lineHeight: 1.6, color: "#a1a3ab" }}
           >
             Fråga assistenten vad regionen betalar för din roll och zon, vad du
             kan fakturera och hur avropen har
