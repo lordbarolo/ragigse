@@ -1,24 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
 import Onboarding from "@/pages/Onboarding";
+import { seoHead } from "@/lib/seo/routeHead";
 
 export const Route = createFileRoute("/onboarding")({
-  head: () => ({
-    meta: [
-      { title: "Kom igång – vårdbemanning.ai" },
-      {
-        name: "description",
-        content:
-          "Fyll i roll, ort, kontraktsform och ersättning för att se dina villkor i förhållande till marknaden.",
-      },
-      { property: "og:title", content: "Kom igång – vårdbemanning.ai" },
-      {
-        property: "og:description",
-        content: "Roll, ort, kontraktsform och ersättning behövs för att visa dina villkor mot marknaden.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "robots", content: "noindex, nofollow" },
-    ],
+  head: () => seoHead({
+    title: 'Kom igång – vårdbemanning.ai',
+    description: 'Fyll i roll, ort, kontraktsform och ersättning för att se dina villkor i förhållande till marknaden.',
+    path: '/onboarding',
+    noindex: true,
   }),
   component: Onboarding,
 });
