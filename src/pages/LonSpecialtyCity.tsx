@@ -227,7 +227,7 @@ export default function LonSpecialtyCity() {
         color: "#eef0f4",
       }}
     >
-      <JsonLd data={jsonLd} />
+      {jsonLd ? <JsonLd data={jsonLd} /> : null}
 
       <header
         className="flex items-center justify-between px-5 py-4 md:px-12 md:py-5"
