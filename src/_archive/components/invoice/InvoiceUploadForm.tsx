@@ -55,7 +55,7 @@ export default function InvoiceUploadForm() {
       supabase.functions.invoke("send-transactional-email", {
         body: {
           templateName: "invoice-admin-notify",
-          recipientEmail: "lordbarolo@gmail.com",
+          recipientEmail: "alerts@vardbemanning.ai",
           idempotencyKey: `invoice-admin-${submissionId}`,
           templateData: { email, name: name || "Ej angivet", role: role || "Ej angivet", region: region || "Ej angivet", message: message || "Inget meddelande" },
         },
