@@ -26,7 +26,7 @@ export default function OvergangChatt() {
               color: "#ffffff",
             }}
           >
-            Ai för konsulter inom sjukvård.
+            Vad tänker du på?.
             <br />
             <span
               style={{
@@ -43,10 +43,7 @@ export default function OvergangChatt() {
             className="mx-auto mt-4 max-w-[600px] text-[15.5px]"
             style={{ lineHeight: 1.6, color: "#a1a3ab" }}
           >
-            Fråga assistenten vad regionen betalar för din roll och zon, vad du
-            kan fakturera och hur avropen har
-            sett ut historiskt. Svaren bygger på omfattande Ai-analys av
-            offentliga handlingar och historisk data.
+            Vad tänker du på?
           </p>
 
           <div className="mx-auto mt-9 w-full text-left">
