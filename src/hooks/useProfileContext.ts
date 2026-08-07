@@ -14,13 +14,16 @@ export function useProfileContext(userId: string | undefined) {
     if (!userId) {
       setContext(null);
       setLoading(false);
-      return;
+      return null;
     }
     setLoading(true);
     try {
-      setContext(await fetchProfileContext(userId));
+      const nextContext = await fetchProfileContext(userId);
+      setContext(nextContext);
+      return nextContext;
     } catch {
       setContext(null);
+      return null;
     } finally {
       setLoading(false);
     }

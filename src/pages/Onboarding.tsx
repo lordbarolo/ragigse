@@ -4,7 +4,7 @@ import { Loader2 } from "lucide-react";
 import InlineTerminalSurvey from "@/components/survey/InlineTerminalSurvey";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfileContext } from "@/hooks/useProfileContext";
-import { saveProfileContext } from "@/lib/profileContext";
+import { isProfileComplete, saveProfileContext } from "@/lib/profileContext";
 import { sanitizeRedirect } from "@/lib/authIntent";
 import { toast } from "sonner";
 
@@ -33,19 +33,24 @@ export default function Onboarding() {
   }, [authLoading, user, profileLoading, complete, saving, navigate, target]);
 
   const handleComplete = async () => {
-    if (!user) return;
+    if (!user || saving) return;
     setSaving(true);
     try {
       const raw = sessionStorage.getItem("surveyData");
       const data = raw ? JSON.parse(raw) : null;
-      if (data?.yrke && data?.kommun) {
-        await saveProfileContext(user.id, {
-          role: data.yrke,
-          kommun: data.kommun,
-          employmentType: data.employmentType || "",
-          hourlyRate: Number(data.currentSalary) || 0,
-        });
-        await refresh();
+      if (!data?.yrke || !data?.kommun || !data?.employmentType || !Number(data?.currentSalary)) {
+        throw new Error("Enkätens svar är ofullständiga.");
+      }
+
+      const saved = await saveProfileContext(user.id, {
+        role: data.yrke,
+        kommun: data.kommun,
+        employmentType: data.employmentType,
+        hourlyRate: Number(data.currentSalary),
+      });
+      const refreshed = await refresh();
+      if (!isProfileComplete(saved) || !isProfileComplete(refreshed)) {
+        throw new Error("Profilen kunde inte verifieras efter sparning.");
       }
       navigate(target);
     } catch (err) {
