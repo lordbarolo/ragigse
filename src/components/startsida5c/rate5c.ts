@@ -27,8 +27,8 @@ export const ZONES_5C = [
   { value: "Zon 3", label: "Zon 3 · Glesbygd", column: "Zon 3 Glesbygd" },
 ];
 
-export const DEFAULT_ROLE_5C = "Specialistsjuksköterska intensivvård";
-export const DEFAULT_ZONE_5C = "Zon 2";
+export const DEFAULT_ROLE_5C = "Specialistläkare ögonsjukdomar";
+export const DEFAULT_ZONE_5C = "Zon 3";
 
 export function basePrices(rows: unknown): RateRow[] {
   if (!Array.isArray(rows)) return [];
