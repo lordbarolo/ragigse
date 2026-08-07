@@ -123,6 +123,17 @@ export default function ProfileDocumentsSection({ userId }: Props) {
                       <p className="mt-0.5 truncate text-xs text-white/45">
                         {has ? docs.find((x) => x.doc_type === d.id)?.file_name : d.desc}
                       </p>
+                      {!has && d.link && (
+                        <a
+                          href={d.link.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-1 inline-flex items-center gap-1 text-xs text-white/60 underline decoration-white/25 underline-offset-2 hover:text-white"
+                        >
+                          Begär hos {d.link.label}
+                          <ExternalLink className="h-3 w-3" />
+                        </a>
+                      )}
                     </div>
                     <label className="inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-full border border-white/20 px-3.5 py-1.5 text-xs font-medium text-white/85 transition-colors hover:bg-white/10">
                       {uploading === d.id ? (
