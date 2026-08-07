@@ -1,14 +1,34 @@
 import { useCallback, useEffect, useState } from "react";
-import { Check, FileUp, Loader2, Lock, Unlock } from "lucide-react";
+import { Check, ExternalLink, FileUp, Loader2, Lock, Unlock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import CvAssistantCard from "./CvAssistantCard";
+import RegistryExtractCard from "./RegistryExtractCard";
 
 const DOC_TYPES = [
-  { id: "legitimation", label: "Legitimation", desc: "Socialstyrelsens legitimationsbevis." },
-  { id: "hosp", label: "HOSP-utdrag", desc: "Utdrag ur registret över legitimerad personal." },
-  { id: "ivo", label: "IVO-utdrag", desc: "Utdrag från Inspektionen för vård och omsorg." },
-  { id: "cv", label: "CV", desc: "Aktuellt CV med uppdrag och kompetens." },
-  { id: "forsakring", label: "Försäkringsbevis", desc: "Ansvarsförsäkring för uppdraget." },
+  { id: "legitimation", label: "Legitimation", desc: "Socialstyrelsens legitimationsbevis.", link: null },
+  {
+    id: "hosp",
+    label: "HOSP-utdrag",
+    desc: "Utdrag ur registret över legitimerad personal.",
+    link: {
+      href: "https://legitimation.socialstyrelsen.se/ansok-om-intyg/legitimationskontroll-for-arbete-eller-studier-inom-sverige/",
+      label: "Socialstyrelsen",
+    },
+  },
+  {
+    id: "ivo",
+    label: "IVO-utdrag",
+    desc: "Utdrag från Inspektionen för vård och omsorg.",
+    link: { href: "https://www.ivo.se/kontakt/ta-del-av-handlingar/", label: "IVO" },
+  },
+  { id: "cv", label: "CV", desc: "Aktuellt CV med uppdrag och kompetens.", link: null },
+  {
+    id: "belastningsregister",
+    label: "Utdrag från belastningsregistret",
+    desc: "Begärs hos Polisen — krävs för arbete inom vård och omsorg.",
+    link: { href: "https://polisen.se/tjanster-tillstand/belastningsregistret/", label: "Polisen" },
+  },
 ] as const;
 
 type DocRow = { id: string; doc_type: string; file_name: string; status: string };
