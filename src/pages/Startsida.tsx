@@ -69,13 +69,10 @@ export default function Startsida5c() {
             draggable={false}
           />
         </Link>
-        <Link
-          to="/logga-in"
-          className="rounded-full px-5 py-2.5 text-[13.5px] font-medium"
-          style={{ border: "1px solid rgba(255,255,255,.18)", color: "#ffffff" }}
-        >
+        <BadgeCta to="/logga-in" variant="ghost" ariaLabel="Logga in">
           Logga in
-        </Link>
+        </BadgeCta>
+
       </header>
 
       <Hero />
