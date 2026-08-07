@@ -1,19 +1,16 @@
 import sskFoto from "@/assets/startsida5c-ssk.png";
-import { computeRate5c, kr } from "./rate5c";
-import { useBaseRates5c } from "./useRates5c";
-import VerktygsForslagForm from "./VerktygsForslagForm";
+import { Link } from "@tanstack/react-router";
 
-
-const CARDS: { label: string; yrkeskategori: string; zon: string }[] = [
-  { label: "IVA-sjuksköterska", yrkeskategori: "Specialistsjuksköterska intensivvård", zon: "Zon 3" },
-  { label: "Operationssjuksköterska", yrkeskategori: "Specialistsjuksköterska operationssjukvård", zon: "Zon 3" },
-  { label: "Leg. sjuksköterska", yrkeskategori: "Sjuksköterska", zon: "Zon 2" },
-  { label: "Anestesiläkare", yrkeskategori: "Specialistläkare anestesi och intensivvård", zon: "Zon 2" },
+const TOOLS: { name: string; desc: string }[] = [
+  { name: "Löneanalys", desc: "Se ramavtalspriset för din roll och kommun och vad du kan fakturera." },
+  { name: "Pensionssimulator", desc: "Jämför långsiktig effekt av anställning och eget bolag." },
+  { name: "Avtalsassistent", desc: "Ai-stöd som går igenom uppdragsavtal och villkor." },
+  { name: "Fakturahjälpen", desc: "Kontroll av tidrapporter mot utbetalning och ramavtal." },
+  { name: "CV-assistenten", desc: "Bygger om ditt CV enligt best practice och fyller luckorna." },
+  { name: "Dokumentvalvet", desc: "Samla legitimation, CV och registerutdrag på ett ställe." },
 ];
 
 export default function FotoBand() {
-  const base = useBaseRates5c();
-
   return (
     <section style={{ background: "#0b0c10", borderBottom: "1px solid #22232b" }}>
       <div className="mx-auto grid max-w-[1200px] items-center gap-10 px-5 py-14 md:px-12 md:py-16 lg:grid-cols-2 lg:gap-14">
@@ -28,43 +25,55 @@ export default function FotoBand() {
         </div>
 
         <div>
+          <div
+            className="text-[11.5px] font-semibold uppercase"
+            style={{ color: "#8a8c94", letterSpacing: "0.12em" }}
+          >
+            Innanför inloggningen
+          </div>
           <h2
-            className="m-0 text-[24px] font-semibold md:text-[30px]"
+            className="mt-3 text-[24px] font-semibold md:text-[30px]"
             style={{ color: "#ffffff", letterSpacing: "-0.015em", lineHeight: 1.15 }}
           >
-            Vi samlar fördelarna med Ai i en enkel chatt. Kostnadsfritt och öppet för alla.
+            Verktygen din Ai-assistent använder när du är inloggad.
           </h2>
           <p className="mt-3 max-w-[460px] text-[15px]" style={{ color: "#a1a3ab", lineHeight: 1.6 }}>
-            Vi utvecklar nu en rad verktyg som ska jämna ut kunskapsglappet mellan beställare och konsulter. Vi bygger det konsulten saknar och tar gärna emot tips. Vilket verktyg saknar du?
+            Skapa ett konto, svara på fyra frågor i chatten och assistenten låser upp verktygen — allt
+            byggt på offentlig data om regionernas ramavtal.
           </p>
 
-          <VerktygsForslagForm />
-
-
           <div className="mt-6 grid gap-3 sm:grid-cols-2">
-            {CARDS.map((c) => {
-              const rate = computeRate5c(base, c.yrkeskategori, c.zon);
-              return (
-                <div
-                  key={`${c.yrkeskategori}-${c.zon}`}
-                  className="p-4"
-                  style={{ background: "#121319", border: "1px solid #22232b", borderRadius: 12 }}
-                >
-                  <div className="text-[12.5px]" style={{ color: "#a1a3ab" }}>
-                    {c.label}
-                  </div>
-                  <div className="mt-1 flex items-baseline gap-1.5" style={{ color: "#ffffff" }}>
-                    <span className="text-[26px] font-semibold leading-none tabular-nums">
-                      {kr(rate?.foretagareKrH)}
-                    </span>
-                    <span className="text-[12.5px]">kr/h</span>
-                  </div>
-                  <div className="mt-1 text-[11.5px]" style={{ color: "#8a8c94" }}>
-                    {c.zon} · kundpris {kr(rate?.timpris_kund)} kr/h
-                  </div>
+            {TOOLS.map((t) => (
+              <div
+                key={t.name}
+                className="p-4"
+                style={{ background: "#121319", border: "1px solid #22232b", borderRadius: 12 }}
+              >
+                <div className="text-[14px] font-semibold" style={{ color: "#ffffff" }}>
+                  {t.name}
                 </div>
-              );
-            })}
+                <div className="mt-1.5 text-[12.5px]" style={{ color: "#a1a3ab", lineHeight: 1.55 }}>
+                  {t.desc}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-6 flex flex-wrap items-center gap-3">
+            <Link
+              to="/registrera"
+              className="inline-flex items-center rounded-full px-6 py-3 text-sm font-semibold transition-opacity hover:opacity-90"
+              style={{ background: "#ffffff", color: "#0b0c10" }}
+            >
+              Skapa konto
+            </Link>
+            <Link
+              to="/logga-in"
+              className="inline-flex items-center rounded-full px-6 py-3 text-sm font-semibold"
+              style={{ border: "1px solid #2c2d36", color: "#e6e7ea" }}
+            >
+              Logga in
+            </Link>
           </div>
         </div>
       </div>
