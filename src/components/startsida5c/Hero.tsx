@@ -1,7 +1,7 @@
 import Rateraknare from "./Rateraknare";
 import { marginText5c } from "./rate5c";
 
-const CHECKS = ["Notis vid prisökning", "AI-stöd för konsultavtal", "Hitta förlorade timmar"];
+const CHECKS = ["Få notis vid prisökning", "Skapa CV med Ai", "Hitta ofakturerade timmar"];
 
 export default function Hero() {
   const doctorMargin = marginText5c("Specialistläkare anestesi och intensivvård");
@@ -56,9 +56,9 @@ export default function Hero() {
             style={{ color: "#8a8c94", animation: "fadeUp5c .55s .2s ease both" }}
           >
             {CHECKS.map((c) => (
-              <li key={c} className="flex items-center gap-2">
+              <li key={c} className="flex flex-col gap-1">
                 <span style={{ color: "#4ade80" }}>✓</span>
-                {c}
+                <span>{c}</span>
               </li>
             ))}
           </ul>
