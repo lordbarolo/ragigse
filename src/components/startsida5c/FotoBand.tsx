@@ -1,5 +1,5 @@
 import sskFoto from "@/assets/startsida5c-ssk.png";
-import { Link } from "@tanstack/react-router";
+import BadgeCta from "./BadgeCta";
 
 const TOOLS: { name: string; desc: string }[] = [
   { name: "Löneanalys", desc: "Se ramavtalspriset för din roll och kommun och vad du kan fakturera." },
