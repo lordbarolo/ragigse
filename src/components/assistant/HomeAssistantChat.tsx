@@ -158,13 +158,15 @@ export default function HomeAssistantChat() {
     </div>
   );
 
+  // Chipsen hålls i två band (topp/botten) med marginal till skrivrutan i mitten,
+  // så att de aldrig kan hamna bakom composern.
   const positions = [
     "left-[-2%] top-[0%] w-[220px]",
     "right-[-2%] top-[-2%] w-[210px]",
-    "left-[-4%] top-[24%] w-[200px]",
-    "right-[-4%] top-[27%] w-[215px]",
-    "left-[-1%] bottom-[6%] w-[205px]",
-    "right-[-1%] bottom-[2%] w-[220px]",
+    "left-[-4%] top-[14%] w-[200px]",
+    "right-[-4%] top-[16%] w-[215px]",
+    "left-[-1%] bottom-[10%] w-[205px]",
+    "right-[-1%] bottom-[6%] w-[220px]",
     "left-1/2 -translate-x-1/2 bottom-[-4%] w-[250px]",
   ];
 
@@ -234,7 +236,7 @@ export default function HomeAssistantChat() {
                 {p.label}
               </button>
             ))}
-            <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 px-[30%]">{composer}</div>
+            <div className="pointer-events-none absolute left-0 right-0 top-1/2 z-20 -translate-y-1/2 px-[30%] [&_*]:pointer-events-auto">{composer}</div>
           </div>
 
 
