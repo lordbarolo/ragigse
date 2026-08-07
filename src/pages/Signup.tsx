@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useLocation } from "@/lib/router-compat";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -10,6 +10,7 @@ import { Loader2, ArrowLeft, CheckCircle2, Sparkles } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 import { trackEvent } from "@/lib/trackEvent";
 import { getSignupIntentCopy, sanitizeRedirect } from "@/lib/authIntent";
+import GoogleAuthButton from "@/components/auth/GoogleAuthButton";
 
 export default function Signup() {
   const [email, setEmail] = useState("");
@@ -21,7 +22,7 @@ export default function Signup() {
   const { toast } = useToast();
   const location = useLocation();
 
-  const { intentCopy, loginHref } = useMemo(() => {
+  const { intentCopy, loginHref, redirectTo } = useMemo(() => {
     const params = new URLSearchParams(location.search);
     const redirectTo = sanitizeRedirect(params.get("redirect"));
     const intent = params.get("intent");
@@ -32,9 +33,26 @@ export default function Signup() {
     const loginHref = loginParams.toString()
       ? `/logga-in?${loginParams.toString()}`
       : "/logga-in";
-    return { intentCopy, loginHref };
+    return { intentCopy, loginHref, redirectTo };
   }, [location.search]);
 
+
+  const goAfterAuth = () => {
+    navigate(redirectTo ? `/onboarding?redirect=${encodeURIComponent(redirectTo)}` : "/onboarding");
+  };
+
+  // Returning from Google OAuth lands back on this page with a session set.
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      const { data } = await supabase.auth.getSession();
+      if (!cancelled && data.session?.user) goAfterAuth();
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -179,6 +197,14 @@ export default function Signup() {
           </CardHeader>
 
           <CardContent className="!bg-transparent">
+            <GoogleAuthButton label="Fortsätt med Google" source="signup_page" onSession={goAfterAuth} />
+
+            <div className="my-5 flex items-center gap-3">
+              <span className="h-px flex-1 bg-black/10" />
+              <span className="text-xs text-black/50">eller</span>
+              <span className="h-px flex-1 bg-black/10" />
+            </div>
+
             <form onSubmit={handleSignup} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="fullName" className="text-black">Ditt namn</Label>
