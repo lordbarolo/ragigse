@@ -1,9 +1,9 @@
 
--- Flexible import table for assignments from various sources (avropsplatsen, bemlo, medlo, etc.)
+-- Flexible import table for assignments from various sources (partner feeds, manual, etc.)
 -- All fields nullable except auto-generated id, to accommodate varying data formats.
 CREATE TABLE public.calloff_imports (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  source text,                    -- e.g. 'avropsplatsen', 'bemlo', 'medlo', 'manual'
+  source text,                    -- e.g. 'partner', 'manual'
   calloff_date date,              -- when the assignment was created/published
   region text,                    -- region/län
   customer text,                  -- buyer/vårdgivare

@@ -1,0 +1,1 @@
+UPDATE public.calloff_imports SET source = 'partner_feed' WHERE source = 'bemlo';
