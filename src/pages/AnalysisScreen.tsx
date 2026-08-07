@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef, useMemo } from "react";
 import { useNavigate, useParams } from "@/lib/router-compat";
-import { Helmet } from "react-helmet-async";
 import { supabase } from "@/integrations/supabase/client";
 import { trackEvent } from "@/lib/trackEvent";
 import { toast } from "sonner";
@@ -269,9 +268,6 @@ export default function AnalysisScreen() {
   if (loadError) {
     return (
       <>
-        <Helmet>
-          <meta name="robots" content="noindex, nofollow" />
-        </Helmet>
         <div className="min-h-screen flex items-center justify-center px-5" style={{ backgroundColor: "#EEEBE4" }}>
           <div className="max-w-md text-center space-y-4">
             <CompcareLogo variant="full" className="!h-7 mx-auto mb-2" />
@@ -306,10 +302,6 @@ export default function AnalysisScreen() {
 
   return (
     <>
-      <Helmet>
-        {/* /resultat/:leadId innehåller personuppgifter — får inte indexeras. */}
-        <meta name="robots" content="noindex, nofollow" />
-      </Helmet>
     <div
       className="min-h-screen"
       style={{
