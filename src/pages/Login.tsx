@@ -42,6 +42,45 @@ export default function Login() {
 
 
 
+  const continueAfterAuth = async (user: { id: string; email?: string | null }) => {
+    // Determine role
+    let userRole: string = "individual";
+    const { data: roleData } = await supabase
+      .from("ref_user_roles")
+      .select("role")
+      .eq("user_id", user.id)
+      .limit(1)
+      .maybeSingle();
+    if (roleData?.role) userRole = roleData.role as string;
+
+    try {
+      posthog.identify(user.id, { email: user.email, role: userRole });
+    } catch {}
+
+    trackEvent("login_succeeded", { role: userRole });
+
+    if (userRole === "agency") {
+      navigate(redirectTo ?? "/agency/dashboard");
+      return;
+    }
+    navigate(redirectTo ? `/onboarding?redirect=${encodeURIComponent(redirectTo)}` : "/onboarding");
+  };
+
+  // Returning from Google OAuth lands back on this page with a session set.
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      const { data } = await supabase.auth.getSession();
+      if (!cancelled && data.session?.user) {
+        await continueAfterAuth(data.session.user);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -65,36 +104,7 @@ export default function Login() {
 
     toast({ title: "Inloggad!" });
 
-    // Determine role
-    const userId = data.user?.id;
-    let userRole: string = "individual";
-    if (userId) {
-      const { data: roleData } = await supabase
-        .from("ref_user_roles")
-        .select("role")
-        .eq("user_id", userId)
-        .limit(1)
-        .maybeSingle();
-      if (roleData?.role) userRole = roleData.role as string;
-    }
-
-    try {
-      if (data.user) {
-        posthog.identify(data.user.id, {
-          email: data.user.email,
-          role: userRole,
-        });
-      }
-    } catch {}
-
-    trackEvent("login_succeeded", { role: userRole });
-
-    if (userRole === "agency") {
-      navigate(redirectTo ?? "/agency/dashboard");
-      return;
-    }
-    navigate(redirectTo ? `/onboarding?redirect=${encodeURIComponent(redirectTo)}` : "/onboarding");
-
+    if (data.user) await continueAfterAuth(data.user);
   };
 
   const handleForgotPassword = async () => {
