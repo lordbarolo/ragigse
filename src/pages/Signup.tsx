@@ -109,13 +109,10 @@ export default function Signup() {
     ].join(", "),
     backgroundRepeat: "no-repeat" as const,
   };
-  const seo = (
-  );
 
   if (success) {
     return (
       <>
-      {seo}
       <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden" style={beigeBg}>
         <Card className="relative z-10 w-full max-w-md border-border/40 !bg-[#F5F2EA]/95 backdrop-blur">
           <CardContent className="!bg-transparent pt-10 pb-8 px-6 text-center space-y-5">
@@ -154,7 +151,6 @@ export default function Signup() {
 
   return (
     <>
-    {seo}
     <div className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden" style={beigeBg}>
 
       <header className="absolute top-0 left-0 right-0 z-20 flex items-center px-4 md:px-6 lg:px-8 h-14 md:h-16">
