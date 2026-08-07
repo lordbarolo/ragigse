@@ -23,7 +23,7 @@ export default function Hero() {
               className="inline-flex items-center gap-2 rounded-full px-4 py-[7px] text-[13px] font-medium"
               style={{ background: "#0b0c10", color: "#e8eaef" }}
             >
-              Sätt din AI-agent i arbete
+              Sätt din AI-assistent i arbete
               <span style={{ color: "#8a8c94" }}>›</span>
             </span>
           </a>

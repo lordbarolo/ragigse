@@ -52,7 +52,7 @@ export default function Profile() {
             <h1 className="mt-3 text-3xl font-semibold leading-[1.1] tracking-tight sm:text-5xl">
               {firstName ? `Hej ${firstName}.` : "Välkommen."}
               <br />
-              <span className="text-white/45">Sätt din agent i arbete.</span>
+              <span className="text-white/45">Sätt din assistent i arbete.</span>
             </h1>
             <p className="mt-5 max-w-md text-sm leading-relaxed text-white/55 sm:text-base">
               Gör din AI-assistent personlig. Berätta var du arbetar, vilket yrke du har, om du är
