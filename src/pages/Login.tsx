@@ -253,6 +253,14 @@ export default function Login() {
               </CardHeader>
 
               <CardContent className="!bg-transparent">
+                <GoogleAuthButton label="Logga in med Google" source="login_page" />
+
+                <div className="my-5 flex items-center gap-3">
+                  <span className="h-px flex-1 bg-black/10" />
+                  <span className="text-xs text-black/50">eller</span>
+                  <span className="h-px flex-1 bg-black/10" />
+                </div>
+
                 <form onSubmit={handleLogin} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="email" className="text-black">E-post</Label>
