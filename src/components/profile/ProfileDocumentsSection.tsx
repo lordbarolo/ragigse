@@ -184,6 +184,12 @@ export default function ProfileDocumentsSection({ userId }: Props) {
           </p>
         </div>
       </div>
+
+      {/* Hjälp med handlingarna */}
+      <div className="mx-auto mt-8 grid w-full max-w-[1200px] gap-4 px-5 lg:mt-12 lg:grid-cols-2 lg:gap-6">
+        <CvAssistantCard />
+        <RegistryExtractCard />
+      </div>
     </section>
   );
 }
