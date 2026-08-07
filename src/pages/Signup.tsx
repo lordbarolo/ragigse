@@ -12,6 +12,7 @@ import { trackEvent } from "@/lib/trackEvent";
 import { getSignupIntentCopy, sanitizeRedirect } from "@/lib/authIntent";
 import GoogleAuthButton from "@/components/auth/GoogleAuthButton";
 import { translateAuthError } from "@/lib/authErrors";
+import { isOAuthReturn } from "@/lib/oauthReturn";
 
 export default function Signup() {
   const [email, setEmail] = useState("");
@@ -45,12 +46,18 @@ export default function Signup() {
   // Returning from Google OAuth lands back on this page with a session set.
   useEffect(() => {
     let cancelled = false;
-    void (async () => {
-      const { data } = await supabase.auth.getSession();
-      if (!cancelled && data.session?.user) goAfterAuth();
-    })();
+    if (isOAuthReturn()) {
+      void (async () => {
+        const { data } = await supabase.auth.getSession();
+        if (!cancelled && data.session?.user) goAfterAuth();
+      })();
+    }
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" && session?.user && !cancelled) goAfterAuth();
+    });
     return () => {
       cancelled = true;
+      sub.subscription.unsubscribe();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
