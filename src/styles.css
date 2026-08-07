@@ -520,21 +520,30 @@
 
 /* Gemini-liknande svävande frågechips runt skrivrutan */
 @keyframes chip-float {
-  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
-  20% { transform: translate3d(12px, -14px, 0) rotate(0.6deg); }
-  40% { transform: translate3d(-8px, -6px, 0) rotate(-0.4deg); }
-  60% { transform: translate3d(-14px, 10px, 0) rotate(0.3deg); }
-  80% { transform: translate3d(6px, 12px, 0) rotate(-0.5deg); }
+  0%   { transform: translate3d(0, 0, 0) rotate(0deg); }
+  12%  { transform: translate3d(5px, -7px, 0) rotate(0.18deg); }
+  25%  { transform: translate3d(10px, -11px, 0) rotate(0.32deg); }
+  37%  { transform: translate3d(6px, -6px, 0) rotate(0.16deg); }
+  50%  { transform: translate3d(-4px, -1px, 0) rotate(-0.14deg); }
+  62%  { transform: translate3d(-9px, 5px, 0) rotate(-0.26deg); }
+  75%  { transform: translate3d(-5px, 9px, 0) rotate(-0.14deg); }
+  87%  { transform: translate3d(2px, 6px, 0) rotate(0.1deg); }
+  100% { transform: translate3d(0, 0, 0) rotate(0deg); }
 }
 @keyframes chip-float-reverse {
-  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
-  20% { transform: translate3d(-10px, -10px, 0) rotate(-0.5deg); }
-  40% { transform: translate3d(10px, -4px, 0) rotate(0.4deg); }
-  60% { transform: translate3d(14px, 8px, 0) rotate(-0.3deg); }
-  80% { transform: translate3d(-6px, 14px, 0) rotate(0.5deg); }
+  0%   { transform: translate3d(0, 0, 0) rotate(0deg); }
+  12%  { transform: translate3d(-5px, -5px, 0) rotate(-0.16deg); }
+  25%  { transform: translate3d(-9px, -10px, 0) rotate(-0.3deg); }
+  37%  { transform: translate3d(-4px, -5px, 0) rotate(-0.14deg); }
+  50%  { transform: translate3d(3px, 0, 0) rotate(0.12deg); }
+  62%  { transform: translate3d(9px, 6px, 0) rotate(0.26deg); }
+  75%  { transform: translate3d(5px, 10px, 0) rotate(0.14deg); }
+  87%  { transform: translate3d(-2px, 5px, 0) rotate(-0.1deg); }
+  100% { transform: translate3d(0, 0, 0) rotate(0deg); }
 }
-.chip-float { animation: chip-float 9s ease-in-out infinite; will-change: transform; }
-.chip-float-reverse { animation: chip-float-reverse 10s ease-in-out infinite; will-change: transform; }
+.chip-float { animation: chip-float 18s cubic-bezier(0.45, 0, 0.55, 1) infinite; will-change: transform; backface-visibility: hidden; transform: translate3d(0, 0, 0); }
+.chip-float-reverse { animation: chip-float-reverse 21s cubic-bezier(0.45, 0, 0.55, 1) infinite; will-change: transform; backface-visibility: hidden; transform: translate3d(0, 0, 0); }
+
 @media (prefers-reduced-motion: reduce) {
   .chip-float, .chip-float-reverse { animation: none; }
 }
