@@ -310,7 +310,7 @@ export default function LonSpecialtyCity() {
               <Link
                 to="/logga-in"
                 className="mt-4 inline-block rounded-full text-sm font-semibold"
-                style={{ background: "#ffffff", color: "#fff", padding: "12px 24px" }}
+                style={{ background: "#ffffff", color: "#121319", padding: "12px 24px" }}
               >
                 Logga in med e-post
               </Link>
@@ -365,7 +365,7 @@ export default function LonSpecialtyCity() {
               disabled={!pickRole || !pickCity}
               onClick={() => navigate(`/lon/${pickRole}/${pickCity}`)}
               className="mt-5 rounded-full text-sm font-semibold disabled:opacity-50"
-              style={{ background: "#ffffff", color: "#fff", padding: "12px 24px" }}
+              style={{ background: "#ffffff", color: "#121319", padding: "12px 24px" }}
             >
               Visa timpeng
             </button>

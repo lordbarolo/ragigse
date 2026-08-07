@@ -137,7 +137,7 @@ export default function Rateraknare() {
           type="submit"
           aria-label="Gå till assistenten"
           className="grid h-9 w-9 place-items-center rounded-[10px] text-[16px]"
-          style={{ background: "#ffffff", color: "#fff" }}
+          style={{ background: "#ffffff", color: "#121319" }}
         >
           ↑
         </button>
