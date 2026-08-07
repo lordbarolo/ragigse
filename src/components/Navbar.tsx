@@ -3,7 +3,7 @@ import { useAuth } from "@/hooks/useAuth";
 import CompcareLogo from "@/components/CompcareLogo";
 import BadgeCta from "@/components/startsida5c/BadgeCta";
 import { Button } from "@/components/ui/button";
-import { User, LogIn, LogOut, MessageSquare, Shield, FileSearch, ArrowLeft } from "lucide-react";
+import { User, LogOut, MessageSquare, Shield, FileSearch, ArrowLeft } from "lucide-react";
 import { trackCta } from "@/lib/trackCta";
 
 const CONSULTANT_LINKS: ReadonlyArray<{ to: string; label: string; icon: typeof User }> = [];
