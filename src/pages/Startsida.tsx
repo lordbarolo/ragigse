@@ -6,6 +6,8 @@ import RolltabellDark from "@/components/startsida5c/RolltabellDark";
 import OvergangChatt from "@/components/startsida5c/OvergangChatt";
 import FotoBand from "@/components/startsida5c/FotoBand";
 import Footer5c from "@/components/startsida5c/Footer5c";
+import BadgeCta from "@/components/startsida5c/BadgeCta";
+
 import { trackEvent } from "@/lib/trackEvent";
 
 const FONT_HREF =
@@ -69,13 +71,10 @@ export default function Startsida5c() {
             draggable={false}
           />
         </Link>
-        <Link
-          to="/logga-in"
-          className="rounded-full px-5 py-2.5 text-[13.5px] font-medium"
-          style={{ border: "1px solid rgba(255,255,255,.18)", color: "#ffffff" }}
-        >
+        <BadgeCta to="/logga-in" variant="ghost" ariaLabel="Logga in">
           Logga in
-        </Link>
+        </BadgeCta>
+
       </header>
 
       <Hero />
