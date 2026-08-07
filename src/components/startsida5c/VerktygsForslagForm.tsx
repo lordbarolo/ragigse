@@ -74,7 +74,7 @@ export default function VerktygsForslagForm() {
             <label
               key={opt.value}
               className="flex cursor-pointer items-center gap-2.5 text-[13.5px]"
-              style={{ color: "#22232b" }}
+              style={{ color: "#c7c9cf" }}
             >
               <input
                 type="radio"
