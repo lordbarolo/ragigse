@@ -75,18 +75,12 @@ const CompcareLogo = forwardRef<HTMLSpanElement, CompcareLogoProps>(
         {...rest}
       >
         <img
-          src={fileFor("light")}
-          alt={altText}
-          className="h-full w-auto select-none block dark:hidden"
-          draggable={false}
-        />
-        <img
           src={fileFor("dark")}
           alt={altText}
-          className="h-full w-auto select-none hidden dark:block"
+          className="h-full w-auto select-none block"
           draggable={false}
-          aria-hidden="true"
         />
+
       </span>
     );
   }
