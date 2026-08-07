@@ -4,7 +4,7 @@ import { useBaseRates5c } from "./useRates5c";
 
 const ROWS: { label: string; yrkeskategori: string }[] = [
   { label: "Anestesiläkare", yrkeskategori: "Specialistläkare anestesi och intensivvård" },
-  { label: "Psykiater", yrkeskategori: "Specialistläkare psykiatri" },
+  { label: "Barnmorska", yrkeskategori: "Barnmorska" },
   { label: "Geriatriker", yrkeskategori: "Specialistläkare geriatrik" },
   { label: "Legitimerad läkare", yrkeskategori: "Legitimerad läkare" },
   { label: "IVA-sjuksköterska", yrkeskategori: "Specialistsjuksköterska intensivvård" },
