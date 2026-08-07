@@ -1131,10 +1131,12 @@ export type Database = {
           employment_type: string | null
           experience_years: number | null
           id: string
+          kommun_name: string | null
           leadership: boolean | null
           on_call: boolean | null
           onboarding_step: number
           region_id: string | null
+          role_name: string | null
           salary_type: string | null
           sector: string | null
           shift_pattern: string | null
@@ -1151,10 +1153,12 @@ export type Database = {
           employment_type?: string | null
           experience_years?: number | null
           id?: string
+          kommun_name?: string | null
           leadership?: boolean | null
           on_call?: boolean | null
           onboarding_step?: number
           region_id?: string | null
+          role_name?: string | null
           salary_type?: string | null
           sector?: string | null
           shift_pattern?: string | null
@@ -1171,10 +1175,12 @@ export type Database = {
           employment_type?: string | null
           experience_years?: number | null
           id?: string
+          kommun_name?: string | null
           leadership?: boolean | null
           on_call?: boolean | null
           onboarding_step?: number
           region_id?: string | null
+          role_name?: string | null
           salary_type?: string | null
           sector?: string | null
           shift_pattern?: string | null

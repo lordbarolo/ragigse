@@ -94,18 +94,18 @@ export default function Profile() {
 
       const { data: cpData } = await supabase
         .from("consultant_profiles")
-        .select("specialty_id, region_id, experience_years, employment_type, salary_type, current_hourly_rate, current_monthly_salary")
+        .select("role_name, kommun_name, specialty_id, region_id, experience_years, employment_type, salary_type, current_hourly_rate, current_monthly_salary")
         .eq("user_id", user.id)
         .single();
 
       if (cpData) {
-        let specialtyName: string | null = null;
-        let regionName: string | null = null;
-        if (cpData.specialty_id) {
+        let specialtyName: string | null = cpData.role_name;
+        let regionName: string | null = cpData.kommun_name;
+        if (!specialtyName && cpData.specialty_id) {
           const { data: spec } = await supabase.from("specialties").select("name").eq("id", cpData.specialty_id).single();
           specialtyName = spec?.name || null;
         }
-        if (cpData.region_id) {
+        if (!regionName && cpData.region_id) {
           const { data: reg } = await supabase.from("regions").select("kommun").eq("id", cpData.region_id).single();
           regionName = reg?.kommun || null;
         }
