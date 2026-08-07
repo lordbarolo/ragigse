@@ -224,7 +224,7 @@ export default function FakturakontrollNy() {
       void supabase.functions.invoke("send-transactional-email", {
         body: {
           templateName: "invoice-admin-notify",
-          recipientEmail: "anders@npf-gruppen.se",
+          recipientEmail: "alerts@vardbemanning.ai",
           idempotencyKey: `invoice-admin-upload-${review.id}`,
           templateData: {
             email: user?.email || "Ej inloggad (anonym uppladdning)",

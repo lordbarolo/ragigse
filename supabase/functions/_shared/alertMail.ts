@@ -4,7 +4,7 @@
 
 import { fromAddress } from "./mailFrom.ts";
 
-const ALERT_EMAIL = "anders@compcare.se";
+const ALERT_EMAIL = "alerts@vardbemanning.ai";
 const PROJECT_URL = "https://lovable.dev/projects/f4c1323e-7c72-43ee-978e-fa632a197c62";
 
 function escapeHtml(s: string): string {

@@ -18,7 +18,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-const ALERT_EMAIL = "anders@compcare.se";
+const ALERT_EMAIL = "alerts@vardbemanning.ai";
 const PROJECT_URL = "https://lovable.dev/projects/f4c1323e-7c72-43ee-978e-fa632a197c62";
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL")!;
 const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
