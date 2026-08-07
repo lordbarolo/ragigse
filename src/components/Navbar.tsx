@@ -74,12 +74,14 @@ export default function Navbar() {
               </Button>
             </>
           ) : (
-            <Link to="/logga-in" aria-label="Logga in" onClick={() => trackCta("app_navbar", "Logga in", "/logga-in")}>
-              <Button variant="ghost" size="sm" className="gap-2 text-white/70 hover:text-white hover:bg-white/10">
-                <LogIn className="w-4 h-4" />
-                <span className="hidden sm:inline">Logga in</span>
-              </Button>
-            </Link>
+            <BadgeCta
+              to="/logga-in"
+              variant="ghost"
+              ariaLabel="Logga in"
+              onClick={() => trackCta("app_navbar", "Logga in", "/logga-in")}
+            >
+              Logga in
+            </BadgeCta>
           )
         )}
       </div>
