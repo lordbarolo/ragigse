@@ -56,9 +56,9 @@ export default function Hero() {
             style={{ color: "#8a8c94", animation: "fadeUp5c .55s .2s ease both" }}
           >
             {CHECKS.map((c) => (
-              <li key={c} className="flex items-start gap-2">
-                <span className="mt-0.5" style={{ color: "#4ade80" }}>✓</span>
-                <span className="whitespace-pre-line">{c.replace(" ", "\n")}</span>
+              <li key={c} className="flex flex-col gap-1">
+                <span style={{ color: "#4ade80" }}>✓</span>
+                <span>{c}</span>
               </li>
             ))}
           </ul>
