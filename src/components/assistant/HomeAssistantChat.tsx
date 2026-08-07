@@ -221,21 +221,22 @@ export default function HomeAssistantChat() {
       ) : (
         <>
           {/* Desktop: frågor svävar runt skrivrutan */}
-          <div className="relative hidden h-[460px] lg:block">
+          <div className="relative hidden h-[560px] lg:block">
             {PRESETS.map((p, i) => (
               <button
                 key={p.key}
                 type="button"
                 disabled={loading}
                 onClick={() => onPreset(p)}
-                style={{ animationDelay: `${(i % 5) * 1.1}s`, animationDuration: `${7 + (i % 4)}s` }}
+                style={{ animationDelay: `${(i % 7) * -1.7}s`, animationDuration: `${16 + (i % 5) * 2.5}s` }}
                 className={`absolute ${positions[i] ?? ""} ${i % 2 === 0 ? "chip-float" : "chip-float-reverse"} rounded-full bg-white/[0.045] px-3.5 py-2 text-left text-[12.5px] leading-snug text-white/70 backdrop-blur-sm transition-colors hover:bg-white/[0.09] hover:text-white disabled:opacity-40`}
               >
                 {p.label}
               </button>
             ))}
-            <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 px-[22%]">{composer}</div>
+            <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 px-[30%]">{composer}</div>
           </div>
+
 
           {/* Mobil/tablet */}
           <div className="lg:hidden">
