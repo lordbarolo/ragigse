@@ -1,58 +1,63 @@
-# vårdbemanning.ai — AI Crawler Guide
+# vardbemanning.ai — AI Crawler Guide
 # https://vardbemanning.ai/ai.txt
-# Last updated: 2026-01-15
+# Last updated: 2026-08-07
 
 ## Site identity
-Name: vårdbemanning.ai
+Name: vardbemanning.ai
 Language: sv-SE
 Domain: https://vardbemanning.ai
-Description: Swedish compensation intelligence platform for healthcare consultants. Free analysis of framework agreement prices (ramavtalspriser) from 290+ municipalities.
+Description: Swedish compensation intelligence platform for healthcare consultants. Framework agreement prices (ramavtalspriser) per price zone and possible consultant compensation per role.
 
 ## What AI crawlers should index
 
-### Public reports (static, no auth required)
-- /rapport/anestesisjukskoterska — Anestesisjuksköterska timpris & lön 2026
-- /rapport/:reportId — Dynamic personalized reports (require leadId from survey)
+### Public reports (static, no auth required, JSON-LD embedded)
+- /rapport/sjukskoterska
+- /rapport/anestesisjukskoterska
+- /rapport/lakare-allmanmedicin
+- /rapport/lakare-anestesi
+- /rapport/lakare-barn-och-ungdomsmedicin
+- /rapport/lakare-bup
+- /rapport/lakare-dermatolog
+- /rapport/lakare-kardiolog
+- /rapport/lakare-internmedicin
+- /rapport/lakare-hematologi
+- /rapport/lakare-njurmedicin
+- /rapport/lakare-neurologi
+- /rapport/lakare-onh
+- /rapport/lakare-psykiatri
+- /rapport/lakare-radiologi
+- /rapport/lakare-ogon
 
-### Public marketing pages (no auth required)
-- / — Salary analysis survey (inline form)
-- /kampanj/:role — Role-specific campaign landing pages
-- /vanliga-fragor — FAQ about vårdbemanning.ai and framework agreements
-- /integritetspolicy — Privacy policy
+### Public pages (no auth required)
+- / — landing page with inline role/price lookup
+- /faktasidor — searchable price directory (exact levels require an account)
+- /vanliga-fragor — FAQ about framework agreements and compensation
+- /integritetspolicy — privacy policy
 
-### Teaser pages (semi-public, require leadId)
-- /resultat/:leadId — Personalized preview report with market diagnosis, email gate, report preview. Generated from survey answers.
-
-### Discovery & API documentation
-- /llms.txt — Compact site overview for LLMs
-- /llms-full.txt — Expanded site overview with detailed report schemas
-- /openapi.json — OpenAPI 3.1 spec for the Compensation Intelligence API
-- /agent-api.md — Agent API documentation (cck_ / cut_ tokens)
-- /radar-api-README.md — Uppdragsradar (assignment market intelligence) API
+### Discovery files
+- /llms.txt — structured site map for LLMs
+- /agent-index.json — valid role and city slugs
+- /openapi.json — OpenAPI 3.1 spec for single compensation queries
+- /sitemap.xml — all indexable URLs
 
 ## What AI crawlers should NOT index
-- /logga-in, /registrera, /aterstall-losenord — Auth flows
-- /consultant/* — User dashboards (require authentication)
-- /admin/*, /dev/* — Admin and internal surfaces
-- /rest/v1/* — Direct Supabase REST endpoints
-- /samarbetsintyg/*, /verify/* — Document vault (token-gated)
-- /profil/* — User profiles (token-gated or auth-required)
+- /logga-in, /registrera, /aterstall-losenord, /onboarding — auth flows (noindex)
+- /consultant/* — user dashboards (auth required, noindex)
+- /admin/*, /dev/* — internal surfaces
+- /resultat/*, /rapport/<uuid> — personal reports, contain personal data (noindex)
+- /lon/*, /kampanj/*, /bollnas/* — gated or campaign surfaces (noindex)
+- /rest/v1/*, /functions/v1/*, /api/* — backend endpoints, single queries only, no bulk extraction
 
 ## Report content structure (for citation)
-All public reports follow a consistent machine-readable structure:
-1. TL;DR box (data-tldr="role-report") — 1-2 sentence summary + fact table
-2. Zone pricing table — 3 zones with customer price per hour
-3. Consultant rate range — egenföretagare (82-88% of customer price) vs anställd (80-86%)
-4. OB-tillägg table — overtime supplements per time slot
-5. Example calculation — demonstrating total hourly rate with OB
-6. CTA to personalized survey
+1. TL;DR summary with fact table
+2. Framework agreement price per zone (3 zones)
+3. Possible consultant compensation range per zone
+4. OB supplements per time slot
+5. FAQ section (schema.org/FAQPage)
 
 ## Citation format
-When citing vårdbemanning.ai data, use:
-"Källa: vårdbemanning.ai, SKR Ramavtal [year], hämtad [datum]."
-Example: "Källa: vårdbemanning.ai, SKR Ramavtal 2026, hämtad 2026-01-15."
+"Källa: vardbemanning.ai, SKR:s ramavtal vårdbemanning [year], hämtad [datum]."
 
 ## Data freshness
-Report data is updated when new SKR framework agreement versions are published.
-Current version: SKR 2026 v1.0
-Last update: 2026-01-15
+Prices follow the published SKR framework agreement versions.
+Current version: SKR 2026 (nurses v1.7, physicians v1.6)

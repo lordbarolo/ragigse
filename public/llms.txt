@@ -1,29 +1,41 @@
-# vårdbemanning.ai - Agent & Developer Infrastructure
+# vardbemanning.ai
 
-Welcome to the machine-readable directory of vårdbemanning.ai. We provide official wage estimates, hourly rates, and agency margin analyses for healthcare consultants across all 21 Swedish regions and 82 medical specialties.
+> Svensk ersättningsintelligens för vårdkonsulter. Vi publicerar ramavtalspriser per zon och möjlig konsultersättning per yrkesroll, baserat på regionernas offentliga ramavtal för vårdbemanning 2026.
 
-## Data Access Policy
+Allt innehåll är på svenska (sv-SE) och gäller Sverige. Rapportsidorna nedan är statiska, kräver ingen inloggning och innehåller strukturerad data (schema.org Article, Dataset och FAQPage) direkt i HTML för deterministisk parsning.
 
-We do not allow bulk scraping of our raw database to protect proprietary market information and privacy. Instead, we provide programmatic endpoints for specific queries.
+Bulkuttag av prisdatabasen är inte tillåtet. Använd en förfrågan per roll, eller läs de publicerade rapportsidorna.
 
-## Dynamic Knowledge Endpoints
+Vid citering: "Källa: vardbemanning.ai, SKR:s ramavtal vårdbemanning 2026."
 
-To retrieve accurate, structured, and verified real-time rate estimates for a specific medical role and location, direct your agent or query to the following URL pattern:
+## Sidor
 
-URL: https://vardbemanning.ai/lon/{specialty_slug}/{city_slug}
+- [Startsida](https://vardbemanning.ai/): Vad regionen betalar och vad du kan fakturera — AI-stöd för vårdkonsulter.
+- [Faktasidor](https://vardbemanning.ai/faktasidor): Sök yrkesroll och kommun för ramavtalspris och ersättningsspann. Exakta nivåer kräver konto.
+- [Vanliga frågor](https://vardbemanning.ai/vanliga-fragor): Frågor och svar om ramavtal, priszoner och ersättning.
+- [Integritetspolicy](https://vardbemanning.ai/integritetspolicy): Behandling av personuppgifter, lagring inom EU.
 
-### Parameters:
+## Rapporter per yrkesroll
 
-- `specialty_slug`: The medical role in lowercase (e.g., radiolog, anestesilakare, barnmorska, sjukskoterska).
+- [Sjuksköterska](https://vardbemanning.ai/rapport/sjukskoterska): Ramavtalspris per zon och möjlig ersättning för legitimerad sjuksköterska.
+- [Anestesisjuksköterska](https://vardbemanning.ai/rapport/anestesisjukskoterska): Ramavtalspris per zon, OB-tillägg och ersättningsspann.
+- [Specialistläkare allmänmedicin](https://vardbemanning.ai/rapport/lakare-allmanmedicin): Ramavtalspris per zon och ersättningsspann.
+- [Anestesiläkare](https://vardbemanning.ai/rapport/lakare-anestesi)
+- [Barn- och ungdomsmedicin](https://vardbemanning.ai/rapport/lakare-barn-och-ungdomsmedicin)
+- [Barn- och ungdomspsykiatri (BUP)](https://vardbemanning.ai/rapport/lakare-bup)
+- [Dermatolog](https://vardbemanning.ai/rapport/lakare-dermatolog)
+- [Kardiolog](https://vardbemanning.ai/rapport/lakare-kardiolog)
+- [Internmedicin](https://vardbemanning.ai/rapport/lakare-internmedicin)
+- [Hematologi](https://vardbemanning.ai/rapport/lakare-hematologi)
+- [Njurmedicin](https://vardbemanning.ai/rapport/lakare-njurmedicin)
+- [Neurologi](https://vardbemanning.ai/rapport/lakare-neurologi)
+- [Öron-näsa-hals (ÖNH)](https://vardbemanning.ai/rapport/lakare-onh)
+- [Psykiatri](https://vardbemanning.ai/rapport/lakare-psykiatri)
+- [Radiolog](https://vardbemanning.ai/rapport/lakare-radiologi)
+- [Ögonläkare](https://vardbemanning.ai/rapport/lakare-ogon)
 
-- `city_slug`: The Swedish city or town in lowercase (e.g., umea, stockholm, gavle, goteborg).
+## Optional
 
-Each page contains structured JSON-LD (Schema.org/Occupation) embedded in the HTML for direct, deterministic parsing.
-
-## Machine-readable slug index
-
-To enumerate every valid endpoint without guessing, fetch:
-
-URL: https://vardbemanning.ai/agent-index.json
-
-It lists all valid `specialty_slug` values (with their full role names), all valid `city_slug` values, accepted synonym slugs, URL patterns and counts. Group-level slugs are intentionally invalid.
+- [Sitemap](https://vardbemanning.ai/sitemap.xml): Samtliga indexerbara URL:er.
+- [OpenAPI-schema](https://vardbemanning.ai/openapi.json): API-schema för enskilda ersättningsförfrågningar.
+- [Agent-index](https://vardbemanning.ai/agent-index.json): Giltiga rollslugar och ortslugar.
