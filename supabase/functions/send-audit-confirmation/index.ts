@@ -39,6 +39,14 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
+    // Rate limit per IP and per recipient so the endpoint cannot be used to
+    // hammer a single address or to fan out from one host.
+    for (const key of [`ip:${clientIp(req)}`, await emailKey(email)]) {
+      const rl = await checkRateLimit(supabase, "send-audit-confirmation", key, 3, 60);
+      if (!rl.allowed) return rateLimitResponse(rl, corsHeaders);
+    }
+
+
     const tenMinAgo = new Date(Date.now() - 10 * 60 * 1000).toISOString();
     const { data: lead, error: leadErr } = await supabase
       .from("invoice_review_leads")
