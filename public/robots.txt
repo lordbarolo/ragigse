@@ -2,11 +2,12 @@
 #
 # Genomsökningsbara sökvägar (statiskt innehåll, fritt att indexera):
 #   /                      startsida
-#   /lon/{specialty}/{city} lönesidor per roll och ort (JSON-LD, SSR)
-#   /rapport/*             statiska rapportsidor per roll
-#   /kampanj/*             kampanjsidor
+#   /rapport/{roll}        statiska rapportsidor per roll (inkl. läkarspecialiteter)
 #   /faktasidor            prisöversikt
 #   /vanliga-fragor, /integritetspolicy
+#
+# Genomsökningsbara men noindex (kanoniseras/ersätts av /rapport/* och /faktasidor):
+#   /lon/{specialty}/{city}, /kampanj/{roll}, /bollnas/lakare-alm
 #
 # Maskinläsbara filer för agenter:
 #   /llms.txt              beskrivning av datamodell och endpoints
@@ -21,7 +22,8 @@
 # Bulkuttag av prisdata är inte tillåtet – använd en query per roll/ort.
 #
 # Privat / icke-indexerbart:
-#   /admin*, /dev/*, /resultat/*, /consultant/*
+#   /admin*, /dev/*, /resultat/*, /consultant/*, /profil*, /onboarding,
+#   /logga-in, /registrera, /aterstall-losenord, /unsubscribe
 
 User-agent: *
 Allow: /
@@ -33,6 +35,12 @@ Disallow: /admin/
 Disallow: /dev/
 Disallow: /resultat/
 Disallow: /consultant/
+Disallow: /profil
+Disallow: /onboarding
+Disallow: /logga-in
+Disallow: /registrera
+Disallow: /aterstall-losenord
+Disallow: /unsubscribe
 Disallow: /rest/v1/
 Disallow: /functions/v1/
 Disallow: /api/
@@ -52,6 +60,7 @@ Allow: /openapi.json
 Disallow: /admin
 Disallow: /resultat/
 Disallow: /consultant/
+Disallow: /profil
 Disallow: /rest/v1/
 Disallow: /functions/v1/
 Disallow: /api/
@@ -63,6 +72,7 @@ Allow: /agent-index.json
 Disallow: /admin
 Disallow: /resultat/
 Disallow: /consultant/
+Disallow: /profil
 Disallow: /rest/v1/
 Disallow: /functions/v1/
 
@@ -73,6 +83,7 @@ Allow: /agent-index.json
 Disallow: /admin
 Disallow: /resultat/
 Disallow: /consultant/
+Disallow: /profil
 Disallow: /rest/v1/
 Disallow: /functions/v1/
 
@@ -83,6 +94,7 @@ Allow: /agent-index.json
 Disallow: /admin
 Disallow: /resultat/
 Disallow: /consultant/
+Disallow: /profil
 Disallow: /rest/v1/
 Disallow: /functions/v1/
 
@@ -93,6 +105,7 @@ Allow: /agent-index.json
 Disallow: /admin
 Disallow: /resultat/
 Disallow: /consultant/
+Disallow: /profil
 Disallow: /rest/v1/
 Disallow: /functions/v1/
 
@@ -103,6 +116,7 @@ Allow: /agent-index.json
 Disallow: /admin
 Disallow: /resultat/
 Disallow: /consultant/
+Disallow: /profil
 Disallow: /rest/v1/
 Disallow: /functions/v1/
 
@@ -113,5 +127,6 @@ Allow: /agent-index.json
 Disallow: /admin
 Disallow: /resultat/
 Disallow: /consultant/
+Disallow: /profil
 Disallow: /rest/v1/
 Disallow: /functions/v1/
