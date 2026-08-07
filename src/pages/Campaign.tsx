@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Lock, ArrowRight, MessageSquare, BarChart3 } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
-import { SEO } from "@/components/SEO";
 
 /* ── Slug → yrkeskategori mapping ───────────────── */
 const ROLE_MAP: Record<string, string> = {
@@ -105,11 +104,6 @@ export default function Campaign() {
 
   return (
     <>
-      <SEO
-        title={`${displayLabel} – ramavtalspriser per zon`.slice(0, 60)}
-        description={`Se aktuella ramavtalspriser för ${displayLabel} i Zon 1–3. Anonymt och kostnadsfritt via vårdbemanning.ai.`.slice(0, 160)}
-        path={`/kampanj/${role}`}
-      />
     <div className="min-h-[100dvh] bg-white">
       {/* ── Nav ──────────────────────────────── */}
       <nav className="flex items-center justify-between px-6 py-4 max-w-3xl mx-auto">

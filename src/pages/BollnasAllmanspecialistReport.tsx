@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import CompcareLogo from "@/components/CompcareLogo";
 import Navbar from "@/components/Navbar";
-import { SEO } from "@/components/SEO";
+import { JsonLd } from "@/components/JsonLd";
 import { buildRoleReportSchemas } from "@/lib/seo/roleReportSchema";
 import { ArrowRight, MapPin, BarChart3, Info, TrendingUp } from "lucide-react";
 import { useEffect } from "react";
@@ -88,13 +88,7 @@ export default function BollnasAllmanspecialistReport() {
 
   return (
     <>
-      <SEO
-        title="Allmänspecialist Bollnäs – timpris & konsultarvode 2026"
-        description="Ramavtalspriser, möjlig konsultersättning och förhandlingsspann för specialistläkare i allmänmedicin i Bollnäs (Zon 3). Källa: SKR ramavtal 2026."
-        path="/Bollnas/lakare-alm"
-        ogType="article"
-        jsonLd={roleSchemas}
-      />
+      <JsonLd data={roleSchemas} />
       <div
         className="min-h-screen"
         style={{

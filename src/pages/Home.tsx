@@ -6,7 +6,7 @@ import InlineTerminalSurvey from "@/components/survey/InlineTerminalSurvey";
 import RoleCarousel from "@/components/landing/RoleCarousel";
 import SiteFooter from "@/components/landing/SiteFooter";
 import AnthropicScope from "@/components/demo/AnthropicScope";
-import { SEO } from "@/components/SEO";
+import { JsonLd } from "@/components/JsonLd";
 import { trackEvent } from "@/lib/trackEvent";
 import { useTimeOnPage } from "@/hooks/useTimeOnPage";
 
@@ -41,12 +41,7 @@ export default function Home() {
   return (
     <AnthropicScope>
       <div className="w-full text-foreground font-sans min-h-screen">
-        <SEO
-          title="vårdbemanning.ai – Lön & ramavtalspriser för vårdkonsulter"
-          description="Jämför ditt erbjudande mot SKR:s ramavtalspriser i 290 kommuner. Gratis löneanalys för sjuksköterskor, barnmorskor och läkare."
-          path="/"
-          jsonLd={LANDING_JSONLD}
-        />
+        <JsonLd data={LANDING_JSONLD} />
 
         {/* ── Nav ─────────────────────────────── */}
         <nav className="relative flex items-center justify-between px-5 sm:px-6 lg:px-10 h-[60px] border-b border-black/10 bg-transparent">

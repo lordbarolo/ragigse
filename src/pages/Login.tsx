@@ -8,7 +8,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, ArrowLeft, FileText, Clock, TrendingUp, MessageSquare, Link2, MailCheck, AlertTriangle, Sparkles } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
-import { SEO } from "@/components/SEO";
 import { trackEvent } from "@/lib/trackEvent";
 import posthog from "@/lib/posthog";
 import { getAuthIntentCopy, sanitizeRedirect } from "@/lib/authIntent";
@@ -140,12 +139,6 @@ export default function Login() {
 
   return (
     <>
-      <SEO
-        title="Logga in – vårdbemanning.ai"
-        description="Logga in på ditt vårdbemanning.ai-konto för att se din rapport och hantera dina inställningar."
-        path="/logga-in"
-        noindex
-      />
     <div
       className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden"
       style={{

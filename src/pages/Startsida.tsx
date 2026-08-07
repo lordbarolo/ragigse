@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Link } from "@/lib/router-compat";
-import { SEO } from "@/components/SEO";
+import { JsonLd } from "@/components/JsonLd";
 import Hero from "@/components/startsida5c/Hero";
 import RolltabellDark from "@/components/startsida5c/RolltabellDark";
 import OvergangChatt from "@/components/startsida5c/OvergangChatt";
@@ -47,13 +47,7 @@ export default function Startsida5c() {
 
   return (
     <div style={{ background: "#0e1016", fontFamily: "'Space Grotesk',system-ui,sans-serif", color: "#eef0f4" }}>
-      <SEO
-        title="vardbemanning.ai – Lön & ramavtalspriser för vårdkonsulter"
-        description="Se vad regionen betalar för din roll och zon enligt SKR:s ramavtal 2026 — och vad du kan fakturera."
-        path="/"
-        baseUrl={SITE_URL}
-        jsonLd={LANDING_JSONLD}
-      />
+      <JsonLd data={LANDING_JSONLD} />
       <style>{`
         @keyframes fadeUp5c { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
         @keyframes cursorBlink5c { 0%,100% { opacity: 1; } 50% { opacity: 0; } }

@@ -8,7 +8,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, ArrowLeft, CheckCircle2, Sparkles } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
-import { SEO } from "@/components/SEO";
 import { trackEvent } from "@/lib/trackEvent";
 import { getSignupIntentCopy, sanitizeRedirect } from "@/lib/authIntent";
 
@@ -111,12 +110,6 @@ export default function Signup() {
     backgroundRepeat: "no-repeat" as const,
   };
   const seo = (
-    <SEO
-      title="Skapa konto – vårdbemanning.ai"
-      description="Skapa ett gratis vårdbemanning.ai-konto för att spara dina rapporter och få notiser om nya analyser."
-      path="/registrera"
-      noindex
-    />
   );
 
   if (success) {

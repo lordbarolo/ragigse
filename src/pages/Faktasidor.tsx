@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import AnthropicScope from "@/components/demo/AnthropicScope";
 import CompcareLogo from "@/components/CompcareLogo";
 import SiteFooter from "@/components/landing/SiteFooter";
-import { SEO } from "@/components/SEO";
+import { JsonLd } from "@/components/JsonLd";
 import { trackEvent } from "@/lib/trackEvent";
 import { filterPublicRoles } from "@/lib/roleVisibility";
 
@@ -237,12 +237,7 @@ export default function Faktasidor() {
   return (
     <AnthropicScope>
       <div className="w-full min-h-screen text-foreground font-sans">
-        <SEO
-          title="Din ersättning enligt ramavtalet 2026 – sök roll och kommun"
-          description="Sök din yrkesroll och kommun och få en personlig ersättningsanalys enligt regionernas ramavtal 2026. Skapa konto för att se exakta nivåer."
-          path="/faktasidor"
-          jsonLd={FAKTA_JSONLD}
-        />
+        <JsonLd data={FAKTA_JSONLD} />
 
         {/* Nav */}
         <nav className="relative flex items-center justify-between px-5 sm:px-6 lg:px-10 h-[60px] border-b border-black/10">

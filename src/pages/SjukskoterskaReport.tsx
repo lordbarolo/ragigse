@@ -2,7 +2,7 @@ import { Link } from "@/lib/router-compat";
 import { Separator } from "@/components/ui/separator";
 import CompcareLogo from "@/components/CompcareLogo";
 import Navbar from "@/components/Navbar";
-import { SEO } from "@/components/SEO";
+import { JsonLd } from "@/components/JsonLd";
 import { buildRoleReportSchemas } from "@/lib/seo/roleReportSchema";
 import PensionImpactSimulator from "@/components/report/PensionImpactSimulator";
 import {
@@ -120,13 +120,7 @@ export default function SjukskoterskaReport() {
 
   return (
     <>
-      <SEO
-        title="Sjuksköterska – timpris & ersättning 2026 | leg ssk"
-        description="Ramavtalspriser per zon och möjlig konsultersättning för legitimerad sjuksköterska (grundutbildning). Källa: SKR:s ramavtal vårdbemanning 2026."
-        path="/rapport/sjukskoterska"
-        ogType="article"
-        jsonLd={roleSchemas}
-      />
+      <JsonLd data={roleSchemas} />
       <div
         className="min-h-screen"
         style={{

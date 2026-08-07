@@ -17,7 +17,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import logoDark from "@/assets/logo-dark.png";
-import { SEO } from "@/components/SEO";
 
 const PrivacyPolicy = () => {
   const { user, signOut } = useAuth();
@@ -47,11 +46,6 @@ const PrivacyPolicy = () => {
 
   return (
     <>
-      <SEO
-        title="Integritetspolicy – vårdbemanning.ai"
-        description="Så hanterar vårdbemanning.ai dina personuppgifter: lagring i EU, anonym analys, dina rättigheter och kontaktinformation."
-        path="/integritetspolicy"
-      />
     <div className="min-h-screen bg-background">
       <header className="py-8 px-5 border-b border-border">
         <div className="max-w-3xl mx-auto">

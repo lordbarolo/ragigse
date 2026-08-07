@@ -2,7 +2,7 @@ import { Link } from "@/lib/router-compat";
 import { Separator } from "@/components/ui/separator";
 import CompcareLogo from "@/components/CompcareLogo";
 import Navbar from "@/components/Navbar";
-import { SEO } from "@/components/SEO";
+import { JsonLd } from "@/components/JsonLd";
 import { buildRoleReportSchemas } from "@/lib/seo/roleReportSchema";
 import PensionImpactSimulator from "@/components/report/PensionImpactSimulator";
 import {
@@ -116,13 +116,7 @@ export default function AllmanmedicinReport() {
 
   return (
     <>
-      <SEO
-        title="Specialistläkare allmänmedicin – timpris & ersättning 2026"
-        description="Ramavtalspriser per zon och möjlig konsultersättning för specialistläkare i allmänmedicin. Källa: SKR:s ramavtal vårdbemanning 2026."
-        path="/rapport/lakare-allmanmedicin"
-        ogType="article"
-        jsonLd={roleSchemas}
-      />
+      <JsonLd data={roleSchemas} />
       <div
         className="min-h-screen"
         style={{

@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { Separator } from "@/components/ui/separator";
 import CompcareLogo from "@/components/CompcareLogo";
 import Navbar from "@/components/Navbar";
-import { SEO } from "@/components/SEO";
+import { JsonLd } from "@/components/JsonLd";
 import { buildRoleReportSchemas } from "@/lib/seo/roleReportSchema";
 import PensionImpactSimulator from "@/components/report/PensionImpactSimulator";
 import {
@@ -119,13 +119,7 @@ export default function LakareSpecialtyReport() {
 
   return (
     <>
-      <SEO
-        title={cfg.metaTitle}
-        description={cfg.metaDescription}
-        path={`/rapport/${cfg.slug}`}
-        ogType="article"
-        jsonLd={roleSchemas}
-      />
+      <JsonLd data={roleSchemas} />
       <div
         className="min-h-screen"
         style={{
