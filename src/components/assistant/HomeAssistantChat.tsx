@@ -112,106 +112,157 @@ export default function HomeAssistantChat() {
     ask(p.key);
   }
 
-  return (
-    <div className="w-full rounded-2xl border border-black/10 bg-white shadow-[0_1px_3px_rgba(0,0,0,0.06)] overflow-hidden flex flex-col h-[560px]">
-      {/* Transkript */}
-      <div ref={scrollRef} className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-5 py-4 space-y-3">
-        {messages.map((m) => (
-          <div key={m.id} className={m.role === "user" ? "flex justify-end" : ""}>
-            {m.role === "user" ? (
-              <div className="max-w-[85%] rounded-2xl bg-[#22232b] text-white px-3.5 py-2 text-sm">
-                {m.text}
-              </div>
-            ) : (
-              <div className="max-w-[95%] text-sm text-black/85 whitespace-pre-wrap leading-relaxed">
-                {m.text}
-                {m.source && (
-                  <span className="mt-1.5 block text-[11px] text-black/45">Källa: {m.source}</span>
-                )}
-              </div>
-            )}
-          </div>
-        ))}
+  const chipClass =
+    "chip-float rounded-full bg-white/[0.045] px-3.5 py-2 text-left text-[12.5px] leading-snug text-white/70 backdrop-blur-sm transition-colors hover:bg-white/[0.09] hover:text-white disabled:opacity-40";
 
-        {loading && (
-          <div className="flex items-center gap-2 text-sm text-black/50">
-            <Loader2 className="w-3.5 h-3.5 animate-spin" /> Tänker…
-          </div>
-        )}
-      </div>
-
-      {/* Fördefinierade frågor — kompakt lista när samtalet startat */}
-      <div
-        className={`shrink-0 px-4 sm:px-5 pb-2 pt-3 border-t border-black/5 flex flex-wrap gap-1.5 overflow-y-auto ${
-          started ? "max-h-[76px]" : ""
-        }`}
-      >
-        {PRESETS.map((p) => (
+  const composer = (
+    <div className="mx-auto w-full max-w-[560px]">
+      {user ? (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            const q = input.trim();
+            if (!q) return;
+            push({ role: "user", text: q });
+            setInput("");
+            askFreeText(q);
+          }}
+          className="flex items-center gap-2 rounded-full bg-white/[0.06] px-4 py-2 backdrop-blur-md"
+        >
+          <input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Fråga assistenten"
+            className="h-9 flex-1 bg-transparent text-sm text-white outline-hidden placeholder:text-white/40"
+          />
           <button
-            key={p.key}
-            disabled={loading}
-            onClick={() => onPreset(p)}
-            className="text-xs rounded-full border border-black/15 px-3 py-1.5 text-black/75 hover:bg-black/5 transition-colors disabled:opacity-50"
+            type="submit"
+            aria-label="Skicka"
+            className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-white text-[#0b0c10] transition-opacity hover:opacity-90"
           >
-            {p.label}
+            <ArrowUp className="h-4 w-4" />
           </button>
-        ))}
-      </div>
+        </form>
+      ) : (
+        <Link
+          to="/registrera"
+          className="flex items-center gap-2 rounded-full bg-white/[0.06] px-4 py-2.5 backdrop-blur-md transition-colors hover:bg-white/[0.09]"
+        >
+          <Lock className="h-3.5 w-3.5 shrink-0 text-white/45" />
+          <span className="flex-1 text-sm text-white/45">Fråga assistenten</span>
+          <span className="shrink-0 rounded-full bg-white px-3 py-1.5 text-[12.5px] font-semibold text-[#0b0c10]">
+            Skapa konto
+          </span>
+        </Link>
+      )}
+    </div>
+  );
 
-      {/* Fritext — låst utan konto */}
-      <div className="shrink-0 px-4 sm:px-5 py-3 border-t border-black/10 bg-black/[0.02]">
-        {user ? (
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              const q = input.trim();
-              if (!q) return;
-              push({ role: "user", text: q });
-              setInput("");
-              askFreeText(q);
-            }}
-            className="flex items-center gap-2"
-          >
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Ställ din egen fråga…"
-              className="flex-1 bg-transparent text-sm outline-hidden placeholder:text-black/40"
-            />
-            <button
-              type="submit"
-              aria-label="Skicka"
-              className="shrink-0 w-8 h-8 rounded-full bg-[#22232b] text-white flex items-center justify-center"
-            >
-              <ArrowUp className="w-4 h-4" />
-            </button>
-          </form>
-        ) : (
-          <div className="space-y-2.5">
-            <input
-              readOnly
-              onFocus={(e) => e.currentTarget.blur()}
-              placeholder="Ställ din egen fråga…"
-              aria-label="Fritext kräver konto"
-              className="w-full cursor-pointer rounded-lg border border-black/10 bg-white px-3 py-2 text-sm text-black/60 outline-hidden placeholder:text-black/40"
-            />
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-xs text-black/55 flex items-start gap-1.5">
-                <Lock className="w-3.5 h-3.5 shrink-0 mt-0.5" />
-                Vill du ställa egna frågor till AI-assistenten och få en personlig analys utifrån ditt nuvarande
-                avtal? Logga in med e-post på 10 sekunder.
-              </p>
-              <Link
-                to="/registrera"
-                className="shrink-0 self-start text-sm font-semibold px-4 py-2 rounded-lg bg-[#22232b] text-white hover:opacity-90 transition-opacity"
+  const positions = [
+    "left-[1%] top-[4%] w-[220px]",
+    "right-[2%] top-[1%] w-[210px]",
+    "left-[6%] top-[27%] w-[200px]",
+    "right-[4%] top-[30%] w-[215px]",
+    "left-[3%] bottom-[13%] w-[205px]",
+    "right-[1%] bottom-[9%] w-[220px]",
+    "left-1/2 -translate-x-1/2 bottom-[1%] w-[250px]",
+  ];
+
+  return (
+    <div className="relative w-full">
+      {/* Transkript — kantlös, visas när samtalet startat */}
+      {started && (
+        <div
+          ref={scrollRef}
+          className="mb-6 max-h-[340px] space-y-4 overflow-y-auto pr-1"
+        >
+          {messages.map((m) => (
+            <div key={m.id} className={m.role === "user" ? "flex justify-end" : ""}>
+              {m.role === "user" ? (
+                <div className="max-w-[85%] rounded-2xl bg-white/[0.07] px-3.5 py-2 text-sm text-white">
+                  {m.text}
+                </div>
+              ) : (
+                <div className="max-w-[95%] whitespace-pre-wrap text-sm leading-relaxed text-white/75">
+                  {m.text}
+                  {m.source && (
+                    <span className="mt-1.5 block text-[11px] text-white/40">Källa: {m.source}</span>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+          {loading && (
+            <div className="flex items-center gap-2 text-sm text-white/45">
+              <Loader2 className="h-3.5 w-3.5 animate-spin" /> Tänker…
+            </div>
+          )}
+        </div>
+      )}
+
+      {started ? (
+        <>
+          {composer}
+          <div className="mt-4 flex flex-wrap justify-center gap-1.5">
+            {PRESETS.map((p) => (
+              <button
+                key={p.key}
+                type="button"
+                disabled={loading}
+                onClick={() => onPreset(p)}
+                className={chipClass}
               >
-                Skapa konto
-              </Link>
+                {p.label}
+              </button>
+            ))}
+          </div>
+        </>
+      ) : (
+        <>
+          {/* Desktop: frågor svävar runt skrivrutan */}
+          <div className="relative hidden h-[460px] lg:block">
+            {PRESETS.map((p, i) => (
+              <button
+                key={p.key}
+                type="button"
+                disabled={loading}
+                onClick={() => onPreset(p)}
+                style={{ animationDelay: `${(i % 5) * 0.9}s`, animationDuration: `${6.5 + (i % 3)}s` }}
+                className={`absolute ${positions[i] ?? ""} ${chipClass}`}
+              >
+                {p.label}
+              </button>
+            ))}
+            <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 px-[22%]">{composer}</div>
+          </div>
+
+          {/* Mobil/tablet */}
+          <div className="lg:hidden">
+            {composer}
+            <div className="mt-5 flex flex-wrap justify-center gap-1.5">
+              {PRESETS.map((p, i) => (
+                <button
+                  key={p.key}
+                  type="button"
+                  disabled={loading}
+                  onClick={() => onPreset(p)}
+                  style={{ animationDelay: `${(i % 4) * 1.1}s` }}
+                  className={chipClass}
+                >
+                  {p.label}
+                </button>
+              ))}
             </div>
           </div>
-        )}
 
-      </div>
+          {loading && (
+            <div className="mt-4 flex items-center justify-center gap-2 text-sm text-white/45">
+              <Loader2 className="h-3.5 w-3.5 animate-spin" /> Tänker…
+            </div>
+          )}
+        </>
+      )}
     </div>
   );
 }
+
