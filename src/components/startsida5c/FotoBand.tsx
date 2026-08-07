@@ -1,4 +1,5 @@
 import { Link } from "@/lib/router-compat";
+import BadgeCta from "./BadgeCta";
 import sskFoto from "@/assets/startsida5c-ssk.png";
 
 const TOOLS: { name: string; desc: string }[] = [
