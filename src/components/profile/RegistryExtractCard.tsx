@@ -13,7 +13,7 @@ type DocType = "hosp" | "ivo";
 const SELF_SERVE_LINKS: { label: string; href: string; desc: string }[] = [
   {
     label: "Socialstyrelsen — HOSP",
-    href: "https://legitimation.socialstyrelsen.se/ansok-om-intyg/legitimationskontroll-for-arbete-eller-studier-inom-sverige/",
+    href: "https://www.socialstyrelsen.se/statistik-och-data/register/halso-och-sjukvardspersonal/",
     desc: "Begär intyg om legitimation själv.",
   },
   {
