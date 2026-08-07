@@ -7,7 +7,7 @@ export default function OvergangChatt() {
       id="assistent"
       className="scroll-mt-16"
       style={{
-        background: "#f5f5f7",
+        background: "#e8e9ec",
       }}
     >
       <div className="relative mx-auto max-w-[820px] px-5 pb-32 pt-10 text-center md:px-12 md:pb-40 md:pt-14">
@@ -26,14 +26,14 @@ export default function OvergangChatt() {
             style={{
               lineHeight: 1.08,
               letterSpacing: "-0.02em",
-              color: "#16181f",
+              color: "#0b0c10",
             }}
           >
             Ai för konsulter inom sjukvård.
             <br />
             <span
               style={{
-                background: "linear-gradient(90deg,#4f46e5,#0d9488)",
+                background: "linear-gradient(90deg,#ffffff,#8a8c94)",
                 WebkitBackgroundClip: "text",
                 backgroundClip: "text",
                 color: "transparent",
@@ -44,7 +44,7 @@ export default function OvergangChatt() {
           </h2>
           <p
             className="mx-auto mt-4 max-w-[600px] text-[15.5px]"
-            style={{ lineHeight: 1.6, color: "#5a5f70" }}
+            style={{ lineHeight: 1.6, color: "#6f7178" }}
           >
             Fråga assistenten vad regionen betalar för din roll och zon, vad du
             kan fakturera och hur avropen har
@@ -56,7 +56,7 @@ export default function OvergangChatt() {
             <HomeAssistantChat />
           </div>
 
-          <div className="mt-2.5 text-[11.5px]" style={{ color: "#7a7f8e" }}>
+          <div className="mt-2.5 text-[11.5px]" style={{ color: "#8a8c94" }}>
             Data lagras inom EU · Vi delar aldrig dina uppgifter. Se{" "}
             <Link to="/integritetspolicy" className="underline">
               integritetspolicyn

@@ -164,7 +164,7 @@ export default function Signup() {
               to={loginHref}
 
               className="inline-block text-sm font-semibold hover:underline pt-2"
-              style={{ color: "#534AB7" }}
+              style={{ color: "#ffffff" }}
             >
               Gå till inloggning →
             </Link>
@@ -191,7 +191,7 @@ export default function Signup() {
         <Card className="border-border/40 !bg-[#F5F2EA]/85 backdrop-blur text-black">
           <CardHeader className="text-center !bg-transparent space-y-2">
             {intentCopy && (
-              <div className="mx-auto inline-flex items-center gap-1.5 rounded-full bg-[#3D3491]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#3D3491]">
+              <div className="mx-auto inline-flex items-center gap-1.5 rounded-full bg-[#22232b]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#22232b]">
                 <Sparkles className="w-3 h-3" aria-hidden="true" />
                 {intentCopy.eyebrow}
               </div>

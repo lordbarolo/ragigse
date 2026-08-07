@@ -212,7 +212,7 @@ export default function ProfileAssistantChat({ userId, context, unlocked, onSave
             value={answers.kommun}
             onValueChange={(v) => answer("kommun", v, v)}
             placeholder="Sök kommun…"
-            triggerClassName="h-11 rounded-xl border-white/15 bg-[#0e1016] text-white shadow-none"
+            triggerClassName="h-11 rounded-xl border-white/15 bg-[#0b0c10] text-white shadow-none"
           />
         )}
         {active === "role" && (
@@ -221,7 +221,7 @@ export default function ProfileAssistantChat({ userId, context, unlocked, onSave
             value={answers.role}
             onValueChange={(v) => answer("role", v, roleLabel5c(v))}
             placeholder="Sök yrkesroll…"
-            triggerClassName="h-11 rounded-xl border-white/15 bg-[#0e1016] text-white shadow-none"
+            triggerClassName="h-11 rounded-xl border-white/15 bg-[#0b0c10] text-white shadow-none"
           />
         )}
         {active === "employment" && (
@@ -261,7 +261,7 @@ export default function ProfileAssistantChat({ userId, context, unlocked, onSave
               value={rateDraft}
               onChange={(e) => setRateDraft(e.target.value)}
               placeholder="t.ex. 750"
-              className="h-11 flex-1 rounded-xl border border-white/15 bg-[#0e1016] px-3 text-sm text-white outline-hidden placeholder:text-white/35"
+              className="h-11 flex-1 rounded-xl border border-white/15 bg-[#0b0c10] px-3 text-sm text-white outline-hidden placeholder:text-white/35"
             />
             <button type="submit" className="h-11 rounded-xl bg-white px-4 text-sm font-semibold text-[#121319]">
               Spara

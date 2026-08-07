@@ -101,7 +101,7 @@ export default function BollnasAllmanspecialistReport() {
           ['--border' as any]: '35 17% 85%',
           ['--radius' as any]: '12px',
           backgroundColor: '#EEEBE4',
-          color: '#0A0A0A',
+          color: '#0b0c10',
         }}
       >
         <Navbar />
@@ -109,24 +109,24 @@ export default function BollnasAllmanspecialistReport() {
         {/* Hero — cream light theme */}
         <header
           className="relative overflow-hidden px-5 pt-20 pb-10 sm:pt-24 sm:pb-12"
-          style={{ backgroundColor: '#EEEBE4', color: '#0A0A0A' }}
+          style={{ backgroundColor: '#EEEBE4', color: '#0b0c10' }}
         >
           <div className="max-w-lg mx-auto space-y-4 relative z-10">
             <p className="text-[10px] uppercase tracking-[0.2em] font-medium" style={{ color: '#6B7280' }}>
               Marknadsrapport 2026
             </p>
-            <h1 className="leading-tight" style={{ fontFamily: 'Georgia, serif', fontSize: '28px', fontWeight: 700, color: '#0A0A0A' }}>
+            <h1 className="leading-tight" style={{ fontFamily: 'Georgia, serif', fontSize: '28px', fontWeight: 700, color: '#0b0c10' }}>
               Allmänspecialist · {USER_KOMMUN}
             </h1>
             <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1" style={{ fontSize: '13px', color: '#6B7280' }}>
               <span className="whitespace-nowrap">Specialistläkare allmänmedicin</span>
               <span
                 className="whitespace-nowrap px-1.5 py-0.5 rounded-md"
-                style={{ backgroundColor: '#FFFFFF', border: '1px solid #E0DBD3', color: '#0A0A0A', fontSize: '13px' }}
+                style={{ backgroundColor: '#FFFFFF', border: '1px solid #E0DBD3', color: '#0b0c10', fontSize: '13px' }}
               >
                 {USER_ZON_LABEL}
               </span>
-              <span className="w-1 h-1 rounded-full mx-0.5" style={{ backgroundColor: '#3D3491' }} />
+              <span className="w-1 h-1 rounded-full mx-0.5" style={{ backgroundColor: '#22232b' }} />
               <span className="whitespace-nowrap">SKR Ramavtal 2026</span>
             </div>
           </div>
@@ -140,12 +140,12 @@ export default function BollnasAllmanspecialistReport() {
               Din situation
             </p>
             <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: '#3D34911A' }}>
-                <TrendingUp className="w-5 h-5" style={{ color: '#3D3491' }} />
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: '#22232b1A' }}>
+                <TrendingUp className="w-5 h-5" style={{ color: '#22232b' }} />
               </div>
               <div className="space-y-1">
                 <p className="text-sm" style={{ color: '#6B7280' }}>Din nuvarande ersättning (eget bolag)</p>
-                <p className="font-bold" style={{ fontFamily: 'Georgia, serif', fontSize: '24px', color: '#0A0A0A' }}>{fmt(USER_RATE)} kr/h</p>
+                <p className="font-bold" style={{ fontFamily: 'Georgia, serif', fontSize: '24px', color: '#0b0c10' }}>{fmt(USER_RATE)} kr/h</p>
                 <p className="text-[12px]" style={{ color: '#6B7280' }}>
                   Motsvarar cirka {Math.round((USER_RATE / USER_ZON_RATE) * 100)}% av kundpriset i {USER_ZON_LABEL} ({fmt(USER_ZON_RATE)} kr/h).
                 </p>
@@ -153,9 +153,9 @@ export default function BollnasAllmanspecialistReport() {
             </div>
             {gap > 0 && (
               <div className="rounded-lg p-3.5 text-sm" style={{ backgroundColor: '#EEEBE4', border: '1px solid #E0DBD3' }}>
-                <p style={{ color: '#0A0A0A' }}>
+                <p style={{ color: '#0b0c10' }}>
                   Marknadsmässigt undre spann är <span className="font-semibold">{fmt(recMinF)} kr/h</span> — en skillnad på{" "}
-                  <span className="font-semibold" style={{ color: '#3D3491' }}>+{fmt(gap)} kr/h</span>.
+                  <span className="font-semibold" style={{ color: '#22232b' }}>+{fmt(gap)} kr/h</span>.
                 </p>
                 <p className="text-[12px] mt-1" style={{ color: '#6B7280' }}>
                   På årsbasis: ca <span className="font-semibold">+{fmt(annualUpside)} kr</span> brutto till bolaget.
@@ -178,19 +178,19 @@ export default function BollnasAllmanspecialistReport() {
                   <div
                     key={z.zone}
                     className="flex items-center justify-between p-3.5 px-5"
-                    style={{ borderTop: i > 0 ? '1px solid #E0DBD3' : 'none', backgroundColor: isUser ? '#3D34910A' : 'transparent' }}
+                    style={{ borderTop: i > 0 ? '1px solid #E0DBD3' : 'none', backgroundColor: isUser ? '#22232b0A' : 'transparent' }}
                   >
                     <div className="flex items-center gap-3">
-                      <MapPin className="w-4 h-4 shrink-0" style={{ color: isUser ? '#3D3491' : '#6B7280' }} />
+                      <MapPin className="w-4 h-4 shrink-0" style={{ color: isUser ? '#22232b' : '#6B7280' }} />
                       <div>
-                        <p className="text-sm font-semibold" style={{ color: '#0A0A0A' }}>
+                        <p className="text-sm font-semibold" style={{ color: '#0b0c10' }}>
                           {z.zone}
-                          {isUser && <span className="ml-2 text-[10px] font-semibold uppercase tracking-wider" style={{ color: '#3D3491' }}>Din zon</span>}
+                          {isUser && <span className="ml-2 text-[10px] font-semibold uppercase tracking-wider" style={{ color: '#22232b' }}>Din zon</span>}
                         </p>
                         <p className="text-[11px]" style={{ color: '#6B7280' }}>{z.desc}</p>
                       </div>
                     </div>
-                    <span className="text-lg font-bold tracking-tight" style={{ fontFamily: 'Georgia, serif', color: isUser ? '#3D3491' : '#0A0A0A' }}>
+                    <span className="text-lg font-bold tracking-tight" style={{ fontFamily: 'Georgia, serif', color: isUser ? '#22232b' : '#0b0c10' }}>
                       {fmt(z.rate)} <span className="text-xs font-normal" style={{ color: '#6B7280' }}>kr/h</span>
                     </span>
                   </div>
@@ -211,11 +211,11 @@ export default function BollnasAllmanspecialistReport() {
               Möjlig konsultersättning · {USER_ZON_LABEL}
             </p>
             <div className="flex items-center gap-3 mb-5">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#3D34911A' }}>
-                <BarChart3 className="w-5 h-5" style={{ color: '#3D3491' }} />
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: '#22232b1A' }}>
+                <BarChart3 className="w-5 h-5" style={{ color: '#22232b' }} />
               </div>
               <div>
-                <p className="font-bold" style={{ fontFamily: 'Georgia, serif', fontSize: '18px', color: '#0A0A0A' }}>
+                <p className="font-bold" style={{ fontFamily: 'Georgia, serif', fontSize: '18px', color: '#0b0c10' }}>
                   {fmt(safeMinF)}–{fmt(recMaxF)} kr/h
                 </p>
                 <p className="text-[11px]" style={{ color: '#6B7280' }}>Marknadsmässigt spann (eget bolag)</p>
@@ -229,10 +229,10 @@ export default function BollnasAllmanspecialistReport() {
               ].map((row) => (
                 <div key={row.label} className="flex items-center justify-between rounded-lg px-3.5 py-2.5" style={{ backgroundColor: '#EEEBE4', border: '1px solid #E0DBD3' }}>
                   <div>
-                    <p className="text-sm font-medium" style={{ color: '#0A0A0A' }}>{row.label}</p>
+                    <p className="text-sm font-medium" style={{ color: '#0b0c10' }}>{row.label}</p>
                     <p className="text-[11px]" style={{ color: '#6B7280' }}>Andel av kundpris: {row.share}</p>
                   </div>
-                  <span className="text-sm font-bold" style={{ fontFamily: 'Georgia, serif', color: '#3D3491' }}>{row.range}</span>
+                  <span className="text-sm font-bold" style={{ fontFamily: 'Georgia, serif', color: '#22232b' }}>{row.range}</span>
                 </div>
               ))}
             </div>
@@ -247,15 +247,15 @@ export default function BollnasAllmanspecialistReport() {
               Förhandlingsobservationer
             </p>
             <p>
-              <span className="font-semibold" style={{ color: '#0A0A0A' }}>Undre spann:</span>{" "}
+              <span className="font-semibold" style={{ color: '#0b0c10' }}>Undre spann:</span>{" "}
               <span style={{ color: '#6B7280' }}>{fmt(safeMinF)} kr/h — säker utgångspunkt baserat på SKR Zon 3.</span>
             </p>
             <p>
-              <span className="font-semibold" style={{ color: '#0A0A0A' }}>Median:</span>{" "}
+              <span className="font-semibold" style={{ color: '#0b0c10' }}>Median:</span>{" "}
               <span style={{ color: '#6B7280' }}>{fmt(Math.round((safeMinF + recMaxF) / 2))} kr/h — typisk nivå för konsulter med dokumenterad erfarenhet.</span>
             </p>
             <p>
-              <span className="font-semibold" style={{ color: '#0A0A0A' }}>Övre spann:</span>{" "}
+              <span className="font-semibold" style={{ color: '#0b0c10' }}>Övre spann:</span>{" "}
               <span style={{ color: '#6B7280' }}>{fmt(recMaxF)} kr/h — uppnås vid brist, jourtillgänglighet eller etablerad relation med beställaren.</span>
             </p>
           </section>
@@ -266,28 +266,28 @@ export default function BollnasAllmanspecialistReport() {
               Beräkningsmetod
             </p>
             <p>
-              <span className="font-semibold" style={{ color: '#0A0A0A' }}>Källa:</span> SKR ramavtal vårdbemanning 2026, kategori Specialistläkare allmänmedicin.
+              <span className="font-semibold" style={{ color: '#0b0c10' }}>Källa:</span> SKR ramavtal vårdbemanning 2026, kategori Specialistläkare allmänmedicin.
             </p>
             <p>
-              <span className="font-semibold" style={{ color: '#0A0A0A' }}>Zonindelning:</span> Bollnäs ingår i Region Gävleborg och klassas som Zon 3 (glesbygd/svårrekryterad).
+              <span className="font-semibold" style={{ color: '#0b0c10' }}>Zonindelning:</span> Bollnäs ingår i Region Gävleborg och klassas som Zon 3 (glesbygd/svårrekryterad).
             </p>
             <p>
             </p>
             <p>
-              <span className="font-semibold" style={{ color: '#0A0A0A' }}>OB & jour:</span> Hanteras separat ovanpå grundpriset enligt SKR-tariff och påverkar inte basanalysen.
+              <span className="font-semibold" style={{ color: '#0b0c10' }}>OB & jour:</span> Hanteras separat ovanpå grundpriset enligt SKR-tariff och påverkar inte basanalysen.
             </p>
           </section>
 
           {/* CTA */}
           <section className="rounded-2xl border p-5 text-center space-y-3" style={{ backgroundColor: '#FFFFFF', borderColor: '#E0DBD3' }}>
-            <h2 className="font-bold" style={{ fontFamily: 'Georgia, serif', fontSize: '18px', color: '#0A0A0A' }}>Vill du ha en personlig analys?</h2>
+            <h2 className="font-bold" style={{ fontFamily: 'Georgia, serif', fontSize: '18px', color: '#0b0c10' }}>Vill du ha en personlig analys?</h2>
             <p className="text-sm leading-relaxed" style={{ color: '#6B7280' }}>
               Svara på några snabba frågor och få en egen rapport baserad på din specialitet, zon och anställningsform.
             </p>
             <Link
               to="/?yrke=Specialistläkare%20allmänmedicin&kommun=Bollnäs"
               className="inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 rounded-lg mt-2"
-              style={{ backgroundColor: '#3D3491', color: '#FFFFFF' }}
+              style={{ backgroundColor: '#22232b', color: '#FFFFFF' }}
             >
               Skapa din rapport <ArrowRight className="w-4 h-4" />
             </Link>

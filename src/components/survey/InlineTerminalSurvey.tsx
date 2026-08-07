@@ -373,9 +373,9 @@ export default function InlineTerminalSurvey({
 
   const containerBg = isLight
     ? "rounded-xl border border-[#E5E5E5] bg-white p-6 md:p-8 shadow-xl"
-    : "rounded-xl border border-[#2D2D2D] bg-[#1A1A1A] p-6 md:p-8 shadow-2xl";
+    : "rounded-xl border border-[#2D2D2D] bg-[#0b0c10] p-6 md:p-8 shadow-2xl";
   const progressTrackBg = isLight ? "bg-black/5" : "bg-white/5";
-  const stepTextColor = isLight ? "text-[#1A1A1A]" : "text-white";
+  const stepTextColor = isLight ? "text-[#0b0c10]" : "text-white";
   const backBtnColor = isLight
     ? "text-[#9CA3AF] hover:text-[#4B5563]"
     : "text-white/70 hover:text-white";
@@ -445,8 +445,8 @@ export default function InlineTerminalSurvey({
                     options={s.category === "lakare" ? doctorRoleOptions : nurseRoleOptions}
                     triggerClassName={
                       isLight
-                        ? "bg-white border-[#E5E5E5] text-[#1A1A1A] focus:ring-[#534AB7]"
-                        : "bg-[#2D2D2D] border-[#3D3D3D] text-[#E5E5E5] focus:ring-[#534AB7]"
+                        ? "bg-white border-[#E5E5E5] text-[#0b0c10] focus:ring-[#ffffff]"
+                        : "bg-[#2D2D2D] border-[#3D3D3D] text-[#E5E5E5] focus:ring-[#ffffff]"
                     }
                     placeholderClassName={isLight ? "text-[#9CA3AF]" : "text-[#6B7280]"}
                   />
@@ -493,8 +493,8 @@ export default function InlineTerminalSurvey({
                     }))}
                     triggerClassName={
                       isLight
-                        ? "bg-white border-[#E5E5E5] text-[#1A1A1A] focus:ring-[#534AB7]"
-                        : "bg-[#2D2D2D] border-[#3D3D3D] text-[#E5E5E5] focus:ring-[#534AB7]"
+                        ? "bg-white border-[#E5E5E5] text-[#0b0c10] focus:ring-[#ffffff]"
+                        : "bg-[#2D2D2D] border-[#3D3D3D] text-[#E5E5E5] focus:ring-[#ffffff]"
                     }
                     placeholderClassName={isLight ? "text-[#9CA3AF]" : "text-[#6B7280]"}
                   />
@@ -525,9 +525,9 @@ export default function InlineTerminalSurvey({
                         }}
                         placeholder={s.employmentType === "foretagare" ? "t.ex. 1100" : "t.ex. 250"}
 
-                        className={`w-full h-14 border rounded-lg px-4 pr-16 text-base font-sans transition-colors focus:outline-hidden focus:ring-2 focus:ring-[#534AB7] ${
+                        className={`w-full h-14 border rounded-lg px-4 pr-16 text-base font-sans transition-colors focus:outline-hidden focus:ring-2 focus:ring-[#ffffff] ${
                           isLight
-                            ? "bg-[#FAFAFA] border-[#E5E5E5] text-[#1A1A1A] placeholder:text-[#9CA3AF] focus:bg-white"
+                            ? "bg-[#FAFAFA] border-[#E5E5E5] text-[#0b0c10] placeholder:text-[#9CA3AF] focus:bg-white"
                             : "bg-white/[0.04] border-white/10 text-white placeholder:text-white/50 focus:bg-white/[0.06]"
                         }`}
                       />
@@ -605,7 +605,7 @@ function Step({
       <div className="space-y-1.5">
         <h2
           className={`font-editorial text-xl sm:text-2xl font-semibold ${
-            isLight ? "text-[#1A1A1A]" : "text-white"
+            isLight ? "text-[#0b0c10]" : "text-white"
           }`}
         >
           {question}
@@ -700,7 +700,7 @@ function ChoiceCard({
     ? "bg-violet-100 text-violet-700"
     : "bg-violet-500/20 text-violet-200";
 
-  const titleColor = isLight ? "text-[#1A1A1A]" : "text-white";
+  const titleColor = isLight ? "text-[#0b0c10]" : "text-white";
   const subColor = isLight ? "text-[#9CA3AF]" : "text-white/70";
 
   return (
@@ -751,16 +751,16 @@ function RoleCategoryCards({
   const canSubmit = otherRole.trim().length > 1 && emailValid && !submitting;
 
   const inactive = isLight
-    ? "border-[#E5E5E5] bg-white hover:border-[#534AB7]/40 hover:bg-[#FAFAFA]"
+    ? "border-[#E5E5E5] bg-white hover:border-[#ffffff]/40 hover:bg-[#FAFAFA]"
     : "border-white/10 bg-white/[0.03] hover:border-violet-400/40 hover:bg-white/[0.06]";
   const active = isLight
-    ? "border-[#534AB7] bg-violet-50"
+    ? "border-[#ffffff] bg-violet-50"
     : "border-violet-400 bg-violet-500/10";
-  const titleColor = isLight ? "text-[#1A1A1A]" : "text-white";
+  const titleColor = isLight ? "text-[#0b0c10]" : "text-white";
   const mutedTitle = isLight ? "text-[#6B7280]" : "text-white/60";
   const inputClass = isLight
-    ? "w-full h-11 border border-[#E5E5E5] bg-[#FAFAFA] text-[#1A1A1A] placeholder:text-[#9CA3AF] rounded-lg px-3 text-sm focus:outline-hidden focus:ring-2 focus:ring-[#534AB7] focus:bg-white"
-    : "w-full h-11 border border-white/10 bg-white/[0.04] text-white placeholder:text-white/50 rounded-lg px-3 text-sm focus:outline-hidden focus:ring-2 focus:ring-[#534AB7]";
+    ? "w-full h-11 border border-[#E5E5E5] bg-[#FAFAFA] text-[#0b0c10] placeholder:text-[#9CA3AF] rounded-lg px-3 text-sm focus:outline-hidden focus:ring-2 focus:ring-[#ffffff] focus:bg-white"
+    : "w-full h-11 border border-white/10 bg-white/[0.04] text-white placeholder:text-white/50 rounded-lg px-3 text-sm focus:outline-hidden focus:ring-2 focus:ring-[#ffffff]";
 
   const submitOther = async () => {
     if (!canSubmit) return;
@@ -807,7 +807,7 @@ function RoleCategoryCards({
             onClick={() => setShowOther(true)}
             className={`w-full text-left rounded-lg border border-dashed px-5 py-3 transition-all ${
               isLight
-                ? "border-[#D4D4D4] bg-transparent hover:border-[#534AB7]/40 hover:bg-[#FAFAFA]"
+                ? "border-[#D4D4D4] bg-transparent hover:border-[#ffffff]/40 hover:bg-[#FAFAFA]"
                 : "border-white/15 hover:border-violet-400/40 hover:bg-white/[0.04]"
             }`}
           >

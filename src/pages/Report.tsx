@@ -132,7 +132,7 @@ export default function Report() {
       style={{
         // Light "cream" report theme — overrides global tokens only on this page
         ['--background' as any]: '40 18% 91%',     // #EEEBE4
-        ['--foreground' as any]: '0 0% 4%',         // #0A0A0A
+        ['--foreground' as any]: '0 0% 4%',         // #0b0c10
         ['--card' as any]: '0 0% 100%',             // #FFFFFF
         ['--card-foreground' as any]: '0 0% 4%',
         ['--popover' as any]: '0 0% 100%',
@@ -147,20 +147,20 @@ export default function Report() {
         ['--input' as any]: '35 17% 85%',
         ['--radius' as any]: '12px',
         backgroundColor: '#EEEBE4',
-        color: '#0A0A0A',
+        color: '#0b0c10',
       }}
     >
       <div data-pdf-hide><Navbar /></div>
       {/* Header — cream light theme */}
       <header
         className="relative overflow-hidden px-5 pt-20 pb-10 sm:pt-24 sm:pb-12"
-        style={{ backgroundColor: '#EEEBE4', color: '#0A0A0A' }}
+        style={{ backgroundColor: '#EEEBE4', color: '#0b0c10' }}
       >
         <div className="max-w-lg mx-auto space-y-4 relative z-10">
           <p className="text-[10px] uppercase tracking-[0.2em] font-medium" style={{ color: '#6B7280' }}>
             Ersättningsanalys
           </p>
-          <h1 className="leading-tight" style={{ fontFamily: 'Georgia, serif', fontSize: '28px', fontWeight: 700, color: '#0A0A0A' }}>
+          <h1 className="leading-tight" style={{ fontFamily: 'Georgia, serif', fontSize: '28px', fontWeight: 700, color: '#0b0c10' }}>
             {(() => {
               const occ = report.occupation || "";
               const stripped = occ.replace(/^Specialistläkare\s+/i, "").trim();
@@ -173,14 +173,14 @@ export default function Report() {
             {report.user_zone && (
               <span
                 className="whitespace-nowrap px-1 py-0 rounded"
-                style={{ backgroundColor: '#FFFFFF', border: '1px solid #E0DBD3', color: '#0A0A0A', fontSize: '11px' }}
+                style={{ backgroundColor: '#FFFFFF', border: '1px solid #E0DBD3', color: '#0b0c10', fontSize: '11px' }}
               >
                 {report.user_zone}
               </span>
             )}
-            <span className="w-1 h-1 rounded-full mx-0.5" style={{ backgroundColor: '#3D3491' }} />
+            <span className="w-1 h-1 rounded-full mx-0.5" style={{ backgroundColor: '#22232b' }} />
             <span className="whitespace-nowrap">Konsultuppdrag</span>
-            <span className="w-1 h-1 rounded-full mx-0.5" style={{ backgroundColor: '#3D3491' }} />
+            <span className="w-1 h-1 rounded-full mx-0.5" style={{ backgroundColor: '#22232b' }} />
             <span className="whitespace-nowrap">{isEmployee ? "Anställd" : "Eget bolag"}</span>
           </div>
         </div>
@@ -206,7 +206,7 @@ export default function Report() {
         {/* Förhandlingsassistenten */}
         <div className="rounded-2xl border overflow-hidden" style={{ backgroundColor: '#FFFFFF', borderColor: '#E0DBD3' }}>
           <div className="pt-3.5 px-4 sm:pt-5 sm:px-5">
-            <p className="font-semibold leading-snug text-[16px] sm:text-[18px]" style={{ fontFamily: 'Georgia, serif', color: '#0A0A0A' }}>
+            <p className="font-semibold leading-snug text-[16px] sm:text-[18px]" style={{ fontFamily: 'Georgia, serif', color: '#0b0c10' }}>
               Förhandlingsassistenten
             </p>
             <p className="text-[13px] sm:text-sm mt-1 leading-snug" style={{ color: '#6B7280' }}>
@@ -218,7 +218,7 @@ export default function Report() {
               to="/logga-in?redirect=%2Fconsultant%2Fforhandla&intent=negotiate"
 
               className="inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 rounded-lg"
-              style={{ backgroundColor: '#3D3491', color: '#FFFFFF' }}
+              style={{ backgroundColor: '#22232b', color: '#FFFFFF' }}
             >
               Öppna förhandlingsassistenten
               <ArrowRight className="w-4 h-4" />
@@ -246,7 +246,7 @@ export default function Report() {
             className="rounded-2xl border p-5 mt-2"
             style={{ backgroundColor: '#FFFFFF', borderColor: '#E0DBD3' }}
           >
-            <h3 className="font-semibold mb-1" style={{ fontFamily: 'Georgia, serif', fontSize: '18px', color: '#0A0A0A' }}>
+            <h3 className="font-semibold mb-1" style={{ fontFamily: 'Georgia, serif', fontSize: '18px', color: '#0b0c10' }}>
               Logga in för att se din analys
             </h3>
             <p className="text-sm mb-4" style={{ color: '#6B7280' }}>
@@ -256,7 +256,7 @@ export default function Report() {
             <Link
               to={`/logga-in?redirect=${encodeURIComponent(`/rapport/${reportId}`)}`}
               className="inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 rounded-lg"
-              style={{ backgroundColor: '#3D3491', color: '#FFFFFF' }}
+              style={{ backgroundColor: '#22232b', color: '#FFFFFF' }}
             >
               Logga in
               <ArrowRight className="w-4 h-4" />
@@ -271,7 +271,7 @@ export default function Report() {
         {/* Skapa konto-CTA (visas endast för icke-inloggade) */}
         {!user && (
           <div data-pdf-hide className="rounded-2xl border p-5 mt-4" style={{ backgroundColor: '#FFFFFF', borderColor: '#E0DBD3' }}>
-            <h3 className="font-semibold mb-1" style={{ fontFamily: 'Georgia, serif', fontSize: '18px', color: '#0A0A0A' }}>
+            <h3 className="font-semibold mb-1" style={{ fontFamily: 'Georgia, serif', fontSize: '18px', color: '#0b0c10' }}>
               Spara din rapport
             </h3>
             <p className="text-sm mb-4" style={{ color: '#6B7280' }}>
@@ -280,7 +280,7 @@ export default function Report() {
             <Button
               onClick={() => navigate("/registrera")}
               className="text-sm font-semibold px-6 py-3 gap-2"
-              style={{ backgroundColor: '#3D3491', color: '#FFFFFF' }}
+              style={{ backgroundColor: '#22232b', color: '#FFFFFF' }}
             >
               <UserPlus className="w-4 h-4" />
               Skapa konto
@@ -367,7 +367,7 @@ export default function Report() {
             <Link
               to="/consultant/profil"
               className="inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 rounded-lg w-full sm:w-auto"
-              style={{ backgroundColor: '#3D3491', color: '#FFFFFF' }}
+              style={{ backgroundColor: '#22232b', color: '#FFFFFF' }}
             >
               <User className="w-4 h-4" />
               Gå till din profil

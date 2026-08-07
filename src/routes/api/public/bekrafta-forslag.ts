@@ -9,11 +9,11 @@ function page(body: string): Response {
       `<meta name="robots" content="noindex, nofollow">` +
       `<title>Bekräfta ditt förslag — vårdbemanning.ai</title>` +
       `<style>body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;` +
-      `background:#0e1016;color:#f5f5f7;font-family:Inter,-apple-system,Segoe UI,Arial,sans-serif}` +
+      `background:#0b0c10;color:#e8e9ec;font-family:Inter,-apple-system,Segoe UI,Arial,sans-serif}` +
       `main{max-width:420px;padding:32px;text-align:center;line-height:1.6}` +
       `h1{font-size:20px;margin:0 0 12px}p{font-size:14px;color:#a5a9b8}` +
       `button{margin-top:20px;font-size:14px;font-weight:600;padding:12px 24px;border:0;border-radius:8px;` +
-      `background:#4f46e5;color:#fff;cursor:pointer}a{color:#8ab4ff}</style></head>` +
+      `background:#ffffff;color:#fff;cursor:pointer}a{color:#8ab4ff}</style></head>` +
       `<body><main>${body}</main></body></html>`,
     { status: 200, headers: { "content-type": "text/html; charset=utf-8" } },
   );

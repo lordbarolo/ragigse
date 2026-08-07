@@ -320,7 +320,7 @@ export default function AnalysisScreen() {
         ['--border' as any]: '35 17% 85%',
         ['--input' as any]: '35 17% 85%',
         backgroundColor: '#EEEBE4',
-        color: '#0A0A0A',
+        color: '#0b0c10',
       }}
     >
       <Navbar />

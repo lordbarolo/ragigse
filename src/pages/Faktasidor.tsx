@@ -280,7 +280,7 @@ export default function Faktasidor() {
                 }}
                 placeholder="Sök kommun, t.ex. Bollnäs"
                 aria-label="Sök kommun"
-                className="w-full rounded-lg border border-black/15 bg-white/70 pl-9 pr-3 py-2.5 text-sm text-black placeholder:text-black/40 focus:outline-hidden focus:ring-2 focus:ring-[#534AB7]/30 focus:border-[#534AB7]/50"
+                className="w-full rounded-lg border border-black/15 bg-white/70 pl-9 pr-3 py-2.5 text-sm text-black placeholder:text-black/40 focus:outline-hidden focus:ring-2 focus:ring-[#ffffff]/30 focus:border-[#ffffff]/50"
               />
               {kommunMatches.length > 0 && !selectedKommun && (
                 <ul className="absolute z-20 mt-1 w-full rounded-lg border border-black/10 bg-white shadow-lg overflow-hidden">
@@ -307,7 +307,7 @@ export default function Faktasidor() {
             </div>
 
             {selectedKommun && (
-              <div className="mt-4 rounded-xl border border-[#534AB7]/25 bg-[#534AB7]/[0.06] px-4 py-3 text-sm text-black/80 max-w-[520px]">
+              <div className="mt-4 rounded-xl border border-[#ffffff]/25 bg-[#ffffff]/[0.06] px-4 py-3 text-sm text-black/80 max-w-[520px]">
                 <strong className="font-semibold text-black">{selectedKommun.kommun}</strong> ({selectedKommun.region})
                 tillhör <strong className="font-semibold text-black">{selectedKommun.zon}</strong> —{" "}
                 {ZONE_HELP[selectedKommun.zon as Zone]}.
@@ -358,7 +358,7 @@ export default function Faktasidor() {
                   role="combobox"
                   aria-expanded={roleMatches.length > 0 && !selectedRole}
                   aria-controls="rollista"
-                  className="w-full rounded-lg border border-black/15 bg-white/70 pl-9 pr-3 py-2.5 text-sm text-black placeholder:text-black/40 focus:outline-hidden focus:ring-2 focus:ring-[#534AB7]/30 focus:border-[#534AB7]/50"
+                  className="w-full rounded-lg border border-black/15 bg-white/70 pl-9 pr-3 py-2.5 text-sm text-black placeholder:text-black/40 focus:outline-hidden focus:ring-2 focus:ring-[#ffffff]/30 focus:border-[#ffffff]/50"
                 />
                 {!loading && !selectedRole && roleQuery.trim() !== "" && (
                   <ul
@@ -392,7 +392,7 @@ export default function Faktasidor() {
                     aria-pressed={group === g}
                     className={`text-sm font-medium rounded-lg px-3 py-2 border transition-colors ${
                       group === g
-                        ? "border-[#534AB7] bg-[#534AB7] text-white"
+                        ? "border-[#ffffff] bg-[#ffffff] text-white"
                         : "border-black/15 text-black/70 hover:bg-black/5"
                     }`}
                   >
@@ -421,7 +421,7 @@ export default function Faktasidor() {
                         <dt className="text-xs text-black/55">Kundpris enligt ramavtal</dt>
                         <dd className="text-lg font-semibold text-black tabular-nums">{kr(selectedPrice)}/h</dd>
                       </div>
-                      <div className="rounded-xl border border-[#534AB7]/25 bg-[#534AB7]/[0.06] px-4 py-3">
+                      <div className="rounded-xl border border-[#ffffff]/25 bg-[#ffffff]/[0.06] px-4 py-3">
                         <dt className="text-xs text-black/55">Möjlig ersättning som företagare</dt>
                         <dd className="text-lg font-semibold text-black tabular-nums">
                           {kr(selectedPrice * shareRange(selectedRole.group).min)}–
@@ -431,7 +431,7 @@ export default function Faktasidor() {
                     </dl>
                     <Link
                       to="/"
-                      className="mt-5 inline-flex text-sm font-semibold rounded-lg bg-[#534AB7] text-white px-6 py-3 hover:bg-[#463cA6] transition-colors"
+                      className="mt-5 inline-flex text-sm font-semibold rounded-lg bg-[#ffffff] text-white px-6 py-3 hover:bg-[#463cA6] transition-colors"
                     >
                       Gör din personliga analys
                     </Link>
@@ -440,7 +440,7 @@ export default function Faktasidor() {
                   <>
                     <div className="mt-4 rounded-xl border border-black/10 bg-black/[0.03] px-4 py-4">
                       <p className="flex items-center gap-2 text-sm font-medium text-black">
-                        <Lock className="w-4 h-4 text-[#534AB7]" aria-hidden />
+                        <Lock className="w-4 h-4 text-[#ffffff]" aria-hidden />
                         Ersättningsspann beräknat
                       </p>
                       <p className="mt-2 text-2xl font-semibold text-black/25 select-none tabular-nums" aria-hidden>
@@ -456,7 +456,7 @@ export default function Faktasidor() {
                       <Link
                         to="/registrera"
                         onClick={() => trackEvent("faktasidor_signup_cta_clicked")}
-                        className="inline-flex text-sm font-semibold rounded-lg bg-[#534AB7] text-white px-6 py-3 hover:bg-[#463cA6] transition-colors"
+                        className="inline-flex text-sm font-semibold rounded-lg bg-[#ffffff] text-white px-6 py-3 hover:bg-[#463cA6] transition-colors"
                       >
                         Skapa konto och se analysen
                       </Link>
@@ -490,7 +490,7 @@ export default function Faktasidor() {
             )}
 
             <div className="mt-8 flex items-start gap-2 max-w-[760px] text-xs leading-relaxed text-black/55">
-              <Info className="w-3.5 h-3.5 mt-0.5 shrink-0 text-[#534AB7]" aria-hidden />
+              <Info className="w-3.5 h-3.5 mt-0.5 shrink-0 text-[#ffffff]" aria-hidden />
               <p>
                 Underlaget är regionernas offentliga ramavtal 2026 (kundpris exklusive moms, grundpris — OB, jour och
                 beredskap tillkommer och faktureras separat). Ersättningsspannet visas i din personliga analys efter

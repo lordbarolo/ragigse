@@ -111,10 +111,10 @@ export default function LakareSpecialtyReport() {
   });
 
   const cream = "#EEEBE4";
-  const ink = "#0A0A0A";
+  const ink = "#0b0c10";
   const sub = "#6B7280";
   const border = "#E0DBD3";
-  const violet = "#3D3491";
+  const violet = "#22232b";
   const card = "#FFFFFF";
 
   return (

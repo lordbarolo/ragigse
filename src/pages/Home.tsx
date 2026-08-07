@@ -100,7 +100,7 @@ export default function Home() {
             {heroCollapsed && (
               <div className="md:hidden -mb-2">
                 <p className="text-xs uppercase tracking-wider text-black/60 font-medium">
-                  Vet du vad du <span className="text-[#3D3491] font-semibold">är värd?</span>
+                  Vet du vad du <span className="text-[#22232b] font-semibold">är värd?</span>
                 </p>
               </div>
             )}
@@ -109,7 +109,7 @@ export default function Home() {
             <div className="w-full md:max-w-[480px] md:justify-self-end lg:max-w-none lg:justify-self-stretch">
               <InlineTerminalSurvey variant="light" onStepChange={setSurveyStep} />
               <p className="mt-3 text-[11px] text-black/55 leading-relaxed flex items-start gap-1.5">
-                <ShieldCheck className="w-3 h-3 mt-0.5 shrink-0 text-[#3D3491]" />
+                <ShieldCheck className="w-3 h-3 mt-0.5 shrink-0 text-[#22232b]" />
                 <span>
                   Data lagras inom EU · Vi delar aldrig dina uppgifter. Se{" "}
                   <Link to="/integritetspolicy" className="underline">integritetspolicyn</Link>.

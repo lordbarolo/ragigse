@@ -45,12 +45,12 @@ export default function VerktygsForslagForm() {
     return (
       <div
         className="mt-6 p-4"
-        style={{ background: "#fff", border: "1px solid #e6e6ea", borderRadius: 12 }}
+        style={{ background: "#fff", border: "1px solid #e8e9ec", borderRadius: 12 }}
       >
-        <p className="m-0 text-[14px] font-semibold" style={{ color: "#191922" }}>
+        <p className="m-0 text-[14px] font-semibold" style={{ color: "#121319" }}>
           Kolla din inkorg
         </p>
-        <p className="mt-1 text-[13px]" style={{ color: "#5a5f6e", lineHeight: 1.6 }}>
+        <p className="mt-1 text-[13px]" style={{ color: "#6f7178", lineHeight: 1.6 }}>
           Vi har skickat en bekräftelselänk till {email.trim().toLowerCase()}. Ditt förslag
           registreras när du klickar på länken.
         </p>
@@ -62,10 +62,10 @@ export default function VerktygsForslagForm() {
     <form
       onSubmit={handleSubmit}
       className="mt-6 p-5"
-      style={{ background: "#fff", border: "1px solid #e6e6ea", borderRadius: 12 }}
+      style={{ background: "#fff", border: "1px solid #e8e9ec", borderRadius: 12 }}
     >
       <fieldset className="m-0 border-0 p-0">
-        <legend className="text-[14px] font-semibold" style={{ color: "#191922" }}>
+        <legend className="text-[14px] font-semibold" style={{ color: "#121319" }}>
           Jag vill helst se nya verktyg inom:
         </legend>
 
@@ -74,7 +74,7 @@ export default function VerktygsForslagForm() {
             <label
               key={opt.value}
               className="flex cursor-pointer items-center gap-2.5 text-[13.5px]"
-              style={{ color: "#3d4250" }}
+              style={{ color: "#22232b" }}
             >
               <input
                 type="radio"
@@ -82,7 +82,7 @@ export default function VerktygsForslagForm() {
                 value={opt.value}
                 checked={choice === opt.value}
                 onChange={() => setChoice(opt.value)}
-                style={{ accentColor: "#534AB7" }}
+                style={{ accentColor: "#ffffff" }}
               />
               {opt.label}
             </label>
@@ -97,7 +97,7 @@ export default function VerktygsForslagForm() {
           placeholder="Beskriv verktyget du saknar"
           rows={3}
           className="mt-3 w-full p-3 text-[13.5px] outline-none"
-          style={{ border: "1px solid #e6e6ea", borderRadius: 10, color: "#191922" }}
+          style={{ border: "1px solid #e8e9ec", borderRadius: 10, color: "#121319" }}
         />
       )}
 
@@ -109,10 +109,10 @@ export default function VerktygsForslagForm() {
         onChange={(e) => setEmail(e.target.value.slice(0, 255))}
         placeholder="din@epost.se"
         className="mt-3 w-full p-3 text-[13.5px] outline-none"
-        style={{ border: "1px solid #e6e6ea", borderRadius: 10, color: "#191922" }}
+        style={{ border: "1px solid #e8e9ec", borderRadius: 10, color: "#121319" }}
       />
 
-      <p className="mt-2 text-[11.5px]" style={{ color: "#8a8f9e", lineHeight: 1.5 }}>
+      <p className="mt-2 text-[11.5px]" style={{ color: "#8a8c94", lineHeight: 1.5 }}>
         Vi skickar en bekräftelselänk till din e-post. Förslaget registreras först när du
         bekräftar adressen.
       </p>
@@ -129,7 +129,7 @@ export default function VerktygsForslagForm() {
         className="mt-3 text-sm font-semibold px-6 py-3"
         style={{
           borderRadius: 999,
-          background: canSubmit ? "#191922" : "#c9ccd6",
+          background: canSubmit ? "#121319" : "#c7c9cf",
           color: "#fff",
           cursor: canSubmit ? "pointer" : "not-allowed",
         }}

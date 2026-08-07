@@ -14,12 +14,12 @@ const ROWS: { label: string; yrkeskategori: string }[] = [
 // Sektionen är mörk hela vägen; fadet till ljust sker först efter innehållet
 // (nedre kanten av sektionen), så alla rader har mörk-tema-färger.
 const ROW_THEME = [
-  { label: "#eef0f4", value: "#a3a7b7", accent: "#7c7ff2", border: "#22242e" },
-  { label: "#eef0f4", value: "#a3a7b7", accent: "#7c7ff2", border: "#22242e" },
-  { label: "#eef0f4", value: "#a3a7b7", accent: "#7c7ff2", border: "#22242e" },
-  { label: "#eef0f4", value: "#a3a7b7", accent: "#7c7ff2", border: "#22242e" },
-  { label: "#eef0f4", value: "#a3a7b7", accent: "#7c7ff2", border: "#22242e" },
-  { label: "#eef0f4", value: "#a3a7b7", accent: "#7c7ff2", border: "#22242e" },
+  { label: "#ffffff", value: "#9b9da7", accent: "#8a8c94", border: "#22232b" },
+  { label: "#ffffff", value: "#9b9da7", accent: "#8a8c94", border: "#22232b" },
+  { label: "#ffffff", value: "#9b9da7", accent: "#8a8c94", border: "#22232b" },
+  { label: "#ffffff", value: "#9b9da7", accent: "#8a8c94", border: "#22232b" },
+  { label: "#ffffff", value: "#9b9da7", accent: "#8a8c94", border: "#22232b" },
+  { label: "#ffffff", value: "#9b9da7", accent: "#8a8c94", border: "#22232b" },
 ];
 
 export default function RolltabellDark() {
@@ -28,21 +28,21 @@ export default function RolltabellDark() {
   return (
     <section
       style={{
-        background: "#0e1016",
+        background: "#0b0c10",
       }}
     >
       <div className="mx-auto max-w-[1200px] px-5 py-14 md:px-12 md:py-16">
         <div className="mb-6 flex flex-wrap items-baseline justify-between gap-2">
-          <h2 className="m-0 text-[22px] font-semibold md:text-[26px]" style={{ color: "#eef0f4", letterSpacing: "-0.01em" }}>
+          <h2 className="m-0 text-[22px] font-semibold md:text-[26px]" style={{ color: "#ffffff", letterSpacing: "-0.01em" }}>
             Mest sökta rollerna, alla zoner
           </h2>
-          <span className="text-[12px]" style={{ color: "#8c90a0" }}>
+          <span className="text-[12px]" style={{ color: "#8a8c94" }}>
             kr/h som företagare
           </span>
         </div>
 
         {base.length === 0 ? (
-          <p className="text-[13px]" style={{ color: "#8c90a0" }}>
+          <p className="text-[13px]" style={{ color: "#8a8c94" }}>
             Prisdata kunde inte hämtas just nu.
           </p>
         ) : (
@@ -55,8 +55,8 @@ export default function RolltabellDark() {
                     key={h}
                     className="pb-3 text-[11px] font-medium uppercase tracking-[0.1em]"
                     style={{
-                      color: "#666b7e",
-                      borderBottom: "1px solid #22242e",
+                      color: "#6f7178",
+                      borderBottom: "1px solid #22232b",
                       textAlign: i === 0 ? "left" : "right",
                       fontFamily: "'IBM Plex Mono',monospace",
                     }}
@@ -100,9 +100,9 @@ export default function RolltabellDark() {
         </div>
         )}
 
-        <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-[12px]" style={{ color: "#6b7080" }}>
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-[12px]" style={{ color: "#6f7178" }}>
           <span>Högst ersättning markerad. Fullständig lista med alla roller efter inloggning.</span>
-          <Link to="/faktasidor" style={{ color: "#4f46e5" }} className="hover:underline">
+          <Link to="/faktasidor" style={{ color: "#ffffff" }} className="hover:underline">
             Jämför alla roller →
           </Link>
         </div>
@@ -114,7 +114,7 @@ export default function RolltabellDark() {
         className="h-24 w-full md:h-32"
         style={{
           background:
-            "linear-gradient(180deg,#0e1016 0%,#191d2d 18%,#343950 34%,#6b7083 52%,#a7aab5 68%,#d8d9df 82%,#f5f5f7 100%)",
+            "linear-gradient(180deg,#0b0c10 0%,#0b0c10 18%,#22232b 34%,#6f7178 52%,#9b9da7 68%,#c7c9cf 82%,#e8e9ec 100%)",
         }}
       />
     </section>

@@ -249,7 +249,7 @@ export default function Login() {
             <>
               <CardHeader className="text-center !bg-transparent space-y-2">
                 {intentCopy && (
-                  <div className="mx-auto inline-flex items-center gap-1.5 rounded-full bg-[#3D3491]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#3D3491]">
+                  <div className="mx-auto inline-flex items-center gap-1.5 rounded-full bg-[#22232b]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#22232b]">
                     <Sparkles className="w-3 h-3" aria-hidden="true" />
                     {intentCopy.eyebrow}
                   </div>

@@ -33,8 +33,8 @@ export default function Rateraknare() {
     <div
       className="rounded-2xl p-6 md:p-7"
       style={{
-        background: "#151823",
-        border: "1px solid #262a38",
+        background: "#121319",
+        border: "1px solid #22232b",
         borderRadius: 16,
         animation: "fadeUp5c .55s .24s ease both",
       }}
@@ -43,7 +43,7 @@ export default function Rateraknare() {
         <div>
           <label
             className="mb-2 block text-[11px] uppercase tracking-[0.12em]"
-            style={{ color: "#8c90a0", fontFamily: "'IBM Plex Mono',monospace" }}
+            style={{ color: "#8a8c94", fontFamily: "'IBM Plex Mono',monospace" }}
           >
             Roll
           </label>
@@ -52,27 +52,27 @@ export default function Rateraknare() {
             value={role}
             onValueChange={setRole}
             placeholder="Välj roll"
-            triggerClassName="h-12 rounded-[10px] border-[#2c3142] bg-[#0e1016] text-[#eef0f4] shadow-none"
+            triggerClassName="h-12 rounded-[10px] border-[#22232b] bg-[#0b0c10] text-[#ffffff] shadow-none"
           />
         </div>
 
         <div>
           <label
             className="mb-2 block text-[11px] uppercase tracking-[0.12em]"
-            style={{ color: "#8c90a0", fontFamily: "'IBM Plex Mono',monospace" }}
+            style={{ color: "#8a8c94", fontFamily: "'IBM Plex Mono',monospace" }}
           >
             Zon
           </label>
-          <div className="flex h-12 items-center rounded-[10px]" style={{ background: "#0e1016", border: "1px solid #2c3142" }}>
+          <div className="flex h-12 items-center rounded-[10px]" style={{ background: "#0b0c10", border: "1px solid #22232b" }}>
             <select
               value={zone}
               onChange={(e) => setZone(e.target.value)}
               aria-label="Zon"
               className="h-full w-full bg-transparent px-3 text-[14.5px] outline-hidden"
-              style={{ color: "#eef0f4" }}
+              style={{ color: "#ffffff" }}
             >
               {ZONES_5C.map((z) => (
-                <option key={z.value} value={z.value} style={{ color: "#191922" }}>
+                <option key={z.value} value={z.value} style={{ color: "#121319" }}>
                   {z.label}
                 </option>
               ))}
@@ -85,7 +85,7 @@ export default function Rateraknare() {
         <div
           className="rounded-xl p-4"
           style={{
-            background: "linear-gradient(140deg,#5b5bf0,#8b8bf6)",
+            background: "#ffffff",
             borderRadius: 12,
           }}
         >
@@ -98,18 +98,18 @@ export default function Rateraknare() {
           </div>
         </div>
 
-        <div className="rounded-xl p-4" style={{ background: "#0e1016", border: "1px solid #262a38", borderRadius: 12 }}>
-          <div className="text-[11.5px] uppercase tracking-[0.1em]" style={{ color: "#8c90a0" }}>
+        <div className="rounded-xl p-4" style={{ background: "#0b0c10", border: "1px solid #22232b", borderRadius: 12 }}>
+          <div className="text-[11.5px] uppercase tracking-[0.1em]" style={{ color: "#8a8c94" }}>
             Som löntagare
           </div>
-          <div className="mt-1 flex items-baseline gap-1.5" style={{ color: "#eef0f4" }}>
+          <div className="mt-1 flex items-baseline gap-1.5" style={{ color: "#ffffff" }}>
             <span className="text-[32px] font-semibold leading-none">{kr(rate?.lontagareKrH)}</span>
             <span className="text-[13px]">kr/h</span>
           </div>
         </div>
       </div>
 
-      <p className="mt-4 text-[12px] leading-relaxed" style={{ color: "#666b7e" }}>
+      <p className="mt-4 text-[12px] leading-relaxed" style={{ color: "#6f7178" }}>
         {base.length === 0
           ? "Prisdata kunde inte hämtas just nu."
           : rate
@@ -123,21 +123,21 @@ export default function Rateraknare() {
           navigate("/registrera");
         }}
         className="mt-4 flex items-center gap-2 rounded-xl px-4 py-2"
-        style={{ background: "#0e1016", border: "1px solid #262a38", borderRadius: 12 }}
+        style={{ background: "#0b0c10", border: "1px solid #22232b", borderRadius: 12 }}
       >
         <input
           name="q"
           placeholder="Fråga assistenten om detaljerna…"
           className="h-9 flex-1 bg-transparent text-[14px] outline-hidden"
-          style={{ color: "#eef0f4" }}
+          style={{ color: "#ffffff" }}
           onFocus={() => navigate("/registrera")}
         />
-        <span aria-hidden className="inline-block h-[15px] w-[1.5px] caret5c" style={{ background: "#8b8bf6" }} />
+        <span aria-hidden className="inline-block h-[15px] w-[1.5px] caret5c" style={{ background: "#e8e9ec" }} />
         <button
           type="submit"
           aria-label="Gå till assistenten"
           className="grid h-9 w-9 place-items-center rounded-[10px] text-[16px]"
-          style={{ background: "linear-gradient(140deg,#5b5bf0,#8b8bf6)", color: "#fff" }}
+          style={{ background: "#ffffff", color: "#fff" }}
         >
           ↑
         </button>
