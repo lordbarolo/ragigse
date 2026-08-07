@@ -159,14 +159,15 @@ export default function HomeAssistantChat() {
   );
 
   const positions = [
-    "left-[1%] top-[4%] w-[220px]",
-    "right-[2%] top-[1%] w-[210px]",
-    "left-[6%] top-[27%] w-[200px]",
-    "right-[4%] top-[30%] w-[215px]",
-    "left-[3%] bottom-[13%] w-[205px]",
-    "right-[1%] bottom-[9%] w-[220px]",
-    "left-1/2 -translate-x-1/2 bottom-[1%] w-[250px]",
+    "left-[-2%] top-[0%] w-[220px]",
+    "right-[-2%] top-[-2%] w-[210px]",
+    "left-[-4%] top-[24%] w-[200px]",
+    "right-[-4%] top-[27%] w-[215px]",
+    "left-[-1%] bottom-[6%] w-[205px]",
+    "right-[-1%] bottom-[2%] w-[220px]",
+    "left-1/2 -translate-x-1/2 bottom-[-4%] w-[250px]",
   ];
+
 
   return (
     <div className="relative w-full">
