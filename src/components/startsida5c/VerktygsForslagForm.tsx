@@ -45,12 +45,12 @@ export default function VerktygsForslagForm() {
     return (
       <div
         className="mt-6 p-4"
-        style={{ background: "#fff", border: "1px solid #e8e9ec", borderRadius: 12 }}
+        style={{ background: "#121319", border: "1px solid #22232b", borderRadius: 12 }}
       >
-        <p className="m-0 text-[14px] font-semibold" style={{ color: "#121319" }}>
+        <p className="m-0 text-[14px] font-semibold" style={{ color: "#ffffff" }}>
           Kolla din inkorg
         </p>
-        <p className="mt-1 text-[13px]" style={{ color: "#6f7178", lineHeight: 1.6 }}>
+        <p className="mt-1 text-[13px]" style={{ color: "#a1a3ab", lineHeight: 1.6 }}>
           Vi har skickat en bekräftelselänk till {email.trim().toLowerCase()}. Ditt förslag
           registreras när du klickar på länken.
         </p>
@@ -62,10 +62,10 @@ export default function VerktygsForslagForm() {
     <form
       onSubmit={handleSubmit}
       className="mt-6 p-5"
-      style={{ background: "#fff", border: "1px solid #e8e9ec", borderRadius: 12 }}
+      style={{ background: "#121319", border: "1px solid #22232b", borderRadius: 12 }}
     >
       <fieldset className="m-0 border-0 p-0">
-        <legend className="text-[14px] font-semibold" style={{ color: "#121319" }}>
+        <legend className="text-[14px] font-semibold" style={{ color: "#ffffff" }}>
           Jag vill helst se nya verktyg inom:
         </legend>
 
@@ -97,7 +97,7 @@ export default function VerktygsForslagForm() {
           placeholder="Beskriv verktyget du saknar"
           rows={3}
           className="mt-3 w-full p-3 text-[13.5px] outline-none"
-          style={{ border: "1px solid #e8e9ec", borderRadius: 10, color: "#121319" }}
+          style={{ border: "1px solid #22232b", borderRadius: 10, color: "#ffffff" }}
         />
       )}
 
@@ -109,7 +109,7 @@ export default function VerktygsForslagForm() {
         onChange={(e) => setEmail(e.target.value.slice(0, 255))}
         placeholder="din@epost.se"
         className="mt-3 w-full p-3 text-[13.5px] outline-none"
-        style={{ border: "1px solid #e8e9ec", borderRadius: 10, color: "#121319" }}
+        style={{ border: "1px solid #22232b", borderRadius: 10, color: "#ffffff" }}
       />
 
       <p className="mt-2 text-[11.5px]" style={{ color: "#8a8c94", lineHeight: 1.5 }}>
