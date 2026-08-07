@@ -125,7 +125,7 @@ export default function HomeAssistantChat() {
     "h-auto max-w-[230px] whitespace-normal rounded-2xl border border-border/70 bg-secondary/45 px-4 py-2.5 text-left text-[12.5px] font-normal leading-snug text-muted-foreground backdrop-blur-md hover:border-primary/30 hover:bg-secondary/75 hover:text-foreground";
 
   const composer = (
-    <div className="mx-auto w-full max-w-[560px]">
+    <div className="mx-auto mb-8 w-full max-w-[560px]">
       {user ? (
         <PromptInput
           onSubmit={(message) => {
