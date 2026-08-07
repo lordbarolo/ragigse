@@ -52,7 +52,7 @@ export const optimizeCv = createServerFn({ method: "POST" })
         source_path: file?.path ?? null,
         source_file_name: file?.fileName ?? null,
         status: result.questions.length > 0 ? "needs_input" : "ready",
-        questions: result.questions,
+        questions: result.questions as unknown as never,
         answers,
         cv_markdown: result.cvMarkdown,
       })
