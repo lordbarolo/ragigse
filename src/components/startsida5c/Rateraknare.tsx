@@ -120,7 +120,7 @@ export default function Rateraknare() {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          document.getElementById("assistent")?.scrollIntoView({ behavior: "smooth" });
+          navigate({ to: "/registrera" });
         }}
         className="mt-4 flex items-center gap-2 rounded-xl px-4 py-2"
         style={{ background: "#0e1016", border: "1px solid #262a38", borderRadius: 12 }}
@@ -130,7 +130,7 @@ export default function Rateraknare() {
           placeholder="Fråga assistenten om detaljerna…"
           className="h-9 flex-1 bg-transparent text-[14px] outline-hidden"
           style={{ color: "#eef0f4" }}
-          onFocus={() => document.getElementById("assistent")?.scrollIntoView({ behavior: "smooth" })}
+          onFocus={() => navigate({ to: "/registrera" })}
         />
         <span aria-hidden className="inline-block h-[15px] w-[1.5px] caret5c" style={{ background: "#8b8bf6" }} />
         <button
