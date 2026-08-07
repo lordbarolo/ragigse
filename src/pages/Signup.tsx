@@ -77,7 +77,7 @@ export default function Signup() {
       email: normalizedEmail,
       password,
       options: {
-        emailRedirectTo: window.location.origin,
+        emailRedirectTo: `${window.location.origin}/consultant/profil`,
         data: {
           role: "individual",
           full_name: fullName.trim(),
