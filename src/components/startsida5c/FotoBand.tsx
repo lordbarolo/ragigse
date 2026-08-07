@@ -1,4 +1,4 @@
-import { Link } from "@/lib/router-compat";
+import BadgeCta from "./BadgeCta";
 import sskFoto from "@/assets/startsida5c-ssk.png";
 
 const TOOLS: { name: string; desc: string }[] = [
@@ -59,21 +59,10 @@ export default function FotoBand() {
             ))}
           </div>
 
-          <div className="mt-6 flex flex-wrap items-center gap-3">
-            <Link
-              to="/registrera"
-              className="inline-flex items-center rounded-full px-6 py-3 text-sm font-semibold transition-opacity hover:opacity-90"
-              style={{ background: "#ffffff", color: "#0b0c10" }}
-            >
+          <div className="mt-6">
+            <BadgeCta to="/registrera" variant="steel" ariaLabel="Skapa konto">
               Skapa konto
-            </Link>
-            <Link
-              to="/logga-in"
-              className="inline-flex items-center rounded-full px-6 py-3 text-sm font-semibold"
-              style={{ border: "1px solid #2c2d36", color: "#e6e7ea" }}
-            >
-              Logga in
-            </Link>
+            </BadgeCta>
           </div>
 
         </div>
