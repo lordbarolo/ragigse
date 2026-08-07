@@ -236,7 +236,7 @@ export default function HomeAssistantChat() {
                 {p.label}
               </button>
             ))}
-            <div className="absolute left-0 right-0 top-1/2 -translate-y-1/2 px-[30%]">{composer}</div>
+            <div className="pointer-events-none absolute left-0 right-0 top-1/2 z-20 -translate-y-1/2 px-[30%] [&_*]:pointer-events-auto">{composer}</div>
           </div>
 
 
