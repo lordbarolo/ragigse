@@ -39,12 +39,6 @@ export default function OvergangChatt() {
               Sätt din assistent i arbete.
             </span>
           </h2>
-          <p
-            className="mx-auto mt-4 max-w-[600px] text-[15.5px]"
-            style={{ lineHeight: 1.6, color: "#a1a3ab" }}
-          >
-            Vad tänker du på?
-          </p>
 
           <div className="mx-auto mt-9 w-full text-left">
             <HomeAssistantChat />
