@@ -1,6 +1,8 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { fromAddress } from "../_shared/mailFrom.ts";
+import { clientIp, emailKey } from "../_shared/emailCallerGate.ts";
+import { checkRateLimit, rateLimitResponse } from "../_shared/rateLimit.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -55,6 +57,14 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Rate limit per caller IP and per recipient — an authenticated account
+    // should not be able to fan out referral mail from our domain.
+    for (const key of [`ip:${clientIp(req)}`, await emailKey(String(referee_email))]) {
+      const rl = await checkRateLimit(supabase, "send-referral", key, 5, 60);
+      if (!rl.allowed) return rateLimitResponse(rl, corsHeaders);
+    }
+
 
     // Insert referral and get back the token
     const { data: referral, error: insertError } = await supabase
