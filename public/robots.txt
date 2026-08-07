@@ -36,6 +36,7 @@ Disallow: /dev/
 Disallow: /resultat/
 Disallow: /consultant/
 Disallow: /profil
+Disallow: /profil
 Disallow: /onboarding
 Disallow: /logga-in
 Disallow: /registrera
@@ -60,6 +61,7 @@ Allow: /openapi.json
 Disallow: /admin
 Disallow: /resultat/
 Disallow: /consultant/
+Disallow: /profil
 Disallow: /rest/v1/
 Disallow: /functions/v1/
 Disallow: /api/
@@ -71,6 +73,7 @@ Allow: /agent-index.json
 Disallow: /admin
 Disallow: /resultat/
 Disallow: /consultant/
+Disallow: /profil
 Disallow: /rest/v1/
 Disallow: /functions/v1/
 
@@ -81,6 +84,7 @@ Allow: /agent-index.json
 Disallow: /admin
 Disallow: /resultat/
 Disallow: /consultant/
+Disallow: /profil
 Disallow: /rest/v1/
 Disallow: /functions/v1/
 
@@ -91,6 +95,7 @@ Allow: /agent-index.json
 Disallow: /admin
 Disallow: /resultat/
 Disallow: /consultant/
+Disallow: /profil
 Disallow: /rest/v1/
 Disallow: /functions/v1/
 
@@ -101,6 +106,7 @@ Allow: /agent-index.json
 Disallow: /admin
 Disallow: /resultat/
 Disallow: /consultant/
+Disallow: /profil
 Disallow: /rest/v1/
 Disallow: /functions/v1/
 
@@ -111,6 +117,7 @@ Allow: /agent-index.json
 Disallow: /admin
 Disallow: /resultat/
 Disallow: /consultant/
+Disallow: /profil
 Disallow: /rest/v1/
 Disallow: /functions/v1/
 
@@ -121,5 +128,6 @@ Allow: /agent-index.json
 Disallow: /admin
 Disallow: /resultat/
 Disallow: /consultant/
+Disallow: /profil
 Disallow: /rest/v1/
 Disallow: /functions/v1/
