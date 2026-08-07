@@ -1418,6 +1418,45 @@ export type Database = {
         }
         Relationships: []
       }
+      cv_optimizations: {
+        Row: {
+          answers: Json
+          created_at: string
+          cv_markdown: string | null
+          id: string
+          questions: Json
+          source_file_name: string | null
+          source_path: string | null
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          answers?: Json
+          created_at?: string
+          cv_markdown?: string | null
+          id?: string
+          questions?: Json
+          source_file_name?: string | null
+          source_path?: string | null
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          answers?: Json
+          created_at?: string
+          cv_markdown?: string | null
+          id?: string
+          questions?: Json
+          source_file_name?: string | null
+          source_path?: string | null
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       edge_function_errors: {
         Row: {
           context: Json | null
@@ -3178,6 +3217,42 @@ export type Database = {
         }
         Relationships: []
       }
+      registry_extract_orders: {
+        Row: {
+          created_at: string
+          doc_type: string
+          full_name: string
+          id: string
+          personnummer: string
+          price_ore: number
+          status: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          doc_type: string
+          full_name: string
+          id?: string
+          personnummer: string
+          price_ore?: number
+          status?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          doc_type?: string
+          full_name?: string
+          id?: string
+          personnummer?: string
+          price_ore?: number
+          status?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       report_feedback: {
         Row: {
           comment: string | null
@@ -3931,6 +4006,16 @@ export type Database = {
       get_document_share_by_token: { Args: { _token: string }; Returns: Json }
       get_feature_flag: { Args: { _key: string }; Returns: Json }
       get_health_check_cron_token: { Args: never; Returns: string }
+      get_my_registry_orders: {
+        Args: never
+        Returns: {
+          created_at: string
+          doc_type: string
+          id: string
+          price_ore: number
+          status: string
+        }[]
+      }
       get_referral_by_token: {
         Args: { _token: string }
         Returns: {
