@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { trackEvent } from "@/lib/trackEvent";
+import { translateAuthError } from "@/lib/authErrors";
 
 type Props = {
   label?: string;
@@ -38,7 +39,7 @@ export default function GoogleAuthButton({ label = "Fortsätt med Google", sourc
       if (result.error) {
         toast({
           title: "Google-inloggning misslyckades",
-          description: result.error.message,
+          description: translateAuthError(result.error),
           variant: "destructive",
         });
         setLoading(false);

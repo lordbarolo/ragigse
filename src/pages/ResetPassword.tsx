@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
+import { translateAuthError } from "@/lib/authErrors";
 
 export default function ResetPassword() {
   const [password, setPassword] = useState("");
@@ -111,7 +112,7 @@ export default function ResetPassword() {
       url.searchParams.delete("code");
       window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
       setPendingRecovery(null);
-      toast({ title: "Återställningslänken är ogiltig", description: error.message, variant: "destructive" });
+      toast({ title: "Återställningslänken är ogiltig", description: translateAuthError(error), variant: "destructive" });
       return;
     }
 
@@ -136,7 +137,7 @@ export default function ResetPassword() {
     setLoading(false);
 
     if (error) {
-      toast({ title: "Något gick fel", description: error.message, variant: "destructive" });
+      toast({ title: "Något gick fel", description: translateAuthError(error), variant: "destructive" });
     } else {
       toast({ title: "Lösenord uppdaterat!" });
       navigate("/profil");
