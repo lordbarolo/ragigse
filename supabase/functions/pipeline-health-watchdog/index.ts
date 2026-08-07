@@ -21,7 +21,7 @@ const TASK_NAME = "pipeline-health-watchdog";
 const LIVENESS_WINDOW_DAYS = 8;
 const FORECAST_TASK = "refresh-uppdragsradar-forecast";
 const BACKTEST_TASK = "backtest-uppdragsradar-accuracy";
-const DEFAULT_ALERT_EMAIL = "anders@compcare.se";
+const DEFAULT_ALERT_EMAIL = "alerts@vardbemanning.ai";
 
 interface HealthLog {
   task_name: string;

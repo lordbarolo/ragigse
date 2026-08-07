@@ -11,7 +11,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const ADMIN_EMAIL = "henrik@compcare.se";
+const ADMIN_EMAIL = "alerts@vardbemanning.ai";
 
 type Finding = {
   category: string;
