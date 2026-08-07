@@ -6,7 +6,6 @@ import SearchableSelect from "@/components/SearchableSelect";
 import { basePrices, roleOptions5c, type RateRow } from "@/components/startsida5c/rate5c";
 import { roleLabel5c } from "@/components/startsida5c/roleLabels5c";
 import { saveProfileContext, type ProfileContext } from "@/lib/profileContext";
-import { trackEvent } from "@/lib/trackEvent";
 import { toast } from "sonner";
 
 type Msg = { id: string; role: "user" | "assistant"; text: string; source?: string };
@@ -112,7 +111,6 @@ export default function ProfileAssistantChat({ userId, context, unlocked, onSave
         hourlyRate: Number(next.rate),
       });
       await onSaved();
-      trackEvent("profile_assistant_unlocked", { role: saved.role, kommun: saved.kommun });
       push({
         role: "assistant",
         text: `Tack — nu vet jag vem jag pratar med. ${saved.role} i ${saved.kommun}, ${
