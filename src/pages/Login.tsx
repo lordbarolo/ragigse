@@ -12,6 +12,7 @@ import CompcareLogo from "@/components/CompcareLogo";
 import { trackEvent } from "@/lib/trackEvent";
 import posthog from "@/lib/posthog";
 import { getAuthIntentCopy, sanitizeRedirect } from "@/lib/authIntent";
+import { translateAuthError } from "@/lib/authErrors";
 
 type RecoveryStatus = "idle" | "sending" | "sent" | "error";
 
@@ -93,9 +94,7 @@ export default function Login() {
       });
       toast({
         title: "Inloggning misslyckades",
-        description: error.message === "Invalid login credentials"
-          ? "Fel e-post eller lösenord"
-          : error.message,
+        description: translateAuthError(error),
         variant: "destructive",
       });
       setLoading(false);
@@ -123,7 +122,7 @@ export default function Login() {
       // för att inte avslöja om e-posten finns.
       if (error) {
         setRecoveryStatus("error");
-        setRecoveryError(error.message || "Tjänsten är tillfälligt otillgänglig.");
+        setRecoveryError("Tjänsten är tillfälligt otillgänglig. Försök igen om en stund.");
         return;
       }
       setRecoveryStatus("sent");

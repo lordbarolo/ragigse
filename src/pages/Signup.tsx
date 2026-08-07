@@ -11,6 +11,7 @@ import CompcareLogo from "@/components/CompcareLogo";
 import { trackEvent } from "@/lib/trackEvent";
 import { getSignupIntentCopy, sanitizeRedirect } from "@/lib/authIntent";
 import GoogleAuthButton from "@/components/auth/GoogleAuthButton";
+import { translateAuthError } from "@/lib/authErrors";
 
 export default function Signup() {
   const [email, setEmail] = useState("");
@@ -96,7 +97,7 @@ export default function Signup() {
         return;
       }
 
-      toast({ title: "Registrering misslyckades", description: error.message, variant: "destructive" });
+      toast({ title: "Registrering misslyckades", description: translateAuthError(error), variant: "destructive" });
       return;
     }
 

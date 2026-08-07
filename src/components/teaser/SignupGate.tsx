@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { toast } from "@/hooks/use-toast";
 import { trackEvent } from "@/lib/trackEvent";
+import { translateAuthError } from "@/lib/authErrors";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -44,7 +45,7 @@ export default function SignupGate({ onAuthenticated, loading }: Props) {
       });
       if (result.error) {
         sessionStorage.removeItem("compcare:autoUnlock");
-        toast({ title: "Google-inloggning misslyckades", description: result.error.message, variant: "destructive" });
+        toast({ title: "Google-inloggning misslyckades", description: translateAuthError(result.error), variant: "destructive" });
         setGoogleLoading(false);
         return;
       }
@@ -102,7 +103,7 @@ export default function SignupGate({ onAuthenticated, loading }: Props) {
         return;
       }
       setSubmitting(false);
-      toast({ title: "Kunde inte skapa konto", description: error.message, variant: "destructive" });
+      toast({ title: "Kunde inte skapa konto", description: translateAuthError(error), variant: "destructive" });
       return;
     }
 
