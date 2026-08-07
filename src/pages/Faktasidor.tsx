@@ -307,7 +307,7 @@ export default function Faktasidor() {
             </div>
 
             {selectedKommun && (
-              <div className="mt-4 rounded-xl border border-[#ffffff]/25 bg-[#ffffff]/[0.06] px-4 py-3 text-sm text-black/80 max-w-[520px]">
+              <div className="mt-4 rounded-xl border border-[#ffffff]/25 bg-[#121319]/[0.06] px-4 py-3 text-sm text-black/80 max-w-[520px]">
                 <strong className="font-semibold text-black">{selectedKommun.kommun}</strong> ({selectedKommun.region})
                 tillhör <strong className="font-semibold text-black">{selectedKommun.zon}</strong> —{" "}
                 {ZONE_HELP[selectedKommun.zon as Zone]}.
@@ -392,7 +392,7 @@ export default function Faktasidor() {
                     aria-pressed={group === g}
                     className={`text-sm font-medium rounded-lg px-3 py-2 border transition-colors ${
                       group === g
-                        ? "border-[#ffffff] bg-[#ffffff] text-white"
+                        ? "border-[#ffffff] bg-[#121319] text-white"
                         : "border-black/15 text-black/70 hover:bg-black/5"
                     }`}
                   >
@@ -421,7 +421,7 @@ export default function Faktasidor() {
                         <dt className="text-xs text-black/55">Kundpris enligt ramavtal</dt>
                         <dd className="text-lg font-semibold text-black tabular-nums">{kr(selectedPrice)}/h</dd>
                       </div>
-                      <div className="rounded-xl border border-[#ffffff]/25 bg-[#ffffff]/[0.06] px-4 py-3">
+                      <div className="rounded-xl border border-[#ffffff]/25 bg-[#121319]/[0.06] px-4 py-3">
                         <dt className="text-xs text-black/55">Möjlig ersättning som företagare</dt>
                         <dd className="text-lg font-semibold text-black tabular-nums">
                           {kr(selectedPrice * shareRange(selectedRole.group).min)}–
@@ -431,7 +431,7 @@ export default function Faktasidor() {
                     </dl>
                     <Link
                       to="/"
-                      className="mt-5 inline-flex text-sm font-semibold rounded-lg bg-[#ffffff] text-white px-6 py-3 hover:bg-[#463cA6] transition-colors"
+                      className="mt-5 inline-flex text-sm font-semibold rounded-lg bg-[#121319] text-white px-6 py-3 hover:bg-[#463cA6] transition-colors"
                     >
                       Gör din personliga analys
                     </Link>
@@ -456,7 +456,7 @@ export default function Faktasidor() {
                       <Link
                         to="/registrera"
                         onClick={() => trackEvent("faktasidor_signup_cta_clicked")}
-                        className="inline-flex text-sm font-semibold rounded-lg bg-[#ffffff] text-white px-6 py-3 hover:bg-[#463cA6] transition-colors"
+                        className="inline-flex text-sm font-semibold rounded-lg bg-[#121319] text-white px-6 py-3 hover:bg-[#463cA6] transition-colors"
                       >
                         Skapa konto och se analysen
                       </Link>

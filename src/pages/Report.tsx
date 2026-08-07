@@ -83,8 +83,8 @@ export default function Report() {
   useEffect(() => {
     const prevHtml = document.documentElement.style.backgroundColor;
     const prevBody = document.body.style.backgroundColor;
-    document.documentElement.style.backgroundColor = '#EEEBE4';
-    document.body.style.backgroundColor = '#EEEBE4';
+    document.documentElement.style.backgroundColor = '#0b0c10';
+    document.body.style.backgroundColor = '#0b0c10';
     return () => {
       document.documentElement.style.backgroundColor = prevHtml;
       document.body.style.backgroundColor = prevBody;
@@ -131,36 +131,36 @@ export default function Report() {
       className="min-h-screen"
       style={{
         // Light "cream" report theme — overrides global tokens only on this page
-        ['--background' as any]: '40 18% 91%',     // #EEEBE4
+        ['--background' as any]: '40 18% 91%',     // #0b0c10
         ['--foreground' as any]: '0 0% 4%',         // #0b0c10
         ['--card' as any]: '0 0% 100%',             // #FFFFFF
         ['--card-foreground' as any]: '0 0% 4%',
         ['--popover' as any]: '0 0% 100%',
         ['--popover-foreground' as any]: '0 0% 4%',
         ['--muted' as any]: '40 18% 91%',
-        ['--muted-foreground' as any]: '220 9% 46%', // #6B7280
+        ['--muted-foreground' as any]: '220 9% 46%', // #8a8c94
         ['--secondary' as any]: '40 18% 91%',
         ['--secondary-foreground' as any]: '0 0% 4%',
         ['--accent' as any]: '40 18% 91%',
         ['--accent-foreground' as any]: '0 0% 4%',
-        ['--border' as any]: '35 17% 85%',          // #E0DBD3
+        ['--border' as any]: '35 17% 85%',          // #22232b
         ['--input' as any]: '35 17% 85%',
         ['--radius' as any]: '12px',
-        backgroundColor: '#EEEBE4',
-        color: '#0b0c10',
+        backgroundColor: '#0b0c10',
+        color: '#ffffff',
       }}
     >
       <div data-pdf-hide><Navbar /></div>
       {/* Header — cream light theme */}
       <header
         className="relative overflow-hidden px-5 pt-20 pb-10 sm:pt-24 sm:pb-12"
-        style={{ backgroundColor: '#EEEBE4', color: '#0b0c10' }}
+        style={{ backgroundColor: '#0b0c10', color: '#ffffff' }}
       >
         <div className="max-w-lg mx-auto space-y-4 relative z-10">
-          <p className="text-[10px] uppercase tracking-[0.2em] font-medium" style={{ color: '#6B7280' }}>
+          <p className="text-[10px] uppercase tracking-[0.2em] font-medium" style={{ color: '#8a8c94' }}>
             Ersättningsanalys
           </p>
-          <h1 className="leading-tight" style={{ fontFamily: 'Georgia, serif', fontSize: '28px', fontWeight: 700, color: '#0b0c10' }}>
+          <h1 className="leading-tight" style={{ fontFamily: 'Georgia, serif', fontSize: '28px', fontWeight: 700, color: '#ffffff' }}>
             {(() => {
               const occ = report.occupation || "";
               const stripped = occ.replace(/^Specialistläkare\s+/i, "").trim();
@@ -168,12 +168,12 @@ export default function Report() {
               return stripped.charAt(0).toUpperCase() + stripped.slice(1);
             })()}
           </h1>
-          <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1" style={{ fontSize: '13px', color: '#6B7280' }}>
+          <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1" style={{ fontSize: '13px', color: '#8a8c94' }}>
             <span className="whitespace-nowrap">{report.kommun}</span>
             {report.user_zone && (
               <span
                 className="whitespace-nowrap px-1 py-0 rounded"
-                style={{ backgroundColor: '#FFFFFF', border: '1px solid #E0DBD3', color: '#0b0c10', fontSize: '11px' }}
+                style={{ backgroundColor: '#121319', border: '1px solid #22232b', color: '#ffffff', fontSize: '11px' }}
               >
                 {report.user_zone}
               </span>
@@ -204,12 +204,12 @@ export default function Report() {
         {/* Definition av "möjlig ersättning" ligger i "Vad det här betyder för dig" + Metod-collapsiblen — undvik dubblett. */}
 
         {/* Förhandlingsassistenten */}
-        <div className="rounded-2xl border overflow-hidden" style={{ backgroundColor: '#FFFFFF', borderColor: '#E0DBD3' }}>
+        <div className="rounded-2xl border overflow-hidden" style={{ backgroundColor: '#121319', borderColor: '#22232b' }}>
           <div className="pt-3.5 px-4 sm:pt-5 sm:px-5">
-            <p className="font-semibold leading-snug text-[16px] sm:text-[18px]" style={{ fontFamily: 'Georgia, serif', color: '#0b0c10' }}>
+            <p className="font-semibold leading-snug text-[16px] sm:text-[18px]" style={{ fontFamily: 'Georgia, serif', color: '#ffffff' }}>
               Förhandlingsassistenten
             </p>
-            <p className="text-[13px] sm:text-sm mt-1 leading-snug" style={{ color: '#6B7280' }}>
+            <p className="text-[13px] sm:text-sm mt-1 leading-snug" style={{ color: '#8a8c94' }}>
               Få argument och tips inför din nästa förhandling, baserat på ramavtal och din situation.
             </p>
           </div>
@@ -244,12 +244,12 @@ export default function Report() {
         ) : (
           <div
             className="rounded-2xl border p-5 mt-2"
-            style={{ backgroundColor: '#FFFFFF', borderColor: '#E0DBD3' }}
+            style={{ backgroundColor: '#121319', borderColor: '#22232b' }}
           >
-            <h3 className="font-semibold mb-1" style={{ fontFamily: 'Georgia, serif', fontSize: '18px', color: '#0b0c10' }}>
+            <h3 className="font-semibold mb-1" style={{ fontFamily: 'Georgia, serif', fontSize: '18px', color: '#ffffff' }}>
               Logga in för att se din analys
             </h3>
-            <p className="text-sm mb-4" style={{ color: '#6B7280' }}>
+            <p className="text-sm mb-4" style={{ color: '#8a8c94' }}>
               Denna rapport innehåller personuppgifter och visas endast för rapportens ägare.
               Logga in med den e-post du angav när rapporten skapades.
             </p>
@@ -270,11 +270,11 @@ export default function Report() {
 
         {/* Skapa konto-CTA (visas endast för icke-inloggade) */}
         {!user && (
-          <div data-pdf-hide className="rounded-2xl border p-5 mt-4" style={{ backgroundColor: '#FFFFFF', borderColor: '#E0DBD3' }}>
-            <h3 className="font-semibold mb-1" style={{ fontFamily: 'Georgia, serif', fontSize: '18px', color: '#0b0c10' }}>
+          <div data-pdf-hide className="rounded-2xl border p-5 mt-4" style={{ backgroundColor: '#121319', borderColor: '#22232b' }}>
+            <h3 className="font-semibold mb-1" style={{ fontFamily: 'Georgia, serif', fontSize: '18px', color: '#ffffff' }}>
               Spara din rapport
             </h3>
-            <p className="text-sm mb-4" style={{ color: '#6B7280' }}>
+            <p className="text-sm mb-4" style={{ color: '#8a8c94' }}>
               Skapa ett konto för att spara analysen, följa marknaden och få tillgång till dina verktyg.
             </p>
             <Button
@@ -313,7 +313,7 @@ export default function Report() {
                   await new Promise((r) => setTimeout(r, 50));
 
                   const canvas = await html2canvas(node, {
-                    backgroundColor: "#EEEBE4",
+                    backgroundColor: "#0b0c10",
                     scale: 2,
                     useCORS: true,
                     logging: false,

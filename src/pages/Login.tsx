@@ -163,7 +163,7 @@ export default function Login() {
     <div
       className="relative min-h-screen flex items-center justify-center p-4 overflow-hidden"
       style={{
-        backgroundColor: "#EEEBE4",
+        backgroundColor: "#0b0c10",
         backgroundImage: [
           "radial-gradient(ellipse 70% 55% at 15% 25%, hsl(196 100% 50% / 0.18) 0%, transparent 55%)",
           "radial-gradient(ellipse 55% 50% at 85% 20%, hsl(245 58% 60% / 0.14) 0%, transparent 50%)",

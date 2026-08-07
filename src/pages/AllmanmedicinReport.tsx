@@ -21,7 +21,7 @@ import { useCatalogZoneRates } from "@/hooks/useCatalogZoneRates";
 
 /**
  * Rollrapport — Specialistläkare i Allmänmedicin (nationell)
- * Färgschema matchar startsidans cream/violet (#EEEBE4 / #22232b).
+ * Färgschema matchar startsidans cream/violet (#0b0c10 / #22232b).
  * Neutral copy: informerar om SKR-priser, driver inte upp löner.
  */
 
@@ -88,8 +88,8 @@ export default function AllmanmedicinReport() {
   useEffect(() => {
     const prevHtml = document.documentElement.style.backgroundColor;
     const prevBody = document.body.style.backgroundColor;
-    document.documentElement.style.backgroundColor = "#EEEBE4";
-    document.body.style.backgroundColor = "#EEEBE4";
+    document.documentElement.style.backgroundColor = "#0b0c10";
+    document.body.style.backgroundColor = "#0b0c10";
     return () => {
       document.documentElement.style.backgroundColor = prevHtml;
       document.body.style.backgroundColor = prevBody;
@@ -107,10 +107,10 @@ export default function AllmanmedicinReport() {
     faq: FAQ,
   });
 
-  const cream = "#EEEBE4";
+  const cream = "#0b0c10";
   const ink = "#0b0c10";
-  const sub = "#6B7280";
-  const border = "#E0DBD3";
+  const sub = "#8a8c94";
+  const border = "#22232b";
   const violet = "#22232b";
   const card = "#FFFFFF";
 

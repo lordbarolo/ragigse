@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { heroBackgroundStyle } from "@/lib/heroBackground";
 
 /**
- * Anthropic-inspirerat scope: varm bakgrund (#EEEBE4 + mesh) +
+ * Anthropic-inspirerat scope: varm bakgrund (#0b0c10 + mesh) +
  * Inter Tight 800-rubriker + Source Serif 4 brödtext.
  *
  * Lägg som rotomslutning runt en sida för att applicera samma look som / och /demo.
@@ -32,14 +32,14 @@ export default function AnthropicScope({
       }
     >
       <style>{`
-        /* ── Bakgrund: tvinga #EEEBE4 över hela scopet ── */
+        /* ── Bakgrund: tvinga #0b0c10 över hela scopet ── */
         .demo-anthropic-scope,
         .demo-anthropic-scope .bg-black,
         .demo-anthropic-scope [class*="bg-slate-"],
         .demo-anthropic-scope [class*="bg-neutral-"],
         .demo-anthropic-scope [class*="bg-zinc-"],
         .demo-anthropic-scope [class*="bg-gray-"] {
-          background-color: #EEEBE4 !important;
+          background-color: #0b0c10 !important;
         }
 
         /* ── Rubriker: Inter Tight 800, svart, tight tracking ── */
