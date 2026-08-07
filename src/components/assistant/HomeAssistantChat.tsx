@@ -246,8 +246,8 @@ export default function HomeAssistantChat() {
                   type="button"
                   disabled={loading}
                   onClick={() => onPreset(p)}
-                  style={{ animationDelay: `${(i % 4) * 1.1}s` }}
-                  className={chipClass}
+                  style={{ animationDelay: `${(i % 4) * 1.1}s`, animationDuration: `${7 + (i % 3)}s` }}
+                  className={`${i % 2 === 0 ? "chip-float" : "chip-float-reverse"} rounded-full bg-white/[0.045] px-3.5 py-2 text-left text-[12.5px] leading-snug text-white/70 backdrop-blur-sm transition-colors hover:bg-white/[0.09] hover:text-white disabled:opacity-40`}
                 >
                   {p.label}
                 </button>
