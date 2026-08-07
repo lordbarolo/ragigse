@@ -215,7 +215,7 @@ export default function HomeAssistantChat() {
         <>
           {/* Desktop: varje fråga rör sig endast inom en egen gridcell. */}
           <div className="hidden w-full md:block">
-            <div className="grid min-h-[360px] w-full grid-cols-[minmax(0,1fr)_minmax(280px,360px)_minmax(0,1fr)] items-center gap-5 lg:gap-10">
+            <div className="grid min-h-[320px] w-full grid-cols-[minmax(0,1fr)_minmax(280px,360px)_minmax(0,1fr)] grid-rows-[1fr_auto] items-center gap-5 lg:gap-10">
               <div className="flex min-w-0 flex-col items-end justify-center gap-12 py-5">
                 {[PRESETS[0], PRESETS[2], PRESETS[4]].map((p, i) => p && (
                   <Button key={p.key} type="button" variant="ghost" disabled={loading} onClick={() => onPreset(p)} style={{ animationDelay: `${i * -3.1}s` }} className={`${chipClass} ${i % 2 === 0 ? "chip-float" : "chip-float-reverse"}`}>
@@ -223,7 +223,7 @@ export default function HomeAssistantChat() {
                   </Button>
                 ))}
               </div>
-              <div className="relative z-10 w-full">{composer}</div>
+              <div className="relative z-10 row-span-1 w-full self-center">{composer}</div>
               <div className="flex min-w-0 flex-col items-start justify-center gap-12 py-5">
                 {[PRESETS[1], PRESETS[3], PRESETS[5]].map((p, i) => p && (
                   <Button key={p.key} type="button" variant="ghost" disabled={loading} onClick={() => onPreset(p)} style={{ animationDelay: `${i * -4.3}s` }} className={`${chipClass} ${i % 2 === 0 ? "chip-float-reverse" : "chip-float"}`}>
@@ -231,19 +231,18 @@ export default function HomeAssistantChat() {
                   </Button>
                 ))}
               </div>
-
+              {PRESETS[6] && (
+                <div className="col-span-3 flex justify-center pb-4">
+                  <Button type="button" variant="ghost" disabled={loading} onClick={() => onPreset(PRESETS[6])} className={`${chipClass} chip-float`}>
+                    {PRESETS[6].label}
+                  </Button>
+                </div>
+              )}
             </div>
-            {PRESETS[6] && (
-              <div className="mt-5 flex min-h-12 justify-center px-8">
-                <Button type="button" variant="ghost" disabled={loading} onClick={() => onPreset(PRESETS[6])} className={`${chipClass} chip-float`}>
-                  {PRESETS[6].label}
-                </Button>
-              </div>
-            )}
           </div>
 
-
           {/* Mobil/tablet */}
+
           <div className="md:hidden">
             {composer}
             <div className="mt-5 flex flex-wrap justify-center gap-1.5">
