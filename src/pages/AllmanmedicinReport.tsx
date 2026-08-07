@@ -122,10 +122,10 @@ export default function AllmanmedicinReport() {
         className="min-h-screen"
         style={{
           ["--background" as any]: "228 18% 5%",
-          ["--foreground" as any]: "231 16% 9%",
+          ["--foreground" as any]: "0 0% 100%",
           ["--card" as any]: "231 16% 9%",
-          ["--card-foreground" as any]: "231 16% 9%",
-          ["--muted" as any]: "228 18% 5%",
+          ["--card-foreground" as any]: "0 0% 100%",
+          ["--muted" as any]: "231 16% 12%",
           ["--muted-foreground" as any]: "228 6% 62%",
           ["--border" as any]: "230 10% 17%",
           ["--primary" as any]: "0 0% 100%",
