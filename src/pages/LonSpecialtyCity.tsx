@@ -274,7 +274,7 @@ export default function LonSpecialtyCity() {
             </p>
 
             <div className="mt-7 grid gap-3 sm:grid-cols-2">
-              <div className="rounded-xl p-5" style={{ background: "#ffffff", borderRadius: 12 }}>
+              <div className="rounded-xl p-5" style={{ background: "#121319", border: "1px solid #22232b", borderRadius: 12 }}>
                 <div className="text-[11.5px] uppercase tracking-[0.1em]" style={{ color: "rgba(255,255,255,.82)" }}>
                   Som företagare
                 </div>

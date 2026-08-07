@@ -85,7 +85,8 @@ export default function Rateraknare() {
         <div
           className="rounded-xl p-4"
           style={{
-            background: "#ffffff",
+            background: "#121319",
+            border: "1px solid #22232b",
             borderRadius: 12,
           }}
         >
