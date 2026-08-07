@@ -15,7 +15,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, waitFor } from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "@/lib/router-compat";
-import { HelmetProvider } from "react-helmet-async";
 
 // ── Hoisted mocks ────────────────────────────────────────────────────────────
 const {
@@ -99,14 +98,14 @@ const SURVEY = {
 
 function renderAt(path = `/resultat/${LEAD_ID}`) {
   return render(
-    <HelmetProvider>
+    <>
       <MemoryRouter initialEntries={[path]}>
         <Routes>
           <Route path="/resultat/:leadId" element={<AnalysisScreen />} />
           <Route path="/resultat" element={<AnalysisScreen />} />
         </Routes>
       </MemoryRouter>
-    </HelmetProvider>
+    </>
   );
 }
 
