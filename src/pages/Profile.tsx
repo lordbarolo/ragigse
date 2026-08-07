@@ -1,537 +1,110 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "@/lib/router-compat";
-import { supabase } from "@/integrations/supabase/client";
+import { useEffect } from "react";
+import { useNavigate } from "@/lib/router-compat";
+import { Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
-import Navbar from "@/components/Navbar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { FileText, MapPin, Briefcase, Clock, UserPlus, Check, Mail, Users, User, Share2, ArrowRight, MessageSquare } from "lucide-react";
-import { ProfilePageSkeleton } from "@/components/ui/page-skeleton";
-import { toast } from "sonner";
-import ProfileTabs, { type ProfileTab } from "@/components/profile/ProfileTabs";
-import ProfileInsights from "@/components/profile/ProfileInsights";
-import TrustVerification from "@/components/profile/TrustVerification";
-import CompensationView from "@/components/report/CompensationView";
+import { useProfileContext } from "@/hooks/useProfileContext";
+import ProfileAssistantChat from "@/components/profile/ProfileAssistantChat";
+import ProfileToolsGrid from "@/components/profile/ProfileToolsGrid";
+import ProfileDocumentsSection from "@/components/profile/ProfileDocumentsSection";
 
-
-import ProfileAuditLog from "@/components/profile/ProfileAuditLog";
-
-import PensionImpactSimulator from "@/components/report/PensionImpactSimulator";
-import AssignmentFeedbackDialog from "@/components/profile/AssignmentFeedbackDialog";
-
-
-import { useAssignmentFeedback } from "@/hooks/useAssignmentFeedback";
-import { trackEvent } from "@/lib/trackEvent";
-
-
-interface ReportRow {
-  id: string;
-  created_at: string;
-  occupation: string | null;
-  kommun: string | null;
-  employment_type: string | null;
-  status: string;
-}
-
-interface ProfileData {
-  specialty_name: string | null;
-  region_name: string | null;
-  experience_years: number | null;
-  employment_type: string | null;
-  salary_type: string | null;
-  current_hourly_rate: number | null;
-  current_monthly_salary: number | null;
-}
-
-interface VerificationFlags {
-  hasBankid: boolean;
-  hasValidHosp: boolean;
-  hasValidIvo: boolean;
-}
-
+/**
+ * Profilsidan (inloggat läge).
+ * Hero = AI-assistenten (uppe till höger) som låses upp när användaren
+ * besvarat de fyra profilfrågorna. Sedan verktyg och dokumentuppladdning.
+ */
 export default function Profile() {
   const { user, loading: authLoading, signOut } = useAuth();
+  const { context, loading: profileLoading, complete, refresh } = useProfileContext(user?.id);
+  const navigate = useNavigate();
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  const navigate = useNavigate();
-  const [reports, setReports] = useState<ReportRow[]>([]);
-  const [profile, setProfile] = useState<ProfileData | null>(null);
-  const [verification, setVerification] = useState<VerificationFlags>({
-    hasBankid: false,
-    hasValidHosp: false,
-    hasValidIvo: false,
-  });
-  const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<ProfileTab>("overview");
-  const { pending: pendingFeedback, dismiss: dismissFeedback } = useAssignmentFeedback(user);
-
-  const goVerifyIdentity = () => {
-    toast.info("Digital signering är på väg", { description: "Vi öppnar identitetsverifiering inom kort." });
-  };
-
-  useEffect(() => {
-    if (pendingFeedback) {
-      trackEvent("assignment_feedback_shown", { stage: pendingFeedback.stage });
-    }
-  }, [pendingFeedback?.representation_request_id, pendingFeedback?.stage]);
-
   useEffect(() => {
     if (!authLoading && !user) navigate("/logga-in");
   }, [authLoading, user, navigate]);
 
-  useEffect(() => {
-    if (!user) return;
-    const fetchData = async () => {
-      const { data: reportData } = await supabase
-        .from("reports")
-        .select("id, created_at, occupation, kommun, employment_type, status")
-        .eq("user_id", user.id)
-        .order("created_at", { ascending: false });
-      setReports(reportData || []);
-
-      const { data: cpData } = await supabase
-        .from("consultant_profiles")
-        .select("role_name, kommun_name, specialty_id, region_id, experience_years, employment_type, salary_type, current_hourly_rate, current_monthly_salary")
-        .eq("user_id", user.id)
-        .single();
-
-      if (cpData) {
-        let specialtyName: string | null = cpData.role_name;
-        let regionName: string | null = cpData.kommun_name;
-        if (!specialtyName && cpData.specialty_id) {
-          const { data: spec } = await supabase.from("specialties").select("name").eq("id", cpData.specialty_id).single();
-          specialtyName = spec?.name || null;
-        }
-        if (!regionName && cpData.region_id) {
-          const { data: reg } = await supabase.from("regions").select("kommun").eq("id", cpData.region_id).single();
-          regionName = reg?.kommun || null;
-        }
-
-        if (!specialtyName || !regionName) {
-          const { data: latestReport } = await supabase
-            .from("reports")
-            .select("occupation, kommun")
-            .eq("user_id", user.id)
-            .order("created_at", { ascending: false })
-            .limit(1)
-            .maybeSingle();
-          if (latestReport) {
-            if (!specialtyName && latestReport.occupation) specialtyName = latestReport.occupation;
-            if (!regionName && latestReport.kommun) regionName = latestReport.kommun;
-          }
-        }
-
-        setProfile({
-          specialty_name: specialtyName, region_name: regionName,
-          experience_years: cpData.experience_years, employment_type: cpData.employment_type,
-          salary_type: cpData.salary_type, current_hourly_rate: cpData.current_hourly_rate,
-          current_monthly_salary: cpData.current_monthly_salary,
-        });
-      }
-
-      const { data: profileFlags } = await supabase
-        .from("profiles")
-        .select("has_bankid, has_valid_hosp, has_valid_ivo")
-        .eq("user_id", user.id)
-        .maybeSingle();
-
-      if (profileFlags) {
-        setVerification({
-          hasBankid: !!profileFlags.has_bankid,
-          hasValidHosp: !!profileFlags.has_valid_hosp,
-          hasValidIvo: !!profileFlags.has_valid_ivo,
-        });
-      }
-
-      setLoading(false);
-    };
-    fetchData();
-  }, [user]);
-
-  const handleSignOut = async () => { await signOut(); navigate("/"); };
-
-  const handleShare = () => {
-    if (!user) return;
-    const url = `${window.location.origin}/profil/${user.id}`;
-    navigator.clipboard.writeText(url).then(() => toast.success("Profillänk kopierad!"));
-  };
-
-  if (authLoading || loading) {
-    return <ProfilePageSkeleton />;
+  if (authLoading || profileLoading || !user) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#0b0c10]">
+        <Loader2 className="h-5 w-5 animate-spin text-white/60" />
+      </div>
+    );
   }
 
-  const employmentLabel = (t: string | null) => t === "consultant" ? "Konsult" : t === "permanent" ? "Tillsvidareanställd (vill bli konsult)" : t || "–";
-  const formatSalary = (val: number | null) => val ? val.toLocaleString("sv-SE") : "–";
-
-  const emailVerified = !!user?.email_confirmed_at;
-  const completenessChecks = [
-    emailVerified,
-    verification.hasBankid,
-    verification.hasValidHosp,
-    verification.hasValidIvo,
-    !!profile?.specialty_name,
-    !!profile?.region_name,
-    !!(profile?.current_hourly_rate || profile?.current_monthly_salary),
-  ];
-  const stepLabels = [
-    "E-post bekräftad",
-    "Identitet verifierad",
-    "HOSP-bevis",
-    "IVO-registrering",
-    "Yrkesroll vald",
-    "Område vald",
-    "Löneuppgift angiven",
-  ];
-  const stepBenefits = [
-    "Säkerställer att du får viktiga uppdateringar.",
-    "Ökar förtroendet och låser upp full rapport.",
-    "Lås upp verifierad status — krävs för att se aktuella behov hos 100+ vårdbemanningsföretag.",
-    "Krävs för att matchas mot uppdrag.",
-    "Krävs för att visa din möjliga ersättning.",
-    "Krävs för att visa din möjliga ersättning.",
-    "Gör att vi kan ge dig skräddarsydda förhandlingsråd.",
-  ];
-  const completedCount = completenessChecks.filter(Boolean).length;
-  const totalCount = completenessChecks.length;
-
-  const displayName = user?.email?.split("@")[0]
-    ?.split(/[._-]/)
-    .map((p) => p.charAt(0).toUpperCase() + p.slice(1))
-    .join(" ") || "Användare";
-
-  const percent = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
-  const initials = displayName
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((n) => n[0]?.toUpperCase() || "")
-    .join("") || (user?.email?.slice(0, 2).toUpperCase() ?? "U");
+  const firstName = (user.user_metadata?.full_name as string | undefined)?.split(" ")[0];
 
   return (
-    <div className="profile-light relative min-h-screen bg-[#F7F5FB] overflow-hidden">
-
-      {/* Scoped overrides: force all cards in profile to light theme */}
-      <style>{`
-        .profile-light [class*="rounded-2xl"][class*="bg-[hsl(260"],
-        .profile-light .rounded-xl.bg-card,
-        .profile-light [data-slot="card"] { }
-      `}</style>
-      <style>{`
-        .profile-light .relative.rounded-2xl.border.bg-\\[hsl\\(260_40\\%_9\\%_\\/_0\\.5\\)\\] {
-          background: #ffffff !important;
-          border-color: rgb(226 232 240) !important;
-          backdrop-filter: none !important;
-          box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05) !important;
-          color: rgb(15 23 42) !important;
-        }
-        .profile-light .bg-card { background: #ffffff !important; }
-        .profile-light .border-border { border-color: rgb(226 232 240) !important; }
-        .profile-light .text-foreground { color: rgb(15 23 42) !important; }
-        .profile-light .text-muted-foreground { color: rgb(100 116 139) !important; }
-        .profile-light .bg-muted { background: rgb(241 245 249) !important; }
-        .profile-light .bg-secondary\\/50 { background: rgb(248 250 252) !important; }
-        .profile-light .hover\\:bg-secondary:hover { background: rgb(241 245 249) !important; }
-        .profile-light .divide-border > * + * { border-color: rgb(226 232 240) !important; }
-        .profile-light [data-slot="card"], .profile-light h1, .profile-light h2, .profile-light h3 { color: rgb(15 23 42); }
-      `}</style>
-      {/* Subtle glow gradients matching landing page section 2 */}
-      <div
-        className="absolute inset-x-0 top-0 h-[600px] pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse 60% 40% at 50% 0%, hsl(256 100% 67% / 0.08) 0%, transparent 65%), radial-gradient(ellipse 50% 35% at 90% 30%, hsl(330 90% 70% / 0.07) 0%, transparent 60%)",
-        }}
-      />
-
-      <Navbar />
-
-      <div className="relative pt-20 pb-12 px-4 max-w-7xl mx-auto space-y-5">
-        {/* Tabs (flyttad överst) */}
-        <ProfileTabs active={activeTab} onChange={setActiveTab} />
-
-        {/* === OVERVIEW === */}
-        {activeTab === "overview" && (
-          <div className="space-y-5">
-            {/* Personliga uppgifter — full width on top */}
-            <Card className="bg-white border-slate-200 shadow-xs backdrop-blur-none">
-              <CardHeader>
-                <CardTitle className="text-base flex items-center gap-2 text-slate-900">
-                  <User className="w-4 h-4 text-primary" />
-                  Personliga uppgifter
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {/* Identity row: avatar + name + email */}
-                <div className="flex items-center gap-3 pb-3 mb-3 border-b border-slate-200">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                    <span className="text-base font-semibold text-primary">{initials}</span>
-                  </div>
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-slate-900 truncate">{displayName}</p>
-                    <p className="text-xs text-slate-500 truncate inline-flex items-center gap-1.5">
-                      <Mail className="w-3 h-3" /> {user?.email || "–"}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Meta details */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                  <div className="flex items-center gap-2 text-slate-600">
-                    <Briefcase className="w-4 h-4" /> {profile?.specialty_name || "–"}
-                  </div>
-                  <div className="flex items-center gap-2 text-slate-600">
-                    <MapPin className="w-4 h-4" /> {profile?.region_name || "–"}
-                  </div>
-                  <div className="flex items-center gap-2 text-slate-600">
-                    <Users className="w-4 h-4" /> 0 kopplingar
-                  </div>
-                  {profile?.experience_years != null && (
-                    <div className="flex items-center gap-2 text-slate-600">
-                      <Clock className="w-4 h-4" /> {profile.experience_years} års erfarenhet
-                    </div>
-                  )}
-                  {profile && (
-                    <div className="flex items-center gap-2 text-slate-600">
-                      <FileText className="w-4 h-4" /> {employmentLabel(profile.employment_type)}
-                      {profile.salary_type === "hourly" && profile.current_hourly_rate
-                        ? ` · ${formatSalary(profile.current_hourly_rate)} kr/h`
-                        : profile.current_monthly_salary
-                          ? ` · ${formatSalary(profile.current_monthly_salary)} kr/mån`
-                          : ""}
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Two-column grid on desktop, single column on mobile */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-              {/* Left column */}
-              <div className="space-y-5">
-                {/* Compensation view */}
-                <CompensationView
-                  role={profile?.specialty_name || null}
-                  location={profile?.region_name || null}
-                  employmentType={profile?.employment_type || null}
-                />
-
-                {/* Insights */}
-                <Card className="bg-white border-slate-200 shadow-xs backdrop-blur-none">
-                  <CardContent className="pt-6">
-                    <ProfileInsights
-                      specialtyName={profile?.specialty_name || null}
-                      regionName={profile?.region_name || null}
-                      employmentType={profile?.employment_type || null}
-                    />
-                  </CardContent>
-                </Card>
+    <div className="min-h-screen bg-[#0b0c10] text-white">
+      {/* Hero */}
+      <section className="relative overflow-hidden">
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(1000px 420px at 80% -10%, rgba(255,255,255,0.10), transparent 60%)",
+          }}
+        />
+        <div className="relative mx-auto grid w-full max-w-[1200px] items-center gap-10 px-5 py-14 sm:py-20 lg:grid-cols-[1fr_0.95fr] lg:gap-16">
+          <div>
+            <p className="text-[11px] uppercase tracking-[0.16em] text-white/40">Din profil</p>
+            <h1 className="mt-3 text-3xl font-semibold leading-[1.1] tracking-tight sm:text-5xl">
+              {firstName ? `Hej ${firstName}.` : "Välkommen."}
+              <br />
+              <span className="text-white/45">Sätt din agent i arbete.</span>
+            </h1>
+            <p className="mt-5 max-w-md text-sm leading-relaxed text-white/55 sm:text-base">
+              Gör din AI-assistent personlig. Berätta var du arbetar, vilket yrke du har, om du är
+              företagare eller anställd samt vilken timersättning du har idag — sedan svarar den utifrån
+              din situation.
+            </p>
+            {complete && context && (
+              <div className="mt-7 flex flex-wrap gap-2">
+                {[
+                  context.role,
+                  context.kommun,
+                  context.employmentType === "foretagare" ? "Företagare" : "Anställd",
+                  context.hourlyRate ? `${context.hourlyRate.toLocaleString("sv-SE")} kr/h` : null,
+                ]
+                  .filter(Boolean)
+                  .map((v) => (
+                    <span
+                      key={String(v)}
+                      className="rounded-full border border-white/15 px-3 py-1 text-xs text-white/70"
+                    >
+                      {v}
+                    </span>
+                  ))}
               </div>
-
-              {/* Right column */}
-              <div className="space-y-5">
-                {/* Löneassistenten */}
-                <Card className="bg-white border-slate-200 shadow-xs backdrop-blur-none">
-                  <CardHeader>
-                    <CardTitle className="text-base flex items-center gap-2 text-slate-900">
-                      <MessageSquare className="w-4 h-4 text-primary" />
-                      Löneassistenten
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <p className="text-sm text-slate-600 mb-4">
-                      Objektivt förhandlingsstöd baserat på SKR-ramavtal. Få konkreta formuleringar och marknadsobservationer för din nästa förhandling.
-                    </p>
-                    <Link to="/consultant/forhandla">
-                      <Button size="sm" className="text-sm font-semibold px-6 py-3 bg-gradient-to-br from-[#0d0b2a] via-[#1a1545] via-40% to-[#2a2070] text-white border-0 hover:opacity-90">
-                        Öppna Löneassistenten
-                        <ArrowRight className="w-4 h-4 ml-1.5" />
-                      </Button>
-                    </Link>
-                  </CardContent>
-                </Card>
-
-                {/* Pensionssimulator */}
-                <PensionImpactSimulator
-                  initialSalary={profile?.current_monthly_salary || 55000}
-                />
-              </div>
-            </div>
+            )}
           </div>
-        )}
 
-
-        {/* === WORK === */}
-        {activeTab === "work" && (
-          <div className="space-y-5">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-              <Card className="bg-white border-slate-200 shadow-xs backdrop-blur-none">
-                <CardHeader>
-                  <CardTitle className="text-base flex items-center gap-2 text-slate-900">
-                    <FileText className="w-4 h-4 text-primary" />
-                    Mina rapporter
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {reports.length === 0 ? (
-                    <div className="text-center py-6">
-                      <p className="text-muted-foreground text-sm mb-3">Inga rapporter ännu</p>
-                      <Link to="/">
-                        <Button size="sm">
-                          <UserPlus className="w-4 h-4 mr-1" />
-                          Skapa din första analys
-                        </Button>
-                      </Link>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {reports.map((r) => (
-                        <Link key={r.id} to={`/rapport/${r.id}`} className="flex items-center justify-between p-3 rounded-lg bg-secondary/50 hover:bg-secondary transition-colors group">
-                          <div>
-                            <p className="font-medium text-foreground group-hover:text-primary transition-colors">{r.occupation || "Analys"}</p>
-                            <p className="text-xs text-muted-foreground">{r.kommun && `${r.kommun} · `}{new Date(r.created_at).toLocaleDateString("sv-SE")}</p>
-                          </div>
-                          <span className="text-xs text-muted-foreground">→</span>
-                        </Link>
-                      ))}
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white border-slate-200 shadow-xs backdrop-blur-none">
-                <CardHeader>
-                  <CardTitle className="text-base flex items-center gap-2 text-slate-900">
-                    <MessageSquare className="w-4 h-4 text-primary" />
-                    Löneassistenten
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Objektivt förhandlingsstöd baserat på SKR-ramavtal. Få konkreta formuleringar och marknadsobservationer för din nästa förhandling.
-                  </p>
-                  <Link to="/consultant/forhandla">
-                    <Button size="sm" className="text-sm font-semibold px-6 py-3 bg-gradient-to-br from-[#0d0b2a] via-[#1a1545] via-40% to-[#2a2070] text-white border-0 hover:opacity-90">
-                      Öppna Löneassistenten
-                      <ArrowRight className="w-4 h-4 ml-1.5" />
-                    </Button>
-                  </Link>
-                </CardContent>
-              </Card>
-            </div>
-          </div>
-        )}
-
-
-
-        {/* === CREDS (verifieringar) === */}
-        {activeTab === "creds" && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
-            <div className="space-y-5">
-              <TrustVerification
-                emailVerified={emailVerified}
-                identityVerified={verification.hasBankid}
-                hospValid={verification.hasValidHosp}
-                ivoValid={verification.hasValidIvo}
-                /* onVerifyIdentity dold — funktionen är inte live än (visade bara "kommer snart"-toast). */
-              />
-            </div>
-            <div className="space-y-5">
-              <ProfileAuditLog />
-            </div>
-          </div>
-        )}
-
-
-        {/* === SAVED === */}
-        {activeTab === "saved" && (
-          <Card className="bg-white border-slate-200 shadow-xs backdrop-blur-none">
-            <CardContent className="py-12 text-center space-y-3">
-              <div className="w-12 h-12 mx-auto rounded-full bg-muted flex items-center justify-center">
-                <FileText className="w-5 h-5 text-muted-foreground" />
-              </div>
-              <p className="text-sm font-medium text-foreground">Inget sparat ännu</p>
-              <p className="text-xs text-muted-foreground max-w-sm mx-auto">
-                Spara analyser, uppdrag och artiklar för att hitta dem snabbt här.
-              </p>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Profilstatus + verktyg — flyttade under tabs */}
-        <div className="rounded-2xl bg-white border border-slate-200 shadow-xs px-4 sm:px-5 py-4">
-          <div className="flex items-center justify-between gap-3 mb-3">
-            <div className="min-w-0 flex-1">
-              <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-slate-500">Profilstatus</p>
-              <p className="text-sm text-slate-900 mt-0.5 truncate">
-                {percent >= 100
-                  ? "Komplett profil — du kan nu se aktuella behov hos 100+ vårdbemanningsföretag."
-                  : `${completedCount} av ${totalCount} steg klara.`}
-              </p>
-            </div>
-            <span className="text-2xl font-semibold text-slate-900 tabular-nums shrink-0">{percent}%</span>
-          </div>
-          <div className="h-2 w-full bg-slate-100 rounded-full overflow-hidden mb-3">
-            <div
-              className="h-full rounded-full transition-all duration-700 ease-out"
-              style={{
-                width: `${percent}%`,
-                background:
-                  "linear-gradient(90deg, hsl(256 90% 60%) 0%, hsl(280 85% 65%) 50%, hsl(330 90% 70%) 100%)",
-              }}
+          <div className="lg:justify-self-end lg:self-start">
+            <ProfileAssistantChat
+              userId={user.id}
+              context={context}
+              unlocked={complete}
+              onSaved={refresh}
             />
           </div>
-          {percent < 100 && (
-            <div className="space-y-1.5 mb-3">
-              {completenessChecks.map((done, i) =>
-                done ? null : (
-                  <p key={i} className="text-xs text-slate-600 leading-relaxed">
-                    <span className="font-medium text-slate-800">{stepLabels[i]}:</span>{" "}
-                    {stepBenefits[i]}
-                  </p>
-                )
-              )}
-            </div>
-          )}
-          {/* "Redigera" dold — länken pekade på /profil vilket är samma sida (no-op-loop). */}
-          {/* "Dela profil" dold — /profil/:id-routen är inaktiverad så länken blir bruten. */}
         </div>
+      </section>
 
-        {/* Förhandlingsassistenten dold — funktionen är inte live; CTA pekade till /logga-in. */}
+      <ProfileToolsGrid />
+      <ProfileDocumentsSection userId={user.id} />
 
-        
-
-        
-
-        {reports.length === 0 && !profile?.specialty_name && (
-          <div className="rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 to-pink-50 p-5 sm:p-6 shadow-xs">
-            <p className="text-[11px] font-medium uppercase tracking-[0.14em] text-violet-700">
-              Kom igång
-            </p>
-            <h1 className="text-lg sm:text-xl font-semibold text-slate-900 mt-1">
-              Gör din löneanalys på 60 sekunder
-            </h1>
-            <p className="text-sm text-slate-600 mt-1 mb-4 max-w-xl">
-              Svara på 6 korta frågor så jämför vi din ersättning mot SKR:s ramavtal och skapar din personliga rapport.
-            </p>
-            <Link to="/">
-              <Button
-                size="sm"
-                className="text-sm font-semibold px-6 py-3 text-white border-0 bg-gradient-to-r from-[#8b5cf6] to-[#d946ef] hover:from-[#7c3aed] hover:to-[#c026d3]"
-              >
-                Starta enkäten
-              </Button>
-            </Link>
-          </div>
-        )}
+      <div className="border-t border-white/10 py-8">
+        <div className="mx-auto w-full max-w-[1200px] px-5">
+          <button
+            type="button"
+            onClick={() => signOut()}
+            className="text-sm text-white/45 transition-colors hover:text-white"
+          >
+            Logga ut
+          </button>
+        </div>
       </div>
-
-
-      {pendingFeedback && (
-        <AssignmentFeedbackDialog pending={pendingFeedback} onClose={dismissFeedback} />
-      )}
     </div>
   );
 }
