@@ -111,11 +111,11 @@ export default function LakareSpecialtyReport() {
   });
 
   const cream = "#0b0c10";
-  const ink = "#0b0c10";
+  const ink = "#ffffff";
   const sub = "#8a8c94";
   const border = "#22232b";
   const violet = "#22232b";
-  const card = "#FFFFFF";
+  const card = "#121319";
 
   return (
     <>
@@ -123,14 +123,14 @@ export default function LakareSpecialtyReport() {
       <div
         className="min-h-screen"
         style={{
-          ["--background" as any]: "40 18% 91%",
-          ["--foreground" as any]: "0 0% 4%",
-          ["--card" as any]: "0 0% 100%",
-          ["--card-foreground" as any]: "0 0% 4%",
-          ["--muted" as any]: "40 18% 91%",
-          ["--muted-foreground" as any]: "220 9% 46%",
-          ["--border" as any]: "35 17% 85%",
-          ["--primary" as any]: "247 47% 38%",
+          ["--background" as any]: "228 18% 5%",
+          ["--foreground" as any]: "231 16% 9%",
+          ["--card" as any]: "231 16% 9%",
+          ["--card-foreground" as any]: "231 16% 9%",
+          ["--muted" as any]: "228 18% 5%",
+          ["--muted-foreground" as any]: "228 6% 62%",
+          ["--border" as any]: "230 10% 17%",
+          ["--primary" as any]: "0 0% 100%",
           ["--radius" as any]: "12px",
           backgroundColor: cream,
           color: ink,
