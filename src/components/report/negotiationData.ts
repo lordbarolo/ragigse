@@ -22,7 +22,6 @@ export const APPROVED_SUPPLIERS = [
   "Hedera Nurse AB",
   "Helsebemanning AS",
   "Idaliv AB",
-  "Instacura",
   "Invida Vårdservice AB",
   "Klara D AB",
   "Kletor AB",

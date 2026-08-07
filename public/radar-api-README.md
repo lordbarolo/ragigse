@@ -139,7 +139,7 @@ curl -X POST \
     "duplicates": 2,
     "rejected": 1,
     "flagged": 3,
-    "partner_source": "avropsplatsen-next",
+    "partner_source": "partner-next",
     "share_data": false,
     "details": {
       "duplicates": [{ "index": 4, "reason": "duplicate_in_db" }],
@@ -148,7 +148,7 @@ curl -X POST \
     }
   },
   "meta": {
-    "consumer": "Avropsplatsen Next",
+    "consumer": "Partner Next",
     "rate_limit": { "per_hour": 100, "per_day": 1000, "remaining_hour": 99, "remaining_day": 999 }
   }
 }
