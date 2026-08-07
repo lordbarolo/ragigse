@@ -1,11 +1,13 @@
 // Runs before `vite dev` and `vite build` (predev/prebuild hooks); writes public/sitemap.xml.
-// Sync rules: Keep in sync with src/routes/rapport/* och src/data/doctorSpecialtyReports.ts.
+// Läkarspecialiteterna läses direkt ur src/data/doctorSpecialtyReports.ts — lägg till en
+// ny specialitet där och den hamnar automatiskt i sitemapen.
 // Medvetet UTANFÖR sitemapen (noindex i sidorna): /lon/[roll]/[ort], /kampanj/[roll],
 // /bollnas/lakare-alm, alias-slugar för sjuksköterskerapporten, /llms.txt, /openapi.json
 // (de senare annonseras i robots.txt).
 
 import { writeFileSync } from "fs"
 import { resolve } from "path"
+import { DOCTOR_SPECIALTY_REPORTS } from "../src/data/doctorSpecialtyReports"
 
 const BASE_URL = "https://vardbemanning.ai"
 
@@ -16,26 +18,15 @@ interface SitemapEntry {
   priority?: string
 }
 
-// Kanoniska rapportsidor (alias-slugar 301:ar till /rapport/sjukskoterska)
+// Kanoniska rapportsidor (alias-slugar 301:ar till /rapport/sjukskoterska).
+// Handskrivna rutter under src/routes/rapport/ + alla läkarspecialiteter.
 const REPORT_SLUGS = [
   "anestesisjukskoterska",
   "lakare-allmanmedicin",
   "sjukskoterska",
-  // Specialistläkar-rapporter (src/data/doctorSpecialtyReports.ts)
-  "lakare-anestesi",
-  "lakare-barn-och-ungdomsmedicin",
-  "lakare-bup",
-  "lakare-dermatolog",
-  "lakare-kardiolog",
-  "lakare-internmedicin",
-  "lakare-hematologi",
-  "lakare-njurmedicin",
-  "lakare-neurologi",
-  "lakare-onh",
-  "lakare-psykiatri",
-  "lakare-radiologi",
-  "lakare-ogon",
+  ...DOCTOR_SPECIALTY_REPORTS.map((r) => r.slug),
 ];
+
 
 const entries: SitemapEntry[] = [
   // Core pages
