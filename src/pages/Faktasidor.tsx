@@ -240,13 +240,13 @@ export default function Faktasidor() {
         <JsonLd data={FAKTA_JSONLD} />
 
         {/* Nav */}
-        <nav className="relative flex items-center justify-between px-5 sm:px-6 lg:px-10 h-[60px] border-b border-black/10">
-          <Link to="/" aria-label="vårdbemanning.ai startsida" className="inline-flex items-center text-black">
+        <nav className="relative flex items-center justify-between px-5 sm:px-6 lg:px-10 h-[60px] border-b border-white/10">
+          <Link to="/" aria-label="vårdbemanning.ai startsida" className="inline-flex items-center text-white">
             <CompcareLogo variant="full" inverted={false} />
           </Link>
           <Link to="/logga-in">
             <button
-              className="text-sm text-black hover:bg-black/5 transition-colors"
+              className="text-sm text-white hover:bg-white/5 transition-colors"
               style={{ backgroundColor: "transparent", border: "1px solid rgba(0,0,0,0.3)", borderRadius: "6px", padding: "8px 16px" }}
             >
               Logga in
@@ -255,22 +255,22 @@ export default function Faktasidor() {
         </nav>
 
         <div className="max-w-[1200px] mx-auto px-5 sm:px-6 lg:px-10 pt-12 pb-8">
-          <p className="text-xs uppercase tracking-wider text-black/50 font-medium mb-3">Ersättningssökning</p>
-          <h1 className="font-editorial font-bold leading-[1.12] text-black text-[32px] sm:text-[44px] max-w-[760px]">
+          <p className="text-xs uppercase tracking-wider text-white/50 font-medium mb-3">Ersättningssökning</p>
+          <h1 className="font-editorial font-bold leading-[1.12] text-white text-[32px] sm:text-[44px] max-w-[760px]">
             Vad ger ramavtalet för din roll?
           </h1>
-          <p className="mt-4 max-w-[640px] text-lg text-black/70 leading-relaxed">
+          <p className="mt-4 max-w-[640px] text-lg text-white/70 leading-relaxed">
             Välj din yrkesroll och din kommun. Analysen bygger på regionernas ramavtal 2026 — exakta nivåer visas
             när du skapat ett konto.
           </p>
 
           {/* Steg 1: kommun */}
           <section className="mt-10" aria-labelledby="kommun-rubrik">
-            <h2 id="kommun-rubrik" className="text-sm font-semibold text-black mb-3">
+            <h2 id="kommun-rubrik" className="text-sm font-semibold text-white mb-3">
               1. Hitta din kommun
             </h2>
             <div className="relative max-w-[420px]">
-              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-black/40" aria-hidden />
+              <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" aria-hidden />
               <input
                 type="text"
                 value={kommunQuery}
@@ -280,10 +280,10 @@ export default function Faktasidor() {
                 }}
                 placeholder="Sök kommun, t.ex. Bollnäs"
                 aria-label="Sök kommun"
-                className="w-full rounded-lg border border-black/15 bg-white/70 pl-9 pr-3 py-2.5 text-sm text-black placeholder:text-black/40 focus:outline-hidden focus:ring-2 focus:ring-[#ffffff]/30 focus:border-[#ffffff]/50"
+                className="w-full rounded-lg border border-white/15 bg-white/[0.04] pl-9 pr-3 py-2.5 text-sm text-white placeholder:text-white/40 focus:outline-hidden focus:ring-2 focus:ring-[#ffffff]/30 focus:border-[#ffffff]/50"
               />
               {kommunMatches.length > 0 && !selectedKommun && (
-                <ul className="absolute z-20 mt-1 w-full rounded-lg border border-black/10 bg-white shadow-lg overflow-hidden">
+                <ul className="absolute z-20 mt-1 w-full rounded-lg border border-white/10 bg-white shadow-lg overflow-hidden">
                   {kommunMatches.map((l) => (
                     <li key={l.kommun}>
                       <button
@@ -292,13 +292,13 @@ export default function Faktasidor() {
                           setSelectedKommun(l);
                           setKommunQuery(l.kommun);
                         }}
-                        className="w-full text-left px-3 py-2 text-sm text-black hover:bg-black/5 flex items-center justify-between gap-3"
+                        className="w-full text-left px-3 py-2 text-sm text-white hover:bg-white/5 flex items-center justify-between gap-3"
                       >
                         <span>
                           {l.kommun}
-                          <span className="text-black/45"> · {l.region}</span>
+                          <span className="text-white/45"> · {l.region}</span>
                         </span>
-                        <span className="text-black/55 text-xs">{l.zon}</span>
+                        <span className="text-white/55 text-xs">{l.zon}</span>
                       </button>
                     </li>
                   ))}
@@ -307,9 +307,9 @@ export default function Faktasidor() {
             </div>
 
             {selectedKommun && (
-              <div className="mt-4 rounded-xl border border-[#ffffff]/25 bg-[#121319]/[0.06] px-4 py-3 text-sm text-black/80 max-w-[520px]">
-                <strong className="font-semibold text-black">{selectedKommun.kommun}</strong> ({selectedKommun.region})
-                tillhör <strong className="font-semibold text-black">{selectedKommun.zon}</strong> —{" "}
+              <div className="mt-4 rounded-xl border border-[#ffffff]/25 bg-[#121319]/[0.06] px-4 py-3 text-sm text-white/80 max-w-[520px]">
+                <strong className="font-semibold text-white">{selectedKommun.kommun}</strong> ({selectedKommun.region})
+                tillhör <strong className="font-semibold text-white">{selectedKommun.zon}</strong> —{" "}
                 {ZONE_HELP[selectedKommun.zon as Zone]}.
                 <button
                   type="button"
@@ -326,9 +326,9 @@ export default function Faktasidor() {
 
             <dl className="mt-4 grid gap-2 sm:grid-cols-3 max-w-[720px]">
               {ZONES.map((z) => (
-                <div key={z} className="rounded-lg border border-black/10 px-3 py-2">
-                  <dt className="text-xs font-semibold text-black">{z}</dt>
-                  <dd className="text-xs text-black/60">
+                <div key={z} className="rounded-lg border border-white/10 px-3 py-2">
+                  <dt className="text-xs font-semibold text-white">{z}</dt>
+                  <dd className="text-xs text-white/60">
                     {ZONE_HELP[z]}
                     {zoneCounts[z] ? ` · ${zoneCounts[z]} kommuner` : ""}
                   </dd>
@@ -339,13 +339,13 @@ export default function Faktasidor() {
 
           {/* Steg 2: roll-sök */}
           <section className="mt-12" aria-labelledby="roll-rubrik">
-            <h2 id="roll-rubrik" className="text-sm font-semibold text-black mb-3">
+            <h2 id="roll-rubrik" className="text-sm font-semibold text-white mb-3">
               2. Välj din yrkesroll
             </h2>
 
             <div className="flex flex-col sm:flex-row sm:items-center gap-3">
               <div className="relative flex-1 max-w-[420px]">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-black/40" aria-hidden />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40" aria-hidden />
                 <input
                   type="text"
                   value={roleQuery}
@@ -358,27 +358,27 @@ export default function Faktasidor() {
                   role="combobox"
                   aria-expanded={roleMatches.length > 0 && !selectedRole}
                   aria-controls="rollista"
-                  className="w-full rounded-lg border border-black/15 bg-white/70 pl-9 pr-3 py-2.5 text-sm text-black placeholder:text-black/40 focus:outline-hidden focus:ring-2 focus:ring-[#ffffff]/30 focus:border-[#ffffff]/50"
+                  className="w-full rounded-lg border border-white/15 bg-white/[0.04] pl-9 pr-3 py-2.5 text-sm text-white placeholder:text-white/40 focus:outline-hidden focus:ring-2 focus:ring-[#ffffff]/30 focus:border-[#ffffff]/50"
                 />
                 {!loading && !selectedRole && roleQuery.trim() !== "" && (
                   <ul
                     id="rollista"
-                    className="absolute z-20 mt-1 w-full rounded-lg border border-black/10 bg-white shadow-lg overflow-hidden max-h-[320px] overflow-y-auto"
+                    className="absolute z-20 mt-1 w-full rounded-lg border border-white/10 bg-white shadow-lg overflow-hidden max-h-[320px] overflow-y-auto"
                   >
                     {roleMatches.map((r) => (
                       <li key={r.role}>
                         <button
                           type="button"
                           onClick={() => pickRole(r)}
-                          className="w-full text-left px-3 py-2 text-sm text-black hover:bg-black/5"
+                          className="w-full text-left px-3 py-2 text-sm text-white hover:bg-white/5"
                         >
                           {r.role}
-                          {r.detaljer && <span className="block text-xs text-black/45">{r.detaljer}</span>}
+                          {r.detaljer && <span className="block text-xs text-white/45">{r.detaljer}</span>}
                         </button>
                       </li>
                     ))}
                     {roleMatches.length === 0 && (
-                      <li className="px-3 py-2 text-sm text-black/55">Ingen roll matchar sökningen.</li>
+                      <li className="px-3 py-2 text-sm text-white/55">Ingen roll matchar sökningen.</li>
                     )}
                   </ul>
                 )}
@@ -393,7 +393,7 @@ export default function Faktasidor() {
                     className={`text-sm font-medium rounded-lg px-3 py-2 border transition-colors ${
                       group === g
                         ? "border-[#ffffff] bg-[#121319] text-white"
-                        : "border-black/15 text-black/70 hover:bg-black/5"
+                        : "border-white/15 text-white/70 hover:bg-white/5"
                     }`}
                   >
                     {g === "alla" ? "Alla" : g === "Läkare" ? "Läkare" : "Sjuksköterskor"}
@@ -402,28 +402,28 @@ export default function Faktasidor() {
               </div>
             </div>
 
-            {loading && <p className="mt-6 text-sm text-black/55">Hämtar rollistan…</p>}
+            {loading && <p className="mt-6 text-sm text-white/55">Hämtar rollistan…</p>}
             {error && <p className="mt-6 text-sm text-red-700">{error}</p>}
 
             {/* Resultat */}
             {!loading && !error && selectedRole && (
-              <div className="mt-6 max-w-[640px] rounded-2xl border border-black/10 bg-white/70 p-5 sm:p-6">
-                <p className="text-xs uppercase tracking-wider text-black/45 font-medium">
+              <div className="mt-6 max-w-[640px] rounded-2xl border border-white/10 bg-white/[0.04] p-5 sm:p-6">
+                <p className="text-xs uppercase tracking-wider text-white/45 font-medium">
                   {zoneForResult} · {ZONE_HELP[zoneForResult]}
                   {selectedKommun ? ` · ${selectedKommun.kommun}` : ""}
                 </p>
-                <h3 className="mt-1 text-xl font-semibold text-black">{selectedRole.role}</h3>
+                <h3 className="mt-1 text-xl font-semibold text-white">{selectedRole.role}</h3>
 
                 {authed && selectedPrice ? (
                   <>
                     <dl className="mt-4 grid gap-3 sm:grid-cols-2">
-                      <div className="rounded-xl border border-black/10 px-4 py-3">
-                        <dt className="text-xs text-black/55">Kundpris enligt ramavtal</dt>
-                        <dd className="text-lg font-semibold text-black tabular-nums">{kr(selectedPrice)}/h</dd>
+                      <div className="rounded-xl border border-white/10 px-4 py-3">
+                        <dt className="text-xs text-white/55">Kundpris enligt ramavtal</dt>
+                        <dd className="text-lg font-semibold text-white tabular-nums">{kr(selectedPrice)}/h</dd>
                       </div>
                       <div className="rounded-xl border border-[#ffffff]/25 bg-[#121319]/[0.06] px-4 py-3">
-                        <dt className="text-xs text-black/55">Möjlig ersättning som företagare</dt>
-                        <dd className="text-lg font-semibold text-black tabular-nums">
+                        <dt className="text-xs text-white/55">Möjlig ersättning som företagare</dt>
+                        <dd className="text-lg font-semibold text-white tabular-nums">
                           {kr(selectedPrice * shareRange(selectedRole.group).min)}–
                           {kr(selectedPrice * shareRange(selectedRole.group).max)}/h
                         </dd>
@@ -438,15 +438,15 @@ export default function Faktasidor() {
                   </>
                 ) : (
                   <>
-                    <div className="mt-4 rounded-xl border border-black/10 bg-black/[0.03] px-4 py-4">
-                      <p className="flex items-center gap-2 text-sm font-medium text-black">
+                    <div className="mt-4 rounded-xl border border-white/10 bg-black/[0.03] px-4 py-4">
+                      <p className="flex items-center gap-2 text-sm font-medium text-white">
                         <Lock className="w-4 h-4 text-[#ffffff]" aria-hidden />
                         Ersättningsspann beräknat
                       </p>
-                      <p className="mt-2 text-2xl font-semibold text-black/25 select-none tabular-nums" aria-hidden>
+                      <p className="mt-2 text-2xl font-semibold text-white/25 select-none tabular-nums" aria-hidden>
                         ••• kr – ••• kr /h
                       </p>
-                      <p className="mt-2 text-sm text-black/60 leading-relaxed">
+                      <p className="mt-2 text-sm text-white/60 leading-relaxed">
                         Vi har räknat fram ersättningsspannet för {selectedRole.role} i{" "}
                         {zoneForResult.toLowerCase()}. Skapa konto med e-post eller Google för att se exakt nivå
                         och vad det ger dig per månad.
@@ -462,7 +462,7 @@ export default function Faktasidor() {
                       </Link>
                       <Link
                         to="/logga-in"
-                        className="inline-flex text-sm font-semibold rounded-lg border border-black/15 text-black/80 px-6 py-3 hover:bg-black/5 transition-colors"
+                        className="inline-flex text-sm font-semibold rounded-lg border border-white/15 text-white/80 px-6 py-3 hover:bg-white/5 transition-colors"
                       >
                         Jag har redan konto
                       </Link>
@@ -473,7 +473,7 @@ export default function Faktasidor() {
             )}
 
             {!loading && !error && !selectedRole && (
-              <p className="mt-6 text-sm text-black/55 max-w-[560px]">
+              <p className="mt-6 text-sm text-white/55 max-w-[560px]">
                 {roles.length} yrkesroller finns i ramavtalet 2026. Sök upp din roll ovan för att få din analys.
               </p>
             )}
@@ -482,14 +482,14 @@ export default function Faktasidor() {
               <button
                 type="button"
                 onClick={exportToExcel}
-                className="mt-6 inline-flex items-center gap-2 text-sm font-semibold rounded-lg border border-black/15 px-4 py-2 text-black/80 hover:bg-black/5 transition-colors"
+                className="mt-6 inline-flex items-center gap-2 text-sm font-semibold rounded-lg border border-white/15 px-4 py-2 text-white/80 hover:bg-white/5 transition-colors"
               >
                 <Download className="w-4 h-4" aria-hidden />
                 Exportera hela listan till Excel
               </button>
             )}
 
-            <div className="mt-8 flex items-start gap-2 max-w-[760px] text-xs leading-relaxed text-black/55">
+            <div className="mt-8 flex items-start gap-2 max-w-[760px] text-xs leading-relaxed text-white/55">
               <Info className="w-3.5 h-3.5 mt-0.5 shrink-0 text-[#ffffff]" aria-hidden />
               <p>
                 Underlaget är regionernas offentliga ramavtal 2026 (kundpris exklusive moms, grundpris — OB, jour och

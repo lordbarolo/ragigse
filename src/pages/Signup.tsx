@@ -188,7 +188,7 @@ export default function Signup() {
 
 
 
-        <Card className="border-border/40 !bg-[#F5F2EA]/85 backdrop-blur text-black">
+        <Card className="border-border/40 !bg-[#121319]/85 backdrop-blur text-white">
           <CardHeader className="text-center !bg-transparent space-y-2">
             {intentCopy && (
               <div className="mx-auto inline-flex items-center gap-1.5 rounded-full bg-[#22232b]/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-[#22232b]">
@@ -196,10 +196,10 @@ export default function Signup() {
                 {intentCopy.eyebrow}
               </div>
             )}
-            <CardTitle className="text-xl font-semibold text-black">
+            <CardTitle className="text-xl font-semibold text-white">
               {intentCopy?.title ?? "Skapa konto"}
             </CardTitle>
-            <CardDescription className="text-black/70">
+            <CardDescription className="text-white/70">
               {intentCopy?.description ?? "Få tillgång till dina rapporter och personlig profil direkt"}
             </CardDescription>
           </CardHeader>
@@ -208,14 +208,14 @@ export default function Signup() {
             <GoogleAuthButton label="Fortsätt med Google" source="signup_page" onSession={goAfterAuth} />
 
             <div className="my-5 flex items-center gap-3">
-              <span className="h-px flex-1 bg-black/10" />
-              <span className="text-xs text-black/50">eller</span>
-              <span className="h-px flex-1 bg-black/10" />
+              <span className="h-px flex-1 bg-white/10" />
+              <span className="text-xs text-white/50">eller</span>
+              <span className="h-px flex-1 bg-white/10" />
             </div>
 
             <form onSubmit={handleSignup} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="fullName" className="text-black">Ditt namn</Label>
+                <Label htmlFor="fullName" className="text-white">Ditt namn</Label>
                 <Input
                   id="fullName"
                   type="text"
@@ -223,11 +223,11 @@ export default function Signup() {
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   required
-                  className="bg-white/70 text-black border-border placeholder:text-black/50"
+                  className="bg-white/[0.04] text-white border-border placeholder:text-white/50"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-black">E-post</Label>
+                <Label htmlFor="email" className="text-white">E-post</Label>
                 <Input
                   id="email"
                   type="email"
@@ -235,11 +235,11 @@ export default function Signup() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="bg-white/70 text-black border-border placeholder:text-black/50"
+                  className="bg-white/[0.04] text-white border-border placeholder:text-white/50"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-black">Lösenord</Label>
+                <Label htmlFor="password" className="text-white">Lösenord</Label>
                 <Input
                   id="password"
                   type="password"
@@ -248,7 +248,7 @@ export default function Signup() {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   minLength={6}
-                  className="bg-white/70 text-black border-border placeholder:text-black/50"
+                  className="bg-white/[0.04] text-white border-border placeholder:text-white/50"
                 />
               </div>
               <Button type="submit" variant="secondary" className="w-full" disabled={loading}>
@@ -257,9 +257,9 @@ export default function Signup() {
               </Button>
             </form>
 
-            <div className="mt-4 text-center text-sm text-black/70">
+            <div className="mt-4 text-center text-sm text-white/70">
               Har du redan ett konto?{" "}
-              <Link to={loginHref} className="text-black hover:underline font-medium">
+              <Link to={loginHref} className="text-white hover:underline font-medium">
                 Logga in
               </Link>
             </div>
@@ -267,7 +267,7 @@ export default function Signup() {
         </Card>
 
         <div className="text-center">
-          <Link to="/" className="text-sm text-black/70 hover:text-black inline-flex items-center gap-1">
+          <Link to="/" className="text-sm text-white/70 hover:text-white inline-flex items-center gap-1">
             <ArrowLeft className="w-3 h-3" /> Tillbaka till startsidan
           </Link>
         </div>
