@@ -97,8 +97,8 @@ export default function AnalysisScreen() {
   useEffect(() => {
     const prevHtml = document.documentElement.style.backgroundColor;
     const prevBody = document.body.style.backgroundColor;
-    document.documentElement.style.backgroundColor = '#EEEBE4';
-    document.body.style.backgroundColor = '#EEEBE4';
+    document.documentElement.style.backgroundColor = '#0b0c10';
+    document.body.style.backgroundColor = '#0b0c10';
     return () => {
       document.documentElement.style.backgroundColor = prevHtml;
       document.body.style.backgroundColor = prevBody;
@@ -268,7 +268,7 @@ export default function AnalysisScreen() {
   if (loadError) {
     return (
       <>
-        <div className="min-h-screen flex items-center justify-center px-5" style={{ backgroundColor: "#EEEBE4" }}>
+        <div className="min-h-screen flex items-center justify-center px-5" style={{ backgroundColor: "#0b0c10" }}>
           <div className="max-w-md text-center space-y-4">
             <CompcareLogo variant="full" className="!h-7 mx-auto mb-2" />
             <h1 className="font-display text-2xl font-bold text-foreground">Något gick fel</h1>
@@ -279,7 +279,7 @@ export default function AnalysisScreen() {
             <div className="flex gap-2 justify-center pt-2">
               <button
                 onClick={() => { setLoadError(null); window.location.reload(); }}
-                className="text-sm font-semibold px-6 py-3 rounded-xl bg-foreground text-[#EEEBE4] hover:bg-foreground/90"
+                className="text-sm font-semibold px-6 py-3 rounded-xl bg-foreground text-[#0b0c10] hover:bg-foreground/90"
               >
                 Försök igen
               </button>
@@ -319,8 +319,8 @@ export default function AnalysisScreen() {
         ['--accent-foreground' as any]: '0 0% 4%',
         ['--border' as any]: '35 17% 85%',
         ['--input' as any]: '35 17% 85%',
-        backgroundColor: '#EEEBE4',
-        color: '#0A0A0A',
+        backgroundColor: '#0b0c10',
+        color: '#ffffff',
       }}
     >
       <Navbar />
@@ -342,7 +342,7 @@ export default function AnalysisScreen() {
               return stripped.charAt(0).toUpperCase() + stripped.slice(1);
             })()}
           </h1>
-          <p className="text-[14px] text-[#6B6B6B]">
+          <p className="text-[14px] text-[#8a8c94]">
             {survey.kommun}{userRegion && <> · {userRegion}</>} · {employmentLabel}
           </p>
         </div>

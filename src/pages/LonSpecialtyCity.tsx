@@ -221,29 +221,29 @@ export default function LonSpecialtyCity() {
   return (
     <div
       style={{
-        background: "#0e1016",
+        background: "#0b0c10",
         minHeight: "100vh",
         fontFamily: "'Space Grotesk',system-ui,sans-serif",
-        color: "#eef0f4",
+        color: "#ffffff",
       }}
     >
       {jsonLd ? <JsonLd data={jsonLd} /> : null}
 
       <header
         className="flex items-center justify-between px-5 py-4 md:px-12 md:py-5"
-        style={{ borderBottom: "1px solid #22242e" }}
+        style={{ borderBottom: "1px solid #22232b" }}
       >
         <Link
           to="/"
           className="text-[17px] font-semibold"
-          style={{ fontFamily: "'IBM Plex Mono',monospace", letterSpacing: "-0.5px", color: "#eef0f4" }}
+          style={{ fontFamily: "'IBM Plex Mono',monospace", letterSpacing: "-0.5px", color: "#ffffff" }}
         >
           vardbemanning.ai
         </Link>
         <Link
           to="/logga-in"
           className="rounded-full px-5 py-2.5 text-[13.5px] font-medium"
-          style={{ border: "1px solid rgba(255,255,255,.18)", color: "#eef0f4" }}
+          style={{ border: "1px solid rgba(255,255,255,.18)", color: "#ffffff" }}
         >
           Logga in
         </Link>
@@ -252,7 +252,7 @@ export default function LonSpecialtyCity() {
       <main className="mx-auto w-full max-w-[820px] px-5 py-12 md:px-8 md:py-16">
         <div
           className="mb-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] uppercase tracking-[0.12em]"
-          style={{ background: "#151823", border: "1px solid #262a38", color: "#8c90a0", fontFamily: "'IBM Plex Mono',monospace" }}
+          style={{ background: "#121319", border: "1px solid #22232b", color: "#8a8c94", fontFamily: "'IBM Plex Mono',monospace" }}
         >
           SKR Ramavtal 2026
         </div>
@@ -274,7 +274,7 @@ export default function LonSpecialtyCity() {
             </p>
 
             <div className="mt-7 grid gap-3 sm:grid-cols-2">
-              <div className="rounded-xl p-5" style={{ background: "linear-gradient(140deg,#5b5bf0,#8b8bf6)", borderRadius: 12 }}>
+              <div className="rounded-xl p-5" style={{ background: "#121319", border: "1px solid #22232b", borderRadius: 12 }}>
                 <div className="text-[11.5px] uppercase tracking-[0.1em]" style={{ color: "rgba(255,255,255,.82)" }}>
                   Som företagare
                 </div>
@@ -284,25 +284,25 @@ export default function LonSpecialtyCity() {
                 </div>
               </div>
 
-              <div className="rounded-xl p-5" style={{ background: "#151823", border: "1px solid #262a38", borderRadius: 12 }}>
-                <div className="text-[11.5px] uppercase tracking-[0.1em]" style={{ color: "#8c90a0" }}>
+              <div className="rounded-xl p-5" style={{ background: "#121319", border: "1px solid #22232b", borderRadius: 12 }}>
+                <div className="text-[11.5px] uppercase tracking-[0.1em]" style={{ color: "#8a8c94" }}>
                   Som löntagare
                 </div>
-                <div className="mt-1 flex items-baseline gap-1.5" style={{ color: "#eef0f4" }}>
+                <div className="mt-1 flex items-baseline gap-1.5" style={{ color: "#ffffff" }}>
                   <span className="text-[34px] font-semibold leading-none">{kr(data.employee_rate)}</span>
                   <span className="text-[13px]">kr/h</span>
                 </div>
               </div>
             </div>
 
-            <p className="mt-4 text-[12px] leading-relaxed" style={{ color: "#666b7e" }}>
+            <p className="mt-4 text-[12px] leading-relaxed" style={{ color: "#6f7178" }}>
               Kundpris {kr(data.client_rate)} kr/h enligt {data.source}. Löntagarnivån är omräknad med
               arbetsgivaravgifter och avtalspension.
             </p>
 
             <div
               className="mt-9 rounded-2xl p-6"
-              style={{ background: "#151823", border: "1px solid #262a38", borderRadius: 16 }}
+              style={{ background: "#121319", border: "1px solid #22232b", borderRadius: 16 }}
             >
               <p className="text-[15px] leading-relaxed" style={{ color: "#c8ccd8" }}>
                 Vill du se din personliga analys, bevaka skift eller få rådgivning?
@@ -310,7 +310,7 @@ export default function LonSpecialtyCity() {
               <Link
                 to="/logga-in"
                 className="mt-4 inline-block rounded-full text-sm font-semibold"
-                style={{ background: "linear-gradient(140deg,#5b5bf0,#8b8bf6)", color: "#fff", padding: "12px 24px" }}
+                style={{ background: "#ffffff", color: "#121319", padding: "12px 24px" }}
               >
                 Logga in med e-post
               </Link>
@@ -321,7 +321,7 @@ export default function LonSpecialtyCity() {
         {state === "missing" && (
           <div
             className="mt-7 rounded-2xl p-6"
-            style={{ background: "#151823", border: "1px solid #262a38", borderRadius: 16 }}
+            style={{ background: "#121319", border: "1px solid #22232b", borderRadius: 16 }}
           >
             <p className="text-[14.5px] leading-relaxed" style={{ color: "#a8adbd" }}>
               Välj yrkesroll och ort nedan för att se timpengen enligt ramavtalet 2026.
@@ -331,7 +331,7 @@ export default function LonSpecialtyCity() {
               <div>
                 <label
                   className="mb-2 block text-[11px] uppercase tracking-[0.12em]"
-                  style={{ color: "#8c90a0", fontFamily: "'IBM Plex Mono',monospace" }}
+                  style={{ color: "#8a8c94", fontFamily: "'IBM Plex Mono',monospace" }}
                 >
                   Yrkesroll
                 </label>
@@ -340,13 +340,13 @@ export default function LonSpecialtyCity() {
                   value={pickRole}
                   onValueChange={setPickRole}
                   placeholder={options ? "Välj yrkesroll" : "Hämtar roller…"}
-                  triggerClassName="h-12 rounded-[10px] border-[#2c3142] bg-[#0e1016] text-[#eef0f4] shadow-none"
+                  triggerClassName="h-12 rounded-[10px] border-[#22232b] bg-[#0b0c10] text-[#ffffff] shadow-none"
                 />
               </div>
               <div>
                 <label
                   className="mb-2 block text-[11px] uppercase tracking-[0.12em]"
-                  style={{ color: "#8c90a0", fontFamily: "'IBM Plex Mono',monospace" }}
+                  style={{ color: "#8a8c94", fontFamily: "'IBM Plex Mono',monospace" }}
                 >
                   Ort
                 </label>
@@ -355,7 +355,7 @@ export default function LonSpecialtyCity() {
                   value={pickCity}
                   onValueChange={setPickCity}
                   placeholder={options ? "Välj ort" : "Hämtar orter…"}
-                  triggerClassName="h-12 rounded-[10px] border-[#2c3142] bg-[#0e1016] text-[#eef0f4] shadow-none"
+                  triggerClassName="h-12 rounded-[10px] border-[#22232b] bg-[#0b0c10] text-[#ffffff] shadow-none"
                 />
               </div>
             </div>
@@ -365,7 +365,7 @@ export default function LonSpecialtyCity() {
               disabled={!pickRole || !pickCity}
               onClick={() => navigate(`/lon/${pickRole}/${pickCity}`)}
               className="mt-5 rounded-full text-sm font-semibold disabled:opacity-50"
-              style={{ background: "linear-gradient(140deg,#5b5bf0,#8b8bf6)", color: "#fff", padding: "12px 24px" }}
+              style={{ background: "#ffffff", color: "#121319", padding: "12px 24px" }}
             >
               Visa timpeng
             </button>

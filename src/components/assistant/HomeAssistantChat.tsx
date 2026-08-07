@@ -119,7 +119,7 @@ export default function HomeAssistantChat() {
         {messages.map((m) => (
           <div key={m.id} className={m.role === "user" ? "flex justify-end" : ""}>
             {m.role === "user" ? (
-              <div className="max-w-[85%] rounded-2xl bg-[#3D3491] text-white px-3.5 py-2 text-sm">
+              <div className="max-w-[85%] rounded-2xl bg-[#22232b] text-white px-3.5 py-2 text-sm">
                 {m.text}
               </div>
             ) : (
@@ -181,7 +181,7 @@ export default function HomeAssistantChat() {
             <button
               type="submit"
               aria-label="Skicka"
-              className="shrink-0 w-8 h-8 rounded-full bg-[#3D3491] text-white flex items-center justify-center"
+              className="shrink-0 w-8 h-8 rounded-full bg-[#22232b] text-white flex items-center justify-center"
             >
               <ArrowUp className="w-4 h-4" />
             </button>
@@ -203,7 +203,7 @@ export default function HomeAssistantChat() {
               </p>
               <Link
                 to="/registrera"
-                className="shrink-0 self-start text-sm font-semibold px-4 py-2 rounded-lg bg-[#3D3491] text-white hover:opacity-90 transition-opacity"
+                className="shrink-0 self-start text-sm font-semibold px-4 py-2 rounded-lg bg-[#22232b] text-white hover:opacity-90 transition-opacity"
               >
                 Skapa konto
               </Link>

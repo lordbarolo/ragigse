@@ -8,12 +8,12 @@ export default function Hero() {
   const otherMargin = marginText5c("Sjuksköterska");
 
   return (
-    <section style={{ background: "#0e1016", borderBottom: "1px solid #22242e" }}>
+    <section style={{ background: "#0b0c10", borderBottom: "1px solid #22232b" }}>
       <div className="mx-auto grid max-w-[1200px] items-center gap-10 px-5 py-14 md:px-12 md:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
         <div>
           <div
             className="mb-4 text-[11px] uppercase tracking-[0.14em]"
-            style={{ color: "#7c7ff2", fontFamily: "'IBM Plex Mono',monospace", animation: "fadeUp5c .55s ease both" }}
+            style={{ color: "#8a8c94", fontFamily: "'IBM Plex Mono',monospace", animation: "fadeUp5c .55s ease both" }}
           >
             AI FÖR VÅRDKONSULTER &nbsp;&nbsp;&nbsp;&nbsp; OBEROENDE &nbsp;&nbsp;&nbsp;&nbsp; KOSTNADSFRITT
           </div>
@@ -22,7 +22,7 @@ export default function Hero() {
             style={{
               lineHeight: 1.06,
               letterSpacing: "-0.02em",
-              color: "#eef0f4",
+              color: "#ffffff",
               animation: "fadeUp5c .55s .08s ease both",
             }}
           >
@@ -30,13 +30,13 @@ export default function Hero() {
           </h1>
           <p
             className="mt-4 max-w-[520px] text-[15.5px]"
-            style={{ lineHeight: 1.62, color: "#a3a7b7", animation: "fadeUp5c .55s .16s ease both" }}
+            style={{ lineHeight: 1.62, color: "#9b9da7", animation: "fadeUp5c .55s .16s ease both" }}
           >
             Information baserad på regionernas offentliga ramavtal.&nbsp; Uppdaterad data för 21 regioner och 290 kommuner.&nbsp; Samtliga kompetenser inom svensk sjukvård.
           </p>
           <ul
             className="mt-6 flex list-none flex-wrap gap-x-6 gap-y-2 p-0 text-[12.5px]"
-            style={{ color: "#8c90a0", animation: "fadeUp5c .55s .2s ease both" }}
+            style={{ color: "#8a8c94", animation: "fadeUp5c .55s .2s ease both" }}
           >
             {CHECKS.map((c) => (
               <li key={c} className="flex items-center gap-2">

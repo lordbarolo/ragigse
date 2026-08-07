@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import { heroBackgroundStyle } from "@/lib/heroBackground";
 
 /**
- * Anthropic-inspirerat scope: varm bakgrund (#EEEBE4 + mesh) +
+ * Anthropic-inspirerat scope: mörk bakgrund (#0b0c10 + mesh) +
  * Inter Tight 800-rubriker + Source Serif 4 brödtext.
  *
  * Lägg som rotomslutning runt en sida för att applicera samma look som / och /demo.
@@ -32,14 +32,14 @@ export default function AnthropicScope({
       }
     >
       <style>{`
-        /* ── Bakgrund: tvinga #EEEBE4 över hela scopet ── */
+        /* ── Bakgrund: tvinga #0b0c10 över hela scopet ── */
         .demo-anthropic-scope,
         .demo-anthropic-scope .bg-black,
         .demo-anthropic-scope [class*="bg-slate-"],
         .demo-anthropic-scope [class*="bg-neutral-"],
         .demo-anthropic-scope [class*="bg-zinc-"],
         .demo-anthropic-scope [class*="bg-gray-"] {
-          background-color: #EEEBE4 !important;
+          background-color: #0b0c10 !important;
         }
 
         /* ── Rubriker: Inter Tight 800, svart, tight tracking ── */
@@ -51,7 +51,7 @@ export default function AnthropicScope({
         .demo-anthropic-scope h6 {
           font-family: "Inter Tight", "Inter", system-ui, -apple-system,
             BlinkMacSystemFont, "Segoe UI", sans-serif !important;
-          color: #000000 !important;
+          color: #ffffff !important;
           font-weight: 800 !important;
           letter-spacing: -0.035em;
           line-height: 1.05;
@@ -63,8 +63,8 @@ export default function AnthropicScope({
 
         .demo-anthropic-scope .text-gradient-violet {
           background: none !important;
-          -webkit-text-fill-color: #000000 !important;
-          color: #000000 !important;
+          -webkit-text-fill-color: #ffffff !important;
+          color: #ffffff !important;
         }
 
         /* ── Brödtext: Source Serif 4, svart ── */
@@ -78,7 +78,7 @@ export default function AnthropicScope({
         .demo-anthropic-scope p,
         .demo-anthropic-scope li,
         .demo-anthropic-scope blockquote {
-          color: #000000;
+          color: #d5d7dd;
           font-weight: 400;
         }
 
@@ -90,7 +90,7 @@ export default function AnthropicScope({
         .demo-anthropic-scope [data-eyebrow],
         .demo-anthropic-scope .uppercase {
           font-family: "Inter Tight", "Inter", system-ui, sans-serif !important;
-          color: #555555 !important;
+          color: #8a8c94 !important;
         }
 
         /* UI-element (knappar/inputs) i sans-serif */

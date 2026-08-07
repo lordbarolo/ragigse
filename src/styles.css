@@ -88,59 +88,59 @@
 
 :root {
   /* ── Deep Space / Agentic UI (default) ─────────────── */
-  --background: 260 60% 4%;          /* #0D001A deep space */
-  --foreground: 250 30% 96%;         /* near-white w/ violet tint */
+  --background: 228 18% 5%;          /* #0b0c10 — Resend-neutral djupsvart */
+  --foreground: 0 0% 100%;
 
-  --card: 260 40% 9% / 0.55;         /* glass card base (alpha used via utility) */
-  --card-solid: 260 40% 9%;          /* solid fallback */
-  --card-foreground: 250 30% 96%;
+  --card: 231 16% 9% / 0.55;         /* glass card base (alpha used via utility) */
+  --card-solid: 231 16% 9%;          /* #121319 solid fallback */
+  --card-foreground: 0 0% 100%;
 
-  --popover: 260 40% 9%;
-  --popover-foreground: 250 30% 96%;
+  --popover: 231 16% 9%;
+  --popover-foreground: 0 0% 100%;
 
-  --primary: 256 100% 67%;           /* #8155FF violet */
-  --primary-foreground: 0 0% 100%;
+  --primary: 0 0% 100%;              /* vit primärknapp */
+  --primary-foreground: 231 16% 9%;
 
-  --secondary: 260 35% 14%;
-  --secondary-foreground: 250 30% 96%;
+  --secondary: 230 12% 12%;
+  --secondary-foreground: 0 0% 98%;
 
-  --muted: 260 30% 14%;
-  --muted-foreground: 250 15% 70%;
+  --muted: 230 12% 12%;
+  --muted-foreground: 230 8% 62%;
 
-  --accent: 320 95% 65%;             /* hot pink accent */
-  --accent-foreground: 0 0% 100%;
+  --accent: 230 12% 15%;
+  --accent-foreground: 0 0% 98%;
 
-  --cyan: 190 95% 55%;               /* cyan accent */
-  --glow-violet: 256 100% 67%;
-  --glow-pink: 320 95% 65%;
-  --glow-cyan: 190 95% 55%;
+  --cyan: 0 0% 100%;
+  --glow-violet: 0 0% 100%;
+  --glow-pink: 0 0% 100%;
+  --glow-cyan: 0 0% 100%;
 
-  --destructive: 0 84% 60%;
+  --destructive: 0 72% 55%;
   --destructive-foreground: 0 0% 100%;
 
-  --border: 260 30% 18%;             /* subtle violet-tinted border */
-  --input: 260 30% 14%;
-  --ring: 256 100% 67%;
+  --border: 230 10% 17%;
+  --input: 230 10% 17%;
+  --ring: 0 0% 70%;
 
   --radius: 1rem;
 
-  --hero-bg: 260 60% 4%;
-  --hero-fg: 250 30% 96%;
-  --success: 160 80% 50%;
-  --success-foreground: 260 60% 4%;
-  --warning: 36 100% 60%;
-  --warning-foreground: 260 60% 4%;
-  --green: 160 80% 50%;
-  --amber: 36 100% 60%;
+  --hero-bg: 228 18% 5%;
+  --hero-fg: 0 0% 100%;
+  --success: 160 60% 45%;
+  --success-foreground: 228 18% 5%;
+  --warning: 36 90% 58%;
+  --warning-foreground: 228 18% 5%;
+  --green: 160 60% 45%;
+  --amber: 36 90% 58%;
 
-  --sidebar-background: 260 50% 6% / 0.6;
-  --sidebar-foreground: 250 20% 80%;
-  --sidebar-primary: 256 100% 67%;
-  --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 260 35% 14%;
-  --sidebar-accent-foreground: 250 30% 96%;
-  --sidebar-border: 260 30% 18%;
-  --sidebar-ring: 256 100% 67%;
+  --sidebar-background: 231 16% 7% / 0.6;
+  --sidebar-foreground: 0 0% 80%;
+  --sidebar-primary: 0 0% 100%;
+  --sidebar-primary-foreground: 231 16% 9%;
+  --sidebar-accent: 230 12% 13%;
+  --sidebar-accent-foreground: 0 0% 98%;
+  --sidebar-border: 230 10% 17%;
+  --sidebar-ring: 0 0% 70%;
 
   --font-display: 'Inter', sans-serif;
   --font-editorial: 'Libre Baskerville', Georgia, 'Times New Roman', serif;
@@ -150,40 +150,49 @@
 
 /* .dark mirrors :root — Deep Space is the only theme */
 .dark {
-  --background: 260 60% 4%;
-  --foreground: 250 30% 96%;
-  --card: 260 40% 9% / 0.55;
-  --card-solid: 260 40% 9%;
-  --card-foreground: 250 30% 96%;
-  --popover: 260 40% 9%;
-  --popover-foreground: 250 30% 96%;
-  --primary: 256 100% 67%;
-  --primary-foreground: 0 0% 100%;
-  --secondary: 260 35% 14%;
-  --secondary-foreground: 250 30% 96%;
-  --muted: 260 30% 14%;
-  --muted-foreground: 250 15% 70%;
-  --accent: 320 95% 65%;
-  --accent-foreground: 0 0% 100%;
-  --destructive: 0 84% 60%;
+  --background: 228 18% 5%;          /* #0b0c10 — Resend-neutral djupsvart */
+  --foreground: 0 0% 100%;
+
+  --card: 231 16% 9% / 0.55;         /* glass card base (alpha used via utility) */
+  --card-solid: 231 16% 9%;          /* #121319 solid fallback */
+  --card-foreground: 0 0% 100%;
+
+  --popover: 231 16% 9%;
+  --popover-foreground: 0 0% 100%;
+
+  --primary: 0 0% 100%;              /* vit primärknapp */
+  --primary-foreground: 231 16% 9%;
+
+  --secondary: 230 12% 12%;
+  --secondary-foreground: 0 0% 98%;
+
+  --muted: 230 12% 12%;
+  --muted-foreground: 230 8% 62%;
+
+  --accent: 230 12% 15%;
+  --accent-foreground: 0 0% 98%;
+
+  --destructive: 0 72% 55%;
   --destructive-foreground: 0 0% 100%;
-  --border: 260 30% 18%;
-  --input: 260 30% 14%;
-  --ring: 256 100% 67%;
-  --hero-bg: 260 60% 4%;
-  --hero-fg: 250 30% 96%;
-  --success: 160 80% 50%;
-  --success-foreground: 260 60% 4%;
-  --warning: 36 100% 60%;
-  --warning-foreground: 260 60% 4%;
-  --sidebar-background: 260 50% 6% / 0.6;
-  --sidebar-foreground: 250 20% 80%;
-  --sidebar-primary: 256 100% 67%;
-  --sidebar-primary-foreground: 0 0% 100%;
-  --sidebar-accent: 260 35% 14%;
-  --sidebar-accent-foreground: 250 30% 96%;
-  --sidebar-border: 260 30% 18%;
-  --sidebar-ring: 256 100% 67%;
+
+  --border: 230 10% 17%;
+  --input: 230 10% 17%;
+  --ring: 0 0% 70%;
+
+  --hero-bg: 228 18% 5%;
+  --hero-fg: 0 0% 100%;
+  --success: 160 60% 45%;
+  --success-foreground: 228 18% 5%;
+  --warning: 36 90% 58%;
+  --warning-foreground: 228 18% 5%;
+  --sidebar-background: 231 16% 7% / 0.6;
+  --sidebar-foreground: 0 0% 80%;
+  --sidebar-primary: 0 0% 100%;
+  --sidebar-primary-foreground: 231 16% 9%;
+  --sidebar-accent: 230 12% 13%;
+  --sidebar-accent-foreground: 0 0% 98%;
+  --sidebar-border: 230 10% 17%;
+  --sidebar-ring: 0 0% 70%;
 }
 
 @layer base {
@@ -214,18 +223,18 @@
     z-index: -1;
     pointer-events: none;
     background:
-      radial-gradient(ellipse 80% 40% at 20% 0%, hsl(var(--glow-violet) / 0.14) 0%, transparent 65%),
-      radial-gradient(ellipse 70% 35% at 90% 8%, hsl(var(--glow-pink) / 0.10) 0%, transparent 60%),
-      radial-gradient(ellipse 90% 40% at 50% 100%, hsl(var(--glow-cyan) / 0.06) 0%, transparent 65%),
+      radial-gradient(ellipse 80% 40% at 20% 0%, hsl(var(--glow-violet) / 0.05) 0%, transparent 65%),
+      radial-gradient(ellipse 70% 35% at 90% 8%, hsl(var(--glow-pink) / 0.035) 0%, transparent 60%),
+      radial-gradient(ellipse 90% 40% at 50% 100%, hsl(var(--glow-cyan) / 0.025) 0%, transparent 65%),
       hsl(var(--background));
   }
 
   @media (min-width: 768px) {
     body::before {
       background:
-        radial-gradient(ellipse 60% 50% at 15% 0%, hsl(var(--glow-violet) / 0.22) 0%, transparent 60%),
-        radial-gradient(ellipse 55% 45% at 90% 10%, hsl(var(--glow-pink) / 0.16) 0%, transparent 55%),
-        radial-gradient(ellipse 70% 50% at 50% 100%, hsl(var(--glow-cyan) / 0.10) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 15% 0%, hsl(var(--glow-violet) / 0.06) 0%, transparent 60%),
+        radial-gradient(ellipse 55% 45% at 90% 10%, hsl(var(--glow-pink) / 0.04) 0%, transparent 55%),
+        radial-gradient(ellipse 70% 50% at 50% 100%, hsl(var(--glow-cyan) / 0.03) 0%, transparent 60%),
         hsl(var(--background));
     }
   }
@@ -268,7 +277,7 @@
   }
 
   .hero-gradient {
-    background: linear-gradient(135deg, hsl(var(--hero-bg)), hsl(260 50% 10%));
+    background: linear-gradient(135deg, hsl(var(--hero-bg)), hsl(231 16% 10%));
     color: hsl(var(--hero-fg));
   }
 
@@ -284,36 +293,36 @@
     --card-foreground: 220 13% 12%;
     --popover: 0 0% 100%;
     --popover-foreground: 220 13% 12%;
-    --primary: 256 100% 67%;
+    --primary: 231 16% 12%;
     --primary-foreground: 0 0% 100%;
     --secondary: 220 14% 96%;
     --secondary-foreground: 220 13% 12%;
     --muted: 220 14% 96%;
     --muted-foreground: 220 9% 46%;
-    --accent: 260 60% 95%;
-    --accent-foreground: 256 100% 40%;
+    --accent: 220 14% 94%;
+    --accent-foreground: 231 16% 12%;
     --border: 220 13% 91%;
     --input: 220 13% 91%;
-    --ring: 256 100% 67%;
+    --ring: 231 16% 30%;
   }
 
   /* ── Glassmorphism ─────────────────────────────────── */
   .glass {
-    background: hsl(260 40% 9% / 0.65);
+    background: hsl(231 16% 9% / 0.7);
     backdrop-filter: blur(10px) saturate(130%);
     -webkit-backdrop-filter: blur(10px) saturate(130%);
     border: 1px solid hsl(var(--border) / 0.6);
   }
 
   .glass-strong {
-    background: hsl(260 40% 9% / 0.85);
+    background: hsl(231 16% 9% / 0.88);
     backdrop-filter: blur(14px) saturate(140%);
     -webkit-backdrop-filter: blur(14px) saturate(140%);
     border: 1px solid hsl(var(--border) / 0.7);
   }
 
   .glass-subtle {
-    background: hsl(260 40% 12% / 0.5);
+    background: hsl(230 12% 12% / 0.55);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
     border: 1px solid hsl(var(--border) / 0.4);
@@ -321,17 +330,17 @@
 
   @media (min-width: 768px) {
     .glass {
-      background: hsl(260 40% 9% / 0.5);
+      background: hsl(231 16% 9% / 0.55);
       backdrop-filter: blur(18px) saturate(140%);
       -webkit-backdrop-filter: blur(18px) saturate(140%);
     }
     .glass-strong {
-      background: hsl(260 40% 9% / 0.75);
+      background: hsl(231 16% 9% / 0.8);
       backdrop-filter: blur(24px) saturate(160%);
       -webkit-backdrop-filter: blur(24px) saturate(160%);
     }
     .glass-subtle {
-      background: hsl(260 40% 12% / 0.35);
+      background: hsl(230 12% 12% / 0.4);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
     }
@@ -351,13 +360,13 @@
 
   /* Permanent subtle glow for hero CTAs / featured cards */
   .glow-violet {
-    box-shadow: 0 8px 40px -8px hsl(var(--glow-violet) / 0.5);
+    box-shadow: 0 8px 40px -8px hsl(var(--glow-violet) / 0.12);
   }
   .glow-pink {
-    box-shadow: 0 8px 40px -8px hsl(var(--glow-pink) / 0.4);
+    box-shadow: 0 8px 40px -8px hsl(var(--glow-pink) / 0.10);
   }
   .glow-cyan {
-    box-shadow: 0 8px 40px -8px hsl(var(--glow-cyan) / 0.4);
+    box-shadow: 0 8px 40px -8px hsl(var(--glow-cyan) / 0.10);
   }
 
   /* Text gradients */

@@ -59,15 +59,15 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }
   };
 
   const cardStyle: React.CSSProperties = {
-    background: '#FFFFFF',
-    border: '1px solid #E0DBD3',
+    background: '#121319',
+    border: '1px solid #22232b',
     borderRadius: '12px',
   };
 
   if (alreadyOptedIn || submitted) {
     return (
       <Card className="card-shadow" style={cardStyle}>
-        <CardContent className="py-6 flex items-center gap-3 justify-center" style={{ background: '#FFFFFF' }}>
+        <CardContent className="py-6 flex items-center gap-3 justify-center" style={{ background: '#121319' }}>
           <CheckCircle className="w-5 h-5 text-primary" />
           <p className="text-sm font-medium text-foreground">Tack! Vi återkommer till dig via e-post.</p>
         </CardContent>
@@ -77,7 +77,7 @@ export default function InvoiceReviewCTA({ leadId, email, role, zone, reportId }
 
   return (
     <Card className="card-shadow" style={cardStyle}>
-      <CardContent className="pt-6 space-y-5" style={{ background: '#FFFFFF', borderRadius: '12px' }}>
+      <CardContent className="pt-6 space-y-5" style={{ background: '#121319', borderRadius: '12px' }}>
         <div className="flex items-start gap-2">
           <ShieldCheck className="w-5 h-5 text-primary shrink-0 mt-0.5" />
           <p className="font-semibold text-foreground text-base">

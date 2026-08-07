@@ -46,7 +46,7 @@ export default function Startsida5c() {
   }, []);
 
   return (
-    <div style={{ background: "#0e1016", fontFamily: "'Space Grotesk',system-ui,sans-serif", color: "#eef0f4" }}>
+    <div style={{ background: "#0b0c10", fontFamily: "'Space Grotesk',system-ui,sans-serif", color: "#ffffff" }}>
       <JsonLd data={LANDING_JSONLD} />
       <style>{`
         @keyframes fadeUp5c { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
@@ -59,7 +59,7 @@ export default function Startsida5c() {
 
       <header
         className="flex items-center justify-between px-5 py-4 md:px-12 md:py-5"
-        style={{ borderBottom: "1px solid #22242e" }}
+        style={{ borderBottom: "1px solid #22232b" }}
       >
         <Link to="/" className="inline-flex items-center" aria-label="vardbemanning.ai">
           <img
@@ -72,7 +72,7 @@ export default function Startsida5c() {
         <Link
           to="/logga-in"
           className="rounded-full px-5 py-2.5 text-[13.5px] font-medium"
-          style={{ border: "1px solid rgba(255,255,255,.18)", color: "#eef0f4" }}
+          style={{ border: "1px solid rgba(255,255,255,.18)", color: "#ffffff" }}
         >
           Logga in
         </Link>

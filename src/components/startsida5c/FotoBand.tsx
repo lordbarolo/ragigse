@@ -15,7 +15,7 @@ export default function FotoBand() {
   const base = useBaseRates5c();
 
   return (
-    <section style={{ background: "#f5f5f7", borderBottom: "1px solid #e6e6ea" }}>
+    <section style={{ background: "#0b0c10", borderBottom: "1px solid #22232b" }}>
       <div className="mx-auto grid max-w-[1200px] items-center gap-10 px-5 py-14 md:px-12 md:py-16 lg:grid-cols-2 lg:gap-14">
         <div className="overflow-hidden" style={{ borderRadius: 16 }}>
           <img
@@ -30,11 +30,11 @@ export default function FotoBand() {
         <div>
           <h2
             className="m-0 text-[24px] font-semibold md:text-[30px]"
-            style={{ color: "#191922", letterSpacing: "-0.015em", lineHeight: 1.15 }}
+            style={{ color: "#ffffff", letterSpacing: "-0.015em", lineHeight: 1.15 }}
           >
             Vi samlar fördelarna med Ai i en enkel chatt. Kostnadsfritt och öppet för alla.
           </h2>
-          <p className="mt-3 max-w-[460px] text-[15px]" style={{ color: "#5a5f6e", lineHeight: 1.6 }}>
+          <p className="mt-3 max-w-[460px] text-[15px]" style={{ color: "#a1a3ab", lineHeight: 1.6 }}>
             Vi utvecklar nu en rad verktyg som ska jämna ut kunskapsglappet mellan beställare och konsulter. Vi bygger det konsulten saknar och tar gärna emot tips. Vilket verktyg saknar du?
           </p>
 
@@ -48,18 +48,18 @@ export default function FotoBand() {
                 <div
                   key={`${c.yrkeskategori}-${c.zon}`}
                   className="p-4"
-                  style={{ background: "#fff", border: "1px solid #e6e6ea", borderRadius: 12 }}
+                  style={{ background: "#121319", border: "1px solid #22232b", borderRadius: 12 }}
                 >
-                  <div className="text-[12.5px]" style={{ color: "#5a5f6e" }}>
+                  <div className="text-[12.5px]" style={{ color: "#a1a3ab" }}>
                     {c.label}
                   </div>
-                  <div className="mt-1 flex items-baseline gap-1.5" style={{ color: "#191922" }}>
+                  <div className="mt-1 flex items-baseline gap-1.5" style={{ color: "#ffffff" }}>
                     <span className="text-[26px] font-semibold leading-none tabular-nums">
                       {kr(rate?.foretagareKrH)}
                     </span>
                     <span className="text-[12.5px]">kr/h</span>
                   </div>
-                  <div className="mt-1 text-[11.5px]" style={{ color: "#8a8f9e" }}>
+                  <div className="mt-1 text-[11.5px]" style={{ color: "#8a8c94" }}>
                     {c.zon} · kundpris {kr(rate?.timpris_kund)} kr/h
                   </div>
                 </div>

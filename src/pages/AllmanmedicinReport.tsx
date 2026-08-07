@@ -21,7 +21,7 @@ import { useCatalogZoneRates } from "@/hooks/useCatalogZoneRates";
 
 /**
  * Rollrapport — Specialistläkare i Allmänmedicin (nationell)
- * Färgschema matchar startsidans cream/violet (#EEEBE4 / #3D3491).
+ * Färgschema matchar startsidans cream/violet (#0b0c10 / #22232b).
  * Neutral copy: informerar om SKR-priser, driver inte upp löner.
  */
 
@@ -88,8 +88,8 @@ export default function AllmanmedicinReport() {
   useEffect(() => {
     const prevHtml = document.documentElement.style.backgroundColor;
     const prevBody = document.body.style.backgroundColor;
-    document.documentElement.style.backgroundColor = "#EEEBE4";
-    document.body.style.backgroundColor = "#EEEBE4";
+    document.documentElement.style.backgroundColor = "#0b0c10";
+    document.body.style.backgroundColor = "#0b0c10";
     return () => {
       document.documentElement.style.backgroundColor = prevHtml;
       document.body.style.backgroundColor = prevBody;
@@ -107,12 +107,13 @@ export default function AllmanmedicinReport() {
     faq: FAQ,
   });
 
-  const cream = "#EEEBE4";
-  const ink = "#0A0A0A";
-  const sub = "#6B7280";
-  const border = "#E0DBD3";
-  const violet = "#3D3491";
-  const card = "#FFFFFF";
+  const cream = "#0b0c10";
+  const ink = "#ffffff";
+  const sub = "#8a8c94";
+  const border = "#22232b";
+  const violet = "#22232b";
+  const accent = "#ffffff";
+  const card = "#121319";
 
   return (
     <>
@@ -120,14 +121,14 @@ export default function AllmanmedicinReport() {
       <div
         className="min-h-screen"
         style={{
-          ["--background" as any]: "40 18% 91%",
-          ["--foreground" as any]: "0 0% 4%",
-          ["--card" as any]: "0 0% 100%",
-          ["--card-foreground" as any]: "0 0% 4%",
-          ["--muted" as any]: "40 18% 91%",
-          ["--muted-foreground" as any]: "220 9% 46%",
-          ["--border" as any]: "35 17% 85%",
-          ["--primary" as any]: "247 47% 38%",
+          ["--background" as any]: "228 18% 5%",
+          ["--foreground" as any]: "0 0% 100%",
+          ["--card" as any]: "231 16% 9%",
+          ["--card-foreground" as any]: "0 0% 100%",
+          ["--muted" as any]: "231 16% 12%",
+          ["--muted-foreground" as any]: "228 6% 62%",
+          ["--border" as any]: "230 10% 17%",
+          ["--primary" as any]: "0 0% 100%",
           ["--radius" as any]: "12px",
           backgroundColor: cream,
           color: ink,
@@ -172,7 +173,7 @@ export default function AllmanmedicinReport() {
             </p>
             <p style={{ fontFamily: "Georgia, serif", fontSize: "17px", lineHeight: 1.5, color: ink }}>
               Kundpriset för en specialistläkare i allmänmedicin är{" "}
-              <span style={{ color: violet, fontWeight: 700 }}>
+              <span style={{ color: accent, fontWeight: 700 }}>
                 {fmt(lowZone)}–{fmt(highZone)} kr/h
               </span>{" "}
               beroende på zon. Konsultandelen ligger typiskt på{" "}
@@ -254,7 +255,7 @@ export default function AllmanmedicinReport() {
                 className="w-10 h-10 rounded-xl flex items-center justify-center"
                 style={{ backgroundColor: `${violet}1A` }}
               >
-                <BarChart3 className="w-5 h-5" style={{ color: violet }} />
+                <BarChart3 className="w-5 h-5" style={{ color: accent }} />
               </div>
               <div>
                 <p
@@ -297,7 +298,7 @@ export default function AllmanmedicinReport() {
                   </div>
                   <span
                     className="text-sm font-bold whitespace-nowrap pl-3"
-                    style={{ fontFamily: "Georgia, serif", color: violet }}
+                    style={{ fontFamily: "Georgia, serif", color: accent }}
                   >
                     {row.range}
                   </span>
@@ -318,7 +319,7 @@ export default function AllmanmedicinReport() {
             style={{ backgroundColor: card, borderColor: border }}
           >
             <div className="flex items-center gap-2 mb-3">
-              <PiggyBank className="w-4 h-4" style={{ color: violet }} />
+              <PiggyBank className="w-4 h-4" style={{ color: accent }} />
               <p
                 className="text-[10px] font-semibold tracking-[1.4px] uppercase"
                 style={{ color: sub }}
@@ -451,7 +452,7 @@ export default function AllmanmedicinReport() {
                   className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
                   style={{ backgroundColor: `${violet}1A` }}
                 >
-                  <ClipboardList className="w-5 h-5" style={{ color: violet }} />
+                  <ClipboardList className="w-5 h-5" style={{ color: accent }} />
                 </div>
                 <div className="flex-1">
                   <p
@@ -465,7 +466,7 @@ export default function AllmanmedicinReport() {
                     ersättning.
                   </p>
                 </div>
-                <ArrowRight className="w-4 h-4 mt-2 shrink-0" style={{ color: violet }} />
+                <ArrowRight className="w-4 h-4 mt-2 shrink-0" style={{ color: accent }} />
               </div>
             </Link>
 
@@ -479,7 +480,7 @@ export default function AllmanmedicinReport() {
                   className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
                   style={{ backgroundColor: `${violet}1A` }}
                 >
-                  <FileSearch className="w-5 h-5" style={{ color: violet }} />
+                  <FileSearch className="w-5 h-5" style={{ color: accent }} />
                 </div>
                 <div className="flex-1">
                   <p
@@ -492,7 +493,7 @@ export default function AllmanmedicinReport() {
                     Jämför din nuvarande ersättning mot ramavtalets spann i din zon.
                   </p>
                 </div>
-                <ArrowRight className="w-4 h-4 mt-2 shrink-0" style={{ color: violet }} />
+                <ArrowRight className="w-4 h-4 mt-2 shrink-0" style={{ color: accent }} />
               </div>
             </Link>
 
@@ -506,7 +507,7 @@ export default function AllmanmedicinReport() {
                   className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
                   style={{ backgroundColor: `${violet}1A` }}
                 >
-                  <Calculator className="w-5 h-5" style={{ color: violet }} />
+                  <Calculator className="w-5 h-5" style={{ color: accent }} />
                 </div>
                 <div className="flex-1">
                   <p
@@ -520,7 +521,7 @@ export default function AllmanmedicinReport() {
                     timmar du jobbat.
                   </p>
                 </div>
-                <ArrowRight className="w-4 h-4 mt-2 shrink-0" style={{ color: violet }} />
+                <ArrowRight className="w-4 h-4 mt-2 shrink-0" style={{ color: accent }} />
               </div>
             </Link>
           </section>
@@ -543,7 +544,7 @@ export default function AllmanmedicinReport() {
             <Link
               to="/?yrke=allmanmedicin"
               className="inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 rounded-lg mt-2"
-              style={{ backgroundColor: violet, color: "#FFFFFF" }}
+              style={{ backgroundColor: "#ffffff", color: "#0b0c10" }}
             >
               Starta <ArrowRight className="w-4 h-4" />
             </Link>

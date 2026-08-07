@@ -49,7 +49,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
     <div className="mb-3">
       <span
         className="uppercase whitespace-nowrap"
-        style={{ fontFamily: 'sans-serif', fontSize: '11px', letterSpacing: '0.12em', fontWeight: 600, color: '#3D3491' }}
+        style={{ fontFamily: 'sans-serif', fontSize: '11px', letterSpacing: '0.12em', fontWeight: 600, color: '#22232b' }}
       >
         {children}
       </span>
@@ -127,7 +127,7 @@ export default function ConsultantTrackContent({
                   <div
                     className="h-full rounded-[3px]"
                     style={{
-                      backgroundColor: '#3D3491',
+                      backgroundColor: '#22232b',
                       width: `${Math.min(100, Math.max(1, (currentHourly / rec.recommended_hourly_max) * 100))}%`,
                     }}
                   />

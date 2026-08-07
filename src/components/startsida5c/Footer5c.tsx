@@ -9,7 +9,7 @@ const LINKS = [
 
 export default function Footer5c() {
   return (
-    <footer style={{ background: "#f5f5f7" }}>
+    <footer style={{ background: "#0b0c10" }}>
       <div className="mx-auto flex max-w-[1200px] flex-col gap-4 px-5 py-10 md:flex-row md:items-center md:justify-between md:px-12">
         <img
           src="/vardbemanning-lockup-light.svg"
@@ -18,14 +18,14 @@ export default function Footer5c() {
           draggable={false}
         />
 
-        <nav className="flex flex-wrap gap-x-6 gap-y-2 text-[13px]" style={{ color: "#5a5f6e" }}>
+        <nav className="flex flex-wrap gap-x-6 gap-y-2 text-[13px]" style={{ color: "#a1a3ab" }}>
           {LINKS.map((l) => (
             <Link key={l.to} to={l.to} className="hover:underline">
               {l.label}
             </Link>
           ))}
         </nav>
-        <div className="text-[11.5px]" style={{ color: "#8a8f9e" }}>
+        <div className="text-[11.5px]" style={{ color: "#8a8c94" }}>
           © 2026 vardbemanning.ai · Data lagras inom EU
         </div>
       </div>
