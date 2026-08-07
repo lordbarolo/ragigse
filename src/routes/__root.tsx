@@ -9,7 +9,6 @@ import {
   useRouter,
   useLocation,
 } from "@tanstack/react-router";
-import { HelmetProvider } from "react-helmet-async";
 import ErrorBoundary from "@/components/ErrorBoundary";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -220,7 +219,7 @@ function RootComponent() {
   }, []);
 
   return (
-    <HelmetProvider>
+    <>
       <ErrorBoundary>
         <QueryClientProvider client={queryClient}>
           <TooltipProvider>
@@ -240,7 +239,7 @@ function RootComponent() {
           </TooltipProvider>
         </QueryClientProvider>
       </ErrorBoundary>
-    </HelmetProvider>
+    </>
   );
 }
 

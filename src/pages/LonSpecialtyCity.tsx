@@ -6,7 +6,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "@/lib/router-compat";
 import { supabase } from "@/integrations/supabase/client";
-import { SEO } from "@/components/SEO";
+import { JsonLd } from "@/components/JsonLd";
 import SearchableSelect from "@/components/SearchableSelect";
 
 const FONT_HREF =
@@ -227,21 +227,7 @@ export default function LonSpecialtyCity() {
         color: "#eef0f4",
       }}
     >
-      <SEO
-        title={
-          state === "ok"
-            ? `Timpeng ${specialtyLabel} i ${cityLabel} 2026 | vårdbemanning.ai`
-            : `Timpeng per roll och ort 2026 | vårdbemanning.ai`
-        }
-        description={
-          state === "ok" && data
-            ? `Kundpris enligt regionernas ramavtal 2026 för ${specialtyLabel} i ${cityLabel}: ${data.client_rate} kr/h. Se vad du kan få som företagare eller löntagare.`
-            : "Timpeng och ersättningsspann per yrkesroll och ort enligt regionernas ramavtal 2026."
-        }
-        path={`/lon/${specialty}/${city}`}
-        noindex={state !== "ok"}
-        jsonLd={jsonLd}
-      />
+      {jsonLd ? <JsonLd data={jsonLd} /> : null}
 
       <header
         className="flex items-center justify-between px-5 py-4 md:px-12 md:py-5"

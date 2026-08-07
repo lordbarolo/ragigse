@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "@/lib/router-compat";
 import { Loader2 } from "lucide-react";
-import { SEO } from "@/components/SEO";
 import InlineTerminalSurvey from "@/components/survey/InlineTerminalSurvey";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfileContext } from "@/hooks/useProfileContext";
@@ -66,12 +65,6 @@ export default function Onboarding() {
 
   return (
     <div className="min-h-screen px-4 py-12" style={{ background: "#0e1016" }}>
-      <SEO
-        title="Kom igång – vårdbemanning.ai"
-        description="Fyll i roll, ort, kontraktsform och ersättning för att se dina villkor i förhållande till marknaden."
-        path="/onboarding"
-        noindex
-      />
       <div className="mx-auto w-full max-w-xl space-y-6">
         <div className="space-y-2">
           <h1 className="text-2xl font-semibold text-white">Kom igång</h1>

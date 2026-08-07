@@ -1,6 +1,6 @@
 import { Link } from "@/lib/router-compat";
 import { ArrowLeft } from "lucide-react";
-import { SEO } from "@/components/SEO";
+import { JsonLd } from "@/components/JsonLd";
 
 
 const FAQ_ITEMS = [
@@ -72,12 +72,7 @@ const faqJsonLd = {
 export default function FAQ() {
   return (
     <div className="min-h-screen bg-background">
-      <SEO
-        title="Vanliga frågor om ersättning för vårdkonsulter | vårdbemanning.ai"
-        description="Svar på vanliga frågor om ersättning, SKR-ramavtalspriser och hur vårdbemanning.ai hjälper dig jämföra din ersättning mot möjlig ersättning."
-        path="/vanliga-fragor"
-        jsonLd={faqJsonLd}
-      />
+      <JsonLd data={faqJsonLd} />
 
 
       {/* Header */}

@@ -5,7 +5,6 @@ import { Loader2, CheckCircle2, XCircle, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import CompcareLogo from "@/components/CompcareLogo";
-import { SEO } from "@/components/SEO";
 
 type Status = "loading" | "valid" | "already" | "invalid" | "confirming" | "done" | "error";
 
@@ -64,12 +63,6 @@ export default function Unsubscribe() {
 
   return (
     <>
-    <SEO
-      title="Avregistrera utskick – vårdbemanning.ai"
-      description="Avregistrera dig från vårdbemanning.ai:s e-postutskick."
-      path="/unsubscribe"
-      noindex
-    />
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-6">
         <div className="flex justify-center">

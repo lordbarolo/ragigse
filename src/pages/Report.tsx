@@ -16,7 +16,6 @@ import type { ReportData } from "@/shared/types";
 import ConsultantTrackContent from "@/components/report/ConsultantTrackContent";
 import ReportFlowIndicator from "@/components/report/ReportFlowIndicator";
 
-import { SEO } from "@/components/SEO";
 
 
 
@@ -127,7 +126,6 @@ export default function Report() {
 
   return (
     <>
-      <SEO title={seoTitle} description={seoDesc} path={`/rapport/${reportId}`} ogType="article" />
     <div
       ref={printableRef}
       className="min-h-screen"

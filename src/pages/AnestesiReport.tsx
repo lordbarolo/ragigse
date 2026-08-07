@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import CompcareLogo from "@/components/CompcareLogo";
 import Navbar from "@/components/Navbar";
-import { SEO } from "@/components/SEO";
+import { JsonLd } from "@/components/JsonLd";
 import TLDRBox from "@/components/report/TLDRBox";
 import { buildRoleReportSchemas } from "@/lib/seo/roleReportSchema";
 import { useCatalogZoneRates } from "@/hooks/useCatalogZoneRates";
@@ -93,13 +93,7 @@ export default function AnestesiReport() {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEO
-        title="Anestesisjuksköterska – timpris & lön 2026 | vårdbemanning.ai"
-        description="Aktuella ramavtalspriser, OB-tillägg och rekommenderat konsultarvode för anestesisjuksköterskor i Sveriges tre priszoner."
-        path="/rapport/anestesisjukskoterska"
-        ogType="article"
-        jsonLd={roleSchemas}
-      />
+      <JsonLd data={roleSchemas} />
       <Navbar />
 
 

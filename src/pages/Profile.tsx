@@ -22,7 +22,6 @@ import AssignmentFeedbackDialog from "@/components/profile/AssignmentFeedbackDia
 
 import { useAssignmentFeedback } from "@/hooks/useAssignmentFeedback";
 import { trackEvent } from "@/lib/trackEvent";
-import { SEO } from "@/components/SEO";
 
 
 interface ReportRow {
@@ -213,12 +212,6 @@ export default function Profile() {
 
   return (
     <div className="profile-light relative min-h-screen bg-[#F7F5FB] overflow-hidden">
-      <SEO
-        title="Min profil – vårdbemanning.ai"
-        description="Hantera dina rapporter, dokument och kontoinställningar på vårdbemanning.ai."
-        path="/consultant/profil"
-        noindex
-      />
 
       {/* Scoped overrides: force all cards in profile to light theme */}
       <style>{`

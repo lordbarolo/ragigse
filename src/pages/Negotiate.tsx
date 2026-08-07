@@ -13,7 +13,6 @@ import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 import { LONEKOLL_TOPICS, type LonekollTopic, type LonekollQuestion } from "@/data/lonekollQuestions";
 import InlineTerminalSurvey from "@/components/survey/InlineTerminalSurvey";
-import { SEO } from "@/components/SEO";
 
 
 const PAGE_TITLE = "Lönekoll — vårdbemanning.ai";
@@ -171,12 +170,6 @@ export default function Negotiate() {
 
   return (
     <div className="h-[100dvh] bg-secondary/30 flex flex-col overflow-hidden">
-      <SEO
-        title="Löneassistenten – vårdbemanning.ai"
-        description="AI-driven förhandlingsassistent med marknadsdata för vårdkonsulter."
-        path="/consultant/forhandla"
-        noindex
-      />
       <div className="w-full bg-background flex flex-col overflow-hidden flex-1 min-h-0">
 
         {/* Header */}
