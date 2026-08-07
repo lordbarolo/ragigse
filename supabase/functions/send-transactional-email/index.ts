@@ -2,6 +2,11 @@ import * as React from 'npm:react@18.3.1'
 import { renderAsync } from 'npm:@react-email/components@0.0.22'
 import { createClient } from 'npm:@supabase/supabase-js@2'
 import { TEMPLATES } from '../_shared/transactional-email-templates/registry.ts'
+import { identifyCaller, clientIp, emailKey } from '../_shared/emailCallerGate.ts'
+import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts'
+
+// Templates an unauthenticated caller may trigger (self-service signup flow only).
+const ANON_TEMPLATES = new Set(['welcome'])
 
 // Sends app emails DIRECTLY via Resend gateway.
 // No pgmq queue, no NS-delegation — just CNAME/TXT on the from-domain in DNS.
