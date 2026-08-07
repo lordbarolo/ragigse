@@ -36,7 +36,6 @@ Disallow: /dev/
 Disallow: /resultat/
 Disallow: /consultant/
 Disallow: /profil
-Disallow: /profil
 Disallow: /onboarding
 Disallow: /logga-in
 Disallow: /registrera
