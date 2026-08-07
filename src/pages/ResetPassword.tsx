@@ -140,7 +140,7 @@ export default function ResetPassword() {
       toast({ title: "Något gick fel", description: translateAuthError(error), variant: "destructive" });
     } else {
       toast({ title: "Lösenord uppdaterat!" });
-      navigate("/profil");
+      navigate("/consultant/profil");
     }
   };
 

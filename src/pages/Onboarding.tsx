@@ -20,7 +20,7 @@ export default function Onboarding() {
   const { complete, loading: profileLoading, refresh } = useProfileContext(user?.id);
   const [saving, setSaving] = useState(false);
 
-  const target = sanitizeRedirect(searchParams.get("redirect")) ?? "/profil";
+  const target = sanitizeRedirect(searchParams.get("redirect")) ?? "/consultant/profil";
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/logga-in");
