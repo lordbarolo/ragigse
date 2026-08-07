@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { useNavigate } from "@/lib/router-compat";
 import SearchableSelect from "@/components/SearchableSelect";
 import {
   computeRate5c,
