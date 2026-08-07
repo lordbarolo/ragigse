@@ -108,15 +108,16 @@ export default function RolltabellDark() {
         </div>
       </div>
 
-      {/* Övergång mörkt → ljust, efter sektionens innehåll */}
+      {/* Mjuk sektionsövergång inom samma mörka palett */}
       <div
         aria-hidden
         className="h-24 w-full md:h-32"
         style={{
           background:
-            "linear-gradient(180deg,#0b0c10 0%,#0b0c10 18%,#22232b 34%,#6f7178 52%,#9b9da7 68%,#c7c9cf 82%,#e8e9ec 100%)",
+            "linear-gradient(180deg,#0b0c10 0%,#0e0f15 45%,#121319 100%)",
         }}
       />
+
     </section>
   );
 }
