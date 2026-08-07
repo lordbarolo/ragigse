@@ -110,7 +110,7 @@ export default function RadarApiKeys() {
       return;
     }
     if (canWrite && !partnerSource.trim()) {
-      toast({ title: "Partner-källa krävs vid skrivåtkomst", description: "T.ex. 'avropsplatsen-next'", variant: "destructive" });
+      toast({ title: "Partner-källa krävs vid skrivåtkomst", description: "T.ex. 'partner-next'", variant: "destructive" });
       return;
     }
     setCreating(true);
@@ -265,7 +265,7 @@ export default function RadarApiKeys() {
           <div className="space-y-3">
             <div>
               <Label>Namn *</Label>
-              <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="t.ex. Avropsplatsen Next" />
+              <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="t.ex. Partner Next" />
             </div>
             <div>
               <Label>Konsumentprojekt (valfritt)</Label>
@@ -322,7 +322,7 @@ export default function RadarApiKeys() {
                     <Input
                       value={partnerSource}
                       onChange={(e) => setPartnerSource(e.target.value)}
-                      placeholder="t.ex. avropsplatsen-next"
+                      placeholder="t.ex. partner-next"
                     />
                     <p className="text-xs text-muted-foreground mt-0.5">
                       Taggas på alla rader partnern skickar in. Används för dedup och datasynlighet.
