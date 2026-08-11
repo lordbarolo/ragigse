@@ -45,14 +45,14 @@ export default function Hero() {
             Se uppdaterade lönenivåer inom bemanning
           </h1>
           <p
-            className="mt-4 max-w-[520px] text-[15.5px]"
-            style={{ lineHeight: 1.62, color: "#9b9da7", animation: "fadeUp5c .55s .16s ease both" }}
+            className="mt-4 max-w-[540px] text-[17px]"
+            style={{ lineHeight: 1.6, color: "#b8bac2", animation: "fadeUp5c .55s .16s ease both" }}
           >
             Transparent löneinformation baserad på regionernas ramavtal och branschens vanliga marginaler.
           </p>
           <ul
-            className="mt-6 flex list-none flex-wrap gap-x-6 gap-y-2 p-0 text-[12.5px]"
-            style={{ color: "#8a8c94", animation: "fadeUp5c .55s .2s ease both" }}
+            className="mt-6 flex list-none flex-wrap gap-x-6 gap-y-2 p-0 text-[14px]"
+            style={{ color: "#a1a3ab", animation: "fadeUp5c .55s .2s ease both" }}
           >
             {CHECKS.map((c) => (
               <li key={c} className="flex flex-col gap-1">

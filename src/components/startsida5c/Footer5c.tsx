@@ -18,14 +18,14 @@ export default function Footer5c() {
           draggable={false}
         />
 
-        <nav className="flex flex-wrap gap-x-6 gap-y-2 text-[13px]" style={{ color: "#a1a3ab" }}>
+        <nav className="flex flex-wrap gap-x-6 gap-y-2 text-[14px]" style={{ color: "#b8bac2" }}>
           {LINKS.map((l) => (
             <Link key={l.to} to={l.to} className="hover:underline">
               {l.label}
             </Link>
           ))}
         </nav>
-        <div className="text-[11.5px]" style={{ color: "#8a8c94" }}>
+        <div className="text-[12.5px]" style={{ color: "#a1a3ab" }}>
           © 2026 vardbemanning.ai · Data lagras inom EU
         </div>
       </div>
