@@ -48,7 +48,6 @@ export default function Hero() {
             className="mt-4 max-w-[520px] text-[15.5px]"
             style={{ lineHeight: 1.62, color: "#9b9da7", animation: "fadeUp5c .55s .16s ease both" }}
           >
-            Se uppdaterade villkor för läkare och sjuksköterskor.<br />
             Transparent löneinformation baserad på regionernas ramavtal och branschens vanliga marginaler.
           </p>
           <ul
