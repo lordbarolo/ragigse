@@ -57,11 +57,6 @@ export default function FotoBand() {
             ))}
           </div>
 
-          <div className="mt-6">
-            <BadgeCta to="/registrera" variant="steel" ariaLabel="Skapa konto">
-              Skapa konto
-            </BadgeCta>
-          </div>
 
         </div>
       </div>
