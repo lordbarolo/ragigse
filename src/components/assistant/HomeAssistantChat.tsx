@@ -179,10 +179,10 @@ export default function HomeAssistantChat() {
         >
           {messages.map((m) => (
             <Message key={m.id} from={m.role}>
-              <MessageContent>
+              <MessageContent className="text-[15px] leading-relaxed">
                 <MessageResponse>{m.text}</MessageResponse>
                 {m.source && (
-                  <span className="mt-1.5 block text-[11px] text-muted-foreground">Källa: {m.source}</span>
+                  <span className="mt-1.5 block text-[12.5px] text-muted-foreground">Källa: {m.source}</span>
                 )}
               </MessageContent>
             </Message>
