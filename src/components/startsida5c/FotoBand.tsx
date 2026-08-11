@@ -35,7 +35,7 @@ export default function FotoBand() {
           >
             Verktygen din Ai-assistent använder när du är inloggad.
           </h2>
-          <p className="mt-3 max-w-[460px] text-[15px]" style={{ color: "#a1a3ab", lineHeight: 1.6 }}>
+          <p className="mt-3 max-w-[480px] text-[16px]" style={{ color: "#b8bac2", lineHeight: 1.6 }}>
             Skapa ett konto, svara på fyra frågor i chatten och assistenten låser upp verktygen — allt
             byggt på offentlig data om regionernas ramavtal.
           </p>
@@ -47,10 +47,10 @@ export default function FotoBand() {
                 className="p-4"
                 style={{ background: "#121319", border: "1px solid #22232b", borderRadius: 12 }}
               >
-                <div className="text-[14px] font-semibold" style={{ color: "#ffffff" }}>
+                <div className="text-[15px] font-semibold" style={{ color: "#ffffff" }}>
                   {t.name}
                 </div>
-                <div className="mt-1.5 text-[12.5px]" style={{ color: "#a1a3ab", lineHeight: 1.55 }}>
+                <div className="mt-1.5 text-[14px]" style={{ color: "#b8bac2", lineHeight: 1.55 }}>
                   {t.desc}
                 </div>
               </div>

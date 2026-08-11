@@ -44,7 +44,7 @@ export default function OvergangChatt() {
             <HomeAssistantChat />
           </div>
 
-          <div className="mt-2.5 text-[11.5px]" style={{ color: "#8a8c94" }}>
+          <div className="mt-3 text-[13px]" style={{ color: "#a1a3ab" }}>
             Data lagras inom EU · Vi delar aldrig dina uppgifter. Se{" "}
             <Link to="/integritetspolicy" className="underline">
               integritetspolicyn

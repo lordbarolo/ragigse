@@ -122,7 +122,7 @@ export default function HomeAssistantChat() {
   }
 
   const chipClass =
-    "h-auto max-w-[230px] whitespace-normal rounded-2xl border border-border/70 bg-secondary/45 px-4 py-2.5 text-left text-[12.5px] font-normal leading-snug text-muted-foreground backdrop-blur-md hover:border-primary/30 hover:bg-secondary/75 hover:text-foreground";
+    "h-auto max-w-[260px] whitespace-normal rounded-2xl border border-border/70 bg-secondary/45 px-4 py-3 text-left text-[13.5px] font-normal leading-snug text-muted-foreground backdrop-blur-md hover:border-primary/30 hover:bg-secondary/75 hover:text-foreground";
 
   const composer = (
     <div className="mx-auto mb-8 w-full max-w-[560px]">
@@ -141,7 +141,7 @@ export default function HomeAssistantChat() {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Fråga assistenten"
-            className="min-h-12 py-3.5 text-sm text-foreground placeholder:text-muted-foreground"
+            className="min-h-12 py-3.5 text-[15px] text-foreground placeholder:text-muted-foreground"
           />
           <PromptInputFooter className="justify-end pt-0">
             <PromptInputSubmit
@@ -157,11 +157,11 @@ export default function HomeAssistantChat() {
       ) : (
         <Link
           to="/registrera"
-          className="flex items-center gap-2 rounded-full bg-white/[0.06] px-4 py-2.5 backdrop-blur-md transition-colors hover:bg-white/[0.09]"
+          className="flex items-center gap-2 rounded-full bg-white/[0.06] px-4 py-3 backdrop-blur-md transition-colors hover:bg-white/[0.09]"
         >
-          <Lock className="h-3.5 w-3.5 shrink-0 text-white/45" />
-          <span className="flex-1 text-sm text-white/45">Fråga assistenten</span>
-          <span className="shrink-0 rounded-full bg-white px-3 py-1.5 text-[12.5px] font-semibold text-[#0b0c10]">
+          <Lock className="h-4 w-4 shrink-0 text-white/45" />
+          <span className="flex-1 text-[15px] text-white/45">Fråga assistenten</span>
+          <span className="shrink-0 rounded-full bg-white px-3 py-1.5 text-[13.5px] font-semibold text-[#0b0c10]">
             Skapa konto
           </span>
         </Link>
