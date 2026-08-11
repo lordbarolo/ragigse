@@ -33,17 +33,24 @@ export default function Rateraknare() {
     <div
       className="rounded-2xl p-6 md:p-7"
       style={{
-        background: "#121319",
-        border: "1px solid #22232b",
+        background: "#16171f",
+        border: "1px solid #2a2b36",
         borderRadius: 16,
         animation: "fadeUp5c .55s .24s ease both",
       }}
     >
+      <h2 className="mb-1 text-[18px] font-semibold" style={{ color: "#ffffff", letterSpacing: "-0.01em" }}>
+        Räkna ut ditt timpris
+      </h2>
+      <p className="mb-5 text-[15px]" style={{ color: "#a1a3ab", lineHeight: 1.5 }}>
+        Välj roll och zon för att se vad regionen betalar och vad du kan fakturera.
+      </p>
+
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label
-            className="mb-2 block text-[11px] uppercase tracking-[0.12em]"
-            style={{ color: "#8a8c94", fontFamily: "'IBM Plex Mono',monospace" }}
+            className="mb-2 block text-[13px] font-medium uppercase tracking-[0.08em]"
+            style={{ color: "#c4c6ce", fontFamily: "'IBM Plex Mono',monospace" }}
           >
             Roll
           </label>
@@ -52,23 +59,23 @@ export default function Rateraknare() {
             value={role}
             onValueChange={setRole}
             placeholder="Välj roll"
-            triggerClassName="h-12 rounded-[10px] border-[#22232b] bg-[#0b0c10] text-[#ffffff] shadow-none"
+            triggerClassName="h-12 rounded-[10px] border-[#2a2b36] bg-[#0b0c10] text-[#ffffff] shadow-none text-[15px]"
           />
         </div>
 
         <div>
           <label
-            className="mb-2 block text-[11px] uppercase tracking-[0.12em]"
-            style={{ color: "#8a8c94", fontFamily: "'IBM Plex Mono',monospace" }}
+            className="mb-2 block text-[13px] font-medium uppercase tracking-[0.08em]"
+            style={{ color: "#c4c6ce", fontFamily: "'IBM Plex Mono',monospace" }}
           >
             Zon
           </label>
-          <div className="flex h-12 items-center rounded-[10px]" style={{ background: "#0b0c10", border: "1px solid #22232b" }}>
+          <div className="flex h-12 items-center rounded-[10px]" style={{ background: "#0b0c10", border: "1px solid #2a2b36" }}>
             <select
               value={zone}
               onChange={(e) => setZone(e.target.value)}
               aria-label="Zon"
-              className="h-full w-full bg-transparent px-3 text-[14.5px] outline-hidden"
+              className="h-full w-full bg-transparent px-3 text-[15px] outline-hidden"
               style={{ color: "#ffffff" }}
             >
               {ZONES_5C.map((z) => (
@@ -85,32 +92,32 @@ export default function Rateraknare() {
         <div
           className="rounded-xl p-4"
           style={{
-            background: "#121319",
-            border: "1px solid #22232b",
+            background: "#0b0c10",
+            border: "1px solid #2a2b36",
             borderRadius: 12,
           }}
         >
-          <div className="text-[11.5px] uppercase tracking-[0.1em]" style={{ color: "rgba(255,255,255,.82)" }}>
+          <div className="text-[13px] font-medium uppercase tracking-[0.06em]" style={{ color: "#c4c6ce" }}>
             Som företagare
           </div>
-          <div className="mt-1 flex items-baseline gap-1.5" style={{ color: "#fff" }}>
-            <span className="text-[32px] font-semibold leading-none">{kr(rate?.foretagareKrH)}</span>
-            <span className="text-[13px]">kr/h</span>
+          <div className="mt-1.5 flex items-baseline gap-1.5" style={{ color: "#fff" }}>
+            <span className="text-[34px] font-semibold leading-none">{kr(rate?.foretagareKrH)}</span>
+            <span className="text-[14px]">kr/h</span>
           </div>
         </div>
 
-        <div className="rounded-xl p-4" style={{ background: "#0b0c10", border: "1px solid #22232b", borderRadius: 12 }}>
-          <div className="text-[11.5px] uppercase tracking-[0.1em]" style={{ color: "#8a8c94" }}>
+        <div className="rounded-xl p-4" style={{ background: "#0b0c10", border: "1px solid #2a2b36", borderRadius: 12 }}>
+          <div className="text-[13px] font-medium uppercase tracking-[0.06em]" style={{ color: "#c4c6ce" }}>
             Som löntagare
           </div>
-          <div className="mt-1 flex items-baseline gap-1.5" style={{ color: "#ffffff" }}>
-            <span className="text-[32px] font-semibold leading-none">{kr(rate?.lontagareKrH)}</span>
-            <span className="text-[13px]">kr/h</span>
+          <div className="mt-1.5 flex items-baseline gap-1.5" style={{ color: "#ffffff" }}>
+            <span className="text-[34px] font-semibold leading-none">{kr(rate?.lontagareKrH)}</span>
+            <span className="text-[14px]">kr/h</span>
           </div>
         </div>
       </div>
 
-      <p className="mt-4 text-[12px] leading-relaxed" style={{ color: "#6f7178" }}>
+      <p className="mt-5 text-[14px] leading-relaxed" style={{ color: "#a1a3ab" }}>
         {base.length === 0
           ? "Prisdata kunde inte hämtas just nu."
           : rate
@@ -123,13 +130,13 @@ export default function Rateraknare() {
           e.preventDefault();
           navigate("/registrera");
         }}
-        className="mt-4 flex items-center gap-2 rounded-xl px-4 py-2"
-        style={{ background: "#0b0c10", border: "1px solid #22232b", borderRadius: 12 }}
+        className="mt-5 flex items-center gap-2 rounded-xl px-4 py-2"
+        style={{ background: "#0b0c10", border: "1px solid #2a2b36", borderRadius: 12 }}
       >
         <input
           name="q"
           placeholder="Fråga assistenten om detaljerna…"
-          className="h-9 flex-1 bg-transparent text-[14px] outline-hidden"
+          className="h-10 flex-1 bg-transparent text-[15px] outline-hidden"
           style={{ color: "#ffffff" }}
           onFocus={() => navigate("/registrera")}
         />
@@ -137,7 +144,7 @@ export default function Rateraknare() {
         <button
           type="submit"
           aria-label="Gå till assistenten"
-          className="grid h-9 w-9 place-items-center rounded-[10px] text-[16px]"
+          className="grid h-10 w-10 place-items-center rounded-[10px] text-[18px]"
           style={{ background: "#ffffff", color: "#121319" }}
         >
           ↑
