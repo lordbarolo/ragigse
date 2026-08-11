@@ -42,7 +42,7 @@ export default function Hero() {
               animation: "fadeUp5c .55s .08s ease both",
             }}
           >
-            Ai för vårdens konsulter
+            Se uppdaterade lönenivåer inom bemanning
           </h1>
           <p
             className="mt-4 max-w-[520px] text-[15.5px]"
