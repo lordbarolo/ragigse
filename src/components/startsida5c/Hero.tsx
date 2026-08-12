@@ -58,7 +58,7 @@ export default function Hero() {
               animation: "fadeUp5c .55s .08s ease both",
             }}
           >
-            Se uppdaterade löner för läkare och sjuksköterskor
+            Har du rätt lön?<br />Se svaret direkt
           </h1>
           <p
             className="mt-4 max-w-[540px] text-[17px]"
