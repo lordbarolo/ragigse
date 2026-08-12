@@ -102,32 +102,33 @@ export default function ProfileContextCard({ userId, context, onSaved }: Props) 
     }
   }
 
-  const rows: { label: string; value: string }[] = [
-    { label: "Yrke", value: context.role ? roleLabel5c(context.role) : "—" },
-    { label: "Ort", value: context.kommun ?? "—" },
+  const rows: { label: string; value: string; icon: typeof Briefcase }[] = [
+    {
+      label: "Yrke",
+      value: context.role ? roleLabel5c(context.role) : "—",
+      icon: Briefcase,
+    },
+    { label: "Ort", value: context.kommun ?? "—", icon: MapPin },
     {
       label: "Kontraktsform",
       value: context.employmentType === "foretagare" ? "Företagare" : "Anställd",
+      icon: FileText,
     },
     {
       label: "Ersättning",
       value: context.hourlyRate ? `${context.hourlyRate.toLocaleString("sv-SE")} kr/timme` : "—",
+      icon: Coins,
     },
   ];
 
   return (
-    <div className="mt-6 max-w-md rounded-2xl border border-white/10 bg-white/[0.03] p-5">
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-[11px] uppercase tracking-[0.16em] text-white/40">Dina uppgifter</p>
-          <p className="mt-1 text-sm text-white/55">
-            Assistenten och verktygen utgår från detta. Ändra när något förändras.
-          </p>
-        </div>
+    <div className="mt-6 max-w-md overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.02] shadow-[0_20px_50px_-30px_rgba(0,0,0,0.9)] backdrop-blur-sm">
+      <div className="flex items-center justify-between gap-4 border-b border-white/10 px-5 py-3.5">
+        <p className="text-[11px] uppercase tracking-[0.16em] text-white/45">Dina uppgifter</p>
         <button
           type="button"
           onClick={() => setEditing((v) => !v)}
-          className="flex shrink-0 items-center gap-1.5 rounded-full border border-white/15 px-3 py-1.5 text-xs text-white/70 transition-colors hover:border-white/30 hover:text-white"
+          className="flex shrink-0 items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.03] px-3 py-1.5 text-xs text-white/70 transition-colors hover:border-white/30 hover:bg-white/[0.08] hover:text-white"
         >
           {editing ? <X className="h-3.5 w-3.5" /> : <Pencil className="h-3.5 w-3.5" />}
           {editing ? "Stäng" : "Ändra"}
@@ -135,15 +136,19 @@ export default function ProfileContextCard({ userId, context, onSaved }: Props) 
       </div>
 
       {!editing ? (
-        <dl className="mt-4 divide-y divide-white/10">
+        <dl className="grid grid-cols-1 gap-px bg-white/10 sm:grid-cols-2">
           {rows.map((r) => (
-            <div key={r.label} className="flex items-center justify-between gap-4 py-2.5">
-              <dt className="text-sm text-white/45">{r.label}</dt>
-              <dd className="text-sm font-medium text-white">{r.value}</dd>
+            <div key={r.label} className="bg-[#0b0c10]/40 px-5 py-4">
+              <dt className="flex items-center gap-1.5 text-[11px] uppercase tracking-[0.12em] text-white/40">
+                <r.icon className="h-3.5 w-3.5" />
+                {r.label}
+              </dt>
+              <dd className="mt-1.5 text-sm font-medium leading-snug text-white">{r.value}</dd>
             </div>
           ))}
         </dl>
       ) : (
+        <div className="px-5 pb-5">
         <div className="mt-4 space-y-3">
           <div>
             <label className="text-xs text-white/45">Yrke</label>
