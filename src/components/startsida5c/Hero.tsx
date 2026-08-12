@@ -42,7 +42,7 @@ export default function Hero() {
             }}
           >
             <span
-              className="inline-flex items-center gap-1.5 rounded-full px-4 py-[7px] text-[13px] font-medium"
+              className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-[7px] text-[13px] font-medium"
               style={{ background: "#0b0c10", color: "#e8eaef" }}
             >
               Logga in för att träffa din AI-assistent
