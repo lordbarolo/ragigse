@@ -1,7 +1,7 @@
 import Rateraknare from "./Rateraknare";
 import { marginText5c } from "./rate5c";
 
-const CHECKS = ["Få notis vid prisökning", "Skapa CV med Ai"];
+
 
 export default function Hero() {
   const doctorMargin = marginText5c("Specialistläkare anestesi och intensivvård");
@@ -66,18 +66,6 @@ export default function Hero() {
           >
             Transparent löneinformation baserad på regionernas avtal och branschens vanliga marginaler. Kostnadsfritt och öppet för alla.
           </p>
-          <ul
-            className="mt-6 hidden list-none flex-wrap gap-x-6 gap-y-2 p-0 text-[14px] sm:flex"
-            style={{ color: "#a1a3ab", animation: "fadeUp5c .55s .2s ease both" }}
-          >
-            {CHECKS.map((c) => (
-              <li key={c} className="flex flex-col gap-1">
-                <span>
-                  <span style={{ color: "#56C98F" }}>✓</span>&nbsp;{c}
-                </span>
-              </li>
-            ))}
-          </ul>
         </div>
 
         <Rateraknare />
