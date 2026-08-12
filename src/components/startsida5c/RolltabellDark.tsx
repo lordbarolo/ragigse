@@ -54,8 +54,8 @@ export default function RolltabellDark() {
                     key={h}
                     className="pb-3 text-[11px] font-medium uppercase tracking-[0.1em]"
                     style={{
-                      color: "#6f7178",
-                      borderBottom: "1px solid #22232b",
+                      color: "#6b6b6b",
+                      borderBottom: "1px solid #e3e3e8",
                       textAlign: i === 0 ? "left" : "right",
                       fontFamily: "'IBM Plex Mono',monospace",
                     }}
@@ -99,24 +99,13 @@ export default function RolltabellDark() {
         </div>
         )}
 
-        <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-[12px]" style={{ color: "#6f7178" }}>
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-[12px]" style={{ color: "#6b6b6b" }}>
           <span>Högst ersättning markerad. Fullständig lista med alla roller efter inloggning.</span>
-          <Link to="/faktasidor" style={{ color: "#ffffff" }} className="hover:underline">
+          <Link to="/faktasidor" style={{ color: "#1a1b22" }} className="hover:underline">
             Jämför alla roller →
           </Link>
         </div>
       </div>
-
-      {/* Mjuk övergång från mörk till ljus sektion */}
-      <div
-        aria-hidden
-        className="h-32 w-full md:h-44"
-        style={{
-          background:
-            "linear-gradient(180deg,#0b0c10 0%,#0e0f15 30%,#2a2b36 52%,#6f7178 70%,#bcbec6 86%,#f5f5f7 100%)",
-        }}
-      />
-
     </section>
   );
 }
