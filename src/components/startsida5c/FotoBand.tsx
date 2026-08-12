@@ -11,7 +11,7 @@ const TOOLS: { name: string; desc: string }[] = [
 export default function FotoBand() {
   return (
     <section style={{ background: "#f5f5f7", borderBottom: "1px solid #e3e3e8" }}>
-      <div className="mx-auto grid max-w-[1200px] items-center gap-10 px-5 py-14 md:px-12 md:py-16 lg:grid-cols-2 lg:gap-14">
+      <div className="mx-auto grid max-w-[1200px] items-center gap-10 px-5 pb-14 pt-8 md:px-12 md:pb-16 md:pt-10 lg:grid-cols-2 lg:gap-14">
         <div className="overflow-hidden" style={{ borderRadius: 16 }}>
           <img
             src={sskFoto}
