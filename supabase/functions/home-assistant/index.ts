@@ -257,7 +257,9 @@ Deno.serve(async (req) => {
         answer,
         source: "SKR:s ramavtal, publicerade avrop och din sparade profil",
         quota: { used, limit, warning: warn },
+        memory_added: memoryAdded,
       });
+
 
     }
 
