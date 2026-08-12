@@ -161,7 +161,11 @@ export default function ProfileAssistantChat({ userId, context, unlocked, onSave
       });
       if (error) throw error;
       push({ role: "assistant", text: data?.answer ?? data?.error ?? "Inget svar.", source: data?.source });
-    } catch {
+      // Assistenten kan ha destillerat nya nyckelpunkter — uppdatera minneskortet.
+      if (data?.memory_added) {
+        void qc.invalidateQueries({ queryKey: assistantMemoryKey(userId) });
+      }
+
       push({ role: "assistant", text: "Något gick fel. Försök igen om en stund." });
     } finally {
       setLoading(false);
