@@ -67,9 +67,9 @@ export default function Profile() {
               </>
             ) : (
               <p className="mt-5 max-w-md text-sm leading-relaxed text-white/55 sm:text-base">
-                Gör din AI-assistent personlig. Berätta var du arbetar, vilket yrke du har, om du är
-                företagare eller anställd samt vilken timersättning du har idag — sedan svarar den utifrån
-                din situation.
+                Vi vill göra det lättare att arbeta som konsult. I din profil hittar du smarta verktyg redo att
+                användas direkt. Din assistent behöver lära känna dig för att ha möjligheterna att representera
+                din intresen. De 4 frågorna i chattrutan är en bra början.
               </p>
             )}
           </div>
