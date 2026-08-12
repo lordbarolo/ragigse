@@ -4,6 +4,7 @@ import { Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfileContext } from "@/hooks/useProfileContext";
 import ProfileAssistantChat from "@/components/profile/ProfileAssistantChat";
+import ProfileContextCard from "@/components/profile/ProfileContextCard";
 import ProfileToolsGrid from "@/components/profile/ProfileToolsGrid";
 import ProfileDocumentsSection from "@/components/profile/ProfileDocumentsSection";
 
