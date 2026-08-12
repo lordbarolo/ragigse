@@ -241,12 +241,11 @@ export default function HomeAssistantChat() {
             </div>
           </div>
 
-          {/* Mobil/tablet */}
-
+          {/* Mobil/tablet — endast 3 mest konverterande frågor */}
           <div className="md:hidden">
             {composer}
             <div className="mt-5 flex flex-wrap justify-center gap-1.5">
-              {PRESETS.map((p, i) => (
+              {[PRESETS[0], PRESETS[1], PRESETS[6]].map((p) => (
                 <Button
                   key={p.key}
                   type="button"
