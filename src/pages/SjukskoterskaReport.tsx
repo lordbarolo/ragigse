@@ -32,7 +32,7 @@ const fmt = (n: number) => n.toLocaleString("sv-SE", { maximumFractionDigits: 0 
 
 // SKR ramavtal vårdbemanning 2026 — Sjuksköterska grundutbildning (dagtid)
 // Priserna hämtas live ur contract_version_rates (v1.7); värdena nedan är fallback.
-const ZONE_FALLBACK = { zone1: 616, zone2: 660, zone3: 715 };
+const ZONE_FALLBACK = { zone1: 592, zone2: 634, zone3: 687 };
 const ZONE_META = [
   { zone: "Zon 1", desc: "Storstadsregioner (t.ex. Stockholm, Göteborg, Malmö)" },
   { zone: "Zon 2", desc: "Mellanstora regioner" },
