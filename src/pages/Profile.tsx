@@ -79,7 +79,9 @@ export default function Profile() {
               unlocked={complete}
               onSaved={refresh}
             />
+            {complete ? <AssistantMemoryCard userId={user.id} /> : null}
           </div>
+
         </div>
       </section>
 
