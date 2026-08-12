@@ -113,9 +113,9 @@ export default function ProfileAssistantChat({ userId, context, unlocked, onSave
       await onSaved();
       push({
         role: "assistant",
-        text: `Tack — nu vet jag vem jag pratar med. ${saved.role} i ${saved.kommun}, ${
+        text: `Tack! Nu har jag den information som behövs för att ge dig personliga svar — ${saved.role} i ${saved.kommun}, ${
           next.employment === "foretagare" ? "företagare" : "anställd"
-        }, ${Number(next.rate).toLocaleString("sv-SE")} kr/h. Assistenten är upplåst — ställ din första fråga.`,
+        }, ${Number(next.rate).toLocaleString("sv-SE")} kr/h.\n\nFinns det något jag kan hjälpa dig med på en gång? Vill du veta hur lönerna ligger för din roll i en specifik ort? Eller kanske hur långt du har kvar till brytpunkten för den högre tjänstepensionen?`,
       });
     } catch (err) {
       console.error("[ProfileAssistantChat] save failed", err);
