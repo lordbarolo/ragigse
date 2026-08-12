@@ -11,7 +11,7 @@ const TOOLS = [
     desc: "Se vad regionen betalar för din roll och vad du kan begära.",
   },
   {
-    to: "/consultant/forhandla",
+    to: "/consultant/pension",
     icon: PiggyBank,
     title: "Pensionssimulator",
     desc: "Räkna på hur ersättningsnivån påverkar din pension över tid.",
