@@ -101,9 +101,14 @@ export default function AssistantDemoChat() {
         <div className="min-h-[240px] space-y-5">
           {question && (
             <Message from="user">
-              <MessageContent className="text-[15px] leading-relaxed">
-                {question}
-              </MessageContent>
+              <div className="flex max-w-[85%] flex-col items-end gap-1.5">
+                <span className="pr-1 text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
+                  Du
+                </span>
+                <MessageContent className="rounded-2xl rounded-br-md border border-primary/20 bg-primary text-primary-foreground px-4 py-3 text-[15px] leading-relaxed shadow-sm">
+                  {question}
+                </MessageContent>
+              </div>
             </Message>
           )}
 
@@ -111,17 +116,23 @@ export default function AssistantDemoChat() {
 
           {answer && (
             <Message from="assistant">
-              <MessageContent className="text-[15px] leading-relaxed">
-                <MessageResponse>{answer}</MessageResponse>
-                {source && (
-                  <span className="mt-1.5 block text-[13px] text-muted-foreground">
-                    Källa: {source}
-                  </span>
-                )}
-              </MessageContent>
+              <div className="flex max-w-[90%] flex-col items-start gap-1.5">
+                <span className="pl-1 text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
+                  Assistenten
+                </span>
+                <MessageContent className="rounded-2xl rounded-bl-md border border-border bg-secondary/60 px-4 py-3 text-[15px] leading-relaxed text-foreground shadow-sm">
+                  <MessageResponse>{answer}</MessageResponse>
+                  {source && (
+                    <span className="mt-1.5 block text-[13px] text-muted-foreground">
+                      Källa: {source}
+                    </span>
+                  )}
+                </MessageContent>
+              </div>
             </Message>
           )}
         </div>
+
 
         <Link
           to="/registrera"
