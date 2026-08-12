@@ -310,7 +310,7 @@ export default function CvAssistantCard() {
               type="button"
               onClick={() => {
                 try {
-                  downloadCvAsPdf(markdown);
+                  downloadCvAsPdf(markdown, cvFileName(markdown, "pdf", fullName));
                 } catch {
                   toast.error("Kunde inte skapa PDF-filen. Försök igen.");
                 }
