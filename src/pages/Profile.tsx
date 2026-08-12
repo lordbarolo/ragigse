@@ -4,6 +4,7 @@ import { Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfileContext } from "@/hooks/useProfileContext";
 import ProfileAssistantChat from "@/components/profile/ProfileAssistantChat";
+import ProfileContextCard from "@/components/profile/ProfileContextCard";
 import ProfileToolsGrid from "@/components/profile/ProfileToolsGrid";
 import ProfileDocumentsSection from "@/components/profile/ProfileDocumentsSection";
 
@@ -54,29 +55,20 @@ export default function Profile() {
               <br />
               <span className="text-white/45">Sätt din assistent i arbete.</span>
             </h1>
-            <p className="mt-5 max-w-md text-sm leading-relaxed text-white/55 sm:text-base">
-              Gör din AI-assistent personlig. Berätta var du arbetar, vilket yrke du har, om du är
-              företagare eller anställd samt vilken timersättning du har idag — sedan svarar den utifrån
-              din situation.
-            </p>
-            {complete && context && (
-              <div className="mt-7 flex flex-wrap gap-2">
-                {[
-                  context.role,
-                  context.kommun,
-                  context.employmentType === "foretagare" ? "Företagare" : "Anställd",
-                  context.hourlyRate ? `${context.hourlyRate.toLocaleString("sv-SE")} kr/h` : null,
-                ]
-                  .filter(Boolean)
-                  .map((v) => (
-                    <span
-                      key={String(v)}
-                      className="rounded-full border border-white/15 px-3 py-1 text-xs text-white/70"
-                    >
-                      {v}
-                    </span>
-                  ))}
-              </div>
+            {complete && context ? (
+              <>
+                <p className="mt-5 max-w-md text-sm leading-relaxed text-white/55 sm:text-base">
+                  Din assistent är personlig. Uppgifterna nedan styr svaren och verktygen — ändra dem
+                  direkt här om något förändras.
+                </p>
+                <ProfileContextCard userId={user.id} context={context} onSaved={refresh} />
+              </>
+            ) : (
+              <p className="mt-5 max-w-md text-sm leading-relaxed text-white/55 sm:text-base">
+                Gör din AI-assistent personlig. Berätta var du arbetar, vilket yrke du har, om du är
+                företagare eller anställd samt vilken timersättning du har idag — sedan svarar den utifrån
+                din situation.
+              </p>
             )}
           </div>
 
@@ -91,7 +83,7 @@ export default function Profile() {
         </div>
       </section>
 
-      <ProfileToolsGrid />
+      <ProfileToolsGrid context={complete ? context : null} />
       <ProfileDocumentsSection userId={user.id} />
 
       <div className="border-t border-white/10 py-8">

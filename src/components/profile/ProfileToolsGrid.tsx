@@ -1,4 +1,6 @@
 import { Link } from "@/lib/router-compat";
+import { roleLabel5c } from "@/components/startsida5c/roleLabels5c";
+import type { ProfileContext } from "@/lib/profileContext";
 import { Calculator, FileSearch, PiggyBank, ScrollText } from "lucide-react";
 
 const TOOLS = [
@@ -29,7 +31,16 @@ const TOOLS = [
 ];
 
 /** Sektion 2: de fyra verktygen i det inloggade läget. */
-export default function ProfileToolsGrid() {
+export default function ProfileToolsGrid({ context }: { context?: ProfileContext | null }) {
+  const basis = context
+    ? [
+        context.role ? roleLabel5c(context.role) : null,
+        context.kommun,
+        context.hourlyRate ? `${context.hourlyRate.toLocaleString("sv-SE")} kr/h` : null,
+      ]
+        .filter(Boolean)
+        .join(" · ")
+    : null;
   return (
     <section className="border-t border-white/10 py-14 sm:py-16">
       <div className="mx-auto w-full max-w-[1200px] px-5">
@@ -37,6 +48,9 @@ export default function ProfileToolsGrid() {
         <h2 className="mt-2 max-w-xl text-2xl font-semibold tracking-tight text-white sm:text-3xl">
           Fyra verktyg som arbetar med din data
         </h2>
+        {basis && (
+          <p className="mt-3 text-sm text-white/45">Utgår från dina uppgifter: {basis}</p>
+        )}
         <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {TOOLS.map((t) => (
             <Link
