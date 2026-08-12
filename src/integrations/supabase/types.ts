@@ -1458,11 +1458,16 @@ export type Database = {
           cv_markdown: string | null
           id: string
           questions: Json
+          source_document_id: string | null
           source_file_name: string | null
           source_path: string | null
           status: string
+          strengths: Json
+          summary: string | null
           updated_at: string
           user_id: string
+          user_instruction: string | null
+          version: number
         }
         Insert: {
           answers?: Json
@@ -1470,11 +1475,16 @@ export type Database = {
           cv_markdown?: string | null
           id?: string
           questions?: Json
+          source_document_id?: string | null
           source_file_name?: string | null
           source_path?: string | null
           status?: string
+          strengths?: Json
+          summary?: string | null
           updated_at?: string
           user_id: string
+          user_instruction?: string | null
+          version?: number
         }
         Update: {
           answers?: Json
@@ -1482,11 +1492,16 @@ export type Database = {
           cv_markdown?: string | null
           id?: string
           questions?: Json
+          source_document_id?: string | null
           source_file_name?: string | null
           source_path?: string | null
           status?: string
+          strengths?: Json
+          summary?: string | null
           updated_at?: string
           user_id?: string
+          user_instruction?: string | null
+          version?: number
         }
         Relationships: []
       }

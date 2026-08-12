@@ -1,0 +1,6 @@
+ALTER TABLE public.cv_optimizations
+  ADD COLUMN IF NOT EXISTS version INTEGER NOT NULL DEFAULT 1,
+  ADD COLUMN IF NOT EXISTS summary TEXT,
+  ADD COLUMN IF NOT EXISTS strengths JSONB NOT NULL DEFAULT '[]'::jsonb,
+  ADD COLUMN IF NOT EXISTS user_instruction TEXT,
+  ADD COLUMN IF NOT EXISTS source_document_id UUID;
