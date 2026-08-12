@@ -64,7 +64,9 @@ export function useLocation() {
   return useMemo(
     () => ({
       pathname: loc.pathname,
-      search: loc.searchStr ? `?${loc.searchStr}` : "",
+      // searchStr kan komma med eller utan ledande "?" beroende på version —
+      // normalisera så vi aldrig producerar "??a=1" (bryter URLSearchParams).
+      search: loc.searchStr ? `?${loc.searchStr.replace(/^\?+/, "")}` : "",
       hash: loc.hash ?? "",
       state: (loc.state ?? null) as unknown,
       key: loc.pathname + (loc.searchStr ?? ""),
