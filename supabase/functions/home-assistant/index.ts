@@ -186,7 +186,8 @@ Deno.serve(async (req) => {
         "Förklara ALDRIG hur möjlig ersättning beräknas: nämn inga marginaler, procentandelar, " +
         "omräkningsfaktorer eller antal timmar per månad. Om någon frågar hur siffran räknas fram, " +
         "svara att beräkningen utgår från regionernas ramavtal och att modellen inte redovisas. " +
-        `${profileContext} ${rateContext}`.trim();
+        `${profileContext} ${rateContext} ${memoryContext}`.trim();
+
 
       const model = getAiModel();
       const startedAt = Date.now();
