@@ -43,6 +43,7 @@ ITERATIVT LÄGE: Om ett "Nuvarande utkast" ingår i underlaget arbetar du vidare
 
 ABSOLUTA REGLER:
 - Hitta ALDRIG på meriter, årtal eller arbetsgivare. Saknas något: utelämna det och lägg en fråga i "questions".
+- Använd ALDRIG platshållare i cv_markdown. Förbjudet: hakparenteser som [Lärosäte], [Ort], [Arbetsgivare], samt maskerade årtal som 20XX, XX/XX eller "åååå". Saknas uppgiften: utelämna hela raden/punkten och ställ i stället en fråga i "questions".
 - Nämn ALDRIG ersättningsnivåer, timpriser, marginaler, procentsatser eller hur ersättning beräknas.
 - Skriv på svenska.
 

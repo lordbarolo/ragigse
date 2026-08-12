@@ -4,7 +4,8 @@ import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { optimizeCv } from "@/lib/cvAssistant.functions";
-import { downloadCvAsDocx, downloadCvAsPdf } from "@/lib/cvExport";
+import { downloadCvAsDocx, downloadCvAsPdf, cvFileName } from "@/lib/cvExport";
+import { useAuth } from "@/hooks/useAuth";
 import CvPreview from "./CvPreview";
 import CvHistoryList from "./CvHistoryList";
 
@@ -42,6 +43,8 @@ function sourceDescription(source: SourceInfo): string {
 
 /** CV-assistent: tar konsultens uppladdade/inklistrade CV och bygger en proffsversion. */
 export default function CvAssistantCard() {
+  const { user } = useAuth();
+  const fullName = (user?.user_metadata?.full_name as string | undefined) ?? null;
   const runOptimize = useServerFn(optimizeCv);
   const [docs, setDocs] = useState<DocOption[]>([]);
   const [sourceChoice, setSourceChoice] = useState<string>(PASTED);
@@ -166,7 +169,7 @@ export default function CvAssistantCard() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "cv-vardbemanning.md";
+    a.download = cvFileName(markdown, "md", fullName);
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -295,7 +298,7 @@ export default function CvAssistantCard() {
             <button
               type="button"
               onClick={() => {
-                void downloadCvAsDocx(markdown).catch(() =>
+                void downloadCvAsDocx(markdown, cvFileName(markdown, "docx", fullName)).catch(() =>
                   toast.error("Kunde inte skapa DOCX-filen. Försök igen."),
                 );
               }}
@@ -307,7 +310,7 @@ export default function CvAssistantCard() {
               type="button"
               onClick={() => {
                 try {
-                  downloadCvAsPdf(markdown);
+                  downloadCvAsPdf(markdown, cvFileName(markdown, "pdf", fullName));
                 } catch {
                   toast.error("Kunde inte skapa PDF-filen. Försök igen.");
                 }
