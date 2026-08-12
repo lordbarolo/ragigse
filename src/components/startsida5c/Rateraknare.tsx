@@ -64,7 +64,7 @@ export default function Rateraknare() {
         Räkna ut ditt timpris
       </h2>
       <p className="mb-5 text-[15px]" style={{ color: "#a1a3ab", lineHeight: 1.5 }}>
-        Välj roll och zon för att se vad regionen betalar och vad du kan fakturera.
+        Välj roll och ort för att se vad regionen betalar och vad du kan fakturera.
       </p>
 
       <div className="grid gap-4 sm:grid-cols-2">
@@ -89,25 +89,18 @@ export default function Rateraknare() {
             className="mb-2 block text-[13px] font-medium uppercase tracking-[0.08em]"
             style={{ color: "#c4c6ce", fontFamily: "'IBM Plex Mono',monospace" }}
           >
-            Zon
+            Ort
           </label>
-          <div className="flex h-12 items-center rounded-[10px]" style={{ background: "#0b0c10", border: "1px solid #2a2b36" }}>
-            <select
-              value={zone}
-              onChange={(e) => setZone(e.target.value)}
-              aria-label="Zon"
-              className="h-full w-full bg-transparent px-3 text-[15px] outline-hidden"
-              style={{ color: "#ffffff" }}
-            >
-              {ZONES_5C.map((z) => (
-                <option key={z.value} value={z.value} style={{ color: "#121319" }}>
-                  {z.label}
-                </option>
-              ))}
-            </select>
-          </div>
+          <SearchableSelect
+            options={placeOptions}
+            value={place}
+            onValueChange={setPlace}
+            placeholder="Sök kommun eller region"
+            triggerClassName="h-12 rounded-[10px] border-[#2a2b36] bg-[#0b0c10] text-[#ffffff] shadow-none text-[15px]"
+          />
         </div>
       </div>
+
 
       <div className="mt-5 grid gap-3 sm:grid-cols-2">
         <div
