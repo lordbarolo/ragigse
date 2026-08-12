@@ -74,6 +74,23 @@ export function parseCvMarkdown(markdown: string): CvBlock[] {
   return blocks;
 }
 
+/**
+ * Filnamn baserat på konsultens namn. Namnet hämtas från CV:ts H1-rubrik
+ * (eller angivet fallbackNamn). Utan namn används det neutrala filnamnet.
+ */
+export function cvFileName(markdown: string, ext: "docx" | "pdf" | "md", fallbackName?: string | null): string {
+  const h1 = markdown.split("\n").find((l) => /^#\s+\S/.test(l.trim()));
+  const raw = (h1 ? h1.trim().replace(/^#\s+/, "") : (fallbackName ?? "")).replace(/[*_`]/g, "").trim();
+  const slug = raw
+    .toLowerCase()
+    .replace(/[åä]/g, "a")
+    .replace(/ö/g, "o")
+    .replace(/é/g, "e")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+  return slug ? `cv-${slug}.${ext}` : `cv-vardbemanning.${ext}`;
+}
+
 function triggerDownload(blob: Blob, fileName: string): void {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
