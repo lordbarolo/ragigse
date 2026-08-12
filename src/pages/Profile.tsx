@@ -83,7 +83,7 @@ export default function Profile() {
         </div>
       </section>
 
-      <ProfileToolsGrid />
+      <ProfileToolsGrid context={complete ? context : null} />
       <ProfileDocumentsSection userId={user.id} />
 
       <div className="border-t border-white/10 py-8">
