@@ -46,7 +46,7 @@ const EXPECTED: Array<[label: string, canonical: string]> = [
   ["Palliativsjuksköterska", "Specialistsjuksköterska palliativ vård"],
   ["Psykiatrisjuksköterska", "Specialistsjuksköterska psykiatrisk vård"],
   ["Geriatriksjuksköterska", "Specialistsjuksköterska vård av äldre"],
-  ["Grundutbildad sjuksköterska", "Sjuksköterska"],
+  ["Allmänsjuksköterska", "Sjuksköterska"],
 
   // Läkare
   ["Akutläkare", "Specialistläkare akutsjukvård"],

@@ -4,7 +4,7 @@ import { ArrowUp, Check, Loader2, Lock, Sparkle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import SearchableSelect from "@/components/SearchableSelect";
 import { basePrices, roleOptions5c, type RateRow } from "@/components/startsida5c/rate5c";
-import { roleLabel5c } from "@/components/startsida5c/roleLabels5c";
+import { roleLabel5c, roleKeywords5c } from "@/components/startsida5c/roleLabels5c";
 import { saveProfileContext, type ProfileContext } from "@/lib/profileContext";
 import { toast } from "sonner";
 
@@ -84,7 +84,7 @@ export default function ProfileAssistantChat({ userId, context, unlocked, onSave
   const roleOptions = useMemo(
     () =>
       roleOptions5c(rates ?? [])
-        .map((r) => ({ value: r, label: roleLabel5c(r) }))
+        .map((r) => ({ value: r, label: roleLabel5c(r), keywords: roleKeywords5c(r) }))
         .sort((a, b) => a.label.localeCompare(b.label, "sv")),
     [rates],
   );
