@@ -3,7 +3,7 @@ import { Link } from "@/lib/router-compat";
 import { Lock } from "lucide-react";
 import { Message, MessageContent, MessageResponse } from "@/components/ai-elements/message";
 import { Shimmer } from "@/components/ai-elements/shimmer";
-import { supabase } from "@/integrations/supabase/client";
+
 
 type PresetKey =
   | "ssk_stockholm"
@@ -26,8 +26,39 @@ const PRESETS: { key: PresetKey; label: string }[] = [
 
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
-/** Cache per sidladdning så demon inte anropar assistenten om och om igen. */
-const answerCache = new Map<PresetKey, { text: string; source?: string }>();
+/**
+ * Förinspelade demosvar. Demon på startsidan anropar INTE assistenten —
+ * den loopar för alla besökare och slog i frågegränsen (429).
+ * Riktiga svar kräver konto (live-chatten).
+ */
+const DEMO_ANSWERS: Record<PresetKey, { text: string; source?: string }> = {
+  ssk_stockholm: {
+    text: "I Stockholm ligger ramavtalspriset för en legitimerad sjuksköterska i den lägre zonen. Utifrån det brukar ersättningen till konsulten landa i ett spann som jag kan räkna fram exakt för din roll och kommun.",
+    source: "Ramavtal region/SKR",
+  },
+  allmanlakare_torsby: {
+    text: "Torsby ligger i den högsta prisgruppen, vilket ger ett högre ramavtalspris för specialist i allmänmedicin än storstadsregionerna. Jag kan visa vad du kan fakturera där.",
+    source: "Ramavtal region/SKR",
+  },
+  erfarenhet: {
+    text: "De flesta uppdrag efterfrågar minst två års yrkeserfarenhet inom aktuellt område, men kraven varierar mellan avrop och verksamhet.",
+  },
+  termin10: {
+    text: "Vikariat som underläkare före legitimation förekommer, men förutsätter att verksamheten godtar din utbildningsnivå och att handledning finns på plats.",
+  },
+  patientforsakring: {
+    text: "Som egenföretagande läkare behöver du normalt egen patientförsäkring, om inte uppdragsgivaren uttryckligen omfattar dig i sin.",
+  },
+  avrop_gavle: {
+    text: "Historiskt har akutmottagningar i Gävleborg publicerat sjuksköterskeavrop återkommande under året, med tydliga toppar kring sommar och jul.",
+    source: "Historiska avrop",
+  },
+  lon_malmo: {
+    text: "390 kr/timme ligger inom det spann som förekommer för sjuksköterskor i Malmö. Om det är rimligt beror på roll, tjänstetyp och aktuellt ramavtalspris — det kan jag jämföra åt dig.",
+    source: "Ramavtal region/SKR",
+  },
+};
+
 
 
 /**
@@ -57,27 +88,6 @@ export default function AssistantDemoChat() {
       }
     };
 
-    const fetchAnswer = async (preset: { key: PresetKey; label: string }) => {
-      const cached = answerCache.get(preset.key);
-      if (cached) return cached;
-      try {
-        const { data, error } = await supabase.functions.invoke("home-assistant", {
-          body: { action: "answer", key: preset.key },
-        });
-        if (!error && data?.answer) {
-          const entry = {
-            text: data.answer as string,
-            source: data.source as string | undefined,
-          };
-          answerCache.set(preset.key, entry);
-          return entry;
-        }
-      } catch {
-        /* nätverksfel — visa fallback */
-      }
-      return null;
-    };
-
     const run = async () => {
       let i = 0;
       while (aliveRef.current) {
@@ -91,16 +101,12 @@ export default function AssistantDemoChat() {
         if (!aliveRef.current) return;
 
         setThinking(true);
-        const result = await fetchAnswer(preset);
-        await sleep(500);
+        const result = DEMO_ANSWERS[preset.key];
+        await sleep(700);
         if (!aliveRef.current) return;
         setThinking(false);
 
-        if (!result) {
-          // Inget svar (t.ex. tillfällig gräns) — hoppa vidare utan felruta.
-          await sleep(1500);
-          continue;
-        }
+
 
         setSource(result.source);
         await typeInto(result.text, setAnswer, 12);
