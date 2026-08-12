@@ -72,7 +72,6 @@ export default function Hero() {
           >
             {CHECKS.map((c) => (
               <li key={c} className="flex flex-col gap-1">
-                <span style={{ color: "#4ade80" }}>{"\n"}</span>
                 <span>{c}</span>
               </li>
             ))}
