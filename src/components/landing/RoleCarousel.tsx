@@ -27,7 +27,7 @@ const ROLES: { name: string; short: string; kind: RoleKind; prices: [number, num
   { name: "Specialistläkare anestesi och intensivvård", short: "Anestesiläkare", kind: "lakare", prices: [1189, 1453, 1717] },
   { name: "Specialistläkare internmedicin", short: "Internmedicin", kind: "lakare", prices: [1189, 1453, 1717] },
   { name: "Specialistläkare barn- och ungdomsmedicin", short: "Barnläkare", kind: "lakare", prices: [1189, 1453, 1717] },
-  { name: "ST-läkare", short: "ST-läkare", kind: "lakare", prices: [847, 1040, 1233] },
+  { name: "ST-läkare", short: "ST-läkare", kind: "lakare", prices: [814, 999, 1184] },
   { name: "Specialistläkare psykiatri", short: "Psykiatriker", kind: "lakare", prices: [1400, 1612, 1876] },
   { name: "Specialistläkare geriatrik", short: "Geriatriker", kind: "lakare", prices: [1189, 1453, 1717] },
   { name: "Specialistsjuksköterska akutsjukvård", short: "Akut-ssk", kind: "ssk", prices: [687, 740, 792] },

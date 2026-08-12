@@ -55,13 +55,13 @@ Kundpriset (vad regionen betalar bemanningsföretaget) delas enligt branschpraxi
 ### Egenföretagare (företagare)
 - Andel till konsulten: **82–88 %** av kundpriset
 - Bemanningsföretagets marginal: 12–18 %
-- Exempel: Kundpris 770 kr/h → Konsultarvode 631–678 kr/h
+- Exempel: Kundpris 740 kr/h → Konsultarvode 607–651 kr/h
 
 ### Anställd via bemanningsföretag (anstalld)
 - Andel till konsulten: **80–86 %** av kundpriset
 - Bemanningsföretagets marginal: 14–20 %
 - Sociala avgifter (arbetsgivaravgifter): ×1,38 på lönekostnaden
-- Exempel: Kundpris 770 kr/h → Bruttolön 633–680 kr/h → Nettolön efter arbetsgivaravgifter beräknas som (brutto × 0,7056) / 1,38
+- Exempel: Kundpris 740 kr/h → Bruttolön 592–636 kr/h → Nettolön efter arbetsgivaravgifter beräknas som (brutto × 0,7056) / 1,38
 
 ### Priszoner
 - **Zon 1**: Storstadsregioner (Stockholm, Göteborg, Malmö) — lägst kundpris
@@ -124,10 +124,10 @@ Länk tillbaka till startsidan med förifyllt yrke för personlig analys.
 
 ### Anestesisjuksköterska
 - URL: https://vardbemanning.ai/rapport/anestesisjukskoterska
-- Zon 1 kundpris: 770 kr/h
-- Zon 3 kundpris: 880 kr/h
-- Konsultarvode Zon 1 (egenföretagare): 631–678 kr/h
-- Konsultarvode Zon 1 (anställd): 616–662 kr/h
+- Zon 1 kundpris: 740 kr/h
+- Zon 3 kundpris: 845 kr/h
+- Konsultarvode Zon 1 (egenföretagare): 607–651 kr/h
+- Konsultarvode Zon 1 (anställd): 592–636 kr/h
 - Senast uppdaterad: 2026-01-15
 - JSON-LD: Article + FAQPage + Dataset
 
