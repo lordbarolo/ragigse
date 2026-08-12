@@ -4,6 +4,7 @@ import AssistantDemoChat from "@/components/assistant/AssistantDemoChat";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function OvergangChatt() {
+  const { user } = useAuth();
   return (
     <section
       id="assistent"
