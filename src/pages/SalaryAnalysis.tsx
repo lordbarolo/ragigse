@@ -29,13 +29,21 @@ export default function SalaryAnalysis() {
       try {
         const { data: existing } = await supabase
           .from("reports")
-          .select("id")
+          .select("id, occupation, kommun, employment_type, current_salary")
           .eq("user_id", user.id)
           .order("created_at", { ascending: false })
           .limit(1);
 
-        if (existing && existing.length > 0) {
-          navigate(`/rapport/${existing[0].id}`, { replace: true });
+        const latest = existing?.[0];
+        const matchesProfile =
+          latest &&
+          latest.occupation === context.role &&
+          latest.kommun === context.kommun &&
+          latest.employment_type === context.employmentType &&
+          (latest.current_salary ?? 0) === (context.hourlyRate ?? 0);
+
+        if (matchesProfile) {
+          navigate(`/rapport/${latest.id}`, { replace: true });
           return;
         }
 
