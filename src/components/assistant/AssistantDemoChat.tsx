@@ -26,6 +26,10 @@ const PRESETS: { key: PresetKey; label: string }[] = [
 
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
+/** Cache per sidladdning så demon inte anropar assistenten om och om igen. */
+const answerCache = new Map<PresetKey, { text: string; source?: string }>();
+
+
 /**
  * AssistantDemoChat — uppspelad demo av assistenten på startsidan.
  * Ingen inmatning: frågor och svar skrivs fram tecken för tecken (vänster→höger)
@@ -53,6 +57,27 @@ export default function AssistantDemoChat() {
       }
     };
 
+    const fetchAnswer = async (preset: { key: PresetKey; label: string }) => {
+      const cached = answerCache.get(preset.key);
+      if (cached) return cached;
+      try {
+        const { data, error } = await supabase.functions.invoke("home-assistant", {
+          body: { action: "answer", key: preset.key },
+        });
+        if (!error && data?.answer) {
+          const entry = {
+            text: data.answer as string,
+            source: data.source as string | undefined,
+          };
+          answerCache.set(preset.key, entry);
+          return entry;
+        }
+      } catch {
+        /* nätverksfel — visa fallback */
+      }
+      return null;
+    };
+
     const run = async () => {
       let i = 0;
       while (aliveRef.current) {
@@ -66,28 +91,24 @@ export default function AssistantDemoChat() {
         if (!aliveRef.current) return;
 
         setThinking(true);
-        let text = "Assistenten kunde inte svara just nu.";
-        let src: string | undefined;
-        try {
-          const { data } = await supabase.functions.invoke("home-assistant", {
-            body: { action: "answer", key: preset.key },
-          });
-          if (data?.answer) {
-            text = data.answer as string;
-            src = data.source as string | undefined;
-          }
-        } catch {
-          /* behåll fallbacktexten */
-        }
+        const result = await fetchAnswer(preset);
         await sleep(500);
         if (!aliveRef.current) return;
         setThinking(false);
-        setSource(src);
-        await typeInto(text, setAnswer, 12);
+
+        if (!result) {
+          // Inget svar (t.ex. tillfällig gräns) — hoppa vidare utan felruta.
+          await sleep(1500);
+          continue;
+        }
+
+        setSource(result.source);
+        await typeInto(result.text, setAnswer, 12);
         if (!aliveRef.current) return;
         await sleep(4200);
       }
     };
+
 
     run();
     return () => {
