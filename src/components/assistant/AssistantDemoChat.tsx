@@ -3,7 +3,7 @@ import { Link } from "@/lib/router-compat";
 import { Lock } from "lucide-react";
 import { Message, MessageContent, MessageResponse } from "@/components/ai-elements/message";
 import { Shimmer } from "@/components/ai-elements/shimmer";
-import { supabase } from "@/integrations/supabase/client";
+
 
 type PresetKey =
   | "ssk_stockholm"
