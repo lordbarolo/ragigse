@@ -4,6 +4,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2'
 import { TEMPLATES } from '../_shared/transactional-email-templates/registry.ts'
 import { identifyCaller, clientIp, emailKey } from '../_shared/emailCallerGate.ts'
 import { checkRateLimit, rateLimitResponse } from '../_shared/rateLimit.ts'
+import { FROM_DOMAIN as FROM_DOMAIN_SHARED } from '../_shared/mailFrom.ts'
 
 // Templates an unauthenticated caller may trigger (self-service signup flow only).
 const ANON_TEMPLATES = new Set(['welcome'])
