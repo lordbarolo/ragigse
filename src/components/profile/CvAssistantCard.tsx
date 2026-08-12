@@ -4,7 +4,8 @@ import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { optimizeCv } from "@/lib/cvAssistant.functions";
-import { downloadCvAsDocx, downloadCvAsPdf } from "@/lib/cvExport";
+import { downloadCvAsDocx, downloadCvAsPdf, cvFileName } from "@/lib/cvExport";
+import { useAuth } from "@/hooks/useAuth";
 import CvPreview from "./CvPreview";
 import CvHistoryList from "./CvHistoryList";
 
