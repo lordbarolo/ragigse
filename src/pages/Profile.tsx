@@ -5,6 +5,8 @@ import { useAuth } from "@/hooks/useAuth";
 import { useProfileContext } from "@/hooks/useProfileContext";
 import ProfileAssistantChat from "@/components/profile/ProfileAssistantChat";
 import ProfileContextCard from "@/components/profile/ProfileContextCard";
+import AssistantMemoryCard from "@/components/profile/AssistantMemoryCard";
+
 import ProfileToolsGrid from "@/components/profile/ProfileToolsGrid";
 import ProfileDocumentsSection from "@/components/profile/ProfileDocumentsSection";
 
