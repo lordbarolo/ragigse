@@ -45,7 +45,7 @@ export default function Hero() {
               className="inline-flex flex-col items-center gap-0.5 rounded-full px-4 py-[7px] text-[13px] font-medium"
               style={{ background: "#0b0c10", color: "#e8eaef" }}
             >
-              Logga in och träffa din personliga AI-assistent
+              Logga in för att träffa din AI-assistent{" "}
               <span className="leading-none" style={{ color: "#8a8c94" }}>›</span>
             </span>
           </a>
