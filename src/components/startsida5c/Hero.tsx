@@ -78,7 +78,7 @@ export default function Hero() {
         familj som heron) istället för neutralgrått, och ett diskret ljus
         i mitten bryter av den platta horisontella banden.
       */}
-      <div aria-hidden className="relative h-48 w-full md:h-72">
+      <div aria-hidden className="relative h-24 w-full md:h-32">
         <div
           className="absolute inset-0"
           style={{
