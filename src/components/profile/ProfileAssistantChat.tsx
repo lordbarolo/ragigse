@@ -165,8 +165,9 @@ export default function ProfileAssistantChat({ userId, context, unlocked, onSave
       if (data?.memory_added) {
         void qc.invalidateQueries({ queryKey: assistantMemoryKey(userId) });
       }
-
+    } catch {
       push({ role: "assistant", text: "Något gick fel. Försök igen om en stund." });
+
     } finally {
       setLoading(false);
     }
