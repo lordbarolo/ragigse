@@ -6,7 +6,9 @@ import SearchableSelect from "@/components/SearchableSelect";
 import { basePrices, roleOptions5c, type RateRow } from "@/components/startsida5c/rate5c";
 import { roleLabel5c, roleKeywords5c } from "@/components/startsida5c/roleLabels5c";
 import { saveProfileContext, type ProfileContext } from "@/lib/profileContext";
+import { assistantMemoryKey } from "@/components/profile/AssistantMemoryCard";
 import { toast } from "sonner";
+
 
 type Msg = { id: string; role: "user" | "assistant"; text: string; source?: string };
 
