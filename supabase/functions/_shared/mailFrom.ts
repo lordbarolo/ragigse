@@ -1,8 +1,17 @@
-// Central avsändardomän för alla utgående mejl.
-// Styrs av RESEND_FROM_DOMAIN (måste vara en verifierad domän i Resend
-// som den aktiva RESEND_API_KEY har sending access till).
-export const FROM_DOMAIN =
-  (Deno.env.get("RESEND_FROM_DOMAIN") || "vardbemanning.ai").trim();
+// Central avsändardomän för alla utgående mejl (Resend).
+// Endast domäner som är verifierade i Resend och som den aktiva nyckeln har
+// sending access till får användas. RESEND_FROM_DOMAIN kan peka på en
+// subdomän av vardbemanning.ai, men aldrig på en gammal/overifierad domän
+// (t.ex. compcare.se) — då faller vi tillbaka på rotdomänen.
+const ROOT_DOMAIN = "vardbemanning.ai";
+
+function resolveDomain(): string {
+  const raw = (Deno.env.get("RESEND_FROM_DOMAIN") || "").trim().toLowerCase();
+  if (raw === ROOT_DOMAIN || raw.endsWith(`.${ROOT_DOMAIN}`)) return raw;
+  return ROOT_DOMAIN;
+}
+
+export const FROM_DOMAIN = resolveDomain();
 
 // ASCII-namn: Resend avvisar From-headers med icke-ASCII-tecken (422).
 export const SITE_NAME = "vardbemanning.ai";
