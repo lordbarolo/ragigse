@@ -3,7 +3,7 @@ import { FileText, GitCompareArrows, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
 import { listCvDrafts, getCvDraft, type CvDraftListItem } from "@/lib/cvAssistant.history.functions";
-import { downloadCvAsDocx, downloadCvAsPdf } from "@/lib/cvExport";
+import { downloadCvAsDocx, downloadCvAsPdf, cvFileName } from "@/lib/cvExport";
 
 const STATUS_LABELS: Record<string, string> = {
   ready: "Klar",
@@ -209,7 +209,7 @@ export default function CvHistoryList({ refreshKey, onOpen }: Props) {
                       <button
                         type="button"
                         disabled={busyId === d.id}
-                        onClick={() => void withDraft(d.id, (md) => downloadCvAsDocx(md))}
+                        onClick={() => void withDraft(d.id, (md) => downloadCvAsDocx(md, cvFileName(md, "docx")))}
                         className="rounded-full border border-white/20 px-3 py-1 text-[11px] font-medium text-white/85 hover:bg-white/10 disabled:opacity-50"
                       >
                         DOCX
@@ -217,7 +217,7 @@ export default function CvHistoryList({ refreshKey, onOpen }: Props) {
                       <button
                         type="button"
                         disabled={busyId === d.id}
-                        onClick={() => void withDraft(d.id, (md) => downloadCvAsPdf(md))}
+                        onClick={() => void withDraft(d.id, (md) => downloadCvAsPdf(md, cvFileName(md, "pdf")))}
                         className="rounded-full border border-white/20 px-3 py-1 text-[11px] font-medium text-white/85 hover:bg-white/10 disabled:opacity-50"
                       >
                         PDF
