@@ -27,12 +27,6 @@ export default function Hero() {
               <span style={{ color: "#8a8c94" }}>›</span>
             </span>
           </a>
-          <div
-            className="mb-4 text-[11px] uppercase tracking-[0.14em]"
-            style={{ color: "#8a8c94", fontFamily: "'IBM Plex Mono',monospace", animation: "fadeUp5c .55s ease both" }}
-          >
-            OPTIMERA TID, VILLKOR OCH AVTAL
-          </div>
           <h1
             className="m-0 text-[34px] font-semibold sm:text-[42px] lg:text-[50px]"
             style={{
