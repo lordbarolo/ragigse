@@ -10,7 +10,7 @@ export default function Hero() {
   return (
     <section
       className="relative overflow-hidden"
-      style={{ background: "#0b0c10", borderBottom: "1px solid #22232b" }}
+      style={{ background: "#0b0c10" }}
     >
       {/* Spotlight: ljuskägla från övre högra hörnet ned mot mitten */}
       <div
@@ -70,6 +70,16 @@ export default function Hero() {
 
         <Rateraknare />
       </div>
+
+      {/* Mjuk övergång från mörk hero till ljus sektion */}
+      <div
+        aria-hidden
+        className="h-32 w-full md:h-44"
+        style={{
+          background:
+            "linear-gradient(180deg,#0b0c10 0%,#0e0f15 30%,#2a2b36 52%,#6f7178 70%,#bcbec6 86%,#f5f5f7 100%)",
+        }}
+      />
     </section>
   );
 }
