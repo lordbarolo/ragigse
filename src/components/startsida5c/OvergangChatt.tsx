@@ -45,7 +45,7 @@ export default function OvergangChatt() {
           </h2>
 
           <div className="mx-auto mt-9 w-full text-left">
-            <HomeAssistantChat />
+            {user ? <HomeAssistantChat /> : <AssistantDemoChat />}
           </div>
 
           <div className="mt-3 text-[13px]" style={{ color: "#6b6b6b" }}>
