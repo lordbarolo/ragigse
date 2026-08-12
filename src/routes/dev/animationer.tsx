@@ -156,7 +156,7 @@ function Toggle({
       className="rounded-full px-4 py-2 text-[13px] font-medium transition-colors"
       style={{
         background: aktiv ? "#FFFFFF" : "transparent",
-        color: aktiv ? "#0B0C10" : "#2A2B36",
+        color: aktiv ? "#0B0C10" : "#B8BAC2",
         border: `1px solid ${aktiv ? "#FFFFFF" : "#2A2B36"}`,
       }}
     >
