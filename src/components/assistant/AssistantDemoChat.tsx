@@ -26,8 +26,39 @@ const PRESETS: { key: PresetKey; label: string }[] = [
 
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
-/** Cache per sidladdning så demon inte anropar assistenten om och om igen. */
-const answerCache = new Map<PresetKey, { text: string; source?: string }>();
+/**
+ * Förinspelade demosvar. Demon på startsidan anropar INTE assistenten —
+ * den loopar för alla besökare och slog i frågegränsen (429).
+ * Riktiga svar kräver konto (live-chatten).
+ */
+const DEMO_ANSWERS: Record<PresetKey, { text: string; source?: string }> = {
+  ssk_stockholm: {
+    text: "I Stockholm ligger ramavtalspriset för en legitimerad sjuksköterska i den lägre zonen. Utifrån det brukar ersättningen till konsulten landa i ett spann som jag kan räkna fram exakt för din roll och kommun.",
+    source: "Ramavtal region/SKR",
+  },
+  allmanlakare_torsby: {
+    text: "Torsby ligger i den högsta prisgruppen, vilket ger ett högre ramavtalspris för specialist i allmänmedicin än storstadsregionerna. Jag kan visa vad du kan fakturera där.",
+    source: "Ramavtal region/SKR",
+  },
+  erfarenhet: {
+    text: "De flesta uppdrag efterfrågar minst två års yrkeserfarenhet inom aktuellt område, men kraven varierar mellan avrop och verksamhet.",
+  },
+  termin10: {
+    text: "Vikariat som underläkare före legitimation förekommer, men förutsätter att verksamheten godtar din utbildningsnivå och att handledning finns på plats.",
+  },
+  patientforsakring: {
+    text: "Som egenföretagande läkare behöver du normalt egen patientförsäkring, om inte uppdragsgivaren uttryckligen omfattar dig i sin.",
+  },
+  avrop_gavle: {
+    text: "Historiskt har akutmottagningar i Gävleborg publicerat sjuksköterskeavrop återkommande under året, med tydliga toppar kring sommar och jul.",
+    source: "Historiska avrop",
+  },
+  lon_malmo: {
+    text: "390 kr/timme ligger inom det spann som förekommer för sjuksköterskor i Malmö. Om det är rimligt beror på roll, tjänstetyp och aktuellt ramavtalspris — det kan jag jämföra åt dig.",
+    source: "Ramavtal region/SKR",
+  },
+};
+
 
 
 /**
