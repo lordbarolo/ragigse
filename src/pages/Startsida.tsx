@@ -6,7 +6,6 @@ import RolltabellDark from "@/components/startsida5c/RolltabellDark";
 import OvergangChatt from "@/components/startsida5c/OvergangChatt";
 import FotoBand from "@/components/startsida5c/FotoBand";
 import Footer5c from "@/components/startsida5c/Footer5c";
-import BadgeCta from "@/components/startsida5c/BadgeCta";
 
 import { trackEvent } from "@/lib/trackEvent";
 
@@ -71,9 +70,14 @@ export default function Startsida5c() {
             draggable={false}
           />
         </Link>
-        <BadgeCta to="/logga-in" variant="ghost" ariaLabel="Logga in">
+        <Link
+          to="/logga-in"
+          aria-label="Logga in"
+          className="text-[14px] font-medium text-white/70 transition-colors hover:text-white"
+        >
           Logga in
-        </BadgeCta>
+        </Link>
+
 
       </header>
 
