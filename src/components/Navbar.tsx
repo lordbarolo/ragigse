@@ -1,7 +1,6 @@
 import { Link, useLocation, useNavigate } from "@/lib/router-compat";
 import { useAuth } from "@/hooks/useAuth";
 import CompcareLogo from "@/components/CompcareLogo";
-import BadgeCta from "@/components/startsida5c/BadgeCta";
 import { Button } from "@/components/ui/button";
 import { User, LogOut, MessageSquare, Shield, FileSearch, ArrowLeft } from "lucide-react";
 import { trackCta } from "@/lib/trackCta";
