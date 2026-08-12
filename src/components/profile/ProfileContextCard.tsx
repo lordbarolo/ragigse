@@ -111,7 +111,7 @@ export default function ProfileContextCard({ userId, context, onSaved }: Props) 
     },
     {
       label: "Ersättning",
-      value: context.hourlyRate ? `${context.hourlyRate.toLocaleString("sv-SE")} kr/h` : "—",
+      value: context.hourlyRate ? `${context.hourlyRate.toLocaleString("sv-SE")} kr/timme` : "—",
     },
   ];
 
@@ -191,7 +191,7 @@ export default function ProfileContextCard({ userId, context, onSaved }: Props) 
           </div>
           <div>
             <label className="text-xs text-white/45" htmlFor="profile-rate">
-              Timersättning (kr/h)
+              Timersättning (kr/timme)
             </label>
             <input
               id="profile-rate"

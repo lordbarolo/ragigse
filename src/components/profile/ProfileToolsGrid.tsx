@@ -36,7 +36,7 @@ export default function ProfileToolsGrid({ context }: { context?: ProfileContext
     ? [
         context.role ? roleLabel5c(context.role) : null,
         context.kommun,
-        context.hourlyRate ? `${context.hourlyRate.toLocaleString("sv-SE")} kr/h` : null,
+        context.hourlyRate ? `${context.hourlyRate.toLocaleString("sv-SE")} kr/timme` : null,
       ]
         .filter(Boolean)
         .join(" · ")

@@ -85,7 +85,7 @@ export default function PriceHistory({ changes, userZone, occupation }: Props) {
                 <p className={`${monoClass} text-lg text-foreground/[0.4] line-through decoration-foreground/[0.15]`}>
                   {fmt(latest.old_timpris)}
                 </p>
-                <p className="text-[9px] text-foreground/[0.2]">kr/h</p>
+                <p className="text-[9px] text-foreground/[0.2]">kr/timme</p>
               </div>
               <div className="text-foreground/[0.15] text-lg">→</div>
             </>
@@ -95,7 +95,7 @@ export default function PriceHistory({ changes, userZone, occupation }: Props) {
             <p className={`${monoClass} text-lg font-medium ${isIncrease ? "text-accent" : "text-foreground/[0.7]"}`}>
               {fmt(latest.new_timpris)}
             </p>
-            <p className="text-[9px] text-foreground/[0.2]">kr/h</p>
+            <p className="text-[9px] text-foreground/[0.2]">kr/timme</p>
           </div>
         </div>
 
@@ -128,9 +128,9 @@ export default function PriceHistory({ changes, userZone, occupation }: Props) {
         <p className="text-[10px] text-foreground/[0.2] mt-2 leading-relaxed">
           Kundpriset för {occupation.toLowerCase()} i {userZone || "din zon"} har{" "}
           {isIncrease
-            ? `ökat med ${fmt(Math.abs(latest.diff_abs))} kr/h sedan föregående avtal.`
+            ? `ökat med ${fmt(Math.abs(latest.diff_abs))} kr/timme sedan föregående avtal.`
             : isDecrease
-              ? `minskat med ${fmt(Math.abs(latest.diff_abs))} kr/h sedan föregående avtal.`
+              ? `minskat med ${fmt(Math.abs(latest.diff_abs))} kr/timme sedan föregående avtal.`
               : "inte förändrats sedan föregående avtal."}
         </p>
       </div>

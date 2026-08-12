@@ -116,7 +116,7 @@ export default function Rateraknare() {
           </div>
           <div className="mt-1.5 flex items-baseline gap-1.5" style={{ color: "#fff" }}>
             <span className="text-[34px] font-semibold leading-none">{kr(rate?.foretagareKrH)}</span>
-            <span className="text-[14px]">kr/h</span>
+            <span className="text-[14px]">kr/timme</span>
           </div>
         </div>
 
@@ -126,7 +126,7 @@ export default function Rateraknare() {
           </div>
           <div className="mt-1.5 flex items-baseline gap-1.5" style={{ color: "#ffffff" }}>
             <span className="text-[34px] font-semibold leading-none">{kr(rate?.lontagareKrH)}</span>
-            <span className="text-[14px]">kr/h</span>
+            <span className="text-[14px]">kr/timme</span>
           </div>
         </div>
       </div>
@@ -135,7 +135,7 @@ export default function Rateraknare() {
         {base.length === 0
           ? "Prisdata kunde inte hämtas just nu."
           : rate
-            ? `Kundpris ${kr(rate.timpris_kund)} kr/h i ${place}${selected?.region ? ` (${selected.region})` : ""}. Källa: SKR:s ramavtal 2026.`
+            ? `Kundpris ${kr(rate.timpris_kund)} kr/timme i ${place}${selected?.region ? ` (${selected.region})` : ""}. Källa: SKR:s ramavtal 2026.`
             : "Pris saknas för denna kombination — kontakta oss."}
       </p>
     </div>

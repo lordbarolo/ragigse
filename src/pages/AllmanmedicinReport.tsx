@@ -47,7 +47,7 @@ const EMPLOYER_FACTOR = 1.38;
 const makeFaq = (zones: { zone: string; rate: number; desc: string }[]) => [
   {
     question: "Vad är ramavtalspriset för en specialistläkare i allmänmedicin 2026?",
-    answer: `Enligt SKR:s ramavtal vårdbemanning 2026 är kundpriset ${fmt(zones[0].rate)} kr/h i Zon 1 (storstad), ${fmt(zones[1].rate)} kr/h i Zon 2 (mellanstora regioner) och ${fmt(zones[2].rate)} kr/h i Zon 3 (glesbygd).`,
+    answer: `Enligt SKR:s ramavtal vårdbemanning 2026 är kundpriset ${fmt(zones[0].rate)} kr/timme i Zon 1 (storstad), ${fmt(zones[1].rate)} kr/timme i Zon 2 (mellanstora regioner) och ${fmt(zones[2].rate)} kr/timme i Zon 3 (glesbygd).`,
   },
 
   {
@@ -101,7 +101,7 @@ export default function AllmanmedicinReport() {
     roleSlug: "lakare-allmanmedicin",
     dateModified: LAST_UPDATED,
     summary:
-      `Ramavtalspriset för specialistläkare i allmänmedicin är ${fmt(lowZone)}–${fmt(highZone)} kr/h beroende på zon enligt SKR:s ramavtal vårdbemanning 2026. `,
+      `Ramavtalspriset för specialistläkare i allmänmedicin är ${fmt(lowZone)}–${fmt(highZone)} kr/timme beroende på zon enligt SKR:s ramavtal vårdbemanning 2026. `,
     rateRange: { min: lowZone, median: refRate, max: highZone, unit: "SEK/h" },
     skrSources: ["https://skr.se/ramavtal/vardbemanning"],
     faq: FAQ,
@@ -174,7 +174,7 @@ export default function AllmanmedicinReport() {
             <p style={{ fontFamily: "Georgia, serif", fontSize: "17px", lineHeight: 1.5, color: ink }}>
               Kundpriset för en specialistläkare i allmänmedicin är{" "}
               <span style={{ color: accent, fontWeight: 700 }}>
-                {fmt(lowZone)}–{fmt(highZone)} kr/h
+                {fmt(lowZone)}–{fmt(highZone)} kr/timme
               </span>{" "}
               beroende på zon. Konsultandelen ligger typiskt på{" "}
               redovisad som ett spann per zon.
@@ -221,7 +221,7 @@ export default function AllmanmedicinReport() {
                   >
                     {fmt(z.rate)}{" "}
                     <span className="text-xs font-normal" style={{ color: sub }}>
-                      kr/h
+                      kr/timme
                     </span>
                   </span>
                 </div>
@@ -262,7 +262,7 @@ export default function AllmanmedicinReport() {
                   className="font-bold"
                   style={{ fontFamily: "Georgia, serif", fontSize: "18px", color: ink }}
                 >
-                  {fmt(recMinF)}–{fmt(recMaxF)} kr/h
+                  {fmt(recMinF)}–{fmt(recMaxF)} kr/timme
                 </p>
                 <p className="text-[11px]" style={{ color: sub }}>
                   Marknadsmässigt spann (eget bolag, Zon 2)
@@ -275,12 +275,12 @@ export default function AllmanmedicinReport() {
                 {
                   label: "Egenföretagare",
                   share: "Möjlig ersättning",
-                  range: `${fmt(recMinF)}–${fmt(recMaxF)} kr/h`,
+                  range: `${fmt(recMinF)}–${fmt(recMaxF)} kr/timme`,
                 },
                 {
                   label: "Anställd via bemanning",
                   share: "Bruttolön efter sociala avgifter och tjänstepension",
-                  range: `${fmt(recMinA)}–${fmt(recMaxA)} kr/h`,
+                  range: `${fmt(recMinA)}–${fmt(recMaxA)} kr/timme`,
                 },
               ].map((row) => (
                 <div
@@ -350,7 +350,7 @@ export default function AllmanmedicinReport() {
                 Undre spann:
               </span>{" "}
               <span style={{ color: sub }}>
-                {fmt(recMinF)} kr/h — utgångspunkt baserat på SKR Zon 2 för en konsult med begränsad tillgänglighet och erfarenhet.
+                {fmt(recMinF)} kr/timme — utgångspunkt baserat på SKR Zon 2 för en konsult med begränsad tillgänglighet och erfarenhet.
               </span>
             </p>
             <p>
@@ -358,7 +358,7 @@ export default function AllmanmedicinReport() {
                 Median:
               </span>{" "}
               <span style={{ color: sub }}>
-                {fmt(Math.round((recMinF + recMaxF) / 2))} kr/h — typisk nivå för konsulter med
+                {fmt(Math.round((recMinF + recMaxF) / 2))} kr/timme — typisk nivå för konsulter med
                 dokumenterad erfarenhet.
               </span>
             </p>
@@ -367,7 +367,7 @@ export default function AllmanmedicinReport() {
                 Övre spann:
               </span>{" "}
               <span style={{ color: sub }}>
-                {fmt(recMaxF)} kr/h — Konsulter med god tillgänglighet och etablerad relation med beställande vårdgivare. Som ej behöver få betald resa, boende eller utbildning.  
+                {fmt(recMaxF)} kr/timme — Konsulter med god tillgänglighet och etablerad relation med beställande vårdgivare. Som ej behöver få betald resa, boende eller utbildning.  
               </span>
             </p>
           </section>

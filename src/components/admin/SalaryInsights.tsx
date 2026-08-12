@@ -83,7 +83,7 @@ function stLabel(st: string): string {
 }
 
 function unitLabel(st: string): string {
-  return st === "monthly" ? "kr/mån" : "kr/h";
+  return st === "monthly" ? "kr/mån" : "kr/timme";
 }
 
 function formatHours(h: number): string {

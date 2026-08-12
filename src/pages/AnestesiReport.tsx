@@ -70,23 +70,23 @@ export default function AnestesiReport() {
     roleSlug: "anestesisjukskoterska",
     dateModified: LAST_UPDATED,
     summary:
-      `Ramavtalspriset för anestesisjuksköterskor är ${fmt(zone1Rate)}–${fmt(zone3Rate)} kr/h beroende på zon. ` +
-      `Marknadsmässigt konsultarvode (egenföretagare) ligger på ${fmt(recMinF)}–${fmt(recMaxF)} kr/h enligt SKR:s ramavtal 2026.`,
+      `Ramavtalspriset för anestesisjuksköterskor är ${fmt(zone1Rate)}–${fmt(zone3Rate)} kr/timme beroende på zon. ` +
+      `Marknadsmässigt konsultarvode (egenföretagare) ligger på ${fmt(recMinF)}–${fmt(recMaxF)} kr/timme enligt SKR:s ramavtal 2026.`,
     rateRange: { min: zone1Rate, median: 792, max: zone3Rate, unit: "SEK/h" },
     skrSources: ["https://skr.se/ramavtal/vardbemanning"],
     faq: [
       {
         question: "Vad är timpriset för en anestesisjuksköterska 2026?",
-        answer: `Ramavtalspriset enligt SKR är ${fmt(zone1Rate)} kr/h i storstad (Zon 1), 792 kr/h i mellanstora regioner (Zon 2) och ${fmt(zone3Rate)} kr/h i glesbygd (Zon 3).`,
+        answer: `Ramavtalspriset enligt SKR är ${fmt(zone1Rate)} kr/timme i storstad (Zon 1), 792 kr/timme i mellanstora regioner (Zon 2) och ${fmt(zone3Rate)} kr/timme i glesbygd (Zon 3).`,
       },
       {
         question: "Hur mycket tjänar en anestesisjuksköterska som konsult?",
-        answer: `Som egenföretagare ligger möjlig ersättning på ${fmt(recMinF)}–${fmt(recMaxF)} kr/h i Zon 1. Som anställd konsult ligger spannet på ${fmt(recMinA)}–${fmt(recMaxA)} kr/h.`,
+        answer: `Som egenföretagare ligger möjlig ersättning på ${fmt(recMinF)}–${fmt(recMaxF)} kr/timme i Zon 1. Som anställd konsult ligger spannet på ${fmt(recMinA)}–${fmt(recMaxA)} kr/timme.`,
       },
       {
         question: "Vad är OB-tillägget för anestesisjuksköterskor?",
         answer:
-          "OB-tilläggen följer SKR:s ramavtal: vardagkväll 36 kr/h, vardagnatt 79 kr/h, helgdag/helgkväll 92 kr/h, helgnatt 105 kr/h, storhelg 177–213 kr/h.",
+          "OB-tilläggen följer SKR:s ramavtal: vardagkväll 36 kr/timme, vardagnatt 79 kr/timme, helgdag/helgkväll 92 kr/timme, helgnatt 105 kr/timme, storhelg 177–213 kr/timme.",
       },
     ],
   });
@@ -118,11 +118,11 @@ export default function AnestesiReport() {
       <main className="px-4 py-6 max-w-lg mx-auto space-y-6">
         {/* ── TL;DR — citerbar sammanfattning för människor & AI-agenter ── */}
         <TLDRBox
-          summary={`Ramavtalspriset för anestesisjuksköterskor ligger på ${fmt(zone1Rate)}–${fmt(zone3Rate)} kr/h beroende på zon. Marknadsmässigt konsultarvode (egenföretagare) är ${fmt(recMinF)}–${fmt(recMaxF)} kr/h i storstad enligt SKR:s ramavtal 2026.`}
+          summary={`Ramavtalspriset för anestesisjuksköterskor ligger på ${fmt(zone1Rate)}–${fmt(zone3Rate)} kr/timme beroende på zon. Marknadsmässigt konsultarvode (egenföretagare) är ${fmt(recMinF)}–${fmt(recMaxF)} kr/timme i storstad enligt SKR:s ramavtal 2026.`}
           facts={[
-            { label: "Kundpris", value: `${fmt(zone1Rate)}–${fmt(zone3Rate)} kr/h` },
-            { label: "Konsult (eget bolag)", value: `${fmt(recMinF)}–${fmt(recMaxF)} kr/h` },
-            { label: "Konsult (anställd)", value: `${fmt(recMinA)}–${fmt(recMaxA)} kr/h` },
+            { label: "Kundpris", value: `${fmt(zone1Rate)}–${fmt(zone3Rate)} kr/timme` },
+            { label: "Konsult (eget bolag)", value: `${fmt(recMinF)}–${fmt(recMaxF)} kr/timme` },
+            { label: "Konsult (anställd)", value: `${fmt(recMinA)}–${fmt(recMaxA)} kr/timme` },
           ]}
           lastUpdated={LAST_UPDATED}
           source="SKR Ramavtal 2026"
@@ -149,7 +149,7 @@ export default function AnestesiReport() {
                   </div>
                 </div>
                 <span className="font-[var(--font-mono)] text-lg font-bold tracking-tight text-foreground">
-                  {fmt(z.rate)} <span className="text-xs font-normal text-muted-foreground">kr/h</span>
+                  {fmt(z.rate)} <span className="text-xs font-normal text-muted-foreground">kr/timme</span>
                 </span>
               </div>
             ))}
@@ -175,7 +175,7 @@ export default function AnestesiReport() {
               </div>
               <div>
                 <p className="text-lg font-bold text-foreground">
-                  {fmt(recMinF)}–{fmt(recMaxF)} kr/h
+                  {fmt(recMinF)}–{fmt(recMaxF)} kr/timme
                 </p>
                 <p className="text-[11px] text-muted-foreground">Realistiskt förhandlingsspann (egenföretagare)</p>
               </div>
@@ -183,8 +183,8 @@ export default function AnestesiReport() {
 
             <div className="space-y-3">
               {[
-                { label: "Egenföretagare", share: "82–88%", range: `${fmt(recMinF)}–${fmt(recMaxF)} kr/h` },
-                { label: "Anställd via bemanning", share: "80–86%", range: `${fmt(recMinA)}–${fmt(recMaxA)} kr/h` },
+                { label: "Egenföretagare", share: "82–88%", range: `${fmt(recMinF)}–${fmt(recMaxF)} kr/timme` },
+                { label: "Anställd via bemanning", share: "80–86%", range: `${fmt(recMinA)}–${fmt(recMaxA)} kr/timme` },
               ].map((row) => (
                 <div key={row.label} className="flex items-center justify-between rounded-lg bg-foreground/[0.03] border border-foreground/[0.06] px-3.5 py-2.5">
                   <div>
@@ -222,7 +222,7 @@ export default function AnestesiReport() {
                     </div>
                   </div>
                   <span className={`font-[var(--font-mono)] text-base font-bold tracking-tight ${isStorhelg ? "text-primary" : "text-foreground"}`}>
-                    +{fmt(ob.rate)} <span className="text-xs font-normal text-muted-foreground">kr/h</span>
+                    +{fmt(ob.rate)} <span className="text-xs font-normal text-muted-foreground">kr/timme</span>
                   </span>
                 </div>
               );
@@ -243,9 +243,9 @@ export default function AnestesiReport() {
           </div>
           <div className="rounded-[18px] bg-foreground/[0.035] border border-foreground/[0.07] p-4 space-y-2">
             {[
-              { label: "Grundpris Zon 1", value: "740 kr/h" },
-              { label: "OB helgnatt (fre–mån 22–06)", value: "+109 kr/h" },
-              { label: "Totalt kundpris", value: "879 kr/h", bold: true },
+              { label: "Grundpris Zon 1", value: "740 kr/timme" },
+              { label: "OB helgnatt (fre–mån 22–06)", value: "+109 kr/timme" },
+              { label: "Totalt kundpris", value: "879 kr/timme", bold: true },
             ].map((row) => (
               <div key={row.label} className={`flex items-center justify-between ${row.bold ? "pt-2 border-t border-foreground/[0.08]" : ""}`}>
                 <span className={`text-sm ${row.bold ? "font-semibold text-foreground" : "text-muted-foreground"}`}>{row.label}</span>

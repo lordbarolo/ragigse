@@ -5,11 +5,11 @@ import { trackEvent } from "@/lib/trackEvent";
 type Position = "under" | "normal" | "above" | "unknown";
 
 interface Props {
-  /** User's reported hourly rate (kr/h, already normalised). */
+  /** User's reported hourly rate (kr/timme, already normalised). */
   userHourly: number;
-  /** Lower edge of "möjlig ersättning" (kr/h). */
+  /** Lower edge of "möjlig ersättning" (kr/timme). */
   rangeLow: number;
-  /** Upper edge of "möjlig ersättning" (kr/h) — also the marker we measure from. */
+  /** Upper edge of "möjlig ersättning" (kr/timme) — also the marker we measure from. */
   rangeHigh: number;
   /** Resolved consultant share at upper edge (0.85 = 15% margin, 0.90 = 10% margin).
    *  Comes from the pricing engine, so it correctly reflects role classification

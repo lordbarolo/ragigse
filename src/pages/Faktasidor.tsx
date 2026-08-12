@@ -182,12 +182,12 @@ export default function Faktasidor() {
     const head = [
       "Roll",
       "Yrkesgrupp",
-      "Zon 1 kundpris (kr/h)",
-      "Zon 2 kundpris (kr/h)",
-      "Zon 3 kundpris (kr/h)",
-      "Zon 1 ersättning (kr/h)",
-      "Zon 2 ersättning (kr/h)",
-      "Zon 3 ersättning (kr/h)",
+      "Zon 1 kundpris (kr/timme)",
+      "Zon 2 kundpris (kr/timme)",
+      "Zon 3 kundpris (kr/timme)",
+      "Zon 1 ersättning (kr/timme)",
+      "Zon 2 ersättning (kr/timme)",
+      "Zon 3 ersättning (kr/timme)",
     ];
     const cell = (v: string | number) => `"${String(v).replace(/"/g, '""')}"`;
     const lines = [head.map(cell).join(";")];

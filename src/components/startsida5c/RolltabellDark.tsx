@@ -37,7 +37,7 @@ export default function RolltabellDark() {
             Mest sökta rollerna, alla zoner
           </h2>
           <span className="text-[12px]" style={{ color: "#8a8c94" }}>
-            kr/h som företagare
+            kr/timme som företagare
           </span>
         </div>
 

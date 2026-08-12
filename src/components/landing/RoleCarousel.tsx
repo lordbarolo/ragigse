@@ -1,5 +1,5 @@
 /**
- * Auto-scrolling carousel showcasing CONSULTANT compensation (kr/h) for the 15
+ * Auto-scrolling carousel showcasing CONSULTANT compensation (kr/timme) for the 15
  * most popular survey roles (positions 6–20), broken down per zone 1, 2, 3.
  * Consultant rate = SKR ramavtal 2026 customer price − agency margin.
  *   - Läkare / ST-läkare:    12% margin (konsult behåller 88%)
@@ -170,7 +170,7 @@ function RoleCard({ card }: { card: Card }) {
           <span className="font-editorial text-2xl font-bold text-[#ffffff]">
             {fmt(card.consultantRate)}
           </span>
-          <span className="text-xs text-black/50">kr/h</span>
+          <span className="text-xs text-black/50">kr/timme</span>
         </div>
       </div>
 
@@ -183,7 +183,7 @@ function RoleCard({ card }: { card: Card }) {
           <span className="font-editorial text-xl font-bold text-black/80">
             {fmt(card.employeeRate)}
           </span>
-          <span className="text-xs text-black/40">kr/h</span>
+          <span className="text-xs text-black/40">kr/timme</span>
         </div>
       </div>
     </div>
