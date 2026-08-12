@@ -51,6 +51,28 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
+    // Inloggad användare → koppla rapporten till kontot så att ägaren får full
+    // åtkomst i get-report (samma logik som efter enkäten + teasern).
+    let authUserId: string | null = null;
+    const authHeader = req.headers.get("Authorization");
+    if (authHeader?.startsWith("Bearer ")) {
+      try {
+        const anonClient = createClient(
+          Deno.env.get("SUPABASE_URL")!,
+          Deno.env.get("SUPABASE_ANON_KEY")!,
+          { global: { headers: { Authorization: authHeader } } }
+        );
+        const { data: claimsData } = await anonClient.auth.getClaims(
+          authHeader.replace("Bearer ", "")
+        );
+        if (claimsData?.claims?.sub) authUserId = claimsData.claims.sub as string;
+      } catch (claimsError) {
+        console.warn("create-report: could not verify caller token", claimsError);
+      }
+    }
+
+
+
     // Rate limit per IP — bromsar massgenerering av rapporter.
     const rl = await checkRateLimit(supabase, "create-report", clientIp, 20, 60);
     if (!rl.allowed) {
