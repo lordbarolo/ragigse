@@ -44,6 +44,7 @@ import { Route as ApiPublicBekraftaForslagRouteImport } from './routes/api/publi
 import { Route as ApiPublicSendSignupConfirmationRouteImport } from './routes/api/public/send-signup-confirmation'
 import { Route as ConsultantLayoutAvtalRouteImport } from './routes/consultant/_layout/avtal'
 import { Route as ConsultantLayoutLoneanalysRouteImport } from './routes/consultant/_layout/loneanalys'
+import { Route as ConsultantLayoutPensionRouteImport } from './routes/consultant/_layout/pension'
 import { Route as ConsultantLayoutProfilRouteImport } from './routes/consultant/_layout/profil'
 import { Route as LonSpecialtyCityRouteImport } from './routes/lon/$specialty/$city'
 
@@ -229,6 +230,11 @@ const ConsultantLayoutLoneanalysRoute =
     path: '/loneanalys',
     getParentRoute: () => ConsultantLayoutRoute,
   } as any)
+const ConsultantLayoutPensionRoute = ConsultantLayoutPensionRouteImport.update({
+  id: '/pension',
+  path: '/pension',
+  getParentRoute: () => ConsultantLayoutRoute,
+} as any)
 const ConsultantLayoutProfilRoute = ConsultantLayoutProfilRouteImport.update({
   id: '/profil',
   path: '/profil',
@@ -276,6 +282,7 @@ export interface FileRoutesByFullPath {
   '/api/public/send-signup-confirmation': typeof ApiPublicSendSignupConfirmationRoute
   '/consultant/avtal': typeof ConsultantLayoutAvtalRoute
   '/consultant/loneanalys': typeof ConsultantLayoutLoneanalysRoute
+  '/consultant/pension': typeof ConsultantLayoutPensionRoute
   '/consultant/profil': typeof ConsultantLayoutProfilRoute
   '/lon/$specialty/$city': typeof LonSpecialtyCityRoute
 }
@@ -315,6 +322,7 @@ export interface FileRoutesByTo {
   '/api/public/send-signup-confirmation': typeof ApiPublicSendSignupConfirmationRoute
   '/consultant/avtal': typeof ConsultantLayoutAvtalRoute
   '/consultant/loneanalys': typeof ConsultantLayoutLoneanalysRoute
+  '/consultant/pension': typeof ConsultantLayoutPensionRoute
   '/consultant/profil': typeof ConsultantLayoutProfilRoute
   '/lon/$specialty/$city': typeof LonSpecialtyCityRoute
 }
@@ -355,6 +363,7 @@ export interface FileRoutesById {
   '/api/public/send-signup-confirmation': typeof ApiPublicSendSignupConfirmationRoute
   '/consultant/_layout/avtal': typeof ConsultantLayoutAvtalRoute
   '/consultant/_layout/loneanalys': typeof ConsultantLayoutLoneanalysRoute
+  '/consultant/_layout/pension': typeof ConsultantLayoutPensionRoute
   '/consultant/_layout/profil': typeof ConsultantLayoutProfilRoute
   '/lon/$specialty/$city': typeof LonSpecialtyCityRoute
 }
@@ -396,6 +405,7 @@ export interface FileRouteTypes {
     | '/api/public/send-signup-confirmation'
     | '/consultant/avtal'
     | '/consultant/loneanalys'
+    | '/consultant/pension'
     | '/consultant/profil'
     | '/lon/$specialty/$city'
   fileRoutesByTo: FileRoutesByTo
@@ -435,6 +445,7 @@ export interface FileRouteTypes {
     | '/api/public/send-signup-confirmation'
     | '/consultant/avtal'
     | '/consultant/loneanalys'
+    | '/consultant/pension'
     | '/consultant/profil'
     | '/lon/$specialty/$city'
   id:
@@ -474,6 +485,7 @@ export interface FileRouteTypes {
     | '/api/public/send-signup-confirmation'
     | '/consultant/_layout/avtal'
     | '/consultant/_layout/loneanalys'
+    | '/consultant/_layout/pension'
     | '/consultant/_layout/profil'
     | '/lon/$specialty/$city'
   fileRoutesById: FileRoutesById
@@ -762,6 +774,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConsultantLayoutLoneanalysRouteImport
       parentRoute: typeof ConsultantLayoutRoute
     }
+    '/consultant/_layout/pension': {
+      id: '/consultant/_layout/pension'
+      path: '/pension'
+      fullPath: '/consultant/pension'
+      preLoaderRoute: typeof ConsultantLayoutPensionRouteImport
+      parentRoute: typeof ConsultantLayoutRoute
+    }
     '/consultant/_layout/profil': {
       id: '/consultant/_layout/profil'
       path: '/profil'
@@ -782,12 +801,14 @@ declare module '@tanstack/react-router' {
 interface ConsultantLayoutRouteChildren {
   ConsultantLayoutAvtalRoute: typeof ConsultantLayoutAvtalRoute
   ConsultantLayoutLoneanalysRoute: typeof ConsultantLayoutLoneanalysRoute
+  ConsultantLayoutPensionRoute: typeof ConsultantLayoutPensionRoute
   ConsultantLayoutProfilRoute: typeof ConsultantLayoutProfilRoute
 }
 
 const ConsultantLayoutRouteChildren: ConsultantLayoutRouteChildren = {
   ConsultantLayoutAvtalRoute: ConsultantLayoutAvtalRoute,
   ConsultantLayoutLoneanalysRoute: ConsultantLayoutLoneanalysRoute,
+  ConsultantLayoutPensionRoute: ConsultantLayoutPensionRoute,
   ConsultantLayoutProfilRoute: ConsultantLayoutProfilRoute,
 }
 
