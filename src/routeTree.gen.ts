@@ -40,6 +40,7 @@ import { Route as RegionRegionRouteImport } from './routes/region/$region'
 import { Route as ResultatLeadIdRouteImport } from './routes/resultat/$leadId'
 import { Route as TimprisRoleRouteImport } from './routes/timpris/$role'
 import { Route as ApiPublicBekraftaForslagRouteImport } from './routes/api/public/bekrafta-forslag'
+import { Route as ApiPublicSendSignupConfirmationRouteImport } from './routes/api/public/send-signup-confirmation'
 import { Route as ConsultantLayoutLoneanalysRouteImport } from './routes/consultant/_layout/loneanalys'
 import { Route as ConsultantLayoutProfilRouteImport } from './routes/consultant/_layout/profil'
 import { Route as LonSpecialtyCityRouteImport } from './routes/lon/$specialty/$city'
@@ -204,6 +205,12 @@ const ApiPublicBekraftaForslagRoute =
     path: '/api/public/bekrafta-forslag',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicSendSignupConfirmationRoute =
+  ApiPublicSendSignupConfirmationRouteImport.update({
+    id: '/api/public/send-signup-confirmation',
+    path: '/api/public/send-signup-confirmation',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ConsultantLayoutLoneanalysRoute =
   ConsultantLayoutLoneanalysRouteImport.update({
     id: '/loneanalys',
@@ -253,6 +260,7 @@ export interface FileRoutesByFullPath {
   '/timpris/$role': typeof TimprisRoleRoute
   '/admin/': typeof AdminIndexRoute
   '/api/public/bekrafta-forslag': typeof ApiPublicBekraftaForslagRoute
+  '/api/public/send-signup-confirmation': typeof ApiPublicSendSignupConfirmationRoute
   '/consultant/loneanalys': typeof ConsultantLayoutLoneanalysRoute
   '/consultant/profil': typeof ConsultantLayoutProfilRoute
   '/lon/$specialty/$city': typeof LonSpecialtyCityRoute
@@ -289,6 +297,7 @@ export interface FileRoutesByTo {
   '/timpris/$role': typeof TimprisRoleRoute
   '/admin': typeof AdminIndexRoute
   '/api/public/bekrafta-forslag': typeof ApiPublicBekraftaForslagRoute
+  '/api/public/send-signup-confirmation': typeof ApiPublicSendSignupConfirmationRoute
   '/consultant/loneanalys': typeof ConsultantLayoutLoneanalysRoute
   '/consultant/profil': typeof ConsultantLayoutProfilRoute
   '/lon/$specialty/$city': typeof LonSpecialtyCityRoute
@@ -326,6 +335,7 @@ export interface FileRoutesById {
   '/timpris/$role': typeof TimprisRoleRoute
   '/admin/': typeof AdminIndexRoute
   '/api/public/bekrafta-forslag': typeof ApiPublicBekraftaForslagRoute
+  '/api/public/send-signup-confirmation': typeof ApiPublicSendSignupConfirmationRoute
   '/consultant/_layout/loneanalys': typeof ConsultantLayoutLoneanalysRoute
   '/consultant/_layout/profil': typeof ConsultantLayoutProfilRoute
   '/lon/$specialty/$city': typeof LonSpecialtyCityRoute
@@ -364,6 +374,7 @@ export interface FileRouteTypes {
     | '/timpris/$role'
     | '/admin/'
     | '/api/public/bekrafta-forslag'
+    | '/api/public/send-signup-confirmation'
     | '/consultant/loneanalys'
     | '/consultant/profil'
     | '/lon/$specialty/$city'
@@ -400,6 +411,7 @@ export interface FileRouteTypes {
     | '/timpris/$role'
     | '/admin'
     | '/api/public/bekrafta-forslag'
+    | '/api/public/send-signup-confirmation'
     | '/consultant/loneanalys'
     | '/consultant/profil'
     | '/lon/$specialty/$city'
@@ -436,6 +448,7 @@ export interface FileRouteTypes {
     | '/timpris/$role'
     | '/admin/'
     | '/api/public/bekrafta-forslag'
+    | '/api/public/send-signup-confirmation'
     | '/consultant/_layout/loneanalys'
     | '/consultant/_layout/profil'
     | '/lon/$specialty/$city'
@@ -473,6 +486,7 @@ export interface RootRouteChildren {
   TimprisRoleRoute: typeof TimprisRoleRoute
   AdminIndexRoute: typeof AdminIndexRoute
   ApiPublicBekraftaForslagRoute: typeof ApiPublicBekraftaForslagRoute
+  ApiPublicSendSignupConfirmationRoute: typeof ApiPublicSendSignupConfirmationRoute
   LonSpecialtyCityRoute: typeof LonSpecialtyCityRoute
 }
 
@@ -695,6 +709,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicBekraftaForslagRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/send-signup-confirmation': {
+      id: '/api/public/send-signup-confirmation'
+      path: '/api/public/send-signup-confirmation'
+      fullPath: '/api/public/send-signup-confirmation'
+      preLoaderRoute: typeof ApiPublicSendSignupConfirmationRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/consultant/_layout/loneanalys': {
       id: '/consultant/_layout/loneanalys'
       path: '/loneanalys'
@@ -764,18 +785,9 @@ const rootRouteChildren: RootRouteChildren = {
   TimprisRoleRoute: TimprisRoleRoute,
   AdminIndexRoute: AdminIndexRoute,
   ApiPublicBekraftaForslagRoute: ApiPublicBekraftaForslagRoute,
+  ApiPublicSendSignupConfirmationRoute: ApiPublicSendSignupConfirmationRoute,
   LonSpecialtyCityRoute: LonSpecialtyCityRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

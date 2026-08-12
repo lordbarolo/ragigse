@@ -117,6 +117,17 @@ export default function Signup() {
     // from initAuthIdentitySync once the user clicks the email link.
     trackEvent("signup_initiated", { method: "email", role: "individual" });
 
+    // Bekräftelsemailet skickas via vår egen Resend-route (Supabase egna
+    // auth-mail går inte iväg utan verifierad Lovable-domän).
+    fetch("/api/public/send-signup-confirmation", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        email: normalizedEmail,
+        redirectTo: `${window.location.origin}/consultant/profil`,
+      }),
+    }).catch(() => {});
+
     supabase.functions.invoke("send-transactional-email", {
       body: {
         templateName: "welcome",
