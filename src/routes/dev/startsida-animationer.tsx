@@ -90,7 +90,7 @@ function DevStartsidaAnimationer() {
         etikett="Fakturahjälpen"
         rubrik={"Timmarna du faktiskt jobbade\nsyns inte alltid på fakturan"}
         brodtext="Ladda upp tidrapport och faktura. Assistenten går rad för rad, jämför mot avtalets ersättningsregler och markerar det som saknas eller ligger fel — jour, förskjuten tid, restid, avrundade pass."
-        brodtextTill={undefined as never}
+        
         punkter={[
           "Rad-för-rad-genomgång av underlag mot avtal.",
           "Avvikelser markeras med förklaring du kan skicka vidare.",
