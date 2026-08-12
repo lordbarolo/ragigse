@@ -109,6 +109,12 @@ export default function SignupGate({ onAuthenticated, loading }: Props) {
 
     sessionStorage.setItem("compcare:justSignedUp", "email");
     trackEvent("signup_initiated", { method: "email", source: "teaser_gate" });
+    // Bekräftelsemailet skickas via vår egen Resend-route.
+    fetch("/api/public/send-signup-confirmation", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: normalizedEmail, redirectTo: window.location.href }),
+    }).catch(() => {});
     // Even without email verification, the gate continues so the user gets
     // their report. They can verify the email link later to keep the account.
     onAuthenticated(normalizedEmail);
