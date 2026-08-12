@@ -26,6 +26,10 @@ const PRESETS: { key: PresetKey; label: string }[] = [
 
 const sleep = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
 
+/** Cache per sidladdning så demon inte anropar assistenten om och om igen. */
+const answerCache = new Map<PresetKey, { text: string; source?: string }>();
+
+
 /**
  * AssistantDemoChat — uppspelad demo av assistenten på startsidan.
  * Ingen inmatning: frågor och svar skrivs fram tecken för tecken (vänster→höger)
