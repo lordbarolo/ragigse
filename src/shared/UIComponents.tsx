@@ -72,7 +72,7 @@ export function BarRow({
   color,
   blurred = false,
   partialReveal = false,
-  unit = "kr/h",
+  unit = "kr/timme",
   animateAndBlurAt,
 }: {
   label: string;

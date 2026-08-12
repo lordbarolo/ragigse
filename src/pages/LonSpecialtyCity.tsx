@@ -113,7 +113,7 @@ export default function LonSpecialtyCity() {
           "@id": `${url}#occupation`,
           name: data.specialty_name,
           occupationalCategory: data.specialty_name,
-          description: `Konsultuppdrag som ${data.specialty_name} i ${place}. Kundpris enligt regionernas ramavtal 2026: ${data.client_rate} kr/h.`,
+          description: `Konsultuppdrag som ${data.specialty_name} i ${place}. Kundpris enligt regionernas ramavtal 2026: ${data.client_rate} kr/timme.`,
           occupationLocation: { "@type": "City", name: place, addressCountry: "SE" },
           // Primär siffra för agenter: konsultens ersättning som företagare (contractor_rate).
           estimatedSalary: [
@@ -174,7 +174,7 @@ export default function LonSpecialtyCity() {
               name: `Vad är timpengen för ${data.specialty_name} i ${place} 2026?`,
               acceptedAnswer: {
                 "@type": "Answer",
-                text: `Enligt regionernas ramavtal 2026 är kundpriset ${data.client_rate} kr/h för ${data.specialty_name} i ${place}. Som företagare kan ersättningen ligga omkring ${data.contractor_rate} kr/h och som löntagare omkring ${data.employee_rate} kr/h. Källa: ${data.source}.`,
+                text: `Enligt regionernas ramavtal 2026 är kundpriset ${data.client_rate} kr/timme för ${data.specialty_name} i ${place}. Som företagare kan ersättningen ligga omkring ${data.contractor_rate} kr/timme och som löntagare omkring ${data.employee_rate} kr/timme. Källa: ${data.source}.`,
               },
             },
             {
@@ -182,7 +182,7 @@ export default function LonSpecialtyCity() {
               name: `Varför skiljer sig kundpriset från min ersättning som ${data.specialty_name}?`,
               acceptedAnswer: {
                 "@type": "Answer",
-                text: `Kundpriset (${data.client_rate} kr/h) är vad regionen betalar bemanningsbolaget. Möjlig ersättning till konsulten är omkring ${data.contractor_rate} kr/h som företagare och omkring ${data.employee_rate} kr/h som löntagare.`,
+                text: `Kundpriset (${data.client_rate} kr/timme) är vad regionen betalar bemanningsbolaget. Möjlig ersättning till konsulten är omkring ${data.contractor_rate} kr/timme som företagare och omkring ${data.employee_rate} kr/timme som löntagare.`,
               },
             },
             {
@@ -269,7 +269,7 @@ export default function LonSpecialtyCity() {
           <>
             <p className="mt-5 text-[15.5px] leading-relaxed" style={{ color: "#a8adbd" }}>
               Enligt regionernas gällande ramavtal för 2026 ligger det faktiska kundpriset för en{" "}
-              {data.specialty_name} i {cityLabel} på {kr(data.client_rate)} kr/h. Efter
+              {data.specialty_name} i {cityLabel} på {kr(data.client_rate)} kr/timme. Efter
               ramavtalet kan du som konsult förvänta dig följande ersättningsspann.
             </p>
 
@@ -280,7 +280,7 @@ export default function LonSpecialtyCity() {
                 </div>
                 <div className="mt-1 flex items-baseline gap-1.5" style={{ color: "#fff" }}>
                   <span className="text-[34px] font-semibold leading-none">{kr(data.contractor_rate)}</span>
-                  <span className="text-[13px]">kr/h</span>
+                  <span className="text-[13px]">kr/timme</span>
                 </div>
               </div>
 
@@ -290,13 +290,13 @@ export default function LonSpecialtyCity() {
                 </div>
                 <div className="mt-1 flex items-baseline gap-1.5" style={{ color: "#ffffff" }}>
                   <span className="text-[34px] font-semibold leading-none">{kr(data.employee_rate)}</span>
-                  <span className="text-[13px]">kr/h</span>
+                  <span className="text-[13px]">kr/timme</span>
                 </div>
               </div>
             </div>
 
             <p className="mt-4 text-[12px] leading-relaxed" style={{ color: "#6f7178" }}>
-              Kundpris {kr(data.client_rate)} kr/h enligt {data.source}. Löntagarnivån är omräknad med
+              Kundpris {kr(data.client_rate)} kr/timme enligt {data.source}. Löntagarnivån är omräknad med
               arbetsgivaravgifter och avtalspension.
             </p>
 

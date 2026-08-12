@@ -748,7 +748,7 @@ export default function Survey({ initialCategory, initialRole, onBack, onComplet
                   
                 />
                 <span className="absolute right-5 top-1/2 -translate-y-1/2 text-base text-muted-foreground font-medium">
-                  {data.salaryType === "hourly" ? "kr/h" : "kr/mån"}
+                  {data.salaryType === "hourly" ? "kr/timme" : "kr/mån"}
                 </span>
               </div>
                <p className="text-body-sm text-center">

@@ -69,7 +69,7 @@ export default function PensionImpactSimulator({
             <div className="font-display text-lg font-bold text-foreground tabular-nums">
               {fmt(scenarios.none.hourlyEquivalent)}{" "}
               <span className="text-xs font-normal text-muted-foreground">
-                kr/h
+                kr/timme
               </span>
             </div>
             <div className="text-xs text-muted-foreground tabular-nums mt-0.5">

@@ -126,7 +126,7 @@ export default function ProfileInsights({ specialtyName, regionName, employmentT
               >
                 <p className="text-xs text-muted-foreground">{r.zon}</p>
                 <p className="text-xs text-muted-foreground/70">{ZON_LABELS[r.zon] || ""}</p>
-                <p className="text-lg font-semibold text-foreground">{fmt(r.timpris_kund)} <span className="text-xs font-normal text-muted-foreground">kr/h</span></p>
+                <p className="text-lg font-semibold text-foreground">{fmt(r.timpris_kund)} <span className="text-xs font-normal text-muted-foreground">kr/timme</span></p>
               </div>
             ))}
           </div>
@@ -153,7 +153,7 @@ export default function ProfileInsights({ specialtyName, regionName, employmentT
               >
                 <p className="text-xs text-muted-foreground">{s.zon}</p>
                 <p className="text-base font-semibold text-foreground">
-                  {fmt(s.hourly_min)}–{fmt(s.hourly_max)} <span className="text-xs font-normal text-muted-foreground">kr/h</span>
+                  {fmt(s.hourly_min)}–{fmt(s.hourly_max)} <span className="text-xs font-normal text-muted-foreground">kr/timme</span>
                 </p>
                 <p className="text-xs text-muted-foreground">
                   {fmt(s.monthly_min)}–{fmt(s.monthly_max)} kr/mån

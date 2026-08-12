@@ -263,7 +263,7 @@ export default function InlineTerminalSurvey({
   };
 
   const salaryType: "hourly" | "monthly" = "hourly";
-  const salaryUnit = "kr/h";
+  const salaryUnit = "kr/timme";
 
   const submit = async () => {
     setSaving(true);
@@ -506,10 +506,10 @@ export default function InlineTerminalSurvey({
                   question="Vad har du för ersättning idag?"
                   subtitle={
                     s.employmentType === "foretagare"
-                      ? "Ange ditt fakturapris exkl. moms (kr/h)."
+                      ? "Ange ditt fakturapris exkl. moms (kr/timme)."
                       : s.employmentType === "anstalld"
-                      ? "Ange din timlön före skatt (kr/h)."
-                      : "Ange ditt nuvarande timpris (kr/h)."
+                      ? "Ange din timlön före skatt (kr/timme)."
+                      : "Ange ditt nuvarande timpris (kr/timme)."
                   }
                 >
                   <div className="space-y-4">

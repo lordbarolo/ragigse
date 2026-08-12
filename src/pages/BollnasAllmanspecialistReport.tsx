@@ -66,22 +66,22 @@ export default function BollnasAllmanspecialistReport() {
     roleSlug: "lakare-allmanmedicin-bollnas",
     dateModified: LAST_UPDATED,
     summary:
-      `Ramavtalspriset för specialistläkare i allmänmedicin i Bollnäs (Zon 3) är ${fmt(USER_ZON_RATE)} kr/h. ` +
-      `Marknadsmässigt konsultarvode (egenföretagare) ligger på ${fmt(recMinF)}–${fmt(recMaxF)} kr/h enligt SKR:s ramavtal 2026.`,
+      `Ramavtalspriset för specialistläkare i allmänmedicin i Bollnäs (Zon 3) är ${fmt(USER_ZON_RATE)} kr/timme. ` +
+      `Marknadsmässigt konsultarvode (egenföretagare) ligger på ${fmt(recMinF)}–${fmt(recMaxF)} kr/timme enligt SKR:s ramavtal 2026.`,
     rateRange: { min: ZONES[0].rate, median: ZONES[1].rate, max: ZONES[2].rate, unit: "SEK/h" },
     skrSources: ["https://skr.se/ramavtal/vardbemanning"],
     faq: [
       {
         question: "Vad är timpriset för en allmänspecialist i Bollnäs 2026?",
-        answer: `Bollnäs tillhör Zon 3 i SKR:s ramavtal. Kundpriset (vad regionen betalar) är ${fmt(USER_ZON_RATE)} kr/h för specialistläkare allmänmedicin.`,
+        answer: `Bollnäs tillhör Zon 3 i SKR:s ramavtal. Kundpriset (vad regionen betalar) är ${fmt(USER_ZON_RATE)} kr/timme för specialistläkare allmänmedicin.`,
       },
       {
         question: "Hur mycket bör en allmänspecialist tjäna som konsult i Bollnäs?",
-        answer: `Som egenföretagare ligger möjlig ersättning på ${fmt(recMinF)}–${fmt(recMaxF)} kr/h. Som anställd konsult ligger spannet på ${fmt(recMinA)}–${fmt(recMaxA)} kr/h.`,
+        answer: `Som egenföretagare ligger möjlig ersättning på ${fmt(recMinF)}–${fmt(recMaxF)} kr/timme. Som anställd konsult ligger spannet på ${fmt(recMinA)}–${fmt(recMaxA)} kr/timme.`,
       },
       {
-        question: "Är 1 240 kr/h bra för en allmänspecialist i Bollnäs?",
-        answer: `1 240 kr/h motsvarar cirka ${Math.round((USER_RATE / USER_ZON_RATE) * 100)}% av Zon 3-priset (${fmt(USER_ZON_RATE)} kr/h). Marknadsmässigt spann för eget bolag är ${fmt(recMinF)}–${fmt(recMaxF)} kr/h.`,
+        question: "Är 1 240 kr/timme bra för en allmänspecialist i Bollnäs?",
+        answer: `1 240 kr/timme motsvarar cirka ${Math.round((USER_RATE / USER_ZON_RATE) * 100)}% av Zon 3-priset (${fmt(USER_ZON_RATE)} kr/timme). Marknadsmässigt spann för eget bolag är ${fmt(recMinF)}–${fmt(recMaxF)} kr/timme.`,
       },
     ],
   });
@@ -145,17 +145,17 @@ export default function BollnasAllmanspecialistReport() {
               </div>
               <div className="space-y-1">
                 <p className="text-sm" style={{ color: '#8a8c94' }}>Din nuvarande ersättning (eget bolag)</p>
-                <p className="font-bold" style={{ fontFamily: 'Georgia, serif', fontSize: '24px', color: '#ffffff' }}>{fmt(USER_RATE)} kr/h</p>
+                <p className="font-bold" style={{ fontFamily: 'Georgia, serif', fontSize: '24px', color: '#ffffff' }}>{fmt(USER_RATE)} kr/timme</p>
                 <p className="text-[12px]" style={{ color: '#8a8c94' }}>
-                  Motsvarar cirka {Math.round((USER_RATE / USER_ZON_RATE) * 100)}% av kundpriset i {USER_ZON_LABEL} ({fmt(USER_ZON_RATE)} kr/h).
+                  Motsvarar cirka {Math.round((USER_RATE / USER_ZON_RATE) * 100)}% av kundpriset i {USER_ZON_LABEL} ({fmt(USER_ZON_RATE)} kr/timme).
                 </p>
               </div>
             </div>
             {gap > 0 && (
               <div className="rounded-lg p-3.5 text-sm" style={{ backgroundColor: '#0b0c10', border: '1px solid #22232b' }}>
                 <p style={{ color: '#ffffff' }}>
-                  Marknadsmässigt undre spann är <span className="font-semibold">{fmt(recMinF)} kr/h</span> — en skillnad på{" "}
-                  <span className="font-semibold" style={{ color: '#22232b' }}>+{fmt(gap)} kr/h</span>.
+                  Marknadsmässigt undre spann är <span className="font-semibold">{fmt(recMinF)} kr/timme</span> — en skillnad på{" "}
+                  <span className="font-semibold" style={{ color: '#22232b' }}>+{fmt(gap)} kr/timme</span>.
                 </p>
                 <p className="text-[12px] mt-1" style={{ color: '#8a8c94' }}>
                   På årsbasis: ca <span className="font-semibold">+{fmt(annualUpside)} kr</span> brutto till bolaget.
@@ -191,7 +191,7 @@ export default function BollnasAllmanspecialistReport() {
                       </div>
                     </div>
                     <span className="text-lg font-bold tracking-tight" style={{ fontFamily: 'Georgia, serif', color: isUser ? '#22232b' : '#0b0c10' }}>
-                      {fmt(z.rate)} <span className="text-xs font-normal" style={{ color: '#8a8c94' }}>kr/h</span>
+                      {fmt(z.rate)} <span className="text-xs font-normal" style={{ color: '#8a8c94' }}>kr/timme</span>
                     </span>
                   </div>
                 );
@@ -216,7 +216,7 @@ export default function BollnasAllmanspecialistReport() {
               </div>
               <div>
                 <p className="font-bold" style={{ fontFamily: 'Georgia, serif', fontSize: '18px', color: '#ffffff' }}>
-                  {fmt(safeMinF)}–{fmt(recMaxF)} kr/h
+                  {fmt(safeMinF)}–{fmt(recMaxF)} kr/timme
                 </p>
                 <p className="text-[11px]" style={{ color: '#8a8c94' }}>Marknadsmässigt spann (eget bolag)</p>
               </div>
@@ -224,8 +224,8 @@ export default function BollnasAllmanspecialistReport() {
 
             <div className="space-y-3">
               {[
-                { label: "Egenföretagare", share: "Möjlig ersättning", range: `${fmt(safeMinF)}–${fmt(recMaxF)} kr/h` },
-                { label: "Anställd via bemanning", share: "Bruttolön", range: `${fmt(safeMinA)}–${fmt(recMaxA)} kr/h` },
+                { label: "Egenföretagare", share: "Möjlig ersättning", range: `${fmt(safeMinF)}–${fmt(recMaxF)} kr/timme` },
+                { label: "Anställd via bemanning", share: "Bruttolön", range: `${fmt(safeMinA)}–${fmt(recMaxA)} kr/timme` },
               ].map((row) => (
                 <div key={row.label} className="flex items-center justify-between rounded-lg px-3.5 py-2.5" style={{ backgroundColor: '#0b0c10', border: '1px solid #22232b' }}>
                   <div>
@@ -248,15 +248,15 @@ export default function BollnasAllmanspecialistReport() {
             </p>
             <p>
               <span className="font-semibold" style={{ color: '#ffffff' }}>Undre spann:</span>{" "}
-              <span style={{ color: '#8a8c94' }}>{fmt(safeMinF)} kr/h — säker utgångspunkt baserat på SKR Zon 3.</span>
+              <span style={{ color: '#8a8c94' }}>{fmt(safeMinF)} kr/timme — säker utgångspunkt baserat på SKR Zon 3.</span>
             </p>
             <p>
               <span className="font-semibold" style={{ color: '#ffffff' }}>Median:</span>{" "}
-              <span style={{ color: '#8a8c94' }}>{fmt(Math.round((safeMinF + recMaxF) / 2))} kr/h — typisk nivå för konsulter med dokumenterad erfarenhet.</span>
+              <span style={{ color: '#8a8c94' }}>{fmt(Math.round((safeMinF + recMaxF) / 2))} kr/timme — typisk nivå för konsulter med dokumenterad erfarenhet.</span>
             </p>
             <p>
               <span className="font-semibold" style={{ color: '#ffffff' }}>Övre spann:</span>{" "}
-              <span style={{ color: '#8a8c94' }}>{fmt(recMaxF)} kr/h — uppnås vid brist, jourtillgänglighet eller etablerad relation med beställaren.</span>
+              <span style={{ color: '#8a8c94' }}>{fmt(recMaxF)} kr/timme — uppnås vid brist, jourtillgänglighet eller etablerad relation med beställaren.</span>
             </p>
           </section>
 

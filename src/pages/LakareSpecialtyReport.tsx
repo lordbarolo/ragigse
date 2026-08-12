@@ -36,7 +36,7 @@ function makeFaq(cfg: DoctorSpecialtyConfig, rates: { zone1: number; zone2: numb
   return [
     {
       question: `Vad är ramavtalspriset för ${cfg.skrCategory.toLowerCase()} 2026?`,
-      answer: `Enligt SKR:s ramavtal vårdbemanning 2026 är kundpriset ${fmt(rates.zone1)} kr/h i Zon 1 (storstad), ${fmt(rates.zone2)} kr/h i Zon 2 (mellanstora regioner) och ${fmt(rates.zone3)} kr/h i Zon 3 (glesbygd).`,
+      answer: `Enligt SKR:s ramavtal vårdbemanning 2026 är kundpriset ${fmt(rates.zone1)} kr/timme i Zon 1 (storstad), ${fmt(rates.zone2)} kr/timme i Zon 2 (mellanstora regioner) och ${fmt(rates.zone3)} kr/timme i Zon 3 (glesbygd).`,
     },
 
     {
@@ -104,7 +104,7 @@ export default function LakareSpecialtyReport() {
     roleSlug: cfg.slug,
     dateModified: LAST_UPDATED,
     summary:
-      `Ramavtalspriset för ${cfg.skrCategory.toLowerCase()} är ${fmt(lowZone)}–${fmt(highZone)} kr/h beroende på zon enligt SKR:s ramavtal vårdbemanning 2026. `,
+      `Ramavtalspriset för ${cfg.skrCategory.toLowerCase()} är ${fmt(lowZone)}–${fmt(highZone)} kr/timme beroende på zon enligt SKR:s ramavtal vårdbemanning 2026. `,
     rateRange: { min: lowZone, median: refRate, max: highZone, unit: "SEK/h" },
     skrSources: ["https://skr.se/ramavtal/vardbemanning"],
     faq: FAQ,
@@ -161,7 +161,7 @@ export default function LakareSpecialtyReport() {
             <p className="text-[10px] font-semibold tracking-[1.4px] uppercase" style={{ color: sub }}>Sammanfattning</p>
             <p style={{ fontFamily: "Georgia, serif", fontSize: "17px", lineHeight: 1.5, color: ink }}>
               Kundpriset för {cfg.skrCategory.toLowerCase()} är{" "}
-              <span style={{ color: accent, fontWeight: 700 }}>{fmt(lowZone)}–{fmt(highZone)} kr/h</span>{" "}
+              <span style={{ color: accent, fontWeight: 700 }}>{fmt(lowZone)}–{fmt(highZone)} kr/timme</span>{" "}
               beroende på zon. Konsultandelen ligger typiskt på{" "}
               redovisad som ett spann per zon.
             </p>
@@ -186,7 +186,7 @@ export default function LakareSpecialtyReport() {
                     </div>
                   </div>
                   <span className="text-lg font-bold tracking-tight" style={{ fontFamily: "Georgia, serif", color: ink }}>
-                    {fmt(z.rate)} <span className="text-xs font-normal" style={{ color: sub }}>kr/h</span>
+                    {fmt(z.rate)} <span className="text-xs font-normal" style={{ color: sub }}>kr/timme</span>
                   </span>
                 </div>
               ))}
@@ -210,7 +210,7 @@ export default function LakareSpecialtyReport() {
               </div>
               <div>
                 <p className="font-bold" style={{ fontFamily: "Georgia, serif", fontSize: "18px", color: ink }}>
-                  {fmt(recMinF)}–{fmt(recMaxF)} kr/h
+                  {fmt(recMinF)}–{fmt(recMaxF)} kr/timme
                 </p>
                 <p className="text-[11px]" style={{ color: sub }}>Marknadsmässigt spann (eget bolag, Zon 2)</p>
               </div>
@@ -218,8 +218,8 @@ export default function LakareSpecialtyReport() {
 
             <div className="space-y-3">
               {[
-                { label: "Egenföretagare", share: "Möjlig ersättning", range: `${fmt(recMinF)}–${fmt(recMaxF)} kr/h` },
-                { label: "Anställd via bemanning", share: "Bruttolön efter sociala avgifter och tjänstepension", range: `${fmt(recMinA)}–${fmt(recMaxA)} kr/h` },
+                { label: "Egenföretagare", share: "Möjlig ersättning", range: `${fmt(recMinF)}–${fmt(recMaxF)} kr/timme` },
+                { label: "Anställd via bemanning", share: "Bruttolön efter sociala avgifter och tjänstepension", range: `${fmt(recMinA)}–${fmt(recMaxA)} kr/timme` },
               ].map((row) => (
                 <div key={row.label} className="flex items-center justify-between rounded-lg px-3.5 py-2.5" style={{ backgroundColor: cream, border: `1px solid ${border}` }}>
                   <div>
@@ -255,19 +255,19 @@ export default function LakareSpecialtyReport() {
             <p>
               <span className="font-semibold" style={{ color: ink }}>Undre spann:</span>{" "}
               <span style={{ color: sub }}>
-                {fmt(recMinF)} kr/h — utgångspunkt baserat på SKR Zon 2 för en konsult med begränsad tillgänglighet och erfarenhet.
+                {fmt(recMinF)} kr/timme — utgångspunkt baserat på SKR Zon 2 för en konsult med begränsad tillgänglighet och erfarenhet.
               </span>
             </p>
             <p>
               <span className="font-semibold" style={{ color: ink }}>Median:</span>{" "}
               <span style={{ color: sub }}>
-                {fmt(Math.round((recMinF + recMaxF) / 2))} kr/h — typisk nivå för konsulter med dokumenterad erfarenhet.
+                {fmt(Math.round((recMinF + recMaxF) / 2))} kr/timme — typisk nivå för konsulter med dokumenterad erfarenhet.
               </span>
             </p>
             <p>
               <span className="font-semibold" style={{ color: ink }}>Övre spann:</span>{" "}
               <span style={{ color: sub }}>
-                {fmt(recMaxF)} kr/h — konsulter med god tillgänglighet och etablerad relation med beställande vårdgivare, som inte behöver betald resa, boende eller utbildning.
+                {fmt(recMaxF)} kr/timme — konsulter med god tillgänglighet och etablerad relation med beställande vårdgivare, som inte behöver betald resa, boende eller utbildning.
               </span>
             </p>
           </section>

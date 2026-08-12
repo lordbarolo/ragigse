@@ -109,7 +109,7 @@ export default function ConsultantTrackContent({
             <div className="flex items-center justify-between p-3.5 bg-accent/[0.04]">
               <div>
                 <p className="text-micro font-semibold tracking-[0.8px] uppercase mb-1">{isEmployee ? "Din lön" : "Din ersättning"}</p>
-                <p className={`${monoClass} text-[22px] font-bold tracking-tight text-foreground`}>{fmt(currentHourly)} kr/h</p>
+                <p className={`${monoClass} text-[22px] font-bold tracking-tight text-foreground`}>{fmt(currentHourly)} kr/timme</p>
                 <p className={`${monoClass} text-micro mt-0.5`}>{fmt(currentMonthly)} kr/mån</p>
               </div>
               <span className="text-micro font-bold tracking-[0.5px] bg-accent/[0.18] text-accent border border-accent/[0.3] rounded-full px-2.5 py-1 whitespace-nowrap">
@@ -133,8 +133,8 @@ export default function ConsultantTrackContent({
                   />
                 </div>
                 <div className="flex justify-between mt-2" style={{ fontSize: '12px', color: '#6B7280' }}>
-                  <span>{fmt(currentHourly)} kr/h (din nivå)</span>
-                  <span>{fmt(rec.recommended_hourly_max)} kr/h (möjlig ersättning)</span>
+                  <span>{fmt(currentHourly)} kr/timme (din nivå)</span>
+                  <span>{fmt(rec.recommended_hourly_max)} kr/timme (möjlig ersättning)</span>
                 </div>
               </div>
             )}
@@ -143,7 +143,7 @@ export default function ConsultantTrackContent({
             <div className="flex items-center justify-between p-3.5 border-t border-foreground/[0.05]">
               <div>
                 <p className="text-micro font-semibold tracking-[0.8px] uppercase mb-1">Möjlig ersättning</p>
-                <p className={`${monoClass} text-[22px] font-medium tracking-tight text-primary/[0.7]`}>{fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/h</p>
+                <p className={`${monoClass} text-[22px] font-medium tracking-tight text-primary/[0.7]`}>{fmt(rec.recommended_hourly_min)}–{fmt(rec.recommended_hourly_max)} kr/timme</p>
                 <p className={`${monoClass} text-micro mt-0.5`}>{fmt(rec.recommended_monthly_min)}–{fmt(rec.recommended_monthly_max)} kr/mån</p>
               </div>
               <span className="text-micro font-semibold tracking-[0.5px] bg-primary/[0.08] text-primary/[0.8] border border-primary/[0.2] rounded-full px-2.5 py-1 whitespace-nowrap">
@@ -181,7 +181,7 @@ export default function ConsultantTrackContent({
             <li className="flex items-start gap-3">
               <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
               <span className="text-body-sm leading-relaxed">
-                Regionens ersättning till bemanningsföretag för {occupation} i {userZone || "din zon"} är {fmt(marketRate)} kr/h.
+                Regionens ersättning till bemanningsföretag för {occupation} i {userZone || "din zon"} är {fmt(marketRate)} kr/timme.
               </span>
             </li>
             <li className="flex items-start gap-3">
@@ -203,7 +203,7 @@ export default function ConsultantTrackContent({
             <h2 className="text-lg font-bold text-foreground">Ersättningen ligger i marknadens övre skikt</h2>
           </div>
           <p className="text-body-sm leading-relaxed mb-5">
-            Din ersättning på {fmt(currentHourly)} kr/h{isEmployee ? ` (lönekostnad ${fmt(costToCompare)} kr/h)` : ""} motsvarar {sharePercent}% av vad regionen betalar till bemanningsföretag ({fmt(marketRate)} kr/h).
+            Din ersättning på {fmt(currentHourly)} kr/timme{isEmployee ? ` (lönekostnad ${fmt(costToCompare)} kr/timme)` : ""} motsvarar {sharePercent}% av vad regionen betalar till bemanningsföretag ({fmt(marketRate)} kr/timme).
           </p>
           <div className="space-y-2.5">
             <p className="text-caption">
@@ -275,7 +275,7 @@ export default function ConsultantTrackContent({
                         )}
                       </div>
                       <span className={`${monoClass} text-[15px] font-medium ${isUserZone ? 'text-primary' : 'text-foreground/[0.6]'}`}>
-                        {fmt(zoneRate)} kr/h
+                        {fmt(zoneRate)} kr/timme
                       </span>
                     </div>
                     <div className="h-[3px] bg-foreground/[0.06] rounded-xs overflow-hidden mb-1.5">
@@ -286,7 +286,7 @@ export default function ConsultantTrackContent({
                     </div>
                     {!isUserZone && (
                       <p className={`${monoClass} text-micro`}>
-                        Konsultersättning: {fmt(recHourlyLow)}–{fmt(recHourlyHigh)} kr/h
+                        Konsultersättning: {fmt(recHourlyLow)}–{fmt(recHourlyHigh)} kr/timme
                       </p>
                     )}
                   </div>

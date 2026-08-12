@@ -67,7 +67,7 @@ const finite = (n: unknown): n is number =>
  * AND |shown_max−expected_max|/expected_max ≤ tol. Midpoint sekundärt.
  *
  * För `anstalld` multipliceras shown med employer_factor innan jämförelse,
- * eftersom expected_* är i kundpris-kr/h.
+ * eftersom expected_* är i kundpris-kr/timme.
  */
 export function validateRange(input: RangeGuardInput): RangeGuardResult {
   const empty = (reason: GuardReason): RangeGuardResult => ({

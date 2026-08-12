@@ -126,7 +126,7 @@ export default function InvoiceReviews() {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-sm">
                   <div>
                     <span className="text-muted-foreground">Grundpris:</span>{" "}
-                    <span className="font-medium">{r.grundpris ?? "–"} kr/h</span>
+                    <span className="font-medium">{r.grundpris ?? "–"} kr/timme</span>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Förväntat:</span>{" "}
