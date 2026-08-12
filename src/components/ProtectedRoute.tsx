@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { Navigate, Outlet, useLocation } from "@/lib/router-compat";
 import { useAuth, type AppRole } from "@/hooks/useAuth";
 import { Loader2 } from "lucide-react";
@@ -15,9 +16,21 @@ function inferIntent(pathname: string): string | null {
   return null;
 }
 
+const AUTH_PATHS = ["/logga-in", "/registrera", "/onboarding", "/aterstall-losenord"];
+
 export default function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
   const { user, loading, role } = useAuth();
   const location = useLocation();
+
+  // Frys ursprungsadressen vid första renderingen. Under en pågående
+  // navigering kan den här komponenten fortfarande vara monterad medan
+  // location redan pekar på /logga-in — utan frysning byggs då redirect
+  // rekursivt (/logga-in?redirect=/logga-in?redirect=…) vilket ger 400 och
+  // "Maximum update depth exceeded".
+  const originRef = useRef<string | null>(null);
+  if (originRef.current === null && !AUTH_PATHS.some((p) => location.pathname.startsWith(p))) {
+    originRef.current = `${location.pathname}${location.search}`;
+  }
 
   if (loading) {
     return (
@@ -28,8 +41,9 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
   }
 
   if (!user) {
-    const redirectPath = `${location.pathname}${location.search}`;
-    const intent = inferIntent(location.pathname);
+    const redirectPath = originRef.current;
+    if (!redirectPath) return <Navigate to="/logga-in" replace />;
+    const intent = inferIntent(redirectPath);
     const query = intent
       ? buildAuthQuery(redirectPath, intent)
       : `?redirect=${encodeURIComponent(redirectPath)}`;
@@ -44,4 +58,3 @@ export default function ProtectedRoute({ children, allowedRoles }: ProtectedRout
   // If children are provided, render them; otherwise render Outlet for layout usage
   return <>{children || <Outlet />}</>;
 }
-
