@@ -107,7 +107,7 @@ export default function SjukskoterskaReport() {
     summary:
       `Ramavtalspriset för en legitimerad sjuksköterska (grundutbildning) är ${fmt(lowZone)}–${fmt(highZone)}\u00a0kr/timme beroende på zon enligt SKR:s ramavtal vårdbemanning 2026. `,
     rateRange: { min: lowZone, median: refRate, max: highZone, unit: "SEK/h" },
-    skrSources: ["https://skr.se/ramavtal/vardbemanning"],
+    skrSources: ["https://www.vgregion.se/ov/hyrpersonal/avtal-och-dokument/"],
     faq: FAQ,
   });
 
@@ -187,8 +187,16 @@ export default function SjukskoterskaReport() {
               beroende på zon.
             </p>
             <p className="text-[12px]" style={{ color: sub }}>
-              Senast uppdaterad {LAST_UPDATED} · Källa: SKR Ramavtal vårdbemanning 2026
-            </p>
+               Senast uppdaterad {LAST_UPDATED} · Källa:{" "}
+               <a
+                 href="https://www.vgregion.se/ov/hyrpersonal/avtal-och-dokument/"
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 style={{ color: sub, textDecoration: "underline" }}
+               >
+                 SKR Ramavtal vårdbemanning 2026
+               </a>
+             </p>
           </section>
 
           {/* Kundpris per zon */}
