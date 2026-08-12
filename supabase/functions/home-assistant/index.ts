@@ -230,12 +230,28 @@ Deno.serve(async (req) => {
       });
       if (!answer) return json({ error: "Assistenten kunde inte svara just nu." }, 502);
 
+      // ── Minnet uppdateras efter svaret. Ett fel här får aldrig fälla svaret. ──
+      let memoryAdded = 0;
+      try {
+        memoryAdded = await distillMemory({
+          supabase,
+          key,
+          userId,
+          question,
+          answer,
+          existing: memoryPoints,
+        });
+      } catch (err) {
+        console.error("[home-assistant] minnet kunde inte uppdateras", err);
+      }
+
       // Mjuk varning vid 80 % av dygnskvoten
       const used = (quota.used ?? 0) + 1;
       const limit = quota.limit ?? null;
       const warn = limit && !quota.is_admin && used >= Math.floor(limit * 0.8)
         ? `Du har använt ${used} av ${limit} fritextfrågor i dag.`
         : undefined;
+
 
       return json({
         answer,
