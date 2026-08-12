@@ -26,7 +26,7 @@ export default function Hero() {
         className="pointer-events-none absolute -top-[35%] right-[-10%] hidden h-[150%] w-[70%] md:block"
         style={{
           background:
-            "conic-gradient(from 190deg at 90% 0%, rgba(255,255,255,0.10) 0deg, rgba(255,255,255,0) 55deg)",
+            "conic-gradient(from 190deg at 90% 0%, rgba(255,255,255,0.06) 0deg, rgba(255,255,255,0) 55deg)",
           filter: "blur(40px)",
         }}
       />
