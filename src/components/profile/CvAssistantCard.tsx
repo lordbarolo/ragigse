@@ -298,7 +298,7 @@ export default function CvAssistantCard() {
             <button
               type="button"
               onClick={() => {
-                void downloadCvAsDocx(markdown).catch(() =>
+                void downloadCvAsDocx(markdown, cvFileName(markdown, "docx", fullName)).catch(() =>
                   toast.error("Kunde inte skapa DOCX-filen. Försök igen."),
                 );
               }}
