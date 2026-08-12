@@ -63,7 +63,7 @@ const PrivacyPolicy = () => {
           <div>
             <h2 className="text-xl font-semibold text-foreground">1. Personuppgiftsansvarig</h2>
             <p className="text-sm text-muted-foreground leading-relaxed mt-2">
-              Vi är personuppgiftsansvariga för behandlingen av dina personuppgifter när du använder vardbemanning.ai.
+              Vi är personuppgiftsansvariga för behandlingen av dina personuppgifter när du använder vårdbemanning.ai.
             </p>
             <p className="text-sm text-muted-foreground mt-2">Kontakt: <a href="mailto:info@vardbemanning.ai" className="text-primary hover:underline">info@vardbemanning.ai</a></p>
           </div>
@@ -73,7 +73,7 @@ const PrivacyPolicy = () => {
 
             <h3 className="text-base font-medium text-foreground mt-4">2.1 Löneenkäten</h3>
             <p className="text-sm text-muted-foreground leading-relaxed mt-1">
-              När du gör en analys på vardbemanning.ai samlar vi in: yrkesroll (ev. specialisering), kommun/region, anställningsform (anställd/egenföretagare), aktuell timersättning eller månadslön, samt e-postadress för att leverera rapporten. Uppgifterna används för att beräkna din marknadsposition mot SKR:s ramavtalspriser.
+              När du gör en analys på vårdbemanning.ai samlar vi in: yrkesroll (ev. specialisering), kommun/region, anställningsform (anställd/egenföretagare), aktuell timersättning eller månadslön, samt e-postadress för att leverera rapporten. Uppgifterna används för att beräkna din marknadsposition mot SKR:s ramavtalspriser.
             </p>
 
             <h3 className="text-base font-medium text-foreground mt-4">2.2 Kontouppgifter</h3>
