@@ -45,6 +45,8 @@ export function sanitizeRedirect(raw: string | null): string | null {
   if (!raw) return null;
   if (!raw.startsWith("/")) return null;
   if (raw.startsWith("//")) return null;
+  // Aldrig redirecta tillbaka till auth-sidorna — det skapar loopar.
+  if (/^\/(logga-in|registrera|aterstall-losenord)/.test(raw)) return null;
   return raw;
 }
 
