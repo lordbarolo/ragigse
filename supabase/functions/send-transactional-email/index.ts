@@ -20,8 +20,11 @@ const ANON_TEMPLATES = new Set(['welcome'])
 //  - RESEND_FROM_NAME       (default: "vårdbemanning.ai")
 //  - APP_BASE_URL           (default: "https://vardbemanning.ai" — used in unsubscribe links)
 
-const SITE_NAME = Deno.env.get('RESEND_FROM_NAME') || 'vårdbemanning.ai'
-const FROM_DOMAIN = Deno.env.get('RESEND_FROM_DOMAIN') || 'vardbemanning.ai'
+// ASCII-only avsändarnamn: Resend avvisar icke-ASCII i From-headern (422).
+const SITE_NAME = (Deno.env.get('RESEND_FROM_NAME') || 'vardbemanning.ai')
+  .replace(/[^\x20-\x7E]/g, '')
+  .trim() || 'vardbemanning.ai'
+const FROM_DOMAIN = FROM_DOMAIN_SHARED
 const APP_BASE_URL = Deno.env.get('APP_BASE_URL') || 'https://vardbemanning.ai'
 const GATEWAY_URL = 'https://connector-gateway.lovable.dev/resend'
 
