@@ -64,7 +64,7 @@ async function checkSaveEmail(): Promise<CheckResult> {
       },
       body: JSON.stringify({
         lead_id: "00000000-0000-0000-0000-000000000000",
-        email: "healthcheck@compcare.se",
+        email: "healthcheck@vardbemanning.ai",
       }),
     }));
   });
