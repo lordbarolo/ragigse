@@ -8,8 +8,30 @@ export default function Hero() {
   const otherMargin = marginText5c("Sjuksköterska");
 
   return (
-    <section style={{ background: "#0b0c10", borderBottom: "1px solid #22232b" }}>
-      <div className="mx-auto grid max-w-[1200px] items-center gap-10 px-5 py-14 md:px-12 md:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
+    <section
+      className="relative overflow-hidden"
+      style={{ background: "#0b0c10", borderBottom: "1px solid #22232b" }}
+    >
+      {/* Spotlight: ljuskägla från övre högra hörnet ned mot mitten */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background:
+            "radial-gradient(120% 90% at 88% -10%, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.07) 28%, rgba(255,255,255,0.02) 52%, rgba(255,255,255,0) 72%)",
+        }}
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -top-[35%] right-[-10%] hidden h-[150%] w-[70%] md:block"
+        style={{
+          background:
+            "conic-gradient(from 190deg at 90% 0%, rgba(255,255,255,0.10) 0deg, rgba(255,255,255,0) 55deg)",
+          filter: "blur(40px)",
+        }}
+      />
+      <div className="relative mx-auto grid max-w-[1200px] items-center gap-10 px-5 py-14 md:px-12 md:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
+
         <div>
           <a
             href="/registrera"
