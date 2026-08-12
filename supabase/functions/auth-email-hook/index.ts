@@ -9,7 +9,7 @@ import { MagicLinkEmail } from '../_shared/email-templates/magic-link.tsx'
 import { RecoveryEmail } from '../_shared/email-templates/recovery.tsx'
 import { EmailChangeEmail } from '../_shared/email-templates/email-change.tsx'
 import { ReauthenticationEmail } from '../_shared/email-templates/reauthentication.tsx'
-import { FROM_DOMAIN } from '../_shared/mailFrom.ts'
+import { fromAddress } from '../_shared/mailFrom.ts'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
