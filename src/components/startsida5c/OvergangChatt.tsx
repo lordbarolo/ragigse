@@ -1,7 +1,10 @@
 import { Link } from "@/lib/router-compat";
 import HomeAssistantChat from "@/components/assistant/HomeAssistantChat";
+import AssistantDemoChat from "@/components/assistant/AssistantDemoChat";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function OvergangChatt() {
+  const { user } = useAuth();
   return (
     <section
       id="assistent"
@@ -42,7 +45,7 @@ export default function OvergangChatt() {
           </h2>
 
           <div className="mx-auto mt-9 w-full text-left">
-            <HomeAssistantChat />
+            {user ? <HomeAssistantChat /> : <AssistantDemoChat />}
           </div>
 
           <div className="mt-3 text-[13px]" style={{ color: "#6b6b6b" }}>
