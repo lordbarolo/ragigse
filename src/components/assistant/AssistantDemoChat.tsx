@@ -167,7 +167,7 @@ export default function AssistantDemoChat() {
         >
           <Lock className="h-4 w-4 shrink-0 text-muted-foreground" />
           <span className="flex-1 text-left text-[15px] text-muted-foreground">
-            Ställ din egen fråga
+            Ställ din egen fråga som inloggad
           </span>
           <span className="shrink-0 rounded-full bg-[#1a1b22] px-3 py-1.5 text-[13.5px] font-semibold text-white">
             Skapa konto
