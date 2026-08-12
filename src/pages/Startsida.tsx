@@ -18,14 +18,14 @@ const LANDING_JSONLD = [
   {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: "vardbemanning.ai",
+    name: "vårdbemanning.ai",
     url: `${SITE_URL}/`,
     inLanguage: "sv-SE",
   },
   {
     "@context": "https://schema.org",
     "@type": "Organization",
-    name: "vardbemanning.ai",
+    name: "vårdbemanning.ai",
     url: `${SITE_URL}/`,
     logo: `${SITE_URL}/vardbemanning-logo-light-v2.png`,
   },
