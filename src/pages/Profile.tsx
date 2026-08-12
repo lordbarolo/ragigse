@@ -60,8 +60,7 @@ export default function Profile() {
             {complete && context ? (
               <>
                 <p className="mt-5 max-w-md text-sm leading-relaxed text-white/55 sm:text-base">
-                  Din assistent är personlig. Uppgifterna nedan styr svaren och verktygen — ändra dem
-                  direkt här om något förändras.
+                  Din assistent är personlig. Håll nedanstående uppgifter uppdaterade för bäst svar.
                 </p>
                 <ProfileContextCard userId={user.id} context={context} onSaved={refresh} />
               </>
