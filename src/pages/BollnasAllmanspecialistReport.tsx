@@ -14,7 +14,7 @@ const fmt = (n: number) => n.toLocaleString("sv-SE", { maximumFractionDigits: 0 
 
 // Allmänspecialist (Specialistläkare allmänmedicin) — SKR ramavtal 2026
 // Priserna hämtas live ur contract_version_rates (v1.6); värdena nedan är fallback.
-const ZONE_FALLBACK = { zone1: 1189, zone2: 1453, zone3: 1717 };
+const ZONE_FALLBACK = { zone1: 1238, zone2: 1513, zone3: 1787 };
 const ZONE_META = [
   { zone: "Zon 1", desc: "Storstadsregioner" },
   { zone: "Zon 2", desc: "Mellanstora regioner" },

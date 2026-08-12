@@ -16,21 +16,21 @@ const MARGIN: Record<RoleKind, number> = {
 };
 
 const ROLES: { name: string; short: string; kind: RoleKind; prices: [number, number, number] }[] = [
-  { name: "Specialistsjuksköterska anestesi", short: "Anestesi-ssk", kind: "ssk", prices: [740, 792, 845] },
-  { name: "Specialistsjuksköterska psykiatrisk vård", short: "Psyk-ssk", kind: "ssk", prices: [687, 740, 792] },
-  { name: "Specialistsjuksköterska intensivvård", short: "IVA-ssk", kind: "ssk", prices: [740, 792, 845] },
-  { name: "Specialistsjuksköterska ambulanssjukvård", short: "Ambulans-ssk", kind: "ssk", prices: [687, 740, 792] },
-  { name: "Specialistsjuksköterska barn och ungdom", short: "Barn-ssk", kind: "ssk", prices: [687, 740, 792] },
-  { name: "Specialistsjuksköterska operationssjukvård", short: "Operations-ssk", kind: "ssk", prices: [740, 792, 845] },
-  { name: "Specialistläkare akutsjukvård", short: "Akutläkare", kind: "lakare", prices: [1189, 1453, 1717] },
-  { name: "Legitimerad sjuksköterska", short: "Leg. ssk", kind: "ssk", prices: [592, 634, 687] },
-  { name: "Specialistläkare anestesi och intensivvård", short: "Anestesiläkare", kind: "lakare", prices: [1189, 1453, 1717] },
-  { name: "Specialistläkare internmedicin", short: "Internmedicin", kind: "lakare", prices: [1189, 1453, 1717] },
-  { name: "Specialistläkare barn- och ungdomsmedicin", short: "Barnläkare", kind: "lakare", prices: [1189, 1453, 1717] },
+  { name: "Specialistsjuksköterska anestesi", short: "Anestesi-ssk", kind: "ssk", prices: [770, 824, 880] },
+  { name: "Specialistsjuksköterska psykiatrisk vård", short: "Psyk-ssk", kind: "ssk", prices: [715, 770, 824] },
+  { name: "Specialistsjuksköterska intensivvård", short: "IVA-ssk", kind: "ssk", prices: [770, 824, 880] },
+  { name: "Specialistsjuksköterska ambulanssjukvård", short: "Ambulans-ssk", kind: "ssk", prices: [715, 770, 824] },
+  { name: "Specialistsjuksköterska barn och ungdom", short: "Barn-ssk", kind: "ssk", prices: [715, 770, 824] },
+  { name: "Specialistsjuksköterska operationssjukvård", short: "Operations-ssk", kind: "ssk", prices: [770, 824, 880] },
+  { name: "Specialistläkare akutsjukvård", short: "Akutläkare", kind: "lakare", prices: [1238, 1513, 1787] },
+  { name: "Legitimerad sjuksköterska", short: "Leg. ssk", kind: "ssk", prices: [616, 660, 715] },
+  { name: "Specialistläkare anestesi och intensivvård", short: "Anestesiläkare", kind: "lakare", prices: [1238, 1513, 1787] },
+  { name: "Specialistläkare internmedicin", short: "Internmedicin", kind: "lakare", prices: [1238, 1513, 1787] },
+  { name: "Specialistläkare barn- och ungdomsmedicin", short: "Barnläkare", kind: "lakare", prices: [1238, 1513, 1787] },
   { name: "ST-läkare", short: "ST-läkare", kind: "lakare", prices: [814, 999, 1184] },
-  { name: "Specialistläkare psykiatri", short: "Psykiatriker", kind: "lakare", prices: [1400, 1612, 1876] },
-  { name: "Specialistläkare geriatrik", short: "Geriatriker", kind: "lakare", prices: [1189, 1453, 1717] },
-  { name: "Specialistsjuksköterska akutsjukvård", short: "Akut-ssk", kind: "ssk", prices: [687, 740, 792] },
+  { name: "Specialistläkare psykiatri", short: "Psykiatriker", kind: "lakare", prices: [1457, 1678, 1953] },
+  { name: "Specialistläkare geriatrik", short: "Geriatriker", kind: "lakare", prices: [1238, 1513, 1787] },
+  { name: "Specialistsjuksköterska akutsjukvård", short: "Akut-ssk", kind: "ssk", prices: [715, 770, 824] },
 ];
 
 const ZONE_LABELS = ["Zon 1", "Zon 2", "Zon 3"] as const;
