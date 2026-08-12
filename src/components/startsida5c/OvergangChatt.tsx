@@ -1,5 +1,7 @@
 import { Link } from "@/lib/router-compat";
 import HomeAssistantChat from "@/components/assistant/HomeAssistantChat";
+import AssistantDemoChat from "@/components/assistant/AssistantDemoChat";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function OvergangChatt() {
   return (
