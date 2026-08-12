@@ -13,7 +13,7 @@ export default function Footer5c() {
       <div className="mx-auto flex max-w-[1200px] flex-col gap-4 px-5 py-10 md:flex-row md:items-center md:justify-between md:px-12">
         <img
           src="/vardbemanning-lockup-dark.svg"
-          alt="vardbemanning.ai"
+          alt="vårdbemanning.ai"
           className="h-5 w-auto select-none"
           draggable={false}
         />
@@ -26,7 +26,7 @@ export default function Footer5c() {
           ))}
         </nav>
         <div className="text-[12.5px]" style={{ color: "#6b6b6b" }}>
-          © 2026 vardbemanning.ai · Data lagras inom EU
+          © 2026 vårdbemanning.ai · Data lagras inom EU
         </div>
       </div>
     </footer>

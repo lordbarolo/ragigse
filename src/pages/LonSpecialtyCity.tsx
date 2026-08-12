@@ -238,7 +238,7 @@ export default function LonSpecialtyCity() {
           className="text-[17px] font-semibold"
           style={{ fontFamily: "'IBM Plex Mono',monospace", letterSpacing: "-0.5px", color: "#ffffff" }}
         >
-          vardbemanning.ai
+          vårdbemanning.ai
         </Link>
         <Link
           to="/logga-in"

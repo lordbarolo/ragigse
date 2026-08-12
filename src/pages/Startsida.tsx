@@ -62,10 +62,10 @@ export default function Startsida5c() {
         className="flex items-center justify-between px-5 py-4 md:px-12 md:py-5"
         style={{ borderBottom: "1px solid #22232b" }}
       >
-        <Link to="/" className="inline-flex items-center" aria-label="vardbemanning.ai">
+        <Link to="/" className="inline-flex items-center" aria-label="vårdbemanning.ai">
           <img
             src="/vardbemanning-wordmark-dark.svg"
-            alt="vardbemanning.ai"
+            alt="vårdbemanning.ai"
             className="h-6 w-auto select-none md:h-7"
             draggable={false}
           />
