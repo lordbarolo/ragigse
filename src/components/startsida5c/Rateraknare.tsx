@@ -3,19 +3,21 @@ import SearchableSelect from "@/components/SearchableSelect";
 import {
   computeRate5c,
   roleOptions5c,
-  ZONES_5C,
   DEFAULT_ROLE_5C,
   DEFAULT_ZONE_5C,
   kr,
 } from "./rate5c";
 import { useBaseRates5c } from "./useRates5c";
 import { roleLabel5c } from "./roleLabels5c";
+import { useLocations } from "@/hooks/useCalculator";
 
+const DEFAULT_PLACE = "Torsby";
 
 export default function Rateraknare() {
   const base = useBaseRates5c();
+  const { data: locations } = useLocations();
   const [role, setRole] = useState(DEFAULT_ROLE_5C);
-  const [zone, setZone] = useState(DEFAULT_ZONE_5C);
+  const [place, setPlace] = useState(DEFAULT_PLACE);
 
   const options = useMemo(
     () =>
@@ -24,6 +26,27 @@ export default function Rateraknare() {
         .sort((a, b) => a.label.localeCompare(b.label, "sv")),
     [base]
   );
+
+  /** Sveriges kommuner — sökbara på både kommun- och regionnamn. */
+  const placeOptions = useMemo(
+    () =>
+      (locations ?? [])
+        .map((l) => ({
+          value: l.kommun as string,
+          label: l.kommun as string,
+          group: (l.region as string) ?? "",
+          keywords: [l.region as string].filter(Boolean),
+        }))
+        .sort((a, b) => a.label.localeCompare(b.label, "sv")),
+    [locations]
+  );
+
+  const selected = useMemo(
+    () => (locations ?? []).find((l) => l.kommun === place),
+    [locations, place]
+  );
+  const zone = (selected?.zon as string) ?? DEFAULT_ZONE_5C;
+
 
   const rate = useMemo(() => computeRate5c(base, role, zone), [base, role, zone]);
 
