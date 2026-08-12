@@ -359,6 +359,26 @@ export function AnimationStage({
           transform: scale === null ? undefined : `scale(${scale})`,
           visibility: scale === null ? 'hidden' : 'visible',
           willChange: 'transform',
+          // ── Stilbrandvägg ──────────────────────────────────────────────
+          // Scenen är ritad i en miljö utan CSS-reset (radavstånd `normal`).
+          // Värdsidan sätter globalt `line-height: 1.5` via Tailwinds preflight,
+          // vilket annars gör varje textblock ~25 % högre och får innehållet i
+          // korten med fast höjd att svämma över. Vi nollställer de ärvda
+          // egenskaperna som påverkar textmått så att scenen ser likadan ut
+          // oavsett vilken sida den läggs på.
+          lineHeight: 'normal',
+          letterSpacing: 'normal',
+          wordSpacing: 'normal',
+          fontStyle: 'normal',
+          fontWeight: 400,
+          textAlign: 'left',
+          textTransform: 'none',
+          textIndent: 0,
+          whiteSpace: 'normal',
+          wordBreak: 'normal',
+          overflowWrap: 'normal',
+          hyphens: 'none',
+          fontVariant: 'normal',
         }}
       >
         {children(args)}
