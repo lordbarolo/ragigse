@@ -51,7 +51,7 @@ export default function Hero() {
             Transparent löneinformation baserad på regionernas ramavtal och branschens vanliga marginaler.
           </p>
           <ul
-            className="mt-6 flex list-none flex-wrap gap-x-6 gap-y-2 p-0 text-[14px]"
+            className="mt-6 hidden list-none flex-wrap gap-x-6 gap-y-2 p-0 text-[14px] sm:flex"
             style={{ color: "#a1a3ab", animation: "fadeUp5c .55s .2s ease both" }}
           >
             {CHECKS.map((c) => (
