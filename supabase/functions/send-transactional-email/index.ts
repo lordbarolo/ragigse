@@ -16,7 +16,7 @@ const ANON_TEMPLATES = new Set(['welcome'])
 //  - RESEND_API_KEY_1       (connector key, managed by Resend connector)
 //  - SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY
 // Optional env:
-//  - RESEND_FROM_DOMAIN     (default: "compcare.se" — verified root domain in Resend)
+//  - RESEND_FROM_DOMAIN     (default: "vardbemanning.ai" — verified sending domain i Resend)
 //  - RESEND_FROM_NAME       (default: "vårdbemanning.ai")
 //  - APP_BASE_URL           (default: "https://vardbemanning.ai" — used in unsubscribe links)
 
