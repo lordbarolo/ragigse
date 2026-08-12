@@ -3,7 +3,7 @@ import { Calculator, FileSearch, PiggyBank, ScrollText } from "lucide-react";
 
 const TOOLS = [
   {
-    to: "/consultant/forhandla",
+    to: "/consultant/loneanalys",
     icon: Calculator,
     title: "Löneanalys",
     desc: "Se vad regionen betalar för din roll och vad du kan begära.",

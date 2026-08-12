@@ -40,6 +40,7 @@ import { Route as RegionRegionRouteImport } from './routes/region/$region'
 import { Route as ResultatLeadIdRouteImport } from './routes/resultat/$leadId'
 import { Route as TimprisRoleRouteImport } from './routes/timpris/$role'
 import { Route as ApiPublicBekraftaForslagRouteImport } from './routes/api/public/bekrafta-forslag'
+import { Route as ConsultantLayoutLoneanalysRouteImport } from './routes/consultant/_layout/loneanalys'
 import { Route as ConsultantLayoutProfilRouteImport } from './routes/consultant/_layout/profil'
 import { Route as LonSpecialtyCityRouteImport } from './routes/lon/$specialty/$city'
 
@@ -203,6 +204,12 @@ const ApiPublicBekraftaForslagRoute =
     path: '/api/public/bekrafta-forslag',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ConsultantLayoutLoneanalysRoute =
+  ConsultantLayoutLoneanalysRouteImport.update({
+    id: '/loneanalys',
+    path: '/loneanalys',
+    getParentRoute: () => ConsultantLayoutRoute,
+  } as any)
 const ConsultantLayoutProfilRoute = ConsultantLayoutProfilRouteImport.update({
   id: '/profil',
   path: '/profil',
@@ -246,6 +253,7 @@ export interface FileRoutesByFullPath {
   '/timpris/$role': typeof TimprisRoleRoute
   '/admin/': typeof AdminIndexRoute
   '/api/public/bekrafta-forslag': typeof ApiPublicBekraftaForslagRoute
+  '/consultant/loneanalys': typeof ConsultantLayoutLoneanalysRoute
   '/consultant/profil': typeof ConsultantLayoutProfilRoute
   '/lon/$specialty/$city': typeof LonSpecialtyCityRoute
 }
@@ -281,6 +289,7 @@ export interface FileRoutesByTo {
   '/timpris/$role': typeof TimprisRoleRoute
   '/admin': typeof AdminIndexRoute
   '/api/public/bekrafta-forslag': typeof ApiPublicBekraftaForslagRoute
+  '/consultant/loneanalys': typeof ConsultantLayoutLoneanalysRoute
   '/consultant/profil': typeof ConsultantLayoutProfilRoute
   '/lon/$specialty/$city': typeof LonSpecialtyCityRoute
 }
@@ -317,6 +326,7 @@ export interface FileRoutesById {
   '/timpris/$role': typeof TimprisRoleRoute
   '/admin/': typeof AdminIndexRoute
   '/api/public/bekrafta-forslag': typeof ApiPublicBekraftaForslagRoute
+  '/consultant/_layout/loneanalys': typeof ConsultantLayoutLoneanalysRoute
   '/consultant/_layout/profil': typeof ConsultantLayoutProfilRoute
   '/lon/$specialty/$city': typeof LonSpecialtyCityRoute
 }
@@ -354,6 +364,7 @@ export interface FileRouteTypes {
     | '/timpris/$role'
     | '/admin/'
     | '/api/public/bekrafta-forslag'
+    | '/consultant/loneanalys'
     | '/consultant/profil'
     | '/lon/$specialty/$city'
   fileRoutesByTo: FileRoutesByTo
@@ -389,6 +400,7 @@ export interface FileRouteTypes {
     | '/timpris/$role'
     | '/admin'
     | '/api/public/bekrafta-forslag'
+    | '/consultant/loneanalys'
     | '/consultant/profil'
     | '/lon/$specialty/$city'
   id:
@@ -424,6 +436,7 @@ export interface FileRouteTypes {
     | '/timpris/$role'
     | '/admin/'
     | '/api/public/bekrafta-forslag'
+    | '/consultant/_layout/loneanalys'
     | '/consultant/_layout/profil'
     | '/lon/$specialty/$city'
   fileRoutesById: FileRoutesById
@@ -682,6 +695,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicBekraftaForslagRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/consultant/_layout/loneanalys': {
+      id: '/consultant/_layout/loneanalys'
+      path: '/loneanalys'
+      fullPath: '/consultant/loneanalys'
+      preLoaderRoute: typeof ConsultantLayoutLoneanalysRouteImport
+      parentRoute: typeof ConsultantLayoutRoute
+    }
     '/consultant/_layout/profil': {
       id: '/consultant/_layout/profil'
       path: '/profil'
@@ -700,10 +720,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface ConsultantLayoutRouteChildren {
+  ConsultantLayoutLoneanalysRoute: typeof ConsultantLayoutLoneanalysRoute
   ConsultantLayoutProfilRoute: typeof ConsultantLayoutProfilRoute
 }
 
 const ConsultantLayoutRouteChildren: ConsultantLayoutRouteChildren = {
+  ConsultantLayoutLoneanalysRoute: ConsultantLayoutLoneanalysRoute,
   ConsultantLayoutProfilRoute: ConsultantLayoutProfilRoute,
 }
 
@@ -747,13 +769,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
