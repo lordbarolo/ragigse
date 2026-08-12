@@ -31,8 +31,9 @@ export default function CvAssistantCard() {
       setStrengths(res.strengths ?? []);
       setQuestions((res.questions ?? []) as Question[]);
       toast.success(
-        res.usedUploadedFile ? "Assistenten har läst ditt uppladdade CV." : "Assistenten har bearbetat ditt CV.",
+        res.source.type === "upload" ? "Assistenten har läst ditt uppladdade CV." : "Assistenten har bearbetat ditt CV.",
       );
+
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Något gick fel. Försök igen.");
     } finally {
