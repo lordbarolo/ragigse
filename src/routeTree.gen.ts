@@ -27,6 +27,7 @@ import { Route as ConsultantForhandlaRouteImport } from './routes/consultant/for
 import { Route as DevAnalyticsRouteImport } from './routes/dev/analytics'
 import { Route as DevAnimationerRouteImport } from './routes/dev/animationer'
 import { Route as DevLlmsCheckRouteImport } from './routes/dev/llms-check'
+import { Route as DevStartsidaAnimationerRouteImport } from './routes/dev/startsida-animationer'
 import { Route as KampanjRoleRouteImport } from './routes/kampanj/$role'
 import { Route as RapportReportIdRouteImport } from './routes/rapport/$reportId'
 import { Route as RapportAllmansjukskoterskaRouteImport } from './routes/rapport/allmansjukskoterska'
@@ -137,6 +138,11 @@ const DevAnimationerRoute = DevAnimationerRouteImport.update({
 const DevLlmsCheckRoute = DevLlmsCheckRouteImport.update({
   id: '/dev/llms-check',
   path: '/dev/llms-check',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevStartsidaAnimationerRoute = DevStartsidaAnimationerRouteImport.update({
+  id: '/dev/startsida-animationer',
+  path: '/dev/startsida-animationer',
   getParentRoute: () => rootRouteImport,
 } as any)
 const KampanjRoleRoute = KampanjRoleRouteImport.update({
@@ -271,6 +277,7 @@ export interface FileRoutesByFullPath {
   '/dev/analytics': typeof DevAnalyticsRoute
   '/dev/animationer': typeof DevAnimationerRoute
   '/dev/llms-check': typeof DevLlmsCheckRoute
+  '/dev/startsida-animationer': typeof DevStartsidaAnimationerRoute
   '/kampanj/$role': typeof KampanjRoleRoute
   '/rapport/$reportId': typeof RapportReportIdRoute
   '/rapport/allmansjukskoterska': typeof RapportAllmansjukskoterskaRoute
@@ -312,6 +319,7 @@ export interface FileRoutesByTo {
   '/dev/analytics': typeof DevAnalyticsRoute
   '/dev/animationer': typeof DevAnimationerRoute
   '/dev/llms-check': typeof DevLlmsCheckRoute
+  '/dev/startsida-animationer': typeof DevStartsidaAnimationerRoute
   '/kampanj/$role': typeof KampanjRoleRoute
   '/rapport/$reportId': typeof RapportReportIdRoute
   '/rapport/allmansjukskoterska': typeof RapportAllmansjukskoterskaRoute
@@ -354,6 +362,7 @@ export interface FileRoutesById {
   '/dev/analytics': typeof DevAnalyticsRoute
   '/dev/animationer': typeof DevAnimationerRoute
   '/dev/llms-check': typeof DevLlmsCheckRoute
+  '/dev/startsida-animationer': typeof DevStartsidaAnimationerRoute
   '/kampanj/$role': typeof KampanjRoleRoute
   '/rapport/$reportId': typeof RapportReportIdRoute
   '/rapport/allmansjukskoterska': typeof RapportAllmansjukskoterskaRoute
@@ -397,6 +406,7 @@ export interface FileRouteTypes {
     | '/dev/analytics'
     | '/dev/animationer'
     | '/dev/llms-check'
+    | '/dev/startsida-animationer'
     | '/kampanj/$role'
     | '/rapport/$reportId'
     | '/rapport/allmansjukskoterska'
@@ -438,6 +448,7 @@ export interface FileRouteTypes {
     | '/dev/analytics'
     | '/dev/animationer'
     | '/dev/llms-check'
+    | '/dev/startsida-animationer'
     | '/kampanj/$role'
     | '/rapport/$reportId'
     | '/rapport/allmansjukskoterska'
@@ -479,6 +490,7 @@ export interface FileRouteTypes {
     | '/dev/analytics'
     | '/dev/animationer'
     | '/dev/llms-check'
+    | '/dev/startsida-animationer'
     | '/kampanj/$role'
     | '/rapport/$reportId'
     | '/rapport/allmansjukskoterska'
@@ -521,6 +533,7 @@ export interface RootRouteChildren {
   DevAnalyticsRoute: typeof DevAnalyticsRoute
   DevAnimationerRoute: typeof DevAnimationerRoute
   DevLlmsCheckRoute: typeof DevLlmsCheckRoute
+  DevStartsidaAnimationerRoute: typeof DevStartsidaAnimationerRoute
   KampanjRoleRoute: typeof KampanjRoleRoute
   RapportReportIdRoute: typeof RapportReportIdRoute
   RapportAllmansjukskoterskaRoute: typeof RapportAllmansjukskoterskaRoute
@@ -666,6 +679,13 @@ declare module '@tanstack/react-router' {
       path: '/dev/llms-check'
       fullPath: '/dev/llms-check'
       preLoaderRoute: typeof DevLlmsCheckRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/startsida-animationer': {
+      id: '/dev/startsida-animationer'
+      path: '/dev/startsida-animationer'
+      fullPath: '/dev/startsida-animationer'
+      preLoaderRoute: typeof DevStartsidaAnimationerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/kampanj/$role': {
@@ -855,6 +875,7 @@ const rootRouteChildren: RootRouteChildren = {
   DevAnalyticsRoute: DevAnalyticsRoute,
   DevAnimationerRoute: DevAnimationerRoute,
   DevLlmsCheckRoute: DevLlmsCheckRoute,
+  DevStartsidaAnimationerRoute: DevStartsidaAnimationerRoute,
   KampanjRoleRoute: KampanjRoleRoute,
   RapportReportIdRoute: RapportReportIdRoute,
   RapportAllmansjukskoterskaRoute: RapportAllmansjukskoterskaRoute,
