@@ -25,6 +25,7 @@ import { Route as BollnasLakareAlmRouteImport } from './routes/bollnas/lakare-al
 import { Route as ConsultantLayoutRouteImport } from './routes/consultant/_layout'
 import { Route as ConsultantForhandlaRouteImport } from './routes/consultant/forhandla'
 import { Route as DevAnalyticsRouteImport } from './routes/dev/analytics'
+import { Route as DevAnimationerRouteImport } from './routes/dev/animationer'
 import { Route as DevLlmsCheckRouteImport } from './routes/dev/llms-check'
 import { Route as KampanjRoleRouteImport } from './routes/kampanj/$role'
 import { Route as RapportReportIdRouteImport } from './routes/rapport/$reportId'
@@ -123,6 +124,11 @@ const ConsultantForhandlaRoute = ConsultantForhandlaRouteImport.update({
 const DevAnalyticsRoute = DevAnalyticsRouteImport.update({
   id: '/dev/analytics',
   path: '/dev/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevAnimationerRoute = DevAnimationerRouteImport.update({
+  id: '/dev/animationer',
+  path: '/dev/animationer',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DevLlmsCheckRoute = DevLlmsCheckRouteImport.update({
@@ -244,6 +250,7 @@ export interface FileRoutesByFullPath {
   '/consultant': typeof ConsultantLayoutRouteWithChildren
   '/consultant/forhandla': typeof ConsultantForhandlaRoute
   '/dev/analytics': typeof DevAnalyticsRoute
+  '/dev/animationer': typeof DevAnimationerRoute
   '/dev/llms-check': typeof DevLlmsCheckRoute
   '/kampanj/$role': typeof KampanjRoleRoute
   '/rapport/$reportId': typeof RapportReportIdRoute
@@ -281,6 +288,7 @@ export interface FileRoutesByTo {
   '/consultant': typeof ConsultantLayoutRouteWithChildren
   '/consultant/forhandla': typeof ConsultantForhandlaRoute
   '/dev/analytics': typeof DevAnalyticsRoute
+  '/dev/animationer': typeof DevAnimationerRoute
   '/dev/llms-check': typeof DevLlmsCheckRoute
   '/kampanj/$role': typeof KampanjRoleRoute
   '/rapport/$reportId': typeof RapportReportIdRoute
@@ -319,6 +327,7 @@ export interface FileRoutesById {
   '/consultant/_layout': typeof ConsultantLayoutRouteWithChildren
   '/consultant/forhandla': typeof ConsultantForhandlaRoute
   '/dev/analytics': typeof DevAnalyticsRoute
+  '/dev/animationer': typeof DevAnimationerRoute
   '/dev/llms-check': typeof DevLlmsCheckRoute
   '/kampanj/$role': typeof KampanjRoleRoute
   '/rapport/$reportId': typeof RapportReportIdRoute
@@ -358,6 +367,7 @@ export interface FileRouteTypes {
     | '/consultant'
     | '/consultant/forhandla'
     | '/dev/analytics'
+    | '/dev/animationer'
     | '/dev/llms-check'
     | '/kampanj/$role'
     | '/rapport/$reportId'
@@ -395,6 +405,7 @@ export interface FileRouteTypes {
     | '/consultant'
     | '/consultant/forhandla'
     | '/dev/analytics'
+    | '/dev/animationer'
     | '/dev/llms-check'
     | '/kampanj/$role'
     | '/rapport/$reportId'
@@ -432,6 +443,7 @@ export interface FileRouteTypes {
     | '/consultant/_layout'
     | '/consultant/forhandla'
     | '/dev/analytics'
+    | '/dev/animationer'
     | '/dev/llms-check'
     | '/kampanj/$role'
     | '/rapport/$reportId'
@@ -470,6 +482,7 @@ export interface RootRouteChildren {
   ConsultantLayoutRoute: typeof ConsultantLayoutRouteWithChildren
   ConsultantForhandlaRoute: typeof ConsultantForhandlaRoute
   DevAnalyticsRoute: typeof DevAnalyticsRoute
+  DevAnimationerRoute: typeof DevAnimationerRoute
   DevLlmsCheckRoute: typeof DevLlmsCheckRoute
   KampanjRoleRoute: typeof KampanjRoleRoute
   RapportReportIdRoute: typeof RapportReportIdRoute
@@ -602,6 +615,13 @@ declare module '@tanstack/react-router' {
       path: '/dev/analytics'
       fullPath: '/dev/analytics'
       preLoaderRoute: typeof DevAnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/animationer': {
+      id: '/dev/animationer'
+      path: '/dev/animationer'
+      fullPath: '/dev/animationer'
+      preLoaderRoute: typeof DevAnimationerRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dev/llms-check': {
@@ -769,6 +789,7 @@ const rootRouteChildren: RootRouteChildren = {
   ConsultantLayoutRoute: ConsultantLayoutRouteWithChildren,
   ConsultantForhandlaRoute: ConsultantForhandlaRoute,
   DevAnalyticsRoute: DevAnalyticsRoute,
+  DevAnimationerRoute: DevAnimationerRoute,
   DevLlmsCheckRoute: DevLlmsCheckRoute,
   KampanjRoleRoute: KampanjRoleRoute,
   RapportReportIdRoute: RapportReportIdRoute,
@@ -791,13 +812,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
