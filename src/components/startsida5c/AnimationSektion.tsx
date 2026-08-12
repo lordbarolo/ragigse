@@ -68,7 +68,7 @@ export default function AnimationSektion({
           </p>
           <h2
             className="mb-4 text-[26px] font-bold leading-[1.15] tracking-tight sm:text-[32px]"
-            style={{ color: c.rubrik }}
+            style={{ color: c.rubrik, whiteSpace: "pre-line" }}
           >
             {rubrik}
           </h2>
