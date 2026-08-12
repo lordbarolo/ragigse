@@ -135,7 +135,10 @@ export default function Rateraknare() {
         {base.length === 0
           ? "Prisdata kunde inte hämtas just nu."
           : rate
-            ? `Kundpris ${kr(rate.timpris_kund)} kr/timme i ${place}${selected?.region ? ` (${selected.region})` : ""}. Källa: SKR:s ramavtal 2026.`
+            ? (<>
+                {`Kundpris ${kr(rate.timpris_kund)} kr/timme i ${place}${selected?.region ? ` (${selected.region})` : ""}. Källa: `}
+                <a href="https://www.vgregion.se/ov/hyrpersonal/avtal-och-dokument/" target="_blank" rel="noopener noreferrer" style={{ color: "#a1a3ab", textDecoration: "underline" }}>SKR:s ramavtal 2026</a>.
+              </>)
             : "Pris saknas för denna kombination — kontakta oss."}
       </p>
     </div>

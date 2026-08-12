@@ -106,7 +106,7 @@ export default function LakareSpecialtyReport() {
     summary:
       `Ramavtalspriset för ${cfg.skrCategory.toLowerCase()} är ${fmt(lowZone)}–${fmt(highZone)} kr/timme beroende på zon enligt SKR:s ramavtal vårdbemanning 2026. `,
     rateRange: { min: lowZone, median: refRate, max: highZone, unit: "SEK/h" },
-    skrSources: ["https://skr.se/ramavtal/vardbemanning"],
+    skrSources: ["https://www.vgregion.se/ov/hyrpersonal/avtal-och-dokument/"],
     faq: FAQ,
   });
 
@@ -166,8 +166,16 @@ export default function LakareSpecialtyReport() {
               redovisad som ett spann per zon.
             </p>
             <p className="text-[12px]" style={{ color: sub }}>
-              Senast uppdaterad {LAST_UPDATED} · Källa: SKR Ramavtal vårdbemanning 2026
-            </p>
+               Senast uppdaterad {LAST_UPDATED} · Källa:{" "}
+               <a
+                 href="https://www.vgregion.se/ov/hyrpersonal/avtal-och-dokument/"
+                 target="_blank"
+                 rel="noopener noreferrer"
+                 style={{ color: sub, textDecoration: "underline" }}
+               >
+                 SKR Ramavtal vårdbemanning 2026
+               </a>
+             </p>
           </section>
 
           {/* Kundpris per zon */}
@@ -286,7 +294,7 @@ export default function LakareSpecialtyReport() {
           {/* Metod */}
           <section className="rounded-2xl border p-5 space-y-2 text-[12px] leading-relaxed" style={{ backgroundColor: card, borderColor: border, color: sub }}>
             <p className="text-[10px] font-semibold tracking-[1.4px] uppercase" style={{ color: sub }}>Beräkningsmetod</p>
-            <p><span className="font-semibold" style={{ color: ink }}>Källa:</span> SKR:s ramavtal vårdbemanning 2026, kategori {cfg.skrCategory}.</p>
+            <p><span className="font-semibold" style={{ color: ink }}>Källa:</span> <a href="https://www.vgregion.se/ov/hyrpersonal/avtal-och-dokument/" target="_blank" rel="noopener noreferrer" style={{ color: sub, textDecoration: "underline" }}>SKR:s ramavtal vårdbemanning 2026</a>, kategori {cfg.skrCategory}.</p>
             <p><span className="font-semibold" style={{ color: ink }}>OB & jour:</span> Hanteras separat ovanpå grundpriset enligt SKR-tariff.</p>
             <p><span className="font-semibold" style={{ color: ink }}>Neutralitet:</span> vårdbemanning.ai driver inte upp löner. Vi informerar om publika priser och offentliga ramavtal.</p>
           </section>
