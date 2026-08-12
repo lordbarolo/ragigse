@@ -37,6 +37,8 @@ interface Props {
  * de visas alla på en gång i chatten. När svaren sparats öppnas fritextläget.
  */
 export default function ProfileAssistantChat({ userId, context, unlocked, onSaved }: Props) {
+  const qc = useQueryClient();
+
   const [answers, setAnswers] = useState<Record<QuestionId, string>>({
     kommun: context?.kommun ?? "",
     role: context?.role ?? "",
