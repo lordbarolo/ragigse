@@ -217,6 +217,7 @@ export default function ProfileContextCard({ userId, context, onSaved }: Props) 
             Spara ändringar
           </button>
         </div>
+        </div>
       )}
     </div>
   );
