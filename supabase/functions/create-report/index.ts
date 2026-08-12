@@ -187,6 +187,7 @@ serve(async (req) => {
       .from("reports")
       .insert({
         lead_id: lead_id || null,
+        user_id: authUserId,
         email: email || null,
         status: "preview",
         result_json: resultJson,
