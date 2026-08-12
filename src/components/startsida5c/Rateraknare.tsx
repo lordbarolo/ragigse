@@ -1,5 +1,4 @@
 import { useMemo, useState } from "react";
-import { useNavigate } from "@/lib/router-compat";
 import SearchableSelect from "@/components/SearchableSelect";
 import {
   computeRate5c,
@@ -15,7 +14,6 @@ import { roleLabel5c } from "./roleLabels5c";
 
 export default function Rateraknare() {
   const base = useBaseRates5c();
-  const navigate = useNavigate();
   const [role, setRole] = useState(DEFAULT_ROLE_5C);
   const [zone, setZone] = useState(DEFAULT_ZONE_5C);
 
@@ -124,32 +122,6 @@ export default function Rateraknare() {
             ? `Kundpris ${kr(rate.timpris_kund)} kr/h. Källa: SKR:s ramavtal 2026.`
             : "Pris saknas för denna kombination — kontakta oss."}
       </p>
-
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          navigate("/registrera");
-        }}
-        className="mt-5 flex items-center gap-2 rounded-xl px-4 py-2"
-        style={{ background: "#0b0c10", border: "1px solid #2a2b36", borderRadius: 12 }}
-      >
-        <input
-          name="q"
-          placeholder="Fråga assistenten om detaljerna…"
-          className="h-10 flex-1 bg-transparent text-[15px] outline-hidden"
-          style={{ color: "#ffffff" }}
-          onFocus={() => navigate("/registrera")}
-        />
-        <span aria-hidden className="inline-block h-[15px] w-[1.5px] caret5c" style={{ background: "#e8e9ec" }} />
-        <button
-          type="submit"
-          aria-label="Gå till assistenten"
-          className="grid h-10 w-10 place-items-center rounded-[10px] text-[18px]"
-          style={{ background: "#ffffff", color: "#121319" }}
-        >
-          ↑
-        </button>
-      </form>
     </div>
   );
 }
