@@ -17,7 +17,7 @@ const TOOLS = [
     desc: "Räkna på hur ersättningsnivån påverkar din pension över tid.",
   },
   {
-    to: "/consultant/forhandla",
+    to: "/consultant/avtal",
     icon: ScrollText,
     title: "Avtalsassistent",
     desc: "Få svar på vad ramavtalet säger om pris, krav, OB och vite.",
