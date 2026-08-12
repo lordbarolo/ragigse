@@ -23,7 +23,7 @@ const ROLE_LABELS_5C: Record<string, string> = {
   "Specialistsjuksköterska palliativ vård": "Palliativsjuksköterska",
   "Specialistsjuksköterska psykiatrisk vård": "Psykiatrisjuksköterska",
   "Specialistsjuksköterska vård av äldre": "Geriatriksjuksköterska",
-  Sjuksköterska: "Grundutbildad sjuksköterska",
+  Sjuksköterska: "Allmänsjuksköterska",
 
   // ── Läkare ───────────────────────────────────────────────────────
   "Specialistläkare akutsjukvård": "Akutläkare",
@@ -93,4 +93,25 @@ const ROLE_LABELS_5C: Record<string, string> = {
 
 export function roleLabel5c(role: string): string {
   return ROLE_LABELS_5C[role] ?? role;
+}
+
+/**
+ * Extra sökord per kanonisk roll. Visas aldrig i UI men gör att användaren
+ * hittar rollen med vardagliga eller formella benämningar.
+ */
+const ROLE_KEYWORDS_5C: Record<string, string[]> = {
+  Sjuksköterska: [
+    "sjuksköterska",
+    "leg sjuksköterska",
+    "leg. sjuksköterska",
+    "legitimerad sjuksköterska",
+    "allmänsjuksköterska",
+    "allmän sjuksköterska",
+    "grundutbildad sjuksköterska",
+    "ssk",
+  ],
+};
+
+export function roleKeywords5c(role: string): string[] {
+  return ROLE_KEYWORDS_5C[role] ?? [];
 }
