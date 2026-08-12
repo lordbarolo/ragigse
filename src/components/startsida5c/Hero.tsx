@@ -71,15 +71,43 @@ export default function Hero() {
         <Rateraknare />
       </div>
 
-      {/* Mjuk övergång från mörk hero till ljus sektion */}
-      <div
-        aria-hidden
-        className="h-32 w-full md:h-44"
-        style={{
-          background:
-            "linear-gradient(180deg,#0b0c10 0%,#0e0f15 30%,#2a2b36 52%,#6f7178 70%,#bcbec6 86%,#f5f5f7 100%)",
-        }}
-      />
+      {/*
+        Mjuk övergång från mörk hero till ljus sektion.
+        Längre höjd + många stopp med ease-in-out-kurva gör att ingen grå
+        "dimbandskant" uppstår. Skuggorna behåller en svag blå ton (samma
+        familj som heron) istället för neutralgrått, och ett diskret ljus
+        i mitten bryter av den platta horisontella banden.
+      */}
+      <div aria-hidden className="relative h-48 w-full md:h-72">
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(180deg," +
+              "#0b0c10 0%," +
+              "#0b0c11 18%," +
+              "#0d0e14 32%," +
+              "#12141d 44%," +
+              "#1c1f2b 54%," +
+              "#2c3040 63%," +
+              "#434857 71%," +
+              "#5f6472 78%," +
+              "#80858f 84%," +
+              "#a2a6ad 89%," +
+              "#c3c6cb 93%," +
+              "#dedfe3 96.5%," +
+              "#ededf0 98.5%," +
+              "#f5f5f7 100%)",
+          }}
+        />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "radial-gradient(110% 70% at 50% 100%, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0) 60%)",
+          }}
+        />
+      </div>
     </section>
   );
 }
