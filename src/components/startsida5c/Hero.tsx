@@ -1,7 +1,7 @@
 import Rateraknare from "./Rateraknare";
 import { marginText5c } from "./rate5c";
 
-const CHECKS = ["Få notis vid prisökning", "Skapa CV med Ai"];
+const CHECKS = ["✓\u00a0Få notis vid prisökning", "✓\u00a0Skapa CV med Ai"];
 
 export default function Hero() {
   const doctorMargin = marginText5c("Specialistläkare anestesi och intensivvård");
@@ -72,7 +72,7 @@ export default function Hero() {
           >
             {CHECKS.map((c) => (
               <li key={c} className="flex flex-col gap-1">
-                <span style={{ color: "#4ade80" }}>✓</span>
+                <span style={{ color: "#4ade80" }}>{"\n"}</span>
                 <span>{c}</span>
               </li>
             ))}
