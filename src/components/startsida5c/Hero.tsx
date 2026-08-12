@@ -64,7 +64,7 @@ export default function Hero() {
             className="mt-4 max-w-[540px] text-[17px]"
             style={{ lineHeight: 1.6, color: "#b8bac2", animation: "fadeUp5c .55s .16s ease both" }}
           >
-            Transparent löneinformation baserad på regionernas ramavtal och branschens vanliga marginaler.
+            Transparent löneinformation baserad på regionernas avtal och branschens vanliga marginaler. Kostnadsfritt och öppet för alla.
           </p>
           <ul
             className="mt-6 hidden list-none flex-wrap gap-x-6 gap-y-2 p-0 text-[14px] sm:flex"
