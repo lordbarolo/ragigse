@@ -43,6 +43,8 @@ function sourceDescription(source: SourceInfo): string {
 
 /** CV-assistent: tar konsultens uppladdade/inklistrade CV och bygger en proffsversion. */
 export default function CvAssistantCard() {
+  const { user } = useAuth();
+  const fullName = (user?.user_metadata?.full_name as string | undefined) ?? null;
   const runOptimize = useServerFn(optimizeCv);
   const [docs, setDocs] = useState<DocOption[]>([]);
   const [sourceChoice, setSourceChoice] = useState<string>(PASTED);
