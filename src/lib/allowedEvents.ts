@@ -91,6 +91,10 @@ export const ALLOWED_EVENTS = [
   "lonekoll_missing_question_reported",
   "home_chat_question_clicked",
   "home_chat_login_prompt_shown",
+  "avtalsassistent_page_viewed",
+  "avtalsassistent_question_clicked",
+  "pension_page_viewed",
+  "fakturahjalp_page_viewed",
 ] as const;
 
 export type AllowedEventName = (typeof ALLOWED_EVENTS)[number];

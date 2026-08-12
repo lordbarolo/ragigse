@@ -11,7 +11,7 @@ const TOOLS = [
     desc: "Se vad regionen betalar för din roll och vad du kan begära.",
   },
   {
-    to: "/consultant/forhandla",
+    to: "/consultant/pension",
     icon: PiggyBank,
     title: "Pensionssimulator",
     desc: "Räkna på hur ersättningsnivån påverkar din pension över tid.",
@@ -23,7 +23,7 @@ const TOOLS = [
     desc: "Få svar på vad ramavtalet säger om pris, krav, OB och vite.",
   },
   {
-    to: "/consultant/forhandla",
+    to: "/consultant/fakturahjalp",
     icon: FileSearch,
     title: "Fakturahjälpen",
     desc: "Låt agenten granska dina tidrapporter mot fakturerad ersättning.",

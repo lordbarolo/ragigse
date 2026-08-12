@@ -94,7 +94,11 @@ type EventName =
   | "home_chat_question_clicked"
   | "home_chat_login_prompt_shown"
   | "avtalsassistent_page_viewed"
-  | "avtalsassistent_question_clicked";
+  | "avtalsassistent_question_clicked"
+  | "pension_page_viewed"
+  | "fakturahjalp_page_viewed"
+  | "fakturakontroll_uploaded"
+  | "fakturakontroll_interest_submitted";
 
 
 function isInternalTraffic(): boolean {
