@@ -38,7 +38,6 @@ const EMAIL_TEMPLATES: Record<string, React.ComponentType<any>> = {
 
 // Configuration
 const SITE_NAME = "vårdbemanning.ai"
-const SENDER_DOMAIN = FROM_DOMAIN
 const ROOT_DOMAIN = "vardbemanning.ai"
 
 
