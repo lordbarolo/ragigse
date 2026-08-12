@@ -127,8 +127,25 @@ Deno.serve(async (req) => {
       const question = (body.question ?? "").trim().slice(0, 500);
       if (!question) return json({ error: "Tom fråga" }, 400);
 
+      // ── Långtidsminne: nyckelpunkter användaren (eller assistenten) sparat ──
+      const { data: memoryRows } = await supabase
+        .from("assistant_memory")
+        .select("content")
+        .eq("user_id", userId)
+        .eq("is_active", true)
+        .order("updated_at", { ascending: false })
+        .limit(MEMORY_LIMIT);
+      const memoryPoints = (memoryRows ?? [])
+        .map((r: { content: string }) => r.content)
+        .filter(Boolean);
+      const memoryContext = memoryPoints.length
+        ? "Detta minns du från tidigare samtal med användaren (behandla som bakgrund, " +
+          "upprepa det inte i onödan och lita på det bara om det är förenligt med profilen): " +
+          memoryPoints.map((p) => `- ${p}`).join(" ")
+        : "";
 
       const ctx = body.context ?? null;
+
       let rateContext = "";
       if (ctx?.role && !GROUP_LABEL.test(ctx.role)) {
         const { data: rateRows } = await supabase
