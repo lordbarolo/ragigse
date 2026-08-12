@@ -42,6 +42,7 @@ import { Route as ResultatLeadIdRouteImport } from './routes/resultat/$leadId'
 import { Route as TimprisRoleRouteImport } from './routes/timpris/$role'
 import { Route as ApiPublicBekraftaForslagRouteImport } from './routes/api/public/bekrafta-forslag'
 import { Route as ApiPublicSendSignupConfirmationRouteImport } from './routes/api/public/send-signup-confirmation'
+import { Route as ConsultantLayoutAvtalRouteImport } from './routes/consultant/_layout/avtal'
 import { Route as ConsultantLayoutLoneanalysRouteImport } from './routes/consultant/_layout/loneanalys'
 import { Route as ConsultantLayoutProfilRouteImport } from './routes/consultant/_layout/profil'
 import { Route as LonSpecialtyCityRouteImport } from './routes/lon/$specialty/$city'
@@ -217,6 +218,11 @@ const ApiPublicSendSignupConfirmationRoute =
     path: '/api/public/send-signup-confirmation',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ConsultantLayoutAvtalRoute = ConsultantLayoutAvtalRouteImport.update({
+  id: '/avtal',
+  path: '/avtal',
+  getParentRoute: () => ConsultantLayoutRoute,
+} as any)
 const ConsultantLayoutLoneanalysRoute =
   ConsultantLayoutLoneanalysRouteImport.update({
     id: '/loneanalys',
@@ -268,6 +274,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/api/public/bekrafta-forslag': typeof ApiPublicBekraftaForslagRoute
   '/api/public/send-signup-confirmation': typeof ApiPublicSendSignupConfirmationRoute
+  '/consultant/avtal': typeof ConsultantLayoutAvtalRoute
   '/consultant/loneanalys': typeof ConsultantLayoutLoneanalysRoute
   '/consultant/profil': typeof ConsultantLayoutProfilRoute
   '/lon/$specialty/$city': typeof LonSpecialtyCityRoute
@@ -306,6 +313,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/api/public/bekrafta-forslag': typeof ApiPublicBekraftaForslagRoute
   '/api/public/send-signup-confirmation': typeof ApiPublicSendSignupConfirmationRoute
+  '/consultant/avtal': typeof ConsultantLayoutAvtalRoute
   '/consultant/loneanalys': typeof ConsultantLayoutLoneanalysRoute
   '/consultant/profil': typeof ConsultantLayoutProfilRoute
   '/lon/$specialty/$city': typeof LonSpecialtyCityRoute
@@ -345,6 +353,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/api/public/bekrafta-forslag': typeof ApiPublicBekraftaForslagRoute
   '/api/public/send-signup-confirmation': typeof ApiPublicSendSignupConfirmationRoute
+  '/consultant/_layout/avtal': typeof ConsultantLayoutAvtalRoute
   '/consultant/_layout/loneanalys': typeof ConsultantLayoutLoneanalysRoute
   '/consultant/_layout/profil': typeof ConsultantLayoutProfilRoute
   '/lon/$specialty/$city': typeof LonSpecialtyCityRoute
@@ -385,6 +394,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/api/public/bekrafta-forslag'
     | '/api/public/send-signup-confirmation'
+    | '/consultant/avtal'
     | '/consultant/loneanalys'
     | '/consultant/profil'
     | '/lon/$specialty/$city'
@@ -423,6 +433,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/api/public/bekrafta-forslag'
     | '/api/public/send-signup-confirmation'
+    | '/consultant/avtal'
     | '/consultant/loneanalys'
     | '/consultant/profil'
     | '/lon/$specialty/$city'
@@ -461,6 +472,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/api/public/bekrafta-forslag'
     | '/api/public/send-signup-confirmation'
+    | '/consultant/_layout/avtal'
     | '/consultant/_layout/loneanalys'
     | '/consultant/_layout/profil'
     | '/lon/$specialty/$city'
@@ -736,6 +748,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicSendSignupConfirmationRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/consultant/_layout/avtal': {
+      id: '/consultant/_layout/avtal'
+      path: '/avtal'
+      fullPath: '/consultant/avtal'
+      preLoaderRoute: typeof ConsultantLayoutAvtalRouteImport
+      parentRoute: typeof ConsultantLayoutRoute
+    }
     '/consultant/_layout/loneanalys': {
       id: '/consultant/_layout/loneanalys'
       path: '/loneanalys'
@@ -761,11 +780,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface ConsultantLayoutRouteChildren {
+  ConsultantLayoutAvtalRoute: typeof ConsultantLayoutAvtalRoute
   ConsultantLayoutLoneanalysRoute: typeof ConsultantLayoutLoneanalysRoute
   ConsultantLayoutProfilRoute: typeof ConsultantLayoutProfilRoute
 }
 
 const ConsultantLayoutRouteChildren: ConsultantLayoutRouteChildren = {
+  ConsultantLayoutAvtalRoute: ConsultantLayoutAvtalRoute,
   ConsultantLayoutLoneanalysRoute: ConsultantLayoutLoneanalysRoute,
   ConsultantLayoutProfilRoute: ConsultantLayoutProfilRoute,
 }

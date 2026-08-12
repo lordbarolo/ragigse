@@ -415,6 +415,48 @@ Deno.serve(async (req) => {
       });
     }
 
+    if (key === "ob") {
+      return json({
+        answer:
+          "OB, jour och beredskap ersätts separat utanför ramavtalets grundpris. Påslagen är procentuella " +
+          "och varierar beroende på vardag, helg, natt och storhelg. Exakta nivåer framgår av den aktuella " +
+          "prisbilagan till avtalet.\n\n" +
+          "Grundpriset avser ordinarie arbetstid.",
+        source: "SKR:s ramavtal för hyrpersonal",
+      });
+    }
+
+    if (key === "vite") {
+      return json({
+        answer:
+          "Vite är ett avtalsvite som kan utdömas om bemanningsföretaget inte uppfyller sina åtaganden " +
+          "enligt ramavtalet, exempelvis brister i dokumentation eller kvalificerad personal. Vite följer " +
+          "avtalets särskilda villkor och påverkar i första hand relationen mellan region och bemanningsföretag, " +
+          "inte konsultens ersättning direkt.",
+        source: "SKR:s ramavtal för hyrpersonal",
+      });
+    }
+
+    if (key === "krav_bemanning") {
+      return json({
+        answer:
+          "Ramavtalet ställer krav på att bemanning sker via auktoriserade bemanningsföretag och att personalen " +
+          "har giltig legitimation, HOSP- eller IVO-registrering och erforderlig kompetens för rollen. " +
+          "Regionen specificerar ytterligare krav i varje avrop, till exempel erfarenhet eller specialistbevis.",
+        source: "Regionernas avropsunderlag, SKR:s ramavtal",
+      });
+    }
+
+    if (key === "uppsagning") {
+      return json({
+        answer:
+          "Uppsägningstid och villkor för avbrott regleras i det enskilda avtalet mellan region och bemanningsföretag, " +
+          "samt i ditt anställnings- eller konsultavtal.\n\n" +
+          "Ramavtalet styr i första hand regionernas upphandling och prissättning, inte enskilda anställningsvillkor.",
+        source: "SKR:s ramavtal för hyrpersonal",
+      });
+    }
+
     if (key === "uppgifter") {
       return json({
         answer:
