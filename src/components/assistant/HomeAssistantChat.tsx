@@ -157,11 +157,11 @@ export default function HomeAssistantChat() {
       ) : (
         <Link
           to="/registrera"
-          className="flex items-center gap-2 rounded-full bg-white/[0.06] px-4 py-3 backdrop-blur-md transition-colors hover:bg-white/[0.09]"
+          className="flex items-center gap-2 rounded-full border border-border/70 bg-white px-4 py-3 shadow-lg backdrop-blur-md transition-colors hover:bg-secondary"
         >
-          <Lock className="h-4 w-4 shrink-0 text-white/45" />
-          <span className="flex-1 text-[15px] text-white/45">Fråga assistenten</span>
-          <span className="shrink-0 rounded-full bg-white px-3 py-1.5 text-[13.5px] font-semibold text-[#0b0c10]">
+          <Lock className="h-4 w-4 shrink-0 text-muted-foreground" />
+          <span className="flex-1 text-[15px] text-muted-foreground">Fråga assistenten</span>
+          <span className="shrink-0 rounded-full bg-[#1a1b22] px-3 py-1.5 text-[13.5px] font-semibold text-white">
             Skapa konto
           </span>
         </Link>
@@ -261,7 +261,7 @@ export default function HomeAssistantChat() {
           </div>
 
           {loading && (
-            <div className="mt-4 flex items-center justify-center gap-2 text-sm text-white/45">
+            <div className="mt-4 flex items-center justify-center gap-2 text-sm text-muted-foreground">
               <Loader2 className="h-3.5 w-3.5 animate-spin" /> Tänker…
             </div>
           )}
