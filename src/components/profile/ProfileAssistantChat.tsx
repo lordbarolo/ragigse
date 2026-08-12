@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ArrowUp, Check, Loader2, Lock, Sparkle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import SearchableSelect from "@/components/SearchableSelect";
 import { basePrices, roleOptions5c, type RateRow } from "@/components/startsida5c/rate5c";
 import { roleLabel5c, roleKeywords5c } from "@/components/startsida5c/roleLabels5c";
 import { saveProfileContext, type ProfileContext } from "@/lib/profileContext";
+import { assistantMemoryKey } from "@/components/profile/AssistantMemoryCard";
 import { toast } from "sonner";
+
 
 type Msg = { id: string; role: "user" | "assistant"; text: string; source?: string };
 
@@ -35,6 +37,8 @@ interface Props {
  * de visas alla på en gång i chatten. När svaren sparats öppnas fritextläget.
  */
 export default function ProfileAssistantChat({ userId, context, unlocked, onSaved }: Props) {
+  const qc = useQueryClient();
+
   const [answers, setAnswers] = useState<Record<QuestionId, string>>({
     kommun: context?.kommun ?? "",
     role: context?.role ?? "",
@@ -157,8 +161,13 @@ export default function ProfileAssistantChat({ userId, context, unlocked, onSave
       });
       if (error) throw error;
       push({ role: "assistant", text: data?.answer ?? data?.error ?? "Inget svar.", source: data?.source });
+      // Assistenten kan ha destillerat nya nyckelpunkter — uppdatera minneskortet.
+      if (data?.memory_added) {
+        void qc.invalidateQueries({ queryKey: assistantMemoryKey(userId) });
+      }
     } catch {
       push({ role: "assistant", text: "Något gick fel. Försök igen om en stund." });
+
     } finally {
       setLoading(false);
     }
