@@ -169,7 +169,7 @@ export default function CvAssistantCard() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = "cv-vardbemanning.md";
+    a.download = cvFileName(markdown, "md", fullName);
     a.click();
     URL.revokeObjectURL(url);
   }
