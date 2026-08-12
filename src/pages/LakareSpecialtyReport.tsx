@@ -294,7 +294,7 @@ export default function LakareSpecialtyReport() {
           {/* Metod */}
           <section className="rounded-2xl border p-5 space-y-2 text-[12px] leading-relaxed" style={{ backgroundColor: card, borderColor: border, color: sub }}>
             <p className="text-[10px] font-semibold tracking-[1.4px] uppercase" style={{ color: sub }}>Beräkningsmetod</p>
-            <p><span className="font-semibold" style={{ color: ink }}>Källa:</span> SKR:s ramavtal vårdbemanning 2026, kategori {cfg.skrCategory}.</p>
+            <p><span className="font-semibold" style={{ color: ink }}>Källa:</span> <a href="https://www.vgregion.se/ov/hyrpersonal/avtal-och-dokument/" target="_blank" rel="noopener noreferrer" style={{ color: sub, textDecoration: "underline" }}>SKR:s ramavtal vårdbemanning 2026</a>, kategori {cfg.skrCategory}.</p>
             <p><span className="font-semibold" style={{ color: ink }}>OB & jour:</span> Hanteras separat ovanpå grundpriset enligt SKR-tariff.</p>
             <p><span className="font-semibold" style={{ color: ink }}>Neutralitet:</span> vårdbemanning.ai driver inte upp löner. Vi informerar om publika priser och offentliga ramavtal.</p>
           </section>

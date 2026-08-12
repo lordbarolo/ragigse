@@ -419,7 +419,15 @@ export default function SjukskoterskaReport() {
               <span className="font-semibold" style={{ color: ink }}>
                 Källa:
               </span>{" "}
-              SKR:s ramavtal vårdbemanning 2026, kategori Sjuksköterska grundutbildning (dagtid).
+              <a
+                href="https://www.vgregion.se/ov/hyrpersonal/avtal-och-dokument/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: sub, textDecoration: "underline" }}
+              >
+                SKR:s ramavtal vårdbemanning 2026
+              </a>
+              , kategori Sjuksköterska grundutbildning (dagtid).
             </p>
             <p>
               <span className="font-semibold" style={{ color: ink }}>
