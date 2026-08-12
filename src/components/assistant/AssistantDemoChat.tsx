@@ -88,27 +88,6 @@ export default function AssistantDemoChat() {
       }
     };
 
-    const fetchAnswer = async (preset: { key: PresetKey; label: string }) => {
-      const cached = answerCache.get(preset.key);
-      if (cached) return cached;
-      try {
-        const { data, error } = await supabase.functions.invoke("home-assistant", {
-          body: { action: "answer", key: preset.key },
-        });
-        if (!error && data?.answer) {
-          const entry = {
-            text: data.answer as string,
-            source: data.source as string | undefined,
-          };
-          answerCache.set(preset.key, entry);
-          return entry;
-        }
-      } catch {
-        /* nätverksfel — visa fallback */
-      }
-      return null;
-    };
-
     const run = async () => {
       let i = 0;
       while (aliveRef.current) {
@@ -122,16 +101,12 @@ export default function AssistantDemoChat() {
         if (!aliveRef.current) return;
 
         setThinking(true);
-        const result = await fetchAnswer(preset);
-        await sleep(500);
+        const result = DEMO_ANSWERS[preset.key];
+        await sleep(700);
         if (!aliveRef.current) return;
         setThinking(false);
 
-        if (!result) {
-          // Inget svar (t.ex. tillfällig gräns) — hoppa vidare utan felruta.
-          await sleep(1500);
-          continue;
-        }
+
 
         setSource(result.source);
         await typeInto(result.text, setAnswer, 12);
