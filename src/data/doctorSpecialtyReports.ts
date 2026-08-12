@@ -28,7 +28,7 @@ export const DOCTOR_SPECIALTY_REPORTS: DoctorSpecialtyConfig[] = [
     metaTitle: "Anestesiläkare – timpris & ersättning 2026",
     metaDescription:
       "SKR-ramavtalspriser per zon och möjlig konsultersättning för specialistläkare i anestesi och intensivvård 2026.",
-    zone1: 1238, zone2: 1513, zone3: 1787,
+    zone1: 1189, zone2: 1453, zone3: 1717,
   },
   {
     slug: "lakare-barn-och-ungdomsmedicin",
@@ -38,7 +38,7 @@ export const DOCTOR_SPECIALTY_REPORTS: DoctorSpecialtyConfig[] = [
     metaTitle: "Barnläkare – timpris & ersättning 2026",
     metaDescription:
       "SKR-ramavtalspriser per zon och möjlig konsultersättning för specialistläkare i barn- och ungdomsmedicin 2026.",
-    zone1: 1238, zone2: 1513, zone3: 1787,
+    zone1: 1189, zone2: 1453, zone3: 1717,
   },
   {
     slug: "lakare-bup",
@@ -48,7 +48,7 @@ export const DOCTOR_SPECIALTY_REPORTS: DoctorSpecialtyConfig[] = [
     metaTitle: "BUP-läkare – timpris & ersättning 2026",
     metaDescription:
       "SKR-ramavtalspriser per zon och möjlig konsultersättning för specialistläkare i barn- och ungdomspsykiatri (BUP) 2026.",
-    zone1: 1457, zone2: 1678, zone3: 1953,
+    zone1: 1400, zone2: 1612, zone3: 1876,
   },
   {
     slug: "lakare-dermatolog",
@@ -58,7 +58,7 @@ export const DOCTOR_SPECIALTY_REPORTS: DoctorSpecialtyConfig[] = [
     metaTitle: "Dermatolog – timpris & ersättning 2026",
     metaDescription:
       "SKR-ramavtalspriser per zon och möjlig konsultersättning för specialistläkare i hud- och könssjukdomar (dermatologi) 2026.",
-    zone1: 1457, zone2: 1678, zone3: 1953,
+    zone1: 1400, zone2: 1612, zone3: 1876,
   },
   {
     slug: "lakare-kardiolog",
@@ -68,7 +68,7 @@ export const DOCTOR_SPECIALTY_REPORTS: DoctorSpecialtyConfig[] = [
     metaTitle: "Kardiolog – timpris & ersättning 2026",
     metaDescription:
       "SKR-ramavtalspriser per zon och möjlig konsultersättning för specialistläkare i kardiologi 2026.",
-    zone1: 1238, zone2: 1513, zone3: 1787,
+    zone1: 1189, zone2: 1453, zone3: 1717,
   },
   {
     slug: "lakare-internmedicin",
@@ -78,7 +78,7 @@ export const DOCTOR_SPECIALTY_REPORTS: DoctorSpecialtyConfig[] = [
     metaTitle: "Internmedicinare – timpris & ersättning 2026",
     metaDescription:
       "SKR-ramavtalspriser per zon och möjlig konsultersättning för specialistläkare i internmedicin 2026.",
-    zone1: 1238, zone2: 1513, zone3: 1787,
+    zone1: 1189, zone2: 1453, zone3: 1717,
   },
   {
     slug: "lakare-hematologi",
@@ -88,7 +88,7 @@ export const DOCTOR_SPECIALTY_REPORTS: DoctorSpecialtyConfig[] = [
     metaTitle: "Hematolog – timpris & ersättning 2026",
     metaDescription:
       "SKR-ramavtalspriser per zon och möjlig konsultersättning för specialistläkare i hematologi 2026.",
-    zone1: 1238, zone2: 1513, zone3: 1787,
+    zone1: 1189, zone2: 1453, zone3: 1717,
   },
   {
     slug: "lakare-njurmedicin",
@@ -98,7 +98,7 @@ export const DOCTOR_SPECIALTY_REPORTS: DoctorSpecialtyConfig[] = [
     metaTitle: "Njurmedicinare – timpris & ersättning 2026",
     metaDescription:
       "SKR-ramavtalspriser per zon och möjlig konsultersättning för specialistläkare i njurmedicin 2026.",
-    zone1: 1238, zone2: 1513, zone3: 1787,
+    zone1: 1189, zone2: 1453, zone3: 1717,
   },
   {
     slug: "lakare-neurologi",
@@ -108,7 +108,7 @@ export const DOCTOR_SPECIALTY_REPORTS: DoctorSpecialtyConfig[] = [
     metaTitle: "Neurolog – timpris & ersättning 2026",
     metaDescription:
       "SKR-ramavtalspriser per zon och möjlig konsultersättning för specialistläkare i neurologi 2026.",
-    zone1: 1238, zone2: 1513, zone3: 1787,
+    zone1: 1189, zone2: 1453, zone3: 1717,
   },
   {
     slug: "lakare-onh",
@@ -118,7 +118,7 @@ export const DOCTOR_SPECIALTY_REPORTS: DoctorSpecialtyConfig[] = [
     metaTitle: "ÖNH-läkare – timpris & ersättning 2026",
     metaDescription:
       "SKR-ramavtalspriser per zon och möjlig konsultersättning för specialistläkare i öron-, näs- och halssjukdomar 2026.",
-    zone1: 1238, zone2: 1513, zone3: 1787,
+    zone1: 1189, zone2: 1453, zone3: 1717,
   },
   {
     slug: "lakare-psykiatri",
@@ -128,7 +128,7 @@ export const DOCTOR_SPECIALTY_REPORTS: DoctorSpecialtyConfig[] = [
     metaTitle: "Psykiater – timpris & ersättning 2026",
     metaDescription:
       "SKR-ramavtalspriser per zon och möjlig konsultersättning för specialistläkare i psykiatri 2026.",
-    zone1: 1457, zone2: 1678, zone3: 1953,
+    zone1: 1400, zone2: 1612, zone3: 1876,
   },
   {
     slug: "lakare-radiologi",
@@ -138,7 +138,7 @@ export const DOCTOR_SPECIALTY_REPORTS: DoctorSpecialtyConfig[] = [
     metaTitle: "Radiolog – timpris & ersättning 2026",
     metaDescription:
       "SKR-ramavtalspriser per zon och möjlig konsultersättning för specialistläkare i radiologi 2026.",
-    zone1: 1457, zone2: 1678, zone3: 1953,
+    zone1: 1400, zone2: 1612, zone3: 1876,
   },
   {
     slug: "lakare-ogon",
@@ -148,7 +148,7 @@ export const DOCTOR_SPECIALTY_REPORTS: DoctorSpecialtyConfig[] = [
     metaTitle: "Ögonläkare – timpris & ersättning 2026",
     metaDescription:
       "SKR-ramavtalspriser per zon och möjlig konsultersättning för specialistläkare i ögonsjukdomar 2026.",
-    zone1: 1457, zone2: 1678, zone3: 1953,
+    zone1: 1400, zone2: 1612, zone3: 1876,
   },
 ];
 

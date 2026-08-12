@@ -68,8 +68,8 @@ async function fetchDbRate(role: string): Promise<RolePrice | null> {
 }
 
 function deriveGroup(zone1: number): PriceGroup {
-  if (zone1 >= 770) return "hog";
-  if (zone1 >= 715) return "mellan";
+  if (zone1 >= 740) return "hog";
+  if (zone1 >= 687) return "mellan";
   return "bas";
 }
 

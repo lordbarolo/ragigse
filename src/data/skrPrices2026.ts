@@ -9,10 +9,10 @@
  * "Specialistsjuksköterska" entry — that string must never resolve to a price.
  *
  * Price groups (sjuksköterskor v1.7):
- *  - "bas"     616 / 660 / 715  Sjuksköterska grundutbildning, Röntgensjuksköterska
- *  - "mellan"  715 / 770 / 824  Skolsköterska + alla "Specialistsjuksköterska …"
+ *  - "bas"     592 / 634 / 687  Sjuksköterska grundutbildning, Röntgensjuksköterska
+ *  - "mellan"  687 / 740 / 792  Skolsköterska + alla "Specialistsjuksköterska …"
  *                               UTOM de fyra i grupp "hog"
- *  - "hog"     770 / 824 / 880  Barnmorska, Distriktssjuksköterska,
+ *  - "hog"     740 / 792 / 845  Barnmorska, Distriktssjuksköterska,
  *                               Specialistsjuksköterska anestesi,
  *                               Specialistsjuksköterska intensivvård,
  *                               Specialistsjuksköterska operationssjukvård
@@ -34,32 +34,32 @@ export interface RolePrice {
 const bas = (role: string): RolePrice => ({
   role,
   group: "bas",
-  zone1: 616,
-  zone2: 660,
-  zone3: 715,
+  zone1: 592,
+  zone2: 634,
+  zone3: 687,
   contractVersion: "v1.7",
 });
 
 const mellan = (role: string): RolePrice => ({
   role,
   group: "mellan",
-  zone1: 715,
-  zone2: 770,
-  zone3: 824,
+  zone1: 687,
+  zone2: 740,
+  zone3: 792,
   contractVersion: "v1.7",
 });
 
 const hog = (role: string): RolePrice => ({
   role,
   group: "hog",
-  zone1: 770,
-  zone2: 824,
-  zone3: 880,
+  zone1: 740,
+  zone2: 792,
+  zone3: 845,
   contractVersion: "v1.7",
 });
 
 /**
- * Endast dessa fem roller har den höga prisnivån (770/824/880).
+ * Endast dessa fem roller har den höga prisnivån (740/792/845).
  * Källa: SKR ramavtal vårdbemanning 2026, prisbilaga sjuksköterskor.
  * Bekräftat av vårdbemanning.ai 2026-01.
  */
@@ -72,18 +72,18 @@ export const HIGH_GROUP_ROLES = [
 ] as const;
 
 export const SKR_2026_NURSE_PRICES: readonly RolePrice[] = [
-  // ── bas (616 / 660 / 715) ─────────────────────────────────────────────────
+  // ── bas (592 / 634 / 687) ─────────────────────────────────────────────────
   bas("Sjuksköterska"),
   bas("Röntgensjuksköterska"),
 
-  // ── hog (770 / 824 / 880) — endast dessa fem ──────────────────────────────
+  // ── hog (740 / 792 / 845) — endast dessa fem ──────────────────────────────
   hog("Barnmorska"),
   hog("Distriktssjuksköterska"),
   hog("Specialistsjuksköterska anestesi"),
   hog("Specialistsjuksköterska intensivvård"),
   hog("Specialistsjuksköterska operationssjukvård"),
 
-  // ── mellan (715 / 770 / 824) ──────────────────────────────────────────────
+  // ── mellan (687 / 740 / 792) ──────────────────────────────────────────────
   mellan("Skolsköterska"),
   mellan("Specialistsjuksköterska akutsjukvård"),
   mellan("Specialistsjuksköterska ambulanssjukvård"),

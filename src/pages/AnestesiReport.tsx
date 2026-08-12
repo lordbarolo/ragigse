@@ -28,7 +28,7 @@ import {
 const fmt = (n: number) => n.toLocaleString("sv-SE", { maximumFractionDigits: 0 });
 
 // Priserna hämtas live ur contract_version_rates (v1.7); värdena nedan är fallback.
-const ZONE_FALLBACK = { zone1: 770, zone2: 824, zone3: 880 };
+const ZONE_FALLBACK = { zone1: 740, zone2: 792, zone3: 845 };
 const ZONE_META = [
   { zone: "Zon 1", desc: "Storstadsregioner" },
   { zone: "Zon 2", desc: "Mellanstora regioner" },
@@ -37,13 +37,13 @@ const ZONE_META = [
 
 
 const OB_RATES = [
-  { typ: "Vardagkväll", tid: "Mån–Tor 19–22", rate: 37, icon: Clock },
-  { typ: "Vardagnatt", tid: "Mån–Fre 22–06", rate: 82, icon: Moon },
-  { typ: "Helgdag", tid: "Lör–Sön 06–19", rate: 96, icon: Sun },
-  { typ: "Helgkväll", tid: "Fre–Sön 19–22", rate: 96, icon: Clock },
-  { typ: "Helgnatt", tid: "Fre–Mån 22–06", rate: 109, icon: Moon },
-  { typ: "Storhelg dag/kväll", tid: "Dag & kväll", rate: 184, icon: Sparkles },
-  { typ: "Storhelg natt", tid: "22–07", rate: 222, icon: Sparkles },
+  { typ: "Vardagkväll", tid: "Mån–Tor 19–22", rate: 36, icon: Clock },
+  { typ: "Vardagnatt", tid: "Mån–Fre 22–06", rate: 79, icon: Moon },
+  { typ: "Helgdag", tid: "Lör–Sön 06–19", rate: 92, icon: Sun },
+  { typ: "Helgkväll", tid: "Fre–Sön 19–22", rate: 92, icon: Clock },
+  { typ: "Helgnatt", tid: "Fre–Mån 22–06", rate: 105, icon: Moon },
+  { typ: "Storhelg dag/kväll", tid: "Dag & kväll", rate: 177, icon: Sparkles },
+  { typ: "Storhelg natt", tid: "22–07", rate: 213, icon: Sparkles },
 ];
 
 const SHARE_MIN_FORETAGARE = 0.82;
@@ -72,12 +72,12 @@ export default function AnestesiReport() {
     summary:
       `Ramavtalspriset för anestesisjuksköterskor är ${fmt(zone1Rate)}–${fmt(zone3Rate)} kr/h beroende på zon. ` +
       `Marknadsmässigt konsultarvode (egenföretagare) ligger på ${fmt(recMinF)}–${fmt(recMaxF)} kr/h enligt SKR:s ramavtal 2026.`,
-    rateRange: { min: zone1Rate, median: 824, max: zone3Rate, unit: "SEK/h" },
+    rateRange: { min: zone1Rate, median: 792, max: zone3Rate, unit: "SEK/h" },
     skrSources: ["https://skr.se/ramavtal/vardbemanning"],
     faq: [
       {
         question: "Vad är timpriset för en anestesisjuksköterska 2026?",
-        answer: `Ramavtalspriset enligt SKR är ${fmt(zone1Rate)} kr/h i storstad (Zon 1), 824 kr/h i mellanstora regioner (Zon 2) och ${fmt(zone3Rate)} kr/h i glesbygd (Zon 3).`,
+        answer: `Ramavtalspriset enligt SKR är ${fmt(zone1Rate)} kr/h i storstad (Zon 1), 792 kr/h i mellanstora regioner (Zon 2) och ${fmt(zone3Rate)} kr/h i glesbygd (Zon 3).`,
       },
       {
         question: "Hur mycket tjänar en anestesisjuksköterska som konsult?",
@@ -86,7 +86,7 @@ export default function AnestesiReport() {
       {
         question: "Vad är OB-tillägget för anestesisjuksköterskor?",
         answer:
-          "OB-tilläggen följer SKR:s ramavtal: vardagkväll 37 kr/h, vardagnatt 82 kr/h, helgdag/helgkväll 96 kr/h, helgnatt 109 kr/h, storhelg 184–222 kr/h.",
+          "OB-tilläggen följer SKR:s ramavtal: vardagkväll 36 kr/h, vardagnatt 79 kr/h, helgdag/helgkväll 92 kr/h, helgnatt 105 kr/h, storhelg 177–213 kr/h.",
       },
     ],
   });
@@ -243,7 +243,7 @@ export default function AnestesiReport() {
           </div>
           <div className="rounded-[18px] bg-foreground/[0.035] border border-foreground/[0.07] p-4 space-y-2">
             {[
-              { label: "Grundpris Zon 1", value: "770 kr/h" },
+              { label: "Grundpris Zon 1", value: "740 kr/h" },
               { label: "OB helgnatt (fre–mån 22–06)", value: "+109 kr/h" },
               { label: "Totalt kundpris", value: "879 kr/h", bold: true },
             ].map((row) => (
