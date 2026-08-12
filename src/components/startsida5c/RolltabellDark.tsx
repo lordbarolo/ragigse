@@ -11,15 +11,14 @@ const ROWS: { label: string; yrkeskategori: string }[] = [
   { label: "Leg. sjuksköterska", yrkeskategori: "Sjuksköterska" },
 ];
 
-// Sektionen är mörk hela vägen; fadet till ljust sker först efter innehållet
-// (nedre kanten av sektionen), så alla rader har mörk-tema-färger.
+// Sektionen är ljus hela vägen (övergången från mörkt sker i Hero).
 const ROW_THEME = [
-  { label: "#ffffff", value: "#9b9da7", accent: "#8a8c94", border: "#22232b" },
-  { label: "#ffffff", value: "#9b9da7", accent: "#8a8c94", border: "#22232b" },
-  { label: "#ffffff", value: "#9b9da7", accent: "#8a8c94", border: "#22232b" },
-  { label: "#ffffff", value: "#9b9da7", accent: "#8a8c94", border: "#22232b" },
-  { label: "#ffffff", value: "#9b9da7", accent: "#8a8c94", border: "#22232b" },
-  { label: "#ffffff", value: "#9b9da7", accent: "#8a8c94", border: "#22232b" },
+  { label: "#1a1b22", value: "#5a5b62", accent: "#1a1b22", border: "#e3e3e8" },
+  { label: "#1a1b22", value: "#5a5b62", accent: "#1a1b22", border: "#e3e3e8" },
+  { label: "#1a1b22", value: "#5a5b62", accent: "#1a1b22", border: "#e3e3e8" },
+  { label: "#1a1b22", value: "#5a5b62", accent: "#1a1b22", border: "#e3e3e8" },
+  { label: "#1a1b22", value: "#5a5b62", accent: "#1a1b22", border: "#e3e3e8" },
+  { label: "#1a1b22", value: "#5a5b62", accent: "#1a1b22", border: "#e3e3e8" },
 ];
 
 export default function RolltabellDark() {
@@ -28,21 +27,21 @@ export default function RolltabellDark() {
   return (
     <section
       style={{
-        background: "#0b0c10",
+        background: "#f5f5f7",
       }}
     >
       <div className="mx-auto max-w-[1200px] px-5 py-14 md:px-12 md:py-16">
         <div className="mb-6 flex flex-wrap items-baseline justify-between gap-2">
-          <h2 className="m-0 text-[22px] font-semibold md:text-[26px]" style={{ color: "#ffffff", letterSpacing: "-0.01em" }}>
+          <h2 className="m-0 text-[22px] font-semibold md:text-[26px]" style={{ color: "#1a1b22", letterSpacing: "-0.01em" }}>
             Mest sökta rollerna, alla zoner
           </h2>
-          <span className="text-[12px]" style={{ color: "#8a8c94" }}>
+          <span className="text-[12px]" style={{ color: "#6b6b6b" }}>
             kr/timme som företagare
           </span>
         </div>
 
         {base.length === 0 ? (
-          <p className="text-[13px]" style={{ color: "#8a8c94" }}>
+          <p className="text-[13px]" style={{ color: "#6b6b6b" }}>
             Prisdata kunde inte hämtas just nu.
           </p>
         ) : (
