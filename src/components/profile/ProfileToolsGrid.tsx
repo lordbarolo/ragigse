@@ -23,7 +23,7 @@ const TOOLS = [
     desc: "Få svar på vad ramavtalet säger om pris, krav, OB och vite.",
   },
   {
-    to: "/consultant/forhandla",
+    to: "/consultant/fakturahjalp",
     icon: FileSearch,
     title: "Fakturahjälpen",
     desc: "Låt agenten granska dina tidrapporter mot fakturerad ersättning.",
