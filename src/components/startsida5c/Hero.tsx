@@ -42,11 +42,11 @@ export default function Hero() {
             }}
           >
             <span
-              className="inline-flex items-center gap-2 rounded-full px-4 py-[7px] text-[13px] font-medium"
+              className="inline-flex flex-col items-center gap-0.5 rounded-full px-4 py-[7px] text-[13px] font-medium"
               style={{ background: "#0b0c10", color: "#e8eaef" }}
             >
-              Logga in för att träffa din personliga AI-assistent
-              <span style={{ color: "#8a8c94" }}>›</span>
+              Logga in och träffa din personliga AI-assistent
+              <span className="leading-none" style={{ color: "#8a8c94" }}>›</span>
             </span>
           </a>
           <h1
