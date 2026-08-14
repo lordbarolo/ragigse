@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useEffect } from "react";
 import { useCatalogZoneRates } from "@/hooks/useCatalogZoneRates";
+import { trackEvent } from "@/lib/trackEvent";
 
 
 /**
@@ -88,6 +89,14 @@ export default function SjukskoterskaReport() {
   const recMaxF = Math.round(refRate * SHARE_MAX_FORETAGARE);
   const recMinA = Math.round((refRate * SHARE_MIN_ANSTALLD) / EMPLOYER_FACTOR);
   const recMaxA = Math.round((refRate * SHARE_MAX_ANSTALLD) / EMPLOYER_FACTOR);
+
+  useEffect(() => {
+    trackEvent("public_page_viewed", {
+      page: "rapport_sjukskoterska",
+      role: "Legitimerad sjuksköterska",
+      slug: "sjukskoterska",
+    });
+  }, []);
 
   useEffect(() => {
     const prevHtml = document.documentElement.style.backgroundColor;
