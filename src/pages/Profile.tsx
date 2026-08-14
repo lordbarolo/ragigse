@@ -55,9 +55,7 @@ export default function Profile() {
             <h1 className="mt-3 text-3xl font-semibold leading-[1.1] tracking-tight sm:text-5xl">
               {firstName ? `Hej ${firstName}.` : "Välkommen."}
               <br />
-              Utforska nya verktyg
-              <br />
-              och säg hej till din AI-assistent.
+              Här bor dina nya verktyg. Använd dom som du använder ett bemanningsföretag.
               <br />
               <br />
               <span className="text-white/45">
