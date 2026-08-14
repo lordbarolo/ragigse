@@ -5,7 +5,7 @@ const TOOLS: { name: string; desc: string }[] = [
   { name: "Löneanalys", desc: "Se ramavtalspriset för din roll och kommun och vad du kan fakturera." },
   { name: "Pensionssimulator", desc: "Jämför långsiktig effekt av anställning och eget bolag." },
   { name: "Avtalsassistent", desc: "Ai-stöd som går igenom uppdragsavtal och villkor." },
-  { name: "CV-assistenten", desc: "Skapar ett CV från grunden eller optimerar ett befintligt." },
+  { name: "CV-assistenten", desc: "Uppdaterar och snyggar till ett befintligt CV. Eller bygger ett nytt från grunden." },
 ];
 
 export default function FotoBand() {
