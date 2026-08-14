@@ -58,6 +58,7 @@ const POSTHOG_SNIPPET = `!function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e.
     ui_host: "https://eu.posthog.com",
     persistence: "memory",
     opt_out_capturing_by_default: false,
+    opt_out_useragent_filter: true,
     autocapture: false,
     capture_pageview: false,
     capture_pageleave: false,
