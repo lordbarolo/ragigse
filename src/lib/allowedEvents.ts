@@ -95,6 +95,7 @@ export const ALLOWED_EVENTS = [
   "avtalsassistent_question_clicked",
   "pension_page_viewed",
   "fakturahjalp_page_viewed",
+  "public_page_viewed",
 ] as const;
 
 export type AllowedEventName = (typeof ALLOWED_EVENTS)[number];

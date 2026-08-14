@@ -97,8 +97,10 @@ type EventName =
   | "avtalsassistent_question_clicked"
   | "pension_page_viewed"
   | "fakturahjalp_page_viewed"
+  | "public_page_viewed"
   | "fakturakontroll_uploaded"
   | "fakturakontroll_interest_submitted";
+
 
 
 function isInternalTraffic(): boolean {
@@ -118,9 +120,10 @@ export function trackEvent(
   eventName: EventName,
   metadata?: Record<string, string | number | boolean | null>
 ) {
-  if (isInternalTraffic()) return;
+  const internal = isInternalTraffic();
 
   const leadId = sessionStorage.getItem("leadId") || undefined;
+
 
   const reportId = sessionStorage.getItem("reportId") || undefined;
   const abVariant = sessionStorage.getItem("abVariant") || undefined;
@@ -130,7 +133,7 @@ export function trackEvent(
   const enrichedMetadata: Record<string, unknown> = {
     ...(metadata ?? {}),
     hostname: window.location.hostname,
-    is_internal_traffic: isInternalTraffic(),
+    is_internal_traffic: internal,
     ...(reportId ? { report_id: reportId } : {}),
     ...(abVariant ? { ab_variant: abVariant } : {}),
     ...(couponCode ? { coupon_code: couponCode } : {}),
@@ -144,8 +147,13 @@ export function trackEvent(
     if (window.localStorage?.getItem("compcare_cookie_consent") === "rejected") return;
   } catch { /* localStorage kan vara blockerad — fortsätt ändå, vi spårar cookieless */ }
 
-  // Send to PostHog (silent fail)
+  // Send to PostHog (silent fail). Intern trafik skickas också, men flaggad med
+  // is_internal_traffic: true så filtreringen kan göras i PostHog — det gör att
+  // spårning kan rök-testas lokalt/i preview i stället för att tappas tyst.
   try { posthog.capture(eventName, enrichedMetadata); } catch { /* silent */ }
+
+  // Databasen (analytics_events) ska bara innehålla riktig trafik.
+  if (internal) return;
 
   // Fire-and-forget via edge function — don't block UI
   supabase.functions
@@ -160,3 +168,4 @@ export function trackEvent(
       if (error) console.warn("[trackEvent]", error.message);
     });
 }
+

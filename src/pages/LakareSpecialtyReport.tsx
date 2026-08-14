@@ -14,6 +14,7 @@ import {
   type DoctorSpecialtyConfig,
 } from "@/data/doctorSpecialtyReports";
 import { useCatalogZoneRates } from "@/hooks/useCatalogZoneRates";
+import { trackEvent } from "@/lib/trackEvent";
 
 
 /**
@@ -68,6 +69,14 @@ export default function LakareSpecialtyReport() {
     zone2: cfg?.zone2 ?? 0,
     zone3: cfg?.zone3 ?? 0,
   });
+
+  useEffect(() => {
+    trackEvent("public_page_viewed", {
+      page: "rapport_lakare_specialitet",
+      role: cfg?.skrCategory ?? slug,
+      slug,
+    });
+  }, [cfg?.skrCategory, slug]);
 
   useEffect(() => {
     const prevHtml = document.documentElement.style.backgroundColor;

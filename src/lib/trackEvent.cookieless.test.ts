@@ -86,7 +86,7 @@ describe("trackEvent — cookieless mode", () => {
     expect(invokeMock).toHaveBeenCalledTimes(1);
   });
 
-  it("skippar tracking på interna hosts", async () => {
+  it("skickar interna events till PostHog (flaggade) men inte till databasen", async () => {
     Object.defineProperty(window, "location", {
       value: { hostname: "localhost", search: "" },
       writable: true,
@@ -94,7 +94,9 @@ describe("trackEvent — cookieless mode", () => {
     const { trackEvent } = await import("./trackEvent");
     trackEvent("survey_started");
 
-    expect(captureMock).not.toHaveBeenCalled();
+    expect(captureMock).toHaveBeenCalledTimes(1);
+    expect(captureMock.mock.calls[0][1]).toMatchObject({ is_internal_traffic: true });
     expect(invokeMock).not.toHaveBeenCalled();
   });
+
 });

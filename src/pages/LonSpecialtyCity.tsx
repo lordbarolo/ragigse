@@ -7,6 +7,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "@/lib/router-compat";
 import { supabase } from "@/integrations/supabase/client";
 import { JsonLd } from "@/components/JsonLd";
+import { trackEvent } from "@/lib/trackEvent";
 import SearchableSelect from "@/components/SearchableSelect";
 
 const FONT_HREF =
@@ -49,6 +50,14 @@ export default function LonSpecialtyCity() {
   const [options, setOptions] = useState<Options | null>(null);
   const [pickRole, setPickRole] = useState("");
   const [pickCity, setPickCity] = useState("");
+
+  useEffect(() => {
+    trackEvent("public_page_viewed", {
+      page: "lon_roll_ort",
+      role: specialty,
+      city,
+    });
+  }, [specialty, city]);
 
   useEffect(() => {
     const id = "lon-page-fonts";
