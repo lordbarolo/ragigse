@@ -120,9 +120,10 @@ export function trackEvent(
   eventName: EventName,
   metadata?: Record<string, string | number | boolean | null>
 ) {
-  if (isInternalTraffic()) return;
+  const internal = isInternalTraffic();
 
   const leadId = sessionStorage.getItem("leadId") || undefined;
+
 
   const reportId = sessionStorage.getItem("reportId") || undefined;
   const abVariant = sessionStorage.getItem("abVariant") || undefined;
