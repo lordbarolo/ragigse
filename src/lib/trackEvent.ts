@@ -97,8 +97,10 @@ type EventName =
   | "avtalsassistent_question_clicked"
   | "pension_page_viewed"
   | "fakturahjalp_page_viewed"
+  | "public_page_viewed"
   | "fakturakontroll_uploaded"
   | "fakturakontroll_interest_submitted";
+
 
 
 function isInternalTraffic(): boolean {
