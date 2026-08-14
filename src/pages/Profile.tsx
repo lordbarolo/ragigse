@@ -55,12 +55,21 @@ export default function Profile() {
             <h1 className="mt-3 text-3xl font-semibold leading-[1.1] tracking-tight sm:text-5xl">
               {firstName ? `Hej ${firstName}.` : "Välkommen."}
               <br />
-              <span className="text-white/45">Sätt din assistent i arbete.</span>
+              Utforska nya verktyg
+              <br />
+              och säg hej till din AI-assistent.
+              <br />
+              <br />
+              <span className="text-white/45">
+                Luta dig tillbaka och låt dina assistenter göra jobbet.
+                <br />
+                <br />
+              </span>
             </h1>
             {complete && context ? (
               <>
                 <p className="mt-5 max-w-md text-sm leading-relaxed text-white/55 sm:text-base">
-                  Din assistent är personlig. Håll nedanstående uppgifter uppdaterade för bäst svar.
+                  Tips och råd baseras på vad Ai:n vet om dig. Håll nedanstående uppgifter uppdaterade för bäst svar.
                 </p>
                 <ProfileContextCard userId={user.id} context={context} onSaved={refresh} />
               </>
