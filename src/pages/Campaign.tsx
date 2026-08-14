@@ -1,5 +1,6 @@
 import { useParams, useSearchParams, useNavigate } from "@/lib/router-compat";
 import { useEffect, useState } from "react";
+import { trackEvent } from "@/lib/trackEvent";
 import { supabase } from "@/integrations/supabase/client";
 import { Lock, ArrowRight, MessageSquare, BarChart3 } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
@@ -55,6 +56,14 @@ export default function Campaign() {
   const [rates, setRates] = useState<ZoneRate[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAuthModal, setShowAuthModal] = useState(false);
+
+  useEffect(() => {
+    trackEvent("public_page_viewed", {
+      page: "kampanj",
+      role: yrkeskategori ?? role ?? null,
+      slug: role ?? null,
+    });
+  }, [role, yrkeskategori]);
 
   useEffect(() => {
     async function load() {
