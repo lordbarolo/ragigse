@@ -5,7 +5,7 @@ import { resolve } from "node:path";
 /**
  * Guard test — protects cookieless tracking from being built away.
  *
- * PostHog initieras i <head> via snippet i index.html (laddas på ALLA sidor).
+ * PostHog initieras i <head> via snippet i src/routes/__root.tsx (laddas på ALLA sidor).
  * Konfigurationen är cookie-fri: memory-persistence, ingen autocapture,
  * manuella pageviews, ingen session recording, $ip null och URL-redaktion.
  * Detta är kärnan i vårdbemanning.ai:s integritetsposition (se Privacy Policy 2026).
@@ -14,7 +14,7 @@ import { resolve } from "node:path";
  * Den matchande runtime-testen ligger i `trackEvent.cookieless.test.ts`.
  */
 
-const HTML = readFileSync(resolve(__dirname, "../../index.html"), "utf8");
+const HTML = readFileSync(resolve(__dirname, "../routes/__root.tsx"), "utf8");
 const SRC = readFileSync(resolve(__dirname, "./posthog.ts"), "utf8");
 
 describe("posthog head-snippet — cookie-fri konfiguration", () => {
@@ -83,8 +83,8 @@ describe("posthog.ts — consent-toggle och hjälpare", () => {
   });
 });
 
-describe("App routing — manuell pageview triggas vid varje navigering", () => {
-  const APP = readFileSync(resolve(__dirname, "../App.tsx"), "utf8");
+describe("Root route — manuell pageview triggas vid varje navigering", () => {
+  const APP = HTML;
 
   it("anropar trackPageview från ScrollToTop-effekten", () => {
     expect(APP).toMatch(/trackPageview\(\)/);
