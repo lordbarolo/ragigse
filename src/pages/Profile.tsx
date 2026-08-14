@@ -53,15 +53,12 @@ export default function Profile() {
           <div>
             <p className="text-[11px] uppercase tracking-[0.16em] text-white/40">Din profil</p>
             <h1 className="mt-3 text-3xl font-semibold leading-[1.1] tracking-tight sm:text-5xl">
-              {firstName ? `Hej ${firstName}.` : "Välkommen."}
-              <br />
-              Här bor dina nya verktyg.{" "}
-              <span className="text-white/45">Använd dom som du använder ett bemanningsföretag.</span>
+              Saknas det timmar på dina fakturor? AI-appen visar om du har pengar att hämta.
             </h1>
             {complete && context ? (
               <>
                 <p className="mt-5 max-w-md text-sm leading-relaxed text-white/55 sm:text-base">
-                  Tips och råd baseras på vad Ai:n vet om dig. Håll nedanstående uppgifter uppdaterade för bäst svar.
+                  Håll uppgifterna om dig uppdaterade för att maximera effekten av{" "}
                 </p>
                 <ProfileContextCard userId={user.id} context={context} onSaved={refresh} />
               </>
