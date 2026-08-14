@@ -57,13 +57,6 @@ export default function Profile() {
               <br />
               Här bor dina nya verktyg.{" "}
               <span className="text-white/45">Använd dom som du använder ett bemanningsföretag.</span>
-              <br />
-              <br />
-              <span className="text-white/45">
-                Luta dig tillbaka och låt dina assistenter göra jobbet.
-                <br />
-                <br />
-              </span>
             </h1>
             {complete && context ? (
               <>
