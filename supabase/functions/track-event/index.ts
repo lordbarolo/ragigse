@@ -102,7 +102,9 @@ const ALLOWED_EVENTS = new Set([
   "avtalsassistent_question_clicked",
   "pension_page_viewed",
   "fakturahjalp_page_viewed",
+  "public_page_viewed",
 ]);
+
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
