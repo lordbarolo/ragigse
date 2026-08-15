@@ -61,6 +61,8 @@ export const LIGHT: Record<Variant, LightPalette> = {
     BLOCK: '#E5F0F2',
     TRACK_FILL: '#9BC7CE',
     SHADOW_RGB: '7,51,61',
+    PLATE: 'rgba(7,51,61,0.028)',
+    ON_ACCENT: '#07333D',
     CAPTION: '#3E6069',
   },
   site: {
@@ -73,9 +75,47 @@ export const LIGHT: Record<Variant, LightPalette> = {
     BLOCK: '#E8E8EC',
     TRACK_FILL: '#B6BCC2',
     SHADOW_RGB: '26,27,34',
+    PLATE: 'rgba(26,27,34,0.028)',
+    ON_ACCENT: '#1A1B22',
     CAPTION: '#4A4B52',
   },
 };
+
+/**
+ * Mörk variant av de ljusa scenerna. Samma token-namn som `LightPalette`,
+ * så att scenens JSX kan vara temaneutral.
+ */
+export const SCENE_DARK: Record<Variant, LightPalette> = {
+  original: {
+    BG: '#051E24',
+    INK: '#E9F6F8',
+    DIM: '#9FC8CE',
+    LINE: 'rgba(159,224,232,0.14)',
+    SURFACE: '#0A2E38',
+    TRACK: '#0E3944',
+    BLOCK: '#12404C',
+    TRACK_FILL: '#3E7E89',
+    SHADOW_RGB: '0,0,0',
+    PLATE: 'rgba(159,224,232,0.05)',
+    ON_ACCENT: '#05262C',
+    CAPTION: '#BFE6EB',
+  },
+  site: {
+    BG: '#0B0C10',
+    INK: '#FFFFFF',
+    DIM: '#A8AAB4',
+    LINE: 'rgba(255,255,255,0.10)',
+    SURFACE: '#16171F',
+    TRACK: '#1E1F28',
+    BLOCK: '#22232D',
+    TRACK_FILL: '#4A4C58',
+    SHADOW_RGB: '0,0,0',
+    PLATE: 'rgba(255,255,255,0.05)',
+    ON_ACCENT: '#0B0C10',
+    CAPTION: '#C4C6CE',
+  },
+};
+
 
 export const DARK: Record<Variant, DarkPalette> = {
   original: {
