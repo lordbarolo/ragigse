@@ -103,14 +103,14 @@ export default function MissadeTimmarAnimation({
         const summan = CUES.Summan;
         const D = MOTION.draw;
 
-        const worldO = brand ? D(T, 0.4, 0.5) * (1 - D(T, AT - 1.3, 0.75)) : D(T, 0.4, 0.5);
+        const worldO = brand ? D(T, 0.4, 0.5) * (1 - D(T, AT - 1.3, 0.75)) : D(T, 0, 0.5);
         const brandO = clamp((1 - D(T, 0.18, 0.55)) + D(T, AT - 1.0, 0.6), 0, 1);
 
         const wob = Math.sin((2 * Math.PI * T) / AT);
         const camE = Easing.easeInOutCubic;
         const camKeys = [0, skan, skan + 0.3, skan + 2.95, hittat + 0.4, summan + 0.2, summan + 1.0, AT - 1.0];
-        const camS = interpolate(camKeys, [1, 1, 1.05, 1.05, 1.02, 1.02, 1.13, 1], camE)(T);
-        const camX = interpolate(camKeys, [0, 0, 48, -48, 0, 0, -168, 0], camE)(T);
+        const camS = interpolate(camKeys, [1, 1, 1.05, 1.05, 1.02, 1.02, 1.13, brand ? 1 : 1.13], camE)(T);
+        const camX = interpolate(camKeys, [0, 0, 48, -48, 0, 0, -168, brand ? 0 : -168], camE)(T);
 
         const scanStart = skan + 0.25;
         const scanDur = 2.7;
