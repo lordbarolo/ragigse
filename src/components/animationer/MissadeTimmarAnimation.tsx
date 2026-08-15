@@ -507,34 +507,37 @@ export default function MissadeTimmarAnimation({
             </div>
 
 
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                opacity: brandO,
-                pointerEvents: 'none',
-                transform: 'scale(' + (1 + 0.014 * wob) + ')',
-              }}
-            >
-              <div style={{ fontSize: 74, fontWeight: 800, letterSpacing: -2 }}>
-                vårdbemanning<span style={{ color: accent }}>.ai</span>
-              </div>
+            {brand && (
               <div
                 style={{
-                  fontFamily: FONT_MONO,
-                  fontSize: 17,
-                  letterSpacing: 5,
-                  color: p.DIM,
-                  marginTop: 20,
+                  position: 'absolute',
+                  inset: 0,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  opacity: brandO,
+                  pointerEvents: 'none',
+                  transform: 'scale(' + (1 + 0.014 * wob) + ')',
                 }}
               >
-                AI FÖR VÅRDENS KONSULTER
+                <div style={{ fontSize: 74, fontWeight: 800, letterSpacing: -2 }}>
+                  vårdbemanning<span style={{ color: accent }}>.ai</span>
+                </div>
+                <div
+                  style={{
+                    fontFamily: FONT_MONO,
+                    fontSize: 17,
+                    letterSpacing: 5,
+                    color: p.DIM,
+                    marginTop: 20,
+                  }}
+                >
+                  AI FÖR VÅRDENS KONSULTER
+                </div>
               </div>
-            </div>
+            )}
+
           </div>
         );
       }}
