@@ -18,7 +18,7 @@ import {
   withAlpha,
   type Scene,
 } from './motion';
-import { ACCENT_DEFAULT, LIGHT, type SceneProps } from './palett';
+import { ACCENT_DEFAULT, LIGHT, SCENE_DARK, type SceneProps } from './palett';
 
 const SCENES: Scene[] = [
   { name: 'Öppning', dur: 2.5 },
