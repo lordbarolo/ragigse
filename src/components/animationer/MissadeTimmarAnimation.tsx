@@ -69,7 +69,9 @@ export default function MissadeTimmarAnimation({
   accent = ACCENT_DEFAULT,
   captions = true,
   loop = true,
+  brand = true,
   paused = false,
+
   posterTime = 12.9,
   radius = 0,
   className,
