@@ -55,7 +55,7 @@ export default function Profile() {
           <div>
             <p className="text-[11px] uppercase tracking-[0.16em] text-white/40">Din profil</p>
             <h1 className="mt-3 text-3xl font-semibold leading-[1.1] tracking-tight sm:text-5xl">
-              Saknas det timmar på dina fakturor? AI-appen visar om du har pengar att hämta.
+              Ai-expertis för att underlätta konsultlivet. Dygnet runt.
             </h1>
             {complete && context ? (
               <>
