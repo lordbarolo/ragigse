@@ -57,9 +57,19 @@ export default function Profile() {
             <h1 className="mt-3 text-3xl font-semibold leading-[1.1] tracking-tight sm:text-5xl">
               Saknas det timmar på dina fakturor? AI-appen visar om du har pengar att hämta.
             </h1>
-            <div className="mt-6 max-w-lg overflow-hidden rounded-2xl border border-white/10">
+            <Link
+              to="/consultant/fakturakontroll"
+              aria-label="Öppna fakturakontrollen"
+              className="group mt-6 block max-w-lg overflow-hidden rounded-2xl border border-white/10 transition-colors hover:border-white/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0c10]"
+              onClick={() =>
+                trackEvent("fakturakontroll_animation_clicked", {
+                  source: "profile_hero",
+                  target: "/consultant/fakturakontroll",
+                })
+              }
+            >
               <MissadeTimmarAnimation variant="site" radius={16} />
-            </div>
+            </Link>
             {complete && context ? (
               <>
                 <p className="mt-5 max-w-md text-sm leading-relaxed text-white/55 sm:text-base">
