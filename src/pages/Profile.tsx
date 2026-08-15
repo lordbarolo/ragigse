@@ -1,11 +1,12 @@
 import { useEffect } from "react";
-import { useNavigate } from "@/lib/router-compat";
+import { useNavigate, Link } from "@/lib/router-compat";
 import { Loader2 } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { useProfileContext } from "@/hooks/useProfileContext";
 import ProfileAssistantChat from "@/components/profile/ProfileAssistantChat";
 import ProfileContextCard from "@/components/profile/ProfileContextCard";
 import AssistantMemoryCard from "@/components/profile/AssistantMemoryCard";
+import { trackEvent } from "@/lib/trackEvent";
 
 import ProfileToolsGrid from "@/components/profile/ProfileToolsGrid";
 import ProfileDocumentsSection from "@/components/profile/ProfileDocumentsSection";
