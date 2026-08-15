@@ -105,6 +105,9 @@ export type SceneProps = {
   captions?: boolean;
   /** Loopa. Standard true. */
   loop?: boolean;
+  /** Visa varumärkesavslutet (logga + tagline). Standard true. */
+  brand?: boolean;
+
   /** Tvinga stillbild (t.ex. i en modal som inte syns). */
   paused?: boolean;
   /** Tid i sekunder som visas vid prefers-reduced-motion. */
