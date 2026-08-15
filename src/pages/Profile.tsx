@@ -80,8 +80,8 @@ export default function Profile() {
             ) : (
               <p className="mt-5 max-w-md text-sm leading-relaxed text-white/55 sm:text-base">
                 Vi vill göra det lättare att arbeta som konsult. I din profil hittar du smarta verktyg redo att
-                användas direkt. Din assistent behöver lära känna dig för att ha möjligheterna att representera
-                din intresen. De 4 frågorna i chattrutan är en bra början.
+                användas direkt. Din assistent behöver lära känna dig för att kunna företräda dina intressen. De fyra
+                frågorna i chattrutan är en bra början.
               </p>
             )}
           </div>
