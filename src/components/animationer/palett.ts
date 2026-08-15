@@ -29,8 +29,13 @@ export type LightPalette = {
   TRACK_FILL: string;
   /** Skuggfärg som rgba-sträng utan alpha-suffix, t.ex. "7,51,61". */
   SHADOW_RGB: string;
+  /** Bakgrundsplatta bakom veckokolumnerna (färdig färgsträng). */
+  PLATE: string;
+  /** Textfärg ovanpå accentfärgade ytor. */
+  ON_ACCENT: string;
   CAPTION: string;
 };
+
 
 /** Mörk scen: Assistenten. */
 export type DarkPalette = {
