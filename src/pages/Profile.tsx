@@ -58,13 +58,13 @@ export default function Profile() {
               Saknas det timmar på dina fakturor? AI-appen visar om du har pengar att hämta.
             </h1>
             <Link
-              to="/consultant/fakturakontroll"
+              to="/consultant/fakturahjalp"
               aria-label="Öppna fakturakontrollen"
               className="group mt-6 block max-w-lg overflow-hidden rounded-2xl border border-white/10 transition-colors hover:border-white/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0c10]"
               onClick={() =>
                 trackEvent("fakturakontroll_animation_clicked", {
                   source: "profile_hero",
-                  target: "/consultant/fakturakontroll",
+                  target: "/consultant/fakturahjalp",
                 })
               }
             >
