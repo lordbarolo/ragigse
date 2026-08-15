@@ -18,7 +18,7 @@ import {
   withAlpha,
   type Scene,
 } from './motion';
-import { ACCENT_DEFAULT, LIGHT, type SceneProps } from './palett';
+import { ACCENT_DEFAULT, LIGHT, SCENE_DARK, type SceneProps } from './palett';
 
 const SCENES: Scene[] = [
   { name: 'Öppning', dur: 2.5 },
@@ -70,6 +70,7 @@ export default function MissadeTimmarAnimation({
   captions = true,
   loop = true,
   brand = true,
+  theme = 'light',
   paused = false,
 
   posterTime = 12.9,
@@ -78,7 +79,7 @@ export default function MissadeTimmarAnimation({
   style,
   ariaLabel = 'Animation: assistenten granskar fakturaunderlaget och hittar 8 137 kronor i ofakturerade timmar.',
 }: SceneProps) {
-  const p = LIGHT[variant];
+  const p = theme === 'dark' ? SCENE_DARK[variant] : LIGHT[variant];
 
   return (
     <AnimationStage
@@ -247,7 +248,7 @@ export default function MissadeTimmarAnimation({
                       width: COLW,
                       height: 560,
                       borderRadius: 14,
-                      background: `rgba(${p.SHADOW_RGB},0.028)`,
+                      background: p.PLATE,
                       opacity: D(T, 0.9 + i * 0.05, 0.5),
                     }}
                   />
@@ -378,7 +379,7 @@ export default function MissadeTimmarAnimation({
                       transform: 'translate(-50%,-50%) scale(' + (0.8 + 0.2 * pillO) + ')',
                       opacity: pillO * (arrived ? 0 : 1),
                       background: accent,
-                      color: p.INK,
+                      color: p.ON_ACCENT,
                       fontFamily: FONT_MONO,
                       fontSize: 16,
                       fontWeight: 700,
@@ -497,7 +498,7 @@ export default function MissadeTimmarAnimation({
                     justifyContent: 'center',
                     fontSize: 22.5,
                     fontWeight: 700,
-                    color: p.INK,
+                    color: p.ON_ACCENT,
                     boxShadow: '0 16px 38px ' + withAlpha(accent, 0.333),
                   }}
                 >
