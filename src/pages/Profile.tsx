@@ -73,7 +73,7 @@ export default function Profile() {
             {complete && context ? (
               <>
                 <p className="mt-5 max-w-md text-sm leading-relaxed text-white/55 sm:text-base">
-                  Håll uppgifterna om dig uppdaterade för att maximera effekten av{" "}
+                  Håll uppgifterna om dig uppdaterade för att optimera utfallet.
                 </p>
                 <ProfileContextCard userId={user.id} context={context} onSaved={refresh} />
               </>
