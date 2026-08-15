@@ -72,6 +72,7 @@ const ALLOWED_EVENTS = new Set([
   "fakturakontroll_uploaded",
   "fakturakontroll_confirmed",
   "fakturakontroll_completed",
+  "fakturakontroll_animation_clicked",
   "intyg_dashboard_viewed",
   "intyg_create_opened",
   "intyg_ai_extract_run",
