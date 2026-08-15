@@ -86,6 +86,23 @@ export default function Profile() {
         </div>
       </section>
 
+      <section className="mx-auto w-full max-w-[1200px] px-5 pb-14 sm:pb-20">
+        <Link
+          to="/consultant/fakturahjalp"
+          aria-label="Öppna fakturakontrollen"
+          className="group block overflow-hidden rounded-2xl border border-white/10 transition-colors hover:border-white/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0c10]"
+          onClick={() =>
+            trackEvent("fakturakontroll_animation_clicked", {
+              source: "profile_hero",
+              target: "/consultant/fakturahjalp",
+            })
+          }
+        >
+          <MissadeTimmarAnimation variant="site" theme="dark" radius={16} brand={false} loop={false} />
+        </Link>
+      </section>
+
+
       <ProfileToolsGrid context={complete ? context : null} />
       <ProfileDocumentsSection userId={user.id} />
 
