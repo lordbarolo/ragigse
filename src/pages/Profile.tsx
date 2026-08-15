@@ -68,7 +68,7 @@ export default function Profile() {
                 })
               }
             >
-              <MissadeTimmarAnimation variant="site" radius={16} />
+              <MissadeTimmarAnimation variant="site" radius={16} brand={false} />
             </Link>
             {complete && context ? (
               <>

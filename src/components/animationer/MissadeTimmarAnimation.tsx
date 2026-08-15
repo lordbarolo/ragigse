@@ -69,7 +69,9 @@ export default function MissadeTimmarAnimation({
   accent = ACCENT_DEFAULT,
   captions = true,
   loop = true,
+  brand = true,
   paused = false,
+
   posterTime = 12.9,
   radius = 0,
   className,
@@ -101,8 +103,9 @@ export default function MissadeTimmarAnimation({
         const summan = CUES.Summan;
         const D = MOTION.draw;
 
-        const worldO = D(T, 0.4, 0.5) * (1 - D(T, AT - 1.3, 0.75));
+        const worldO = brand ? D(T, 0.4, 0.5) * (1 - D(T, AT - 1.3, 0.75)) : D(T, 0.4, 0.5);
         const brandO = clamp((1 - D(T, 0.18, 0.55)) + D(T, AT - 1.0, 0.6), 0, 1);
+
         const wob = Math.sin((2 * Math.PI * T) / AT);
         const camE = Easing.easeInOutCubic;
         const camKeys = [0, skan, skan + 0.3, skan + 2.95, hittat + 0.4, summan + 0.2, summan + 1.0, AT - 1.0];
@@ -504,34 +507,37 @@ export default function MissadeTimmarAnimation({
             </div>
 
 
-            <div
-              style={{
-                position: 'absolute',
-                inset: 0,
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                justifyContent: 'center',
-                opacity: brandO,
-                pointerEvents: 'none',
-                transform: 'scale(' + (1 + 0.014 * wob) + ')',
-              }}
-            >
-              <div style={{ fontSize: 74, fontWeight: 800, letterSpacing: -2 }}>
-                vårdbemanning<span style={{ color: accent }}>.ai</span>
-              </div>
+            {brand && (
               <div
                 style={{
-                  fontFamily: FONT_MONO,
-                  fontSize: 17,
-                  letterSpacing: 5,
-                  color: p.DIM,
-                  marginTop: 20,
+                  position: 'absolute',
+                  inset: 0,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  opacity: brandO,
+                  pointerEvents: 'none',
+                  transform: 'scale(' + (1 + 0.014 * wob) + ')',
                 }}
               >
-                AI FÖR VÅRDENS KONSULTER
+                <div style={{ fontSize: 74, fontWeight: 800, letterSpacing: -2 }}>
+                  vårdbemanning<span style={{ color: accent }}>.ai</span>
+                </div>
+                <div
+                  style={{
+                    fontFamily: FONT_MONO,
+                    fontSize: 17,
+                    letterSpacing: 5,
+                    color: p.DIM,
+                    marginTop: 20,
+                  }}
+                >
+                  AI FÖR VÅRDENS KONSULTER
+                </div>
               </div>
-            </div>
+            )}
+
           </div>
         );
       }}
