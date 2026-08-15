@@ -152,6 +152,8 @@ export type SceneProps = {
   loop?: boolean;
   /** Visa varumärkesavslutet (logga + tagline). Standard true. */
   brand?: boolean;
+  /** Färgtema. Standard 'light'. */
+  theme?: 'light' | 'dark';
 
   /** Tvinga stillbild (t.ex. i en modal som inte syns). */
   paused?: boolean;
