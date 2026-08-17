@@ -5,8 +5,9 @@ import { FALLBACK_CV_TEMPLATES, normalizeDesign, type CvTemplate } from "@/lib/c
 export const listCvTemplates = createServerFn({ method: "GET" }).handler(
   async (): Promise<CvTemplate[]> => {
     const { createClient } = await import("@supabase/supabase-js");
-    const url = process.env['VITE_SUPABASE_URL'];
-    const key = process.env['VITE_SUPABASE_PUBLISHABLE_KEY'];
+    const url = process.env['SUPABASE_URL'] ?? process.env['VITE_SUPABASE_URL'];
+    const key =
+      process.env['SUPABASE_PUBLISHABLE_KEY'] ?? process.env['VITE_SUPABASE_PUBLISHABLE_KEY'];
     if (!url || !key) return FALLBACK_CV_TEMPLATES;
 
     const client = createClient(url, key, {
