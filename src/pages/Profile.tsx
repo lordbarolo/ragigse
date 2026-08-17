@@ -84,7 +84,7 @@ export default function Profile() {
             <ProfileToolsGrid context={complete ? context : null} />
           </div>
 
-          <section id="assistent" className="scroll-mt-24 border-t border-white/10 py-14 sm:py-16">
+          <section id="assistent" className="scroll-mt-24 border-t border-white/10 px-5 py-14 sm:py-16">
             <p className="text-[11px] uppercase tracking-[0.16em] text-white/40">Assistent</p>
             <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
               Din assistent
