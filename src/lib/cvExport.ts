@@ -12,6 +12,7 @@ import {
   TextRun,
 } from "docx";
 import { jsPDF } from "jspdf";
+import { FALLBACK_CV_TEMPLATES, type CvDesign } from "@/lib/cvTemplates";
 
 export interface CvInlineSegment {
   text: string;
@@ -107,66 +108,109 @@ function triggerDownload(blob: Blob, fileName: string): void {
 export async function downloadCvAsDocx(
   markdown: string,
   fileName = "cv-vardbemanning.docx",
+  design: CvDesign = FALLBACK_CV_TEMPLATES[0]!.design,
 ): Promise<void> {
   const blocks = parseCvMarkdown(markdown);
+  const tight = design.lineFactor < 1.4;
 
   const children = blocks.map((block) => {
+    const upper = block.type === "h2" && design.uppercaseH2;
     const runs = block.segments.map(
-      (seg) => new TextRun({ text: seg.text, bold: seg.bold, italics: seg.italic }),
+      (seg) =>
+        new TextRun({
+          text: upper ? seg.text.toUpperCase() : seg.text,
+          bold: seg.bold,
+          italics: seg.italic,
+          ...(upper ? { characterSpacing: 20 } : {}),
+        }),
     );
     switch (block.type) {
       case "h1":
         return new Paragraph({
           heading: HeadingLevel.HEADING_1,
-          spacing: { after: 160 },
+          spacing: { after: tight ? 110 : 160 },
           children: runs,
         });
       case "h2":
         return new Paragraph({
           heading: HeadingLevel.HEADING_2,
-          spacing: { before: 280, after: 120 },
-          border: {
-            bottom: { style: BorderStyle.SINGLE, size: 4, color: "999999", space: 2 },
-          },
+          spacing: { before: tight ? 200 : 280, after: tight ? 80 : 120 },
+          ...(design.showRule
+            ? {
+                border: {
+                  bottom: {
+                    style: BorderStyle.SINGLE,
+                    size: 4,
+                    color: design.rule,
+                    space: 2,
+                  },
+                },
+              }
+            : {}),
           children: runs,
         });
       case "h3":
         return new Paragraph({
           heading: HeadingLevel.HEADING_3,
-          spacing: { before: 200, after: 80 },
+          spacing: { before: tight ? 140 : 200, after: tight ? 60 : 80 },
           children: runs,
         });
       case "li":
         return new Paragraph({
           bullet: { level: 0 },
-          spacing: { after: 60 },
+          spacing: { after: tight ? 40 : 60 },
           children: runs,
         });
       case "hr":
         return new Paragraph({
           spacing: { before: 120, after: 120 },
-          border: { bottom: { style: BorderStyle.SINGLE, size: 4, color: "CCCCCC", space: 1 } },
+          border: {
+            bottom: { style: BorderStyle.SINGLE, size: 4, color: design.rule, space: 1 },
+          },
           children: [],
         });
       default:
         return new Paragraph({
           alignment: AlignmentType.LEFT,
-          spacing: { after: 100 },
+          spacing: { after: tight ? 70 : 100 },
           children: runs,
         });
     }
   });
 
+  const pt = (size: number) => Math.round(size * 2);
+  const marginDxa = Math.round(design.margin * 20);
+
   const doc = new Document({
     styles: {
       default: {
-        document: { run: { font: "Calibri", size: 22 } },
-        heading1: { run: { font: "Calibri", size: 34, bold: true, color: "111111" } },
-        heading2: { run: { font: "Calibri", size: 26, bold: true, color: "111111" } },
-        heading3: { run: { font: "Calibri", size: 23, bold: true, color: "333333" } },
+        document: { run: { font: design.fontDocx, size: pt(design.body) } },
+        heading1: {
+          run: { font: design.fontDocx, size: pt(design.h1), bold: true, color: design.accent },
+        },
+        heading2: {
+          run: { font: design.fontDocx, size: pt(design.h2), bold: true, color: design.accent },
+        },
+        heading3: {
+          run: { font: design.fontDocx, size: pt(design.h3), bold: true, color: "333333" },
+        },
       },
     },
-    sections: [{ properties: {}, children }],
+    sections: [
+      {
+        properties: {
+          page: {
+            margin: {
+              top: marginDxa,
+              right: marginDxa,
+              bottom: marginDxa,
+              left: marginDxa,
+            },
+          },
+        },
+        children,
+      },
+    ],
   });
 
   const blob = await Packer.toBlob(doc);
@@ -177,33 +221,43 @@ export async function downloadCvAsDocx(
 // PDF
 // =============================================================
 
-const PDF = {
-  margin: 56,
-  pageWidth: 595.28, // A4 i pt
-  pageHeight: 841.89,
-  body: 10.5,
-  h1: 18,
-  h2: 13,
-  h3: 11.5,
-  lineFactor: 1.45,
-};
+const PAGE = { width: 595.28, height: 841.89 }; // A4 i pt
 
-export function downloadCvAsPdf(markdown: string, fileName = "cv-vardbemanning.pdf"): void {
+function hexToRgb(hex: string): [number, number, number] {
+  const h = hex.replace("#", "");
+  return [
+    parseInt(h.slice(0, 2), 16) || 0,
+    parseInt(h.slice(2, 4), 16) || 0,
+    parseInt(h.slice(4, 6), 16) || 0,
+  ];
+}
+
+export function downloadCvAsPdf(
+  markdown: string,
+  fileName = "cv-vardbemanning.pdf",
+  design: CvDesign = FALLBACK_CV_TEMPLATES[0]!.design,
+): void {
   const blocks = parseCvMarkdown(markdown);
   const doc = new jsPDF({ unit: "pt", format: "a4" });
-  const maxWidth = PDF.pageWidth - PDF.margin * 2;
-  let y = PDF.margin;
+  const margin = design.margin;
+  const maxWidth = PAGE.width - margin * 2;
+  const accent = hexToRgb(design.accent);
+  const rule = hexToRgb(design.rule);
+  let y = margin;
 
   const ensureSpace = (needed: number) => {
-    if (y + needed > PDF.pageHeight - PDF.margin) {
+    if (y + needed > PAGE.height - margin) {
       doc.addPage();
-      y = PDF.margin;
+      y = margin;
     }
   };
 
   const setFont = (size: number, bold: boolean, italic: boolean) => {
     doc.setFontSize(size);
-    doc.setFont("helvetica", bold && italic ? "bolditalic" : bold ? "bold" : italic ? "italic" : "normal");
+    doc.setFont(
+      design.fontPdf,
+      bold && italic ? "bolditalic" : bold ? "bold" : italic ? "italic" : "normal",
+    );
   };
 
   // Ordvis layout med radbrytning så att fetstil mitt i en rad bevaras.
@@ -212,18 +266,20 @@ export function downloadCvAsPdf(markdown: string, fileName = "cv-vardbemanning.p
     fontSize: number,
     indent: number,
     baseBold = false,
+    uppercase = false,
   ) => {
-    const lineHeight = fontSize * PDF.lineFactor;
-    const startX = PDF.margin + indent;
+    const lineHeight = fontSize * design.lineFactor;
+    const startX = margin + indent;
     let x = startX;
     ensureSpace(lineHeight);
     for (const seg of segments) {
       const bold = baseBold || seg.bold;
       setFont(fontSize, bold, seg.italic);
-      const words = seg.text.split(/(\s+)/).filter((w) => w.length > 0);
+      const text = uppercase ? seg.text.toUpperCase() : seg.text;
+      const words = text.split(/(\s+)/).filter((w) => w.length > 0);
       for (const word of words) {
         const width = doc.getTextWidth(word);
-        if (x + width > PDF.margin + maxWidth && x > startX) {
+        if (x + width > margin + maxWidth && x > startX) {
           y += lineHeight;
           ensureSpace(lineHeight);
           x = startX;
@@ -239,43 +295,50 @@ export function downloadCvAsPdf(markdown: string, fileName = "cv-vardbemanning.p
   for (const block of blocks) {
     switch (block.type) {
       case "h1":
-        ensureSpace(PDF.h1 * PDF.lineFactor + 6);
-        drawSegments(block.segments, PDF.h1, 0, true);
+        ensureSpace(design.h1 * design.lineFactor + 6);
+        doc.setTextColor(accent[0], accent[1], accent[2]);
+        drawSegments(block.segments, design.h1, 0, true);
+        doc.setTextColor(20, 20, 20);
         y += 4;
         break;
       case "h2": {
-        y += 10;
-        ensureSpace(PDF.h2 * PDF.lineFactor + 8);
-        drawSegments(block.segments, PDF.h2, 0, true);
-        doc.setDrawColor(160);
-        doc.setLineWidth(0.6);
-        doc.line(PDF.margin, y - PDF.h2 * PDF.lineFactor + PDF.h2 * 0.35, PDF.margin + maxWidth, y - PDF.h2 * PDF.lineFactor + PDF.h2 * 0.35);
+        y += design.lineFactor < 1.4 ? 6 : 10;
+        ensureSpace(design.h2 * design.lineFactor + 8);
+        doc.setTextColor(accent[0], accent[1], accent[2]);
+        drawSegments(block.segments, design.h2, 0, true, design.uppercaseH2);
+        doc.setTextColor(20, 20, 20);
+        if (design.showRule) {
+          const ruleY = y - design.h2 * design.lineFactor + design.h2 * 0.35;
+          doc.setDrawColor(rule[0], rule[1], rule[2]);
+          doc.setLineWidth(0.6);
+          doc.line(margin, ruleY, margin + maxWidth, ruleY);
+        }
         y += 2;
         break;
       }
       case "h3":
-        y += 6;
-        ensureSpace(PDF.h3 * PDF.lineFactor);
-        drawSegments(block.segments, PDF.h3, 0, true);
+        y += design.lineFactor < 1.4 ? 4 : 6;
+        ensureSpace(design.h3 * design.lineFactor);
+        drawSegments(block.segments, design.h3, 0, true);
         break;
       case "li": {
-        const lineHeight = PDF.body * PDF.lineFactor;
+        const lineHeight = design.body * design.lineFactor;
         ensureSpace(lineHeight);
-        setFont(PDF.body, false, false);
-        doc.text("•", PDF.margin + 4, y);
-        drawSegments(block.segments, PDF.body, 16);
+        setFont(design.body, false, false);
+        doc.text("•", margin + 4, y);
+        drawSegments(block.segments, design.body, 16);
         break;
       }
       case "hr":
         y += 6;
         ensureSpace(12);
-        doc.setDrawColor(200);
+        doc.setDrawColor(rule[0], rule[1], rule[2]);
         doc.setLineWidth(0.5);
-        doc.line(PDF.margin, y, PDF.margin + maxWidth, y);
+        doc.line(margin, y, margin + maxWidth, y);
         y += 12;
         break;
       default:
-        drawSegments(block.segments, PDF.body, 0);
+        drawSegments(block.segments, design.body, 0);
         y += 2;
         break;
     }

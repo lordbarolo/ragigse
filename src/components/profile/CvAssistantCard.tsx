@@ -2,11 +2,19 @@ import { useEffect, useMemo, useState } from "react";
 import { Copy, Download, FileText, Loader2, RotateCcw, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { optimizeCv } from "@/lib/cvAssistant.functions";
+import { listCvTemplates, saveCvTemplateChoice } from "@/lib/cvTemplates.functions";
+import {
+  DEFAULT_CV_TEMPLATE_SLUG,
+  FALLBACK_CV_TEMPLATES,
+  findTemplate,
+} from "@/lib/cvTemplates";
 import { downloadCvAsDocx, downloadCvAsPdf, cvFileName } from "@/lib/cvExport";
 import { useAuth } from "@/hooks/useAuth";
 import CvPreview from "./CvPreview";
+import CvTemplatePicker from "./CvTemplatePicker";
 import CvHistoryList from "./CvHistoryList";
 
 type Question = { id: string; question: string; why?: string };
@@ -46,6 +54,15 @@ export default function CvAssistantCard() {
   const { user } = useAuth();
   const fullName = (user?.user_metadata?.full_name as string | undefined) ?? null;
   const runOptimize = useServerFn(optimizeCv);
+  const fetchTemplates = useServerFn(listCvTemplates);
+  const saveTemplateChoice = useServerFn(saveCvTemplateChoice);
+  const { data: templates = FALLBACK_CV_TEMPLATES } = useQuery({
+    queryKey: ["cv-templates"],
+    queryFn: () => fetchTemplates(),
+    staleTime: 1000 * 60 * 60,
+  });
+  const [templateSlug, setTemplateSlug] = useState<string>(DEFAULT_CV_TEMPLATE_SLUG);
+  const design = findTemplate(templates, templateSlug).design;
   const [docs, setDocs] = useState<DocOption[]>([]);
   const [sourceChoice, setSourceChoice] = useState<string>(PASTED);
   const [cvText, setCvText] = useState("");
@@ -79,6 +96,32 @@ export default function CvAssistantCard() {
     };
   }, []);
 
+  // Senast valda design (läsning skyddas av RLS på användarens egna utkast).
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      const { data } = await supabase
+        .from("cv_optimizations")
+        .select("cv_template_slug")
+        .order("updated_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (!cancelled && data?.cv_template_slug) setTemplateSlug(data.cv_template_slug);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  function chooseTemplate(slug: string) {
+    setTemplateSlug(slug);
+    if (draftId) {
+      void saveTemplateChoice({ data: { draftId, slug } }).catch(() => {
+        /* valet gäller ändå i denna session */
+      });
+    }
+  }
+
   const iterating = Boolean(draftId && markdown);
 
   const sourceOptions = useMemo(
@@ -111,6 +154,9 @@ export default function CvAssistantCard() {
       setStrengths(res.strengths ?? []);
       setQuestions((res.questions ?? []) as Question[]);
       setDraftId(res.id);
+      void saveTemplateChoice({ data: { draftId: res.id, slug: templateSlug } }).catch(() => {
+        /* designvalet gäller i denna session även om sparandet fallerar */
+      });
       setVersion(res.version);
       setSourceInfo(res.source as SourceInfo);
       setAnswers({});
@@ -294,13 +340,20 @@ export default function CvAssistantCard() {
 
       {markdown && (
         <div className="mt-6">
-          <div className="flex flex-wrap gap-2">
+          <CvTemplatePicker
+            templates={templates}
+            value={templateSlug}
+            onChange={chooseTemplate}
+          />
+          <div className="mt-4 flex flex-wrap gap-2">
             <button
               type="button"
               onClick={() => {
-                void downloadCvAsDocx(markdown, cvFileName(markdown, "docx", fullName)).catch(() =>
-                  toast.error("Kunde inte skapa DOCX-filen. Försök igen."),
-                );
+                void downloadCvAsDocx(
+                  markdown,
+                  cvFileName(markdown, "docx", fullName),
+                  design,
+                ).catch(() => toast.error("Kunde inte skapa DOCX-filen. Försök igen."));
               }}
               className="inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-xs font-semibold text-[#0b0c10] hover:opacity-90"
             >
@@ -310,7 +363,7 @@ export default function CvAssistantCard() {
               type="button"
               onClick={() => {
                 try {
-                  downloadCvAsPdf(markdown, cvFileName(markdown, "pdf", fullName));
+                  downloadCvAsPdf(markdown, cvFileName(markdown, "pdf", fullName), design);
                 } catch {
                   toast.error("Kunde inte skapa PDF-filen. Försök igen.");
                 }
