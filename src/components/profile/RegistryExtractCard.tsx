@@ -6,6 +6,7 @@ import {
   createRegistryExtractOrder,
   listMyRegistryExtractOrders,
 } from "@/lib/registryOrders.functions";
+import { btnPrimary, segmentedGroup, segmentedItem } from "./buttonStyles";
 import { isValidPersonnummer } from "@/lib/personnummer";
 
 type DocType = "hosp" | "ivo";
