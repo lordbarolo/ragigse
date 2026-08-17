@@ -54,6 +54,14 @@ export default function CvAssistantCard() {
   const { user } = useAuth();
   const fullName = (user?.user_metadata?.full_name as string | undefined) ?? null;
   const runOptimize = useServerFn(optimizeCv);
+  const fetchTemplates = useServerFn(listCvTemplates);
+  const { data: templates = FALLBACK_CV_TEMPLATES } = useQuery({
+    queryKey: ["cv-templates"],
+    queryFn: () => fetchTemplates(),
+    staleTime: 1000 * 60 * 60,
+  });
+  const [templateSlug, setTemplateSlug] = useState<string>(DEFAULT_CV_TEMPLATE_SLUG);
+  const design = findTemplate(templates, templateSlug).design;
   const [docs, setDocs] = useState<DocOption[]>([]);
   const [sourceChoice, setSourceChoice] = useState<string>(PASTED);
   const [cvText, setCvText] = useState("");
