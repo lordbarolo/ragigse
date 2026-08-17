@@ -337,13 +337,20 @@ export default function CvAssistantCard() {
 
       {markdown && (
         <div className="mt-6">
-          <div className="flex flex-wrap gap-2">
+          <CvTemplatePicker
+            templates={templates}
+            value={templateSlug}
+            onChange={chooseTemplate}
+          />
+          <div className="mt-4 flex flex-wrap gap-2">
             <button
               type="button"
               onClick={() => {
-                void downloadCvAsDocx(markdown, cvFileName(markdown, "docx", fullName)).catch(() =>
-                  toast.error("Kunde inte skapa DOCX-filen. Försök igen."),
-                );
+                void downloadCvAsDocx(
+                  markdown,
+                  cvFileName(markdown, "docx", fullName),
+                  design,
+                ).catch(() => toast.error("Kunde inte skapa DOCX-filen. Försök igen."));
               }}
               className="inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-xs font-semibold text-[#0b0c10] hover:opacity-90"
             >
@@ -353,7 +360,7 @@ export default function CvAssistantCard() {
               type="button"
               onClick={() => {
                 try {
-                  downloadCvAsPdf(markdown, cvFileName(markdown, "pdf", fullName));
+                  downloadCvAsPdf(markdown, cvFileName(markdown, "pdf", fullName), design);
                 } catch {
                   toast.error("Kunde inte skapa PDF-filen. Försök igen.");
                 }
