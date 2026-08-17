@@ -48,7 +48,7 @@ export default function Profile() {
 
         <div className="min-w-0 flex-1">
           {/* Sidhuvud + status */}
-          <section id="profil" className="scroll-mt-24 py-10 sm:py-14">
+          <section id="profil" className="scroll-mt-24 px-5 py-10 sm:py-14">
             <p className="text-[11px] uppercase tracking-[0.16em] text-white/40">
               {firstName ? `Inloggad som ${firstName}` : "Inloggad"}
             </p>
