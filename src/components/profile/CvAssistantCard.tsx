@@ -154,6 +154,9 @@ export default function CvAssistantCard() {
       setStrengths(res.strengths ?? []);
       setQuestions((res.questions ?? []) as Question[]);
       setDraftId(res.id);
+      void saveTemplateChoice({ data: { draftId: res.id, slug: templateSlug } }).catch(() => {
+        /* designvalet gäller i denna session även om sparandet fallerar */
+      });
       setVersion(res.version);
       setSourceInfo(res.source as SourceInfo);
       setAnswers({});
