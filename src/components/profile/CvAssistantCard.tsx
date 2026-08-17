@@ -95,6 +95,32 @@ export default function CvAssistantCard() {
     };
   }, []);
 
+  // Senast valda design (läsning skyddas av RLS på användarens egna utkast).
+  useEffect(() => {
+    let cancelled = false;
+    void (async () => {
+      const { data } = await supabase
+        .from("cv_optimizations")
+        .select("cv_template_slug")
+        .order("updated_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (!cancelled && data?.cv_template_slug) setTemplateSlug(data.cv_template_slug);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  function chooseTemplate(slug: string) {
+    setTemplateSlug(slug);
+    if (draftId) {
+      void saveTemplateChoice({ data: { draftId, slug } }).catch(() => {
+        /* valet gäller ändå i denna session */
+      });
+    }
+  }
+
   const iterating = Boolean(draftId && markdown);
 
   const sourceOptions = useMemo(
