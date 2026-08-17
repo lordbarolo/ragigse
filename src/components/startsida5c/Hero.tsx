@@ -45,7 +45,7 @@ export default function Hero() {
               className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-[7px] text-[13px] font-medium"
               style={{ background: "#0b0c10", color: "#e8eaef" }}
             >
-              Logga in för att träffa din AI-assistent
+              AI skap&nbsp;
               <span className="leading-none" style={{ color: "#8a8c94" }}>›</span>
             </span>
           </a>
@@ -58,7 +58,7 @@ export default function Hero() {
               animation: "fadeUp5c .55s .08s ease both",
             }}
           >
-            Har du rätt lön?<br />Se svaret direkt
+            Har du rätt lön?
           </h1>
           <p
             className="mt-4 max-w-[540px] text-[17px]"
