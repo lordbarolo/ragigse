@@ -12,6 +12,7 @@ import {
   TextRun,
 } from "docx";
 import { jsPDF } from "jspdf";
+import { FALLBACK_CV_TEMPLATES, type CvDesign } from "@/lib/cvTemplates";
 
 export interface CvInlineSegment {
   text: string;
