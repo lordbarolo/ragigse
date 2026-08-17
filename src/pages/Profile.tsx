@@ -43,7 +43,7 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-[#0b0c10] text-white">
-      <div className="mx-auto flex w-full max-w-[1440px] gap-0 px-5 lg:gap-12 lg:px-8">
+      <div className="mx-auto flex w-full max-w-[1440px] gap-0 px-0 lg:gap-12 lg:px-8">
         <ProfileSideNav />
 
         <div className="min-w-0 flex-1">
