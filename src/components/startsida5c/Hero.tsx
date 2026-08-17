@@ -64,7 +64,7 @@ export default function Hero() {
             className="mt-4 max-w-[540px] text-[17px]"
             style={{ lineHeight: 1.6, color: "#b8bac2", animation: "fadeUp5c .55s .16s ease both" }}
           >
-            Det sitter en agent och väntar på dig. Han tillhör inget bemanningsföretag. Han har ingen provision. Han jobbar 24/7 och svarar alltid direkt. Fråga om din lön är rätt? Eller viteHan behöver veta eller lojalitet mot en arbetsgivare.{"\u00A0"} bolaget. Han jobbar Han jobbar bara för diglöneinformation baserad på regionernas avtal och branschens vanliga marginaler. Kostnadsfritt och öppet för alla.
+            Se uppdaterade ersättningar för läkare och sjuksköterskor inom bemanning. Sök utifrån din roll och uppdragets ort.
           </p>
         </div>
 
