@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Check, ExternalLink, FileUp, Loader2, Lock, Unlock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import CvAssistantCard from "./CvAssistantCard";
+import CvStatusCard from "./CvStatusCard";
 import RegistryExtractCard from "./RegistryExtractCard";
 
 const DOC_TYPES = [
@@ -186,11 +186,8 @@ export default function ProfileDocumentsSection({ userId }: Props) {
       </div>
 
       {/* Hjälp med handlingarna */}
-      <div
-        id="cv"
-        className="mx-auto mt-8 grid w-full max-w-[1200px] scroll-mt-24 gap-4 px-5 lg:mt-12 lg:grid-cols-2 lg:gap-6"
-      >
-        <CvAssistantCard />
+      <div className="mx-auto mt-8 grid w-full max-w-[1200px] gap-4 px-5 lg:mt-12 lg:grid-cols-2 lg:gap-6">
+        <CvStatusCard />
         <RegistryExtractCard />
       </div>
     </section>
