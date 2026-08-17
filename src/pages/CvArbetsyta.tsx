@@ -398,7 +398,7 @@ export default function CvArbetsyta() {
                   design,
                 ).catch(() => toast.error("Kunde inte skapa DOCX-filen. Försök igen."));
               }}
-              className={btnPrimary}
+              className={btnSecondary}
             >
               <Download className="h-3.5 w-3.5" /> Ladda ner DOCX
             </button>
