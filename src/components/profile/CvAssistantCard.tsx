@@ -5,7 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { optimizeCv } from "@/lib/cvAssistant.functions";
-import { listCvTemplates } from "@/lib/cvTemplates.functions";
+import { listCvTemplates, saveCvTemplateChoice } from "@/lib/cvTemplates.functions";
 import {
   DEFAULT_CV_TEMPLATE_SLUG,
   FALLBACK_CV_TEMPLATES,
