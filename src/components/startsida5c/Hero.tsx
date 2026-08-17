@@ -45,7 +45,7 @@ export default function Hero() {
               className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-[7px] text-[13px] font-medium"
               style={{ background: "#0b0c10", color: "#e8eaef" }}
             >
-              AI som jobbar för konsulter
+              Smarta verktyg för läkare och sjuksköterskor{"\n"}
               <span className="leading-none" style={{ color: "#8a8c94" }}>›</span>
             </span>
           </a>
@@ -58,13 +58,13 @@ export default function Hero() {
               animation: "fadeUp5c .55s .08s ease both",
             }}
           >
-            Har du rätt lön?
+            Har du rätt lön?{"\n"}
           </h1>
           <p
             className="mt-4 max-w-[540px] text-[17px]"
             style={{ lineHeight: 1.6, color: "#b8bac2", animation: "fadeUp5c .55s .16s ease both" }}
           >
-            Transparent löneinformation baserad på regionernas avtal och branschens vanliga marginaler. Kostnadsfritt och öppet för alla.
+            Det sitter en agent och väntar på dig. Han tillhör inget bemanningsföretag. Han har ingen provision. Han jobbar 24/7 och svarar alltid direkt. Fråga om din lön är rätt? Eller viteHan behöver veta eller lojalitet mot en arbetsgivare.{"\u00A0"} bolaget. Han jobbar Han jobbar bara för diglöneinformation baserad på regionernas avtal och branschens vanliga marginaler. Kostnadsfritt och öppet för alla.
           </p>
         </div>
 

@@ -61,7 +61,7 @@ export default function Rateraknare() {
       }}
     >
       <h2 className="mb-1 text-[18px] font-semibold" style={{ color: "#ffffff", letterSpacing: "-0.01em" }}>
-        Alltid uppdaterad med de senaste uppgifterna
+        AI-INDIKATOR FÖR KONSULTERSÄTTNING
       </h2>
       <p className="mb-5 text-[15px]" style={{ color: "#a1a3ab", lineHeight: 1.5 }}>
         Välj roll och ort för att se vad regionen betalar och vad du kan fakturera.
