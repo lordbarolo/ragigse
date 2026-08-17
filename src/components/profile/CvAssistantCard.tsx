@@ -55,6 +55,7 @@ export default function CvAssistantCard() {
   const fullName = (user?.user_metadata?.full_name as string | undefined) ?? null;
   const runOptimize = useServerFn(optimizeCv);
   const fetchTemplates = useServerFn(listCvTemplates);
+  const saveTemplateChoice = useServerFn(saveCvTemplateChoice);
   const { data: templates = FALLBACK_CV_TEMPLATES } = useQuery({
     queryKey: ["cv-templates"],
     queryFn: () => fetchTemplates(),
