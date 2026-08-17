@@ -1,5 +1,27 @@
 import { createServerFn } from "@tanstack/react-start";
+import { z } from "zod";
+import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { FALLBACK_CV_TEMPLATES, normalizeDesign, type CvTemplate } from "@/lib/cvTemplates";
+
+const SaveSchema = z.object({
+  draftId: z.string().uuid(),
+  slug: z.string().trim().min(1).max(40),
+});
+
+/** Sparar användarens designval på ett eget CV-utkast. */
+export const saveCvTemplateChoice = createServerFn({ method: "POST" })
+  .middleware([requireSupabaseAuth])
+  .inputValidator((data: unknown) => SaveSchema.parse(data ?? {}))
+  .handler(async ({ data, context }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("cv_optimizations")
+      .update({ cv_template_slug: data.slug })
+      .eq("id", data.draftId)
+      .eq("user_id", context.userId);
+    if (error) throw new Error("Kunde inte spara designvalet.");
+    return { ok: true };
+  });
 
 /** Läser de aktiva CV-designerna. Publik data (endast layoutinställningar). */
 export const listCvTemplates = createServerFn({ method: "GET" }).handler(
