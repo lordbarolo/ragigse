@@ -107,66 +107,109 @@ function triggerDownload(blob: Blob, fileName: string): void {
 export async function downloadCvAsDocx(
   markdown: string,
   fileName = "cv-vardbemanning.docx",
+  design: CvDesign = FALLBACK_CV_TEMPLATES[0]!.design,
 ): Promise<void> {
   const blocks = parseCvMarkdown(markdown);
+  const tight = design.lineFactor < 1.4;
 
   const children = blocks.map((block) => {
+    const upper = block.type === "h2" && design.uppercaseH2;
     const runs = block.segments.map(
-      (seg) => new TextRun({ text: seg.text, bold: seg.bold, italics: seg.italic }),
+      (seg) =>
+        new TextRun({
+          text: upper ? seg.text.toUpperCase() : seg.text,
+          bold: seg.bold,
+          italics: seg.italic,
+          ...(upper ? { characterSpacing: 20 } : {}),
+        }),
     );
     switch (block.type) {
       case "h1":
         return new Paragraph({
           heading: HeadingLevel.HEADING_1,
-          spacing: { after: 160 },
+          spacing: { after: tight ? 110 : 160 },
           children: runs,
         });
       case "h2":
         return new Paragraph({
           heading: HeadingLevel.HEADING_2,
-          spacing: { before: 280, after: 120 },
-          border: {
-            bottom: { style: BorderStyle.SINGLE, size: 4, color: "999999", space: 2 },
-          },
+          spacing: { before: tight ? 200 : 280, after: tight ? 80 : 120 },
+          ...(design.showRule
+            ? {
+                border: {
+                  bottom: {
+                    style: BorderStyle.SINGLE,
+                    size: 4,
+                    color: design.rule,
+                    space: 2,
+                  },
+                },
+              }
+            : {}),
           children: runs,
         });
       case "h3":
         return new Paragraph({
           heading: HeadingLevel.HEADING_3,
-          spacing: { before: 200, after: 80 },
+          spacing: { before: tight ? 140 : 200, after: tight ? 60 : 80 },
           children: runs,
         });
       case "li":
         return new Paragraph({
           bullet: { level: 0 },
-          spacing: { after: 60 },
+          spacing: { after: tight ? 40 : 60 },
           children: runs,
         });
       case "hr":
         return new Paragraph({
           spacing: { before: 120, after: 120 },
-          border: { bottom: { style: BorderStyle.SINGLE, size: 4, color: "CCCCCC", space: 1 } },
+          border: {
+            bottom: { style: BorderStyle.SINGLE, size: 4, color: design.rule, space: 1 },
+          },
           children: [],
         });
       default:
         return new Paragraph({
           alignment: AlignmentType.LEFT,
-          spacing: { after: 100 },
+          spacing: { after: tight ? 70 : 100 },
           children: runs,
         });
     }
   });
 
+  const pt = (size: number) => Math.round(size * 2);
+  const marginDxa = Math.round(design.margin * 20);
+
   const doc = new Document({
     styles: {
       default: {
-        document: { run: { font: "Calibri", size: 22 } },
-        heading1: { run: { font: "Calibri", size: 34, bold: true, color: "111111" } },
-        heading2: { run: { font: "Calibri", size: 26, bold: true, color: "111111" } },
-        heading3: { run: { font: "Calibri", size: 23, bold: true, color: "333333" } },
+        document: { run: { font: design.fontDocx, size: pt(design.body) } },
+        heading1: {
+          run: { font: design.fontDocx, size: pt(design.h1), bold: true, color: design.accent },
+        },
+        heading2: {
+          run: { font: design.fontDocx, size: pt(design.h2), bold: true, color: design.accent },
+        },
+        heading3: {
+          run: { font: design.fontDocx, size: pt(design.h3), bold: true, color: "333333" },
+        },
       },
     },
-    sections: [{ properties: {}, children }],
+    sections: [
+      {
+        properties: {
+          page: {
+            margin: {
+              top: marginDxa,
+              right: marginDxa,
+              bottom: marginDxa,
+              left: marginDxa,
+            },
+          },
+        },
+        children,
+      },
+    ],
   });
 
   const blob = await Packer.toBlob(doc);
