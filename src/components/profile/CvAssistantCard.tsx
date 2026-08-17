@@ -2,11 +2,19 @@ import { useEffect, useMemo, useState } from "react";
 import { Copy, Download, FileText, Loader2, RotateCcw, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { useServerFn } from "@tanstack/react-start";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { optimizeCv } from "@/lib/cvAssistant.functions";
+import { listCvTemplates } from "@/lib/cvTemplates.functions";
+import {
+  DEFAULT_CV_TEMPLATE_SLUG,
+  FALLBACK_CV_TEMPLATES,
+  findTemplate,
+} from "@/lib/cvTemplates";
 import { downloadCvAsDocx, downloadCvAsPdf, cvFileName } from "@/lib/cvExport";
 import { useAuth } from "@/hooks/useAuth";
 import CvPreview from "./CvPreview";
+import CvTemplatePicker from "./CvTemplatePicker";
 import CvHistoryList from "./CvHistoryList";
 
 type Question = { id: string; question: string; why?: string };
