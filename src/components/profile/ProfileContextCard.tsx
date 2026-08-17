@@ -7,6 +7,7 @@ import SearchableSelect from "@/components/SearchableSelect";
 import { basePrices, roleOptions5c, type RateRow } from "@/components/startsida5c/rate5c";
 import { roleLabel5c, roleKeywords5c } from "@/components/startsida5c/roleLabels5c";
 import { saveProfileContext, type ProfileContext } from "@/lib/profileContext";
+import { btnPrimary, btnSecondary } from "./buttonStyles";
 
 interface Props {
   userId: string;
@@ -128,7 +129,7 @@ export default function ProfileContextCard({ userId, context, onSaved }: Props) 
         <button
           type="button"
           onClick={() => setEditing((v) => !v)}
-          className="flex shrink-0 items-center gap-1.5 rounded-full border border-white/15 bg-white/[0.03] px-3 py-1.5 text-xs text-white/70 transition-colors hover:border-white/30 hover:bg-white/[0.08] hover:text-white"
+          className={`shrink-0 ${btnSecondary}`}
         >
           {editing ? <X className="h-3.5 w-3.5" /> : <Pencil className="h-3.5 w-3.5" />}
           {editing ? "Stäng" : "Ändra"}
@@ -183,7 +184,7 @@ export default function ProfileContextCard({ userId, context, onSaved }: Props) 
                   key={o.value}
                   type="button"
                   onClick={() => setEmployment(o.value)}
-                  className={`rounded-full border px-4 py-2 text-sm transition-colors ${
+                  className={`min-h-10 rounded-full border px-4 text-sm transition-colors ${
                     employment === o.value
                       ? "border-white/40 bg-white/10 text-white"
                       : "border-white/15 text-white/60 hover:border-white/30"
@@ -211,7 +212,7 @@ export default function ProfileContextCard({ userId, context, onSaved }: Props) 
             type="button"
             onClick={save}
             disabled={!canSave || !dirty || saving}
-            className="flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-[#0b0c10] transition-opacity disabled:opacity-40"
+            className={btnPrimary}
           >
             {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
             Spara ändringar

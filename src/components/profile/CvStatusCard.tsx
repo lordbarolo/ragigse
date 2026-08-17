@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { supabase } from "@/integrations/supabase/client";
+import { btnPrimary } from "./buttonStyles";
 
 /** Litet CV-kort på profilsidan — själva arbetsflödet ligger på /consultant/cv. */
 export default function CvStatusCard() {
@@ -45,7 +46,7 @@ export default function CvStatusCard() {
         </div>
         <Link
           to="/consultant/cv"
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-white px-6 py-3 text-sm font-semibold text-[#0b0c10] transition-opacity hover:opacity-90"
+          className={`shrink-0 ${btnPrimary}`}
         >
           Öppna <ArrowRight className="h-4 w-4" />
         </Link>
