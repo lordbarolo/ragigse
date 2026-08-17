@@ -1456,6 +1456,7 @@ export type Database = {
           answers: Json
           created_at: string
           cv_markdown: string | null
+          cv_template_slug: string
           id: string
           questions: Json
           source_document_id: string | null
@@ -1473,6 +1474,7 @@ export type Database = {
           answers?: Json
           created_at?: string
           cv_markdown?: string | null
+          cv_template_slug?: string
           id?: string
           questions?: Json
           source_document_id?: string | null
@@ -1490,6 +1492,7 @@ export type Database = {
           answers?: Json
           created_at?: string
           cv_markdown?: string | null
+          cv_template_slug?: string
           id?: string
           questions?: Json
           source_document_id?: string | null
@@ -1502,6 +1505,42 @@ export type Database = {
           user_id?: string
           user_instruction?: string | null
           version?: number
+        }
+        Relationships: []
+      }
+      cv_templates: {
+        Row: {
+          created_at: string
+          description: string
+          design: Json
+          id: string
+          is_active: boolean
+          name: string
+          slug: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string
+          design?: Json
+          id?: string
+          is_active?: boolean
+          name: string
+          slug: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          design?: Json
+          id?: string
+          is_active?: boolean
+          name?: string
+          slug?: string
+          sort_order?: number
+          updated_at?: string
         }
         Relationships: []
       }
