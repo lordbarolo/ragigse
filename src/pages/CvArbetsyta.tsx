@@ -17,6 +17,7 @@ import { useAuth } from "@/hooks/useAuth";
 import CvPreview from "@/components/profile/CvPreview";
 import CvTemplatePicker from "@/components/profile/CvTemplatePicker";
 import CvHistoryList from "@/components/profile/CvHistoryList";
+import { btnPrimary, btnSecondary, btnTertiary } from "@/components/profile/buttonStyles";
 
 type Question = { id: string; question: string; why?: string };
 
@@ -294,7 +295,7 @@ export default function CvArbetsyta() {
                   type="button"
                   onClick={() => void run()}
                   disabled={loading}
-                  className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-[#0b0c10] transition-opacity hover:opacity-90 disabled:opacity-50"
+                  className={btnPrimary}
                 >
                   {loading ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -308,7 +309,7 @@ export default function CvArbetsyta() {
                     type="button"
                     onClick={reset}
                     disabled={loading}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-white/20 px-3.5 py-1.5 text-xs font-medium text-white/85 hover:bg-white/10 disabled:opacity-50"
+                    className={btnTertiary}
                   >
                     <RotateCcw className="h-3.5 w-3.5" /> Börja om från källan
                   </button>
@@ -397,7 +398,7 @@ export default function CvArbetsyta() {
                   design,
                 ).catch(() => toast.error("Kunde inte skapa DOCX-filen. Försök igen."));
               }}
-              className="inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-xs font-semibold text-[#0b0c10] hover:opacity-90"
+              className={btnSecondary}
             >
               <Download className="h-3.5 w-3.5" /> Ladda ner DOCX
             </button>
@@ -410,21 +411,21 @@ export default function CvArbetsyta() {
                   toast.error("Kunde inte skapa PDF-filen. Försök igen.");
                 }
               }}
-              className="inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-1.5 text-xs font-semibold text-[#0b0c10] hover:opacity-90"
+              className={btnSecondary}
             >
               <Download className="h-3.5 w-3.5" /> Ladda ner PDF
             </button>
             <button
               type="button"
               onClick={copyMarkdown}
-              className="inline-flex items-center gap-1.5 rounded-full border border-white/20 px-3.5 py-1.5 text-xs font-medium text-white/85 hover:bg-white/10"
+              className={btnTertiary}
             >
               <Copy className="h-3.5 w-3.5" /> Kopiera
             </button>
             <button
               type="button"
               onClick={downloadMarkdown}
-              className="inline-flex items-center gap-1.5 rounded-full border border-white/20 px-3.5 py-1.5 text-xs font-medium text-white/85 hover:bg-white/10"
+              className={btnTertiary}
             >
               <FileText className="h-3.5 w-3.5" /> Markdown
             </button>

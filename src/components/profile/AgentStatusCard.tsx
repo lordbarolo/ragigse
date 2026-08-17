@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ArrowRight, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { btnPrimary } from "./buttonStyles";
 
 const REQUIRED_DOCS = ["legitimation", "hosp", "ivo", "cv", "belastningsregister"] as const;
 
@@ -68,7 +69,7 @@ export default function AgentStatusCard({ userId, contextComplete }: Props) {
         </div>
         <a
           href={cta.href}
-          className="inline-flex items-center gap-1.5 rounded-full bg-white px-4 py-2 text-sm font-semibold text-[#0b0c10] transition-opacity hover:opacity-90"
+          className={btnPrimary}
         >
           {cta.label} <ArrowRight className="h-3.5 w-3.5" />
         </a>

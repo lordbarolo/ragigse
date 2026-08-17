@@ -6,6 +6,7 @@ import {
   createRegistryExtractOrder,
   listMyRegistryExtractOrders,
 } from "@/lib/registryOrders.functions";
+import { btnPrimary, segmentedGroup, segmentedItem } from "./buttonStyles";
 import { isValidPersonnummer } from "@/lib/personnummer";
 
 type DocType = "hosp" | "ivo";
@@ -81,21 +82,21 @@ export default function RegistryExtractCard() {
         din dokumentlista. Personnummret lagras krypterat och används bara för beställningen.
       </p>
 
-      <div className="mt-5 flex gap-2">
-        {(["hosp", "ivo"] as DocType[]).map((t) => (
-          <button
-            key={t}
-            type="button"
-            onClick={() => setDocType(t)}
-            className={`rounded-full border px-3.5 py-1.5 text-xs font-medium transition-colors ${
-              docType === t
-                ? "border-white bg-white text-[#0b0c10]"
-                : "border-white/20 text-white/75 hover:bg-white/10"
-            }`}
-          >
-            {t === "hosp" ? "HOSP-utdrag" : "IVO-utdrag"}
-          </button>
-        ))}
+      <div className="mt-5" role="tablist" aria-label="Typ av utdrag">
+        <div className={segmentedGroup}>
+          {(["hosp", "ivo"] as DocType[]).map((t) => (
+            <button
+              key={t}
+              type="button"
+              role="tab"
+              aria-selected={docType === t}
+              onClick={() => setDocType(t)}
+              className={segmentedItem(docType === t)}
+            >
+              {t === "hosp" ? "HOSP-utdrag" : "IVO-utdrag"}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="mt-4 space-y-2.5">
@@ -119,7 +120,7 @@ export default function RegistryExtractCard() {
         type="button"
         onClick={() => void order()}
         disabled={saving}
-        className="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-[#0b0c10] transition-opacity hover:opacity-90 disabled:opacity-50"
+        className={`mt-4 ${btnPrimary}`}
       >
         {saving && <Loader2 className="h-4 w-4 animate-spin" />}
         Beställ för 39 kr
