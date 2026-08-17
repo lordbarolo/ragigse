@@ -42,69 +42,65 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-[#0b0c10] text-white">
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(1000px 420px at 80% -10%, rgba(255,255,255,0.10), transparent 60%)",
-          }}
-        />
-        <div className="relative mx-auto grid w-full max-w-[1200px] items-center gap-10 px-5 py-14 sm:py-20 lg:grid-cols-[1fr_0.95fr] lg:gap-16">
-          <div>
-            <p className="text-[11px] uppercase tracking-[0.16em] text-white/40">Din profil</p>
-            <h1 className="mt-3 text-3xl font-semibold leading-[1.1] tracking-tight sm:text-5xl">
-              Ai-expertis för att underlätta konsultlivet. Dygnet runt.
+      <div className="mx-auto flex w-full max-w-[1440px] gap-0 px-5 lg:gap-12 lg:px-8">
+        <ProfileSideNav />
+
+        <div className="min-w-0 flex-1">
+          {/* Sidhuvud + status */}
+          <section id="profil" className="scroll-mt-24 py-10 sm:py-14">
+            <p className="text-[11px] uppercase tracking-[0.16em] text-white/40">
+              {firstName ? `Inloggad som ${firstName}` : "Inloggad"}
+            </p>
+            <h1 className="mt-3 text-3xl font-semibold leading-[1.1] tracking-tight sm:text-4xl">
+              Min profil
             </h1>
+
+            <div className="mt-8">
+              <AgentStatusCard userId={user.id} contextComplete={Boolean(complete && context)} />
+            </div>
+
             {complete && context ? (
               <>
-                <p className="mt-5 max-w-md text-sm leading-relaxed text-white/55 sm:text-base">
+                <p className="mt-10 max-w-lg text-sm leading-relaxed text-white/55">
                   Håll uppgifterna om dig uppdaterade för att optimera utfallet.
                 </p>
                 <ProfileContextCard userId={user.id} context={context} onSaved={refresh} />
               </>
             ) : (
-              <p className="mt-5 max-w-md text-sm leading-relaxed text-white/55 sm:text-base">
+              <p className="mt-8 max-w-lg text-sm leading-relaxed text-white/55">
                 Vi vill göra det lättare att arbeta som konsult. I din profil hittar du smarta verktyg redo att
                 användas direkt. Din assistent behöver lära känna dig för att kunna företräda dina intressen. De fyra
                 frågorna i chattrutan är en bra början.
               </p>
             )}
+          </section>
+
+          <div id="dokument" className="scroll-mt-24">
+            <ProfileDocumentsSection userId={user.id} />
           </div>
 
-          <div className="lg:justify-self-end lg:self-start">
-            <ProfileAssistantChat
-              userId={user.id}
-              context={context}
-              unlocked={complete}
-              onSaved={refresh}
-            />
-            {complete ? <AssistantMemoryCard userId={user.id} /> : null}
+          <div id="verktyg" className="scroll-mt-24">
+            <ProfileToolsGrid context={complete ? context : null} />
           </div>
 
+          <section id="assistent" className="scroll-mt-24 border-t border-white/10 py-14 sm:py-16">
+            <p className="text-[11px] uppercase tracking-[0.16em] text-white/40">Assistent</p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">
+              Din assistent
+            </h2>
+            <div className="mt-6 max-w-2xl">
+              <ProfileAssistantChat
+                userId={user.id}
+                context={context}
+                unlocked={complete}
+                onSaved={refresh}
+              />
+              {complete ? <AssistantMemoryCard userId={user.id} /> : null}
+            </div>
+          </section>
         </div>
-      </section>
+      </div>
 
-      <section className="mx-auto w-full max-w-[1200px] px-5 pb-14 sm:pb-20">
-        <Link
-          to="/consultant/fakturahjalp"
-          aria-label="Öppna fakturakontrollen"
-          className="group block overflow-hidden rounded-2xl border border-white/10 transition-colors hover:border-white/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#0b0c10]"
-          onClick={() =>
-            trackEvent("fakturakontroll_animation_clicked", {
-              source: "profile_hero",
-              target: "/consultant/fakturahjalp",
-            })
-          }
-        >
-          <MissadeTimmarAnimation variant="site" theme="dark" radius={16} brand={false} loop={false} />
-        </Link>
-      </section>
-
-
-      <ProfileToolsGrid context={complete ? context : null} />
-      <ProfileDocumentsSection userId={user.id} />
 
       <div className="border-t border-white/10 py-8">
         <div className="mx-auto w-full max-w-[1200px] px-5">
