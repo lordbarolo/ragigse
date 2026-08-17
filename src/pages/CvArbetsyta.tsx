@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Copy, Download, FileText, Loader2, RotateCcw, Sparkles } from "lucide-react";
 import { toast } from "sonner";
+import { Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,9 +14,9 @@ import {
 } from "@/lib/cvTemplates";
 import { downloadCvAsDocx, downloadCvAsPdf, cvFileName } from "@/lib/cvExport";
 import { useAuth } from "@/hooks/useAuth";
-import CvPreview from "./CvPreview";
-import CvTemplatePicker from "./CvTemplatePicker";
-import CvHistoryList from "./CvHistoryList";
+import CvPreview from "@/components/profile/CvPreview";
+import CvTemplatePicker from "@/components/profile/CvTemplatePicker";
+import CvHistoryList from "@/components/profile/CvHistoryList";
 
 type Question = { id: string; question: string; why?: string };
 
@@ -49,8 +50,8 @@ function sourceDescription(source: SourceInfo): string {
   }
 }
 
-/** CV-assistent: tar konsultens uppladdade/inklistrade CV och bygger en proffsversion. */
-export default function CvAssistantCard() {
+/** CV-arbetsytan: frågor och instruktioner till vänster, live-CV till höger. */
+export default function CvArbetsyta() {
   const { user } = useAuth();
   const fullName = (user?.user_metadata?.full_name as string | undefined) ?? null;
   const runOptimize = useServerFn(optimizeCv);
@@ -221,131 +222,172 @@ export default function CvAssistantCard() {
   }
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-[#121319] p-6">
-      <span className="grid h-9 w-9 place-items-center rounded-xl border border-white/10 bg-white/5">
-        <Sparkles className="h-4 w-4 text-white" />
-      </span>
-      <h3 className="mt-4 text-lg font-medium text-white">Hjälp med ditt CV</h3>
-      <p className="mt-2 text-sm leading-relaxed text-white/55">
-        Assistenten utgår från ditt uppladdade CV och bygger en version med tydlig struktur, rätt
-        formulerade behörigheter och de uppgifter som regionerna efterfrågar i avrop. Saknas något
-        ställer assistenten kompletterande frågor.
-      </p>
-
-      {!iterating && (
-        <>
-          <label className="mt-5 block text-xs text-white/45" htmlFor="cv-source">
-            Underlag
-          </label>
-          <select
-            id="cv-source"
-            value={sourceChoice}
-            onChange={(e) => setSourceChoice(e.target.value)}
-            className="mt-1.5 w-full rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2.5 text-sm text-white focus:border-white/25 focus:outline-none [&>option]:bg-[#121319]"
-          >
-            {sourceOptions.map((o) => (
-              <option key={o.value} value={o.value}>
-                {o.label}
-              </option>
-            ))}
-          </select>
-
-          {sourceChoice === PASTED && (
-            <textarea
-              value={cvText}
-              onChange={(e) => setCvText(e.target.value)}
-              rows={4}
-              placeholder="Klistra in innehållet i ditt CV här."
-              className="mt-3 w-full resize-y rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-3 text-sm text-white placeholder:text-white/35 focus:border-white/25 focus:outline-none"
-            />
-          )}
-        </>
-      )}
-
-      <label className="mt-4 block text-xs text-white/45" htmlFor="cv-instruction">
-        Instruktion till assistenten (valfritt)
-      </label>
-      <input
-        id="cv-instruction"
-        value={instruction}
-        onChange={(e) => setInstruction(e.target.value)}
-        maxLength={1000}
-        placeholder="T.ex. betona IVA-erfarenhet"
-        className="mt-1.5 w-full rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2.5 text-sm text-white placeholder:text-white/35 focus:border-white/25 focus:outline-none"
-      />
-
-      <div className="mt-4 flex flex-wrap items-center gap-2">
-        <button
-          type="button"
-          onClick={() => void run()}
-          disabled={loading}
-          className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-[#0b0c10] transition-opacity hover:opacity-90 disabled:opacity-50"
+    <div className="min-h-screen bg-[#0b0c10] pb-32">
+      <div className="mx-auto w-full max-w-[1440px] px-5 pt-10 sm:pt-14">
+        <Link
+          to="/consultant/profil"
+          className="text-xs text-white/45 underline hover:text-white/70"
         >
-          {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-          {iterating ? "Uppdatera CV:t" : "Förbättra mitt CV"}
-        </button>
-        {iterating && (
-          <button
-            type="button"
-            onClick={reset}
-            disabled={loading}
-            className="inline-flex items-center gap-1.5 rounded-full border border-white/20 px-3.5 py-1.5 text-xs font-medium text-white/85 hover:bg-white/10 disabled:opacity-50"
-          >
-            <RotateCcw className="h-3.5 w-3.5" /> Börja om från källan
-          </button>
-        )}
+          Tillbaka till Min profil
+        </Link>
+        <h1 className="mt-4 text-2xl font-medium tracking-tight text-white sm:text-3xl">
+          CV-assistenten
+        </h1>
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-white/55">
+          Assistenten utgår från ditt uppladdade CV och bygger en version med tydlig struktur, rätt
+          formulerade behörigheter och de uppgifter som regionerna efterfrågar i avrop. Saknas något
+          ställer assistenten kompletterande frågor.
+        </p>
+
+        <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,420px)_minmax(0,1fr)]">
+          {/* Vänster: underlag, instruktioner och kompletterande frågor */}
+          <div className="space-y-6">
+            <div className="rounded-2xl border border-white/10 bg-[#121319] p-6">
+              <span className="grid h-9 w-9 place-items-center rounded-xl border border-white/10 bg-white/5">
+                <Sparkles className="h-4 w-4 text-white" />
+              </span>
+
+              {!iterating && (
+                <>
+                  <label className="mt-5 block text-xs text-white/45" htmlFor="cv-source">
+                    Underlag
+                  </label>
+                  <select
+                    id="cv-source"
+                    value={sourceChoice}
+                    onChange={(e) => setSourceChoice(e.target.value)}
+                    className="mt-1.5 w-full rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2.5 text-sm text-white focus:border-white/25 focus:outline-none [&>option]:bg-[#121319]"
+                  >
+                    {sourceOptions.map((o) => (
+                      <option key={o.value} value={o.value}>
+                        {o.label}
+                      </option>
+                    ))}
+                  </select>
+
+                  {sourceChoice === PASTED && (
+                    <textarea
+                      value={cvText}
+                      onChange={(e) => setCvText(e.target.value)}
+                      rows={6}
+                      placeholder="Klistra in innehållet i ditt CV här."
+                      className="mt-3 w-full resize-y rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-3 text-sm text-white placeholder:text-white/35 focus:border-white/25 focus:outline-none"
+                    />
+                  )}
+                </>
+              )}
+
+              <label className="mt-4 block text-xs text-white/45" htmlFor="cv-instruction">
+                Instruktion till assistenten (valfritt)
+              </label>
+              <input
+                id="cv-instruction"
+                value={instruction}
+                onChange={(e) => setInstruction(e.target.value)}
+                maxLength={1000}
+                placeholder="T.ex. betona IVA-erfarenhet"
+                className="mt-1.5 w-full rounded-xl border border-white/10 bg-white/[0.03] px-3.5 py-2.5 text-sm text-white placeholder:text-white/35 focus:border-white/25 focus:outline-none"
+              />
+
+              <div className="mt-4 flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => void run()}
+                  disabled={loading}
+                  className="inline-flex items-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-[#0b0c10] transition-opacity hover:opacity-90 disabled:opacity-50"
+                >
+                  {loading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <Sparkles className="h-4 w-4" />
+                  )}
+                  {iterating ? "Uppdatera CV:t" : "Förbättra mitt CV"}
+                </button>
+                {iterating && (
+                  <button
+                    type="button"
+                    onClick={reset}
+                    disabled={loading}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-white/20 px-3.5 py-1.5 text-xs font-medium text-white/85 hover:bg-white/10 disabled:opacity-50"
+                  >
+                    <RotateCcw className="h-3.5 w-3.5" /> Börja om från källan
+                  </button>
+                )}
+              </div>
+
+              {sourceInfo && (
+                <p className="mt-3 text-xs text-white/45">
+                  {sourceDescription(sourceInfo)}
+                  {version && version > 1 ? ` Version ${version}.` : ""}
+                </p>
+              )}
+
+              {summary && <p className="mt-4 text-sm text-white/60">{summary}</p>}
+
+              {strengths.length > 0 && (
+                <ul className="mt-3 space-y-1.5">
+                  {strengths.map((s) => (
+                    <li key={s} className="text-xs text-white/50">
+                      • {s}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            {questions.length > 0 && (
+              <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-6">
+                <p className="text-[11px] uppercase tracking-[0.16em] text-white/40">Komplettera</p>
+                <div className="mt-3 space-y-3">
+                  {questions.map((q) => (
+                    <div key={q.id}>
+                      <label className="block text-sm text-white/80">{q.question}</label>
+                      {q.why && <p className="mt-0.5 text-xs text-white/40">{q.why}</p>}
+                      <input
+                        value={answers[q.id] ?? ""}
+                        onChange={(e) =>
+                          setAnswers((prev) => ({ ...prev, [q.id]: e.target.value }))
+                        }
+                        className="mt-1.5 w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white placeholder:text-white/30 focus:border-white/25 focus:outline-none"
+                        placeholder="Ditt svar"
+                      />
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-3 text-xs text-white/40">
+                  Svara och tryck på ”Uppdatera CV:t” — assistenten väver in uppgifterna i samma
+                  utkast.
+                </p>
+              </div>
+            )}
+
+            <CvHistoryList refreshKey={historyRefresh} onOpen={openFromHistory} />
+          </div>
+
+          {/* Höger: live-CV som scrollar med sidan */}
+          <div>
+            {markdown ? (
+              <>
+                <CvTemplatePicker
+                  templates={templates}
+                  value={templateSlug}
+                  onChange={chooseTemplate}
+                />
+                <CvPreview markdown={markdown} scroll={false} className="mt-4" />
+              </>
+            ) : (
+              <div className="rounded-2xl border border-dashed border-white/10 bg-white/[0.02] p-10 text-sm text-white/45">
+                Ditt CV visas här när assistenten har bearbetat underlaget.
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
-      {sourceInfo && (
-        <p className="mt-3 text-xs text-white/45">
-          {sourceDescription(sourceInfo)}
-          {version && version > 1 ? ` Version ${version}.` : ""}
-        </p>
-      )}
-
-      {summary && <p className="mt-4 text-sm text-white/60">{summary}</p>}
-
-      {strengths.length > 0 && (
-        <ul className="mt-3 space-y-1.5">
-          {strengths.map((s) => (
-            <li key={s} className="text-xs text-white/50">
-              • {s}
-            </li>
-          ))}
-        </ul>
-      )}
-
-      {questions.length > 0 && (
-        <div className="mt-6 rounded-xl border border-white/10 bg-white/[0.02] p-4">
-          <p className="text-[11px] uppercase tracking-[0.16em] text-white/40">Komplettera</p>
-          <div className="mt-3 space-y-3">
-            {questions.map((q) => (
-              <div key={q.id}>
-                <label className="block text-sm text-white/80">{q.question}</label>
-                {q.why && <p className="mt-0.5 text-xs text-white/40">{q.why}</p>}
-                <input
-                  value={answers[q.id] ?? ""}
-                  onChange={(e) => setAnswers((prev) => ({ ...prev, [q.id]: e.target.value }))}
-                  className="mt-1.5 w-full rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2 text-sm text-white placeholder:text-white/30 focus:border-white/25 focus:outline-none"
-                  placeholder="Ditt svar"
-                />
-              </div>
-            ))}
-          </div>
-          <p className="mt-3 text-xs text-white/40">
-            Svara och tryck på ”Uppdatera CV:t” — assistenten väver in uppgifterna i samma utkast.
-          </p>
-        </div>
-      )}
-
+      {/* Sticky exportrad */}
       {markdown && (
-        <div className="mt-6">
-          <CvTemplatePicker
-            templates={templates}
-            value={templateSlug}
-            onChange={chooseTemplate}
-          />
-          <div className="mt-4 flex flex-wrap gap-2">
+        <div className="fixed inset-x-0 bottom-0 z-30 border-t border-white/10 bg-[#0b0c10]/95 backdrop-blur">
+          <div className="mx-auto flex w-full max-w-[1440px] flex-wrap items-center gap-2 px-5 py-3">
             <button
               type="button"
               onClick={() => {
@@ -387,11 +429,8 @@ export default function CvAssistantCard() {
               <FileText className="h-3.5 w-3.5" /> Markdown
             </button>
           </div>
-          <CvPreview markdown={markdown} className="mt-4" />
         </div>
       )}
-
-      <CvHistoryList refreshKey={historyRefresh} onOpen={openFromHistory} />
     </div>
   );
 }

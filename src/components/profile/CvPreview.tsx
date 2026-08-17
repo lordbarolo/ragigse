@@ -36,14 +36,17 @@ const components: Components = {
 interface Props {
   markdown: string;
   className?: string;
+  /** Egen inre scroll. Stäng av i arbetsytan så vyn scrollar med sidan. */
+  scroll?: boolean;
 }
 
 /** Renderad Markdown-vy för CV-utkast (rubriker, listor — inte rå text). */
-export default function CvPreview({ markdown, className }: Props) {
+export default function CvPreview({ markdown, className, scroll = true }: Props) {
   return (
     <div
       className={
-        "max-h-96 overflow-auto rounded-xl border border-white/10 bg-black/40 px-5 py-4 " +
+        (scroll ? "max-h-96 overflow-auto " : "") +
+        "rounded-xl border border-white/10 bg-black/40 px-5 py-4 " +
         (className ?? "")
       }
     >
