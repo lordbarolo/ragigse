@@ -3,6 +3,7 @@ import { Separator } from "@/components/ui/separator";
 import CompcareLogo from "@/components/CompcareLogo";
 import Navbar from "@/components/Navbar";
 import { JsonLd } from "@/components/JsonLd";
+import { getReportUpdatedAt } from "@/data/contentFreshness";
 import RelateradeSidor from "@/components/report/RelateradeSidor";
 import { getRelatedPaths } from "@/data/relatedContent";
 import { buildRoleReportSchemas } from "@/lib/seo/roleReportSchema";
@@ -27,7 +28,7 @@ import { useCatalogZoneRates } from "@/hooks/useCatalogZoneRates";
  * Neutral copy: informerar om SKR-priser, driver inte upp löner.
  */
 
-const LAST_UPDATED = "2026-01-15";
+const LAST_UPDATED = getReportUpdatedAt("lakare-allmanmedicin");
 const fmt = (n: number) => n.toLocaleString("sv-SE", { maximumFractionDigits: 0 });
 
 // SKR ramavtal vårdbemanning 2026 — Specialistläkare allmänmedicin

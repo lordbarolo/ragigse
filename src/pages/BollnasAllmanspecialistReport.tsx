@@ -4,12 +4,13 @@ import { Separator } from "@/components/ui/separator";
 import CompcareLogo from "@/components/CompcareLogo";
 import Navbar from "@/components/Navbar";
 import { JsonLd } from "@/components/JsonLd";
+import { getReportUpdatedAt } from "@/data/contentFreshness";
 import { buildRoleReportSchemas } from "@/lib/seo/roleReportSchema";
 import { ArrowRight, MapPin, BarChart3, Info, TrendingUp } from "lucide-react";
 import { useEffect } from "react";
 import { useCatalogZoneRates } from "@/hooks/useCatalogZoneRates";
 
-const LAST_UPDATED = "2026-01-15";
+const LAST_UPDATED = getReportUpdatedAt("bollnas-lakare-alm");
 const fmt = (n: number) => n.toLocaleString("sv-SE", { maximumFractionDigits: 0 });
 
 // Allmänspecialist (Specialistläkare allmänmedicin) — SKR ramavtal 2026

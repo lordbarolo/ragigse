@@ -9,6 +9,7 @@ import { writeFileSync } from "fs"
 import { resolve } from "path"
 import { DOCTOR_SPECIALTY_REPORTS } from "../src/data/doctorSpecialtyReports"
 import { GUIDES } from "../src/data/guides"
+import { getGuideUpdatedAt, getReportUpdatedAt } from "../src/data/contentFreshness"
 
 const BASE_URL = "https://vardbemanning.ai"
 
@@ -39,6 +40,7 @@ const entries: SitemapEntry[] = [
   // Static reports
   ...REPORT_SLUGS.map(slug => ({
     path: `/rapport/${slug}`,
+    lastmod: getReportUpdatedAt(slug),
     changefreq: "monthly" as const,
     priority: "0.8"
   })),
@@ -46,7 +48,7 @@ const entries: SitemapEntry[] = [
   // Guider (långformat innehåll)
   ...GUIDES.map(g => ({
     path: `/guide/${g.slug}`,
-    lastmod: g.lastUpdated,
+    lastmod: getGuideUpdatedAt(g.slug),
     changefreq: "monthly" as const,
     priority: "0.9"
   })),

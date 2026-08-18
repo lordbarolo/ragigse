@@ -44,6 +44,7 @@ import { Route as ResultatLeadIdRouteImport } from './routes/resultat/$leadId'
 import { Route as TimprisRoleRouteImport } from './routes/timpris/$role'
 import { Route as ApiPublicBekraftaForslagRouteImport } from './routes/api/public/bekrafta-forslag'
 import { Route as ApiPublicSendSignupConfirmationRouteImport } from './routes/api/public/send-signup-confirmation'
+import { Route as ApiPublicSeoScanRouteImport } from './routes/api/public/seo-scan'
 import { Route as ConsultantLayoutAvtalRouteImport } from './routes/consultant/_layout/avtal'
 import { Route as ConsultantLayoutCvRouteImport } from './routes/consultant/_layout/cv'
 import { Route as ConsultantLayoutFakturahjalpRouteImport } from './routes/consultant/_layout/fakturahjalp'
@@ -233,6 +234,11 @@ const ApiPublicSendSignupConfirmationRoute =
     path: '/api/public/send-signup-confirmation',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicSeoScanRoute = ApiPublicSeoScanRouteImport.update({
+  id: '/api/public/seo-scan',
+  path: '/api/public/seo-scan',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ConsultantLayoutAvtalRoute = ConsultantLayoutAvtalRouteImport.update({
   id: '/avtal',
   path: '/avtal',
@@ -307,6 +313,7 @@ export interface FileRoutesByFullPath {
   '/admin/': typeof AdminIndexRoute
   '/api/public/bekrafta-forslag': typeof ApiPublicBekraftaForslagRoute
   '/api/public/send-signup-confirmation': typeof ApiPublicSendSignupConfirmationRoute
+  '/api/public/seo-scan': typeof ApiPublicSeoScanRoute
   '/consultant/avtal': typeof ConsultantLayoutAvtalRoute
   '/consultant/cv': typeof ConsultantLayoutCvRoute
   '/consultant/fakturahjalp': typeof ConsultantLayoutFakturahjalpRoute
@@ -351,6 +358,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminIndexRoute
   '/api/public/bekrafta-forslag': typeof ApiPublicBekraftaForslagRoute
   '/api/public/send-signup-confirmation': typeof ApiPublicSendSignupConfirmationRoute
+  '/api/public/seo-scan': typeof ApiPublicSeoScanRoute
   '/consultant/avtal': typeof ConsultantLayoutAvtalRoute
   '/consultant/cv': typeof ConsultantLayoutCvRoute
   '/consultant/fakturahjalp': typeof ConsultantLayoutFakturahjalpRoute
@@ -396,6 +404,7 @@ export interface FileRoutesById {
   '/admin/': typeof AdminIndexRoute
   '/api/public/bekrafta-forslag': typeof ApiPublicBekraftaForslagRoute
   '/api/public/send-signup-confirmation': typeof ApiPublicSendSignupConfirmationRoute
+  '/api/public/seo-scan': typeof ApiPublicSeoScanRoute
   '/consultant/_layout/avtal': typeof ConsultantLayoutAvtalRoute
   '/consultant/_layout/cv': typeof ConsultantLayoutCvRoute
   '/consultant/_layout/fakturahjalp': typeof ConsultantLayoutFakturahjalpRoute
@@ -442,6 +451,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/api/public/bekrafta-forslag'
     | '/api/public/send-signup-confirmation'
+    | '/api/public/seo-scan'
     | '/consultant/avtal'
     | '/consultant/cv'
     | '/consultant/fakturahjalp'
@@ -486,6 +496,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/api/public/bekrafta-forslag'
     | '/api/public/send-signup-confirmation'
+    | '/api/public/seo-scan'
     | '/consultant/avtal'
     | '/consultant/cv'
     | '/consultant/fakturahjalp'
@@ -530,6 +541,7 @@ export interface FileRouteTypes {
     | '/admin/'
     | '/api/public/bekrafta-forslag'
     | '/api/public/send-signup-confirmation'
+    | '/api/public/seo-scan'
     | '/consultant/_layout/avtal'
     | '/consultant/_layout/cv'
     | '/consultant/_layout/fakturahjalp'
@@ -575,6 +587,7 @@ export interface RootRouteChildren {
   AdminIndexRoute: typeof AdminIndexRoute
   ApiPublicBekraftaForslagRoute: typeof ApiPublicBekraftaForslagRoute
   ApiPublicSendSignupConfirmationRoute: typeof ApiPublicSendSignupConfirmationRoute
+  ApiPublicSeoScanRoute: typeof ApiPublicSeoScanRoute
   LonSpecialtyCityRoute: typeof LonSpecialtyCityRoute
 }
 
@@ -825,6 +838,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicSendSignupConfirmationRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/seo-scan': {
+      id: '/api/public/seo-scan'
+      path: '/api/public/seo-scan'
+      fullPath: '/api/public/seo-scan'
+      preLoaderRoute: typeof ApiPublicSeoScanRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/consultant/_layout/avtal': {
       id: '/consultant/_layout/avtal'
       path: '/avtal'
@@ -934,6 +954,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminIndexRoute: AdminIndexRoute,
   ApiPublicBekraftaForslagRoute: ApiPublicBekraftaForslagRoute,
   ApiPublicSendSignupConfirmationRoute: ApiPublicSendSignupConfirmationRoute,
+  ApiPublicSeoScanRoute: ApiPublicSeoScanRoute,
   LonSpecialtyCityRoute: LonSpecialtyCityRoute,
 }
 export const routeTree = rootRouteImport
