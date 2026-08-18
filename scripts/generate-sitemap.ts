@@ -42,6 +42,14 @@ const entries: SitemapEntry[] = [
     changefreq: "monthly" as const,
     priority: "0.8"
   })),
+
+  // Guider (långformat innehåll)
+  ...GUIDES.map(g => ({
+    path: `/guide/${g.slug}`,
+    lastmod: g.lastUpdated,
+    changefreq: "monthly" as const,
+    priority: "0.9"
+  })),
 ]
 
 function generateSitemap(entries: SitemapEntry[]) {
