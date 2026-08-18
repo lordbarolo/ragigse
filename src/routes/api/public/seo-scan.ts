@@ -5,9 +5,10 @@
  * kontrollerar on-page-hygien. Resultatet loggas i public.seo_scan_runs /
  * public.seo_scan_findings så att det alltid finns en spårbar "sist verifierad".
  *
- * Skydd: ligger under /api/public/* (ingen sajt-auth) och verifierar därför en
- * delad hemlighet i headern `x-seo-scan-secret` (SEO_SCAN_SECRET) i handlern.
- * Endast schemaläggaren känner hemligheten. Svaret innehåller ingen PII.
+ * Skydd: ligger under /api/public/* (ingen sajt-auth) och verifierar därför i
+ * handlern att headern `x-seo-scan-key` matchar projektets service-role-nyckel
+ * (SUPABASE_SERVICE_ROLE_KEY). Endast schemaläggaren har den nyckeln, så inga
+ * extra hemligheter behöver hanteras. Svaret innehåller ingen PII.
  */
 
 import { createFileRoute } from "@tanstack/react-router";
@@ -48,8 +49,8 @@ export const Route = createFileRoute("/api/public/seo-scan")({
   server: {
     handlers: {
       POST: async ({ request }) => {
-        const secret = process.env["SEO_SCAN_SECRET"];
-        const provided = request.headers.get("x-seo-scan-secret") ?? "";
+        const secret = process.env["SUPABASE_SERVICE_ROLE_KEY"];
+        const provided = request.headers.get("x-seo-scan-key") ?? "";
         if (!secret || !provided || !timingSafeEqual(provided, secret)) {
           return new Response("Unauthorized", { status: 401 });
         }
