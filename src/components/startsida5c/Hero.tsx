@@ -71,47 +71,7 @@ export default function Hero() {
         <Rateraknare />
       </div>
 
-      {/*
-        Mjuk övergång från mörk hero till ljus sektion.
-        Längre höjd + många stopp med ease-in-out-kurva gör att ingen grå
-        "dimbandskant" uppstår. Skuggorna behåller en svag blå ton (samma
-        familj som heron) istället för neutralgrått, och ett diskret ljus
-        i mitten bryter av den platta horisontella banden.
-      */}
-      <div aria-hidden className="relative h-32 w-full md:h-48">
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(180deg," +
-              "#0b0c10 0%," +
-              "#0b0c10 12%," +
-              "#0c0d12 22%," +
-              "#0e1016 30%," +
-              "#11131a 38%," +
-              "#161923 46%," +
-              "#1d212d 53%," +
-              "#262b39 59%," +
-              "#333848 65%," +
-              "#434958 71%," +
-              "#575c6b 77%," +
-              "#737782 82%," +
-              "#9296a2 87%," +
-              "#b3b6bd 91%," +
-              "#d1d3d8 94.5%," +
-              "#e6e7ea 97%," +
-              "#f2f2f5 99%," +
-              "#f5f5f7 100%)",
-          }}
-        />
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "radial-gradient(120% 80% at 50% 100%, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.05) 35%, rgba(255,255,255,0) 70%)",
-          }}
-        />
-      </div>
+      {/* Sidan är mörk hela vägen ner — ingen övergång till ljus sektion behövs. */}
     </section>
   );
 }
