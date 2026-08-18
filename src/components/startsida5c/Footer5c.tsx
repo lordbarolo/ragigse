@@ -13,7 +13,7 @@ export default function Footer5c() {
     <footer style={{ background: "#0b0c10", borderTop: "1px solid #22232b" }}>
       <div className="mx-auto flex max-w-[1200px] flex-col gap-4 px-5 py-10 md:flex-row md:items-center md:justify-between md:px-12">
         <img
-          src="/vardbemanning-lockup-dark.svg"
+          src="/vardbemanning-lockup-dark.png"
           alt="vårdbemanning.ai – ramavtalspriser för vårdkonsulter"
           className="h-5 w-auto select-none"
           draggable={false}

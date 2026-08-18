@@ -26,12 +26,12 @@ const CompcareLogo = forwardRef<HTMLSpanElement, CompcareLogoProps>(
       variant === "icon" ? "h-8 w-8" : variant === "full" ? "h-5 md:h-6" : "h-5 md:h-6";
 
     const fileFor = (mode: "light" | "dark") => {
-      if (variant === "icon") return "/vardbemanning-symbol.svg";
+      if (variant === "icon") return "/vardbemanning-symbol.png";
       // Symbolen används endast i footern och som favicon – övriga ytor
       // (inkl. "full") renderar därför wordmarken.
       return mode === "dark"
-        ? "/vardbemanning-wordmark-dark.svg"
-        : "/vardbemanning-wordmark-light.svg";
+        ? "/vardbemanning-wordmark-dark.png"
+        : "/vardbemanning-wordmark-light.png";
     };
 
     const altText = "vårdbemanning.ai – ramavtalspriser för vårdkonsulter";
@@ -57,7 +57,7 @@ const CompcareLogo = forwardRef<HTMLSpanElement, CompcareLogoProps>(
           className={`inline-flex items-center ${sizeClass} ${className}`}
           {...rest}
         >
-          <img src="/vardbemanning-symbol.svg" alt={altText} className="h-full w-auto select-none" draggable={false} />
+          <img src="/vardbemanning-symbol.png" alt={altText} className="h-full w-auto select-none" draggable={false} />
         </span>
       );
     }
