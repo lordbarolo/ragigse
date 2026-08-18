@@ -50,7 +50,7 @@ const PrivacyPolicy = () => {
       <header className="py-8 px-5 border-b border-border">
         <div className="max-w-3xl mx-auto">
           <Link to="/">
-            <img src={logoDark} alt="vårdbemanning.ai" className="h-8 sm:h-10" />
+            <img src={logoDark} alt="vårdbemanning.ai – till startsidan" className="h-8 sm:h-10" />
           </Link>
         </div>
       </header>
