@@ -3,7 +3,7 @@ import { Link } from "@/lib/router-compat";
 import { JsonLd } from "@/components/JsonLd";
 import Hero from "@/components/startsida5c/Hero";
 import RolltabellDark from "@/components/startsida5c/RolltabellDark";
-import OvergangChatt from "@/components/startsida5c/OvergangChatt";
+import FilmFakturakontroll from "@/components/startsida5c/FilmFakturakontroll";
 import FotoBand from "@/components/startsida5c/FotoBand";
 import Footer5c from "@/components/startsida5c/Footer5c";
 
@@ -84,7 +84,7 @@ export default function Startsida5c() {
       <Hero />
       <RolltabellDark />
       <FotoBand />
-      <OvergangChatt />
+      <FilmFakturakontroll />
 
       <Footer5c />
     </div>
