@@ -2,6 +2,7 @@ import { Link } from "@/lib/router-compat";
 
 const LINKS = [
   { to: "/faktasidor", label: "Faktasidor" },
+  { to: "/guide/hyrlakare-lon-2026", label: "Hyrläkare lön 2026" },
   { to: "/vanliga-fragor", label: "Vanliga frågor" },
   { to: "/integritetspolicy", label: "Integritetspolicy" },
   { to: "/logga-in", label: "Logga in" },

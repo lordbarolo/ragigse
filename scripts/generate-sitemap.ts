@@ -8,6 +8,7 @@
 import { writeFileSync } from "fs"
 import { resolve } from "path"
 import { DOCTOR_SPECIALTY_REPORTS } from "../src/data/doctorSpecialtyReports"
+import { GUIDES } from "../src/data/guides"
 
 const BASE_URL = "https://vardbemanning.ai"
 
@@ -40,6 +41,14 @@ const entries: SitemapEntry[] = [
     path: `/rapport/${slug}`,
     changefreq: "monthly" as const,
     priority: "0.8"
+  })),
+
+  // Guider (långformat innehåll)
+  ...GUIDES.map(g => ({
+    path: `/guide/${g.slug}`,
+    lastmod: g.lastUpdated,
+    changefreq: "monthly" as const,
+    priority: "0.9"
   })),
 ]
 
