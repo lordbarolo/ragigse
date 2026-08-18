@@ -14,6 +14,8 @@ import {
   type DoctorSpecialtyConfig,
 } from "@/data/doctorSpecialtyReports";
 import { useCatalogZoneRates } from "@/hooks/useCatalogZoneRates";
+import RelateradeSidor from "@/components/report/RelateradeSidor";
+import { getRelatedPaths } from "@/data/relatedContent";
 import { trackEvent } from "@/lib/trackEvent";
 
 
@@ -117,6 +119,7 @@ export default function LakareSpecialtyReport() {
     rateRange: { min: lowZone, median: refRate, max: highZone, unit: "SEK/h" },
     skrSources: ["https://www.vgregion.se/ov/hyrpersonal/avtal-och-dokument/"],
     faq: FAQ,
+    relatedPaths: getRelatedPaths(cfg.slug),
   });
 
   const cream = "#0b0c10";
@@ -312,32 +315,6 @@ export default function LakareSpecialtyReport() {
           <section className="space-y-2.5 pt-2">
             <p className="text-[10px] font-semibold tracking-[1.4px] uppercase px-1" style={{ color: sub }}>Gå vidare med dina egna siffror</p>
 
-            <Link to={`/?yrke=${cfg.prefillSlug}`} className="block rounded-2xl border p-5 transition hover:shadow-xs" style={{ backgroundColor: card, borderColor: border }}>
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: `${violet}1A` }}>
-                  <ClipboardList className="w-5 h-5" style={{ color: accent }} />
-                </div>
-                <div className="flex-1">
-                  <p className="font-bold" style={{ fontFamily: "Georgia, serif", fontSize: "16px", color: ink }}>Personlig rapport</p>
-                  <p className="text-sm mt-1" style={{ color: sub }}>Få en rapport baserad på din kommun, anställningsform och nuvarande ersättning.</p>
-                </div>
-                <ArrowRight className="w-4 h-4 mt-2 shrink-0" style={{ color: accent }} />
-              </div>
-            </Link>
-
-            <Link to={`/?yrke=${cfg.prefillSlug}&fokus=lonekoll`} className="block rounded-2xl border p-5 transition hover:shadow-xs" style={{ backgroundColor: card, borderColor: border }}>
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: `${violet}1A` }}>
-                  <FileSearch className="w-5 h-5" style={{ color: accent }} />
-                </div>
-                <div className="flex-1">
-                  <p className="font-bold" style={{ fontFamily: "Georgia, serif", fontSize: "16px", color: ink }}>Lönekoll</p>
-                  <p className="text-sm mt-1" style={{ color: sub }}>Jämför din nuvarande ersättning mot ramavtalets spann i din zon.</p>
-                </div>
-                <ArrowRight className="w-4 h-4 mt-2 shrink-0" style={{ color: accent }} />
-              </div>
-            </Link>
-
             <Link to={`/?yrke=${cfg.prefillSlug}&fokus=faktura`} className="block rounded-2xl border p-5 transition hover:shadow-xs" style={{ backgroundColor: card, borderColor: border }}>
               <div className="flex items-start gap-3">
                 <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: `${violet}1A` }}>
@@ -351,6 +328,9 @@ export default function LakareSpecialtyReport() {
               </div>
             </Link>
           </section>
+
+          {/* Relaterade roller och underlag */}
+          <RelateradeSidor currentSlug={cfg.slug} prefillSlug={cfg.prefillSlug} />
 
           {/* Primär CTA */}
           <section className="rounded-2xl border p-5 text-center space-y-3" style={{ backgroundColor: card, borderColor: border }}>

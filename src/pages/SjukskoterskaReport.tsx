@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import { useEffect } from "react";
 import { useCatalogZoneRates } from "@/hooks/useCatalogZoneRates";
+import RelateradeSidor from "@/components/report/RelateradeSidor";
+import { getRelatedPaths } from "@/data/relatedContent";
 import { trackEvent } from "@/lib/trackEvent";
 
 
@@ -118,6 +120,7 @@ export default function SjukskoterskaReport() {
     rateRange: { min: lowZone, median: refRate, max: highZone, unit: "SEK/h" },
     skrSources: ["https://www.vgregion.se/ov/hyrpersonal/avtal-och-dokument/"],
     faq: FAQ,
+    relatedPaths: getRelatedPaths("sjukskoterska"),
   });
 
   const cream = "#0b0c10";
@@ -545,6 +548,9 @@ export default function SjukskoterskaReport() {
               </div>
             </Link>
           </section>
+
+          {/* Relaterade roller och underlag */}
+          <RelateradeSidor currentSlug="sjukskoterska" prefillSlug="sjukskoterska" />
 
           {/* Primär CTA */}
           <section
