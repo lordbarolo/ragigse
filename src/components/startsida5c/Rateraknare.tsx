@@ -64,7 +64,7 @@ export default function Rateraknare() {
         AI-INDIKATOR FÖR KONSULTERSÄTTNING
       </h2>
       <p className="mb-5 text-[15px]" style={{ color: "#a1a3ab", lineHeight: 1.5 }}>
-        Välj roll och ort för att se vad regionen betalar och vad du kan fakturera.
+        Välj roll och ort för att se marknadsmässig ersättning
       </p>
 
       <div className="grid gap-4 sm:grid-cols-2">
