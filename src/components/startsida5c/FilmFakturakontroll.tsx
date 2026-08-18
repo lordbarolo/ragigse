@@ -46,7 +46,7 @@ export default function FilmFakturakontroll() {
         </Link>
 
         <div className="mt-4 text-[13px]" style={{ color: "#a1a3ab" }}>
-          Ingen kostnad om vi inte hittar något.
+          Din AI-agent jämför dina fakturor mot tillhörande tidrapporter. Om du har pengar att hämta så hanterar vi faktureringen och ser till att du får betalt. Det kostar 20% av beloppet vi hittar. Vi får endast betalt om du får betalt,{" "}
         </div>
       </div>
     </section>
