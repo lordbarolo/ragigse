@@ -1,6 +1,7 @@
 /// <reference types="npm:@types/react@18.3.1" />
 import * as React from 'npm:react@18.3.1'
 import {
+  Img,
   Body, Button, Container, Head, Heading, Html, Preview, Text,
 } from 'npm:@react-email/components@0.0.22'
 import type { TemplateEntry } from './registry.ts'
@@ -17,7 +18,13 @@ const WelcomeEmail = ({ name }: WelcomeProps) => (
     <Preview>Välkommen till vårdbemanning.ai — din ersättningspartner</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Text style={logo}>{SITE_NAME}</Text>
+        <Img
+          src="https://vardbemanning.ai/vardbemanning-wordmark-light.png"
+          width="180"
+          height="29"
+          alt="vårdbemanning.ai"
+          style={logo}
+        />
         <Heading style={h1}>
           {name ? `Välkommen, ${name}!` : 'Välkommen till vårdbemanning.ai!'}
         </Heading>
@@ -52,7 +59,7 @@ export const template = {
 
 const main = { backgroundColor: '#ffffff', fontFamily: "'Inter', Arial, sans-serif" }
 const container = { padding: '32px 28px' }
-const logo = { fontSize: '20px', fontWeight: 'bold' as const, color: '#4F46E5', margin: '0 0 24px', fontFamily: "'Work Sans', 'Inter', Arial, sans-serif" }
+const logo = { display: 'block', width: '180px', height: 'auto', margin: '0 0 24px' }
 const h1 = { fontSize: '22px', fontWeight: '600' as const, color: '#111827', margin: '0 0 16px', fontFamily: "'Work Sans', 'Inter', Arial, sans-serif" }
 const text = { fontSize: '15px', color: '#475569', lineHeight: '1.6', margin: '0 0 20px' }
 const list = { fontSize: '15px', color: '#475569', lineHeight: '2', margin: '0 0 24px', whiteSpace: 'pre-line' as const }
