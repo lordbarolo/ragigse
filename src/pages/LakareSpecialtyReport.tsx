@@ -16,6 +16,7 @@ import {
 import { useCatalogZoneRates } from "@/hooks/useCatalogZoneRates";
 import RelateradeSidor from "@/components/report/RelateradeSidor";
 import { getRelatedPaths } from "@/data/relatedContent";
+import { getReportUpdatedAt } from "@/data/contentFreshness";
 import { trackEvent } from "@/lib/trackEvent";
 
 
@@ -25,7 +26,6 @@ import { trackEvent } from "@/lib/trackEvent";
  * Pris-källa: contract_version_rates v1.6 (SKR 2026), verifierat i DB.
  */
 
-const LAST_UPDATED = "2026-01-15";
 const fmt = (n: number) => n.toLocaleString("sv-SE", { maximumFractionDigits: 0 });
 
 // Marginalmodell — specialistläkare 10–15 %
@@ -64,6 +64,7 @@ export default function LakareSpecialtyReport() {
   const location = useLocation();
   const slug = location.pathname.replace(/^\/rapport\//, "").replace(/\/$/, "");
   const cfg = slug ? DOCTOR_SPECIALTY_BY_SLUG[slug] : undefined;
+  const LAST_UPDATED = getReportUpdatedAt(slug);
 
   // Priserna hämtas live ur contract_version_rates (v1.6); config-värdena är fallback.
   const rates = useCatalogZoneRates(cfg?.skrCategory ?? "", "v1.6", {

@@ -5,6 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import CompcareLogo from "@/components/CompcareLogo";
 import Navbar from "@/components/Navbar";
 import { JsonLd } from "@/components/JsonLd";
+import { getReportUpdatedAt } from "@/data/contentFreshness";
 import TLDRBox from "@/components/report/TLDRBox";
 import { buildRoleReportSchemas } from "@/lib/seo/roleReportSchema";
 import { useCatalogZoneRates } from "@/hooks/useCatalogZoneRates";
@@ -14,7 +15,7 @@ import { getRelatedPaths } from "@/data/relatedContent";
 
 // Single source of truth for the report's freshness stamp.
 // Same value drives the visible TL;DR timestamp AND every JSON-LD schema.
-const LAST_UPDATED = "2026-01-15";
+const LAST_UPDATED = getReportUpdatedAt("anestesisjukskoterska");
 
 import {
   Clock,

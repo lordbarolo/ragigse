@@ -3,6 +3,7 @@ import { Separator } from "@/components/ui/separator";
 import CompcareLogo from "@/components/CompcareLogo";
 import Navbar from "@/components/Navbar";
 import { JsonLd } from "@/components/JsonLd";
+import { getReportUpdatedAt } from "@/data/contentFreshness";
 import { buildRoleReportSchemas } from "@/lib/seo/roleReportSchema";
 import PensionImpactSimulator from "@/components/report/PensionImpactSimulator";
 import {
@@ -30,7 +31,7 @@ import { trackEvent } from "@/lib/trackEvent";
  * leg sjuksköterska, sjuksköterska, leg ssk, ssk (utan vidareutbildning).
  */
 
-const LAST_UPDATED = "2026-01-15";
+const LAST_UPDATED = getReportUpdatedAt("sjukskoterska");
 const fmt = (n: number) => n.toLocaleString("sv-SE", { maximumFractionDigits: 0 });
 
 // SKR ramavtal vårdbemanning 2026 — Sjuksköterska grundutbildning (dagtid)
