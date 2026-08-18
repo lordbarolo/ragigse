@@ -99,6 +99,7 @@ type EventName =
   | "pension_page_viewed"
   | "fakturahjalp_page_viewed"
   | "public_page_viewed"
+  | "related_link_clicked"
   | "fakturakontroll_uploaded"
   | "fakturakontroll_interest_submitted";
 
