@@ -211,7 +211,7 @@ export default function Signup() {
               {intentCopy?.title ?? "Skapa konto"}
             </CardTitle>
             <CardDescription className="text-white/70">
-              {intentCopy?.description ?? "Se marknadens villkor utifrån din roll och ort"}
+              {intentCopy?.description ?? "Din sida uppdateras automatiskt när ersättningar ändras. Exempelvis vid årliga indexjusteringar.\u00a0"}
             </CardDescription>
           </CardHeader>
 
