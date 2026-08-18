@@ -211,7 +211,7 @@ export default function Signup() {
               {intentCopy?.title ?? "Skapa konto"}
             </CardTitle>
             <CardDescription className="text-white/70">
-              {intentCopy?.description ?? "Se upphandlade priser på din roll och få insyn i Få tillgång till dina rapporter och personlig profil direkt"}
+              {intentCopy?.description ?? "Logga in för att se marknadens villkor utifrån din roll och ort"}
             </CardDescription>
           </CardHeader>
 
