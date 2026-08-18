@@ -9,7 +9,7 @@ const LINKS = [
 
 export default function Footer5c() {
   return (
-    <footer style={{ background: "#f5f5f7", borderTop: "1px solid #e3e3e8" }}>
+    <footer style={{ background: "#0b0c10", borderTop: "1px solid #22232b" }}>
       <div className="mx-auto flex max-w-[1200px] flex-col gap-4 px-5 py-10 md:flex-row md:items-center md:justify-between md:px-12">
         <img
           src="/vardbemanning-lockup-dark.svg"
@@ -18,14 +18,14 @@ export default function Footer5c() {
           draggable={false}
         />
 
-        <nav className="flex flex-wrap gap-x-6 gap-y-2 text-[14px]" style={{ color: "#4a4b52" }}>
+        <nav className="flex flex-wrap gap-x-6 gap-y-2 text-[14px]" style={{ color: "#b8bac2" }}>
           {LINKS.map((l) => (
             <Link key={l.to} to={l.to} className="hover:underline">
               {l.label}
             </Link>
           ))}
         </nav>
-        <div className="text-[12.5px]" style={{ color: "#6b6b6b" }}>
+        <div className="text-[12.5px]" style={{ color: "#8a8c94" }}>
           © 2026 vårdbemanning.ai · Data lagras inom EU
         </div>
       </div>
