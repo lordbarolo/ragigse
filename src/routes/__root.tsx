@@ -129,7 +129,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://eu.i.posthog.com", crossOrigin: "anonymous" },
       { rel: "dns-prefetch", href: "https://eu-assets.i.posthog.com" },
       { rel: "icon", href: "/favicon.ico", sizes: "48x48" },
-      { rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
       { rel: "icon", type: "image/png", sizes: "16x16", href: "/favicon-16x16.png" },
       { rel: "icon", type: "image/png", sizes: "32x32", href: "/favicon-32x32.png" },
       { rel: "icon", type: "image/png", sizes: "48x48", href: "/favicon-48x48.png" },
@@ -137,7 +136,6 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "icon", type: "image/png", sizes: "192x192", href: "/favicon-192x192.png" },
       { rel: "icon", type: "image/png", sizes: "512x512", href: "/favicon-512x512.png" },
       { rel: "apple-touch-icon", sizes: "180x180", href: "/apple-touch-icon.png" },
-      { rel: "mask-icon", href: "/safari-pinned-tab.svg", color: "#1D8F5C" },
 
     ],
     scripts: [
