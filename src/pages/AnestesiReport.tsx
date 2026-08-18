@@ -8,6 +8,8 @@ import { JsonLd } from "@/components/JsonLd";
 import TLDRBox from "@/components/report/TLDRBox";
 import { buildRoleReportSchemas } from "@/lib/seo/roleReportSchema";
 import { useCatalogZoneRates } from "@/hooks/useCatalogZoneRates";
+import RelateradeSidor from "@/components/report/RelateradeSidor";
+import { getRelatedPaths } from "@/data/relatedContent";
 
 
 // Single source of truth for the report's freshness stamp.
@@ -89,6 +91,7 @@ export default function AnestesiReport() {
           "OB-tilläggen följer SKR:s ramavtal: vardagkväll 36 kr/timme, vardagnatt 79 kr/timme, helgdag/helgkväll 92 kr/timme, helgnatt 105 kr/timme, storhelg 177–213 kr/timme.",
       },
     ],
+    relatedPaths: getRelatedPaths("anestesisjukskoterska"),
   });
 
   return (
@@ -254,6 +257,9 @@ export default function AnestesiReport() {
             ))}
           </div>
         </section>
+
+        {/* Relaterade roller och underlag */}
+        <RelateradeSidor currentSlug="anestesisjukskoterska" prefillSlug="anestesi" />
 
         {/* ── CTA ── */}
         <section className="rounded-2xl bg-gradient-to-b from-primary/[0.08] to-primary/[0.02] border border-primary/20 p-5 text-center space-y-3">
