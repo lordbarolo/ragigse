@@ -14,7 +14,7 @@ export const Route = createFileRoute("/")({
   },
   head: () =>
     seoHead({
-      title: "vårdbemanning.ai – AI för vårdens konsulter",
+      title: "vårdbemanning.ai – uppdaterade löner för vårdbemanning",
       description:
         "Hitta timmar du missat att fakturera, få notis vid årets prisjustering och stöd i löneförhandlingen. Baserat på offentliga ramavtal.",
       path: "/",
