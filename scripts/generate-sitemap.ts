@@ -8,6 +8,7 @@
 import { writeFileSync } from "fs"
 import { resolve } from "path"
 import { DOCTOR_SPECIALTY_REPORTS } from "../src/data/doctorSpecialtyReports"
+import { GUIDES } from "../src/data/guides"
 
 const BASE_URL = "https://vardbemanning.ai"
 

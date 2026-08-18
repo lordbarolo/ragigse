@@ -28,6 +28,7 @@ import { Route as DevAnalyticsRouteImport } from './routes/dev/analytics'
 import { Route as DevAnimationerRouteImport } from './routes/dev/animationer'
 import { Route as DevLlmsCheckRouteImport } from './routes/dev/llms-check'
 import { Route as DevStartsidaAnimationerRouteImport } from './routes/dev/startsida-animationer'
+import { Route as GuideHyrlakareLon2026RouteImport } from './routes/guide/hyrlakare-lon-2026'
 import { Route as KampanjRoleRouteImport } from './routes/kampanj/$role'
 import { Route as RapportReportIdRouteImport } from './routes/rapport/$reportId'
 import { Route as RapportAllmansjukskoterskaRouteImport } from './routes/rapport/allmansjukskoterska'
@@ -144,6 +145,11 @@ const DevLlmsCheckRoute = DevLlmsCheckRouteImport.update({
 const DevStartsidaAnimationerRoute = DevStartsidaAnimationerRouteImport.update({
   id: '/dev/startsida-animationer',
   path: '/dev/startsida-animationer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GuideHyrlakareLon2026Route = GuideHyrlakareLon2026RouteImport.update({
+  id: '/guide/hyrlakare-lon-2026',
+  path: '/guide/hyrlakare-lon-2026',
   getParentRoute: () => rootRouteImport,
 } as any)
 const KampanjRoleRoute = KampanjRoleRouteImport.update({
@@ -284,6 +290,7 @@ export interface FileRoutesByFullPath {
   '/dev/animationer': typeof DevAnimationerRoute
   '/dev/llms-check': typeof DevLlmsCheckRoute
   '/dev/startsida-animationer': typeof DevStartsidaAnimationerRoute
+  '/guide/hyrlakare-lon-2026': typeof GuideHyrlakareLon2026Route
   '/kampanj/$role': typeof KampanjRoleRoute
   '/rapport/$reportId': typeof RapportReportIdRoute
   '/rapport/allmansjukskoterska': typeof RapportAllmansjukskoterskaRoute
@@ -327,6 +334,7 @@ export interface FileRoutesByTo {
   '/dev/animationer': typeof DevAnimationerRoute
   '/dev/llms-check': typeof DevLlmsCheckRoute
   '/dev/startsida-animationer': typeof DevStartsidaAnimationerRoute
+  '/guide/hyrlakare-lon-2026': typeof GuideHyrlakareLon2026Route
   '/kampanj/$role': typeof KampanjRoleRoute
   '/rapport/$reportId': typeof RapportReportIdRoute
   '/rapport/allmansjukskoterska': typeof RapportAllmansjukskoterskaRoute
@@ -371,6 +379,7 @@ export interface FileRoutesById {
   '/dev/animationer': typeof DevAnimationerRoute
   '/dev/llms-check': typeof DevLlmsCheckRoute
   '/dev/startsida-animationer': typeof DevStartsidaAnimationerRoute
+  '/guide/hyrlakare-lon-2026': typeof GuideHyrlakareLon2026Route
   '/kampanj/$role': typeof KampanjRoleRoute
   '/rapport/$reportId': typeof RapportReportIdRoute
   '/rapport/allmansjukskoterska': typeof RapportAllmansjukskoterskaRoute
@@ -416,6 +425,7 @@ export interface FileRouteTypes {
     | '/dev/animationer'
     | '/dev/llms-check'
     | '/dev/startsida-animationer'
+    | '/guide/hyrlakare-lon-2026'
     | '/kampanj/$role'
     | '/rapport/$reportId'
     | '/rapport/allmansjukskoterska'
@@ -459,6 +469,7 @@ export interface FileRouteTypes {
     | '/dev/animationer'
     | '/dev/llms-check'
     | '/dev/startsida-animationer'
+    | '/guide/hyrlakare-lon-2026'
     | '/kampanj/$role'
     | '/rapport/$reportId'
     | '/rapport/allmansjukskoterska'
@@ -502,6 +513,7 @@ export interface FileRouteTypes {
     | '/dev/animationer'
     | '/dev/llms-check'
     | '/dev/startsida-animationer'
+    | '/guide/hyrlakare-lon-2026'
     | '/kampanj/$role'
     | '/rapport/$reportId'
     | '/rapport/allmansjukskoterska'
@@ -546,6 +558,7 @@ export interface RootRouteChildren {
   DevAnimationerRoute: typeof DevAnimationerRoute
   DevLlmsCheckRoute: typeof DevLlmsCheckRoute
   DevStartsidaAnimationerRoute: typeof DevStartsidaAnimationerRoute
+  GuideHyrlakareLon2026Route: typeof GuideHyrlakareLon2026Route
   KampanjRoleRoute: typeof KampanjRoleRoute
   RapportReportIdRoute: typeof RapportReportIdRoute
   RapportAllmansjukskoterskaRoute: typeof RapportAllmansjukskoterskaRoute
@@ -698,6 +711,13 @@ declare module '@tanstack/react-router' {
       path: '/dev/startsida-animationer'
       fullPath: '/dev/startsida-animationer'
       preLoaderRoute: typeof DevStartsidaAnimationerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guide/hyrlakare-lon-2026': {
+      id: '/guide/hyrlakare-lon-2026'
+      path: '/guide/hyrlakare-lon-2026'
+      fullPath: '/guide/hyrlakare-lon-2026'
+      preLoaderRoute: typeof GuideHyrlakareLon2026RouteImport
       parentRoute: typeof rootRouteImport
     }
     '/kampanj/$role': {
@@ -897,6 +917,7 @@ const rootRouteChildren: RootRouteChildren = {
   DevAnimationerRoute: DevAnimationerRoute,
   DevLlmsCheckRoute: DevLlmsCheckRoute,
   DevStartsidaAnimationerRoute: DevStartsidaAnimationerRoute,
+  GuideHyrlakareLon2026Route: GuideHyrlakareLon2026Route,
   KampanjRoleRoute: KampanjRoleRoute,
   RapportReportIdRoute: RapportReportIdRoute,
   RapportAllmansjukskoterskaRoute: RapportAllmansjukskoterskaRoute,
