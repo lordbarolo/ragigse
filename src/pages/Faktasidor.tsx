@@ -495,11 +495,11 @@ export default function Faktasidor() {
                 Underlaget är regionernas offentliga ramavtal 2026 (kundpris exklusive moms, grundpris — OB, jour och
                 beredskap tillkommer och faktureras separat). Ersättningsspannet visas i din personliga analys efter
                 inloggning. Bygger du en agent? Se{" "}
-                <a href="/llms.txt" className="underline underline-offset-4 hover:no-underline">
+                <a href="/llms.txt" aria-label="llms.txt – maskinläsbar beskrivning av vårdbemanning.ai" className="underline underline-offset-4 hover:no-underline">
                   /llms.txt
                 </a>{" "}
                 och{" "}
-                <a href="/openapi.json" className="underline underline-offset-4 hover:no-underline">
+                <a href="/openapi.json" aria-label="openapi.json – API-specifikation för sökflödet" className="underline underline-offset-4 hover:no-underline">
                   /openapi.json
                 </a>{" "}
                 för det maskinläsbara sökflödet.

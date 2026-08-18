@@ -202,6 +202,7 @@ export default function CvHistoryList({ refreshKey, onOpen }: Props) {
                         type="button"
                         disabled={busyId === d.id}
                         onClick={() => void openDraft(d.id)}
+                        aria-label={`Öppna CV-version ${d.version} från ${formatDate(d.updated_at)}`}
                         className="rounded-full border border-white/20 px-3 py-1 text-[11px] font-medium text-white/85 hover:bg-white/10 disabled:opacity-50"
                       >
                         Öppna
