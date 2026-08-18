@@ -3,6 +3,7 @@
 import * as React from 'npm:react@18.3.1'
 
 import {
+  Img,
   Body,
   Button,
   Container,
@@ -32,7 +33,13 @@ export const SignupEmail = ({
     <Preview>Bekräfta din e-post för vårdbemanning.ai</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Text style={logo}>vårdbemanning.ai</Text>
+        <Img
+          src="https://vardbemanning.ai/vardbemanning-wordmark-light.png"
+          width="180"
+          height="29"
+          alt="vårdbemanning.ai"
+          style={logo}
+        />
         <Heading style={h1}>Välkommen till vårdbemanning.ai!</Heading>
         <Text style={text}>
           Tack för att du registrerade dig. Bekräfta din e-postadress (
@@ -54,7 +61,7 @@ export default SignupEmail
 
 const main = { backgroundColor: '#ffffff', fontFamily: "'Inter', Arial, sans-serif" }
 const container = { padding: '32px 28px' }
-const logo = { fontSize: '20px', fontWeight: 'bold' as const, color: '#4F46E5', margin: '0 0 24px', fontFamily: "'Work Sans', 'Inter', Arial, sans-serif" }
+const logo = { display: 'block', width: '180px', height: 'auto', margin: '0 0 24px' }
 const h1 = { fontSize: '22px', fontWeight: '600' as const, color: '#111827', margin: '0 0 16px', fontFamily: "'Work Sans', 'Inter', Arial, sans-serif" }
 const text = { fontSize: '15px', color: '#475569', lineHeight: '1.6', margin: '0 0 24px' }
 const link = { color: '#4F46E5', textDecoration: 'underline' }
