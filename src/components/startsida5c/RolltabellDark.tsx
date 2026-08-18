@@ -11,14 +11,14 @@ const ROWS: { label: string; yrkeskategori: string }[] = [
   { label: "Leg. sjuksköterska", yrkeskategori: "Sjuksköterska" },
 ];
 
-// Sektionen är ljus hela vägen (övergången från mörkt sker i Hero).
+// Sektionen är mörk hela vägen (samma bas som heron).
 const ROW_THEME = [
-  { label: "#1a1b22", value: "#5a5b62", accent: "#1a1b22", border: "#e3e3e8" },
-  { label: "#1a1b22", value: "#5a5b62", accent: "#1a1b22", border: "#e3e3e8" },
-  { label: "#1a1b22", value: "#5a5b62", accent: "#1a1b22", border: "#e3e3e8" },
-  { label: "#1a1b22", value: "#5a5b62", accent: "#1a1b22", border: "#e3e3e8" },
-  { label: "#1a1b22", value: "#5a5b62", accent: "#1a1b22", border: "#e3e3e8" },
-  { label: "#1a1b22", value: "#5a5b62", accent: "#1a1b22", border: "#e3e3e8" },
+  { label: "#e8eaef", value: "#a1a3ab", accent: "#ffffff", border: "#22232b" },
+  { label: "#e8eaef", value: "#a1a3ab", accent: "#ffffff", border: "#22232b" },
+  { label: "#e8eaef", value: "#a1a3ab", accent: "#ffffff", border: "#22232b" },
+  { label: "#e8eaef", value: "#a1a3ab", accent: "#ffffff", border: "#22232b" },
+  { label: "#e8eaef", value: "#a1a3ab", accent: "#ffffff", border: "#22232b" },
+  { label: "#e8eaef", value: "#a1a3ab", accent: "#ffffff", border: "#22232b" },
 ];
 
 export default function RolltabellDark() {
@@ -27,21 +27,21 @@ export default function RolltabellDark() {
   return (
     <section
       style={{
-        background: "#f5f5f7",
+        background: "#0b0c10",
       }}
     >
       <div className="mx-auto max-w-[1200px] px-5 py-14 md:px-12 md:py-16">
         <div className="mb-6 flex flex-wrap items-baseline justify-between gap-2">
-          <h2 className="m-0 text-[22px] font-semibold md:text-[26px]" style={{ color: "#1a1b22", letterSpacing: "-0.01em" }}>
+          <h2 className="m-0 text-[22px] font-semibold md:text-[26px]" style={{ color: "#ffffff", letterSpacing: "-0.01em" }}>
             Mest sökta rollerna, alla zoner
           </h2>
-          <span className="text-[12px]" style={{ color: "#6b6b6b" }}>
+          <span className="text-[12px]" style={{ color: "#c4c6ce" }}>
             kr/timme som företagare
           </span>
         </div>
 
         {base.length === 0 ? (
-          <p className="text-[13px]" style={{ color: "#6b6b6b" }}>
+          <p className="text-[13px]" style={{ color: "#c4c6ce" }}>
             Prisdata kunde inte hämtas just nu.
           </p>
         ) : (
@@ -54,8 +54,8 @@ export default function RolltabellDark() {
                     key={h}
                     className="pb-3 text-[11px] font-medium uppercase tracking-[0.1em]"
                     style={{
-                      color: "#6b6b6b",
-                      borderBottom: "1px solid #e3e3e8",
+                      color: "#c4c6ce",
+                      borderBottom: "1px solid #22232b",
                       textAlign: i === 0 ? "left" : "right",
                       fontFamily: "'IBM Plex Mono',monospace",
                     }}
@@ -99,9 +99,9 @@ export default function RolltabellDark() {
         </div>
         )}
 
-        <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-[12px]" style={{ color: "#6b6b6b" }}>
+        <div className="mt-5 flex flex-wrap items-center justify-between gap-3 text-[12px]" style={{ color: "#c4c6ce" }}>
           <span>Högst ersättning markerad. Fullständig lista med alla roller efter inloggning.</span>
-          <Link to="/faktasidor" style={{ color: "#1a1b22" }} className="hover:underline">
+          <Link to="/faktasidor" style={{ color: "#e8eaef" }} className="hover:underline">
             Jämför alla roller →
           </Link>
         </div>

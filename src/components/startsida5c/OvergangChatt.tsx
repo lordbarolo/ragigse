@@ -9,7 +9,7 @@ export default function OvergangChatt() {
     <section
       id="assistent"
       className="form-light scroll-mt-16"
-      style={{ background: "#f5f5f7" }}
+      style={{ background: "#0b0c10" }}
     >
       <div className="relative mx-auto max-w-[1160px] px-5 pb-32 pt-10 text-center md:px-10 md:pb-40 md:pt-14">
         <div
@@ -27,14 +27,14 @@ export default function OvergangChatt() {
             style={{
               lineHeight: 1.08,
               letterSpacing: "-0.02em",
-              color: "#1a1b22",
+              color: "#ffffff",
             }}
           >
             Sätt din assistent i arbete.
             <br />
             <span
               style={{
-                background: "linear-gradient(90deg,#1a1b22,#6b6b6b)",
+                background: "linear-gradient(90deg,#ffffff,#b8bac2)",
                 WebkitBackgroundClip: "text",
                 backgroundClip: "text",
                 color: "transparent",
@@ -48,7 +48,7 @@ export default function OvergangChatt() {
             {user ? <HomeAssistantChat /> : <AssistantDemoChat />}
           </div>
 
-          <div className="mt-3 text-[13px]" style={{ color: "#6b6b6b" }}>
+          <div className="mt-3 text-[13px]" style={{ color: "#a1a3ab" }}>
             Data lagras inom EU · Vi delar aldrig dina uppgifter. Se{" "}
             <Link to="/integritetspolicy" className="underline">
               integritetspolicyn
