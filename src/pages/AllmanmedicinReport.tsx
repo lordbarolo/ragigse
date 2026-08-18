@@ -107,6 +107,7 @@ export default function AllmanmedicinReport() {
     rateRange: { min: lowZone, median: refRate, max: highZone, unit: "SEK/h" },
     skrSources: ["https://skr.se/ramavtal/vardbemanning"],
     faq: FAQ,
+    relatedPaths: getRelatedPaths("lakare-allmanmedicin"),
   });
 
   const cream = "#0b0c10";
