@@ -91,6 +91,7 @@ export default function AnestesiReport() {
           "OB-tilläggen följer SKR:s ramavtal: vardagkväll 36 kr/timme, vardagnatt 79 kr/timme, helgdag/helgkväll 92 kr/timme, helgnatt 105 kr/timme, storhelg 177–213 kr/timme.",
       },
     ],
+    relatedPaths: getRelatedPaths("anestesisjukskoterska"),
   });
 
   return (
