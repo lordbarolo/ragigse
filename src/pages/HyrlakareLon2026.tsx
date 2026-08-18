@@ -127,7 +127,7 @@ export default function HyrlakareLon2026() {
       headline: GUIDE.metaTitle,
       description: GUIDE.metaDescription,
       inLanguage: "sv-SE",
-      dateModified: GUIDE.lastUpdated,
+      dateModified: GUIDE_UPDATED_AT,
       mainEntityOfPage: {
         "@type": "WebPage",
         "@id": `https://vardbemanning.ai/guide/${GUIDE.slug}`,
@@ -176,7 +176,7 @@ export default function HyrlakareLon2026() {
 
       <main className="mx-auto w-full max-w-[1200px] px-5 pb-20 pt-10 md:px-12">
         <p className="text-[13px] font-medium uppercase tracking-wider" style={{ color: SUB }}>
-          Guide · Uppdaterad {GUIDE.lastUpdated}
+          Guide · Uppdaterad {GUIDE_UPDATED_AT}
         </p>
         <h1 className="mt-3 text-[32px] font-semibold leading-tight md:text-[44px]">
           Hyrläkare lön 2026
