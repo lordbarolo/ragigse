@@ -39,6 +39,8 @@ export interface RoleReportSchemaInput {
   faq?: Array<{ question: string; answer: string }>;
   /** Kort sammanfattning, motsvarar TL;DR-boxens innehåll. */
   summary?: string;
+  /** Relaterade interna sökvägar, t.ex. ["/rapport/lakare-kardiolog"]. Ger semantisk kontext. */
+  relatedPaths?: string[];
 }
 
 function buildPath(roleSlug: string, region?: string): string {
@@ -72,6 +74,7 @@ export function buildArticleSchema(input: RoleReportSchemaInput) {
     publisher: ORG_REF,
     creator: ORG_REF,
     isBasedOn: input.skrSources ?? ["https://skr.se/ramavtal/vardbemanning"],
+    relatedLink: input.relatedPaths?.map((path) => `${BASE_URL}${path}`),
     about: {
       "@type": "Thing",
       name: input.roleName,
@@ -123,6 +126,25 @@ export function buildDatasetSchema(input: RoleReportSchemaInput) {
   } as const;
 }
 
+/** ItemList över relaterade rollsidor — semantisk internlänkning för agenter. */
+export function buildRelatedItemListSchema(input: RoleReportSchemaInput) {
+  if (!input.relatedPaths || input.relatedPaths.length === 0) return null;
+  const url = `${BASE_URL}${buildPath(input.roleSlug, input.region)}`;
+
+  return {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "@id": `${url}#related`,
+    name: `Relaterade roller och underlag för ${input.roleName}`,
+    inLanguage: "sv-SE",
+    itemListElement: input.relatedPaths.map((path, i) => ({
+      "@type": "ListItem",
+      position: i + 1,
+      url: `${BASE_URL}${path}`,
+    })),
+  } as const;
+}
+
 /** FAQPage-schema — direkta agent-formulerade frågor & svar. */
 export function buildFaqSchema(input: RoleReportSchemaInput) {
   if (!input.faq || input.faq.length === 0) return null;
@@ -159,6 +181,7 @@ export function buildRoleReportSchemas(input: RoleReportSchemaInput) {
     buildArticleSchema(input),
     buildDatasetSchema(input),
     buildFaqSchema(input),
+    buildRelatedItemListSchema(input),
   ].filter(Boolean) as Record<string, unknown>[];
 }
 
