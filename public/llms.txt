@@ -15,6 +15,10 @@ Vid citering: "Källa: vardbemanning.ai, SKR:s ramavtal vårdbemanning 2026."
 - [Vanliga frågor](https://vardbemanning.ai/vanliga-fragor): Frågor och svar om ramavtal, priszoner och ersättning.
 - [Integritetspolicy](https://vardbemanning.ai/integritetspolicy): Behandling av personuppgifter, lagring inom EU.
 
+## Guider
+
+- [Hyrläkare lön 2026](https://vardbemanning.ai/guide/hyrlakare-lon-2026): Ramavtalspris per zon och möjlig timersättning för 14 läkarspecialiteter 2026, med förklaring av zoner, marginal, OB och jour.
+
 ## Rapporter per yrkesroll
 
 - [Sjuksköterska](https://vardbemanning.ai/rapport/sjukskoterska): Ramavtalspris per zon och möjlig ersättning för legitimerad sjuksköterska.
