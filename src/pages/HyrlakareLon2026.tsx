@@ -3,6 +3,7 @@ import { Link } from "@/lib/router-compat";
 import Navbar from "@/components/Navbar";
 import Footer5c from "@/components/startsida5c/Footer5c";
 import { JsonLd } from "@/components/JsonLd";
+import RelateradeSidor from "@/components/report/RelateradeSidor";
 import { DOCTOR_SPECIALTY_REPORTS } from "@/data/doctorSpecialtyReports";
 import { GUIDE_BY_SLUG } from "@/data/guides";
 import {
@@ -372,6 +373,14 @@ export default function HyrlakareLon2026() {
             Källa: SKR:s ramavtal vårdbemanning 2026 (läkarlistan v1.6).
           </p>
         </section>
+        {/* Relaterade roller och underlag */}
+        <div className="mt-12">
+          <RelateradeSidor
+            currentSlug="guide-hyrlakare-lon-2026"
+            prefillSlug="allmanmedicin"
+            showGuideLink={false}
+          />
+        </div>
       </main>
 
       <Footer5c />

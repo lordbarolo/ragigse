@@ -3,6 +3,8 @@ import { Separator } from "@/components/ui/separator";
 import CompcareLogo from "@/components/CompcareLogo";
 import Navbar from "@/components/Navbar";
 import { JsonLd } from "@/components/JsonLd";
+import RelateradeSidor from "@/components/report/RelateradeSidor";
+import { getRelatedPaths } from "@/data/relatedContent";
 import { buildRoleReportSchemas } from "@/lib/seo/roleReportSchema";
 import PensionImpactSimulator from "@/components/report/PensionImpactSimulator";
 import {
@@ -549,6 +551,9 @@ export default function AllmanmedicinReport() {
               Starta <ArrowRight className="w-4 h-4" />
             </Link>
           </section>
+
+          {/* Relaterade roller och underlag */}
+          <RelateradeSidor currentSlug="lakare-allmanmedicin" prefillSlug="allmanmedicin" />
 
           {/* Footer */}
           <div className="pt-4">
