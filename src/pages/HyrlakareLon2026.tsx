@@ -6,6 +6,7 @@ import { JsonLd } from "@/components/JsonLd";
 import RelateradeSidor from "@/components/report/RelateradeSidor";
 import { DOCTOR_SPECIALTY_REPORTS } from "@/data/doctorSpecialtyReports";
 import { GUIDE_BY_SLUG } from "@/data/guides";
+import { getGuideUpdatedAt } from "@/data/contentFreshness";
 import {
   SPECIALIST_DOCTOR_SHARE_MIN,
   SPECIALIST_DOCTOR_SHARE_MAX,
@@ -20,6 +21,7 @@ import {
  */
 
 const GUIDE = GUIDE_BY_SLUG["hyrlakare-lon-2026"]!;
+const GUIDE_UPDATED_AT = getGuideUpdatedAt(GUIDE.slug);
 
 const BG = "#0b0c10";
 const CARD = "#121319";
