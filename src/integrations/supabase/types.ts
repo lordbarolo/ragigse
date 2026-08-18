@@ -3681,6 +3681,83 @@ export type Database = {
         }
         Relationships: []
       }
+      seo_scan_findings: {
+        Row: {
+          check_id: string
+          created_at: string
+          id: string
+          message: string
+          path: string
+          run_id: string
+          severity: string
+        }
+        Insert: {
+          check_id: string
+          created_at?: string
+          id?: string
+          message: string
+          path: string
+          run_id: string
+          severity: string
+        }
+        Update: {
+          check_id?: string
+          created_at?: string
+          id?: string
+          message?: string
+          path?: string
+          run_id?: string
+          severity?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seo_scan_findings_run_id_fkey"
+            columns: ["run_id"]
+            isOneToOne: false
+            referencedRelation: "seo_scan_runs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      seo_scan_runs: {
+        Row: {
+          created_at: string
+          duration_ms: number | null
+          error_count: number
+          error_message: string | null
+          finished_at: string | null
+          id: string
+          pages_checked: number
+          started_at: string
+          status: string
+          warning_count: number
+        }
+        Insert: {
+          created_at?: string
+          duration_ms?: number | null
+          error_count?: number
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          pages_checked?: number
+          started_at?: string
+          status?: string
+          warning_count?: number
+        }
+        Update: {
+          created_at?: string
+          duration_ms?: number | null
+          error_count?: number
+          error_message?: string | null
+          finished_at?: string | null
+          id?: string
+          pages_checked?: number
+          started_at?: string
+          status?: string
+          warning_count?: number
+        }
+        Relationships: []
+      }
       specialties: {
         Row: {
           category: string
