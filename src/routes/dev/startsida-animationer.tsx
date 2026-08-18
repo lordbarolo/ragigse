@@ -52,7 +52,7 @@ function DevStartsidaAnimationer() {
       >
         <Link to="/" className="inline-flex items-center" aria-label="vårdbemanning.ai">
           <img
-            src="/vardbemanning-wordmark-dark.svg"
+            src="/vardbemanning-wordmark-dark.png"
             alt="vårdbemanning.ai"
             className="h-6 w-auto select-none md:h-7"
             draggable={false}

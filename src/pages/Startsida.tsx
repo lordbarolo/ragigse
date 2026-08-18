@@ -64,7 +64,7 @@ export default function Startsida5c() {
       >
         <Link to="/" className="inline-flex items-center">
           <img
-            src="/vardbemanning-wordmark-dark.svg"
+            src="/vardbemanning-wordmark-dark.png"
             alt="vårdbemanning.ai – till startsidan"
             className="h-6 w-auto select-none md:h-7"
             draggable={false}
