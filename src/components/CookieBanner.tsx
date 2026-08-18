@@ -64,7 +64,7 @@ export default function CookieBanner() {
             to="/integritetspolicy"
             className="text-primary hover:underline font-medium"
           >
-            Läs mer
+            Läs mer i integritetspolicyn
           </Link>
         </p>
         <div className="flex gap-2">

@@ -48,7 +48,7 @@ export default function CvStatusCard() {
           to="/consultant/cv"
           className={`shrink-0 ${btnPrimary}`}
         >
-          Öppna <ArrowRight className="h-4 w-4" />
+          Öppna CV-arbetsytan <ArrowRight className="h-4 w-4" />
         </Link>
       </div>
     </div>

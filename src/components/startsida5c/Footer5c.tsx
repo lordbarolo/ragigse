@@ -14,7 +14,7 @@ export default function Footer5c() {
       <div className="mx-auto flex max-w-[1200px] flex-col gap-4 px-5 py-10 md:flex-row md:items-center md:justify-between md:px-12">
         <img
           src="/vardbemanning-lockup-dark.svg"
-          alt="vårdbemanning.ai"
+          alt="vårdbemanning.ai – ramavtalspriser för vårdkonsulter"
           className="h-5 w-auto select-none"
           draggable={false}
         />

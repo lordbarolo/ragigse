@@ -238,7 +238,7 @@ export default function SearchableSelect({
         <button
           type="button"
           tabIndex={-1}
-          aria-label={open ? "Stäng" : "Öppna"}
+          aria-label={open ? `Stäng listan: ${placeholder}` : `Öppna listan: ${placeholder}`}
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => {
             setOpen((o) => !o);

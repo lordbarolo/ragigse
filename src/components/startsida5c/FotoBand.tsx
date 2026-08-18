@@ -15,7 +15,7 @@ export default function FotoBand() {
         <div className="overflow-hidden" style={{ borderRadius: 16 }}>
           <img
             src={sskFoto}
-            alt="Sjuksköterska i vårdmiljö"
+            alt="Sjuksköterska i arbetskläder på en vårdavdelning, med patientrum i bakgrunden"
             loading="lazy"
             className="h-[300px] w-full object-cover md:h-[420px]"
             style={{ borderRadius: 16 }}
