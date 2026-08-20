@@ -137,7 +137,10 @@ export function leaksForbiddenData(
   if (/regionens pris[^.]{0,40}\d/i.test(normalized)) return true;
   if (/kundpris\w*[^.]{0,40}\d/i.test(normalized)) return true;
   // Beräkningsmodellen: marginalprocent och omräkningsfaktorer.
+  // Fångar båda ordningarna: "marginal på 15 %" och "15–20 % i marginal".
   if (/margina\w*[^.]{0,40}\d\s*[–\-]?\s*\d*\s*%/i.test(normalized)) return true;
+  if (/\d\s*[–\-]?\s*\d*\s*%[^.]{0,40}margina\w*/i.test(normalized)) return true;
+  if (/(behåller|tar)[^.]{0,30}\d\s*[–\-]?\s*\d*\s*%/i.test(normalized)) return true;
   if (/\b1[.,]38\b/.test(normalized)) return true;
   if (/\b167\s*(timmar|h\b)/i.test(normalized)) return true;
 
