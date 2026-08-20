@@ -185,7 +185,7 @@ export default function Admin() {
           yrkeskategori,
           zon,
           typ,
-          timpris_kund: parseInt(timpris_kund, 10),
+          timpris_kund: parseInt(timpris_kund ?? "0", 10),
           detaljer: detaljer || null,
         };
       });
@@ -595,9 +595,9 @@ export default function Admin() {
                       return (
                         <tr key={r.id || `${r.yrkeskategori}-${r.zon}`} className="border-t">
                           <td className="p-2">
-                            <span className={`flex items-center gap-1 ${ct.color}`}>
+                            <span className={`flex items-center gap-1 ${ct?.color}`}>
                               <ChangeIcon type={r.change_type} />
-                              {ct.label}
+                              {ct?.label}
                             </span>
                           </td>
                           <td className="p-2">{r.yrkeskategori}</td>

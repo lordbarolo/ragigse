@@ -67,7 +67,7 @@ export default function RolltabellDark() {
             </thead>
             <tbody>
               {ROWS.map((r, rowIndex) => {
-                const t = ROW_THEME[rowIndex] ?? ROW_THEME[ROW_THEME.length - 1];
+                const t = ROW_THEME[rowIndex] ?? ROW_THEME[ROW_THEME.length - 1]!;
                 const values = ZONES_5C.map((z) => computeRate5c(base, r.yrkeskategori, z.value));
                 const max = Math.max(...values.map((v) => v?.foretagareKrH ?? -1));
                 return (
@@ -79,7 +79,7 @@ export default function RolltabellDark() {
                       const isMax = v != null && v.foretagareKrH === max;
                       return (
                         <td
-                          key={ZONES_5C[i].value}
+                          key={ZONES_5C[i]?.value ?? i}
                           className="py-3.5 text-right text-[14px] tabular-nums"
                           style={{
                             color: isMax ? t.accent : t.value,

@@ -77,9 +77,9 @@ export default function ProfileAuditLog() {
                       {FIELD_LABELS[r.field_name] || r.field_name}
                     </span>
                     <span
-                      className={`text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded ${src.cls}`}
+                      className={`text-[10px] uppercase tracking-wider font-semibold px-2 py-0.5 rounded ${src?.cls}`}
                     >
-                      {src.label}
+                      {src?.label}
                     </span>
                   </div>
                   <div className="flex items-center gap-2 text-xs text-slate-600 flex-wrap">

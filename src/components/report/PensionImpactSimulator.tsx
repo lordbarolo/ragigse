@@ -82,7 +82,7 @@ export default function PensionImpactSimulator({
           min={MIN_SALARY}
           max={MAX_SALARY}
           step={STEP}
-          onValueChange={(v) => setSalary(v[0])}
+          onValueChange={(v) => { if (v[0] !== undefined) setSalary(v[0]); }}
           aria-label="Bruttolön per månad"
         />
         <div className="flex justify-between text-[10px] text-muted-foreground mt-1.5 tabular-nums">

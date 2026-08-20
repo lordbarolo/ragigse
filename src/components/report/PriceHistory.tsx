@@ -34,6 +34,7 @@ export default function PriceHistory({ changes, userZone, occupation }: Props) {
   );
 
   const latest = sorted[0];
+  if (!latest) return null;
   const isIncrease = latest.diff_abs > 0;
   const isDecrease = latest.diff_abs < 0;
 
