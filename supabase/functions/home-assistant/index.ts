@@ -746,8 +746,8 @@ Deno.serve(async (req) => {
       const where = fixed ? `${fixed.place} (${zone})` : zone;
 
       if (fixed?.mode === "jamfor") {
-        const salaryLo = (price * lo) / 1.38;
-        const salaryHi = (price * hi) / 1.38;
+        const salaryLo = (price * lo) / EMPLOYER_FACTOR;
+        const salaryHi = (price * hi) / EMPLOYER_FACTOR;
         return json({
           answer:
             `Kundpriset för ${role} i ${where} är ${kr(price)} enligt ramavtal ${version}.\n\n` +
@@ -771,7 +771,7 @@ Deno.serve(async (req) => {
         answer:
           `${role} i ${where}: kundpris ${kr(price)} enligt ramavtal ${version}.\n\n` +
           `Möjlig ersättning som egenföretagare: ${kr(price * lo)}–${kr(price * hi)}.\n\n` +
-          `Som anställd motsvarar det ungefär ${kr((price * lo) / 1.38)}–${kr((price * hi) / 1.38)} i lön.`,
+          `Som anställd motsvarar det ungefär ${kr((price * lo) / EMPLOYER_FACTOR)}–${kr((price * hi) / EMPLOYER_FACTOR)} i lön.`,
         source: `SKR-ramavtal ${version}`,
       });
     }

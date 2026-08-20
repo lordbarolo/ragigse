@@ -17,6 +17,7 @@ import { getRelatedPaths } from "@/data/relatedContent";
 // Same value drives the visible TL;DR timestamp AND every JSON-LD schema.
 const LAST_UPDATED = getReportUpdatedAt("anestesisjukskoterska");
 
+import { anesthesiaRange } from "@/lib/pricing";
 import {
   Clock,
   Moon,
@@ -49,10 +50,7 @@ const OB_RATES = [
   { typ: "Storhelg natt", tid: "22–07", rate: 213, icon: Sparkles },
 ];
 
-const SHARE_MIN_FORETAGARE = 0.82;
-const SHARE_MAX_FORETAGARE = 0.88;
-const SHARE_MIN_ANSTALLD = 0.80;
-const SHARE_MAX_ANSTALLD = 0.86;
+// Anestesins marginalmodell ligger i src/lib/pricing.ts (ANESTHESIA_SHARES).
 
 export default function AnestesiReport() {
   const rates = useCatalogZoneRates("Specialistsjuksköterska anestesi", "v1.7", ZONE_FALLBACK);
@@ -63,10 +61,12 @@ export default function AnestesiReport() {
   const zone1Rate = rates.zone1;
   const zone3Rate = rates.zone3;
 
-  const recMinF = Math.round(zone1Rate * SHARE_MIN_FORETAGARE);
-  const recMaxF = Math.round(zone1Rate * SHARE_MAX_FORETAGARE);
-  const recMinA = Math.round(zone1Rate * SHARE_MIN_ANSTALLD);
-  const recMaxA = Math.round(zone1Rate * SHARE_MAX_ANSTALLD);
+  const foretagare = anesthesiaRange(zone1Rate, "foretagare");
+  const anstalld = anesthesiaRange(zone1Rate, "anstalld");
+  const recMinF = foretagare.min;
+  const recMaxF = foretagare.max;
+  const recMinA = anstalld.min;
+  const recMaxA = anstalld.max;
 
   const roleSchemas = buildRoleReportSchemas({
     roleName: "Anestesisjuksköterska",

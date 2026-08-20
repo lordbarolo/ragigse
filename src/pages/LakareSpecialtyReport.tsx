@@ -18,6 +18,7 @@ import RelateradeSidor from "@/components/report/RelateradeSidor";
 import { getRelatedPaths } from "@/data/relatedContent";
 import { getReportUpdatedAt } from "@/data/contentFreshness";
 import { trackEvent } from "@/lib/trackEvent";
+import { possibleRange, employedRange } from "@/lib/pricing";
 
 
 /**
@@ -29,11 +30,8 @@ import { trackEvent } from "@/lib/trackEvent";
 const fmt = (n: number) => n.toLocaleString("sv-SE", { maximumFractionDigits: 0 });
 
 // Marginalmodell — specialistläkare 10–15 %
-const SHARE_MIN_FORETAGARE = 0.85;
-const SHARE_MAX_FORETAGARE = 0.90;
-const SHARE_MIN_ANSTALLD = 0.83;
-const SHARE_MAX_ANSTALLD = 0.88;
-const EMPLOYER_FACTOR = 1.38;
+// Marginal- och arbetsgivarmodell: se src/lib/pricing.ts (enda källan).
+const MARGIN_ROLE = "Specialistläkare";
 
 function makeFaq(cfg: DoctorSpecialtyConfig, rates: { zone1: number; zone2: number; zone3: number }) {
   return [
@@ -103,10 +101,12 @@ export default function LakareSpecialtyReport() {
   const lowZone = rates.zone1;
   const highZone = rates.zone3;
   const refRate = rates.zone2;
-  const recMinF = Math.round(refRate * SHARE_MIN_FORETAGARE);
-  const recMaxF = Math.round(refRate * SHARE_MAX_FORETAGARE);
-  const recMinA = Math.round((refRate * SHARE_MIN_ANSTALLD) / EMPLOYER_FACTOR);
-  const recMaxA = Math.round((refRate * SHARE_MAX_ANSTALLD) / EMPLOYER_FACTOR);
+  const foretagare = possibleRange(refRate, MARGIN_ROLE, "foretagare");
+  const anstalld = employedRange(refRate, MARGIN_ROLE);
+  const recMinF = foretagare.min;
+  const recMaxF = foretagare.max;
+  const recMinA = anstalld.min;
+  const recMaxA = anstalld.max;
 
   const FAQ = makeFaq(cfg, rates);
 

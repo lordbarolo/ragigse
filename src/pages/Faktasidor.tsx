@@ -8,6 +8,7 @@ import SiteFooter from "@/components/landing/SiteFooter";
 import { JsonLd } from "@/components/JsonLd";
 import { trackEvent } from "@/lib/trackEvent";
 import { filterPublicRoles } from "@/lib/roleVisibility";
+import { shareRange as pricingShareRange } from "@/lib/pricing";
 
 type Zone = "Zon 1" | "Zon 2" | "Zon 3";
 
@@ -40,9 +41,10 @@ const ZONE_HELP: Record<Zone, string> = {
   "Zon 3": "Glesbygd och långt avstånd",
 };
 
-/** Andel av kundpriset som konsulten typiskt kan behålla (branschmarginal). */
+/** Andel av kundpriset som konsulten typiskt kan behålla — via central modell. */
 function shareRange(group: RolePrice["group"]) {
-  return group === "Läkare" ? { min: 0.85, max: 0.9 } : { min: 0.8, max: 0.85 };
+  const [min, max] = pricingShareRange(group === "Läkare" ? "Specialistläkare" : "Sjuksköterska");
+  return { min, max };
 }
 
 const kr = (n: number) => `${Math.round(n).toLocaleString("sv-SE")} kr`;

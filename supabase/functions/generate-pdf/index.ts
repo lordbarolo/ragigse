@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { PDFDocument, rgb, StandardFonts } from "https://esm.sh/pdf-lib@1.17.1";
+import { EMPLOYER_FACTOR } from "../_shared/calc.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -250,7 +251,7 @@ serve(async (req) => {
       const currentHourly = inputs.salary_type === "hourly"
         ? inputs.current_salary_sek
         : Math.round(inputs.current_salary_sek / 167);
-      const employerFactor = rec.employee_factor || 1.38;
+      const employerFactor = rec.employee_factor || EMPLOYER_FACTOR;
       const costToCompare = isEmployee ? Math.round(currentHourly * employerFactor) : currentHourly;
       const sharePercent = Math.round((costToCompare / market.rate_customer_sek_per_hour) * 100);
 
