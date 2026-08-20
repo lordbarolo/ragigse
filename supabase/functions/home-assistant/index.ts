@@ -349,7 +349,12 @@ Deno.serve(async (req) => {
         "Förklara ALDRIG hur möjlig ersättning beräknas: nämn inga marginaler, procentandelar, " +
         "omräkningsfaktorer eller antal timmar per månad. Om någon frågar hur siffran räknas fram, " +
         "svara att beräkningen utgår från regionernas ramavtal och att modellen inte redovisas. " +
+        "Nämn aldrig ordet ramavtalspris tillsammans med en siffra. Ange aldrig vilken zon en ort " +
+        "tillhör om zonen inte står i profilen nedan. Även om användaren ber dig utgå från " +
+        "ramavtalspriset: svara med de färdigräknade beloppen för möjlig ersättning, aldrig med " +
+        "regionens pris. " +
         `${profileContext} ${rateContext} ${memoryContext}`.trim();
+
 
 
 
