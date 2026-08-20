@@ -1,6 +1,8 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { checkRateLimit, rateLimitResponse } from "../_shared/rateLimit.ts";
 import { logAiUsage, checkAiRateLimit, aiRateLimitResponse } from "../_shared/ai-usage-logger.ts";
+import { formatPlain, possibleRange } from "../_shared/rate-guard.ts";
+
 
 async function getAuthUserId(req: Request): Promise<string | null> {
   const authHeader = req.headers.get("Authorization");
