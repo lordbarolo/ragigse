@@ -7,6 +7,14 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { z } from "https://esm.sh/zod@3.23.8";
 import { logAiUsage, extractTokensFromResponse, checkAiRateLimit, aiRateLimitResponse } from "../_shared/ai-usage-logger.ts";
 import { getAiGatewayUrl, getAiGatewayKey, getAiModel } from "../_shared/ai-transport.ts";
+import {
+  leaksForbiddenData,
+  missingDataAnswer,
+  MODEL_NOT_DISCLOSED,
+  possibleRange,
+  resolveZone,
+} from "../_shared/rate-guard.ts";
+
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -39,25 +47,15 @@ function mapEmployment(t: string | null | undefined): "foretagare" | "anstalld" 
   return (t === "foretagare" || t === "consultant") ? "foretagare" : "anstalld";
 }
 
-function isSpecialistDoctor(role: string): boolean {
-  const n = role.trim().toLowerCase();
-  return n.startsWith("specialistläkare") || n.startsWith("specialistlakare");
+/**
+ * Möjlig ersättning ur kundpriset. Marginalmodellen och arbetsgivarfaktorn
+ * kommer från den delade `rate-guard` — aldrig lokala konstanter.
+ */
+function calcRange(customerPrice: number, empType: "foretagare" | "anstalld", role: string) {
+  const range = possibleRange(customerPrice, role, empType);
+  return { hourly_min: range.min, hourly_max: range.max };
 }
 
-function calcRange(customerPrice: number, empType: "foretagare" | "anstalld", role: string) {
-  // Role-based margin (matches _shared/calc.ts):
-  //  - Specialistläkare: bemanning behåller 10–15% → konsult 85–90%
-  //  - Övriga roller: bemanning behåller 15–20% → konsult 80–85%
-  // Anställda divideras med employer_factor 1.38 för att få timlön.
-  const isSpec = isSpecialistDoctor(role);
-  const shareMin = isSpec ? 0.85 : 0.80;
-  const shareMax = isSpec ? 0.90 : 0.85;
-  const factor = empType === "anstalld" ? 1.38 : 1;
-  return {
-    hourly_min: Math.round((customerPrice * shareMin) / factor),
-    hourly_max: Math.round((customerPrice * shareMax) / factor),
-  };
-}
 
 const SYSTEM = `Du är vårdbemanning.ai:s neutrala marknadsanalytiker. Aldrig "topp X%" eller social benchmarking.
 Regler:
@@ -115,15 +113,27 @@ serve(async (req) => {
     }), { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 
-  // Look up zone for the region
-  const { data: regionRow } = await sb
-    .from("regions")
-    .select("zon")
-    .eq("kommun", body.region)
-    .maybeSingle();
+  // Zonen härleds ur kommunen via den delade uppslagningen. Ingen gissning:
+  // utan mappning returneras 422 i stället för priset för en godtycklig zon.
+  const zone = await resolveZone(sb, body.region);
+  if (!zone) {
+    return new Response(JSON.stringify({
+      error: "unknown_zone",
+      message: missingDataAnswer([
+        `vilken kommun eller närliggande ort som gäller (vi saknar uppgift för ${body.region})`,
+      ]),
+    }), { status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+  }
 
-  const zone = regionRow?.zon || rates[0].zon;
-  const zoneRate = rates.find((r) => r.zon === zone) ?? rates[0];
+  const zoneRate = rates.find((r) => r.zon === zone);
+  if (!zoneRate) {
+    return new Response(JSON.stringify({
+      error: "no_market_data",
+      message: missingDataAnswer([
+        `vilken roll som ligger närmast, eftersom vi saknar uppgift för ${body.role} i ${zone}`,
+      ]),
+    }), { status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+  }
 
   const empType = mapEmployment(body.employmentType);
   const range = calcRange(zoneRate.timpris_kund, empType, body.role);
@@ -134,12 +144,14 @@ serve(async (req) => {
     safeMin = body.currentRate;
   }
 
+  // Råa kundpriser lämnar aldrig funktionen — de används bara som spärrlista.
+  const forbiddenAmounts = (rates ?? []).map((r) => Math.round(Number(r.timpris_kund)));
+
   const facts = {
     role: body.role,
     region: body.region,
     zone,
     employmentType: empType,
-    customerPriceHour: zoneRate.timpris_kund,
     expectedRangeHour: { min: range.hourly_min, max: range.hourly_max },
     suggestedFloor: safeMin,
     currentRate: body.currentRate ?? null,
@@ -150,14 +162,15 @@ serve(async (req) => {
     return new Response(JSON.stringify({ error: "missing_api_key" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 
-  const userPrompt = `Marknadsdata för konsulten:
+  const userPrompt = `Marknadsdata för konsulten (beloppen är färdigräknade — använd dem exakt som de står):
 ${JSON.stringify(facts, null, 2)}
 
 Skriv en neutral marknadskommentar (max 5 meningar) som beskriver:
-1) Var ramavtalet ligger.
-2) Förväntat ersättningsspann (${range.hourly_min}–${range.hourly_max} kr/h).
+1) Att nivån utgår från regionernas ramavtal, utan att nämna regionens pris som siffra.
+2) Möjlig ersättning (${range.hourly_min}–${range.hourly_max} kr/h).
 3) En försiktig observation om förhandlingsutrymme givet det nuvarande timpriset (om angivet).
-Ange inga procent, inga peer-jämförelser, ingen "push"-ton.`;
+Ange inga procent, inga peer-jämförelser, ingen "push"-ton. Räkna aldrig själv.`;
+
 
   const model = getAiModel("google/gemini-3-flash-preview");
   try {
@@ -190,7 +203,13 @@ Ange inga procent, inga peer-jämförelser, ingen "push"-ton.`;
     }
 
     const json = await resp.json();
-    const commentary = json?.choices?.[0]?.message?.content?.trim?.() ?? "";
+    const rawCommentary = json?.choices?.[0]?.message?.content?.trim?.() ?? "";
+    // Utgångsspärr: läcker svaret ett rått kundpris eller beräkningsmodellen
+    // ersätts det med ett deterministiskt svar.
+    const commentary = leaksForbiddenData(rawCommentary, { forbiddenAmounts, hasRateContext: true })
+      ? `Möjlig ersättning för ${body.role} i ${body.region} ligger på ${range.hourly_min}–${range.hourly_max} kr/h. ${MODEL_NOT_DISCLOSED}`
+      : rawCommentary;
+
     const { inputTokens, outputTokens } = extractTokensFromResponse(json);
     await logAiUsage({
       feature: "ai-pricing-coach",

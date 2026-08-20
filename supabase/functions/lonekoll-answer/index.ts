@@ -18,6 +18,15 @@ import {
   checkAiRateLimit,
   aiRateLimitResponse,
 } from "../_shared/ai-usage-logger.ts";
+import {
+  EMPLOYER_FACTOR,
+  MODEL_NOT_DISCLOSED,
+  missingDataAnswer,
+  possibleRange,
+  resolveZone,
+} from "../_shared/rate-guard.ts";
+import { HOURS_PER_MONTH } from "../_shared/calc.ts";
+
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -119,31 +128,31 @@ async function loadContext(supabase: ReturnType<typeof createClient>, userId: st
 
 // ── Topic 1 / 3: rate lookup helper ────────────────────────────────────────
 
+/**
+ * Kundpris för roll + kommun. Zonen härleds ALLTID ur kommunen via den delade
+ * `resolveZone` (locations → regions). Utan zonmappning returneras
+ * `{ reason: "zone" }` — vi visar aldrig priset för en gissad zon.
+ */
 async function lookupRate(
   supabase: ReturnType<typeof createClient>,
   role: string,
   kommun: string | undefined,
-): Promise<{ timpris_kund: number; zon: string; yrkeskategori: string } | null> {
-  // Resolve zone (zon text) from kommun via regions->? In rates we have `zon` text.
-  // Geographies table likely has zone mapping. Simplest: try direct match on yrkeskategori,
-  // get all zones for role, then we don't know which zone applies. Use geographies if available.
-  let zon: string | null = null;
-  if (kommun) {
-    const { data: geo } = await supabase
-      .from("geographies")
-      .select("code, name, parent_id")
-      .or(`name.ilike.${kommun},code.ilike.${kommun}`)
-      .limit(1)
-      .maybeSingle();
-    if (geo?.code) zon = geo.code;
-  }
+): Promise<
+  | { ok: true; timpris_kund: number; zon: string; yrkeskategori: string }
+  | { ok: false; reason: "zone" | "role" }
+> {
+  const zon = await resolveZone(supabase, kommun);
+  if (!zon) return { ok: false, reason: "zone" };
 
-  const query = supabase.from("rates").select("yrkeskategori, zon, timpris_kund").ilike("yrkeskategori", role);
-  if (zon) query.eq("zon", zon);
-  const { data: rates } = await query.limit(1);
+  const { data: rates } = await supabase
+    .from("rates")
+    .select("yrkeskategori, zon, timpris_kund")
+    .ilike("yrkeskategori", role)
+    .eq("zon", zon)
+    .limit(1);
   if (rates && rates.length > 0) {
     const r = rates[0] as { yrkeskategori: string; zon: string; timpris_kund: number };
-    return r;
+    return { ok: true, ...r };
   }
 
   // Try role_aliases
@@ -153,27 +162,45 @@ async function lookupRate(
     .ilike("alias", role)
     .maybeSingle();
   if (alias?.canonical_role) {
-    const q2 = supabase.from("rates").select("yrkeskategori, zon, timpris_kund").eq("yrkeskategori", alias.canonical_role);
-    if (zon) q2.eq("zon", zon);
-    const { data: r2 } = await q2.limit(1);
-    if (r2 && r2.length > 0) return r2[0] as { yrkeskategori: string; zon: string; timpris_kund: number };
+    const { data: r2 } = await supabase
+      .from("rates")
+      .select("yrkeskategori, zon, timpris_kund")
+      .eq("yrkeskategori", alias.canonical_role)
+      .eq("zon", zon)
+      .limit(1);
+    if (r2 && r2.length > 0) {
+      const r = r2[0] as { yrkeskategori: string; zon: string; timpris_kund: number };
+      return { ok: true, ...r };
+    }
   }
 
-  return null;
+  return { ok: false, reason: "role" };
 }
 
-async function getMarginModel(
-  supabase: ReturnType<typeof createClient>,
-  employmentType: string | undefined,
-): Promise<{ share_min: number; share_max: number; employer_factor: number; hours_per_month: number } | null> {
-  const name = employmentType === "foretagare" ? "foretagare" : "anstalld";
-  const { data } = await supabase
-    .from("margin_models")
-    .select("share_min, share_max, employer_factor, hours_per_month")
-    .ilike("name", `%${name}%`)
-    .eq("is_active", true)
-    .maybeSingle();
-  return data as { share_min: number; share_max: number; employer_factor: number; hours_per_month: number } | null;
+/** Deterministiskt svar när underlag saknas — aldrig belopp, aldrig gissad zon. */
+function noDataAnswer(reason: "zone" | "role", ctx: UserContext): string {
+  if (reason === "zone") {
+    return missingDataAnswer([
+      `vilken kommun eller närliggande ort uppdraget gäller (vi saknar uppgift för ${ctx.kommun ?? "din ort"})`,
+    ]);
+  }
+  return missingDataAnswer([
+    `vilken roll som ligger närmast, eftersom vi saknar uppgift för ${ctx.role ?? "din roll"}`,
+  ]);
+}
+
+/**
+ * Möjlig ersättning per timme och månad. Marginalen är redan avdragen och
+ * anställda räknas om med arbetsgivarfaktorn — endast dessa belopp får visas.
+ */
+function possibleForContext(customerPrice: number, ctx: UserContext) {
+  const range = possibleRange(customerPrice, ctx.role ?? "", ctx.employment_type);
+  return {
+    ...range,
+    mid: Math.round((range.min + range.max) / 2),
+    monthlyMin: Math.round(range.min * HOURS_PER_MONTH),
+    monthlyMax: Math.round(range.max * HOURS_PER_MONTH),
+  };
 }
 
 // ── Topic 1 deterministic answers ──────────────────────────────────────────
@@ -181,6 +208,7 @@ async function getMarginModel(
 function fmt(n: number): string {
   return Math.round(n).toLocaleString("sv-SE");
 }
+
 
 async function answerTopic1(
   supabase: ReturnType<typeof createClient>,
@@ -194,35 +222,22 @@ async function answerTopic1(
     return `För att besvara den här frågan behöver vi veta din ${missing.join(" och ")}. Komplettera i din profil eller gör en lönekoll först.`;
   }
 
-  const rate = await lookupRate(supabase, ctx.role!, ctx.kommun);
-  if (!rate) {
-    return `Vi hittar inget aktuellt SKR-ramavtalspris för **${ctx.role}** i **${ctx.kommun}**. Det kan bero på att rollen inte är upphandlad i den zonen, eller att namnet behöver standardiseras. Kontakta oss så hjälper vi dig.`;
-  }
+  const lookup = await lookupRate(supabase, ctx.role!, ctx.kommun);
+  if (!lookup.ok) return noDataAnswer(lookup.reason, ctx);
+  const rate = lookup;
 
-  const margin = await getMarginModel(supabase, ctx.employment_type);
-  if (!margin) {
-    return `Vi kan inte visa möjlig ersättning för anställningstypen just nu. Försök igen senare.`;
-  }
-
-  const lo = rate.timpris_kund * Number(margin.share_min);
-  const hi = rate.timpris_kund * Number(margin.share_max);
+  const possible = possibleForContext(rate.timpris_kund, ctx);
   const empType = ctx.employment_type === "foretagare" ? "konsult via eget bolag" : "anställd konsult";
 
   switch (questionId) {
     case "ranges": {
-      const monthlyLo = ctx.employment_type === "foretagare"
-        ? lo * margin.hours_per_month
-        : (lo * margin.hours_per_month) / Number(margin.employer_factor);
-      const monthlyHi = ctx.employment_type === "foretagare"
-        ? hi * margin.hours_per_month
-        : (hi * margin.hours_per_month) / Number(margin.employer_factor);
       return [
-        `**Aktuellt SKR-ramavtalspris för ${rate.yrkeskategori} i ${ctx.kommun} (${rate.zon}):** ${fmt(rate.timpris_kund)} kr/h kundpris.`,
+        `**Möjlig ersättning för ${rate.yrkeskategori} i ${ctx.kommun} (${rate.zon}), som ${empType}:**`,
         ``,
-        `**Förväntat spann för ${empType}:** ${fmt(lo)}–${fmt(hi)} kr/h.`,
-        `Motsvarande månadsersättning: **${fmt(monthlyLo)}–${fmt(monthlyHi)} kr/mån**.`,
+        `**${fmt(possible.min)}–${fmt(possible.max)} kr/h.**`,
+        `Motsvarande månadsersättning: **${fmt(possible.monthlyMin)}–${fmt(possible.monthlyMax)} kr/mån**.`,
         ``,
-        `Marginalen (${Math.round((1 - Number(margin.share_max)) * 100)}–${Math.round((1 - Number(margin.share_min)) * 100)}%) täcker bemanningsföretagets administration, rekrytering och risk.`,
+        MODEL_NOT_DISCLOSED,
       ].join("\n");
     }
     case "nearby": {
@@ -236,26 +251,33 @@ async function answerTopic1(
         .eq("region", ctx.region)
         .neq("kommun", ctx.kommun)
         .limit(20);
-      const samples: Array<{ kommun: string; rate: number; zon: string }> = [];
+      const samples: Array<{ kommun: string; zon: string; min: number; max: number; sort: number }> = [];
       for (const n of neighbours ?? []) {
-        const r = await lookupRate(supabase, ctx.role!, (n as { kommun: string }).kommun);
-        if (r && r.timpris_kund > rate.timpris_kund) {
-          samples.push({ kommun: (n as { kommun: string }).kommun, rate: r.timpris_kund, zon: r.zon });
+        const kommun = (n as { kommun: string }).kommun;
+        const r = await lookupRate(supabase, ctx.role!, kommun);
+        if (r.ok && r.timpris_kund > rate.timpris_kund) {
+          const p = possibleForContext(r.timpris_kund, ctx);
+          samples.push({ kommun, zon: r.zon, min: p.min, max: p.max, sort: r.timpris_kund });
         }
       }
-      samples.sort((a, b) => b.rate - a.rate);
+      samples.sort((a, b) => b.sort - a.sort);
       const top = samples.slice(0, 5);
       if (top.length === 0) {
-        return `Inom **${ctx.region}** har vi inga närliggande orter med högre kundpris för **${rate.yrkeskategori}** än ${ctx.kommun} (${fmt(rate.timpris_kund)} kr/h).`;
+        return [
+          `Inom **${ctx.region}** har vi inga närliggande orter med högre möjlig ersättning för **${rate.yrkeskategori}** än ${ctx.kommun}.`,
+          ``,
+          `Där ligger möjlig ersättning på **${fmt(possible.min)}–${fmt(possible.max)} kr/h**.`,
+        ].join("\n");
       }
       return [
-        `**Närliggande orter i ${ctx.region} med högre kundpris för ${rate.yrkeskategori}:**`,
+        `**Närliggande orter i ${ctx.region} med högre möjlig ersättning för ${rate.yrkeskategori}:**`,
         ``,
-        ...top.map((t) => `- **${t.kommun}** (${t.zon}): ${fmt(t.rate)} kr/h`),
+        ...top.map((t) => `- **${t.kommun}** (${t.zon}): ${fmt(t.min)}–${fmt(t.max)} kr/h`),
         ``,
         `Notera: Restid, boende och introduktion kan påverka din nettoersättning.`,
       ].join("\n");
     }
+
     case "cost_factors":
       return [
         `**Kostnader som ofta belastar bemanningsföretaget och kan motivera ett lägre timpris än ramavtalets max:**`,
@@ -395,17 +417,19 @@ async function answerTopic3(
   questionId: string,
   ctx: UserContext,
 ): Promise<string> {
-  const rate = ctx.role && ctx.kommun ? await lookupRate(supabase, ctx.role, ctx.kommun) : null;
-  const margin = await getMarginModel(supabase, ctx.employment_type);
-
-  if (!rate || !margin) {
+  if (!ctx.role || !ctx.kommun) {
     return `För att ge förhandlingsstöd behöver vi din roll, kommun och anställningsform. Komplettera i din profil eller gör en lönekoll först.`;
   }
+  const lookup = await lookupRate(supabase, ctx.role, ctx.kommun);
+  if (!lookup.ok) return noDataAnswer(lookup.reason, ctx);
+  const rate = lookup;
 
-  const lo = rate.timpris_kund * Number(margin.share_min);
-  const median = rate.timpris_kund * ((Number(margin.share_min) + Number(margin.share_max)) / 2);
-  const hi = rate.timpris_kund * Number(margin.share_max);
-  const current = ctx.current_rate ?? (ctx.current_salary ? (ctx.current_salary * Number(margin.employer_factor)) / margin.hours_per_month : null);
+  const possible = possibleForContext(rate.timpris_kund, ctx);
+  const lo = possible.min;
+  const median = possible.mid;
+  const hi = possible.max;
+  const current = ctx.current_rate ??
+    (ctx.current_salary ? (ctx.current_salary * EMPLOYER_FACTOR) / HOURS_PER_MONTH : null);
 
   switch (questionId) {
     case "realistic_range": {
@@ -421,8 +445,11 @@ async function answerTopic3(
         current ? `- Din nuvarande ersättning: ${fmt(current)} kr/h` : ``,
         ``,
         `**Realistiskt att begära:** ${fmt(floor)}–${fmt(ceiling)} kr/h, beroende på vad bemanningsföretaget åtar sig (resa, boende, intro).`,
+        ``,
+        MODEL_NOT_DISCLOSED,
       ].filter(Boolean).join("\n");
     }
+
     case "arguments":
       return [
         `**Argument som stärker din position:**`,
@@ -440,11 +467,12 @@ async function answerTopic3(
         `**Hur du hanterar motbud:**`,
         ``,
         `1. **Fråga efter motiveringen:** "Vilka kostnader belastar uppdraget?" (resa, boende, intro, vite)`,
-        `2. **Jämför mot ramavtalets max:** ${fmt(rate.timpris_kund)} kr/h är kundpriset — din ersättning är förhandlingsbar.`,
+        `2. **Utgå från möjlig ersättning:** ${fmt(lo)}–${fmt(hi)} kr/h är nivån vi ser för din roll och ort — din ersättning är förhandlingsbar.`,
         `3. **Erbjud paket:** Lägre timpris mot längre uppdrag eller fler pass.`,
         `4. **Be om skriftligt:** Be om bemanningsbolagets kalkyl över vilka kostnader uppdraget medför. Många säger nej — vilket också är information.`,
         `5. **Ha en walk-away-nivå:** Skriv ner i förväg vilket pris du tackar nej under.`,
       ].join("\n");
+
     case "walk_away": {
       const walkAway = current ? current : lo;
       return [
@@ -470,24 +498,27 @@ async function answerTopic4(
   questionId: string,
   ctx: UserContext,
 ): Promise<string> {
-  const rate = ctx.role && ctx.kommun ? await lookupRate(supabase, ctx.role, ctx.kommun) : null;
-
-  const { data: empMargin } = await supabase.from("margin_models").select("share_min, share_max, employer_factor, hours_per_month").ilike("name", "%anstalld%").eq("is_active", true).maybeSingle();
-  const { data: foreMargin } = await supabase.from("margin_models").select("share_min, share_max, employer_factor, hours_per_month").ilike("name", "%foretagare%").eq("is_active", true).maybeSingle();
+  const lookup = ctx.role && ctx.kommun
+    ? await lookupRate(supabase, ctx.role, ctx.kommun)
+    : ({ ok: false, reason: "role" } as const);
+  const rate = lookup.ok ? lookup : null;
 
   switch (questionId) {
     case "ab_vs_employee": {
-      if (!rate || !empMargin || !foreMargin) {
+      if (!rate) {
+        if (ctx.role && ctx.kommun && !lookup.ok) return noDataAnswer(lookup.reason, ctx);
         return `För att räkna på AB vs anställd behöver vi din roll och kommun. Komplettera i din profil.`;
       }
-      const empMonthly = (rate.timpris_kund * Number(empMargin.share_max) * empMargin.hours_per_month) / Number(empMargin.employer_factor);
-      const foreHourly = rate.timpris_kund * Number(foreMargin.share_max);
-      const foreMonthly = foreHourly * foreMargin.hours_per_month; // gross to AB, before owner salary/tax
+      // Båda alternativen räknas med den delade modellen — marginalen är redan avdragen.
+      const employed = possibleRange(rate.timpris_kund, ctx.role ?? "", "anstalld");
+      const company = possibleRange(rate.timpris_kund, ctx.role ?? "", "foretagare");
+      const empMonthly = employed.max * HOURS_PER_MONTH;
+      const foreMonthly = company.max * HOURS_PER_MONTH;
       return [
         `**${rate.yrkeskategori} i ${ctx.kommun} — AB vs anställd (övre spann):**`,
         ``,
-        `- **Anställd via bf:** ~${fmt(empMonthly)} kr/mån brutto`,
-        `- **Eget AB:** ~${fmt(foreHourly)} kr/h × ${foreMargin.hours_per_month} h = ${fmt(foreMonthly)} kr/mån till bolaget (före lön + sociala avgifter)`,
+        `- **Anställd via bf:** ~${fmt(employed.max)} kr/h, ~${fmt(empMonthly)} kr/mån brutto`,
+        `- **Eget AB:** ~${fmt(company.max)} kr/h till bolaget, ~${fmt(foreMonthly)} kr/mån (före lön + sociala avgifter)`,
         ``,
         `**Vad du behöver tänka på som AB:**`,
         `- Du betalar arbetsgivaravgifter (~31%) + egen lön + bolagsskatt på vinst`,
@@ -496,8 +527,11 @@ async function answerTopic4(
         `- Större upside vid längre uppdrag och hög omsättning`,
         ``,
         `**Tumregel:** AB lönar sig oftast vid >30 000 kr/mån i nettoöverskott, eller om du värdesätter friheten att styra själv.`,
+        ``,
+        MODEL_NOT_DISCLOSED,
       ].join("\n");
     }
+
     case "vite_foretagare":
       return [
         `**Vitesansvar som företagare:**`,
@@ -529,7 +563,7 @@ async function answerTopic4(
       return [
         `**Nettoskillnad AB vs anställd (förenklat):**`,
         ``,
-        `Vid samma kundpris (${rate ? fmt(rate.timpris_kund) + " kr/h" : "X kr/h"}):`,
+        `Vid samma uppdrag och samma nivå på möjlig ersättning:`,
         `- **Anställd:** Din arbetsgivare betalar arbetsgivaravgifter (~31,42%), pension, semester, sjuklön. Du får brutto, sedan inkomstskatt.`,
         `- **AB:** Du betalar arbetsgivaravgift på egen lön, men kan låta överskott stå i bolaget (22% bolagsskatt) och ta ut som utdelning (20% under 3:12-gränsen).`,
         ``,
