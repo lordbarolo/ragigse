@@ -312,21 +312,9 @@ Deno.serve(async (req) => {
         return null;
       }
 
-      /** Kommun → zon. Två källor, annars null (ingen gissning). */
-      async function resolveZone(kommun: string): Promise<string | null> {
-        const name = kommun.trim().replace(/\s+kommun$/i, "");
-        const { data: locRows } = await supabase
-          .from("locations")
-          .select("zon")
-          .ilike("kommun", name);
-        const fromLoc = ((locRows ?? [])[0] as { zon?: string } | undefined)?.zon ?? null;
-        if (fromLoc) return fromLoc;
-        const { data: regRows } = await supabase
-          .from("regions")
-          .select("zon")
-          .ilike("kommun", name);
-        return ((regRows ?? [])[0] as { zon?: string } | undefined)?.zon ?? null;
-      }
+      /** Kommun → zon via den delade uppslagningen (locations → regions). */
+      const resolveZone = (kommun: string) => resolveZoneShared(supabase, kommun);
+
 
       /** Ort ur frågan: matchas mot faktiska kommuner, aldrig fritt gissad. */
       async function kommunFromQuestion(): Promise<string | null> {
