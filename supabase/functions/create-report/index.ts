@@ -106,7 +106,13 @@ serve(async (req) => {
         }
       : undefined;
 
-    const m = model ?? { share_min: 0.85, share_max: 0.90, employer_factor: 1.47, hours_per_month: 167 };
+    // Fallback = den centrala modellen (_shared/calc + rate-guard), inte lokala siffror.
+    const m = model ?? {
+      share_min: SPECIALIST_DOCTOR_SHARE_MIN,
+      share_max: SPECIALIST_DOCTOR_SHARE_MAX,
+      employer_factor: EMPLOYER_FACTOR,
+      hours_per_month: HOURS_PER_MONTH,
+    };
 
     // Look up zone from locations
     const { data: locData } = await supabase
