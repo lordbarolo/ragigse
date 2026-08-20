@@ -3,6 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import {
   calculateSalaryRange,
   getMarginShares,
+  EMPLOYER_FACTOR,
   type EmploymentType,
   type MarginModel,
 } from "../_shared/calc.ts";
