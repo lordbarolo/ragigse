@@ -213,35 +213,22 @@ async function answerTopic1(
     return `För att besvara den här frågan behöver vi veta din ${missing.join(" och ")}. Komplettera i din profil eller gör en lönekoll först.`;
   }
 
-  const rate = await lookupRate(supabase, ctx.role!, ctx.kommun);
-  if (!rate) {
-    return `Vi hittar inget aktuellt SKR-ramavtalspris för **${ctx.role}** i **${ctx.kommun}**. Det kan bero på att rollen inte är upphandlad i den zonen, eller att namnet behöver standardiseras. Kontakta oss så hjälper vi dig.`;
-  }
+  const lookup = await lookupRate(supabase, ctx.role!, ctx.kommun);
+  if (!lookup.ok) return noDataAnswer(lookup.reason, ctx);
+  const rate = lookup;
 
-  const margin = await getMarginModel(supabase, ctx.employment_type);
-  if (!margin) {
-    return `Vi kan inte visa möjlig ersättning för anställningstypen just nu. Försök igen senare.`;
-  }
-
-  const lo = rate.timpris_kund * Number(margin.share_min);
-  const hi = rate.timpris_kund * Number(margin.share_max);
+  const possible = possibleForContext(rate.timpris_kund, ctx);
   const empType = ctx.employment_type === "foretagare" ? "konsult via eget bolag" : "anställd konsult";
 
   switch (questionId) {
     case "ranges": {
-      const monthlyLo = ctx.employment_type === "foretagare"
-        ? lo * margin.hours_per_month
-        : (lo * margin.hours_per_month) / Number(margin.employer_factor);
-      const monthlyHi = ctx.employment_type === "foretagare"
-        ? hi * margin.hours_per_month
-        : (hi * margin.hours_per_month) / Number(margin.employer_factor);
       return [
-        `**Aktuellt SKR-ramavtalspris för ${rate.yrkeskategori} i ${ctx.kommun} (${rate.zon}):** ${fmt(rate.timpris_kund)} kr/h kundpris.`,
+        `**Möjlig ersättning för ${rate.yrkeskategori} i ${ctx.kommun} (${rate.zon}), som ${empType}:**`,
         ``,
-        `**Förväntat spann för ${empType}:** ${fmt(lo)}–${fmt(hi)} kr/h.`,
-        `Motsvarande månadsersättning: **${fmt(monthlyLo)}–${fmt(monthlyHi)} kr/mån**.`,
+        `**${fmt(possible.min)}–${fmt(possible.max)} kr/h.**`,
+        `Motsvarande månadsersättning: **${fmt(possible.monthlyMin)}–${fmt(possible.monthlyMax)} kr/mån**.`,
         ``,
-        `Marginalen (${Math.round((1 - Number(margin.share_max)) * 100)}–${Math.round((1 - Number(margin.share_min)) * 100)}%) täcker bemanningsföretagets administration, rekrytering och risk.`,
+        MODEL_NOT_DISCLOSED,
       ].join("\n");
     }
     case "nearby": {
@@ -255,26 +242,33 @@ async function answerTopic1(
         .eq("region", ctx.region)
         .neq("kommun", ctx.kommun)
         .limit(20);
-      const samples: Array<{ kommun: string; rate: number; zon: string }> = [];
+      const samples: Array<{ kommun: string; zon: string; min: number; max: number; sort: number }> = [];
       for (const n of neighbours ?? []) {
-        const r = await lookupRate(supabase, ctx.role!, (n as { kommun: string }).kommun);
-        if (r && r.timpris_kund > rate.timpris_kund) {
-          samples.push({ kommun: (n as { kommun: string }).kommun, rate: r.timpris_kund, zon: r.zon });
+        const kommun = (n as { kommun: string }).kommun;
+        const r = await lookupRate(supabase, ctx.role!, kommun);
+        if (r.ok && r.timpris_kund > rate.timpris_kund) {
+          const p = possibleForContext(r.timpris_kund, ctx);
+          samples.push({ kommun, zon: r.zon, min: p.min, max: p.max, sort: r.timpris_kund });
         }
       }
-      samples.sort((a, b) => b.rate - a.rate);
+      samples.sort((a, b) => b.sort - a.sort);
       const top = samples.slice(0, 5);
       if (top.length === 0) {
-        return `Inom **${ctx.region}** har vi inga närliggande orter med högre kundpris för **${rate.yrkeskategori}** än ${ctx.kommun} (${fmt(rate.timpris_kund)} kr/h).`;
+        return [
+          `Inom **${ctx.region}** har vi inga närliggande orter med högre möjlig ersättning för **${rate.yrkeskategori}** än ${ctx.kommun}.`,
+          ``,
+          `Där ligger möjlig ersättning på **${fmt(possible.min)}–${fmt(possible.max)} kr/h**.`,
+        ].join("\n");
       }
       return [
-        `**Närliggande orter i ${ctx.region} med högre kundpris för ${rate.yrkeskategori}:**`,
+        `**Närliggande orter i ${ctx.region} med högre möjlig ersättning för ${rate.yrkeskategori}:**`,
         ``,
-        ...top.map((t) => `- **${t.kommun}** (${t.zon}): ${fmt(t.rate)} kr/h`),
+        ...top.map((t) => `- **${t.kommun}** (${t.zon}): ${fmt(t.min)}–${fmt(t.max)} kr/h`),
         ``,
         `Notera: Restid, boende och introduktion kan påverka din nettoersättning.`,
       ].join("\n");
     }
+
     case "cost_factors":
       return [
         `**Kostnader som ofta belastar bemanningsföretaget och kan motivera ett lägre timpris än ramavtalets max:**`,
