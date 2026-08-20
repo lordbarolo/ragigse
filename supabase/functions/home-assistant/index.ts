@@ -424,7 +424,7 @@ Deno.serve(async (req) => {
         "tillhör om zonen inte står i profilen nedan. Även om användaren ber dig utgå från " +
         "ramavtalspriset: svara med de färdigräknade beloppen för möjlig ersättning, aldrig med " +
         "regionens pris. " +
-        `${profileContext} ${rateContext} ${memoryContext}`.trim();
+        `${profileContext} ${rateContext} ${fallbackContext} ${memoryContext}`.trim();
 
 
 
