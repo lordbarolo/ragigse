@@ -47,10 +47,13 @@ Regler:
 
 function buildUserPrompt(topic: string, role: string | null | undefined, region: string | null | undefined, employmentType: string | null | undefined, data: unknown): string {
   const ctx = `Roll: ${role || "okänd"}. Region: ${region || "okänd"}. Anställningsform: ${employmentType || "okänd"}.`;
-  const dataStr = JSON.stringify(data).slice(0, 1500);
+  // Alla belopp maskeras till färdiga ersättningsspann (rate-guard) innan de når
+  // modellen — råa kundpriser får aldrig ingå i ett användarsvar.
+  const safeData = maskCustomerPrices(data, role ?? "", employmentType);
+  const dataStr = JSON.stringify(safeData).slice(0, 1500);
   switch (topic) {
     case "zone_rates":
-      return `${ctx}\n\nDessa är ramavtalspriser (kundpris per timme) per geografisk zon för rollen, hämtade från SKR-ramavtal:\n${dataStr}\n\nFörklara kort vad mönstret betyder och varför priserna skiljer sig mellan zoner.`;
+      return `${ctx}\n\nDessa är möjliga ersättningsspann per geografisk zon för rollen, härledda ur SKR-ramavtalen:\n${dataStr}\n\nFörklara kort vad mönstret betyder och varför nivåerna skiljer sig mellan zoner. Redovisa aldrig kundpris eller hur spannen räknas fram.`;
     case "salary_zones":
       return `${ctx}\n\nDessa är förväntade ersättningsspann per zon för konsulten, baserade på ramavtalspriser:\n${dataStr}\n\nFörklara kort vad spannen betyder för en konsult i denna roll.`;
     case "upcoming_assignments":
@@ -59,6 +62,7 @@ function buildUserPrompt(topic: string, role: string | null | undefined, region:
       return `${ctx}\n\nData:\n${dataStr}\n\nFörklara kort vad detta visar.`;
   }
 }
+
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
