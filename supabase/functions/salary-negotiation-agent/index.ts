@@ -804,6 +804,15 @@ serve(async (req) => {
       history
     );
 
+    // Utgångsspärr (rate-guard): kundpris och beräkningsmodell får aldrig nå svaret.
+    const forbiddenAmounts = ciResults
+      .filter((r) => r.ok)
+      .map((r) => (r.data?.data as Record<string, unknown> | undefined)?.amount)
+      .filter((v): v is number => typeof v === "number");
+    const guardedAdvice = leaksForbiddenData(advice, { forbiddenAmounts })
+      ? MODEL_NOT_DISCLOSED
+      : advice;
+
     // Collect sources and policy info
     const sources = ciResults
       .filter((r) => r.ok && r.data.source)
@@ -814,12 +823,14 @@ serve(async (req) => {
     );
 
     const response: AgentResponse = {
-      advice: sanitizeReijdarText(advice),
+      advice: sanitizeReijdarText(guardedAdvice),
       situation_summary: sanitizeReijdarText(situation_summary),
-      data_points: ciResults.filter((r) => r.ok).map((r) => ({
-        capability: r.capability,
-        data: r.data.data,
-      })),
+      data_points: ciResults.filter((r) => r.ok).map((r) => {
+        // Kundpriset (`amount`) skickas aldrig till klienten.
+        const { amount: _amount, ...safeData } = (r.data.data ?? {}) as Record<string, unknown>;
+        return { capability: r.capability, data: safeData };
+      }),
+
       sources: uniqueSources.map((source) => ({
         ...source,
         name: sanitizeReijdarText(source.name),
