@@ -7,7 +7,6 @@ import ProfileAssistantChat from "@/components/profile/ProfileAssistantChat";
 import ProfileContextCard from "@/components/profile/ProfileContextCard";
 import AssistantMemoryCard from "@/components/profile/AssistantMemoryCard";
 import ProfileSideNav from "@/components/profile/ProfileSideNav";
-import AgentStatusCard from "@/components/profile/AgentStatusCard";
 
 import ProfileToolsGrid from "@/components/profile/ProfileToolsGrid";
 import ProfileDocumentsSection from "@/components/profile/ProfileDocumentsSection";
