@@ -385,7 +385,27 @@ Deno.serve(async (req) => {
         return json({ error: "Assistenten kunde inte svara just nu." }, 502);
       }
       const aiJson = await aiRes.json();
-      const answer = aiJson?.choices?.[0]?.message?.content?.trim();
+      const rawAnswer = aiJson?.choices?.[0]?.message?.content?.trim();
+      // ── Utgångsspärr: läcker svaret regionens pris (eller sätter en zon vi inte
+      //    har belopp för) ersätts det av ett deterministiskt svar. ──
+      const leaksRegionPrice =
+        !!rawAnswer &&
+        (forbiddenAmounts.some((amount) =>
+          new RegExp(`\\b${amount.toString().replace(/(\d)(\d{3})$/, "$1[\\s\u00a0]?$2")}\\b`).test(
+            rawAnswer.replace(/\u00a0/g, " "),
+          )
+        ) ||
+          /ramavtalspris\w*[^.]{0,40}\d/i.test(rawAnswer) ||
+          /regionens pris[^.]{0,40}\d/i.test(rawAnswer));
+      const answer = leaksRegionPrice
+        ? (rateContext
+          ? `${rateContext.replace(
+            /\. Dessa belopp[\s\S]*$/,
+            ".",
+          )}\n\nBeräkningen utgår från regionernas ramavtal. Modellen bakom beloppen redovisas inte.`
+          : "Jag har inga sparade ersättningsbelopp för din roll och ort ännu.")
+        : rawAnswer;
+
       const { inputTokens, outputTokens } = extractTokensFromResponse(aiJson);
       await logAiUsage({
         feature: "home-assistant",
