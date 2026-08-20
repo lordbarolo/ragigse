@@ -174,7 +174,7 @@ export default function ProfileAssistantChat({ userId, context, unlocked, onSave
   }
 
   return (
-    <div className="flex h-[520px] w-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#121319]">
+    <div className="flex h-[420px] w-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-[#121319]">
       {/* Header */}
       <div className="flex shrink-0 items-center gap-2.5 border-b border-white/10 px-4 py-3 sm:px-5">
         <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-white/10">
