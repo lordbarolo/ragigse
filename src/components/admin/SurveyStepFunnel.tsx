@@ -40,8 +40,8 @@ export default function SurveyStepFunnel({ data, loading, period, onRefresh }: P
       }));
   })();
 
-  const totals = STEPS.map((_, i) => rows.reduce((sum, r) => sum + r.counts[i], 0));
-  const totalCr = pct(totals[3], totals[0]);
+  const totals = STEPS.map((_, i) => rows.reduce((sum, r) => sum + (r.counts[i] ?? 0), 0));
+  const totalCr = pct(totals[3] ?? 0, totals[0] ?? 0);
 
   return (
     <Card>
@@ -79,12 +79,12 @@ export default function SurveyStepFunnel({ data, loading, period, onRefresh }: P
               </TableHeader>
               <TableBody>
                 {rows.map((r) => {
-                  const dayCr = pct(r.counts[3], r.counts[0]);
+                  const dayCr = pct(r.counts[3] ?? 0, r.counts[0] ?? 0);
                   return (
                     <TableRow key={r.date}>
                       <TableCell className="font-mono text-xs text-muted-foreground">{r.date}</TableCell>
                       {r.counts.map((c, i) => {
-                        const stepPct = i === 0 ? null : pct(c, r.counts[i - 1]);
+                        const stepPct = i === 0 ? null : pct(c, r.counts[i - 1] ?? 0);
                         return (
                           <TableCell key={i} className="text-right font-mono text-sm">
                             <span className="text-foreground">{fmt(c)}</span>
@@ -107,7 +107,7 @@ export default function SurveyStepFunnel({ data, loading, period, onRefresh }: P
                 <TableRow>
                   <TableCell className="font-semibold text-xs">TOTALT {period}d</TableCell>
                   {totals.map((t, i) => {
-                    const stepPct = i === 0 ? null : pct(t, totals[i - 1]);
+                    const stepPct = i === 0 ? null : pct(t, totals[i - 1] ?? 0);
                     return (
                       <TableCell key={i} className="text-right font-mono text-sm font-semibold">
                         <span className="text-foreground">{fmt(t)}</span>

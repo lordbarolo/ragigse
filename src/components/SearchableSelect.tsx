@@ -143,7 +143,7 @@ export default function SearchableSelect({
           e.preventDefault();
           if (highlightedIndex >= 0 && highlightedIndex < flatList.length) {
             const opt = flatList[highlightedIndex];
-            onValueChange(opt.value);
+            if (opt) onValueChange(opt.value);
             setOpen(false);
             inputRef.current?.blur();
           }

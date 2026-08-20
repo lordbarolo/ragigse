@@ -141,8 +141,8 @@ export default function FeedbackStats() {
                       return (
                         <tr key={i} className="border-b last:border-0">
                           <td className="p-2">
-                            <Badge className={cfg.color} variant="outline">
-                              <span className="flex items-center gap-1">{cfg.icon} {cfg.label}</span>
+                            <Badge className={cfg?.color} variant="outline">
+                              <span className="flex items-center gap-1">{cfg?.icon} {cfg?.label}</span>
                             </Badge>
                           </td>
                           <td className="p-2">{r.role || "–"}</td>
