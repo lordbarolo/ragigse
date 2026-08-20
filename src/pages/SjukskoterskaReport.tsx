@@ -306,7 +306,7 @@ export default function SjukskoterskaReport() {
                 {
                   label: "Anställd via bemanning",
                   share: "Bruttolön",
-                  range: "370–395\u00a0kr/timme",
+                  range: `${fmt(recMinA)}–${fmt(recMaxA)}\u00a0kr/timme`,
                 },
               ].map((row) => (
                 <div
