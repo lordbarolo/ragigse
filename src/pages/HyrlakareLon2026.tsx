@@ -136,6 +136,20 @@ export default function HyrlakareLon2026() {
     };
   }, []);
 
+  // Priserna hämtas live ur contract_version_rates (v1.6); config-värdena är fallback.
+  const catalog = useCatalogZoneRatesBatch(ROW_CATEGORIES, "v1.6");
+  const ROWS: GuideRow[] = ROW_CONFIG.map((r) => {
+    const rates = catalog.get(r.skrCategory, r.fallback);
+    return { slug: r.slug, title: r.title, ...rates };
+  });
+  const FAQ = buildFaq(ROWS);
+  const LOWEST = Math.min(...ROWS.map((r) => r.zone1));
+  const HIGHEST = Math.max(...ROWS.map((r) => r.zone3));
+  const PAY_LOW = lo(LOWEST);
+  const PAY_HIGH = hi(HIGHEST);
+
+
+
   const schemas: Record<string, unknown>[] = [
     {
       "@context": "https://schema.org",
