@@ -276,48 +276,99 @@ Deno.serve(async (req) => {
 
       const ctx = body.context ?? null;
 
-      // ── Zonen härleds ur kommunen. Utan träff får modellen inga belopp alls,
-      //    så den kan inte gissa fel zon (t.ex. Gällivare som "Zon 1"). ──
-      let userZone: string | null = null;
-      if (ctx?.kommun) {
+      // ── Rollistan ur katalogen: används både för uppslag och för att tolka
+      //    roll/ort som användaren uppger i själva frågan. ──
+      const { data: catalogRows } = await supabase
+        .from("contract_version_rates")
+        .select("yrkeskategori, zon, timpris_kund, contract_versions!inner(is_active, version_label)")
+        .eq("typ", "Grundpris")
+        .eq("contract_versions.is_active", true);
+      const catalog = ((catalogRows ?? []) as unknown as {
+        yrkeskategori: string;
+        zon: string;
+        timpris_kund: number;
+        contract_versions: { version_label: string };
+      }[]).filter((r) => r.yrkeskategori && !GROUP_LABEL.test(r.yrkeskategori));
+
+      const q = question.toLowerCase();
+
+      /** Roll ur frågan: exakt kataloginamn först, därefter ett fåtal vardagsnamn. */
+      function roleFromQuestion(): string | null {
+        const names = Array.from(new Set(catalog.map((r) => r.yrkeskategori)))
+          .sort((a, b) => b.length - a.length);
+        const direct = names.find((n) => q.includes(n.toLowerCase()));
+        if (direct) return direct;
+        const aliases: [RegExp, RegExp][] = [
+          [/\bspecialistläkare\b/, /^specialistläkare$/i],
+          [/\b(leg\.?\s*läkare|läkare)\b/, /^legitimerad läkare$/i],
+          [/\b(sjuksköterska|ssk)\b/, /^legitimerad sjuksköterska$/i],
+        ];
+        for (const [needle, target] of aliases) {
+          if (needle.test(q)) {
+            const hit = names.find((n) => target.test(n));
+            if (hit) return hit;
+          }
+        }
+        return null;
+      }
+
+      /** Kommun → zon. Två källor, annars null (ingen gissning). */
+      async function resolveZone(kommun: string): Promise<string | null> {
+        const name = kommun.trim().replace(/\s+kommun$/i, "");
         const { data: locRows } = await supabase
           .from("locations")
-          .select("kommun, zon")
-          .ilike("kommun", ctx.kommun);
-        userZone = ((locRows ?? [])[0] as { zon?: string } | undefined)?.zon ?? null;
+          .select("zon")
+          .ilike("kommun", name);
+        const fromLoc = ((locRows ?? [])[0] as { zon?: string } | undefined)?.zon ?? null;
+        if (fromLoc) return fromLoc;
+        const { data: regRows } = await supabase
+          .from("regions")
+          .select("zon")
+          .ilike("kommun", name);
+        return ((regRows ?? [])[0] as { zon?: string } | undefined)?.zon ?? null;
       }
+
+      /** Ort ur frågan: matchas mot faktiska kommuner, aldrig fritt gissad. */
+      async function kommunFromQuestion(): Promise<string | null> {
+        const { data: locRows } = await supabase.from("locations").select("kommun");
+        const names = ((locRows ?? []) as { kommun: string }[])
+          .map((r) => r.kommun)
+          .filter((k) => k && k.length >= 4)
+          .sort((a, b) => b.length - a.length);
+        return names.find((k) => q.includes(k.toLowerCase())) ?? null;
+      }
+
+      // Uppgifter från frågan kompletterar profilen när profilen saknar dem.
+      const effRole = (ctx?.role && !GROUP_LABEL.test(ctx.role) ? ctx.role : null) ??
+        roleFromQuestion();
+      const effKommun = ctx?.kommun ?? (await kommunFromQuestion());
+
+      // ── Zonen härleds ur kommunen. Utan träff får modellen inga belopp alls,
+      //    så den kan inte gissa fel zon (t.ex. Gällivare som "Zon 1"). ──
+      const userZone = effKommun ? await resolveZone(effKommun) : null;
 
       let rateContext = "";
       // Råa kundpriser samlas för utgångsspärren nedan — de får aldrig nå svaret.
       const forbiddenAmounts: number[] = [];
-      if (ctx?.role && !GROUP_LABEL.test(ctx.role)) {
-        const { data: rateRows } = await supabase
-          .from("contract_version_rates")
-          .select("zon, timpris_kund, contract_versions!inner(is_active, version_label)")
-          .eq("typ", "Grundpris")
-          .eq("contract_versions.is_active", true)
-          .ilike("yrkeskategori", ctx.role);
-        const allRows = (rateRows ?? []) as unknown as {
-          zon: string;
-          timpris_kund: number;
-          contract_versions: { version_label: string };
-        }[];
+      if (effRole) {
+        const allRows = catalog.filter(
+          (r) => r.yrkeskategori.toLowerCase() === effRole.toLowerCase(),
+        );
         for (const r of allRows) forbiddenAmounts.push(Math.round(Number(r.timpris_kund)));
-        const rows = userZone ? allRows.filter((r) => r.zon === userZone) : allRows;
+        const rows = userZone ? allRows.filter((r) => r.zon === userZone) : [];
         if (rows.length) {
-          const [shareLo, shareHi] = shareRange(ctx.role);
-          const employed = ctx.employment_type === "anstalld";
+          const [shareLo, shareHi] = shareRange(effRole);
+          const employed = ctx?.employment_type === "anstalld";
           const factor = employed ? EMPLOYER_FACTOR : 1;
           // Enda tillåtna siffror i svaret: möjlig ersättning per zon, redan
           // nedräknad från regionens pris med bemanningsföretagets marginal.
           rateContext =
-            `Möjlig ersättning för ${ctx.role} (${rows[0].contract_versions.version_label}), ` +
-            `${employed ? "som anställd konsult" : "som egenföretagare"}` +
-            `${userZone ? ` i ${ctx.kommun} (${userZone})` : ""}: ` +
+            `Möjlig ersättning för ${effRole} (${rows[0].contract_versions.version_label}), ` +
+            `${employed ? "som anställd konsult" : "som egenföretagare"} i ${effKommun}: ` +
             rows
               .map((r) => {
                 const p = Number(r.timpris_kund);
-                return `${r.zon} ${krPlain((p * shareLo) / factor)}–${kr((p * shareHi) / factor)}`;
+                return `${krPlain((p * shareLo) / factor)}–${kr((p * shareHi) / factor)}`;
               })
               .join(", ") +
             ". Dessa belopp är redan färdigräknade — använd dem exakt som de står, " +
@@ -325,12 +376,32 @@ Deno.serve(async (req) => {
         }
       }
 
+      // ── Fallback: saknas roll, ort eller zon-mappning lämnas inga belopp alls.
+      //    Assistenten ska då fråga efter exakt det som saknas. ──
+      const missing: string[] = [];
+      if (!effRole) missing.push("vilken roll (yrkestitel) frågan gäller");
+      if (!effKommun) missing.push("vilken kommun eller ort uppdraget gäller");
+      else if (!userZone) missing.push(`vilken närliggande kommun som gäller (vi saknar uppgift för ${effKommun})`);
+      if (effRole && effKommun && userZone && !rateContext) {
+        missing.push("vilken roll som ligger närmast, eftersom vi saknar pris för den angivna rollen");
+      }
+      const fallbackContext = rateContext
+        ? ""
+        : "VIKTIGT: vi har inga färdigräknade ersättningsbelopp för den här frågan. " +
+          "Nämn därför INGA belopp och gör inga beräkningar. Svara kort och be användaren " +
+          `om följande uppgifter: ${missing.join("; ")}. ` +
+          "Förklara att du kan visa möjlig ersättning så snart uppgifterna finns.";
 
       const profileContext = ctx
         ? `Användarens profil: roll ${ctx.role ?? "okänd"}, ort ${ctx.kommun ?? "okänd"}, ` +
           `kontraktsform ${ctx.employment_type ?? "okänd"}, nuvarande ersättning ` +
-          `${ctx.current_hourly_rate ?? "okänd"} kr/h.`
-        : "Användaren har ingen sparad profil.";
+          `${ctx.current_hourly_rate ?? "okänd"} kr/h.` +
+          (effRole && effRole !== ctx.role ? ` Roll enligt frågan: ${effRole}.` : "") +
+          (effKommun && effKommun !== ctx.kommun ? ` Ort enligt frågan: ${effKommun}.` : "")
+        : "Användaren har ingen sparad profil." +
+          (effRole ? ` Roll enligt frågan: ${effRole}.` : "") +
+          (effKommun ? ` Ort enligt frågan: ${effKommun}.` : "");
+
 
       const key = getAiGatewayKey();
       if (!key) return json({ error: "Assistenten är inte tillgänglig just nu." }, 503);
