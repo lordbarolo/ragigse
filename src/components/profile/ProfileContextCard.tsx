@@ -116,7 +116,7 @@ export default function ProfileContextCard({ userId, context, onSaved }: Props) 
       icon: FileText,
     },
     {
-      label: "Ersättning",
+      label: "Angiven ersättning idag",
       value: context.hourlyRate ? `${context.hourlyRate.toLocaleString("sv-SE")} kr/timme` : "—",
       icon: Coins,
     },
