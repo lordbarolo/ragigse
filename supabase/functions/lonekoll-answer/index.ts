@@ -18,6 +18,15 @@ import {
   checkAiRateLimit,
   aiRateLimitResponse,
 } from "../_shared/ai-usage-logger.ts";
+import {
+  EMPLOYER_FACTOR,
+  MODEL_NOT_DISCLOSED,
+  missingDataAnswer,
+  possibleRange,
+  resolveZone,
+} from "../_shared/rate-guard.ts";
+import { HOURS_PER_MONTH } from "../_shared/calc.ts";
+
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
