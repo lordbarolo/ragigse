@@ -119,31 +119,31 @@ async function loadContext(supabase: ReturnType<typeof createClient>, userId: st
 
 // ── Topic 1 / 3: rate lookup helper ────────────────────────────────────────
 
+/**
+ * Kundpris för roll + kommun. Zonen härleds ALLTID ur kommunen via den delade
+ * `resolveZone` (locations → regions). Utan zonmappning returneras
+ * `{ reason: "zone" }` — vi visar aldrig priset för en gissad zon.
+ */
 async function lookupRate(
   supabase: ReturnType<typeof createClient>,
   role: string,
   kommun: string | undefined,
-): Promise<{ timpris_kund: number; zon: string; yrkeskategori: string } | null> {
-  // Resolve zone (zon text) from kommun via regions->? In rates we have `zon` text.
-  // Geographies table likely has zone mapping. Simplest: try direct match on yrkeskategori,
-  // get all zones for role, then we don't know which zone applies. Use geographies if available.
-  let zon: string | null = null;
-  if (kommun) {
-    const { data: geo } = await supabase
-      .from("geographies")
-      .select("code, name, parent_id")
-      .or(`name.ilike.${kommun},code.ilike.${kommun}`)
-      .limit(1)
-      .maybeSingle();
-    if (geo?.code) zon = geo.code;
-  }
+): Promise<
+  | { ok: true; timpris_kund: number; zon: string; yrkeskategori: string }
+  | { ok: false; reason: "zone" | "role" }
+> {
+  const zon = await resolveZone(supabase, kommun);
+  if (!zon) return { ok: false, reason: "zone" };
 
-  const query = supabase.from("rates").select("yrkeskategori, zon, timpris_kund").ilike("yrkeskategori", role);
-  if (zon) query.eq("zon", zon);
-  const { data: rates } = await query.limit(1);
+  const { data: rates } = await supabase
+    .from("rates")
+    .select("yrkeskategori, zon, timpris_kund")
+    .ilike("yrkeskategori", role)
+    .eq("zon", zon)
+    .limit(1);
   if (rates && rates.length > 0) {
     const r = rates[0] as { yrkeskategori: string; zon: string; timpris_kund: number };
-    return r;
+    return { ok: true, ...r };
   }
 
   // Try role_aliases
@@ -153,27 +153,45 @@ async function lookupRate(
     .ilike("alias", role)
     .maybeSingle();
   if (alias?.canonical_role) {
-    const q2 = supabase.from("rates").select("yrkeskategori, zon, timpris_kund").eq("yrkeskategori", alias.canonical_role);
-    if (zon) q2.eq("zon", zon);
-    const { data: r2 } = await q2.limit(1);
-    if (r2 && r2.length > 0) return r2[0] as { yrkeskategori: string; zon: string; timpris_kund: number };
+    const { data: r2 } = await supabase
+      .from("rates")
+      .select("yrkeskategori, zon, timpris_kund")
+      .eq("yrkeskategori", alias.canonical_role)
+      .eq("zon", zon)
+      .limit(1);
+    if (r2 && r2.length > 0) {
+      const r = r2[0] as { yrkeskategori: string; zon: string; timpris_kund: number };
+      return { ok: true, ...r };
+    }
   }
 
-  return null;
+  return { ok: false, reason: "role" };
 }
 
-async function getMarginModel(
-  supabase: ReturnType<typeof createClient>,
-  employmentType: string | undefined,
-): Promise<{ share_min: number; share_max: number; employer_factor: number; hours_per_month: number } | null> {
-  const name = employmentType === "foretagare" ? "foretagare" : "anstalld";
-  const { data } = await supabase
-    .from("margin_models")
-    .select("share_min, share_max, employer_factor, hours_per_month")
-    .ilike("name", `%${name}%`)
-    .eq("is_active", true)
-    .maybeSingle();
-  return data as { share_min: number; share_max: number; employer_factor: number; hours_per_month: number } | null;
+/** Deterministiskt svar när underlag saknas — aldrig belopp, aldrig gissad zon. */
+function noDataAnswer(reason: "zone" | "role", ctx: UserContext): string {
+  if (reason === "zone") {
+    return missingDataAnswer([
+      `vilken kommun eller närliggande ort uppdraget gäller (vi saknar uppgift för ${ctx.kommun ?? "din ort"})`,
+    ]);
+  }
+  return missingDataAnswer([
+    `vilken roll som ligger närmast, eftersom vi saknar uppgift för ${ctx.role ?? "din roll"}`,
+  ]);
+}
+
+/**
+ * Möjlig ersättning per timme och månad. Marginalen är redan avdragen och
+ * anställda räknas om med arbetsgivarfaktorn — endast dessa belopp får visas.
+ */
+function possibleForContext(customerPrice: number, ctx: UserContext) {
+  const range = possibleRange(customerPrice, ctx.role ?? "", ctx.employment_type);
+  return {
+    ...range,
+    mid: Math.round((range.min + range.max) / 2),
+    monthlyMin: Math.round(range.min * HOURS_PER_MONTH),
+    monthlyMax: Math.round(range.max * HOURS_PER_MONTH),
+  };
 }
 
 // ── Topic 1 deterministic answers ──────────────────────────────────────────
@@ -181,6 +199,7 @@ async function getMarginModel(
 function fmt(n: number): string {
   return Math.round(n).toLocaleString("sv-SE");
 }
+
 
 async function answerTopic1(
   supabase: ReturnType<typeof createClient>,
