@@ -472,7 +472,7 @@ async function capLookupRate(
   const effectiveModel: MarginModel = {
     share_min: roleShares.share_min,
     share_max: roleShares.share_max,
-    employer_factor: baseModel?.employer_factor ?? 1.38,
+    employer_factor: baseModel?.employer_factor ?? EMPLOYER_FACTOR,
     hours_per_month: baseModel?.hours_per_month ?? 167,
   };
 
