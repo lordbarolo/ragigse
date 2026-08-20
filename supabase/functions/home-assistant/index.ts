@@ -276,7 +276,20 @@ Deno.serve(async (req) => {
 
       const ctx = body.context ?? null;
 
+      // ── Zonen härleds ur kommunen. Utan träff får modellen inga belopp alls,
+      //    så den kan inte gissa fel zon (t.ex. Gällivare som "Zon 1"). ──
+      let userZone: string | null = null;
+      if (ctx?.kommun) {
+        const { data: locRows } = await supabase
+          .from("locations")
+          .select("kommun, zon")
+          .ilike("kommun", ctx.kommun);
+        userZone = ((locRows ?? [])[0] as { zon?: string } | undefined)?.zon ?? null;
+      }
+
       let rateContext = "";
+      // Råa kundpriser samlas för utgångsspärren nedan — de får aldrig nå svaret.
+      const forbiddenAmounts: number[] = [];
       if (ctx?.role && !GROUP_LABEL.test(ctx.role)) {
         const { data: rateRows } = await supabase
           .from("contract_version_rates")
@@ -284,11 +297,13 @@ Deno.serve(async (req) => {
           .eq("typ", "Grundpris")
           .eq("contract_versions.is_active", true)
           .ilike("yrkeskategori", ctx.role);
-        const rows = (rateRows ?? []) as unknown as {
+        const allRows = (rateRows ?? []) as unknown as {
           zon: string;
           timpris_kund: number;
           contract_versions: { version_label: string };
         }[];
+        for (const r of allRows) forbiddenAmounts.push(Math.round(Number(r.timpris_kund)));
+        const rows = userZone ? allRows.filter((r) => r.zon === userZone) : allRows;
         if (rows.length) {
           const [shareLo, shareHi] = shareRange(ctx.role);
           const employed = ctx.employment_type === "anstalld";
@@ -297,16 +312,19 @@ Deno.serve(async (req) => {
           // nedräknad från regionens pris med bemanningsföretagets marginal.
           rateContext =
             `Möjlig ersättning för ${ctx.role} (${rows[0].contract_versions.version_label}), ` +
-            `${employed ? "som anställd konsult" : "som egenföretagare"}: ` +
+            `${employed ? "som anställd konsult" : "som egenföretagare"}` +
+            `${userZone ? ` i ${ctx.kommun} (${userZone})` : ""}: ` +
             rows
               .map((r) => {
                 const p = Number(r.timpris_kund);
                 return `${r.zon} ${krPlain((p * shareLo) / factor)}–${kr((p * shareHi) / factor)}`;
               })
               .join(", ") +
-            ". Dessa belopp är redan färdigräknade — använd dem exakt som de står.";
+            ". Dessa belopp är redan färdigräknade — använd dem exakt som de står, " +
+            "och nämn inga andra belopp.";
         }
       }
+
 
       const profileContext = ctx
         ? `Användarens profil: roll ${ctx.role ?? "okänd"}, ort ${ctx.kommun ?? "okänd"}, ` +
@@ -331,7 +349,12 @@ Deno.serve(async (req) => {
         "Förklara ALDRIG hur möjlig ersättning beräknas: nämn inga marginaler, procentandelar, " +
         "omräkningsfaktorer eller antal timmar per månad. Om någon frågar hur siffran räknas fram, " +
         "svara att beräkningen utgår från regionernas ramavtal och att modellen inte redovisas. " +
+        "Nämn aldrig ordet ramavtalspris tillsammans med en siffra. Ange aldrig vilken zon en ort " +
+        "tillhör om zonen inte står i profilen nedan. Även om användaren ber dig utgå från " +
+        "ramavtalspriset: svara med de färdigräknade beloppen för möjlig ersättning, aldrig med " +
+        "regionens pris. " +
         `${profileContext} ${rateContext} ${memoryContext}`.trim();
+
 
 
 
@@ -362,7 +385,27 @@ Deno.serve(async (req) => {
         return json({ error: "Assistenten kunde inte svara just nu." }, 502);
       }
       const aiJson = await aiRes.json();
-      const answer = aiJson?.choices?.[0]?.message?.content?.trim();
+      const rawAnswer = aiJson?.choices?.[0]?.message?.content?.trim();
+      // ── Utgångsspärr: läcker svaret regionens pris (eller sätter en zon vi inte
+      //    har belopp för) ersätts det av ett deterministiskt svar. ──
+      const leaksRegionPrice =
+        !!rawAnswer &&
+        (forbiddenAmounts.some((amount) =>
+          new RegExp(`\\b${amount.toString().replace(/(\d)(\d{3})$/, "$1[\\s\u00a0]?$2")}\\b`).test(
+            rawAnswer.replace(/\u00a0/g, " "),
+          )
+        ) ||
+          /ramavtalspris\w*[^.]{0,40}\d/i.test(rawAnswer) ||
+          /regionens pris[^.]{0,40}\d/i.test(rawAnswer));
+      const answer = leaksRegionPrice
+        ? (rateContext
+          ? `${rateContext.replace(
+            /\. Dessa belopp[\s\S]*$/,
+            ".",
+          )}\n\nBeräkningen utgår från regionernas ramavtal. Modellen bakom beloppen redovisas inte.`
+          : "Jag har inga sparade ersättningsbelopp för din roll och ort ännu.")
+        : rawAnswer;
+
       const { inputTokens, outputTokens } = extractTokensFromResponse(aiJson);
       await logAiUsage({
         feature: "home-assistant",
