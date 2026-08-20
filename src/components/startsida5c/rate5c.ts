@@ -3,7 +3,7 @@
  * Alla siffror räknas fram från tabellen `rates` (typ = "Grundpris")
  * med produktionens marginalmodell i @/lib/calc. Inga hårdkodade priser.
  */
-import { getMarginShares, EMPLOYER_FACTOR } from "@/lib/calc";
+import { getMarginShares, midRate } from "@/lib/pricing";
 import { filterPublicRoles } from "@/lib/roleVisibility";
 
 
