@@ -254,13 +254,22 @@ Deno.serve(async (req) => {
       .sort((a, b) => b.count - a.count)
       .slice(0, 20);
 
+    // Råa kundpriser får aldrig nå modellen — de maskeras till möjlig ersättning
+    // via rate-guard (samma modell som övriga assistenter).
+    const payRangeText = (avgPrice: number | null): string => {
+      if (!avgPrice) return "möjlig ersättning: underlag saknas";
+      const { min, max } = possibleRange(avgPrice, normalizedRoll);
+      return `möjlig ersättning ${formatPlain(min)}–${formatPlain(max)} kr/h`;
+    };
+
     const regionStatsText = regionStats
-      .map((r) => `- ${r.region}: ${r.count} uppdrag, senaste ${r.senaste}, snittintervall ${r.avgInterval ?? '?'} dagar, prognos nästa: ${r.predictedNext}, snittpris ${r.avgPrice ?? '?'} kr/tim, tillsättningsgrad ${r.fillRate}%, kunder: ${r.customers.join(', ')}`)
+      .map((r) => `- ${r.region}: ${r.count} uppdrag, senaste ${r.senaste}, snittintervall ${r.avgInterval ?? '?'} dagar, prognos nästa: ${r.predictedNext}, ${payRangeText(r.avgPrice)}, tillsättningsgrad ${r.fillRate}%, kunder: ${r.customers.join(', ')}`)
       .join("\n");
 
     const buyerStatsText = buyerStats
-      .map((b) => `- ${b.buyer}: ${b.count} uppdrag, senaste ${b.senaste}, snittintervall ${b.avgInterval ?? '?'} dagar, prognos nästa: ${b.predictedNext}, snittpris ${b.avgPrice ?? '?'} kr/tim, regioner: ${b.regions.join(', ')}`)
+      .map((b) => `- ${b.buyer}: ${b.count} uppdrag, senaste ${b.senaste}, snittintervall ${b.avgInterval ?? '?'} dagar, prognos nästa: ${b.predictedNext}, ${payRangeText(b.avgPrice)}, regioner: ${b.regions.join(', ')}`)
       .join("\n");
+
 
     const totalRequests = allData.length;
     const totalFilled = allData.filter((r: any) => r.filled).length;
