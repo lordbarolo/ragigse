@@ -554,7 +554,7 @@ async function answerTopic4(
       return [
         `**Nettoskillnad AB vs anställd (förenklat):**`,
         ``,
-        `Vid samma kundpris (${rate ? fmt(rate.timpris_kund) + " kr/h" : "X kr/h"}):`,
+        `Vid samma uppdrag och samma nivå på möjlig ersättning:`,
         `- **Anställd:** Din arbetsgivare betalar arbetsgivaravgifter (~31,42%), pension, semester, sjuklön. Du får brutto, sedan inkomstskatt.`,
         `- **AB:** Du betalar arbetsgivaravgift på egen lön, men kan låta överskott stå i bolaget (22% bolagsskatt) och ta ut som utdelning (20% under 3:12-gränsen).`,
         ``,
