@@ -104,6 +104,48 @@ export function withFloor(range: PossibleRange, currentRate?: number | null): Po
 export const MODEL_NOT_DISCLOSED =
   "Beräkningen utgår från regionernas ramavtal. Modellen bakom beloppen redovisas inte.";
 
+/** Alla tal i en fritt formad datastruktur — underlag för utgångsspärren. */
+export function collectNumbers(value: unknown, out: number[] = []): number[] {
+  if (typeof value === "number" && Number.isFinite(value)) out.push(value);
+  else if (Array.isArray(value)) value.forEach((item) => collectNumbers(item, out));
+  else if (value && typeof value === "object") {
+    Object.values(value as Record<string, unknown>).forEach((item) => collectNumbers(item, out));
+  }
+  return out;
+}
+
+/** Nedre/övre gräns för vad som räknas som ett kundpris per timme. */
+const CUSTOMER_PRICE_MIN = 200;
+const CUSTOMER_PRICE_MAX = 5000;
+
+/**
+ * Byter ut råa kundpriser i en datastruktur mot färdiga ersättningsspann innan
+ * den skickas till en språkmodell. Modellen får då aldrig se kundpriset och kan
+ * därför inte citera det.
+ */
+export function maskCustomerPrices(
+  value: unknown,
+  role: string,
+  employmentType?: string | null,
+): unknown {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    if (value < CUSTOMER_PRICE_MIN || value > CUSTOMER_PRICE_MAX) return value;
+    const { min, max } = possibleRange(value, role, employmentType);
+    return `${formatPlain(min)}–${formatPlain(max)} kr/h möjlig ersättning`;
+  }
+  if (Array.isArray(value)) return value.map((item) => maskCustomerPrices(item, role, employmentType));
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>).map(([key, item]) => [
+        key,
+        maskCustomerPrices(item, role, employmentType),
+      ]),
+    );
+  }
+  return value;
+}
+
+
 /** Deterministisk följdfråga när underlag saknas — aldrig belopp. */
 export function missingDataAnswer(missing: string[]): string {
   const what = missing.length ? missing.join(" och ") : "vilken roll och ort frågan gäller";
