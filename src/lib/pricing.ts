@@ -116,3 +116,53 @@ export async function fetchZoneRates(
 
   return { zone1, zone2, zone3 };
 }
+
+// ── Dokumenterade varianter av modellen ──────────────────────────────────────
+//
+// Publika rapportsidor visar två spann: eget bolag (kanonisk modell ovan) och
+// anställd. För anställdaspannet används en något lägre andel, eftersom
+// bemanningsbolaget bär betalningsrisk och garanterade timmar. Offseten ligger
+// här — inte utspridd i sidorna — så att en modelländring slår igenom överallt.
+
+/** Andelen sänks med detta antal procentenheter för anställda konsulter. */
+export const EMPLOYED_SHARE_OFFSET = 0.02;
+
+/** Marginalandelar för anställd konsult (kanonisk andel minus offset). */
+export function employedShareRange(role: string | null | undefined): [number, number] {
+  const [lo, hi] = shareRange(role);
+  return [lo - EMPLOYED_SHARE_OFFSET, hi - EMPLOYED_SHARE_OFFSET];
+}
+
+/**
+ * Möjlig bruttolön för anställd konsult ur ett kundpris.
+ * `employerFactor: 1` används av ytor som redovisar total konsultkostnad
+ * istället för bruttolön.
+ */
+export function employedRange(
+  customerPrice: number,
+  role: string | null | undefined,
+  employerFactor: number = EMPLOYER_FACTOR,
+): PossibleRange {
+  const [lo, hi] = employedShareRange(role);
+  return {
+    min: Math.round((customerPrice * lo) / employerFactor),
+    max: Math.round((customerPrice * hi) / employerFactor),
+  };
+}
+
+/**
+ * Anestesi har en egen, dokumenterad marginalmodell (12–18 % för eget bolag,
+ * 14–20 % för anställd) och redovisas utan arbetsgivarfaktor.
+ */
+export const ANESTHESIA_SHARES = {
+  foretagare: [0.82, 0.88] as [number, number],
+  anstalld: [0.8, 0.86] as [number, number],
+};
+
+export function anesthesiaRange(
+  customerPrice: number,
+  employmentType: "foretagare" | "anstalld",
+): PossibleRange {
+  const [lo, hi] = ANESTHESIA_SHARES[employmentType];
+  return { min: Math.round(customerPrice * lo), max: Math.round(customerPrice * hi) };
+}
