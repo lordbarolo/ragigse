@@ -458,11 +458,12 @@ async function answerTopic3(
         `**Hur du hanterar motbud:**`,
         ``,
         `1. **Fråga efter motiveringen:** "Vilka kostnader belastar uppdraget?" (resa, boende, intro, vite)`,
-        `2. **Jämför mot ramavtalets max:** ${fmt(rate.timpris_kund)} kr/h är kundpriset — din ersättning är förhandlingsbar.`,
+        `2. **Utgå från möjlig ersättning:** ${fmt(lo)}–${fmt(hi)} kr/h är nivån vi ser för din roll och ort — din ersättning är förhandlingsbar.`,
         `3. **Erbjud paket:** Lägre timpris mot längre uppdrag eller fler pass.`,
         `4. **Be om skriftligt:** Be om bemanningsbolagets kalkyl över vilka kostnader uppdraget medför. Många säger nej — vilket också är information.`,
         `5. **Ha en walk-away-nivå:** Skriv ner i förväg vilket pris du tackar nej under.`,
       ].join("\n");
+
     case "walk_away": {
       const walkAway = current ? current : lo;
       return [
