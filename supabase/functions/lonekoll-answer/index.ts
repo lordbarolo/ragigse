@@ -489,24 +489,27 @@ async function answerTopic4(
   questionId: string,
   ctx: UserContext,
 ): Promise<string> {
-  const rate = ctx.role && ctx.kommun ? await lookupRate(supabase, ctx.role, ctx.kommun) : null;
-
-  const { data: empMargin } = await supabase.from("margin_models").select("share_min, share_max, employer_factor, hours_per_month").ilike("name", "%anstalld%").eq("is_active", true).maybeSingle();
-  const { data: foreMargin } = await supabase.from("margin_models").select("share_min, share_max, employer_factor, hours_per_month").ilike("name", "%foretagare%").eq("is_active", true).maybeSingle();
+  const lookup = ctx.role && ctx.kommun
+    ? await lookupRate(supabase, ctx.role, ctx.kommun)
+    : ({ ok: false, reason: "role" } as const);
+  const rate = lookup.ok ? lookup : null;
 
   switch (questionId) {
     case "ab_vs_employee": {
-      if (!rate || !empMargin || !foreMargin) {
+      if (!rate) {
+        if (ctx.role && ctx.kommun && !lookup.ok) return noDataAnswer(lookup.reason, ctx);
         return `För att räkna på AB vs anställd behöver vi din roll och kommun. Komplettera i din profil.`;
       }
-      const empMonthly = (rate.timpris_kund * Number(empMargin.share_max) * empMargin.hours_per_month) / Number(empMargin.employer_factor);
-      const foreHourly = rate.timpris_kund * Number(foreMargin.share_max);
-      const foreMonthly = foreHourly * foreMargin.hours_per_month; // gross to AB, before owner salary/tax
+      // Båda alternativen räknas med den delade modellen — marginalen är redan avdragen.
+      const employed = possibleRange(rate.timpris_kund, ctx.role ?? "", "anstalld");
+      const company = possibleRange(rate.timpris_kund, ctx.role ?? "", "foretagare");
+      const empMonthly = employed.max * HOURS_PER_MONTH;
+      const foreMonthly = company.max * HOURS_PER_MONTH;
       return [
         `**${rate.yrkeskategori} i ${ctx.kommun} — AB vs anställd (övre spann):**`,
         ``,
-        `- **Anställd via bf:** ~${fmt(empMonthly)} kr/mån brutto`,
-        `- **Eget AB:** ~${fmt(foreHourly)} kr/h × ${foreMargin.hours_per_month} h = ${fmt(foreMonthly)} kr/mån till bolaget (före lön + sociala avgifter)`,
+        `- **Anställd via bf:** ~${fmt(employed.max)} kr/h, ~${fmt(empMonthly)} kr/mån brutto`,
+        `- **Eget AB:** ~${fmt(company.max)} kr/h till bolaget, ~${fmt(foreMonthly)} kr/mån (före lön + sociala avgifter)`,
         ``,
         `**Vad du behöver tänka på som AB:**`,
         `- Du betalar arbetsgivaravgifter (~31%) + egen lön + bolagsskatt på vinst`,
@@ -515,8 +518,11 @@ async function answerTopic4(
         `- Större upside vid längre uppdrag och hög omsättning`,
         ``,
         `**Tumregel:** AB lönar sig oftast vid >30 000 kr/mån i nettoöverskott, eller om du värdesätter friheten att styra själv.`,
+        ``,
+        MODEL_NOT_DISCLOSED,
       ].join("\n");
     }
+
     case "vite_foretagare":
       return [
         `**Vitesansvar som företagare:**`,
