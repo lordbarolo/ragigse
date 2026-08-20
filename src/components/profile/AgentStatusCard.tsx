@@ -12,7 +12,7 @@ interface Props {
 }
 
 /**
- * Statusblock högst upp på profilsidan: visar hur nära agenten är att kunna
+ * Statusblock högst upp på profilsidan: visar hur nära assistenten är att kunna
  * arbeta åt användaren. Inga exempelvärden — endast användarens egen status.
  */
 export default function AgentStatusCard({ userId, contextComplete }: Props) {
@@ -54,9 +54,9 @@ export default function AgentStatusCard({ userId, contextComplete }: Props) {
                 <Loader2 className="h-4 w-4 animate-spin" /> Hämtar din status
               </span>
             ) : running ? (
-              "Din agent är igång"
+              "Din assistent är igång"
             ) : (
-              "Din agent är inte igång ännu"
+              "Din assistent är inte igång ännu"
             )}
           </h2>
           <p className="mt-2 max-w-lg text-sm leading-relaxed text-white/55">
@@ -64,7 +64,7 @@ export default function AgentStatusCard({ userId, contextComplete }: Props) {
               ? "Assistenten behöver dina fyra profilsvar innan den kan arbeta med dina uppgifter."
               : allDocs
                 ? "Alla handlingar är uppladdade. Funktionen aktiveras efter manuell granskning."
-                : "Handlingarna nedan låser upp agentens uppdragsfunktion."}
+                : "Handlingarna nedan låser upp assistentens uppdragsfunktion."}
           </p>
         </div>
         <a
