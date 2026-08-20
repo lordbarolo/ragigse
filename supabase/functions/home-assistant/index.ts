@@ -276,7 +276,20 @@ Deno.serve(async (req) => {
 
       const ctx = body.context ?? null;
 
+      // ── Zonen härleds ur kommunen. Utan träff får modellen inga belopp alls,
+      //    så den kan inte gissa fel zon (t.ex. Gällivare som "Zon 1"). ──
+      let userZone: string | null = null;
+      if (ctx?.kommun) {
+        const { data: locRows } = await supabase
+          .from("locations")
+          .select("kommun, zon")
+          .ilike("kommun", ctx.kommun);
+        userZone = ((locRows ?? [])[0] as { zon?: string } | undefined)?.zon ?? null;
+      }
+
       let rateContext = "";
+      // Råa kundpriser samlas för utgångsspärren nedan — de får aldrig nå svaret.
+      const forbiddenAmounts: number[] = [];
       if (ctx?.role && !GROUP_LABEL.test(ctx.role)) {
         const { data: rateRows } = await supabase
           .from("contract_version_rates")
@@ -284,11 +297,13 @@ Deno.serve(async (req) => {
           .eq("typ", "Grundpris")
           .eq("contract_versions.is_active", true)
           .ilike("yrkeskategori", ctx.role);
-        const rows = (rateRows ?? []) as unknown as {
+        const allRows = (rateRows ?? []) as unknown as {
           zon: string;
           timpris_kund: number;
           contract_versions: { version_label: string };
         }[];
+        for (const r of allRows) forbiddenAmounts.push(Math.round(Number(r.timpris_kund)));
+        const rows = userZone ? allRows.filter((r) => r.zon === userZone) : allRows;
         if (rows.length) {
           const [shareLo, shareHi] = shareRange(ctx.role);
           const employed = ctx.employment_type === "anstalld";
@@ -297,16 +312,19 @@ Deno.serve(async (req) => {
           // nedräknad från regionens pris med bemanningsföretagets marginal.
           rateContext =
             `Möjlig ersättning för ${ctx.role} (${rows[0].contract_versions.version_label}), ` +
-            `${employed ? "som anställd konsult" : "som egenföretagare"}: ` +
+            `${employed ? "som anställd konsult" : "som egenföretagare"}` +
+            `${userZone ? ` i ${ctx.kommun} (${userZone})` : ""}: ` +
             rows
               .map((r) => {
                 const p = Number(r.timpris_kund);
                 return `${r.zon} ${krPlain((p * shareLo) / factor)}–${kr((p * shareHi) / factor)}`;
               })
               .join(", ") +
-            ". Dessa belopp är redan färdigräknade — använd dem exakt som de står.";
+            ". Dessa belopp är redan färdigräknade — använd dem exakt som de står, " +
+            "och nämn inga andra belopp.";
         }
       }
+
 
       const profileContext = ctx
         ? `Användarens profil: roll ${ctx.role ?? "okänd"}, ort ${ctx.kommun ?? "okänd"}, ` +
