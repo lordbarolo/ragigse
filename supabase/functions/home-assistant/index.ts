@@ -771,7 +771,7 @@ Deno.serve(async (req) => {
         answer:
           `${role} i ${where}: kundpris ${kr(price)} enligt ramavtal ${version}.\n\n` +
           `Möjlig ersättning som egenföretagare: ${kr(price * lo)}–${kr(price * hi)}.\n\n` +
-          `Som anställd motsvarar det ungefär ${kr((price * lo) / 1.38)}–${kr((price * hi) / 1.38)} i lön.`,
+          `Som anställd motsvarar det ungefär ${kr((price * lo) / EMPLOYER_FACTOR)}–${kr((price * hi) / EMPLOYER_FACTOR)} i lön.`,
         source: `SKR-ramavtal ${version}`,
       });
     }
