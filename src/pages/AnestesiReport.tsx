@@ -248,9 +248,10 @@ export default function AnestesiReport() {
           </div>
           <div className="rounded-[18px] bg-foreground/[0.035] border border-foreground/[0.07] p-4 space-y-2">
             {[
-              { label: "Grundpris Zon 1", value: "740 kr/timme" },
-              { label: "OB helgnatt (fre–mån 22–06)", value: "+109 kr/timme" },
-              { label: "Totalt kundpris", value: "879 kr/timme", bold: true },
+              { label: "Grundpris Zon 1", value: `${fmt(zone1Rate)} kr/timme` },
+              { label: `OB helgnatt (fre–mån 22–06)`, value: `+${fmt(obHelgnatt)} kr/timme` },
+              { label: "Totalt kundpris", value: `${fmt(zone1Rate + obHelgnatt)} kr/timme`, bold: true },
+
             ].map((row) => (
               <div key={row.label} className={`flex items-center justify-between ${row.bold ? "pt-2 border-t border-foreground/[0.08]" : ""}`}>
                 <span className={`text-sm ${row.bold ? "font-semibold text-foreground" : "text-muted-foreground"}`}>{row.label}</span>
