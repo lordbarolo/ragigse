@@ -3,6 +3,8 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { z } from "https://esm.sh/zod@3.23.8";
 import { checkRateLimit, rateLimitResponse } from "../_shared/rateLimit.ts";
 import { logAiUsage, extractTokensFromResponse, checkAiRateLimit, aiRateLimitResponse } from "../_shared/ai-usage-logger.ts";
+import { leaksForbiddenData, MODEL_NOT_DISCLOSED } from "../_shared/rate-guard.ts";
+
 
 async function getAuthUserId(req: Request): Promise<string | null> {
   const authHeader = req.headers.get("Authorization");
@@ -804,6 +806,15 @@ serve(async (req) => {
       history
     );
 
+    // Utgångsspärr (rate-guard): kundpris och beräkningsmodell får aldrig nå svaret.
+    const forbiddenAmounts = ciResults
+      .filter((r) => r.ok)
+      .map((r) => (r.data?.data as Record<string, unknown> | undefined)?.amount)
+      .filter((v): v is number => typeof v === "number");
+    const guardedAdvice = leaksForbiddenData(advice, { forbiddenAmounts })
+      ? MODEL_NOT_DISCLOSED
+      : advice;
+
     // Collect sources and policy info
     const sources = ciResults
       .filter((r) => r.ok && r.data.source)
@@ -814,12 +825,14 @@ serve(async (req) => {
     );
 
     const response: AgentResponse = {
-      advice: sanitizeReijdarText(advice),
+      advice: sanitizeReijdarText(guardedAdvice),
       situation_summary: sanitizeReijdarText(situation_summary),
-      data_points: ciResults.filter((r) => r.ok).map((r) => ({
-        capability: r.capability,
-        data: r.data.data,
-      })),
+      data_points: ciResults.filter((r) => r.ok).map((r) => {
+        // Kundpriset (`amount`) skickas aldrig till klienten.
+        const { amount: _amount, ...safeData } = (r.data.data ?? {}) as Record<string, unknown>;
+        return { capability: r.capability, data: safeData };
+      }),
+
       sources: uniqueSources.map((source) => ({
         ...source,
         name: sanitizeReijdarText(source.name),

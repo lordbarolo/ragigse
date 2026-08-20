@@ -1,6 +1,8 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { checkRateLimit, rateLimitResponse } from "../_shared/rateLimit.ts";
 import { logAiUsage, checkAiRateLimit, aiRateLimitResponse } from "../_shared/ai-usage-logger.ts";
+import { formatPlain, possibleRange } from "../_shared/rate-guard.ts";
+
 
 async function getAuthUserId(req: Request): Promise<string | null> {
   const authHeader = req.headers.get("Authorization");
@@ -254,13 +256,22 @@ Deno.serve(async (req) => {
       .sort((a, b) => b.count - a.count)
       .slice(0, 20);
 
+    // Råa kundpriser får aldrig nå modellen — de maskeras till möjlig ersättning
+    // via rate-guard (samma modell som övriga assistenter).
+    const payRangeText = (avgPrice: number | null): string => {
+      if (!avgPrice) return "möjlig ersättning: underlag saknas";
+      const { min, max } = possibleRange(avgPrice, normalizedRoll);
+      return `möjlig ersättning ${formatPlain(min)}–${formatPlain(max)} kr/h`;
+    };
+
     const regionStatsText = regionStats
-      .map((r) => `- ${r.region}: ${r.count} uppdrag, senaste ${r.senaste}, snittintervall ${r.avgInterval ?? '?'} dagar, prognos nästa: ${r.predictedNext}, snittpris ${r.avgPrice ?? '?'} kr/tim, tillsättningsgrad ${r.fillRate}%, kunder: ${r.customers.join(', ')}`)
+      .map((r) => `- ${r.region}: ${r.count} uppdrag, senaste ${r.senaste}, snittintervall ${r.avgInterval ?? '?'} dagar, prognos nästa: ${r.predictedNext}, ${payRangeText(r.avgPrice)}, tillsättningsgrad ${r.fillRate}%, kunder: ${r.customers.join(', ')}`)
       .join("\n");
 
     const buyerStatsText = buyerStats
-      .map((b) => `- ${b.buyer}: ${b.count} uppdrag, senaste ${b.senaste}, snittintervall ${b.avgInterval ?? '?'} dagar, prognos nästa: ${b.predictedNext}, snittpris ${b.avgPrice ?? '?'} kr/tim, regioner: ${b.regions.join(', ')}`)
+      .map((b) => `- ${b.buyer}: ${b.count} uppdrag, senaste ${b.senaste}, snittintervall ${b.avgInterval ?? '?'} dagar, prognos nästa: ${b.predictedNext}, ${payRangeText(b.avgPrice)}, regioner: ${b.regions.join(', ')}`)
       .join("\n");
+
 
     const totalRequests = allData.length;
     const totalFilled = allData.filter((r: any) => r.filled).length;
@@ -303,7 +314,7 @@ VAD ASSISTENTEN ALDRIG GÖR
 - Använder inte ord som: optimera, sömlös, proaktiv, innovativ, spännande
 - Använder ALDRIG orden "benchmark", "SCB" eller "Medlingsinstitutet"
 - Använder "uppdrag" istället för "avrop"
-- Kallar priset "vad regionen betalar" — använder aldrig "timtaxa" eller "timpris"
+- Redovisar aldrig regionens pris eller kundpris — endast de färdiga ersättningsspann som finns i underlaget ovan
 
 HANTERING AV OSÄKERHET
 Om du inte vet — säg det rakt ut och förklara vad konsulten kan göra för att ta reda på det själv. En ärlig "det vet jag inte" bygger mer förtroende än ett fabricerat svar.
