@@ -75,12 +75,13 @@ export default function AnestesiReport() {
     summary:
       `Ramavtalspriset för anestesisjuksköterskor är ${fmt(zone1Rate)}–${fmt(zone3Rate)} kr/timme beroende på zon. ` +
       `Marknadsmässigt konsultarvode (egenföretagare) ligger på ${fmt(recMinF)}–${fmt(recMaxF)} kr/timme enligt SKR:s ramavtal 2026.`,
-    rateRange: { min: zone1Rate, median: 792, max: zone3Rate, unit: "SEK/h" },
+    rateRange: { min: zone1Rate, median: rates.zone2, max: zone3Rate, unit: "SEK/h" },
     skrSources: ["https://skr.se/ramavtal/vardbemanning"],
     faq: [
       {
         question: "Vad är timpriset för en anestesisjuksköterska 2026?",
-        answer: `Ramavtalspriset enligt SKR är ${fmt(zone1Rate)} kr/timme i storstad (Zon 1), 792 kr/timme i mellanstora regioner (Zon 2) och ${fmt(zone3Rate)} kr/timme i glesbygd (Zon 3).`,
+        answer: `Ramavtalspriset enligt SKR är ${fmt(zone1Rate)} kr/timme i storstad (Zon 1), ${fmt(rates.zone2)} kr/timme i mellanstora regioner (Zon 2) och ${fmt(zone3Rate)} kr/timme i glesbygd (Zon 3).`,
+
       },
       {
         question: "Hur mycket tjänar en anestesisjuksköterska som konsult?",
