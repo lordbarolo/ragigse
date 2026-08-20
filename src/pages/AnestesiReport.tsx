@@ -17,8 +17,8 @@ import { getRelatedPaths } from "@/data/relatedContent";
 // Same value drives the visible TL;DR timestamp AND every JSON-LD schema.
 const LAST_UPDATED = getReportUpdatedAt("anestesisjukskoterska");
 
-import {
 import { anesthesiaRange } from "@/lib/pricing";
+import {
   Clock,
   Moon,
   Sun,
