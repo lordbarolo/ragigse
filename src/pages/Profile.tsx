@@ -47,10 +47,6 @@ export default function Profile() {
         <ProfileSideNav />
 
         <div className="min-w-0 flex-1">
-          <div id="verktyg" className="scroll-mt-24">
-            <ProfileToolsGrid context={complete ? context : null} />
-          </div>
-
           {/* Sidhuvud + status */}
           <section id="profil" className="scroll-mt-24 px-5 py-10 sm:py-14">
             <p className="text-[11px] uppercase tracking-[0.16em] text-white/40">
@@ -79,6 +75,10 @@ export default function Profile() {
               </p>
             )}
           </section>
+
+          <div id="verktyg" className="scroll-mt-24">
+            <ProfileToolsGrid context={complete ? context : null} />
+          </div>
 
           <div id="dokument" className="scroll-mt-24">
             <ProfileDocumentsSection userId={user.id} />
