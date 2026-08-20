@@ -301,7 +301,7 @@ Deno.serve(async (req) => {
             rows
               .map((r) => {
                 const p = Number(r.timpris_kund);
-                return `${r.zon} ${kr((p * shareLo) / factor)}–${kr((p * shareHi) / factor)}`;
+                return `${r.zon} ${krPlain((p * shareLo) / factor)}–${kr((p * shareHi) / factor)}`;
               })
               .join(", ") +
             ". Dessa belopp är redan färdigräknade — använd dem exakt som de står.";
