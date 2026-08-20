@@ -22,10 +22,13 @@ import {
 
 export { EMPLOYER_FACTOR };
 
-/** Intern andelsmodell — får aldrig beskrivas i svar till användaren. */
+/**
+ * Intern andelsmodell — får aldrig beskrivas i svar till användaren.
+ * Endast specialistläkare har den högre andelen; leg. läkare och ST-läkare
+ * följer standardmodellen. Samma predikat som frontend (`getMarginShares`).
+ */
 export function shareRange(role: string): [number, number] {
-  const isDoctor = /läkare|lakare/i.test(role);
-  return isDoctor
+  return isSpecialistDoctor(role)
     ? [SPECIALIST_DOCTOR_SHARE_MIN, SPECIALIST_DOCTOR_SHARE_MAX]
     : [STANDARD_SHARE_MIN, STANDARD_SHARE_MAX];
 }
