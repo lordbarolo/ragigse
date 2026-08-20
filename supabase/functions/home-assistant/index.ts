@@ -44,7 +44,12 @@ function shareRange(role: string): [number, number] {
   return isDoctor ? [0.85, 0.9] : [0.8, 0.85];
 }
 
+/** Arbetsgivarens totalkostnadsfaktor vid anställning (samma regel som @/lib/calc). */
+const EMPLOYER_FACTOR = 1.38;
+
 const kr = (n: number) => `${Math.round(n).toLocaleString("sv-SE")} kr/h`;
+const krPlain = (n: number) => Math.round(n).toLocaleString("sv-SE");
+
 
 // ── Långtidsminne ──────────────────────────────────────────────────────────
 /** Så många nyckelpunkter som skickas med i systemprompten. */
