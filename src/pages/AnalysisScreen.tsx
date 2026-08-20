@@ -136,7 +136,7 @@ export default function AnalysisScreen() {
           .eq("zon", zoneName)
           .limit(1);
         if (rateData && rateData.length > 0) {
-          setUserZoneRate(rateData[0]?.timpris_kund ?? null);
+          setUserZoneRate(rateData[0]?.timpris_kund ?? 0);
         }
       }
 
