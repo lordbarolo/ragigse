@@ -60,6 +60,9 @@ export default function AnestesiReport() {
   }));
   const zone1Rate = rates.zone1;
   const zone3Rate = rates.zone3;
+  // Exempelberäkningen använder OB-tariffen ur tabellen ovan, inte ett eget tal.
+  const obHelgnatt = OB_RATES.find((o) => o.typ === "Helgnatt")?.rate ?? 0;
+
 
   const foretagare = anesthesiaRange(zone1Rate, "foretagare");
   const anstalld = anesthesiaRange(zone1Rate, "anstalld");
