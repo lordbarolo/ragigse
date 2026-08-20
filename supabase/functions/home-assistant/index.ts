@@ -44,7 +44,12 @@ function shareRange(role: string): [number, number] {
   return isDoctor ? [0.85, 0.9] : [0.8, 0.85];
 }
 
+/** Arbetsgivarens totalkostnadsfaktor vid anställning (samma regel som @/lib/calc). */
+const EMPLOYER_FACTOR = 1.38;
+
 const kr = (n: number) => `${Math.round(n).toLocaleString("sv-SE")} kr/h`;
+const krPlain = (n: number) => Math.round(n).toLocaleString("sv-SE");
+
 
 // ── Långtidsminne ──────────────────────────────────────────────────────────
 /** Så många nyckelpunkter som skickas med i systemprompten. */
@@ -285,14 +290,24 @@ Deno.serve(async (req) => {
           contract_versions: { version_label: string };
         }[];
         if (rows.length) {
+          const [shareLo, shareHi] = shareRange(ctx.role);
+          const employed = ctx.employment_type === "anstalld";
+          const factor = employed ? EMPLOYER_FACTOR : 1;
+          // Enda tillåtna siffror i svaret: möjlig ersättning per zon, redan
+          // nedräknad från regionens pris med bemanningsföretagets marginal.
           rateContext =
-            `Aktiva ramavtalspriser (${rows[0].contract_versions.version_label}) för ${ctx.role}: ` +
-            rows.map((r) => `${r.zon} ${Math.round(Number(r.timpris_kund))} kr/h`).join(", ") +
-            ".";
+            `Möjlig ersättning för ${ctx.role} (${rows[0].contract_versions.version_label}), ` +
+            `${employed ? "som anställd konsult" : "som egenföretagare"}: ` +
+            rows
+              .map((r) => {
+                const p = Number(r.timpris_kund);
+                return `${r.zon} ${krPlain((p * shareLo) / factor)}–${kr((p * shareHi) / factor)}`;
+              })
+              .join(", ") +
+            ". Dessa belopp är redan färdigräknade — använd dem exakt som de står.";
         }
       }
 
-      const [lo, hi] = shareRange(ctx?.role ?? "");
       const profileContext = ctx
         ? `Användarens profil: roll ${ctx.role ?? "okänd"}, ort ${ctx.kommun ?? "okänd"}, ` +
           `kontraktsform ${ctx.employment_type ?? "okänd"}, nuvarande ersättning ` +
@@ -308,10 +323,16 @@ Deno.serve(async (req) => {
         "vårdbemanning.ai:s prismodell. Använd aldrig SCB eller lönestatistik för konsultpriser. " +
         "Nämn aldrig gruppetiketter som 'Grupp A'. Beskriv aldrig en nivå som bra eller dålig — " +
         "beskriv bara hur den förhåller sig till ramavtalet. Avrop är alltid historiska, aldrig pågående. " +
+        "KRITISKT: ramavtalspriset är vad regionen betalar bemanningsföretaget, ALDRIG konsultens ersättning. " +
+        "Nämn aldrig regionens pris som en siffra och jämför aldrig användarens ersättning med det. " +
+        "När du talar om vad användaren kan få: använd ENBART de färdigräknade beloppen för möjlig ersättning " +
+        "nedan, som redan har bemanningsföretagets marginal avdragen. Räkna aldrig själv och hitta aldrig på " +
+        "egna siffror. Saknas belopp för rollen eller zonen: säg att uppgiften inte finns sparad. " +
         "Förklara ALDRIG hur möjlig ersättning beräknas: nämn inga marginaler, procentandelar, " +
         "omräkningsfaktorer eller antal timmar per månad. Om någon frågar hur siffran räknas fram, " +
         "svara att beräkningen utgår från regionernas ramavtal och att modellen inte redovisas. " +
         `${profileContext} ${rateContext} ${memoryContext}`.trim();
+
 
 
       const model = getAiModel();
