@@ -12,6 +12,14 @@ import {
   extractTokensFromResponse,
   logAiUsage,
 } from "../_shared/ai-usage-logger.ts";
+import {
+  EMPLOYER_FACTOR,
+  formatKr,
+  formatPlain,
+  resolveZone as resolveZoneShared,
+  shareRange,
+} from "../_shared/rate-guard.ts";
+
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
