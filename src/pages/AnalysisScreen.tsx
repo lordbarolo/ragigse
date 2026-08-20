@@ -122,9 +122,9 @@ export default function AnalysisScreen() {
 
       let zoneName: string | null = null;
       if (locData && locData.length > 0) {
-        zoneName = locData[0].zon;
+        zoneName = locData[0]?.zon ?? null;
         setUserZone(zoneName);
-        setUserRegion(locData[0].region);
+        setUserRegion(locData[0]?.region ?? null);
       }
 
       // 2. Rate for this role + zone (exact match on rates.yrkeskategori)
@@ -136,7 +136,7 @@ export default function AnalysisScreen() {
           .eq("zon", zoneName)
           .limit(1);
         if (rateData && rateData.length > 0) {
-          setUserZoneRate(rateData[0].timpris_kund);
+          setUserZoneRate(rateData[0]?.timpris_kund ?? 0);
         }
       }
 

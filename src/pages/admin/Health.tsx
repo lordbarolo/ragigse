@@ -192,7 +192,7 @@ function StatusBadge({ status }: { status: string }) {
     unknown: { label: "Ingen data", cls: "bg-muted text-muted-foreground" },
   };
   const v = map[status] ?? map.unknown;
-  return <Badge variant="outline" className={v.cls}>{v.label}</Badge>;
+  return <Badge variant="outline" className={v?.cls}>{v?.label}</Badge>;
 }
 
 function StatusIcon({ status, small }: { status: string; small?: boolean }) {

@@ -52,7 +52,7 @@ export function initRageDeadClickTracking() {
       const sample: ClickSample = { t, x: ev.clientX, y: ev.clientY };
       recent.push(sample);
       // Drop samples outside window
-      while (recent.length && t - recent[0].t > RAGE_WINDOW_MS) recent.shift();
+      while (recent.length && t - (recent[0]?.t ?? 0) > RAGE_WINDOW_MS) recent.shift();
 
       // ── Rage click detection ──
       if (recent.length >= RAGE_THRESHOLD) {

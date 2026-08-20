@@ -102,7 +102,7 @@ export function BarRow({
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
+        if (entry?.isIntersecting) {
           setHasStarted(true);
           observer.disconnect();
         }

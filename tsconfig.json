@@ -23,7 +23,7 @@
     // Incremental strictness (project standard): full "strict" is ON;
     // these extras are deferred to a follow-up pass.
     "noPropertyAccessFromIndexSignature": false,
-    "noUncheckedIndexedAccess": false,
+    "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": false,
     "noUncheckedSideEffectImports": true,
     "paths": {

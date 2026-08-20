@@ -34,7 +34,7 @@ export default function BollnasAllmanspecialistReport() {
   const rates = useCatalogZoneRates("Specialistläkare Allmänmedicin", "v1.6", ZONE_FALLBACK);
   const ZONES = ZONE_META.map((meta, i) => ({
     ...meta,
-    rate: [rates.zone1, rates.zone2, rates.zone3][i],
+    rate: ([rates.zone1, rates.zone2, rates.zone3][i] ?? 0),
   }));
   const USER_ZON_RATE = rates.zone3;
 
@@ -71,7 +71,7 @@ export default function BollnasAllmanspecialistReport() {
     summary:
       `Ramavtalspriset för specialistläkare i allmänmedicin i Bollnäs (Zon 3) är ${fmt(USER_ZON_RATE)} kr/timme. ` +
       `Marknadsmässigt konsultarvode (egenföretagare) ligger på ${fmt(recMinF)}–${fmt(recMaxF)} kr/timme enligt SKR:s ramavtal 2026.`,
-    rateRange: { min: ZONES[0].rate, median: ZONES[1].rate, max: ZONES[2].rate, unit: "SEK/h" },
+    rateRange: { min: rates.zone1, median: rates.zone2, max: rates.zone3, unit: "SEK/h" },
     skrSources: ["https://skr.se/ramavtal/vardbemanning"],
     faq: [
       {

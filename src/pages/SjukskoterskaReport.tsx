@@ -50,7 +50,7 @@ const ROLE = "Sjuksköterska";
 const makeFaq = (zones: { zone: string; rate: number; desc: string }[]) => [
   {
     question: "Vad är ramavtalspriset för en legitimerad sjuksköterska 2026?",
-    answer: `Enligt SKR:s ramavtal vårdbemanning 2026 är kundpriset ${fmt(zones[0].rate)}\u00a0kr/timme i Zon 1 (storstad), ${fmt(zones[1].rate)}\u00a0kr/timme i Zon 2 (mellanstora regioner) och ${fmt(zones[2].rate)}\u00a0kr/timme i Zon 3 (glesbygd) för en sjuksköterska med grundutbildning på dagtid.`,
+    answer: `Enligt SKR:s ramavtal vårdbemanning 2026 är kundpriset ${fmt(zones[0]?.rate ?? 0)}\u00a0kr/timme i Zon 1 (storstad), ${fmt(zones[1]?.rate ?? 0)}\u00a0kr/timme i Zon 2 (mellanstora regioner) och ${fmt(zones[2]?.rate ?? 0)}\u00a0kr/timme i Zon 3 (glesbygd) för en sjuksköterska med grundutbildning på dagtid.`,
   },
 
   {
@@ -74,15 +74,15 @@ export default function SjukskoterskaReport() {
   const rates = useCatalogZoneRates("Sjuksköterska", "v1.7", ZONE_FALLBACK);
   const ZONES = ZONE_META.map((meta, i) => ({
     ...meta,
-    rate: [rates.zone1, rates.zone2, rates.zone3][i],
+    rate: ([rates.zone1, rates.zone2, rates.zone3][i] ?? 0),
   }));
   const FAQ = makeFaq(ZONES);
 
-  const lowZone = ZONES[0].rate;
-  const highZone = ZONES[2].rate;
+  const lowZone = rates.zone1;
+  const highZone = rates.zone3;
 
   // Spann baserat på Zon 2 (median) som referens för "marknadsmässigt"
-  const refRate = ZONES[1].rate;
+  const refRate = rates.zone2;
 
   const foretagare = possibleRange(refRate, ROLE, "foretagare");
   const anstalld = employedRange(refRate, ROLE);

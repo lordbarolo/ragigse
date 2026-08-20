@@ -51,10 +51,10 @@ const ZONE_Y = 470;
 const zoneX = (i: number) => (1920 - (3 * ZONE_W + 2 * ZONE_GAP)) / 2 + i * (ZONE_W + ZONE_GAP);
 
 const captionItems = (CUES: Record<string, number>, AT: number): CaptionItem[] => [
-  { at: CUES.Roll + 0.25, text: '1 · Välj din roll' },
-  { at: CUES.Zon + 0.25, text: '2 · Välj din zon' },
-  { at: CUES.Belopp + 0.4, text: '3 · Se vad du kan fakturera' },
-  { at: CUES.Notis + 0.35, until: AT - 1.2, text: 'Få notis vid varje prisjustering' },
+  { at: (CUES.Roll ?? 0) + 0.25, text: '1 · Välj din roll' },
+  { at: (CUES.Zon ?? 0) + 0.25, text: '2 · Välj din zon' },
+  { at: (CUES.Belopp ?? 0) + 0.4, text: '3 · Se vad du kan fakturera' },
+  { at: (CUES.Notis ?? 0) + 0.35, until: AT - 1.2, text: 'Få notis vid varje prisjustering' },
 ];
 
 export default function LonekollenAnimation({
@@ -89,10 +89,10 @@ export default function LonekollenAnimation({
       }
     >
       {({ T, CUES, AT }) => {
-        const roll = CUES.Roll;
-        const zon = CUES.Zon;
-        const belopp = CUES.Belopp;
-        const notis = CUES.Notis;
+        const roll = CUES.Roll ?? 0;
+        const zon = CUES.Zon ?? 0;
+        const belopp = CUES.Belopp ?? 0;
+        const notis = CUES.Notis ?? 0;
         const D = MOTION.draw;
 
         const worldO = D(T, 0.45, 0.5) * (1 - D(T, AT - 1.35, 0.8));

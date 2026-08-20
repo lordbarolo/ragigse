@@ -43,10 +43,10 @@ const ZDATA = [
 ];
 
 const captionItems = (CUES: Record<string, number>, AT: number): CaptionItem[] => [
-  { at: CUES['Frågan'] + 0.3, text: 'Ställ frågan som du tänker den' },
-  { at: CUES.Analys + 0.2, text: 'Assistenten läser regionernas ramavtal' },
-  { at: CUES.Svaret + 0.7, text: 'Svar med källa — på sekunder' },
-  { at: CUES.Verktyg + 0.45, until: AT - 1.15, text: 'Fyra verktyg. En assistent.' },
+  { at: (CUES['Frågan'] ?? 0) + 0.3, text: 'Ställ frågan som du tänker den' },
+  { at: (CUES.Analys ?? 0) + 0.2, text: 'Assistenten läser regionernas ramavtal' },
+  { at: (CUES.Svaret ?? 0) + 0.7, text: 'Svar med källa — på sekunder' },
+  { at: (CUES.Verktyg ?? 0) + 0.45, until: AT - 1.15, text: 'Fyra verktyg. En assistent.' },
 ];
 
 export default function AssistentenAnimation({
@@ -81,10 +81,10 @@ export default function AssistentenAnimation({
       }
     >
       {({ T, CUES, AT }) => {
-        const fraga = CUES['Frågan'];
-        const analys = CUES.Analys;
-        const svar = CUES.Svaret;
-        const verktyg = CUES.Verktyg;
+        const fraga = CUES['Frågan'] ?? 0;
+        const analys = CUES.Analys ?? 0;
+        const svar = CUES.Svaret ?? 0;
+        const verktyg = CUES.Verktyg ?? 0;
         const D = MOTION.draw;
 
         const worldO = D(T, 0.35, 0.5) * (1 - D(T, AT - 1.3, 0.75));

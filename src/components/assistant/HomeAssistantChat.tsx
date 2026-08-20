@@ -231,9 +231,9 @@ export default function HomeAssistantChat() {
                   </Button>
                 ))}
               </div>
-              {PRESETS[6] && (
+              {PRESETS[6] !== undefined && (
                 <div className="col-span-3 flex justify-center pb-4">
-                  <Button type="button" variant="ghost" disabled={loading} onClick={() => onPreset(PRESETS[6])} className={`${chipClass} chip-float`}>
+                  <Button type="button" variant="ghost" disabled={loading} onClick={() => onPreset(PRESETS[6]!)} className={`${chipClass} chip-float`}>
                     {PRESETS[6].label}
                   </Button>
                 </div>
@@ -245,7 +245,7 @@ export default function HomeAssistantChat() {
           <div className="md:hidden">
             {composer}
             <div className="mt-5 flex flex-wrap justify-center gap-1.5">
-              {[PRESETS[0], PRESETS[1], PRESETS[6]].map((p) => (
+              {[PRESETS[0], PRESETS[1], PRESETS[6]].filter((p): p is (typeof PRESETS)[number] => p !== undefined).map((p) => (
                 <Button
                   key={p.key}
                   type="button"

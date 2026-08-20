@@ -59,9 +59,9 @@ const CARDX = 1230;
 const CARDY = 330;
 
 const captionItems = (CUES: Record<string, number>, AT: number): CaptionItem[] => [
-  { at: CUES.Skanning + 0.35, text: 'Assistenten går igenom ditt fakturaunderlag' },
-  { at: CUES.Hittat + 0.3, text: 'Ofakturerade timmar hittas åt dig' },
-  { at: CUES.Summan + 0.5, until: AT - 1.15, text: 'Pengar du redan har jobbat in' },
+  { at: (CUES.Skanning ?? 0) + 0.35, text: 'Assistenten går igenom ditt fakturaunderlag' },
+  { at: (CUES.Hittat ?? 0) + 0.3, text: 'Ofakturerade timmar hittas åt dig' },
+  { at: (CUES.Summan ?? 0) + 0.5, until: AT - 1.15, text: 'Pengar du redan har jobbat in' },
 ];
 
 export default function MissadeTimmarAnimation({
@@ -99,9 +99,9 @@ export default function MissadeTimmarAnimation({
       }
     >
       {({ T, CUES, AT }) => {
-        const skan = CUES.Skanning;
-        const hittat = CUES.Hittat;
-        const summan = CUES.Summan;
+        const skan = CUES.Skanning ?? 0;
+        const hittat = CUES.Hittat ?? 0;
+        const summan = CUES.Summan ?? 0;
         const D = MOTION.draw;
 
         const worldO = brand ? D(T, 0.4, 0.5) * (1 - D(T, AT - 1.3, 0.75)) : D(T, 0, 0.5);
@@ -276,7 +276,8 @@ export default function MissadeTimmarAnimation({
                 {BLOCKS.map((b, i) => {
                   const inP = MOTION.enter(T, 1.1 + i * 0.08, 0.55);
                   const isM = b.m !== undefined;
-                  const fp = isM ? D(T, flagT(MISSED[b.m as number]), 0.35) : 0;
+                  const missed = isM ? MISSED[b.m as number] : undefined;
+                  const fp = missed ? D(T, flagT(missed), 0.35) : 0;
                   return (
                     <div
                       key={i}
@@ -321,7 +322,7 @@ export default function MissadeTimmarAnimation({
                             opacity: fp,
                           }}
                         >
-                          {MISSED[b.m as number].label}
+                          {missed?.label}
                         </div>
                       )}
                     </div>

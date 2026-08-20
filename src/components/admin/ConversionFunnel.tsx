@@ -58,6 +58,7 @@ export default function ConversionFunnel({ data, loading, period, onRefresh }: P
     const result: FunnelStep[] = [];
     for (let i = 0; i < FUNNEL_STEPS.length; i++) {
       const step = FUNNEL_STEPS[i];
+      if (!step) continue;
       const count = counts[step.key] || 0;
       const prevCount = i === 0 ? count : (result[i - 1]?.count || 0);
       const dropoff = Math.max(0, prevCount - count);
@@ -96,8 +97,9 @@ export default function ConversionFunnel({ data, loading, period, onRefresh }: P
         <div className="space-y-2">
           {funnel.map((step, i) => {
             const barWidth = maxCount > 0 ? Math.max(4, (step.count / maxCount) * 100) : 4;
-            const convRate = i > 0 && funnel[i - 1].count > 0
-              ? Math.round((step.count / funnel[i - 1].count) * 100)
+            const prevStepCount = funnel[i - 1]?.count ?? 0;
+            const convRate = i > 0 && prevStepCount > 0
+              ? Math.round((step.count / prevStepCount) * 100)
               : 100;
 
             return (

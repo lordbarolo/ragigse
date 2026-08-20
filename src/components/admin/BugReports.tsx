@@ -93,7 +93,7 @@ export default function BugReports() {
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex items-center gap-2 flex-wrap">
                       <Badge variant="secondary" className="text-xs">{categoryLabel[r.category] || r.category}</Badge>
-                      <Badge variant={sc.variant} className="text-xs">{sc.label}</Badge>
+                      <Badge variant={sc?.variant} className="text-xs">{sc?.label}</Badge>
                       <span className="text-xs text-muted-foreground">{r.page_url}</span>
                     </div>
                     <span className="text-xs text-muted-foreground whitespace-nowrap">

@@ -197,13 +197,15 @@ export function Captions({
   let active: CaptionItem | null = null;
   let end = Infinity;
   for (let i = 0; i < sorted.length; i++) {
-    if (T < sorted[i].at) break;
-    active = sorted[i];
+    const item = sorted[i];
+    if (!item || T < item.at) break;
+    active = item;
+    const next = sorted[i + 1];
     end =
-      typeof active.until === 'number' && isFinite(active.until)
-        ? active.until
-        : i + 1 < sorted.length
-          ? sorted[i + 1].at
+      typeof item.until === 'number' && isFinite(item.until)
+        ? item.until
+        : next
+          ? next.at
           : Infinity;
   }
   if (!active || T >= end) return null;

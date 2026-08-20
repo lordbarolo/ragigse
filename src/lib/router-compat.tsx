@@ -19,7 +19,7 @@ import { useMemo, useCallback, forwardRef, type ComponentProps, type ReactNode }
 
 function parseTo(to: string): { pathname: string; search?: Record<string, string>; hash?: string } {
   const [beforeHash, hashStr] = (to ?? "").split("#");
-  const [pathname, searchStr] = beforeHash.split("?");
+  const [pathname, searchStr] = (beforeHash ?? "").split("?");
   return {
     // react-router keeps the current path for search-only ("?a=1") and
     // hash-only ("#section") targets; TanStack's "." means current route.

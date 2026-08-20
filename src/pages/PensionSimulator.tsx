@@ -112,7 +112,7 @@ export default function PensionSimulator() {
                 min={MIN_SALARY}
                 max={MAX_SALARY}
                 step={STEP}
-                onValueChange={(v) => setSalary(v[0])}
+                onValueChange={(v) => setSalary(v[0] ?? null)}
                 aria-label="Månadslön"
               />
               <div className="mt-2 flex justify-between text-[11px] text-white/35">
