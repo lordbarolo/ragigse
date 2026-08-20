@@ -98,7 +98,7 @@ export default function AssistantMemoryCard({ userId }: { userId: string }) {
   const list = points ?? [];
 
   return (
-    <div className="mt-6 rounded-2xl border border-white/10 bg-[#121319] p-5">
+    <div className="h-full rounded-2xl border border-white/10 bg-[#121319] p-5">
       <div className="flex items-center gap-2.5">
         <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-white/10">
           <Brain className="h-3.5 w-3.5 text-white" />
