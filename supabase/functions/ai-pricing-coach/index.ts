@@ -203,7 +203,13 @@ Ange inga procent, inga peer-jämförelser, ingen "push"-ton. Räkna aldrig sjä
     }
 
     const json = await resp.json();
-    const commentary = json?.choices?.[0]?.message?.content?.trim?.() ?? "";
+    const rawCommentary = json?.choices?.[0]?.message?.content?.trim?.() ?? "";
+    // Utgångsspärr: läcker svaret ett rått kundpris eller beräkningsmodellen
+    // ersätts det med ett deterministiskt svar.
+    const commentary = leaksForbiddenData(rawCommentary, { forbiddenAmounts, hasRateContext: true })
+      ? `Möjlig ersättning för ${body.role} i ${body.region} ligger på ${range.hourly_min}–${range.hourly_max} kr/h. ${MODEL_NOT_DISCLOSED}`
+      : rawCommentary;
+
     const { inputTokens, outputTokens } = extractTokensFromResponse(json);
     await logAiUsage({
       feature: "ai-pricing-coach",
