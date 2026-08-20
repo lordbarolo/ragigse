@@ -10,7 +10,7 @@
  */
 
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchZoneRates } from "@/lib/pricing";
 import {
   PRICE_BY_ROLE,
   lookupRolePrice,
