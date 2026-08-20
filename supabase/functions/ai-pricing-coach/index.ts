@@ -7,6 +7,14 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { z } from "https://esm.sh/zod@3.23.8";
 import { logAiUsage, extractTokensFromResponse, checkAiRateLimit, aiRateLimitResponse } from "../_shared/ai-usage-logger.ts";
 import { getAiGatewayUrl, getAiGatewayKey, getAiModel } from "../_shared/ai-transport.ts";
+import {
+  leaksForbiddenData,
+  missingDataAnswer,
+  MODEL_NOT_DISCLOSED,
+  possibleRange,
+  resolveZone,
+} from "../_shared/rate-guard.ts";
+
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
