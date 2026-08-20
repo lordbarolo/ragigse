@@ -105,15 +105,27 @@ serve(async (req) => {
     }), { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 
-  // Look up zone for the region
-  const { data: regionRow } = await sb
-    .from("regions")
-    .select("zon")
-    .eq("kommun", body.region)
-    .maybeSingle();
+  // Zonen härleds ur kommunen via den delade uppslagningen. Ingen gissning:
+  // utan mappning returneras 422 i stället för priset för en godtycklig zon.
+  const zone = await resolveZone(sb, body.region);
+  if (!zone) {
+    return new Response(JSON.stringify({
+      error: "unknown_zone",
+      message: missingDataAnswer([
+        `vilken kommun eller närliggande ort som gäller (vi saknar uppgift för ${body.region})`,
+      ]),
+    }), { status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+  }
 
-  const zone = regionRow?.zon || rates[0].zon;
-  const zoneRate = rates.find((r) => r.zon === zone) ?? rates[0];
+  const zoneRate = rates.find((r) => r.zon === zone);
+  if (!zoneRate) {
+    return new Response(JSON.stringify({
+      error: "no_market_data",
+      message: missingDataAnswer([
+        `vilken roll som ligger närmast, eftersom vi saknar uppgift för ${body.role} i ${zone}`,
+      ]),
+    }), { status: 422, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+  }
 
   const empType = mapEmployment(body.employmentType);
   const range = calcRange(zoneRate.timpris_kund, empType, body.role);
@@ -124,12 +136,14 @@ serve(async (req) => {
     safeMin = body.currentRate;
   }
 
+  // Råa kundpriser lämnar aldrig funktionen — de används bara som spärrlista.
+  const forbiddenAmounts = (rates ?? []).map((r) => Math.round(Number(r.timpris_kund)));
+
   const facts = {
     role: body.role,
     region: body.region,
     zone,
     employmentType: empType,
-    customerPriceHour: zoneRate.timpris_kund,
     expectedRangeHour: { min: range.hourly_min, max: range.hourly_max },
     suggestedFloor: safeMin,
     currentRate: body.currentRate ?? null,
@@ -140,14 +154,15 @@ serve(async (req) => {
     return new Response(JSON.stringify({ error: "missing_api_key" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 
-  const userPrompt = `Marknadsdata för konsulten:
+  const userPrompt = `Marknadsdata för konsulten (beloppen är färdigräknade — använd dem exakt som de står):
 ${JSON.stringify(facts, null, 2)}
 
 Skriv en neutral marknadskommentar (max 5 meningar) som beskriver:
-1) Var ramavtalet ligger.
-2) Förväntat ersättningsspann (${range.hourly_min}–${range.hourly_max} kr/h).
+1) Att nivån utgår från regionernas ramavtal, utan att nämna regionens pris som siffra.
+2) Möjlig ersättning (${range.hourly_min}–${range.hourly_max} kr/h).
 3) En försiktig observation om förhandlingsutrymme givet det nuvarande timpriset (om angivet).
-Ange inga procent, inga peer-jämförelser, ingen "push"-ton.`;
+Ange inga procent, inga peer-jämförelser, ingen "push"-ton. Räkna aldrig själv.`;
+
 
   const model = getAiModel("google/gemini-3-flash-preview");
   try {
