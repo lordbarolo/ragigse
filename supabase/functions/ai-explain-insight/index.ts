@@ -137,7 +137,12 @@ serve(async (req) => {
     }
 
     const json = await resp.json();
-    const explanation = json?.choices?.[0]?.message?.content?.trim?.() ?? "";
+    const raw = json?.choices?.[0]?.message?.content?.trim?.() ?? "";
+    // Utgångsspärr: fångar kundpriser eller modellbeskrivningar som ändå slinker igenom.
+    const explanation = leaksForbiddenData(raw, { forbiddenAmounts: collectNumbers(body.data) })
+      ? MODEL_NOT_DISCLOSED
+      : raw;
+
     const { inputTokens, outputTokens } = extractTokensFromResponse(json);
     await logAiUsage({
       feature: "ai-explain-insight",
