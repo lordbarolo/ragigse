@@ -425,7 +425,7 @@ SAMMA ZON / SAMMA NIVÅ
 Om den nya orten ligger i samma zon eller ger samma ersättningsspann som i föregående svar ska du säga det direkt i första meningen, till exempel: "[ort] ligger också i Zon 2, så nivån är densamma: X–Y kr/h." Upprepa inte hela resonemanget en gång till.
 
 KORTA BEKRÄFTELSER ("ja", "nej", "japp", "stämmer")
-Om användarens senaste meddelande är en kort bekräftelse eller ett kort svar på din egen följdfråga, då har du REDAN presenterat zon, kundpris, ersättningsspann och nuvarande ersättning i föregående svar. Du får INTE upprepa dessa siffror, INTE upprepa zon/kundpris/spann, och INTE upprepa samma argument som föregående svar redan innehöll. Bygg istället direkt vidare på det användaren just bekräftat: ge ETT nytt, konkret argument eller en ny vinkel (t.ex. introduktionskostnad, indexjustering, historik med bemanningsföretaget, specialistkompetens) — välj något som INTE redan nämnts i föregående svar. Hoppa över kostnadsreservationen om inget nytt belopp introduceras. Avsluta med en ny, relevant motfråga (inte samma som förra gången).
+Om användarens senaste meddelande är en kort bekräftelse eller ett kort svar på din egen följdfråga, då har du REDAN presenterat zon, ersättningsspann och nuvarande ersättning i föregående svar. Du får INTE upprepa dessa siffror, INTE upprepa zon/spann, och INTE upprepa samma argument som föregående svar redan innehöll. Bygg istället direkt vidare på det användaren just bekräftat: ge ETT nytt, konkret argument eller en ny vinkel (t.ex. introduktionskostnad, indexjustering, historik med bemanningsföretaget, specialistkompetens) — välj något som INTE redan nämnts i föregående svar. Hoppa över kostnadsreservationen om inget nytt belopp introduceras. Avsluta med en ny, relevant motfråga (inte samma som förra gången).
 
 VIKTIGT — ORT ÄR INTE SAMMA SOM ARBETSPLATS
 Om användaren bekräftar att hen har arbetat på en ort tidigare, anta INTE automatiskt att det var på samma arbetsplats eller enhet. Det räcker inte att orten är densamma — det är den specifika arbetsplatsen som avgör om introduktion behövs. Formulera argumentet villkorligt: "Om du ska arbeta på samma arbetsplats..." istället för att påstå att introduktionskostnaden uteblir.
@@ -630,7 +630,7 @@ async function synthesiseAdvice(
 
   const isShortConfirmation = /^\s*(ja|japp|jo|jepp|nej|nope|stämmer|precis|absolut|ok|okej)[\s.!?]*$/i.test(message.trim());
   const shortConfirmationNotice = isShortConfirmation
-    ? `\n\nVIKTIGT: Användarens meddelande är en kort bekräftelse på din egen följdfråga. Föregående svar har redan presenterat zon, kundpris, ersättningsspann och nuvarande ersättning — upprepa INTE dessa siffror eller samma argument. Ge ETT nytt argument eller en ny vinkel som inte fanns i föregående svar, och avsluta med en NY motfråga.`
+    ? `\n\nVIKTIGT: Användarens meddelande är en kort bekräftelse på din egen följdfråga. Föregående svar har redan presenterat zon, ersättningsspann och nuvarande ersättning — upprepa INTE dessa siffror eller samma argument. Ge ETT nytt argument eller en ny vinkel som inte fanns i föregående svar, och avsluta med en NY motfråga.`
     : "";
 
   const userPrompt = `Användarens fråga: "${message}"
