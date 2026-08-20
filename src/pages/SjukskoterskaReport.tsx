@@ -21,6 +21,7 @@ import { useCatalogZoneRates } from "@/hooks/useCatalogZoneRates";
 import RelateradeSidor from "@/components/report/RelateradeSidor";
 import { getRelatedPaths } from "@/data/relatedContent";
 import { trackEvent } from "@/lib/trackEvent";
+import { possibleRange, employedRange } from "@/lib/pricing";
 
 
 /**

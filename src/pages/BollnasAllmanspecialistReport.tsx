@@ -9,6 +9,7 @@ import { buildRoleReportSchemas } from "@/lib/seo/roleReportSchema";
 import { ArrowRight, MapPin, BarChart3, Info, TrendingUp } from "lucide-react";
 import { useEffect } from "react";
 import { useCatalogZoneRates } from "@/hooks/useCatalogZoneRates";
+import { possibleRange, employedRange } from "@/lib/pricing";
 
 const LAST_UPDATED = getReportUpdatedAt("bollnas-lakare-alm");
 const fmt = (n: number) => n.toLocaleString("sv-SE", { maximumFractionDigits: 0 });

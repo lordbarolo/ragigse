@@ -18,6 +18,7 @@ import { getRelatedPaths } from "@/data/relatedContent";
 const LAST_UPDATED = getReportUpdatedAt("anestesisjukskoterska");
 
 import {
+import { anesthesiaRange } from "@/lib/pricing";
   Clock,
   Moon,
   Sun,

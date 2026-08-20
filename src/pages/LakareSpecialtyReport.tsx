@@ -18,6 +18,7 @@ import RelateradeSidor from "@/components/report/RelateradeSidor";
 import { getRelatedPaths } from "@/data/relatedContent";
 import { getReportUpdatedAt } from "@/data/contentFreshness";
 import { trackEvent } from "@/lib/trackEvent";
+import { possibleRange, employedRange } from "@/lib/pricing";
 
 
 /**

@@ -27,6 +27,7 @@ import { SectionHeading, StatBlock } from "@/shared/UIComponents";
 import type { ResultJson, ZoneComparison } from "@/shared/types";
 import { getNegotiationTips } from "./negotiationData";
 import ReportFeedback from "./ReportFeedback";
+import { shareRange, EMPLOYER_FACTOR } from "@/lib/pricing";
 
 interface Props {
   r: ResultJson;

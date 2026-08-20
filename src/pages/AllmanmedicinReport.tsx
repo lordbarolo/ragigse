@@ -20,6 +20,7 @@ import {
 } from "lucide-react";
 import { useEffect } from "react";
 import { useCatalogZoneRates } from "@/hooks/useCatalogZoneRates";
+import { possibleRange, employedRange } from "@/lib/pricing";
 
 
 /**

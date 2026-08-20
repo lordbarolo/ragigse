@@ -10,6 +10,7 @@ import { fetchLead, leadToSurvey, createReport, saveEmail } from "@/services/lea
 import { identifyLeadWithEmail } from "@/lib/identify";
 import Navbar from "@/components/Navbar";
 import CompcareLogo from "@/components/CompcareLogo";
+import { possibleRange, shareRange } from "@/lib/pricing";
 
 export default function AnalysisScreen() {
   const { leadId: urlLeadId } = useParams<{ leadId: string }>();
