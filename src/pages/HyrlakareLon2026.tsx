@@ -5,6 +5,8 @@ import Footer5c from "@/components/startsida5c/Footer5c";
 import { JsonLd } from "@/components/JsonLd";
 import RelateradeSidor from "@/components/report/RelateradeSidor";
 import { DOCTOR_SPECIALTY_REPORTS } from "@/data/doctorSpecialtyReports";
+import { useCatalogZoneRatesBatch } from "@/hooks/useCatalogZoneRatesBatch";
+
 import { GUIDE_BY_SLUG } from "@/data/guides";
 import { getGuideUpdatedAt } from "@/data/contentFreshness";
 import {
@@ -35,29 +37,22 @@ const lo = (rate: number) => Math.round(rate * SPECIALIST_DOCTOR_SHARE_MIN);
 const hi = (rate: number) => Math.round(rate * SPECIALIST_DOCTOR_SHARE_MAX);
 
 /** Allmänmedicin har en egen handskriven rapportsida och ligger inte i listan. */
-const ROWS = [
+const ROW_CONFIG = [
   {
     slug: "lakare-allmanmedicin",
     title: "Allmänmedicin (distriktsläkare)",
-    zone1: 1238,
-    zone2: 1513,
-    zone3: 1787,
+    skrCategory: "Specialistläkare Allmänmedicin",
+    fallback: { zone1: 1238, zone2: 1513, zone3: 1787 },
   },
   ...DOCTOR_SPECIALTY_REPORTS.map((r) => ({
     slug: r.slug,
     title: r.title,
-    zone1: r.zone1,
-    zone2: r.zone2,
-    zone3: r.zone3,
+    skrCategory: r.skrCategory,
+    fallback: { zone1: r.zone1, zone2: r.zone2, zone3: r.zone3 },
   })),
 ];
 
-const allZone1 = ROWS.map((r) => r.zone1);
-const allZone3 = ROWS.map((r) => r.zone3);
-const LOWEST = Math.min(...allZone1);
-const HIGHEST = Math.max(...allZone3);
-const PAY_LOW = lo(LOWEST);
-const PAY_HIGH = hi(HIGHEST);
+const ROW_CATEGORIES = ROW_CONFIG.map((r) => r.skrCategory);
 
 const ZONES = [
   {
@@ -74,14 +69,33 @@ const ZONES = [
   },
 ];
 
-const FAQ = [
+interface GuideRow {
+  slug: string;
+  title: string;
+  zone1: number;
+  zone2: number;
+  zone3: number;
+}
+
+/** FAQ:n innehåller belopp och byggs därför ur samma live-priser som tabellen. */
+function buildFaq(rows: GuideRow[]) {
+  const lowest = Math.min(...rows.map((r) => r.zone1));
+  const highest = Math.max(...rows.map((r) => r.zone3));
+  const payLow = lo(lowest);
+  const payHigh = hi(highest);
+  // Näst högsta zon 3-nivån = den nivå "övriga specialiteter" ligger på.
+  const secondHighest = Math.max(
+    ...rows.map((r) => r.zone3).filter((v) => v < highest),
+    lowest,
+  );
+  return [
   {
     question: "Vad tjänar en hyrläkare per timme 2026?",
-    answer: `Ramavtalspriset som regionen betalar bemanningsbolaget ligger 2026 mellan ${fmt(LOWEST)} och ${fmt(HIGHEST)} kr/timme beroende på specialitet och zon. För en läkare som fakturerar via eget bolag motsvarar det ungefär ${fmt(PAY_LOW)}–${fmt(PAY_HIGH)} kr/timme, eftersom bemanningsbolaget behåller en marginal på 10–15 procent.`,
+    answer: `Ramavtalspriset som regionen betalar bemanningsbolaget ligger 2026 mellan ${fmt(lowest)} och ${fmt(highest)} kr/timme beroende på specialitet och zon. För en läkare som fakturerar via eget bolag motsvarar det ungefär ${fmt(payLow)}–${fmt(payHigh)} kr/timme, eftersom bemanningsbolaget behåller en marginal på 10–15 procent.`,
   },
   {
     question: "Vilken specialitet har högst ersättning 2026?",
-    answer: `Den högsta prisnivån i ramavtalet 2026 är ${fmt(HIGHEST)} kr/timme i zon 3 och gäller bland annat psykiatri, barn- och ungdomspsykiatri, radiologi, dermatologi och ögonsjukdomar. Övriga specialiteter i tabellen ligger på nivån ${fmt(1787)} kr/timme i zon 3.`,
+    answer: `Den högsta prisnivån i ramavtalet 2026 är ${fmt(highest)} kr/timme i zon 3 och gäller bland annat psykiatri, barn- och ungdomspsykiatri, radiologi, dermatologi och ögonsjukdomar. Övriga specialiteter i tabellen ligger på nivån ${fmt(secondHighest)} kr/timme i zon 3.`,
   },
   {
     question: "Vad är skillnaden mellan zon 1, 2 och 3?",
@@ -108,7 +122,9 @@ const FAQ = [
     answer:
       "Samtliga priser är hämtade ur SKR:s ramavtal för vårdbemanning 2026 (läkarlistan v1.6). Vi publicerar inga egna löneuppskattningar och använder inte lönestatistik från andra källor för konsultersättning.",
   },
-];
+  ];
+}
+
 
 export default function HyrlakareLon2026() {
   useEffect(() => {
@@ -121,6 +137,20 @@ export default function HyrlakareLon2026() {
       document.body.style.backgroundColor = prevBody;
     };
   }, []);
+
+  // Priserna hämtas live ur contract_version_rates (v1.6); config-värdena är fallback.
+  const catalog = useCatalogZoneRatesBatch(ROW_CATEGORIES, "v1.6");
+  const ROWS: GuideRow[] = ROW_CONFIG.map((r) => {
+    const rates = catalog.get(r.skrCategory, r.fallback);
+    return { slug: r.slug, title: r.title, ...rates };
+  });
+  const FAQ = buildFaq(ROWS);
+  const LOWEST = Math.min(...ROWS.map((r) => r.zone1));
+  const HIGHEST = Math.max(...ROWS.map((r) => r.zone3));
+  const PAY_LOW = lo(LOWEST);
+  const PAY_HIGH = hi(HIGHEST);
+
+
 
   const schemas: Record<string, unknown>[] = [
     {

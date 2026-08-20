@@ -117,6 +117,47 @@ export async function fetchZoneRates(
   return { zone1, zone2, zone3 };
 }
 
+/**
+ * Samma uppslag som `fetchZoneRates`, men för flera yrkeskategorier i ett anrop.
+ * Används av tabell-/listsidor så att de inte behöver hårdkoda priser.
+ * Matchning sker skiftlägesokänsligt (som `ilike` i enskilda uppslaget).
+ * Kategorier som saknar en komplett zonuppsättning utesluts ur resultatet.
+ */
+export async function fetchZoneRatesBatch(
+  roles: string[],
+  versionLabel: string,
+): Promise<Record<string, ZoneRates>> {
+  const wanted = roles.filter(Boolean);
+  if (wanted.length === 0) return {};
+
+  const { data, error } = await supabase
+    .from("contract_version_rates")
+    .select("yrkeskategori, zon, timpris_kund, contract_versions!inner(version_label)")
+    .eq("typ", "Grundpris")
+    .eq("contract_versions.version_label", versionLabel);
+
+  if (error || !data) return {};
+
+  const byKey: Record<string, Record<string, number>> = {};
+  for (const row of data as unknown as { yrkeskategori: string; zon: string; timpris_kund: number }[]) {
+    (byKey[row.yrkeskategori.toLowerCase()] ??= {})[row.zon] = row.timpris_kund;
+  }
+
+  const out: Record<string, ZoneRates> = {};
+  for (const role of wanted) {
+    const zones = byKey[role.toLowerCase()];
+    if (!zones) continue;
+    const zone1 = zones["Zon 1"];
+    const zone2 = zones["Zon 2"];
+    const zone3 = zones["Zon 3"];
+    if (zone1 == null || zone2 == null || zone3 == null) continue;
+    out[role] = { zone1, zone2, zone3 };
+  }
+  return out;
+}
+
+
+
 // ── Dokumenterade varianter av modellen ──────────────────────────────────────
 //
 // Publika rapportsidor visar två spann: eget bolag (kanonisk modell ovan) och

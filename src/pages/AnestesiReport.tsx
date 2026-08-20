@@ -60,6 +60,9 @@ export default function AnestesiReport() {
   }));
   const zone1Rate = rates.zone1;
   const zone3Rate = rates.zone3;
+  // Exempelberäkningen använder OB-tariffen ur tabellen ovan, inte ett eget tal.
+  const obHelgnatt = OB_RATES.find((o) => o.typ === "Helgnatt")?.rate ?? 0;
+
 
   const foretagare = anesthesiaRange(zone1Rate, "foretagare");
   const anstalld = anesthesiaRange(zone1Rate, "anstalld");
@@ -75,12 +78,13 @@ export default function AnestesiReport() {
     summary:
       `Ramavtalspriset för anestesisjuksköterskor är ${fmt(zone1Rate)}–${fmt(zone3Rate)} kr/timme beroende på zon. ` +
       `Marknadsmässigt konsultarvode (egenföretagare) ligger på ${fmt(recMinF)}–${fmt(recMaxF)} kr/timme enligt SKR:s ramavtal 2026.`,
-    rateRange: { min: zone1Rate, median: 792, max: zone3Rate, unit: "SEK/h" },
+    rateRange: { min: zone1Rate, median: rates.zone2, max: zone3Rate, unit: "SEK/h" },
     skrSources: ["https://skr.se/ramavtal/vardbemanning"],
     faq: [
       {
         question: "Vad är timpriset för en anestesisjuksköterska 2026?",
-        answer: `Ramavtalspriset enligt SKR är ${fmt(zone1Rate)} kr/timme i storstad (Zon 1), 792 kr/timme i mellanstora regioner (Zon 2) och ${fmt(zone3Rate)} kr/timme i glesbygd (Zon 3).`,
+        answer: `Ramavtalspriset enligt SKR är ${fmt(zone1Rate)} kr/timme i storstad (Zon 1), ${fmt(rates.zone2)} kr/timme i mellanstora regioner (Zon 2) och ${fmt(zone3Rate)} kr/timme i glesbygd (Zon 3).`,
+
       },
       {
         question: "Hur mycket tjänar en anestesisjuksköterska som konsult?",
@@ -89,7 +93,7 @@ export default function AnestesiReport() {
       {
         question: "Vad är OB-tillägget för anestesisjuksköterskor?",
         answer:
-          "OB-tilläggen följer SKR:s ramavtal: vardagkväll 36 kr/timme, vardagnatt 79 kr/timme, helgdag/helgkväll 92 kr/timme, helgnatt 105 kr/timme, storhelg 177–213 kr/timme.",
+          `OB-tilläggen följer SKR:s ramavtal: ${OB_RATES.map((o) => `${o.typ.toLowerCase()} ${fmt(o.rate)} kr/timme`).join(", ")}.`,
       },
     ],
     relatedPaths: getRelatedPaths("anestesisjukskoterska"),
@@ -247,9 +251,10 @@ export default function AnestesiReport() {
           </div>
           <div className="rounded-[18px] bg-foreground/[0.035] border border-foreground/[0.07] p-4 space-y-2">
             {[
-              { label: "Grundpris Zon 1", value: "740 kr/timme" },
-              { label: "OB helgnatt (fre–mån 22–06)", value: "+109 kr/timme" },
-              { label: "Totalt kundpris", value: "879 kr/timme", bold: true },
+              { label: "Grundpris Zon 1", value: `${fmt(zone1Rate)} kr/timme` },
+              { label: `OB helgnatt (fre–mån 22–06)`, value: `+${fmt(obHelgnatt)} kr/timme` },
+              { label: "Totalt kundpris", value: `${fmt(zone1Rate + obHelgnatt)} kr/timme`, bold: true },
+
             ].map((row) => (
               <div key={row.label} className={`flex items-center justify-between ${row.bold ? "pt-2 border-t border-foreground/[0.08]" : ""}`}>
                 <span className={`text-sm ${row.bold ? "font-semibold text-foreground" : "text-muted-foreground"}`}>{row.label}</span>
