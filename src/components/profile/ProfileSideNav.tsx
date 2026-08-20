@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
-import { FileText, FolderOpen, LayoutGrid, MessageSquare, User } from "lucide-react";
+import { FileText, LayoutGrid, User } from "lucide-react";
 
 const ITEMS = [
   { id: "profil", label: "Profil", icon: User },
-  { id: "dokument", label: "Dokument", icon: FolderOpen },
   { id: "cv", label: "CV", icon: FileText },
   { id: "verktyg", label: "Verktyg", icon: LayoutGrid },
-  { id: "assistent", label: "Assistent", icon: MessageSquare },
 ] as const;
 
 /**
