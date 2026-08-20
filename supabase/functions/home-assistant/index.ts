@@ -468,14 +468,22 @@ Deno.serve(async (req) => {
         ) ||
           /ramavtalspris\w*[^.]{0,40}\d/i.test(rawAnswer) ||
           /regionens pris[^.]{0,40}\d/i.test(rawAnswer));
-      const answer = leaksRegionPrice
+      // Saknas underlag får inga belopp alls förekomma i svaret.
+      const inventsAmount = !rateContext && !!rawAnswer &&
+        /\d[\d\s\u00a0.,]*\s*(kr|kronor|sek)/i.test(rawAnswer);
+      const askFallback =
+        "Jag saknar underlag för att räkna på det här utan att gissa. " +
+        `Kan du berätta ${missing.join(" och ")}? ` +
+        "Då visar jag möjlig ersättning direkt.";
+      const answer = leaksRegionPrice || inventsAmount
         ? (rateContext
           ? `${rateContext.replace(
             /\. Dessa belopp[\s\S]*$/,
             ".",
           )}\n\nBeräkningen utgår från regionernas ramavtal. Modellen bakom beloppen redovisas inte.`
-          : "Jag har inga sparade ersättningsbelopp för din roll och ort ännu.")
+          : askFallback)
         : rawAnswer;
+
 
       const { inputTokens, outputTokens } = extractTokensFromResponse(aiJson);
       await logAiUsage({
