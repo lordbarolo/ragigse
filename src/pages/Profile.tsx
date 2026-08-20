@@ -55,7 +55,7 @@ export default function Profile() {
               Min profil
             </h1>
 
-            <div className="mx-auto mt-8 w-full max-w-2xl">
+            <div className="mt-8 w-full">
               {/* Assistenten */}
               <ProfileAssistantChat
                 userId={user.id}
