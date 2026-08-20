@@ -408,17 +408,19 @@ async function answerTopic3(
   questionId: string,
   ctx: UserContext,
 ): Promise<string> {
-  const rate = ctx.role && ctx.kommun ? await lookupRate(supabase, ctx.role, ctx.kommun) : null;
-  const margin = await getMarginModel(supabase, ctx.employment_type);
-
-  if (!rate || !margin) {
+  if (!ctx.role || !ctx.kommun) {
     return `För att ge förhandlingsstöd behöver vi din roll, kommun och anställningsform. Komplettera i din profil eller gör en lönekoll först.`;
   }
+  const lookup = await lookupRate(supabase, ctx.role, ctx.kommun);
+  if (!lookup.ok) return noDataAnswer(lookup.reason, ctx);
+  const rate = lookup;
 
-  const lo = rate.timpris_kund * Number(margin.share_min);
-  const median = rate.timpris_kund * ((Number(margin.share_min) + Number(margin.share_max)) / 2);
-  const hi = rate.timpris_kund * Number(margin.share_max);
-  const current = ctx.current_rate ?? (ctx.current_salary ? (ctx.current_salary * Number(margin.employer_factor)) / margin.hours_per_month : null);
+  const possible = possibleForContext(rate.timpris_kund, ctx);
+  const lo = possible.min;
+  const median = possible.mid;
+  const hi = possible.max;
+  const current = ctx.current_rate ??
+    (ctx.current_salary ? (ctx.current_salary * EMPLOYER_FACTOR) / HOURS_PER_MONTH : null);
 
   switch (questionId) {
     case "realistic_range": {
@@ -434,8 +436,11 @@ async function answerTopic3(
         current ? `- Din nuvarande ersättning: ${fmt(current)} kr/h` : ``,
         ``,
         `**Realistiskt att begära:** ${fmt(floor)}–${fmt(ceiling)} kr/h, beroende på vad bemanningsföretaget åtar sig (resa, boende, intro).`,
+        ``,
+        MODEL_NOT_DISCLOSED,
       ].filter(Boolean).join("\n");
     }
+
     case "arguments":
       return [
         `**Argument som stärker din position:**`,
