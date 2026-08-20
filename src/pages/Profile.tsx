@@ -55,7 +55,7 @@ export default function Profile() {
               Min profil
             </h1>
 
-            <div className="mx-auto mt-8 w-full max-w-2xl space-y-6">
+            <div className="mx-auto mt-8 w-full max-w-2xl">
               {/* Assistenten */}
               <ProfileAssistantChat
                 userId={user.id}
@@ -64,18 +64,18 @@ export default function Profile() {
                 onSaved={refresh}
               />
 
-              {/* Dina uppgifter */}
-              {complete && context ? (
-                <ProfileContextCard userId={user.id} context={context} onSaved={refresh} />
-              ) : (
-                <p className="text-sm leading-relaxed text-white/55">
-                  Vi vill göra det lättare att arbeta som konsult. Din assistent behöver lära känna dig för att
-                  kunna företräda dina intressen. De fyra frågorna i chattrutan är en bra början.
-                </p>
-              )}
-
-              {/* Vad assistenten minns */}
-              {complete ? <AssistantMemoryCard userId={user.id} /> : null}
+              {/* Dina uppgifter + Vad assistenten minns, sida vid sida */}
+              <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+                {complete && context ? (
+                  <ProfileContextCard userId={user.id} context={context} onSaved={refresh} />
+                ) : (
+                  <p className="text-sm leading-relaxed text-white/55 md:col-span-2">
+                    Vi vill göra det lättare att arbeta som konsult. Din assistent behöver lära känna dig för att
+                    kunna företräda dina intressen. De fyra frågorna i chattrutan är en bra början.
+                  </p>
+                )}
+                {complete ? <AssistantMemoryCard userId={user.id} /> : null}
+              </div>
             </div>
           </section>
 
