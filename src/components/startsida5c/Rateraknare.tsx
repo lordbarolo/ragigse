@@ -60,10 +60,10 @@ export default function Rateraknare() {
         animation: "fadeUp5c .55s .24s ease both",
       }}
     >
-      <h2 className="mb-1 text-[18px] font-semibold" style={{ color: "#ffffff", letterSpacing: "-0.01em" }}>
+      <h2 className="hidden md:block mb-1 text-[18px] font-semibold" style={{ color: "#ffffff", letterSpacing: "-0.01em" }}>
         AI-INDIKATOR FÖR KONSULTERSÄTTNING
       </h2>
-      <p className="mb-5 text-[15px]" style={{ color: "#a1a3ab", lineHeight: 1.5 }}>
+      <p className="hidden md:block mb-5 text-[15px]" style={{ color: "#a1a3ab", lineHeight: 1.5 }}>
         Välj roll och ort för att se marknadsmässig ersättning
       </p>
 
