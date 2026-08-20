@@ -7,7 +7,6 @@ import ProfileAssistantChat from "@/components/profile/ProfileAssistantChat";
 import ProfileContextCard from "@/components/profile/ProfileContextCard";
 import AssistantMemoryCard from "@/components/profile/AssistantMemoryCard";
 import ProfileSideNav from "@/components/profile/ProfileSideNav";
-import AgentStatusCard from "@/components/profile/AgentStatusCard";
 
 import ProfileToolsGrid from "@/components/profile/ProfileToolsGrid";
 import ProfileDocumentsSection from "@/components/profile/ProfileDocumentsSection";
@@ -47,7 +46,7 @@ export default function Profile() {
         <ProfileSideNav />
 
         <div className="min-w-0 flex-1">
-          {/* Sidhuvud + assistent + uppgifter sida vid sida */}
+          {/* Sidhuvud + assistent som översta sektion, uppgifter och minne under */}
           <section id="profil" className="scroll-mt-24 px-5 py-10 sm:py-14">
             <p className="text-[11px] uppercase tracking-[0.16em] text-white/40">
               {firstName ? `Inloggad som ${firstName}` : "Inloggad"}
@@ -56,39 +55,27 @@ export default function Profile() {
               Min profil
             </h1>
 
-            <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[1fr_1.25fr]">
-              {/* Vänster: dina uppgifter */}
-              <div className="space-y-6">
-                {complete && context ? (
-                  <>
-                    <p className="max-w-lg text-sm leading-relaxed text-white/55">
-                      Håll uppgifterna om dig uppdaterade för att optimera utfallet.
-                    </p>
-                    <ProfileContextCard userId={user.id} context={context} onSaved={refresh} />
-                  </>
-                ) : (
-                  <div className="max-w-lg">
-                    <p className="text-sm leading-relaxed text-white/55">
-                      Vi vill göra det lättare att arbeta som konsult. Din assistent behöver lära känna dig för att kunna företräda dina intressen. De fyra frågorna i chattrutan är en bra början.
-                    </p>
-                  </div>
-                )}
-              </div>
+            <div className="mx-auto mt-8 w-full max-w-2xl space-y-6">
+              {/* Assistenten */}
+              <ProfileAssistantChat
+                userId={user.id}
+                context={context}
+                unlocked={complete}
+                onSaved={refresh}
+              />
 
-              {/* Höger: AI-assistenten */}
-              <div>
-                <ProfileAssistantChat
-                  userId={user.id}
-                  context={context}
-                  unlocked={complete}
-                  onSaved={refresh}
-                />
-                {complete ? <AssistantMemoryCard userId={user.id} /> : null}
-              </div>
-            </div>
+              {/* Dina uppgifter */}
+              {complete && context ? (
+                <ProfileContextCard userId={user.id} context={context} onSaved={refresh} />
+              ) : (
+                <p className="text-sm leading-relaxed text-white/55">
+                  Vi vill göra det lättare att arbeta som konsult. Din assistent behöver lära känna dig för att
+                  kunna företräda dina intressen. De fyra frågorna i chattrutan är en bra början.
+                </p>
+              )}
 
-            <div className="mt-10">
-              <AgentStatusCard userId={user.id} contextComplete={Boolean(complete && context)} />
+              {/* Vad assistenten minns */}
+              {complete ? <AssistantMemoryCard userId={user.id} /> : null}
             </div>
           </section>
 

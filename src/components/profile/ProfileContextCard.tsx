@@ -123,7 +123,7 @@ export default function ProfileContextCard({ userId, context, onSaved }: Props) 
   ];
 
   return (
-    <div className="mt-6 max-w-md overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.02] shadow-[0_20px_50px_-30px_rgba(0,0,0,0.9)] backdrop-blur-sm">
+    <div className="mt-0 overflow-hidden rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.06] to-white/[0.02] shadow-[0_20px_50px_-30px_rgba(0,0,0,0.9)] backdrop-blur-sm">
       <div className="flex items-center justify-between gap-4 border-b border-white/10 px-5 py-3.5">
         <p className="text-[11px] uppercase tracking-[0.16em] text-white/45">Dina uppgifter</p>
         <button
