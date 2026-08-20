@@ -4,6 +4,10 @@ import {
   calculateSalaryRange,
   getMarginShares,
   monthlyDelta,
+  EMPLOYER_FACTOR,
+  HOURS_PER_MONTH,
+  SPECIALIST_DOCTOR_SHARE_MAX,
+  SPECIALIST_DOCTOR_SHARE_MIN,
   type EmploymentType,
   type MarginModel,
 } from "../_shared/calc.ts";
