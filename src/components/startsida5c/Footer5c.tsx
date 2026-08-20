@@ -15,9 +15,12 @@ export default function Footer5c() {
         <img
           src="/vardbemanning-lockup-dark.png"
           alt="vårdbemanning.ai – ramavtalspriser för vårdkonsulter"
-          className="h-5 w-auto select-none"
+          width={2676}
+          height={750}
+          className="h-6 w-auto max-w-[200px] shrink-0 self-start select-none object-contain md:h-5"
           draggable={false}
         />
+
 
         <nav className="flex flex-wrap gap-x-6 gap-y-2 text-[14px]" style={{ color: "#b8bac2" }}>
           {LINKS.map((l) => (
