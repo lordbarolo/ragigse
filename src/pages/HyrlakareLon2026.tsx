@@ -5,6 +5,8 @@ import Footer5c from "@/components/startsida5c/Footer5c";
 import { JsonLd } from "@/components/JsonLd";
 import RelateradeSidor from "@/components/report/RelateradeSidor";
 import { DOCTOR_SPECIALTY_REPORTS } from "@/data/doctorSpecialtyReports";
+import { useCatalogZoneRatesBatch } from "@/hooks/useCatalogZoneRatesBatch";
+
 import { GUIDE_BY_SLUG } from "@/data/guides";
 import { getGuideUpdatedAt } from "@/data/contentFreshness";
 import {
