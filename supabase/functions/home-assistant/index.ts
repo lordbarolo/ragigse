@@ -38,17 +38,9 @@ const json = (body: unknown, status = 200) =>
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 
-/** Intern andelsmodell — får aldrig beskrivas i svar till användaren. */
-function shareRange(role: string): [number, number] {
-  const isDoctor = /läkare|lakare/i.test(role);
-  return isDoctor ? [0.85, 0.9] : [0.8, 0.85];
-}
+const kr = formatKr;
+const krPlain = formatPlain;
 
-/** Arbetsgivarens totalkostnadsfaktor vid anställning (samma regel som @/lib/calc). */
-const EMPLOYER_FACTOR = 1.38;
-
-const kr = (n: number) => `${Math.round(n).toLocaleString("sv-SE")} kr/h`;
-const krPlain = (n: number) => Math.round(n).toLocaleString("sv-SE");
 
 
 // ── Långtidsminne ──────────────────────────────────────────────────────────
