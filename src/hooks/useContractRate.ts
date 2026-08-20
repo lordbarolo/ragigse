@@ -10,7 +10,7 @@
  */
 
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { fetchZoneRates } from "@/lib/pricing";
 import {
   PRICE_BY_ROLE,
   lookupRolePrice,
@@ -31,38 +31,17 @@ export type ContractRateResult =
   | { status: "missing"; role: string | null }
   | { status: "loading" };
 
-interface DbRateRow {
-  yrkeskategori: string;
-  zon: string;
-  timpris_kund: number;
-}
-
 async function fetchDbRate(role: string): Promise<RolePrice | null> {
-  const { data, error } = await supabase
-    .from("contract_version_rates")
-    .select("yrkeskategori, zon, timpris_kund, contract_versions!inner(version_label)")
-    .eq("yrkeskategori", role)
-    .eq("typ", "Grundpris")
-    .eq("contract_versions.version_label", "v1.7");
-
-  if (error || !data || data.length === 0) return null;
-
-  const byZone: Record<string, number> = {};
-  for (const row of data as unknown as DbRateRow[]) {
-    byZone[row.zon] = row.timpris_kund;
-  }
-  const z1 = byZone["Zon 1"];
-  const z2 = byZone["Zon 2"];
-  const z3 = byZone["Zon 3"];
-  if (z1 == null || z2 == null || z3 == null) return null;
+  const zones = await fetchZoneRates(role, "v1.7");
+  if (!zones) return null;
 
   const fallback = PRICE_BY_ROLE[role];
   return {
     role,
-    group: fallback?.group ?? deriveGroup(z1),
-    zone1: z1,
-    zone2: z2,
-    zone3: z3,
+    group: fallback?.group ?? deriveGroup(zones.zone1),
+    zone1: zones.zone1,
+    zone2: zones.zone2,
+    zone3: zones.zone3,
     contractVersion: "v1.7",
   };
 }

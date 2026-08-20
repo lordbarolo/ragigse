@@ -3,7 +3,7 @@
  * Alla siffror räknas fram från tabellen `rates` (typ = "Grundpris")
  * med produktionens marginalmodell i @/lib/calc. Inga hårdkodade priser.
  */
-import { getMarginShares, EMPLOYER_FACTOR } from "@/lib/calc";
+import { getMarginShares, midRate } from "@/lib/pricing";
 import { filterPublicRoles } from "@/lib/roleVisibility";
 
 
@@ -51,10 +51,9 @@ export function computeRate5c(
   const row = rows.find((r) => r.yrkeskategori === yrkeskategori && r.zon === zon);
   if (!row || typeof row.timpris_kund !== "number") return null;
 
-  const { share_min, share_max, margin_text } = getMarginShares(yrkeskategori);
-  const shareMid = (share_min + share_max) / 2;
-  const foretagareKrH = Math.round(row.timpris_kund * shareMid);
-  const lontagareKrH = Math.round(foretagareKrH / EMPLOYER_FACTOR);
+  const { margin_text } = getMarginShares(yrkeskategori);
+  const foretagareKrH = midRate(row.timpris_kund, yrkeskategori, "foretagare");
+  const lontagareKrH = midRate(row.timpris_kund, yrkeskategori, "anstalld");
 
   return { timpris_kund: row.timpris_kund, foretagareKrH, lontagareKrH, margin_text };
 }
