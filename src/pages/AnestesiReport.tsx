@@ -56,7 +56,7 @@ export default function AnestesiReport() {
   const rates = useCatalogZoneRates("Specialistsjuksköterska anestesi", "v1.7", ZONE_FALLBACK);
   const ZONES = ZONE_META.map((meta, i) => ({
     ...meta,
-    rate: [rates.zone1, rates.zone2, rates.zone3][i],
+    rate: ([rates.zone1, rates.zone2, rates.zone3][i] ?? 0),
   }));
   const zone1Rate = rates.zone1;
   const zone3Rate = rates.zone3;
