@@ -14,6 +14,7 @@
 
 import {
   EMPLOYER_FACTOR,
+  isSpecialistDoctor,
   SPECIALIST_DOCTOR_SHARE_MAX,
   SPECIALIST_DOCTOR_SHARE_MIN,
   STANDARD_SHARE_MAX,
@@ -22,10 +23,13 @@ import {
 
 export { EMPLOYER_FACTOR };
 
-/** Intern andelsmodell — får aldrig beskrivas i svar till användaren. */
+/**
+ * Intern andelsmodell — får aldrig beskrivas i svar till användaren.
+ * Endast specialistläkare har den högre andelen; leg. läkare och ST-läkare
+ * följer standardmodellen. Samma predikat som frontend (`getMarginShares`).
+ */
 export function shareRange(role: string): [number, number] {
-  const isDoctor = /läkare|lakare/i.test(role);
-  return isDoctor
+  return isSpecialistDoctor(role)
     ? [SPECIALIST_DOCTOR_SHARE_MIN, SPECIALIST_DOCTOR_SHARE_MAX]
     : [STANDARD_SHARE_MIN, STANDARD_SHARE_MAX];
 }
@@ -133,7 +137,10 @@ export function leaksForbiddenData(
   if (/regionens pris[^.]{0,40}\d/i.test(normalized)) return true;
   if (/kundpris\w*[^.]{0,40}\d/i.test(normalized)) return true;
   // Beräkningsmodellen: marginalprocent och omräkningsfaktorer.
+  // Fångar båda ordningarna: "marginal på 15 %" och "15–20 % i marginal".
   if (/margina\w*[^.]{0,40}\d\s*[–\-]?\s*\d*\s*%/i.test(normalized)) return true;
+  if (/\d\s*[–\-]?\s*\d*\s*%[^.]{0,40}margina\w*/i.test(normalized)) return true;
+  if (/(behåller|tar)[^.]{0,30}\d\s*[–\-]?\s*\d*\s*%/i.test(normalized)) return true;
   if (/\b1[.,]38\b/.test(normalized)) return true;
   if (/\b167\s*(timmar|h\b)/i.test(normalized)) return true;
 
