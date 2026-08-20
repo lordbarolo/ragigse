@@ -40,12 +40,8 @@ const ZONE_META = [
   { zone: "Zon 3", desc: "Glesbygd / svårrekryterade områden" },
 ];
 
-const SHARE_MIN_FORETAGARE = 0.85;
-const SHARE_MAX_FORETAGARE = 0.90;
-const SHARE_MIN_ANSTALLD = 0.83;
-const SHARE_MAX_ANSTALLD = 0.88;
-// Arbetsgivaravgifter ~31,42 % + ITP1 4,5 % + särskild löneskatt + AFA — bruttolön = total konsultkostnad / 1,38
-const EMPLOYER_FACTOR = 1.38;
+// Marginal- och arbetsgivarmodell: se src/lib/pricing.ts (enda källan).
+const MARGIN_ROLE = "Specialistläkare";
 
 const makeFaq = (zones: { zone: string; rate: number; desc: string }[]) => [
   {
@@ -83,10 +79,12 @@ export default function AllmanmedicinReport() {
   // Spann baserat på Zon 2 (median) som referens för "marknadsmässigt"
   const refRate = ZONES[1].rate;
 
-  const recMinF = Math.round(refRate * SHARE_MIN_FORETAGARE);
-  const recMaxF = Math.round(refRate * SHARE_MAX_FORETAGARE);
-  const recMinA = Math.round((refRate * SHARE_MIN_ANSTALLD) / EMPLOYER_FACTOR);
-  const recMaxA = Math.round((refRate * SHARE_MAX_ANSTALLD) / EMPLOYER_FACTOR);
+  const foretagare = possibleRange(refRate, MARGIN_ROLE, "foretagare");
+  const anstalld = employedRange(refRate, MARGIN_ROLE);
+  const recMinF = foretagare.min;
+  const recMaxF = foretagare.max;
+  const recMinA = anstalld.min;
+  const recMaxA = anstalld.max;
 
   useEffect(() => {
     const prevHtml = document.documentElement.style.backgroundColor;

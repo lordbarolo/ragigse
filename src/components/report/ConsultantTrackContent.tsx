@@ -76,8 +76,9 @@ export default function ConsultantTrackContent({
   const delta = r.delta;
   const isConsultantFullAccess = isFullAccess && !!rec;
 
-  const shareMin = rec?.consultant_share_min ?? (isEmployee ? 0.85 : 0.85);
-  const shareMax = rec?.consultant_share_max ?? (isEmployee ? 0.90 : 0.92);
+  const [fallbackShareMin, fallbackShareMax] = shareRange(occupation);
+  const shareMin = rec?.consultant_share_min ?? fallbackShareMin;
+  const shareMax = rec?.consultant_share_max ?? fallbackShareMax;
   const afterMarginMin = Math.round(marketRate * shareMin);
   const afterMarginMax = Math.round(marketRate * shareMax);
 
@@ -88,8 +89,8 @@ export default function ConsultantTrackContent({
   const recommendedMax = rec ? rec.recommended_hourly_max : Math.round(marketRate * shareMax);
   const isAboveThreshold = recommendedMax > 0 && currentHourly >= recommendedMax;
 
-  // For employees, the comparable cost is gross salary × employer factor (1.38)
-  const employerFactor = rec?.employee_factor ?? 1.38;
+  // För anställda jämförs bruttolön × arbetsgivarfaktor (central modell).
+  const employerFactor = rec?.employee_factor ?? EMPLOYER_FACTOR;
   const costToCompare = isEmployee ? Math.round(currentHourly * employerFactor) : currentHourly;
   const sharePercent = marketRate > 0 ? Math.round((costToCompare / marketRate) * 100) : 0;
 
@@ -242,10 +243,10 @@ export default function ConsultantTrackContent({
                 const isUserZone = zc.zon === userZone;
                 const zoneRate = zc.timpris_kund;
                 const recHourlyLow = isEmployee
-                  ? Math.round((zoneRate * shareMin) / 1.38)
+                  ? Math.round((zoneRate * shareMin) / employerFactor)
                   : Math.round(zoneRate * shareMin);
                 const recHourlyHigh = isEmployee
-                  ? Math.round((zoneRate * shareMax) / 1.38)
+                  ? Math.round((zoneRate * shareMax) / employerFactor)
                   : Math.round(zoneRate * shareMax);
                 const maxRate = Math.max(...zoneComparisons.map((z) => z.timpris_kund));
                 const barWidth = Math.round((zoneRate / maxRate) * 100);

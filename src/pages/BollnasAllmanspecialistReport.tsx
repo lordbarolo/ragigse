@@ -22,10 +22,8 @@ const ZONE_META = [
   { zone: "Zon 3", desc: "Glesbygd / svårrekryterade — Bollnäs" },
 ];
 
-const SHARE_MIN_FORETAGARE = 0.85;
-const SHARE_MAX_FORETAGARE = 0.90;
-const SHARE_MIN_ANSTALLD = 0.83;
-const SHARE_MAX_ANSTALLD = 0.88;
+// Marginalmodell: se src/lib/pricing.ts (enda källan).
+const MARGIN_ROLE = "Specialistläkare";
 
 const USER_RATE = 1240;
 const USER_KOMMUN = "Bollnäs";
@@ -39,10 +37,13 @@ export default function BollnasAllmanspecialistReport() {
   }));
   const USER_ZON_RATE = rates.zone3;
 
-  const recMinF = Math.round(USER_ZON_RATE * SHARE_MIN_FORETAGARE);
-  const recMaxF = Math.round(USER_ZON_RATE * SHARE_MAX_FORETAGARE);
-  const recMinA = Math.round(USER_ZON_RATE * SHARE_MIN_ANSTALLD);
-  const recMaxA = Math.round(USER_ZON_RATE * SHARE_MAX_ANSTALLD);
+  const foretagare = possibleRange(USER_ZON_RATE, MARGIN_ROLE, "foretagare");
+  // Denna sida redovisar total konsultkostnad, inte bruttolön → employerFactor 1.
+  const anstalld = employedRange(USER_ZON_RATE, MARGIN_ROLE, 1);
+  const recMinF = foretagare.min;
+  const recMaxF = foretagare.max;
+  const recMinA = anstalld.min;
+  const recMaxA = anstalld.max;
 
 
   const safeMinF = Math.max(recMinF, USER_RATE);

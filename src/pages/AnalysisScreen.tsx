@@ -244,17 +244,14 @@ export default function AnalysisScreen() {
   const comparison = useMemo(() => {
     if (!survey || !userZoneRate) return null;
     const isEmployee = survey.employmentType === "anstalld";
-    const role = (survey.yrke || "").toLowerCase();
-    // Per project memory: läkare 10% margin marker (share_max 0.90),
-    // övriga 15% margin marker (share_max 0.85).
-    const isDoctor = role.includes("läkare") || role.includes("lakare");
-    const shareMin = isDoctor ? 0.85 : 0.80;
-    const shareMax = isDoctor ? 0.90 : 0.85;
-    const employerFactor = 1.38;
-
-    const scale = isEmployee ? employerFactor : 1;
-    const recMin = Math.round((userZoneRate * shareMin) / scale);
-    const recMax = Math.round((userZoneRate * shareMax) / scale);
+    const role = survey.yrke || "";
+    // Marginal- och arbetsgivarmodell hämtas centralt (src/lib/pricing.ts).
+    const [, shareMax] = shareRange(role);
+    const { min: recMin, max: recMax } = possibleRange(
+      userZoneRate,
+      role,
+      isEmployee ? "anstalld" : "foretagare",
+    );
 
     const isHourly = survey.salaryType === "hourly";
     const currentHourly = isHourly
