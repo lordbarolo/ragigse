@@ -44,18 +44,24 @@ export function interpolate(
   output: number[],
   ease: EaseFn | EaseFn[] = Easing.linear
 ) {
+  const first = input[0] ?? 0;
+  const last = input[input.length - 1] ?? 0;
+  const outFirst = output[0] ?? 0;
+  const outLast = output[output.length - 1] ?? 0;
   return (t: number) => {
-    if (t <= input[0]) return output[0];
-    if (t >= input[input.length - 1]) return output[output.length - 1];
+    if (t <= first) return outFirst;
+    if (t >= last) return outLast;
     for (let i = 0; i < input.length - 1; i++) {
-      if (t >= input[i] && t <= input[i + 1]) {
-        const span = input[i + 1] - input[i];
-        const local = span === 0 ? 0 : (t - input[i]) / span;
+      const a = input[i] ?? 0;
+      const b = input[i + 1] ?? 0;
+      if (t >= a && t <= b) {
+        const span = b - a;
+        const local = span === 0 ? 0 : (t - a) / span;
         const easeFn = Array.isArray(ease) ? ease[i] || Easing.linear : ease;
-        return output[i] + (output[i + 1] - output[i]) * easeFn(local);
+        return (output[i] ?? 0) + ((output[i + 1] ?? 0) - (output[i] ?? 0)) * easeFn(local);
       }
     }
-    return output[output.length - 1];
+    return outLast;
   };
 }
 
@@ -133,7 +139,7 @@ export function withAlpha(color: string, alpha: number): string {
   const c = color.trim();
   const hex = /^#([0-9a-f]{3}|[0-9a-f]{4}|[0-9a-f]{6}|[0-9a-f]{8})$/i.exec(c);
   if (hex) {
-    let h = hex[1];
+    let h = hex[1] ?? '';
     if (h.length === 3 || h.length === 4) {
       h = h
         .split('')
@@ -149,7 +155,7 @@ export function withAlpha(color: string, alpha: number): string {
   // rgb()/rgba() → byt ut alfakanalen
   const rgb = /^rgba?\(([^)]+)\)$/i.exec(c);
   if (rgb) {
-    const parts = rgb[1].split(/[\s,/]+/).filter(Boolean);
+    const parts = (rgb[1] ?? '').split(/[\s,/]+/).filter(Boolean);
     if (parts.length >= 3) {
       return `rgba(${parts[0]}, ${parts[1]}, ${parts[2]}, ${a})`;
     }

@@ -276,7 +276,8 @@ export default function MissadeTimmarAnimation({
                 {BLOCKS.map((b, i) => {
                   const inP = MOTION.enter(T, 1.1 + i * 0.08, 0.55);
                   const isM = b.m !== undefined;
-                  const fp = isM ? D(T, flagT(MISSED[b.m as number]), 0.35) : 0;
+                  const missed = isM ? MISSED[b.m as number] : undefined;
+                  const fp = missed ? D(T, flagT(missed), 0.35) : 0;
                   return (
                     <div
                       key={i}
@@ -321,7 +322,7 @@ export default function MissadeTimmarAnimation({
                             opacity: fp,
                           }}
                         >
-                          {MISSED[b.m as number].label}
+                          {missed?.label}
                         </div>
                       )}
                     </div>
