@@ -93,7 +93,7 @@ export default function AnestesiReport() {
       {
         question: "Vad är OB-tillägget för anestesisjuksköterskor?",
         answer:
-          "OB-tilläggen följer SKR:s ramavtal: vardagkväll 36 kr/timme, vardagnatt 79 kr/timme, helgdag/helgkväll 92 kr/timme, helgnatt 105 kr/timme, storhelg 177–213 kr/timme.",
+          `OB-tilläggen följer SKR:s ramavtal: ${OB_RATES.map((o) => `${o.typ.toLowerCase()} ${fmt(o.rate)} kr/timme`).join(", ")}.`,
       },
     ],
     relatedPaths: getRelatedPaths("anestesisjukskoterska"),
