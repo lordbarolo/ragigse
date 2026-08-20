@@ -36,7 +36,7 @@ export default function ProfileSideNav() {
       {/* Mobil: vågrät, scrollbar rad */}
       <nav
         aria-label="Profilnavigering"
-        className="sticky top-0 z-20 -mx-5 mb-2 border-b border-white/10 bg-[#0b0c10]/95 px-5 py-3 backdrop-blur lg:hidden"
+        className="sticky top-0 z-20 mb-2 w-full border-b border-white/10 bg-[#0b0c10]/95 px-5 py-3 backdrop-blur lg:hidden"
       >
         <ul className="flex gap-2 overflow-x-auto">
           {ITEMS.map((item) => (
