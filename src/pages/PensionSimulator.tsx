@@ -28,16 +28,20 @@ export default function PensionSimulator() {
     trackEvent("pension_page_viewed");
   }, []);
 
-  // Förifyll utifrån profilens timersättning första gången den finns.
+  // Förifyll endast för anställda — företagares angivna timpris är ett
+  // fakturerat kundpris, inte bruttolön, och får aldrig styra simulatorn.
+  const isEmployee = context?.employmentType === "anstalld";
+  const prefillRate = isEmployee ? context?.hourlyRate ?? null : null;
+
   useEffect(() => {
     if (salary !== null) return;
-    const fromProfile = context?.hourlyRate ? context.hourlyRate * HOURS_PER_MONTH : 55000;
+    const fromProfile = prefillRate ? prefillRate * HOURS_PER_MONTH : 55000;
     const clamped = Math.min(
       MAX_SALARY,
       Math.max(MIN_SALARY, Math.round(fromProfile / STEP) * STEP),
     );
     setSalary(clamped);
-  }, [context, salary]);
+  }, [prefillRate, salary]);
 
   const value = salary ?? 55000;
   const scenarios = useMemo(() => calculateAllScenarios(value), [value]);
