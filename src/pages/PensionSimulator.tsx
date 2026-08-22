@@ -91,10 +91,15 @@ export default function PensionSimulator() {
               betala tjänstepension enligt kollektivavtal. Dra i reglaget för att se
               hur olika lönenivåer påverkar den månatliga pensionsavsättningen.
             </p>
-            {context?.hourlyRate && (
+            {prefillRate ? (
               <p className="mt-4 text-xs text-white/40">
-                Utgångspunkt: {fmt(context.hourlyRate)} kr/timme ×{" "}
-                {HOURS_PER_MONTH} timmar.
+                Utgångspunkt: {fmt(prefillRate)} kr/timme × {HOURS_PER_MONTH}{" "}
+                timmar.
+              </p>
+            ) : (
+              <p className="mt-4 text-xs text-white/40">
+                Simulatorn utgår från bruttolön som anställd. Ange nivån själv
+                med reglaget.
               </p>
             )}
           </div>
