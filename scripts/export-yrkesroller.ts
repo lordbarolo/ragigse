@@ -72,6 +72,9 @@ async function main() {
     for (const r of data) {
       const v = vMap.get(r.version_id);
       if (!v) continue;
+      // Endast yrkesroller: hoppa över OB-tillägg och administrativa prisgrupper.
+      if (/^OB-tillägg/i.test(r.yrkeskategori)) continue;
+      if (/\bGrupp [AB]\b/i.test(r.yrkeskategori)) continue;
       const katalog = v.catalog_name ?? "";
       const key = `${katalog}|${v.version_label}|${r.yrkeskategori}|${r.typ}`;
       let row = index.get(key);
