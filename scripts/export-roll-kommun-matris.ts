@@ -121,7 +121,7 @@ async function fetchRoller(): Promise<Roll[]> {
   return roller;
 }
 
-async function fetchKommuner() {
+
 async function fetchKommuner(): Promise<LocationRow[]> {
   const rows: LocationRow[] = [];
   const pageSize = 1000;
