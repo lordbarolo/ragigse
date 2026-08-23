@@ -122,21 +122,24 @@ async function fetchRoller(): Promise<Roll[]> {
 }
 
 async function fetchKommuner() {
-  const rows: { kommun: string; zon: string; region: string | null }[] = [];
+async function fetchKommuner(): Promise<LocationRow[]> {
+  const rows: LocationRow[] = [];
   const pageSize = 1000;
   for (let from = 0; ; from += pageSize) {
-    const { data, error } = await supabase
+    const { data: dataRaw, error } = await supabase
       .from("locations")
       .select("kommun, zon, region")
       .order("kommun")
       .range(from, from + pageSize - 1);
     if (error) throw error;
-    if (!data || data.length === 0) break;
+    const data = (dataRaw ?? []) as LocationRow[];
+    if (data.length === 0) break;
     for (const r of data) rows.push({ kommun: r.kommun, zon: r.zon, region: r.region });
     if (data.length < pageSize) break;
   }
   return rows;
 }
+
 
 async function main() {
   const outDir = process.argv[2] || "/mnt/documents";
