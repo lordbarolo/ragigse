@@ -2,26 +2,49 @@
  * Exporterar samtliga yrkesroller (artikelkatalogens nivå, ej kanonisk indelning)
  * för läkare, sjuksköterskor och barnmorskor ur aktiva avtalsversioner.
  *
+ * Fristående skript: enda beroendet är @supabase/supabase-js.
+ * Kräver tabellerna public.contract_versions och public.contract_version_rates
+ * samt läsrättighet (anon/publishable key räcker om RLS tillåter SELECT).
+ *
  * Användning:
  *   bunx tsx scripts/export-yrkesroller.ts [utmapp]
+ *
+ * Miljövariabler (första träffen används):
+ *   SUPABASE_URL | VITE_SUPABASE_URL
+ *   SUPABASE_PUBLISHABLE_KEY | VITE_SUPABASE_PUBLISHABLE_KEY | SUPABASE_ANON_KEY | VITE_SUPABASE_ANON_KEY
  *
  * Skriver CSV + Markdown till /mnt/documents om ingen mapp anges.
  */
 import { createClient } from "@supabase/supabase-js";
 import { writeFileSync } from "fs";
 import { resolve } from "path";
-import type { Database } from "../src/integrations/supabase/types";
 
 const SUPABASE_URL = process.env["SUPABASE_URL"] || process.env["VITE_SUPABASE_URL"];
 const SUPABASE_KEY =
-  process.env["SUPABASE_PUBLISHABLE_KEY"] || process.env["VITE_SUPABASE_PUBLISHABLE_KEY"];
+  process.env["SUPABASE_PUBLISHABLE_KEY"] ||
+  process.env["VITE_SUPABASE_PUBLISHABLE_KEY"] ||
+  process.env["SUPABASE_ANON_KEY"] ||
+  process.env["VITE_SUPABASE_ANON_KEY"];
 
 if (!SUPABASE_URL || !SUPABASE_KEY) {
-  console.error("Saknar SUPABASE_URL / SUPABASE_PUBLISHABLE_KEY i miljön.");
+  console.error(
+    "Saknar SUPABASE_URL / SUPABASE_PUBLISHABLE_KEY i miljön (se kommentaren högst upp i filen).",
+  );
   process.exit(1);
 }
 
-const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_KEY);
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+/** Radformer skriptet läser — hålls lokala så filen är projektoberoende. */
+type ContractVersionRow = { id: string; catalog_name: string | null; version_label: string | null };
+type ContractRateRow = {
+  version_id: string;
+  yrkeskategori: string;
+  zon: string | null;
+  typ: string | null;
+  timpris_kund: number | null;
+};
+
 
 type Row = {
   yrkesroll: string;
