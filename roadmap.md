@@ -1,7 +1,7 @@
 # Roadmap
 
 ## Pågående
-- [ ] Byt ut src/lib/cvExport.ts mot buggrättad version (PDF WinAnsi-tecken, kerning-mätning, länkar/tabeller/kursiv-hantering). Verifiera sha256 + typkontroll + bygg.
+- [ ] cvExport.ts: funktionellt ersatt (typkontroll 0 fel, bygg OK), men sha256 matchar inte originalet — inväntar filen som bilaga för byte-exakt ersättning.
 
 ## Öppet (ej påbörjat, avvaktar beslut)
 - Uppdragsassistenten "Hälsingland v40–44": plan ligger i .lovable/plan.md, väntar godkännande + beslut om marginal-synlighet.
