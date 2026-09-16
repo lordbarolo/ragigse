@@ -96,13 +96,36 @@ export function parseCvMarkdown(markdown: string): CvBlock[] {
   return blocks;
 }
 
+/** H1-rubriker som är sektionsnamn och inte konsultens namn. */
+const NON_NAME_HEADINGS = new Set([
+  "cv",
+  "curriculum vitae",
+  "meritförteckning",
+  "sammanfattning",
+  "profil",
+  "legitimation och behörigheter",
+  "klinisk erfarenhet",
+  "erfarenhet",
+  "kompetenser och system",
+  "utbildning",
+  "kurser och certifikat",
+  "referenser",
+  "kontakt",
+]);
+
 /**
  * Filnamn baserat på konsultens namn. Namnet hämtas från CV:ts H1-rubrik
  * (eller angivet fallbackNamn). Utan namn används det neutrala filnamnet.
+ * H1-rubriker som är sektionsnamn ("# Sammanfattning") räknas inte som namn.
  */
 export function cvFileName(markdown: string, ext: "docx" | "pdf" | "md", fallbackName?: string | null): string {
-  const h1 = markdown.split("\n").find((l) => /^#\s+\S/.test(l.trim()));
-  const raw = (h1 ? h1.trim().replace(/^#\s+/, "") : (fallbackName ?? "")).replace(/[*_`]/g, "").trim();
+  const h1 = markdown
+    .split("\n")
+    .map((l) => l.trim())
+    .filter((l) => /^#\s+\S/.test(l))
+    .map((l) => l.replace(/^#\s+/, "").replace(/[*_`]/g, "").trim())
+    .find((title) => !NON_NAME_HEADINGS.has(title.toLowerCase()));
+  const raw = (h1 ?? fallbackName ?? "").replace(/[*_`]/g, "").trim();
   const slug = raw
     .toLowerCase()
     .replace(/[åä]/g, "a")

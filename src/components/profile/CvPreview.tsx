@@ -1,20 +1,25 @@
+import { useMemo } from "react";
 import ReactMarkdown, { type Components } from "react-markdown";
 
 // Renderad förhandsvisning av CV-utkastet i det mörka profiltemat.
 // Egen komponentmappning istället för prose-klasser — @tailwindcss/typography
 // är inte registrerat i Tailwind v4-CSS:en och globala stilfiler ska inte röras.
+// CV:ts rubriker renderas en nivå ned (h2–h4) eftersom sidan redan har en h1.
 const components: Components = {
   h1: ({ children }) => (
-    <h1 className="text-lg font-semibold tracking-tight text-white">{children}</h1>
+    <h2 className="text-lg font-semibold tracking-tight text-white">{children}</h2>
   ),
   h2: ({ children }) => (
-    <h2 className="mt-6 border-b border-white/10 pb-1.5 text-sm font-semibold uppercase tracking-[0.08em] text-white/90 first:mt-0">
+    <h3 className="mt-6 border-b border-white/10 pb-1.5 text-sm font-semibold uppercase tracking-[0.08em] text-white/90 first:mt-0">
       {children}
-    </h2>
+    </h3>
   ),
   h3: ({ children }) => (
-    <h3 className="mt-4 text-sm font-semibold text-white/85">{children}</h3>
+    <h4 className="mt-4 text-sm font-semibold text-white/85">{children}</h4>
   ),
+  h4: ({ children }) => <h4 className="mt-4 text-sm font-semibold text-white/85">{children}</h4>,
+  h5: ({ children }) => <h4 className="mt-4 text-sm font-semibold text-white/85">{children}</h4>,
+  h6: ({ children }) => <h4 className="mt-4 text-sm font-semibold text-white/85">{children}</h4>,
   p: ({ children }) => (
     <p className="mt-2 text-sm leading-relaxed text-white/70">{children}</p>
   ),
@@ -33,6 +38,15 @@ const components: Components = {
   code: ({ children }) => <span className="text-white/80">{children}</span>,
 };
 
+/**
+ * Enkla radbrytningar blir hårda brytningar, så att förhandsvisningen visar
+ * samma radindelning som PDF- och DOCX-exporten (som tolkar varje rad för sig).
+ * Utan detta slår Markdown ihop t.ex. "Legitimation — 2012" och "B-körkort" till en rad.
+ */
+function withHardBreaks(markdown: string): string {
+  return markdown.replace(/([^\n])\n(?=[^\n])/g, "$1  \n");
+}
+
 interface Props {
   markdown: string;
   className?: string;
@@ -42,6 +56,7 @@ interface Props {
 
 /** Renderad Markdown-vy för CV-utkast (rubriker, listor — inte rå text). */
 export default function CvPreview({ markdown, className, scroll = true }: Props) {
+  const rendered = useMemo(() => withHardBreaks(markdown), [markdown]);
   return (
     <div
       className={
@@ -50,7 +65,7 @@ export default function CvPreview({ markdown, className, scroll = true }: Props)
         (className ?? "")
       }
     >
-      <ReactMarkdown components={components}>{markdown}</ReactMarkdown>
+      <ReactMarkdown components={components}>{rendered}</ReactMarkdown>
     </div>
   );
 }

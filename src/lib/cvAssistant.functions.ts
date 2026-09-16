@@ -30,7 +30,7 @@ export const optimizeCv = createServerFn({ method: "POST" })
     const {
       loadSourceDocument,
       buildContextBlock,
-      callCvGateway,
+      runCvAssistant,
       checkCvRateLimit,
       logCvUsage,
       CvGatewayError,
@@ -115,10 +115,26 @@ export const optimizeCv = createServerFn({ method: "POST" })
       previousQuestions,
     });
 
+    // Underlag för faktaspärren: allt som CV:t får härledas ur. Vid första körningen
+    // med uppladdad fil finns ingen text att jämföra mot, då görs bara platshållarstädning.
+    const corpus =
+      file && !iterating
+        ? null
+        : [
+            pastedText,
+            draft?.cv_markdown ?? "",
+            ...Object.values(mergedAnswers),
+            data.instruction ?? "",
+            profile?.role_name ?? "",
+            profile?.kommun_name ?? "",
+          ]
+            .filter(Boolean)
+            .join("\n");
+
     const startedAt = Date.now();
     let result;
     try {
-      result = await callCvGateway({ apiKey, contextBlock, file });
+      result = await runCvAssistant({ apiKey, contextBlock, file, corpus });
     } catch (err) {
       const status = err instanceof CvGatewayError ? err.status : "error";
       await logCvUsage(supabaseAdmin, {
@@ -140,7 +156,15 @@ export const optimizeCv = createServerFn({ method: "POST" })
       outputTokens: result.outputTokens,
       durationMs: Date.now() - startedAt,
       status: "success",
-      metadata: { iterating, source: file ? (data.sourceDocumentId ? "selected_document" : "uploaded_cv") : iterating ? "previous_draft" : "pasted_text" },
+      metadata: {
+        iterating,
+        source: file ? (data.sourceDocumentId ? "selected_document" : "uploaded_cv") : iterating ? "previous_draft" : "pasted_text",
+        guard_retried: result.retried,
+        guard_invented_years: result.guard.inventedYears,
+        guard_invented_acronyms: result.guard.inventedAcronyms,
+        guard_removed_months: result.guard.removedMonths,
+        guard_removed_placeholders: result.guard.removedPlaceholders,
+      },
     });
 
     const status = result.questions.length > 0 ? "needs_input" : "ready";
