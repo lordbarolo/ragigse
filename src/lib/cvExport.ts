@@ -284,8 +284,8 @@ const PDF_REPLACEMENTS: Record<string, string> = {
   "Đ": "D", // Đ
   "ı": "i", // punktlöst i
   "\t": " ",
-  " ": " ", // smalt mellanslag
-  " ": " ", // smalt hårt mellanslag
+  " ": " ", // smalt mellanslag
+  " ": " ", // smalt hårt mellanslag
   "​": "", // nollbreddsmellanslag
 };
 
