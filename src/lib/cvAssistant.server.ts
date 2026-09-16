@@ -9,6 +9,8 @@
  *   - kvantifierade uppdrag (enhet, vårdplatser, journalsystem, jourlinje)
  *   - kompletteringsfrågor för uppgifter som saknas
  *   - iterativt läge: arbetar vidare på ett befintligt utkast utan att tappa innehåll
+ *   - faktaspärr: påhittade månader och platshållare tas bort, påhittade årtal och
+ *     förkortningar ger ett rättande omtag (se runCvAssistant längst ned)
  *
  * PDF-källor skickas till gatewayen som dokument-del (type "file"), inte som bild.
  * Bildfiler (png/jpg) skickas fortsatt som image_url. Om gatewayen skulle avvisa
@@ -33,17 +35,24 @@ export const CV_SYSTEM_PROMPT = `Du är vårdbemanning.ai:s CV-assistent för sv
 Du bygger om konsultens CV enligt etablerad best practice:
 1. Omvänt kronologiskt — senaste uppdraget först. Aldrig rent kompetensbaserat CV; det tolkas fel av automatiska granskningssystem (ATS).
 2. Rena, maskinläsbara rubriker i denna ordning: Sammanfattning, Legitimation och behörigheter, Klinisk erfarenhet, Kompetenser och system, Utbildning, Kurser och certifikat, Referenser.
-3. Legitimation och certifikat formateras konsekvent: "Benämning — utfärdare — år".
+3. Legitimation och certifikat formateras konsekvent: "Benämning — utfärdare — år". Utelämna utfärdare eller år som inte står i underlaget.
 4. Skriv fackterm och klartext första gången en förkortning används: "IVA (intensivvård)", "ATLS (Advanced Trauma Life Support)".
-5. Varje uppdrag: uppdragsgivare, enhet, ort, period (mån/år–mån/år) och 2–4 konkreta punkter, kvantifierade när underlag finns (vårdplatser, patientflöde, journalsystem, jourlinje, handledning).
+5. Varje uppdrag: uppdragsgivare, enhet, ort, period och 1–4 konkreta punkter, kvantifierade när underlag finns (vårdplatser, patientflöde, journalsystem, jourlinje, handledning). Period skrivs mån/år–mån/år när månaderna står i underlaget, annars år–år.
 6. Journalsystem, medicintekniska system och språk listas explicit — de är sökord i regionernas avrop.
 7. Neutral, saklig ton. Inga superlativ, inga emojis.
+8. Första raden är konsultens namn som huvudrubrik (# Namn) när namnet står i underlaget. Sektionsrubriker skrivs med ##.
 
 ITERATIVT LÄGE: Om ett "Nuvarande utkast" ingår i underlaget arbetar du vidare på det utkastet. Behåll all befintlig korrekt information, väv in konsultens svar och instruktioner, och skriv inte om stycken i onödan. Ta bort en fråga ur "questions" när den är besvarad.
 
 ABSOLUTA REGLER:
 - Hitta ALDRIG på meriter, årtal eller arbetsgivare. Saknas något: utelämna det och lägg en fråga i "questions".
-- Använd ALDRIG platshållare i cv_markdown. Förbjudet: hakparenteser som [Lärosäte], [Ort], [Arbetsgivare], samt maskerade årtal som 20XX, XX/XX eller "åååå". Saknas uppgiften: utelämna hela raden/punkten och ställ i stället en fråga i "questions".
+- Allt i cv_markdown ska gå att härleda ur underlaget, konsultens svar eller instruktion. Du får omformulera och strukturera, men aldrig lägga till:
+  • månader när underlaget bara anger år (skriv "2019–" och inte "09/2019–"),
+  • utfärdare som inte står i underlaget (en specialistsjuksköterskeexamen utfärdas av lärosätet, inte av Socialstyrelsen),
+  • kurser, certifikat eller varianter av dem (står det "HLR" skriver du inte "S-HLR", "A-HLR" eller ett årtal),
+  • språknivåer som inte anges (står det "talar svenska och engelska" skriver du just det),
+  • arbetsuppgifter, ansvar, system, metoder eller patientgrupper som inte nämns.
+- Använd ALDRIG platshållare i cv_markdown. Förbjudet: hakparenteser som [Lärosäte], [Ort], [Arbetsgivare], maskerade årtal som 20XX, XX/XX eller "åååå", samt ord som "saknas", "okänt" eller "ej angivet". Saknas uppgiften: utelämna raden, punkten eller den delen av raden och ställ i stället en fråga i "questions".
 - Nämn ALDRIG ersättningsnivåer, timpriser, marginaler, procentsatser eller hur ersättning beräknas.
 - Skriv på svenska.
 
@@ -77,6 +86,8 @@ export interface CvGatewayResult {
   questions: CvQuestion[];
   inputTokens: number;
   outputTokens: number;
+  /** Modellens råa svar, används som föregående tur vid rättande omtag. */
+  rawContent: string;
 }
 
 type AdminClient = Awaited<
@@ -275,11 +286,17 @@ function buildFilePart(file: SourceFile, asImage: boolean): Record<string, unkno
   };
 }
 
+interface CvFollowUp {
+  assistantContent: string;
+  feedback: string;
+}
+
 async function postToGateway(
   apiKey: string,
   contextBlock: string,
   file: SourceFile | null,
   fileAsImage: boolean,
+  followUp?: CvFollowUp,
 ): Promise<Response> {
   const userContent: unknown[] = [
     {
@@ -300,6 +317,12 @@ async function postToGateway(
       messages: [
         { role: "system", content: CV_SYSTEM_PROMPT },
         { role: "user", content: userContent },
+        ...(followUp
+          ? [
+              { role: "assistant", content: followUp.assistantContent },
+              { role: "user", content: followUp.feedback },
+            ]
+          : []),
       ],
       response_format: { type: "json_object" },
     }),
@@ -318,13 +341,14 @@ export async function callCvGateway(opts: {
   apiKey: string;
   contextBlock: string;
   file: SourceFile | null;
+  followUp?: CvFollowUp;
 }): Promise<CvGatewayResult> {
-  let resp = await postToGateway(opts.apiKey, opts.contextBlock, opts.file, false);
+  let resp = await postToGateway(opts.apiKey, opts.contextBlock, opts.file, false, opts.followUp);
 
   // Fallback: skulle gatewayen avvisa dokument-delen (400) provas bildvägen en gång.
   if (resp.status === 400 && opts.file && !opts.file.mime.startsWith("image/")) {
     console.warn("[cv-assistant] gateway avvisade file-delen, provar image_url-fallback");
-    resp = await postToGateway(opts.apiKey, opts.contextBlock, opts.file, true);
+    resp = await postToGateway(opts.apiKey, opts.contextBlock, opts.file, true, opts.followUp);
   }
 
   if (resp.status === 429) {
@@ -371,5 +395,224 @@ export async function callCvGateway(opts: {
     questions,
     inputTokens: payload.usage?.prompt_tokens ?? 0,
     outputTokens: payload.usage?.completion_tokens ?? 0,
+    rawContent: raw,
   };
+}
+
+// =============================================================
+// Faktaspärr
+// =============================================================
+//
+// Prompten räcker inte ensam: modellen fyller gärna i månader, utfärdare, kursvarianter
+// och årtal som låter rimliga men inte står i underlaget. Spärren jämför utkastet mot
+// underlaget (inklistrad text, föregående utkast, konsultens svar och instruktion):
+//   - månader som inte finns i underlaget tas bort ("09/2019" → "2019"),
+//   - platshållare ("Period saknas", "[Ort]", "20XX") tas bort,
+//   - årtal och förkortningar som inte finns i underlaget leder till ett rättande
+//     omtag där modellen får listan och ombeds ta bort dem.
+// Utan textunderlag (uppladdad fil vid första körningen) görs bara platshållarstädningen.
+
+export interface CvGuardReport {
+  /** Årtal i utkastet som inte finns i underlaget. */
+  inventedYears: string[];
+  /** Förkortningar (t.ex. "S-HLR") som inte finns i underlaget. */
+  inventedAcronyms: string[];
+  /** Antal månader som togs bort eftersom underlaget bara angav år. */
+  removedMonths: number;
+  /** Antal platshållare som togs bort. */
+  removedPlaceholders: number;
+}
+
+const MONTH_NUMBERS: Record<string, number> = {
+  jan: 1, januari: 1,
+  feb: 2, februari: 2,
+  mar: 3, mars: 3,
+  apr: 4, april: 4,
+  maj: 5,
+  jun: 6, juni: 6,
+  jul: 7, juli: 7,
+  aug: 8, augusti: 8,
+  sep: 9, sept: 9, september: 9,
+  okt: 10, oktober: 10,
+  nov: 11, november: 11,
+  dec: 12, december: 12,
+};
+
+const YEAR_RE = /(?<!\d)(?:19|20)\d{2}(?!\d)/g;
+const NUMERIC_MONTH_RE = /(?<!\d)(0?[1-9]|1[0-2])\s*[./]\s*((?:19|20)\d{2})(?!\d)/g;
+const NAMED_MONTH_RE = /(?<!\p{L})(\p{L}{3,9})\.?\s+((?:19|20)\d{2})(?!\d)/gu;
+const ACRONYM_RE = /(?<![\p{L}\p{N}-])[A-ZÅÄÖ0-9]+(?:-[A-ZÅÄÖ0-9]+)*(?![\p{L}\p{N}-])/gu;
+const PLACEHOLDER_WORD_RE = /(?<!\p{L})(?:saknas|okänt|okänd|ej angivet|ej angiven|anges senare)(?!\p{L})/iu;
+const BRACKET_PLACEHOLDER_RE = /\[[^\]\n]{1,40}\](?!\()/g;
+const MASKED_YEAR_RE = /(?<![\p{L}\p{N}])(?:(?:19|20)XX|XX\/XX(?:XX)?|åååå)(?![\p{L}\p{N}])/giu;
+
+/** Ord som får stå versalt utan att räknas som förkortningar (rubriker, CV, ATS). */
+const ACRONYM_ALLOWLIST = new Set([
+  "cv", "ats", "sammanfattning", "legitimation", "och", "behörigheter", "klinisk", "erfarenhet",
+  "kompetenser", "system", "utbildning", "kurser", "certifikat", "referenser",
+]);
+
+function monthYearPairs(text: string): Set<string> {
+  const pairs = new Set<string>();
+  for (const m of text.matchAll(NUMERIC_MONTH_RE)) pairs.add(`${m[2]}-${Number(m[1])}`);
+  for (const m of text.matchAll(NAMED_MONTH_RE)) {
+    const month = MONTH_NUMBERS[(m[1] ?? "").toLowerCase()];
+    if (month) pairs.add(`${m[2]}-${month}`);
+  }
+  return pairs;
+}
+
+function stripInventedMonths(markdown: string, corpusPairs: Set<string>): { text: string; removed: number } {
+  let removed = 0;
+  let text = markdown.replace(NUMERIC_MONTH_RE, (match, month: string, year: string) => {
+    if (corpusPairs.has(`${year}-${Number(month)}`)) return match;
+    removed++;
+    return year;
+  });
+  text = text.replace(NAMED_MONTH_RE, (match, word: string, year: string) => {
+    const month = MONTH_NUMBERS[word.toLowerCase()];
+    if (!month || corpusPairs.has(`${year}-${month}`)) return match;
+    removed++;
+    return year;
+  });
+  return { text, removed };
+}
+
+function stripPlaceholders(markdown: string): { text: string; removed: number } {
+  let removed = 0;
+  const lines: string[] = [];
+  for (const rawLine of markdown.split("\n")) {
+    let removedHere = 0;
+    let line = rawLine
+      .replace(BRACKET_PLACEHOLDER_RE, () => {
+        removedHere++;
+        return "";
+      })
+      .replace(MASKED_YEAR_RE, () => {
+        removedHere++;
+        return "";
+      });
+
+    if (removedHere > 0 || PLACEHOLDER_WORD_RE.test(line)) {
+      // Ta bara bort de led i raden som är platshållare eller blev tomma
+      // ("Sjuksköterska | Period saknas" → "Sjuksköterska", "Program — [Lärosäte] — 2010" → "Program — 2010").
+      // Listmarkör/rubriktecken och avslutande hård radbrytning bevaras.
+      const prefix = line.match(/^\s*(?:[*-]\s+|#{1,6}\s+|>\s*)?/)?.[0] ?? "";
+      const hardBreak = / {2,}$/.test(line) ? "  " : "";
+      // Separatorn fångas utan omgivande blanksteg så att "— —" delas som två separatorer.
+      const parts = line.slice(prefix.length).split(/((?<=\s)[|—–](?=\s)|,(?=\s))/);
+      const kept: string[] = [];
+      for (let i = 0; i < parts.length; i += 2) {
+        const text = (parts[i] ?? "").trim();
+        if (text === "") continue;
+        if (PLACEHOLDER_WORD_RE.test(text)) {
+          removedHere++;
+          continue;
+        }
+        const sep = parts[i - 1];
+        if (kept.length > 0) kept.push(sep === "," ? ", " : ` ${sep ?? "—"} `);
+        kept.push(text);
+      }
+      let body = kept.join("").replace(/ {2,}/g, " ").replace(/\(\s*\)/g, "").trim();
+      // Låg platshållaren inuti **fetstil** får markeringen inte bli obalanserad.
+      if ((body.match(/\*\*/g) ?? []).length % 2 === 1) {
+        body = body.startsWith("**") ? `${body}**` : `**${body}`;
+      }
+      line = body === "" ? "" : `${prefix}${body}${hardBreak}`;
+    }
+
+    removed += removedHere;
+    if (removedHere > 0 && line.replace(/[*_#>\s|—–,.:-]/g, "").length === 0) continue;
+    lines.push(line);
+  }
+  return { text: lines.join("\n"), removed };
+}
+
+/** Städar utkastet och rapporterar uppgifter som inte går att härleda ur underlaget. */
+export function applyFactGuard(
+  markdown: string,
+  corpus: string | null,
+): { markdown: string; report: CvGuardReport } {
+  const placeholders = stripPlaceholders(markdown);
+  let text = placeholders.text;
+  const report: CvGuardReport = {
+    inventedYears: [],
+    inventedAcronyms: [],
+    removedMonths: 0,
+    removedPlaceholders: placeholders.removed,
+  };
+  if (corpus === null) return { markdown: text, report };
+
+  const months = stripInventedMonths(text, monthYearPairs(corpus));
+  text = months.text;
+  report.removedMonths = months.removed;
+
+  const corpusYears = new Set(corpus.match(YEAR_RE) ?? []);
+  report.inventedYears = [...new Set(text.match(YEAR_RE) ?? [])].filter((y) => !corpusYears.has(y));
+
+  const corpusLower = corpus.toLowerCase();
+  report.inventedAcronyms = [
+    ...new Set(
+      [...text.matchAll(ACRONYM_RE)]
+        .map((m) => m[0])
+        .filter((t) => (t.match(/[A-ZÅÄÖ]/g) ?? []).length >= 2 && t.length <= 12)
+        .filter((t) => !ACRONYM_ALLOWLIST.has(t.toLowerCase()))
+        .filter((t) => !corpusLower.includes(t.toLowerCase())),
+    ),
+  ];
+
+  return { markdown: text, report };
+}
+
+function guardFeedback(report: CvGuardReport): string {
+  const items = [
+    ...report.inventedYears.map((y) => `årtalet ${y}`),
+    ...report.inventedAcronyms.map((a) => `"${a}"`),
+  ];
+  return (
+    `Granskning av ditt svar: följande finns inte i underlaget, konsultens svar eller instruktion ` +
+    `och får inte stå i cv_markdown: ${items.join(", ")}. Ta bort dem. Behövs uppgiften, ställ en ` +
+    `fråga i "questions" i stället. Lägg inte till något annat som inte står i underlaget. ` +
+    `Svara med hela JSON-objektet igen.`
+  );
+}
+
+/**
+ * Kör assistenten med faktaspärr. Ger spärren utslag görs ett rättande omtag; misslyckas
+ * omtaget används det städade första svaret. Tokens summeras så att en användaråtgärd
+ * loggas som ett anrop.
+ */
+export async function runCvAssistant(opts: {
+  apiKey: string;
+  contextBlock: string;
+  file: SourceFile | null;
+  corpus: string | null;
+}): Promise<CvGatewayResult & { guard: CvGuardReport; retried: boolean }> {
+  const first = await callCvGateway({ apiKey: opts.apiKey, contextBlock: opts.contextBlock, file: opts.file });
+  const checked = applyFactGuard(first.cvMarkdown, opts.corpus);
+  const needsRetry = checked.report.inventedYears.length > 0 || checked.report.inventedAcronyms.length > 0;
+  if (!needsRetry) {
+    return { ...first, cvMarkdown: checked.markdown, guard: checked.report, retried: false };
+  }
+
+  try {
+    const second = await callCvGateway({
+      apiKey: opts.apiKey,
+      contextBlock: opts.contextBlock,
+      file: opts.file,
+      followUp: { assistantContent: first.rawContent, feedback: guardFeedback(checked.report) },
+    });
+    const rechecked = applyFactGuard(second.cvMarkdown, opts.corpus);
+    return {
+      ...second,
+      cvMarkdown: rechecked.markdown,
+      inputTokens: first.inputTokens + second.inputTokens,
+      outputTokens: first.outputTokens + second.outputTokens,
+      guard: rechecked.report,
+      retried: true,
+    };
+  } catch (err) {
+    console.error("[cv-assistant] rättande omtag misslyckades, använder städat första svar", err);
+    return { ...first, cvMarkdown: checked.markdown, guard: checked.report, retried: false };
+  }
 }
