@@ -25,11 +25,21 @@ export interface CvBlock {
   segments: CvInlineSegment[];
 }
 
-/** Delar upp en rad i segment utifrån **fetstil** och *kursiv*. Backticks tas bort. */
+/**
+ * Delar upp en rad i segment utifrån **fetstil** och *kursiv*. Backticks tas bort och
+ * länkar skrivs som "text (adress)". Enkla asterisker/understreck räknas bara som kursiv
+ * när de inte sitter mitt i ett ord, så "5*3*2" och "fil_namn_x" lämnas orörda.
+ */
 function parseInline(text: string): CvInlineSegment[] {
-  const cleaned = text.replace(/`/g, "");
+  const cleaned = text
+    .replace(/`/g, "")
+    .replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_m, label: string, url: string) => {
+      const href = url.replace(/^mailto:/, "");
+      return label.trim() === href ? href : `${label} (${href})`;
+    });
   const segments: CvInlineSegment[] = [];
-  const re = /(\*\*[^*]+\*\*|\*[^*]+\*|__[^_]+__|_[^_]+_)/g;
+  const re =
+    /(\*\*[^*]+\*\*|__[^_]+__|(?<![\p{L}\p{N}*])\*(?!\s)[^*]+?(?<!\s)\*(?![\p{L}\p{N}*])|(?<![\p{L}\p{N}_])_(?!\s)[^_]+?(?<!\s)_(?![\p{L}\p{N}_]))/gu;
   let last = 0;
   let match: RegExpExecArray | null;
   while ((match = re.exec(cleaned)) !== null) {
@@ -58,6 +68,17 @@ export function parseCvMarkdown(markdown: string): CvBlock[] {
     if (!line) continue;
     if (/^(-{3,}|\*{3,}|_{3,})$/.test(line)) {
       blocks.push({ type: "hr", segments: [] });
+    } else if (/^\|.*\|$/.test(line)) {
+      // Tabellrad: avgränsarraden hoppas över, cellerna blir en läsbar rad.
+      if (/^\|[\s:|-]+\|$/.test(line)) continue;
+      const cells = line
+        .slice(1, -1)
+        .split("|")
+        .map((c) => c.trim())
+        .filter(Boolean);
+      if (cells.length > 0) blocks.push({ type: "p", segments: parseInline(cells.join(" — ")) });
+    } else if (/^#{4,6}\s+/.test(line)) {
+      blocks.push({ type: "h3", segments: parseInline(line.replace(/^#{4,6}\s+/, "")) });
     } else if (line.startsWith("### ")) {
       blocks.push({ type: "h3", segments: parseInline(line.slice(4)) });
     } else if (line.startsWith("## ")) {
@@ -223,6 +244,73 @@ export async function downloadCvAsDocx(
 
 const PAGE = { width: 595.28, height: 841.89 }; // A4 i pt
 
+// jsPDF:s standardfonter kodar text som WinAnsi (cp1252). Tecken utanför den tabellen
+// (my, större/mindre än, minustecken, pilar, bockar, emoji m.fl.) blir annars trasig och
+// överlappande text i PDF:en. DOCX berörs inte — där bevaras alla tecken.
+// Tecknen anges som escape-sekvenser eftersom flera är osynliga eller ser likadana ut.
+
+/** De tecken i WinAnsi 0x80–0x9F som inte ligger i Latin-1 (€ ‚ ƒ „ … † ‡ ˆ ‰ Š ‹ Œ Ž ‘ ’ “ ” • – — ˜ ™ š › œ ž Ÿ). */
+const WINANSI_HIGH = new Set(
+  "€‚ƒ„…†‡ˆ‰Š‹ŒŽ" +
+    "‘’“”•–—˜™š›œžŸ",
+);
+
+const PDF_REPLACEMENTS: Record<string, string> = {
+  "μ": "µ", // grekiskt my → mikrotecken (µ), som finns i WinAnsi
+  "Μ": "M", // versalt grekiskt my (uppstår när rubriker görs versala)
+  "≥": ">=", // ≥
+  "≤": "<=", // ≤
+  "≠": "!=", // ≠
+  "≈": "~", // ≈
+  "−": "-", // minustecken
+  "‐": "-", // bindestreck
+  "‑": "-", // hårt bindestreck
+  "‒": "–", // siffertankstreck → kort tankstreck
+  "―": "—", // horisontell linje → långt tankstreck
+  "→": "->", // →
+  "←": "<-", // ←
+  "⇒": "=>", // ⇒
+  "↔": "<->", // ↔
+  "●": "•", // ● → •
+  "▪": "•", // ▪ → •
+  "◦": "•", // ◦ → •
+  "■": "•", // ■ → •
+  "‣": "•", // ‣ → •
+  "′": "'", // prim
+  "″": '"', // dubbelprim
+  "ł": "l", // ł
+  "Ł": "L", // Ł
+  "đ": "d", // đ
+  "Đ": "D", // Đ
+  "ı": "i", // punktlöst i
+  "\t": " ",
+  " ": " ", // smalt mellanslag
+  " ": " ", // smalt hårt mellanslag
+  "​": "", // nollbreddsmellanslag
+};
+
+function isWinAnsi(ch: string): boolean {
+  const code = ch.codePointAt(0) ?? 0;
+  return (code >= 0x20 && code <= 0x7e) || (code >= 0xa0 && code <= 0xff) || WINANSI_HIGH.has(ch);
+}
+
+/** Gör text säker för jsPDF:s standardfonter: ersätter, avaccentuerar eller tar bort tecken. */
+export function toPdfSafeText(text: string): string {
+  let out = "";
+  for (const ch of text) {
+    if (isWinAnsi(ch)) {
+      out += ch;
+    } else if (ch in PDF_REPLACEMENTS) {
+      out += PDF_REPLACEMENTS[ch];
+    } else {
+      // Latinska bokstäver med diakriter (ř, ő, ș …) → grundbokstav; övrigt (emoji m.m.) tas bort.
+      const base = ch.normalize("NFKD").replace(/[̀-ͯ]/g, "");
+      if ([...base].every(isWinAnsi)) out += base;
+    }
+  }
+  return out.replace(/ {2,}/g, " ");
+}
+
 function hexToRgb(hex: string): [number, number, number] {
   const h = hex.replace("#", "");
   return [
@@ -260,6 +348,11 @@ export function downloadCvAsPdf(
     );
   };
 
+  // getTextWidth räknar med kerning men text() ritar utan, så mätningen blir för kort
+  // och mellanrummet efter t.ex. "IVA" eller "TakeCare," krymper. Mät därför utan kerning.
+  const measure = (s: string) =>
+    (doc.getStringUnitWidth(s, { doKerning: false }) * doc.getFontSize()) / doc.internal.scaleFactor;
+
   // Ordvis layout med radbrytning så att fetstil mitt i en rad bevaras.
   const drawSegments = (
     segments: CvInlineSegment[],
@@ -275,10 +368,10 @@ export function downloadCvAsPdf(
     for (const seg of segments) {
       const bold = baseBold || seg.bold;
       setFont(fontSize, bold, seg.italic);
-      const text = uppercase ? seg.text.toUpperCase() : seg.text;
+      const text = toPdfSafeText(uppercase ? seg.text.toUpperCase() : seg.text);
       const words = text.split(/(\s+)/).filter((w) => w.length > 0);
       for (const word of words) {
-        const width = doc.getTextWidth(word);
+        const width = measure(word);
         if (x + width > margin + maxWidth && x > startX) {
           y += lineHeight;
           ensureSpace(lineHeight);
