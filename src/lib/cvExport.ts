@@ -251,42 +251,42 @@ const PAGE = { width: 595.28, height: 841.89 }; // A4 i pt
 
 /** De tecken i WinAnsi 0x80–0x9F som inte ligger i Latin-1 (€ ‚ ƒ „ … † ‡ ˆ ‰ Š ‹ Œ Ž ‘ ’ “ ” • – — ˜ ™ š › œ ž Ÿ). */
 const WINANSI_HIGH = new Set(
-  "€‚ƒ„…†‡ˆ‰Š‹ŒŽ" +
-    "‘’“”•–—˜™š›œžŸ",
+  "\u20ac\u201a\u0192\u201e\u2026\u2020\u2021\u02c6\u2030\u0160\u2039\u0152\u017d" +
+    "\u2018\u2019\u201c\u201d\u2022\u2013\u2014\u02dc\u2122\u0161\u203a\u0153\u017e\u0178",
 );
 
 const PDF_REPLACEMENTS: Record<string, string> = {
-  "μ": "µ", // grekiskt my → mikrotecken (µ), som finns i WinAnsi
-  "Μ": "M", // versalt grekiskt my (uppstår när rubriker görs versala)
-  "≥": ">=", // ≥
-  "≤": "<=", // ≤
-  "≠": "!=", // ≠
-  "≈": "~", // ≈
-  "−": "-", // minustecken
-  "‐": "-", // bindestreck
-  "‑": "-", // hårt bindestreck
-  "‒": "–", // siffertankstreck → kort tankstreck
-  "―": "—", // horisontell linje → långt tankstreck
-  "→": "->", // →
-  "←": "<-", // ←
-  "⇒": "=>", // ⇒
-  "↔": "<->", // ↔
-  "●": "•", // ● → •
-  "▪": "•", // ▪ → •
-  "◦": "•", // ◦ → •
-  "■": "•", // ■ → •
-  "‣": "•", // ‣ → •
-  "′": "'", // prim
-  "″": '"', // dubbelprim
-  "ł": "l", // ł
-  "Ł": "L", // Ł
-  "đ": "d", // đ
-  "Đ": "D", // Đ
-  "ı": "i", // punktlöst i
+  "\u03bc": "\u00b5", // grekiskt my → mikrotecken (µ), som finns i WinAnsi
+  "\u039c": "M", // versalt grekiskt my (uppstår när rubriker görs versala)
+  "\u2265": ">=", // ≥
+  "\u2264": "<=", // ≤
+  "\u2260": "!=", // ≠
+  "\u2248": "~", // ≈
+  "\u2212": "-", // minustecken
+  "\u2010": "-", // bindestreck
+  "\u2011": "-", // hårt bindestreck
+  "\u2012": "\u2013", // siffertankstreck → kort tankstreck
+  "\u2015": "\u2014", // horisontell linje → långt tankstreck
+  "\u2192": "->", // →
+  "\u2190": "<-", // ←
+  "\u21d2": "=>", // ⇒
+  "\u2194": "<->", // ↔
+  "\u25cf": "\u2022", // ● → •
+  "\u25aa": "\u2022", // ▪ → •
+  "\u25e6": "\u2022", // ◦ → •
+  "\u25a0": "\u2022", // ■ → •
+  "\u2023": "\u2022", // ‣ → •
+  "\u2032": "'", // prim
+  "\u2033": '"', // dubbelprim
+  "\u0142": "l", // ł
+  "\u0141": "L", // Ł
+  "\u0111": "d", // đ
+  "\u0110": "D", // Đ
+  "\u0131": "i", // punktlöst i
   "\t": " ",
-  " ": " ", // smalt mellanslag
-  " ": " ", // smalt hårt mellanslag
-  "​": "", // nollbreddsmellanslag
+  "\u2009": " ", // smalt mellanslag
+  "\u202f": " ", // smalt hårt mellanslag
+  "\u200b": "", // nollbreddsmellanslag
 };
 
 function isWinAnsi(ch: string): boolean {
@@ -304,7 +304,7 @@ export function toPdfSafeText(text: string): string {
       out += PDF_REPLACEMENTS[ch];
     } else {
       // Latinska bokstäver med diakriter (ř, ő, ș …) → grundbokstav; övrigt (emoji m.m.) tas bort.
-      const base = ch.normalize("NFKD").replace(/[̀-ͯ]/g, "");
+      const base = ch.normalize("NFKD").replace(/[\u0300-\u036f]/g, "");
       if ([...base].every(isWinAnsi)) out += base;
     }
   }
