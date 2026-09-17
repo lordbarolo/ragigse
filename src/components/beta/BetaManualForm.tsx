@@ -32,7 +32,12 @@ export function BetaManualForm({ initial, busy, onCancel, onSubmit }: BetaManual
   const [compensationType, setCompensationType] = useState<BetaCompensationType>(
     initial?.compensation_type ?? "Faktura",
   );
-  const [rate, setRate] = useState(initial?.offered_rate ? String(initial.offered_rate) : "");
+  const initialRate = initial?.offered_rate
+    ? initial.compensation_type === "Anställd"
+      ? initial.offered_rate * 165
+      : initial.offered_rate
+    : null;
+  const [rate, setRate] = useState(initialRate ? String(Math.round(initialRate)) : "");
   const [error, setError] = useState<string | null>(null);
   const monthly = compensationType === "Anställd";
 

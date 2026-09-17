@@ -33,11 +33,16 @@ export function BetaCoachStep({ result, onReset }: { result: BetaAnalysisResult;
     try {
       await navigator.clipboard.writeText(draft);
       toast.success("Kopierat");
-      if (result.analysis_id) {
-        await recordBetaEvent({ analysisId: result.analysis_id, event: "copied" });
-      }
     } catch {
       toast.error("Motbudet kunde inte kopieras");
+      return;
+    }
+    if (result.analysis_id) {
+      try {
+        await recordBetaEvent({ analysisId: result.analysis_id, event: "copied" });
+      } catch {
+        // Kopieringen lyckades även om den anonyma händelsen inte kunde registreras.
+      }
     }
   }
 
