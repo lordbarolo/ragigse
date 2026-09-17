@@ -52,6 +52,8 @@ import { Route as ConsultantLayoutLoneanalysRouteImport } from './routes/consult
 import { Route as ConsultantLayoutPensionRouteImport } from './routes/consultant/_layout/pension'
 import { Route as ConsultantLayoutProfilRouteImport } from './routes/consultant/_layout/profil'
 import { Route as LonSpecialtyCityRouteImport } from './routes/lon/$specialty/$city'
+import { Route as ApiPublicBetaAnalysisEventRouteImport } from './routes/api/public/beta/analysis-event'
+import { Route as ApiPublicBetaAnalyzeContractRouteImport } from './routes/api/public/beta/analyze-contract'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -276,6 +278,18 @@ const LonSpecialtyCityRoute = LonSpecialtyCityRouteImport.update({
   path: '/lon/$specialty/$city',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicBetaAnalysisEventRoute =
+  ApiPublicBetaAnalysisEventRouteImport.update({
+    id: '/api/public/beta/analysis-event',
+    path: '/api/public/beta/analysis-event',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicBetaAnalyzeContractRoute =
+  ApiPublicBetaAnalyzeContractRouteImport.update({
+    id: '/api/public/beta/analyze-contract',
+    path: '/api/public/beta/analyze-contract',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -321,6 +335,8 @@ export interface FileRoutesByFullPath {
   '/consultant/pension': typeof ConsultantLayoutPensionRoute
   '/consultant/profil': typeof ConsultantLayoutProfilRoute
   '/lon/$specialty/$city': typeof LonSpecialtyCityRoute
+  '/api/public/beta/analysis-event': typeof ApiPublicBetaAnalysisEventRoute
+  '/api/public/beta/analyze-contract': typeof ApiPublicBetaAnalyzeContractRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -366,6 +382,8 @@ export interface FileRoutesByTo {
   '/consultant/pension': typeof ConsultantLayoutPensionRoute
   '/consultant/profil': typeof ConsultantLayoutProfilRoute
   '/lon/$specialty/$city': typeof LonSpecialtyCityRoute
+  '/api/public/beta/analysis-event': typeof ApiPublicBetaAnalysisEventRoute
+  '/api/public/beta/analyze-contract': typeof ApiPublicBetaAnalyzeContractRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -412,6 +430,8 @@ export interface FileRoutesById {
   '/consultant/_layout/pension': typeof ConsultantLayoutPensionRoute
   '/consultant/_layout/profil': typeof ConsultantLayoutProfilRoute
   '/lon/$specialty/$city': typeof LonSpecialtyCityRoute
+  '/api/public/beta/analysis-event': typeof ApiPublicBetaAnalysisEventRoute
+  '/api/public/beta/analyze-contract': typeof ApiPublicBetaAnalyzeContractRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -459,6 +479,8 @@ export interface FileRouteTypes {
     | '/consultant/pension'
     | '/consultant/profil'
     | '/lon/$specialty/$city'
+    | '/api/public/beta/analysis-event'
+    | '/api/public/beta/analyze-contract'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -504,6 +526,8 @@ export interface FileRouteTypes {
     | '/consultant/pension'
     | '/consultant/profil'
     | '/lon/$specialty/$city'
+    | '/api/public/beta/analysis-event'
+    | '/api/public/beta/analyze-contract'
   id:
     | '__root__'
     | '/'
@@ -549,6 +573,8 @@ export interface FileRouteTypes {
     | '/consultant/_layout/pension'
     | '/consultant/_layout/profil'
     | '/lon/$specialty/$city'
+    | '/api/public/beta/analysis-event'
+    | '/api/public/beta/analyze-contract'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -589,6 +615,8 @@ export interface RootRouteChildren {
   ApiPublicSendSignupConfirmationRoute: typeof ApiPublicSendSignupConfirmationRoute
   ApiPublicSeoScanRoute: typeof ApiPublicSeoScanRoute
   LonSpecialtyCityRoute: typeof LonSpecialtyCityRoute
+  ApiPublicBetaAnalysisEventRoute: typeof ApiPublicBetaAnalysisEventRoute
+  ApiPublicBetaAnalyzeContractRoute: typeof ApiPublicBetaAnalyzeContractRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -894,6 +922,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LonSpecialtyCityRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/beta/analysis-event': {
+      id: '/api/public/beta/analysis-event'
+      path: '/api/public/beta/analysis-event'
+      fullPath: '/api/public/beta/analysis-event'
+      preLoaderRoute: typeof ApiPublicBetaAnalysisEventRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/beta/analyze-contract': {
+      id: '/api/public/beta/analyze-contract'
+      path: '/api/public/beta/analyze-contract'
+      fullPath: '/api/public/beta/analyze-contract'
+      preLoaderRoute: typeof ApiPublicBetaAnalyzeContractRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -956,6 +998,8 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPublicSendSignupConfirmationRoute: ApiPublicSendSignupConfirmationRoute,
   ApiPublicSeoScanRoute: ApiPublicSeoScanRoute,
   LonSpecialtyCityRoute: LonSpecialtyCityRoute,
+  ApiPublicBetaAnalysisEventRoute: ApiPublicBetaAnalysisEventRoute,
+  ApiPublicBetaAnalyzeContractRoute: ApiPublicBetaAnalyzeContractRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

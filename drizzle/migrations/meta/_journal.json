@@ -15,6 +15,20 @@
       "when": 1789604148248,
       "tag": "0001_beta_analyses_revoke_client_grants",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1789604284538,
+      "tag": "0002_beta_rate_limit_log",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1789604521845,
+      "tag": "0003_beta_resolve_zone_tokenized",
+      "breakpoints": true
     }
   ]
 }
