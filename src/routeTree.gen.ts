@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AterstallLosenordRouteImport } from './routes/aterstall-losenord'
+import { Route as BetaRouteImport } from './routes/beta'
 import { Route as FaktasidorRouteImport } from './routes/faktasidor'
 import { Route as IntegritetspolicyRouteImport } from './routes/integritetspolicy'
 import { Route as LoggaInRouteImport } from './routes/logga-in'
@@ -63,6 +64,11 @@ const IndexRoute = IndexRouteImport.update({
 const AterstallLosenordRoute = AterstallLosenordRouteImport.update({
   id: '/aterstall-losenord',
   path: '/aterstall-losenord',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BetaRoute = BetaRouteImport.update({
+  id: '/beta',
+  path: '/beta',
   getParentRoute: () => rootRouteImport,
 } as any)
 const FaktasidorRoute = FaktasidorRouteImport.update({
@@ -294,6 +300,7 @@ const ApiPublicBetaAnalyzeContractRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/aterstall-losenord': typeof AterstallLosenordRoute
+  '/beta': typeof BetaRoute
   '/faktasidor': typeof FaktasidorRoute
   '/integritetspolicy': typeof IntegritetspolicyRoute
   '/logga-in': typeof LoggaInRoute
@@ -341,6 +348,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/aterstall-losenord': typeof AterstallLosenordRoute
+  '/beta': typeof BetaRoute
   '/faktasidor': typeof FaktasidorRoute
   '/integritetspolicy': typeof IntegritetspolicyRoute
   '/logga-in': typeof LoggaInRoute
@@ -389,6 +397,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/aterstall-losenord': typeof AterstallLosenordRoute
+  '/beta': typeof BetaRoute
   '/faktasidor': typeof FaktasidorRoute
   '/integritetspolicy': typeof IntegritetspolicyRoute
   '/logga-in': typeof LoggaInRoute
@@ -438,6 +447,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/aterstall-losenord'
+    | '/beta'
     | '/faktasidor'
     | '/integritetspolicy'
     | '/logga-in'
@@ -485,6 +495,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/aterstall-losenord'
+    | '/beta'
     | '/faktasidor'
     | '/integritetspolicy'
     | '/logga-in'
@@ -532,6 +543,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/aterstall-losenord'
+    | '/beta'
     | '/faktasidor'
     | '/integritetspolicy'
     | '/logga-in'
@@ -580,6 +592,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AterstallLosenordRoute: typeof AterstallLosenordRoute
+  BetaRoute: typeof BetaRoute
   FaktasidorRoute: typeof FaktasidorRoute
   IntegritetspolicyRoute: typeof IntegritetspolicyRoute
   LoggaInRoute: typeof LoggaInRoute
@@ -633,6 +646,13 @@ declare module '@tanstack/react-router' {
       path: '/aterstall-losenord'
       fullPath: '/aterstall-losenord'
       preLoaderRoute: typeof AterstallLosenordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/beta': {
+      id: '/beta'
+      path: '/beta'
+      fullPath: '/beta'
+      preLoaderRoute: typeof BetaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/faktasidor': {
@@ -963,6 +983,7 @@ const ConsultantLayoutRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AterstallLosenordRoute: AterstallLosenordRoute,
+  BetaRoute: BetaRoute,
   FaktasidorRoute: FaktasidorRoute,
   IntegritetspolicyRoute: IntegritetspolicyRoute,
   LoggaInRoute: LoggaInRoute,
