@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1789604095672,
+      "tag": "0000_beta_contract_review_phase1",
+      "breakpoints": true
+    }
+  ]
+}

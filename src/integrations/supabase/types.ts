@@ -751,6 +751,102 @@ export type Database = {
           },
         ]
       }
+      beta_contract_analyses: {
+        Row: {
+          compensation_type: string | null
+          copied_counter_offer: boolean | null
+          created_at: string | null
+          estimated_agency_margin_pct: number | null
+          flagged_issues: Json | null
+          generated_counter_offer: string | null
+          housing_included: boolean | null
+          id: string
+          lead_opt_in_agencies: boolean | null
+          margin_tier: string | null
+          matched_benchmark_rate: number | null
+          ob_specified: boolean | null
+          offered_rate: number
+          profession: string
+          region: string
+          specialty: string | null
+          travel_included: boolean | null
+          user_email: string | null
+          zone: number | null
+        }
+        Insert: {
+          compensation_type?: string | null
+          copied_counter_offer?: boolean | null
+          created_at?: string | null
+          estimated_agency_margin_pct?: number | null
+          flagged_issues?: Json | null
+          generated_counter_offer?: string | null
+          housing_included?: boolean | null
+          id?: string
+          lead_opt_in_agencies?: boolean | null
+          margin_tier?: string | null
+          matched_benchmark_rate?: number | null
+          ob_specified?: boolean | null
+          offered_rate: number
+          profession: string
+          region: string
+          specialty?: string | null
+          travel_included?: boolean | null
+          user_email?: string | null
+          zone?: number | null
+        }
+        Update: {
+          compensation_type?: string | null
+          copied_counter_offer?: boolean | null
+          created_at?: string | null
+          estimated_agency_margin_pct?: number | null
+          flagged_issues?: Json | null
+          generated_counter_offer?: string | null
+          housing_included?: boolean | null
+          id?: string
+          lead_opt_in_agencies?: boolean | null
+          margin_tier?: string | null
+          matched_benchmark_rate?: number | null
+          ob_specified?: boolean | null
+          offered_rate?: number
+          profession?: string
+          region?: string
+          specialty?: string | null
+          travel_included?: boolean | null
+          user_email?: string | null
+          zone?: number | null
+        }
+        Relationships: []
+      }
+      beta_skr_rate_benchmarks: {
+        Row: {
+          ceiling_rate_sek: number
+          created_at: string | null
+          id: string
+          profession: string
+          source: string | null
+          specialty: string
+          zone: number
+        }
+        Insert: {
+          ceiling_rate_sek: number
+          created_at?: string | null
+          id?: string
+          profession: string
+          source?: string | null
+          specialty: string
+          zone: number
+        }
+        Update: {
+          ceiling_rate_sek?: number
+          created_at?: string | null
+          id?: string
+          profession?: string
+          source?: string | null
+          specialty?: string
+          zone?: number
+        }
+        Relationships: []
+      }
       bug_reports: {
         Row: {
           category: string
@@ -4136,6 +4232,16 @@ export type Database = {
         Args: { _request_id: string }
         Returns: undefined
       }
+      beta_match_benchmark: {
+        Args: { p_profession: string; p_specialty: string; p_zone: number }
+        Returns: {
+          ceiling_rate_sek: number
+          match_quality: string
+          source: string
+          specialty: string
+        }[]
+      }
+      beta_resolve_zone: { Args: { p_region: string }; Returns: number }
       cc_slugify: { Args: { _input: string }; Returns: string }
       check_ai_rate_limit: {
         Args: { _daily_limit?: number; _user_id: string }
