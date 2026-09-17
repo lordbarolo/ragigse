@@ -817,6 +817,27 @@ export type Database = {
         }
         Relationships: []
       }
+      beta_rate_limit_log: {
+        Row: {
+          created_at: string
+          id: string
+          ip_hash: string
+          scope: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ip_hash: string
+          scope?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ip_hash?: string
+          scope?: string
+        }
+        Relationships: []
+      }
       beta_skr_rate_benchmarks: {
         Row: {
           ceiling_rate_sek: number
