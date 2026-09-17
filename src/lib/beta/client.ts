@@ -30,7 +30,7 @@ export class BetaApiError extends Error {
   constructor(
     message: string,
     readonly status: number,
-    readonly extracted?: Partial<BetaAnalysisResult["extracted"]>,
+    readonly extracted?: BetaApiErrorBody["extracted"],
   ) {
     super(message);
   }
