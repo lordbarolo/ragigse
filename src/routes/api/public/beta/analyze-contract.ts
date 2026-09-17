@@ -40,7 +40,7 @@ async function logAiUsage(
     model: BETA_MODEL,
     input_tokens: usage["prompt_tokens"] ?? 0,
     output_tokens: usage["completion_tokens"] ?? 0,
-    total_tokens: usage["total_tokens"] ?? null,
+    // total_tokens är en genererad kolumn och sätts av databasen.
     metadata: { beta: true },
   });
   if (error) console.error("beta-analyze-contract: kunde inte logga AI-användning", error.message);
