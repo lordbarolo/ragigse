@@ -78,13 +78,13 @@ export async function analyzeBetaContract(input: BetaAnalysisInput): Promise<Bet
   });
   const body = (await response.json().catch(() => ({}))) as BetaAnalysisResult & BetaApiErrorBody;
   if (!response.ok) {
-    const fallback =
+    const message =
       response.status === 429
         ? "Du har nått dagens gräns på 10 granskningar. Välkommen tillbaka i morgon."
         : response.status === 502
           ? "AI-tjänsten svarar inte just nu. Försök igen om en stund."
-          : "Analysen kunde inte genomföras. Försök igen.";
-    throw new BetaApiError(body.error || fallback, response.status, body.extracted);
+          : body.error || "Analysen kunde inte genomföras. Försök igen.";
+    throw new BetaApiError(message, response.status, body.extracted);
   }
   return body;
 }

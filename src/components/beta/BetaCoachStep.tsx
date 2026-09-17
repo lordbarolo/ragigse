@@ -88,7 +88,7 @@ export function BetaCoachStep({ result, onReset }: { result: BetaAnalysisResult;
       </div>
 
       <Card className="p-5 sm:p-7">
-        <div className="mb-5 inline-flex rounded-md bg-muted p-1" role="group" aria-label="Ton i motbudet">
+        <div className="mb-5 flex w-fit rounded-md bg-muted p-1" role="group" aria-label="Ton i motbudet">
           <button
             type="button"
             onClick={() => setTone("soft")}
