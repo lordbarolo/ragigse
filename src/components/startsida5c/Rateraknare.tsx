@@ -80,7 +80,8 @@ export default function Rateraknare() {
             value={role}
             onValueChange={setRole}
             placeholder="Välj roll"
-            triggerClassName="h-12 rounded-[10px] border-[#2a2b36] bg-[#0b0c10] text-[#ffffff] shadow-none text-[15px]"
+            triggerClassName="h-12 rounded-[10px] border-[#3a3c48] bg-[#20222c] text-[#ffffff] shadow-none text-[15px]"
+
           />
         </div>
 
@@ -96,7 +97,7 @@ export default function Rateraknare() {
             value={place}
             onValueChange={setPlace}
             placeholder="Sök kommun eller region"
-            triggerClassName="h-12 rounded-[10px] border-[#2a2b36] bg-[#0b0c10] text-[#ffffff] shadow-none text-[15px]"
+            triggerClassName="h-12 rounded-[10px] border-[#3a3c48] bg-[#20222c] text-[#ffffff] shadow-none text-[15px]"
           />
         </div>
       </div>
