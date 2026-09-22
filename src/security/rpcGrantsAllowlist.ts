@@ -20,6 +20,9 @@ export const FUNCTION_GRANTS: Record<string, GrantCategory> = {
   top_kommuner: "anon",
   cc_slugify: "anon",
   search_staffing_agencies: "anon",
+  // Beta: AI-avtalsgranskaren är medvetet publik (se drizzle/migrations/0000, 0003)
+  beta_match_benchmark: "anon",
+  beta_resolve_zone: "anon",
 
   // ── Endast inloggade ──────────────────────────────────────────────────────
   ref_has_role: "authenticated",
