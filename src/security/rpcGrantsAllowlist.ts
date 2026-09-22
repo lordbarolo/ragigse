@@ -87,6 +87,7 @@ export const FUNCTION_GRANTS: Record<string, GrantCategory> = {
   guard_trust_evidence_fields: "internal",
   trust_events_append_only: "internal",
   trust_share_log_append_only: "internal",
+  trust_dualread_append_only: "internal",
   // Endast service_role: anropas från publika trust-rutter efter tokenvalidering.
   trust_resolve_share_grant: "internal",
 };
