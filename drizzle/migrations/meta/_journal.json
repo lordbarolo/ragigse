@@ -64,6 +64,13 @@
       "when": 1790039398342,
       "tag": "0008_trust_core_tighten_grants",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1790039840125,
+      "tag": "0009_trust_v1_step1_harden_share_functions",
+      "breakpoints": true
     }
   ]
 }
