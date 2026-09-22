@@ -50,6 +50,8 @@ export const FUNCTION_GRANTS: Record<string, GrantCategory> = {
   match_lonekoll_chunks: "authenticated",
   trust_create_self_asserted_credential: "authenticated",
   trust_transition_credential: "authenticated",
+  // Legacy-projektion: endast service_role/admin, ingen API-roll
+  trust_project_consultant_document: "internal",
   trust_create_share_grant: "authenticated",
   trust_revoke_share_grant: "authenticated",
   trust_evaluate_requirements: "authenticated",
