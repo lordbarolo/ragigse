@@ -50,6 +50,13 @@
       "when": 1790039173657,
       "tag": "0006_trust_core_v1_write_functions",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1790039287406,
+      "tag": "0007_trust_transition_fix_privilege_check",
+      "breakpoints": true
     }
   ]
 }
