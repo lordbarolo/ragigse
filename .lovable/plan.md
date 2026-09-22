@@ -1,103 +1,164 @@
-# Compcare Trust v1 — förändringsspec (plan only)
+# Compcare Trust v1 — förändringsspecifikation (plan-only)
 
-Ingen kod, inga migrationer, inga DB-/konfigändringar i detta dokument.
+Ingen kod, databas, RLS-policy, fil eller konfiguration ändras av detta dokument. Compcare förblir source of truth. Referly utvecklas inte som separat backend.
 
-## 0. Audit av dagens läge (verifierat mot databasen nu)
+Viktig utgångspunkt: trust-kärnan är redan påbörjad och verifierad i migrationerna 0004–0008 (`trust_issuers`, `trust_credential_types`, `trust_credentials`, `trust_claims`, `trust_evidence`, `trust_verification_events`, skapande-RPC och admin-transition med append-only logg). Specen bygger vidare på den, den ritar inte om den.
 
-Faktiskt läge i Compcare:
+---
 
-- `ref_*` i detta projekt är bara `ref_profiles` och `ref_user_roles`. `ref_references`, `ref_pings`, `ref_verifications`, `ref_role_profiles`, `ref_verified_domains` finns **inte** här — de är legacy-Referly.
-- RLS på `ref_profiles`: endast egen rad (select/insert/update), ingen publik läsning. Derived trust-fält (`bankid_verified`, `trust_score`, `trust_tier`, `score_breakdown`, `profile_status`) skrivskyddas av triggern `guard_ref_profiles_trust_fields` som återställer dem för icke-service_role. ✅ ingen self-verification-väg via tabellen.
-- `ref_user_roles`: läs egen rad, `ALL` endast för admin via `ref_has_role` (SECURITY DEFINER). ✅ ingen self-role-escalation.
-- **Trasiga legacy-funktioner (verkliga fynd):** `ref_calculate_trust_score` och `ref_calculate_profile_status` läser tabeller som inte finns här (`ref_references`, `ref_verified_domains`, `ref_role_profiles`) → fel vid anrop. `create_document_share` skriver till `public.document_shares` som inte finns, och matchar `consultant_documents.consultant_id` medan kolumnen heter `user_id`. `get_document_share_by_token` läser samma icke-existerande tabell. Delningsflödet är alltså dött, inte osäkert.
-- Dagens reella datalager för identitet: `consultant_profiles` (user_id-scopad), `consultant_documents` (user_id, doc_type, file_path, status), `consultant_references` (fritext, ingen verifiering), `profile_audit_log` (fältnivå-historik), `profiles` med `guard_profiles_verification_fields`.
-- **Risk att åtgärda:** `consultant_documents` UPDATE tillåts av användaren när `status = 'pending'` men det finns ingen guard som hindrar att `status` sätts till `verified` i samma update → self-verification-väg. Verifieras och stängs i steg 1.
-- Agent-API-mönstret finns redan: `agent_api_keys` (key_prefix + key_hash + scopes[] + rate_limit_daily + revoked_at), `agent_user_tokens` (token_prefix + token_hash + expires_at + revoked_at), `agent_api_logs`. Endast hash lagras. ✅ mönstret återanvänds.
+## 1. Nuläge och säkerhet
 
-## 1. Vad som INTE ändras i v1
+Inventerat i databasen (schema, policyer, funktioner, storage).
 
-`ref_profiles`, `ref_user_roles`, `ref_has_role`, `guard_*`-triggrar, `consultant_profiles`, `consultant_references`, `consultant_documents` (utom en additiv statusguard), `profiles`, `profile_audit_log`, alla befintliga sidor/komponenter/hooks, `agent_api_*`-tabeller, sitemap, RLS på befintliga tabeller. Inga drops, inga renames, inga typbyten.
+Faktiskt befintliga ref-objekt: **`ref_profiles`** och **`ref_user_roles`**. `ref_references`, `ref_verifications`, `ref_pings` och en share-tabell **finns inte** i den här databasen. Referens-data lever i stället i `consultant_references` (fritextkontakter, ingen verifiering) och dokument i `consultant_documents` + storage-bucket `verifications`.
 
-## 2. Nya tabeller (alla `public.trust_*`)
+| Risk | Status | Exakt objekt |
+|---|---|---|
+| a) publik läsning av profiler/referenstexter | LÖST | `ref_profiles`, `profiles`, `consultant_references`: samtliga policyer är ägarscopade (`id = auth.uid()` / `user_id = auth.uid()` / via `consultant_profiles`). Inga anon-policyer. |
+| b) privilege escalation via roller | LÖST | Roller ligger separat i `ref_user_roles`; skrivning bara via policy `Admins can manage roles` med `ref_has_role(auth.uid(),'admin')`. Ingen roll på `profiles`. |
+| c) self-verification | LÖST (denna vecka) | `consultant_documents`: trigger `guard_consultant_documents_status` låser `status` och `user_id` för icke-admin. `trust_credentials`: `guard_trust_credentials_fields` + insert-policy som bara tillåter `pending`/`self_asserted`/`source=user`. |
+| d) klient skriver härledda trust-fält | LÖST | `guard_profiles_verification_fields` (ivo/hosp/bankid/profile_status), `guard_ref_profiles_trust_fields` (trust_score m.fl.), `guard_trust_credentials_fields`. |
+| e) råa invite/response/share-tokens exponeras | EJ RELEVANT i dag, men riskyta kvar | Ingen share-/ping-tabell finns. Kvar finns däremot funktionen `get_document_share_by_token` som är SECURITY DEFINER **och körbar av `anon`**, mot en tabell som inte längre finns — den bör revokas/tas bort innan nya share-flöden byggs. |
+| f) känsliga dokument läsbara bredare än avsett | LÖST | Alla fyra buckets (`verifications`, `invoice_reviews`, `imports`, `lonekoll_avtal`) är privata; verifieringsdokument låsta till `foldername(name)[1] = auth.uid()`. |
+| g) SECURITY DEFINER med för bred behörighet | FINNS KVAR (1 objekt) | `get_document_share_by_token` har EXECUTE för `anon` + `PUBLIC`-liknande grant. Övriga (`ref_calculate_trust_score`, `ref_calculate_profile_status`, `ref_refresh_attachability`, `ref_get_user_org_id`) har bara postgres/service_role. Alla har explicit `search_path=public`. |
 
-Gemensamt: `id uuid pk default gen_random_uuid()`, `created_at timestamptz not null default now()`, `updated_at` där rader muteras. Alla FK `on delete restrict` utom där annat anges.
+Ytterligare observation: `ref_calculate_trust_score`, `ref_calculate_profile_status`, `ref_refresh_attachability` och `create_document_share` refererar tabeller/kolumner som inte finns i denna databas och är därmed **trasiga vid anrop** (inte en säkerhetsrisk, men de får inte vara grund för ny logik).
 
-- **trust_issuers** — `slug text unique not null`, `display_name text not null`, `issuer_kind text not null check in ('authority','employer','education','platform','self')`, `country char(2) default 'SE'`, `verified_domain text`, `assurance_default text`, `is_active bool not null default true`.
-- **trust_credential_types** — `slug text unique not null`, `display_name text not null`, `category text not null check in ('license','specialty','certification','employment','reference','document','identity')`, `requires_expiry bool not null default false`, `default_validity_months int`, `expected_issuer_kind text`, `schema jsonb not null default '{}'` (fält-schema för `trust_claims`), `is_active bool not null default true`.
-- **trust_credentials** — `subject_user_id uuid not null` (ingen FK mot `auth.users`), `credential_type_id uuid not null fk trust_credential_types`, `issuer_id uuid fk trust_issuers`, `status text not null default 'pending' check in ('pending','active','expired','revoked','rejected')`, `assurance_level text not null default 'self_asserted' check in ('self_asserted','document_verified','issuer_verified','authority_verified')`, `valid_from date`, `valid_to date`, `revoked_at timestamptz`, `revoked_reason text`, `source text not null check in ('user','admin','import','legacy_ref','agent')`, `legacy_ref_id uuid`, `legacy_table text`. Index: `(subject_user_id, status)`, `(credential_type_id)`, `(valid_to)`, unique `(legacy_table, legacy_ref_id)` där not null.
-- **trust_claims** — normaliserade påståenden per credential: `credential_id uuid not null fk trust_credentials on delete cascade`, `claim_key text not null`, `value_text text`, `value_num numeric`, `value_date date`, `value_bool bool`, `value_json jsonb`, check "exakt ett värdefält satt". Unique `(credential_id, claim_key)`. Index `(claim_key, value_text)`.
-- **trust_evidence** — `credential_id uuid not null fk on delete cascade`, `evidence_kind text not null check in ('document','email_domain','signature','api_lookup','attestation','manual')`, `storage_bucket text`, `storage_path text`, `document_id uuid` (pekar `consultant_documents.id`, ingen hård FK i v1), `sha256 text`, `collected_at timestamptz not null default now()`, `collected_by uuid`, `metadata jsonb not null default '{}'`.
-- **trust_verification_events** — append-only audit: `credential_id uuid not null fk on delete cascade`, `event_type text not null check in ('created','submitted','attested','reconfirmed','verified','rejected','expired','revoked','shared','accessed')`, `actor_kind text not null check in ('subject','admin','issuer','system','agent')`, `actor_user_id uuid`, `actor_api_key_id uuid fk agent_api_keys`, `from_status text`, `to_status text`, `reason text`, `payload jsonb not null default '{}'`, `occurred_at timestamptz not null default now()`. Index `(credential_id, occurred_at desc)`.
-- **trust_requirement_sets** — `slug text unique not null`, `display_name text not null`, `owner_org_id uuid`, `source text`, `is_active bool default true`.
-- **trust_requirement_rules** — `set_id uuid not null fk on delete cascade`, `rule_key text not null`, `credential_type_slug text not null`, `operator text not null check in ('exists_active','claim_equals','claim_in','min_count','max_age_months','valid_on')`, `claim_key text`, `expected_text text`, `expected_list text[]`, `expected_num numeric`, `severity text not null default 'required' check in ('required','preferred')`, `sort_order int default 0`.
-- **trust_shares** — `subject_user_id uuid not null`, `token_hash text not null unique`, `token_prefix text not null`, `scope jsonb not null default '{}'` (vilka credential-typer/ids som ingår), `expires_at timestamptz`, `revoked_at timestamptz`, `recipient_label text`, `recipient_email text`, `max_views int`, `view_count int not null default 0`, `created_by uuid not null`. **Råa tokens lagras aldrig.**
+---
 
-## 3. Relationer och canonical source
+## 2. Måldatamodell Trust v1
 
-`trust_credentials` blir canonical för credentials/trust på sikt. Legacy kopplas in via `legacy_table`/`legacy_ref_id` (adapter, ej FK): `consultant_documents` → credential av kategori `document` med evidens `document`; `consultant_references` → kategori `reference` med `assurance_level='self_asserted'`; `ref_profiles.bankid_verified` → kategori `identity`; Referly `ref_references`/`ref_pings`/`ref_verifications` importeras vid behov som `source='legacy_ref'` — Referly får ingen ny affärslogik. `ref_profiles.trust_score`/`trust_tier` lämnas orörda och blir på sikt derived vy över `trust_credentials`; befintligt UI läser samma kolumner som idag.
+Fem av sju tabeller finns redan (0005). Nedan anges vad som är klart och vad som återstår.
 
-## 4. Säkerhet
+**Klart (inga ändringar planerade i v1):** `trust_issuers`, `trust_credential_types`, `trust_credentials`, `trust_claims`, `trust_evidence`, `trust_verification_events` — med statuscheckar, assurance-nivåer, legacy-pekare, exakt-ett-värde-constraint på claims, index på `(subject_user_id,status)`, `credential_type_id`, `valid_to`, partiell unik på `(legacy_table, legacy_ref_id)` och append-only-trigger på händelseloggen.
 
-- RLS på samtliga nya tabeller, plus explicita GRANTs.
-- `trust_issuers`, `trust_credential_types`, `trust_requirement_sets`, `trust_requirement_rules`: SELECT för `authenticated` (katalogdata, ingen PII). Skrivning endast `service_role`. Ingen `anon`-grant.
-- `trust_credentials`: SELECT/INSERT/UPDATE för ägaren (`subject_user_id = auth.uid()`), men UPDATE begränsas av trigger som återställer derived fält. Ingen DELETE för klient (revoke istället).
-- `trust_claims`, `trust_evidence`: åtkomst endast via ägarskap på credential (EXISTS-subquery). Ingen `anon`.
-- `trust_verification_events`: SELECT egen, **ingen** klient-INSERT/UPDATE/DELETE — endast service_role. Append-only via trigger som blockerar UPDATE/DELETE.
-- `trust_shares`: SELECT/INSERT/UPDATE (revoke) för ägaren, men `token_hash`/`token_prefix`/`view_count` aldrig klientsatta. Mottagaråtkomst sker **aldrig** via RLS — bara via server-handler som slår upp hash.
-- **Aldrig klientskrivbara kolumner:** `trust_credentials.status`, `assurance_level`, `revoked_at`, `revoked_reason`, `source`, `legacy_*`; `trust_evidence.sha256`, `collected_by`; allt i `trust_verification_events`; `trust_shares.token_hash`, `token_prefix`, `view_count`. Skyddas med guard-trigger enligt samma mönster som `guard_ref_profiles_trust_fields`.
-- Tokens: generera server-side (32 byte), returnera en gång i klartext, lagra `sha256`-hash + prefix, alltid `expires_at`, revoke via `revoked_at`, logga åtkomst i `trust_verification_events` (`accessed`). Samma modell som `agent_user_tokens`.
-- SECURITY DEFINER-funktioner som behövs: `trust_create_share` (validerar ägarskap, mintar token), `trust_get_share_by_token` (hash-uppslag, respekterar expiry/revoke/max_views, returnerar maskerad payload), `trust_evaluate_requirements` (läser över RLS för att kunna svara på annans uppdrag, men bara aggregerat), `trust_credential_summary`. Externa anrop går via server-handlers under `src/routes/api/public/agent/*` med nyckel/token-verifiering — inga nya publika råa RLS-läsningar.
-- Fixar i samma spår: statusguard på `consultant_documents` (hindra klient från att sätta `verified`), och beslut om de tre trasiga legacy-funktionerna (`ref_calculate_trust_score`, `ref_calculate_profile_status`, `create_document_share`/`get_document_share_by_token`) ska lagas eller markeras deprecated — inget drop i v1.
+**Nytt i v1 (tillkommer):**
 
-## 5. Migration (additiv, reversibel, ingen destruktiv operation i v1)
+`trust_share_grants`
+- `id` uuid PK, `subject_user_id` uuid NOT NULL
+- `token_hash` text NOT NULL UNIQUE (sha256 av engångstoken; rå token lagras aldrig)
+- `token_prefix` text NOT NULL (8 tecken, för igenkänning i UI/logg)
+- `grant_kind` text CHECK ('share_read','attestation','revalidation')
+- `scope` jsonb NOT NULL DEFAULT '{}' (credential_type-slugs, credential_ids, fältnivå)
+- `audience_label` text, `audience_email` text
+- `expires_at` timestamptz NOT NULL, `max_uses` int, `used_count` int NOT NULL DEFAULT 0
+- `revoked_at` timestamptz, `created_by` uuid, `created_at`
+- Index: `(subject_user_id, revoked_at)`, `(expires_at)`, unik på `token_hash`
 
-1. Katalogtabeller + RLS + GRANT (`trust_issuers`, `trust_credential_types`) och seed av taxonomi.
-2. `trust_credentials`, `trust_claims`, `trust_evidence` + RLS + guard-triggrar.
-3. `trust_verification_events` + append-only-trigger; börja logga från all ny skrivning.
-4. Backfill-adapter: läs `consultant_documents`/`consultant_references`/`ref_profiles` → skapa credentials med `source`/`legacy_*`, idempotent via unik `(legacy_table, legacy_ref_id)`.
-5. Läsvyer för UI-kompatibilitet (`trust_credential_summary_v1`) — UI byter inte ännu.
-6. Dual-write: nya skrivningar landar i både legacy-tabell och `trust_credentials` bakom en serverfunktion; legacy fortsätter vara läskälla.
-7. Requirement-tabeller + evaluator.
-8. `trust_shares` + share-funktioner; det trasiga document-share-flödet ersätts av det nya (legacy lämnas kvar, deprecated-kommenterat).
-9. Cutover: UI läser vyn i stället för legacy, ett ytkomponent i taget. Pensionering = `COMMENT ... 'DEPRECATED'`, aldrig drop i v1.
+`trust_share_access_log` (append-only)
+- `id`, `grant_id` FK → trust_share_grants ON DELETE CASCADE
+- `accessed_at`, `ip_hash` text, `user_agent_hash` text, `outcome` text CHECK ('granted','expired','revoked','scope_denied','not_found')
+- Ingen rå IP, ingen rå token.
 
-## 6. API-kontrakt (definieras, byggs inte)
+`trust_requirement_sets` / `trust_requirements` (kravmodell, se §6)
+- set: `id`, `slug` UNIQUE, `display_name`, `owner_kind` ('region','agency','platform'), `source_ref` text, `is_active`
+- requirement: `id`, `set_id` FK, `credential_type_slug` text, `claim_key` text NULL, `operator` text CHECK ('exists','equals','gte','lte','in','not_expired'), `expected_json` jsonb, `min_assurance_level` text, `is_mandatory` boolean, `weight` numeric NULL
+- Unik: `(set_id, credential_type_slug, coalesce(claim_key,''), operator)`
 
-Alla under `/api/public/agent/`, samma auth-mönster som `agent_api_keys` (server-to-server, `x-api-key`) + `agent_user_tokens` (user-scoped bearer). Allt loggas i `agent_api_logs`.
+Soft-delete/expiry/revocation: credentials använder redan `status` + `valid_to` + `revoked_at`; grants använder `expires_at`/`revoked_at`/`used_count`. Ingen hård radering någonstans i trust-domänen.
 
-- `GET /trust/credentials/summary` — user-scoped token. Svar: `{ subject_ref, credentials: [{ type, category, status, assurance_level, valid_to, issuer, last_event_at }], counts, generated_at }`. Ingen PII om tredje part.
-- `POST /trust/requirements/evaluate` — body `{ subject_ref | share_token, requirement_set_slug | rules[] }`. Svar per regel: `{ rule_key, result: 'met'|'not_met'|'unknown', evidence: [{ credential_id, type, assurance_level, valid_to }], provenance: { issuer, verified_at, method }, reason }` + `overall: 'met'|'not_met'|'unknown'`.
-- `POST /trust/shares` (user-scoped) → `{ share_id, token, url, expires_at }` (token visas en gång). `GET /trust/shares/{token}` (ingen auth, hash-uppslag) → maskerad summary. `POST /trust/shares/{id}/revoke`.
-- `POST /trust/credentials/{id}/attest` | `/reconfirm` | `/revoke` — attest/verify kräver issuer- eller admin-scope, aldrig subjektet självt. Alla skapar `trust_verification_events`.
-- Scopes: `trust:read.self`, `trust:read.shared`, `trust:verify`, `trust:share.write`, `trust:attest`, `trust:admin`.
+---
 
-## 7. Requirement engine — exempel
+## 3. Relationer och legacy-adapter
 
-- "aktiv legitimation" → `credential_type_slug='license_se'`, `operator='exists_active'`, `valid_on=today`.
-- "specialitet anestesi" → `credential_type_slug='specialty'`, `operator='claim_equals'`, `claim_key='specialty_slug'`, `expected_text='anestesi'`.
-- "minst två referenser yngre än 36 månader" → två regler: `min_count=2` + `max_age_months=36` på `reference`.
-- "HLR giltig" → `certification` + `claim_equals(cert_slug,'hlr')` + `valid_on`.
-- `unknown` används när credential saknas helt eller `assurance_level` är lägre än vad regeln kräver — aldrig `not_met` utan underlag.
+Eftersom `ref_references`/`ref_verifications`/`ref_pings` inte existerar här blir adapterarbetet mindre än i den ursprungliga målbilden.
 
-## 8. Backward compatibility
+- `consultant_references` → credentials av typ `professional_reference`, en credential per referensrad, `legacy_table='consultant_references'`, `legacy_ref_id=<rad-id>`. Namn/roll/organisation/relation blir claims (`referee_name`, `referee_role`, `referee_org`, `relationship`). Kontaktuppgifter (telefon/e-post) lagras **inte** som claims utan hålls kvar i legacy-tabellen; de exponeras aldrig i share-läsning.
+- `consultant_documents` → credentials av typ `swedish_healthcare_license` / `hosp_extract` / `ivo_extract` / `certification` beroende på `doc_type`, med en `trust_evidence`-rad som pekar på bucket `verifications` + `file_path`. Ingen ny dokumenttabell behövs.
+- Digital identitet (signering) → credential `digital_identity` med evidence `signature`; inga nya specialtabeller.
+- `ref_profiles.trust_score`, `trust_tier`, `profile_status`, `status_checklist` behandlas som **presentation/derived** och blir läsare av trust-lagret senare — inga skrivningar från trust-lagret i v1.
+- Legacyfält som behöver pekare: **inga i v1**. Kopplingen sker enkelriktat via `trust_credentials.legacy_table/legacy_ref_id`, så legacy-tabellerna rörs inte. `credential_id`-kolumner på `consultant_references`/`consultant_documents` läggs först i den fas där writes flyttas (steg F i §9).
+- Ska INTE ändras i v1: `ref_profiles`, `ref_user_roles`, `consultant_profiles`, storage-layout, befintliga policyer som fungerar.
 
-Orörda i fas 1: alla nuvarande sidor/komponenter/hooks, `ref_has_role`, `ref_user_roles`, `consultant_*`-RLS (utom additiv statusguard), `profile_audit_log`. Adapterlager behövs på tre ställen: legacy→credential-backfill, läsvy för UI, och dual-write-serverfunktion.
+---
 
-## 9. Test- och acceptanskriterier
+## 4. Verifieringslivscykel
 
-RLS-test per tabell (anon nekas, annan användare nekas, ägare tillåts); guard-test att derived kolumner inte kan sättas av klient; append-only-test på events; token-test (ingen rå token i DB, expiry/revoke/max_views nekar); revocation- och expiry-test i evaluator (`not_met` respektive `unknown`); idempotens-test på backfill (dubbelkörning ger samma antal rader); API-kontrakttest mot svarsschema; audit-test att varje statusövergång har ett event; migreringskontroll att inga befintliga objekt ändrats.
+Statusmodellen är redan satt och används: `pending` (= submitted/självrapporterat i väntan), `active` (verifierad och gällande), `rejected`, `expired`, `revoked`, `superseded`. Tillägget i v1 är enbart dokumentation och en schemalagd expiry-jobb-definition, inte nya statusar. Självrapporterat vs inskickat skiljs via `assurance_level` (`self_asserted` → `evidence_submitted`), inte via extra status.
 
-## 10. Beslutspunkter före implementation
+Tillåtna övergångar (som implementerade):
+```text
+pending  -> active | rejected | revoked | superseded
+active   -> expired | revoked | superseded
+expired  -> active | revoked | superseded
+rejected -> pending
+revoked / superseded = terminala
+```
+Aktörer: subjektet skapar (`pending`) och kan skicka in nya evidence; admin/service utför alla övergångar via `trust_transition_credential`; issuer/agent-attestation går senare via samma funktion med `actor_kind='issuer'|'agent'`. Automatisk `active -> expired` sker via schemalagt jobb med `actor_kind='system'`.
 
-1. Namnrymd `trust_*` eller `cc_trust_*`. 2. Credential-taxonomi (vilka `category`-värden och slugs som är kanoniska). 3. Assurance-nivåernas definition och vem som får sätta `authority_verified`. 4. Retention för evidens och events (och om evidensfiler ska vara egen bucket). 5. Consent/share-semantik: opt-in per delning eller stående samtycke; ska mottagaren identifieras. 6. Om trust score förblir derived UI-mått (rekommenderat) eller blir del av domänmodellen. 7. Om Referly-data ska importeras alls i v1. 8. Om de trasiga legacy-funktionerna lagas eller deprecateras.
+Audit trail: varje övergång skriver en rad i `trust_verification_events`. Loggen är append-only i databasen (trigger blockerar UPDATE och DELETE för alla roller, verifierat), har inga klient-INSERT-grants, och är läsbar för subjektet och admin.
 
-## 11. Rekommenderad byggordning
+---
 
-1. Säkerhetsfixar + beslut om trasiga legacy-funktioner — **låg**.
-2. Katalogtabeller + taxonomi-seed — **låg**.
-3. `trust_credentials`/`claims`/`evidence` + RLS + guards — **medel**.
-4. `trust_verification_events` append-only + logging — **låg/medel**.
-5. Backfill-adapter + läsvy (ingen UI-ändring) — **medel**.
-6. Requirement-modell + evaluator — **hög**.
-7. Agent-API-endpoints med scopes + loggning — **medel/hög**.
-8. `trust_shares` + share-handlers, sedan stegvis UI-cutover — **medel**.
+## 5. Assurance och provenance
+
+Varje credential svarar på de fem frågorna med fält som redan finns:
+- **Vem säger detta** → `issuer_id` (+ `trust_issuers.issuer_kind`, `verified_domain`) och `source` (`user|admin|import|legacy|system|agent`).
+- **På vilken grund** → `trust_evidence` (`document`, `email_domain`, `signature`, `api_lookup`, `attestation`, `manual`) + `sha256` (sätts endast server-side).
+- **Hur verifierat** → `assurance_level`: `self_asserted` < `evidence_submitted` < `document_verified` < `issuer_verified` < `authority_verified`. Tillägg i v1: en claim `verification_method` på event-payload-nivå i stället för ny kolumn.
+- **När** → `verified_at`, `trust_verification_events.occurred_at`, `trust_evidence.collected_at`.
+- **Gäller det fortfarande** → `status`, `valid_from`/`valid_to`, `revoked_at`, `revoked_reason`.
+
+Regel: assurance_level får bara höjas av admin/service/issuer via transition-funktionen. Subjektet kan aldrig höja den (redan låst av guard-trigger).
+
+---
+
+## 6. Status- och kravmotor (separation av sanning och presentation)
+
+- Sanningslager: `trust_credentials` + `trust_claims` + `trust_verification_events`.
+- Kravlager: `trust_requirement_sets` / `trust_requirements` (§2) beskriver vad ett avrop eller en region kräver, datadrivet — inga hårdkodade checklistor.
+- Utvärdering: en ren funktion `trust_evaluate_requirements(subject, requirement_set)` som returnerar per krav `met | not_met | unknown` plus vilken credential som uppfyllde det. `unknown` används när uppgift saknas — aldrig "godkänt vid tveksamhet".
+- `ref_calculate_profile_status`, `trust_score` och `trust_tier` behandlas som presentation ovanpå detta och pensioneras gradvis. Ingen ny scoremodell i v1.
+
+---
+
+## 7. API-placering (ingen implementation nu)
+
+- **Internt service-lager** (server functions i Compcare): `createSelfAssertedCredential`, `submitEvidence`, `listMyCredentials`, `adminTransition`, `evaluateRequirements`.
+- **Publik scoped läsning**: `GET /api/public/trust/share/:token` — löser token via hash, kontrollerar expiry/revoke/max_uses, returnerar endast credentials inom `scope` och endast säkra fält, loggar i `trust_share_access_log`.
+- **Attestation/revalidation**: `POST /api/public/trust/attest/:token` — engångstoken, skriver `attested`/`reconfirmed`-event, kan aldrig sätta `active` utan att kravet på issuer-verifiering är uppfyllt.
+- **Framtida Agent API capability**: `trust.verify_requirements` och `trust.read_shared_credentials`, båda med `agent_api_keys`-autentisering och `actor_api_key_id` i audit-loggen. Byggs inte nu.
+
+---
+
+## 8. RLS och säkerhetsmodell för nya tabeller
+
+- `trust_share_grants`: SELECT endast subjektet (+admin). INSERT/UPDATE **aldrig** direkt från klient — endast via SECURITY DEFINER-RPC som genererar token, lagrar `token_hash`, och returnerar rå token exakt en gång. Ingen klient-DELETE; revoke via RPC som sätter `revoked_at`. Aldrig klientskrivbara: `token_hash`, `token_prefix`, `used_count`, `revoked_at`, `subject_user_id`.
+- `trust_share_access_log`: ingen klientåtkomst alls utom subjektets SELECT; INSERT endast server/service; UPDATE/DELETE blockerade av trigger (samma mönster som `trust_verification_events`).
+- `trust_requirement_sets` / `trust_requirements`: SELECT för `authenticated`, skrivning endast admin/service. Ingen anon-läsning.
+- Grants: ingen `anon`-grant på någon trust-tabell (projektets default privileges ger annars `anon` ALL — måste revokas explicit i samma migration, som i 0008).
+- Tokens: endast sha256-hash i databasen, rå token visas en gång i svaret, `token_prefix` för spårbarhet. Konstanttidsjämförelse i handlern.
+- service_role: används bara i publika share/attest-handlers efter tokenvalidering, aldrig för vanliga inloggade läsningar (då gäller `requireSupabaseAuth` + RLS).
+- Storage/evidence: buckets förblir privata; delning sker via kortlivade signerade URL:er som genereras i handlern efter scope-kontroll, aldrig genom bredare storage-policyer.
+- SECURITY DEFINER-regler: explicit `search_path=public`, EXECUTE endast till de roller som verkligen behöver den, och behörighet avgörs **aldrig** av `current_user` inne i funktionen (det är alltid ägaren) utan av admin-roll eller JWT-roll.
+
+---
+
+## 9. Migreringsplan (bakåtkompatibel, i ordning)
+
+| Fas | Innehåll | Risk | Rollback | Beroenden | Testkriterier |
+|---|---|---|---|---|---|
+| A. Security hardening | Revoke `anon`/PUBLIC EXECUTE på `get_document_share_by_token`; besluta om den och `create_document_share` ska tas ur bruk (markeras deprecated) | Låg; funktionerna är redan trasiga | Återställ grant | Inga | Anon-anrop ger 401/403; inget UI-flöde slutar fungera |
+| B. Additiva trust-tabeller | `trust_share_grants`, `trust_share_access_log`, kravtabellerna + RLS/grants/triggers | Låg (endast nytt) | Tabellerna är oanvända, kan lämnas tomma | A | Anon nekas på alla nya tabeller; append-only bevisat; typecheck/build OK |
+| C. Legacy-adapters | Läsvyer som projicerar credentials i det format dagens UI förväntar (t.ex. dokumentstatus per `doc_type`) | Låg | Droppa vy | B | Vy ger samma rader som dagens direktläsning |
+| D. Backfill | Skriv befintliga `consultant_documents` och `consultant_references` som credentials med `legacy_ref_id` | Medel: dubbletter | Radera credentials med `source='legacy'` | C | Antal credentials = antal legacyrader; unik legacy-index håller; idempotent vid omkörning |
+| E. Dual-read | UI/serverfunktioner läser trust-lagret men jämför mot legacy i logg | Medel: avvikelser | Flagga tillbaka till legacy-läsning | D | Noll avvikelser under en definierad period |
+| F. Nya writes via trust-lagret | Uppladdning/referens skapar credential som primär post; `credential_id` läggs på legacy-tabellerna | Hög: berör aktiva flöden | Feature-flagga tillbaka writes | E | Nytt dokument syns i både trust och legacy; ingen self-verify möjlig |
+| G. Pensionering | `ref_calculate_trust_score`/`profile_status` ersätts av kravmotor + presentationslager; ref-specifik logik markeras deprecated | Medel | Behåll gamla funktioner orörda till sista steget | F | Inga anrop kvar i kod; UI oförändrat för användaren |
+
+---
+
+## 10. Exakt build-ordning (små steg med Definition of Done)
+
+1. **Hardening av kvarvarande SECURITY DEFINER** — revoke anon/PUBLIC EXECUTE på `get_document_share_by_token`, deprecated-kommentar på den och `create_document_share`. DoD: anon nekas, allowlist-testet grönt, inget UI påverkat.
+2. **`trust_share_grants` + revoke/expiry-RPC** — tabell, RLS, hashad token, create/revoke via RPC. DoD: rå token finns inte i databasen; utgången/återkallad token nekas; anon har noll grants.
+3. **`trust_share_access_log`** — append-only, ingen rå IP. DoD: UPDATE/DELETE blockerat i databasen; åtkomstförsök loggas med rätt `outcome`.
+4. **Publik scoped läsendpoint** — `/api/public/trust/share/:token`, scope-filtrerad projektion, signerade URL:er. DoD: fel token ger 404 utan informationsläckage; utanför scope returneras aldrig.
+5. **Attestation/revalidation-endpoint** — engångstoken, skriver event, höjer aldrig status själv. DoD: token kan användas en gång; event finns i loggen.
+6. **Kravtabeller + `trust_evaluate_requirements`** — datadriven utvärdering med `met/not_met/unknown`. DoD: enhetstester för alla operatorer; saknad uppgift ger `unknown`.
+7. **Legacy-vyer + backfill (idempotent)** — DoD: omkörning skapar inga dubbletter; radantal stämmer.
+8. **Dual-read med avvikelseloggning** — DoD: noll avvikelser under mätperioden.
+9. **Writes via trust-lagret bakom feature-flagga** — DoD: nytt dokument/referens skapar credential + event; self-verify fortfarande omöjligt.
+10. **Pensionering av ref-specifik statuslogik** — DoD: presentationslagret läser kravmotorn, inga anrop till trasiga ref-funktioner kvar.
+
+Portabilitet mot ett framtida separat AP Trust: all trust-logik hålls i `trust_*`-tabeller, `trust_*`-funktioner och `/api/public/trust/*`-rutter, utan referenser till Compcares pris-, rapport- eller fakturadomän. Kopplingen till användare sker via `subject_user_id` och till legacy via `legacy_table`/`legacy_ref_id`, vilket gör domänen utlyftbar utan att resten av Compcare skrivs om.
