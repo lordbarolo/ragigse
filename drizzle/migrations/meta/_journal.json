@@ -43,6 +43,13 @@
       "when": 1790039124091,
       "tag": "0005_trust_core_v1_tables",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1790039173657,
+      "tag": "0006_trust_core_v1_write_functions",
+      "breakpoints": true
     }
   ]
 }

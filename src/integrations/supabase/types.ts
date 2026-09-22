@@ -4729,6 +4729,27 @@ export type Database = {
           kommun: string
         }[]
       }
+      trust_create_self_asserted_credential: {
+        Args: {
+          _claims?: Json
+          _evidence?: Json
+          _metadata?: Json
+          _type_slug: string
+          _valid_from?: string
+          _valid_to?: string
+        }
+        Returns: string
+      }
+      trust_transition_credential: {
+        Args: {
+          _assurance_level?: string
+          _credential_id: string
+          _issuer_id?: string
+          _reason?: string
+          _to_status: string
+        }
+        Returns: Json
+      }
     }
     Enums: {
       bankid_signature_flow: "verify_representation"
