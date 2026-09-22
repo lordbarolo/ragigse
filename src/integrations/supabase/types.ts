@@ -4153,6 +4153,45 @@ export type Database = {
           },
         ]
       }
+      trust_dualread_discrepancies: {
+        Row: {
+          actual_value: string | null
+          credential_id: string | null
+          detail_hash: string
+          discrepancy_kind: string
+          expected_value: string | null
+          id: string
+          legacy_ref_id: string | null
+          legacy_table: string
+          observed_at: string
+          subject_user_id: string
+        }
+        Insert: {
+          actual_value?: string | null
+          credential_id?: string | null
+          detail_hash: string
+          discrepancy_kind: string
+          expected_value?: string | null
+          id?: string
+          legacy_ref_id?: string | null
+          legacy_table: string
+          observed_at?: string
+          subject_user_id: string
+        }
+        Update: {
+          actual_value?: string | null
+          credential_id?: string | null
+          detail_hash?: string
+          discrepancy_kind?: string
+          expected_value?: string | null
+          id?: string
+          legacy_ref_id?: string | null
+          legacy_table?: string
+          observed_at?: string
+          subject_user_id?: string
+        }
+        Relationships: []
+      }
       trust_evidence: {
         Row: {
           collected_at: string
