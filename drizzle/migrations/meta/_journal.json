@@ -36,6 +36,13 @@
       "when": 1790039058401,
       "tag": "0004_guard_consultant_documents_status",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1790039124091,
+      "tag": "0005_trust_core_v1_tables",
+      "breakpoints": true
     }
   ]
 }
