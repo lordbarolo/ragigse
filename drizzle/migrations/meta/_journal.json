@@ -57,6 +57,13 @@
       "when": 1790039287406,
       "tag": "0007_trust_transition_fix_privilege_check",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1790039398342,
+      "tag": "0008_trust_core_tighten_grants",
+      "breakpoints": true
     }
   ]
 }
