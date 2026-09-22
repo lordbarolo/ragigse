@@ -50,6 +50,9 @@ export const FUNCTION_GRANTS: Record<string, GrantCategory> = {
   match_lonekoll_chunks: "authenticated",
   trust_create_self_asserted_credential: "authenticated",
   trust_transition_credential: "authenticated",
+  trust_create_share_grant: "authenticated",
+  trust_revoke_share_grant: "authenticated",
+  trust_evaluate_requirements: "authenticated",
 
   // ── Interna (triggers, cron, service_role) ────────────────────────────────
   agent_api_count_today: "internal",
@@ -79,4 +82,7 @@ export const FUNCTION_GRANTS: Record<string, GrantCategory> = {
   guard_trust_credentials_fields: "internal",
   guard_trust_evidence_fields: "internal",
   trust_events_append_only: "internal",
+  trust_share_log_append_only: "internal",
+  // Endast service_role: anropas från publika trust-rutter efter tokenvalidering.
+  trust_resolve_share_grant: "internal",
 };
