@@ -71,6 +71,13 @@
       "when": 1790039840125,
       "tag": "0009_trust_v1_step1_harden_share_functions",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1790039887643,
+      "tag": "0010_trust_v1_share_grants",
+      "breakpoints": true
     }
   ]
 }
