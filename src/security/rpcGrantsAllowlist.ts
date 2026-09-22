@@ -20,6 +20,9 @@ export const FUNCTION_GRANTS: Record<string, GrantCategory> = {
   top_kommuner: "anon",
   cc_slugify: "anon",
   search_staffing_agencies: "anon",
+  // Beta: AI-avtalsgranskaren är medvetet publik (se drizzle/migrations/0000, 0003)
+  beta_match_benchmark: "anon",
+  beta_resolve_zone: "anon",
 
   // ── Endast inloggade ──────────────────────────────────────────────────────
   ref_has_role: "authenticated",
@@ -45,6 +48,8 @@ export const FUNCTION_GRANTS: Record<string, GrantCategory> = {
   set_profile_email: "authenticated",
   ai_usage_summary: "authenticated",
   match_lonekoll_chunks: "authenticated",
+  trust_create_self_asserted_credential: "authenticated",
+  trust_transition_credential: "authenticated",
 
   // ── Interna (triggers, cron, service_role) ────────────────────────────────
   agent_api_count_today: "internal",
@@ -67,4 +72,11 @@ export const FUNCTION_GRANTS: Record<string, GrantCategory> = {
   ref_refresh_attachability: "internal",
   security_audit_checks: "internal",
   update_updated_at_column: "internal",
+  guard_consultant_documents_status: "internal",
+  guard_invoice_reviews_admin_fields: "internal",
+  guard_profiles_verification_fields: "internal",
+  guard_ref_profiles_trust_fields: "internal",
+  guard_trust_credentials_fields: "internal",
+  guard_trust_evidence_fields: "internal",
+  trust_events_append_only: "internal",
 };

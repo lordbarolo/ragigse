@@ -3989,6 +3989,313 @@ export type Database = {
         }
         Relationships: []
       }
+      trust_claims: {
+        Row: {
+          claim_key: string
+          created_at: string
+          credential_id: string
+          id: string
+          updated_at: string
+          value_bool: boolean | null
+          value_date: string | null
+          value_json: Json | null
+          value_num: number | null
+          value_text: string | null
+        }
+        Insert: {
+          claim_key: string
+          created_at?: string
+          credential_id: string
+          id?: string
+          updated_at?: string
+          value_bool?: boolean | null
+          value_date?: string | null
+          value_json?: Json | null
+          value_num?: number | null
+          value_text?: string | null
+        }
+        Update: {
+          claim_key?: string
+          created_at?: string
+          credential_id?: string
+          id?: string
+          updated_at?: string
+          value_bool?: boolean | null
+          value_date?: string | null
+          value_json?: Json | null
+          value_num?: number | null
+          value_text?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trust_claims_credential_id_fkey"
+            columns: ["credential_id"]
+            isOneToOne: false
+            referencedRelation: "trust_credentials"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trust_credential_types: {
+        Row: {
+          category: string
+          created_at: string
+          default_validity_months: number | null
+          display_name: string
+          expected_issuer_kind: string | null
+          id: string
+          is_active: boolean
+          requires_expiry: boolean
+          schema: Json
+          slug: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          default_validity_months?: number | null
+          display_name: string
+          expected_issuer_kind?: string | null
+          id?: string
+          is_active?: boolean
+          requires_expiry?: boolean
+          schema?: Json
+          slug: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          default_validity_months?: number | null
+          display_name?: string
+          expected_issuer_kind?: string | null
+          id?: string
+          is_active?: boolean
+          requires_expiry?: boolean
+          schema?: Json
+          slug?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      trust_credentials: {
+        Row: {
+          assurance_level: string
+          created_at: string
+          credential_type_id: string
+          id: string
+          issuer_id: string | null
+          legacy_ref_id: string | null
+          legacy_table: string | null
+          metadata: Json
+          revoked_at: string | null
+          revoked_reason: string | null
+          source: string
+          status: string
+          subject_user_id: string
+          updated_at: string
+          valid_from: string | null
+          valid_to: string | null
+          verified_at: string | null
+        }
+        Insert: {
+          assurance_level?: string
+          created_at?: string
+          credential_type_id: string
+          id?: string
+          issuer_id?: string | null
+          legacy_ref_id?: string | null
+          legacy_table?: string | null
+          metadata?: Json
+          revoked_at?: string | null
+          revoked_reason?: string | null
+          source: string
+          status?: string
+          subject_user_id: string
+          updated_at?: string
+          valid_from?: string | null
+          valid_to?: string | null
+          verified_at?: string | null
+        }
+        Update: {
+          assurance_level?: string
+          created_at?: string
+          credential_type_id?: string
+          id?: string
+          issuer_id?: string | null
+          legacy_ref_id?: string | null
+          legacy_table?: string | null
+          metadata?: Json
+          revoked_at?: string | null
+          revoked_reason?: string | null
+          source?: string
+          status?: string
+          subject_user_id?: string
+          updated_at?: string
+          valid_from?: string | null
+          valid_to?: string | null
+          verified_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trust_credentials_credential_type_id_fkey"
+            columns: ["credential_type_id"]
+            isOneToOne: false
+            referencedRelation: "trust_credential_types"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trust_credentials_issuer_id_fkey"
+            columns: ["issuer_id"]
+            isOneToOne: false
+            referencedRelation: "trust_issuers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trust_evidence: {
+        Row: {
+          collected_at: string
+          collected_by: string | null
+          created_at: string
+          credential_id: string
+          document_id: string | null
+          evidence_kind: string
+          id: string
+          metadata: Json
+          sha256: string | null
+          storage_bucket: string | null
+          storage_path: string | null
+        }
+        Insert: {
+          collected_at?: string
+          collected_by?: string | null
+          created_at?: string
+          credential_id: string
+          document_id?: string | null
+          evidence_kind: string
+          id?: string
+          metadata?: Json
+          sha256?: string | null
+          storage_bucket?: string | null
+          storage_path?: string | null
+        }
+        Update: {
+          collected_at?: string
+          collected_by?: string | null
+          created_at?: string
+          credential_id?: string
+          document_id?: string | null
+          evidence_kind?: string
+          id?: string
+          metadata?: Json
+          sha256?: string | null
+          storage_bucket?: string | null
+          storage_path?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trust_evidence_credential_id_fkey"
+            columns: ["credential_id"]
+            isOneToOne: false
+            referencedRelation: "trust_credentials"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trust_issuers: {
+        Row: {
+          country: string | null
+          created_at: string
+          display_name: string
+          id: string
+          is_active: boolean
+          issuer_kind: string
+          slug: string
+          updated_at: string
+          verified_domain: string | null
+        }
+        Insert: {
+          country?: string | null
+          created_at?: string
+          display_name: string
+          id?: string
+          is_active?: boolean
+          issuer_kind: string
+          slug: string
+          updated_at?: string
+          verified_domain?: string | null
+        }
+        Update: {
+          country?: string | null
+          created_at?: string
+          display_name?: string
+          id?: string
+          is_active?: boolean
+          issuer_kind?: string
+          slug?: string
+          updated_at?: string
+          verified_domain?: string | null
+        }
+        Relationships: []
+      }
+      trust_verification_events: {
+        Row: {
+          actor_api_key_id: string | null
+          actor_kind: string
+          actor_user_id: string | null
+          credential_id: string
+          event_type: string
+          from_status: string | null
+          id: string
+          occurred_at: string
+          payload: Json
+          reason: string | null
+          to_status: string | null
+        }
+        Insert: {
+          actor_api_key_id?: string | null
+          actor_kind: string
+          actor_user_id?: string | null
+          credential_id: string
+          event_type: string
+          from_status?: string | null
+          id?: string
+          occurred_at?: string
+          payload?: Json
+          reason?: string | null
+          to_status?: string | null
+        }
+        Update: {
+          actor_api_key_id?: string | null
+          actor_kind?: string
+          actor_user_id?: string | null
+          credential_id?: string
+          event_type?: string
+          from_status?: string | null
+          id?: string
+          occurred_at?: string
+          payload?: Json
+          reason?: string | null
+          to_status?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trust_verification_events_actor_api_key_id_fkey"
+            columns: ["actor_api_key_id"]
+            isOneToOne: false
+            referencedRelation: "agent_api_keys"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "trust_verification_events_credential_id_fkey"
+            columns: ["credential_id"]
+            isOneToOne: false
+            referencedRelation: "trust_credentials"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       uppdrag_notifications: {
         Row: {
           created_at: string
@@ -4421,6 +4728,27 @@ export type Database = {
           cnt: number
           kommun: string
         }[]
+      }
+      trust_create_self_asserted_credential: {
+        Args: {
+          _claims?: Json
+          _evidence?: Json
+          _metadata?: Json
+          _type_slug: string
+          _valid_from?: string
+          _valid_to?: string
+        }
+        Returns: string
+      }
+      trust_transition_credential: {
+        Args: {
+          _assurance_level?: string
+          _credential_id: string
+          _issuer_id?: string
+          _reason?: string
+          _to_status: string
+        }
+        Returns: Json
       }
     }
     Enums: {

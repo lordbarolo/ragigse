@@ -11,14 +11,26 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { FUNCTION_GRANTS } from "./rpcGrantsAllowlist";
 
-const MIGRATIONS_DIR = join(process.cwd(), "supabase", "migrations");
+// Migrationer finns både i den äldre supabase-mappen och i drizzle-mappen.
+const MIGRATION_DIRS = [
+  join(process.cwd(), "supabase", "migrations"),
+  join(process.cwd(), "drizzle", "migrations"),
+];
 
 function functionsInMigrations(): string[] {
-  const files = readdirSync(MIGRATIONS_DIR).filter((f) => f.endsWith(".sql"));
+  const files = MIGRATION_DIRS.flatMap((dir) => {
+    try {
+      return readdirSync(dir)
+        .filter((f) => f.endsWith(".sql"))
+        .map((f) => join(dir, f));
+    } catch {
+      return [];
+    }
+  });
   const found = new Set<string>();
   const re = /create\s+(?:or\s+replace\s+)?function\s+(?:public\.)?"?([a-z0-9_]+)"?/gi;
   for (const file of files) {
-    const sql = readFileSync(join(MIGRATIONS_DIR, file), "utf8");
+    const sql = readFileSync(file, "utf8");
     for (const match of sql.matchAll(re)) {
       const name = match[1]?.toLowerCase();
       // Hoppa över funktioner i andra scheman (extensions m.m.)
