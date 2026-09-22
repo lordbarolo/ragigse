@@ -4939,6 +4939,10 @@ export type Database = {
           requirement_id: string
         }[]
       }
+      trust_project_consultant_document: {
+        Args: { _document_id: string }
+        Returns: Json
+      }
       trust_resolve_share_grant: {
         Args: {
           _consume?: boolean
