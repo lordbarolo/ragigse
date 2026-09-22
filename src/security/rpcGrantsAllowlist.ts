@@ -52,6 +52,8 @@ export const FUNCTION_GRANTS: Record<string, GrantCategory> = {
   trust_transition_credential: "authenticated",
   // Legacy-projektion: endast service_role/admin, ingen API-roll
   trust_project_consultant_document: "internal",
+  trust_project_consultant_reference: "internal",
+  trust_backfill_legacy: "internal",
   trust_create_share_grant: "authenticated",
   trust_revoke_share_grant: "authenticated",
   trust_evaluate_requirements: "authenticated",
