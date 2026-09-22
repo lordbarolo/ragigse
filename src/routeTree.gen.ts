@@ -55,6 +55,8 @@ import { Route as ConsultantLayoutProfilRouteImport } from './routes/consultant/
 import { Route as LonSpecialtyCityRouteImport } from './routes/lon/$specialty/$city'
 import { Route as ApiPublicBetaAnalysisEventRouteImport } from './routes/api/public/beta/analysis-event'
 import { Route as ApiPublicBetaAnalyzeContractRouteImport } from './routes/api/public/beta/analyze-contract'
+import { Route as ApiPublicTrustAttestTokenRouteImport } from './routes/api/public/trust/attest.$token'
+import { Route as ApiPublicTrustShareTokenRouteImport } from './routes/api/public/trust/share.$token'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -296,6 +298,18 @@ const ApiPublicBetaAnalyzeContractRoute =
     path: '/api/public/beta/analyze-contract',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicTrustAttestTokenRoute =
+  ApiPublicTrustAttestTokenRouteImport.update({
+    id: '/api/public/trust/attest/$token',
+    path: '/api/public/trust/attest/$token',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const ApiPublicTrustShareTokenRoute =
+  ApiPublicTrustShareTokenRouteImport.update({
+    id: '/api/public/trust/share/$token',
+    path: '/api/public/trust/share/$token',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -344,6 +358,8 @@ export interface FileRoutesByFullPath {
   '/lon/$specialty/$city': typeof LonSpecialtyCityRoute
   '/api/public/beta/analysis-event': typeof ApiPublicBetaAnalysisEventRoute
   '/api/public/beta/analyze-contract': typeof ApiPublicBetaAnalyzeContractRoute
+  '/api/public/trust/attest/$token': typeof ApiPublicTrustAttestTokenRoute
+  '/api/public/trust/share/$token': typeof ApiPublicTrustShareTokenRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -392,6 +408,8 @@ export interface FileRoutesByTo {
   '/lon/$specialty/$city': typeof LonSpecialtyCityRoute
   '/api/public/beta/analysis-event': typeof ApiPublicBetaAnalysisEventRoute
   '/api/public/beta/analyze-contract': typeof ApiPublicBetaAnalyzeContractRoute
+  '/api/public/trust/attest/$token': typeof ApiPublicTrustAttestTokenRoute
+  '/api/public/trust/share/$token': typeof ApiPublicTrustShareTokenRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -441,6 +459,8 @@ export interface FileRoutesById {
   '/lon/$specialty/$city': typeof LonSpecialtyCityRoute
   '/api/public/beta/analysis-event': typeof ApiPublicBetaAnalysisEventRoute
   '/api/public/beta/analyze-contract': typeof ApiPublicBetaAnalyzeContractRoute
+  '/api/public/trust/attest/$token': typeof ApiPublicTrustAttestTokenRoute
+  '/api/public/trust/share/$token': typeof ApiPublicTrustShareTokenRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -491,6 +511,8 @@ export interface FileRouteTypes {
     | '/lon/$specialty/$city'
     | '/api/public/beta/analysis-event'
     | '/api/public/beta/analyze-contract'
+    | '/api/public/trust/attest/$token'
+    | '/api/public/trust/share/$token'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -539,6 +561,8 @@ export interface FileRouteTypes {
     | '/lon/$specialty/$city'
     | '/api/public/beta/analysis-event'
     | '/api/public/beta/analyze-contract'
+    | '/api/public/trust/attest/$token'
+    | '/api/public/trust/share/$token'
   id:
     | '__root__'
     | '/'
@@ -587,6 +611,8 @@ export interface FileRouteTypes {
     | '/lon/$specialty/$city'
     | '/api/public/beta/analysis-event'
     | '/api/public/beta/analyze-contract'
+    | '/api/public/trust/attest/$token'
+    | '/api/public/trust/share/$token'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -630,6 +656,8 @@ export interface RootRouteChildren {
   LonSpecialtyCityRoute: typeof LonSpecialtyCityRoute
   ApiPublicBetaAnalysisEventRoute: typeof ApiPublicBetaAnalysisEventRoute
   ApiPublicBetaAnalyzeContractRoute: typeof ApiPublicBetaAnalyzeContractRoute
+  ApiPublicTrustAttestTokenRoute: typeof ApiPublicTrustAttestTokenRoute
+  ApiPublicTrustShareTokenRoute: typeof ApiPublicTrustShareTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -956,6 +984,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicBetaAnalyzeContractRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/trust/attest/$token': {
+      id: '/api/public/trust/attest/$token'
+      path: '/api/public/trust/attest/$token'
+      fullPath: '/api/public/trust/attest/$token'
+      preLoaderRoute: typeof ApiPublicTrustAttestTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/trust/share/$token': {
+      id: '/api/public/trust/share/$token'
+      path: '/api/public/trust/share/$token'
+      fullPath: '/api/public/trust/share/$token'
+      preLoaderRoute: typeof ApiPublicTrustShareTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -1021,6 +1063,8 @@ const rootRouteChildren: RootRouteChildren = {
   LonSpecialtyCityRoute: LonSpecialtyCityRoute,
   ApiPublicBetaAnalysisEventRoute: ApiPublicBetaAnalysisEventRoute,
   ApiPublicBetaAnalyzeContractRoute: ApiPublicBetaAnalyzeContractRoute,
+  ApiPublicTrustAttestTokenRoute: ApiPublicTrustAttestTokenRoute,
+  ApiPublicTrustShareTokenRoute: ApiPublicTrustShareTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

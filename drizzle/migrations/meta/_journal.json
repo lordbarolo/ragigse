@@ -64,6 +64,34 @@
       "when": 1790039398342,
       "tag": "0008_trust_core_tighten_grants",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1790039840125,
+      "tag": "0009_trust_v1_step1_harden_share_functions",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1790039887643,
+      "tag": "0010_trust_v1_share_grants",
+      "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1790039929157,
+      "tag": "0011_trust_v1_requirements_engine",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1790040055812,
+      "tag": "0012_trust_share_log_no_cascade",
+      "breakpoints": true
     }
   ]
 }

@@ -4239,6 +4239,178 @@ export type Database = {
         }
         Relationships: []
       }
+      trust_requirement_sets: {
+        Row: {
+          created_at: string
+          display_name: string
+          id: string
+          is_active: boolean
+          owner_kind: string
+          slug: string
+          source_ref: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_name: string
+          id?: string
+          is_active?: boolean
+          owner_kind: string
+          slug: string
+          source_ref?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string
+          id?: string
+          is_active?: boolean
+          owner_kind?: string
+          slug?: string
+          source_ref?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      trust_requirements: {
+        Row: {
+          claim_key: string | null
+          created_at: string
+          credential_type_slug: string
+          expected_json: Json
+          id: string
+          is_mandatory: boolean
+          min_assurance_level: string
+          operator: string
+          set_id: string
+          updated_at: string
+          weight: number | null
+        }
+        Insert: {
+          claim_key?: string | null
+          created_at?: string
+          credential_type_slug: string
+          expected_json?: Json
+          id?: string
+          is_mandatory?: boolean
+          min_assurance_level?: string
+          operator: string
+          set_id: string
+          updated_at?: string
+          weight?: number | null
+        }
+        Update: {
+          claim_key?: string | null
+          created_at?: string
+          credential_type_slug?: string
+          expected_json?: Json
+          id?: string
+          is_mandatory?: boolean
+          min_assurance_level?: string
+          operator?: string
+          set_id?: string
+          updated_at?: string
+          weight?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trust_requirements_set_id_fkey"
+            columns: ["set_id"]
+            isOneToOne: false
+            referencedRelation: "trust_requirement_sets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trust_share_access_log: {
+        Row: {
+          accessed_at: string
+          grant_id: string | null
+          id: string
+          ip_hash: string | null
+          metadata: Json
+          outcome: string
+          user_agent_hash: string | null
+        }
+        Insert: {
+          accessed_at?: string
+          grant_id?: string | null
+          id?: string
+          ip_hash?: string | null
+          metadata?: Json
+          outcome: string
+          user_agent_hash?: string | null
+        }
+        Update: {
+          accessed_at?: string
+          grant_id?: string | null
+          id?: string
+          ip_hash?: string | null
+          metadata?: Json
+          outcome?: string
+          user_agent_hash?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trust_share_access_log_grant_id_fkey"
+            columns: ["grant_id"]
+            isOneToOne: false
+            referencedRelation: "trust_share_grants"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      trust_share_grants: {
+        Row: {
+          audience_email: string | null
+          audience_label: string | null
+          created_at: string
+          created_by: string | null
+          expires_at: string
+          grant_kind: string
+          id: string
+          max_uses: number | null
+          revoked_at: string | null
+          scope: Json
+          subject_user_id: string
+          token_hash: string
+          token_prefix: string
+          used_count: number
+        }
+        Insert: {
+          audience_email?: string | null
+          audience_label?: string | null
+          created_at?: string
+          created_by?: string | null
+          expires_at: string
+          grant_kind: string
+          id?: string
+          max_uses?: number | null
+          revoked_at?: string | null
+          scope?: Json
+          subject_user_id: string
+          token_hash: string
+          token_prefix: string
+          used_count?: number
+        }
+        Update: {
+          audience_email?: string | null
+          audience_label?: string | null
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string
+          grant_kind?: string
+          id?: string
+          max_uses?: number | null
+          revoked_at?: string | null
+          scope?: Json
+          subject_user_id?: string
+          token_hash?: string
+          token_prefix?: string
+          used_count?: number
+        }
+        Relationships: []
+      }
       trust_verification_events: {
         Row: {
           actor_api_key_id: string | null
@@ -4739,6 +4911,52 @@ export type Database = {
           _valid_to?: string
         }
         Returns: string
+      }
+      trust_create_share_grant: {
+        Args: {
+          _audience_email?: string
+          _audience_label?: string
+          _expires_in_hours?: number
+          _grant_kind: string
+          _max_uses?: number
+          _scope?: Json
+        }
+        Returns: {
+          expires_at: string
+          id: string
+          token: string
+        }[]
+      }
+      trust_evaluate_requirements: {
+        Args: { _set_slug: string; _subject_user_id: string }
+        Returns: {
+          claim_key: string
+          credential_id: string
+          credential_type_slug: string
+          is_mandatory: boolean
+          operator: string
+          outcome: string
+          requirement_id: string
+        }[]
+      }
+      trust_resolve_share_grant: {
+        Args: {
+          _consume?: boolean
+          _ip_hash?: string
+          _token: string
+          _user_agent_hash?: string
+        }
+        Returns: {
+          grant_id: string
+          grant_kind: string
+          outcome: string
+          scope: Json
+          subject_user_id: string
+        }[]
+      }
+      trust_revoke_share_grant: {
+        Args: { _grant_id: string }
+        Returns: boolean
       }
       trust_transition_credential: {
         Args: {
