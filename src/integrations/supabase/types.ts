@@ -4901,6 +4901,7 @@ export type Database = {
           kommun: string
         }[]
       }
+      trust_backfill_legacy: { Args: { _limit?: number }; Returns: Json }
       trust_create_self_asserted_credential: {
         Args: {
           _claims?: Json
@@ -4941,6 +4942,10 @@ export type Database = {
       }
       trust_project_consultant_document: {
         Args: { _document_id: string }
+        Returns: Json
+      }
+      trust_project_consultant_reference: {
+        Args: { _reference_id: string }
         Returns: Json
       }
       trust_resolve_share_grant: {
