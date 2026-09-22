@@ -45,6 +45,8 @@ export const FUNCTION_GRANTS: Record<string, GrantCategory> = {
   set_profile_email: "authenticated",
   ai_usage_summary: "authenticated",
   match_lonekoll_chunks: "authenticated",
+  trust_create_self_asserted_credential: "authenticated",
+  trust_transition_credential: "authenticated",
 
   // ── Interna (triggers, cron, service_role) ────────────────────────────────
   agent_api_count_today: "internal",
@@ -67,4 +69,8 @@ export const FUNCTION_GRANTS: Record<string, GrantCategory> = {
   ref_refresh_attachability: "internal",
   security_audit_checks: "internal",
   update_updated_at_column: "internal",
+  guard_consultant_documents_status: "internal",
+  guard_trust_credentials_fields: "internal",
+  guard_trust_evidence_fields: "internal",
+  trust_events_append_only: "internal",
 };
