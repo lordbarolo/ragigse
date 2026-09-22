@@ -4239,6 +4239,89 @@ export type Database = {
         }
         Relationships: []
       }
+      trust_requirement_sets: {
+        Row: {
+          created_at: string
+          display_name: string
+          id: string
+          is_active: boolean
+          owner_kind: string
+          slug: string
+          source_ref: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          display_name: string
+          id?: string
+          is_active?: boolean
+          owner_kind: string
+          slug: string
+          source_ref?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          display_name?: string
+          id?: string
+          is_active?: boolean
+          owner_kind?: string
+          slug?: string
+          source_ref?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      trust_requirements: {
+        Row: {
+          claim_key: string | null
+          created_at: string
+          credential_type_slug: string
+          expected_json: Json
+          id: string
+          is_mandatory: boolean
+          min_assurance_level: string
+          operator: string
+          set_id: string
+          updated_at: string
+          weight: number | null
+        }
+        Insert: {
+          claim_key?: string | null
+          created_at?: string
+          credential_type_slug: string
+          expected_json?: Json
+          id?: string
+          is_mandatory?: boolean
+          min_assurance_level?: string
+          operator: string
+          set_id: string
+          updated_at?: string
+          weight?: number | null
+        }
+        Update: {
+          claim_key?: string | null
+          created_at?: string
+          credential_type_slug?: string
+          expected_json?: Json
+          id?: string
+          is_mandatory?: boolean
+          min_assurance_level?: string
+          operator?: string
+          set_id?: string
+          updated_at?: string
+          weight?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trust_requirements_set_id_fkey"
+            columns: ["set_id"]
+            isOneToOne: false
+            referencedRelation: "trust_requirement_sets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       trust_share_access_log: {
         Row: {
           accessed_at: string
@@ -4842,6 +4925,18 @@ export type Database = {
           expires_at: string
           id: string
           token: string
+        }[]
+      }
+      trust_evaluate_requirements: {
+        Args: { _set_slug: string; _subject_user_id: string }
+        Returns: {
+          claim_key: string
+          credential_id: string
+          credential_type_slug: string
+          is_mandatory: boolean
+          operator: string
+          outcome: string
+          requirement_id: string
         }[]
       }
       trust_resolve_share_grant: {

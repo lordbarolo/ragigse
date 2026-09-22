@@ -78,6 +78,13 @@
       "when": 1790039887643,
       "tag": "0010_trust_v1_share_grants",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1790039929157,
+      "tag": "0011_trust_v1_requirements_engine",
+      "breakpoints": true
     }
   ]
 }
