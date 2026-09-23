@@ -22,8 +22,8 @@ export interface Rate5c {
 }
 
 export const ZONES_5C = [
-  { value: "Zon 1", label: "Zon 1 · Storstad", column: "Zon 1 Storstad" },
-  { value: "Zon 2", label: "Zon 2 · Mellannorrland", column: "Zon 2 Mellannorrl." },
+  { value: "Zon 1", label: "Zon 1 · Storstad", column: "ZON 1" },
+  { value: "Zon 2", label: "Zon 2 · Mellannorrland", column: "ZON 2" },
   { value: "Zon 3", label: "Zon 3 · Glesbygd", column: "Zon 3 Glesbygd" },
 ];
 
