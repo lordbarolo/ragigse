@@ -48,7 +48,8 @@ export default function Hero() {
             className="mt-4 max-w-[540px] text-[17px]"
             style={{ lineHeight: 1.6, color: "#b8bac2", animation: "fadeUp5c .55s .16s ease both" }}
           >
-            Se uppdaterade ersättningar för läkare och sjuksköterskor inom bemanning. Sök utifrån din roll och uppdragets ort.
+            Att jobba som läkare är svårt.{"\n"}
+            Att se vad läkare kan tjäna är lätt.
           </p>
         </div>
 
