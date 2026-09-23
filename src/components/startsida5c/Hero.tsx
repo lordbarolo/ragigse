@@ -37,17 +37,17 @@ export default function Hero() {
             href="/registrera"
             className="mb-6 inline-flex rounded-full no-underline"
             style={{
-              background: "#F0EEE6",
+              background: "#E8E0D3",
               color: "#191919",
               animation: "fadeUp5c .55s ease both",
             }}
           >
             <span
               className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-[7px] text-[13px] font-medium"
-              style={{ background: "#F0EEE6", color: "#191919" }}
+              style={{ background: "#E8E0D3", color: "#191919" }}
             >
               Smarta verktyg för läkare och sjuksköterskor{"\n"}
-              <span className="leading-none" style={{ color: "#6b6a63" }}>›</span>
+              <span className="leading-none" style={{ color: "#8a8272" }}>›</span>
             </span>
           </a>
           <h1
