@@ -24,7 +24,7 @@ export interface Rate5c {
 export const ZONES_5C = [
   { value: "Zon 1", label: "Zon 1 · Storstad", column: "ZON 1" },
   { value: "Zon 2", label: "Zon 2 · Mellannorrland", column: "ZON 2" },
-  { value: "Zon 3", label: "Zon 3 · Glesbygd", column: "Zon 3 Glesbygd" },
+  { value: "Zon 3", label: "Zon 3 · Glesbygd", column: "ZON 3" },
 ];
 
 export const DEFAULT_ROLE_5C = "Specialistläkare ögonsjukdomar";
