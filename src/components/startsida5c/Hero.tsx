@@ -34,22 +34,6 @@ export default function Hero() {
 
         <div>
           <h1
-            className="mb-6 inline-flex rounded-full no-underline"
-            style={{
-              background: "#E8E0D3",
-              color: "#191919",
-              animation: "fadeUp5c .55s ease both",
-            }}
-          >
-            <span
-              className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-[7px] text-[13px] font-medium"
-              style={{ background: "#E8E0D3", color: "#191919" }}
-            >
-              Smarta verktyg för läkare och sjuksköterskor{"\n"}
-              <span className="leading-none" style={{ color: "#8a8272" }}>›</span>
-            </span>
-          </a>
-          <h1
             className="m-0 text-[34px] font-semibold sm:text-[42px] lg:text-[50px]"
             style={{
               lineHeight: 1.06,
