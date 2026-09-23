@@ -35,18 +35,19 @@ export default function Hero() {
         <div>
           <a
             href="/registrera"
-            className="mb-6 inline-flex rounded-full p-[1px] no-underline"
+            className="mb-6 inline-flex rounded-full no-underline"
             style={{
-              background: "linear-gradient(100deg,#4ade80,#22d3ee 35%,#6366f1 70%,#4ade80)",
+              background: "#F0EEE6",
+              color: "#191919",
               animation: "fadeUp5c .55s ease both",
             }}
           >
             <span
               className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full px-4 py-[7px] text-[13px] font-medium"
-              style={{ background: "#0b0c10", color: "#e8eaef" }}
+              style={{ background: "#F0EEE6", color: "#191919" }}
             >
               Smarta verktyg för läkare och sjuksköterskor{"\n"}
-              <span className="leading-none" style={{ color: "#8a8c94" }}>›</span>
+              <span className="leading-none" style={{ color: "#6b6a63" }}>›</span>
             </span>
           </a>
           <h1
