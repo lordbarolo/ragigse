@@ -33,8 +33,7 @@ export default function Hero() {
       <div className="relative mx-auto grid max-w-[1200px] items-center gap-10 px-5 py-14 md:px-12 md:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:gap-14">
 
         <div>
-          <a
-            href="/registrera"
+          <h1
             className="mb-6 inline-flex rounded-full no-underline"
             style={{
               background: "#E8E0D3",
