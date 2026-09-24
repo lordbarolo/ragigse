@@ -120,6 +120,13 @@
       "when": 1790077840864,
       "tag": "0016_trust_dualread_discrepancies",
       "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1790209632837,
+      "tag": "0017_tighten_public_policies",
+      "breakpoints": true
     }
   ]
 }
