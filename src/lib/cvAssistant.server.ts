@@ -443,6 +443,9 @@ const NUMERIC_MONTH_RE = /(?<!\d)(0?[1-9]|1[0-2])\s*[./]\s*((?:19|20)\d{2})(?!\d
 const NAMED_MONTH_RE = /(?<!\p{L})(\p{L}{3,9})\.?\s+((?:19|20)\d{2})(?!\d)/gu;
 const ACRONYM_RE = /(?<![\p{L}\p{N}-])[A-ZÅÄÖ0-9]+(?:-[A-ZÅÄÖ0-9]+)*(?![\p{L}\p{N}-])/gu;
 const PLACEHOLDER_WORD_RE = /(?<!\p{L})(?:saknas|okänt|okänd|ej angivet|ej angiven|anges senare)(?!\p{L})/iu;
+// Ett led räknas som platshållare bara om platshållarordet avslutar ett kort led
+// ("Period saknas", "Okänt") – aldrig mitt i en klinisk fras ("feber av okänd genes").
+const PLACEHOLDER_SEGMENT_RE = /^(?:\p{L}+\s+){0,2}(?:saknas|okänt|okänd|ej angivet|ej angiven|anges senare)[.:]?$/iu;
 const BRACKET_PLACEHOLDER_RE = /\[[^\]\n]{1,40}\](?!\()/g;
 const MASKED_YEAR_RE = /(?<![\p{L}\p{N}])(?:(?:19|20)XX|XX\/XX(?:XX)?|åååå)(?![\p{L}\p{N}])/giu;
 
@@ -493,7 +496,7 @@ function stripPlaceholders(markdown: string): { text: string; removed: number } 
         return "";
       });
 
-    if (removedHere > 0 || PLACEHOLDER_WORD_RE.test(line)) {
+    if (removedHere > 0 || line.split(/\s*(?:\||—|–|·)\s*/).some((seg) => PLACEHOLDER_SEGMENT_RE.test(seg.replace(/^[\s>#*+-]+/, "").trim()))) {
       // Ta bara bort de led i raden som är platshållare eller blev tomma
       // ("Sjuksköterska | Period saknas" → "Sjuksköterska", "Program — [Lärosäte] — 2010" → "Program — 2010").
       // Listmarkör/rubriktecken och avslutande hård radbrytning bevaras.
@@ -505,7 +508,7 @@ function stripPlaceholders(markdown: string): { text: string; removed: number } 
       for (let i = 0; i < parts.length; i += 2) {
         const text = (parts[i] ?? "").trim();
         if (text === "") continue;
-        if (PLACEHOLDER_WORD_RE.test(text)) {
+        if (PLACEHOLDER_SEGMENT_RE.test(text)) {
           removedHere++;
           continue;
         }
