@@ -1,0 +1,1 @@
+GRANT EXECUTE ON FUNCTION public.ref_has_role(uuid, public.ref_app_role) TO anon;
