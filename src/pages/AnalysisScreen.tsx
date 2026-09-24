@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import type { SurveyData } from "@/components/Survey";
 import MarketDiagnosisCard from "@/components/teaser/MarketDiagnosisCard";
 import SignupGate from "@/components/teaser/SignupGate";
-import { fetchLead, leadToSurvey, createReport, saveEmail } from "@/services/leadService";
+import { fetchLead, leadToSurvey, createReport, saveEmail, LeadNotFoundError } from "@/services/leadService";
 import { identifyLeadWithEmail } from "@/lib/identify";
 import Navbar from "@/components/Navbar";
 import CompcareLogo from "@/components/CompcareLogo";
