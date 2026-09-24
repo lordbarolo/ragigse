@@ -23,9 +23,12 @@ export const FUNCTION_GRANTS: Record<string, GrantCategory> = {
   // Beta: AI-avtalsgranskaren är medvetet publik (se drizzle/migrations/0000, 0003)
   beta_match_benchmark: "anon",
   beta_resolve_zone: "anon",
+  // SECURITY DEFINER-rollkontroll som används av ~29 RLS-policyer; måste vara
+  // körbar även för anon, annars kraschar publika läsningar i stället för att
+  // returnera tomt. Funktionen läser bara rolltabellen och svarar "nej" för anon.
+  ref_has_role: "anon",
 
   // ── Endast inloggade ──────────────────────────────────────────────────────
-  ref_has_role: "authenticated",
   create_org_with_admin: "authenticated",
   approve_org_membership_request: "authenticated",
   reject_org_membership_request: "authenticated",
