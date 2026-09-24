@@ -80,7 +80,7 @@ serve(async (req) => {
     if (leadFetchError || !existingLead) {
       console.error("Lead lookup failed:", leadFetchError);
       return new Response(
-        JSON.stringify({ error: "Lead not found" }),
+        JSON.stringify({ error: "Kunde inte hitta dina uppgifter", code: "lead_not_found" }),
         { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }

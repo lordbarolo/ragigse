@@ -38,7 +38,9 @@ export const Route = createFileRoute("/api/public/trust/attest/$token")({
           }
 
           const supabase = serviceClient();
-          const { grant, outcome } = await resolveGrant(supabase, request, token, true);
+          // Lös länken UTAN att konsumera den först — den bränns först när
+          // svaret faktiskt har sparats, så ett fel inte låser referenten ute.
+          const { grant, outcome } = await resolveGrant(supabase, request, token, false);
           if (!grant) {
             return json({ error: OUTCOME_MESSAGES[outcome] ?? OUTCOME_MESSAGES["not_found"] }, 404);
           }
