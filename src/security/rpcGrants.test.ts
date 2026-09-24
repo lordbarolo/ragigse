@@ -69,11 +69,6 @@ const ANON_DENIED: Array<{ fn: string; body: Record<string, unknown> }> = [
 ];
 
 /**
- * Funktioner som ska ha EXECUTE för `authenticated` men vara nekade för `anon`.
- */
-const AUTHENTICATED_ONLY: Array<{ fn: string; body: Record<string, unknown> }> = [];
-
-/**
  * `ref_has_role` anropas av ~29 RLS-policyer och måste vara körbar även för
  * `anon`, annars kraschar publika läsningar med 42501 i stället för att
  * returnera tomt. Funktionen är SECURITY DEFINER och läser bara rolltabellen —
