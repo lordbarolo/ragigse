@@ -85,6 +85,13 @@ export const Route = createFileRoute("/api/public/trust/attest/$token")({
             return json({ error: "Kunde inte spara svaret" }, 500);
           }
 
+          // Svaret är sparat — nu konsumeras engångslänken. Misslyckas detta
+          // loggas det, men svaret är redan säkert och länken förfaller av sig själv.
+          const consumed = await resolveGrant(supabase, request, token, true);
+          if (!consumed.grant) {
+            console.warn("trust-attest: kunde inte konsumera länken efter sparat svar", consumed.outcome);
+          }
+
           return json({ ok: true });
         } catch (err) {
           console.error("trust-attest: oväntat fel", err instanceof Error ? err.message : "okänt");
