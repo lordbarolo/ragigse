@@ -85,7 +85,16 @@ export async function saveEmail(params: {
   });
   if (error) {
     // functions.invoke surfaces non-2xx as error; the body may still carry our code
-    const code = (data as { code?: string } | null)?.code;
+    // functions.invoke sets data=null on non-2xx; the body lives on error.context (Response)
+    let code = (data as { code?: string } | null)?.code;
+    const ctx = (error as { context?: unknown }).context;
+    if (!code && ctx instanceof Response) {
+      try {
+        code = ((await ctx.clone().json()) as { code?: string } | null)?.code;
+      } catch {
+        /* non-JSON body */
+      }
+    }
     if (code === "lead_not_found") throw new LeadNotFoundError();
     throw error;
   }
