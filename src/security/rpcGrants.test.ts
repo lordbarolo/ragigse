@@ -70,10 +70,16 @@ const ANON_DENIED: Array<{ fn: string; body: Record<string, unknown> }> = [
 
 /**
  * Funktioner som ska ha EXECUTE för `authenticated` men vara nekade för `anon`.
- * `ref_has_role` anropas av 29 RLS-policyer och måste vara körbar för inloggade,
- * annars faller policy-utvärderingen med 42501 för legitima frågor.
  */
-const AUTHENTICATED_ONLY: Array<{ fn: string; body: Record<string, unknown> }> = [
+const AUTHENTICATED_ONLY: Array<{ fn: string; body: Record<string, unknown> }> = [];
+
+/**
+ * `ref_has_role` anropas av ~29 RLS-policyer och måste vara körbar även för
+ * `anon`, annars kraschar publika läsningar med 42501 i stället för att
+ * returnera tomt. Funktionen är SECURITY DEFINER och läser bara rolltabellen —
+ * den svarar "false" för utloggade och ger inga nya rättigheter.
+ */
+const ANON_ALLOWED: Array<{ fn: string; body: Record<string, unknown> }> = [
   { fn: "ref_has_role", body: { _user_id: "00000000-0000-0000-0000-000000000000", _role: "admin" } },
 ];
 
@@ -139,6 +145,21 @@ describe.skipIf(!hasEnv)("RPC-grants · EXECUTE för authenticated, nekad för a
   for (const { fn, body } of AUTHENTICATED_ONLY) {
     it(`anon blockeras från ${fn}`, async () => {
       expectBlocked(fn, await callRpc(fn, body));
+    });
+  }
+});
+
+describe.skipIf(!hasEnv)("RPC-grants · ref_has_role är körbar för anon (RLS-beroende)", () => {
+  for (const { fn, body } of ANON_ALLOWED) {
+    it(`anon kan köra ${fn}`, async () => {
+      const r = await callRpc(fn, body);
+      const blocked =
+        r.status === 401 ||
+        r.status === 403 ||
+        (r.status === 404 && /PGRST202|not find|does not exist/i.test(r.text)) ||
+        /permission denied for function/i.test(r.text) ||
+        /42501/.test(r.text);
+      expect(blocked, `RPC ${fn} borde vara körbar men svarade ${r.status}: ${r.text.slice(0, 300)}`).toBe(false);
     });
   }
 });
