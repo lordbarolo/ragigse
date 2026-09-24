@@ -38,7 +38,9 @@ export const Route = createFileRoute("/api/public/trust/attest/$token")({
           }
 
           const supabase = serviceClient();
-          const { grant, outcome } = await resolveGrant(supabase, request, token, true);
+          // Lös länken UTAN att konsumera den först — den bränns först när
+          // svaret faktiskt har sparats, så ett fel inte låser referenten ute.
+          const { grant, outcome } = await resolveGrant(supabase, request, token, false);
           if (!grant) {
             return json({ error: OUTCOME_MESSAGES[outcome] ?? OUTCOME_MESSAGES["not_found"] }, 404);
           }
@@ -81,6 +83,13 @@ export const Route = createFileRoute("/api/public/trust/attest/$token")({
           if (eventErr) {
             console.error("trust-attest: kunde inte skriva händelse", eventErr.message);
             return json({ error: "Kunde inte spara svaret" }, 500);
+          }
+
+          // Svaret är sparat — nu konsumeras engångslänken. Misslyckas detta
+          // loggas det, men svaret är redan säkert och länken förfaller av sig själv.
+          const consumed = await resolveGrant(supabase, request, token, true);
+          if (!consumed.grant) {
+            console.warn("trust-attest: kunde inte konsumera länken efter sparat svar", consumed.outcome);
           }
 
           return json({ ok: true });

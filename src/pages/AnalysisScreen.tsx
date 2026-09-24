@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import type { SurveyData } from "@/components/Survey";
 import MarketDiagnosisCard from "@/components/teaser/MarketDiagnosisCard";
 import SignupGate from "@/components/teaser/SignupGate";
-import { fetchLead, leadToSurvey, createReport, saveEmail } from "@/services/leadService";
+import { fetchLead, leadToSurvey, createReport, saveEmail, LeadNotFoundError } from "@/services/leadService";
 import { identifyLeadWithEmail } from "@/lib/identify";
 import Navbar from "@/components/Navbar";
 import CompcareLogo from "@/components/CompcareLogo";
@@ -182,7 +182,28 @@ export default function AnalysisScreen() {
         setEmailSaving(false);
         return;
       }
-      const { reportAccessToken } = await saveEmail({ leadId, reportId: activeReportId, email: normalized });
+      let accessResult: { reportAccessToken: string | null };
+      try {
+        accessResult = await saveEmail({ leadId, reportId: activeReportId, email: normalized });
+      } catch (err) {
+        // Återhämtning: leadId kan vara gammalt (t.ex. sparat lokalt men aldrig
+        // nått databasen). Skapa om leaden från enkätsvaren och försök en gång till.
+        if (err instanceof LeadNotFoundError && survey) {
+          await supabase.from("leads").insert({
+            id: leadId,
+            employment_type: survey.employmentType,
+            yrke: survey.yrke,
+            kommun: survey.kommun,
+            experience: survey.experience,
+            salary_type: survey.salaryType,
+            current_salary: survey.currentSalary,
+          });
+          accessResult = await saveEmail({ leadId, reportId: activeReportId, email: normalized });
+        } else {
+          throw err;
+        }
+      }
+      const { reportAccessToken } = accessResult;
       if (reportAccessToken) {
         sessionStorage.setItem(`reportAccess:${activeReportId}`, reportAccessToken);
       }

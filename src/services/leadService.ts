@@ -66,6 +66,14 @@ export async function createReport(params: {
   return { reportId: data.report_id, abVariant: data.ab_variant || "A" };
 }
 
+/** Error thrown when the lead no longer exists server-side (stale leadId). */
+export class LeadNotFoundError extends Error {
+  constructor() {
+    super("lead_not_found");
+    this.name = "LeadNotFoundError";
+  }
+}
+
 /** Save email to lead + report (also creates auth user + consultant profile) */
 export async function saveEmail(params: {
   leadId: string;
@@ -75,6 +83,11 @@ export async function saveEmail(params: {
   const { data, error } = await supabase.functions.invoke("save-email", {
     body: { lead_id: params.leadId, report_id: params.reportId, email: params.email },
   });
-  if (error) throw error;
+  if (error) {
+    // functions.invoke surfaces non-2xx as error; the body may still carry our code
+    const code = (data as { code?: string } | null)?.code;
+    if (code === "lead_not_found") throw new LeadNotFoundError();
+    throw error;
+  }
   return { reportAccessToken: data?.report_access_token || null };
 }

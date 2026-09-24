@@ -127,6 +127,20 @@
       "when": 1790209632837,
       "tag": "0017_tighten_public_policies",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1790209911488,
+      "tag": "0018_grant_leads_insert_anon",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1790209914106,
+      "tag": "0019_grant_ref_has_role_anon",
+      "breakpoints": true
     }
   ]
 }
