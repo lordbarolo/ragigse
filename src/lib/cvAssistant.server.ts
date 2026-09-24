@@ -442,7 +442,6 @@ const YEAR_RE = /(?<!\d)(?:19|20)\d{2}(?!\d)/g;
 const NUMERIC_MONTH_RE = /(?<!\d)(0?[1-9]|1[0-2])\s*[./]\s*((?:19|20)\d{2})(?!\d)/g;
 const NAMED_MONTH_RE = /(?<!\p{L})(\p{L}{3,9})\.?\s+((?:19|20)\d{2})(?!\d)/gu;
 const ACRONYM_RE = /(?<![\p{L}\p{N}-])[A-ZÅÄÖ0-9]+(?:-[A-ZÅÄÖ0-9]+)*(?![\p{L}\p{N}-])/gu;
-const PLACEHOLDER_WORD_RE = /(?<!\p{L})(?:saknas|okänt|okänd|ej angivet|ej angiven|anges senare)(?!\p{L})/iu;
 // Ett led räknas som platshållare bara om platshållarordet avslutar ett kort led
 // ("Period saknas", "Okänt") – aldrig mitt i en klinisk fras ("feber av okänd genes").
 const PLACEHOLDER_SEGMENT_RE = /^(?:\p{L}+\s+){0,2}(?:saknas|okänt|okänd|ej angivet|ej angiven|anges senare)[.:]?$/iu;
