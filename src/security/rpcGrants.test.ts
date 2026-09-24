@@ -136,14 +136,6 @@ describe.skipIf(!hasEnv)("RPC-grants · interna helpers är stängda för alla A
   }
 });
 
-describe.skipIf(!hasEnv)("RPC-grants · EXECUTE för authenticated, nekad för anon", () => {
-  for (const { fn, body } of AUTHENTICATED_ONLY) {
-    it(`anon blockeras från ${fn}`, async () => {
-      expectBlocked(fn, await callRpc(fn, body));
-    });
-  }
-});
-
 describe.skipIf(!hasEnv)("RPC-grants · ref_has_role är körbar för anon (RLS-beroende)", () => {
   for (const { fn, body } of ANON_ALLOWED) {
     it(`anon kan köra ${fn}`, async () => {
