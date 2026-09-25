@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Check, ExternalLink, FileUp, Loader2, Lock, Unlock } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { dualWriteDocument } from "@/lib/trust/dualWrite.functions";
 import CvStatusCard from "./CvStatusCard";
 import RegistryExtractCard from "./RegistryExtractCard";
 
@@ -71,11 +72,22 @@ export default function ProfileDocumentsSection({ userId }: Props) {
       const path = `${userId}/${docType}-${Date.now()}.${ext}`;
       const { error: upErr } = await supabase.storage.from("verifications").upload(path, file);
       if (upErr) throw upErr;
-      const { error: dbErr } = await supabase.from("consultant_documents").upsert(
-        { user_id: userId, doc_type: docType, file_path: path, file_name: file.name, status: "pending" },
-        { onConflict: "user_id,doc_type" },
-      );
+      const { data: inserted, error: dbErr } = await supabase
+        .from("consultant_documents")
+        .upsert(
+          { user_id: userId, doc_type: docType, file_path: path, file_name: file.name, status: "pending" },
+          { onConflict: "user_id,doc_type" },
+        )
+        .select("id")
+        .single();
       if (dbErr) throw dbErr;
+      // Dual-write till trust (bakom feature flag). Fire-and-forget: ett
+      // misslyckat trust-anrop ska aldrig påverka legacy-flödet.
+      if (inserted?.id) {
+        void dualWriteDocument({ data: { documentId: inserted.id } }).catch((err) => {
+          console.warn("[ProfileDocuments] trust dual-write misslyckades", err);
+        });
+      }
       toast.success("Dokumentet är uppladdat.");
       await load();
     } catch (err) {
