@@ -1,5 +1,9 @@
 # Roadmap
 
+## Aktuellt
+- [x] Byt favicon till senaste ljusa db.-ikonen; verifierad på rapportsidan i förhandsvisningen. Publicerad version har fortfarande gamla ikonreferenser, publicering ej utförd.
+- [x] Inventera de sju ChatGPT-källorna i bilden mot tidigare beslut; alla finns publicerade och ska behållas, inga sidor ändrade.
+
 ## Klart
 - [x] cvExport.ts ersatt byte för byte från bilaga — sha256 f518b034… verifierad, typkontroll 0 fel, bygg OK.
 - [x] CV-assistent faktaspärr + exportfixar (cvAssistant.server.ts, cvAssistant.functions.ts, cvExport.ts, CvPreview.tsx) — alla 4 sha256 verifierade byte för byte, typkontroll 0 fel, bygg OK.
