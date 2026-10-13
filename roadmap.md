@@ -1,8 +1,8 @@
 # Roadmap
 
 ## Aktuellt
-- [ ] Byt favicon till senaste db.-ikonen och verifiera förhandsvisning/publicerad skillnad.
-- [ ] Inventera ChatGPT-källorna i bilden mot tidigare beslut; inga sidor tas bort.
+- [x] Byt favicon till senaste ljusa db.-ikonen; verifierad på rapportsidan i förhandsvisningen. Publicerad version har fortfarande gamla ikonreferenser, publicering ej utförd.
+- [x] Inventera de sju ChatGPT-källorna i bilden mot tidigare beslut; alla finns publicerade och ska behållas, inga sidor ändrade.
 
 ## Klart
 - [x] cvExport.ts ersatt byte för byte från bilaga — sha256 f518b034… verifierad, typkontroll 0 fel, bygg OK.
