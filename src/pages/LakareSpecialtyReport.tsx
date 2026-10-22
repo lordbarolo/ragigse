@@ -7,7 +7,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { buildRoleReportSchemas } from "@/lib/seo/roleReportSchema";
 import PensionImpactSimulator from "@/components/report/PensionImpactSimulator";
 import {
-  ArrowRight, MapPin, BarChart3, Info, PiggyBank, FileSearch, ClipboardList, Calculator,
+  ArrowRight, MapPin, BarChart3, Info, PiggyBank, FileSearch, ClipboardList,
 } from "lucide-react";
 import {
   DOCTOR_SPECIALTY_BY_SLUG,
@@ -310,24 +310,6 @@ export default function LakareSpecialtyReport() {
             <p><span className="font-semibold" style={{ color: ink }}>Källa:</span> <a href="https://www.vgregion.se/ov/hyrpersonal/avtal-och-dokument/" target="_blank" rel="noopener noreferrer" style={{ color: sub, textDecoration: "underline" }}>SKR:s ramavtal vårdbemanning 2026</a>, kategori {cfg.skrCategory}.</p>
             <p><span className="font-semibold" style={{ color: ink }}>OB & jour:</span> Hanteras separat ovanpå grundpriset enligt SKR-tariff.</p>
             <p><span className="font-semibold" style={{ color: ink }}>Neutralitet:</span> vårdbemanning.ai driver inte upp löner. Vi informerar om publika priser och offentliga ramavtal.</p>
-          </section>
-
-          {/* Verktygsteaser */}
-          <section className="space-y-2.5 pt-2">
-            <p className="text-[10px] font-semibold tracking-[1.4px] uppercase px-1" style={{ color: sub }}>Gå vidare med dina egna siffror</p>
-
-            <Link to={`/?yrke=${cfg.prefillSlug}&fokus=faktura`} className="block rounded-2xl border p-5 transition hover:shadow-xs" style={{ backgroundColor: card, borderColor: border }}>
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: `${violet}1A` }}>
-                  <Calculator className="w-5 h-5" style={{ color: accent }} />
-                </div>
-                <div className="flex-1">
-                  <p className="font-bold" style={{ fontFamily: "Georgia, serif", fontSize: "16px", color: ink }}>Faktureringshjälp</p>
-                  <p className="text-sm mt-1" style={{ color: sub }}>Låt vår AI-assistent kontrollera att du fakturerat för alla timmar du jobbat.</p>
-                </div>
-                <ArrowRight className="w-4 h-4 mt-2 shrink-0" style={{ color: accent }} />
-              </div>
-            </Link>
           </section>
 
           {/* Relaterade roller och underlag */}

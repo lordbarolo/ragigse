@@ -4,6 +4,7 @@
 - [x] Byt favicon till senaste ljusa db.-ikonen; verifierad på rapportsidan i förhandsvisningen. Publicerad version har fortfarande gamla ikonreferenser, publicering ej utförd.
 - [x] Inventera de sju ChatGPT-källorna i bilden mot tidigare beslut; alla finns publicerade och ska behållas, inga sidor ändrade.
 - [x] Ta bort faktura-sektionen (FilmFakturakontroll) från startsidan tillsvidare; komponentfilen finns kvar.
+- [x] Ta bort all marknadsföring av fakturakontroll från alla sidor (startsida, tre rapportsidor, inloggningssidan, två förhandsvisningssidor). Verktyget /consultant/fakturahjalp och "Fakturahjälpen" i profilen finns kvar. Typkontroll 0 fel, bygg OK.
 - [x] Fixa logotypens nederkant i startsidans header (h-7/h-8 + pb-1, delade PNG-filer orörda).
 
 ## Klart

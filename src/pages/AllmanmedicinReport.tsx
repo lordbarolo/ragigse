@@ -16,7 +16,6 @@ import {
   PiggyBank,
   FileSearch,
   ClipboardList,
-  Calculator,
 } from "lucide-react";
 import { useEffect } from "react";
 import { useCatalogZoneRates } from "@/hooks/useCatalogZoneRates";
@@ -494,34 +493,6 @@ export default function AllmanmedicinReport() {
                   </p>
                   <p className="text-sm mt-1" style={{ color: sub }}>
                     Jämför din nuvarande ersättning mot ramavtalets spann i din zon.
-                  </p>
-                </div>
-                <ArrowRight className="w-4 h-4 mt-2 shrink-0" style={{ color: accent }} />
-              </div>
-            </Link>
-
-            <Link
-              to="/?yrke=allmanmedicin&fokus=faktura"
-              className="block rounded-2xl border p-5 transition hover:shadow-xs"
-              style={{ backgroundColor: card, borderColor: border }}
-            >
-              <div className="flex items-start gap-3">
-                <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-                  style={{ backgroundColor: `${violet}1A` }}
-                >
-                  <Calculator className="w-5 h-5" style={{ color: accent }} />
-                </div>
-                <div className="flex-1">
-                  <p
-                    className="font-bold"
-                    style={{ fontFamily: "Georgia, serif", fontSize: "16px", color: ink }}
-                  >
-                    Faktureringshjälp
-                  </p>
-                  <p className="text-sm mt-1" style={{ color: sub }}>
-                    Låt vår AI-assistent kontrollera att du fakturerat för alla
-                    timmar du jobbat.
                   </p>
                 </div>
                 <ArrowRight className="w-4 h-4 mt-2 shrink-0" style={{ color: accent }} />

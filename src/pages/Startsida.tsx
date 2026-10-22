@@ -3,7 +3,6 @@ import { Link } from "@/lib/router-compat";
 import { JsonLd } from "@/components/JsonLd";
 import Hero from "@/components/startsida5c/Hero";
 import RolltabellDark from "@/components/startsida5c/RolltabellDark";
-// Faktura-sektionen borttagen tillsvidare (FilmFakturakontroll finns kvar i komponentbiblioteket)
 import FotoBand from "@/components/startsida5c/FotoBand";
 import Footer5c from "@/components/startsida5c/Footer5c";
 

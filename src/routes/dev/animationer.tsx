@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import {
   LonekollenAnimation,
-  MissadeTimmarAnimation,
   AssistentenAnimation,
 } from "@/components/animationer";
 import type { Variant } from "@/components/animationer";
@@ -14,7 +13,7 @@ export const Route = createFileRoute("/dev/animationer")({
       { name: "robots", content: "noindex" },
       {
         name: "description",
-        content: "Förhandsvisning av de tre landningsanimationerna.",
+        content: "Förhandsvisning av de två landningsanimationerna.",
       },
     ],
   }),
@@ -28,13 +27,6 @@ const SCENES = [
     beskrivning:
       "Vad är din tid värd? Roll → zon → belopp → prisnotis. 16 sekunder. Ljus scen — passar en ljus sektion (#F5F5F7).",
     Comp: LonekollenAnimation,
-  },
-  {
-    id: "timmar",
-    titel: "Missade timmar",
-    beskrivning:
-      "Assistenten skannar fakturaunderlaget och hittar 8 137 kr i ofakturerade timmar. 15 sekunder. Ljus scen.",
-    Comp: MissadeTimmarAnimation,
   },
   {
     id: "assistenten",
@@ -121,9 +113,6 @@ function AnimationerPage() {
 
 // Full bredd i en ljus sektion
 <LonekollenAnimation variant="site" />
-
-// I ett kort med samma radie som startsidans kort
-<MissadeTimmarAnimation variant="site" radius={16} />
 
 // Mörk scen, kant i kant mot #0B0C10, utan textremsor
 <AssistentenAnimation variant="site" captions={false} />`}</pre>
