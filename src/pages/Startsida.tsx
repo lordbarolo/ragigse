@@ -66,7 +66,7 @@ export default function Startsida5c() {
           <img
             src="/vardbemanning-wordmark-dark.png"
             alt="vårdbemanning.ai – till startsidan"
-            className="h-6 w-auto select-none md:h-7"
+            className="h-7 w-auto select-none pb-1 md:h-8"
             draggable={false}
           />
         </Link>
