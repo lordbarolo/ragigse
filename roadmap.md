@@ -3,6 +3,8 @@
 ## Aktuellt
 - [x] Byt favicon till senaste ljusa db.-ikonen; verifierad på rapportsidan i förhandsvisningen. Publicerad version har fortfarande gamla ikonreferenser, publicering ej utförd.
 - [x] Inventera de sju ChatGPT-källorna i bilden mot tidigare beslut; alla finns publicerade och ska behållas, inga sidor ändrade.
+- [x] Ta bort faktura-sektionen (FilmFakturakontroll) från startsidan tillsvidare; komponentfilen finns kvar.
+- [x] Fixa logotypens nederkant i startsidans header (h-7/h-8 + pb-1, delade PNG-filer orörda).
 
 ## Klart
 - [x] cvExport.ts ersatt byte för byte från bilaga — sha256 f518b034… verifierad, typkontroll 0 fel, bygg OK.
