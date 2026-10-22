@@ -3,7 +3,7 @@ import { Link } from "@/lib/router-compat";
 import { JsonLd } from "@/components/JsonLd";
 import Hero from "@/components/startsida5c/Hero";
 import RolltabellDark from "@/components/startsida5c/RolltabellDark";
-import FilmFakturakontroll from "@/components/startsida5c/FilmFakturakontroll";
+// Faktura-sektionen borttagen tillsvidare (FilmFakturakontroll finns kvar i komponentbiblioteket)
 import FotoBand from "@/components/startsida5c/FotoBand";
 import Footer5c from "@/components/startsida5c/Footer5c";
 
@@ -66,7 +66,7 @@ export default function Startsida5c() {
           <img
             src="/vardbemanning-wordmark-dark.png"
             alt="vårdbemanning.ai – till startsidan"
-            className="h-6 w-auto select-none md:h-7"
+            className="h-7 w-auto select-none pb-1 md:h-8"
             draggable={false}
           />
         </Link>
@@ -84,7 +84,7 @@ export default function Startsida5c() {
       <Hero />
       <RolltabellDark />
       <FotoBand />
-      <FilmFakturakontroll />
+
 
       <Footer5c />
     </div>
