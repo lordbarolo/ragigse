@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, ArrowLeft, FileText, Clock, TrendingUp, MessageSquare, Link2, MailCheck, AlertTriangle, Sparkles } from "lucide-react";
+import { Loader2, ArrowLeft, FileText, Clock, TrendingUp, Link2, MailCheck, AlertTriangle, Sparkles } from "lucide-react";
 import CompcareLogo from "@/components/CompcareLogo";
 import { trackEvent } from "@/lib/trackEvent";
 import posthog from "@/lib/posthog";
@@ -154,7 +154,6 @@ export default function Login() {
     { icon: FileText, title: "Dokumentvalvet", desc: "Säker lagring av legitimationer, specialistbevis och tjänstgöringsintyg. Dela tillgång till en miljö du kontrollerar istället för att sprida filer via mail.", badge: "Ingår gratis", badgeColor: "text-green-700 bg-green-100" },
     { icon: Clock, title: "Referensplattformen", desc: "Enu styr vem som får tillgång och när. Uppgifter verifieras med Bank-ID istället för återkommande intervjuer.", badge: "Ingår gratis", badgeColor: "text-green-700 bg-green-100" },
     { icon: TrendingUp, title: "Ersättningsanalys - Se aktuella arvoden", desc: "Förhandlingstips baserat på din specialitet, region och erfarenhet.", badge: "Insight — 149 kr/mån", badgeColor: "text-amber-700 bg-amber-100" },
-    { icon: MessageSquare, title: "Fakturagranskning", desc: "Automatiserad revision av fakturor du skickat senaste 2 åren. Hittar vi inget, betalar du inget.", badge: "Prestationsbaserat", badgeColor: "text-purple-700 bg-purple-100" },
     { icon: Link2, title: "Uppdragsprognos", desc: "Öka chansen att få uppdraget du verkligen vill ha. AI ger oss träffsäkra prognoser om kommande behov baserat på 5 års historik och över 30 000 bemanningsuppdrag.", badge: "Beta", badgeColor: "text-slate-600 bg-slate-100" },
   ];
 
