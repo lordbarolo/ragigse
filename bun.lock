@@ -108,6 +108,7 @@
     },
   },
   "overrides": {
+    "dompurify": "^3.3.4",
     "js-yaml": "^5.2.3",
   },
   "packages": {
