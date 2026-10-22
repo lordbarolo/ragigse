@@ -9,7 +9,6 @@ import AnimationSektion from "@/components/startsida5c/AnimationSektion";
 import {
   AssistentenAnimation,
   LonekollenAnimation,
-  MissadeTimmarAnimation,
 } from "@/components/animationer";
 
 export const Route = createFileRoute("/dev/startsida-animationer")({
@@ -20,12 +19,12 @@ export const Route = createFileRoute("/dev/startsida-animationer")({
       {
         name: "description",
         content:
-          "Intern förhandsvisning av startsidan med de tre landningsanimationerna och tillhörande copy.",
+          "Intern förhandsvisning av startsidan med de två landningsanimationerna och tillhörande copy.",
       },
       { property: "og:title", content: "Startsida med animationer — förhandsvisning" },
       {
         property: "og:description",
-        content: "Intern förhandsvisning av startsidan med de tre landningsanimationerna.",
+        content: "Intern förhandsvisning av startsidan med de två landningsanimationerna.",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -43,7 +42,7 @@ function DevStartsidaAnimationer() {
         className="px-5 py-2 text-center text-[12px] sm:px-8"
         style={{ background: "#16171f", color: "#9b9da7", fontFamily: "'IBM Plex Mono', monospace" }}
       >
-        Intern förhandsvisning · startsidan med tre animationssektioner
+        Intern förhandsvisning · startsidan med två animationssektioner
       </div>
 
       <header
@@ -85,21 +84,6 @@ function DevStartsidaAnimationer() {
 
       <FotoBand />
 
-      <AnimationSektion
-        Animation={MissadeTimmarAnimation}
-        etikett="Fakturahjälpen"
-        rubrik={"Timmarna du faktiskt jobbade\nsyns inte alltid på fakturan"}
-        brodtext="Ladda upp tidrapport och faktura. Assistenten går rad för rad, jämför mot avtalets ersättningsregler och markerar det som saknas eller ligger fel — jour, förskjuten tid, restid, avrundade pass."
-        
-        punkter={[
-          "Rad-för-rad-genomgång av underlag mot avtal.",
-          "Avvikelser markeras med förklaring du kan skicka vidare.",
-          "Du bestämmer själv om och hur du tar det med uppdragsgivaren.",
-        ]}
-        cta={{ text: "Läs mer om fakturahjälpen", till: "/registrera" }}
-        ton="ljus"
-        omvand
-      />
 
       <RolltabellDark />
 
