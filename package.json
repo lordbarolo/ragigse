@@ -120,7 +120,7 @@
   },
   "overrides": {
     "js-yaml": "^5.2.3",
-    "dompurify": "^3.3.4"
+    "dompurify": "^3.4.17"
   },
   "version": "0.0.0"
 }
