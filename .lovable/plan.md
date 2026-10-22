@@ -1,28 +1,25 @@
-# Åtgärdsförslag: aktuella säkerhetsfynd
+# Åtgärdsförslag: de tre fynden i "3 issues found"
 
-Säkerhetslistan har just nu två allvarliga fynd och två varningar. Båda de allvarliga är redan åtgärdade i koden, men listan har inte uppdaterats.
+Alla tre är redan åtgärdade i koden. Fynden skannades mot en äldre version och har inte stängts. De gäller fortfarande på den publicerade sidan tills du publicerar.
 
-## 1. Adminlösenord i webbläsarkoden (allvarligt) – redan åtgärdat, listan ej uppdaterad
-- Kontroll: `Admin.tsx` och `AnalyticsDashboard.tsx` innehåller inga lösenord längre. Admin-sidorna kräver inloggning och adminroll (`useAdminAuth`).
-- Åtgärd: kör en ny skanning och markera fyndet som åtgärdat.
-- Rekommendation: de gamla lösenorden `compcare2026`/`Compcare2026` har legat publikt. Använd dem inte någon annanstans, till exempel inte för konton eller andra tjänster.
+## 1. E-postregistrering misslyckas för återvändande besökare
+- Orsak: felkoden lästes på fel ställe, så räddningen (återskapa enkätsvaret) kördes aldrig.
+- Status: rättat. Felkoden läses nu där den faktiskt skickas.
+- Kvar att göra: testa flödet i förhandsvisningen med ett gammalt, borttaget enkätsvar. Om det fungerar markeras fyndet som åtgärdat.
 
-## 2. Adminfunktioner utan inloggningskontroll (allvarligt) – redan åtgärdat, listan ej uppdaterad
-- Kontroll: alla fem funktionerna (`analytics-dashboard`, `import-contract`, `run-price-diff`, `feedback-stats`, `salary-insights`) anropar `requireAdmin` först.
-- Åtgärd: testa varje funktion utan inloggning. Den ska svara 401/403. Bekräfta också att den publicerade versionen är den nya, och markera sedan fyndet som åtgärdat.
+## 2. Länkar för referensbekräftelse bränns innan svaret sparats
+- Orsak: länken markerades som använd redan när den öppnades.
+- Status: rättat. Länken kontrolleras utan att förbrukas när den öppnas och förbrukas först när svaret är sparat.
+- Kvar att göra: testa att samma länk fungerar igen om sparandet misslyckas. Därefter markeras fyndet som åtgärdat.
 
-## 3. Åtkomstregel som släpper igenom allt (varning)
-- Hitta exakt vilken tabell och regel det gäller med databaskontrollen.
-- Är tabellen avsiktligt publik (som `regions`, `rates` och `roles` för priskalkylatorn)? Då markeras fyndet som avsiktligt med en motivering.
-- Annars ersätts regeln med en riktig ägar- eller adminkontroll. Det görs i en migration med test, utan ändrat beteende för besökare.
+## 3. CV-assistenten tar bort giltiga rader
+- Orsak: ord som "okänd" och "saknas" togs bort var de än stod i en rad.
+- Status: rättat. Bara rena platshållare tas bort, som "Period saknas" eller "Okänt". "Utredning av feber av okänd genes" och "prioritering när resurser saknas" behålls.
+- Kvar att göra: lägg till två tester med exakt de raderna och markera fyndet som åtgärdat.
 
-## 4. Skydd mot läckta lösenord avstängt (varning)
-- Slå på kontrollen mot kända läckta lösenord för konton med e-post och lösenord.
-- Det påverkar bara nya lösenord och lösenordsbyten, och kräver ingen kodändring.
-
-## Vad som inte ändras
-Inget utseende, inga sidor och inga produktflöden ändras. De publika pris- och rolltabellerna lämnas orörda.
+## Viktigt
+Fynd 1 och 3 rör appens kod. De når besökare först när du publicerar. Fynd 2 gäller också den publicerade versionen tills dess.
 
 ## Tekniskt
-- Verifiering: `security--run_security_scan`, `supabase--linter`, curl mot edge functions utan token och `manage_security_finding` (mark_as_fixed/ignore).
-- Lösenordsskyddet slås på med `supabase--configure_auth` (password_hibp_enabled).
+- Rättningar: `leadService.ts` (läser `error.context`), `attest.$token.ts` (`resolveGrant(..., false)` vid öppning och `true` efter sparat event), `cvAssistant.server.ts` (`PLACEHOLDER_SEGMENT_RE`).
+- Stängning: `project_monitoring--claim_findings_for_fix` och sedan `resolve_finding` (fixed) för respektive id.
