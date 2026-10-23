@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "@/lib/router-compat";
+import { useNavigate } from "@/lib/router-compat";
+import { getRouteApi } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import InlineTerminalSurvey from "@/components/survey/InlineTerminalSurvey";
 import { useAuth } from "@/hooks/useAuth";
@@ -15,12 +16,12 @@ import { toast } from "sonner";
  */
 export default function Onboarding() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const search = getRouteApi("/onboarding").useSearch();
   const { user, loading: authLoading } = useAuth();
   const { complete, loading: profileLoading, refresh } = useProfileContext(user?.id);
   const [saving, setSaving] = useState(false);
 
-  const target = sanitizeRedirect(searchParams.get("redirect")) ?? "/consultant/profil";
+  const target = sanitizeRedirect(search.redirect ?? null) ?? "/consultant/profil";
 
   useEffect(() => {
     if (!authLoading && !user) navigate("/logga-in");
@@ -77,7 +78,7 @@ export default function Onboarding() {
             Vi behöver fyra uppgifter innan du kan använda assistenten.
           </p>
         </div>
-        <InlineTerminalSurvey variant="dark" initialRole={searchParams.get("yrke") ?? undefined} initialKommun={searchParams.get("kommun") ?? undefined} onComplete={handleComplete} />
+        <InlineTerminalSurvey variant="dark" initialRole={search.yrke} initialKommun={search.kommun} onComplete={handleComplete} />
       </div>
     </div>
   );
