@@ -1,6 +1,8 @@
 # Roadmap
 
 ## Aktuellt
+- [ ] Verifiera och åtgärda öppna Project monitoring-fynd i error_logs/qa utan publicering.
+- [ ] Rätta rapporternas kontoväg och bevara yrkesroll till personlig ersättningsanalys; synlig kontolänk på startsidan.
 - [x] Byt favicon till senaste ljusa db.-ikonen; verifierad på rapportsidan i förhandsvisningen. Publicerad version har fortfarande gamla ikonreferenser, publicering ej utförd.
 - [x] Inventera de sju ChatGPT-källorna i bilden mot tidigare beslut; alla finns publicerade och ska behållas, inga sidor ändrade.
 - [x] Ta bort faktura-sektionen (FilmFakturakontroll) från startsidan tillsvidare; komponentfilen finns kvar.
