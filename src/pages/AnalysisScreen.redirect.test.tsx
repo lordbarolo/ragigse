@@ -13,8 +13,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, waitFor } from "@testing-library/react";
-import { MemoryRouter, Route, Routes } from "@/lib/router-compat";
+import { cleanup, render, waitFor } from "@testing-library/react";
 
 // ── Hoisted mocks ────────────────────────────────────────────────────────────
 const {
@@ -26,6 +25,7 @@ const {
   fetchLeadMock,
   createReportMock,
   saveEmailMock,
+  paramsMock,
 } = vi.hoisted(() => ({
   navigateMock: vi.fn(),
   getSessionMock: vi.fn(),
@@ -35,12 +35,10 @@ const {
   fetchLeadMock: vi.fn(),
   createReportMock: vi.fn(),
   saveEmailMock: vi.fn(),
+  paramsMock: vi.fn(),
 }));
 
-vi.mock("@/lib/router-compat", async () => {
-  const actual = await vi.importActual<typeof import("@/lib/router-compat")>("@/lib/router-compat");
-  return { ...actual, useNavigate: () => navigateMock };
-});
+vi.mock("@/lib/router-compat", () => ({ useNavigate: () => navigateMock, useParams: () => paramsMock() }));
 
 vi.mock("@/integrations/supabase/client", () => ({
   supabase: {
@@ -51,6 +49,7 @@ vi.mock("@/integrations/supabase/client", () => ({
 }));
 
 vi.mock("@/services/leadService", () => ({
+  LeadNotFoundError: class LeadNotFoundError extends Error {},
   fetchLead: (...a: unknown[]) => fetchLeadMock(...a),
   createReport: (...a: unknown[]) => createReportMock(...a),
   saveEmail: (...a: unknown[]) => saveEmailMock(...a),
@@ -97,16 +96,8 @@ const SURVEY = {
 };
 
 function renderAt(path = `/resultat/${LEAD_ID}`) {
-  return render(
-    <>
-      <MemoryRouter initialEntries={[path]}>
-        <Routes>
-          <Route path="/resultat/:leadId" element={<AnalysisScreen />} />
-          <Route path="/resultat" element={<AnalysisScreen />} />
-        </Routes>
-      </MemoryRouter>
-    </>
-  );
+  paramsMock.mockReturnValue({ leadId: path.split("/")[2] });
+  return render(<AnalysisScreen />);
 }
 
 function mockRatesQuery() {
@@ -141,6 +132,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  cleanup();
   vi.clearAllTimers();
 });
 
