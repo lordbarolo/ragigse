@@ -13,8 +13,7 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, waitFor } from "@testing-library/react";
-import { MemoryRouter, Route, Routes } from "@/lib/router-compat";
+import { cleanup, render, waitFor } from "@testing-library/react";
 
 // ── Hoisted mocks ────────────────────────────────────────────────────────────
 const {
@@ -26,6 +25,7 @@ const {
   fetchLeadMock,
   createReportMock,
   saveEmailMock,
+  paramsMock,
 } = vi.hoisted(() => ({
   navigateMock: vi.fn(),
   getSessionMock: vi.fn(),
@@ -35,12 +35,10 @@ const {
   fetchLeadMock: vi.fn(),
   createReportMock: vi.fn(),
   saveEmailMock: vi.fn(),
+  paramsMock: vi.fn(),
 }));
 
-vi.mock("@/lib/router-compat", async () => {
-  const actual = await vi.importActual<typeof import("@/lib/router-compat")>("@/lib/router-compat");
-  return { ...actual, useNavigate: () => navigateMock };
-});
+vi.mock("@/lib/router-compat", () => ({ useNavigate: () => navigateMock, useParams: () => paramsMock() }));
 
 vi.mock("@/integrations/supabase/client", () => ({
   supabase: {
@@ -51,6 +49,7 @@ vi.mock("@/integrations/supabase/client", () => ({
 }));
 
 vi.mock("@/services/leadService", () => ({
+  LeadNotFoundError: class LeadNotFoundError extends Error {},
   fetchLead: (...a: unknown[]) => fetchLeadMock(...a),
   createReport: (...a: unknown[]) => createReportMock(...a),
   saveEmail: (...a: unknown[]) => saveEmailMock(...a),
@@ -81,6 +80,7 @@ vi.mock("@/components/teaser/SignupGate", () => ({
 
 import AnalysisScreen from "./AnalysisScreen";
 import { toast } from "sonner";
+import { LeadNotFoundError } from "@/services/leadService";
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 const LEAD_ID = "lead-123";
@@ -97,16 +97,8 @@ const SURVEY = {
 };
 
 function renderAt(path = `/resultat/${LEAD_ID}`) {
-  return render(
-    <>
-      <MemoryRouter initialEntries={[path]}>
-        <Routes>
-          <Route path="/resultat/:leadId" element={<AnalysisScreen />} />
-          <Route path="/resultat" element={<AnalysisScreen />} />
-        </Routes>
-      </MemoryRouter>
-    </>
-  );
+  paramsMock.mockReturnValue({ leadId: path.split("/")[2] });
+  return render(<AnalysisScreen />);
 }
 
 function mockRatesQuery() {
@@ -141,12 +133,41 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  cleanup();
   vi.clearAllTimers();
 });
 
 // ── Tests ────────────────────────────────────────────────────────────────────
 
 describe("AnalysisScreen · auto-redirect för inloggade", () => {
+  it("återskapar en saknad lead från samma yrkesroll och försöker spara e-post igen", async () => {
+    sessionStorage.setItem("surveyData", JSON.stringify(SURVEY));
+    getSessionMock.mockResolvedValue({ data: { session: { user: { email: "a@b.se" } } } });
+    getUserMock.mockResolvedValue({ data: { user: null } });
+    createReportMock.mockResolvedValue({ reportId: REPORT_ID, abVariant: "A" });
+    saveEmailMock.mockRejectedValueOnce(new LeadNotFoundError()).mockResolvedValue({ reportAccessToken: "tok" });
+    const insert = vi.fn().mockResolvedValue({ error: null });
+    const original = fromMock.getMockImplementation();
+    fromMock.mockImplementation((table: string) => table === "leads" ? { insert } : original?.(table));
+    renderAt();
+    await waitFor(() => expect(saveEmailMock).toHaveBeenCalledTimes(2));
+    expect(insert).toHaveBeenCalledWith(expect.objectContaining({ id: LEAD_ID, yrke: "Sjuksköterska", kommun: "Stockholm" }));
+    await waitFor(() => expect(navigateMock).toHaveBeenCalledWith(`/rapport/${REPORT_ID}`, { replace: true }));
+  });
+
+  it("stoppar återförsöket om återskapandet nekas, utan att öppna rapporten", async () => {
+    sessionStorage.setItem("surveyData", JSON.stringify(SURVEY));
+    getSessionMock.mockResolvedValue({ data: { session: { user: { email: "a@b.se" } } } });
+    createReportMock.mockResolvedValue({ reportId: REPORT_ID, abVariant: "A" });
+    saveEmailMock.mockRejectedValue(new LeadNotFoundError());
+    const original = fromMock.getMockImplementation();
+    fromMock.mockImplementation((table: string) => table === "leads" ? { insert: vi.fn().mockResolvedValue({ error: new Error("permission denied") }) } : original?.(table));
+    renderAt();
+    await waitFor(() => expect(toast.error).toHaveBeenCalled());
+    expect(saveEmailMock).toHaveBeenCalledTimes(1);
+    expect(navigateMock).not.toHaveBeenCalledWith(`/rapport/${REPORT_ID}`, { replace: true });
+  });
+
   it("1. redirectar direkt till /rapport/:reportId när reportId finns i sessionStorage", async () => {
     sessionStorage.setItem("surveyData", JSON.stringify(SURVEY));
     sessionStorage.setItem("reportId", REPORT_ID);

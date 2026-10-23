@@ -11,6 +11,7 @@ import { buildRoleReportSchemas } from "@/lib/seo/roleReportSchema";
 import { useCatalogZoneRates } from "@/hooks/useCatalogZoneRates";
 import RelateradeSidor from "@/components/report/RelateradeSidor";
 import { getRelatedPaths } from "@/data/relatedContent";
+import { reportSignupHref } from "@/lib/reportSignup";
 
 
 // Single source of truth for the report's freshness stamp.
@@ -273,7 +274,7 @@ export default function AnestesiReport() {
           <p className="text-sm text-muted-foreground leading-relaxed">
             Svara på 4 snabba frågor och få en personlig rapport baserad på din zon och anställningsform.
           </p>
-          <Link to="/?yrke=anestesi">
+          <Link to={reportSignupHref("anestesi")}>
             <Button className="gap-2 h-12 rounded-xl px-6 mt-2">
               Skapa din rapport <ArrowRight className="w-4 h-4" />
             </Button>

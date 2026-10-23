@@ -19,6 +19,7 @@ import { getRelatedPaths } from "@/data/relatedContent";
 import { getReportUpdatedAt } from "@/data/contentFreshness";
 import { trackEvent } from "@/lib/trackEvent";
 import { possibleRange, employedRange } from "@/lib/pricing";
+import { reportSignupHref } from "@/lib/reportSignup";
 
 
 /**
@@ -323,7 +324,7 @@ export default function LakareSpecialtyReport() {
             <p className="text-sm leading-relaxed" style={{ color: sub }}>
               Några snabba frågor om kommun, anställningsform och nuvarande ersättning räcker. Rapporten är gratis.
             </p>
-            <Link to={`/?yrke=${cfg.prefillSlug}`} className="inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 rounded-lg mt-2" style={{ backgroundColor: "#ffffff", color: "#0b0c10" }}>
+            <Link to={reportSignupHref(cfg.prefillSlug)} className="inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 rounded-lg mt-2" style={{ backgroundColor: "#ffffff", color: "#0b0c10" }}>
               Starta <ArrowRight className="w-4 h-4" />
             </Link>
           </section>

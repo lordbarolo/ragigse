@@ -14,6 +14,7 @@ import posthog from "@/lib/posthog";
 import { getAuthIntentCopy, sanitizeRedirect } from "@/lib/authIntent";
 import { translateAuthError } from "@/lib/authErrors";
 import { isOAuthReturn } from "@/lib/oauthReturn";
+import { onboardingHref } from "@/lib/reportSignup";
 
 type RecoveryStatus = "idle" | "sending" | "sent" | "error";
 
@@ -36,6 +37,10 @@ export default function Login() {
     const signupParams = new URLSearchParams();
     if (redirectTo) signupParams.set("redirect", redirectTo);
     if (intent) signupParams.set("intent", intent);
+    for (const key of ["yrke", "kommun"]) {
+      const value = params.get(key);
+      if (value) signupParams.set(key, value);
+    }
     const signupHref = signupParams.toString()
       ? `/registrera?${signupParams.toString()}`
       : "/registrera";
@@ -65,7 +70,7 @@ export default function Login() {
       navigate(redirectTo ?? "/agency/dashboard");
       return;
     }
-    navigate(redirectTo ? `/onboarding?redirect=${encodeURIComponent(redirectTo)}` : "/onboarding");
+    navigate(onboardingHref(location.search));
   };
 
   // Auto-fortsätt ENDAST vid retur från Google OAuth. En kvarliggande session

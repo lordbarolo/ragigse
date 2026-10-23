@@ -13,6 +13,7 @@ import { getSignupIntentCopy, sanitizeRedirect } from "@/lib/authIntent";
 import GoogleAuthButton from "@/components/auth/GoogleAuthButton";
 import { translateAuthError } from "@/lib/authErrors";
 import { isOAuthReturn } from "@/lib/oauthReturn";
+import { onboardingHref } from "@/lib/reportSignup";
 
 export default function Signup() {
   const [email, setEmail] = useState("");
@@ -32,6 +33,10 @@ export default function Signup() {
     const loginParams = new URLSearchParams();
     if (redirectTo) loginParams.set("redirect", redirectTo);
     if (intent) loginParams.set("intent", intent);
+    for (const key of ["yrke", "kommun"]) {
+      const value = params.get(key);
+      if (value) loginParams.set(key, value);
+    }
     const loginHref = loginParams.toString()
       ? `/logga-in?${loginParams.toString()}`
       : "/logga-in";
@@ -40,7 +45,7 @@ export default function Signup() {
 
 
   const goAfterAuth = () => {
-    navigate(redirectTo ? `/onboarding?redirect=${encodeURIComponent(redirectTo)}` : "/onboarding");
+    navigate(onboardingHref(location.search));
   };
 
   // Returning from Google OAuth lands back on this page with a session set.
@@ -77,7 +82,7 @@ export default function Signup() {
       email: normalizedEmail,
       password,
       options: {
-        emailRedirectTo: `${window.location.origin}/consultant/profil`,
+        emailRedirectTo: `${window.location.origin}${onboardingHref(location.search)}`,
         data: {
           role: "individual",
           full_name: fullName.trim(),
@@ -124,7 +129,7 @@ export default function Signup() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         email: normalizedEmail,
-        redirectTo: `${window.location.origin}/consultant/profil`,
+        redirectTo: `${window.location.origin}${onboardingHref(location.search)}`,
       }),
     }).catch(() => {});
 

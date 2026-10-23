@@ -189,7 +189,7 @@ export default function AnalysisScreen() {
         // Återhämtning: leadId kan vara gammalt (t.ex. sparat lokalt men aldrig
         // nått databasen). Skapa om leaden från enkätsvaren och försök en gång till.
         if (err instanceof LeadNotFoundError && survey) {
-          await supabase.from("leads").insert({
+          const { error: recoveryError } = await supabase.from("leads").insert({
             id: leadId,
             employment_type: survey.employmentType,
             yrke: survey.yrke,
@@ -198,6 +198,7 @@ export default function AnalysisScreen() {
             salary_type: survey.salaryType,
             current_salary: survey.currentSalary,
           });
+          if (recoveryError) throw recoveryError;
           accessResult = await saveEmail({ leadId, reportId: activeReportId, email: normalized });
         } else {
           throw err;

@@ -2,6 +2,7 @@ import { Link } from "@/lib/router-compat";
 import { ArrowRight, ClipboardList, FileSearch, BookOpen, Table2 } from "lucide-react";
 import { getRelatedPages, RELATED_PAGE_BY_SLUG } from "@/data/relatedContent";
 import { trackEvent } from "@/lib/trackEvent";
+import { reportSignupHref } from "@/lib/reportSignup";
 
 /**
  * Innehållsmodul: relaterade rollsidor, kontextlänkar och CTA.
@@ -120,10 +121,10 @@ export default function RelateradeSidor({
       </Link>
 
       <Link
-        to={`/?yrke=${prefillSlug}`}
+        to={reportSignupHref(prefillSlug)}
         className={cardClass}
         style={cardStyle}
-        onClick={() => track(`/?yrke=${prefillSlug}`, "cta")}
+        onClick={() => track(reportSignupHref(prefillSlug), "cta")}
       >
         <div className="flex items-start gap-3">
           <div className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: ICON_BG }}>
