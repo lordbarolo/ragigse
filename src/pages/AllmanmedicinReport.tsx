@@ -20,6 +20,7 @@ import {
 import { useEffect } from "react";
 import { useCatalogZoneRates } from "@/hooks/useCatalogZoneRates";
 import { possibleRange, employedRange } from "@/lib/pricing";
+import { reportSignupHref } from "@/lib/reportSignup";
 
 
 /**
@@ -445,7 +446,7 @@ export default function AllmanmedicinReport() {
             </p>
 
             <Link
-              to="/?yrke=allmanmedicin"
+              to={reportSignupHref("allmanmedicin")}
               className="block rounded-2xl border p-5 transition hover:shadow-xs"
               style={{ backgroundColor: card, borderColor: border }}
             >
@@ -516,7 +517,7 @@ export default function AllmanmedicinReport() {
               Rapporten är gratis.
             </p>
             <Link
-              to="/?yrke=allmanmedicin"
+              to={reportSignupHref("allmanmedicin")}
               className="inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 rounded-lg mt-2"
               style={{ backgroundColor: "#ffffff", color: "#0b0c10" }}
             >

@@ -21,6 +21,7 @@ import RelateradeSidor from "@/components/report/RelateradeSidor";
 import { getRelatedPaths } from "@/data/relatedContent";
 import { trackEvent } from "@/lib/trackEvent";
 import { possibleRange, employedRange } from "@/lib/pricing";
+import { reportSignupHref } from "@/lib/reportSignup";
 
 
 /**
@@ -464,7 +465,7 @@ export default function SjukskoterskaReport() {
             </p>
 
             <Link
-              to="/?yrke=sjukskoterska"
+              to={reportSignupHref("sjukskoterska")}
               className="block rounded-2xl border p-5 transition hover:shadow-xs"
               style={{ backgroundColor: card, borderColor: border }}
             >
@@ -538,7 +539,7 @@ export default function SjukskoterskaReport() {
               Rapporten är gratis.
             </p>
             <Link
-              to="/?yrke=sjukskoterska"
+              to={reportSignupHref("sjukskoterska")}
               className="inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 rounded-lg mt-2"
               style={{ backgroundColor: "#ffffff", color: "#0b0c10" }}
             >

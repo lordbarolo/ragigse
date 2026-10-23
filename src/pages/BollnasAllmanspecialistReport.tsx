@@ -10,6 +10,7 @@ import { ArrowRight, MapPin, BarChart3, Info, TrendingUp } from "lucide-react";
 import { useEffect } from "react";
 import { useCatalogZoneRates } from "@/hooks/useCatalogZoneRates";
 import { possibleRange, employedRange } from "@/lib/pricing";
+import { reportSignupHref } from "@/lib/reportSignup";
 
 const LAST_UPDATED = getReportUpdatedAt("bollnas-lakare-alm");
 const fmt = (n: number) => n.toLocaleString("sv-SE", { maximumFractionDigits: 0 });
@@ -288,7 +289,7 @@ export default function BollnasAllmanspecialistReport() {
               Svara på några snabba frågor och få en egen rapport baserad på din specialitet, zon och anställningsform.
             </p>
             <Link
-              to="/?yrke=Specialistläkare%20allmänmedicin&kommun=Bollnäs"
+              to={reportSignupHref("allmanmedicin", "Bollnäs")}
               className="inline-flex items-center justify-center gap-2 text-sm font-semibold px-6 py-3 rounded-lg mt-2"
               style={{ backgroundColor: '#22232b', color: '#FFFFFF' }}
             >

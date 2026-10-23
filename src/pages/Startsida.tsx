@@ -7,6 +7,8 @@ import FotoBand from "@/components/startsida5c/FotoBand";
 import Footer5c from "@/components/startsida5c/Footer5c";
 
 import { trackEvent } from "@/lib/trackEvent";
+import { Button } from "@/components/ui/button";
+import { reportSignupHref } from "@/lib/reportSignup";
 
 const FONT_HREF =
   "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap";
@@ -69,6 +71,7 @@ export default function Startsida5c() {
             draggable={false}
           />
         </Link>
+        <div className="flex items-center gap-3">
         <Link
           to="/logga-in"
           aria-label="Logga in"
@@ -76,7 +79,10 @@ export default function Startsida5c() {
         >
           Logga in
         </Link>
-
+        <Button asChild size="sm" className="text-sm font-semibold px-6 py-3">
+          <Link to={reportSignupHref()}>Skapa konto</Link>
+        </Button>
+        </div>
 
       </header>
 

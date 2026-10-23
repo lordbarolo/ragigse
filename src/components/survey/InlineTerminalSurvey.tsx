@@ -22,6 +22,7 @@ import {
   NURSE_VALUE_MAP as nurseValueMap,
 } from "@/lib/specialityLists";
 import { toast } from "sonner";
+import { reportRolePrefill } from "@/lib/reportSignup";
 
 const SurveyThemeContext = createContext<"dark" | "light">("dark");
 
@@ -83,19 +84,24 @@ export default function InlineTerminalSurvey({
   variant = "dark",
   onStepChange,
   onComplete,
+  initialRole,
+  initialKommun,
 }: {
   variant?: "dark" | "light";
   onStepChange?: (step: number) => void;
   onComplete?: (leadId: string) => void;
+  initialRole?: string;
+  initialKommun?: string;
 }) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { data: locations } = useLocations();
   const { calculate: pricingCalculate, result: pricingResult } = usePricingEngine();
 
-  const [step, setStep] = useState(1);
+  const prefill = reportRolePrefill(initialRole ?? null);
+  const [step, setStep] = useState(prefill ? 3 : 1);
   const [direction, setDirection] = useState<1 | -1>(1);
-  const [s, setS] = useState<State>(initialState);
+  const [s, setS] = useState<State>(() => ({ ...initialState, ...prefill, kommun: initialKommun ?? "" }));
   const [saving, setSaving] = useState(false);
 
   const surveyStarted = useRef(false);

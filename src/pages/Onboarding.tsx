@@ -77,7 +77,7 @@ export default function Onboarding() {
             Vi behöver fyra uppgifter innan du kan använda assistenten.
           </p>
         </div>
-        <InlineTerminalSurvey variant="dark" onComplete={handleComplete} />
+        <InlineTerminalSurvey variant="dark" initialRole={searchParams.get("yrke") ?? undefined} initialKommun={searchParams.get("kommun") ?? undefined} onComplete={handleComplete} />
       </div>
     </div>
   );
