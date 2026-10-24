@@ -51,8 +51,8 @@ const ROWS = [
   { t: 'Ansökan skickad', s: 'Mottagen av byrån 07:42' },
 ];
 
-const X = 60;
-const RW = 960;
+const X = 48;
+const RW = 892;
 const RH = 168;
 const Y0 = 560;
 const GAPY = 26;

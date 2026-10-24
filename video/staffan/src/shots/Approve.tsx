@@ -66,7 +66,7 @@ export const Approve: React.FC = () => {
   const enter = seg(f, 0, 16, E.outQuint);
   // Tummen: glider in, trycker, lyfter
   const fin = seg(f, 6, tap - 1, E.outCubic);
-  const lift = seg(f, tap + 5, tap + 14, E.inOutCubic);
+  const lift = seg(f, tap + 3, tap + 10, E.inOutCubic);
   const bx = CARD.x + BTN.x + BTN.w * 0.62;
   const by = CARD.y + BTN.y + BTN.h / 2;
   const tx = bx + (1 - fin) * 180 + lift * 60;
@@ -133,7 +133,7 @@ export const Approve: React.FC = () => {
           background: 'radial-gradient(circle at 40% 35%, rgba(255,255,255,0.95), rgba(230,236,240,0.78))',
           boxShadow: '0 20px 40px rgba(0,0,0,0.45)',
           transform: `scale(${tScale})`,
-          opacity: seg(f, 6, 10) * (1 - seg(f, tap + 10, tap + 16)),
+          opacity: seg(f, 6, 10) * (1 - seg(f, tap + 4, tap + 9)),
         }}
       />
     </AbsoluteFill>

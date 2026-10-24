@@ -18,32 +18,33 @@ const MSGS: { who: 'byra' | 'staffan'; text: string }[] = [
 ];
 
 // Odometer
-const ROWH = 250;
+const ROWH = 262; // ≈1.11 × FS som i demo
 const DW = 150;
 const FS = 236;
+// Startar stilla på byråns första bud (790), rullar vid motbud och vid Staffans 865.
+const START = 790;
 const KEYS = [
-  { f: K.dealMsgs[0], v: 790 },
   { f: K.dealMsgs[2], v: 840 },
-  { f: K.dealDone, v: 865 },
+  { f: K.dealMsgs[3] + 2, v: 865 },
 ];
 const digitsOf = (v: number) => [Math.floor(v / 100) % 10, Math.floor(v / 10) % 10, v % 10];
 
 // Strängposition (i rader) för siffra i vid frame f — ren funktion.
 const posAt = (f: number, i: number): number => {
-  let pos = 0;
+  let pos = digitsOf(START)[i];
   for (let k = 0; k < KEYS.length; k++) {
     const key = KEYS[k];
     const s = key.f + i * 2;
     const d = digitsOf(key.v)[i];
-    const minRows = k === 0 ? 10 + i * 3 : 0;
+    const minRows = 0;
     const prev = pos;
     let T = Math.ceil((prev + minRows - d) / 10) * 10 + d;
     if (T < prev) T += 10;
     if (f < s) return prev;
     if (T === prev) continue;
-    const R = k === 0 ? 16 : 12;
-    if (f < s + R) return lerp(seg(f, s, s + R, E.outCubic), prev, T + 0.5);
-    if (f < s + R + 5) return lerp(seg(f, s + R, s + R + 5, E.outCubic), T + 0.5, T);
+    const R = 12;
+    if (f < s + R) return lerp(seg(f, s, s + R, E.outCubic), prev, T + 0.3);
+    if (f < s + R + 5) return lerp(seg(f, s + R, s + R + 5, E.outCubic), T + 0.3, T);
     pos = T;
   }
   return pos;
@@ -87,8 +88,8 @@ const Bubble: React.FC<{ who: 'byra' | 'staffan'; text: string; at: number; f: n
         position: 'absolute',
         top: y,
         left: me ? undefined : 60,
-        right: me ? 60 : undefined,
-        maxWidth: 800,
+        right: me ? 140 : undefined,
+        maxWidth: 760,
         opacity: op * (1 - fade),
         transform: `translateX(${(1 - p) * (me ? 50 : -50)}px) scale(${0.92 + 0.08 * p})`,
         transformOrigin: me ? '100% 100%' : '0% 100%',
@@ -128,7 +129,7 @@ export const Deal: React.FC = () => {
   const end = SHOTS.deal.dur;
   const out = seg(f, end - 6, end + 6, E.inOutCubic);
   const done = seg(f, K.dealDone, K.dealDone + 8, E.outCubic);
-  const lockPulse = Math.sin(seg(f, K.dealDone + 22, K.dealDone + 30) * Math.PI);
+  const lockPulse = Math.sin(seg(f, K.dealDone, K.dealDone + 8) * Math.PI);
   const ink = done > 0 ? C.mint : C.ink;
 
   return (
@@ -139,7 +140,7 @@ export const Deal: React.FC = () => {
       </div>
 
       {/* Versus-rad */}
-      <div style={{ position: 'absolute', top: 470, left: 60, right: 60, display: 'flex', alignItems: 'center', justifyContent: 'space-between', opacity: seg(f, 0, 8) }}>
+      <div style={{ position: 'absolute', top: 465, left: 60, right: 140, display: 'flex', alignItems: 'center', justifyContent: 'space-between', opacity: seg(f, 0, 8) }}>
         <Kicker color={C.amber}>Byrå</Kicker>
         <div style={{ flex: 1, margin: '0 26px', height: 2, background: `linear-gradient(90deg, ${C.amber}, rgba(243,239,231,0.15), ${C.mint})` }} />
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
@@ -150,11 +151,11 @@ export const Deal: React.FC = () => {
 
       {/* Tråd */}
       {MSGS.map((m, i) => (
-        <Bubble key={i} who={m.who} text={m.text} at={K.dealMsgs[i]} f={f} y={560 + i * 160} fade={0} />
+        <Bubble key={i} who={m.who} text={m.text} at={K.dealMsgs[i]} f={f} y={545 + i * 150} fade={0} />
       ))}
 
       {/* Timpris */}
-      <div style={{ position: 'absolute', top: 1235, left: 0, right: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', opacity: seg(f, K.dealMsgs[0] - 3, K.dealMsgs[0] + 3) }}>
+      <div style={{ position: 'absolute', top: 1160, left: 0, right: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', opacity: seg(f, K.dealMsgs[0] - 3, K.dealMsgs[0] + 3) }}>
         <Kicker color={done > 0 ? C.mint : C.mute} dot={false}>
           {done > 0 ? '✓ Överens · timpris' : 'Timpris · förhandlas'}
         </Kicker>

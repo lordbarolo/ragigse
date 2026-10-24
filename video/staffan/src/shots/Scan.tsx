@@ -25,8 +25,8 @@ const CITIES = ['Umeå', 'Kalmar', 'Gävle', 'Visby', 'Luleå', 'Falun', 'Öster
 export const N = 34;
 export const TARGET = 29;
 const GAP = 18;
-export const ROW_X = 60;
-export const ROW_W = 960;
+export const ROW_X = 48;
+export const ROW_W = 892; // höger kant ≤ 940 (TikTok/Reels ikonrad)
 const rowH = (i: number) => (i === TARGET ? 176 : 140 + ((i * 29) % 3) * 18);
 export const rowY: number[] = [];
 {
@@ -48,7 +48,7 @@ export const Row: React.FC<{ i: number; lift: number; dim: number }> = ({ i, lif
   const isT = i === TARGET;
   const role = isT ? 'Specialistsjuksköterska · IVA' : ROLES[i % ROLES.length];
   const city = isT ? 'Sundsvall' : CITIES[(i * 7) % CITIES.length];
-  const wk = 2 + ((i * 5) % 40);
+  const wk = isT ? 12 : [22, 30, 36, 4, 26, 40, 33, 18][i % 8];
   const rate = isT ? 790 : 640 + Math.round(hash(i) * 14) * 10;
   const match = isT ? 98 : 41 + Math.round(hash(i + 9) * 46);
   return (
@@ -156,15 +156,19 @@ export const Scan: React.FC = () => {
       <div
         style={{
           position: 'absolute',
-          left: 0,
-          right: 0,
-          top: CENTER_Y - 160,
-          textAlign: 'center',
+          left: ROW_X + 34,
+          top: CENTER_Y - rowH(TARGET) / 2 - 34,
+          zIndex: 5,
+          padding: '10px 20px',
+          borderRadius: 999,
+          background: C.bg,
+          border: `2px solid ${C.mint}`,
           opacity: seg(f, K.scanLift + 6, K.scanLift + 12) * (1 - othersOut),
           transform: `scale(${seg(f, K.scanLift + 6, K.scanLift + 16, (t) => E.outBack(t, 2.2))})`,
+          transformOrigin: '0% 50%',
         }}
       >
-        <Kicker>Bästa matchningen</Kicker>
+        <Kicker size={26}>Bästa matchningen</Kicker>
       </div>
 
       {/* Räknare */}

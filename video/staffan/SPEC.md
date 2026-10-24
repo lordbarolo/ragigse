@@ -15,7 +15,7 @@ Läge: **autonom fri kreation** (video-shotcraft pipeline), från en enda prompt
 | 20 s, sociala medier | 9:16, krok inom 1 s, text inom säker zon y 220–1560 |
 | "Helt färdig modern produkt" | Mörk premium-UI, glas-kort, agent-orb, 2.5D-rörelser, takt-synkad klippning |
 | "Valfria connectors" | ElevenLabs: svensk speaker (röst *Anton*, eleven_v4), 1 tagning (348 krediter) |
-| Ljud | BGM *Cat Walk* (Arulo, Mixkit fri licens), 129,99 BPM, start i låtens takt 52 så att droppet landar på video-takt 12 (f166) |
+| Ljud | BGM *Cat Walk* (Arulo, Mixkit fri licens), 129,99 BPM, start 24,026 s in i låten så att droppet (kick 29,559 s) landar på video-takt 12 (f166); rutnätet uppmätt på kick-onsets 40–160 Hz |
 | Leverans | Med BGM + utan BGM (speaker + SFX kvar), samma tidslinje via `bgm`-prop |
 
 ## Visuell riktning — "Nordic Night"
@@ -49,3 +49,12 @@ Läge: **autonom fri kreation** (video-shotcraft pipeline), från en enda prompt
 ## Medvetna avvikelser
 - Format 9:16 i stället för pipelinens 16:9 (sociala medier). Q11-teckenhöjder tolkade för mobil helskärm: rubriker 128–156 px, UI 36–50 px, etiketter 22–30 px (sekundära).
 - Workbench-manifest (`src/workbench.ts`) ej skrivet: molnsessionen kan inte exponera localhost till användaren.
+
+## Oberoende granskning — åtgärdat
+- Veckor motsade varandra (chip v. 12–20 vs match v. 27–35) → matchen är nu v. 12–20 genomgående.
+- BGM låg en halv takt fel (beat-tracker låst på off-beats) → offset 24,71 → 24,026 s. Rendermätning: alla klipp inom ±2,4 f från kick.
+- Speakerns "vill ha" maskerades av droppet → drop-SFX sänkta ~4 dB.
+- Odometer: startar stilla på 790, rullar bara vid motbud, "✓ Överens" + låsljud när 865 landat, 865 hålls >1 s.
+- Säker zon: kort/bubblor/bockar inom x ≤ 940, prisblock ovanför y 1560.
+- CTA 42 px "Gå med i väntelistan →" + "Länk i bio".
+- Rapport: `out/qa/review.md` (före åtgärder).

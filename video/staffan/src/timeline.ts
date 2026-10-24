@@ -1,11 +1,11 @@
 // Enda sanningskällan för tidslinjen. Allt räknas i takt mot BGM (Cat Walk, 129.99 BPM).
-// Video-takt 0 = låtens takt 52 (24.710 s). Drop (takt 64 i låten) = video-takt 12.
+// Kick-rutnät uppmätt på 40–160 Hz-onsets (29.559 s + n·T). Video-takt 12 (f166) = låtens drop 29.559 s.
 
 export const FPS = 30;
 export const DURATION = 600;
 export const BPM = 129.99;
 export const BEAT_S = 60 / BPM;
-export const BGM_OFFSET_S = 24.71;
+export const BGM_OFFSET_S = 24.026;
 
 export const beatF = (n: number) => Math.round(n * BEAT_S * FPS);
 
@@ -46,8 +46,8 @@ export const K = {
   meetSuck: 82,
   scanBrake: 69,
   scanLift: 73,
-  dealMsgs: [6, 23, 40, 56],
-  dealDone: 68,
+  dealMsgs: [6, 22, 38, 52],
+  dealDone: 73, // = när 865 har rullat klart
   opsCues: [6, 18, 28, 36],
   opsFixat: 69,
   approveTap: 20,
@@ -68,8 +68,8 @@ export const SFX: Sfx[] = [
     note: `chip ${i + 1} poppar in`,
   })),
   { from: S.meet.from + K.meetSuck, src: 'air-zoom-vacuum', volume: 0.5, note: 'chips sugs in i orben' },
-  { from: S.scan.from, src: 'bass-hit-futuristic', volume: 0.6, note: 'DROP — orben spricker till chockring (slam 1/3)' },
-  { from: S.scan.from + 2, src: 'sweep-scifi-fast', volume: 0.55, note: 'listan rusar förbi' },
+  { from: S.scan.from, src: 'bass-hit-futuristic', volume: 0.4, note: 'DROP — orben spricker till chockring (slam 1/3)' },
+  { from: S.scan.from + 2, src: 'sweep-scifi-fast', volume: 0.34, note: 'listan rusar förbi' },
   { from: S.scan.from + K.scanBrake - 2, src: 'impact-zoom-quick', volume: 0.5, note: 'inbromsning' },
   { from: S.scan.from + K.scanLift, src: 'camera-autofocus', volume: 0.35, dur: 14, note: 'målrad låses' },
   { from: S.scan.from + 99, src: 'swoosh-quick', volume: 0.4, note: 'målraden flyger upp till headern' },

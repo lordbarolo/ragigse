@@ -97,14 +97,17 @@ export const Outro: React.FC = () => {
             border: `2px solid rgba(92,242,196,0.5)`,
             background: C.mintSoft,
             fontFamily: F.mono,
-            fontSize: 32,
+            fontSize: 42,
             fontWeight: 600,
-            letterSpacing: '0.06em',
+            letterSpacing: '0.04em',
             color: C.mint,
           }}
         >
-          Väntelistan är öppen →
+          Gå med i väntelistan →
         </div>
+      </div>
+      <div style={{ position: 'absolute', top: CY + 420, left: 0, right: 0, textAlign: 'center', opacity: pill, fontFamily: F.sans, fontSize: 34, color: C.mute }}>
+        Länk i bio
       </div>
     </AbsoluteFill>
   );
