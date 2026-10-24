@@ -2,6 +2,15 @@ import { createFileRoute } from "@tanstack/react-router";
 import { checkRateLimit, clientIpFrom } from "@/lib/rateLimit.server";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const ALLOWED_REDIRECT_HOSTS = new Set([
+  "vardbemanning.ai",
+  "www.vardbemanning.ai",
+  "compcare.se",
+  "www.compcare.se",
+  "preview--compcare-se.lovable.app",
+  "id-preview--f4c1323e-7c72-43ee-978e-fa632a197c62.lovable.app",
+  "project--f4c1323e-7c72-43ee-978e-fa632a197c62.lovable.app",
+]);
 const SITE_NAME = "vardbemanning.ai";
 
 function ok() {
@@ -80,14 +89,22 @@ export const Route = createFileRoute("/api/public/send-signup-confirmation")({
           });
         }
 
+        const emailKey = Array.from(
+          new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(email))),
+        ).map((b) => b.toString(16).padStart(2, "0")).join("").slice(0, 32);
+        const emailRate = await checkRateLimit(supabaseAdmin, "send-signup-confirmation-email", emailKey, 3, 60);
+        if (!emailRate.allowed) {
+          return new Response("Too many requests", {
+            status: 429,
+            headers: { "Retry-After": String(emailRate.retryAfterSeconds) },
+          });
+        }
+
         // Only redirect back to origins we control.
         let target = "https://vardbemanning.ai/consultant/profil";
         try {
           const parsed = new URL(redirectTo);
-          if (
-            parsed.hostname.endsWith("vardbemanning.ai") ||
-            parsed.hostname.endsWith("lovable.app")
-          ) {
+          if (parsed.protocol === "https:" && ALLOWED_REDIRECT_HOSTS.has(parsed.hostname)) {
             target = parsed.toString();
           }
         } catch {
