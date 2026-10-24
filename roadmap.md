@@ -1,6 +1,7 @@
 # Roadmap
 
 ## Aktuellt
+- [ ] Rätta bekräftelsekortets kontrast och bevara roll/ort/analysdestination vid utloggad onboarding; verifiera utan publicering.
 - [x] Project monitoring: två gamla behörighetsfynd verifierade som redan åtgärdade; e-poståterhämtning kontrollerar nu insert-fel och har regressionstester. Inga öppna qa-fynd returnerades. Ingen publicering.
 - [x] Rapporter länkar till befintlig registrering med exakt yrkesroll/ort; kontext bevaras via login, e-postretur och Google till onboarding/analys. Startsidan har synlig kontolänk. 46 relevanta tester passerade, 19 behörighetstester utan testlösenord skippades; inloggad analys och mobil kontolänk verifierade. Äldre RoleDropdown-testsvit har fem befintliga test-/markupfel, utanför scope; inte ändrad.
 - [x] Byt favicon till senaste ljusa db.-ikonen; verifierad på rapportsidan i förhandsvisningen. Publicerad version har fortfarande gamla ikonreferenser, publicering ej utförd.

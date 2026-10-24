@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "@/lib/router-compat";
+import { useLocation, useNavigate } from "@/lib/router-compat";
 import { getRouteApi } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import InlineTerminalSurvey from "@/components/survey/InlineTerminalSurvey";
@@ -8,6 +8,7 @@ import { useProfileContext } from "@/hooks/useProfileContext";
 import { isProfileComplete, saveProfileContext } from "@/lib/profileContext";
 import { sanitizeRedirect } from "@/lib/authIntent";
 import { toast } from "sonner";
+import { onboardingLoginHref } from "@/lib/reportSignup";
 
 /**
  * Obligatorisk onboarding efter inloggning/registrering.
@@ -16,6 +17,7 @@ import { toast } from "sonner";
  */
 export default function Onboarding() {
   const navigate = useNavigate();
+  const location = useLocation();
   const search = getRouteApi("/onboarding").useSearch();
   const { user, loading: authLoading } = useAuth();
   const { complete, loading: profileLoading, refresh } = useProfileContext(user?.id);
@@ -24,8 +26,8 @@ export default function Onboarding() {
   const target = sanitizeRedirect(search.redirect ?? null) ?? "/consultant/profil";
 
   useEffect(() => {
-    if (!authLoading && !user) navigate("/logga-in");
-  }, [authLoading, user, navigate]);
+    if (!authLoading && !user) navigate(onboardingLoginHref(location.search));
+  }, [authLoading, user, navigate, location.search]);
 
   useEffect(() => {
     if (!authLoading && user && !profileLoading && complete && !saving) {
