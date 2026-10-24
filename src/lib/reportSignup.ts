@@ -40,3 +40,8 @@ export function onboardingHref(search: string) {
   }
   return params.size ? `/onboarding?${params.toString()}` : "/onboarding";
 }
+
+/** A signed-out onboarding visit must retain the same safe report context. */
+export function onboardingLoginHref(search: string) {
+  return onboardingHref(search).replace(/^\/onboarding/, "/logga-in");
+}

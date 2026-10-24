@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { onboardingHref, reportRolePrefill, reportSignupHref } from "./reportSignup";
+import { onboardingHref, onboardingLoginHref, reportRolePrefill, reportSignupHref } from "./reportSignup";
 import { DOCTOR_SPECIALTY_REPORTS } from "@/data/doctorSpecialtyReports";
 
 describe("report signup preserves the report role", () => {
@@ -25,5 +25,19 @@ describe("report signup preserves the report role", () => {
   it("does not guess unknown roles or accept external return destinations", () => {
     expect(reportRolePrefill("unknown")).toBeNull();
     expect(onboardingHref("?redirect=https://example.com")).toBe("/onboarding");
+  });
+  it("preserves exact role, municipality and analysis destination when onboarding requires login", () => {
+    const signup = new URL(reportSignupHref("allmanmedicin", "Bollnäs"), "https://vardbemanning.ai");
+    const login = new URL(onboardingLoginHref(signup.search), signup.origin);
+    expect(login.pathname).toBe("/logga-in");
+    expect(login.searchParams.get("yrke")).toBe("Specialistläkare allmänmedicin");
+    expect(login.searchParams.get("kommun")).toBe("Bollnäs");
+    expect(login.searchParams.get("redirect")).toBe("/consultant/loneanalys");
+    expect(onboardingHref(login.search)).toBe(onboardingHref(signup.search));
+  });
+  it("rejects external redirects and unrecognized fields on the signed-out onboarding path", () => {
+    expect(onboardingLoginHref("?redirect=https://example.com&token=secret&yrke=Sjuksk%C3%B6terska"))
+      .toBe("/logga-in?yrke=Sjuksk%C3%B6terska");
+    expect(onboardingLoginHref("")).toBe("/logga-in");
   });
 });
