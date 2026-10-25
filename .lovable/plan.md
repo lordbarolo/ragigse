@@ -1,20 +1,17 @@
-# Publicera rättat kontoflöde till vardbemanning.ai
+# Åtgärd: CodeQL "Clear text storage" i AnalysisScreen.tsx:212
 
-Rättningarna är klara och verifierade i förhandsvisningen, men inget har publicerats än. Därför syns de inte live.
+## Bedömning
+- Fyndet gäller att enkätsvaren (lön, lönetyp) skrivs till webbläsarens sessionStorage. Rad 212 lägger dessutom till e-postadressen.
+- sessionStorage är bunden till fliken och sajten och töms när fliken stängs. Risken är låg men verklig vid delad dator eller vid ett eventuellt XSS-fel.
+- Samma enkätsvar sparas redan tidigare i flödet (Survey.tsx, InlineTerminalSurvey.tsx, AnalysisScreen.tsx:57). Rad 212 tillför bara e-posten och är i övrigt en omskrivning.
+- Kryptering i webbläsaren, som CodeQL föreslår, ger inget skydd här eftersom nyckeln också måste ligga i webbläsaren. Den åtgärden avråder jag från.
 
-## Vad som går live
-- Rapportsidornas "Starta" och "Personlig rapport" leder till kontoskapande, och vald yrkesroll följer med hela vägen till den personliga ersättningsanalysen.
-- Kontoskapandet syns tydligare på startsidan, även på mobil.
-- Utloggade besökare som hamnar på inloggningen behåller sin roll och ort.
-- Bekräftelserutan efter registrering har bättre kontrast.
-- Allt annat som redan väntar i förhandsvisningen går också live, eftersom en publicering omfattar hela sidan. Det gäller till exempel ny text högst upp på startsidan, ZON 1–3, ny logotyp och flikikon, borttagen marknadsföring av fakturakontroll, /beta och tidigare säkerhetsrättningar.
+## Förslag (minsta ändring, ingen synlig skillnad)
+1. AnalysisScreen.tsx rad 211–213: ta bort omskrivningen av `surveyData` med e-post. E-posten finns redan i komponentens state (`setEmail`) och sparas i databasen via `saveEmail`. Ingen e-post hamnar i sessionStorage.
+2. Kontrollera att inget läser `surveyData.email` (Onboarding.tsx:42 och AnalysisScreen.tsx:38). Om något gör det läses värdet från state eller profilen i stället.
+3. Lägg ett test i `AnalysisScreen.redirect.test.tsx`: efter att e-posten sparats innehåller `sessionStorage.surveyData` ingen e-post.
+4. Lön och lönetyp blir kvar i sessionStorage. Att ta bort dem kräver att Onboarding och analysen hämtar svaren från servern via leadId. Det är en större ändring som du får ta ställning till separat.
+5. Fyndet markeras i GitHub/CodeQL som "won't fix – accepted risk" för lönefälten, med motivering. Det görs av dig, eftersom jag inte har tillgång till GitHubs säkerhetsflik.
 
-## Steg
-1. Kör en säkerhetskontroll. Om den hittar allvarliga problem visar jag dem först och frågar om du vill åtgärda dem innan publicering.
-2. Kontrollera att sidan byggs utan fel.
-3. Publicera.
-4. Skicka adressen. Det tar oftast ungefär en minut innan ändringarna syns, men det är en uppskattning.
-
-## Tekniskt
-- Kontrollera säkerhetsrapporten innan publicering och kör en ny genomsökning om den senaste är för gammal.
-- Publicera med preview_ui--publish. Ingen kod ändras.
+## Ändras inte
+Ingen text som användaren ser, ingen databas, inga andra filer utöver testet. Ingen publicering.
