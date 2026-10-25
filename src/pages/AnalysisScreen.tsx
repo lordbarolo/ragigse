@@ -208,9 +208,6 @@ export default function AnalysisScreen() {
       if (reportAccessToken) {
         sessionStorage.setItem(`reportAccess:${activeReportId}`, reportAccessToken);
       }
-      if (survey) {
-        sessionStorage.setItem("surveyData", JSON.stringify({ ...survey, email: normalized }));
-      }
       setEmail(normalized);
       trackEvent("email_collected", { source: "analysis_screen" });
       identifyLeadWithEmail(leadId, normalized, {
