@@ -168,6 +168,17 @@ describe("AnalysisScreen · auto-redirect för inloggade", () => {
     expect(navigateMock).not.toHaveBeenCalledWith(`/rapport/${REPORT_ID}`, { replace: true });
   });
 
+  it("sparar aldrig e-postadressen i sessionStorage efter att e-posten sparats", async () => {
+    sessionStorage.setItem("surveyData", JSON.stringify(SURVEY));
+    getSessionMock.mockResolvedValue({ data: { session: { user: { email: "a@b.se" } } } });
+    createReportMock.mockResolvedValue({ reportId: REPORT_ID, abVariant: "A" });
+    saveEmailMock.mockResolvedValue({ reportAccessToken: null });
+    renderAt();
+    await waitFor(() => expect(saveEmailMock).toHaveBeenCalled());
+    await waitFor(() => expect(navigateMock).toHaveBeenCalledWith(`/rapport/${REPORT_ID}`, { replace: true }));
+    expect(sessionStorage.getItem("surveyData") ?? "").not.toContain("a@b.se");
+  });
+
   it("1. redirectar direkt till /rapport/:reportId när reportId finns i sessionStorage", async () => {
     sessionStorage.setItem("surveyData", JSON.stringify(SURVEY));
     sessionStorage.setItem("reportId", REPORT_ID);
