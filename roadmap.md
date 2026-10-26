@@ -1,6 +1,7 @@
 # Roadmap
 
 ## Aktuellt
+- [ ] Redovisa vilken bransch den live-publicerade sajten på vardbemanning.ai avser; read-only-koll av publicerad metadata och synlig text.
 - [x] Bekräftelsekortets kontrast rättad; utloggad onboarding → login → registrering bevarar exakt roll, ort och analysdestination. 7 tester passerade, webbläsarflödet och kortet verifierade med simulerad registrering (inget konto eller mejl skapat), bygg OK. Ingen publicering.
 - [x] Project monitoring: två gamla behörighetsfynd verifierade som redan åtgärdade; e-poståterhämtning kontrollerar nu insert-fel och har regressionstester. Inga öppna qa-fynd returnerades. Ingen publicering.
 - [x] Rapporter länkar till befintlig registrering med exakt yrkesroll/ort; kontext bevaras via login, e-postretur och Google till onboarding/analys. Startsidan har synlig kontolänk. 46 relevanta tester passerade, 19 behörighetstester utan testlösenord skippades; inloggad analys och mobil kontolänk verifierade. Äldre RoleDropdown-testsvit har fem befintliga test-/markupfel, utanför scope; inte ändrad.
