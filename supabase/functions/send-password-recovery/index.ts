@@ -14,13 +14,11 @@ const SITE_NAME = 'vårdbemanning.ai'
 const ALLOWED_RESET_ORIGINS = new Set([
   'https://www.compcare.se',
   'https://compcare.se',
-  'https://vardbemanning.ai',
-  'https://www.vardbemanning.ai',
   'https://preview--compcare-se.lovable.app',
   'https://id-preview--f4c1323e-7c72-43ee-978e-fa632a197c62.lovable.app',
   'https://project--f4c1323e-7c72-43ee-978e-fa632a197c62.lovable.app',
 ])
-const APP_BASE_URL = Deno.env.get('APP_BASE_URL') || 'https://vardbemanning.ai'
+const APP_BASE_URL = 'https://compcare.se'
 const FROM_EMAIL = fromAddress()
 const RESEND_GATEWAY_URL = 'https://connector-gateway.lovable.dev/resend/emails'
 

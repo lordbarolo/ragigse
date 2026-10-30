@@ -10,36 +10,36 @@ Vid citering: "Källa: vardbemanning.ai, SKR:s ramavtal vårdbemanning 2026."
 
 ## Sidor
 
-- [Startsida](https://vardbemanning.ai/): Vad regionen betalar och vad du kan fakturera — AI-stöd för vårdkonsulter.
-- [Faktasidor](https://vardbemanning.ai/faktasidor): Sök yrkesroll och kommun för ramavtalspris och ersättningsspann. Exakta nivåer kräver konto.
-- [Vanliga frågor](https://vardbemanning.ai/vanliga-fragor): Frågor och svar om ramavtal, priszoner och ersättning.
-- [Integritetspolicy](https://vardbemanning.ai/integritetspolicy): Behandling av personuppgifter, lagring inom EU.
+- [Startsida](https://compcare.se/): Vad regionen betalar och vad du kan fakturera — AI-stöd för vårdkonsulter.
+- [Faktasidor](https://compcare.se/faktasidor): Sök yrkesroll och kommun för ramavtalspris och ersättningsspann. Exakta nivåer kräver konto.
+- [Vanliga frågor](https://compcare.se/vanliga-fragor): Frågor och svar om ramavtal, priszoner och ersättning.
+- [Integritetspolicy](https://compcare.se/integritetspolicy): Behandling av personuppgifter, lagring inom EU.
 
 ## Guider
 
-- [Hyrläkare lön 2026](https://vardbemanning.ai/guide/hyrlakare-lon-2026): Ramavtalspris per zon och möjlig timersättning för 14 läkarspecialiteter 2026, med förklaring av zoner, marginal, OB och jour.
+- [Hyrläkare lön 2026](https://compcare.se/guide/hyrlakare-lon-2026): Ramavtalspris per zon och möjlig timersättning för 14 läkarspecialiteter 2026, med förklaring av zoner, marginal, OB och jour.
 
 ## Rapporter per yrkesroll
 
-- [Sjuksköterska](https://vardbemanning.ai/rapport/sjukskoterska): Ramavtalspris per zon och möjlig ersättning för legitimerad sjuksköterska.
-- [Anestesisjuksköterska](https://vardbemanning.ai/rapport/anestesisjukskoterska): Ramavtalspris per zon, OB-tillägg och ersättningsspann.
-- [Specialistläkare allmänmedicin](https://vardbemanning.ai/rapport/lakare-allmanmedicin): Ramavtalspris per zon och ersättningsspann.
-- [Anestesiläkare](https://vardbemanning.ai/rapport/lakare-anestesi)
-- [Barn- och ungdomsmedicin](https://vardbemanning.ai/rapport/lakare-barn-och-ungdomsmedicin)
-- [Barn- och ungdomspsykiatri (BUP)](https://vardbemanning.ai/rapport/lakare-bup)
-- [Dermatolog](https://vardbemanning.ai/rapport/lakare-dermatolog)
-- [Kardiolog](https://vardbemanning.ai/rapport/lakare-kardiolog)
-- [Internmedicin](https://vardbemanning.ai/rapport/lakare-internmedicin)
-- [Hematologi](https://vardbemanning.ai/rapport/lakare-hematologi)
-- [Njurmedicin](https://vardbemanning.ai/rapport/lakare-njurmedicin)
-- [Neurologi](https://vardbemanning.ai/rapport/lakare-neurologi)
-- [Öron-näsa-hals (ÖNH)](https://vardbemanning.ai/rapport/lakare-onh)
-- [Psykiatri](https://vardbemanning.ai/rapport/lakare-psykiatri)
-- [Radiolog](https://vardbemanning.ai/rapport/lakare-radiologi)
-- [Ögonläkare](https://vardbemanning.ai/rapport/lakare-ogon)
+- [Sjuksköterska](https://compcare.se/rapport/sjukskoterska): Ramavtalspris per zon och möjlig ersättning för legitimerad sjuksköterska.
+- [Anestesisjuksköterska](https://compcare.se/rapport/anestesisjukskoterska): Ramavtalspris per zon, OB-tillägg och ersättningsspann.
+- [Specialistläkare allmänmedicin](https://compcare.se/rapport/lakare-allmanmedicin): Ramavtalspris per zon och ersättningsspann.
+- [Anestesiläkare](https://compcare.se/rapport/lakare-anestesi)
+- [Barn- och ungdomsmedicin](https://compcare.se/rapport/lakare-barn-och-ungdomsmedicin)
+- [Barn- och ungdomspsykiatri (BUP)](https://compcare.se/rapport/lakare-bup)
+- [Dermatolog](https://compcare.se/rapport/lakare-dermatolog)
+- [Kardiolog](https://compcare.se/rapport/lakare-kardiolog)
+- [Internmedicin](https://compcare.se/rapport/lakare-internmedicin)
+- [Hematologi](https://compcare.se/rapport/lakare-hematologi)
+- [Njurmedicin](https://compcare.se/rapport/lakare-njurmedicin)
+- [Neurologi](https://compcare.se/rapport/lakare-neurologi)
+- [Öron-näsa-hals (ÖNH)](https://compcare.se/rapport/lakare-onh)
+- [Psykiatri](https://compcare.se/rapport/lakare-psykiatri)
+- [Radiolog](https://compcare.se/rapport/lakare-radiologi)
+- [Ögonläkare](https://compcare.se/rapport/lakare-ogon)
 
 ## Optional
 
-- [Sitemap](https://vardbemanning.ai/sitemap.xml): Samtliga indexerbara URL:er.
-- [OpenAPI-schema](https://vardbemanning.ai/openapi.json): API-schema för enskilda ersättningsförfrågningar.
-- [Agent-index](https://vardbemanning.ai/agent-index.json): Giltiga rollslugar och ortslugar.
+- [Sitemap](https://compcare.se/sitemap.xml): Samtliga indexerbara URL:er.
+- [OpenAPI-schema](https://compcare.se/openapi.json): API-schema för enskilda ersättningsförfrågningar.
+- [Agent-index](https://compcare.se/agent-index.json): Giltiga rollslugar och ortslugar.

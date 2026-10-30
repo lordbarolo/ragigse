@@ -48,7 +48,7 @@ const RepresentationInviteEmail = ({
     <Body style={main}>
       <Container style={container}>
         <Img
-          src="https://vardbemanning.ai/vardbemanning-wordmark-light.png"
+          src="https://compcare.se/vardbemanning-wordmark-light.png"
           width="180"
           height="29"
           alt="vårdbemanning.ai"
@@ -121,7 +121,7 @@ export const template = {
     periodStart: '2026-05-04',
     periodEnd: '2026-06-15',
     responseDeadline: '2026-04-28',
-    signingUrl: 'https://vardbemanning.ai/sign/abc123',
+    signingUrl: 'https://compcare.se/sign/abc123',
   },
 } satisfies TemplateEntry
 

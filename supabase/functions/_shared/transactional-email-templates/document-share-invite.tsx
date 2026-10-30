@@ -29,7 +29,7 @@ const DocumentShareInviteEmail = ({
     <Body style={main}>
       <Container style={container}>
         <Img
-          src="https://vardbemanning.ai/vardbemanning-wordmark-light.png"
+          src="https://compcare.se/vardbemanning-wordmark-light.png"
           width="180"
           height="29"
           alt="vårdbemanning.ai"
@@ -70,7 +70,7 @@ export const template = {
   previewData: {
     ownerName: 'Anna Svensson',
     documentCount: 3,
-    inviteUrl: 'https://vardbemanning.ai/delade-dokument/abc123',
+    inviteUrl: 'https://compcare.se/delade-dokument/abc123',
     personalMessage: 'Hej! Här är mina handlingar inför uppdraget.',
   },
 } satisfies TemplateEntry

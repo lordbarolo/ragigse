@@ -82,7 +82,7 @@ serve(async (req) => {
     }
 
     // Build the confirmation link
-    const siteUrl = req.headers.get("origin") || "https://vardbemanning.ai";
+    const siteUrl = "https://compcare.se";
     const utmParams = "utm_source=referral&utm_medium=email&utm_campaign=colleague_tip";
     const confirmLink = `${siteUrl}/referral/${referral.token}?${utmParams}`;
     const homepageLink = `${siteUrl}/?${utmParams}`;

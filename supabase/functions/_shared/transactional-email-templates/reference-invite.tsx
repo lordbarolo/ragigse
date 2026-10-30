@@ -35,7 +35,7 @@ const ReferenceInviteEmail = ({
     <Body style={main}>
       <Container style={container}>
         <Img
-          src="https://vardbemanning.ai/vardbemanning-wordmark-light.png"
+          src="https://compcare.se/vardbemanning-wordmark-light.png"
           width="180"
           height="29"
           alt="vårdbemanning.ai"
@@ -89,7 +89,7 @@ export const template = {
     relationship: 'Chef',
     isVerification: false,
     personalMessage: 'Hej! Det vore jättesnällt om du kunde lämna en referens.',
-    inviteUrl: 'https://vardbemanning.ai/referens/abc123',
+    inviteUrl: 'https://compcare.se/referens/abc123',
   },
 } satisfies TemplateEntry
 

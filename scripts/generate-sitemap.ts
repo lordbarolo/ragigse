@@ -11,7 +11,7 @@ import { DOCTOR_SPECIALTY_REPORTS } from "../src/data/doctorSpecialtyReports"
 import { GUIDES } from "../src/data/guides"
 import { getGuideUpdatedAt, getReportUpdatedAt } from "../src/data/contentFreshness"
 
-const BASE_URL = "https://vardbemanning.ai"
+const BASE_URL = "https://compcare.se"
 
 interface SitemapEntry {
   path: string

@@ -11,7 +11,7 @@
  * - schema.org/WebSite (med potentialAction för SearchAction)
  */
 
-const BASE_URL = "https://vardbemanning.ai";
+const BASE_URL = "https://compcare.se";
 
 export const organizationSchema = {
   "@context": "https://schema.org",

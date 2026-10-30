@@ -20,7 +20,7 @@ const ToolSuggestionConfirmEmail = ({ confirmUrl, choiceLabel }: ToolSuggestionC
     <Body style={main}>
       <Container style={container}>
         <Img
-          src="https://vardbemanning.ai/vardbemanning-wordmark-light.png"
+          src="https://compcare.se/vardbemanning-wordmark-light.png"
           width="180"
           height="29"
           alt="vårdbemanning.ai"
@@ -48,7 +48,7 @@ export const template = {
   subject: 'Bekräfta ditt verktygsförslag',
   displayName: 'Bekräfta verktygsförslag',
   previewData: {
-    confirmUrl: 'https://vardbemanning.ai/api/public/bekrafta-forslag?token=demo',
+    confirmUrl: 'https://compcare.se/api/public/bekrafta-forslag?token=demo',
     choiceLabel: 'Optimering av ersättning/förhandling',
   },
 } satisfies TemplateEntry

@@ -6,7 +6,7 @@ import { writeFileSync } from "fs"
 import { resolve } from "path"
 import { ROLE_NAMES, CITY_NAMES, slugify, publishableRoles } from "./seo-roles"
 
-const BASE_URL = "https://vardbemanning.ai"
+const BASE_URL = "https://compcare.se"
 
 // Synonym slugs accepted by public.lookup_rate via public.rate_slug_aliases.
 // Snapshot — keep in sync if new aliases are added in the database.

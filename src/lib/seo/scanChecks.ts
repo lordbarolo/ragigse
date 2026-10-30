@@ -18,7 +18,7 @@ export interface Finding {
   message: string;
 }
 
-const BASE_URL = "https://vardbemanning.ai";
+const BASE_URL = "https://compcare.se";
 
 const stripTags = (s: string) => s.replace(/<[^>]*>/g, "").trim();
 

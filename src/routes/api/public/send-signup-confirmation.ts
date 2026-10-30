@@ -3,8 +3,6 @@ import { checkRateLimit, clientIpFrom } from "@/lib/rateLimit.server";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const ALLOWED_REDIRECT_HOSTS = new Set([
-  "vardbemanning.ai",
-  "www.vardbemanning.ai",
   "compcare.se",
   "www.compcare.se",
   "preview--compcare-se.lovable.app",
@@ -101,7 +99,7 @@ export const Route = createFileRoute("/api/public/send-signup-confirmation")({
         }
 
         // Only redirect back to origins we control.
-        let target = "https://vardbemanning.ai/consultant/profil";
+        let target = "https://compcare.se/consultant/profil";
         try {
           const parsed = new URL(redirectTo);
           if (parsed.protocol === "https:" && ALLOWED_REDIRECT_HOSTS.has(parsed.hostname)) {

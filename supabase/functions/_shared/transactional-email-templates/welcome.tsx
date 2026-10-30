@@ -19,7 +19,7 @@ const WelcomeEmail = ({ name }: WelcomeProps) => (
     <Body style={main}>
       <Container style={container}>
         <Img
-          src="https://vardbemanning.ai/vardbemanning-wordmark-light.png"
+          src="https://compcare.se/vardbemanning-wordmark-light.png"
           width="180"
           height="29"
           alt="vårdbemanning.ai"
@@ -39,7 +39,7 @@ const WelcomeEmail = ({ name }: WelcomeProps) => (
           • Jämför din lön med marknaden{'\n'}
           • Få stöd i din nästa löneförhandling
         </Text>
-        <Button style={button} href="https://vardbemanning.ai/profil">
+        <Button style={button} href="https://compcare.se/profil">
           Gå till min profil →
         </Button>
         <Text style={footer}>

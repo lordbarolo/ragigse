@@ -23,7 +23,7 @@ const InvoiceAdminNotifyEmail = ({ email, name, role, region, message }: AdminNo
     <Body style={main}>
       <Container style={container}>
         <Img
-          src="https://vardbemanning.ai/vardbemanning-wordmark-light.png"
+          src="https://compcare.se/vardbemanning-wordmark-light.png"
           width="180"
           height="29"
           alt="vårdbemanning.ai"

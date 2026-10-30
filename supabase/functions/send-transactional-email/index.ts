@@ -19,14 +19,14 @@ const ANON_TEMPLATES = new Set(['welcome'])
 // Optional env:
 //  - RESEND_FROM_DOMAIN     (default: "vardbemanning.ai" — verified sending domain i Resend)
 //  - RESEND_FROM_NAME       (default: "vårdbemanning.ai")
-//  - APP_BASE_URL           (default: "https://vardbemanning.ai" — used in unsubscribe links)
+//  - APP_BASE_URL           (fixed: "https://compcare.se" — used in unsubscribe links)
 
 // ASCII-only avsändarnamn: Resend avvisar icke-ASCII i From-headern (422).
 const SITE_NAME = (Deno.env.get('RESEND_FROM_NAME') || 'vardbemanning.ai')
   .replace(/[^\x20-\x7E]/g, '')
   .trim() || 'vardbemanning.ai'
 const FROM_DOMAIN = FROM_DOMAIN_SHARED
-const APP_BASE_URL = Deno.env.get('APP_BASE_URL') || 'https://vardbemanning.ai'
+const APP_BASE_URL = 'https://compcare.se'
 const GATEWAY_URL = 'https://connector-gateway.lovable.dev/resend'
 
 const corsHeaders = {

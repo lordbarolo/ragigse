@@ -5,7 +5,7 @@ import { requireCronOrAdmin } from "../_shared/cronAuth.ts";
 import { fromAddress } from "../_shared/mailFrom.ts";
 
 
-const APP_BASE_URL = Deno.env.get("APP_BASE_URL") || "https://vardbemanning.ai";
+const APP_BASE_URL = "https://compcare.se";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
