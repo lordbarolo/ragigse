@@ -69,7 +69,7 @@ Deno.serve(async (req) => {
     if (constantsAlert) {
       lines.push(`<h3>Konstant-kontroll avvikelse >48h</h3><p>${constantsLatest!.run_at} — status: <b>${constantsLatest!.status}</b> — ${constantsLatest!.mismatch_count} diffar.</p>`);
     }
-    lines.push(`<p><a href="https://vardbemanning.ai/admin">Öppna admin</a></p>`);
+    lines.push(`<p><a href="https://compcare.se/admin">Öppna admin</a></p>`);
 
     // Send via existing transactional function
     await supabase.functions.invoke("send-transactional-email", {

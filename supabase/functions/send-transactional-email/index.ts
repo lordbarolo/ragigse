@@ -26,7 +26,7 @@ const SITE_NAME = (Deno.env.get('RESEND_FROM_NAME') || 'vardbemanning.ai')
   .replace(/[^\x20-\x7E]/g, '')
   .trim() || 'vardbemanning.ai'
 const FROM_DOMAIN = FROM_DOMAIN_SHARED
-const APP_BASE_URL = Deno.env.get('APP_BASE_URL') || 'https://vardbemanning.ai'
+const APP_BASE_URL = 'https://compcare.se'
 const GATEWAY_URL = 'https://connector-gateway.lovable.dev/resend'
 
 const corsHeaders = {

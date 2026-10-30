@@ -3,7 +3,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { checkRateLimit, rateLimitResponse } from "../_shared/rateLimit.ts";
 import { maskEmail } from "../_shared/maskEmail.ts";
 
-const APP_BASE_URL = Deno.env.get("APP_BASE_URL") || "https://vardbemanning.ai";
+const APP_BASE_URL = "https://compcare.se";
 
 const encoder = new TextEncoder();
 
