@@ -4,13 +4,13 @@
   "description": "Machine-readable index of all valid specialty_slug and city_slug values. Combine any specialty_slug with any city_slug to form a valid rate page URL. Roles are always addressed as their specific role — administrative group labels are never published.",
   "version": "2026.1",
   "generated_at": "2026-10-30",
-  "base_url": "https://vardbemanning.ai",
+  "base_url": "https://compcare.se",
   "data_source": "SKR ramavtalspriser 2026 per roll och zon, minus bemanningsföretagets standardmarginal.",
   "url_patterns": {
-    "rate_page": "https://vardbemanning.ai/lon/{specialty_slug}/{city_slug}",
-    "sitemap": "https://vardbemanning.ai/sitemap.xml",
-    "llms_txt": "https://vardbemanning.ai/llms.txt",
-    "openapi": "https://vardbemanning.ai/openapi.json"
+    "rate_page": "https://compcare.se/lon/{specialty_slug}/{city_slug}",
+    "sitemap": "https://compcare.se/sitemap.xml",
+    "llms_txt": "https://compcare.se/llms.txt",
+    "openapi": "https://compcare.se/openapi.json"
   },
   "counts": {
     "specialties": 88,

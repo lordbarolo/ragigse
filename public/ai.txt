@@ -1,11 +1,11 @@
 # vardbemanning.ai — AI Crawler Guide
-# https://vardbemanning.ai/ai.txt
+# https://compcare.se/ai.txt
 # Last updated: 2026-08-07
 
 ## Site identity
 Name: vardbemanning.ai
 Language: sv-SE
-Domain: https://vardbemanning.ai
+Domain: https://compcare.se
 Description: Swedish compensation intelligence platform for healthcare consultants. Framework agreement prices (ramavtalspriser) per price zone and possible consultant compensation per role.
 
 ## What AI crawlers should index

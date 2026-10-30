@@ -13,7 +13,7 @@ import { reportSignupHref } from "@/lib/reportSignup";
 const FONT_HREF =
   "https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap";
 
-const SITE_URL = "https://vardbemanning.ai";
+const SITE_URL = "https://compcare.se";
 
 const LANDING_JSONLD = [
   {

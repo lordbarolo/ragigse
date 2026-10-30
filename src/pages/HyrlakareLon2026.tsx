@@ -162,12 +162,12 @@ export default function HyrlakareLon2026() {
       dateModified: GUIDE_UPDATED_AT,
       mainEntityOfPage: {
         "@type": "WebPage",
-        "@id": `https://vardbemanning.ai/guide/${GUIDE.slug}`,
+        "@id": `https://compcare.se/guide/${GUIDE.slug}`,
       },
       publisher: {
         "@type": "Organization",
         name: "vårdbemanning.ai",
-        url: "https://vardbemanning.ai",
+        url: "https://compcare.se",
       },
       citation: "SKR:s ramavtal vårdbemanning 2026",
     },

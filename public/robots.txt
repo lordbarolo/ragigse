@@ -45,11 +45,11 @@ Disallow: /rest/v1/
 Disallow: /functions/v1/
 Disallow: /api/
 
-Sitemap: https://vardbemanning.ai/sitemap.xml
+Sitemap: https://compcare.se/sitemap.xml
 
 # LLMs.txt – AI-optimerad beskrivning av vårdbemanning.ai
 # Se https://llmstxt.org för specifikation
-LLMs-Txt: https://vardbemanning.ai/llms.txt
+LLMs-Txt: https://compcare.se/llms.txt
 
 # AI crawlers – välkomna till publika sidor och maskinläsbara filer
 User-agent: GPTBot

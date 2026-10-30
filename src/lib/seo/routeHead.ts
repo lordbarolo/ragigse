@@ -9,7 +9,7 @@
  * ofta byggs av data som bara finns vid render.
  */
 
-const BASE_URL = "https://vardbemanning.ai";
+const BASE_URL = "https://compcare.se";
 const DEFAULT_OG_IMAGE = `${BASE_URL}/vardbemanning-og.png`;
 
 export interface SeoHeadInput {

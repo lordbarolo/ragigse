@@ -59,7 +59,7 @@ export const submitToolSuggestion = createServerFn({ method: "POST" })
       throw new Error("Kunde inte spara förslaget just nu.");
     }
 
-    const baseUrl = process.env["APP_BASE_URL"] || "https://vardbemanning.ai";
+    const baseUrl = process.env["APP_BASE_URL"] || "https://compcare.se";
     const confirmUrl = `${baseUrl}/api/public/bekrafta-forslag?token=${token}`;
     const label =
       TOOL_SUGGESTION_OPTIONS.find((o) => o.value === data.choice)?.label ?? undefined;

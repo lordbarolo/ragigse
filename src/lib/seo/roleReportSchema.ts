@@ -13,7 +13,7 @@
 
 import { organizationSchema } from "./organizationSchema";
 
-const BASE_URL = "https://vardbemanning.ai";
+const BASE_URL = "https://compcare.se";
 const ORG_REF = { "@id": `${BASE_URL}/#organization` };
 
 

@@ -16,7 +16,7 @@ describe("report signup preserves the report role", () => {
     }
   });
   it("preserves role and municipality through signup and onboarding", () => {
-    const signup = new URL(reportSignupHref("allmanmedicin", "Bollnäs"), "https://vardbemanning.ai");
+    const signup = new URL(reportSignupHref("allmanmedicin", "Bollnäs"), "https://compcare.se");
     const onboarding = new URL(onboardingHref(signup.search), signup.origin);
     expect(onboarding.searchParams.get("yrke")).toBe("Specialistläkare allmänmedicin");
     expect(onboarding.searchParams.get("kommun")).toBe("Bollnäs");
@@ -27,7 +27,7 @@ describe("report signup preserves the report role", () => {
     expect(onboardingHref("?redirect=https://example.com")).toBe("/onboarding");
   });
   it("preserves exact role, municipality and analysis destination when onboarding requires login", () => {
-    const signup = new URL(reportSignupHref("allmanmedicin", "Bollnäs"), "https://vardbemanning.ai");
+    const signup = new URL(reportSignupHref("allmanmedicin", "Bollnäs"), "https://compcare.se");
     const login = new URL(onboardingLoginHref(signup.search), signup.origin);
     expect(login.pathname).toBe("/logga-in");
     expect(login.searchParams.get("yrke")).toBe("Specialistläkare allmänmedicin");

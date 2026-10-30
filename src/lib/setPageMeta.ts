@@ -17,7 +17,7 @@
  * `path` defaults to the current location pathname; pass an explicit value for
  * routes that want a canonical URL different from the visited path.
  */
-const SITE_ORIGIN = "https://vardbemanning.ai";
+const SITE_ORIGIN = "https://compcare.se";
 
 export function setPageMeta({
   title,

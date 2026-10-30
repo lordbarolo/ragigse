@@ -113,7 +113,7 @@ export default function LonSpecialtyCity() {
   const jsonLd = useMemo(() => {
     if (!data) return undefined;
     const place = dedupePlace(data.location_name);
-    const url = `https://vardbemanning.ai/lon/${specialty}/${city}`;
+    const url = `https://compcare.se/lon/${specialty}/${city}`;
     return {
       "@context": "https://schema.org",
       "@graph": [
@@ -151,7 +151,7 @@ export default function LonSpecialtyCity() {
           provider: {
             "@type": "Organization",
             name: "vårdbemanning.ai",
-            url: "https://vardbemanning.ai",
+            url: "https://compcare.se",
           },
           mainEntityOfPage: { "@id": url },
         },
@@ -171,7 +171,7 @@ export default function LonSpecialtyCity() {
             { "@type": "PropertyValue", name: "Företagare", unitText: "SEK/timme", value: data.contractor_rate },
             { "@type": "PropertyValue", name: "Löntagare", unitText: "SEK/timme", value: data.employee_rate },
           ],
-          creator: { "@type": "Organization", name: "vårdbemanning.ai", url: "https://vardbemanning.ai" },
+          creator: { "@type": "Organization", name: "vårdbemanning.ai", url: "https://compcare.se" },
           citation: data.source,
         },
         {
@@ -208,8 +208,8 @@ export default function LonSpecialtyCity() {
           "@type": "BreadcrumbList",
           "@id": `${url}#breadcrumbs`,
           itemListElement: [
-            { "@type": "ListItem", position: 1, name: "vårdbemanning.ai", item: "https://vardbemanning.ai/" },
-            { "@type": "ListItem", position: 2, name: "Timpeng per roll och ort", item: "https://vardbemanning.ai/faktasidor" },
+            { "@type": "ListItem", position: 1, name: "vårdbemanning.ai", item: "https://compcare.se/" },
+            { "@type": "ListItem", position: 2, name: "Timpeng per roll och ort", item: "https://compcare.se/faktasidor" },
             { "@type": "ListItem", position: 3, name: `${data.specialty_name} i ${place}`, item: url },
           ],
         },

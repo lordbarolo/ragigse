@@ -1,7 +1,7 @@
 /**
  * E2E smoketest — verifierar nuvarande startsideflöde efter publicering.
  *
- * Flow (mot https://vardbemanning.ai):
+ * Flow (mot https://compcare.se):
  *   1. Öppna startsidan → hero renderas
  *   2. Rateräknaren visar ett kundpris (eller den godkända fallbacktexten)
  *   3. Rolltabellen renderar rader (eller fallbacktexten)
@@ -15,7 +15,7 @@
 
 import { chromium, type Browser, type Page } from "npm:playwright@1.47.0";
 
-const BASE_URL = Deno.env.get("SMOKETEST_URL") ?? "https://vardbemanning.ai";
+const BASE_URL = Deno.env.get("SMOKETEST_URL") ?? "https://compcare.se";
 const TIMEOUT_MS = 60_000;
 
 interface Step {

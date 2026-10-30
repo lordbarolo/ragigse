@@ -9,26 +9,26 @@
     "api_key": {
       "header_name": "Authorization",
       "prefix": "Bearer",
-      "description": "Supabase anon key for public endpoints, or cck_ API key for agent endpoints. See https://vardbemanning.ai/agent-api.md for agent authentication."
+      "description": "Supabase anon key for public endpoints, or cck_ API key for agent endpoints. See https://compcare.se/agent-api.md for agent authentication."
     }
   },
   "api": {
     "type": "openapi",
-    "url": "https://vardbemanning.ai/openapi.json"
+    "url": "https://compcare.se/openapi.json"
   },
   "contact": {
     "name": "vårdbemanning.ai",
-    "url": "https://vardbemanning.ai",
+    "url": "https://compcare.se",
     "email": "info@vardbemanning.ai"
   },
   "legal_info": {
-    "terms_of_service": "https://vardbemanning.ai/integritetspolicy"
+    "terms_of_service": "https://compcare.se/integritetspolicy"
   },
-  "logo_url": "https://vardbemanning.ai/vardbemanning-logo-light-v2.png",
+  "logo_url": "https://compcare.se/vardbemanning-logo-light-v2.png",
   "content_resources": {
     "reports": {
       "description": "Static role-based compensation reports with TL;DR summaries, zone pricing, OB rates, and recommended consultant rates.",
-      "example": "https://vardbemanning.ai/rapport/anestesisjukskoterska",
+      "example": "https://compcare.se/rapport/anestesisjukskoterska",
       "schema": "Article + FAQPage + Dataset JSON-LD. Each report includes a citerbar TL;DR box with dateModified."
     },
     "teasers": {
@@ -41,11 +41,11 @@
     }
   },
   "discovery_files": [
-    "https://vardbemanning.ai/llms.txt",
-    "https://vardbemanning.ai/llms-full.txt",
-    "https://vardbemanning.ai/ai.txt",
-    "https://vardbemanning.ai/openapi.json",
-    "https://vardbemanning.ai/agent-api.md",
-    "https://vardbemanning.ai/radar-api-README.md"
+    "https://compcare.se/llms.txt",
+    "https://compcare.se/llms-full.txt",
+    "https://compcare.se/ai.txt",
+    "https://compcare.se/openapi.json",
+    "https://compcare.se/agent-api.md",
+    "https://compcare.se/radar-api-README.md"
   ]
 }
