@@ -21,7 +21,7 @@ const ReportDeliveryEmail = ({ occupation, kommun, reportUrl }: ReportDeliveryPr
     <Body style={main}>
       <Container style={container}>
         <Img
-          src="https://vardbemanning.ai/vardbemanning-wordmark-light.png"
+          src="https://compcare.se/vardbemanning-wordmark-light.png"
           width="180"
           height="29"
           alt="vårdbemanning.ai"
@@ -38,7 +38,7 @@ const ReportDeliveryEmail = ({ occupation, kommun, reportUrl }: ReportDeliveryPr
             förhandlingsstrategier anpassade för dig.
           </Text>
         </Section>
-        <Button style={button} href={reportUrl || 'https://vardbemanning.ai'}>
+        <Button style={button} href={reportUrl || 'https://compcare.se'}>
           Öppna min rapport →
         </Button>
         <Text style={footer}>
@@ -54,7 +54,7 @@ export const template = {
   subject: (data: Record<string, any>) =>
     `Din ersättningsanalys — ${data.occupation || 'din roll'}${data.kommun ? `, ${data.kommun}` : ''}`,
   displayName: 'Rapportleverans',
-  previewData: { occupation: 'Specialistsjuksköterska', kommun: 'Stockholm', reportUrl: 'https://vardbemanning.ai/rapport/demo' },
+  previewData: { occupation: 'Specialistsjuksköterska', kommun: 'Stockholm', reportUrl: 'https://compcare.se/rapport/demo' },
 } satisfies TemplateEntry
 
 const main = { backgroundColor: '#ffffff', fontFamily: "'Inter', Arial, sans-serif" }
